@@ -13,42 +13,21 @@ namespace Hyperf\Server;
 
 class Port
 {
-    /**
-     * @var string
-     */
-    protected $name = 'http';
+    protected string $name = 'http';
 
-    /**
-     * @var int
-     */
-    protected $type = ServerInterface::SERVER_HTTP;
+    protected int $type = ServerInterface::SERVER_HTTP;
 
-    /**
-     * @var string
-     */
-    protected $host = '0.0.0.0';
+    protected string $host = '0.0.0.0';
 
-    /**
-     * @var int
-     */
-    protected $port = 9501;
+    protected int $port = 9501;
 
-    /**
-     * @var int
-     */
-    protected $sockType = 0;
+    protected int $sockType = 0;
 
-    /**
-     * @var array
-     */
-    protected $callbacks = [];
+    protected array $callbacks = [];
 
-    /**
-     * @var array
-     */
-    protected $settings = [];
+    protected array $settings = [];
 
-    public static function build(array $config)
+    public static function build(array $config): static
     {
         $config = self::filter($config);
 
@@ -69,7 +48,7 @@ class Port
         return $this->name;
     }
 
-    public function setName(string $name): Port
+    public function setName(string $name): static
     {
         $this->name = $name;
         return $this;
@@ -80,7 +59,7 @@ class Port
         return $this->type;
     }
 
-    public function setType(int $type): Port
+    public function setType(int $type): static
     {
         $this->type = $type;
         return $this;
@@ -91,7 +70,7 @@ class Port
         return $this->host;
     }
 
-    public function setHost(string $host): Port
+    public function setHost(string $host): static
     {
         $this->host = $host;
         return $this;
@@ -102,7 +81,7 @@ class Port
         return $this->port;
     }
 
-    public function setPort(int $port): Port
+    public function setPort(int $port): static
     {
         $this->port = $port;
         return $this;
@@ -113,7 +92,7 @@ class Port
         return $this->sockType;
     }
 
-    public function setSockType(int $sockType): Port
+    public function setSockType(int $sockType): static
     {
         $this->sockType = $sockType;
         return $this;
@@ -124,7 +103,7 @@ class Port
         return $this->callbacks;
     }
 
-    public function setCallbacks(array $callbacks): Port
+    public function setCallbacks(array $callbacks): static
     {
         $this->callbacks = $callbacks;
         return $this;
@@ -135,7 +114,7 @@ class Port
         return $this->settings;
     }
 
-    public function setSettings(array $settings): Port
+    public function setSettings(array $settings): static
     {
         $this->settings = $settings;
         return $this;

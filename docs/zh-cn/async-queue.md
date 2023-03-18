@@ -66,11 +66,11 @@ return [
 
 ## 工作原理
 
-`ConsumerProcess` 是异步消费进程，会根据用户创建的 `Job` 或者使用 `@AsyncQueueMessage` 的代码块，执行消费逻辑。
-`Job` 和 `@AsyncQueueMessage` 都是需要投递和执行的任务，即数据、消费逻辑都会在任务中定义。
+`ConsumerProcess` 是异步消费进程，会根据用户创建的 `Job` 或者使用 `#[AsyncQueueMessage]` 的代码块，执行消费逻辑。
+`Job` 和 `#[AsyncQueueMessage]` 都是需要投递和执行的任务，即数据、消费逻辑都会在任务中定义。
 
 - `Job` 类中成员变量即为待消费的数据，`handle()` 方法则为消费逻辑。
-- `@AsyncQueueMessage` 注解的方法，构造函数传入的数据即为待消费的数据，方法体则为消费逻辑。
+- `#[AsyncQueueMessage]` 注解的方法，构造函数传入的数据即为待消费的数据，方法体则为消费逻辑。
 
 ```mermaid
 graph LR;
@@ -109,9 +109,7 @@ namespace App\Process;
 use Hyperf\AsyncQueue\Process\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="async-queue")
- */
+#[Process(name: "async-queue")]
 class AsyncQueueConsumer extends ConsumerProcess
 {
 }
@@ -123,7 +121,7 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 这种模式会把对象直接序列化然后存到 `Redis` 等队列中，所以为了保证序列化后的体积，尽量不要将 `Container`，`Config` 等设置为成员变量。
 
-比如以下 `Job` 的定义，是 **不可取** 的，同理 `@Inject` 也是如此。
+比如以下 `Job` 的定义，是 **不可取** 的，同理 `#[Inject]` 也是如此。
 
 > 因为 Job 会被序列化，所以成员变量不要包含 匿名函数 等 无法被序列化 的内容，如果不清楚哪些内容无法被序列化，尽量使用注解方式。
 
@@ -176,10 +174,8 @@ class ExampleJob extends Job
     
     /**
      * 任务执行失败后的重试次数，即最大执行次数为 $maxAttempts+1 次
-     *
-     * @var int
      */
-    protected $maxAttempts = 2;
+    protected int $maxAttempts = 2;
 
     public function __construct($params)
     {
@@ -212,10 +208,7 @@ use Hyperf\AsyncQueue\Driver\DriverInterface;
 
 class QueueService
 {
-    /**
-     * @var DriverInterface
-     */
-    protected $driver;
+    protected DriverInterface $driver;
 
     public function __construct(DriverFactory $driverFactory)
     {
@@ -252,16 +245,11 @@ use App\Service\QueueService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class QueueController extends AbstractController
 {
-    /**
-     * @Inject
-     * @var QueueService
-     */
-    protected $service;
+    #[Inject]
+    protected QueueService $service;
 
     /**
      * 传统模式投递消息
@@ -299,9 +287,7 @@ use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
 
 class QueueService
 {
-    /**
-     * @AsyncQueueMessage
-     */
+    #[AsyncQueueMessage]
     public function example($params)
     {
         // 需要异步执行的代码逻辑
@@ -327,15 +313,13 @@ use App\Service\QueueService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class QueueController extends AbstractController
 {
     /**
-     * @Inject
      * @var QueueService
      */
+    #[Inject]
     protected $service;
 
     /**
@@ -468,15 +452,10 @@ namespace App\Process;
 use Hyperf\AsyncQueue\Process\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process()
- */
+#[Process]
 class OtherConsumerProcess extends ConsumerProcess
 {
-    /**
-     * @var string
-     */
-    protected $queue = 'other';
+    protected string $queue = 'other';
 }
 ```
 
@@ -492,17 +471,18 @@ return $driver->push(new ExampleJob());
 
 ## 安全关闭
 
-异步队列在终止时，如果正在进行消费逻辑，可能会导致出现错误。框架提供了 `DriverStopHandler` ，可以让异步队列进程安全关闭。
+异步队列在终止时，如果正在进行消费逻辑，可能会导致出现错误。框架提供了 `ProcessStopHandler` ，可以让异步队列进程安全关闭。
 
 > 当前信号处理器并不适配于 CoroutineServer，如有需要请自行实现
 
 安装信号处理器
 
-```
+```shell
 composer require hyperf/signal
+composer require hyperf/process
 ```
 
-添加配置
+添加配置 `autoload/signal.php`
 
 ```php
 <?php
@@ -511,7 +491,7 @@ declare(strict_types=1);
 
 return [
     'handlers' => [
-        Hyperf\AsyncQueue\Signal\DriverStopHandler::class,
+        Hyperf\Process\Handler\ProcessStopHandler::class,
     ],
     'timeout' => 5.0,
 ];

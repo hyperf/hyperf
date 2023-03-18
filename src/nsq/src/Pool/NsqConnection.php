@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nsq\Pool;
 
+use Hyperf\Engine\Contract\Socket\SocketFactoryInterface;
+use Hyperf\Engine\Socket;
 use Hyperf\Nsq\MessageBuilder;
 use Hyperf\Nsq\Subscriber;
 use Hyperf\Pool\Exception\ConnectionException;
@@ -18,27 +20,24 @@ use Hyperf\Pool\KeepaliveConnection;
 use Hyperf\Pool\Pool;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Socket;
+use Throwable;
 
 class NsqConnection extends KeepaliveConnection
 {
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'host' => 'localhost',
         'port' => 4150,
     ];
 
-    /**
-     * @var MessageBuilder
-     */
-    protected $builder;
+    protected MessageBuilder $builder;
+
+    protected SocketFactoryInterface $factory;
 
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
         $this->config = array_merge($this->config, $config);
         $this->builder = $container->get(MessageBuilder::class);
+        $this->factory = $container->get(SocketFactoryInterface::class);
         if ($pool instanceof NsqPool) {
             $this->name = 'nsq.connection.' . $pool->getName();
         }
@@ -47,15 +46,12 @@ class NsqConnection extends KeepaliveConnection
 
     protected function getActiveConnection()
     {
-        $socket = new Socket(AF_INET, SOCK_STREAM, 0);
         $host = $this->config['host'];
         $port = $this->config['port'];
 
-        if (! $socket->connect($host, $port)) {
-            throw new ConnectionException('Nsq connect failed.');
-        }
+        $socket = $this->factory->make(new Socket\SocketOption($host, $port));
 
-        if ($socket->send($this->builder->buildMagic()) === false) {
+        if ($socket->sendAll($this->builder->buildMagic()) === false) {
             throw new ConnectionException('Nsq connect failed.');
         }
 
@@ -84,7 +80,7 @@ class NsqConnection extends KeepaliveConnection
     {
         try {
             $connection->send($this->builder->buildCls());
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             // Do nothing
         }
     }

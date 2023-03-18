@@ -12,48 +12,31 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Composer\Autoload\ClassLoader;
+use RuntimeException;
 
 class Composer
 {
-    /**
-     * @var null|Collection
-     */
-    private static $content;
+    private static ?Collection $content = null;
+
+    private static ?Collection $json = null;
+
+    private static array $extra = [];
+
+    private static array $scripts = [];
+
+    private static array $versions = [];
+
+    private static ?ClassLoader $classLoader = null;
 
     /**
-     * @var null|Collection
-     */
-    private static $json;
-
-    /**
-     * @var array
-     */
-    private static $extra = [];
-
-    /**
-     * @var array
-     */
-    private static $scripts = [];
-
-    /**
-     * @var array
-     */
-    private static $versions = [];
-
-    /**
-     * @var null|ClassLoader
-     */
-    private static $classLoader;
-
-    /**
-     * @throws \RuntimeException When composer.lock does not exist.
+     * @throws RuntimeException When `composer.lock` does not exist.
      */
     public static function getLockContent(): Collection
     {
         if (! self::$content) {
             $path = self::discoverLockFile();
             if (! $path) {
-                throw new \RuntimeException('composer.lock not found.');
+                throw new RuntimeException('composer.lock not found.');
             }
             self::$content = collect(json_decode(file_get_contents($path), true));
             $packages = self::$content->offsetGet('packages') ?? [];
@@ -87,7 +70,7 @@ class Composer
         if (! self::$json) {
             $path = BASE_PATH . '/composer.json';
             if (! is_readable($path)) {
-                throw new \RuntimeException('composer.json is not readable.');
+                throw new RuntimeException('composer.json is not readable.');
             }
             self::$json = collect(json_decode(file_get_contents($path), true));
         }
@@ -112,10 +95,10 @@ class Composer
             return self::$extra;
         }
         $extra = [];
-        foreach (self::$extra ?? [] as $project => $config) {
+        foreach (self::$extra as $project => $config) {
             foreach ($config ?? [] as $configKey => $item) {
                 if ($key === $configKey && $item) {
-                    foreach ($item ?? [] as $k => $v) {
+                    foreach ($item as $k => $v) {
                         if (is_array($v)) {
                             $extra[$k] = array_merge($extra[$k] ?? [], $v);
                         } else {
@@ -142,18 +125,25 @@ class Composer
         return $classLoader;
     }
 
+    public static function getScripts(): array
+    {
+        return self::$scripts;
+    }
+
+    public static function getVersions(): array
+    {
+        return self::$versions;
+    }
+
     private static function findLoader(): ClassLoader
     {
-        $composerClass = '';
-        foreach (get_declared_classes() as $declaredClass) {
-            if (strpos($declaredClass, 'ComposerAutoloaderInit') === 0 && method_exists($declaredClass, 'getLoader')) {
-                $composerClass = $declaredClass;
-                break;
+        $loaders = spl_autoload_functions();
+        foreach ($loaders as $loader) {
+            if (is_array($loader) && $loader[0] instanceof ClassLoader) {
+                return $loader[0];
             }
         }
-        if (! $composerClass) {
-            throw new \RuntimeException('Composer loader not found.');
-        }
-        return $composerClass::getLoader();
+
+        throw new RuntimeException('Composer loader not found.');
     }
 }

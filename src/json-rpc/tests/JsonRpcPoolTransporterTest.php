@@ -13,6 +13,8 @@ namespace HyperfTest\JsonRpc;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
+use Hyperf\Engine\Contract\Socket\SocketFactoryInterface;
+use Hyperf\Engine\Socket\SocketFactory;
 use Hyperf\JsonRpc\Exception\ClientException;
 use Hyperf\JsonRpc\JsonRpcPoolTransporter;
 use Hyperf\JsonRpc\Packer\JsonLengthPacker;
@@ -26,6 +28,7 @@ use Hyperf\Utils\ApplicationContext;
 use HyperfTest\JsonRpc\Stub\RpcPoolStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
@@ -147,7 +150,7 @@ class JsonRpcPoolTransporterTest extends TestCase
 
     public function testsplObjectHash()
     {
-        $class = new \stdClass();
+        $class = new stdClass();
         $class->id = 1;
         $hash = spl_object_hash($class);
 
@@ -174,6 +177,7 @@ class JsonRpcPoolTransporterTest extends TestCase
         $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($_, $args) {
             return new Channel(10);
         });
+        $container->shouldReceive('get')->with(SocketFactoryInterface::class)->andReturn(new SocketFactory());
 
         return $container;
     }

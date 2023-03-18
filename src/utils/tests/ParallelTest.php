@@ -11,11 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Exception;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Exception\ParallelExecutionException;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Str;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use Throwable;
 
 /**
  * @internal
@@ -167,7 +170,7 @@ class ParallelTest extends TestCase
         $parallel = new Parallel();
         $err = function () {
             Coroutine::sleep(0.001);
-            throw new \RuntimeException('something bad happened');
+            throw new RuntimeException('something bad happened');
         };
         $ok = function () {
             Coroutine::sleep(0.001);
@@ -187,7 +190,7 @@ class ParallelTest extends TestCase
 
         $err = function () {
             Coroutine::sleep(0.001);
-            throw new \RuntimeException('something bad happened');
+            throw new RuntimeException('something bad happened');
         };
         $parallel->add($err);
 
@@ -201,7 +204,7 @@ class ParallelTest extends TestCase
 
         try {
             $parallel->wait();
-            throw new \RuntimeException();
+            throw new RuntimeException();
         } catch (ParallelExecutionException $exception) {
             foreach (['Detecting', 'RuntimeException', '#0'] as $keyword) {
                 $this->assertTrue(Str::contains($exception->getMessage(), $keyword));
@@ -233,6 +236,45 @@ class ParallelTest extends TestCase
         $parallel->wait();
         $this->assertSame(2, $parallel->count());
         $this->assertSame(4, $id);
+    }
+
+    public function testTheResultSort()
+    {
+        $res = parallel(['a' => function () {
+            usleep(1000);
+            return 1;
+        }, 'b' => function () {
+            return 2;
+        }]);
+
+        $this->assertSame(['a' => 1, 'b' => 2], $res);
+
+        $res = parallel(['a' => function () {
+            usleep(1000);
+            return 1;
+        }, 'b' => function () {
+        }]);
+
+        $this->assertSame(['a' => 1, 'b' => null], $res);
+    }
+
+    public function testThrowExceptionInParallel()
+    {
+        try {
+            parallel([
+                static function () {
+                    throw new Exception();
+                },
+            ]);
+        } catch (ParallelExecutionException $exception) {
+            /** @var Throwable $exception */
+            $exception = $exception->getThrowables()[0];
+            $traces = $exception->getTrace();
+            ob_start();
+            var_dump($traces);
+            $content = ob_get_clean();
+            $this->assertStringNotContainsString('*RECURSION*', $content);
+        }
     }
 
     public function returnCoId()

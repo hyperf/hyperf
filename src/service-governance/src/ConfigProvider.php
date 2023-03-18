@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\ServiceGovernance;
 
+use Hyperf\Contract\IPReaderInterface;
 use Hyperf\ServiceGovernance\Listener\RegisterServiceListener;
+use Hyperf\Utils\IPReader;
 
 class ConfigProvider
 {
@@ -23,13 +25,6 @@ class ConfigProvider
             ],
             'listeners' => [
                 RegisterServiceListener::class,
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
             ],
             'publish' => [
                 [

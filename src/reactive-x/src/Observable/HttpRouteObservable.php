@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\ReactiveX\Observable;
 
+use Hyperf\Context\Context;
 use Hyperf\Dispatcher\HttpRequestHandler;
 use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Server;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Psr\Http\Message\ServerRequestInterface;
 use Rx\Disposable\EmptyDisposable;
 use Rx\DisposableInterface;
@@ -25,41 +25,21 @@ use Rx\Observable;
 use Rx\ObserverInterface;
 use Rx\Scheduler;
 use Rx\SchedulerInterface;
+use stdClass;
 
 class HttpRouteObservable extends Observable
 {
     /**
-     * @var string|string[]
+     * @param string|string[] $httpMethod
+     * @param null|callable|string $callback
      */
-    private $httpMethod;
-
-    /**
-     * @var string
-     */
-    private $uri;
-
-    /**
-     * @var null|callable|string
-     */
-    private $callback;
-
-    /**
-     * @var null|SchedulerInterface
-     */
-    private $scheduler;
-
-    /**
-     * @var string
-     */
-    private $serverName;
-
-    public function __construct($httpMethod, string $uri, $callback = null, SchedulerInterface $scheduler = null, string $serverName = 'http')
-    {
-        $this->scheduler = $scheduler;
-        $this->httpMethod = $httpMethod;
-        $this->uri = $uri;
-        $this->callback = $callback;
-        $this->serverName = $serverName;
+    public function __construct(
+        private string|array $httpMethod,
+        private string $uri,
+        private mixed $callback = null,
+        private ?SchedulerInterface $scheduler = null,
+        private string $serverName = 'http'
+    ) {
     }
 
     protected function _subscribe(ObserverInterface $observer): DisposableInterface
@@ -77,7 +57,7 @@ class HttpRouteObservable extends Observable
             if ($this->callback !== null) {
                 $serverName = $container->get(Server::class)->getServerName();
                 $middleware = new CoreMiddleware($container, $serverName);
-                $handler = new HttpRequestHandler([], new \stdClass(), $container);
+                $handler = new HttpRequestHandler([], new stdClass(), $container);
                 /** @var Dispatched $dispatched */
                 $dispatched = $request->getAttribute(Dispatched::class);
                 $dispatched->handler->callback = $this->callback;

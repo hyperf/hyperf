@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Devtool\Describe;
 
+use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpServer\MiddlewareManager;
@@ -24,23 +25,12 @@ use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[Command]
 class RoutesCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ContainerInterface $container, ConfigInterface $config)
+    public function __construct(private ContainerInterface $container, private ConfigInterface $config)
     {
         parent::__construct('describe:routes');
-        $this->container = $container;
-        $this->config = $config;
     }
 
     public function handle()
@@ -94,10 +84,8 @@ class RoutesCommand extends HyperfCommand
             $action = $handler->callback[0] . '::' . $handler->callback[1];
         } elseif (is_string($handler->callback)) {
             $action = $handler->callback;
-        } elseif (is_callable($handler->callback)) {
-            $action = 'Closure';
         } else {
-            $action = (string) $handler->callback;
+            $action = 'Closure';
         }
         $unique = "{$serverName}|{$uri}|{$action}";
         if (isset($data[$unique])) {

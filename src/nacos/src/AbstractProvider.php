@@ -17,31 +17,28 @@ use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Nacos\Provider\AccessToken;
 use Hyperf\Utils\Codec\Json;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 
 abstract class AbstractProvider
 {
     use AccessToken;
 
-    /**
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * @var Application
-     */
-    protected $app;
-
-    public function __construct(Application $app, Config $config)
+    public function __construct(protected Application $app, protected Config $config)
     {
-        $this->app = $app;
-        $this->config = $config;
     }
 
-    public function request($method, $uri, array $options = [])
+    public function request(string $method, string|UriInterface $uri, array $options = [])
     {
         $token = $this->getAccessToken();
         $token && $options[RequestOptions::QUERY]['accessToken'] = $token;
+
+        if ($this->config->getAccessKey()) {
+            $options[RequestOptions::HEADERS]['Spas-AccessKey'] = $this->config->getAccessKey();
+            $signHeaders = $this->getMseSignHeaders($options[RequestOptions::QUERY] ?? [], $this->config->getAccessSecret());
+            foreach ($signHeaders as $header => $value) {
+                $options[RequestOptions::HEADERS][$header] = $value;
+            }
+        }
         return $this->client()->request($method, $uri, $options);
     }
 
@@ -83,5 +80,24 @@ abstract class AbstractProvider
         }
 
         return $result;
+    }
+
+    protected function getMseSignHeaders(array $data, string $secretKey): array
+    {
+        $group = $data['group'] ?? '';
+        $tenant = $data['tenant'] ?? '';
+        $timeStamp = round(microtime(true) * 1000);
+        $signStr = '';
+        if ($tenant) {
+            $signStr .= "{$tenant}+";
+        }
+        if ($group) {
+            $signStr .= "{$group}+";
+        }
+        $signStr .= "{$timeStamp}";
+        return [
+            'timeStamp' => $timeStamp,
+            'Spas-Signature' => base64_encode(hash_hmac('sha1', $signStr, $secretKey, true)),
+        ];
     }
 }

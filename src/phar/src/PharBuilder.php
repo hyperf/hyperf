@@ -25,39 +25,18 @@ use UnexpectedValueException;
 
 class PharBuilder
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    private Package $package;
 
-    /**
-     * @var Package
-     */
-    private $package;
+    private null|string|TargetPhar $target = null;
 
-    /**
-     * @var null|string|TargetPhar
-     */
-    private $target;
+    private array $mount = [];
 
-    /**
-     * @var array
-     */
-    private $mount = [];
+    private ?string $version = null;
 
-    /**
-     * @var string
-     */
-    private $version;
+    private ?string $main = null;
 
-    /**
-     * @var string
-     */
-    private $main;
-
-    public function __construct(string $path, LoggerInterface $logger)
+    public function __construct(string $path, private LoggerInterface $logger)
     {
-        $this->logger = $logger;
         $this->package = new Package($this->loadJson($path), dirname(realpath($path)));
     }
 
@@ -78,10 +57,9 @@ class PharBuilder
 
     /**
      * Set the Phar package name.
-     * @param string|TargetPhar $target
      * @return $this
      */
-    public function setTarget($target)
+    public function setTarget(string|TargetPhar $target): static
     {
         if (is_dir($target)) {
             $this->target = null;
@@ -91,10 +69,7 @@ class PharBuilder
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function setVersion(string $version)
+    public function setVersion(string $version): static
     {
         $this->version = $version;
         return $this;
@@ -123,9 +98,8 @@ class PharBuilder
 
     /**
      * Set the default startup file.
-     * @return $this
      */
-    public function setMain(string $main)
+    public function setMain(string $main): static
     {
         $this->main = $main;
         return $this;
@@ -139,10 +113,7 @@ class PharBuilder
         return $this->package;
     }
 
-    /**
-     * @return $this
-     */
-    public function setMount(array $mount = [])
+    public function setMount(array $mount = []): static
     {
         foreach ($mount as $item) {
             $items = explode(':', $item);
@@ -171,14 +142,15 @@ class PharBuilder
         if (is_file($vendorPath . 'composer/installed.json')) {
             $installed = $this->loadJson($vendorPath . 'composer/installed.json');
             $installedPackages = $installed;
-            // Adapte Composer 2.0
+            // Adapt Composer 2.0
             if (isset($installed['packages'])) {
                 $installedPackages = $installed['packages'];
             }
             // Package all of these dependent components into the packages
             foreach ($installedPackages as $package) {
-                // support custom install path
-                $dir = 'composer/' . $package['install-path'] . '/';
+                // support custom installation path
+                $dir = 'composer/' . ($package['install-path'] ?? '../' . $package['name']) . '/';
+
                 if (isset($package['target-dir'])) {
                     $dir .= trim($package['target-dir'], '/') . '/';
                 }
@@ -191,7 +163,7 @@ class PharBuilder
     }
 
     /**
-     * Gets the canonicalize path, like realpath.
+     * Gets the canonical path, like realpath.
      * @param mixed $address
      */
     public function canonicalize($address)
@@ -199,8 +171,8 @@ class PharBuilder
         $address = explode('/', $address);
         $keys = array_keys($address, '..');
 
-        foreach ($keys as $keypos => $key) {
-            array_splice($address, $key - ($keypos * 2 + 1), 2);
+        foreach ($keys as $pos => $key) {
+            array_splice($address, $key - ($pos * 2 + 1), 2);
         }
 
         $address = implode('/', $address);
@@ -213,7 +185,7 @@ class PharBuilder
     public function getPathLocalToBase(string $path): ?string
     {
         $root = $this->package->getDirectory();
-        if (strpos($path, $root) !== 0) {
+        if (! str_starts_with($path, $root)) {
             throw new UnexpectedValueException('Path "' . $path . '" is not within base project path "' . $root . '"');
         }
         $basePath = substr($path, strlen($root));
@@ -292,7 +264,7 @@ EOD;
 
         $targetPhar->addBundle($this->package->bundle($finder));
 
-        // Force to turn on ScanCacheable.
+        // Force turning on ScanCacheable.
         $this->enableScanCacheable($targetPhar);
 
         // Load the Runtime folder separately
@@ -319,6 +291,16 @@ EOD;
             $targetPhar->addFile($this->package->getDirectory() . '.env');
         }
 
+        // Add vendor/bin files.
+        if (is_dir($vendorPath . 'bin/')) {
+            $this->logger->info('Adding vendor/bin files');
+            $binIterator = new GlobIterator($vendorPath . 'bin/*');
+            while ($binIterator->valid()) {
+                $targetPhar->addFile($binIterator->getPathname());
+                $binIterator->next();
+            }
+        }
+
         $this->logger->info('Adding composer base files');
         // Add composer autoload file.
         $targetPhar->addFile($vendorPath . 'autoload.php');
@@ -326,7 +308,7 @@ EOD;
         // Add composer autoload files.
         $targetPhar->buildFromIterator(new GlobIterator($vendorPath . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME));
 
-        // Add composer depenedencies.
+        // Add composer dependencies.
         foreach ($this->getPackagesDependencies() as $package) {
             $this->logger->info('Adding dependency "' . $package->getName() . '" from "' . $this->getPathLocalToBase($package->getDirectory()) . '"');
             // support package symlink

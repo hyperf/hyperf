@@ -11,10 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcClient;
 
+use Hyperf\GrpcClient\Listener\RegisterProtocolListener;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
-        return [];
+        return [
+            'listeners' => [
+                RegisterProtocolListener::class,
+            ],
+        ];
     }
 }

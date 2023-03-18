@@ -18,6 +18,7 @@ return [
         'timeout' => 0.0,
         'reserved' => null,
         'retry_interval' => 0,
+        'read_timeout' => 0.0,
         'cluster' => [
             'enable' => (bool) env('REDIS_CLUSTER_ENABLE', false),
             'name' => null,
@@ -29,6 +30,7 @@ return [
             'nodes' => explode(';', env('REDIS_SENTINEL_NODE', '')),
             'persistent' => '',
             'read_timeout' => 0,
+            'auth' => env('REDIS_SENTINEL_PASSWORD', ''),
         ],
         'pool' => [
             'min_connections' => 1,

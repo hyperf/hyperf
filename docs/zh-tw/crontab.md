@@ -1,6 +1,6 @@
 # 定時任務
 
-通常來說，執行定時任務會通過 Linux 的 `crontab` 命令來實現，但現實情況下，並不是所有開發人員都能夠擁有生產環境的伺服器去設定定時任務的，這裡 [hyperf/crontab](https://github.com/hyperf/crontab) 元件為您提供了一個 `秒級` 定時任務功能，只需通過簡單的定義即可完成一個定時任務的定義。 
+通常來說，執行定時任務會透過 Linux 的 `crontab` 命令來實現，但現實情況下，並不是所有開發人員都能夠擁有生產環境的伺服器去設定定時任務的，這裡 [hyperf/crontab](https://github.com/hyperf/crontab) 元件為您提供了一個 `秒級` 定時任務功能，只需透過簡單的定義即可完成一個定時任務的定義。 
 
 # 安裝
 
@@ -35,7 +35,7 @@ return [
 
 ## 定義定時任務
 
-### 通過配置檔案定義
+### 透過配置檔案定義
 
 您可於 `config/autoload/crontab.php` 的配置檔案內配置您所有的定時任務，檔案返回一個 `Hyperf\Crontab\Crontab[]` 結構的陣列，如配置檔案不存在可自行建立：
 
@@ -45,7 +45,7 @@ return [
 use Hyperf\Crontab\Crontab;
 return [
     'enable' => true,
-    // 通過配置檔案定義的定時任務
+    // 透過配置檔案定義的定時任務
     'crontab' => [
         // Callback型別定時任務（預設）
         (new Crontab())->setName('Foo')->setRule('* * * * *')->setCallback([App\Task\FooTask::class, 'execute'])->setMemo('這是一個示例的定時任務'),
@@ -56,14 +56,16 @@ return [
             'fooArgument' => 'barValue',
             // (optional) options
             '--message-limit' => 1,
+            // 記住要加上，否則會導致主程序退出
+            '--disable-event-dispatcher' => true,
         ]),
     ],
 ];
 ```
 
-### 通過註解定義
+### 透過註解定義
 
-通過 `@Crontab` 註解可以快速完成對一個任務的定義，以下的定義示例與配置檔案定義所達到的目的都是一樣的。定義一個名為 `Foo` 每分鐘執行一次 `App\Task\FooTask::execute()` 的定時任務。
+透過 `#[Crontab]` 註解可以快速完成對一個任務的定義，以下的定義示例與配置檔案定義所達到的目的都是一樣的。定義一個名為 `Foo` 每分鐘執行一次 `App\Task\FooTask::execute()` 的定時任務。
 
 ```php
 <?php
@@ -73,25 +75,18 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab;
 use Hyperf\Di\Annotation\Inject;
 
-/**
- * @Crontab(name="Foo", rule="* * * * *", callback="execute", memo="這是一個示例的定時任務")
- */
+#[Crontab(name: "Foo", rule: "* * * * *", callback: "execute", memo: "這是一個示例的定時任務")]
 class FooTask
 {
-    /**
-     * @Inject()
-     * @var \Hyperf\Contract\StdoutLoggerInterface
-     */
-    private $logger;
+    #[Inject]
+    private StdoutLoggerInterface $logger;
 
     public function execute()
     {
         $this->logger->info(date('Y-m-d H:i:s', time()));
     }
-    
-    /**
-     * @Crontab(rule="* * * * * *", memo="foo")
-     */
+
+    #[Crontab(rule: "* * * * *", memo: "foo")]
     public function foo()
     {
         var_dump('foo');
@@ -111,7 +106,7 @@ class FooTask
 
 #### callback
 
-定時任務的執行回撥，即定時任務實際執行的程式碼，在通過配置檔案定義時，這裡需要傳遞一個 `[$class, $method]` 的陣列，`$class` 為一個類的全稱，`$method` 為 `$class` 內的一個 `public` 方法。當通過註解定義時，只需要提供一個當前類內的 `public` 方法的方法名即可，如果當前類只有一個 `public` 方法，您甚至可以不提供該屬性。
+定時任務的執行回撥，即定時任務實際執行的程式碼，在透過配置檔案定義時，這裡需要傳遞一個 `[$class, $method]` 的陣列，`$class` 為一個類的全稱，`$method` 為 `$class` 內的一個 `public` 方法。當透過註解定義時，只需要提供一個當前類內的 `public` 方法的方法名即可，如果當前類只有一個 `public` 方法，您甚至可以不提供該屬性。
 
 #### singleton
 
@@ -149,9 +144,7 @@ namespace App\Crontab;
 use Carbon\Carbon;
 use Hyperf\Crontab\Annotation\Crontab;
 
-/**
- * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable="isEnable", memo="這是一個示例的定時任務")
- */
+#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: "isEnable", memo: "這是一個示例的定時任務")]
 class EchoCrontab
 {
     public function execute()
@@ -190,9 +183,7 @@ namespace App\Crontab;
 use Carbon\Carbon;
 use Hyperf\Crontab\Annotation\Crontab;
 
-/**
- * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable={EnableChecker::class, "isEnable"}, memo="這是一個示例的定時任務")
- */
+#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: [EnableChecker::class, "isEnable"], memo: "這是一個示例的定時任務")]
 class EchoCrontab
 {
     public function execute()
@@ -210,13 +201,13 @@ class EchoCrontab
 
 ### 排程分發策略
 
-定時任務在設計上允許通過不同的策略來排程分發執行任務，目前僅提供了 `多程序執行策略`、`協程執行策略` 兩種策略，預設為 `多程序執行策略`，後面的迭代會增加更多更強的策略。
+定時任務在設計上允許透過不同的策略來排程分發執行任務，目前僅提供了 `多程序執行策略`、`協程執行策略` 兩種策略，預設為 `多程序執行策略`，後面的迭代會增加更多更強的策略。
 
 > 當使用協程風格服務時，請使用 協程執行策略。
 
 #### 更改排程分發策略
 
-通過在 `config/autoload/dependencies.php` 更改 `Hyperf\Crontab\Strategy\StrategyInterface` 介面類所對應的例項來更改目前所使用的策略，預設情況下使用 `Worker 程序執行策略`，對應的類為 `Hyperf\Crontab\Strategy\WorkerStrategy`，如我們希望更改策略為一個新的策略，比如為 `App\Crontab\Strategy\FooStrategy`，那麼如下：
+透過在 `config/autoload/dependencies.php` 更改 `Hyperf\Crontab\Strategy\StrategyInterface` 介面類所對應的例項來更改目前所使用的策略，預設情況下使用 `Worker 程序執行策略`，對應的類為 `Hyperf\Crontab\Strategy\WorkerStrategy`，如我們希望更改策略為一個新的策略，比如為 `App\Crontab\Strategy\FooStrategy`，那麼如下：
 
 ```php
 <?php
@@ -229,19 +220,19 @@ return [
 
 策略類：`Hyperf\Crontab\Strategy\WorkerStrategy`   
 
-預設情況下使用此策略，即為 `CrontabDispatcherProcess` 程序解析定時任務，並通過程序間通訊輪詢傳遞執行任務到各個 `Worker` 程序中，由各個 `Worker` 程序以協程來實際執行執行任務。
+預設情況下使用此策略，即為 `CrontabDispatcherProcess` 程序解析定時任務，並透過程序間通訊輪詢傳遞執行任務到各個 `Worker` 程序中，由各個 `Worker` 程序以協程來實際執行執行任務。
 
 ##### TaskWorker 程序執行策略
 
 策略類：`Hyperf\Crontab\Strategy\TaskWorkerStrategy`   
 
-此策略為 `CrontabDispatcherProcess` 程序解析定時任務，並通過程序間通訊輪詢傳遞執行任務到各個 `TaskWorker` 程序中，由各個 `TaskWorker` 程序以協程來實際執行執行任務，使用此策略需注意 `TaskWorker` 程序是否配置了支援協程。
+此策略為 `CrontabDispatcherProcess` 程序解析定時任務，並透過程序間通訊輪詢傳遞執行任務到各個 `TaskWorker` 程序中，由各個 `TaskWorker` 程序以協程來實際執行執行任務，使用此策略需注意 `TaskWorker` 程序是否配置了支援協程。
 
 ##### 多程序執行策略
 
 策略類：`Hyperf\Crontab\Strategy\ProcessStrategy`   
 
-此策略為 `CrontabDispatcherProcess` 程序解析定時任務，並通過程序間通訊輪詢傳遞執行任務到各個 `Worker` 程序和 `TaskWorker` 程序中，由各個程序以協程來實際執行執行任務，使用此策略需注意 `TaskWorker` 程序是否配置了支援協程。
+此策略為 `CrontabDispatcherProcess` 程序解析定時任務，並透過程序間通訊輪詢傳遞執行任務到各個 `Worker` 程序和 `TaskWorker` 程序中，由各個程序以協程來實際執行執行任務，使用此策略需注意 `TaskWorker` 程序是否配置了支援協程。
 
 ##### 協程執行策略
 
@@ -253,3 +244,40 @@ return [
 
 當您完成上述的配置後，以及定義了定時任務後，只需要直接啟動 `Server`，定時任務便會一同啟動。   
 在您啟動後，即便您定義了足夠短週期的定時任務，定時任務也不會馬上開始執行，所有定時任務都會等到下一個分鐘週期時才會開始執行，比如您啟動的時候是 `10 時 11 分 12 秒`，那麼定時任務會在 `10 時 12 分 00 秒` 才會正式開始執行。
+
+### FailToExecute 事件
+
+當定時任務執行失敗時，會觸發 `FailToExecute` 事件，所以我們可以編寫以下監聽器，拿到對應的 `Crontab` 和 `Throwable`。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\Crontab\Event\FailToExecute;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Psr\Container\ContainerInterface;
+
+#[Listener]
+class FailToExecuteCrontabListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            FailToExecute::class,
+        ];
+    }
+
+    /**
+     * @param FailToExecute $event
+     */
+    public function process(object $event)
+    {
+        var_dump($event->crontab->getName());
+        var_dump($event->throwable->getMessage());
+    }
+}
+```

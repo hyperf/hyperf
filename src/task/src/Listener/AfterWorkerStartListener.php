@@ -18,14 +18,8 @@ use Psr\Container\ContainerInterface;
 
 class AfterWorkerStartListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
@@ -38,7 +32,7 @@ class AfterWorkerStartListener implements ListenerInterface
     /**
      * @param AfterWorkerStart $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($event instanceof AfterWorkerStart) {
             if (! $event->server->taskworker) {

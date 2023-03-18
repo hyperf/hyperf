@@ -12,48 +12,27 @@ declare(strict_types=1);
 namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
-use Hyperf\Kafka\Exception\ConnectionCLosedException;
+use Hyperf\Kafka\Exception\ConnectionClosedException;
 use Hyperf\Kafka\Exception\TimeoutException;
+use Hyperf\Utils\Coroutine;
 use longlang\phpkafka\Broker;
 use longlang\phpkafka\Producer\ProduceMessage;
 use longlang\phpkafka\Producer\Producer as LongLangProducer;
 use longlang\phpkafka\Producer\ProducerConfig;
 use longlang\phpkafka\Socket\SwooleSocket;
-use Swoole\Coroutine;
+use Throwable;
 
 class Producer
 {
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected ?Channel $chan = null;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected ?LongLangProducer $producer = null;
 
-    /**
-     * @var ?Channel
-     */
-    protected $chan;
-
-    /**
-     * @var LongLangProducer
-     */
-    protected $producer;
-
-    /**
-     * @var int
-     */
-    protected $timeout;
-
-    public function __construct(ConfigInterface $config, string $name = 'default', int $timeout = 10)
+    public function __construct(protected ConfigInterface $config, protected string $name = 'default', protected int $timeout = 10)
     {
-        $this->config = $config;
-        $this->name = $name;
-        $this->timeout = $timeout;
     }
 
     public function send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): void
@@ -65,13 +44,13 @@ class Producer
             try {
                 $this->producer->send($topic, $value, $key, $headers, $partitionIndex);
                 $ack->close();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $ack->push($e);
                 throw $e;
             }
         });
         if ($chan->isClosing()) {
-            throw new ConnectionCLosedException('Connection closed.');
+            throw new ConnectionClosedException('Connection closed.');
         }
         if ($e = $ack->pop($this->timeout)) {
             throw $e;
@@ -93,13 +72,13 @@ class Producer
             try {
                 $this->producer->sendBatch($messages);
                 $ack->close();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $ack->push($e);
                 throw $e;
             }
         });
         if ($chan->isClosing()) {
-            throw new ConnectionCLosedException('Connection closed.');
+            throw new ConnectionClosedException('Connection closed.');
         }
         if ($e = $ack->pop()) {
             throw $e;
@@ -111,9 +90,8 @@ class Producer
 
     public function close(): void
     {
-        if ($this->chan) {
-            $this->chan->close();
-        }
+        $this->chan?->close();
+        $this->producer?->close();
     }
 
     public function getConfig(): ProducerConfig
@@ -136,21 +114,28 @@ class Producer
             while (true) {
                 $this->producer = $this->makeProducer();
                 while (true) {
-                    $closure = $this->chan->pop();
+                    $closure = $this->chan?->pop();
                     if (! $closure) {
                         break 2;
                     }
                     try {
                         $closure->call($this);
-                    } catch (\Throwable $e) {
+                    } catch (\Throwable) {
                         $this->producer->close();
                         break;
                     }
                 }
             }
-            /* @phpstan-ignore-next-line */
-            $this->chan->close();
+
+            $this->chan?->close();
             $this->chan = null;
+            $this->producer->close();
+        });
+
+        Coroutine::create(function () {
+            if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
+                $this->chan?->close();
+            }
         });
     }
 
@@ -163,7 +148,7 @@ class Producer
         $producerConfig->setRecvTimeout($config['recv_timeout']);
         $producerConfig->setClientId($config['client_id']);
         $producerConfig->setMaxWriteAttempts($config['max_write_attempts']);
-        $producerConfig->setSocket(SwooleSocket::class);
+        $producerConfig->setSocket($config['socket'] ?? SwooleSocket::class);
         $producerConfig->setBootstrapServers($config['bootstrap_servers']);
         $producerConfig->setAcks($config['acks']);
         $producerConfig->setProducerId($config['producer_id']);

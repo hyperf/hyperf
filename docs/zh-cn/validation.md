@@ -64,7 +64,7 @@ php bin/hyperf.php vendor:publish hyperf/validation
 
 执行上面的命令会将验证器的语言文件 `validation.php` 发布到对应的语言文件目录，`en` 指英文语言文件，`zh_CN` 指中文简体的语言文件，您可以按照实际需要对 `validation.php` 文件内容进行修改和自定义。
 
-```
+```shell
 /storage
     /languages
         /en
@@ -170,11 +170,8 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class IndexController
 {
-    /**
-     * @Inject()
-     * @var ValidatorFactoryInterface
-     */
-    protected $validationFactory;
+    #[Inject]
+    protected ValidatorFactoryInterface $validationFactory;
 
     public function foo(RequestInterface $request)
     {
@@ -264,11 +261,8 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class IndexController
 {
-    /**
-     * @Inject()
-     * @var ValidatorFactoryInterface
-     */
-    protected $validationFactory;
+    #[Inject]
+    protected ValidatorFactoryInterface $validationFactory;
 
     public function foo(RequestInterface $request)
     {
@@ -368,7 +362,7 @@ use Hyperf\Validation\Request\FormRequest;
 
 class SceneRequest extends FormRequest
 {
-    protected $scenes = [
+    protected array $scenes = [
         'foo' => ['username'],
         'bar' => ['username', 'password'],
     ];
@@ -398,7 +392,8 @@ class SceneRequest extends FormRequest
 
 我们可以设定场景，让此次请求只验证 `username` 必填。
 
-> 如果我们配置了 `Hyperf\Validation\Middleware\ValidationMiddleware`，且将 `SceneRequest` 注入到方法上，就会导致入参在中间件中直接进行验证，故场景值无法生效，所以我们需要在方法里从容器中获取对应的 `SceneRequest`，进行场景切换。
+如果我们配置了 `Hyperf\Validation\Middleware\ValidationMiddleware`，且将 `SceneRequest` 注入到方法上，
+就会导致入参在中间件中直接进行验证，故场景值无法生效，所以我们需要在方法里从容器中获取对应的 `SceneRequest`，进行场景切换。
 
 ```php
 <?php
@@ -417,6 +412,48 @@ class FooController extends Controller
         $request = $this->container->get(SceneRequest::class);
         $request->scene('foo')->validateResolved();
 
+        return $this->response->success($request->all());
+    }
+}
+```
+
+当然，我们也可以通过 `Scene` 注解切换场景
+
+```php
+<?php
+
+namespace App\Controller;
+
+use App\Request\DebugRequest;
+use App\Request\SceneRequest;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\Validation\Annotation\Scene;
+
+#[AutoController(prefix: 'foo')]
+class FooController extends Controller
+{
+    #[Scene(scene:'bar1')]
+    public function bar1(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene(scene:'bar2', argument: 'request')] // 绑定到 $request
+    public function bar2(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene(scene:'bar3', argument: 'request')]
+    #[Scene(scene:'bar3', argument: 'req')] // 支持多个参数
+    public function bar3(SceneRequest $request, DebugRequest $req)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene()] // 默认 scene 为方法名，效果等于 #[Scene(scene: 'bar1')]
+    public function bar1(SceneRequest $request)
+    {
         return $this->response->success($request->all());
     }
 }
@@ -966,9 +1003,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Event\ValidatorFactoryResolved;
 
-/**
- * @Listener
- */
+#[Listener]
 class ValidatorFactoryResolvedListener implements ListenerInterface
 {
 

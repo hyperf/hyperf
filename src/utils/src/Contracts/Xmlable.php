@@ -11,7 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Contracts;
 
-interface Xmlable
+use Hyperf\Contract;
+
+/**
+ * @deprecated v3.1
+ */
+interface Xmlable extends Contract\Xmlable
 {
-    public function __toString(): string;
 }

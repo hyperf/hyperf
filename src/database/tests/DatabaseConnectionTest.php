@@ -22,8 +22,10 @@ use Hyperf\Database\Events\TransactionRolledBack;
 use Hyperf\Database\Exception\QueryException;
 use Hyperf\Database\Query\Builder as BaseBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Database\Schema\Builder;
+use HyperfTest\Database\Stubs\ExceptionPDO;
 use Mockery as m;
 use PDO;
 use PDOException;
@@ -31,7 +33,6 @@ use PDOStatement;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionClass;
-use stdClass;
 
 /**
  * @internal
@@ -47,7 +48,7 @@ class DatabaseConnectionTest extends TestCase
     public function testSettingDefaultCallsGetDefaultGrammar()
     {
         $connection = $this->getMockConnection();
-        $mock = m::mock(stdClass::class);
+        $mock = m::mock(QueryGrammar::class);
         $connection->expects($this->once())->method('getDefaultQueryGrammar')->willReturn($mock);
         $connection->useDefaultQueryGrammar();
         $this->assertEquals($mock, $connection->getQueryGrammar());
@@ -56,7 +57,7 @@ class DatabaseConnectionTest extends TestCase
     public function testSettingDefaultCallsGetDefaultPostProcessor()
     {
         $connection = $this->getMockConnection();
-        $mock = m::mock(stdClass::class);
+        $mock = m::mock(Processor::class);
         $connection->expects($this->once())->method('getDefaultPostProcessor')->willReturn($mock);
         $connection->useDefaultPostProcessor();
         $this->assertEquals($mock, $connection->getPostProcessor());
@@ -172,7 +173,7 @@ class DatabaseConnectionTest extends TestCase
             ->withConsecutive([], [])
             ->willReturnOnConsecutiveCalls(
                 $this->throwException(new ErrorException('server has gone away')),
-                null
+                true
             );
         $connection = $this->getMockConnection(['reconnect'], $pdo);
         $connection->expects($this->once())->method('reconnect');
@@ -376,9 +377,11 @@ class DatabaseConnectionTest extends TestCase
         $mock = $this->getMockConnection(['tryAgainIfCausedByLostConnection'], $pdo);
         $mock->expects($this->once())->method('tryAgainIfCausedByLostConnection');
 
-        $method->invokeArgs($mock, ['', [], function () {
-            throw new QueryException('', [], new Exception());
-        }]);
+        $method->invokeArgs($mock, [
+            '', [], function () {
+                throw new QueryException('', [], new Exception());
+            },
+        ]);
     }
 
     public function testRunMethodNeverRetriesIfWithinTransaction()
@@ -395,9 +398,11 @@ class DatabaseConnectionTest extends TestCase
         $mock->expects($this->never())->method('tryAgainIfCausedByLostConnection');
         $mock->beginTransaction();
 
-        $method->invokeArgs($mock, ['', [], function () {
-            throw new QueryException('', [], new Exception());
-        }]);
+        $method->invokeArgs($mock, [
+            '', [], function () {
+                throw new QueryException('', [], new Exception());
+            },
+        ]);
     }
 
     public function testFromCreatesNewQueryBuilder()
@@ -450,6 +455,24 @@ class DatabaseConnectionTest extends TestCase
         $schema = $connection->getSchemaBuilder();
         $this->assertInstanceOf(Builder::class, $schema);
         $this->assertSame($connection, $schema->getConnection());
+    }
+
+    public function testThrowExceptionWhenPDODestruct()
+    {
+        $connection = $this->getMockConnection(pdo: new ExceptionPDO(true));
+
+        $connection->setReadPdo(new ExceptionPDO(true));
+
+        $connection->disconnect();
+
+        $this->assertNull($connection->getPdo());
+        $this->assertNull($connection->getReadPdo());
+
+        $connection = $this->getMockConnection(pdo: new ExceptionPDO(true));
+
+        $connection->setPdo($pdo2 = new ExceptionPDO(false));
+
+        $this->assertSame($pdo2, $connection->getPdo());
     }
 
     protected function getMockConnection($methods = [], $pdo = null)

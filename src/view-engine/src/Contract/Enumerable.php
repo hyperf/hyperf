@@ -12,9 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Contract;
 
 use Countable;
+use Exception;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\Utils\Collection;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
+use InvalidArgumentException;
 use IteratorAggregate;
 use JsonSerializable;
 
@@ -29,8 +31,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Dynamically access collection proxies.
      *
      * @param string $key
-     * @throws \Exception
      * @return mixed
+     * @throws Exception
      */
     public function __get($key);
 
@@ -659,8 +661,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Get one or a specified number of items randomly from the collection.
      *
      * @param null|int $number
-     * @throws \InvalidArgumentException
      * @return mixed|static
+     * @throws InvalidArgumentException
      */
     public function random($number = null);
 

@@ -16,6 +16,7 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
+use Hyperf\Context\Context;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionInterface as Connection;
 use Hyperf\Database\ConnectionResolver;
@@ -37,8 +38,8 @@ use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\InteractsWithTime;
+use Hyperf\Utils\Str;
 use HyperfTest\Database\Stubs\DateModelStub;
 use HyperfTest\Database\Stubs\DifferentConnectionModelStub;
 use HyperfTest\Database\Stubs\KeyTypeModelStub;
@@ -57,11 +58,14 @@ use HyperfTest\Database\Stubs\ModelSaveStub;
 use HyperfTest\Database\Stubs\ModelSavingEventStub;
 use HyperfTest\Database\Stubs\ModelStub;
 use HyperfTest\Database\Stubs\ModelStubWithTrait;
+use HyperfTest\Database\Stubs\ModelStubWithUlid;
+use HyperfTest\Database\Stubs\ModelStubWithUuid;
 use HyperfTest\Database\Stubs\ModelWithoutRelationStub;
 use HyperfTest\Database\Stubs\ModelWithoutTableStub;
 use HyperfTest\Database\Stubs\ModelWithStub;
 use HyperfTest\Database\Stubs\NoConnectionModelStub;
 use HyperfTest\Database\Stubs\User;
+use LogicException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -1346,8 +1350,8 @@ class ModelTest extends TestCase
         $this->assertFalse($clone->exists);
         $this->assertEquals('hyperf', $clone->first);
         $this->assertEquals('otwell', $clone->last);
-        $this->assertObjectNotHasAttribute('created_at', $clone);
-        $this->assertObjectNotHasAttribute('updated_at', $clone);
+        $this->assertNull($clone->created_at);
+        $this->assertNull($clone->updated_at);
         $this->assertEquals(['bar'], $clone->foo);
     }
 
@@ -1397,7 +1401,7 @@ class ModelTest extends TestCase
 
     public function testGetModelAttributeMethodThrowsExceptionIfNotRelation()
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('HyperfTest\Database\Stubs\ModelStub::incorrectRelationStub must return a relationship instance.');
         $model = new ModelStub();
         $model->incorrectRelationStub;
@@ -1960,7 +1964,7 @@ class ModelTest extends TestCase
         $this->getContainer();
 
         /** @var Collection $users */
-        $users = User::findMany([1, 2]);
+        $users = User::query()->findMany([1, 2]);
         $s1 = serialize($users);
         $meta = $users->compress();
         $s2 = serialize($meta);
@@ -1989,6 +1993,20 @@ class ModelTest extends TestCase
 
         $this->assertTrue(Constraint::isConstraint());
         $chan->pop();
+    }
+
+    public function testUlid()
+    {
+        $model = new ModelStubWithUlid();
+
+        $this->assertTrue(Str::isUlid($model->newUniqueId()));
+    }
+
+    public function testUuid()
+    {
+        $model = new ModelStubWithUuid();
+
+        $this->assertTrue(Str::isUuid($model->newUniqueId()));
     }
 
     protected function getContainer()

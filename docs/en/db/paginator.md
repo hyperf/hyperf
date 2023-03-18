@@ -1,28 +1,28 @@
-# 查询分页
+# Query pagination
 
-在使用 [hyperf/database](https://github.com/hyperf-cloud/database) 来查询数据时，可以很方便的通过与 [hyperf/paginator](https://github.com/hyperf-cloud/paginator) 组件配合便捷地对查询结果进行分页。
+When using [hyperf/database](https://github.com/hyperf-cloud/database) to query data, it is very convenient to use [hyperf/paginator](https://github.com/hyperf-cloud /paginator) component to easily paginate query results.
 
-# 使用方法
+# Instructions
 
-在您通过 [查询构造器](en/db/querybuilder.md) 或 [模型](en/db/model.md) 查询数据时，可以通过 `paginate` 方法来处理分页，该方法会自动根据用户正在查看的页面来设置限制和偏移量，默认情况下，通过当前 HTTP 请求所带的 `page` 参数的值来检测当前的页数：
+When you query data through [Query Builder](en/db/querybuilder.md) or [Model](en/db/model.md), pagination can be handled through the `paginate` method, which automatically The page being viewed is used to set the limit and offset. By default, the current number of pages is detected by the value of the `page` parameter carried by the current HTTP request:
 
-> 由于 Hyperf 当前并不支持视图，所以分页组件尚未支持对视图的渲染，直接返回分页结果默认会以 application/json 格式输出。
+> Since Hyperf does not currently support views, the paging component does not yet support rendering of views, and the paging results returned directly will be output in application/json format by default.
 
-## 查询构造器分页
+## query builder pagination
 
 ```php
 <?php
-// 展示应用中的所有用户，每页显示 10 条数据
+// Show all users in the app, 10 pieces of data per page
 return Db::table('users')->paginate(10);
 ```
 
-## 模型分页 
+## Model pagination
 
-您可以直接通过静态方法调用 `paginate` 方法来进行分页：
+You can do pagination by calling the `paginate` method directly from a static method:
 
 ```php
 <?php
-// 展示应用中的所有用户，每页显示 10 条数据
+// Show all users in the app, 10 pieces of data per page
 return User::paginate(10);
 ```
 
@@ -30,10 +30,10 @@ return User::paginate(10);
 
 ```php
 <?php 
-// 展示应用中的所有用户，每页显示 10 条数据
+// Show all users in the app, 10 pieces of data per page
 return User::where('gender', 1)->paginate(10);
 ```
 
-## 分页器实例方法
+## Paginator instance methods
 
-这里仅说明分页器在数据库查询上的使用方法，更多关于分页器的细节可阅读 [分页](en/paginator.md) 章节。
+Only the usage of the paginator in database queries is described here. For more details about the paginator, please read the [Pagination](en/paginator.md) chapter.

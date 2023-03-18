@@ -15,10 +15,7 @@ use PhpDocReader\PhpDocReader;
 
 class PhpDocReaderManager
 {
-    /**
-     * @var null|PhpDocReader
-     */
-    protected static $instance;
+    protected static ?PhpDocReader $instance = null;
 
     public static function getInstance(): PhpDocReader
     {

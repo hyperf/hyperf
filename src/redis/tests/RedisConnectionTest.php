@@ -13,15 +13,20 @@ namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\LowFrequencyInterface;
+use Hyperf\Pool\Pool;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Redis\Frequency;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Reflection\ClassInvoker;
+use HyperfTest\Redis\Stub\RedisConnectionStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -46,6 +51,9 @@ class RedisConnectionTest extends TestCase
             'auth' => 'redis',
             'db' => 0,
             'timeout' => 0.0,
+            'reserved' => null,
+            'retry_interval' => 5,
+            'read_timeout' => 3.0,
             'cluster' => [
                 'enable' => false,
                 'name' => null,
@@ -54,6 +62,9 @@ class RedisConnectionTest extends TestCase
                 ],
                 'read_timeout' => 0.0,
                 'persistent' => false,
+                'context' => [
+                    'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
+                ],
             ],
             'sentinel' => [
                 'enable' => false,
@@ -63,6 +74,9 @@ class RedisConnectionTest extends TestCase
                 'read_timeout' => 0,
             ],
             'options' => [],
+            'context' => [
+                'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
+            ],
             'pool' => [
                 'min_connections' => 1,
                 'max_connections' => 30,
@@ -88,6 +102,19 @@ class RedisConnectionTest extends TestCase
         $connection->release();
         $connection = $pool->get()->getConnection();
         $this->assertSame(null, $connection->getDatabase());
+    }
+
+    public function testRedisConnectionLog()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnTrue();
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn($logger = Mockery::mock(StdoutLoggerInterface::class));
+        $logger->shouldReceive('log')->once();
+
+        $conn = new RedisConnectionStub($container, Mockery::mock(Pool::class), []);
+        $conn = new ClassInvoker($conn);
+        $conn->log('xxxx');
+        $this->assertTrue(true);
     }
 
     public function testRedisCloseInLowFrequency()
@@ -122,6 +149,12 @@ class RedisConnectionTest extends TestCase
                     'host' => 'redis',
                     'auth' => 'redis',
                     'port' => 16379,
+                    'read_timeout' => 3.0,
+                    'reserved' => null,
+                    'retry_interval' => 5,
+                    'context' => [
+                        'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
+                    ],
                     'pool' => [
                         'min_connections' => 1,
                         'max_connections' => 30,
@@ -135,6 +168,9 @@ class RedisConnectionTest extends TestCase
                         'name' => null,
                         'seeds' => [
                             '127.0.0.1:6379',
+                        ],
+                        'context' => [
+                            'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
                         ],
                     ],
                     'sentinel' => [

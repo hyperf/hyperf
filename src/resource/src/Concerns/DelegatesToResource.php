@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Resource\Concerns;
 
+use Exception;
 use Hyperf\Resource\Exception\ResourceException;
 use Hyperf\Utils\Traits\ForwardsCalls;
 
@@ -87,7 +88,7 @@ trait DelegatesToResource
      *
      * @param mixed $value
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function resolveRouteBinding($value)
     {
@@ -96,43 +97,32 @@ trait DelegatesToResource
 
     /**
      * Determine if the given attribute exists.
-     *
-     * @param mixed $offset
-     * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return array_key_exists($offset, $this->resource);
     }
 
     /**
      * Get the value for a given offset.
-     *
-     * @param mixed $offset
-     * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->resource[$offset];
     }
 
     /**
      * Set the value for a given offset.
-     *
-     * @param mixed $offset
-     * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->resource[$offset] = $value;
     }
 
     /**
      * Unset the value for a given offset.
-     *
-     * @param mixed $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->resource[$offset]);
     }

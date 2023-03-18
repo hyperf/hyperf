@@ -18,16 +18,10 @@ class ProducerManager
     /**
      * @var array<string, Producer>
      */
-    private $producers = [];
+    private array $producers = [];
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function getProducer(string $name = 'default'): Producer

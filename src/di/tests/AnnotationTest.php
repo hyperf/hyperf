@@ -11,17 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di;
 
-use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Di\ClassLoader;
 use Hyperf\Di\Exception\DirectoryNotExistException;
-use Hyperf\Di\ReflectionManager;
-use HyperfTest\Di\Stub\AnnotationCollector;
-use HyperfTest\Di\Stub\Ignore;
-use HyperfTest\Di\Stub\IgnoreDemoAnnotation;
+use Hyperf\Di\ScanHandler\NullScanHandler;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
@@ -34,27 +30,10 @@ class AnnotationTest extends TestCase
         Mockery::close();
     }
 
-    public function testIgnoreAnnotations()
-    {
-        $scaner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
-        $reader = new AnnotationReader();
-        $scaner->collect($reader, $ref = ReflectionManager::reflectClass(Ignore::class));
-        $annotations = AnnotationCollector::get(Ignore::class . '._c');
-        $this->assertArrayHasKey(IgnoreDemoAnnotation::class, $annotations);
-
-        AnnotationCollector::clear();
-
-        $scaner = new Scanner($loader, new ScanConfig(false, '/', [], [], ['IgnoreDemoAnnotation']));
-        $reader = new AnnotationReader();
-        $scaner->collect($reader, $ref);
-        $annotations = AnnotationCollector::get(Ignore::class . '._c');
-        $this->assertNull($annotations);
-    }
-
     public function testScanAnnotationsDirectoryNotExist()
     {
-        $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
-        $ref = new \ReflectionClass($scanner);
+        $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
+        $ref = new ReflectionClass($scanner);
         $method = $ref->getMethod('normalizeDir');
         $method->setAccessible(true);
 
@@ -64,11 +43,28 @@ class AnnotationTest extends TestCase
 
     public function testScanAnnotationsDirectoryEmpty()
     {
-        $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
-        $ref = new \ReflectionClass($scanner);
+        $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
+        $ref = new ReflectionClass($scanner);
         $method = $ref->getMethod('normalizeDir');
         $method->setAccessible(true);
 
         $this->assertSame([], $method->invokeArgs($scanner, [[]]));
+    }
+
+    public function testVariadicParams()
+    {
+        $foo = new FooParams(id: 1, name: 'Hyperf');
+
+        $this->assertSame(['id' => 1, 'name' => 'Hyperf'], $foo->param);
+    }
+}
+
+class FooParams
+{
+    public array $param;
+
+    public function __construct(...$params)
+    {
+        $this->param = $params;
     }
 }

@@ -23,14 +23,8 @@ use Psr\Http\Message\StreamInterface;
  */
 class ConsulResponse
 {
-    /**
-     * @var ResponseInterface
-     */
-    private $response;
-
-    public function __construct(ResponseInterface $response)
+    public function __construct(private ResponseInterface $response)
     {
-        $this->response = $response;
     }
 
     public function __call($name, $arguments)
@@ -40,7 +34,7 @@ class ConsulResponse
 
     public function json(string $key = null, $default = null)
     {
-        if ($this->response->getHeaderLine('Content-Type') !== 'application/json') {
+        if ($this->response->getHeaderLine('content-type') !== 'application/json') {
             throw new ServerException('The Content-Type of response is not equal application/json');
         }
         $data = json_decode((string) $this->response->getBody(), true);

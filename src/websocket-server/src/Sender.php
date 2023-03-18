@@ -16,8 +16,10 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Server\CoroutineServer;
 use Hyperf\WebSocketServer\Exception\InvalidMethodException;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Swoole\Http\Response;
 use Swoole\Server;
+use Swow\Http\Server\Connection;
 
 /**
  * @method push(int $fd, $data, int $opcode = null, $finish = null)
@@ -25,34 +27,19 @@ use Swoole\Server;
  */
 class Sender
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected LoggerInterface $logger;
+
+    protected ?int $workerId = null;
 
     /**
-     * @var StdoutLoggerInterface
+     * @var Connection[]|Response[]
      */
-    protected $logger;
+    protected array $responses = [];
 
-    /**
-     * @var int
-     */
-    protected $workerId;
+    protected bool $isCoroutineServer = false;
 
-    /**
-     * @var Response[]
-     */
-    protected $responses = [];
-
-    /**
-     * @var bool
-     */
-    protected $isCoroutineServer = false;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
         if ($config = $container->get(ConfigInterface::class)) {
             $this->isCoroutineServer = $config->get('server.type') === CoroutineServer::class;
@@ -109,7 +96,13 @@ class Sender
         return false;
     }
 
-    public function setResponse(int $fd, ?Response $response): void
+    /**
+     * The responses of coroutine style swoole server.
+     * Or connections of swow server.
+     * And so on.
+     * @param null|Connection|Response $response
+     */
+    public function setResponse(int $fd, mixed $response): void
     {
         if ($response === null) {
             unset($this->responses[$fd]);
@@ -118,9 +111,14 @@ class Sender
         }
     }
 
-    public function getResponse(int $fd): ?Response
+    public function getResponse(int $fd): mixed
     {
         return $this->responses[$fd] ?? null;
+    }
+
+    public function getResponses(): array
+    {
+        return $this->responses;
     }
 
     public function getFdAndMethodFromProxyMethod(string $method, array $arguments): array

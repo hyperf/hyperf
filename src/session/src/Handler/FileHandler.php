@@ -14,34 +14,17 @@ namespace Hyperf\Session\Handler;
 use Carbon\Carbon;
 use Hyperf\Utils\Filesystem\Filesystem;
 use SessionHandlerInterface;
+use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
 class FileHandler implements SessionHandlerInterface
 {
     /**
-     * The number of minutes the session should be valid.
-     *
-     * @var int
+     * @param string $path the path where sessions should be stored
+     * @param int $minutes the number of minutes the session should be valid
      */
-    protected $minutes;
-
-    /**
-     * @var Filesystem
-     */
-    private $files;
-
-    /**
-     * The path where sessions should be stored.
-     *
-     * @var string
-     */
-    private $path;
-
-    public function __construct(Filesystem $files, string $path, int $minutes)
+    public function __construct(private Filesystem $files, private string $path, protected int $minutes)
     {
-        $this->files = $files;
-        $this->path = $path;
-        $this->minutes = $minutes;
         if (! file_exists($path)) {
             $files->makeDirectory($path, 0755, true);
         }
@@ -51,9 +34,8 @@ class FileHandler implements SessionHandlerInterface
      * Close the session.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.close.php
-     * @return bool
      */
-    public function close()
+    public function close(): bool
     {
         return true;
     }
@@ -62,12 +44,11 @@ class FileHandler implements SessionHandlerInterface
      * Destroy a session.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.destroy.php
-     * @param string $session_id the session ID being destroyed
-     * @return bool
+     * @param string $id the session ID being destroyed
      */
-    public function destroy($session_id)
+    public function destroy(string $id): bool
     {
-        $this->files->delete($this->path . '/' . $session_id);
+        $this->files->delete($this->path . '/' . $id);
         return true;
     }
 
@@ -75,33 +56,32 @@ class FileHandler implements SessionHandlerInterface
      * Cleanup old sessions.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.gc.php
-     * @param int $maxlifetime
-     * @return bool
      */
-    public function gc($maxlifetime)
+    public function gc(int $max_lifetime): int|false
     {
         $files = Finder::create()
             ->in($this->path)
             ->files()
             ->ignoreDotFiles(true)
-            ->date('<= now - ' . $maxlifetime . ' seconds');
+            ->date('<= now - ' . $max_lifetime . ' seconds');
 
-        /** @var \SplFileInfo $file */
+        $count = 0;
+        /** @var SplFileInfo $file */
         foreach ($files as $file) {
             $this->files->delete($file->getRealPath());
+            ++$count;
         }
-        return true;
+        return $count;
     }
 
     /**
      * Initialize session.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.open.php
-     * @param string $save_path the path where to store/retrieve the session
+     * @param string $path the path where to store/retrieve the session
      * @param string $name the session name
-     * @return bool
      */
-    public function open($save_path, $name)
+    public function open(string $path, string $name): bool
     {
         return true;
     }
@@ -110,12 +90,12 @@ class FileHandler implements SessionHandlerInterface
      * Read session data.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.read.php
-     * @param string $session_id the session id to read data for
+     * @param string $id the session id to read data for
      * @return string
      */
-    public function read($session_id)
+    public function read(string $id): string|false
     {
-        if ($this->files->isFile($path = $this->path . '/' . $session_id)) {
+        if ($this->files->isFile($path = $this->path . '/' . $id)) {
             if ($this->files->lastModified($path) >= Carbon::now()->subMinutes($this->minutes)->getTimestamp()) {
                 return $this->files->sharedGet($path);
             }
@@ -128,13 +108,13 @@ class FileHandler implements SessionHandlerInterface
      * Write session data.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.write.php
-     * @param string $session_id the session id
-     * @param string $session_data
-     * @return bool
+     * @param string $id the session id
      */
-    public function write($session_id, $session_data)
+    public function write(string $id, string $data): bool
     {
-        $this->files->put($this->path . '/' . $session_id, $session_data, true);
+        $this->files->put($this->path . '/' . $id, $data, true);
+
+        $this->files->clearStatCache($this->path);
 
         return true;
     }

@@ -14,6 +14,7 @@ namespace HyperfTest\Utils;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use Hyperf\Utils\Str;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @internal
@@ -21,6 +22,16 @@ use PHPUnit\Framework\TestCase;
  */
 class StrTest extends TestCase
 {
+    public function testCharAt()
+    {
+        $this->assertEquals('р', Str::charAt('Привет, мир!', 1));
+        $this->assertEquals('ち', Str::charAt('「こんにちは世界」', 4));
+        $this->assertEquals('w', Str::charAt('Привет, world!', 8));
+        $this->assertEquals('界', Str::charAt('「こんにちは世界」', -2));
+        $this->assertEquals(null, Str::charAt('「こんにちは世界」', -200));
+        $this->assertEquals(null, Str::charAt('Привет, мир!', 100));
+    }
+
     public function testSlug()
     {
         $res = Str::slug('hyperf_', '_');
@@ -38,6 +49,23 @@ class StrTest extends TestCase
             $this->assertIsInt($i);
             break;
         }
+
+        $this->assertSame('hello-world', Str::slug('hello world'));
+        $this->assertSame('hello-world', Str::slug('hello-world'));
+        $this->assertSame('hello-world', Str::slug('hello_world'));
+        $this->assertSame('hello_world', Str::slug('hello_world', '_'));
+        $this->assertSame('user-at-host', Str::slug('user@host'));
+        $this->assertSame('سلام-دنیا', Str::slug('سلام دنیا', '-', null));
+        $this->assertSame('sometext', Str::slug('some text', ''));
+        $this->assertSame('', Str::slug('', ''));
+        $this->assertSame('', Str::slug(''));
+        $this->assertSame('bsm-allah', Str::slug('بسم الله', '-', 'en', ['allh' => 'allah']));
+        $this->assertSame('500-dollar-bill', Str::slug('500$ bill', '-', 'en', ['$' => 'dollar']));
+        $this->assertSame('500-dollar-bill', Str::slug('500--$----bill', '-', 'en', ['$' => 'dollar']));
+        $this->assertSame('500-dollar-bill', Str::slug('500-$-bill', '-', 'en', ['$' => 'dollar']));
+        $this->assertSame('500-dollar-bill', Str::slug('500$--bill', '-', 'en', ['$' => 'dollar']));
+        $this->assertSame('500-dollar-bill', Str::slug('500-$--bill', '-', 'en', ['$' => 'dollar']));
+        $this->assertSame('أحمد-في-المدرسة', Str::slug('أحمد@المدرسة', '-', null, ['@' => 'في']));
     }
 
     public function testMask()
@@ -141,5 +169,80 @@ class StrTest extends TestCase
         $this->assertFalse(Str::startsWith('hyperf.wiki', ['http://', 'https://']));
         $this->assertTrue(Str::startsWith('http://www.hyperf.io', 'http://'));
         $this->assertTrue(Str::startsWith('https://www.hyperf.io', ['http://', 'https://']));
+    }
+
+    public function testStripTags()
+    {
+        $this->assertSame('beforeafter', Str::stripTags('before<br>after'));
+        $this->assertSame('before<br>after', Str::stripTags('before<br>after', '<br>'));
+        $this->assertSame('before<br>after', Str::stripTags('<strong>before</strong><br>after', '<br>'));
+        $this->assertSame('<strong>before</strong><br>after', Str::stripTags('<strong>before</strong><br>after', '<br><strong>'));
+
+        if (PHP_VERSION_ID >= 70400) {
+            $this->assertSame('<strong>before</strong><br>after', Str::stripTags('<strong>before</strong><br>after', ['<br>', '<strong>']));
+        }
+
+        if (PHP_VERSION_ID >= 80000) {
+            $this->assertSame('beforeafter', Str::stripTags('before<br>after', null));
+        }
+    }
+
+    public function testPadBoth()
+    {
+        $this->assertSame('__Alien___', Str::padBoth('Alien', 10, '_'));
+        $this->assertSame('  Alien   ', Str::padBoth('Alien', 10));
+        $this->assertSame('  ❤MultiByte☆   ', Str::padBoth('❤MultiByte☆', 16));
+    }
+
+    public function testPadLeft()
+    {
+        $this->assertSame('-=-=-Alien', Str::padLeft('Alien', 10, '-='));
+        $this->assertSame('     Alien', Str::padLeft('Alien', 10));
+        $this->assertSame('     ❤MultiByte☆', Str::padLeft('❤MultiByte☆', 16));
+    }
+
+    public function testPadRight()
+    {
+        $this->assertSame('Alien-----', Str::padRight('Alien', 10, '-'));
+        $this->assertSame('Alien     ', Str::padRight('Alien', 10));
+        $this->assertSame('❤MultiByte☆     ', Str::padRight('❤MultiByte☆', 16));
+    }
+
+    public function testLength()
+    {
+        $this->assertEquals(11, Str::length('foo bar baz'));
+        $this->assertEquals(11, Str::length('foo bar baz', 'UTF-8'));
+    }
+
+    public function testUlid()
+    {
+        $this->assertTrue(Str::isUlid((string) Str::ulid()));
+    }
+
+    public function testUuid()
+    {
+        $this->assertInstanceOf(UuidInterface::class, $uuid = Str::uuid());
+        $this->assertTrue(Str::isUuid((string) $uuid));
+
+        $this->assertInstanceOf(UuidInterface::class, $uuid = Str::orderedUuid());
+        $this->assertTrue(Str::isUuid((string) $uuid));
+    }
+
+    public function testIsMatch()
+    {
+        $this->assertTrue(Str::isMatch('/.*,.*!/', 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch('/^.*$(.*)/', 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch('/laravel/i', 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch('/^(.*(.*(.*)))/', 'Hello, Laravel!'));
+
+        $this->assertFalse(Str::isMatch('/H.o/', 'Hello, Laravel!'));
+        $this->assertFalse(Str::isMatch('/^laravel!/i', 'Hello, Laravel!'));
+        $this->assertFalse(Str::isMatch('/laravel!(.*)/', 'Hello, Laravel!'));
+        $this->assertFalse(Str::isMatch('/^[a-zA-Z,!]+$/', 'Hello, Laravel!'));
+
+        $this->assertTrue(Str::isMatch(['/.*,.*!/', '/H.o/'], 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch(['/^laravel!/i', '/^.*$(.*)/'], 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch(['/laravel/i', '/laravel!(.*)/'], 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch(['/^[a-zA-Z,!]+$/', '/^(.*(.*(.*)))/'], 'Hello, Laravel!'));
     }
 }

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Guzzle\RingPHP;
 
+use Exception;
 use GuzzleHttp\Ring\Core;
 use GuzzleHttp\Ring\Exception\RingException;
 use Hyperf\Engine\Http\Client;
@@ -18,15 +19,8 @@ use Hyperf\Pool\SimplePool\PoolFactory;
 
 class PoolHandler extends CoroutineHandler
 {
-    /**
-     * @var PoolFactory
-     */
-    protected $factory;
-
-    public function __construct(PoolFactory $factory, array $option = [])
+    public function __construct(protected PoolFactory $factory, array $option = [])
     {
-        $this->factory = $factory;
-
         parent::__construct($option);
     }
 
@@ -53,7 +47,7 @@ class PoolHandler extends CoroutineHandler
         }, $this->options);
 
         $connection = $pool->get();
-
+        $response = null;
         try {
             /** @var Client $client */
             $client = $connection->getConnection();
@@ -64,17 +58,17 @@ class PoolHandler extends CoroutineHandler
                 $client->set($settings);
             }
 
-            $btime = microtime(true);
+            $beginTime = microtime(true);
 
             try {
                 $raw = $client->request($method, $path, $headers, (string) $body);
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $connection->close();
                 $exception = new RingException($exception->getMessage());
-                return $this->getErrorResponse($exception, $btime, $effectiveUrl);
+                return $this->getErrorResponse($exception, $beginTime, $effectiveUrl);
             }
 
-            $response = $this->getResponse($raw, $btime, $effectiveUrl);
+            $response = $this->getResponse($raw, $beginTime, $effectiveUrl);
         } finally {
             $connection->release();
         }

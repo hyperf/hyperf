@@ -21,49 +21,27 @@ use Psr\Container\ContainerInterface;
 
 abstract class ConsumerMessage extends Message implements ConsumerMessageInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    public $container;
+    public ?ContainerInterface $container = null;
 
-    /**
-     * @var string
-     */
-    protected $queue;
+    protected ?string $queue = null;
 
-    /**
-     * @var bool
-     */
-    protected $requeue = true;
+    protected bool $requeue = true;
 
-    /**
-     * @var array
-     */
-    protected $routingKey = [];
+    protected array|string $routingKey = [];
 
-    /**
-     * @var null|array
-     */
-    protected $qos = [
+    protected ?array $qos = [
         'prefetch_size' => 0,
         'prefetch_count' => 1,
         'global' => false,
     ];
 
-    /**
-     * @var bool
-     */
-    protected $enable = true;
+    protected bool $enable = true;
 
-    /**
-     * @var int
-     */
-    protected $maxConsumption = 0;
+    protected int $maxConsumption = 0;
 
-    /**
-     * @var float|int
-     */
-    protected $waitTimeout = 0;
+    protected int|float $waitTimeout = 0;
+
+    protected int $nums = 1;
 
     public function consumeMessage($data, AMQPMessage $message): string
     {
@@ -75,7 +53,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return Result::ACK;
     }
 
-    public function setQueue(string $queue): self
+    public function setQueue(string $queue): static
     {
         $this->queue = $queue;
         return $this;
@@ -119,7 +97,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this->enable;
     }
 
-    public function setEnable(bool $enable): self
+    public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
         return $this;
@@ -130,21 +108,43 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this->maxConsumption;
     }
 
-    public function setMaxConsumption(int $maxConsumption)
+    public function setMaxConsumption(int $maxConsumption): static
     {
         $this->maxConsumption = $maxConsumption;
         return $this;
     }
 
-    public function getWaitTimeout()
+    public function getWaitTimeout(): int|float
     {
         return $this->waitTimeout;
     }
 
-    public function setWaitTimeout($timeout)
+    public function setWaitTimeout(int|float $timeout): static
     {
         $this->waitTimeout = $timeout;
         return $this;
+    }
+
+    public function getNums(): int
+    {
+        return $this->nums;
+    }
+
+    public function setNums(int $nums): static
+    {
+        $this->nums = $nums;
+        return $this;
+    }
+
+    public function setContainer(ContainerInterface $container): static
+    {
+        $this->container = $container;
+        return $this;
+    }
+
+    public function getContainer(): ?ContainerInterface
+    {
+        return $this->container;
     }
 
     protected function reply($data, AMQPMessage $message)

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache;
 
+use DateInterval;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\Collection;
@@ -20,32 +21,21 @@ use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class Manager
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * @var HandlerInterface[]
      */
-    protected $handlers = [];
+    protected array $handlers = [];
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var TableCollector
-     */
-    protected $collector;
+    protected TableCollector $collector;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->collector = $container->get(TableCollector::class);
 
@@ -86,7 +76,7 @@ class Manager
                 );
             }
 
-            // Fetch it from database, because it not exist in cache handler.
+            // Fetch it from database, because it not exists in cache handler.
             if (is_null($data)) {
                 $model = $instance->newQuery()->where($primaryKey, '=', $id)->first();
                 if ($model) {
@@ -99,7 +89,7 @@ class Manager
                 return $model;
             }
 
-            // It not exist in cache handler and database.
+            // It not exists in cache handler and database.
             return null;
         }
 
@@ -130,7 +120,7 @@ class Manager
             $data = $handler->getMultiple($keys);
             $items = [];
             $fetchIds = [];
-            foreach ($data ?? [] as $item) {
+            foreach ($data as $item) {
                 if (isset($item[$primaryKey])) {
                     $items[] = $item;
                     $fetchIds[] = $item[$primaryKey];
@@ -218,10 +208,22 @@ class Manager
         return false;
     }
 
-    /**
-     * @return \DateInterval|int
-     */
-    protected function getCacheTTL(Model $instance, HandlerInterface $handler)
+    public function formatModel(Model $model): array
+    {
+        return $model->getAttributes();
+    }
+
+    public function formatModels($models): array
+    {
+        $result = [];
+        foreach ($models as $model) {
+            $result[] = $this->formatModel($model);
+        }
+
+        return $result;
+    }
+
+    protected function getCacheTTL(Model $instance, HandlerInterface $handler): DateInterval|int
     {
         if ($instance instanceof CacheableInterface) {
             return $instance->getCacheTTL() ?? $handler->getConfig()->getTtl();
@@ -242,21 +244,6 @@ class Manager
             $model->getKeyName(),
             $id
         );
-    }
-
-    protected function formatModel(Model $model): array
-    {
-        return $model->getAttributes();
-    }
-
-    protected function formatModels($models): array
-    {
-        $result = [];
-        foreach ($models as $model) {
-            $result[] = $this->formatModel($model);
-        }
-
-        return $result;
     }
 
     protected function getAttributes(Config $config, Model $model, array $data)

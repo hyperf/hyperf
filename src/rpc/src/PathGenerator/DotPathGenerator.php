@@ -19,8 +19,7 @@ class DotPathGenerator implements PathGeneratorInterface
     public function generate(string $service, string $method): string
     {
         $handledNamespace = explode('\\', $service);
-        $handledNamespace = Str::replaceArray('\\', ['/'], end($handledNamespace));
-        $path = Str::studly($handledNamespace);
+        $path = Str::studly(end($handledNamespace));
 
         return $path . '.' . Str::studly($method);
     }

@@ -18,10 +18,7 @@ use Hyperf\Utils\ApplicationContext;
 
 class SocketIORouter extends MetadataCollector
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
     public static function addNamespace(string $nsp, string $className)
     {
@@ -64,7 +61,7 @@ class SocketIORouter extends MetadataCollector
 
         $instance = ApplicationContext::getContainer()->get($class);
 
-        if (! ($instance instanceof NamespaceInterface)) {
+        if (! $instance instanceof NamespaceInterface) {
             throw new RouteNotFoundException("namespace {$nsp} must be an instance of NamespaceInterface");
         }
 

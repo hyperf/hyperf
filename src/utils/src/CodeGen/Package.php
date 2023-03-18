@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils\CodeGen;
 
 use Jean85\PrettyVersions;
+use Throwable;
 
 class Package
 {
@@ -19,7 +20,7 @@ class Package
     {
         try {
             return (string) PrettyVersions::getVersion($package);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             return 'unknown';
         }
     }

@@ -21,8 +21,10 @@ use HyperfTest\Amqp\Stub\ContainerStub;
 use HyperfTest\Amqp\Stub\Delay2Consumer;
 use HyperfTest\Amqp\Stub\DelayConsumer;
 use Mockery;
+use PhpAmqpLib\Channel\Frame;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
 
 /**
  * @internal
@@ -34,7 +36,7 @@ class ConsumerTest extends TestCase
     {
         $container = ContainerStub::getContainer();
         $consumer = new Consumer($container, Mockery::mock(ConnectionFactory::class), Mockery::mock(LoggerInterface::class));
-        $ref = new \ReflectionClass($consumer);
+        $ref = new ReflectionClass($consumer);
         $method = $ref->getMethod('getConcurrent');
         $method->setAccessible(true);
         /** @var Concurrent $concurrent */
@@ -51,8 +53,8 @@ class ConsumerTest extends TestCase
         $connection = new AMQPConnectionStub();
         $invoker = new ClassInvoker($connection);
         $chan = $invoker->channelManager->get(1, true);
-        $chan->push($id = uniqid());
-        $this->assertSame($id, $invoker->wait_channel(1));
+        $chan->push($frame = new Frame(1, 1, 0));
+        $this->assertSame($frame, $invoker->wait_channel(1));
 
         $this->expectException(ChannelClosedException::class);
         $chan->close();

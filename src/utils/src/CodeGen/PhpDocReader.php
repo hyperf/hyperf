@@ -15,6 +15,7 @@ use PhpDocReader\AnnotationException;
 use PhpDocReader\PhpParser\UseStatementParser;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionProperty;
 use Reflector;
@@ -40,24 +41,16 @@ class PhpDocReader
         'iterable' => 'iterable',
     ];
 
-    /**
-     * @var null|PhpDocReader
-     */
-    protected static $instance;
+    protected static ?PhpDocReader $instance = null;
 
-    /** @var UseStatementParser */
-    private $parser;
-
-    /** @var bool */
-    private $ignorePhpDocErrors;
+    private UseStatementParser $parser;
 
     /**
      * @param bool $ignorePhpDocErrors enable or disable throwing errors when PhpDoc errors occur (when parsing annotations)
      */
-    public function __construct(bool $ignorePhpDocErrors = false)
+    public function __construct(private bool $ignorePhpDocErrors = false)
     {
         $this->parser = new UseStatementParser();
-        $this->ignorePhpDocErrors = $ignorePhpDocErrors;
     }
 
     public static function getInstance(): PhpDocReader
@@ -92,7 +85,7 @@ class PhpDocReader
     {
         // Use reflection
         $returnType = $method->getReturnType();
-        if ($returnType instanceof \ReflectionNamedType) {
+        if ($returnType instanceof ReflectionNamedType) {
             if (! $returnType->isBuiltin() || $allowPrimitiveTypes) {
                 return [($returnType->allowsNull() ? '?' : '') . $returnType->getName()];
             }

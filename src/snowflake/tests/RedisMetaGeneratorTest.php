@@ -13,6 +13,7 @@ namespace HyperfTest\Snowflake;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
@@ -30,6 +31,7 @@ use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Snowflake\Stub\UserDefinedIdGenerator;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 /**
  * @internal
@@ -149,6 +151,25 @@ class RedisMetaGeneratorTest extends TestCase
         $this->assertSame($time + 1, $nextTime);
     }
 
+    public function testCollisionWhenInitManyTimes()
+    {
+        $container = $this->getContainer();
+        $hConfig = $container->get(ConfigInterface::class);
+        $config = new SnowflakeConfig();
+        $metaGenerator = new RedisSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND, $hConfig);
+        $result = [];
+        $tasks = [];
+        for ($i = 0; $i < 2000; ++$i) {
+            $tasks[] = static function () use (&$result, $metaGenerator) {
+                $result[] = $metaGenerator->getDataCenterId();
+            };
+        }
+
+        parallel($tasks);
+
+        $this->assertSame(1, count(array_unique($result)));
+    }
+
     public function testGenerateSameMetaForRedisSecond()
     {
         $container = $this->getContainer();
@@ -163,9 +184,9 @@ class RedisMetaGeneratorTest extends TestCase
                 for ($i = 0; $i < 4100; ++$i) {
                     $result[] = $generator->generate();
                 }
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
             } finally {
-                $channel->push(true);
+                $channel->push(Mockery::mock(ConnectionInterface::class));
             }
         });
 
@@ -174,9 +195,9 @@ class RedisMetaGeneratorTest extends TestCase
                 for ($i = 0; $i < 900; ++$i) {
                     $result[] = $generator->generate();
                 }
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
             } finally {
-                $channel->push(true);
+                $channel->push(Mockery::mock(ConnectionInterface::class));
             }
         });
 

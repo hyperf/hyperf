@@ -17,18 +17,13 @@ use Hyperf\Pool\Pool;
 use PDO;
 use PDOStatement;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 class PDOConnection extends AbstractConnection
 {
-    /**
-     * @var PDO
-     */
-    protected $connection;
+    protected ?PDO $connection = null;
 
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'driver' => 'pdo',
         'host' => 'localhost',
         'port' => 3306,
@@ -38,6 +33,7 @@ class PDOConnection extends AbstractConnection
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
         'fetch_mode' => PDO::FETCH_ASSOC,
+        'defer_release' => false,
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -57,9 +53,8 @@ class PDOConnection extends AbstractConnection
 
     /**
      * Current mysql database.
-     * @var null|int
      */
-    protected $database;
+    protected ?int $database = null;
 
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
@@ -82,8 +77,8 @@ class PDOConnection extends AbstractConnection
         $password = $this->config['password'];
         $dsn = $this->buildDsn($this->config);
         try {
-            $pdo = new \PDO($dsn, $username, $password, $this->config['options']);
-        } catch (\Throwable $e) {
+            $pdo = new PDO($dsn, $username, $password, $this->config['options']);
+        } catch (Throwable $e) {
             throw new ConnectionException('Connection reconnect failed.:' . $e->getMessage());
         }
 

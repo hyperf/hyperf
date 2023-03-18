@@ -11,29 +11,19 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Mutex;
 
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 
 class RedisServerMutex implements ServerMutex
 {
-    /**
-     * @var RedisFactory
-     */
-    private $redisFactory;
+    private null|string $macAddress;
 
-    /**
-     * @var null|string
-     */
-    private $macAddress;
-
-    public function __construct(RedisFactory $redisFactory)
+    public function __construct(private RedisFactory $redisFactory)
     {
-        $this->redisFactory = $redisFactory;
-
         $this->macAddress = $this->getMacAddress();
     }
 
@@ -49,14 +39,14 @@ class RedisServerMutex implements ServerMutex
         $redis = $this->redisFactory->get($crontab->getMutexPool());
         $mutexName = $this->getMutexName($crontab);
 
-        $result = (bool) $redis->set($mutexName, $this->macAddress, ['NX', 'EX' => $crontab->getMutexExpires()]);
+        $result = $redis->set($mutexName, $this->macAddress, ['NX', 'EX' => $crontab->getMutexExpires()]);
 
-        if ($result === true) {
+        if ($result) {
             Coroutine::create(function () use ($crontab, $redis, $mutexName) {
                 $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($crontab->getMutexExpires());
                 $exited && $redis->del($mutexName);
             });
-            return $result;
+            return true;
         }
 
         return $redis->get($mutexName) === $this->macAddress;

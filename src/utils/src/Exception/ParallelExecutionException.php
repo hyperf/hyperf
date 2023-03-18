@@ -11,19 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Exception;
 
-class ParallelExecutionException extends \RuntimeException
+use RuntimeException;
+
+class ParallelExecutionException extends RuntimeException
 {
-    /**
-     * @var array
-     */
-    private $results;
+    private array $results = [];
 
-    /**
-     * @var array
-     */
-    private $throwables;
+    private array $throwables = [];
 
-    public function getResults()
+    public function getResults(): array
     {
         return $this->results;
     }
@@ -33,7 +29,7 @@ class ParallelExecutionException extends \RuntimeException
         $this->results = $results;
     }
 
-    public function getThrowables()
+    public function getThrowables(): array
     {
         return $this->throwables;
     }

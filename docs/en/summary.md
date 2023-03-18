@@ -42,6 +42,7 @@
   * [Command](en/command.md)
   * [Testing](en/testing.md)
   * [View](en/view.md)
+  * [View Engine](en/view-engine.md)
   * [Translation](en/translation.md)
   * [Validaton](en/validation.md)
   * [Session](en/session.md)
@@ -52,6 +53,7 @@
   * [Quick Start](en/db/quick-start.md)
   * [Query Builder](en/db/querybuilder.md)
   * [Model](en/db/model.md)
+  * [Generator](en/db/gen.md)
   * [Relationship](en/db/relationship.md)
   * [Paginator](en/db/paginator.md)
   * [Model Event](en/db/event.md)
@@ -59,19 +61,29 @@
   * [Migration](en/db/migration.md)
   * [Mutator](en/db/mutators.md)
   * [Simple DB](en/db/db.md)
+  * [API Resource](en/db/resource.md)
+  * [Scout](en/scout.md)
+
+* Hyperf Ecosystem
+
+  * [Nano](https://github.com/hyperf/nano)
+  * [GoTask](https://github.com/hyperf/gotask)
+  * [Box](en/eco/box.md)
   
 * Microservice
 
   * [Concept](en/microservice.md)
   * [JSON RPC](en/json-rpc.md)
   * [gRPC](en/grpc.md)
+  * [Multiplex RPC](en/rpc-multiplex.md)
   * [Service Register](en/service-register.md)
+  * [Retry](en/retry.md)
   * [Service Circuit Breaker](en/circuit-breaker.md)
   * [Rate Limit](en/rate-limit.md)
   * [Configuration Center](en/config-center.md)
   * [Tracing](en/tracer.md)
   * [Metric](en/metric.md)
-  * [Retry](en/retry.md)
+  * [Distributed Transaction](en/distributed-transaction.md)
   * [Snowflake](en/snowflake.md)
   
 * Server
@@ -79,6 +91,7 @@
   * [Tcp Server](en/tcp-server.md)
   * [WebSocket Server](en/websocket-server.md)
   * [Socket.io](en/socketio-server.md)
+  * [Coroutine Style Server](en/coroutine-server.md)
   
 * Message Queue
 
@@ -86,6 +99,7 @@
   * [AMQP](en/amqp.md)
   * [Nats](en/nats.md)
   * [NSQ](en/nsq.md)
+  * [Kafka](en/kafka.md)
   
 * Clients
   
@@ -103,7 +117,6 @@
   * [Connection Pool](en/pool.md)
   * [Custom Process](en/process.md)
   * [Utils](en/utils.md)
-  * [Rate Limit](en/rate-limit.md)
   * [Crontab](en/crontab.md)
   * [Task](en/task.md)
   * [Enum](en/constants.md)
@@ -112,12 +125,17 @@
   * [Watcher](en/watcher.md)
   * [Dev Tool](en/devtool.md)
   * [Swoole Tracker](en/swoole-tracker.md)
+  * [Phar](en/phar.md)
+  * [DAG](en/dag.md)
+  * [RPN](en/rpn.md)
 
 * Deployment
 
   * [Build Docker Swarm cluster](en/tutorial/docker-swarm.md)
   * [Build DaoCloud Devops](en/tutorial/daocloud.md)
   * [Deploy by Supervisor](en/tutorial/supervisor.md)
+  * [Nginx reverse proxy](en/tutorial/nginx.md)
+  * [Aliyun Logger Service](en/tutorial/aliyun-logger.md)
   
 * Awesome Hyperf
 
@@ -133,3 +151,6 @@
   
   * [1.1 Upgrade Guide](en/upgrade/1.1.md)
   * [2.0 Upgrade Guide](en/upgrade/2.0.md)
+  * [2.1 Upgrade Guide](en/upgrade/2.1.md)
+  * [2.2 Upgrade Guide](en/upgrade/2.2.md)
+  * [3.0 Upgrade Guide](en/upgrade/3.0.md)

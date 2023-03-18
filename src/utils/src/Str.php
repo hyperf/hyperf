@@ -11,8 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+use DateTimeInterface;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Exception\InvalidArgumentException;
-use Hyperf\Utils\Traits\Macroable;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+use RuntimeException;
+use Symfony\Component\Uid\Ulid;
 
 /**
  * Most of the methods in this file come from illuminate/support,
@@ -177,16 +182,32 @@ class Str
     }
 
     /**
+     * Get the character at the specified index.
+     *
+     * @param string $subject
+     * @param int $index
+     * @return null|string
+     */
+    public static function charAt($subject, $index)
+    {
+        $length = mb_strlen($subject);
+
+        if ($index < 0 ? $index < -$length : $index > $length - 1) {
+            return null;
+        }
+
+        return mb_substr($subject, $index, 1);
+    }
+
+    /**
      * Determine if a given string contains a given substring.
      *
-     * @param string $haystack
      * @param array|string $needles
-     * @return bool
      */
-    public static function contains($haystack, $needles)
+    public static function contains(string $haystack, $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && mb_strpos($haystack, $needle) !== false) {
+            if ($needle !== '' && str_contains($haystack, (string) $needle)) {
                 return true;
             }
         }
@@ -215,14 +236,13 @@ class Str
     /**
      * Determine if a given string ends with a given substring.
      *
-     * @param string $haystack
      * @param array|string $needles
      * @return bool
      */
-    public static function endsWith($haystack, $needles)
+    public static function endsWith(string $haystack, $needles)
     {
         foreach ((array) $needles as $needle) {
-            if (substr($haystack, -strlen($needle)) === (string) $needle) {
+            if ($needle !== '' && str_ends_with($haystack, (string) $needle)) {
                 return true;
             }
         }
@@ -302,11 +322,7 @@ class Str
      */
     public static function length($value, $encoding = null)
     {
-        if ($encoding) {
-            return mb_strlen($value, $encoding);
-        }
-
-        return mb_strlen($value);
+        return mb_strlen($value, $encoding);
     }
 
     /**
@@ -370,6 +386,32 @@ class Str
     }
 
     /**
+     * Determine if a given string matches a given pattern.
+     *
+     * @param iterable<string>|string $patterns
+     * @param string $value
+     * @return bool
+     */
+    public static function isMatch($patterns, $value)
+    {
+        $value = (string) $value;
+
+        if (! is_iterable($patterns)) {
+            $patterns = [$patterns];
+        }
+
+        foreach ($patterns as $pattern) {
+            $pattern = (string) $pattern;
+
+            if (preg_match($pattern, $value) === 1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get the string matching the given pattern.
      *
      * @param string $pattern
@@ -397,7 +439,7 @@ class Str
      */
     public static function padBoth($value, $length, $pad = ' ')
     {
-        return str_pad($value, $length, $pad, STR_PAD_BOTH);
+        return str_pad($value, strlen($value) - mb_strlen($value) + $length, $pad, STR_PAD_BOTH);
     }
 
     /**
@@ -410,7 +452,7 @@ class Str
      */
     public static function padLeft($value, $length, $pad = ' ')
     {
-        return str_pad($value, $length, $pad, STR_PAD_LEFT);
+        return str_pad($value, strlen($value) - mb_strlen($value) + $length, $pad, STR_PAD_LEFT);
     }
 
     /**
@@ -423,7 +465,7 @@ class Str
      */
     public static function padRight($value, $length, $pad = ' ')
     {
-        return str_pad($value, $length, $pad, STR_PAD_RIGHT);
+        return str_pad($value, strlen($value) - mb_strlen($value) + $length, $pad, STR_PAD_RIGHT);
     }
 
     /**
@@ -567,6 +609,16 @@ class Str
     }
 
     /**
+     * Strip HTML and PHP tags from the given string.
+     *
+     * @param null|string|string[] $allowedTags
+     */
+    public static function stripTags(string $value, $allowedTags = null): string
+    {
+        return strip_tags($value, $allowedTags);
+    }
+
+    /**
      * Convert the given string to upper-case.
      */
     public static function upper(string $value): string
@@ -592,8 +644,9 @@ class Str
 
     /**
      * Generate a URL friendly "slug" from a given string.
+     * @param mixed $dictionary
      */
-    public static function slug(string $title, string $separator = '-', string $language = 'en'): string
+    public static function slug(string $title, string $separator = '-', ?string $language = 'en', $dictionary = ['@' => 'at']): string
     {
         $title = $language ? static::ascii($title, $language) : $title;
 
@@ -602,8 +655,12 @@ class Str
 
         $title = preg_replace('![' . preg_quote($flip) . ']+!u', $separator, $title);
 
-        // Replace @ with the word 'at'
-        $title = str_replace('@', $separator . 'at' . $separator, $title);
+        // Replace dictionary words
+        foreach ($dictionary as $key => $value) {
+            $dictionary[$key] = $separator . $value . $separator;
+        }
+
+        $title = str_replace(array_keys($dictionary), array_values($dictionary), $title);
 
         // Remove all characters that are not the separator, letters, numbers, or whitespace.
         $title = preg_replace('![^' . preg_quote($separator) . '\pL\pN\s]+!u', '', mb_strtolower($title));
@@ -642,7 +699,7 @@ class Str
     public static function startsWith(string $haystack, $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
+            if ($needle !== '' && str_starts_with($haystack, (string) $needle)) {
                 return true;
             }
         }
@@ -729,6 +786,59 @@ class Str
         }
 
         return mb_substr($string, 0, max($stringLength - $hiddenLength - $absOffset, 0)) . str_repeat($replacement, $hiddenLength) . mb_substr($string, $offset);
+    }
+
+    public static function isUlid($value): bool
+    {
+        if (! is_string($value)) {
+            return false;
+        }
+
+        if (strlen($value) !== 26) {
+            return false;
+        }
+
+        if (strspn($value, '0123456789ABCDEFGHJKMNPQRSTVWXYZabcdefghjkmnpqrstvwxyz') !== 26) {
+            return false;
+        }
+
+        return $value[0] <= '7';
+    }
+
+    public static function ulid(?DateTimeInterface $time = null): Ulid
+    {
+        if (! class_exists(Ulid::class)) {
+            throw new RuntimeException('The "symfony/uid" package is required to use the "ulid" method. Please run "composer require symfony/uid".');
+        }
+
+        return new Ulid(Ulid::generate($time));
+    }
+
+    public static function isUuid($value): bool
+    {
+        if (! is_string($value)) {
+            return false;
+        }
+
+        return preg_match('/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iD', $value) > 0;
+    }
+
+    public static function uuid(): UuidInterface
+    {
+        if (! class_exists(Uuid::class)) {
+            throw new RuntimeException('The "ramsey/uuid" package is required to use the "uuid" method. Please run "composer require ramsey/uuid".');
+        }
+
+        return Uuid::uuid4();
+    }
+
+    public static function orderedUuid(?DateTimeInterface $time = null): UuidInterface
+    {
+        if (! class_exists(Uuid::class)) {
+            throw new RuntimeException('The "ramsey/uuid" package is required to use the "orderedUuid" method. Please run "composer require ramsey/uuid".');
+        }
+
+        return Uuid::uuid7($time);
     }
 
     /**

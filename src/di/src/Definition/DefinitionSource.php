@@ -13,6 +13,8 @@ namespace Hyperf\Di\Definition;
 
 use Hyperf\Di\ReflectionManager;
 use ReflectionFunctionAbstract;
+use ReflectionNamedType;
+
 use function class_exists;
 use function interface_exists;
 use function is_callable;
@@ -21,10 +23,7 @@ use function method_exists;
 
 class DefinitionSource implements DefinitionSourceInterface
 {
-    /**
-     * @var array
-     */
-    private $source;
+    private array $source;
 
     public function __construct(array $source)
     {
@@ -36,7 +35,7 @@ class DefinitionSource implements DefinitionSourceInterface
      */
     public function getDefinition(string $name): ?DefinitionInterface
     {
-        return $this->source[$name] ?? $this->source[$name] = $this->autowire($name);
+        return $this->source[$name] ??= $this->autowire($name);
     }
 
     /**
@@ -50,7 +49,7 @@ class DefinitionSource implements DefinitionSourceInterface
     /**
      * @param array|callable|string $definition
      */
-    public function addDefinition(string $name, $definition): self
+    public function addDefinition(string $name, $definition): static
     {
         $this->source[$name] = $this->normalizeDefinition($name, $definition);
         return $this;
@@ -75,7 +74,7 @@ class DefinitionSource implements DefinitionSourceInterface
             }
 
             $parameterType = $parameter->getType();
-            if ($parameterType instanceof \ReflectionNamedType && ! $parameterType->isBuiltin()) {
+            if ($parameterType instanceof ReflectionNamedType && ! $parameterType->isBuiltin()) {
                 $parameters[$index] = new Reference($parameterType->getName());
             }
         }
@@ -84,7 +83,7 @@ class DefinitionSource implements DefinitionSourceInterface
     }
 
     /**
-     * Normaliaze the user definition source to a standard definition souce.
+     * Normalize the user definition source to a standard definition source.
      */
     private function normalizeSource(array $source): array
     {

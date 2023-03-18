@@ -20,6 +20,7 @@ use HyperfTest\Pool\Stub\FooPool;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 
 /**
  * @internal
@@ -110,7 +111,7 @@ class PoolTest extends TestCase
                 parent::__construct($container, $config);
 
                 $this->frequency = Mockery::mock(FrequencyInterface::class);
-                $this->frequency->shouldReceive('hit')->andThrow(new \RuntimeException('Hit Failed'));
+                $this->frequency->shouldReceive('hit')->andThrow(new RuntimeException('Hit Failed'));
             }
 
             protected function createConnection(): ConnectionInterface

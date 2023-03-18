@@ -16,6 +16,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+
 use function sprintf;
 use function str_replace;
 
@@ -26,97 +27,58 @@ use function str_replace;
  */
 class StdoutLogger implements StdoutLoggerInterface
 {
-    /**
-     * @var \Hyperf\Contract\ConfigInterface
-     */
-    private $config;
+    private OutputInterface $output;
 
-    /**
-     * @var OutputInterface
-     */
-    private $output;
-
-    /**
-     * @var array
-     */
-    private $tags = [
+    private array $tags = [
         'component',
     ];
 
-    public function __construct(ConfigInterface $config, $output = null)
+    public function __construct(private ConfigInterface $config, ?OutputInterface $output = null)
     {
-        $this->config = $config;
-        $this->output = $output ? $output : new ConsoleOutput();
+        $this->output = $output ?? new ConsoleOutput();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function emergency($message, array $context = [])
+    public function emergency($message, array $context = []): void
     {
         $this->log(LogLevel::EMERGENCY, $message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function alert($message, array $context = [])
+    public function alert($message, array $context = []): void
     {
         $this->log(LogLevel::ALERT, $message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function critical($message, array $context = [])
+    public function critical($message, array $context = []): void
     {
         $this->log(LogLevel::CRITICAL, $message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function error($message, array $context = [])
+    public function error($message, array $context = []): void
     {
         $this->log(LogLevel::ERROR, $message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function warning($message, array $context = [])
+    public function warning($message, array $context = []): void
     {
         $this->log(LogLevel::WARNING, $message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function notice($message, array $context = [])
+    public function notice($message, array $context = []): void
     {
         $this->log(LogLevel::NOTICE, $message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function info($message, array $context = [])
+    public function info($message, array $context = []): void
     {
         $this->log(LogLevel::INFO, $message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function debug($message, array $context = [])
+    public function debug($message, array $context = []): void
     {
         $this->log(LogLevel::DEBUG, $message, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         $config = $this->config->get(StdoutLoggerInterface::class, ['log_level' => []]);
         if (! in_array($level, $config['log_level'], true)) {
@@ -140,24 +102,12 @@ class StdoutLogger implements StdoutLoggerInterface
 
     protected function getMessage(string $message, string $level = LogLevel::INFO, array $tags = [])
     {
-        $tag = null;
-        switch ($level) {
-            case LogLevel::EMERGENCY:
-            case LogLevel::ALERT:
-            case LogLevel::CRITICAL:
-                $tag = 'error';
-                break;
-            case LogLevel::ERROR:
-                $tag = 'fg=red';
-                break;
-            case LogLevel::WARNING:
-            case LogLevel::NOTICE:
-                $tag = 'comment';
-                break;
-            case LogLevel::INFO:
-            default:
-                $tag = 'info';
-        }
+        $tag = match ($level) {
+            LogLevel::EMERGENCY, LogLevel::ALERT, LogLevel::CRITICAL => 'error',
+            LogLevel::ERROR => 'fg=red',
+            LogLevel::WARNING, LogLevel::NOTICE => 'comment',
+            default => 'info',
+        };
 
         $template = sprintf('<%s>[%s]</>', $tag, strtoupper($level));
         $implodedTags = '';

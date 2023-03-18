@@ -32,7 +32,7 @@ $kv = new KV(function () use ($clientFactory, $consulServer) {
 
 ### Consul ACL Token
 
-#### 通過 Header 新增 Token
+#### 透過 Header 新增 Token
 
 您可在呼叫方法時往 Client 傳遞 Key 為 `X-Consul-Token` 的 Header 來設定，如下所示：
 
@@ -55,7 +55,7 @@ $kv = new KV(function () use ($clientFactory, $consulServer) {
 });
 ```
 
-#### 通過 Query 新增 Token
+#### 透過 Query 新增 Token
 
 您也可在呼叫方法時往 $options 引數傳遞 Key 為 `token` 的引數來設定，這樣 Token 會跟隨 Query 一起傳遞到 Server，如下所示：
 

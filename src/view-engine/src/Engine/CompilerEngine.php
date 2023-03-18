@@ -19,36 +19,24 @@ use Throwable;
 class CompilerEngine extends PhpEngine
 {
     /**
-     * The Blade compiler instance.
-     *
-     * @var CompilerInterface
-     */
-    protected $compiler;
-
-    /**
      * A stack of the last compiled templates.
-     *
-     * @var array
      */
-    protected $lastCompiled = [];
+    protected array $lastCompiled = [];
 
     /**
      * Create a new compiler engine instance.
+     *
+     * @param CompilerInterface $compiler the Blade compiler instance
      */
-    public function __construct(CompilerInterface $compiler, Filesystem $files = null)
+    public function __construct(protected CompilerInterface $compiler, ?Filesystem $files = null)
     {
         parent::__construct($files ?: new Filesystem());
-
-        $this->compiler = $compiler;
     }
 
     /**
      * Get the evaluated contents of the view.
-     *
-     * @param string $path
-     * @return string
      */
-    public function get($path, array $data = [])
+    public function get(string $path, array $data = []): string
     {
         $this->lastCompiled[] = $path;
 

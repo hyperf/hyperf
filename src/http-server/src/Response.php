@@ -12,59 +12,62 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\Context\Context;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
+use Hyperf\Contract\Xmlable;
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Server\Chunk\Chunkable;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\HttpServer\Exception\Http\FileException;
 use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Codec\Xml;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
-use Hyperf\Utils\Contracts\Xmlable;
 use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\Macroable;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
+use SplFileInfo;
+use Stringable;
+use Throwable;
+
 use function get_class;
 
 class Response implements PsrResponseInterface, ResponseInterface
 {
     use Macroable;
 
-    /**
-     * @var null|PsrResponseInterface
-     */
-    protected $response;
+    protected ?PsrResponseInterface $response = null;
 
     public function __construct(?PsrResponseInterface $response = null)
     {
         $this->response = $response;
     }
 
-    public function __call($name, $arguments)
+    public function __call($method, $parameters)
     {
         $response = $this->getResponse();
-        if (! method_exists($response, $name)) {
-            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
+        if (! method_exists($response, $method)) {
+            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $method));
         }
-        return $response->{$name}(...$arguments);
+        return $response->{$method}(...$parameters);
     }
 
-    public static function __callStatic($name, $arguments)
+    public static function __callStatic($method, $parameters)
     {
         $response = Context::get(PsrResponseInterface::class);
-        if (! method_exists($response, $name)) {
-            throw new BadMethodCallException(sprintf('Call to undefined static method %s::%s()', self::class, $name));
+        if (! method_exists($response, $method)) {
+            throw new BadMethodCallException(sprintf('Call to undefined static method %s::%s()', self::class, $method));
         }
-        return $response::{$name}(...$arguments);
+        return $response::{$method}(...$parameters);
     }
 
     /**
@@ -96,7 +99,7 @@ class Response implements PsrResponseInterface, ResponseInterface
     /**
      * Format data to a string and return data with content-type:text/plain header.
      *
-     * @param mixed $data will transfer to a string value
+     * @param mixed|Stringable $data will transfer to a string value
      */
     public function raw($data): PsrResponseInterface
     {
@@ -106,7 +109,7 @@ class Response implements PsrResponseInterface, ResponseInterface
     }
 
     /**
-     * Redirect to a url with a status.
+     * Redirect to an url with a status.
      */
     public function redirect(
         string $toUrl,
@@ -135,7 +138,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function download(string $file, string $name = ''): PsrResponseInterface
     {
-        $file = new \SplFileInfo($file);
+        $file = new SplFileInfo($file);
 
         if (! $file->isReadable()) {
             throw new FileException('File must be readable.');
@@ -158,6 +161,7 @@ class Response implements PsrResponseInterface, ResponseInterface
             $ifMatch = $request->getHeaderLine('if-match');
             $ifNoneMatch = $request->getHeaderLine('if-none-match');
             $clientEtags = explode(',', $ifMatch ?: $ifNoneMatch);
+            /* @phpstan-ignore-next-line */
             array_walk($clientEtags, 'trim');
             if (in_array($etag, $clientEtags, true)) {
                 return $this->withStatus(304)->withAddedHeader('content-type', $contentType);
@@ -263,7 +267,7 @@ class Response implements PsrResponseInterface, ResponseInterface
 
     /**
      * Retrieves a comma-separated string of the values for a single header.
-     * This method returns all of the header values of the given
+     * This method returns all the header values of the given
      * case-insensitive header name as a string concatenated together using
      * a comma.
      * NOTE: Not all header values may be appropriately represented using
@@ -292,8 +296,8 @@ class Response implements PsrResponseInterface, ResponseInterface
      *
      * @param string $name case-insensitive header field name
      * @param string|string[] $value header value(s)
-     * @throws \InvalidArgumentException for invalid header names or values
      * @return PsrResponseInterface
+     * @throws InvalidArgumentException for invalid header names or values
      */
     public function withHeader($name, $value)
     {
@@ -311,8 +315,8 @@ class Response implements PsrResponseInterface, ResponseInterface
      *
      * @param string $name case-insensitive header field name to add
      * @param string|string[] $value header value(s)
-     * @throws \InvalidArgumentException for invalid header names or values
      * @return PsrResponseInterface
+     * @throws InvalidArgumentException for invalid header names or values
      */
     public function withAddedHeader($name, $value)
     {
@@ -352,8 +356,8 @@ class Response implements PsrResponseInterface, ResponseInterface
      * new body stream.
      *
      * @param StreamInterface $body body
-     * @throws \InvalidArgumentException when the body is not valid
      * @return PsrResponseInterface
+     * @throws InvalidArgumentException when the body is not valid
      */
     public function withBody(StreamInterface $body)
     {
@@ -387,8 +391,8 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @param string $reasonPhrase the reason phrase to use with the
      *                             provided status code; if none is provided, implementations MAY
      *                             use the defaults as suggested in the HTTP specification
-     * @throws \InvalidArgumentException for invalid status code arguments
      * @return PsrResponseInterface
+     * @throws InvalidArgumentException for invalid status code arguments
      */
     public function withStatus($code, $reasonPhrase = '')
     {
@@ -412,6 +416,16 @@ class Response implements PsrResponseInterface, ResponseInterface
         return $this->getResponse()->getReasonPhrase();
     }
 
+    public function write(string $data): bool
+    {
+        $response = $this->getResponse();
+        if ($response instanceof Chunkable) {
+            return $response->write($data);
+        }
+
+        return false;
+    }
+
     protected function call($name, $arguments)
     {
         $response = $this->getResponse();
@@ -430,7 +444,7 @@ class Response implements PsrResponseInterface, ResponseInterface
     /**
      * Get ETag header according to the checksum of the file.
      */
-    protected function createEtag(\SplFileInfo $file, bool $weak = false): string
+    protected function createEtag(SplFileInfo $file, bool $weak = false): string
     {
         $etag = '';
         if ($weak) {
@@ -455,8 +469,8 @@ class Response implements PsrResponseInterface, ResponseInterface
     {
         try {
             $result = Json::encode($data);
-        } catch (\Throwable $exception) {
-            throw new EncodingException($exception->getMessage(), $exception->getCode());
+        } catch (Throwable $exception) {
+            throw new EncodingException($exception->getMessage(), (int) $exception->getCode(), $exception);
         }
 
         return $result;

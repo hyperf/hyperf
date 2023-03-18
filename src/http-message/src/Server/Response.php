@@ -12,24 +12,24 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Server;
 
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Server\Chunk\Chunkable;
+use Hyperf\HttpMessage\Server\Chunk\HasChunk;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 
-class Response extends \Hyperf\HttpMessage\Base\Response
+class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
 {
-    /**
-     * @var array
-     */
-    protected $cookies = [];
+    use HasChunk;
 
-    /**
-     * @var array
-     */
-    protected $trailers = [];
+    protected array $cookies = [];
+
+    protected array $trailers = [];
+
+    protected ?ConnectionInterface $connection = null;
 
     /**
      * Returns an instance with body content.
      */
-    public function withContent(string $content): self
+    public function withContent(string $content): static
     {
         $new = clone $this;
         $new->stream = new SwooleStream($content);
@@ -39,7 +39,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     /**
      * Returns an instance with specified cookies.
      */
-    public function withCookie(Cookie $cookie): self
+    public function withCookie(Cookie $cookie): static
     {
         $clone = clone $this;
         $clone->cookies[$cookie->getDomain()][$cookie->getPath()][$cookie->getName()] = $cookie;
@@ -58,7 +58,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response
      * Returns an instance with specified trailer.
      * @param string $value
      */
-    public function withTrailer(string $key, $value): self
+    public function withTrailer(string $key, $value): static
     {
         $new = clone $this;
         $new->trailers[$key] = $value;
@@ -79,5 +79,16 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     public function getTrailers(): array
     {
         return $this->trailers;
+    }
+
+    public function setConnection(ConnectionInterface $connection)
+    {
+        $this->connection = $connection;
+        return $this;
+    }
+
+    public function getConnection(): ?ConnectionInterface
+    {
+        return $this->connection;
     }
 }

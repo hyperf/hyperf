@@ -10,17 +10,17 @@ Hyperf 提供了大量便捷的輔助類，這裡會列出一些常用的好用�
 
 #### id(): int
 
-通過靜態方法 `id()` 獲得當前所處的 `協程 ID`，如當前不處於協程環境下，則返回 `-1`。 
+透過靜態方法 `id()` 獲得當前所處的 `協程 ID`，如當前不處於協程環境下，則返回 `-1`。 
 
 #### create(callable $callable): int
 
-通過靜態方法 `create(callable $callable)` 可建立一個協程，還可以通過全域性函式 `co(callable $callable)` 或 `go(callable $callable)` 達到同樣的目的，該方法是對 `Swoole` 建立協程方法的一個封裝，區別在於不會丟擲未捕獲的異常，未捕獲的異常會通過 `Hyperf\Contract\StdoutLoggerInterface` 以 `warning` 等級輸出。
+透過靜態方法 `create(callable $callable)` 可建立一個協程，還可以透過全域性函式 `co(callable $callable)` 或 `go(callable $callable)` 達到同樣的目的，該方法是對 `Swoole` 建立協程方法的一個封裝，區別在於不會丟擲未捕獲的異常，未捕獲的異常會透過 `Hyperf\Contract\StdoutLoggerInterface` 以 `warning` 等級輸出。
 
 #### inCoroutine(): bool
 
-通過靜態方法 `inCoroutine()` 判斷當前是否處於協程環境下。
+透過靜態方法 `inCoroutine()` 判斷當前是否處於協程環境下。
 
-### Hyperf\Utils\Context
+### Hyperf\Context\Context
 
 用於處理協程上下文，本質上是對 `Swoole\Coroutine::getContext()` 方法的一個封裝，但區別在於這裡相容了非協程環境下的執行。
 
@@ -30,8 +30,8 @@ Hyperf 提供了大量便捷的輔助類，這裡會列出一些常用的好用�
 
 ```php
 <?php
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Constants;
 use Hyperf\Utils\Coroutine;
 
 Coroutine::create(function() {

@@ -16,14 +16,8 @@ use Symfony\Component\Serializer\Serializer;
 
 class SymfonyNormalizer implements NormalizerInterface
 {
-    /**
-     * @var Serializer
-     */
-    protected $serializer;
-
-    public function __construct(Serializer $serializer)
+    public function __construct(protected Serializer $serializer)
     {
-        $this->serializer = $serializer;
     }
 
     public function normalize($object)

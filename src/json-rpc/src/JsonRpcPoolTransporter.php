@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\JsonRpc\Exception\ClientException;
 use Hyperf\JsonRpc\Pool\PoolFactory;
@@ -21,22 +22,14 @@ use Hyperf\Pool\Pool;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\Rpc\Exception\RecvException;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Exception\ExceptionThrower;
+use Throwable;
 
 class JsonRpcPoolTransporter implements TransporterInterface
 {
     use RecvTrait;
 
-    /**
-     * @var PoolFactory
-     */
-    protected $factory;
-
-    /**
-     * @var null|LoadBalancerInterface
-     */
-    private $loadBalancer;
+    private ?LoadBalancerInterface $loadBalancer;
 
     /**
      * If $loadBalancer is null, will select a node in $nodes to request,
@@ -44,27 +37,18 @@ class JsonRpcPoolTransporter implements TransporterInterface
      *
      * @var Node[]
      */
-    private $nodes = [];
+    private array $nodes = [];
+
+    private float $connectTimeout;
+
+    private float $recvTimeout;
+
+    private int $retryCount;
 
     /**
-     * @var float
+     * @var int millisecond
      */
-    private $connectTimeout = 5;
-
-    /**
-     * @var float
-     */
-    private $recvTimeout = 5;
-
-    /**
-     * @var int
-     */
-    private $retryCount = 0;
-
-    /**
-     * @var int ms
-     */
-    private $retryInterval = 0;
+    private int $retryInterval;
 
     private $config = [
         'connect_timeout' => 5.0,
@@ -82,9 +66,8 @@ class JsonRpcPoolTransporter implements TransporterInterface
         'retry_interval' => 100,
     ];
 
-    public function __construct(PoolFactory $factory, array $config = [])
+    public function __construct(protected PoolFactory $factory, array $config = [])
     {
-        $this->factory = $factory;
         $this->config = array_replace_recursive($this->config, $config);
 
         $this->recvTimeout = $this->config['recv_timeout'] ?? 5.0;
@@ -102,7 +85,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
                     throw new ClientException('Send data failed. ' . $client->errMsg, $client->errCode);
                 }
                 return $this->recvAndCheck($client, $this->recvTimeout);
-            } catch (\Throwable $throwable) {
+            } catch (Throwable $throwable) {
                 if (isset($client)) {
                     $client->close();
                 }
@@ -141,7 +124,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
                     $connection->reconnect();
                 }
                 return $connection;
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $this->log($exception);
             }
         }

@@ -12,27 +12,23 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Countable;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
-use Hyperf\Utils\Contracts\MessageBag as MessageBagContract;
-use Hyperf\Utils\Contracts\MessageProvider;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
+use Hyperf\Contract\MessageBag as MessageBagContract;
+use Hyperf\Contract\MessageProvider;
 use JsonSerializable;
 
 class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, MessageBagContract, MessageProvider
 {
     /**
-     * All of the registered messages.
-     *
-     * @var array
+     * All the registered messages.
      */
-    protected $messages = [];
+    protected array $messages = [];
 
     /**
      * Default format for message output.
-     *
-     * @var string
      */
-    protected $format = ':message';
+    protected string $format = ':message';
 
     /**
      * Create a new message bag instance.
@@ -92,7 +88,7 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
     }
 
     /**
-     * Determine if messages exist for all of the given keys.
+     * Determine if messages exist for all the given keys.
      *
      * @param null|array|string $key
      */
@@ -155,7 +151,7 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
     }
 
     /**
-     * Get all of the messages from the message bag for a given key.
+     * Get all the messages from the message bag for a given key.
      */
     public function get(string $key, ?string $format = null): array
     {
@@ -178,7 +174,7 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
     }
 
     /**
-     * Get all of the messages for every key in the message bag.
+     * Get all the messages for every key in the message bag.
      */
     public function all(?string $format = null): array
     {
@@ -194,7 +190,7 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
     }
 
     /**
-     * Get all of the unique messages for every key in the message bag.
+     * Get all the unique messages for every key in the message bag.
      */
     public function unique(?string $format = null): array
     {
@@ -286,7 +282,7 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
     /**
      * Convert the object into something JSON serializable.
      */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }
@@ -304,7 +300,7 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
      */
     protected function isUnique(string $key, string $message): bool
     {
-        $messages = (array) $this->messages;
+        $messages = $this->messages;
 
         return ! isset($messages[$key]) || ! in_array($message, $messages[$key]);
     }
@@ -335,7 +331,7 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
         return collect($messages)
             ->map(function ($message) use ($format, $messageKey) {
                 // We will simply spin through the given messages and transform each one
-                // replacing the :message place holder with the real message allowing
+                // replacing the :message placeholder with the real message allowing
                 // the messages to be easily formatted to each developer's desires.
                 return str_replace([':message', ':key'], [$message, $messageKey], $format);
             })->all();

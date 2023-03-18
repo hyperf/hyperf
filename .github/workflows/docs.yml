@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - release-*
-      - docs-*
+      - docs*
 
 jobs:
   translate:
@@ -16,7 +16,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.0
           tools: phpize
           extensions: swoole, redis
           ini-values: extension=opencc

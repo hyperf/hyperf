@@ -662,8 +662,8 @@ class EtcdClient
      * @param string $uri
      * @param array $params 请求参数
      * @param array $options 可选参数
-     * @throws \GuzzleHttp\Exception\BadResponseException
      * @return array
+     * @throws \GuzzleHttp\Exception\BadResponseException
      */
     protected function request($uri, array $params = [], array $options = [])
     {
@@ -748,7 +748,7 @@ class EtcdClient
         }
 
         $map = [];
-        foreach ($data as $index => $value) {
+        foreach ($data as $value) {
             $key = $value['key'];
             $map[$key] = $value['value'];
         }

@@ -14,14 +14,10 @@ namespace Hyperf\HttpServer\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Controller extends AbstractAnnotation
 {
-    public function __construct($prefix, $server, $options)
+    public function __construct(string $prefix = '', string $server = 'http', array $options = [])
     {
     }
 }

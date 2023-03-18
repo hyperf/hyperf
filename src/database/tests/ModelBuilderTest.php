@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
+use BadMethodCallException;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Closure;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
@@ -390,7 +392,8 @@ class ModelBuilderTest extends TestCase
         $builder->getModel()->shouldReceive('newFromBuilder')->with(['created_at' => '2010-01-01 00:00:00'])->andReturn(new ModelBuilderTestPluckDatesStub(['created_at' => '2010-01-01 00:00:00']));
         $builder->getModel()->shouldReceive('newFromBuilder')->with(['created_at' => '2011-01-01 00:00:00'])->andReturn(new ModelBuilderTestPluckDatesStub(['created_at' => '2011-01-01 00:00:00']));
 
-        $this->assertEquals(['date_2010-01-01 00:00:00', 'date_2011-01-01 00:00:00'], $builder->pluck('created_at')->all());
+        [$date1, $date2] = $builder->pluck('created_at')->all();
+        $this->assertEquals(['2010-01-01 00:00:00', '2011-01-01 00:00:00'], [$date1->toDateTimeString(), $date2->toDateTimeString()]);
     }
 
     public function testPluckWithoutModelGetterJustReturnsTheAttributesFoundInDatabase()
@@ -441,7 +444,7 @@ class ModelBuilderTest extends TestCase
 
     public function testMissingStaticMacrosThrowsProperException()
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Call to undefined method Hyperf\Database\Model\Builder::missingMacro()');
         Builder::missingMacro();
     }
@@ -1171,6 +1174,29 @@ class ModelBuilderTest extends TestCase
         $builder->withCasts(['foo' => 'bar']);
     }
 
+    public function testMixin()
+    {
+        \Hyperf\Database\Model\Builder::macro('testAbc', fn () => 'abc');
+        $this->assertEquals('abc', ModelStub::testAbc());
+
+        \Hyperf\Database\Model\Builder::mixin(new UserMixin());
+
+        $this->assertInstanceOf(\Hyperf\Database\Model\Builder::class, ModelStub::whereFoo());
+        $this->assertInstanceOf(\Hyperf\Database\Model\Builder::class, ModelStub::whereBar());
+    }
+
+    public function testClone()
+    {
+        $builder = \HyperfTest\Database\Stubs\ModelStub::query();
+        $clone = $builder->clone();
+
+        $clone->select(['id']);
+
+        $this->assertNotEquals($builder->toSql(), $clone->toSql());
+        $this->assertSame('select * from "stub"', $builder->toSql());
+        $this->assertSame('select "id" from "stub"', $clone->toSql());
+    }
+
     protected function mockConnectionForModel($model, $database)
     {
         $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';
@@ -1206,9 +1232,22 @@ class ModelBuilderTest extends TestCase
     }
 }
 
+class UserMixin
+{
+    public function whereFoo()
+    {
+        return fn () => $this;
+    }
+
+    public function whereBar()
+    {
+        return fn () => $this;
+    }
+}
+
 class ModelBuilderTestStub extends Model
 {
-    protected $table = 'table';
+    protected ?string $table = 'table';
 }
 
 class ModelBuilderTestScopeStub extends Model
@@ -1223,7 +1262,7 @@ class ModelBuilderTestNestedStub extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'table';
+    protected ?string $table = 'table';
 
     public function scopeEmpty($query)
     {
@@ -1233,7 +1272,7 @@ class ModelBuilderTestNestedStub extends Model
 
 class ModelBuilderTestPluckStub
 {
-    protected $attributes;
+    protected array $attributes;
 
     public function __construct($attributes)
     {
@@ -1248,16 +1287,16 @@ class ModelBuilderTestPluckStub
 
 class ModelBuilderTestPluckDatesStub extends Model
 {
-    protected $attributes;
+    protected array $attributes;
 
     public function __construct($attributes)
     {
         $this->attributes = $attributes;
     }
 
-    protected function asDateTime($value)
+    protected function asDateTime(mixed $value): CarbonInterface
     {
-        return 'date_' . $value;
+        return Carbon::make($value);
     }
 }
 
@@ -1298,7 +1337,7 @@ class ModelBuilderTestModelFarRelatedStub extends Model
 
 class ModelBuilderTestModelSelfRelatedStub extends Model
 {
-    protected $table = 'self_related_stubs';
+    protected ?string $table = 'self_related_stubs';
 
     public function parentFoo()
     {
@@ -1335,5 +1374,5 @@ class ModelBuilderTestStubWithoutTimestamp extends Model
 {
     public const UPDATED_AT = null;
 
-    protected $table = 'table';
+    protected ?string $table = 'table';
 }

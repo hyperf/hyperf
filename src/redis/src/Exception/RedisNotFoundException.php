@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Redis\Exception;
 
-class RedisNotFoundException extends \RuntimeException
+use RuntimeException;
+
+class RedisNotFoundException extends RuntimeException
 {
 }

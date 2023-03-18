@@ -37,7 +37,9 @@ use phpDocumentor\Reflection\Types\Self_;
 use phpDocumentor\Reflection\Types\String_;
 use Psr\Http\Message\UploadedFileInterface;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionMethod;
+use ReflectionParameter;
 use TheCodingMachine\GraphQLite\Annotations\SourceField;
 use TheCodingMachine\GraphQLite\FieldNotFoundException;
 use TheCodingMachine\GraphQLite\FromSourceFieldsInterface;
@@ -59,6 +61,7 @@ use TheCodingMachine\GraphQLite\Types\DateTimeType;
 use TheCodingMachine\GraphQLite\Types\ID;
 use TheCodingMachine\GraphQLite\Types\TypeResolver;
 use TheCodingMachine\GraphQLite\Types\UnionType;
+
 use function array_merge;
 use function get_parent_class;
 
@@ -131,8 +134,8 @@ class FieldsBuilder
 
     /**
      * @param object $controller
-     * @throws \ReflectionException
      * @return QueryField[]
+     * @throws ReflectionException
      */
     public function getQueries($controller): array
     {
@@ -141,8 +144,8 @@ class FieldsBuilder
 
     /**
      * @param object $controller
-     * @throws \ReflectionException
      * @return QueryField[]
+     * @throws ReflectionException
      */
     public function getMutations($controller): array
     {
@@ -157,7 +160,7 @@ class FieldsBuilder
     {
         $fieldAnnotations = $this->getFieldsByAnnotations($controller, Field::class, true);
 
-        $refClass = new \ReflectionClass($controller);
+        $refClass = new ReflectionClass($controller);
 
         /** @var SourceField[] $sourceFields */
         $sourceFields = $this->annotationReader->getSourceFields($refClass);
@@ -188,7 +191,7 @@ class FieldsBuilder
     {
         $fieldAnnotations = $this->getFieldsByAnnotations(null, Field::class, false, $className);
 
-        $refClass = new \ReflectionClass($className);
+        $refClass = new ReflectionClass($className);
 
         /** @var SourceField[] $sourceFields */
         $sourceFields = $this->annotationReader->getSourceFields($refClass);
@@ -213,7 +216,7 @@ class FieldsBuilder
     public function getInputFields(ReflectionMethod $refMethod): array
     {
         $docBlockObj = $this->cachedDocBlockFactory->getDocBlock($refMethod);
-        //$docBlockComment = $docBlockObj->getSummary()."\n".$docBlockObj->getDescription()->render();
+        // $docBlockComment = $docBlockObj->getSummary()."\n".$docBlockObj->getDescription()->render();
 
         $parameters = $refMethod->getParameters();
 
@@ -223,16 +226,16 @@ class FieldsBuilder
     /**
      * @param object $controller
      * @param bool $injectSource whether to inject the source object or not as the first argument
-     * @throws CannotMapTypeExceptionInterface
-     * @throws \ReflectionException
      * @return QueryField[]
+     * @throws CannotMapTypeExceptionInterface
+     * @throws ReflectionException
      */
     private function getFieldsByAnnotations($controller, string $annotationName, bool $injectSource, ?string $sourceClassName = null): array
     {
         if ($sourceClassName !== null) {
-            $refClass = new \ReflectionClass($sourceClassName);
+            $refClass = new ReflectionClass($sourceClassName);
         } else {
-            $refClass = new \ReflectionClass($controller);
+            $refClass = new ReflectionClass($controller);
         }
 
         $queryList = [];
@@ -316,7 +319,7 @@ class FieldsBuilder
     }
 
     /**
-     * @return GraphQLType&OutputType
+     * @return GraphQLType|OutputType
      */
     private function mapReturnType(ReflectionMethod $refMethod, DocBlock $docBlockObj): GraphQLType
     {
@@ -332,7 +335,7 @@ class FieldsBuilder
         $docBlockReturnType = $this->getDocBlocReturnType($docBlockObj, $refMethod);
 
         try {
-            /** @var GraphQLType&OutputType $type */
+            /** @var GraphQLType|OutputType $type */
             $type = $this->mapType($phpdocType, $docBlockReturnType, $returnType ? $returnType->allowsNull() : false, false);
         } catch (TypeMappingException $e) {
             throw TypeMappingException::wrapWithReturnInfo($e, $refMethod);
@@ -358,10 +361,10 @@ class FieldsBuilder
 
     /**
      * @param array<int, SourceFieldInterface> $sourceFields
+     * @return QueryField[]
      * @throws CannotMapTypeException
      * @throws CannotMapTypeExceptionInterface
-     * @throws \ReflectionException
-     * @return QueryField[]
+     * @throws ReflectionException
      */
     private function getQueryFieldsFromSourceFields(array $sourceFields, ReflectionClass $refClass): array
     {
@@ -380,7 +383,7 @@ class FieldsBuilder
             throw MissingAnnotationException::missingTypeExceptionToUseSourceField();
         }
 
-        $objectRefClass = new \ReflectionClass($objectClass);
+        $objectRefClass = new ReflectionClass($objectClass);
 
         $oldDeclaringClass = null;
         $context = null;
@@ -483,9 +486,9 @@ class FieldsBuilder
     /**
      * Note: there is a bug in $refMethod->allowsNull that forces us to use $standardRefMethod->allowsNull instead.
      *
-     * @param \ReflectionParameter[] $refParameters
-     * @throws MissingTypeHintException
+     * @param ReflectionParameter[] $refParameters
      * @return array[] An array of ['type'=>Type, 'defaultValue'=>val]
+     * @throws MissingTypeHintException
      */
     private function mapParameters(array $refParameters, DocBlock $docBlock): array
     {
@@ -681,8 +684,8 @@ class FieldsBuilder
      * Casts a Type to a GraphQL type.
      * Does not deal with nullable.
      *
-     * @throws CannotMapTypeExceptionInterface
      * @return GraphQLType (InputType&GraphQLType)|(OutputType&GraphQLType)
+     * @throws CannotMapTypeExceptionInterface
      */
     private function toGraphQlType(Type $type, ?GraphQLType $subType, bool $mapToInputType): GraphQLType
     {
@@ -715,7 +718,7 @@ class FieldsBuilder
                     if ($mapToInputType) {
                         return $this->typeMapper->mapClassToInputType($className);
                     }
-                        return $this->typeMapper->mapClassToInterfaceOrType($className, $subType);
+                    return $this->typeMapper->mapClassToInterfaceOrType($className, $subType);
             }
         } elseif ($type instanceof Array_) {
             return GraphQLType::listOf(GraphQLType::nonNull($this->toGraphQlType($type->getValueType(), $subType, $mapToInputType)));

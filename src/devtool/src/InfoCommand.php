@@ -17,20 +17,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @Command
- */
+#[Command]
 class InfoCommand extends SymfonyCommand
 {
-    /**
-     * @var Info
-     */
-    private $info;
-
-    public function __construct(Info $info)
+    public function __construct(private Info $info)
     {
         parent::__construct('info');
-        $this->info = $info;
     }
 
     protected function configure()
@@ -43,6 +35,7 @@ class InfoCommand extends SymfonyCommand
         $type = $input->getArgument('type');
         if (! $this->info->has($type)) {
             $output->writeln(sprintf('<error>Error</error> Info type [%s] not exist.', $type));
+            return 0;
         }
         $adapter = $this->info->get($type);
         $adapter->execute($input, $output);

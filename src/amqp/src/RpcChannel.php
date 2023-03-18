@@ -17,40 +17,20 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 class RpcChannel
 {
-    /**
-     * @var AMQPChannel
-     */
-    protected $channel;
+    protected ?Channel $chan = null;
 
-    /**
-     * @var null|Channel
-     */
-    protected $chan;
+    protected string $correlationId;
 
-    /**
-     * @var string
-     */
-    protected $correlationId;
+    protected ?string $queue = null;
 
-    /**
-     * @var null|string
-     */
-    protected $queue;
-
-    public function __construct(AMQPChannel $channel)
+    public function __construct(protected AMQPChannel $channel)
     {
-        $this->channel = $channel;
         $this->correlationId = uniqid();
     }
 
-    /**
-     * @return static
-     */
-    public function open()
+    public function open(): static
     {
-        if ($this->chan) {
-            $this->chan->close();
-        }
+        $this->chan?->close();
         $this->chan = new Channel(1);
         return $this;
     }
@@ -75,7 +55,7 @@ class RpcChannel
         return $this->queue;
     }
 
-    public function setQueue(?string $queue): RpcChannel
+    public function setQueue(?string $queue): static
     {
         $this->queue = $queue;
         return $this;
@@ -93,10 +73,7 @@ class RpcChannel
 
     public function close()
     {
-        if ($this->chan) {
-            $this->chan->close();
-        }
-
+        $this->chan?->close();
         $this->channel->close();
     }
 }

@@ -17,14 +17,8 @@ use Swoole\Server;
 
 class ReceiveCallback
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(protected EventDispatcherInterface $dispatcher)
     {
-        $this->dispatcher = $eventDispatcher;
     }
 
     public function onReceive(Server $server, int $fd, int $reactorId, $data)

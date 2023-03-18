@@ -15,6 +15,7 @@ use HyperfTest\Consul\Stub\Client;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionMethod;
 
 /**
  * @internal
@@ -28,7 +29,7 @@ class ClientTest extends TestCase
     private $client;
 
     /**
-     * @var \ReflectionMethod
+     * @var ReflectionMethod
      */
     private $method;
 

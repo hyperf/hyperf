@@ -13,6 +13,7 @@ namespace HyperfTest\Session;
 
 use Carbon\Carbon;
 use Hyperf\Config\Config;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\HttpMessage\Cookie\Cookie;
@@ -23,7 +24,6 @@ use Hyperf\Session\Handler\FileHandler;
 use Hyperf\Session\Middleware\SessionMiddleware;
 use Hyperf\Session\Session;
 use Hyperf\Session\SessionManager;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use HyperfTest\Session\Stub\FooHandler;
@@ -33,6 +33,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
+use SessionHandlerInterface;
 
 /**
  * @internal
@@ -148,7 +149,7 @@ class SessionMiddlewareTest extends TestCase
         $method->setAccessible(true);
 
         $request = new Request('GET', new Uri('http://hyperf.io'));
-        $session = new Session('test', Mockery::mock(\SessionHandlerInterface::class));
+        $session = new Session('test', Mockery::mock(SessionHandlerInterface::class));
         $response = new Response();
         /** @var Response $response */
         $response = $method->invokeArgs($middleware, [$request, $response, $session]);
@@ -174,7 +175,7 @@ class SessionMiddlewareTest extends TestCase
         $method->setAccessible(true);
 
         $request = new Request('GET', new Uri('http://hyperf.io'));
-        $session = new Session('test', Mockery::mock(\SessionHandlerInterface::class));
+        $session = new Session('test', Mockery::mock(SessionHandlerInterface::class));
         $response = new Response();
         /** @var Response $response */
         $response = $method->invokeArgs($middleware, [$request, $response, $session]);
@@ -200,7 +201,7 @@ class SessionMiddlewareTest extends TestCase
         $method->setAccessible(true);
 
         $request = new Request('GET', new Uri('http://hyperf.io'));
-        $session = new Session('test', Mockery::mock(\SessionHandlerInterface::class));
+        $session = new Session('test', Mockery::mock(SessionHandlerInterface::class));
         $response = new Response();
         /** @var Response $response */
         $response = $method->invokeArgs($middleware, [$request, $response, $session]);
@@ -221,17 +222,17 @@ class SessionMiddlewareTest extends TestCase
         $reflectionClass = new ReflectionClass(SessionMiddleware::class);
         $reflectionMethod = $reflectionClass->getMethod('fullUrl');
         $reflectionMethod->setAccessible(true);
-        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar')))]);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', new Uri($path = '/foo/bar'))]);
         $this->assertSame($path, $result);
-        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar?baz=1')))]);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', new Uri($path = '/foo/bar?baz=1'))]);
         $this->assertSame($path, $result);
-        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar?baz=1&bar=foo')))]);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', new Uri($path = '/foo/bar?baz=1&bar=foo'))]);
         $this->assertSame($path, $result);
-        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar/')))]);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', new Uri($path = '/foo/bar/'))]);
         $this->assertSame($path, $result);
-        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar/?baz=1')))]);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', new Uri($path = '/foo/bar/?baz=1'))]);
         $this->assertSame($path, $result);
-        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar/?baz=1&bar=foo')))]);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', new Uri($path = '/foo/bar/?baz=1&bar=foo'))]);
         $this->assertSame($path, $result);
     }
 
@@ -246,7 +247,7 @@ class SessionMiddlewareTest extends TestCase
         $method = $ref->getMethod('addCookieToResponse');
         $method->setAccessible(true);
         $request = new Request('GET', new Uri('http://hyperf.io'));
-        $session = new Session('test', Mockery::mock(\SessionHandlerInterface::class), $id = Str::random(40));
+        $session = new Session('test', Mockery::mock(SessionHandlerInterface::class), $id = Str::random(40));
         $response = new Response();
         /** @var Response $response */
         $response = $method->invokeArgs($middleware, [$request, $response, $session]);
@@ -255,7 +256,7 @@ class SessionMiddlewareTest extends TestCase
         $setCookieString = $response->getCookies()['hyperf.io']['/']['test']->__toString();
 
         $request = new Request('GET', new Uri('http://hyperf.io'));
-        $session = new Session('test', Mockery::mock(\SessionHandlerInterface::class), $id);
+        $session = new Session('test', Mockery::mock(SessionHandlerInterface::class), $id);
         $response = Mockery::mock(ResponseInterface::class);
         $response->shouldReceive('withHeader')->once()->andReturnUsing(function ($key, $value) use ($setCookieString, $response) {
             $this->assertSame('Set-Cookie', $key);

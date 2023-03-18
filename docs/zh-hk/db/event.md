@@ -10,14 +10,14 @@
 | :--------: | :----: |
 | Hyperf\Database\Events\QueryExecuted| Query 語句執行後 |
 | Hyperf\Database\Events\StatementPrepared| SQL 語句 prepared 後 |
-| Hyperf\Database\Events\TransactionBeginning| 事務開啟後 |
+| Hyperf\Database\Events\TransactionBeginning| 事務開啓後 |
 | Hyperf\Database\Events\TransactionCommitted| 事務提交後 |
 | Hyperf\Database\Events\TransactionRolledBack| 事務回滾後 |
 
 ### SQL 執行監聽器
 
 根據上述的 ORM 運行事件，接下來我們來實現一個記錄 SQL 的監聽器，達到在每次執行 SQL 時記錄下來並輸出到日誌上。
-首先我們定義好 `DbQueryExecutedListener` ，實現 `Hyperf\Event\Contract\ListenerInterface` 接口並對類定義 `Hyperf\Event\Annotation\Listener` 註解，這樣 Hyperf 就會在應用啟動時自動把該監聽器註冊到事件調度器中，並在事件觸發時執行監聽邏輯，示例代碼如下：
+首先我們定義好 `DbQueryExecutedListener` ，實現 `Hyperf\Event\Contract\ListenerInterface` 接口並對類定義 `Hyperf\Event\Annotation\Listener` 註解，這樣 Hyperf 就會在應用啓動時自動把該監聽器註冊到事件調度器中，並在事件觸發時執行監聽邏輯，示例代碼如下：
 
 ```php
 <?php
@@ -35,15 +35,10 @@ use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
-/**
- * @Listener
- */
+#[Listener]
 class DbQueryExecutedListener implements ListenerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(ContainerInterface $container)
     {
@@ -100,6 +95,7 @@ class DbQueryExecutedListener implements ListenerInterface
 |   restored   | 軟刪除數據恢復後 |    否    |                                  |
 |   deleting   |    數據刪除時   |    是    |                                  |
 |   deleted    |    數據刪除後   |    否    |                                  |
+| forceDeleting |  數據強制刪除時  |    是    |                                  |
 | forceDeleted |  數據強制刪除後  |    否    |                                  |
 
 針對某個模型的事件使用十分簡單，只需要在模型中增加對應的方法即可。例如下方保存數據時，觸發 `saving` 事件，主動覆寫 `created_at` 字段。
@@ -164,9 +160,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\ModelCache\CacheableInterface;
 
-/**
- * @Listener
- */
+#[Listener]
 class DeleteCacheListener implements ListenerInterface
 {
     public function listen(): array

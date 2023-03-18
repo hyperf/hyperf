@@ -99,7 +99,7 @@ return [
 
 ## `config.php` 與 `autoload` 資料夾內的配置檔案的關係
 
-`config.php` 與 `autoload` 資料夾內的配置檔案在服務啟動時都會被掃描並注入到 `Hyperf\Contract\ConfigInterface` 對應的物件中，配置的結構為一個鍵值對的大陣列，兩種配置形式不同的在於 `autoload`  內配置檔案的檔名會作為第一層 鍵(Key) 存在，而 `config.php` 內的則以您定義的為第一層，我們通過下面的例子來演示一下。   
+`config.php` 與 `autoload` 資料夾內的配置檔案在服務啟動時都會被掃描並注入到 `Hyperf\Contract\ConfigInterface` 對應的物件中，配置的結構為一個鍵值對的大陣列，兩種配置形式不同的在於 `autoload`  內配置檔案的檔名會作為第一層 鍵(Key) 存在，而 `config.php` 內的則以您定義的為第一層，我們透過下面的例子來演示一下。   
 我們假設存在一個 `config/autoload/client.php` 檔案，檔案內容如下：
 ```php
 return [
@@ -131,9 +131,9 @@ return [
 
 ### 獲取配置
 
-Config 元件提供了三種方式獲取配置，通過 `Hyperf\Config\Config` 物件獲取、通過 `@Value` 註解獲取和通過 `config(string $key, $default)` 函式獲取。
+Config 元件提供了三種方式獲取配置，透過 `Hyperf\Config\Config` 物件獲取、透過 `#[Value]` 註解獲取和透過 `config(string $key, $default)` 函式獲取。
 
-#### 通過 Config 物件獲取配置
+#### 透過 Config 物件獲取配置
 
 這種方式要求你已經拿到了 `Config` 物件的例項，預設物件為 `Hyperf\Config\Config`，注入例項的細節可查閱 [依賴注入](zh-tw/di.md) 章節；
 
@@ -141,22 +141,20 @@ Config 元件提供了三種方式獲取配置，通過 `Hyperf\Config\Config` �
 /**
  * @var \Hyperf\Contract\ConfigInterface
  */
-// 通過 get(string $key, $default): mixed 方法獲取 $key 所對應的配置，$key 值可以通過 . 連線符定位到下級陣列，$default 則是當對應的值不存在時返回的預設值
+// 透過 get(string $key, $default): mixed 方法獲取 $key 所對應的配置，$key 值可以透過 . 連線符定位到下級陣列，$default 則是當對應的值不存在時返回的預設值
 $config->get($key，$default);
 ```
 
-#### 通過 `@Value` 註解獲取配置
+#### 透過 `#[Value]` 註解獲取配置
 
-這種方式要求註解的應用物件必須是通過 [hyperf/di](https://github.com/hyperf/di) 元件建立的，注入例項的細節可查閱 [依賴注入](zh-tw/di.md) 章節，示例中我們假設 `IndexController` 就是一個已經定義好的 `Controller` 類，`Controller` 類一定是由 `DI` 容器創建出來的；   
-`@Value()` 內的字串則對應到 `$config->get($key)` 內的 `$key` 引數，在建立該物件例項時，對應的配置會自動注入到定義的類屬性中。
+這種方式要求註解的應用物件必須是透過 [hyperf/di](https://github.com/hyperf/di) 元件建立的，注入例項的細節可查閱 [依賴注入](zh-tw/di.md) 章節，示例中我們假設 `IndexController` 就是一個已經定義好的 `Controller` 類，`Controller` 類一定是由 `DI` 容器創建出來的；   
+`#[Value]` 內的字串則對應到 `$config->get($key)` 內的 `$key` 引數，在建立該物件例項時，對應的配置會自動注入到定義的類屬性中。
 
 ```php
 class IndexController
 {
     
-    /**
-     * @Value("config.key")
-     */
+    #[Value("config.key")]
     private $configValue;
     
     public function index()
@@ -167,9 +165,9 @@ class IndexController
 }
 ```
 
-#### 通過 config 函式獲取
+#### 透過 config 函式獲取
 
-在任意地方可以通過 `config(string $key, $default)` 函式獲取對應的配置，但這樣的使用方式也就意味著您對 [hyperf/config](https://github.com/hyperf/config) 和 [hyperf/utils](https://github.com/hyperf/utils) 元件是強依賴的。
+在任意地方可以透過 `config(string $key, $default)` 函式獲取對應的配置，但這樣的使用方式也就意味著您對 [hyperf/config](https://github.com/hyperf/config) 和 [hyperf/utils](https://github.com/hyperf/utils) 元件是強依賴的。
 
 ### 判斷配置是否存在
 
@@ -177,7 +175,7 @@ class IndexController
 /**
  * @var \Hyperf\Contract\ConfigInterface
  */
-// 通過 has(): bool 方法判斷對應的 $key 值是否存在於配置中，$key 值可以通過 . 連線符定位到下級陣列
+// 透過 has(): bool 方法判斷對應的 $key 值是否存在於配置中，$key 值可以透過 . 連線符定位到下級陣列
 $config->has($key);
 ```
 
@@ -185,9 +183,9 @@ $config->has($key);
 
 對於不同的執行環境使用不同的配置是一種常見的需求，比如在測試環境和生產環境的 Redis 配置不一樣，而生產環境的配置又不能提交到原始碼版本管理系統中以免資訊洩露。   
 
-在 Hyperf 裡我們提供了環境變數這一解決方案，通過利用 [vlucas/phpdotenv](https://github.com/vlucas/phpdotenv) 提供的環境變數解析功能，以及 `env()` 函式來獲取環境變數的值，這一需求解決起來是相當的容易。   
+在 Hyperf 裡我們提供了環境變數這一解決方案，透過利用 [vlucas/phpdotenv](https://github.com/vlucas/phpdotenv) 提供的環境變數解析功能，以及 `env()` 函式來獲取環境變數的值，這一需求解決起來是相當的容易。   
 
-在新安裝好的 Hyperf 應用中，其根目錄會包含一個 `.env.example` 檔案。如果是通過 Composer 安裝的 Hyperf，該檔案會自動基於 `.env.example` 複製一個新檔案並命名為 `.env`。否則，需要你手動更改一下檔名。   
+在新安裝好的 Hyperf 應用中，其根目錄會包含一個 `.env.example` 檔案。如果是透過 Composer 安裝的 Hyperf，該檔案會自動基於 `.env.example` 複製一個新檔案並命名為 `.env`。否則，需要你手動更改一下檔名。   
 
 您的 `.env` 檔案不應該提交到應用的原始碼版本管理系統中，因為每個使用你的應用的開發人員 / 伺服器可能需要有一個不同的環境配置。此外，在入侵者獲得你的原始碼倉庫的訪問權的情況下，這會導致嚴重的安全問題，因為所有敏感的資料都被一覽無餘了。   
 
@@ -208,7 +206,7 @@ $config->has($key);
 | null    | (null) null  |
 | (null)  | (null) null  |
 
-如果你需要使用包含空格或包含其他特殊字元的環境變數，可以通過將值括在雙引號中來實現，比如：
+如果你需要使用包含空格或包含其他特殊字元的環境變數，可以透過將值括在雙引號中來實現，比如：
 
 ```dotenv
 APP_NAME="Hyperf Skeleton"
@@ -216,7 +214,7 @@ APP_NAME="Hyperf Skeleton"
 
 ### 讀取環境變數
 
-我們在上面也有提到環境變數可以通過 `env()` 函式獲取，在應用開發中，環境變數只應作為配置的一個值，通過環境變數的值來覆蓋配置的值，對於應用層來說應 **只使用配置**，而不是直接使用環境變數。   
+我們在上面也有提到環境變數可以透過 `env()` 函式獲取，在應用開發中，環境變數只應作為配置的一個值，透過環境變數的值來覆蓋配置的值，對於應用層來說應 **只使用配置**，而不是直接使用環境變數。   
 我們舉個合理使用的例子：
 
 ```php
@@ -228,8 +226,8 @@ return [
 
 ## 釋出元件配置
 
-Hyperf 採用元件化設計，在新增一些元件進來骨架專案後，我們通常會需要為新新增的元件建立對應的配置檔案，以滿足對元件的使用。Hyperf 為元件提供了一個 `元件配置釋出機制`，通過該機制，您只需通過一個 `vendor:publish` 命令即可將元件預設的配置檔案模板釋出到骨架專案中來。
-比如我們希望新增一個 `hyperf/foo` 元件 (該元件實際並不存在，僅示例) 以及該元件對應的配置檔案，在執行 `composer require hyperf/foo` 安裝之後，您可通過執行 `php bin/hyperf.php vendor:publish hyperf/foo` 來將元件預設的配置檔案，釋出到骨架專案的 `config/autoload` 資料夾內，具體要釋出的內容，由元件來定義提供。 
+Hyperf 採用元件化設計，在新增一些元件進來骨架專案後，我們通常會需要為新新增的元件建立對應的配置檔案，以滿足對元件的使用。Hyperf 為元件提供了一個 `元件配置釋出機制`，透過該機制，您只需透過一個 `vendor:publish` 命令即可將元件預設的配置檔案模板釋出到骨架專案中來。
+比如我們希望新增一個 `hyperf/foo` 元件 (該元件實際並不存在，僅示例) 以及該元件對應的配置檔案，在執行 `composer require hyperf/foo` 安裝之後，您可透過執行 `php bin/hyperf.php vendor:publish hyperf/foo` 來將元件預設的配置檔案，釋出到骨架專案的 `config/autoload` 資料夾內，具體要釋出的內容，由元件來定義提供。 
 
 ## 配置中心
 

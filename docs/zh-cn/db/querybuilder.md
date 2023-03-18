@@ -44,9 +44,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use PDO;
 
-/**
- * @Listener
- */
+#[Listener]
 class FetchModeListener implements ListenerInterface
 {
     public function listen(): array
@@ -100,7 +98,7 @@ use Hyperf\DbConnection\Db;
 $names = Db::table('user')->pluck('name');
 
 foreach ($names as $name) {
-    echo $names;
+    echo $name;
 }
 
 ```
@@ -384,6 +382,18 @@ $users = Db::table('users')->where('name', 'like', 'T%')->get();
 $users = Db::table('user')->where([
     ['status', '=', '1'],
     ['gender', '=', '1'],
+])->get();
+```
+
+你还可以使用闭包的方式创建查询数组
+
+```php
+$users = Db::table('user')->where([
+    ['status', '=', '1'],
+    ['gender', '=', '1'],
+    [function ($query) {
+        $query->where('type', 3)->orWhere('type', 6);
+    }]
 ])->get();
 ```
 

@@ -11,12 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Dag;
 
+use Closure;
+
 class Vertex
 {
-    /**
-     * @var string
-     */
-    public $key;
+    public ?string $key = null;
 
     /**
      * @var callable
@@ -26,16 +25,16 @@ class Vertex
     /**
      * @var array<Vertex>
      */
-    public $parents = [];
+    public array $parents = [];
 
     /**
      * @var array<Vertex>
      */
-    public $children = [];
+    public array $children = [];
 
     public static function make(callable $job, string $key = null): self
     {
-        $closure = \Closure::fromCallable($job);
+        $closure = Closure::fromCallable($job);
         if ($key === null) {
             $key = spl_object_hash($closure);
         }

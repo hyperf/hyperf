@@ -67,11 +67,11 @@ return [
 php bin/hyperf.php gen:amqp-producer DemoProducer
 ```
 
-在 DemoProducer 文件中，我们可以修改 `@Producer` 注解对应的字段来替换对应的 `exchange` 和 `routingKey`。
+在 DemoProducer 文件中，我们可以修改 `#[Producer]` 注解对应的字段来替换对应的 `exchange` 和 `routingKey`。
 其中 `payload` 就是最终投递到消息队列中的数据，所以我们可以随意改写 `__construct` 方法，只要最后赋值 `payload` 即可。
 示例如下。
 
-> 使用 `@Producer` 注解时需 `use Hyperf\Amqp\Annotation\Producer;` 命名空间；   
+> 使用 `#[Producer]` 注解时需 `use Hyperf\Amqp\Annotation\Producer;` 命名空间；   
 
 ```php
 <?php
@@ -84,9 +84,7 @@ use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\Message\ProducerMessage;
 use App\Models\User;
 
-/**
- * @Producer(exchange="hyperf", routingKey="hyperf")
- */
+#[Producer(exchange: "hyperf", routingKey: "hyperf")]
 class DemoProducer extends ProducerMessage
 {
     public function __construct($id)
@@ -126,11 +124,11 @@ $result = $producer->produce($message);
 php bin/hyperf.php gen:amqp-consumer DemoConsumer
 ```
 
-在 DemoConsumer 文件中，我们可以修改 `@Consumer` 注解对应的字段来替换对应的 `exchange`、`routingKey` 和 `queue`。
+在 DemoConsumer 文件中，我们可以修改 `#[Consumer]` 注解对应的字段来替换对应的 `exchange`、`routingKey` 和 `queue`。
 其中 `$data` 就是解析后的消息数据。
 示例如下。
 
-> 使用 `@Consumer` 注解时需 `use Hyperf\Amqp\Annotation\Consumer;` 命名空间；   
+> 使用 `#[Consumer]` 注解时需 `use Hyperf\Amqp\Annotation\Consumer;` 命名空间；   
 
 ```php
 <?php
@@ -144,9 +142,7 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1)
- */
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
 class DemoConsumer extends ConsumerMessage
 {
     public function consumeMessage($data, AMQPMessage $message): string
@@ -159,10 +155,10 @@ class DemoConsumer extends ConsumerMessage
 
 ### 禁止消费进程自启
 
-默认情况下，使用了 `@Consumer` 注解后，框架会自动创建子进程启动消费者，并且会在子进程异常退出后，重新拉起。
+默认情况下，使用了 `#[Consumer]` 注解后，框架会自动创建子进程启动消费者，并且会在子进程异常退出后，重新拉起。
 如果出于开发阶段，进行消费者调试时，可能会因为消费其他消息而导致调试不便。
 
-这种情况，只需要在 `@Consumer` 注解中配置 `enable=false` (默认为 `true` 跟随服务启动)或者在对应的消费者中重写类方法 `isEnable()` 返回 `false` 即可
+这种情况，只需要在 `#[Consumer]` 注解中配置 `enable=false` (默认为 `true` 跟随服务启动)或者在对应的消费者中重写类方法 `isEnable()` 返回 `false` 即可
 
 ```php
 <?php
@@ -176,9 +172,7 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1, enable=false)
- */
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1, enable: false)]
 class DemoConsumer extends ConsumerMessage
 {
     public function consumeMessage($data, AMQPMessage $message): string
@@ -196,7 +190,7 @@ class DemoConsumer extends ConsumerMessage
 
 ### 设置最大消费数
 
-可以修改 `@Consumer` 注解中的 `maxConsumption` 属性，设置此消费者最大处理的消息数，达到指定消费数后，消费者进程会重启。
+可以修改 `#[Consumer]` 注解中的 `maxConsumption` 属性，设置此消费者最大处理的消息数，达到指定消费数后，消费者进程会重启。
 
 ### 消费结果
 
@@ -242,9 +236,7 @@ use Hyperf\Amqp\Message\ProducerDelayedMessageTrait;
 use Hyperf\Amqp\Message\ProducerMessage;
 use Hyperf\Amqp\Message\Type;
 
-/**
- * @Producer()
- */
+#[Producer]
 class DelayDirectProducer extends ProducerMessage
 {
     use ProducerDelayedMessageTrait;
@@ -286,9 +278,7 @@ use Hyperf\Amqp\Message\Type;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(nums=1)
- */
+#[Consumer(nums: 1)]
 class DelayDirectConsumer extends ConsumerMessage
 {
     use ProducerDelayedMessageTrait;
@@ -333,15 +323,10 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Command
- */
+#[Command]
 class DelayCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -367,7 +352,6 @@ class DelayCommand extends HyperfCommand
         $message->setDelayMs(5000);
         $producer = ApplicationContext::getContainer()->get(Producer::class);
         $producer->produce($message);
-
     }
 }
 
@@ -398,9 +382,7 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="rpc.reply", name="ReplyConsumer", nums=1, enable=true)
- */
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "rpc.reply", name: "ReplyConsumer", nums: 1, enable: true)]
 class ReplyConsumer extends ConsumerMessage
 {
     public function consumeMessage($data, AMQPMessage $message): string

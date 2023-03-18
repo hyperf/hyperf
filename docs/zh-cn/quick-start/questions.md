@@ -107,9 +107,9 @@ composer require hyperf/signal
 composer require symfony/serializer
 ```
 
-## Trait 内使用 `@Inject` 注入报错 `Error while injecting dependencies into ... No entry or class found ...`
+## Trait 内使用 `#[Inject]` 注入报错 `Error while injecting dependencies into ... No entry or class found ...`
 
-若 Trait 通过 `@Inject @var` 注入属性, 同时子类里 `use` 了不同命名空间的同名类, 会导致 Trait 里类名被覆盖，进而导致注入失效:
+若 Trait 通过 `#[Inject] @var` 注入属性, 同时子类里 `use` 了不同命名空间的同名类, 会导致 Trait 里类名被覆盖，进而导致注入失效:
 
 ```php
 use Hyperf\HttpServer\Contract\ResponseInterface;
@@ -118,9 +118,9 @@ use Hyperf\Di\Annotation\Inject;
 trait TestTrait
 {
     /**
-     * @Inject()   
      * @var ResponseInterface
      */
+    #[Inject]
     protected $response;
 }
 ```
@@ -169,3 +169,37 @@ http2 => enabled
 如果没有，需要重新编译 Swoole 并增加 `--enable-http2` 参数。
 
 2. 检查 [server.php](/zh-cn/config?id=serverphp-配置说明) 文件中 `open_http2_protocol` 选项是否为 `true`。
+
+## Command 无法正常关闭
+
+在 Command 中使用 AMQP 等多路复用技术后，会导致无法正常关闭，碰到这种情况只需要在执行逻辑最后增加以下代码即可。
+
+```php
+<?php
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coordinator\Constants;
+
+CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+```
+
+## OSS 上传组件报 iconv 错误
+
+- fix aliyun oss wrong charset: https://github.com/aliyun/aliyun-oss-php-sdk/issues/101
+- https://github.com/docker-library/php/issues/240#issuecomment-762438977
+- https://github.com/docker-library/php/pull/1264
+
+当使用 `aliyuncs/oss-sdk-php` 组件上传时，会报 iconv 错误，可以尝试使用以下方式规避：
+
+使用 `hyperf/hyperf:8.0-alpine-v3.12-swoole` 镜像时
+
+```
+RUN apk --no-cache --allow-untrusted --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ add gnu-libiconv=1.15-r2
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so
+```
+
+使用 `hyperf/hyperf:8.0-alpine-v3.13-swoole` 镜像时
+
+```dockerfile
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/ gnu-libiconv=1.15-r3
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
+```

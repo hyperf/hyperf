@@ -16,41 +16,29 @@ use Hyperf\Di\Exception\AnnotationException;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\CodeGen\PhpDocReaderManager;
 use PhpDocReader\AnnotationException as DocReaderAnnotationException;
+use Throwable;
 
-/**
- * @Annotation
- * @Target({"PROPERTY"})
- */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Inject extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $value;
-
-    /**
-     * @var bool
-     */
-    public $required = true;
-
-    /**
-     * @var bool
-     */
-    public $lazy = false;
+    public function __construct(public ?string $value = null, public bool $required = true, public bool $lazy = false)
+    {
+    }
 
     public function collectProperty(string $className, ?string $target): void
     {
         try {
-            $reflectionClass = ReflectionManager::reflectClass($className);
+            if (is_null($this->value)) {
+                $reflectionClass = ReflectionManager::reflectClass($className);
 
-            $reflectionProperty = $reflectionClass->getProperty($target);
+                $reflectionProperty = $reflectionClass->getProperty($target);
 
-            if (method_exists($reflectionProperty, 'hasType') && $reflectionProperty->hasType()) {
-                /* @phpstan-ignore-next-line */
-                $this->value = $reflectionProperty->getType()->getName();
-            } else {
-                $this->value = PhpDocReaderManager::getInstance()->getPropertyClass($reflectionProperty);
+                if (method_exists($reflectionProperty, 'hasType') && $reflectionProperty->hasType()) {
+                    /* @phpstan-ignore-next-line */
+                    $this->value = $reflectionProperty->getType()->getName();
+                } else {
+                    $this->value = PhpDocReaderManager::getInstance()->getPropertyClass($reflectionProperty);
+                }
             }
 
             if (empty($this->value)) {
@@ -66,7 +54,7 @@ class Inject extends AbstractAnnotation
                 throw new AnnotationException($exception->getMessage());
             }
             $this->value = '';
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             throw new AnnotationException("The @Inject value is invalid for {$className}->{$target}. Because {$exception->getMessage()}");
         }
     }

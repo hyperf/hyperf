@@ -27,7 +27,7 @@ use Hyperf\Nacos\Provider\ServiceProvider;
  */
 class Application
 {
-    protected $alias = [
+    protected array $alias = [
         'auth' => AuthProvider::class,
         'config' => ConfigProvider::class,
         'instance' => InstanceProvider::class,
@@ -35,19 +35,10 @@ class Application
         'service' => ServiceProvider::class,
     ];
 
-    /**
-     * @var array
-     */
-    protected $providers = [];
+    protected array $providers = [];
 
-    /**
-     * @var Config
-     */
-    protected $config;
-
-    public function __construct(Config $config)
+    public function __construct(protected Config $config)
     {
-        $this->config = $config;
     }
 
     public function __get($name)

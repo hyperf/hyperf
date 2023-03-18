@@ -14,14 +14,10 @@ namespace Hyperf\Crontab\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS", "METHOD"})
- */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Crontab extends AbstractAnnotation
 {
-    public function __construct($name, $type, $rule, $singleton, $mutexPool, $mutexExpires, $onOneServer, $callback, $memo, $enable)
+    public function __construct(?string $name = null, string $type = 'callback', ?string $rule = null, ?bool $singleton = null, ?string $mutexPool = null, ?int $mutexExpires = null, ?bool $onOneServer = null, array|string|null $callback = null, ?string $memo = null, array|string|bool $enable = true)
     {
     }
 }

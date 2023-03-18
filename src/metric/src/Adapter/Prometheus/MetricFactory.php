@@ -13,7 +13,13 @@ namespace Hyperf\Metric\Adapter\Prometheus;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants as Coord;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Engine\Http\ServerFactory;
+use Hyperf\Engine\Http\Stream;
+use Hyperf\Engine\ResponseEmitter;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
+use Hyperf\HttpMessage\Server\Response as HyperfResponse;
 use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
@@ -21,48 +27,25 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Exception\InvalidArgumentException;
 use Hyperf\Metric\Exception\RuntimeException;
 use Hyperf\Metric\MetricFactoryPicker;
-use Hyperf\Utils\Coordinator\Constants as Coord;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
+use Hyperf\Utils\Network;
 use Hyperf\Utils\Str;
 use Prometheus\CollectorRegistry;
 use Prometheus\RenderTextFormat;
-use Swoole\Coroutine\Http\Server;
+use Psr\Http\Message\RequestInterface;
 
 class MetricFactory implements MetricFactoryInterface
 {
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private string $name;
 
-    /**
-     * @var CollectorRegistry
-     */
-    private $registry;
-
-    /**
-     * @var guzzleClientFactory
-     */
-    private $guzzleClientFactory;
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    private $logger;
-
-    public function __construct(ConfigInterface $config, CollectorRegistry $registry, GuzzleClientFactory $guzzleClientFactory, StdoutLoggerInterface $logger)
-    {
-        $this->config = $config;
-        $this->registry = $registry;
-        $this->guzzleClientFactory = $guzzleClientFactory;
+    public function __construct(
+        private ConfigInterface $config,
+        private CollectorRegistry $registry,
+        private GuzzleClientFactory $guzzleClientFactory,
+        private StdoutLoggerInterface $logger,
+        private ServerFactory $factory
+    ) {
         $this->name = $this->config->get('metric.default');
-        $this->logger = $logger;
-        $this->guardConfig();
     }
 
     public function makeCounter(string $name, ?array $labelNames = []): CounterInterface
@@ -123,12 +106,30 @@ class MetricFactory implements MetricFactoryInterface
         $host = $this->config->get("metric.metric.{$this->name}.scrape_host");
         $port = $this->config->get("metric.metric.{$this->name}.scrape_port");
         $path = $this->config->get("metric.metric.{$this->name}.scrape_path");
+
+        foreach ($this->config->get('server.servers', []) as $item) {
+            if (isset($item['port']) && $item['port'] == $port) {
+                $this->logger->error(sprintf('Your service has the same port %s as metric scrape mode, which may cause service or scrape mode failure.', $port));
+            }
+        }
+
         $renderer = new RenderTextFormat();
-        $server = new Server($host, (int) $port, false);
-        $server->handle($path, function ($request, $response) use ($renderer) {
-            $response->header('Content-Type', RenderTextFormat::MIME_TYPE);
-            $response->end($renderer->render($this->registry->getMetricFamilySamples()));
+        $server = $this->factory->make($host, (int) $port);
+
+        Coroutine::create(static function () use ($server) {
+            CoordinatorManager::until(Coord::WORKER_EXIT)->yield();
+            $server->close();
         });
+
+        $emitter = new ResponseEmitter($this->logger);
+
+        $server->handle(function (RequestInterface $request, mixed $connection) use ($emitter, $renderer) {
+            $response = new HyperfResponse();
+            $response = $response->withHeader('Content-Type', RenderTextFormat::MIME_TYPE)
+                ->withBody(new Stream($renderer->render($this->registry->getMetricFamilySamples())));
+            $emitter->emit($response, $connection);
+        });
+
         $server->start();
     }
 
@@ -157,22 +158,12 @@ class MetricFactory implements MetricFactoryInterface
         return preg_replace('#[^a-zA-Z0-9:_]#', '_', Str::snake($name));
     }
 
-    private function guardConfig()
-    {
-        if ($this->config->get("metric.metric.{$this->name}.mode") == Constants::SCRAPE_MODE
-            && $this->config->get('metric.use_standalone_process', true) == false) {
-            throw new RuntimeException(
-                "Prometheus in scrape mode must be used in conjunction with standalone process. \n Set metric.use_standalone_process to true to avoid this error."
-            );
-        }
-    }
-
     private function getUri(string $address, string $job): string
     {
         if (! Str::contains($address, ['https://', 'http://'])) {
             $address = 'http://' . $address;
         }
-        return $address . '/metrics/job/' . $job . '/ip/' . current(swoole_get_local_ip()) . '/pid/' . getmypid();
+        return $address . '/metrics/job/' . $job . '/ip/' . Network::ip() . '/pid/' . getmypid();
     }
 
     private function doRequest(string $address, string $job, string $method)

@@ -17,23 +17,18 @@ use Hyperf\Guzzle\CoroutineHandler;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\Http\Client;
 use SwooleTracker\Stats;
+
 use function getSwooleTrackerSpanId;
 use function getSwooleTrackerTraceId;
 
 class CoroutineHandlerAspect extends AbstractAspect
 {
-    public $classes = [
+    public array $classes = [
         CoroutineHandler::class . '::execute',
     ];
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)

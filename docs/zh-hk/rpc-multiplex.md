@@ -57,9 +57,7 @@ use App\JsonRpc\CalculatorServiceInterface;
 use Hyperf\RpcMultiplex\Constant;
 use Hyperf\RpcServer\Annotation\RpcService;
 
-/**
- * @RpcService(name="CalculatorService", server="rpc", protocol=Constant::PROTOCOL_DEFAULT)
- */
+#[RpcService(name: "CalculatorService", server: "rpc", protocol: Constant::PROTOCOL_DEFAULT)]
 class CalculatorService implements CalculatorServiceInterface
 {
 }
@@ -104,7 +102,7 @@ return [
                 'retry_interval' => 100,
                 // 多路複用客户端數量
                 'client_count' => 4,
-                // 心跳間隔 非 numeric 表示不開啟心跳
+                // 心跳間隔 非 numeric 表示不開啓心跳
                 'heartbeat' => 30,
             ],
         ],

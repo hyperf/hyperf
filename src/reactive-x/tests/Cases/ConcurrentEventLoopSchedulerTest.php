@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Cases;
 
+use Hyperf\Engine\Channel;
 use Hyperf\ReactiveX\Observable;
 use Hyperf\ReactiveX\RxSwoole;
 use Hyperf\ReactiveX\Scheduler\ConcurrentEventLoopScheduler;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Channel;
 use Swoole\Runtime;
 
 /**

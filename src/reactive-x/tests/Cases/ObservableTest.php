@@ -11,12 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Cases;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
-use Hyperf\Di\Definition\ScanConfig;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
+use Hyperf\Engine\Channel;
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\HttpMessage\Server\Request;
@@ -29,7 +30,6 @@ use Hyperf\HttpServer\Server;
 use Hyperf\ReactiveX\Observable;
 use Hyperf\ReactiveX\RxSwoole;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\ReactiveX\Stub\TestEvent;
@@ -43,7 +43,6 @@ use Rx\Disposable\EmptyDisposable;
 use Rx\Observable as RxObservable;
 use Rx\Scheduler\EventLoopScheduler;
 use Rx\SchedulerInterface;
-use Swoole\Coroutine\Channel;
 use Swoole\Event;
 use Swoole\Runtime;
 use Swoole\Timer;
@@ -61,7 +60,7 @@ class ObservableTest extends TestCase
 
     protected function setUp(): void
     {
-        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $container = new Container(new DefinitionSource([]));
         $container->define(SchedulerInterface::class, EventLoopScheduler::class);
         ApplicationContext::setContainer($container);
         RxSwoole::init();

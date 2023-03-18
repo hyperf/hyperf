@@ -16,6 +16,7 @@ use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Channel;
 use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
 use Hyperf\SocketIOServer\Collector\SocketIORouter;
 use Hyperf\SocketIOServer\Exception\RouteNotFoundException;
@@ -26,20 +27,21 @@ use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\WebSocketServer\Constant\Opcode;
 use Hyperf\WebSocketServer\Sender;
-use Swoole\Coroutine\Channel;
+use Swoole\Atomic;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Timer;
-use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
+use Throwable;
 
 /**
  *  packet types
  *  0 open
- *  Sent from the server when a new transport is opened (recheck)
+ *  Sent from the server when new transport is opened (recheck)
  *  1 close
- *  Request the close of this transport but does not shutdown the connection itself.
+ *  Request the close of this transport but does not shut down the connection itself.
  *  2 ping
  *  Sent by the client. Server should answer with a pong packet containing the same data
  *  3 pong
@@ -67,87 +69,30 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
     public static $isMainWorker = false;
 
-    /**
-     * @var string
-     */
-    public static $serverId;
+    public static string $serverId = '';
 
-    /**
-     * @var \Swoole\Atomic
-     */
-    public static $messageId;
+    public static ?Atomic $messageId = null;
 
     /**
      * @var Channel[]
      */
-    protected $clientCallbacks = [];
-
-    /**
-     * @var int
-     * @deprecated
-     */
-    protected $clientCallbackTimeout = 10000;
-
-    /**
-     * @var int
-     * @deprecated
-     */
-    protected $pingInterval = 10000;
-
-    /**
-     * @var int
-     * @deprecated
-     */
-    protected $pingTimeout = 100;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $stdoutLogger;
-
-    /**
-     * @var Decoder
-     */
-    protected $decoder;
-
-    /**
-     * @var SidProviderInterface
-     */
-    protected $sidProvider;
-
-    /**
-     * @var Encoder
-     */
-    protected $encoder;
-
-    /**
-     * @var Sender
-     */
-    protected $sender;
+    protected array $clientCallbacks = [];
 
     /**
      * @var int[]
      */
-    protected $clientCallbackTimers;
+    protected array $clientCallbackTimers = [];
 
-    /**
-     * @var SocketIOConfig
-     */
-    protected $config;
+    protected SocketIOConfig $config;
 
     public function __construct(
-        StdoutLoggerInterface $stdoutLogger,
-        Sender $sender,
-        Decoder $decoder,
-        Encoder $encoder,
-        SidProviderInterface $sidProvider,
+        protected StdoutLoggerInterface $stdoutLogger,
+        protected Sender $sender,
+        protected Decoder $decoder,
+        protected Encoder $encoder,
+        protected SidProviderInterface $sidProvider,
         ?SocketIOConfig $config = null
     ) {
-        $this->stdoutLogger = $stdoutLogger;
-        $this->decoder = $decoder;
-        $this->encoder = $encoder;
-        $this->sender = $sender;
-        $this->sidProvider = $sidProvider;
         $this->config = $config ?? ApplicationContext::getContainer()->get(SocketIOConfig::class);
     }
 
@@ -156,15 +101,36 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         return $this->of('/')->{$method}(...$args);
     }
 
-    public function onMessage($server, Frame $frame): void
+    /**
+     * @param Response|Server $server
+     * @param mixed $frame
+     */
+    public function onMessage($server, $frame): void
     {
+        if ($frame->opcode == Opcode::PING) {
+            if ($server instanceof Response) {
+                $server->push('', Opcode::PONG);
+            } else {
+                $server->push($frame->fd, '', Opcode::PONG);
+            }
+            return;
+        }
+
         if ($frame->data[0] === Engine::PING) {
             $this->renewInAllNamespaces($frame->fd);
-            $server->push($frame->fd, Engine::PONG); //sever pong
+            if ($server instanceof Response) {
+                $server->push(Engine::PONG); // sever pong
+            } else {
+                $server->push($frame->fd, Engine::PONG); // sever pong
+            }
             return;
         }
         if ($frame->data[0] === Engine::CLOSE) {
-            $server->disconnect($frame->fd);
+            if ($server instanceof Response) {
+                $server->close();
+            } else {
+                $server->disconnect($frame->fd);
+            }
             return;
         }
         if ($frame->data[0] !== Engine::MESSAGE) {
@@ -173,15 +139,23 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
         $packet = $this->decoder->decode(substr($frame->data, 1));
         switch ($packet->type) {
-            case Packet::OPEN: //client open
+            case Packet::OPEN: // client open
                 $responsePacket = Packet::create([
                     'type' => Packet::OPEN,
                     'nsp' => $packet->nsp,
                 ]);
-                $server->push($frame->fd, Engine::MESSAGE . $this->encoder->encode($responsePacket)); //sever open
+                if ($server instanceof Response) {
+                    $server->push(Engine::MESSAGE . $this->encoder->encode($responsePacket)); // sever open
+                } else {
+                    $server->push($frame->fd, Engine::MESSAGE . $this->encoder->encode($responsePacket)); // sever open
+                }
                 break;
-            case Packet::CLOSE: //client disconnect
-                $server->disconnect($frame->fd);
+            case Packet::CLOSE: // client disconnect
+                if ($server instanceof Response) {
+                    $server->close();
+                } else {
+                    $server->disconnect($frame->fd);
+                }
                 break;
             case Packet::EVENT: // client message with ack
                 if ($packet->id !== '') {
@@ -192,7 +166,10 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
                             'type' => Packet::ACK,
                             'data' => $data,
                         ]);
-                        $this->sender->push($frame->fd, Engine::MESSAGE . $this->encoder->encode($responsePacket));
+
+                        if ($this->sender->check($frame->fd)) {
+                            $this->sender->push($frame->fd, Engine::MESSAGE . $this->encoder->encode($responsePacket));
+                        }
                     };
                 }
                 $this->dispatch($frame->fd, $packet->nsp, ...$packet->data);
@@ -218,21 +195,22 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 
     /**
      * @param Response|Server $server
+     * @param Request $request
      */
-    public function onOpen($server, Request $request): void
+    public function onOpen($server, $request): void
     {
         $data = [
             'sid' => $this->sidProvider->getSid($request->fd),
             'upgrades' => ['websocket'],
-            'pingInterval' => $this->getPingInterval(),
-            'pingTimeout' => $this->getPingTimeout(),
+            'pingInterval' => $this->config->getPingInterval(),
+            'pingTimeout' => $this->config->getPingTimeout(),
         ];
         if ($server instanceof Response) {
-            $server->push(Engine::OPEN . json_encode($data)); //socket is open
-            $server->push(Engine::MESSAGE . Packet::OPEN); //server open
+            $server->push(Engine::OPEN . json_encode($data)); // socket is open
+            $server->push(Engine::MESSAGE . Packet::OPEN); // server open
         } else {
-            $server->push($request->fd, Engine::OPEN . json_encode($data)); //socket is open
-            $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); //server open
+            $server->push($request->fd, Engine::OPEN . json_encode($data)); // socket is open
+            $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); // server open
         }
 
         $this->dispatchEventInAllNamespaces($request->fd, 'connect');
@@ -262,7 +240,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     {
         $this->clientCallbacks[$ackId] = $channel;
         // Clean up using timer to avoid memory leak.
-        $timerId = Timer::after($timeoutMs ?? $this->getClientCallbackTimeout(), function () use ($ackId) {
+        $timerId = Timer::after($timeoutMs ?? $this->config->getClientCallbackTimeout(), function () use ($ackId) {
             if (! isset($this->clientCallbacks[$ackId])) {
                 return;
             }
@@ -272,74 +250,29 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         $this->clientCallbackTimers[$ackId] = $timerId;
     }
 
-    /**
-     * @return $this
-     * @deprecated use SocketIOConfig::setClientCallbackTimeout() instead
-     */
-    public function setClientCallbackTimeout(int $clientCallbackTimeout)
+    public function setClientCallbackTimeout(int $clientCallbackTimeout): static
     {
         $this->config->setClientCallbackTimeout($clientCallbackTimeout);
         return $this;
     }
 
-    /**
-     * @return $this
-     * @deprecated use SocketIOConfig::setPingInterval() instead
-     */
-    public function setPingInterval(int $pingInterval)
+    public function setPingInterval(int $pingInterval): static
     {
         $this->config->setPingInterval($pingInterval);
         return $this;
     }
 
-    /**
-     * @deprecated use SocketIOConfig::getPingInterval() instead
-     */
-    public function getPingInterval(): int
-    {
-        if ($this->pingInterval != 10000) {
-            return $this->pingInterval;
-        }
-        return $this->config->getPingInterval();
-    }
-
-    /**
-     * @deprecated use SocketIOConfig::getPingTimeout() instead
-     */
-    public function getPingTimeout(): int
-    {
-        if ($this->pingTimeout != 100) {
-            return $this->pingTimeout;
-        }
-        return $this->config->getPingTimeout();
-    }
-
-    /**
-     * @return $this
-     * @deprecated use SocketIOConfig::setPingTimeout instead
-     */
-    public function setPingTimeout(int $pingTimeout)
+    public function setPingTimeout(int $pingTimeout): static
     {
         $this->config->setPingTimeout($pingTimeout);
         return $this;
     }
 
-    /**
-     * @deprecated use SocketIOConfig::getClientCallbackTimeout() instead
-     */
-    private function getClientCallbackTimeout(): int
-    {
-        if ($this->clientCallbackTimeout !== 10000) {
-            return $this->clientCallbackTimeout;
-        }
-        return $this->config->getClientCallbackTimeout();
-    }
-
-    private function dispatch(int $fd, string $nsp, string $event, ...$payloads)
+    private function dispatch(int $fd, string $nsp, string $event, ...$payloads): void
     {
         $socket = $this->makeSocket($fd, $nsp);
         if (empty($socket)) {
-            return null;
+            return;
         }
         $ack = null;
 
@@ -391,7 +324,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
                 'addCallback' => function (string $ackId, Channel $channel, ?int $timeout = null) {
                     $this->addCallback($ackId, $channel, $timeout);
                 }, ]);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->stdoutLogger->error('Socket.io ' . $exception->getMessage());
             return null;
         }

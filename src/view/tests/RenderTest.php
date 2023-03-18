@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace HyperfTest\View;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\Context;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Hyperf\View\Engine\SmartyEngine;
 use Hyperf\View\Exception\RenderException;
 use Hyperf\View\Mode;
@@ -25,6 +25,7 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
 
 /**
  * @internal
@@ -56,7 +57,7 @@ class RenderTest extends TestCase
         try {
             $render->getContents('index.tpl', ['title' => 'Hyperf']);
             $this->assertTrue(false);
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             $this->assertInstanceOf(RenderException::class, $throwable);
             $this->assertSame('Undefined index: name', $throwable->getMessage());
             $this->assertNotNull($throwable->getPrevious());

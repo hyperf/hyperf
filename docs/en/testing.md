@@ -207,6 +207,7 @@ namespace HyperfTest\Cases;
 
 use HyperfTest\HttpTestCase;
 use App\Service\Dao\UserDao;
+
 /**
  * @internal
  * @coversNothing
@@ -238,7 +239,7 @@ Sometimes it is difficult to test the `system under test (SUT)` because it relie
 
 If you cannot use (or choose not to use) the actual dependent component (DOC) when writing a test, you can use a test double instead. The test double does not need to behave in exactly the same way as the real dependent component; it only needs to provide the same API as the real component, so that the system under test will think it is a real component!
 
-The following shows the test doubles of injecting dependencies through the constructor and injecting dependencies through the @Inject annotation.
+The following shows the test doubles of injecting dependencies through the constructor and injecting dependencies through the #[Inject] annotation.
 
 ### Inject dependency test doubles through constructor
 
@@ -343,11 +344,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class DemoLogic
 {
-    /**
-     * @var DemoApi $demoApi
-     * @Inject()
-     */
-    private $demoApi;
+    #[Inject]
+    private DemoApi $demoApi;
 
     public function test()
     {
@@ -415,7 +413,7 @@ class DemoLogicTest extends HttpTestCase
             'status' => 11
         ]);
 
-        $container->getDefinitionSource()->addDefinition(DemoApi::class, function () use ($apiStub) {
+        $container->define(DemoApi::class, function () use ($apiStub) {
             return $apiStub;
         });
 

@@ -23,47 +23,25 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Seed
 {
     /**
-     * The filesystem instance.
-     *
-     * @var \Hyperf\Utils\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
-     * The connection resolver instance.
-     *
-     * @var \Hyperf\Database\ConnectionResolverInterface
-     */
-    protected $resolver;
-
-    /**
      * The name of the default connection.
-     *
-     * @var string
      */
-    protected $connection;
+    protected ?string $connection = null;
 
     /**
-     * The paths to all of the seeder files.
-     *
-     * @var array
+     * The paths to all the seeder files.
      */
-    protected $paths = [];
+    protected array $paths = [];
 
     /**
      * The output interface implementation.
-     *
-     * @var OutputInterface
      */
-    protected $output;
+    protected ?OutputInterface $output = null;
 
     /**
      * Create a new seed instance.
      */
-    public function __construct(Resolver $resolver, Filesystem $files)
+    public function __construct(protected Resolver $resolver, protected Filesystem $files)
     {
-        $this->files = $files;
-        $this->resolver = $resolver;
     }
 
     /**
@@ -88,10 +66,7 @@ class Seed
      */
     public function setConnection(string $name): void
     {
-        if (! is_null($name)) {
-            $this->resolver->setDefaultConnection($name);
-        }
-
+        $this->resolver->setDefaultConnection($name);
         $this->connection = $name;
     }
 
@@ -164,7 +139,7 @@ class Seed
     }
 
     /**
-     * Get all of the seeder files in a given path.
+     * Get all the seeder files in a given path.
      *
      * @param array|string $paths
      * @return array
@@ -203,10 +178,8 @@ class Seed
 
     /**
      * Set the output implementation that should be used by the console.
-     *
-     * @return $this
      */
-    public function setOutput(OutputInterface $output)
+    public function setOutput(OutputInterface $output): static
     {
         $this->output = $output;
 
@@ -220,13 +193,7 @@ class Seed
      */
     protected function getSchemaGrammar($connection): Grammar
     {
-        if (is_null($grammar = $connection->getSchemaGrammar())) {
-            $connection->useDefaultSchemaGrammar();
-
-            $grammar = $connection->getSchemaGrammar();
-        }
-
-        return $grammar;
+        return $connection->getSchemaGrammar();
     }
 
     /**
@@ -234,10 +201,8 @@ class Seed
      *
      * @param string $message
      */
-    protected function note($message)
+    protected function note($message): void
     {
-        if ($this->output) {
-            $this->output->writeln($message);
-        }
+        $this->output?->writeln($message);
     }
 }

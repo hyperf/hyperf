@@ -16,50 +16,31 @@ use Closure;
 trait DatabaseRule
 {
     /**
-     * The table to run the query against.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * The column to check on.
-     *
-     * @var string
-     */
-    protected $column;
-
-    /**
      * The extra where clauses for the query.
-     *
-     * @var array
      */
-    protected $wheres = [];
+    protected array $wheres = [];
 
     /**
      * The array of custom query callbacks.
-     *
-     * @var array
      */
-    protected $using = [];
+    protected array $using = [];
 
     /**
      * Create a new rule instance.
+     *
+     * @param string $table the table to run the query against
+     * @param string $column the column to check on
      */
-    public function __construct(string $table, string $column = 'NULL')
+    public function __construct(protected string $table, protected string $column = 'NULL')
     {
-        $this->table = $table;
-        $this->column = $column;
     }
 
     /**
      * Set a "where" constraint on the query.
      *
-     * @param \Closure|string $column
      * @param null|array|string $value
-     * @return $this
      */
-    public function where($column, $value = null)
+    public function where(Closure|string $column, $value = null): static
     {
         if (is_array($value)) {
             return $this->whereIn($column, $value);
@@ -78,9 +59,8 @@ trait DatabaseRule
      * Set a "where not" constraint on the query.
      *
      * @param array|string $value
-     * @return $this
      */
-    public function whereNot(string $column, $value)
+    public function whereNot(string $column, mixed $value): static
     {
         if (is_array($value)) {
             return $this->whereNotIn($column, $value);
@@ -94,7 +74,7 @@ trait DatabaseRule
      *
      * @return $this
      */
-    public function whereNull(string $column)
+    public function whereNull(string $column): static
     {
         return $this->where($column, 'NULL');
     }
@@ -158,8 +138,6 @@ trait DatabaseRule
      */
     protected function formatWheres(): string
     {
-        return collect($this->wheres)->map(function ($where) {
-            return $where['column'] . ',' . '"' . str_replace('"', '""', (string) $where['value']) . '"';
-        })->implode(',');
+        return collect($this->wheres)->map(fn ($where) => $where['column'] . ',"' . str_replace('"', '""', (string) $where['value']) . '"')->implode(',');
     }
 }

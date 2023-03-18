@@ -19,26 +19,12 @@ namespace Hyperf\Utils;
 class HigherOrderCollectionProxy
 {
     /**
-     * The collection being operated on.
-     *
-     * @var Collection
-     */
-    protected $collection;
-
-    /**
-     * The method being proxied.
-     *
-     * @var string
-     */
-    protected $method;
-
-    /**
      * Create a new proxy instance.
+     * @param Collection $collection the collection being operated on
+     * @param string $method the method being proxied
      */
-    public function __construct(Collection $collection, string $method)
+    public function __construct(protected Collection $collection, protected string $method)
     {
-        $this->method = $method;
-        $this->collection = $collection;
     }
 
     /**

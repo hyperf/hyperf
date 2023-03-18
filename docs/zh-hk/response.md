@@ -29,7 +29,7 @@ class IndexController
 
 ## 返回 Xml 格式
 
-`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `xml($data)` 方法用於快速返回 `XML` 格式，並設置 `Content-Type` 為 `application/xml`，`$data` 接受一個數組或為一個實現了 `Hyperf\Utils\Contracts\Xmlable` 接口的對象。
+`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `xml($data)` 方法用於快速返回 `XML` 格式，並設置 `Content-Type` 為 `application/xml`，`$data` 接受一個數組或為一個實現了 `Hyperf\Contract\Xmlable` 接口的對象。
 
 ```php
 <?php
@@ -52,7 +52,7 @@ class IndexController
 
 ## 返回 Raw 格式
 
-`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `raw($data)` 方法用於快速返回 `raw` 格式，並設置 `Content-Type` 為 `plain/text`，`$data` 接受一個字符串或為一個實現了 `__toString()` 方法的對象。
+`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `raw($data)` 方法用於快速返回 `raw` 格式，並設置 `Content-Type` 為 `plain/text`，`$data` 接受一個字符串或一個實現了 `__toString()` 方法的對象。
 
 ```php
 <?php
@@ -76,7 +76,7 @@ class IndexController
 
 ## 重定向
 
-`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `redirect(string $toUrl, int $status = 302, string $schema = 'http')`  返回一個已設置重定向狀態的 `Psr7ResponseInterface` 對象。
+`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `redirect(string $toUrl, int $status = 302, string $schema = 'http')` 返回一個已設置重定向狀態的 `Psr7ResponseInterface` 對象。
 
 `redirect` 方法：   
 
@@ -97,7 +97,7 @@ class IndexController
 {
     public function redirect(ResponseInterface $response): Psr7ResponseInterface
     {
-        // redirect() 方法返回的是一個 Psr\Http\Message\ResponseInterface 對象，需再 return 回去  
+        // redirect() 方法返回的是一個 Psr\Http\Message\ResponseInterface 對象，需再 return 回去
         return $response->redirect('/anotherUrl');
     }
 }
@@ -123,13 +123,35 @@ class IndexController
 }
 ```
 
-## Gzip 壓縮
-
 ## 分塊傳輸編碼 Chunk
+
+`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `write(string $data)` 用於分段向瀏覽器發送相應內容，並設置 `Transfer-Encoding` 為 `chunked`，`$data` 接受一個字符串或一個實現了 `__toString()` 方法的對象。
+
+```php
+<?php
+namespace App\Controller;
+
+use Hyperf\HttpServer\Contract\ResponseInterface;
+
+class IndexController
+{
+    public function index(ResponseInterface $response)
+    {
+        for ($i=0; $i<10; $i++) {
+            $response->write((string) $i);
+        }
+
+        return 'Hello Hyperf';
+    }
+}
+```
+
+!> 注意：在調用 `write` 分段發送數據後，如果再次使用 `return` 返回數據，此時的數據不會正常返回。即上文的例子中不會輸出 `Hello Hyperf`，只會輸出 `0123456789`。
 
 ## 文件下載
 
-`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `download(string $file, string $name = '')`  返回一個已設置下載文件狀態的 `Psr7ResponseInterface` 對象。   
+`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `download(string $file, string $name = '')` 返回一個已設置下載文件狀態的 `Psr7ResponseInterface` 對象。
+
 如果請求中帶有 `if-match` 或 `if-none-match` 的請求頭，Hyperf 也會根據協議標準與 `ETag` 進行比較，如果一致則會返回一個 `304` 狀態碼的響應。
 
 `download` 方法：   

@@ -22,31 +22,14 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
 
 class TraceMiddleware implements MiddlewareInterface
 {
     use SpanStarter;
 
-    /**
-     * @var SwitchManager
-     */
-    protected $switchManager;
-
-    /**
-     * @var SpanTagManager
-     */
-    protected $spanTagManager;
-
-    /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
+    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
-        $this->tracer = $tracer;
-        $this->switchManager = $switchManager;
-        $this->spanTagManager = $spanTagManager;
     }
 
     /**
@@ -62,13 +45,13 @@ class TraceMiddleware implements MiddlewareInterface
         defer(function () {
             try {
                 $this->tracer->flush();
-            } catch (\Throwable $exception) {
+            } catch (\Throwable) {
             }
         });
         try {
             $response = $handler->handle($request);
             $span->setTag($this->spanTagManager->get('response', 'status_code'), $response->getStatusCode());
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->switchManager->isEnable('exception') && $this->appendExceptionToSpan($span, $exception);
             if ($exception instanceof HttpException) {
                 $span->setTag($this->spanTagManager->get('response', 'status_code'), $exception->getStatusCode());
@@ -81,7 +64,7 @@ class TraceMiddleware implements MiddlewareInterface
         return $response;
     }
 
-    protected function appendExceptionToSpan(Span $span, \Throwable $exception): void
+    protected function appendExceptionToSpan(Span $span, Throwable $exception): void
     {
         $span->setTag('error', true);
         $span->setTag($this->spanTagManager->get('exception', 'class'), get_class($exception));

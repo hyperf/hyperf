@@ -11,7 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Grpc;
 
+use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Internal\Message;
+use Google\Rpc\Status;
+use Swoole\Http\Response;
+use swoole_http2_response;
 
 class Parser
 {
@@ -19,7 +23,7 @@ class Parser
 
     public static function pack(string $data): string
     {
-        return $data = pack('CN', 0, strlen($data)) . $data;
+        return pack('CN', 0, strlen($data)) . $data;
     }
 
     public static function unpack(string $data): string
@@ -28,20 +32,12 @@ class Parser
         // 1 + 4 + data
         // $len = unpack('N', substr($data, 1, 4))[1];
         // assert(strlen($data) - 5 === $len);
-        return $data = substr($data, 5);
+        return substr($data, 5);
     }
 
     public static function serializeMessage($data)
     {
-        if (method_exists($data, 'encode')) {
-            $data = $data->encode();
-        } elseif (method_exists($data, 'serializeToString')) {
-            $data = $data->serializeToString();
-        } elseif (method_exists($data, 'serialize')) {
-            /** @noinspection PhpUndefinedMethodInspection */
-            $data = $data->serialize();
-        }
-        return self::pack((string) $data);
+        return self::pack(self::serializeUnpackedMessage($data));
     }
 
     public static function deserializeMessage($deserialize, string $value)
@@ -49,27 +45,14 @@ class Parser
         if (empty($value)) {
             return null;
         }
-        $value = self::unpack($value);
 
-        if (is_array($deserialize)) {
-            [$className, $deserializeFunc] = $deserialize;
-            /** @var \Google\Protobuf\Internal\Message $object */
-            $object = new $className();
-            if ($deserializeFunc && method_exists($object, $deserializeFunc)) {
-                $object->{$deserializeFunc}($value);
-            } else {
-                // @noinspection PhpUndefinedMethodInspection
-                $object->mergeFromString($value);
-            }
-            return $object;
-        }
-        return call_user_func($deserialize, $value);
+        return self::deserializeUnpackedMessage($deserialize, self::unpack($value));
     }
 
     /**
-     * @param null|\swoole_http2_response $response
+     * @param null|swoole_http2_response $response
      * @param mixed $deserialize
-     * @return \Grpc\StringifyAble[]|Message[]|\swoole_http2_response[]
+     * @return \Grpc\StringifyAble[]|Message[]|swoole_http2_response[]
      */
     public static function parseResponse($response, $deserialize): array
     {
@@ -85,10 +68,63 @@ class Parser
         if ($grpcStatus !== 0) {
             return [$response->headers['grpc-message'] ?? 'Unknown error', $grpcStatus, $response];
         }
-        $data = $response->data;
+        $data = $response->data ?? '';
         $reply = self::deserializeMessage($deserialize, $data);
-        $status = (int) ($response->headers['grpc-status'] ?? 0 ?: 0);
+        $status = (int) ($response->headers['grpc-status'] ?? 0);
         return [$reply, $status, $response];
+    }
+
+    /**
+     * @param Response
+     * @param mixed $response
+     */
+    public static function statusFromResponse($response): ?Status
+    {
+        $detailsEncoded = $response->headers['grpc-status-details-bin'] ?? '';
+
+        if (! $detailsEncoded || ! $detailsBin = base64_decode($detailsEncoded, true)) {
+            return null;
+        }
+        return self::deserializeUnpackedMessage([Status::class, ''], $detailsBin);
+    }
+
+    public static function statusToDetailsBin(Status $status): string
+    {
+        return base64_encode(self::serializeUnpackedMessage($status));
+    }
+
+    private static function deserializeUnpackedMessage($deserialize, string $unpacked)
+    {
+        if (is_array($deserialize)) {
+            [$className, $deserializeFunc] = $deserialize;
+            /** @var \Google\Protobuf\Internal\Message $object */
+            $object = new $className();
+            if ($deserializeFunc && method_exists($object, $deserializeFunc)) {
+                $object->{$deserializeFunc}($unpacked);
+            } else {
+                // @noinspection PhpUndefinedMethodInspection
+                $object->mergeFromString($unpacked);
+            }
+            return $object;
+        }
+        return call_user_func($deserialize, $unpacked);
+    }
+
+    private static function serializeUnpackedMessage($data): string
+    {
+        if ($data === null) {
+            $data = new GPBEmpty();
+        }
+        if (method_exists($data, 'encode')) {
+            $data = $data->encode();
+        } elseif (method_exists($data, 'serializeToString')) {
+            $data = $data->serializeToString();
+        } elseif (method_exists($data, 'serialize')) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $data = $data->serialize();
+        }
+
+        return (string) $data;
     }
 
     private static function isinvalidStatus(int $code)

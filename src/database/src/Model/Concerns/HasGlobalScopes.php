@@ -22,9 +22,9 @@ trait HasGlobalScopes
     /**
      * Register a new global scope on the model.
      *
-     * @param \Closure|\Hyperf\Database\Model\Scope|string $scope
+     * @param Closure|\Hyperf\Database\Model\Scope|string $scope
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function addGlobalScope($scope, Closure $implementation = null)
     {
@@ -45,9 +45,8 @@ trait HasGlobalScopes
      * Determine if a model has a global scope.
      *
      * @param \Hyperf\Database\Model\Scope|string $scope
-     * @return bool
      */
-    public static function hasGlobalScope($scope)
+    public static function hasGlobalScope($scope): bool
     {
         return ! is_null(static::getGlobalScope($scope));
     }
@@ -56,7 +55,7 @@ trait HasGlobalScopes
      * Get a global scope registered with the model.
      *
      * @param \Hyperf\Database\Model\Scope|string $scope
-     * @return null|\Closure|\Hyperf\Database\Model\Scope
+     * @return null|Closure|\Hyperf\Database\Model\Scope
      */
     public static function getGlobalScope($scope)
     {

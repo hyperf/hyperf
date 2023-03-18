@@ -23,32 +23,21 @@ class Container implements HyperfContainerInterface
 {
     /**
      * Map of entries that are already resolved.
-     *
-     * @var array
      */
-    private $resolvedEntries = [];
+    private array $resolvedEntries;
 
     /**
      * Map of definitions that are already fetched (local cache).
      */
-    private $fetchedDefinitions = [];
+    private array $fetchedDefinitions = [];
 
-    /**
-     * @var Definition\DefinitionSourceInterface
-     */
-    private $definitionSource;
-
-    /**
-     * @var Resolver\ResolverInterface
-     */
-    private $definitionResolver;
+    private Resolver\ResolverInterface $definitionResolver;
 
     /**
      * Container constructor.
      */
-    public function __construct(Definition\DefinitionSourceInterface $definitionSource)
+    public function __construct(private Definition\DefinitionSourceInterface $definitionSource)
     {
-        $this->definitionSource = $definitionSource;
         $this->definitionResolver = new ResolverDispatcher($this);
         // Auto-register the container.
         $this->resolvedEntries = [
@@ -87,9 +76,19 @@ class Container implements HyperfContainerInterface
      * Useful for testing 'get'.
      * @param mixed $entry
      */
-    public function set(string $name, $entry)
+    public function set(string $name, $entry): void
     {
         $this->resolvedEntries[$name] = $entry;
+    }
+
+    /**
+     * Unbind an arbitrary resolved entry.
+     */
+    public function unbind(string $name): void
+    {
+        if ($this->has($name)) {
+            unset($this->resolvedEntries[$name]);
+        }
     }
 
     /**
@@ -98,7 +97,7 @@ class Container implements HyperfContainerInterface
      *
      * @param array|callable|string $definition
      */
-    public function define(string $name, $definition)
+    public function define(string $name, $definition): void
     {
         $this->setDefinition($name, $definition);
     }
@@ -106,15 +105,15 @@ class Container implements HyperfContainerInterface
     /**
      * Finds an entry of the container by its identifier and returns it.
      *
-     * @param string $name identifier of the entry to look for
+     * @param string $id identifier of the entry to look for
      */
-    public function get($name)
+    public function get($id)
     {
         // If the entry is already resolved we return it
-        if (isset($this->resolvedEntries[$name]) || array_key_exists($name, $this->resolvedEntries)) {
-            return $this->resolvedEntries[$name];
+        if (isset($this->resolvedEntries[$id]) || array_key_exists($id, $this->resolvedEntries)) {
+            return $this->resolvedEntries[$id];
         }
-        return $this->resolvedEntries[$name] = $this->make($name);
+        return $this->resolvedEntries[$id] = $this->make($id);
     }
 
     /**
@@ -123,19 +122,19 @@ class Container implements HyperfContainerInterface
      * `has($name)` returning true does not mean that `get($name)` will not throw an exception.
      * It does however mean that `get($name)` will not throw a `NotFoundExceptionInterface`.
      *
-     * @param mixed|string $name identifier of the entry to look for
+     * @param mixed|string $id identifier of the entry to look for
      */
-    public function has($name): bool
+    public function has($id): bool
     {
-        if (! is_string($name)) {
-            throw new InvalidArgumentException(sprintf('The name parameter must be of type string, %s given', is_object($name) ? get_class($name) : gettype($name)));
+        if (! is_string($id)) {
+            throw new InvalidArgumentException(sprintf('The name parameter must be of type string, %s given', is_object($id) ? get_class($id) : gettype($id)));
         }
 
-        if (array_key_exists($name, $this->resolvedEntries)) {
+        if (array_key_exists($id, $this->resolvedEntries)) {
             return true;
         }
 
-        $definition = $this->getDefinition($name);
+        $definition = $this->getDefinition($id);
         if ($definition === null) {
             return false;
         }
@@ -147,6 +146,9 @@ class Container implements HyperfContainerInterface
         return true;
     }
 
+    /**
+     * @deprecated
+     */
     public function getDefinitionSource(): Definition\DefinitionSourceInterface
     {
         return $this->definitionSource;

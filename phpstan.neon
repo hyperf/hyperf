@@ -8,24 +8,26 @@ parameters:
   inferPrivatePropertyTypeFromConstructor: true
   treatPhpDocTypesAsCertain: true
   reportUnmatchedIgnoredErrors: false
-  excludes_analyse:
+  excludePaths:
     - %currentWorkingDirectory%/src/*/tests/*
     - %currentWorkingDirectory%/src/*/publish/*
+    - %currentWorkingDirectory%/src/*/class_map/*
     - %currentWorkingDirectory%/src/di/src/Resolver/FactoryResolver.php
     - %currentWorkingDirectory%/src/config-zookeeper/src/Client.php
     - %currentWorkingDirectory%/src/contract/*
     - %currentWorkingDirectory%/src/crontab/*
     - %currentWorkingDirectory%/src/database/*
+    - %currentWorkingDirectory%/src/database-pgsql/*
     - %currentWorkingDirectory%/src/filesystem/*
     - %currentWorkingDirectory%/src/graphql/*
     - %currentWorkingDirectory%/src/grpc/*
     - %currentWorkingDirectory%/src/grpc-server/*
     - %currentWorkingDirectory%/src/ide-helper/*
     - %currentWorkingDirectory%/src/swagger/*
-    - %currentWorkingDirectory%/src/tracer/*
     - %currentWorkingDirectory%/src/validation/*
     - %currentWorkingDirectory%/src/view/src/Engine/*
     - %currentWorkingDirectory%/src/server/src/SwowServer.php
+    - %currentWorkingDirectory%/src/amqp/src/IO/SwowIO.php
   ignoreErrors:
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
@@ -48,3 +50,16 @@ parameters:
     - '#getSwooleTracker.* not found#'
     - '#trackerHookMalloc not found#'
     - '#separator of function explode expects non-empty-string, string given#'
+    - '#While loop condition is always true#'
+    - '#Unsafe access to private property .* through static::#'
+    - '#Unsafe call to private method .* through static::#'
+    - '#Property .* is never read, only written#'
+    - message: '#Match arm is unreachable because previous comparison is always true#'
+      path: src/amqp/src/IO/IOFactory.php
+    - '#.*TKey.*TValue#'
+    - '#Method Hyperf\\Utils\\Serializer\\Serializer::normalize\(\) should return array\|ArrayObject\|bool\|float\|int\|string\|null#'
+    - '#Class RedisSentinel constructor invoked with .*#'
+    - '#Hyperf\\Engine\\Http\\Server#'
+    - '#Class Hyperf\\Logger\\Logger extends @final class Monolog\\Logger#'
+    - '#has invalid type Swow#'
+    - '#has unknown class Swow#'

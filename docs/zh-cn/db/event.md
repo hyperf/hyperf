@@ -35,15 +35,10 @@ use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
-/**
- * @Listener
- */
+#[Listener]
 class DbQueryExecutedListener implements ListenerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(ContainerInterface $container)
     {
@@ -100,6 +95,7 @@ class DbQueryExecutedListener implements ListenerInterface
 |   restored   | 软删除数据恢复后 |    否    |                                  |
 |   deleting   |    数据删除时   |    是    |                                  |
 |   deleted    |    数据删除后   |    否    |                                  |
+| forceDeleting |  数据强制删除时  |    是    |                                  |
 | forceDeleted |  数据强制删除后  |    否    |                                  |
 
 针对某个模型的事件使用十分简单，只需要在模型中增加对应的方法即可。例如下方保存数据时，触发 `saving` 事件，主动覆写 `created_at` 字段。
@@ -164,9 +160,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\ModelCache\CacheableInterface;
 
-/**
- * @Listener
- */
+#[Listener]
 class DeleteCacheListener implements ListenerInterface
 {
     public function listen(): array

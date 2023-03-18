@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Resource;
 
 use FastRoute\Dispatcher;
+use Hyperf\Context\Context;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
@@ -23,7 +24,6 @@ use Hyperf\HttpServer\CoreMiddleware as HttpServerCore;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use Mockery;
 use Psr\Container\ContainerInterface;

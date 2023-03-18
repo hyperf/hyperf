@@ -24,25 +24,16 @@ use Rx\Scheduler\VirtualTimeScheduler;
  */
 final class ConcurrentEventLoopScheduler extends VirtualTimeScheduler
 {
-    /**
-     * @var int
-     */
-    private $nextTimer = PHP_INT_MAX;
+    private int $nextTimer = PHP_INT_MAX;
 
-    /**
-     * @var bool
-     */
-    private $insideInvoke = false;
+    private bool $insideInvoke = false;
 
     /**
      * @var callable
      */
-    private $delayCallback;
+    private mixed $delayCallback;
 
-    /**
-     * @var DisposableInterface
-     */
-    private $currentTimer;
+    private DisposableInterface $currentTimer;
 
     /**
      * EventLoopScheduler constructor.
@@ -51,9 +42,7 @@ final class ConcurrentEventLoopScheduler extends VirtualTimeScheduler
     {
         $this->delayCallback = $timerCallableOrLoop;
         $this->currentTimer = new EmptyDisposable();
-        parent::__construct($this->now(), function ($a, $b) {
-            return $a - $b;
-        });
+        parent::__construct($this->now(), fn ($a, $b) => $a - $b);
     }
 
     public function scheduleAbsoluteWithState($state, int $dueTime, callable $action): DisposableInterface

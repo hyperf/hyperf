@@ -104,7 +104,7 @@ composer require hyperf/signal
 composer require symfony/serializer
 ```
 
-## `Error while injecting dependencies into... No entry or class found...` error when injecting traits using `@Inject`
+## `Error while injecting dependencies into... No entry or class found...` error when injecting traits using `#[Inject]`
 
 This error appears when you inject a trait using namespaces via `Inject` and the class containing the `use Trait;` syntax uses a conflicting namespace. This is a complex concept but the following examples should make it simple:
 
@@ -114,11 +114,8 @@ use Hyperf\Di\Annotation\Inject;
 
 trait TestTrait
 {
-    /**
-     * @Inject()   
-     * @var ResponseInterface
-     */
-    protected $response;
+    #[Inject]
+    protected ResponseInterface $response;
 }
 ```
 

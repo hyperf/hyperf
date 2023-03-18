@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Guzzle\Cases;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\HandlerStack;
@@ -21,6 +22,7 @@ use GuzzleHttp\TransferStats;
 use Hyperf\Guzzle\CoroutineHandler;
 use Hyperf\Utils\Codec\Json;
 use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -35,7 +37,7 @@ class CoroutineHandlerTest extends TestCase
         $request = new Request('GET', 'http://localhost:123');
         try {
             $handler($request, ['timeout' => 0.001, 'connect_timeout' => 0.001])->wait();
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $this->assertInstanceOf(ConnectException::class, $ex);
             $this->assertEquals(0, strpos($ex->getMessage(), 'Connection timed out errCode='));
         }
@@ -332,7 +334,7 @@ class CoroutineHandlerTest extends TestCase
         $this->assertArrayNotHasKey('Content-Length', $data['headers']);
         $this->assertArrayNotHasKey('Expect', $data['headers']);
 
-        $stub = \Mockery::mock(CoroutineHandlerStub::class . '[rewriteHeaders]');
+        $stub = Mockery::mock(CoroutineHandlerStub::class . '[rewriteHeaders]');
         $stub->shouldReceive('rewriteHeaders')->withAnyArgs()->andReturnUsing(function ($headers) {
             return $headers;
         });

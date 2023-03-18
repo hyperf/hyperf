@@ -15,11 +15,8 @@ trait CompilesErrors
 {
     /**
      * Compile the error statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileError($expression)
+    protected function compileError(string $expression): string
     {
         $expression = $this->stripParentheses($expression);
 
@@ -32,11 +29,8 @@ $message = $__bag->first($__errorArgs[0]); ?>';
 
     /**
      * Compile the enderror statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileEnderror($expression)
+    protected function compileEnderror(string $expression): string
     {
         return '<?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }

@@ -11,30 +11,28 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Stream;
 
+use BadMethodCallException;
 use Hyperf\HttpServer\Exception\Http\FileException;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
+use SplFileInfo;
+use Stringable;
 
-class SwooleFileStream implements StreamInterface, FileInterface
+class SwooleFileStream implements StreamInterface, FileInterface, Stringable
 {
-    /**
-     * @var int
-     */
-    protected $size;
+    protected int $size;
 
-    /**
-     * @var \SplFileInfo
-     */
-    protected $file;
+    protected SplFileInfo $file;
 
     /**
      * SwooleFileStream constructor.
      *
-     * @param \SplFileInfo|string $file
+     * @param SplFileInfo|string $file
      */
     public function __construct($file)
     {
-        if (! $file instanceof \SplFileInfo) {
-            $file = new \SplFileInfo($file);
+        if (! $file instanceof SplFileInfo) {
+            $file = new SplFileInfo($file);
         }
         if (! $file->isReadable()) {
             throw new FileException('File must be readable.');
@@ -58,7 +56,7 @@ class SwooleFileStream implements StreamInterface, FileInterface
     {
         try {
             return $this->getContents();
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return '';
         }
     }
@@ -68,7 +66,7 @@ class SwooleFileStream implements StreamInterface, FileInterface
      */
     public function close()
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new BadMethodCallException('Not implemented');
     }
 
     /**
@@ -79,7 +77,7 @@ class SwooleFileStream implements StreamInterface, FileInterface
      */
     public function detach()
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new BadMethodCallException('Not implemented');
     }
 
     /**
@@ -98,12 +96,12 @@ class SwooleFileStream implements StreamInterface, FileInterface
     /**
      * Returns the current position of the file read/write pointer.
      *
-     * @throws \RuntimeException on error
      * @return int Position of the file pointer
+     * @throws RuntimeException on error
      */
     public function tell()
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new BadMethodCallException('Not implemented');
     }
 
     /**
@@ -113,17 +111,17 @@ class SwooleFileStream implements StreamInterface, FileInterface
      */
     public function eof()
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new BadMethodCallException('Not implemented');
     }
 
     /**
-     * Returns whether or not the stream is seekable.
+     * Returns whether the stream is seekable.
      *
      * @return bool
      */
     public function isSeekable()
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new BadMethodCallException('Not implemented');
     }
 
     /**
@@ -136,11 +134,11 @@ class SwooleFileStream implements StreamInterface, FileInterface
      *                    PHP $whence values for `fseek()`.  SEEK_SET: Set position equal to
      *                    offset bytes SEEK_CUR: Set position to current location plus offset
      *                    SEEK_END: Set position to end-of-stream plus offset.
-     * @throws \RuntimeException on failure
+     * @throws RuntimeException on failure
      */
     public function seek($offset, $whence = SEEK_SET)
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new BadMethodCallException('Not implemented');
     }
 
     /**
@@ -148,17 +146,17 @@ class SwooleFileStream implements StreamInterface, FileInterface
      * If the stream is not seekable, this method will raise an exception;
      * otherwise, it will perform a seek(0).
      *
-     * @throws \RuntimeException on failure
+     * @throws RuntimeException on failure
      * @see http://www.php.net/manual/en/function.fseek.php
      * @see seek()
      */
     public function rewind()
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new BadMethodCallException('Not implemented');
     }
 
     /**
-     * Returns whether or not the stream is writable.
+     * Returns whether the stream is writable.
      *
      * @return bool
      */
@@ -171,16 +169,16 @@ class SwooleFileStream implements StreamInterface, FileInterface
      * Write data to the stream.
      *
      * @param string $string the string that is to be written
-     * @throws \RuntimeException on failure
      * @return int returns the number of bytes written to the stream
+     * @throws RuntimeException on failure
      */
     public function write($string)
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new BadMethodCallException('Not implemented');
     }
 
     /**
-     * Returns whether or not the stream is readable.
+     * Returns whether the stream is readable.
      *
      * @return bool
      */
@@ -192,24 +190,24 @@ class SwooleFileStream implements StreamInterface, FileInterface
     /**
      * Read data from the stream.
      *
-     * @param int $length Read up to $length bytes from the object and return
-     *                    them. Fewer than $length bytes may be returned if underlying stream
+     * @param int $length Read up to $length bytes from the object and return them.
+     *                    Fewer than $length bytes may be returned if underlying stream
      *                    call returns fewer bytes.
-     * @throws \RuntimeException if an error occurs
      * @return string returns the data read from the stream, or an empty string
      *                if no bytes are available
+     * @throws RuntimeException if an error occurs
      */
     public function read($length)
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new BadMethodCallException('Not implemented');
     }
 
     /**
      * Returns the remaining contents in a string.
      *
-     * @throws \RuntimeException if unable to read or an error occurs while
-     *                           reading
      * @return string
+     * @throws RuntimeException if unable to read or an error occurs while
+     *                          reading
      */
     public function getContents()
     {
@@ -229,7 +227,7 @@ class SwooleFileStream implements StreamInterface, FileInterface
      */
     public function getMetadata($key = null)
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new BadMethodCallException('Not implemented');
     }
 
     public function getFilename(): string

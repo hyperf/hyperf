@@ -13,41 +13,28 @@ namespace Hyperf\ServiceGovernance\Listener;
 
 use Hyperf\Consul\Exception\ServerException;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\ServiceGovernance\DriverManager;
-use Hyperf\ServiceGovernance\IPReaderInterface;
 use Hyperf\ServiceGovernance\ServiceManager;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class RegisterServiceListener implements ListenerInterface
 {
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var ServiceManager
-     */
-    protected $serviceManager;
+    protected ServiceManager $serviceManager;
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected ConfigInterface $config;
 
-    /**
-     * @var IPReaderInterface
-     */
-    protected $ipReader;
+    protected IPReaderInterface $ipReader;
 
-    /**
-     * @var DriverManager
-     */
-    protected $governanceManager;
+    protected DriverManager $governanceManager;
 
     public function __construct(ContainerInterface $container)
     {
@@ -69,7 +56,7 @@ class RegisterServiceListener implements ListenerInterface
     /**
      * @param MainCoroutineServerStart|MainWorkerStart $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $continue = true;
         while ($continue) {
@@ -93,7 +80,7 @@ class RegisterServiceListener implements ListenerInterface
                 }
                 $continue = false;
             } catch (ServerException $throwable) {
-                if (strpos($throwable->getMessage(), 'Connection failed') !== false) {
+                if (str_contains($throwable->getMessage(), 'Connection failed')) {
                     $this->logger->warning('Cannot register service, connection of service center failed, re-register after 10 seconds.');
                     sleep(10);
                 } else {
@@ -112,18 +99,18 @@ class RegisterServiceListener implements ListenerInterface
                 continue;
             }
             if (! $server['name']) {
-                throw new \InvalidArgumentException('Invalid server name');
+                throw new InvalidArgumentException('Invalid server name');
             }
             $host = $server['host'];
             if (in_array($host, ['0.0.0.0', 'localhost'])) {
                 $host = $this->ipReader->read();
             }
             if (! filter_var($host, FILTER_VALIDATE_IP)) {
-                throw new \InvalidArgumentException(sprintf('Invalid host %s', $host));
+                throw new InvalidArgumentException(sprintf('Invalid host %s', $host));
             }
             $port = $server['port'];
             if (! is_numeric($port) || ($port < 0 || $port > 65535)) {
-                throw new \InvalidArgumentException(sprintf('Invalid port %s', $port));
+                throw new InvalidArgumentException(sprintf('Invalid port %s', $port));
             }
             $port = (int) $port;
             $result[$server['name']] = [$host, $port];

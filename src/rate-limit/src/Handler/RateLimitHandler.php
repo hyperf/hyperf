@@ -14,21 +14,20 @@ namespace Hyperf\RateLimit\Handler;
 use bandwidthThrottle\tokenBucket\Rate;
 use bandwidthThrottle\tokenBucket\TokenBucket;
 use Hyperf\RateLimit\Storage\RedisStorage;
+use Hyperf\Redis\Redis;
 use Psr\Container\ContainerInterface;
+
 use function make;
 
 class RateLimitHandler
 {
     public const RATE_LIMIT_BUCKETS = 'rateLimit:buckets';
 
-    /**
-     * @var \Redis
-     */
-    private $redis;
+    private Redis $redis;
 
     public function __construct(ContainerInterface $container)
     {
-        $this->redis = $container->get(\Redis::class);
+        $this->redis = $container->get(Redis::class);
     }
 
     /**

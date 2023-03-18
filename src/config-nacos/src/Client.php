@@ -18,32 +18,18 @@ use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Codec\Xml;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class Client implements ClientInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ConfigInterface $config;
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected Application $client;
 
-    /**
-     * @var Application
-     */
-    protected $client;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
         $this->client = $container->get(NacosClient::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
@@ -70,10 +56,7 @@ class Client implements ClientInterface
         return $config;
     }
 
-    /**
-     * @return array|string
-     */
-    public function decode(string $body, ?string $type = null)
+    public function decode(string $body, ?string $type = null): array|string
     {
         $type = strtolower((string) $type);
         switch ($type) {

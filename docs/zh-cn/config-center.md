@@ -92,7 +92,7 @@ return [
             // 严格模式，当为 false 时，拉取的配置值均为 string 类型，当为 true 时，拉取的配置值会转化为原配置值的数据类型
             'strict_mode' => false,
             // 客户端IP
-            'client_ip' => current(swoole_get_local_ip()),
+            'client_ip' => \Hyperf\Utils\Network::ip(),
             // 拉取配置超时时间
             'pullTimeout' => 10,
             // 拉取配置间隔
@@ -184,12 +184,39 @@ return [
 
 如配置文件不存在可执行 `php bin/hyperf.php vendor:publish hyperf/config-center` 命令来生成。
 
-
 ## 配置更新的作用范围
 
 在默认的功能实现下，是由一个 `ConfigFetcherProcess` 进程根据配置的 `interval` 来向 配置中心 Server 拉取对应 `namespace` 的配置，并通过 IPC 通讯将拉取到的新配置传递到各个 Worker 中，并更新到 `Hyperf\Contract\ConfigInterface` 对应的对象内。   
 需要注意的是，更新的配置只会更新 `Config` 对象，故仅限应用层或业务层的配置，不涉及框架层的配置改动，因为框架层的配置改动需要重启服务，如果您有这样的需求，也可以通过自行实现 `ConfigFetcherProcess` 来达到目的。
 
-## 注意事项
+## 配置更新事件
 
-在命令行模式时，默认不会触发事件分发，导致无法正常获取到相关配置，可通过添加 `--enable-event-dispatcher` 参数来开启。
+配置中心运行期间，但配置发生变化会对应触发 `Hyperf\ConfigCenter\Event\ConfigChanged` 事件，您可以进行对这些事件进行监听以满足您的需求。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\ConfigCenter\Event\ConfigChanged;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+
+#[Listener]
+class DbQueryExecutedListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            ConfigChanged::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        var_dump($event);
+    }
+}
+```

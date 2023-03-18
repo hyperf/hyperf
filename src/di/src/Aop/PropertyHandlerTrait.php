@@ -14,6 +14,7 @@ namespace Hyperf\Di\Aop;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Definition\PropertyHandlerManager;
 use Hyperf\Di\ReflectionManager;
+use ReflectionClass;
 
 trait PropertyHandlerTrait
 {
@@ -54,7 +55,7 @@ trait PropertyHandlerTrait
         }
     }
 
-    protected function __handleTrait(\ReflectionClass $reflectionClass, array $handled, string $className): array
+    protected function __handleTrait(ReflectionClass $reflectionClass, array $handled, string $className): array
     {
         foreach ($reflectionClass->getTraits() ?? [] as $reflectionTrait) {
             if (in_array($reflectionTrait->getName(), [ProxyTrait::class, PropertyHandlerTrait::class])) {
@@ -85,7 +86,7 @@ trait PropertyHandlerTrait
             foreach ($propertyMetadata as $annotationName => $annotation) {
                 if ($callbacks = PropertyHandlerManager::get($annotationName)) {
                     foreach ($callbacks as $callback) {
-                        call($callback, [$this, $currentClassName, $targetClassName, $propertyName, $annotation]);
+                        $callback($this, $currentClassName, $targetClassName, $propertyName, $annotation);
                     }
                     $handled[] = $propertyName;
                 }

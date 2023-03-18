@@ -1,6 +1,6 @@
 # 模型建立指令碼
 
-Hyperf 提供了建立模型的命令，您可以很方便的根據資料表建立對應模型。命令通過 `AST` 生成模型，所以當您增加了某些方法後，也可以使用指令碼方便的重置模型。
+Hyperf 提供了建立模型的命令，您可以很方便的根據資料表建立對應模型。命令透過 `AST` 生成模型，所以當您增加了某些方法後，也可以使用指令碼方便的重置模型。
 
 ```bash
 php bin/hyperf.php gen:model table_name
@@ -186,7 +186,7 @@ class UserExt extends Model
 
 ```
 
-這時候，我們就可以通過重寫 `ModelUpdateVisitor`，修改這一特性。
+這時候，我們就可以透過重寫 `ModelUpdateVisitor`，修改這一特性。
 
 ```php
 <?php

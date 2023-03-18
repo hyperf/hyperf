@@ -17,23 +17,11 @@ use Psr\Container\ContainerInterface;
 
 class RpcPool extends Pool
 {
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var array
-     */
-    protected $config;
-
-    public function __construct(ContainerInterface $container, string $name, array $config)
+    public function __construct(ContainerInterface $container, protected string $name, protected array $config)
     {
-        $this->name = $name;
-        $this->config = $config;
-        $options = $config['pool'] ?? [];
         $this->frequency = make(Frequency::class, [$this]);
-        parent::__construct($container, $options);
+
+        parent::__construct($container, $config['pool'] ?? []);
     }
 
     public function getName(): string

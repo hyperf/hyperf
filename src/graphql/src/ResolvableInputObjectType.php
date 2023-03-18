@@ -18,6 +18,7 @@ use TheCodingMachine\GraphQLite\Mappers\RecursiveTypeMapperInterface;
 use TheCodingMachine\GraphQLite\Types\ArgumentResolver;
 use TheCodingMachine\GraphQLite\Types\ResolvableInputInterface;
 use TheCodingMachine\GraphQLite\Types\ResolvableInputObjectType as TheCodingMachineResolvableInputObjectType;
+
 use function get_class;
 
 /**
@@ -31,7 +32,7 @@ class ResolvableInputObjectType extends TheCodingMachineResolvableInputObjectTyp
     private $argumentResolver;
 
     /**
-     * @var callable&array<int, object|string>
+     * @var array<int, object|string>|callable
      */
     private $resolve;
 

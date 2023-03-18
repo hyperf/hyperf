@@ -17,7 +17,7 @@ use HyperfTest\Di\Stub\Aspect\NoProcessAspect;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use function Yasd\Zval\getRefCount;
+use WeakReference;
 
 /**
  * @internal
@@ -30,7 +30,7 @@ class PipelineTest extends TestCase
         Mockery::close();
     }
 
-    public function testRefcountForPipelineCarry()
+    public function testWeakReferenceForPipelineCarry()
     {
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('get')->with(NoProcessAspect::class)->andReturn(new NoProcessAspect());
@@ -45,6 +45,9 @@ class PipelineTest extends TestCase
         });
 
         $this->assertTrue($res);
-        $this->assertEquals(2, getRefCount($pipeline));
+        $wr = WeakReference::create($pipeline);
+        $wr->get();
+        unset($pipeline);
+        $this->assertNull($wr->get());
     }
 }

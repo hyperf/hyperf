@@ -44,7 +44,7 @@ class BuilderTest extends TestCase
         $model->shouldReceive('searchableUsing')->andReturn($engine = m::mock());
         $engine->shouldReceive('paginate');
         $engine->shouldReceive('map')->andReturn($results = Collection::make([new stdClass()]));
-        $engine->shouldReceive('getTotalCount');
+        $engine->shouldReceive('getTotalCount')->andReturn(100);
         $model->shouldReceive('newCollection')->andReturn($results);
         $builder->paginate();
     }

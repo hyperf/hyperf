@@ -17,7 +17,10 @@ use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Model\CastsValue;
 use Hyperf\Database\Model\Model;
 use Hyperf\Utils\Arr;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use stdClass;
 
 /**
  * @internal
@@ -27,7 +30,7 @@ class DatabaseModelCustomCastingTest extends TestCase
 {
     protected function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
         UserInfoCaster::$setCount = 0;
         UserInfoCaster::$getCount = 0;
     }
@@ -176,9 +179,9 @@ class DatabaseModelCustomCastingTest extends TestCase
         $model->mergeCasts([
             'mockery' => MockeryAttribute::class,
         ]);
-        $mockery = \Mockery::mock(CastsAttributes::class);
+        $mockery = Mockery::mock(CastsAttributes::class);
         $mockery->shouldReceive('get')->withAnyArgs()->andReturn(function ($_, $key, $value, $attributes) {
-            $obj = new \stdClass();
+            $obj = new stdClass();
             $obj->value = $attributes[$key . '_origin'] - 1;
 
             return $obj;
@@ -190,7 +193,7 @@ class DatabaseModelCustomCastingTest extends TestCase
         });
         MockeryAttribute::$attribute = $mockery;
 
-        $std = new \stdClass();
+        $std = new stdClass();
         $std->value = 1;
         $model->mockery = $std;
 
@@ -200,7 +203,7 @@ class DatabaseModelCustomCastingTest extends TestCase
     public function testResolveCasterClass()
     {
         $model = new TestModelWithCustomCast();
-        $ref = new \ReflectionClass($model);
+        $ref = new ReflectionClass($model);
         $method = $ref->getMethod('resolveCasterClass');
         $method->setAccessible(true);
         CastUsing::$castsAttributes = UppercaseCaster::class;
@@ -249,17 +252,13 @@ class TestModelWithCustomCast extends Model
 {
     /**
      * The attributes that aren't mass assignable.
-     *
-     * @var array
      */
-    protected $guarded = [];
+    protected array $guarded = [];
 
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
-    protected $casts = [
+    protected array $casts = [
         'address' => AddressCaster::class,
         'user' => UserInfoCaster::class,
         'password' => HashCaster::class,
@@ -439,7 +438,7 @@ class Address
  */
 class UserInfo extends CastsValue
 {
-    protected $items = [
+    protected array $items = [
         'role_id' => 0,
     ];
 }

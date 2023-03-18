@@ -16,7 +16,7 @@ Hyperf 為您提供了分散式系統的外部化配置支援，預設適配了:
 - 時效性：修改配置，需要每臺伺服器每個應用修改並重啟服務
 - 侷限性：無法支援動態調整，例如日誌開關、功能開關等   
 
-因此，我們可以通過一個配置中心以一種科學的管理方式來統一管理相關的配置。
+因此，我們可以透過一個配置中心以一種科學的管理方式來統一管理相關的配置。
 
 ## 安裝
 
@@ -92,7 +92,7 @@ return [
             // 嚴格模式，當為 false 時，拉取的配置值均為 string 型別，當為 true 時，拉取的配置值會轉化為原配置值的資料型別
             'strict_mode' => false,
             // 客戶端IP
-            'client_ip' => current(swoole_get_local_ip()),
+            'client_ip' => \Hyperf\Utils\Network::ip(),
             // 拉取配置超時時間
             'pullTimeout' => 10,
             // 拉取配置間隔
@@ -184,12 +184,39 @@ return [
 
 如配置檔案不存在可執行 `php bin/hyperf.php vendor:publish hyperf/config-center` 命令來生成。
 
-
 ## 配置更新的作用範圍
 
-在預設的功能實現下，是由一個 `ConfigFetcherProcess` 程序根據配置的 `interval` 來向 配置中心 Server 拉取對應 `namespace` 的配置，並通過 IPC 通訊將拉取到的新配置傳遞到各個 Worker 中，並更新到 `Hyperf\Contract\ConfigInterface` 對應的物件內。   
-需要注意的是，更新的配置只會更新 `Config` 物件，故僅限應用層或業務層的配置，不涉及框架層的配置改動，因為框架層的配置改動需要重啟服務，如果您有這樣的需求，也可以通過自行實現 `ConfigFetcherProcess` 來達到目的。
+在預設的功能實現下，是由一個 `ConfigFetcherProcess` 程序根據配置的 `interval` 來向 配置中心 Server 拉取對應 `namespace` 的配置，並透過 IPC 通訊將拉取到的新配置傳遞到各個 Worker 中，並更新到 `Hyperf\Contract\ConfigInterface` 對應的物件內。   
+需要注意的是，更新的配置只會更新 `Config` 物件，故僅限應用層或業務層的配置，不涉及框架層的配置改動，因為框架層的配置改動需要重啟服務，如果您有這樣的需求，也可以透過自行實現 `ConfigFetcherProcess` 來達到目的。
 
-## 注意事項
+## 配置更新事件
 
-在命令列模式時，預設不會觸發事件分發，導致無法正常獲取到相關配置，可通過新增 `--enable-event-dispatcher` 引數來開啟。
+配置中心執行期間，但配置發生變化會對應觸發 `Hyperf\ConfigCenter\Event\ConfigChanged` 事件，您可以進行對這些事件進行監聽以滿足您的需求。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\ConfigCenter\Event\ConfigChanged;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+
+#[Listener]
+class DbQueryExecutedListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            ConfigChanged::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        var_dump($event);
+    }
+}
+```

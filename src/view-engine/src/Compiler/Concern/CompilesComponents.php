@@ -19,17 +19,13 @@ trait CompilesComponents
 {
     /**
      * The component name hash stack.
-     *
-     * @var array
      */
-    protected static $componentHashStack = [];
+    protected static array $componentHashStack = [];
 
     /**
      * Get a new component hash for a component name.
-     *
-     * @return string
      */
-    public static function newComponentHash(string $component)
+    public static function newComponentHash(string $component): string
     {
         static::$componentHashStack[] = $hash = sha1($component);
 
@@ -38,10 +34,8 @@ trait CompilesComponents
 
     /**
      * Compile a class component opening.
-     *
-     * @return string
      */
-    public static function compileClassComponentOpening(string $component, string $alias, string $data, string $hash)
+    public static function compileClassComponentOpening(string $component, string $alias, string $data, string $hash): string
     {
         return implode("\n", [
             '<?php if (isset($component)) { $__componentOriginal' . $hash . ' = $component; } ?>',
@@ -54,10 +48,8 @@ trait CompilesComponents
 
     /**
      * Compile the end-component statements into valid PHP.
-     *
-     * @return string
      */
-    public function compileEndComponentClass()
+    public function compileEndComponentClass(): string
     {
         return static::compileEndComponent() . "\n" . implode("\n", [
             '<?php endif; ?>',
@@ -80,13 +72,10 @@ trait CompilesComponents
 
     /**
      * Compile the component statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileComponent($expression)
+    protected function compileComponent(string $expression): string
     {
-        [$component, $alias, $data] = strpos($expression, ',') !== false
+        [$component, $alias, $data] = str_contains($expression, ',')
             ? array_map('trim', explode(',', trim($expression, '()'), 3)) + ['', '', '']
             : [trim($expression, '()'), '', ''];
 
@@ -103,10 +92,8 @@ trait CompilesComponents
 
     /**
      * Compile the end-component statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndComponent()
+    protected function compileEndComponent(): string
     {
         $hash = array_pop(static::$componentHashStack);
 
@@ -121,53 +108,40 @@ trait CompilesComponents
 
     /**
      * Compile the slot statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileSlot($expression)
+    protected function compileSlot(string $expression): string
     {
         return "<?php \$__env->slot{$expression}; ?>";
     }
 
     /**
      * Compile the end-slot statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndSlot()
+    protected function compileEndSlot(): string
     {
         return '<?php $__env->endSlot(); ?>';
     }
 
     /**
      * Compile the component-first statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileComponentFirst($expression)
+    protected function compileComponentFirst(string $expression): string
     {
         return "<?php \$__env->startComponentFirst{$expression}; ?>";
     }
 
     /**
      * Compile the end-component-first statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndComponentFirst()
+    protected function compileEndComponentFirst(): string
     {
         return $this->compileEndComponent();
     }
 
     /**
      * Compile the prop statement into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileProps($expression)
+    protected function compileProps(string $expression): string
     {
         return "<?php \$attributes = \$attributes->exceptProps{$expression}; ?>
 <?php foreach (array_filter({$expression}, 'is_string', ARRAY_FILTER_USE_KEY) as \$__key => \$__value) {

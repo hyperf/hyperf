@@ -12,30 +12,38 @@ declare(strict_types=1);
 namespace Hyperf\Rpc;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\NormalizerInterface;
+use Hyperf\RpcMultiplex\DataFormatter;
+use Hyperf\RpcMultiplex\Packer\JsonPacker;
+use Hyperf\RpcMultiplex\PathGenerator;
+use Hyperf\RpcMultiplex\Transporter;
 use Hyperf\Utils\Str;
 use InvalidArgumentException;
 
 class ProtocolManager
 {
+    public function __construct(private ConfigInterface $config)
+    {
+    }
+
     /**
-     * @var \Hyperf\Contract\ConfigInterface
+     * @param $data = [
+     *     'packer' => JsonPacker::class,
+     *     'transporter' => Transporter::class,
+     *     'path-generator' => PathGenerator::class,
+     *     'data-formatter' => DataFormatter::class,
+     *     'normalizer' => JsonRpcNormalizer::class,
+     * ]
      */
-    private $config;
-
-    public function __construct(ConfigInterface $config)
+    public function register(string $name, array $data): void
     {
-        $this->config = $config;
+        $this->config->set('protocols.' . $name, $data);
     }
 
-    public function register(string $name, array $data)
-    {
-        return $this->config->set('protocols.' . $name, $data);
-    }
-
-    public function registerOrAppend(string $name, array $data)
+    public function registerOrAppend(string $name, array $data): void
     {
         $key = 'protocols.' . $name;
-        return $this->config->set($key, array_merge($this->config->get($key, []), $data));
+        $this->config->set($key, array_merge($this->config->get($key, []), $data));
     }
 
     public function getProtocol(string $name): array
@@ -63,10 +71,19 @@ class ProtocolManager
         return $this->getTarget($name, 'data-formatter');
     }
 
-    private function getTarget(string $name, string $target)
+    public function getNormalizer(string $name): string
+    {
+        return $this->getTarget($name, 'normalizer', NormalizerInterface::class);
+    }
+
+    private function getTarget(string $name, string $target, ?string $default = null): string
     {
         $result = $this->config->get('protocols.' . Str::lower($name) . '.' . Str::lower($target));
         if (! is_string($result)) {
+            if ($default) {
+                return $default;
+            }
+
             throw new InvalidArgumentException(sprintf('%s is not exists.', Str::studly($target, ' ')));
         }
         return $result;

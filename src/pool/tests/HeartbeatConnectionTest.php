@@ -11,16 +11,16 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Pool;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
+use Hyperf\Utils\Reflection\ClassInvoker;
 use HyperfTest\Pool\Stub\HeartbeatPoolStub;
 use HyperfTest\Pool\Stub\KeepaliveConnectionStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Swoole\Timer;
 
 /**
  * @internal
@@ -30,7 +30,6 @@ class HeartbeatConnectionTest extends TestCase
 {
     protected function tearDown(): void
     {
-        Timer::clearAll();
         Mockery::close();
         Context::set('test.pool.heartbeat_connection', []);
     }
@@ -84,10 +83,11 @@ class HeartbeatConnectionTest extends TestCase
         /** @var KeepaliveConnectionStub $connection */
         $connection = $pool->get();
         $connection->reconnect();
-        $this->assertSame(1, count(Timer::list()));
+        $timer = $connection->timer;
+        $this->assertSame(1, count((new ClassInvoker($timer))->closures));
         $this->assertTrue($connection->check());
         $connection->close();
-        $this->assertSame(0, count(Timer::list()));
+        $this->assertSame(0, count((new ClassInvoker($timer))->closures));
         $this->assertFalse($connection->check());
         $this->assertSame('close protocol', Context::get('test.pool.heartbeat_connection')['close']);
     }

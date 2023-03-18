@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils\Coroutine;
 
+use Exception;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine\Concurrent;
 use Mockery;
@@ -66,7 +67,7 @@ class ConcurrentTest extends TestCase
             $con->create(function () use (&$count) {
                 Coroutine::sleep(0.1);
                 ++$count;
-                throw new \Exception('ddd');
+                throw new Exception('ddd');
             });
         }
 

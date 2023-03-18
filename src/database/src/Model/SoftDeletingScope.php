@@ -14,11 +14,9 @@ namespace Hyperf\Database\Model;
 class SoftDeletingScope implements Scope
 {
     /**
-     * All of the extensions to be added to the builder.
-     *
-     * @var array
+     * All the extensions to be added to the builder.
      */
-    protected $extensions = ['Restore', 'WithTrashed', 'WithoutTrashed', 'OnlyTrashed'];
+    protected array $extensions = ['Restore', 'RestoreOrCreate', 'WithTrashed', 'WithoutTrashed', 'OnlyTrashed'];
 
     /**
      * Apply the scope to a given Model query builder.
@@ -77,6 +75,22 @@ class SoftDeletingScope implements Scope
             $builder->withTrashed();
 
             return $builder->update([$builder->getModel()->getDeletedAtColumn() => null]);
+        });
+    }
+
+    /**
+     * Add the restore-or-create extension to the builder.
+     *
+     * @param \Hyperf\Database\Model\Builder $builder
+     */
+    protected function addRestoreOrCreate(Builder $builder)
+    {
+        $builder->macro('restoreOrCreate', function (Builder $builder, array $attributes = [], array $values = []) {
+            $builder->withTrashed();
+
+            return tap($builder->firstOrCreate($attributes, $values), function ($instance) {
+                $instance->restore();
+            });
         });
     }
 
