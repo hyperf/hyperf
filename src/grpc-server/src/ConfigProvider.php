@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\GrpcServer;
 
 use Hyperf\GrpcServer\Listener\RegisterProtocolListener;
-use Hyperf\ServiceGovernance\ServiceManager;
 use Hyperf\GrpcServer\Listener\RegisterServiceListener;
+use Hyperf\ServiceGovernance\ServiceManager;
 
 class ConfigProvider
 {

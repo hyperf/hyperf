@@ -27,7 +27,6 @@ use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Router\DispatcherFactory;
 use Hyperf\Server\Exception\ServerException;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -36,23 +35,15 @@ use RuntimeException;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {
-
     protected Protocol $protocol;
+
     public function __construct($container, string $serverName)
     {
         $this->protocol = new Protocol($container, $container->get(ProtocolManager::class), 'grpc');
 
-        parent::__construct($container,$serverName);
-
+        parent::__construct($container, $serverName);
     }
 
-    protected function createDispatcher(string $serverName): Dispatcher
-    {
-        $factory = make(DispatcherFactory::class, [
-            'pathGenerator' => $this->protocol->getPathGenerator(),
-        ]);
-        return $factory->getDispatcher($serverName);
-    }
     /**
      * Process an incoming server request and return a response, optionally delegating
      * response creation to a handler.
@@ -96,6 +87,14 @@ class CoreMiddleware extends HttpCoreMiddleware
             default:
                 return $this->handleResponse(null, 200, StatusCode::NOT_FOUND, 'Route Not Found.');
         }
+    }
+
+    protected function createDispatcher(string $serverName): Dispatcher
+    {
+        $factory = make(DispatcherFactory::class, [
+            'pathGenerator' => $this->protocol->getPathGenerator(),
+        ]);
+        return $factory->getDispatcher($serverName);
     }
 
     /**

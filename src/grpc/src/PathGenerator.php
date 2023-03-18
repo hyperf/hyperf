@@ -20,6 +20,6 @@ class PathGenerator implements PathGeneratorInterface
     {
         $handledNamespace = explode('\\', $service);
         $handledNamespace = Str::replaceLast('Service', '', end($handledNamespace));
-        return "/grpc.".$handledNamespace . '/' . $method;
+        return '/grpc.' . $handledNamespace . '/' . $method;
     }
 }

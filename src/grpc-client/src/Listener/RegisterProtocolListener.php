@@ -9,16 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\GrpcClient\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
+use Hyperf\Grpc\PathGenerator;
+use Hyperf\GrpcClient\DataFormatter;
 use Hyperf\GrpcClient\GrpcNormalizer;
 use Hyperf\GrpcClient\GrpcPacker;
 use Hyperf\GrpcClient\GrpcTransporter;
-use Hyperf\GrpcClient\DataFormatter;
-use Hyperf\Grpc\PathGenerator;
 use Hyperf\Rpc\ProtocolManager;
 
 class RegisterProtocolListener implements ListenerInterface
@@ -45,7 +44,7 @@ class RegisterProtocolListener implements ListenerInterface
             'transporter' => GrpcTransporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,
-            'normalizer' => GrpcNormalizer::class
+            'normalizer' => GrpcNormalizer::class,
         ]);
     }
 }

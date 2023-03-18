@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace Hyperf\GrpcClient;
 
 use Hyperf\Grpc\StatusCode;
@@ -19,7 +28,6 @@ class GrpcTransporter implements TransporterInterface
      * @var Node[]
      */
     private array $nodes = [];
-
 
     public function send(string $data)
     {
@@ -62,7 +70,6 @@ class GrpcTransporter implements TransporterInterface
         $this->loadBalancer = $loadBalancer;
         return $this;
     }
-
 
     private function getNode(): Node
     {
