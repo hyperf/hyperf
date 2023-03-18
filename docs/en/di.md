@@ -247,8 +247,8 @@ use Psr\Container\ContainerInterface;
 
 class UserServiceFactory
 {
-    // Implement an __invoke() method for the production of the object, and parameters will be automatically injected into a current container instance
-    public function __invoke(ContainerInterface $container)
+    // Implement an __invoke() method for the production of the object, and parameters will be automatically injected into a current container instance and the parameters array.
+    public function __invoke(ContainerInterface $container, array $parameters = [])
     {
         $config = $container->get(ConfigInterface::class);
         // Assume that the key of corresponding config is cache.enable

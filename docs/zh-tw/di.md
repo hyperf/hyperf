@@ -243,8 +243,8 @@ use Psr\Container\ContainerInterface;
 
 class UserServiceFactory
 {
-    // 實現一個 __invoke() 方法來完成物件的生產，方法引數會自動注入一個當前的容器例項
-    public function __invoke(ContainerInterface $container)
+    // 實現一個 __invoke() 方法來完成物件的生產，方法引數會自動注入一個當前的容器例項和一個可選的引數陣列
+    public function __invoke(ContainerInterface $container, array $parameters = [])
     {
         $config = $container->get(ConfigInterface::class);
         // 我們假設對應的配置的 key 為 cache.enable
