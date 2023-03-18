@@ -36,6 +36,7 @@ class GrpcTransporter implements TransporterInterface
         $method = $unserializeData['method'] ?? '';
         $id = $unserializeData['id'] ?? '';
         $params = $unserializeData['params'][0] ?? [];
+        // TODO: Don't make new one when send messages.
         $client = new BaseClient($node->host . ':' . $node->port, []);
         $request = new Request($method, $params, []);
         $streamId = $client->send($request);
