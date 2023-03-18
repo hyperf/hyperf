@@ -148,7 +148,7 @@ class Producer
         $producerConfig->setRecvTimeout($config['recv_timeout']);
         $producerConfig->setClientId($config['client_id']);
         $producerConfig->setMaxWriteAttempts($config['max_write_attempts']);
-        $producerConfig->setSocket(SwooleSocket::class);
+        $producerConfig->setSocket($config['socket'] ?? SwooleSocket::class);
         $producerConfig->setBootstrapServers($config['bootstrap_servers']);
         $producerConfig->setAcks($config['acks']);
         $producerConfig->setProducerId($config['producer_id']);
