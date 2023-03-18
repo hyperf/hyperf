@@ -9,12 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\HttpMessage\Server;
+namespace Hyperf\Http2Client\Exception;
 
-interface ConnectionInterface
+use Exception;
+
+class ClientClosedException extends Exception
 {
-    /**
-     * @return mixed|\Swoole\Http\Response
-     */
-    public function getSocket(): mixed;
 }

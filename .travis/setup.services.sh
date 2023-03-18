@@ -11,3 +11,5 @@ docker build src/grpc-client/tests/Golang -t go-grpc-server:latest
 docker run -d --name go-grpc-server -p 50052:50052 go-grpc-server:latest
 docker build -t tcp-server:latest .travis/tcp_server
 docker run -d --name tcp-server -p 10001:10001 tcp-server:latest
+docker build -t http-server:latest .travis/http_server
+docker run -d --name http-server -p 10002:10002 http-server:latest

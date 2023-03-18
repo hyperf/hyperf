@@ -13,11 +13,13 @@ namespace Hyperf\Watcher;
 
 use Hyperf\Di\Annotation\AnnotationInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
+use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Aop\ProxyManager;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\Utils\Composer;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Watcher\Ast\Metadata;
 use Hyperf\Watcher\Ast\RewriteClassNameVisitor;
@@ -52,7 +54,7 @@ class Process
         }
         $class = $meta->toClassName();
         $collectors = $this->config->getCollectors();
-        [$data, $proxies] = file_exists($this->path) ? unserialize(file_get_contents($this->path)) : [[], []];
+        [$data, $proxies, $aspectClasses] = file_exists($this->path) ? unserialize(file_get_contents($this->path)) : [[], [], []];
         foreach ($data as $collector => $deserialized) {
             /** @var MetadataCollector $collector */
             if (in_array($collector, $collectors)) {
@@ -78,10 +80,16 @@ class Process
             $data[$collector] = $collector::serialize();
         }
 
+        $composerLoader = Composer::getLoader();
+        $composerLoader->addClassMap($this->config->getClassMap());
+        $this->deleteAspectClasses($aspectClasses, $proxies, $class);
+
         // Reload the proxy class.
-        $manager = new ProxyManager(array_merge($proxies, [$class => $this->file]), BASE_PATH . '/runtime/container/proxy/');
+        $manager = new ProxyManager(array_merge($composerLoader->getClassMap(), $proxies, [$class => $this->file]), BASE_PATH . '/runtime/container/proxy/');
         $proxies = $manager->getProxies();
-        $this->putCache($this->path, serialize([$data, $proxies]));
+        $aspectClasses = $manager->getAspectClasses();
+
+        $this->putCache($this->path, serialize([$data, $proxies, $aspectClasses]));
     }
 
     public function collect($className, ReflectionClass $reflection)
@@ -147,5 +155,31 @@ class Process
     protected function initScanConfig(): ScanConfig
     {
         return ScanConfig::instance(BASE_PATH . '/config/');
+    }
+
+    protected function deleteAspectClasses($aspectClasses, $proxies, $class): void
+    {
+        foreach ($aspectClasses as $aspect => $classes) {
+            if ($aspect !== $class) {
+                continue;
+            }
+            foreach ($classes as $path) {
+                if (file_exists($path)) {
+                    unlink($path);
+                }
+            }
+        }
+
+        $classesAspects = AspectCollector::get('classes', []);
+        foreach ($classesAspects as $aspect => $rules) {
+            if ($aspect !== $class) {
+                continue;
+            }
+            foreach ($rules as $rule) {
+                if (isset($proxies[$rule]) && file_exists($proxies[$rule])) {
+                    unlink($proxies[$rule]);
+                }
+            }
+        }
     }
 }

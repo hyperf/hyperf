@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\HttpMessage\Server;
+namespace Hyperf\Http2Client;
 
-interface ConnectionInterface
+class ConfigProvider
 {
-    /**
-     * @return mixed|\Swoole\Http\Response
-     */
-    public function getSocket(): mixed;
+    public function __invoke(): array
+    {
+        return [];
+    }
 }

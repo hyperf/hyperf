@@ -1,11 +1,12 @@
 {
-    "name": "hyperf/amqp",
-    "description": "A amqplib for hyperf.",
+    "name": "hyperf/http2-client",
+    "description": "A HTTP2 client library for Hyperf.",
     "license": "MIT",
     "keywords": [
         "php",
+        "swoole",
         "hyperf",
-        "amqp"
+        "http2-client"
     ],
     "homepage": "https://hyperf.io",
     "support": {
@@ -16,28 +17,18 @@
     },
     "require": {
         "php": ">=8.0",
-        "doctrine/instantiator": "^1.2.0",
         "hyperf/contract": "~3.0.0",
-        "hyperf/utils": "~3.0.0",
-        "hyperf/process": "~3.0.0",
-        "hyperf/pool": "~3.0.0",
-        "php-amqplib/php-amqplib": "^3.5",
-        "psr/container": "^1.0|^2.0",
-        "psr/event-dispatcher": "^1.0",
-        "psr/log": "^1.0|^2.0|^3.0"
-    },
-    "suggest": {
-        "hyperf/di": "Required to use annotations.",
-        "hyperf/event": "Declare queue and start consumers automatically."
+        "hyperf/coordinator": "~3.0.0",
+        "hyperf/engine": "^1.8|^2.6"
     },
     "autoload": {
         "psr-4": {
-            "Hyperf\\Amqp\\": "src/"
+            "Hyperf\\Http2Client\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Amqp\\": "tests/"
+            "HyperfTest\\Http2Client\\": "tests/"
         }
     },
     "config": {
@@ -48,7 +39,7 @@
             "dev-master": "3.0-dev"
         },
         "hyperf": {
-            "config": "Hyperf\\Amqp\\ConfigProvider"
+            "config": "Hyperf\\Http2Client\\ConfigProvider"
         }
     }
 }
