@@ -48,6 +48,20 @@ class ProxyManager
         return $this->proxyDir;
     }
 
+    public function getAspectClasses(): array
+    {
+        $aspectClasses = [];
+        $classesAspects = AspectCollector::get('classes', []);
+        foreach ($classesAspects as $aspect => $rules) {
+            foreach ($rules as $rule) {
+                if (isset($this->proxies[$rule])) {
+                    $aspectClasses[$aspect][$rule] = $this->proxies[$rule];
+                }
+            }
+        }
+        return $aspectClasses;
+    }
+
     protected function generateProxyFiles(array $proxies = []): array
     {
         $proxyFiles = [];
@@ -172,19 +186,5 @@ class ProxyManager
             }
         }
         return $defined;
-    }
-
-    public function getAspectClasses(): array
-    {
-        $aspectClasses = [];
-        $classesAspects = AspectCollector::get('classes', []);
-        foreach ($classesAspects as $aspect => $rules) {
-            foreach ($rules as $rule) {
-                if (isset($this->proxies[$rule])) {
-                    $aspectClasses[$aspect][$rule] = $this->proxies[$rule];
-                }
-            }
-        }
-        return $aspectClasses;
     }
 }
