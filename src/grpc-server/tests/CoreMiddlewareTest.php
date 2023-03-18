@@ -12,17 +12,20 @@ declare(strict_types=1);
 namespace HyperfTest\GrpcServer;
 
 use Closure;
+use Hyperf\Config\Config;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
+use Hyperf\Grpc\PathGenerator;
 use Hyperf\GrpcServer\CoreMiddleware;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
+use Hyperf\Rpc\ProtocolManager;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +37,7 @@ use Psr\Container\ContainerInterface;
  */
 class CoreMiddlewareTest extends TestCase
 {
-    public function testDispatch()
+    public function testGRPCCoreMiddlewareDispatch()
     {
         $container = $this->getContainer();
 
@@ -66,6 +69,12 @@ class CoreMiddlewareTest extends TestCase
             ->andReturn(new ClosureDefinitionCollector());
         $container->shouldReceive('get')->with(NormalizerInterface::class)
             ->andReturn(new SimpleNormalizer());
+        $container->shouldReceive('get')->with(ProtocolManager::class)->andReturn($manager = new ProtocolManager(new Config([])));
+        $manager->registerOrAppend('grpc', [
+            'path-generator' => PathGenerator::class,
+        ]);
+        $container->shouldReceive('has')->with(PathGenerator::class)->andReturnTrue();
+        $container->shouldReceive('get')->with(PathGenerator::class)->andReturn(new PathGenerator());
         return $container;
     }
 }
