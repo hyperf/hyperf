@@ -30,7 +30,6 @@ class ClientTest extends TestCase
     protected function tearDown(): void
     {
         Mockery::close();
-        CoordinatorManager::until('HTTP2ClientUnit')->resume();
     }
 
     public function testHTTP2ClientLoop()
@@ -96,6 +95,8 @@ class ClientTest extends TestCase
         $client->write($streamId, Parser::serializeMessage($secondNote));
         $res = $client->recv($streamId, 10);
         $this->assertSame(0, $res->getStatusCode());
+
+        $client->close();
     }
 
     protected function getClient(string $baseUri)

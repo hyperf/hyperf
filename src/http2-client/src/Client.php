@@ -180,8 +180,8 @@ class Client implements ClientInterface
 
         Coroutine::create(function () {
             try {
+                $client = $this->client;
                 while (true) {
-                    $client = $this->client;
                     $response = $client->recv(-1);
                     if (! $client->isConnected()) {
                         throw new ClientClosedException('Read failed, because the http2 client is closed.');
