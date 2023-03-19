@@ -13,10 +13,13 @@ namespace HyperfTest\Http2Client;
 
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Http\V2\Request;
+use Hyperf\Grpc\Parser;
 use Hyperf\Http2Client\Client;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Routeguide\Point;
+use Routeguide\RouteNote;
 
 /**
  * @internal
@@ -27,7 +30,6 @@ class ClientTest extends TestCase
     protected function tearDown(): void
     {
         Mockery::close();
-        CoordinatorManager::until('HTTP2ClientUnit')->resume();
     }
 
     public function testHTTP2ClientLoop()
@@ -43,6 +45,57 @@ class ClientTest extends TestCase
 
         $result = parallel($callbacks);
         $this->assertSame(100, array_sum($result));
+        $client->close();
+    }
+
+    public function testHTTP2Pipeline()
+    {
+        if (SWOOLE_VERSION_ID < 50000) {
+            $this->markTestSkipped('');
+        }
+
+        $client = $this->getClient('127.0.0.1:50051');
+        $num = rand(0, 1000000);
+
+        $first = new Point();
+        $first->setLatitude($num);
+        $first->setLongitude($num);
+
+        $firstNote = new RouteNote();
+        $firstNote->setLocation($first);
+        $firstNote->setMessage('hello');
+
+        $second = new Point();
+        $second->setLatitude($num + 1);
+        $second->setLongitude($num + 1);
+
+        $secondNote = new RouteNote();
+        $secondNote->setLocation($second);
+        $secondNote->setMessage('world');
+
+        $streamId = $client->send(new Request(
+            '/routeguide.RouteGuide/RouteChat',
+            'POST',
+            '',
+            [
+                'content-type' => 'application/grpc+proto',
+                'te' => 'trailers',
+                'user-agent' => 'HyperfClient',
+            ],
+            true
+        ));
+
+        $client->write($streamId, Parser::serializeMessage($firstNote));
+        $client->write($streamId, Parser::serializeMessage($firstNote));
+
+        $res = $client->recv($streamId, 10);
+        $this->assertSame(200, $res->getStatusCode());
+
+        $client->write($streamId, Parser::serializeMessage($secondNote));
+        $client->write($streamId, Parser::serializeMessage($secondNote));
+        $res = $client->recv($streamId, 10);
+        $this->assertSame(0, $res->getStatusCode());
+
         $client->close();
     }
 

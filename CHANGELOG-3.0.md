@@ -7,6 +7,7 @@
 - [#5536](https://github.com/hyperf/hyperf/pull/5536) Added `hyperf/http2-client`.
 - [#5538](https://github.com/hyperf/hyperf/pull/5538) Support stream call for http2 client.
 - [#5511](https://github.com/hyperf/hyperf/pull/5511) Support GRPC services which can easily to registry and discovery.
+- [#5545](https://github.com/hyperf/hyperf/pull/5545) Added streaming test cases for http2 client.
 
 ## Optimized
 

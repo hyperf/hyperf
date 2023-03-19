@@ -179,9 +179,7 @@ class GrpcClient
         bool $usePipelineRead = false,
         array $metadata = []
     ): int {
-        $method = $method ?: ($data ? 'POST' : 'GET');
-        $request = new Request($method);
-        $request->path = $path;
+        $request = new Request($path);
         if ($data) {
             $request->data = $data;
         }
