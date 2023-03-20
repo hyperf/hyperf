@@ -50,6 +50,72 @@ composer require hyperf/config-etcd
 composer require hyperf/config-nacos
 ```
 
+#### GRPC 雙向流
+
+Nacos 傳統的配置中心，是基於短輪詢進行配置同步的，就會導致輪訓間隔內，服務無法拿到最新的配置。`Nacos V2` 版本增加了 GRPC 雙向流的支持，如果你想讓 Nacos 在發現配置變更後，及時推送給相關服務。
+
+可以按照以下步驟，開啓 GRPC 雙向流功能。
+
+- 首先，我們安裝必要的組件
+
+```shell
+composer require "hyperf/http2-client:~3.0.0"
+composer require "hyperf/grpc:~3.0.0"
+```
+
+- 修改配置項
+
+修改 `config_center.drivers.nacos.client.grpc.enable` 為 `true`，具體如下
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\ConfigApollo\PullMode;
+use Hyperf\ConfigCenter\Mode;
+
+return [
+    'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
+    'driver' => env('CONFIG_CENTER_DRIVER', 'nacos'),
+    'mode' => env('CONFIG_CENTER_MODE', Mode::PROCESS),
+    'drivers' => [
+        'nacos' => [
+            'driver' => Hyperf\ConfigNacos\NacosDriver::class,
+            'merge_mode' => Hyperf\ConfigNacos\Constants::CONFIG_MERGE_OVERWRITE,
+            'interval' => 3,
+            'default_key' => 'nacos_config',
+            'listener_config' => [
+                'nacos_config' => [
+                    'tenant' => 'tenant', // corresponding with service.namespaceId
+                    'data_id' => 'hyperf-service-config',
+                    'group' => 'DEFAULT_GROUP',
+                ],
+            ],
+            'client' => [
+                // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
+                // 'uri' => '',
+                'host' => '127.0.0.1',
+                'port' => 8848,
+                'username' => null,
+                'password' => null,
+                'guzzle' => [
+                    'config' => null,
+                ],
+                // Only support for nacos v2.
+                'grpc' => [
+                    'enable' => true,
+                    'heartbeat' => 10,
+                ],
+            ],
+        ],
+    ],
+];
+
+```
+
+- 接下里啓動服務即可
+
 ### 使用 Zookeeper 需安裝
 
 ```bash
