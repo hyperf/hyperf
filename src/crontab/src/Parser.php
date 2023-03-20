@@ -42,9 +42,9 @@ class Parser
         $startTime = $this->parseStartTime($startTime);
         $date = $this->parseDate($crontabString);
         $result = [];
-        if (in_array((int)date('i', $startTime), $date['minutes'])
-            && in_array((int)date('G', $startTime), $date['hours'])
-            && in_array((int)date('j', $startTime), $date['day'])
+        if (in_array((int) date('i', $startTime), $date['minutes'])
+            && in_array((int) date('G', $startTime), $date['hours'])
+            && in_array((int) date('j', $startTime), $date['day'])
             && in_array((int) date('w', $startTime), $date['week'])
             && in_array((int) date('n', $startTime), $date['month'])
         ) {
@@ -86,7 +86,7 @@ class Parser
                     continue;
                 }
 
-                if (trim($value) === '' || ! $this->between((int)$value, max($min, $start), $max)) {
+                if (trim($value) === '' || ! $this->between((int) $value, max($min, $start), $max)) {
                     continue;
                 }
                 $result[] = (int) $value;
@@ -96,18 +96,18 @@ class Parser
             if (str_contains($exploded[0], '-')) {
                 [$nMin, $nMax] = explode('-', $exploded[0]);
                 $nMin > $min && $min = (int) $nMin;
-                $nMax < $max && $max = (int)$nMax;
+                $nMax < $max && $max = (int) $nMax;
             }
             // If the value of start is larger than the value of min, the value of start should equal with the value of min.
             $start < $min && $start = $min;
             for ($i = $start; $i <= $max;) {
                 $result[] = $i;
-                $i += (int)$exploded[1];
+                $i += (int) $exploded[1];
             }
         } elseif (str_contains($string, '-')) {
             $result = array_merge($result, $this->parseSegment($string . '/1', $min, $max, $start));
-        } elseif ($this->between((int)$string, max($min, $start), $max)) {
-            $result[] = (int)$string;
+        } elseif ($this->between((int) $string, max($min, $start), $max)) {
+            $result[] = (int) $string;
         }
         return $result;
     }
@@ -130,7 +130,7 @@ class Parser
         if (! is_numeric($startTime)) {
             throw new InvalidArgumentException("\$startTime have to be a valid unix timestamp ({$startTime} given)");
         }
-        return (int)$startTime;
+        return (int) $startTime;
     }
 
     private function parseDate(string $crontabString): array
