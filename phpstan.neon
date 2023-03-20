@@ -63,3 +63,4 @@ parameters:
     - '#Class Hyperf\\Logger\\Logger extends @final class Monolog\\Logger#'
     - '#has invalid type Swow#'
     - '#has unknown class Swow#'
+    - '#PHPDoc tag \@var above a method has no effect#'

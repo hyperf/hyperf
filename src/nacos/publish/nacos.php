@@ -21,4 +21,6 @@ return [
     'guzzle' => [
         'config' => null,
     ],
+    // Only support for nacos v2.
+    'grpc' => false,
 ];

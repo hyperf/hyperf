@@ -26,6 +26,7 @@
     },
     "suggests": {
         "google/protobuf": "Required to use nacos v2 grpc apis.",
+        "hyperf/grpc": "Required to use nacos v2 grpc apis.",
         "hyperf/http2-client": "Required to use nacos v2 grpc apis."
     },
     "config": {
