@@ -30,6 +30,8 @@ class ApplicationFactory
             'username' => $config['username'] ?? null,
             'password' => $config['password'] ?? null,
             'guzzle_config' => $config['guzzle']['config'] ?? null,
+            'host' => $config['host'] ?? null,
+            'port' => $config['port'] ?? null,
         ]));
     }
 }

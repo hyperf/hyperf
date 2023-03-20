@@ -23,6 +23,10 @@ class Config
 
     protected ?string $accessSecret = null;
 
+    protected string $host = '127.0.0.1';
+
+    protected int $port = 8848;
+
     protected array $guzzleConfig = [
         'headers' => [
             'charset' => 'UTF-8',
@@ -48,6 +52,8 @@ class Config
         isset($config['access_key']) && $this->accessKey = (string) $config['access_key'];
         isset($config['access_secret']) && $this->accessSecret = (string) $config['access_secret'];
         isset($config['guzzle_config']) && $this->guzzleConfig = (array) $config['guzzle_config'];
+        isset($config['host']) && $this->host = (string) $config['host'];
+        isset($config['port']) && $this->port = (int) $config['port'];
     }
 
     public function getBaseUri(): string
@@ -78,5 +84,15 @@ class Config
     public function getGuzzleConfig(): array
     {
         return $this->guzzleConfig;
+    }
+
+    public function getHost(): string
+    {
+        return $this->host;
+    }
+
+    public function getPort(): int
+    {
+        return $this->port;
     }
 }

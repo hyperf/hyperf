@@ -33,6 +33,7 @@ class Application
         'instance' => InstanceProvider::class,
         'operator' => OperatorProvider::class,
         'service' => ServiceProvider::class,
+        'grpc' => GrpcFactory::class,
     ];
 
     protected array $providers = [];
