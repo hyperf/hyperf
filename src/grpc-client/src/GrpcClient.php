@@ -14,6 +14,7 @@ namespace Hyperf\GrpcClient;
 use Hyperf\Engine\Channel;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
+use Hyperf\GrpcClient\Exception\GrpcClientConnectFailedException;
 use Hyperf\Utils\ChannelPool;
 use Hyperf\Utils\Coroutine;
 use InvalidArgumentException;
@@ -102,7 +103,7 @@ class GrpcClient
             throw new RuntimeException('Client must be started in coroutine');
         }
         if (! $this->getHttpClient()->connect()) {
-            throw new GrpcClientException('Connect failed, error=' . $this->getHttpClient()->errMsg, $this->getHttpClient()->errCode);
+            throw new GrpcClientException('Connect failed, error=' . $this->getHttpClient()->errMsg.'at  ['.$this->host.':'.$this->port.']', $this->getHttpClient()->errCode);
         }
 
         $this->mainCoroutineId = Coroutine::id();
