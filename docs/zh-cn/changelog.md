@@ -1,5 +1,24 @@
 # 版本更新记录
 
+# v3.0.12 - 2023-03-20
+
+## 新增
+
+- [#4112](https://github.com/hyperf/hyperf/pull/4112) 新增配置项 `kafka.default.enable` 用来控制消费者是否启动。
+- [#5533](https://github.com/hyperf/hyperf/pull/5533) [#5535](https://github.com/hyperf/hyperf/pull/5535) 为 `kafka` 组件增加 `client` 和 `socket` 配置，允许开发者自定义。
+- [#5536](https://github.com/hyperf/hyperf/pull/5536) 新增组件 `hyperf/http2-client`。
+- [#5538](https://github.com/hyperf/hyperf/pull/5538) 为 `hyperf/http2-client` 增加双向流支持。
+- [#5511](https://github.com/hyperf/hyperf/pull/5511) 将 `GRPC` 服务统一到 `RPC` 服务中，可以更加方便的进行服务注册与发现。
+- [#5543](https://github.com/hyperf/hyperf/pull/5543) 增加 `Nacos` 双向流支持，可以监听到配置中心实时更新的事件。
+- [#5545](https://github.com/hyperf/hyperf/pull/5545) 为组件 `hyperf/http2-client` 增加双向流相关的测试。
+- [#5546](https://github.com/hyperf/hyperf/pull/5546) 为 `Naco`s 配置中心增加 `GRPC` 功能，可以实时监听配置的变化。
+
+## 优化
+
+- [#5539](https://github.com/hyperf/hyperf/pull/5539) 优化了 `AMQPConnection` 的代码，以支持最新版本的 `php-amqplib` 组件。
+- [#5528](https://github.com/hyperf/hyperf/pull/5528) 优化了 `aspects` 的配置，对热重启有更好的支持。
+- [#5541](https://github.com/hyperf/hyperf/pull/5541) 提升了 `FactoryResolver` 基于 `XXXFactory` 实例化对象的能力，增加了可选参数配置。
+
 # v3.0.11 - 2023-03-15
 
 ## 新增
