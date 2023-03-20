@@ -27,6 +27,11 @@ class Config
 
     protected int $port = 8848;
 
+    protected array $grpc = [
+        'enable' => true,
+        'heartbeat' => 10,
+    ];
+
     protected array $guzzleConfig = [
         'headers' => [
             'charset' => 'UTF-8',
@@ -42,6 +47,8 @@ class Config
      *     'access_key' => null,
      *     'access_secret' => null,
      *     'guzzle_config' => [],
+     *     'host' => '127.0.0.1',
+     *     'port' => 8848,
      * ]
      */
     public function __construct(array $config = [])
@@ -54,6 +61,7 @@ class Config
         isset($config['guzzle_config']) && $this->guzzleConfig = (array) $config['guzzle_config'];
         isset($config['host']) && $this->host = (string) $config['host'];
         isset($config['port']) && $this->port = (int) $config['port'];
+        isset($config['grpc']) && $this->grpc = array_replace($this->grpc, $config['grpc']);
     }
 
     public function getBaseUri(): string
@@ -94,5 +102,10 @@ class Config
     public function getPort(): int
     {
         return $this->port;
+    }
+
+    public function getGrpc(): array
+    {
+        return $this->grpc;
     }
 }

@@ -14,6 +14,8 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Config;
 use Hyperf\Nacos\GrpcClient;
+use Hyperf\Nacos\Protobuf\ListenHandler\ConfigChangeNotifyRequestHandler;
+use Hyperf\Nacos\Protobuf\Response\ConfigQueryResponse;
 use Psr\Container\ContainerInterface;
 
 require __DIR__ . '/../../../vendor/autoload.php';
@@ -34,4 +36,8 @@ run(function () {
         'port' => 8848,
     ]);
     $client = new GrpcClient(new Application($config), $config, $container, '6ec44ac0-e12d-4841-a80a-94a0872559d9');
+    $client->listenConfig('DEFAULT_GROUP', 'test', new ConfigChangeNotifyRequestHandler(static function (ConfigQueryResponse $request) {
+        var_dump($request->getContent());
+    }));
+    $client->listen();
 });

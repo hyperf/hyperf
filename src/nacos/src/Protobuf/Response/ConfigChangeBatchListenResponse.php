@@ -11,26 +11,21 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Protobuf\Response;
 
+use Hyperf\Nacos\Protobuf\ListenContext;
+
 class ConfigChangeBatchListenResponse extends Response
 {
-    protected array $changedConfigs;
+    /**
+     * @var ListenContext[]
+     */
+    public array $changedConfigs = [];
 
     public function __construct(array $json)
     {
-        $this->changedConfigs = $json['changedConfigs'] ?? [];
+        foreach ($json['changedConfigs'] ?? [] as $value) {
+            $this->changedConfigs[] = ListenContext::jsonDeSerialize($value);
+        }
 
         parent::__construct(...parent::namedParameters($json));
-    }
-
-    /**
-     * @return array [[
-     *               'group' => '',
-     *               'dataId' => '',
-     *               'tenant' => '',
-     *               ]]
-     */
-    public function getChangedConfigs(): array
-    {
-        return $this->changedConfigs;
     }
 }

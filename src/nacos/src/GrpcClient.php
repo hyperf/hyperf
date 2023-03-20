@@ -21,6 +21,8 @@ use Hyperf\Grpc\Parser;
 use Hyperf\Http2Client\Client;
 use Hyperf\Nacos\Exception\ConnectToServerFailedException;
 use Hyperf\Nacos\Protobuf\Any;
+use Hyperf\Nacos\Protobuf\ListenContext;
+use Hyperf\Nacos\Protobuf\ListenHandlerInterface;
 use Hyperf\Nacos\Protobuf\Metadata;
 use Hyperf\Nacos\Protobuf\Payload;
 use Hyperf\Nacos\Protobuf\Request\ConfigBatchListenRequest;
@@ -30,6 +32,7 @@ use Hyperf\Nacos\Protobuf\Request\HealthCheckRequest;
 use Hyperf\Nacos\Protobuf\Request\RequestInterface;
 use Hyperf\Nacos\Protobuf\Request\ServerCheckRequest;
 use Hyperf\Nacos\Protobuf\Response\ConfigChangeBatchListenResponse;
+use Hyperf\Nacos\Protobuf\Response\ConfigChangeNotifyRequest;
 use Hyperf\Nacos\Protobuf\Response\ConfigQueryResponse;
 use Hyperf\Nacos\Protobuf\Response\Response;
 use Hyperf\Utils\Codec\Json;
@@ -46,6 +49,18 @@ class GrpcClient
 
     protected ?LoggerInterface $logger = null;
 
+    /**
+     * @var array<string, ListenContext>
+     */
+    protected array $configListenContexts = [];
+
+    /**
+     * @var array<string, ?ListenHandlerInterface>
+     */
+    protected array $configListenHandlers = [];
+
+    protected int $streamId;
+
     public function __construct(
         protected Application $app,
         protected Config $config,
@@ -57,64 +72,6 @@ class GrpcClient
         }
 
         $this->reconnect();
-    }
-
-    public function listen(string $key, callable $callable): void
-    {
-        $this->listeners[$key] = $callable;
-    }
-
-    public function listenService()
-    {
-        $metadata = new Metadata([
-            'type' => 'SubscribeServiceRequest',
-            'clientIp' => $this->ip(),
-            'headers' => $this->defaultHeaders(),
-        ]);
-
-        $payload = new Payload([
-            'metadata' => $metadata,
-            'body' => new Any([
-                'value' => Json::encode([
-                    'namespace' => $this->namespaceId,
-                    'module' => 'naming',
-                    'subscribe' => true,
-                    'serviceName' => 'test',
-                    'groupName' => 'DEFAULT_GROUP',
-                    'clusters' => 'DEFAULT',
-                ]),
-            ]),
-        ]);
-
-        $res = $this->client->request(new Request('/Request/request', 'POST', Parser::serializeMessage($payload), $this->grpcDefaultHeaders()));
-
-        $this->app->service->create('test', [
-            'groupName' => 'DEFAULT_GROUP',
-            'namespaceId' => $this->namespaceId,
-            'selector' => Json::encode(['type' => 'none']),
-            'metadata' => [],
-        ]);
-
-        while (true) {
-            sleep(3000);
-
-            $optional = [
-                'groupName' => 'DEFAULT_GROUP',
-                'namespaceId' => $this->namespaceId,
-                // 'ephemeral' => 'true',
-            ];
-
-            $optionalData = array_merge($optional, [
-                'clusterName' => 'DEFAULT',
-                'weight' => 99,
-                'metadata' => '',
-                'enabled' => 'true',
-            ]);
-
-            $port = rand(9500, 9999);
-            $this->app->instance->register('127.0.0.1', $port, 'test', $optionalData);
-            var_dump('registered');
-        }
     }
 
     public function request(RequestInterface $request, ?Client $client = null): Response
@@ -155,43 +112,21 @@ class GrpcClient
         return $client->write($streamId, Parser::serializeMessage($payload));
     }
 
-    public function healthCheck()
+    public function listenConfig(string $group, string $dataId, ListenHandlerInterface $callback, string $md5 = '')
     {
-        go(function () {
-            $client = $this->client;
-            while (true) {
-                if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(10)) {
-                    break;
-                }
-                $res = $this->request(new HealthCheckRequest(), $client);
-                if ($res->errorCode !== 0) {
-                    $this->logger?->error('Health check failed, the result is ' . (string) $res);
-                }
-            }
-        });
+        $listenContext = new ListenContext($this->namespaceId, $group, $dataId, $md5);
+        $this->configListenContexts[$listenContext->toKeyString()] = $listenContext;
+        $this->configListenHandlers[$listenContext->toKeyString()] = $callback;
     }
 
-    public function listenConfig(string $md5 = '')
+    public function listen(): void
     {
-        sleep(5);
-        $request = new ConfigBatchListenRequest(true, [
-            [
-                'tenant' => $this->namespaceId,
-                'group' => 'DEFAULT_GROUP',
-                'dataId' => 'test',
-                'md5' => $md5,
-            ],
-        ]);
-
+        $request = new ConfigBatchListenRequest(true, array_values($this->configListenContexts));
         $response = $this->request($request);
         if ($response instanceof ConfigChangeBatchListenResponse) {
-            $changedConfigs = $response->getChangedConfigs();
+            $changedConfigs = $response->changedConfigs;
             foreach ($changedConfigs as $changedConfig) {
-                $queryRequest = new ConfigQueryRequest($changedConfig['tenant'], $changedConfig['group'], $changedConfig['dataId']);
-                $response = $this->request($queryRequest);
-                if ($response instanceof ConfigQueryResponse) {
-                    $this->listenConfig($response->getMd5());
-                }
+                $this->handleConfig($changedConfig->tenant, $changedConfig->group, $changedConfig->dataId);
             }
         }
     }
@@ -210,11 +145,25 @@ class GrpcClient
         }
 
         $this->serverCheck();
-        $this->bindStreamCall();
+        $this->streamId = $this->bindStreamCall();
         $this->healthCheck();
-        $this->listenConfig();
-        // $this->listenService();
-        // $this->test();
+    }
+
+    protected function healthCheck()
+    {
+        go(function () {
+            $client = $this->client;
+            $heartbeat = $this->config->getGrpc()['heartbeat'];
+            while ($heartbeat > 0) {
+                if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
+                    break;
+                }
+                $res = $this->request(new HealthCheckRequest(), $client);
+                if ($res->errorCode !== 0) {
+                    $this->logger?->error('Health check failed, the result is ' . (string) $res);
+                }
+            }
+        });
     }
 
     protected function ip(): string
@@ -235,9 +184,17 @@ class GrpcClient
             while (true) {
                 try {
                     $response = $client->recv($id, -1);
-                    var_dump($response);
+                    $response = Response::jsonDeSerialize($response->getBody());
+                    match (true) {
+                        $response instanceof ConfigChangeNotifyRequest => $this->handleConfig(
+                            $response->tenant,
+                            $response->group,
+                            $response->dataId,
+                            $response
+                        )
+                    };
                 } catch (Throwable $e) {
-                    echo $e;
+                    $this->logger->error((string) $e);
                 }
             }
         });
@@ -249,29 +206,20 @@ class GrpcClient
         return $id;
     }
 
-    protected function queryConfig()
+    protected function handleConfig(string $tenant, string $group, string $dataId, ?ConfigChangeNotifyRequest $request = null)
     {
-        $metadata = new Metadata([
-            'type' => 'ConfigQueryRequest',
-            'clientIp' => '127.0.0.1',
-            'headers' => [
-                'notify' => true,
-            ],
-        ]);
+        $response = $this->request(new ConfigQueryRequest($tenant, $group, $dataId));
+        $key = ListenContext::getKeyString($tenant, $group, $dataId);
+        if ($response instanceof ConfigQueryResponse) {
+            if (isset($this->configListenContexts[$key])) {
+                $this->configListenContexts[$key]->md5 = $response->getMd5();
+                $this->configListenHandlers[$key]?->handle($response);
+            }
 
-        $payload = new Payload([
-            'metadata' => $metadata,
-            'body' => new Any([
-                'value' => Json::encode([
-                    'tenant' => $this->namespaceId,
-                    'group' => 'DEFAULT_GROUP',
-                    'dataId' => 'test',
-                    'module' => 'config',
-                ]),
-            ]),
-        ]);
-
-        $res = $this->client->request(new Request('/Request/request', 'POST', Parser::serializeMessage($payload), $this->grpcDefaultHeaders()));
+            if ($request && $ack = $this->configListenHandlers[$key]?->ack($request)) {
+                $this->write($this->streamId, $ack);
+            }
+        }
     }
 
     protected function serverCheck(): bool
@@ -304,20 +252,6 @@ class GrpcClient
             'content-type' => 'application/grpc+proto',
             'te' => 'trailers',
             'user-agent' => 'Nacos-Hyperf-Client:v3.0',
-        ];
-    }
-
-    private function defaultHeaders(): array
-    {
-        $time = (string) (time()*1000);
-        return [
-            'charset' => 'utf-8',
-            'exConfigInfo' => 'true',
-            'Client-RequestToken' => md5($time),
-            'Client-RequestTS' => $time,
-            'Timestamp' => $time,
-            // 'Spas-Signature' => 'PZqVeU8aUslLyV6tkuAG6qgjLKI=',
-            'Client-AppName' => '',
         ];
     }
 }

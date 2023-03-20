@@ -11,15 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Protobuf\Request;
 
+use Hyperf\Nacos\Protobuf\ListenContext;
+
 class ConfigBatchListenRequest extends Request
 {
     /**
-     * @param $configListenContexts = [[
-     *     'tenant' => '',
-     *     'group' => '',
-     *     'dataId' => '',
-     *     'md5' => '',
-     * ]]
+     * @param ListenContext[] $configListenContexts
      */
     public function __construct(public bool $listen, public array $configListenContexts)
     {

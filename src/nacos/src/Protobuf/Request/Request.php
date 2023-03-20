@@ -15,13 +15,14 @@ abstract class Request implements RequestInterface
 {
     protected function defaultHeaders(): array
     {
+        $time = (string) (time() * 1000);
         return [
             'charset' => 'utf-8',
             'exConfigInfo' => 'true',
-            'Client-RequestToken' => '1882376663d9d3236d8b71654a037af7',
-            'Client-RequestTS' => '1679204269662',
-            'Timestamp' => '1679204269662',
-            'Spas-Signature' => 'PZqVeU8aUslLyV6tkuAG6qgjLKI=',
+            'Client-RequestToken' => md5($time),
+            'Client-RequestTS' => $time,
+            'Timestamp' => $time,
+            // 'Spas-Signature' => 'PZqVeU8aUslLyV6tkuAG6qgjLKI=',
             'Client-AppName' => '',
         ];
     }

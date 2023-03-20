@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos;
 
+use Hyperf\Nacos\Exception\InvalidArgumentException;
 use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 
@@ -23,6 +24,9 @@ class GrpcFactory
 
     public function __construct(protected Application $app, protected Config $config)
     {
+        if (! $this->config->getGrpc()['enable']) {
+            throw new InvalidArgumentException('GRPC module is disable, please set `nacos.default.grpc.enable = true`.');
+        }
     }
 
     public function get(string $namespaceId): GrpcClient
