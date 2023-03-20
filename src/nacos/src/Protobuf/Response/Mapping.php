@@ -18,5 +18,6 @@ class Mapping
         'HealthCheckResponse' => HealthCheckResponse::class,
         'ConfigChangeBatchListenResponse' => ConfigChangeBatchListenResponse::class,
         'ConfigQueryResponse' => ConfigQueryResponse::class,
+        'ConfigChangeNotifyRequest' => ConfigChangeNotifyRequest::class,
     ];
 }
