@@ -38,6 +38,14 @@ class GrpcFactory
         return $this->clients[$namespaceId] = new GrpcClient($this->app, $this->config, $this->container(), $namespaceId);
     }
 
+    /**
+     * @return GrpcClient[]
+     */
+    public function getClients(): array
+    {
+        return $this->clients;
+    }
+
     private function container(): ContainerInterface
     {
         return ApplicationContext::getContainer();

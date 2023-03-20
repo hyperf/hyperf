@@ -193,6 +193,8 @@ class GrpcClient
                             $response
                         )
                     };
+
+                    $this->listen();
                 } catch (Throwable $e) {
                     $this->logger->error((string) $e);
                 }

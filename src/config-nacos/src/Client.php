@@ -35,6 +35,11 @@ class Client implements ClientInterface
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
+    public function getClient(): Application
+    {
+        return $this->client;
+    }
+
     public function pull(): array
     {
         $listener = $this->config->get('config_center.drivers.nacos.listener_config', []);
