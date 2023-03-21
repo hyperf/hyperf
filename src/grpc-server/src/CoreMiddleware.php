@@ -16,6 +16,7 @@ use FastRoute\Dispatcher;
 use Google\Protobuf\Internal\Message;
 use Google\Protobuf\Internal\Message as ProtobufMessage;
 use Hyperf\Context\Context;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Grpc\Parser;
@@ -42,11 +43,10 @@ class CoreMiddleware extends HttpCoreMiddleware
 
     public function __construct($container, string $serverName)
     {
-        if (class_exists(Protocol::class)) {
+        parent::__construct($container, $serverName);
+        if ($this->container->get(ConfigInterface::class)->get(sprintf('grpc_server.rpc.%s.enable', $serverName))) {
             $this->protocol = new Protocol($container, $container->get(ProtocolManager::class), 'grpc');
         }
-
-        parent::__construct($container, $serverName);
     }
 
     /**
