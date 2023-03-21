@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab;
 
-use Hyperf\Crontab\Command\TriggerCrontabCommand;
+use Hyperf\Crontab\Command\RunCommand;
 use Hyperf\Crontab\Listener\CrontabRegisterListener;
 use Hyperf\Crontab\Listener\OnPipeMessageListener;
 use Hyperf\Crontab\Strategy\StrategyInterface;
@@ -23,7 +23,7 @@ class ConfigProvider
     {
         return [
             'commands' => [
-                TriggerCrontabCommand::class,
+                RunCommand::class,
             ],
             'dependencies' => [
                 StrategyInterface::class => WorkerStrategy::class,

@@ -19,11 +19,11 @@ use Hyperf\Crontab\Strategy\Executor;
 use Hyperf\Nacos\Exception\InvalidArgumentException;
 use Hyperf\Utils\Coroutine;
 
-class TriggerCrontabCommand extends Command
+class RunCommand extends Command
 {
     public function __construct(protected Scheduler $scheduler, protected Executor $executor, protected ConfigInterface $config)
     {
-        parent::__construct('crontab:trigger');
+        parent::__construct('crontab:run');
     }
 
     public function handle()
