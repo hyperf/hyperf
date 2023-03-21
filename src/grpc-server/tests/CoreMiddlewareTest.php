@@ -81,7 +81,7 @@ class CoreMiddlewareTest extends TestCase
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(Mockery::mock(EventDispatcherInterface::class));
         $container->shouldReceive('make')->with(RPCDispatcherFactory::class)->withAnyArgs()->andReturn($dispatcher = new RPCDispatcherFactory(Mockery::mock(EventDispatcherInterface::class), new PathGenerator()));
         $container->shouldReceive('get')->with(RPCDispatcherFactory::class . '.unit')->andReturn($dispatcher);
-        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config());
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([]));
         return $container;
     }
 }
