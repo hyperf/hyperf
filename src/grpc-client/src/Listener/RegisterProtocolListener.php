@@ -19,10 +19,11 @@ use Hyperf\GrpcClient\GrpcNormalizer;
 use Hyperf\GrpcClient\GrpcPacker;
 use Hyperf\GrpcClient\GrpcTransporter;
 use Hyperf\Rpc\ProtocolManager;
+use Psr\Container\ContainerInterface;
 
 class RegisterProtocolListener implements ListenerInterface
 {
-    public function __construct(private ProtocolManager $protocolManager)
+    public function __construct(private ContainerInterface $container)
     {
     }
 
@@ -39,12 +40,15 @@ class RegisterProtocolListener implements ListenerInterface
      */
     public function process(object $event): void
     {
-        $this->protocolManager->register('grpc', [
-            'packer' => GrpcPacker::class,
-            'transporter' => GrpcTransporter::class,
-            'path-generator' => PathGenerator::class,
-            'data-formatter' => DataFormatter::class,
-            'normalizer' => GrpcNormalizer::class,
-        ]);
+        if ($this->container->has(ProtocolManager::class)) {
+            $manager = $this->container->get(ProtocolManager::class);
+            $manager->register('grpc', [
+                'packer' => GrpcPacker::class,
+                'transporter' => GrpcTransporter::class,
+                'path-generator' => PathGenerator::class,
+                'data-formatter' => DataFormatter::class,
+                'normalizer' => GrpcNormalizer::class,
+            ]);
+        }
     }
 }

@@ -14,10 +14,11 @@ namespace Hyperf\GrpcServer\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\RpcServer\Event\AfterPathRegister;
 use Hyperf\ServiceGovernance\ServiceManager;
+use Psr\Container\ContainerInterface;
 
 class RegisterServiceListener implements ListenerInterface
 {
-    public function __construct(private ServiceManager $serviceManager)
+    public function __construct(private ContainerInterface $container)
     {
     }
 
@@ -36,14 +37,18 @@ class RegisterServiceListener implements ListenerInterface
      */
     public function process(object $event): void
     {
-        $annotation = $event->annotation;
-        if (! in_array($annotation->protocol, ['grpc'])) {
-            return;
-        }
+        if ($this->container->has(ServiceManager::class)) {
+            $annotation = $event->annotation;
+            if (! in_array($annotation->protocol, ['grpc'])) {
+                return;
+            }
 
-        $metadata = $event->toArray();
-        $annotationArray = $metadata['annotation'];
-        unset($metadata['path'], $metadata['annotation'], $annotationArray['name']);
-        $this->serviceManager->register($annotation->name, $event->path, array_merge($metadata, $annotationArray));
+            $manager = $this->container->get(ServiceManager::class);
+
+            $metadata = $event->toArray();
+            $annotationArray = $metadata['annotation'];
+            unset($metadata['path'], $metadata['annotation'], $annotationArray['name']);
+            $manager->register($annotation->name, $event->path, array_merge($metadata, $annotationArray));
+        }
     }
 }
