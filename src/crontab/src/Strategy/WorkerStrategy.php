@@ -34,7 +34,7 @@ class WorkerStrategy extends AbstractStrategy
     public function dispatch(Crontab $crontab)
     {
         $server = $this->serverFactory->getServer()->getServer();
-        if ($server instanceof Server && $crontab->getExecuteTime() instanceof Carbon) {
+        if ($server instanceof Server) {
             $workerId = $this->getNextWorkerId($server);
             $server->sendMessage(new PipeMessage(
                 'callback',
