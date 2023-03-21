@@ -62,25 +62,19 @@ class Executor
             return;
         }
         $diff = $crontab->getExecuteTime()->diffInRealSeconds(new Carbon());
-        $callback = null;
+        $runnable = null;
         switch ($crontab->getType()) {
             case 'callback':
                 [$class, $method] = $crontab->getCallback();
                 $parameters = $crontab->getCallback()[2] ?? null;
                 if ($class && $method && class_exists($class) && method_exists($class, $method)) {
-                    $callback = function () use ($class, $method, $parameters, $crontab) {
-                        $runnable = function () use ($class, $method, $parameters, $crontab) {
-                            $instance = make($class);
-                            if ($parameters && is_array($parameters)) {
-                                $instance->{$method}(...$parameters);
-                            } else {
-                                $instance->{$method}();
-                            }
-                        };
-
-                        $runnable = $this->catchToExecute($crontab, $runnable);
-
-                        $this->decorateRunnable($crontab, $runnable)();
+                    $runnable = function () use ($class, $method, $parameters, $crontab) {
+                        $instance = make($class);
+                        if ($parameters && is_array($parameters)) {
+                            $instance->{$method}(...$parameters);
+                        } else {
+                            $instance->{$method}();
+                        }
                     };
                 }
                 break;
@@ -89,27 +83,27 @@ class Executor
                 $output = make(NullOutput::class);
                 $application = $this->container->get(ApplicationInterface::class);
                 $application->setAutoExit(false);
-                $callback = function () use ($application, $input, $output, $crontab) {
-                    $runnable = function () use ($application, $input, $output, $crontab) {
-                        if ($application->run($input, $output) !== 0) {
-                            throw new \RuntimeException('Crontab task failed to execute.');
-                        }
-                    };
-                    $runnable = $this->catchToExecute($crontab, $runnable);
-                    $this->decorateRunnable($crontab, $runnable)();
+                $runnable = function () use ($application, $input, $output) {
+                    if ($application->run($input, $output) !== 0) {
+                        throw new \RuntimeException('Crontab task failed to execute.');
+                    }
                 };
                 break;
             case 'eval':
-                $callback = function () use ($crontab) {
-                    $runnable = function () use ($crontab) {
-                        eval($crontab->getCallback());
-                    };
-                    $runnable = $this->catchToExecute($crontab, $runnable);
-                    $this->decorateRunnable($crontab, $runnable)();
-                };
+                $runnable = fn() => eval($crontab->getCallback());
                 break;
         }
-        $callback && $this->timer->after($diff > 0 ? $diff : 1, $callback);
+        if ($runnable) {
+            $runnable = function ($isClosing) use ($crontab, $runnable) {
+                if ($isClosing) {
+                    $this->logResult($crontab, false);
+                    return;
+                }
+                $runnable = $this->catchToExecute($crontab, $runnable);
+                $this->decorateRunnable($crontab, $runnable)();
+            };
+            $this->timer->after($diff > 0 ? $diff : 1, $runnable);
+        }
     }
 
     protected function runInSingleton(Crontab $crontab, Closure $runnable): Closure
@@ -198,7 +192,7 @@ class Executor
             $this->logger?->info(sprintf('Crontab task [%s] executed successfully at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
         } else {
             $this->logger?->error(sprintf('Crontab task [%s] failed execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
-            $throwable && $this->logger?->error((string) $throwable);
+            $throwable && $this->logger?->error((string)$throwable);
         }
     }
 }
