@@ -19,18 +19,29 @@ use Hyperf\Crontab\Scheduler;
 use Hyperf\Crontab\Strategy\Executor;
 use Hyperf\Nacos\Exception\InvalidArgumentException;
 use Hyperf\Utils\Coroutine;
+use Psr\Container\ContainerInterface;
 
 class RunCommand extends Command
 {
-    public function __construct(protected Scheduler $scheduler, protected Executor $executor, protected ConfigInterface $config)
+    protected Scheduler $scheduler;
+
+    protected Executor $executor;
+
+    protected ConfigInterface $config;
+
+    public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('crontab:run');
+
+        $this->scheduler = $container->get(Scheduler::class);
+        $this->executor = $container->get(Executor::class);
+        $this->config = $container->get(ConfigInterface::class);
     }
 
     public function handle()
     {
         if ($this->config->get('crontab.enable', false)) {
-             throw new InvalidArgumentException('Crontab is already disabled, please enable it first.');
+            throw new InvalidArgumentException('Crontab is already disabled, please enable it first.');
         }
 
         $this->eventDispatcher?->dispatch(new CrontabDispatcherStarted());
