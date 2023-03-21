@@ -34,7 +34,7 @@ class Parser
      * @return Carbon[]
      * @throws InvalidArgumentException
      */
-    public function parse(string $crontabString, int|Carbon|null $startTime = null): array
+    public function parse(string $crontabString, $startTime = null): array
     {
         if (! $this->isValid($crontabString)) {
             throw new InvalidArgumentException('Invalid cron string: ' . $crontabString);
@@ -120,7 +120,10 @@ class Parser
         return $value >= $min && $value <= $max;
     }
 
-    private function parseStartTime(int|Carbon|null $startTime): int
+    /**
+     * @param null|Carbon|int $startTime
+     */
+    private function parseStartTime($startTime): int
     {
         if ($startTime instanceof Carbon) {
             $startTime = $startTime->getTimestamp();
