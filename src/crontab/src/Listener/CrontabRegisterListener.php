@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Listener;
 
+use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab as CrontabAnnotation;
@@ -19,6 +20,7 @@ use Hyperf\Crontab\CrontabManager;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\BootApplication;
 use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Utils\ApplicationContext;
@@ -26,6 +28,8 @@ use ReflectionException;
 
 class CrontabRegisterListener implements ListenerInterface
 {
+    protected bool $isRegistered = false;
+
     public function __construct(
         protected CrontabManager $crontabManager,
         protected StdoutLoggerInterface $logger,
@@ -39,6 +43,8 @@ class CrontabRegisterListener implements ListenerInterface
     public function listen(): array
     {
         return [
+            BootApplication::class,
+            BeforeHandle::class,
             BeforeProcessHandle::class,
             BeforeCoroutineHandle::class,
         ];
@@ -50,6 +56,11 @@ class CrontabRegisterListener implements ListenerInterface
      */
     public function process(object $event): void
     {
+        if ($this->isRegistered) {
+            return;
+        }
+        $this->isRegistered = true;
+
         $crontabs = $this->parseCrontabs();
         foreach ($crontabs as $crontab) {
             if ($crontab instanceof Crontab && $this->crontabManager->register($crontab)) {

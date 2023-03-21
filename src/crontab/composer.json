@@ -30,6 +30,10 @@
             "HyperfTest\\Crontab\\": "tests/"
         }
     },
+    "suggest": {
+        "hyperf/process": "Auto register the Crontab process for server.",
+        "hyperf/command": "Required to use command trigger."
+    },
     "config": {
         "sort-packages": true
     },

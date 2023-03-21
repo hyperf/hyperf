@@ -23,7 +23,6 @@ use Hyperf\Crontab\Mutex\RedisServerMutex;
 use Hyperf\Crontab\Mutex\RedisTaskMutex;
 use Hyperf\Crontab\Mutex\ServerMutex;
 use Hyperf\Crontab\Mutex\TaskMutex;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
@@ -71,23 +70,17 @@ class Executor
                 if ($class && $method && class_exists($class) && method_exists($class, $method)) {
                     $callback = function () use ($class, $method, $parameters, $crontab) {
                         $runnable = function () use ($class, $method, $parameters, $crontab) {
-                            try {
-                                $result = true;
-                                $instance = make($class);
-                                if ($parameters && is_array($parameters)) {
-                                    $instance->{$method}(...$parameters);
-                                } else {
-                                    $instance->{$method}();
-                                }
-                            } catch (Throwable $throwable) {
-                                $result = false;
-                                $this->dispatcher?->dispatch(new FailToExecute($crontab, $throwable));
-                            } finally {
-                                $this->logResult($crontab, $result, $throwable ?? null);
+                            $instance = make($class);
+                            if ($parameters && is_array($parameters)) {
+                                $instance->{$method}(...$parameters);
+                            } else {
+                                $instance->{$method}();
                             }
                         };
 
-                        Coroutine::create($this->decorateRunnable($crontab, $runnable));
+                        $runnable = $this->catchToExecute($crontab, $runnable);
+
+                        $this->decorateRunnable($crontab, $runnable)();
                     };
                 }
                 break;
@@ -98,9 +91,11 @@ class Executor
                 $application->setAutoExit(false);
                 $callback = function () use ($application, $input, $output, $crontab) {
                     $runnable = function () use ($application, $input, $output, $crontab) {
-                        $result = $application->run($input, $output);
-                        $this->logResult($crontab, $result === 0);
+                        if ($application->run($input, $output) !== 0) {
+                            throw new \RuntimeException('Crontab task failed to execute.');
+                        }
                     };
+                    $runnable = $this->catchToExecute($crontab, $runnable);
                     $this->decorateRunnable($crontab, $runnable)();
                 };
                 break;
@@ -109,6 +104,7 @@ class Executor
                     $runnable = function () use ($crontab) {
                         eval($crontab->getCallback());
                     };
+                    $runnable = $this->catchToExecute($crontab, $runnable);
                     $this->decorateRunnable($crontab, $runnable)();
                 };
                 break;
@@ -179,6 +175,21 @@ class Executor
         }
 
         return $runnable;
+    }
+
+    protected function catchToExecute(Crontab $crontab, Closure $runnable): Closure
+    {
+        return function () use ($crontab, $runnable) {
+            try {
+                $result = true;
+                $runnable();
+            } catch (Throwable $throwable) {
+                $result = false;
+                $this->dispatcher?->dispatch(new FailToExecute($crontab, $throwable));
+            } finally {
+                $this->logResult($crontab, $result, $throwable ?? null);
+            }
+        };
     }
 
     protected function logResult(Crontab $crontab, bool $isSuccess, ?Throwable $throwable = null)
