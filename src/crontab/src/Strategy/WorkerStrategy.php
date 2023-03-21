@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Strategy;
 
-use Carbon\Carbon;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\PipeMessage;
 use Hyperf\Server\ServerFactory;

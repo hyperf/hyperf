@@ -26,6 +26,7 @@ use Hyperf\Crontab\Mutex\TaskMutex;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
+use RuntimeException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Throwable;
@@ -68,7 +69,7 @@ class Executor
                 [$class, $method] = $crontab->getCallback();
                 $parameters = $crontab->getCallback()[2] ?? null;
                 if ($class && $method && class_exists($class) && method_exists($class, $method)) {
-                    $runnable = function () use ($class, $method, $parameters, $crontab) {
+                    $runnable = function () use ($class, $method, $parameters) {
                         $instance = make($class);
                         if ($parameters && is_array($parameters)) {
                             $instance->{$method}(...$parameters);
@@ -85,12 +86,12 @@ class Executor
                 $application->setAutoExit(false);
                 $runnable = function () use ($application, $input, $output) {
                     if ($application->run($input, $output) !== 0) {
-                        throw new \RuntimeException('Crontab task failed to execute.');
+                        throw new RuntimeException('Crontab task failed to execute.');
                     }
                 };
                 break;
             case 'eval':
-                $runnable = fn() => eval($crontab->getCallback());
+                $runnable = fn () => eval($crontab->getCallback());
                 break;
         }
         if ($runnable) {
@@ -192,7 +193,7 @@ class Executor
             $this->logger?->info(sprintf('Crontab task [%s] executed successfully at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
         } else {
             $this->logger?->error(sprintf('Crontab task [%s] failed execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
-            $throwable && $this->logger?->error((string)$throwable);
+            $throwable && $this->logger?->error((string) $throwable);
         }
     }
 }
