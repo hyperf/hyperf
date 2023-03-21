@@ -50,6 +50,7 @@ class ConsumerManager
          */
         foreach ($classes as $class => $annotation) {
             $instance = make($class);
+
             if (! $instance instanceof AbstractConsumer || ! $instance->isEnable($annotation->enable)) {
                 continue;
             }
@@ -90,6 +91,11 @@ class ConsumerManager
                 if ($container->has(EventDispatcherInterface::class)) {
                     $this->dispatcher = $container->get(EventDispatcherInterface::class);
                 }
+            }
+
+            public function isEnable($server): bool
+            {
+                return $this->config->get(sprintf('kafka.%s.enable', $this->consumer->getPool()), true);
             }
 
             public function handle(): void

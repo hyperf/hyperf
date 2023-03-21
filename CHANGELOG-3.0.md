@@ -1,10 +1,21 @@
-# v3.0.12 - TBD
+# v3.0.13 - TBD
+
+## Optimized
+
+- [#5544](https://github.com/hyperf/hyperf/pull/5554) Cancel `grpc-server`'s dependency on `hyperf/rpc`.
+
+# v3.0.12 - 2023-03-20
 
 ## Added
 
+- [#4112](https://github.com/hyperf/hyperf/pull/4112) Added `kafka.default.enable` to control the consumer start or not.
 - [#5533](https://github.com/hyperf/hyperf/pull/5533) [#5535](https://github.com/hyperf/hyperf/pull/5535) Added `client` & `socket` config for kafka.
 - [#5536](https://github.com/hyperf/hyperf/pull/5536) Added `hyperf/http2-client`.
 - [#5538](https://github.com/hyperf/hyperf/pull/5538) Support stream call for http2 client.
+- [#5511](https://github.com/hyperf/hyperf/pull/5511) Support GRPC services which can easily to registry and discovery.
+- [#5543](https://github.com/hyperf/hyperf/pull/5543) Support nacos grpc which used to listen config changed event.
+- [#5545](https://github.com/hyperf/hyperf/pull/5545) Added streaming test cases for http2 client.
+- [#5546](https://github.com/hyperf/hyperf/pull/5546) Support grpc streaming for config-nacos.
 
 ## Optimized
 
