@@ -44,9 +44,6 @@ class CrontabRegisterListener implements ListenerInterface
     {
         return [
             BootApplication::class,
-            BeforeHandle::class,
-            BeforeProcessHandle::class,
-            BeforeCoroutineHandle::class,
         ];
     }
 
