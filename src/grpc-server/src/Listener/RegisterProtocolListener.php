@@ -15,10 +15,11 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\Grpc\PathGenerator;
 use Hyperf\Rpc\ProtocolManager;
+use Psr\Container\ContainerInterface;
 
 class RegisterProtocolListener implements ListenerInterface
 {
-    public function __construct(private ProtocolManager $protocolManager)
+    public function __construct(private ContainerInterface $container)
     {
     }
 
@@ -35,8 +36,11 @@ class RegisterProtocolListener implements ListenerInterface
      */
     public function process(object $event): void
     {
-        $this->protocolManager->registerOrAppend('grpc', [
-            'path-generator' => PathGenerator::class,
-        ]);
+        if ($this->container->has(ProtocolManager::class)) {
+            $manager = $this->container->get(ProtocolManager::class);
+            $manager->registerOrAppend('grpc', [
+                'path-generator' => PathGenerator::class,
+            ]);
+        }
     }
 }
