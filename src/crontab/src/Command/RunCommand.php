@@ -14,6 +14,7 @@ namespace Hyperf\Crontab\Command;
 use Carbon\Carbon;
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Crontab\Event\CrontabDispatcherStarted;
 use Hyperf\Crontab\Scheduler;
 use Hyperf\Crontab\Strategy\Executor;
 use Hyperf\Nacos\Exception\InvalidArgumentException;
@@ -31,6 +32,8 @@ class RunCommand extends Command
         if ($this->config->get('crontab.enable', false)) {
              throw new InvalidArgumentException('Crontab is already disabled, please enable it first.');
         }
+
+        $this->eventDispatcher?->dispatch(new CrontabDispatcherStarted());
 
         $this->line('Triggering Crontab', 'info');
 
