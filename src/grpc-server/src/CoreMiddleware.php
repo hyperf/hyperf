@@ -43,10 +43,11 @@ class CoreMiddleware extends HttpCoreMiddleware
 
     public function __construct($container, string $serverName)
     {
-        parent::__construct($container, $serverName);
-        if ($this->container->get(ConfigInterface::class)->get(sprintf('grpc_server.rpc.%s.enable', $serverName), false)) {
+        if ($container->get(ConfigInterface::class)->get(sprintf('grpc_server.rpc.%s.enable', $serverName), false)) {
             $this->protocol = new Protocol($container, $container->get(ProtocolManager::class), 'grpc');
         }
+
+        parent::__construct($container, $serverName);
     }
 
     /**
