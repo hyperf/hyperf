@@ -16,7 +16,6 @@ use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientConnectFailedException;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
-use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\Utils\Exception\ExceptionThrower;
 use RuntimeException;
@@ -26,13 +25,9 @@ use Psr\Container\ContainerInterface;
 class GrpcTransporter implements TransporterInterface
 {
 
-    /**
-     * If $loadBalancer is null, will select a node in $nodes to request,
-     * otherwise, use the nodes in $loadBalancer.
-     *
-     * @var Node[]
-     */
-    private array $nodes = [];
+    protected ClientFactory $factory;
+
+
     const CONFIG_DEFAULT_CONNECT_TIMEOUT = 3;
     const CONFIG_DEFAULT_RECV_TIMEOUT = 5.0;
     const CONFIG_DEFAULT_RETRY_COUNT = 2;
