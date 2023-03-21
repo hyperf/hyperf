@@ -103,7 +103,7 @@ class GrpcClient
             throw new RuntimeException('Client must be started in coroutine');
         }
         if (! $this->getHttpClient()->connect()) {
-            throw new GrpcClientException('Connect failed, error=' . $this->getHttpClient()->errMsg.'at  ['.$this->host.':'.$this->port.']', $this->getHttpClient()->errCode);
+            throw new GrpcClientException('Connect failed, error=' . $this->getHttpClient()->errMsg.' at  ['.$this->host.':'.$this->port.']', $this->getHttpClient()->errCode);
         }
 
         $this->mainCoroutineId = Coroutine::id();
