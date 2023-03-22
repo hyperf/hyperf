@@ -169,13 +169,7 @@ class ConsumerManager
                 $consumerConfig->setBootstrapServers($config['bootstrap_servers']);
                 $consumerConfig->setClient($config['client'] ?? SwooleClient::class);
                 $consumerConfig->setSocket($config['socket'] ?? SwooleSocket::class);
-                if (method_exists($consumerConfig, 'setTimer')) {
-                    if (isset($config['timer'])) {
-                        $consumerConfig->setTimer($config['timer']);
-                    } elseif (class_exists(SwooleTimer::class)) {
-                        $consumerConfig->setTimer(SwooleTimer::class);
-                    }
-                }
+                $consumerConfig->setTimer($config['timer'] ?? SwooleTimer::class);
                 $consumerConfig->setMaxWriteAttempts($config['max_write_attempts']);
                 $consumerConfig->setClientId(sprintf('%s-%s', $config['client_id'] ?: 'Hyperf', uniqid()));
                 $consumerConfig->setRecvTimeout($config['recv_timeout']);
