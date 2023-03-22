@@ -103,7 +103,7 @@ class Executor
                 $runnable = $this->catchToExecute($crontab, $runnable);
                 $this->decorateRunnable($crontab, $runnable)();
             };
-            $this->timer->after($diff > 0 ? $diff : 1, $runnable);
+            $this->timer->after($diff > 0 ? $diff : 0.001, $runnable);
         }
     }
 
