@@ -55,7 +55,7 @@ class RunCommand extends Command
                 if ($crontab->getExecuteTime() instanceof Carbon) {
                     $wait = $crontab->getExecuteTime()->getTimeStamp() - time();
                     Coroutine::sleep($wait);
-                    $this->executor->execute($crontab, false);
+                    $this->executor->execute($crontab);
                 }
             });
         }
