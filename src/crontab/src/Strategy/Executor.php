@@ -56,7 +56,7 @@ class Executor
         $this->timer = new Timer($this->logger);
     }
 
-    public function execute(Crontab $crontab)
+    public function execute(Crontab $crontab, bool $isDiscard = true)
     {
         if (! $crontab->getExecuteTime() instanceof Carbon) {
             return;
@@ -94,8 +94,8 @@ class Executor
                 break;
         }
         if ($runnable) {
-            $runnable = function ($isClosing) use ($crontab, $runnable) {
-                if ($isClosing) {
+            $runnable = function ($isClosing) use ($crontab, $runnable, $isDiscard) {
+                if ($isClosing && $isDiscard) {
                     $this->logResult($crontab, false);
                     return;
                 }
