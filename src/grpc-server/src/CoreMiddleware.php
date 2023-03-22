@@ -16,6 +16,7 @@ use FastRoute\Dispatcher;
 use Google\Protobuf\Internal\Message;
 use Google\Protobuf\Internal\Message as ProtobufMessage;
 use Hyperf\Context\Context;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Grpc\Parser;
@@ -35,11 +36,16 @@ use RuntimeException;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {
-    protected Protocol $protocol;
+    /**
+     * @var null|Protocol
+     */
+    protected mixed $protocol = null;
 
     public function __construct($container, string $serverName)
     {
-        $this->protocol = new Protocol($container, $container->get(ProtocolManager::class), 'grpc');
+        if ($container->get(ConfigInterface::class)->get(sprintf('grpc_server.rpc.%s.enable', $serverName), false)) {
+            $this->protocol = new Protocol($container, $container->get(ProtocolManager::class), 'grpc');
+        }
 
         parent::__construct($container, $serverName);
     }
@@ -91,10 +97,14 @@ class CoreMiddleware extends HttpCoreMiddleware
 
     protected function createDispatcher(string $serverName): Dispatcher
     {
-        $factory = make(DispatcherFactory::class, [
-            'pathGenerator' => $this->protocol->getPathGenerator(),
-        ]);
-        return $factory->getDispatcher($serverName);
+        if ($this->protocol) {
+            $factory = make(DispatcherFactory::class, [
+                'pathGenerator' => $this->protocol->getPathGenerator(),
+            ]);
+            return $factory->getDispatcher($serverName);
+        }
+
+        return parent::createDispatcher($serverName);
     }
 
     /**
