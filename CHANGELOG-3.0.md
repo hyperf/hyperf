@@ -1,5 +1,9 @@
 # v3.0.13 - TBD
 
+## Optimized
+
+- [#5544](https://github.com/hyperf/hyperf/pull/5554) Cancel `grpc-server`'s dependency on `hyperf/rpc`.
+
 # v3.0.12 - 2023-03-20
 
 ## Added
