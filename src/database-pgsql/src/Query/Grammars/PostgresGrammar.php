@@ -75,10 +75,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile an "upsert" statement into SQL.
-     *
-     * @return string
      */
-    public function compileUpsert(Builder $query, array $values, array $uniqueBy, array $update)
+    public function compileUpsert(Builder $query, array $values, array $uniqueBy, array $update): string
     {
         $sql = $this->compileInsert($query, $values);
 

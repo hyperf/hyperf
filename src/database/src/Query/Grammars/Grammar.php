@@ -194,6 +194,16 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Compile an "upsert" statement into SQL.
+     *
+     * @throws RuntimeException
+     */
+    public function compileUpsert(Builder $query, array $values, array $uniqueBy, array $update): string
+    {
+        throw new RuntimeException('This database engine does not support upserts.');
+    }
+
+    /**
      * Prepare the bindings for an update statement.
      */
     public function prepareBindingsForUpdate(array $bindings, array $values): array
