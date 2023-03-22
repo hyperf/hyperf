@@ -59,7 +59,8 @@ class Timer
                 $round = 0;
                 ++Timer::$count;
                 while (true) {
-                    $isClosing = CoordinatorManager::until($identifier)->yield($timeout);
+                    $isClosing = false;
+                    $timeout && $isClosing = CoordinatorManager::until($identifier)->yield($timeout);
                     if (! isset($this->closures[$id])) {
                         break;
                     }
