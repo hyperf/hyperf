@@ -1,5 +1,9 @@
 # v3.0.13 - TBD
 
+## Added
+
+- [#5561](https://github.com/hyperf/hyperf/pull/5561) Added setTimer support for `hyperf/kafka`.
+
 ## Optimized
 
 - [#5544](https://github.com/hyperf/hyperf/pull/5554) Cancel `grpc-server`'s dependency on `hyperf/rpc`.
