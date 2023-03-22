@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Listener;
 
-use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab as CrontabAnnotation;
@@ -21,8 +20,6 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
-use Hyperf\Process\Event\BeforeCoroutineHandle;
-use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Utils\ApplicationContext;
 use ReflectionException;
 
@@ -44,9 +41,6 @@ class CrontabRegisterListener implements ListenerInterface
     {
         return [
             BootApplication::class,
-            BeforeHandle::class,
-            BeforeProcessHandle::class,
-            BeforeCoroutineHandle::class,
         ];
     }
 

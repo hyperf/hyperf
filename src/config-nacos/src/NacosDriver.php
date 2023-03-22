@@ -56,7 +56,7 @@ class NacosDriver extends AbstractDriver
             }));
         }
 
-        foreach($application->grpc->getClients() as $client){
+        foreach ($application->grpc->getClients() as $client) {
             $client->listen();
         }
     }
