@@ -32,14 +32,14 @@ class RunCommand extends Command
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('crontab:run');
-
-        $this->scheduler = $container->get(Scheduler::class);
-        $this->executor = $container->get(Executor::class);
-        $this->config = $container->get(ConfigInterface::class);
     }
 
     public function handle()
     {
+        $this->scheduler = $this->container->get(Scheduler::class);
+        $this->executor = $this->container->get(Executor::class);
+        $this->config = $this->container->get(ConfigInterface::class);
+
         if ($this->config->get('crontab.enable', false)) {
             throw new InvalidArgumentException('Crontab is already disabled, please enable it first.');
         }

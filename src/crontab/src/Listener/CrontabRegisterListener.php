@@ -21,17 +21,19 @@ use Hyperf\Di\ReflectionManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\Utils\ApplicationContext;
+use Psr\Container\ContainerInterface;
 use ReflectionException;
 
 class CrontabRegisterListener implements ListenerInterface
 {
-    protected bool $isRegistered = false;
+    protected CrontabManager $crontabManager;
 
-    public function __construct(
-        protected CrontabManager $crontabManager,
-        protected StdoutLoggerInterface $logger,
-        protected ConfigInterface $config
-    ) {
+    protected StdoutLoggerInterface $logger;
+
+    protected ConfigInterface $config;
+
+    public function __construct(protected ContainerInterface $container)
+    {
     }
 
     /**
@@ -50,10 +52,9 @@ class CrontabRegisterListener implements ListenerInterface
      */
     public function process(object $event): void
     {
-        if ($this->isRegistered) {
-            return;
-        }
-        $this->isRegistered = true;
+        $this->crontabManager = $this->container->get(CrontabManager::class);
+        $this->logger = $this->container->get(StdoutLoggerInterface::class);
+        $this->config = $this->container->get(ConfigInterface::class);
 
         $crontabs = $this->parseCrontabs();
         foreach ($crontabs as $crontab) {
