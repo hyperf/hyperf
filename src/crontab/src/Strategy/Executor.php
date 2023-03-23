@@ -66,6 +66,7 @@ class Executor
             }
 
             $diff = Carbon::now()->diffInRealSeconds($crontab->getExecuteTime(), false);
+            $runnable = null;
             switch ($crontab->getType()) {
                 case 'callback':
                     [$class, $method] = $crontab->getCallback();
