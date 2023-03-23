@@ -18,6 +18,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Timer;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\Event\FailToExecute;
+use Hyperf\Crontab\Exception\InvalidArgumentException;
 use Hyperf\Crontab\LoggerInterface;
 use Hyperf\Crontab\Mutex\RedisServerMutex;
 use Hyperf\Crontab\Mutex\RedisTaskMutex;
@@ -61,11 +62,10 @@ class Executor
     {
         try {
             if (! $crontab->getExecuteTime() instanceof Carbon) {
-                $crontab->close();
-                return;
+                throw new InvalidArgumentException('Crontab task execute time is invalid.');
             }
+
             $diff = Carbon::now()->diffInRealSeconds($crontab->getExecuteTime(), false);
-            $runnable = null;
             switch ($crontab->getType()) {
                 case 'callback':
                     [$class, $method] = $crontab->getCallback();
@@ -95,10 +95,8 @@ class Executor
                 case 'eval':
                     $runnable = fn() => eval($crontab->getCallback());
                     break;
-            }
-            if (! $runnable) {
-                $crontab->close();
-                return;
+                default:
+                    throw new InvalidArgumentException(sprintf('Crontab task type [%s] is invalid.', $crontab->getType()));
             }
 
             $runnable = function ($isClosing) use ($crontab, $runnable) {
@@ -112,8 +110,9 @@ class Executor
                 $crontab->complete();
             };
             $this->timer->after(max($diff, 0), $runnable);
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
             $crontab->close();
+            throw $exception;
         }
     }
 
