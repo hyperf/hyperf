@@ -57,7 +57,7 @@ class Executor
         $this->timer = new Timer($this->logger);
     }
 
-    public function execute(Crontab $crontab, bool $isDiscard = true)
+    public function execute(Crontab $crontab)
     {
         if (! $crontab->getExecuteTime() instanceof Carbon) {
             return;
@@ -95,15 +95,15 @@ class Executor
                 break;
         }
         if ($runnable) {
-            $runnable = function ($isClosing) use ($crontab, $runnable, $isDiscard) {
-                if ($isClosing && $isDiscard) {
+            $runnable = function ($isClosing) use ($crontab, $runnable) {
+                if ($isClosing) {
                     $this->logResult($crontab, false);
                     return;
                 }
                 $runnable = $this->catchToExecute($crontab, $runnable);
                 $this->decorateRunnable($crontab, $runnable)();
             };
-            $this->timer->after($diff > 0 ? $diff : 0.001, $runnable);
+            $this->timer->after(max($diff, 0), $runnable);
         }
     }
 

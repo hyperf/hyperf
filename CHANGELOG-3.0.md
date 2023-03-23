@@ -8,6 +8,7 @@
 ## Optimized
 
 - [#5544](https://github.com/hyperf/hyperf/pull/5554) Cancel `grpc-server`'s dependency on `hyperf/rpc`.
+- [#5550](https://github.com/hyperf/hyperf/pull/5550) Optimized code for crontab parser and coordinator timer.
 
 # v3.0.12 - 2023-03-20
 
