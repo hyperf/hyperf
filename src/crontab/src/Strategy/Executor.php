@@ -61,6 +61,7 @@ class Executor
     {
         try {
             if (! $crontab->getExecuteTime() instanceof Carbon) {
+                $crontab->close();
                 return;
             }
             $diff = Carbon::now()->diffInRealSeconds($crontab->getExecuteTime(), false);
@@ -96,11 +97,13 @@ class Executor
                     break;
             }
             if (! $runnable) {
+                $crontab->close();
                 return;
             }
 
             $runnable = function ($isClosing) use ($crontab, $runnable) {
                 if ($isClosing) {
+                    $crontab->close();
                     $this->logResult($crontab, false);
                     return;
                 }
@@ -109,7 +112,7 @@ class Executor
                 $crontab->complete();
             };
             $this->timer->after(max($diff, 0), $runnable);
-        } finally {
+        } catch (Throwable) {
             $crontab->close();
         }
     }
