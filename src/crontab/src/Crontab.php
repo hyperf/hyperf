@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
+use Hyperf\Engine\Channel;
 
 class Crontab
 {
@@ -36,6 +37,13 @@ class Crontab
     protected ?Carbon $executeTime = null;
 
     protected bool $enable = true;
+
+    protected ?Channel $running = null;
+
+    public function __clone()
+    {
+        $this->running = new Channel(1);
+    }
 
     public function getName(): ?string
     {
@@ -156,5 +164,20 @@ class Crontab
     {
         $this->enable = $enable;
         return $this;
+    }
+
+    public function complete(): void
+    {
+        $this->running?->close();
+    }
+
+    public function close(): void
+    {
+        $this->running?->close();
+    }
+
+    public function wait(): void
+    {
+        $this->running?->pop();
     }
 }

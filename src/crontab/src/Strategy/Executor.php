@@ -18,6 +18,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Timer;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\Event\FailToExecute;
+use Hyperf\Crontab\Exception\InvalidArgumentException;
 use Hyperf\Crontab\LoggerInterface;
 use Hyperf\Crontab\Mutex\RedisServerMutex;
 use Hyperf\Crontab\Mutex\RedisTaskMutex;
@@ -59,51 +60,57 @@ class Executor
 
     public function execute(Crontab $crontab)
     {
-        if (! $crontab->getExecuteTime() instanceof Carbon) {
-            return;
-        }
-        $diff = Carbon::now()->diffInRealSeconds($crontab->getExecuteTime(), false);
-        $runnable = null;
-        switch ($crontab->getType()) {
-            case 'callback':
-                [$class, $method] = $crontab->getCallback();
-                $parameters = $crontab->getCallback()[2] ?? null;
-                if ($class && $method && class_exists($class) && method_exists($class, $method)) {
-                    $runnable = function () use ($class, $method, $parameters) {
-                        $instance = make($class);
-                        if ($parameters && is_array($parameters)) {
-                            $instance->{$method}(...$parameters);
-                        } else {
-                            $instance->{$method}();
+        try {
+            $diff = Carbon::now()->diffInRealSeconds($crontab->getExecuteTime(), false);
+            $runnable = null;
+
+            switch ($crontab->getType()) {
+                case 'callback':
+                    [$class, $method] = $crontab->getCallback();
+                    $parameters = $crontab->getCallback()[2] ?? null;
+                    if ($class && $method && class_exists($class) && method_exists($class, $method)) {
+                        $runnable = function () use ($class, $method, $parameters) {
+                            $instance = make($class);
+                            if ($parameters && is_array($parameters)) {
+                                $instance->{$method}(...$parameters);
+                            } else {
+                                $instance->{$method}();
+                            }
+                        };
+                    }
+                    break;
+                case 'command':
+                    $input = make(ArrayInput::class, [$crontab->getCallback()]);
+                    $output = make(NullOutput::class);
+                    $application = $this->container->get(ApplicationInterface::class);
+                    $application->setAutoExit(false);
+                    $runnable = function () use ($application, $input, $output) {
+                        if ($application->run($input, $output) !== 0) {
+                            throw new RuntimeException('Crontab task failed to execute.');
                         }
                     };
-                }
-                break;
-            case 'command':
-                $input = make(ArrayInput::class, [$crontab->getCallback()]);
-                $output = make(NullOutput::class);
-                $application = $this->container->get(ApplicationInterface::class);
-                $application->setAutoExit(false);
-                $runnable = function () use ($application, $input, $output) {
-                    if ($application->run($input, $output) !== 0) {
-                        throw new RuntimeException('Crontab task failed to execute.');
-                    }
-                };
-                break;
-            case 'eval':
-                $runnable = fn () => eval($crontab->getCallback());
-                break;
-        }
-        if ($runnable) {
+                    break;
+                case 'eval':
+                    $runnable = fn () => eval($crontab->getCallback());
+                    break;
+                default:
+                    throw new InvalidArgumentException(sprintf('Crontab task type [%s] is invalid.', $crontab->getType()));
+            }
+
             $runnable = function ($isClosing) use ($crontab, $runnable) {
                 if ($isClosing) {
+                    $crontab->close();
                     $this->logResult($crontab, false);
                     return;
                 }
                 $runnable = $this->catchToExecute($crontab, $runnable);
                 $this->decorateRunnable($crontab, $runnable)();
+                $crontab->complete();
             };
             $this->timer->after(max($diff, 0), $runnable);
+        } catch (Throwable $exception) {
+            $crontab->close();
+            throw $exception;
         }
     }
 

@@ -11,14 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Command;
 
-use Carbon\Carbon;
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\Event\CrontabDispatcherStarted;
 use Hyperf\Crontab\Scheduler;
 use Hyperf\Crontab\Strategy\Executor;
 use Hyperf\Nacos\Exception\InvalidArgumentException;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
 class RunCommand extends Command
@@ -48,16 +47,13 @@ class RunCommand extends Command
 
         $this->line('Triggering Crontab', 'info');
 
+        /** @var Crontab[] $crontabs */
         $crontabs = $this->scheduler->schedule();
-        while (! $crontabs->isEmpty()) {
-            $crontab = $crontabs->dequeue();
-            Coroutine::create(function () use ($crontab) {
-                if ($crontab->getExecuteTime() instanceof Carbon) {
-                    $wait = $crontab->getExecuteTime()->getTimeStamp() - time();
-                    Coroutine::sleep($wait);
-                    $this->executor->execute($crontab);
-                }
-            });
+        foreach ($crontabs as $crontab) {
+            $this->executor->execute($crontab);
+        }
+        foreach ($crontabs as $crontab) {
+            $crontab->wait();
         }
     }
 }
