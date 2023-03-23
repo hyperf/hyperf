@@ -61,12 +61,9 @@ class Executor
     public function execute(Crontab $crontab)
     {
         try {
-            if (! $crontab->getExecuteTime() instanceof Carbon) {
-                throw new InvalidArgumentException('Crontab task execute time is invalid.');
-            }
-
             $diff = Carbon::now()->diffInRealSeconds($crontab->getExecuteTime(), false);
             $runnable = null;
+
             switch ($crontab->getType()) {
                 case 'callback':
                     [$class, $method] = $crontab->getCallback();
