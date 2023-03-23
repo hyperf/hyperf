@@ -10,8 +10,6 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 use Hyperf\Kafka\Constants\KafkaStrategy;
-use longlang\phpkafka\Client\SwooleClient;
-use longlang\phpkafka\Socket\SwooleSocket;
 
 return [
     'default' => [
@@ -41,8 +39,9 @@ return [
         'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
         'sasl' => [],
         'ssl' => [],
-        'client' => SwooleClient::class,
-        'socket' => SwooleSocket::class,
+        'client' => \longlang\phpkafka\Client\SwooleClient::class,
+        'socket' => \longlang\phpkafka\Socket\SwooleSocket::class,
+        'timer' => \longlang\phpkafka\Timer\SwooleTimer::class,
         'consume_timeout' => 600,
     ],
 ];

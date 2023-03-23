@@ -28,6 +28,7 @@ use longlang\phpkafka\Consumer\ConsumeMessage;
 use longlang\phpkafka\Consumer\Consumer as LongLangConsumer;
 use longlang\phpkafka\Consumer\ConsumerConfig;
 use longlang\phpkafka\Socket\SwooleSocket;
+use longlang\phpkafka\Timer\SwooleTimer;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;
@@ -166,8 +167,9 @@ class ConsumerManager
                 $consumerConfig->setMemberId($this->consumer->getMemberId() ?: '');
                 $consumerConfig->setInterval($config['interval']);
                 $consumerConfig->setBootstrapServers($config['bootstrap_servers']);
-                $consumerConfig->setSocket($config['socket'] ?? SwooleSocket::class);
                 $consumerConfig->setClient($config['client'] ?? SwooleClient::class);
+                $consumerConfig->setSocket($config['socket'] ?? SwooleSocket::class);
+                $consumerConfig->setTimer($config['timer'] ?? SwooleTimer::class);
                 $consumerConfig->setMaxWriteAttempts($config['max_write_attempts']);
                 $consumerConfig->setClientId(sprintf('%s-%s', $config['client_id'] ?: 'Hyperf', uniqid()));
                 $consumerConfig->setRecvTimeout($config['recv_timeout']);

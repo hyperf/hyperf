@@ -1,5 +1,10 @@
 # v3.0.13 - TBD
 
+## Added
+
+- [#5561](https://github.com/hyperf/hyperf/pull/5561) Added setTimer support for `hyperf/kafka`.
+- [#5562](https://github.com/hyperf/hyperf/pull/5562) Added method `Query\Builder::upsert()`.
+
 ## Optimized
 
 - [#5544](https://github.com/hyperf/hyperf/pull/5554) Cancel `grpc-server`'s dependency on `hyperf/rpc`.
