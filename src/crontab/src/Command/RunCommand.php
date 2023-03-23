@@ -55,7 +55,7 @@ class RunCommand extends Command
             $this->executor->execute($crontab);
         }
         foreach ($crontabs as $crontab) {
-            $crontab->waitHandled();
+            $crontab->wait();
         }
     }
 }

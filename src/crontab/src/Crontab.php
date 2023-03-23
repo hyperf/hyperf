@@ -161,24 +161,23 @@ class Crontab
         return $this;
     }
 
-    public function initHandledChannel(): static
-    {
-        $this->handledChannel = new Channel(1);
-        return $this;
-    }
-
     public function complete(): void
     {
-        $this->handledChannel->close();
+        $this->handledChannel?->close();
     }
 
     public function close(): void
     {
-        $this->handledChannel->close();
+        $this->handledChannel?->close();
     }
 
-    public function waitHandled(): void
+    public function wait(): void
     {
-        $this->handledChannel->pop();
+        $this->handledChannel?->pop();
+    }
+
+    public function __clone()
+    {
+        $this->handledChannel = new Channel(1);
     }
 }
