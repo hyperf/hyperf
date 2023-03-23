@@ -14,6 +14,7 @@ namespace Hyperf\Crontab\Command;
 use Carbon\Carbon;
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\Event\CrontabDispatcherStarted;
 use Hyperf\Crontab\Scheduler;
 use Hyperf\Crontab\Strategy\Executor;
@@ -49,8 +50,10 @@ class RunCommand extends Command
         $this->line('Triggering Crontab', 'info');
 
         $crontabs = $this->scheduler->schedule();
+        $waitCrontabs = [];
         while (! $crontabs->isEmpty()) {
             $crontab = $crontabs->dequeue();
+            $waitCrontabs[] = $crontab;
             Coroutine::create(function () use ($crontab) {
                 if ($crontab->getExecuteTime() instanceof Carbon) {
                     $wait = $crontab->getExecuteTime()->getTimeStamp() - time();
@@ -58,6 +61,11 @@ class RunCommand extends Command
                     $this->executor->execute($crontab);
                 }
             });
+        }
+
+        /** @var Crontab $crontab */
+        foreach ($waitCrontabs as $crontab) {
+            $crontab->waitHandled();
         }
     }
 }
