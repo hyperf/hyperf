@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Command;
 
-use Carbon\Carbon;
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Crontab\Crontab;
@@ -19,7 +18,6 @@ use Hyperf\Crontab\Event\CrontabDispatcherStarted;
 use Hyperf\Crontab\Scheduler;
 use Hyperf\Crontab\Strategy\Executor;
 use Hyperf\Nacos\Exception\InvalidArgumentException;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
 class RunCommand extends Command

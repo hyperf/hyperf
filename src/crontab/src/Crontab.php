@@ -38,7 +38,12 @@ class Crontab
 
     protected bool $enable = true;
 
-    protected ?Channel $handledChannel = null;
+    protected ?Channel $running = null;
+
+    public function __clone()
+    {
+        $this->running = new Channel(1);
+    }
 
     public function getName(): ?string
     {
@@ -163,21 +168,16 @@ class Crontab
 
     public function complete(): void
     {
-        $this->handledChannel?->close();
+        $this->running?->close();
     }
 
     public function close(): void
     {
-        $this->handledChannel?->close();
+        $this->running?->close();
     }
 
     public function wait(): void
     {
-        $this->handledChannel?->pop();
-    }
-
-    public function __clone()
-    {
-        $this->handledChannel = new Channel(1);
+        $this->running?->pop();
     }
 }

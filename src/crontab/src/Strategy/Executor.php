@@ -91,7 +91,7 @@ class Executor
                     };
                     break;
                 case 'eval':
-                    $runnable = fn() => eval($crontab->getCallback());
+                    $runnable = fn () => eval($crontab->getCallback());
                     break;
                 default:
                     throw new InvalidArgumentException(sprintf('Crontab task type [%s] is invalid.', $crontab->getType()));
