@@ -60,6 +60,7 @@ class Executor
     public function execute(Crontab $crontab)
     {
         if (! $crontab->getExecuteTime() instanceof Carbon) {
+            $crontab->closed();
             return;
         }
         $diff = Carbon::now()->diffInRealSeconds($crontab->getExecuteTime(), false);
@@ -94,18 +95,22 @@ class Executor
                 $runnable = fn () => eval($crontab->getCallback());
                 break;
         }
-        if ($runnable) {
-            $runnable = function ($isClosing) use ($crontab, $runnable) {
-                if ($isClosing) {
-                    $this->logResult($crontab, false);
-                    return;
-                }
-                $runnable = $this->catchToExecute($crontab, $runnable);
-                $this->decorateRunnable($crontab, $runnable)();
-                $crontab->handled();
-            };
-            $this->timer->after(max($diff, 0), $runnable);
+        if (! $runnable) {
+            $crontab->closed();
+            return;
         }
+
+        $runnable = function ($isClosing) use ($crontab, $runnable) {
+            if ($isClosing) {
+                $this->logResult($crontab, false);
+                $crontab->closed();
+                return;
+            }
+            $runnable = $this->catchToExecute($crontab, $runnable);
+            $this->decorateRunnable($crontab, $runnable)();
+            $crontab->handled();
+        };
+        $this->timer->after(max($diff, 0), $runnable);
     }
 
     protected function runInSingleton(Crontab $crontab, Closure $runnable): Closure

@@ -169,6 +169,11 @@ class Crontab
 
     public function handled(): void
     {
+        $this->handledChannel->push(1);
+    }
+
+    public function closed(): void
+    {
         $this->handledChannel->close();
     }
 

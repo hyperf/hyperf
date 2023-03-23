@@ -49,22 +49,12 @@ class RunCommand extends Command
 
         $this->line('Triggering Crontab', 'info');
 
+        /** @var Crontab[] $crontabs */
         $crontabs = $this->scheduler->schedule();
-        $waitCrontabs = [];
-        while (! $crontabs->isEmpty()) {
-            $crontab = $crontabs->dequeue();
-            $waitCrontabs[] = $crontab;
-            Coroutine::create(function () use ($crontab) {
-                if ($crontab->getExecuteTime() instanceof Carbon) {
-                    $wait = $crontab->getExecuteTime()->getTimeStamp() - time();
-                    Coroutine::sleep($wait);
-                    $this->executor->execute($crontab);
-                }
-            });
+        foreach ($crontabs as $crontab) {
+            $this->executor->execute($crontab);
         }
-
-        /** @var Crontab $crontab */
-        foreach ($waitCrontabs as $crontab) {
+        foreach ($crontabs as $crontab) {
             $crontab->waitHandled();
         }
     }
