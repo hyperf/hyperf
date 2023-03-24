@@ -70,7 +70,9 @@ class ModelSchemaVisitor extends NodeVisitorAbstract
         return new Node\Stmt\ClassMethod(new Node\Identifier('jsonSerialize'), [
             'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC,
             'returnType' => new Node\Identifier('mixed'),
-            'stmts' => [new Node\Stmt\Return_(new Node\Expr\Array_($items))],
+            'stmts' => [new Node\Stmt\Return_(new Node\Expr\Array_($items, [
+                'kind' => Node\Expr\Array_::KIND_SHORT,
+            ]))],
         ]);
     }
 
@@ -116,7 +118,7 @@ class ModelSchemaVisitor extends NodeVisitorAbstract
                         new Node\VarLikeIdentifier(Str::camel($column->getName()))
                     ),
                 ],
-                type: new Node\Identifier(name: $this->formatDatabaseType($column->getType())),
+                type: new Node\Identifier(name: $this->formatDatabaseType($column->getType(), true)),
                 attrGroups: [
                     new Node\AttributeGroup([
                         new Node\Attribute(new Node\Name('Property'), [
@@ -132,12 +134,12 @@ class ModelSchemaVisitor extends NodeVisitorAbstract
         return $result;
     }
 
-    protected function formatDatabaseType(string $type): ?string
+    protected function formatDatabaseType(string $type, bool $nullable = false): ?string
     {
         return match ($type) {
-            'tinyint', 'smallint', 'mediumint', 'int', 'bigint' => 'int',
-            'bool', 'boolean' => 'bool',
-            'varchar', 'char' => 'string',
+            'tinyint', 'smallint', 'mediumint', 'int', 'bigint' => $nullable ? '?int' : 'int',
+            'bool', 'boolean' => $nullable ? '?bool' : 'bool',
+            'varchar', 'char' => $nullable ? '?string' : 'string',
             default => 'mixed',
         };
     }
