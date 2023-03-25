@@ -22,12 +22,6 @@ use Psr\Container\ContainerInterface;
 
 class RunCommand extends Command
 {
-    protected Scheduler $scheduler;
-
-    protected Executor $executor;
-
-    protected ConfigInterface $config;
-
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('crontab:run');
@@ -35,11 +29,11 @@ class RunCommand extends Command
 
     public function handle()
     {
-        $this->scheduler = $this->container->get(Scheduler::class);
-        $this->executor = $this->container->get(Executor::class);
-        $this->config = $this->container->get(ConfigInterface::class);
+        $config = $this->container->get(ConfigInterface::class);
+        $scheduler = $this->container->get(Scheduler::class);
+        $executor = $this->container->get(Executor::class);
 
-        if ($this->config->get('crontab.enable', false)) {
+        if ($config->get('crontab.enable', false)) {
             throw new InvalidArgumentException('Crontab is already disabled, please enable it first.');
         }
 
@@ -48,10 +42,12 @@ class RunCommand extends Command
         $this->line('Triggering Crontab', 'info');
 
         /** @var Crontab[] $crontabs */
-        $crontabs = $this->scheduler->schedule();
+        $crontabs = $scheduler->schedule();
+
         foreach ($crontabs as $crontab) {
-            $this->executor->execute($crontab);
+            $executor->execute($crontab);
         }
+
         foreach ($crontabs as $crontab) {
             $crontab->wait();
         }
