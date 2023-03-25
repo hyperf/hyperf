@@ -38,7 +38,11 @@ class Timer
         go(function () use ($timeout, $closure, $identifier, $id) {
             try {
                 ++Timer::$count;
-                $isClosing = CoordinatorManager::until($identifier)->yield($timeout);
+                if ($timeout > 0) {
+                    $isClosing = CoordinatorManager::until($identifier)->yield($timeout);
+                } else {
+                    $isClosing = CoordinatorManager::until($identifier)->isClosing();
+                }
                 if (isset($this->closures[$id])) {
                     $closure($isClosing);
                 }
@@ -59,7 +63,7 @@ class Timer
                 $round = 0;
                 ++Timer::$count;
                 while (true) {
-                    $isClosing = CoordinatorManager::until($identifier)->yield($timeout);
+                    $isClosing = CoordinatorManager::until($identifier)->yield(max($timeout, 0.000001));
                     if (! isset($this->closures[$id])) {
                         break;
                     }

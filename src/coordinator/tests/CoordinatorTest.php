@@ -28,6 +28,13 @@ class CoordinatorTest extends TestCase
         $this->assertFalse($aborted);
     }
 
+    public function testYieldMicroSeconds()
+    {
+        $coord = new Coordinator();
+        $aborted = $coord->yield(0.000001);
+        $this->assertFalse($aborted);
+    }
+
     public function testYieldResume()
     {
         $coord = new Coordinator();

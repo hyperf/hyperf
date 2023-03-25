@@ -34,6 +34,25 @@ class ParserTest extends TestCase
         ini_set('date.timezone', $this->timezone);
     }
 
+    public function testIsValid(): void
+    {
+        $parser = new Parser();
+        $this->assertTrue($parser->isValid('* * * * *'));
+        $this->assertTrue($parser->isValid('* * * * * *'));
+        $this->assertTrue($parser->isValid('*/11 * * * * *'));
+        $this->assertTrue($parser->isValid('10-15/1 * * * * *'));
+        $this->assertTrue($parser->isValid('10-12/1,14-15/1 * * * * *'));
+        $this->assertTrue($parser->isValid('10,14,,15, * * * * *'));
+        $this->assertTrue($parser->isValid('10-15/1 10-12/1 10 * * *'));
+    }
+
+    public function testIsInvalid(): void
+    {
+        $parser = new Parser();
+        $this->assertFalse($parser->isValid('* * *'));
+        $this->assertFalse($parser->isValid('* * * * * * *'));
+    }
+
     public function testParseSecondLevel()
     {
         $crontabString = '*/11 * * * * *';
