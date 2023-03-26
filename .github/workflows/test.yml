@@ -18,7 +18,7 @@ jobs:
         exclude:
           - php-version: '8.2'
             sw-version: 'v4.8.12'
-      max-parallel: 12
+      max-parallel: 20
       fail-fast: false
     env:
       SW_VERSION: ${{ matrix.sw-version }}

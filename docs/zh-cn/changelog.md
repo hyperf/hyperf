@@ -1,5 +1,20 @@
 # 版本更新记录
 
+# v3.0.13 - 2023-03-26
+
+## 新增
+
+- [#5561](https://github.com/hyperf/hyperf/pull/5561) 为 `hyperf/kafka` 增加自定义定时器的配置。
+- [#5562](https://github.com/hyperf/hyperf/pull/5562) 为 `MySQL` 数据库组件，增加 `upsert()` 支持。
+- [#5563](https://github.com/hyperf/hyperf/pull/5563) 为 `Crontab` 任务增加是否执行完的逻辑。
+
+## 优化
+
+- [#5544](https://github.com/hyperf/hyperf/pull/5554) 为 `grpc-server` 组件取消 `hyperf/rpc` 的依赖。
+- [#5550](https://github.com/hyperf/hyperf/pull/5550) 优化了 `Coordinator Timer` 和 `Crontab Parser` 的代码。
+- [#5566](https://github.com/hyperf/hyperf/pull/5566) 基于模型生成 `Swagger Schemas` 时，优化变量类型可以为 `Null`。
+- [#5569](https://github.com/hyperf/hyperf/pull/5569) 优化了 `Crontab RunCommand` 的依赖关系。
+
 # v3.0.12 - 2023-03-20
 
 ## 新增
