@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Server;
 
+use Hyperf\Engine\Contract\Http\Writable as ConnectionInterface;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Server\Chunk\Chunkable;
 use Hyperf\HttpMessage\Server\Chunk\HasChunk;
