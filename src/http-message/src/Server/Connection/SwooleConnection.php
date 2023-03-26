@@ -15,6 +15,9 @@ use Hyperf\HttpMessage\Server\Chunk\Chunkable;
 use Hyperf\HttpMessage\Server\ConnectionInterface;
 use Swoole\Http\Response;
 
+/**
+ * @deprecated since 3.1.0
+ */
 class SwooleConnection implements ConnectionInterface, Chunkable
 {
     public function __construct(protected Response $response)
