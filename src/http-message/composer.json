@@ -16,6 +16,8 @@
         "psr/http-message": "^1.0"
     },
     "suggest": {
+        "hyperf/engine": "Required to use WritableConnection for swoole(^1.9.0|^2.7.0).",
+        "hyperf/engine-swow": "Required to use WritableConnection for swow.(^2.7.0)",
         "psr/container": "Required to replace RequestParserInterface."
     },
     "autoload": {
