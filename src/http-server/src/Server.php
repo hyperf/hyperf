@@ -19,6 +19,7 @@ use Hyperf\Contract\OnRequestInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Dispatcher\HttpDispatcher;
+use Hyperf\Engine\Http\WritableConnection;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Connection\SwooleConnection;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
@@ -139,14 +140,16 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     {
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
 
+        $psr7Response->setConnection(new SwooleConnection($response));
+
         if ($request instanceof ServerRequestInterface) {
             $psr7Request = $request;
         } else {
             $psr7Request = Psr7Request::loadFromSwooleRequest($request);
-            $psr7Response->setConnection(new SwooleConnection($response));
         }
 
         Context::set(ServerRequestInterface::class, $psr7Request);
+
         return [$psr7Request, $psr7Response];
     }
 }
