@@ -1,5 +1,9 @@
 # v3.0.14 - TBD
 
+## Optimized
+
+- [#5572](https://github.com/hyperf/hyperf/pull/5572) Update Http Server to use new WritableConnection implementation.
+
 # v3.0.13 - 2023-03-26
 
 ## Added
