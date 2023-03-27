@@ -727,7 +727,7 @@ class Builder
      *
      * @param string $column
      * @param null|string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collections\Collection
      */
     public function pluck($column, $key = null)
     {

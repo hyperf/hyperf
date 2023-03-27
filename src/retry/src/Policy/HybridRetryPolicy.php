@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Retry\Policy;
 
+use Hyperf\Collections\Collection;
 use Hyperf\Retry\RetryContext;
-use Hyperf\Utils\Collection;
 
 class HybridRetryPolicy implements RetryPolicyInterface
 {

@@ -1338,7 +1338,7 @@ class Blueprint
     /**
      * Get all of the commands matching the given names.
      *
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collections\Collection
      */
     protected function commandsNamed(array $names)
     {

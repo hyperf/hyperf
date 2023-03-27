@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Resource\Value;
 
-use Hyperf\Utils\Collection;
+use Hyperf\Collections\Collection;
 use JsonSerializable;
 
 class MergeValue

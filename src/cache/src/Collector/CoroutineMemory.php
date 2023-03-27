@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Cache\Collector;
 
-use Hyperf\Utils\Collection;
+use Hyperf\Collections\Collection;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\StaticInstance;
 
