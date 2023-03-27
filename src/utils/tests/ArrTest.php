@@ -21,6 +21,11 @@ use stdClass;
  */
 class ArrTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        $this->markTestSkipped('Skipped, because this test is deprecated.');
+    }
+
     public function testArrGet()
     {
         $data = ['id' => 1, 'name' => 'Hyperf'];

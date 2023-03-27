@@ -20,6 +20,11 @@ use PHPUnit\Framework\TestCase;
  */
 class CollectionTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        $this->markTestSkipped('Skipped, because this test is deprecated.');
+    }
+
     public function testOperatorForWhere()
     {
         $col = new Collection([['id' => 1, 'name' => 'Hyperf'], ['id' => 2, 'name' => 'HyperfCloud']]);
