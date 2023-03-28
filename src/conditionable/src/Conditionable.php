@@ -16,22 +16,32 @@ use Closure;
 trait Conditionable
 {
     /**
-     * Apply the callback if the given "value" is truthy.
+     * Apply the callback if the given "value" is (or resolves to) truthy.
      *
-     * @param mixed $value
-     * @param callable $callback
-     * @param null|callable $default
+     * @template TWhenParameter
+     * @template TWhenReturnType
      *
-     * @return $this|mixed
+     * @param  (\Closure($this): TWhenParameter)|TWhenParameter|null  $value
+     * @param  (callable($this, TWhenParameter): TWhenReturnType)|null  $callback
+     * @param  (callable($this, TWhenParameter): TWhenReturnType)|null  $default
+     * @param null|mixed $value
+     * @return $this|TWhenReturnType
      */
-    public function when($value, $callback, $default = null)
+    public function when($value = null, callable $callback = null, callable $default = null)
     {
         $value = $value instanceof Closure ? $value($this) : $value;
+
+        if (func_num_args() === 0) {
+            return new HigherOrderWhenProxy($this);
+        }
+
+        if (func_num_args() === 1) {
+            return (new HigherOrderWhenProxy($this))->condition($value);
+        }
 
         if ($value) {
             return $callback($this, $value) ?? $this;
         }
-
         if ($default) {
             return $default($this, $value) ?? $this;
         }
@@ -40,24 +50,34 @@ trait Conditionable
     }
 
     /**
-     * Apply the callback if the given "value" is falsy.
+     * Apply the callback if the given "value" is (or resolves to) falsy.
      *
-     * @param mixed $value
-     * @param callable $callback
-     * @param null|callable $default
+     * @template TUnlessParameter
+     * @template TUnlessReturnType
      *
-     * @return mixed
+     * @param  (\Closure($this): TUnlessParameter)|TUnlessParameter|null  $value
+     * @param  (callable($this, TUnlessParameter): TUnlessReturnType)|null  $callback
+     * @param  (callable($this, TUnlessParameter): TUnlessReturnType)|null  $default
+     * @param null|mixed $value
+     * @return $this|TUnlessReturnType
      */
-    public function unless($value, $callback, $default = null)
+    public function unless($value = null, callable $callback = null, callable $default = null)
     {
         $value = $value instanceof Closure ? $value($this) : $value;
 
-        if (! $value) {
-            return $callback($this, $value) ?: $this;
+        if (func_num_args() === 0) {
+            return (new HigherOrderWhenProxy($this))->negateConditionOnCapture();
         }
 
+        if (func_num_args() === 1) {
+            return (new HigherOrderWhenProxy($this))->condition(! $value);
+        }
+
+        if (! $value) {
+            return $callback($this, $value) ?? $this;
+        }
         if ($default) {
-            return $default($this, $value) ?: $this;
+            return $default($this, $value) ?? $this;
         }
 
         return $this;
