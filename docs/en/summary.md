@@ -128,6 +128,7 @@
   * [Phar](en/phar.md)
   * [DAG](en/dag.md)
   * [RPN](en/rpn.md)
+  * [Swagger](en/swagger.md)
 
 * Deployment
 
