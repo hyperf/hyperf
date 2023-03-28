@@ -20,9 +20,6 @@
         "hyperf/contract": "~3.0.0",
         "hyperf/macroable": "~3.0.0"
     },
-    "suggest": {
-        "symfony/var-dumper": "Required to use the dd function (^5.0|^6.0)."
-    },
     "autoload": {
         "psr-4": {
             "Hyperf\\Collection\\": "src/"
