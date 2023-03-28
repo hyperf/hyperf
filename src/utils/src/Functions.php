@@ -25,6 +25,8 @@ if (! function_exists('value')) {
      * Return the default value of the given value.
      *
      * @param mixed $value
+     *
+     * @deprecated since 3.1, use `Hyperf\Collection\value()` instead.
      */
     function value($value, ...$args)
     {
@@ -121,6 +123,8 @@ if (! function_exists('data_fill')) {
      * @param mixed $target
      * @param array|string $key
      * @param mixed $value
+     *
+     * @deprecated since 3.1, use `Hyperf\Collection\data_fill()` instead.
      */
     function data_fill(&$target, $key, $value)
     {
@@ -134,6 +138,8 @@ if (! function_exists('data_get')) {
      * @param null|array|int|string $key
      * @param null|mixed $default
      * @param mixed $target
+     *
+     * @deprecated since 3.1, use `Hyperf\Collection\data_get()` instead.
      */
     function data_get($target, $key, $default = null)
     {
@@ -174,6 +180,8 @@ if (! function_exists('data_set')) {
      * @param array|string $key
      * @param bool $overwrite
      * @param mixed $value
+     *
+     * @deprecated since 3.1, use `Hyperf\Collection\data_set()` instead.
      */
     function data_set(&$target, $key, $value, $overwrite = true)
     {
@@ -226,6 +234,8 @@ if (! function_exists('head')) {
      * Get the first element of an array. Useful for method chaining.
      *
      * @param array $array
+     *
+     * @deprecated since 3.1, use `Hyperf\Collection\head()` instead.
      */
     function head($array)
     {
@@ -237,6 +247,8 @@ if (! function_exists('last')) {
      * Get the last element from an array.
      *
      * @param array $array
+     *
+     * @deprecated since 3.1, use `Hyperf\Collection\last()` instead.
      */
     function last($array)
     {
