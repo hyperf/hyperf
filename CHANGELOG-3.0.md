@@ -1,5 +1,9 @@
 # v3.0.14 - TBD
 
+## Fixed
+
+- [#5579](https://github.com/hyperf/hyperf/pull/5579) Fixed bug that `crontab:run` cannot work.
+
 ## Optimized
 
 - [#5572](https://github.com/hyperf/hyperf/pull/5572) Update Http Server to use new WritableConnection implementation.
