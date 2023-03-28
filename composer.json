@@ -96,7 +96,7 @@
         "hyperf/async-queue": "*",
         "hyperf/cache": "*",
         "hyperf/circuit-breaker": "*",
-        "hyperf/collections": "*",
+        "hyperf/collection": "*",
         "hyperf/command": "*",
         "hyperf/config": "*",
         "hyperf/config-aliyun-acm": "*",

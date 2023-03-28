@@ -1,5 +1,5 @@
 {
-    "name": "hyperf/collections",
+    "name": "hyperf/collection",
     "description": "Hyperf Collection package which come from illuminate/collections",
     "license": "MIT",
     "keywords": [
