@@ -13,7 +13,7 @@ namespace Hyperf\Collection;
 
 /**
  * @mixin \Hyperf\Collection\Collection
- * Most of the methods in this file come from illuminate/support,
+ * Most of the methods in this file come from illuminate/collections,
  * thanks Laravel Team provide such a useful class.
  */
 class HigherOrderCollectionProxy
