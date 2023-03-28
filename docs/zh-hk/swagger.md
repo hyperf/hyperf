@@ -25,7 +25,7 @@ php bin/hyperf.php vendor:publish hyperf/swagger
 | html     | Swagger 文檔生成器生成的 HTML 文件保存路徑                       |
 | url      | Swagger 文檔的 URL 路徑                                         |
 | auto_generate | 是否自動生成 Swagger 文檔                                     |
-| scan.paths | 需要掃描的 API 接口文件所在的路徑，可以是一個字符串或者一個數組 | 
+| scan.paths | 需要掃描的 API 接口文件所在的路徑，一個數組 | 
 
 ## 生成文檔
 
