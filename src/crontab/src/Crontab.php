@@ -45,6 +45,21 @@ class Crontab
         $this->running = new Channel(1);
     }
 
+    public function __serialize(): array
+    {
+        $result = get_object_vars($this);
+        unset($result['running']);
+        return $result;
+    }
+
+    public function __unserialize(array $data): void
+    {
+        foreach ($data as $key => $value) {
+            $this->{$key} = $value;
+        }
+        $this->running = new Channel(1);
+    }
+
     public function getName(): ?string
     {
         return $this->name;
