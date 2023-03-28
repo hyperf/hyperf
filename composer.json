@@ -190,6 +190,7 @@
     "suggest": {},
     "autoload": {
         "files": [
+            "src/collection/src/Functions.php",
             "src/config/src/Functions.php",
             "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
