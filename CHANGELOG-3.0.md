@@ -4,6 +4,10 @@
 
 - [#5572](https://github.com/hyperf/hyperf/pull/5572) Update Http Server to use new WritableConnection implementation.
 
+## Fixed
+
+- [#5578](https://github.com/hyperf/hyperf/pull/5578) Fixed bug that unable to serialize `Channel` in `Crontab`.
+
 # v3.0.13 - 2023-03-26
 
 ## Added
