@@ -64,3 +64,6 @@ parameters:
     - '#has invalid type Swow#'
     - '#has unknown class Swow#'
     - '#PHPDoc tag \@var above a method has no effect#'
+    - '#\(Hyperf\\Utils\\Collection\) does not accept Hyperf\\Collection\\Collection#'
+    - '#should return Hyperf\\Utils\\Collection but returns Hyperf\\Collection\\Collectio#'
+    - '#Call to an undefined method Hyperf\\Collection\\HigherOrderCollectionProxy::\w+\(\)#'
