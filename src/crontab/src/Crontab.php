@@ -47,16 +47,34 @@ class Crontab
 
     public function __serialize(): array
     {
-        $result = get_object_vars($this);
-        unset($result['running']);
-        return $result;
+        return [
+            "\x00*\x00name" => $this->name,
+            "\x00*\x00type" => $this->type,
+            "\x00*\x00rule" => $this->rule,
+            "\x00*\x00singleton" => $this->singleton,
+            "\x00*\x00mutexPool" => $this->mutexPool,
+            "\x00*\x00mutexExpires" => $this->mutexExpires,
+            "\x00*\x00onOneServer" => $this->onOneServer,
+            "\x00*\x00callback" => $this->callback,
+            "\x00*\x00memo" => $this->memo,
+            "\x00*\x00executeTime" => $this->executeTime,
+            "\x00*\x00enable" => $this->enable,
+        ];
     }
 
     public function __unserialize(array $data): void
     {
-        foreach ($data as $key => $value) {
-            $this->{$key} = $value;
-        }
+        $this->name = $data["\x00*\x00name"] ?? $this->name;
+        $this->type = $data["\x00*\x00type"] ?? $this->type;
+        $this->rule = $data["\x00*\x00rule"] ?? $this->rule;
+        $this->singleton = $data["\x00*\x00singleton"] ?? $this->singleton;
+        $this->mutexPool = $data["\x00*\x00mutexPool"] ?? $this->mutexPool;
+        $this->mutexExpires = $data["\x00*\x00mutexExpires"] ?? $this->mutexExpires;
+        $this->onOneServer = $data["\x00*\x00onOneServer"] ?? $this->onOneServer;
+        $this->callback = $data["\x00*\x00callback"] ?? $this->callback;
+        $this->memo = $data["\x00*\x00memo"] ?? $this->memo;
+        $this->executeTime = $data["\x00*\x00executeTime"] ?? $this->executeTime;
+        $this->enable = $data["\x00*\x00enable"] ?? $this->enable;
         $this->running = new Channel(1);
     }
 
