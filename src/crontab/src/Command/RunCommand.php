@@ -33,7 +33,7 @@ class RunCommand extends Command
         $scheduler = $this->container->get(Scheduler::class);
         $executor = $this->container->get(Executor::class);
 
-        if ($config->get('crontab.enable', false)) {
+        if (!$config->get('crontab.enable', false)) {
             throw new InvalidArgumentException('Crontab is already disabled, please enable it first.');
         }
 
