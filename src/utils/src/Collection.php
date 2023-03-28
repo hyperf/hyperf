@@ -29,7 +29,7 @@ use Symfony\Component\VarDumper\VarDumper;
 use Traversable;
 
 /**
- * Most of the methods in this file come from illuminate/support,
+ * Most of the methods in this file come from illuminate/collections,
  * thanks Laravel Team provide such a useful class.
  *
  * @template TKey of array-key
@@ -58,6 +58,8 @@ use Traversable;
  * @property HigherOrderCollectionProxy $sortByDesc
  * @property HigherOrderCollectionProxy $sum
  * @property HigherOrderCollectionProxy $unique
+ *
+ * @deprecated since 3.1, use \Hyperf\Collection\Collection instead.
  */
 class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
 {
