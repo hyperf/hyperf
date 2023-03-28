@@ -2,8 +2,7 @@
 
 The hyperf/swagger component is based on zircote/swagger-php for packaging
 
-For a full list of supported annotations, see the [OpenApi\Annotations namespace](https://github.com/zircote/swagger-php/blob/master/src/Annotations) or
-[Documentation site](https://zircote.github.io/swagger-php/guide/annotations.html#arrays-and-objects)
+For a full list of supported annotations, see the [OpenApi\Annotations namespace](https://github.com/zircote/swagger-php/blob/master/src/Annotations) or [Documentation site](https://zircote.github.io/swagger-php/guide/annotations.html#arrays-and-objects)
 
 
 ## Installation
