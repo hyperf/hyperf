@@ -16,6 +16,6 @@ namespace Hyperf\Utils;
  * thanks Laravel Team provide such a useful class.
  * @deprecated since 3.1, use \Hyperf\Collections\Arr instead.
  */
-class Arr extends \Hyperf\Collections\Arr
+class Arr extends \Hyperf\Collection\Arr
 {
 }

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcMultiplex;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;

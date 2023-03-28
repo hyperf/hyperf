@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Migrations;
 
-use Hyperf\Collections\Arr;
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolverInterface as Resolver;
 use Hyperf\Database\Schema\Grammars\Grammar;

@@ -17,6 +17,6 @@ namespace Hyperf\Utils;
  *
  * @deprecated since 3.1, use \Hyperf\Collections\Collection instead.
  */
-class Collection extends \Hyperf\Collections\Collection
+class Collection extends \Hyperf\Collection\Collection
 {
 }

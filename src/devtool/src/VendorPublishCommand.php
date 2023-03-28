@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Devtool;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Utils\Composer;
 use Hyperf\Utils\Filesystem\Filesystem;

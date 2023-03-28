@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine;
 
 use Closure;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Str;

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;

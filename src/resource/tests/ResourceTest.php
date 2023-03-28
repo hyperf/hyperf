@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Resource;
 
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Collection;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Resource\Concerns\ConditionallyLoadsAttributes;
 use Hyperf\Resource\Json\JsonResource;

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Mutex;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Crontab\Crontab;

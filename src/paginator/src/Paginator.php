@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Paginator;
 
 use Countable;
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Collection;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use IteratorAggregate;

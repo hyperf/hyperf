@@ -13,7 +13,7 @@ namespace Hyperf\ViewEngine\Component;
 
 use ArrayAccess;
 use ArrayIterator;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Contract\Htmlable;

@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Scout;
 
 use Closure;
-use Hyperf\Collections\Collection as BaseCollection;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Macroable\Macroable;

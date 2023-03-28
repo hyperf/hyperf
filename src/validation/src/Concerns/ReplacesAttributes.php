@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation\Concerns;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 
 trait ReplacesAttributes
 {

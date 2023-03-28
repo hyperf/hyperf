@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigNacos;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\ConfigCenter\AbstractDriver;
 use Hyperf\ConfigCenter\Contract\ClientInterface as ConfigClientInterface;
 use Hyperf\Nacos\Protobuf\ListenHandler\ConfigChangeNotifyRequestHandler;

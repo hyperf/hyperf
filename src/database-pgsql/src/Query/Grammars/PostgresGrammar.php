@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\PgSQL\Query\Grammars;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Utils\Str;

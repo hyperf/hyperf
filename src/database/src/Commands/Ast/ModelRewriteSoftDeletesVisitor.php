@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Ast;
 
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\Utils\Str;
 use PhpParser\Node;

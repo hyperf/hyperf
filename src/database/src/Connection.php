@@ -16,7 +16,7 @@ use DateTimeInterface;
 use Doctrine\DBAL\Connection as DoctrineConnection;
 use Exception;
 use Generator;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Exception\InvalidArgumentException;
 use Hyperf\Database\Exception\QueryException;

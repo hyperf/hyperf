@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Testing;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;

@@ -17,6 +17,6 @@ namespace Hyperf\Utils;
  * thanks Laravel Team provide such a useful class.
  * @deprecated since 3.1, use \Hyperf\Collections\HigherOrderCollectionProxy instead.
  */
-class HigherOrderCollectionProxy extends \Hyperf\Collections\HigherOrderCollectionProxy
+class HigherOrderCollectionProxy extends \Hyperf\Collection\HigherOrderCollectionProxy
 {
 }

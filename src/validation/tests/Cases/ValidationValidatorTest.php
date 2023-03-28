@@ -14,7 +14,7 @@ namespace HyperfTest\Validation\Cases;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeImmutable;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\TranslatorInterface as TranslatorContract;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSourceInterface;

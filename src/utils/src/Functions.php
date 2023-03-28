@@ -9,8 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-use Hyperf\Collections\Arr;
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Backoff;
 use Hyperf\Utils\Coroutine;

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\DB\Pool;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\DB\Frequency;
 use Hyperf\Pool\Pool as HyperfPool;

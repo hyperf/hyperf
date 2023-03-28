@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Resource\Json;
 
 use Countable;
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Collection;
 use Hyperf\Resource\Concerns\CollectsResources;
 use Hyperf\Resource\Response\PaginatedResponse;
 use IteratorAggregate;

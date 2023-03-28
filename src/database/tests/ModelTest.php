@@ -16,7 +16,7 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
-use Hyperf\Collections\Collection as BaseCollection;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Context\Context;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionInterface as Connection;

@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Concerns;
 
 use Closure;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Model\GlobalScope;
 use Hyperf\Database\Model\Scope;
 use InvalidArgumentException;

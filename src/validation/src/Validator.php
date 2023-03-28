@@ -13,7 +13,7 @@ namespace Hyperf\Validation;
 
 use BadMethodCallException;
 use Closure;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\MessageBag as MessageBagContract;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface as ValidatorContract;

@@ -25,12 +25,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Hyperf\\Collections\\": "src/"
+            "Hyperf\\Collection\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Collections\\": "tests/"
+            "HyperfTest\\Collection\\": "tests/"
         }
     },
     "config": {

@@ -13,7 +13,7 @@ namespace Hyperf\ViewEngine\Contract;
 
 use Countable;
 use Exception;
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Collection;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use InvalidArgumentException;

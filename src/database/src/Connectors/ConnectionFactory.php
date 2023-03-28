@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Connectors;
 
 use Closure;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\MySqlConnection;

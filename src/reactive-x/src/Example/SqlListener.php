@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ReactiveX\Example;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;

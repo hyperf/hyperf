@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nsq\Pool;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Engine\Contract\Socket\SocketFactoryInterface;
 use Hyperf\Engine\Socket;
 use Hyperf\Nsq\MessageBuilder;

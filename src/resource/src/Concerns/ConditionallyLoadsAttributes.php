@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Resource\Concerns;
 
 use Countable;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Resource\Json\JsonResource;
 use Hyperf\Resource\Value\MergeValue;
 use Hyperf\Resource\Value\MissingValue;

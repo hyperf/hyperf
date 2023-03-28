@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Translation;
 
 use Countable;
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Collection;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;

@@ -19,7 +19,7 @@ use DateTimeZone;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Exception;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Str;
 use Hyperf\Validation\Rules\Exists;

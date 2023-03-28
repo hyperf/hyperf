@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\ApplicationContext;

@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model;
 
-use Hyperf\Collections\Arr;
-use Hyperf\Collections\Collection as BaseCollection;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\UnCompressInterface;

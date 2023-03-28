@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 
 abstract class MetadataCollector implements MetadataCollectorInterface
 {

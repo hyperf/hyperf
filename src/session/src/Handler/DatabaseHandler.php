@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Session\Handler;
 
 use Carbon\Carbon;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\DbConnection\Db;
 use Hyperf\Utils\InteractsWithTime;

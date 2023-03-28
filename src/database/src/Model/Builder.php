@@ -14,7 +14,7 @@ namespace Hyperf\Database\Model;
 use BadMethodCallException;
 use Closure;
 use Generator;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;

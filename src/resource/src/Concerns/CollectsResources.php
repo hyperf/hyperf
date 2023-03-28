@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Resource\Concerns;
 
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Collection;
 use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Resource\Value\MissingValue;
 use Hyperf\Utils\Str;

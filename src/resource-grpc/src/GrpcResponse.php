@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ResourceGrpc;
 
 use Google\Protobuf\Internal\Message;
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Collection;
 use Hyperf\Resource\Json\JsonResource;
 use Hyperf\Resource\Response\Response;
 

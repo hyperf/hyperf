@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use BadMethodCallException;
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Collection;
 use Hyperf\Context\Context;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Builder as ModelBuilder;

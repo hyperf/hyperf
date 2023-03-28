@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Devtool\Generator;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\CodeGen\Project;

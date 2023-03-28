@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Migrations;
 
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Migrations\Migrator;
 use Symfony\Component\Console\Input\InputOption;
 

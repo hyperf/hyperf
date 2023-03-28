@@ -15,7 +15,7 @@ use BadMethodCallException;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Closure;
-use Hyperf\Collections\Collection as BaseCollection;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolver;

@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Translation;
 
 use Countable;
-use Hyperf\Collections\Arr;
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
 use Hyperf\Context\Context;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;

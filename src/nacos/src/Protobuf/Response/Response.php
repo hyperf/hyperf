@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Protobuf\Response;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\JsonDeSerializable;
 use Hyperf\Grpc\Parser;
 use Hyperf\Nacos\Protobuf\Payload;

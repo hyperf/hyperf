@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpServer;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpServer\Contract\RequestInterface;

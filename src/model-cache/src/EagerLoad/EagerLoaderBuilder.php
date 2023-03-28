@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ModelCache\EagerLoad;
 
 use Closure;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\ModelCache\CacheableInterface;

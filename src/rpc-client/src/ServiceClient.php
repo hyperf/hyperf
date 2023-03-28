@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcClient;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\IdGeneratorInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;

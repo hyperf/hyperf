@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine;
 
 use Countable;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\MessageBag;
 use Stringable;
 

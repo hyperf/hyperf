@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Compiler;
 
-use Hyperf\Collections\Arr;
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
 use Hyperf\Utils\Str;
 use InvalidArgumentException;
 use PhpToken;

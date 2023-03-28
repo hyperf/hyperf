@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Retry\Policy;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Retry\RetryContext;
 use Throwable;
 

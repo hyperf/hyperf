@@ -13,7 +13,7 @@ namespace Hyperf\Scout\Engine;
 
 use Elasticsearch\Client;
 use Elasticsearch\Client as Elastic;
-use Hyperf\Collections\Collection as BaseCollection;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;

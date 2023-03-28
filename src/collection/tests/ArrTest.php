@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Collections;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

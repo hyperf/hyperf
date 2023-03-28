@@ -14,7 +14,7 @@ namespace Hyperf\Amqp;
 use Hyperf\Amqp\Exception\NotSupportedException;
 use Hyperf\Amqp\IO\IOFactory;
 use Hyperf\Amqp\IO\IOFactoryInterface;
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Coroutine\Locker;

@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Closure;
-use Hyperf\Collections\Collection;
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Migrations\DatabaseMigrationRepository;

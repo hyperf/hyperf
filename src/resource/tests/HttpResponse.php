@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Resource;
 
-use Hyperf\Collections\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\Utils\Str;
 use PHPUnit\Framework\Assert as PHPUnit;
