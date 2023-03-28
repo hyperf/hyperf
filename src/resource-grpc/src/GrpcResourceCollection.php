@@ -19,7 +19,7 @@ class GrpcResourceCollection extends ResourceCollection
     public function toMessage()
     {
         /** @var Collection $collection */
-        $collection = $this->collection->map->toMessage();
+        $collection = $this->collection->map->toMessage(); // @phpstan-ignore-line
 
         return $collection->all();
     }

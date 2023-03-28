@@ -210,7 +210,7 @@ class ComponentTagCompiler
         $constructor = (new ReflectionClass($class))->getConstructor();
 
         $parameterNames = $constructor
-            ? collect($constructor->getParameters())->map->getName()->all()
+            ? collect($constructor->getParameters())->map->getName()->all() // @phpstan-ignore-line
             : [];
 
         return collect($attributes)->partition(fn ($value, $key) => in_array(Str::camel($key), $parameterNames))->all();
