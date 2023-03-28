@@ -261,6 +261,8 @@ if (! function_exists('tap')) {
      * @param null|callable $callback
      * @param TValue $value
      * @return TValue
+     *
+     * @deprecated since 3.1, please use `Hyperf\Tappable\tap()` instead.
      */
     function tap($value, $callback = null)
     {
