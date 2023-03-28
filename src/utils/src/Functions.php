@@ -23,12 +23,8 @@ use Hyperf\Utils\Waiter;
 if (! function_exists('value')) {
     /**
      * Return the default value of the given value.
-     *
-     * @param mixed $value
-     *
-     * @deprecated since 3.1, use `Hyperf\Collection\value()` instead.
      */
-    function value($value, ...$args)
+    function value(mixed $value, ...$args)
     {
         return $value instanceof Closure ? $value(...$args) : $value;
     }
@@ -108,6 +104,7 @@ if (! function_exists('collect')) {
     /**
      * Create a collection from the given value.
      *
+     * @deprecated since 3.1, use \Hyperf\Collection\collect instead.
      * @param null|mixed $value
      * @return Collection
      */
