@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Collections;
 
 /**
- * @mixin Collection
+ * @mixin \Hyperf\Collections\Collection
  * Most of the methods in this file come from illuminate/support,
  * thanks Laravel Team provide such a useful class.
  */
