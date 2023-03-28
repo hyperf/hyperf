@@ -356,7 +356,7 @@ class BelongsToMany extends Relation
      *
      * @param array $columns
      * @param mixed $id
-     * @return \Hyperf\Collections\Collection|\Hyperf\Database\Model\Model
+     * @return \Hyperf\Collection\Collection|\Hyperf\Database\Model\Model
      */
     public function findOrNew($id, $columns = ['*'])
     {
@@ -638,7 +638,7 @@ class BelongsToMany extends Relation
     /**
      * Get all of the IDs for the related models.
      *
-     * @return \Hyperf\Collections\Collection
+     * @return \Hyperf\Collection\Collection
      */
     public function allRelatedIds()
     {
@@ -663,7 +663,7 @@ class BelongsToMany extends Relation
     /**
      * Save an array of new models and attach them to the parent model.
      *
-     * @param array|\Hyperf\Collections\Collection $models
+     * @param array|\Hyperf\Collection\Collection $models
      * @return array
      */
     public function saveMany($models, array $pivotAttributes = [])

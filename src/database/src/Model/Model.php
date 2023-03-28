@@ -591,7 +591,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Destroy the models for the given IDs.
      *
-     * @param array|\Hyperf\Collections\Collection|int $ids
+     * @param array|\Hyperf\Collection\Collection|int $ids
      */
     public static function destroy($ids): int
     {

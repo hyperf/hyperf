@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 /**
- * @mixin \Hyperf\Collections\Collection
+ * @mixin \Hyperf\Collection\Collection
  * Most of the methods in this file come from illuminate/support,
  * thanks Laravel Team provide such a useful class.
  * @deprecated since 3.1, use \Hyperf\Collections\HigherOrderCollectionProxy instead.

@@ -14,7 +14,7 @@ namespace Hyperf\Utils;
 /**
  * Most of the methods in this file come from illuminate/collections,
  * thanks Laravel Team provide such a useful class.
- * @deprecated since 3.1, use \Hyperf\Collections\Arr instead.
+ * @deprecated since 3.1, use \Hyperf\Collection\Arr instead.
  */
 class Arr extends \Hyperf\Collection\Arr
 {

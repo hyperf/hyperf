@@ -73,7 +73,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs without detaching.
      *
-     * @param array|\Hyperf\Collections\Collection|\Hyperf\Database\Model\Model $ids
+     * @param array|\Hyperf\Collection\Collection|\Hyperf\Database\Model\Model $ids
      * @return array
      */
     public function syncWithoutDetaching($ids)
@@ -84,7 +84,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs or collection of models.
      *
-     * @param array|\Hyperf\Collections\Collection|\Hyperf\Database\Model\Model $ids
+     * @param array|\Hyperf\Collection\Collection|\Hyperf\Database\Model\Model $ids
      * @param bool $detaching
      * @return array
      */

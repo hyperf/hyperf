@@ -241,7 +241,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      *
      * @param string $delimiter
      * @param int $limit
-     * @return \Hyperf\Collections\Collection
+     * @return \Hyperf\Collection\Collection
      */
     public function explode($delimiter, $limit = PHP_INT_MAX)
     {
@@ -254,7 +254,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      * @param int|string $pattern
      * @param int $limit
      * @param int $flags
-     * @return \Hyperf\Collections\Collection
+     * @return \Hyperf\Collection\Collection
      */
     public function split($pattern, $limit = -1, $flags = 0)
     {
@@ -394,7 +394,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      * Get the string matching the given pattern.
      *
      * @param string $pattern
-     * @return \Hyperf\Collections\Collection
+     * @return \Hyperf\Collection\Collection
      */
     public function matchAll($pattern)
     {
