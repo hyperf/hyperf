@@ -9,14 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils;
+namespace Hyperf\Collection;
 
 /**
- * @mixin Collection
+ * @mixin \Hyperf\Collection\Collection
  * Most of the methods in this file come from illuminate/collections,
  * thanks Laravel Team provide such a useful class.
- *
- * @deprecated since 3.1, use \Hyperf\Collection\HigherOrderCollectionProxy instead.
  */
 class HigherOrderCollectionProxy
 {
