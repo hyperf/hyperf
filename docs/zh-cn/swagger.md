@@ -2,8 +2,7 @@
 
 hyperf/swagger 组件基于 zircote/swagger-php 进行封装
 
-如需完整支持的注释列表，请查看[OpenApi\Annotations命名空间](https://github.com/zircote/swagger-php/blob/master/src/Annotations)或
-[文档网站](https://zircote.github.io/swagger-php/guide/annotations.html#arrays-and-objects)
+如需完整支持的注释列表，请查看[OpenApi\Annotations命名空间](https://github.com/zircote/swagger-php/blob/master/src/Annotations)或[文档网站](https://zircote.github.io/swagger-php/guide/annotations.html#arrays-and-objects)
 
 
 ## 安装
@@ -30,7 +29,7 @@ php bin/hyperf.php vendor:publish hyperf/swagger
 
 ## 生成文档
 
-如果配置了`auto_generate`,在框架初始化的事件中便会自动生成文档,无需再次调用
+如果配置了`auto_generate`，在框架初始化的事件中便会自动生成文档，无需再次调用
 ```shell
 php bin/hyperf.php gen:swagger
 ```
@@ -38,6 +37,13 @@ php bin/hyperf.php gen:swagger
 ## 使用
 
 > 以下出现的 OA 命名空间都为 `use Hyperf\Swagger\Annotation as OA`
+
+框架可以启动多个 Server，每个 Server 的路由可以根据 `OA\Hyperferver` 注解来区分，并生成不同的 swagger 文件（以该配置作为文件名）
+
+可以配置在控制器类或者方法上
+```php
+#[OA\HyperfServer('http')]
+```
 
 ```php
 #[OA\Post(path: '/test', summary: 'POST 表单示例', tags: ['Api/Test'])]

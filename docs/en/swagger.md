@@ -39,6 +39,13 @@ php bin/hyperf.php gen:swagger
 
 > The OA namespaces that appear below are ``use Hyperf\Swagger\Annotation as OA`''
 
+The framework can start multiple servers, and the routes of each server can be distinguished based on the `OA\Hyperferver` annotation, and generate different swagger files (using that configuration as the file name).
+
+It can be configured on the controller class or method:
+```php
+#[OA\HyperfServer('http')]
+```
+
 ``` php
 #[OA\Post(path: '/test', summary: 'POST form example', tags: ['Api/Test'])]
 #[OA\RequestBody(
