@@ -16,7 +16,7 @@ namespace Hyperf\Utils;
  * Most of the methods in this file come from illuminate/collections,
  * thanks Laravel Team provide such a useful class.
  *
- * @deprecated since 3.1, use \Hyperf\Collection\HigherOrderCollectionProxy instead.
+ * @deprecated since 3.1, please use \Hyperf\Collection\HigherOrderCollectionProxy instead.
  */
 class HigherOrderCollectionProxy
 {

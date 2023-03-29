@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+/**
+ * @deprecated since 3.1, please use `\Hyperf\Tappable\HigherOrderTapProxy` instead.
+ */
 class HigherOrderTapProxy
 {
     /**

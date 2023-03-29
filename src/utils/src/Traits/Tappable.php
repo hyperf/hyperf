@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Traits;
 
+/**
+ * @deprecated since 3.1, please use `\Hyperf\Tappable\Tappable` instead.
+ */
 trait Tappable
 {
     /**
