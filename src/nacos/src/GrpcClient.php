@@ -185,13 +185,14 @@ class GrpcClient
                 try {
                     $response = $client->recv($id, -1);
                     $response = Response::jsonDeSerialize($response->getBody());
+                    var_dump($response);
                     match (true) {
                         $response instanceof ConfigChangeNotifyRequest => $this->handleConfig(
                             $response->tenant,
                             $response->group,
                             $response->dataId,
                             $response
-                        )
+                        ),
                     };
 
                     $this->listen();

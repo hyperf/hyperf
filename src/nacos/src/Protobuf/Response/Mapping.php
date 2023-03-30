@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Protobuf\Response;
 
+use Hyperf\Nacos\Protobuf\Request\NotifySubscriberRequest;
+
 class Mapping
 {
     public static $mappings = [
@@ -20,5 +22,6 @@ class Mapping
         'ConfigQueryResponse' => ConfigQueryResponse::class,
         'ConfigChangeNotifyRequest' => ConfigChangeNotifyRequest::class,
         'SubscribeServiceResponse' => SubscribeServiceResponse::class,
+        'NotifySubscriberRequest' => NotifySubscriberRequest::class,
     ];
 }

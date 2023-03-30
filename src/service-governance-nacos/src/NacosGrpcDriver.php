@@ -19,6 +19,7 @@ use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Nacos\Protobuf\Message\Instance;
 use Hyperf\Nacos\Protobuf\Request\InstanceRequest;
 use Hyperf\Nacos\Protobuf\Request\NamingRequest;
+use Hyperf\Nacos\Protobuf\Request\ServiceQueryRequest;
 use Hyperf\Nacos\Protobuf\Request\SubscribeServiceRequest;
 use Hyperf\Nacos\Protobuf\Response\SubscribeServiceResponse;
 use Hyperf\ServiceGovernance\DriverInterface;
@@ -101,6 +102,15 @@ class NacosGrpcDriver implements DriverInterface
         if (! $res->success) {
             throw new RegisterInstanceException('Register instance failed. The response is ' . $res);
         }
+
+        var_dump(123);
+        $res = $client->request(new ServiceQueryRequest(
+            new NamingRequest($name, $groupName, $namespaceId),
+            'DEFAULT',
+            false,
+            0
+        ));
+        var_dump(123123);
 
         $this->serviceRegistered[$name] = true;
 
