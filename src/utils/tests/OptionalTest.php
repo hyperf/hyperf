@@ -133,6 +133,24 @@ class OptionalTest extends TestCase
         $this->assertSame($id, $optional['id']);
     }
 
+    public function testArrayObjectWithAsProps()
+    {
+        $obj = new ArrayObject(['id' => $id = uniqid()]);
+        $obj->setFlags(ArrayObject::ARRAY_AS_PROPS);
+
+        $optional = new Optional($obj);
+
+        $this->assertTrue(isset($optional['id']));
+        $this->assertTrue(isset($optional->id));
+        $this->assertTrue(isset($obj->id));
+
+        $this->assertFalse(isset($optional['name']));
+        $this->assertFalse(isset($optional->name));
+        $this->assertFalse(isset($obj->name));
+
+        $this->assertSame($id, $optional['id']);
+    }
+
     public function testOptional()
     {
         $this->assertNull(optional(null)->something());
