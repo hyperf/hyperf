@@ -9,11 +9,6 @@ This file is part of Hyperf.
 @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
 EOF;
 
-$exclude = ['vendor'];
-if(PHP_VERSION_ID < 80100){
-    $exclude[] = 'src/di/tests/Stub';
-    $exclude[] = 'src/utils/tests/Stub';
-}
 return (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)
     ->setRules([
@@ -96,7 +91,7 @@ return (new PhpCsFixer\Config())
             ->exclude('bin')
             ->exclude('public')
             ->exclude('runtime')
-            ->exclude($exclude)
+            ->exclude('vendor')
             ->in(__DIR__)
     )
     ->setUsingCache(false);
