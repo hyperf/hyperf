@@ -119,6 +119,8 @@ class Scanner
         $lastCacheModified = $this->deserializeCachedCollectors($collectors);
         // TODO: The online mode won't init BetterReflectionManager when has cache.
         if ($lastCacheModified > 0 && $this->scanConfig->isCacheable()) {
+            // Init BetterReflectionManager when SCAN_CACHEABLE is true
+            BetterReflectionManager::initClassReflector([]);
             return [];
         }
 
