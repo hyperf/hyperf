@@ -41,6 +41,11 @@ return [
             'namespace_id' => 'namespace_id',
             'heartbeat' => 5,
             'ephemeral' => false,
+            // Only support for nacos v2.
+            'grpc' => [
+                'enable' => false,
+                'heartbeat' => 10,
+            ],
         ],
     ],
 ];
