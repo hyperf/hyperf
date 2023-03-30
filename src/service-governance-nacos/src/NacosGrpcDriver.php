@@ -22,8 +22,10 @@ use Hyperf\Nacos\Protobuf\Request\NamingRequest;
 use Hyperf\Nacos\Protobuf\Request\SubscribeServiceRequest;
 use Hyperf\Nacos\Protobuf\Response\SubscribeServiceResponse;
 use Hyperf\ServiceGovernance\DriverInterface;
+use Hyperf\ServiceGovernance\Exception\RegisterInstanceException;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -81,48 +83,28 @@ class NacosGrpcDriver implements DriverInterface
     {
         $namespaceId = $this->config->get('services.drivers.nacos.namespace_id');
         $groupName = $this->config->get('services.drivers.nacos.group_name');
+        $ephemeral = (bool) $this->config->get('services.drivers.nacos.ephemeral');
         $this->setMetadata($name, $metadata);
+
+        if (! $ephemeral) {
+            throw new InvalidArgumentException('nacos grpc driver only support ephemeral.');
+        }
 
         $client = $this->client->grpc->get($namespaceId);
 
-        $ephemeral = (bool) $this->config->get('services.drivers.nacos.ephemeral');
-        // if (! $ephemeral && ! array_key_exists($name, $this->serviceCreated)) {
-        //     $response = $this->client->service->create($name, [
-        //         'groupName' => $this->config->get('services.drivers.nacos.group_name'),
-        //         'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-        //         'metadata' => $this->getMetadata($name),
-        //         'protectThreshold' => (float) $this->config->get('services.drivers.nacos.protect_threshold', 0),
-        //     ]);
-        //
-        //     if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
-        //         throw new RequestException(sprintf('Failed to create nacos service %s , %s !', $name, $response->getBody()));
-        //     }
-        //
-        //     $this->serviceCreated[$name] = true;
-        // }
-
         $res = $client->request(new InstanceRequest(
             new NamingRequest($name, $groupName, $namespaceId),
-            new Instance(
-                $host,
-                $port,
-                $name,
-                10,
-                true,
-                true,
-                'DEFAULT',
-                false,
-                $metadata
-            ),
+            new Instance($host, $port, 10, true, true, 'DEFAULT', true, $metadata),
             InstanceRequest::TYPE_REGISTER
         ));
 
-        var_dump($res);
+        if (! $res->success) {
+            throw new RegisterInstanceException('Register instance failed. The response is ' . $res);
+        }
 
         $this->serviceRegistered[$name] = true;
-        if ($ephemeral) {
-            $this->registerHeartbeat($name, $host, $port);
-        }
+
+        $this->registerHeartbeat($name, $host, $port);
     }
 
     public function isRegistered(string $name, string $host, int $port, array $metadata): bool

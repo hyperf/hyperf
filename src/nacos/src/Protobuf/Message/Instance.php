@@ -19,13 +19,13 @@ class Instance implements JsonDeSerializable, JsonSerializable
     public function __construct(
         public string $ip,
         public int $port,
-        public string $serviceName,
         public float $weight,
         public bool $enabled,
         public bool $healthy,
         public string $clusterName,
         public bool $ephemeral,
         public array $metadata,
+        public ?string $serviceName = null,
         public ?string $instanceId = null,
         public ?int $instanceHeartBeatInterval = null,
         public ?int $ipDeleteTimeout = null,
@@ -38,13 +38,13 @@ class Instance implements JsonDeSerializable, JsonSerializable
         return [
             'ip' => $this->ip,
             'port' => $this->port,
-            'serviceName' => $this->serviceName,
             'weight' => $this->weight,
             'enabled' => $this->enabled,
             'healthy' => $this->healthy,
             'clusterName' => $this->clusterName,
             'ephemeral' => $this->ephemeral,
             'metadata' => (object) $this->metadata,
+            'serviceName' => $this->serviceName,
             'instanceId' => $this->instanceId,
             'instanceHeartBeatInterval' => $this->instanceHeartBeatInterval,
             'ipDeleteTimeout' => $this->ipDeleteTimeout,
@@ -54,6 +54,7 @@ class Instance implements JsonDeSerializable, JsonSerializable
 
     public static function jsonDeSerialize(mixed $data): static
     {
+        var_dump($data);
         return new Instance(...$data);
     }
 }
