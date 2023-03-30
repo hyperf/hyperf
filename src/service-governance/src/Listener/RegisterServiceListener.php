@@ -76,6 +76,7 @@ class RegisterServiceListener implements ListenerInterface
                             [$address, $port] = $servers[$service['server']];
                             if ($governance = $this->governanceManager->get($service['publishTo'])) {
                                 if (! $governance->isRegistered($serviceName, $address, (int) $port, $service)) {
+                                    var_dump(123123);
                                     $governance->register($serviceName, $address, (int) $port, $service);
                                 }
                             }

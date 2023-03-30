@@ -16,8 +16,11 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Nacos\Exception\RequestException;
+use Hyperf\Nacos\Protobuf\Message\Instance;
+use Hyperf\Nacos\Protobuf\Request\InstanceRequest;
 use Hyperf\Nacos\Protobuf\Request\NamingRequest;
 use Hyperf\Nacos\Protobuf\Request\SubscribeServiceRequest;
+use Hyperf\Nacos\Protobuf\Response\SubscribeServiceResponse;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
@@ -76,33 +79,45 @@ class NacosGrpcDriver implements DriverInterface
 
     public function register(string $name, string $host, int $port, array $metadata): void
     {
+        $namespaceId = $this->config->get('services.drivers.nacos.namespace_id');
+        $groupName = $this->config->get('services.drivers.nacos.group_name');
         $this->setMetadata($name, $metadata);
+
+        $client = $this->client->grpc->get($namespaceId);
+
         $ephemeral = (bool) $this->config->get('services.drivers.nacos.ephemeral');
-        if (! $ephemeral && ! array_key_exists($name, $this->serviceCreated)) {
-            $response = $this->client->service->create($name, [
-                'groupName' => $this->config->get('services.drivers.nacos.group_name'),
-                'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-                'metadata' => $this->getMetadata($name),
-                'protectThreshold' => (float) $this->config->get('services.drivers.nacos.protect_threshold', 0),
-            ]);
+        // if (! $ephemeral && ! array_key_exists($name, $this->serviceCreated)) {
+        //     $response = $this->client->service->create($name, [
+        //         'groupName' => $this->config->get('services.drivers.nacos.group_name'),
+        //         'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
+        //         'metadata' => $this->getMetadata($name),
+        //         'protectThreshold' => (float) $this->config->get('services.drivers.nacos.protect_threshold', 0),
+        //     ]);
+        //
+        //     if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
+        //         throw new RequestException(sprintf('Failed to create nacos service %s , %s !', $name, $response->getBody()));
+        //     }
+        //
+        //     $this->serviceCreated[$name] = true;
+        // }
 
-            if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
-                throw new RequestException(sprintf('Failed to create nacos service %s , %s !', $name, $response->getBody()));
-            }
+        $res = $client->request(new InstanceRequest(
+            new NamingRequest($name, $groupName, $namespaceId),
+            new Instance(
+                $host,
+                $port,
+                $name,
+                10,
+                true,
+                true,
+                'DEFAULT',
+                false,
+                $metadata
+            ),
+            InstanceRequest::TYPE_REGISTER
+        ));
 
-            $this->serviceCreated[$name] = true;
-        }
-
-        $response = $this->client->instance->register($host, $port, $name, [
-            'groupName' => $this->config->get('services.drivers.nacos.group_name'),
-            'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-            'metadata' => $this->getMetadata($name),
-            'ephemeral' => $ephemeral ? 'true' : 'false',
-        ]);
-
-        if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
-            throw new RequestException(sprintf('Failed to create nacos instance %s:%d! for %s , %s ', $host, $port, $name, $response->getBody()));
-        }
+        var_dump($res);
 
         $this->serviceRegistered[$name] = true;
         if ($ephemeral) {
@@ -121,56 +136,33 @@ class NacosGrpcDriver implements DriverInterface
         $this->setMetadata($name, $metadata);
 
         $client = $this->client->grpc->get($namespaceId);
+        /** @var SubscribeServiceResponse $response */
         $response = $client->request(new SubscribeServiceRequest(
             new NamingRequest(
                 $name,
                 $groupName,
                 $namespaceId,
-            )
+            ),
         ));
 
-        var_dump($response);
-
-        sleep(1231123);
-        $response = $this->client->service->detail(
-            $name,
-            $this->config->get('services.drivers.nacos.group_name'),
-            $this->config->get('services.drivers.nacos.namespace_id')
-        );
-
-        if ($response->getStatusCode() === 404) {
-            return false;
-        }
-
-        if (in_array($response->getStatusCode(), [400, 500], true) && strpos((string) $response->getBody(), 'not found') > 0) {
-            return false;
-        }
-
-        if ($response->getStatusCode() !== 200) {
-            throw new RequestException(sprintf('Failed to get nacos service %s!', $name), $response->getStatusCode());
+        if ($response->errorCode !== 0) {
+            $this->logger->error((string) $response);
+            throw new RequestException(sprintf('Failed to get nacos service %s!', $name), $response->errorCode());
         }
 
         $this->serviceCreated[$name] = true;
 
-        $response = $this->client->instance->detail($host, $port, $name, [
-            'groupName' => $this->config->get('services.drivers.nacos.group_name'),
-            'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-        ]);
-
-        if ($this->isNoIpsFound($response)) {
-            return false;
+        $service = $response->service;
+        $instances = $service->hosts;
+        foreach ($instances as $instance) {
+            if ($instance->ip === $host && $instance->port === $port) {
+                $this->serviceRegistered[$name] = true;
+                $this->registerHeartbeat($name, $host, $port);
+                return true;
+            }
         }
 
-        if ($response->getStatusCode() !== 200) {
-            throw new RequestException(sprintf('Failed to get nacos instance %s:%d for %s!', $host, $port, $name));
-        }
-        $this->serviceRegistered[$name] = true;
-
-        if ($this->config->get('services.drivers.nacos.ephemeral')) {
-            $this->registerHeartbeat($name, $host, $port);
-        }
-
-        return true;
+        return false;
     }
 
     protected function isNoIpsFound(ResponseInterface $response): bool
