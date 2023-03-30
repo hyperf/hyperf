@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di\Stub;
 
-enum FooEnum: int
-{
-    case DEFAULT = 1;
+if (PHP_VERSION_ID > 80100) {
+    enum FooEnum: int
+    {
+        case DEFAULT = 1;
+    }
 }
