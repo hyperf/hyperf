@@ -9,6 +9,7 @@
 - [#5572](https://github.com/hyperf/hyperf/pull/5572) Update Http Server to use new WritableConnection implementation.
 - [#5577](https://github.com/hyperf/hyperf/pull/5577) Split `hyperf/collection` from `hyperf/utils`.
 - [#5580](https://github.com/hyperf/hyperf/pull/5580) Split `hyperf/conditionable` and `hyperf/tappable` from `hyperf/utils`.
+- [#5585](https://github.com/hyperf/hyperf/pull/5585) Removed the requirement `consul` from `service-governance`.
 
 ## Fixed
 
