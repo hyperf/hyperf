@@ -17,7 +17,6 @@
     },
     "require": {
         "php": ">=8.0",
-        "hyperf/consul": "~3.0.0",
         "hyperf/contract": "~3.0.0"
     },
     "suggest": {
