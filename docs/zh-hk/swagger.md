@@ -38,7 +38,7 @@ php bin/hyperf.php gen:swagger
 
 > 以下出現的 OA 命名空間都為 `use Hyperf\Swagger\Annotation as OA`
 
-框架可以啟動多個 Server，每個 Server 的路由可以根據 `OA\Hyperferver` 註解來區分，並生成不同的 swagger 檔案（以該配置作為檔名）
+框架可以啓動多個 Server，每個 Server 的路由可以根據 `OA\Hyperferver` 註解來區分，並生成不同的 swagger 文件（以該配置作為文件名）
 
 可以配置在控制器類或者方法上
 ```php
