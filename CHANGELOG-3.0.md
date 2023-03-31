@@ -1,7 +1,10 @@
-# v3.0.14 - TBD
+# v3.0.15 - TBD
+
+# v3.0.14 - 2023-04-01
 
 ## Fixed
 
+- [#5578](https://github.com/hyperf/hyperf/pull/5578) Fixed bug that unable to serialize `Channel` in `Crontab`.
 - [#5579](https://github.com/hyperf/hyperf/pull/5579) Fixed bug that `crontab:run` cannot work.
 
 ## Optimized
@@ -10,10 +13,6 @@
 - [#5577](https://github.com/hyperf/hyperf/pull/5577) Split `hyperf/collection` from `hyperf/utils`.
 - [#5580](https://github.com/hyperf/hyperf/pull/5580) Split `hyperf/conditionable` and `hyperf/tappable` from `hyperf/utils`.
 - [#5585](https://github.com/hyperf/hyperf/pull/5585) Removed the requirement `consul` from `service-governance`.
-
-## Fixed
-
-- [#5578](https://github.com/hyperf/hyperf/pull/5578) Fixed bug that unable to serialize `Channel` in `Crontab`.
 
 # v3.0.13 - 2023-03-26
 

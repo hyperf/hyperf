@@ -1,5 +1,19 @@
 # 版本更新记录
 
+# v3.0.14 - 2023-04-01
+
+## 修复
+
+- [#5578](https://github.com/hyperf/hyperf/pull/5578) 修复了无法序列化 `Crontab` 的问题。
+- [#5579](https://github.com/hyperf/hyperf/pull/5579) 修复 `crontab:run` 无法正常工作的问题。
+
+## 优化
+
+- [#5572](https://github.com/hyperf/hyperf/pull/5572) 优化了 `HTTP` 服务，使用 `WritableConnection` 实现，支持 `Swow`。
+- [#5577](https://github.com/hyperf/hyperf/pull/5577) 将组件 `hyperf/collection` 从 `hyperf/utils` 分离。
+- [#5580](https://github.com/hyperf/hyperf/pull/5580) 将组件 `hyperf/conditionable` 和 `hyperf/tappable` 从 `hyperf/utils` 分离。
+- [#5585](https://github.com/hyperf/hyperf/pull/5585) 优化 `service-governance` 组件，去除了 `consul` 的依赖关系。
+
 # v3.0.13 - 2023-03-26
 
 ## 新增
