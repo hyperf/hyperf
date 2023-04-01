@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use DateTimeInterface;
+use Hyperf\Collection\Collection;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use Ramsey\Uuid\Uuid;

@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Fluent;
 use HyperfTest\Database\Stubs\ModelStub;
 use LogicException;

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
-use Hyperf\Utils\Collection;
+use Hyperf\Collection\Collection;
 use PHPUnit\Framework\TestCase;
 
 /**
