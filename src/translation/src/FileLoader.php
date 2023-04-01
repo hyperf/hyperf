@@ -15,6 +15,8 @@ use Hyperf\Contract\TranslatorLoaderInterface;
 use Hyperf\Utils\Filesystem\Filesystem;
 use RuntimeException;
 
+use function Hyperf\Collection\collect;
+
 class FileLoader implements TranslatorLoaderInterface
 {
     /**

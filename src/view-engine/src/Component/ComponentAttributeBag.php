@@ -22,6 +22,8 @@ use IteratorAggregate;
 use Stringable;
 use Traversable;
 
+use function Hyperf\Collection\collect;
+
 class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate, Stringable
 {
     use Macroable;

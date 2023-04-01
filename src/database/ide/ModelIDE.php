@@ -345,7 +345,7 @@ class ModelIDE
      *
      * @param string $column
      * @param null|string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     public static function pluck($column, $key = null)
     {

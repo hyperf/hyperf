@@ -14,11 +14,13 @@ namespace Hyperf\Paginator;
 use ArrayAccess;
 use ArrayIterator;
 use Closure;
+use Hyperf\Collection\Collection;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
+
+use function Hyperf\Collection\collect;
 
 abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess
 {

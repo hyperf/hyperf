@@ -15,6 +15,7 @@ use BadMethodCallException;
 use Closure;
 use DateTimeInterface;
 use Generator;
+use Hyperf\Collection\Collection;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
@@ -28,11 +29,12 @@ use Hyperf\Macroable\Macroable;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use RuntimeException;
+
+use function Hyperf\Collection\collect;
 
 class Builder
 {
@@ -2013,7 +2015,7 @@ class Builder
      *
      * @param string $column
      * @param null|string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     public function pluck($column, $key = null)
     {
@@ -2882,7 +2884,7 @@ class Builder
      * @param array $queryResult
      * @param string $column
      * @param string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     protected function pluckFromObjectColumn($queryResult, $column, $key)
     {
@@ -2907,7 +2909,7 @@ class Builder
      * @param array $queryResult
      * @param string $column
      * @param string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     protected function pluckFromArrayColumn($queryResult, $column, $key)
     {

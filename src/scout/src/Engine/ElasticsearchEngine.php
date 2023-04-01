@@ -13,12 +13,14 @@ namespace Hyperf\Scout\Engine;
 
 use Elasticsearch\Client;
 use Elasticsearch\Client as Elastic;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
 use Hyperf\Scout\SearchableInterface;
-use Hyperf\Utils\Collection as BaseCollection;
 use Throwable;
+
+use function Hyperf\Collection\collect;
 
 class ElasticsearchEngine extends Engine
 {

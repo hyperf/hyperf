@@ -20,6 +20,8 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Throwable;
 
+use function get_class;
+
 class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface, CacheableSupportsMethodInterface
 {
     protected ?Instantiator $instantiator = null;
@@ -90,7 +92,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
 
     public function hasCacheableSupportsMethod(): bool
     {
-        return \get_class($this) === __CLASS__;
+        return get_class($this) === __CLASS__;
     }
 
     protected function getInstantiator(): Instantiator

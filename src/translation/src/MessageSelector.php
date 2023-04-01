@@ -13,6 +13,8 @@ namespace Hyperf\Translation;
 
 use Hyperf\Utils\Str;
 
+use function Hyperf\Collection\collect;
+
 class MessageSelector
 {
     /**

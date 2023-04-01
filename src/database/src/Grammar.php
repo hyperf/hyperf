@@ -14,6 +14,8 @@ namespace Hyperf\Database;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Macroable\Macroable;
 
+use function Hyperf\Collection\collect;
+
 abstract class Grammar
 {
     use Macroable;

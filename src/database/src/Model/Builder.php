@@ -27,6 +27,8 @@ use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionMethod;
 
+use function Hyperf\Collection\collect;
+
 /**
  * @mixin \Hyperf\Database\Query\Builder
  */
@@ -727,7 +729,7 @@ class Builder
      *
      * @param string $column
      * @param null|string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     public function pluck($column, $key = null)
     {

@@ -35,6 +35,12 @@ use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Traversable;
 
+use function get_class;
+use function gettype;
+use function is_array;
+use function is_object;
+use function is_resource;
+
 /**
  * Serializer serializes and deserializes data.
  *
@@ -155,7 +161,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
             return $object;
         }
 
-        if (\is_array($object) || $object instanceof Traversable) {
+        if (is_array($object) || $object instanceof Traversable) {
             if ($object instanceof Countable && $object->count() === 0) {
                 return $object;
             }
@@ -168,7 +174,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
             return $normalized;
         }
 
-        if (\is_object($object)) {
+        if (is_object($object)) {
             if (! $this->normalizers) {
                 throw new LogicException('You must register at least one normalizer to be able to normalize objects.');
             }
@@ -176,7 +182,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
             throw new NotNormalizableValueException(sprintf('Could not normalize object of type "%s", no supporting normalizer found.', get_debug_type($object)));
         }
 
-        throw new NotNormalizableValueException('An unexpected value could not be normalized: ' . (! \is_resource($object) ? var_export($object, true) : sprintf('%s resource', get_resource_type($object))));
+        throw new NotNormalizableValueException('An unexpected value could not be normalized: ' . (! is_resource($object) ? var_export($object, true) : sprintf('%s resource', get_resource_type($object))));
     }
 
     /**
@@ -250,7 +256,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
      */
     private function getNormalizer($data, ?string $format, array $context): ?NormalizerInterface
     {
-        $type = \is_object($data) ? \get_class($data) : 'native-' . \gettype($data);
+        $type = is_object($data) ? get_class($data) : 'native-' . gettype($data);
 
         if (! isset($this->normalizerCache[$format][$type])) {
             $this->normalizerCache[$format][$type] = [];

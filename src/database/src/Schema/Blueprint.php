@@ -20,6 +20,8 @@ use Hyperf\Database\SQLiteConnection;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Fluent;
 
+use function Hyperf\Collection\collect;
+
 class Blueprint
 {
     use Macroable;
@@ -1338,7 +1340,7 @@ class Blueprint
     /**
      * Get all of the commands matching the given names.
      *
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     protected function commandsNamed(array $names)
     {

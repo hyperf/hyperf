@@ -20,6 +20,8 @@ use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Traits\ForwardsCalls;
 
+use function Hyperf\Collection\collect;
+
 /**
  * @mixin \Hyperf\Database\Model\Builder
  */

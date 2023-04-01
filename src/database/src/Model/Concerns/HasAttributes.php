@@ -14,6 +14,7 @@ namespace Hyperf\Database\Model\Concerns;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use DateTimeInterface;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
@@ -22,9 +23,10 @@ use Hyperf\Contract\Synchronized;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Str;
 use LogicException;
+
+use function Hyperf\Collection\collect;
 
 trait HasAttributes
 {

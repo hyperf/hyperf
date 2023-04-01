@@ -11,11 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Compiler;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
 use InvalidArgumentException;
 use PhpToken;
+
+use function Hyperf\Collection\collect;
 
 class BladeCompiler extends Compiler implements CompilerInterface
 {

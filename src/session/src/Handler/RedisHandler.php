@@ -18,6 +18,10 @@ use RedisArray;
 use RedisCluster;
 use SessionHandlerInterface;
 
+use function get_class;
+use function gettype;
+use function is_object;
+
 class RedisHandler implements SessionHandlerInterface
 {
     /**
@@ -28,7 +32,7 @@ class RedisHandler implements SessionHandlerInterface
     public function __construct($redis, protected int $gcMaxLifeTime = 1200)
     {
         if (! $redis instanceof Redis && ! $redis instanceof RedisArray && ! $redis instanceof RedisCluster && ! $redis instanceof \Predis\Client && ! $redis instanceof RedisProxy) {
-            throw new InvalidArgumentException(sprintf('%s() expects parameter 1 to be Redis, RedisArray, RedisCluster, Predis\Client or Hyperf\Redis\Redis, %s given', __METHOD__, \is_object($redis) ? \get_class($redis) : \gettype($redis)));
+            throw new InvalidArgumentException(sprintf('%s() expects parameter 1 to be Redis, RedisArray, RedisCluster, Predis\Client or Hyperf\Redis\Redis, %s given', __METHOD__, is_object($redis) ? get_class($redis) : gettype($redis)));
         }
 
         $this->redis = $redis;

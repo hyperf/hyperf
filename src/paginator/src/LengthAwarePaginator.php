@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\Paginator;
 
 use Countable;
+use Hyperf\Collection\Collection;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
-use Hyperf\Utils\Collection;
 use IteratorAggregate;
 use JsonSerializable;
 use RuntimeException;
