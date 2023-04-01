@@ -26,6 +26,8 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use LogicException;
 
+use function Hyperf\Collection\collect;
+
 trait HasAttributes
 {
     /**

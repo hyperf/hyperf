@@ -17,6 +17,8 @@ use Hyperf\Utils\Str;
 use InvalidArgumentException;
 use PhpToken;
 
+use function Hyperf\Collection\collect;
+
 class BladeCompiler extends Compiler implements CompilerInterface
 {
     use Concern\CompilesComments;

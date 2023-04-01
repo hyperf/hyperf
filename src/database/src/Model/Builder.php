@@ -27,6 +27,8 @@ use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionMethod;
 
+use function Hyperf\Collection\collect;
+
 /**
  * @mixin \Hyperf\Database\Query\Builder
  */

@@ -15,6 +15,8 @@ use Composer\Autoload\ClassLoader;
 use Hyperf\Collection\Collection;
 use RuntimeException;
 
+use function Hyperf\Collection\collect;
+
 class Composer
 {
     private static ?Collection $content = null;

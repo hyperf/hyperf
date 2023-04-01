@@ -20,6 +20,8 @@ use Hyperf\Database\SQLiteConnection;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Fluent;
 
+use function Hyperf\Collection\collect;
+
 class Blueprint
 {
     use Macroable;

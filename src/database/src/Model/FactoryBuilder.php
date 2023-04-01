@@ -16,6 +16,8 @@ use Faker\Generator as Faker;
 use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
 
+use function Hyperf\Collection\collect;
+
 class FactoryBuilder
 {
     use Macroable;

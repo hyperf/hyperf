@@ -73,6 +73,8 @@ use Psr\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use ReflectionClass;
 use stdClass;
 
+use function Hyperf\Collection\collect;
+
 /**
  * @internal
  * @coversNothing

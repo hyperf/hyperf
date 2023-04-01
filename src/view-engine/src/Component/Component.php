@@ -23,6 +23,8 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 
+use function Hyperf\Collection\collect;
+
 abstract class Component
 {
     /**

@@ -31,6 +31,8 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
+use function Hyperf\Collection\collect;
+
 /**
  * @internal
  * @coversNothing

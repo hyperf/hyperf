@@ -18,6 +18,8 @@ use Hyperf\Contract\MessageBag as MessageBagContract;
 use Hyperf\Contract\MessageProvider;
 use JsonSerializable;
 
+use function Hyperf\Collection\collect;
+
 class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, MessageBagContract, MessageProvider
 {
     /**

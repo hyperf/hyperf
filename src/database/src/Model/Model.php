@@ -28,6 +28,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Throwable;
 
+use function Hyperf\Collection\collect;
+
 /**
  * @mixin ModelIDE
  */

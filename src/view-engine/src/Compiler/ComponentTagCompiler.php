@@ -21,6 +21,8 @@ use InvalidArgumentException;
 use PhpToken;
 use ReflectionClass;
 
+use function Hyperf\Collection\collect;
+
 class ComponentTagCompiler
 {
     /**

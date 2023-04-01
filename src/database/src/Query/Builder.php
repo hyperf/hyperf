@@ -34,6 +34,8 @@ use Hyperf\Utils\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use RuntimeException;
 
+use function Hyperf\Collection\collect;
+
 class Builder
 {
     use BuildsQueries, ForwardsCalls, Macroable {

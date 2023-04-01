@@ -20,6 +20,8 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
 
+use function Hyperf\Collection\collect;
+
 abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess
 {
     use ForwardsCalls;

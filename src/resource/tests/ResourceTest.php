@@ -33,6 +33,8 @@ use HyperfTest\Resource\Stubs\Resources\PostResourceWithoutWrap;
 use HyperfTest\Resource\Stubs\Resources\ReallyEmptyPostResource;
 use HyperfTest\Resource\Stubs\Resources\ResourceWithPreservedKeys;
 
+use function Hyperf\Collection\collect;
+
 /**
  * @internal
  * @coversNothing

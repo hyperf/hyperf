@@ -16,6 +16,8 @@ use Closure;
 use Hyperf\Macroable\Macroable;
 use JsonSerializable;
 
+use function Hyperf\Collection\collect;
+
 class Stringable implements JsonSerializable, \Stringable, ArrayAccess
 {
     use Traits\Conditionable;

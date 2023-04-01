@@ -21,6 +21,8 @@ use Hyperf\Utils\Str;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
+use function Hyperf\Collection\collect;
+
 class Migrator
 {
     /**

@@ -20,6 +20,8 @@ use Ramsey\Uuid\UuidInterface;
 use RuntimeException;
 use Symfony\Component\Uid\Ulid;
 
+use function Hyperf\Collection\collect;
+
 /**
  * Most of the methods in this file come from illuminate/support,
  * thanks Laravel Team provide such a useful class.

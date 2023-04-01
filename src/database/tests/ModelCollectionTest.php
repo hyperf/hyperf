@@ -21,6 +21,8 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+use function Hyperf\Collection\collect;
+
 /**
  * @internal
  * @coversNothing

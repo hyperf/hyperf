@@ -19,6 +19,8 @@ use Hyperf\Database\Model\ModelNotFoundException;
 use Hyperf\Utils\Str;
 use InvalidArgumentException;
 
+use function Hyperf\Collection\collect;
+
 class BelongsToMany extends Relation
 {
     use Concerns\InteractsWithPivotTable;

@@ -20,6 +20,8 @@ use Hyperf\Scout\Builder;
 use Hyperf\Scout\SearchableInterface;
 use Throwable;
 
+use function Hyperf\Collection\collect;
+
 class ElasticsearchEngine extends Engine
 {
     /**

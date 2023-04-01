@@ -16,6 +16,8 @@ use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 
+use function Hyperf\Collection\collect;
+
 class MorphTo extends BelongsTo
 {
     /**
