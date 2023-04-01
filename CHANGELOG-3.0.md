@@ -1,5 +1,9 @@
 # v3.0.15 - TBD
 
+## Optimized
+
+- [#5593](https://github.com/hyperf/hyperf/pull/5593) Use `Hyperf\Collection\Collection` instead of `Hyperf\Utils\Collection`.
+
 # v3.0.14 - 2023-04-01
 
 ## Fixed
