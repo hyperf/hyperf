@@ -31,6 +31,7 @@ use TheCodingMachine\GraphQLite\NamingStrategyInterface;
 use TheCodingMachine\GraphQLite\Types\MutableObjectType;
 
 use function array_keys;
+use function class_exists;
 use function filemtime;
 
 /**
@@ -546,7 +547,7 @@ class TypeMapper implements TypeMapperInterface
             $this->classes = [];
             $classes = ClassCollector::getClasses();
             foreach ($classes as $className) {
-                if (! \class_exists($className)) {
+                if (! class_exists($className)) {
                     continue;
                 }
                 $refClass = new ReflectionClass($className);
