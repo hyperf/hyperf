@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Resource\Response;
 
+use Hyperf\Collection\Arr;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Arr;
 use Hyperf\Utils\Codec\Json;
 use Psr\Http\Message\ResponseInterface;
 

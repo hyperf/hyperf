@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcClient;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\IdGeneratorInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\RpcClient\Exception\RequestException;
-use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 use Throwable;
 

@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Concerns;
 
 use Closure;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Model\GlobalScope;
 use Hyperf\Database\Model\Scope;
-use Hyperf\Utils\Arr;
 use InvalidArgumentException;
 
 trait HasGlobalScopes

@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Session;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\SessionInterface;
-use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use SessionHandlerInterface;
 

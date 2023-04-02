@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query\Grammars;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\JsonExpression;
-use Hyperf\Utils\Arr;
 
 use function Hyperf\Collection\collect;
 

@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Validation\Concerns;
 
 use Closure;
+use Hyperf\Collection\Arr;
 use Hyperf\HttpMessage\Upload\UploadedFile;
-use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use Hyperf\Validation\Validator;
 

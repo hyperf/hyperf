@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model\Relations;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\Arr;
 
 use function Hyperf\Collection\collect;
 

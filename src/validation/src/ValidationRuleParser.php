@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Validation;
 
 use Closure;
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Utils\Str;
 use Hyperf\Validation\Contract\Rule as RuleContract;
 use Hyperf\Validation\Rules\Exists;

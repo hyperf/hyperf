@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use ArrayAccess;
+use Hyperf\Collection\Arr;
 use Hyperf\Macroable\Macroable;
 
 class Optional implements ArrayAccess

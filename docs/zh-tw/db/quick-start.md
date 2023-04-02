@@ -351,7 +351,7 @@ try{
 <?php
 
 use Hyperf\DbConnection\Db;
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 use App\Model\Book;
 
 // 啟用 SQL 資料記錄功能
