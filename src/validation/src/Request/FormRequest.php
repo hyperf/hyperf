@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation\Request;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\HttpServer\Request;
-use Hyperf\Utils\Arr;
 use Hyperf\Validation\Contract\ValidatesWhenResolved;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface as ValidationFactory;
 use Hyperf\Validation\UnauthorizedException;

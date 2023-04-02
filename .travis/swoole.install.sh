@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
+sudo apt-get clean
 sudo apt-get update
+sudo apt-get upgrade -f
 sudo apt-get install libcurl4-openssl-dev
 wget https://github.com/swoole/swoole-src/archive/${SW_VERSION}.tar.gz -O swoole.tar.gz
 mkdir -p swoole

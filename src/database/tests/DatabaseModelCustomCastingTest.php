@@ -11,12 +11,12 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Model\CastsValue;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\Arr;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;

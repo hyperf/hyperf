@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Arr;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 

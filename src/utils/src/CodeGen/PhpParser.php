@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\CodeGen;
 
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Parser;

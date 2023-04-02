@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Devtool;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Command\Annotation\Command;
-use Hyperf\Utils\Arr;
 use Hyperf\Utils\Composer;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;

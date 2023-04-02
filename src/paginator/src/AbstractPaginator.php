@@ -14,9 +14,9 @@ namespace Hyperf\Paginator;
 use ArrayAccess;
 use ArrayIterator;
 use Closure;
+use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
 use Hyperf\Contract\PaginatorInterface;
-use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
 

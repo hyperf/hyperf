@@ -349,7 +349,7 @@ You can use the [database event listener](en/db/event) to record the SQL queries
 <?php
 
 use Hyperf\DbConnection\Db;
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 use App\Model\Book;
 
 // Enable SQL data logging function
