@@ -16,6 +16,8 @@ use Hyperf\Database\Schema\Grammars\Grammar;
 use Hyperf\Utils\Fluent;
 use RuntimeException;
 
+use function Hyperf\Collection\collect;
+
 class PostgresGrammar extends Grammar
 {
     /**

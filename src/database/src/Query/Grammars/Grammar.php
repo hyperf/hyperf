@@ -19,6 +19,8 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use RuntimeException;
 
+use function Hyperf\Collection\collect;
+
 class Grammar extends BaseGrammar
 {
     /**

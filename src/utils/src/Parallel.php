@@ -15,6 +15,8 @@ use Hyperf\Engine\Channel;
 use Hyperf\Utils\Exception\ParallelExecutionException;
 use Throwable;
 
+use function sprintf;
+
 class Parallel
 {
     /**
@@ -102,7 +104,7 @@ class Parallel
     {
         $output = '';
         foreach ($throwables as $key => $value) {
-            $output .= \sprintf('(%s) %s: %s' . PHP_EOL . '%s' . PHP_EOL, $key, get_class($value), $value->getMessage(), $value->getTraceAsString());
+            $output .= sprintf('(%s) %s: %s' . PHP_EOL . '%s' . PHP_EOL, $key, get_class($value), $value->getMessage(), $value->getTraceAsString());
         }
         return $output;
     }

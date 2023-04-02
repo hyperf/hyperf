@@ -13,6 +13,8 @@ namespace Hyperf\Validation\Rules;
 
 use Closure;
 
+use function Hyperf\Collection\collect;
+
 trait DatabaseRule
 {
     /**

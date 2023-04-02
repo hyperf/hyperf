@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ResourceGrpc;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Resource\Json\ResourceCollection;
-use Hyperf\Utils\Collection;
 
 class GrpcResourceCollection extends ResourceCollection
 {

@@ -16,6 +16,7 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Context\Context;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionInterface as Connection;
@@ -37,7 +38,6 @@ use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\InteractsWithTime;
 use Hyperf\Utils\Str;
 use HyperfTest\Database\Stubs\DateModelStub;
@@ -72,6 +72,8 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use ReflectionClass;
 use stdClass;
+
+use function Hyperf\Collection\collect;
 
 /**
  * @internal

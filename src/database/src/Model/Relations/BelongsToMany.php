@@ -19,6 +19,8 @@ use Hyperf\Database\Model\ModelNotFoundException;
 use Hyperf\Utils\Str;
 use InvalidArgumentException;
 
+use function Hyperf\Collection\collect;
+
 class BelongsToMany extends Relation
 {
     use Concerns\InteractsWithPivotTable;
@@ -356,7 +358,7 @@ class BelongsToMany extends Relation
      *
      * @param array $columns
      * @param mixed $id
-     * @return \Hyperf\Database\Model\Model|\Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection|\Hyperf\Database\Model\Model
      */
     public function findOrNew($id, $columns = ['*'])
     {
@@ -638,7 +640,7 @@ class BelongsToMany extends Relation
     /**
      * Get all of the IDs for the related models.
      *
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     public function allRelatedIds()
     {
@@ -663,7 +665,7 @@ class BelongsToMany extends Relation
     /**
      * Save an array of new models and attach them to the parent model.
      *
-     * @param array|\Hyperf\Utils\Collection $models
+     * @param array|\Hyperf\Collection\Collection $models
      * @return array
      */
     public function saveMany($models, array $pivotAttributes = [])

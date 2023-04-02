@@ -12,7 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Composer\Autoload\ClassLoader;
+use Hyperf\Collection\Collection;
 use RuntimeException;
+
+use function Hyperf\Collection\collect;
 
 class Composer
 {

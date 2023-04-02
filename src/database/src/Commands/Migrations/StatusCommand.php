@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Migrations;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Migrations\Migrator;
-use Hyperf\Utils\Collection;
 use Symfony\Component\Console\Input\InputOption;
 
 class StatusCommand extends BaseCommand
@@ -51,7 +51,7 @@ class StatusCommand extends BaseCommand
     /**
      * Get the status for the given ran migrations.
      *
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     protected function getStatusFor(array $ran, array $batches)
     {

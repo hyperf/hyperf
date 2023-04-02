@@ -16,6 +16,8 @@ use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 
+use function Hyperf\Collection\collect;
+
 class PostgresGrammar extends Grammar
 {
     /**

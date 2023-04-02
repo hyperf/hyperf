@@ -13,6 +13,7 @@ namespace Hyperf\Database\Model;
 
 use ArrayAccess;
 use Exception;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\Jsonable;
@@ -21,12 +22,13 @@ use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Str;
 use JsonSerializable;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Throwable;
+
+use function Hyperf\Collection\collect;
 
 /**
  * @mixin ModelIDE
@@ -591,7 +593,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Destroy the models for the given IDs.
      *
-     * @param array|\Hyperf\Utils\Collection|int $ids
+     * @param array|\Hyperf\Collection\Collection|int $ids
      */
     public static function destroy($ids): int
     {

@@ -28,6 +28,8 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 
+use function Hyperf\Collection\collect;
+
 abstract class Command extends SymfonyCommand
 {
     use DisableEventDispatcher;

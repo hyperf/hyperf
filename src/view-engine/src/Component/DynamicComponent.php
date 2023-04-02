@@ -17,6 +17,8 @@ use Hyperf\ViewEngine\Compiler\CompilerInterface;
 use Hyperf\ViewEngine\Compiler\ComponentTagCompiler;
 use Hyperf\ViewEngine\View;
 
+use function Hyperf\Collection\collect;
+
 class DynamicComponent extends Component
 {
     /**
@@ -49,7 +51,7 @@ class DynamicComponent extends Component
     public function render(): mixed
     {
         $template = <<<'EOF'
-<?php extract(collect($attributes->getAttributes())->mapWithKeys(function ($value, $key) { return [Hyperf\Utils\Str::camel(str_replace(':', ' ', $key)) => $value]; })->all(), EXTR_SKIP); ?>
+<?php extract(\Hyperf\Collection\collect($attributes->getAttributes())->mapWithKeys(function ($value, $key) { return [Hyperf\Utils\Str::camel(str_replace(':', ' ', $key)) => $value]; })->all(), EXTR_SKIP); ?>
 {{ props }}
 <x-{{ component }} {{ bindings }} {{ attributes }}>
 {{ slots }}

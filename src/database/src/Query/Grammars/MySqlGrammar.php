@@ -15,6 +15,8 @@ use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\JsonExpression;
 use Hyperf\Utils\Arr;
 
+use function Hyperf\Collection\collect;
+
 class MySqlGrammar extends Grammar
 {
     /**

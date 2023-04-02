@@ -15,6 +15,7 @@ use BadMethodCallException;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Closure;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolver;
@@ -27,13 +28,14 @@ use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\Database\Query\Builder as BaseBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Utils\Collection as BaseCollection;
 use HyperfTest\Database\Stubs\ModelStub;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+
+use function Hyperf\Collection\collect;
 
 /**
  * @internal

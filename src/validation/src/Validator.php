@@ -28,6 +28,8 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Stringable;
 
+use function Hyperf\Collection\collect;
+
 class Validator implements ValidatorContract
 {
     use Concerns\FormatsMessages;
