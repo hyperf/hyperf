@@ -11,7 +11,7 @@ on:
 jobs:
   split:
     if: github.repository == 'hyperf/hyperf'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     env:
       SSH_PRIVATE_KEY: ${{ secrets.SPLIT_PRIVATE_KEY }}
     steps:

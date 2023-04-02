@@ -12,7 +12,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
-        os: [ ubuntu-22.04 ]
+        os: [ ubuntu-latest ]
         php-version: [ '8.0', '8.1', '8.2' ]
         sw-version: [ 'v4.8.12', 'v5.0.2', 'master' ]
         exclude:
@@ -37,7 +37,9 @@ jobs:
           coverage: none
       - name: Setup Swoole
         run: |
+          sudo apt-get clean
           sudo apt-get update
+          sudo apt-get upgrade -f
           sudo apt-get install libcurl4-openssl-dev libc-ares-dev libpq-dev
           wget https://github.com/swoole/swoole-src/archive/${SW_VERSION}.tar.gz -O swoole.tar.gz
           mkdir -p swoole

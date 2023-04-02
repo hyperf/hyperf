@@ -10,7 +10,7 @@ env:
 jobs:
   database:
     name: Test for Database
-    runs-on: 'ubuntu-22.04'
+    runs-on: 'ubuntu-latest'
     env:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
@@ -46,7 +46,7 @@ jobs:
           vendor/bin/phpunit src/database --group NonCoroutine
   filesystem:
     name: Test for Filesystem
-    runs-on: 'ubuntu-22.04'
+    runs-on: 'ubuntu-latest'
     env:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
@@ -94,7 +94,7 @@ jobs:
           composer test src/filesystem -- --exclude-group NonCoroutine
   phar:
     name: Test for Building PHAR
-    runs-on: 'ubuntu-22.04'
+    runs-on: 'ubuntu-latest'
     env:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
@@ -142,7 +142,7 @@ jobs:
           ./link_env.phar show:name -N helloworld
   container:
     name: Test for Psr Container V1.0 ~ V2.0
-    runs-on: 'ubuntu-22.04'
+    runs-on: 'ubuntu-latest'
     env:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
@@ -177,7 +177,7 @@ jobs:
           vendor/bin/phpunit src/di
   log:
     name: Test for Psr Log V1.0 ~ V3.0
-    runs-on: 'ubuntu-22.04'
+    runs-on: 'ubuntu-latest'
     env:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
@@ -230,7 +230,7 @@ jobs:
           composer info | grep psr/log
   simple-cache:
     name: Test for Psr SimpleCache V1.0 ~ V3.0
-    runs-on: 'ubuntu-22.04'
+    runs-on: 'ubuntu-latest'
     env:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
