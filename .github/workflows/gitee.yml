@@ -5,7 +5,7 @@ on: [ push, delete, create ]
 jobs:
   git-mirror:
     if: github.repository == 'hyperf/hyperf'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Configure Private Key
         env:

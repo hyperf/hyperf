@@ -12,7 +12,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ ubuntu-22.04 ]
         php-version: [ '8.0', '8.1', '8.2' ]
         sw-version: [ 'v4.8.12', 'v5.0.2', 'master' ]
         exclude:
