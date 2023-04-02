@@ -18,6 +18,7 @@
 - [#5577](https://github.com/hyperf/hyperf/pull/5577) Split `hyperf/collection` from `hyperf/utils`.
 - [#5580](https://github.com/hyperf/hyperf/pull/5580) Split `hyperf/conditionable` and `hyperf/tappable` from `hyperf/utils`.
 - [#5585](https://github.com/hyperf/hyperf/pull/5585) Removed the requirement `consul` from `service-governance`.
+- [#5595](https://github.com/hyperf/hyperf/pull/5595) Split hyperf/pipeline from hyperf/utils.
 
 # v3.0.13 - 2023-03-26
 
