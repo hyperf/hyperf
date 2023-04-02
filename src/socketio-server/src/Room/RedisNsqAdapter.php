@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Room;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
@@ -22,7 +23,6 @@ use Hyperf\Nsq\Result;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
-use Hyperf\Utils\Arr;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
 use Hyperf\WebSocketServer\Sender;

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Countable;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Contract\MessageBag as MessageBagContract;

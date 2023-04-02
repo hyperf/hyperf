@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nsq\Pool;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Pool;
-use Hyperf\Utils\Arr;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 

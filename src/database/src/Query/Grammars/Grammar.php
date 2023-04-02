@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query\Grammars;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\JoinClause;
-use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use RuntimeException;
 

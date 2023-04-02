@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Concern;
 
 use Countable;
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 use stdClass;
 
 trait ManagesLoops

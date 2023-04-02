@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Consul;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Consul\Exception\ServerException;
-use Hyperf\Utils\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 

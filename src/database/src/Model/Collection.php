@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\UnCompressInterface;
-use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use RuntimeException;
 

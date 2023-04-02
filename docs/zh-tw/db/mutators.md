@@ -372,7 +372,7 @@ declare(strict_types=1);
 namespace App\Caster;
 
 use Hyperf\Contract\CastsAttributes;
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 
 class UserInfoCaster implements CastsAttributes
 {
