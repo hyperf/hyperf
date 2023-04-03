@@ -14,7 +14,7 @@ namespace Hyperf\Di\Aop;
 use Closure;
 use Hyperf\Di\Exception\InvalidDefinitionException;
 
-class Pipeline extends \Hyperf\Utils\Pipeline
+class Pipeline extends \Hyperf\Pipeline\Pipeline
 {
     protected function carry(): Closure
     {
