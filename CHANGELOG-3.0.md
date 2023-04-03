@@ -2,7 +2,7 @@
 
 ## Optimized
 
-- [#5593](https://github.com/hyperf/hyperf/pull/5593) Use `Hyperf\Collection\Collection` instead of `Hyperf\Utils\Collection`.
+- [#5593](https://github.com/hyperf/hyperf/pull/5593) [#5598](https://github.com/hyperf/hyperf/pull/5598) Use `Hyperf\Collection\Collection` instead of `Hyperf\Utils\Collection`.
 - [#5594](https://github.com/hyperf/hyperf/pull/5594) Use `Hyperf\Collection\Arr` instead of `Hyperf\Utils\Arr`.
 - [#5596](https://github.com/hyperf/hyperf/pull/5596) Split `hyperf/pipeline` from `hyperf/utils`.
 
