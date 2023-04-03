@@ -502,3 +502,6 @@ if (! function_exists('wait')) {
         return (new Waiter())->wait($closure, $timeout);
     }
 }
+
+// TODO: Removed when deleting `\Hyperf\Utils\Collection`.
+class_exists(\Hyperf\Utils\Collection::class);
