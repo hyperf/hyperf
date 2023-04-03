@@ -1838,3 +1838,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         return (array) $items;
     }
 }
+
+// TODO: Removed when deleting `\Hyperf\Utils\Collection`.
+class_exists(\Hyperf\Utils\Collection::class);

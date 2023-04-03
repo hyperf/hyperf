@@ -63,4 +63,15 @@ class CollectionTest extends TestCase
         $col = new Collection([]);
         $this->assertNull($col->avg());
     }
+
+    public function testInstanceofCollection()
+    {
+        $col = new Collection([]);
+        $this->assertTrue($col instanceof Collection);
+        $this->assertTrue($col instanceof \Hyperf\Utils\Collection);
+
+        $col = new \Hyperf\Utils\Collection([]);
+        $this->assertTrue($col instanceof Collection);
+        $this->assertTrue($col instanceof \Hyperf\Utils\Collection);
+    }
 }
