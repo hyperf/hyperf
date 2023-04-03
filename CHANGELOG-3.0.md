@@ -5,6 +5,7 @@
 - [#5593](https://github.com/hyperf/hyperf/pull/5593) Use `Hyperf\Collection\Collection` instead of `Hyperf\Utils\Collection`.
 - [#5594](https://github.com/hyperf/hyperf/pull/5594) Use `Hyperf\Collection\Arr` instead of `Hyperf\Utils\Arr`.
 - [#5596](https://github.com/hyperf/hyperf/pull/5596) Split `hyperf/pipeline` from `hyperf/utils`.
+- [#5599](https://github.com/hyperf/hyperf/pull/5599) Use Hyperf\Pipeline\Pipeline instead of Hyperf\Utils\Pipeline。
 
 # v3.0.14 - 2023-04-01
 
