@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils;
+namespace Hyperf\Pipeline;
 
 use Closure;
 use Psr\Container\ContainerInterface;
@@ -17,7 +17,6 @@ use Psr\Container\ContainerInterface;
 /**
  * This file mostly code come from illuminate/pipe,
  * thanks Laravel Team provide such a useful class.
- * @deprecated since 3.1, use `Hyperf\Pipeline\Pipeline` instead.
  */
 class Pipeline
 {
