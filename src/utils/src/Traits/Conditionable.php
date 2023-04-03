@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils\Traits;
 
 use Closure;
+use Hyperf\Utils\HigherOrderWhenProxy;
 
 /**
  * @deprecated since 3.1, use `Hyperf\Conditionable\Conditionable` instead.
@@ -19,17 +20,28 @@ use Closure;
 trait Conditionable
 {
     /**
-     * Apply the callback if the given "value" is truthy.
+     * Apply the callback if the given "value" is (or resolves to) truthy.
      *
+     * @template TWhenParameter
+     * @template TWhenReturnType
+     *
+     * @param  (\Closure($this): TWhenParameter)|TWhenParameter|null $value
+     * @param  (callable($this, TWhenParameter): TWhenReturnType)|null  $callback
+     * @param  (callable($this, TWhenParameter): TWhenReturnType)|null  $default
      * @param mixed $value
-     * @param callable $callback
-     * @param null|callable $default
-     *
-     * @return $this|mixed
+     * @return $this|TWhenReturnType
      */
-    public function when($value, $callback, $default = null)
+    public function when($value, callable $callback = null, callable $default = null)
     {
         $value = $value instanceof Closure ? $value($this) : $value;
+
+        if (func_num_args() === 0) {
+            return new HigherOrderWhenProxy($this);
+        }
+
+        if (func_num_args() === 1) {
+            return (new HigherOrderWhenProxy($this))->condition($value);
+        }
 
         if ($value) {
             return $callback($this, $value) ?? $this;
@@ -43,17 +55,28 @@ trait Conditionable
     }
 
     /**
-     * Apply the callback if the given "value" is falsy.
+     * Apply the callback if the given "value" is (or resolves to) falsy.
      *
+     * @template TUnlessParameter
+     * @template TUnlessReturnType
+     *
+     * @param  (\Closure($this): TUnlessParameter)|TUnlessParameter|null  $value
+     * @param  (callable($this, TUnlessParameter): TUnlessReturnType)|null  $callback
+     * @param  (callable($this, TUnlessParameter): TUnlessReturnType)|null  $default
      * @param mixed $value
-     * @param callable $callback
-     * @param null|callable $default
-     *
-     * @return mixed
+     * @return $this|TUnlessReturnType
      */
-    public function unless($value, $callback, $default = null)
+    public function unless($value, callable $callback = null, callable $default = null)
     {
         $value = $value instanceof Closure ? $value($this) : $value;
+
+        if (func_num_args() === 0) {
+            return new HigherOrderWhenProxy($this);
+        }
+
+        if (func_num_args() === 1) {
+            return (new HigherOrderWhenProxy($this))->condition($value);
+        }
 
         if (! $value) {
             return $callback($this, $value) ?: $this;

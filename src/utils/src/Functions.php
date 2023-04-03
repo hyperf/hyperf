@@ -19,6 +19,8 @@ use Hyperf\Utils\Optional;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Waiter;
+use Hyperf\ViewEngine\Contract\DeferringDisplayableValue;
+use Hyperf\ViewEngine\Contract\Htmlable;
 
 if (! function_exists('value')) {
     /**
@@ -27,6 +29,31 @@ if (! function_exists('value')) {
     function value(mixed $value, ...$args)
     {
         return $value instanceof Closure ? $value(...$args) : $value;
+    }
+}
+if (! function_exists('e')) {
+    /**
+     * Encode HTML special characters in a string.
+     *
+     * @param null|\BackedEnum|DeferringDisplayableValue|Htmlable|string $value
+     * @param bool $doubleEncode
+     * @return string
+     */
+    function e($value, $doubleEncode = true)
+    {
+        if ($value instanceof DeferringDisplayableValue) {
+            $value = $value->resolveDisplayableValue();
+        }
+
+        if ($value instanceof Htmlable) {
+            return $value->toHtml();
+        }
+
+        if ($value instanceof BackedEnum) {
+            $value = $value->value;
+        }
+
+        return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8', $doubleEncode);
     }
 }
 if (! function_exists('env')) {
