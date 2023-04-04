@@ -69,7 +69,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
     /**
      * Retrieves a specified trailer value, returns null if the value does not exists.
      */
-    public function getTrailer(string $key)
+    public function getTrailer(string $key): mixed
     {
         return $this->trailers[$key] ?? null;
     }

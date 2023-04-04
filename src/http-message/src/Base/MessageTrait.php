@@ -40,7 +40,7 @@ trait MessageTrait
      *
      * @return string HTTP protocol version
      */
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->protocol;
     }
@@ -54,9 +54,8 @@ trait MessageTrait
      * new protocol version.
      *
      * @param string $version HTTP protocol version
-     * @return static
      */
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version): static
     {
         if ($this->protocol === $version) {
             return $this;
@@ -162,10 +161,9 @@ trait MessageTrait
      *
      * @param string $name case-insensitive header field name
      * @param string|string[] $value header value(s)
-     * @return static
      * @throws InvalidArgumentException for invalid header names or values
      */
-    public function withHeader($name, $value)
+    public function withHeader($name, $value): static
     {
         if (! is_array($value)) {
             $value = [$value];
@@ -204,10 +202,9 @@ trait MessageTrait
      *
      * @param string $name case-insensitive header field name to add
      * @param string|string[] $value header value(s)
-     * @return static
      * @throws InvalidArgumentException for invalid header names or values
      */
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader($name, $value): static
     {
         if (! is_array($value)) {
             $value = [$value];
@@ -236,9 +233,8 @@ trait MessageTrait
      * the named header.
      *
      * @param string $name case-insensitive header field name to remove
-     * @return static
      */
-    public function withoutHeader($name)
+    public function withoutHeader($name): static
     {
         $normalized = strtolower($name);
 
@@ -259,7 +255,7 @@ trait MessageTrait
      *
      * @return StreamInterface returns the body as a stream
      */
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         if (! $this->stream) {
             $this->stream = new SwooleStream('');
@@ -276,10 +272,9 @@ trait MessageTrait
      * new body stream.
      *
      * @param StreamInterface $body body
-     * @return static
      * @throws InvalidArgumentException when the body is not valid
      */
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): static
     {
         if ($body === $this->stream) {
             return $this;
