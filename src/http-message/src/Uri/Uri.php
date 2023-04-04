@@ -437,7 +437,7 @@ class Uri implements UriInterface, Stringable
      * @param string $key key to set
      * @param null|string $value Value to set
      */
-    public static function withQueryValue(UriInterface $uri, string $key, ?string $value): static
+    public static function withQueryValue(UriInterface $uri, string $key, ?string $value): UriInterface
     {
         $current = $uri->getQuery();
 
