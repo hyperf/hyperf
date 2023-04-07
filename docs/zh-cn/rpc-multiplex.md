@@ -40,6 +40,9 @@ return [
                 'package_body_offset' => 4,
                 'package_max_length' => 1024 * 1024 * 2,
             ],
+            'options' => [
+                'send_channel_capacity' => 65535,
+            ],
         ],
     ],
 ];
