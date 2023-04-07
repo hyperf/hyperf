@@ -1,5 +1,9 @@
 # v3.0.15 - TBD
 
+## Added
+
+- [#5606](https://github.com/hyperf/hyperf/pull/5606) Added `server.options.send_channel_capacity` to control whether to use safe socket.
+
 ## Optimized
 
 - [#5593](https://github.com/hyperf/hyperf/pull/5593) [#5598](https://github.com/hyperf/hyperf/pull/5598) Use `Hyperf\Collection\Collection` instead of `Hyperf\Utils\Collection`.
