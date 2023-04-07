@@ -1,5 +1,18 @@
 # 版本更新记录
 
+# v3.0.15 - 2023-04-07
+
+## 新增
+
+- [#5606](https://github.com/hyperf/hyperf/pull/5606) 新增配置 `server.options.send_channel_capacity` 用来控制使用 `协程风格` 服务时，是否使用 `SafeSocket` 来返回数据。
+
+## 优化
+
+- [#5593](https://github.com/hyperf/hyperf/pull/5593) [#5598](https://github.com/hyperf/hyperf/pull/5598) 使用 `Hyperf\Collection\Collection` 替代 `Hyperf\Utils\Collection`。
+- [#5594](https://github.com/hyperf/hyperf/pull/5594) 使用 `Hyperf\Collection\Arr` 替代 `Hyperf\Utils\Arr`。
+- [#5596](https://github.com/hyperf/hyperf/pull/5596) 将 `hyperf/pipeline` 从 `hyperf/utils` 分离出来。
+- [#5599](https://github.com/hyperf/hyperf/pull/5599) 使用 `Hyperf\Pipeline\Pipeline` 替代 `Hyperf\Utils\Pipeline`。
+
 # v3.0.14 - 2023-04-01
 
 ## 修复
