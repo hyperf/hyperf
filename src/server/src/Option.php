@@ -20,7 +20,7 @@ class Option
      */
     protected int $sendChannelCapacity = 0;
 
-    public static function make(array|Option $options): static
+    public static function make(array|Option $options): Option
     {
         if ($options instanceof Option) {
             return $options;
