@@ -1,5 +1,18 @@
 # Changelogs
 
+# v3.0.15 - 2023-04-07
+
+## Added
+
+- [#5606](https://github.com/hyperf/hyperf/pull/5606) Added `server.options.send_channel_capacity` to control whether to use safe socket.
+
+## Optimized
+
+- [#5593](https://github.com/hyperf/hyperf/pull/5593) [#5598](https://github.com/hyperf/hyperf/pull/5598) Use `Hyperf\Collection\Collection` instead of `Hyperf\Utils\Collection`.
+- [#5594](https://github.com/hyperf/hyperf/pull/5594) Use `Hyperf\Collection\Arr` instead of `Hyperf\Utils\Arr`.
+- [#5596](https://github.com/hyperf/hyperf/pull/5596) Split `hyperf/pipeline` from `hyperf/utils`.
+- [#5599](https://github.com/hyperf/hyperf/pull/5599) Use Hyperf\Pipeline\Pipeline instead of Hyperf\Utils\Pipeline。
+
 # v3.0.14 - 2023-04-01
 
 ## Fixed
