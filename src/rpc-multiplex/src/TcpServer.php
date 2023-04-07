@@ -25,6 +25,7 @@ use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
 use Hyperf\RpcMultiplex\Exception\Handler\DefaultExceptionHandler;
 use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\RpcServer\Server;
+use Hyperf\Server\Connection as HyperfConnection;
 use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Utils\Coroutine;
 use Multiplex\Contract\HasHeartbeatInterface as Heartbeat;
@@ -91,7 +92,7 @@ class TcpServer extends Server
     }
 
     /**
-     * @param Connection|SwooleServer $server
+     * @param Connection|HyperfConnection|SwooleServer $server
      */
     protected function send($server, int $fd, ResponseInterface $response): void
     {
@@ -101,7 +102,7 @@ class TcpServer extends Server
 
         if ($server instanceof SwooleServer) {
             $server->send($fd, $packed);
-        } elseif ($server instanceof Connection) {
+        } elseif ($server instanceof Connection || $server instanceof HyperfConnection) {
             $server->send($packed);
         }
     }

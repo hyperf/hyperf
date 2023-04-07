@@ -18,7 +18,8 @@
     "require": {
         "php": ">=8.0",
         "hyperf/contract": "~3.0.0",
-        "hyperf/engine": "^1.6|^2.4",
+        "hyperf/engine": "^1.10|^2.8",
+        "hyperf/tappable": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0",
