@@ -1,5 +1,9 @@
 # v3.0.16 - TBD
 
+## Changed
+
+- [#5614](https://github.com/hyperf/hyperf/pull/5614) Removed the default header `Server: Hyperf` from response.
+
 # v3.0.15 - 2023-04-07
 
 ## Added
