@@ -11,29 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
-use Psr\Container\ContainerInterface;
-use TypeError;
-
-class ApplicationContext
+/**
+ * @deprecated since 3.1, please use Hyperf\Context\ApplicationContext instead.
+ */
+class ApplicationContext extends \Hyperf\Context\ApplicationContext
 {
-    private static ?ContainerInterface $container = null;
-
-    /**
-     * @throws TypeError
-     */
-    public static function getContainer(): ContainerInterface
-    {
-        return self::$container;
-    }
-
-    public static function hasContainer(): bool
-    {
-        return isset(self::$container);
-    }
-
-    public static function setContainer(ContainerInterface $container): ContainerInterface
-    {
-        self::$container = $container;
-        return $container;
-    }
 }
