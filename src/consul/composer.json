@@ -18,6 +18,9 @@
     },
     "require": {
         "php": ">=8.0",
+        "guzzlehttp/guzzle": "^6.3|^7.0"
+    },
+    "require-dev": {
         "hyperf/guzzle": "~3.0.0"
     },
     "suggest": {
