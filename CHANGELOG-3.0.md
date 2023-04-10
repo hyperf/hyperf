@@ -2,7 +2,8 @@
 
 ## Optimized
 
-[#5617](https://github.com/hyperf/hyperf/pull/5617) Removed the requirement `hyperf/guzzle` from `hyperf/consul`.
+- [#5617](https://github.com/hyperf/hyperf/pull/5617) Removed the requirement `hyperf/guzzle` from `hyperf/consul`.
+- [#5618](https://github.com/hyperf/hyperf/pull/5618) Support to set the default router for swagger.
 
 # v3.0.15 - 2023-04-07
 
