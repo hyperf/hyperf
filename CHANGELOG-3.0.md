@@ -1,5 +1,9 @@
 # v3.0.16 - TBD
 
+## Optimized
+
+[#5617](https://github.com/hyperf/hyperf/pull/5617) Adds guzzlehttp/guzzle and hyperf/guzzle to composer.json dev and require-dev respectively.
+
 # v3.0.15 - 2023-04-07
 
 ## Added
