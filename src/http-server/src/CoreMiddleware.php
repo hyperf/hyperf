@@ -96,7 +96,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
         if (! $response instanceof ResponseInterface) {
             $response = $this->transferToResponse($response, $request);
         }
-        return $response;
+        return $response->withAddedHeader('Server', 'Hyperf');
     }
 
     public function getMethodDefinitionCollector(): MethodDefinitionCollectorInterface
