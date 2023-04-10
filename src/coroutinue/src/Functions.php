@@ -13,6 +13,7 @@ namespace Hyperf\Coroutine;
 
 use Closure;
 use Hyperf\Context\ApplicationContext;
+use RuntimeException;
 
 /**
  * @param callable[] $callables
@@ -57,4 +58,24 @@ function go(callable $callable)
 {
     $id = Coroutine::create($callable);
     return $id > 0 ? $id : false;
+}
+
+/**
+ * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
+ *
+ * @param array|callable $callbacks
+ */
+function run($callbacks, int $flags = SWOOLE_HOOK_ALL): bool
+{
+    if (Coroutine::inCoroutine()) {
+        throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
+    }
+
+    \Swoole\Runtime::enableCoroutine($flags);
+
+    /* @phpstan-ignore-next-line */
+    $result = \Swoole\Coroutine\run(...(array) $callbacks);
+
+    \Swoole\Runtime::enableCoroutine(false);
+    return $result;
 }
