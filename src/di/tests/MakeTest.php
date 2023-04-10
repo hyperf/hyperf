@@ -13,10 +13,13 @@ namespace HyperfTest\Di;
 
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
+use Hyperf\Engine\Channel;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Coroutine;
 use HyperfTest\Di\Stub\Bar;
 use HyperfTest\Di\Stub\Demo;
 use HyperfTest\Di\Stub\Foo;
+use HyperfTest\Di\Stub\LoadSleep;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -73,5 +76,26 @@ class MakeTest extends TestCase
         $this->assertInstanceOf(Demo::class, $bar->demo);
         $this->assertSame(1, $bar->demo->getId());
         $this->assertSame('Hyperf', $bar->name);
+    }
+
+    public function testConcurrentLoad()
+    {
+        if (Coroutine::inCoroutine()) {
+            $size = 100;
+            $chan = new Channel($size);
+            for ($i = 0; $i < $size; ++$i) {
+                go(function () use ($chan) {
+                    $load = ApplicationContext::getContainer()->get(LoadSleep::class);
+                    $chan->push($load);
+                });
+            }
+            $obj = $chan->pop();
+            $this->assertIsObject($obj);
+            for ($i = 0; $i < $size - 1; ++$i) {
+                $objTmp = $chan->pop();
+                $this->assertTrue($obj === $objTmp);
+            }
+        }
+        $this->assertTrue(true);
     }
 }

@@ -16,7 +16,10 @@ use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Exception\InvalidArgumentException;
 use Hyperf\Di\Exception\NotFoundException;
+use Hyperf\Di\Exception\WaitLoadingException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
+use Hyperf\Engine\Channel;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 class Container implements HyperfContainerInterface
@@ -25,6 +28,8 @@ class Container implements HyperfContainerInterface
      * Map of entries that are already resolved.
      */
     private array $resolvedEntries;
+
+    private array $loading = [];
 
     /**
      * Map of definitions that are already fetched (local cache).
@@ -113,7 +118,26 @@ class Container implements HyperfContainerInterface
         if (isset($this->resolvedEntries[$id]) || array_key_exists($id, $this->resolvedEntries)) {
             return $this->resolvedEntries[$id];
         }
-        return $this->resolvedEntries[$id] = $this->make($id);
+
+        if (! Coroutine::inCoroutine()) {
+            return $this->resolvedEntries[$id] = $this->make($id);
+        }
+
+        // coroutine
+        if (! isset($this->loading[$id])) {
+            $this->loading[$id] = new Channel(1);
+            try {
+                $this->resolvedEntries[$id] = $this->make($id);
+                $this->loading[$id]->push([$this->resolvedEntries[$id]]);
+                return $this->resolvedEntries[$id];
+            } catch (\Throwable $throwable) {
+                $this->loading[$id]->close();
+                throw $throwable;
+            } finally {
+                unset($this->loading[$id]);
+            }
+        }
+        return $this->waitLoading($id, $this->loading[$id]);
     }
 
     /**
@@ -152,6 +176,17 @@ class Container implements HyperfContainerInterface
     public function getDefinitionSource(): Definition\DefinitionSourceInterface
     {
         return $this->definitionSource;
+    }
+
+    private function waitLoading($id, Channel $channel)
+    {
+        $result = $channel->pop(5);
+        if ($result === false) {
+            throw new WaitLoadingException("The get entry or class timed out for 5 seconds or error for {$id}");
+        }
+
+        $channel->push($result);
+        return $result[0];
     }
 
     /**
