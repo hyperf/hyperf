@@ -23,6 +23,10 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Throwable;
 
+use function Hyperf\Coroutine\defer;
+use function Hyperf\Coroutine\go;
+use function Hyperf\Coroutine\run;
+
 /**
  * @internal
  * @coversNothing

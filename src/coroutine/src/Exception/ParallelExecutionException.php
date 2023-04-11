@@ -15,9 +15,9 @@ use RuntimeException;
 
 class ParallelExecutionException extends RuntimeException
 {
-    private array $results = [];
+    protected array $results = [];
 
-    private array $throwables = [];
+    protected array $throwables = [];
 
     public function getResults(): array
     {

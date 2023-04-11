@@ -303,6 +303,8 @@ if (! function_exists('call')) {
 if (! function_exists('go')) {
     /**
      * @return bool|int
+     *
+     * @deprecated since 3.1, use `Hyperf\Coroutine\go` instead.
      */
     function go(callable $callable)
     {
@@ -314,6 +316,8 @@ if (! function_exists('go')) {
 if (! function_exists('co')) {
     /**
      * @return bool|int
+     *
+     * @deprecated since 3.1, use `Hyperf\Coroutine\co` instead.
      */
     function co(callable $callable)
     {
@@ -323,6 +327,9 @@ if (! function_exists('co')) {
 }
 
 if (! function_exists('defer')) {
+    /**
+     * @deprecated since 3.1, use `Hyperf\Coroutine\defer` instead.
+     */
     function defer(callable $callable): void
     {
         Coroutine::defer($callable);
@@ -411,6 +418,8 @@ if (! function_exists('parallel')) {
     /**
      * @param callable[] $callables
      * @param int $concurrent if $concurrent is equal to 0, that means unlimited
+     *
+     * @deprecated since 3.1, use `Hyperf\Coroutine\parallel` instead.
      */
     function parallel(array $callables, int $concurrent = 0)
     {
@@ -446,6 +455,8 @@ if (! function_exists('run')) {
      * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
      *
      * @param array|callable $callbacks
+     *
+     * @deprecated since 3.1, use `Hyperf\Coroutine\run` instead.
      */
     function run($callbacks, int $flags = SWOOLE_HOOK_ALL): bool
     {
@@ -493,6 +504,9 @@ if (! function_exists('optional')) {
 }
 
 if (! function_exists('wait')) {
+    /**
+     * @deprecated since 3.1, use `Hyperf\Coroutine\wait` instead.
+     */
     function wait(Closure $closure, ?float $timeout = null)
     {
         if (ApplicationContext::hasContainer()) {

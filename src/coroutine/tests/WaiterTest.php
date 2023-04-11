@@ -20,6 +20,8 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 
+use function Hyperf\Coroutine\wait;
+
 /**
  * @internal
  * @coversNothing
