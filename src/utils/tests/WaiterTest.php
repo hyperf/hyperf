@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Hyperf\Coroutine\Exception\WaitTimeoutException;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Exception\WaitTimeoutException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
