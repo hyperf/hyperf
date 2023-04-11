@@ -37,7 +37,6 @@ class Locker
             return true;
         }
         self::add($key, Coroutine::id());
-        // TODO: When the verion of `hyperf/engine` >= 2.0, use `Co::yield()` instead.
         match (Constant::ENGINE) {
             'Swoole' => SwooleCoroutine::yield(),
             /* @phpstan-ignore-next-line */
