@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace HyperfTest\DB\Cases;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\DB\Pool\Pool;
 use Hyperf\DB\Pool\PoolFactory;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use Psr\Container\ContainerInterface;
 

@@ -11,12 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Server;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Server\Request\Parser;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
-use Hyperf\Utils\ApplicationContext;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;

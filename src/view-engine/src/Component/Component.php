@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Component;
 
 use Closure;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Blade;

@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Database\Concerns;
 
 use Closure;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\ApplicationContext;
 use RuntimeException;
 
 trait BuildsQueries

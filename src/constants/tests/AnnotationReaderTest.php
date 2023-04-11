@@ -13,12 +13,12 @@ namespace HyperfTest\Constants;
 
 use Hyperf\Constants\AnnotationReader;
 use Hyperf\Constants\ConstantsCollector;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Constants\Stub\ErrorCodeStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;

@@ -12,13 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\Guzzle\Cases;
 
 use GuzzleHttp\Client;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Pool\SimplePool\Connection;
 use Hyperf\Pool\SimplePool\Pool;
 use Hyperf\Pool\SimplePool\PoolFactory;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Codec\Json;
 use HyperfTest\Guzzle\Stub\PoolHandlerStub;
 use Mockery;

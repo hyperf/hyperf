@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Command;
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Utils\Reflection\ClassInvoker;
 use HyperfTest\Command\Command\DefaultSwooleFlagsCommand;
 use HyperfTest\Command\Command\FooCommand;

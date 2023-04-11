@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\DbConnection\Stubs;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
@@ -23,7 +24,6 @@ use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\Framework\Logger\StdoutLogger;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;

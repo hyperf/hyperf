@@ -61,7 +61,7 @@ The specific interface can be viewed `Hyperf\DB\ConnectionInterface`。
 ```php
 <?php
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\DB\DB;
 
 $db = ApplicationContext::getContainer()->get(DB::class);

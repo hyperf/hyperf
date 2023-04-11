@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Retry;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Retry\Policy\FallbackRetryPolicy;
 use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
 use Hyperf\Retry\Retry;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Retry\Stub\Foo;
 use InvalidArgumentException;
 use Mockery;

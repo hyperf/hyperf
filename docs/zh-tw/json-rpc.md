@@ -444,7 +444,7 @@ interface CalculatorServiceInterface
 ```php
 <?php
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use App\JsonRpc\CalculatorServiceInterface;
 use App\JsonRpc\MathValue;
 

@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\ModelCache;
 
 use Closure;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Model\Builder as ModelBuilder;
-use Hyperf\Utils\ApplicationContext;
 
 class Builder extends ModelBuilder
 {

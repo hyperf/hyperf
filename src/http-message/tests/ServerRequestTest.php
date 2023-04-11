@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpMessage;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Server\Request\JsonParser;
 use Hyperf\HttpMessage\Server\Request\Parser;
 use Hyperf\HttpMessage\Server\Request\XmlParser;
 use Hyperf\HttpMessage\Server\RequestParserInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Codec\Xml;
 use HyperfTest\HttpMessage\Stub\ParserStub;

@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Definition\PropertyHandlerManager;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\ApplicationContext;
 use Throwable;
 
 class RegisterInjectPropertyHandler

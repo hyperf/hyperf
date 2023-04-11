@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace HyperfTest\WebSocketServer;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpServer\ResponseEmitter;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Reflection\ClassInvoker;
 use Hyperf\Utils\Waiter;

@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\SocketIOServer\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Engine\Channel;
 use Hyperf\SocketIOServer\Emitter\Future;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 use Mockery;
 

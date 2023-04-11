@@ -11,12 +11,12 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Task;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Task\Aspect\TaskAspect;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Task\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;

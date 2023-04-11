@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpServer;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Xmlable;
@@ -21,7 +22,6 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Response;
 use Hyperf\HttpServer\ResponseEmitter;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

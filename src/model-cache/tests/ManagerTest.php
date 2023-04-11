@@ -12,13 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\ModelCache;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Schema\Column;
 use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\ModelCache;
 use Hyperf\ModelCache\Handler\HandlerInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Reflection\ClassInvoker;
 use HyperfTest\ModelCache\Stub\ManagerStub;
 use HyperfTest\ModelCache\Stub\ModelStub;

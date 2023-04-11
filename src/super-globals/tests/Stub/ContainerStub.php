@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\SuperGlobals\Stub;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\HttpServer\Request;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 
 class ContainerStub

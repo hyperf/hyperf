@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Crontab;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab;
@@ -21,7 +22,6 @@ use Hyperf\Crontab\Listener\CrontabRegisterListener;
 use Hyperf\Crontab\Parser;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Container;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Reflection\ClassInvoker;
 use HyperfTest\Crontab\Stub\FooCron;
 use HyperfTest\Crontab\Stub\FooCron2;

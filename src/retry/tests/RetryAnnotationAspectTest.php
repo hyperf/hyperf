@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Retry;
 
 use Exception;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Aop\AnnotationMetadata;
 use Hyperf\Di\Aop\AroundInterface;
@@ -30,7 +31,6 @@ use Hyperf\Retry\NoOpRetryBudget;
 use Hyperf\Retry\Policy\TimeoutRetryPolicy;
 use Hyperf\Retry\RetryBudget;
 use Hyperf\Retry\RetryBudgetInterface;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Retry\Stub\Foo;
 use InvalidArgumentException;
 use Mockery;

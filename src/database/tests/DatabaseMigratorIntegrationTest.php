@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
@@ -18,7 +19,6 @@ use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Migrations\DatabaseMigrationRepository;
 use Hyperf\Database\Migrations\Migrator;
 use Hyperf\Database\Schema\Schema;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use Mockery as m;

@@ -133,7 +133,7 @@ $log->alert('czl');
 namespace App;
 
 use Hyperf\Logger\LoggerFactory;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 class Log
 {

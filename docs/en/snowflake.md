@@ -71,7 +71,7 @@ Using  `Snowflake` in the framework is very simple. You just need to take out th
 ```php
 <?php
 use Hyperf\Snowflake\IdGeneratorInterface;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 $generator = $container->get(IdGeneratorInterface::class);
@@ -84,7 +84,7 @@ When you know that the `ID` needs to reverse the corresponding `Meta`, you just 
 ```php
 <?php
 use Hyperf\Snowflake\IdGeneratorInterface;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 $generator = $container->get(IdGeneratorInterface::class);
@@ -132,7 +132,7 @@ class UserDefinedIdGenerator
     }
 }
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 $generator = $container->get(UserDefinedIdGenerator::class);

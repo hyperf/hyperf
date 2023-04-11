@@ -463,7 +463,7 @@ $input = new ArrayInput($params);
 $output = new NullOutput();
 
 /** @var \Psr\Container\ContainerInterface $container */
-$container = \Hyperf\Utils\ApplicationContext::getContainer();
+$container = \Hyperf\Context\ApplicationContext::getContainer();
 
 /** @var \Symfony\Component\Console\Application $application */
 $application = $container->get(\Hyperf\Contract\ApplicationInterface::class);

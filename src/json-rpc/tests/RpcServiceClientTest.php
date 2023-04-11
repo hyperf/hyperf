@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\JsonRpc;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -28,7 +29,6 @@ use Hyperf\Rpc\IdGenerator\IdGeneratorInterface;
 use Hyperf\Rpc\IdGenerator\UniqidIdGenerator;
 use Hyperf\RpcClient\Exception\RequestException;
 use Hyperf\RpcClient\ProxyFactory;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Packer\JsonPacker;
 use Hyperf\Utils\Serializer\SerializerFactory;
 use Hyperf\Utils\Serializer\SymfonyNormalizer;

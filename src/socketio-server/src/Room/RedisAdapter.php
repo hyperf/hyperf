@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Room;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
@@ -20,7 +21,6 @@ use Hyperf\Server\Exception\RuntimeException;
 use Hyperf\SocketIOServer\Emitter\Flagger;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
 use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscriber\Subscriber;

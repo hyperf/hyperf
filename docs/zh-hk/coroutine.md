@@ -235,7 +235,7 @@ try{
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine\Concurrent;
+use Hyperf\Coroutine\Concurrent;
 
 $concurrent = new Concurrent(10);
 

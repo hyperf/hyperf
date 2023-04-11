@@ -71,7 +71,7 @@ return [
 ```php
 <?php
 use Hyperf\Snowflake\IdGeneratorInterface;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 $generator = $container->get(IdGeneratorInterface::class);
@@ -84,7 +84,7 @@ $id = $generator->generate();
 ```php
 <?php
 use Hyperf\Snowflake\IdGeneratorInterface;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 $generator = $container->get(IdGeneratorInterface::class);
@@ -126,7 +126,7 @@ class UserDefinedIdGenerator
     }
 }
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 $generator = $container->get(UserDefinedIdGenerator::class);

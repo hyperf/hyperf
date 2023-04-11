@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\JsonRpc;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Engine\Contract\Socket\SocketFactoryInterface;
@@ -24,7 +25,6 @@ use Hyperf\JsonRpc\Pool\RpcPool;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\JsonRpc\Stub\RpcPoolStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;

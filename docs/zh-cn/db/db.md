@@ -61,7 +61,7 @@ php bin/hyperf.php vendor:publish hyperf/db
 ```php
 <?php
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\DB\DB;
 
 $db = ApplicationContext::getContainer()->get(DB::class);

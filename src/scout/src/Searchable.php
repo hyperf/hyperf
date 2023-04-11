@@ -12,12 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Scout;
 
 use Closure;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Coroutine\Concurrent;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Collection as BaseCollection;
 use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\ModelListener\Collector\ListenerCollector;
 use Hyperf\Scout\Engine\Engine;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
 
 trait Searchable
@@ -27,7 +28,7 @@ trait Searchable
      */
     protected array $scoutMetadata = [];
 
-    protected static ?Coroutine\Concurrent $scoutRunner = null;
+    protected static ?Concurrent $scoutRunner = null;
 
     /**
      * Boot the trait.
@@ -288,8 +289,8 @@ trait Searchable
             return;
         }
         if (defined('SCOUT_COMMAND')) {
-            if (! static::$scoutRunner instanceof Coroutine\Concurrent) {
-                static::$scoutRunner = new Coroutine\Concurrent((new static())->syncWithSearchUsingConcurency());
+            if (! static::$scoutRunner instanceof Concurrent) {
+                static::$scoutRunner = new Concurrent((new static())->syncWithSearchUsingConcurency());
             }
             self::$scoutRunner->create($job);
         } else {

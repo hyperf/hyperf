@@ -463,7 +463,7 @@ class OtherConsumerProcess extends ConsumerProcess
 
 ```php
 use Hyperf\AsyncQueue\Driver\DriverFactory;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $driver = ApplicationContext::getContainer()->get(DriverFactory::class)->get('other');
 return $driver->push(new ExampleJob());

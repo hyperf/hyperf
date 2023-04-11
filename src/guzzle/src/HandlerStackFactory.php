@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Guzzle;
 
 use GuzzleHttp\HandlerStack;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Pool\SimplePool\PoolFactory;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
 
 class HandlerStackFactory

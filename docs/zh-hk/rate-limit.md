@@ -111,7 +111,7 @@ namespace App\Controller;
 
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\RateLimit\Annotation\RateLimit;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 class TestController

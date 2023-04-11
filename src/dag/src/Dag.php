@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Dag;
 
+use Hyperf\Coroutine\Concurrent;
 use Hyperf\Dag\Exception\InvalidArgumentException;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Coroutine\Concurrent;
 use SplStack;
 
 class Dag implements Runner

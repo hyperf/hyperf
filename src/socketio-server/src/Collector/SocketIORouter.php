@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Collector;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\SocketIOServer\Exception\RouteNotFoundException;
 use Hyperf\SocketIOServer\NamespaceInterface;
-use Hyperf\Utils\ApplicationContext;
 
 class SocketIORouter extends MetadataCollector
 {

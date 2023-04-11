@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\ReactiveX\Observable;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Dispatcher\HttpRequestHandler;
 use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Server;
-use Hyperf\Utils\ApplicationContext;
 use Psr\Http\Message\ServerRequestInterface;
 use Rx\Disposable\EmptyDisposable;
 use Rx\DisposableInterface;

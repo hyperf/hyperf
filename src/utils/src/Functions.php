@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Utils\Backoff;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;

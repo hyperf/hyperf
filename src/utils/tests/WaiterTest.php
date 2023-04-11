@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Coroutine\Exception\WaitTimeoutException;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
 use Mockery;
 use PHPUnit\Framework\TestCase;

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\JsonRpc;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -34,7 +35,6 @@ use Hyperf\RpcServer\Router\DispatcherFactory;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
 use Hyperf\Server\ServerManager;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use Hyperf\Utils\Str;

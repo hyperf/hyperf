@@ -11,12 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\ModelCache\Builder as ModelCacheBuilder;
-use Hyperf\Utils\ApplicationContext;
 
 trait Cacheable
 {

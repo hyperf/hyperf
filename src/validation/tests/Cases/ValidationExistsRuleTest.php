@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Validation\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
@@ -22,7 +23,6 @@ use Hyperf\DbConnection\Model\Model;
 use Hyperf\Server\Entry\EventDispatcher;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Validation\DatabasePresenceVerifier;
 use Hyperf\Validation\Rules\Exists;
 use Hyperf\Validation\Validator;

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Utils\Pipeline;
 use HyperfTest\Utils\Stub\FooPipeline;
 use Mockery;

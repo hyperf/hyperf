@@ -11,12 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Emitter;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Parser\Engine;
 use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 
 /**

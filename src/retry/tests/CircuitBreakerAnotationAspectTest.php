@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Retry;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Aop\AnnotationMetadata;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Di\Container;
@@ -20,7 +21,6 @@ use Hyperf\Retry\Annotation\CircuitBreaker;
 use Hyperf\Retry\Aspect\RetryAnnotationAspect;
 use Hyperf\Retry\CircuitBreakerState;
 use Hyperf\Retry\FlatStrategy;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Retry\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;
