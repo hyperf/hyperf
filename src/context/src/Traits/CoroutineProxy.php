@@ -37,7 +37,7 @@ trait CoroutineProxy
     protected function getTargetObject()
     {
         if (! isset($this->proxyKey)) {
-            throw new RuntimeException('$proxyKey property of class missing.');
+            throw new RuntimeException(sprintf('Missing $proxyKey property in %s.', $this::class));
         }
         return Context::get($this->proxyKey);
     }
