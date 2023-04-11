@@ -11,34 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Traits;
 
-use Hyperf\Context\Context;
-use RuntimeException;
-
+/**
+ * @deprecated since 3.1, use \Hyperf\Context\Traits\CoroutineProxy instead.
+ */
 trait CoroutineProxy
 {
-    public function __call($name, $arguments)
-    {
-        $target = $this->getTargetObject();
-        return $target->{$name}(...$arguments);
-    }
-
-    public function __get($name)
-    {
-        $target = $this->getTargetObject();
-        return $target->{$name};
-    }
-
-    public function __set($name, $value)
-    {
-        $target = $this->getTargetObject();
-        return $target->{$name} = $value;
-    }
-
-    protected function getTargetObject()
-    {
-        if (! isset($this->proxyKey)) {
-            throw new RuntimeException('$proxyKey property of class missing.');
-        }
-        return Context::get($this->proxyKey);
-    }
+    use \Hyperf\Context\Traits\CoroutineProxy;
 }
