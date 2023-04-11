@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace HyperfTest\WebSocketServer;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 use HyperfTest\ModelCache\Stub\StdoutLogger;
 use Mockery;

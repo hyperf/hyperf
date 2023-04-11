@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di\Annotation;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\ScanHandler\NullScanHandler;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Composer;
 use Hyperf\Utils\Filesystem\Filesystem;
 use HyperfTest\Di\Stub\AnnotationCollector;

@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace HyperfTest\GrpcClient;
 
 use Grpc\UserReply;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Grpc\Parser;
 use Hyperf\GrpcClient\BaseClient;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ChannelPool;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Parallel;

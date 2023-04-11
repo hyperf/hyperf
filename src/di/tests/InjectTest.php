@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Di;
 
 use Exception;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\Inject;
@@ -21,7 +22,6 @@ use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Exception\AnnotationException;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\ScanHandler\NullScanHandler;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Di\ExceptionStub\DemoInjectException;
 use HyperfTest\Di\Stub\AnnotationCollector;
 use HyperfTest\Di\Stub\AspectCollector;

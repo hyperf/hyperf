@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace HyperfTest\ModelCache\Handler;
 
 use DateInterval;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\ModelCache\Stub\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;

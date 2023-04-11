@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace HyperfTest\View;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\View\Engine\SmartyEngine;
 use Hyperf\View\Exception\RenderException;
 use Hyperf\View\Mode;

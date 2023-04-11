@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace HyperfTest\SocketIOServer\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\SocketIOServer\Exception\ConnectionClosedException;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\Socket;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Context;
 use Hyperf\WebSocketServer\Sender;
 use Mockery;

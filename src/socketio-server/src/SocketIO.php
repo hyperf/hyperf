@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\SocketIOServer;
 
 use Closure;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
@@ -26,7 +27,6 @@ use Hyperf\SocketIOServer\Parser\Engine;
 use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Constant\Opcode;
 use Hyperf\WebSocketServer\Sender;
 use Swoole\Atomic;

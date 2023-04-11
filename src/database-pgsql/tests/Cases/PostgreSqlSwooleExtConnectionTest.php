@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database\PgSQL\Cases;
 
 use Exception;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
@@ -23,7 +24,6 @@ use Hyperf\Database\PgSQL\Connectors\PostgresSqlSwooleExtConnector;
 use Hyperf\Database\PgSQL\PostgreSqlSwooleExtConnection;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Schema\Schema;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Mockery;
 use PHPUnit\Framework\TestCase;

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\RpcServer\Stub;
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Mockery;
 use Psr\Container\ContainerInterface;
 

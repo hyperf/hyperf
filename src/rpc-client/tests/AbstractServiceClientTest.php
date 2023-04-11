@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace HyperfTest\RpcClient;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\DriverManager;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\RpcClient\Stub\FooServiceClient;
 use Mockery;
 use PHPUnit\Framework\TestCase;

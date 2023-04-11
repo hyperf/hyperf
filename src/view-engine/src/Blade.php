@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\ViewEngine\Compiler\CompilerInterface;
 use Psr\Container\ContainerInterface;
 

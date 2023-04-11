@@ -13,12 +13,12 @@ namespace Hyperf\DbConnection;
 
 use Closure;
 use Generator;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Connection as Conn;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
-use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 
 /**

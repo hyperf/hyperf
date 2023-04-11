@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Testing;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
@@ -27,7 +28,6 @@ use Hyperf\HttpServer\Router\Router;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
 use Hyperf\Testing\Client;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Filesystem\Filesystem;

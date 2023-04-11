@@ -14,12 +14,12 @@ namespace HyperfTest\ConfigNacos;
 use Hyperf\ConfigNacos\Client;
 use Hyperf\ConfigNacos\Constants;
 use Hyperf\ConfigNacos\NacosClient;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Config;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use Psr\Container\ContainerInterface;
 

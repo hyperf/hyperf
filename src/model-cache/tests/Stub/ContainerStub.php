@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\ModelCache\Stub;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
@@ -41,7 +42,6 @@ use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Hyperf\Utils\Waiter;
 use Mockery;

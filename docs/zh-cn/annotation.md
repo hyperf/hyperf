@@ -237,7 +237,7 @@ namespace Hyperf\Utils;
 
 use App\Kernel\Context\Coroutine as Co;
 use Swoole\Coroutine as SwooleCoroutine;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 /**
  * @method static void defer(callable $callable)

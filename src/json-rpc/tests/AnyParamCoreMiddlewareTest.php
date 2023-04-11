@@ -13,6 +13,7 @@ namespace HyperfTest\JsonRpc;
 
 use Error;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
@@ -38,7 +39,6 @@ use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\RpcServer\Router\DispatcherFactory;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Packer\JsonPacker;
 use Hyperf\Utils\Serializer\SerializerFactory;
 use Hyperf\Utils\Serializer\SymfonyNormalizer;

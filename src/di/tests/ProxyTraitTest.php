@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Di\Stub\Aspect\GetNameAspect;
 use HyperfTest\Di\Stub\Aspect\IncrAspect;
 use HyperfTest\Di\Stub\Aspect\IncrAspectAnnotation;

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
 use Hyperf\Engine\Channel;
@@ -21,7 +22,6 @@ use Hyperf\ReactiveX\Contract\BroadcasterInterface;
 use Hyperf\ReactiveX\IpcMessageWrapper;
 use Hyperf\ReactiveX\IpcSubject;
 use Hyperf\ReactiveX\RxSwoole;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\ListenerProviderInterface;

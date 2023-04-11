@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Dispatcher;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\HttpMessage\Server\Response;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Dispatcher\Middlewares\CoreMiddleware;
 use HyperfTest\Dispatcher\Middlewares\Test2Middleware;
 use HyperfTest\Dispatcher\Middlewares\TestMiddleware;

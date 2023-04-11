@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpServer;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
@@ -21,7 +22,6 @@ use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\ResponseEmitter;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\SafeCaller;
 use HyperfTest\HttpServer\Stub\ServerStub;
 use Mockery;

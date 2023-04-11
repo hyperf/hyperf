@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace HyperfTest\Utils;
 
 use Exception;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Channel;
 use Hyperf\Engine\Exception\CoroutineDestroyedException;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
 use Mockery;
 use PHPUnit\Framework\TestCase;

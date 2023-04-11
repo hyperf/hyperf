@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine;
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\View\Engine\EngineInterface;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 

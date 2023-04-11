@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Pipeline;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Pipeline\Pipeline;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Pipeline\Stub\FooPipeline;
 use Mockery;
 use PHPUnit\Framework\TestCase;

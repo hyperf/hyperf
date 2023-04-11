@@ -14,6 +14,7 @@ namespace HyperfTest\Cache\Stub;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Cache\Driver\RedisDriver;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
@@ -26,7 +27,6 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Mockery;
 

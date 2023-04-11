@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
@@ -25,7 +26,6 @@ use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\HttpServer\Exception\Http\FileException;
 use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Codec\Xml;

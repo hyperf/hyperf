@@ -6,6 +6,7 @@
 - [#5617](https://github.com/hyperf/hyperf/pull/5617) Removed the requirement `hyperf/guzzle` from `hyperf/consul`.
 - [#5618](https://github.com/hyperf/hyperf/pull/5618) Support to set the default router for swagger.
 - [#5619](https://github.com/hyperf/hyperf/pull/5619) [#5620](https://github.com/hyperf/hyperf/pull/5620) Split `hyperf/coroutine` from `hyperf/utils`.
+- [#5621](https://github.com/hyperf/hyperf/pull/5621) Use `Hyperf\Context\ApplicationContext` instead of `Hyperf\Utils\ApplicationContext`.
 
 # v3.0.15 - 2023-04-07
 

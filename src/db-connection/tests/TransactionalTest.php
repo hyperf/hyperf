@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\DbConnection;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Annotation\Transactional;
@@ -18,7 +19,6 @@ use Hyperf\DbConnection\Aspect\TransactionAspect;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

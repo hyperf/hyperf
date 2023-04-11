@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Validation\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\HttpMessage\Base\Response;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\MessageBag;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\ValidationException;

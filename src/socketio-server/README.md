@@ -132,7 +132,7 @@ function onConnect(\Hyperf\SocketIOServer\Socket $socket){
   // sending without compression
   $socket->compress(false)->emit('uncompressed', "that's rough");
 
-  $io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
+  $io = \Hyperf\Context\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
 
   // sending to all clients in 'game' room, including sender
   $io->in('game')->emit('big-announcement', 'the game will start soon');

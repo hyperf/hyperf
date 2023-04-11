@@ -12,12 +12,12 @@ declare(strict_types=1);
 namespace HyperfTest\ViewEngine;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\View\Mode;
 use Hyperf\ViewEngine\Component\DynamicComponent;
 use Hyperf\ViewEngine\ConfigProvider;

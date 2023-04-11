@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\GrpcClient;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\GrpcClient\StreamingCall;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ChannelPool;
 use HyperfTest\GrpcClient\Stub\RouteGuideClient;
 use Mockery;

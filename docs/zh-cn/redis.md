@@ -58,7 +58,7 @@ php bin/hyperf.php vendor:publish hyperf/redis
 
 ```php
 <?php
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 
@@ -140,7 +140,7 @@ $result = $redis->keys('*');
 ```php
 <?php
 use Hyperf\Redis\RedisFactory;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 

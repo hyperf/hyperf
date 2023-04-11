@@ -13,7 +13,7 @@ namespace HyperfTest\Amqp;
 
 use Hyperf\Amqp\ConnectionFactory;
 use Hyperf\Amqp\Consumer;
-use Hyperf\Utils\Coroutine\Concurrent;
+use Hyperf\Coroutine\Concurrent;
 use Hyperf\Utils\Exception\ChannelClosedException;
 use Hyperf\Utils\Reflection\ClassInvoker;
 use HyperfTest\Amqp\Stub\AMQPConnectionStub;

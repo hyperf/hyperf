@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
@@ -31,7 +32,6 @@ use Hyperf\Di\Container;
 use Hyperf\Engine\Channel;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\TestModel;
 use HyperfTest\Database\Stubs\Model\User;
