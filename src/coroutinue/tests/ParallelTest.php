@@ -15,7 +15,6 @@ use Exception;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Coroutine\Exception\ParallelExecutionException;
 use Hyperf\Coroutine\Parallel;
-use Hyperf\Utils\Str;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Throwable;
@@ -207,7 +206,7 @@ class ParallelTest extends TestCase
             throw new RuntimeException();
         } catch (ParallelExecutionException $exception) {
             foreach (['Detecting', 'RuntimeException', '#0'] as $keyword) {
-                $this->assertTrue(Str::contains($exception->getMessage(), $keyword));
+                $this->assertTrue(str_contains($exception->getMessage(), $keyword));
             }
 
             $result = $exception->getResults();
