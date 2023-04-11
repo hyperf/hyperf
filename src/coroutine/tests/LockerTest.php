@@ -15,6 +15,8 @@ use Hyperf\Coroutine\Locker;
 use Hyperf\Engine\Channel;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Coroutine\go;
+
 /**
  * @internal
  * @coversNothing
