@@ -22,16 +22,16 @@ class Parallel
     /**
      * @var callable[]
      */
-    private array $callbacks = [];
+    protected array $callbacks = [];
 
-    private ?Channel $concurrentChannel = null;
+    protected ?Channel $concurrentChannel = null;
 
-    private array $results = [];
+    protected array $results = [];
 
     /**
      * @var Throwable[]
      */
-    private array $throwables = [];
+    protected array $throwables = [];
 
     /**
      * @param int $concurrent if $concurrent is equal to 0, that means unlimit
