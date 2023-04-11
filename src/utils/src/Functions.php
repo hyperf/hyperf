@@ -19,8 +19,6 @@ use Hyperf\Utils\Optional;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Waiter;
-use Psr\Container\NotFoundExceptionInterface;
-use Psr\Container\ContainerExceptionInterface;
 
 if (! function_exists('value')) {
     /**
@@ -305,7 +303,7 @@ if (! function_exists('call')) {
 if (! function_exists('go')) {
     /**
      * @return bool|int
-     * 
+     *
      * @deprecated since 3.1, use `Hyperf\Coroutine\go` instead.
      */
     function go(callable $callable)
@@ -318,7 +316,7 @@ if (! function_exists('go')) {
 if (! function_exists('co')) {
     /**
      * @return bool|int
-     * 
+     *
      * @deprecated since 3.1, use `Hyperf\Coroutine\co` instead.
      */
     function co(callable $callable)
@@ -420,7 +418,7 @@ if (! function_exists('parallel')) {
     /**
      * @param callable[] $callables
      * @param int $concurrent if $concurrent is equal to 0, that means unlimited
-     * 
+     *
      * @deprecated since 3.1, use `Hyperf\Coroutine\parallel` instead.
      */
     function parallel(array $callables, int $concurrent = 0)
@@ -457,7 +455,7 @@ if (! function_exists('run')) {
      * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
      *
      * @param array|callable $callbacks
-     * 
+     *
      * @deprecated since 3.1, use `Hyperf\Coroutine\run` instead.
      */
     function run($callbacks, int $flags = SWOOLE_HOOK_ALL): bool
