@@ -19,6 +19,7 @@
         "php": ">=7.2",
         "doctrine/inflector": "^2.0",
         "hyperf/collection": "~3.0.0",
+        "hyperf/coroutine": "~3.0.0",
         "hyperf/context": "~3.0.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/coordinator": "~3.0.0",
