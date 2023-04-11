@@ -6,7 +6,7 @@
         "php",
         "swoole",
         "hyperf",
-        "pipeline"
+        "coroutine"
     ],
     "homepage": "https://hyperf.io",
     "support": {

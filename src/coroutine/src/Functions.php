@@ -19,7 +19,7 @@ use RuntimeException;
  * @param callable[] $callables
  * @param int $concurrent if $concurrent is equal to 0, that means unlimited
  */
-function parallel(array $callables, int $concurrent = 0)
+function parallel(array $callables, int $concurrent = 0): array
 {
     $parallel = new Parallel($concurrent);
     foreach ($callables as $key => $callable) {
@@ -37,10 +37,7 @@ function wait(Closure $closure, ?float $timeout = null)
     return (new Waiter())->wait($closure, $timeout);
 }
 
-/**
- * @return bool|int
- */
-function co(callable $callable)
+function co(callable $callable): bool|int
 {
     $id = Coroutine::create($callable);
     return $id > 0 ? $id : false;
@@ -51,10 +48,7 @@ function defer(callable $callable): void
     Coroutine::defer($callable);
 }
 
-/**
- * @return bool|int
- */
-function go(callable $callable)
+function go(callable $callable): bool|int
 {
     $id = Coroutine::create($callable);
     return $id > 0 ? $id : false;
