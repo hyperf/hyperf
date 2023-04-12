@@ -9,6 +9,7 @@
 - [#5621](https://github.com/hyperf/hyperf/pull/5621) Use `Hyperf\Context\ApplicationContext` instead of `Hyperf\Utils\ApplicationContext`.
 - [#5622](https://github.com/hyperf/hyperf/pull/5622) Split `CoroutineProxy` from `hyperf/utils` to `hyperf/context`.
 - [#5623](https://github.com/hyperf/hyperf/pull/5623) Use `Hyperf\Coroutine\Coroutine` instead of `Hyperf\Utils\Coroutine`.
+- [#5624](https://github.com/hyperf/hyperf/pull/5624) Split Channel utils from `hyperf/utils` to `hyperf/coroutine`.
 
 # v3.0.15 - 2023-04-07
 
