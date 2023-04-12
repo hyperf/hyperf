@@ -24,6 +24,8 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 
+use function Hyperf\Coroutine\defer;
+
 class TraceMiddleware implements MiddlewareInterface
 {
     use SpanStarter;

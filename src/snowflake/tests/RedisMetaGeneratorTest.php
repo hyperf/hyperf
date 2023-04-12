@@ -33,6 +33,7 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
+use function Hyperf\Coroutine\go;
 use function Hyperf\Coroutine\parallel;
 
 /**
