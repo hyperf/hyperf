@@ -11,9 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Context\Traits;
 
+use RuntimeException;
 use Hyperf\Context\Context;
-use Hyperf\Context\Traits\CoroutineProxy;
 use PHPUnit\Framework\TestCase;
+use Hyperf\Context\Traits\CoroutineProxy;
 
 /**
  * @internal
@@ -29,6 +30,14 @@ class CoroutineProxyTest extends TestCase
         $this->assertSame('bar', $foo->bar);
         $foo->bar = 'foo';
         $this->assertSame('foo', $foo->bar);
+    }
+
+    public function testCoroutineProxyException()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Missing $proxyKey property in HyperfTest\\Context\\Traits\\Foo2.');
+        $foo = new Foo2();
+        $foo->callBar();
     }
 }
 
@@ -47,4 +56,9 @@ class Foo
     use CoroutineProxy;
 
     protected $proxyKey = 'bar';
+}
+
+class Foo2
+{
+    use CoroutineProxy;
 }
