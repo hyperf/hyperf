@@ -23,8 +23,9 @@
         "hyperf/tappable": "~3.0.0"
     },
     "suggest": {
-        "ramsey/uuid": "Required to use uuid and orderedUuid methods",
-        "symfony/uid": "Required to use ulid method"
+        "ramsey/uuid": "Required to use uuid and orderedUuid methods.(^4.7|^5.0)",
+        "symfony/uid": "Required to use ulid method.(^5.0|^6.0)",
+        "doctrine/inflector": "Required to use plural and singular methods.(^2.0|^3.0)"
     },
     "autoload": {
         "psr-4": {
