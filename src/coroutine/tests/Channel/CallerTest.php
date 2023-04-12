@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Utils\Channel;
+namespace HyperfTest\Coroutine\Channel;
 
+use Hyperf\Coroutine\Channel\Caller;
 use Hyperf\Coroutine\Exception\WaitTimeoutException;
-use Hyperf\Utils\Channel\Caller;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+
+use function Hyperf\Coroutine\go;
 
 /**
  * @internal
