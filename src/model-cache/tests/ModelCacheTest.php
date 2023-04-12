@@ -32,6 +32,8 @@ use Redis;
 use stdClass;
 use Throwable;
 
+use function Hyperf\Coroutine\wait;
+
 /**
  * @internal
  * @coversNothing

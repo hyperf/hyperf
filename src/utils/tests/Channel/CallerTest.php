@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils\Channel;
 
+use Hyperf\Coroutine\Exception\WaitTimeoutException;
 use Hyperf\Utils\Channel\Caller;
-use Hyperf\Utils\Exception\WaitTimeoutException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

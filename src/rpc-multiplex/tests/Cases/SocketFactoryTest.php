@@ -22,6 +22,8 @@ use Hyperf\Utils\Reflection\ClassInvoker;
 use HyperfTest\RpcMultiplex\Stub\ContainerStub;
 use Mockery;
 
+use function Hyperf\Coroutine\go;
+
 /**
  * @internal
  * @coversNothing

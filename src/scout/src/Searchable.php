@@ -14,12 +14,12 @@ namespace Hyperf\Scout;
 use Closure;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Coroutine\Concurrent;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Collection as BaseCollection;
 use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\ModelListener\Collector\ListenerCollector;
 use Hyperf\Scout\Engine\Engine;
-use Hyperf\Utils\Coroutine;
 
 trait Searchable
 {

@@ -18,6 +18,8 @@ use HyperfTest\Utils\Stub\StringCodeException;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
+use function Hyperf\Coroutine\go;
+
 /**
  * @internal
  * @coversNothing

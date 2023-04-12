@@ -11,26 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
-use Hyperf\Engine\Channel;
-use SplQueue;
+use Hyperf\Coroutine\Channel\Pool;
 
-class ChannelPool extends SplQueue
+/**
+ * @deprecated since 3.1, use Hyperf\Coroutine\Channel\Pool instead.
+ */
+class ChannelPool extends Pool
 {
-    private static ?ChannelPool $instance = null;
-
-    public static function getInstance(): self
-    {
-        return static::$instance ??= new self();
-    }
-
-    public function get(): Channel
-    {
-        return $this->isEmpty() ? new Channel(1) : $this->pop();
-    }
-
-    public function release(Channel $channel)
-    {
-        $channel->errCode = 0;
-        $this->push($channel);
-    }
 }

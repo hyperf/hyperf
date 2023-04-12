@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ReactiveX;
 
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use Rx\Disposable\CallbackDisposable;
 use Rx\Disposable\EmptyDisposable;
 use Rx\Scheduler;

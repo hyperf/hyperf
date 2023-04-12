@@ -27,6 +27,8 @@ use Hyperf\Redis\Redis;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Coroutine\go;
+
 /**
  * @internal
  * @coversNothing

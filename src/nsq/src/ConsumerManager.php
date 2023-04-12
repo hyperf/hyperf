@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Nsq;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Nsq\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Nsq\Event\AfterConsume;
@@ -21,7 +22,6 @@ use Hyperf\Nsq\Event\BeforeSubscribe;
 use Hyperf\Nsq\Event\FailToConsume;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
-use Hyperf\Utils\Waiter;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;

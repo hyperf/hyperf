@@ -13,8 +13,9 @@ namespace Hyperf\Utils\Filesystem;
 
 use ErrorException;
 use FilesystemIterator;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Locker;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Coroutine;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -539,12 +540,12 @@ class Filesystem
     {
         if (Coroutine::inCoroutine()) {
             try {
-                while (! Coroutine\Locker::lock($path)) {
+                while (! Locker::lock($path)) {
                     usleep(1000);
                 }
                 return $callback($path);
             } finally {
-                Coroutine\Locker::unlock($path);
+                Locker::unlock($path);
             }
         } else {
             return $callback($path);

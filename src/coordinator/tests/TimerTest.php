@@ -14,7 +14,7 @@ namespace HyperfTest\Coordinator;
 use Closure;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
-use Hyperf\Utils\Waiter;
+use Hyperf\Coroutine\Waiter;
 use PHPUnit\Framework\TestCase;
 
 /**

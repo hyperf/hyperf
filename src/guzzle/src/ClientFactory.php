@@ -13,7 +13,7 @@ namespace Hyperf\Guzzle;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use Psr\Container\ContainerInterface;
 
 /**

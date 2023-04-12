@@ -13,13 +13,13 @@ namespace HyperfTest\GrpcClient;
 
 use Grpc\UserReply;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Parallel;
 use Hyperf\Di\Container;
 use Hyperf\Grpc\Parser;
 use Hyperf\GrpcClient\BaseClient;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\Utils\ChannelPool;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Parallel;
 use HyperfTest\GrpcClient\Stub\HiClient;
 use Mockery;
 use PHPUnit\Framework\TestCase;

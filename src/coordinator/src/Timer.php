@@ -15,6 +15,8 @@ use Closure;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Throwable;
 
+use function Hyperf\Coroutine\go;
+
 class Timer
 {
     public const STOP = 'stop';

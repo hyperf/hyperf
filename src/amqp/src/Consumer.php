@@ -31,6 +31,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
+use function Hyperf\Coroutine\parallel;
+
 class Consumer extends Builder
 {
     protected ?EventDispatcherInterface $eventDispatcher = null;

@@ -32,7 +32,7 @@ The `CoordinatorManager` is used to schedule the coroutine when events occurred.
 <?php
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Constants;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 
 Coroutine::create(function() {
     // Invoked after all OnWorkerStart event callbacks are completed

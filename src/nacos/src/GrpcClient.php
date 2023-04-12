@@ -41,6 +41,8 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
+use function Hyperf\Coroutine\go;
+
 class GrpcClient
 {
     protected array $listeners = [];
