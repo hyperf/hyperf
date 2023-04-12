@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
-use Hyperf\Utils\Exception\InvalidArgumentException;
 use Hyperf\Utils\Stringable;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
