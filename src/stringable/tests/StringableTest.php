@@ -9,9 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Utils;
+namespace HyperfTest\Stringable;
 
-use Hyperf\Utils\Stringable;
+use Hyperf\Stringable\Stringable;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
