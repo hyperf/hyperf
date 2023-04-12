@@ -31,6 +31,8 @@ use Rx\SchedulerInterface;
 use Rx\Subject\Subject;
 use Swoole\Runtime;
 
+use function Hyperf\Coroutine\go;
+
 /**
  * @internal
  * @coversNothing

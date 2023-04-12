@@ -47,6 +47,8 @@ use Swoole\Event;
 use Swoole\Runtime;
 use Swoole\Timer;
 
+use function Hyperf\Coroutine\go;
+
 /**
  * @internal
  * @coversNothing
