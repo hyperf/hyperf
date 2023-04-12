@@ -11,27 +11,27 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Validation\Cases;
 
-use Mockery;
-use Throwable;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Coroutine\Waiter;
-use PHPUnit\Framework\TestCase;
-use Hyperf\Translation\Translator;
-use function Hyperf\Coroutine\wait;
-use Hyperf\Translation\ArrayLoader;
-use Psr\Container\ContainerInterface;
-use Hyperf\Context\ApplicationContext;
 use Hyperf\HttpMessage\Server\Response;
-use Hyperf\Validation\ValidatorFactory;
-use Psr\Http\Message\ResponseInterface;
-use Hyperf\Validation\ValidationException;
 use Hyperf\HttpMessage\Upload\UploadedFile;
-use Psr\Http\Message\ServerRequestInterface;
-use HyperfTest\Validation\Cases\Stub\DemoRequest;
-
-use HyperfTest\Validation\Cases\Stub\BarSceneRequest;
-use HyperfTest\Validation\Cases\Stub\FooSceneRequest;
+use Hyperf\Translation\ArrayLoader;
+use Hyperf\Translation\Translator;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
+use Hyperf\Validation\ValidationException;
+use Hyperf\Validation\ValidatorFactory;
+use HyperfTest\Validation\Cases\Stub\BarSceneRequest;
+use HyperfTest\Validation\Cases\Stub\DemoRequest;
+use HyperfTest\Validation\Cases\Stub\FooSceneRequest;
+use Mockery;
+use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
+
+use function Hyperf\Coroutine\wait;
 
 /**
  * @internal
