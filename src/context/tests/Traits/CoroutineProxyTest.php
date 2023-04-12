@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Context\Traits;
 
-use RuntimeException;
 use Hyperf\Context\Context;
-use PHPUnit\Framework\TestCase;
 use Hyperf\Context\Traits\CoroutineProxy;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * @internal
