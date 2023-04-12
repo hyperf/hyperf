@@ -29,6 +29,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Coroutine\run;
 
 abstract class Command extends SymfonyCommand
 {

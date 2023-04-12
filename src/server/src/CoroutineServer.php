@@ -29,6 +29,8 @@ use Swoole\Coroutine;
 use Swoole\Coroutine\Http\Server as HttpServer;
 use Swoole\Coroutine\Server;
 
+use function Hyperf\Coroutine\run;
+
 class CoroutineServer implements ServerInterface
 {
     protected ?ServerConfig $config = null;
