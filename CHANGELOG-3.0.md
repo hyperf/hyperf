@@ -1,5 +1,9 @@
 # v3.0.16 - TBD
 
+## Fixed
+
+- [#5627](https://github.com/hyperf/hyperf/pull/5627) Fixed issue where coroutine context was not destroyed in `Hyperf\Context\Context::destroy` method.
+
 ## Optimized
 
 - [#5616](https://github.com/hyperf/hyperf/pull/5616) Split `ApplicationContext` from `hyperf/utils` to `hyperf/context`.

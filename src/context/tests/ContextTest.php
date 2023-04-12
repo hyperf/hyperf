@@ -53,24 +53,28 @@ class ContextTest extends TestCase
     {
         Context::set('test.store.id', $uid = uniqid());
         $id = Coroutine::id();
-        parallel([function () use ($id, $uid) {
-            Context::copy($id, ['test.store.id']);
-            $this->assertSame($uid, Context::get('test.store.id'));
-        }]);
+        parallel([
+            function () use ($id, $uid) {
+                Context::copy($id, ['test.store.id']);
+                $this->assertSame($uid, Context::get('test.store.id'));
+            },
+        ]);
     }
 
     public function testCopyAfterSet()
     {
         Context::set('test.store.id', $uid = uniqid());
         $id = Coroutine::id();
-        parallel([function () use ($id, $uid) {
-            Context::set('test.store.name', 'Hyperf');
-            Context::copy($id, ['test.store.id']);
-            $this->assertSame($uid, Context::get('test.store.id'));
+        parallel([
+            function () use ($id, $uid) {
+                Context::set('test.store.name', 'Hyperf');
+                Context::copy($id, ['test.store.id']);
+                $this->assertSame($uid, Context::get('test.store.id'));
 
-            // TODO: Context::copy will delete origin values.
-            $this->assertNull(Context::get('test.store.name'));
-        }]);
+                // TODO: Context::copy will delete origin values.
+                $this->assertNull(Context::get('test.store.name'));
+            },
+        ]);
     }
 
     public function testContextChangeAfterCopy()
@@ -82,13 +86,15 @@ class ContextTest extends TestCase
         Context::set('test.store.useless.id', 1);
         $id = Coroutine::id();
         $tid = uniqid();
-        parallel([function () use ($id, $uid, $tid) {
-            Context::copy($id, ['test.store.id']);
-            $obj = Context::get('test.store.id');
-            $this->assertSame($uid, $obj->id);
-            $obj->id = $tid;
-            $this->assertFalse(Context::has('test.store.useless.id'));
-        }]);
+        parallel([
+            function () use ($id, $uid, $tid) {
+                Context::copy($id, ['test.store.id']);
+                $obj = Context::get('test.store.id');
+                $this->assertSame($uid, $obj->id);
+                $obj->id = $tid;
+                $this->assertFalse(Context::has('test.store.useless.id'));
+            },
+        ]);
 
         $this->assertSame($tid, Context::get('test.store.id')->id);
     }
@@ -105,10 +111,21 @@ class ContextTest extends TestCase
 
         Context::copy(-1);
 
-        parallel([function () {
-            Context::set('id', $id = uniqid());
-            Context::copy(-1, ['id']);
-            $this->assertSame($id, Context::get('id'));
-        }]);
+        parallel([
+            function () {
+                Context::set('id', $id = uniqid());
+                Context::copy(-1, ['id']);
+                $this->assertSame($id, Context::get('id'));
+            },
+        ]);
+    }
+
+    public function testContextDestroy()
+    {
+        Context::set($id = uniqid(), $value = uniqid());
+
+        $this->assertSame($value, Context::get($id));
+        Context::destroy($id);
+        $this->assertNull(Context::get($id));
     }
 }
