@@ -45,7 +45,7 @@ The Task component provides two usage methods: `active method delivery` and `ann
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Task\TaskExecutor;
 use Hyperf\Task\Task;
@@ -75,7 +75,7 @@ It is not particularly intuitive to use `active method delivery`. Here we implem
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Task\Annotation\Task;
 

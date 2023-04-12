@@ -33,6 +33,8 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 
+use function Hyperf\Coroutine\wait;
+
 class ConsumerManager
 {
     protected LongLangConsumer $consumer;

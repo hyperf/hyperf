@@ -19,6 +19,8 @@ use Hyperf\DB\Exception\DriverNotFoundException;
 use Hyperf\DB\Pool\PoolFactory;
 use Throwable;
 
+use function Hyperf\Coroutine\defer;
+
 /**
  * @method beginTransaction()
  * @method commit()

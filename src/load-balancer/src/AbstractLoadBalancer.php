@@ -14,7 +14,7 @@ namespace Hyperf\LoadBalancer;
 use Closure;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use Psr\Log\LoggerInterface;
 use Throwable;
 

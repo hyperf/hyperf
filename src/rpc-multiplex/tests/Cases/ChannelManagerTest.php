@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\RpcMultiplex\Cases;
 
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use Multiplex\ChannelManager;
 
 /**

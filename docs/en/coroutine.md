@@ -82,15 +82,15 @@ Set the `max_coroutine` parameter of `Swoole Server` via the `set` method to con
 
 ### Create a coroutine
 
-Use `co(callable $callable)` or `go(callable $callable)` functions or `Hyperf\Utils\Coroutine::create(callable $callable)` method to create a coroutine simply, coroutine related methods and clients can be used within the coroutine.
+Use `co(callable $callable)` or `go(callable $callable)` functions or `Hyperf\Coroutine\Coroutine::create(callable $callable)` method to create a coroutine simply, coroutine related methods and clients can be used within the coroutine.
 
 ### Is it running in coroutine environment ?
 
-In some cases, we want to determine whether is current running in the coroutine environment, for some compatible coroutine environment and non-coroutine environment code will be used as a basis for judgment, we can use `Hyperf\Utils\Coroutine:: inCoroutine(): bool` method to get the result.
+In some cases, we want to determine whether is current running in the coroutine environment, for some compatible coroutine environment and non-coroutine environment code will be used as a basis for judgment, we can use `Hyperf\Coroutine\Coroutine::inCoroutine(): bool` method to get the result.
 
 ### Get the coroutine ID
 
-In some cases, we need to do some logic according to the `coroutine ID`, such as `coroutine context`, you can get the current coroutine ID by `Hyperf\Utils\Coroutine::id(): int`, if not in the coroutine environment, the method will return `-1`.
+In some cases, we need to do some logic according to the `coroutine ID`, such as `coroutine context`, you can get the current coroutine ID by `Hyperf\Coroutine\Coroutine::id(): int`, if not in the coroutine environment, the method will return `-1`.
 
 ### Channel
 
@@ -152,14 +152,14 @@ The `Parallel` feature is an abstraction based on the `WaitGroup` feature provid
 
 ```php
 <?php
-$parallel = new \Hyperf\Utils\Parallel();
+$parallel = new \Hyperf\Coroutine\Parallel();
 $parallel->add(function () {
-    \Hyperf\Utils\Coroutine::sleep(1);
-    return \Hyperf\Utils\Coroutine::id();
+    \Hyperf\Coroutine\Coroutine::sleep(1);
+    return \Hyperf\Coroutine\Coroutine::id();
 });
 $parallel->add(function () {
-    \Hyperf\Utils\Coroutine::sleep(1);
-    return \Hyperf\Utils\Coroutine::id();
+    \Hyperf\Coroutine\Coroutine::sleep(1);
+    return \Hyperf\Coroutine\Coroutine::id();
 });
 // $result is [1, 2]
 $result = $parallel->wait();
@@ -170,7 +170,7 @@ Not only that, but we can further simplify the above code by using the `parallel
 
 ```php
 <?php
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 
 // The passed array parameters can also use `key of array` to facilitate distinguish the result of coroutine, and the returned result will also return the corresponding result according to key.
 $result = parallel([

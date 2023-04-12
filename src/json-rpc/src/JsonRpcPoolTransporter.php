@@ -25,6 +25,8 @@ use Hyperf\Rpc\Exception\RecvException;
 use Hyperf\Utils\Exception\ExceptionThrower;
 use Throwable;
 
+use function Hyperf\Coroutine\defer;
+
 class JsonRpcPoolTransporter implements TransporterInterface
 {
     use RecvTrait;

@@ -25,6 +25,8 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
+use function Hyperf\Coroutine\parallel;
+
 /**
  * @internal
  * @coversNothing

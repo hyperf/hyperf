@@ -14,9 +14,9 @@ namespace Hyperf\Crontab\Mutex;
 use Hyperf\Collection\Arr;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Redis\RedisFactory;
-use Hyperf\Utils\Coroutine;
 
 class RedisServerMutex implements ServerMutex
 {

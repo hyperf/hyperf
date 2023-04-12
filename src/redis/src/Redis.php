@@ -15,6 +15,8 @@ use Hyperf\Context\Context;
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Pool\PoolFactory;
 
+use function Hyperf\Coroutine\defer;
+
 /**
  * @mixin \Redis
  */

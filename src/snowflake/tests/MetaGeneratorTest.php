@@ -15,6 +15,8 @@ use Hyperf\Snowflake\Configuration;
 use Hyperf\Snowflake\MetaGenerator;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Coroutine\parallel;
+
 /**
  * @internal
  * @coversNothing

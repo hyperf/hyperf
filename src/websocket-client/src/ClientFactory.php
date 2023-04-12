@@ -14,6 +14,8 @@ namespace Hyperf\WebSocketClient;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\Utils\Str;
 
+use function Hyperf\Coroutine\defer;
+
 class ClientFactory
 {
     public function create(string $uri, bool $autoClose = true): Client

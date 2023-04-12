@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Logger\Aspect;
 
 use Hyperf\Context\Context;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\Utils\Coroutine;
 use Monolog\Handler\SyslogUdp\UdpSocket;
 
 class UdpSocketAspect extends AbstractAspect

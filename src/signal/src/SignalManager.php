@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Signal;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Engine\Signal as EngineSignal;
 use Hyperf\Signal\Annotation\Signal;
 use Hyperf\Signal\SignalHandlerInterface as SignalHandler;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use SplPriorityQueue;
 

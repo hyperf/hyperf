@@ -15,6 +15,8 @@ use Hyperf\Engine\Channel;
 use Hyperf\Task\ChannelFactory;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Coroutine\parallel;
+
 /**
  * @internal
  * @coversNothing
