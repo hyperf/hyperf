@@ -14,6 +14,7 @@
 - [#5622](https://github.com/hyperf/hyperf/pull/5622) Split `CoroutineProxy` from `hyperf/utils` to `hyperf/context`.
 - [#5623](https://github.com/hyperf/hyperf/pull/5623) Use `Hyperf\Coroutine\Coroutine` instead of `Hyperf\Utils\Coroutine`.
 - [#5624](https://github.com/hyperf/hyperf/pull/5624) Split Channel utils from `hyperf/utils` to `hyperf/coroutine`.
+- [#5629](https://github.com/hyperf/hyperf/pull/5629) Refactor `Hyperf\Utils\Arr` that let it extends `Hyperf\Collection\Arr`.
 
 # v3.0.15 - 2023-04-07
 
