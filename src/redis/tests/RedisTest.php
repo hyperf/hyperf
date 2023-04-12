@@ -35,6 +35,9 @@ use RedisSentinel;
 use ReflectionClass;
 use Throwable;
 
+use function Hyperf\Coroutine\defer;
+use function Hyperf\Coroutine\go;
+
 /**
  * @internal
  * @coversNothing

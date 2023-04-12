@@ -18,6 +18,8 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Coroutine\defer;
+
 class ConnectionResolver implements ConnectionResolverInterface
 {
     /**
