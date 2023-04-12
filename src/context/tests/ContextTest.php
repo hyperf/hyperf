@@ -16,6 +16,8 @@ use Hyperf\Coroutine\Coroutine;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+use function Hyperf\Coroutine\parallel;
+
 /**
  * @internal
  * @coversNothing

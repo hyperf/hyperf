@@ -22,6 +22,8 @@ use HyperfTest\DbConnection\Stubs\PDOStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Coroutine\parallel;
+
 /**
  * @internal
  * @coversNothing

@@ -19,6 +19,8 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Throwable;
 
+use function Hyperf\Coroutine\parallel;
+
 /**
  * @internal
  * @covers \Hyperf\Coroutine\Parallel

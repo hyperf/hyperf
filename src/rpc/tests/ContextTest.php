@@ -15,6 +15,8 @@ use Hyperf\Rpc\Context;
 use Hyperf\Utils\Str;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Coroutine\parallel;
+
 /**
  * @internal
  * @coversNothing
