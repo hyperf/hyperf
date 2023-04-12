@@ -1,0 +1,46 @@
+{
+    "name": "hyperf/stringable",
+    "description": "Hyperf Stringable package which come from illuminate/support",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "stringable"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=8.0",
+        "hyperf/conditionable": "~3.0.0",
+        "hyperf/macroable": "~3.0.0",
+        "hyperf/tappable": "~3.0.0"
+    },
+    "suggest": {
+        "ramsey/uuid": "Required to use uuid and orderedUuid methods",
+        "symfony/uid": "Required to use ulid method"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Stringable\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Stringable\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.0-dev"
+        }
+    }
+}
