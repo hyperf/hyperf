@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Coroutine\Channel;
 
-use Hyperf\Engine\Channel;
 use Hyperf\Coroutine\Channel\Manager as ChannelManager;
+use Hyperf\Engine\Channel;
 use PHPUnit\Framework\TestCase;
 
 use function Hyperf\Coroutine\go;

@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Coroutine\Channel;
 
 use Closure;
-use Hyperf\Engine\Channel;
 use Hyperf\Coroutine\Exception\ChannelClosedException;
 use Hyperf\Coroutine\Exception\WaitTimeoutException;
+use Hyperf\Engine\Channel;
 
 class Caller
 {
