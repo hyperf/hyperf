@@ -306,7 +306,7 @@ class Coroutine
 
 declare(strict_types=1);
 
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 
 return [
     'scan' => [

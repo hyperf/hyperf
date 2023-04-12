@@ -32,7 +32,7 @@ Hyperf 提供了大量便捷的輔助類，這裡會列出一些常用的好用�
 <?php
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Constants;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 
 Coroutine::create(function() {
     // 所有OnWorkerStart事件回撥完成後喚醒

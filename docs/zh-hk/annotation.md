@@ -217,9 +217,9 @@ class Coroutine
 
 ```
 
-然後，我們實現一個跟 `Hyperf\Utils\Coroutine` 一模一樣的對象。其中 `create()` 方法替換成我們上述實現的方法。
+然後，我們實現一個跟 `Hyperf\Coroutine\Coroutine` 一模一樣的對象。其中 `create()` 方法替換成我們上述實現的方法。
 
-`class_map/Hyperf/Utils/Coroutine.php`
+`class_map/Hyperf/Coroutine/Coroutine.php`
 
 ```php
 <?php
@@ -233,7 +233,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils;
+namespace Hyperf\Coroutine;
 
 use App\Kernel\Context\Coroutine as Co;
 use Swoole\Coroutine as SwooleCoroutine;
@@ -306,7 +306,7 @@ class Coroutine
 
 declare(strict_types=1);
 
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 
 return [
     'scan' => [
