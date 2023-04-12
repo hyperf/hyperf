@@ -29,6 +29,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
+use function Hyperf\Coroutine\wait;
+
 /**
  * @internal
  * @coversNothing
