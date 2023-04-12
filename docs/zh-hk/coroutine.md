@@ -100,7 +100,7 @@ $db->connect($config, function ($db, $r) {
 類似於 `Go` 語言的 `chan`，`Channel` 可為多生產者協程和多消費者協程模式提供支持。底層自動實現了協程的切換和調度。 `Channel` 與 `PHP` 的數組類似，僅佔用內存，沒有其他額外的資源申請，所有操作均為內存操作，無 `I/O` 消耗，使用方法與 `SplQueue` 隊列類似。   
 `Channel` 主要用於協程間通訊，當我們希望從一個協程裏返回一些數據到另一個協程時，就可通過 `Channel` 來進行傳遞。   
 
-主要方法：
+主要方法：   
 - `Channel->push` ：當隊列中有其他協程正在等待 `pop` 數據時，自動按順序喚醒一個消費者協程。當隊列已滿時自動 `yield` 讓出控制權，等待其他協程消費數據
 - `Channel->pop` ：當隊列為空時自動 `yield`，等待其他協程生產數據。消費數據後，隊列可寫入新的數據，自動按順序喚醒一個生產者協程。
 
@@ -119,16 +119,16 @@ co(function () {
 
 ### Defer 特性
 
-當我們希望在協程結束時運行一些代碼時，可以通過 `defer(callable $callable)` 函數或 `Hyperf\Coroutine\Coroutine::defer(callable $callable)` 將一段函數以 `棧(stack)` 的形式儲存起來，`棧(stack)` 內的函數會在當前協程結束時以 `先進後出` 的流程逐個執行。
+當我們希望在協程結束時運行一些代碼時，可以通過 `defer(callable $callable)` 函數或 `Hyperf\Coroutine::defer(callable $callable)` 將一段函數以 `棧(stack)` 的形式儲存起來，`棧(stack)` 內的函數會在當前協程結束時以 `先進後出` 的流程逐個執行。
 
 ### WaitGroup 特性
 
-`WaitGroup` 是基於 `Channel` 衍生出來的一個特性，如果接觸過 `Go` 語言，我們都會知道 `WaitGroup` 這一特性，在 `Hyperf` 裏，`WaitGroup` 的用途是使得主協程一直阻塞等待直到所有相關的子協程都已經完成了任務後再繼續運行，這裏説到的阻塞等待是僅對於主協程（即當前協程）來説的，並不會阻塞當前進程。
-我們通過一段代碼來演示該特性：
+`WaitGroup` 是基於 `Channel` 衍生出來的一個特性，如果接觸過 `Go` 語言，我們都會知道 `WaitGroup` 這一特性，在 `Hyperf` 裏，`WaitGroup` 的用途是使得主協程一直阻塞等待直到所有相關的子協程都已經完成了任務後再繼續運行，這裏説到的阻塞等待是僅對於主協程（即當前協程）來説的，並不會阻塞當前進程。      
+我們通過一段代碼來演示該特性：   
 
 ```php
 <?php
-$wg = new \Hyperf\Coroutine\WaitGroup();
+$wg = new \Hyperf\Utils\WaitGroup();
 // 計數器加二
 $wg->add(2);
 // 創建協程 A
@@ -177,10 +177,9 @@ try{
     // $e->getThrowables() 獲取協程中出現的異常。
 }
 ```
+> 注意 `Hyperf\Utils\Exception\ParallelExecutionException` 異常僅在 1.1.6 版本和更新的版本下會拋出
 
-> 注意 `Hyperf\Coroutine\Exception\ParallelExecutionException` 異常僅在 1.1.6 版本和更新的版本下會拋出
-
-通過上面的代碼我們可以看到僅花了 `1` 秒就得到了兩個不同的協程的 `ID`，在調用 `add(callable $callable)` 的時候 `Parallel` 類會為之自動創建一個協程，並加入到 `WaitGroup` 的調度去。
+通過上面的代碼我們可以看到僅花了 `1` 秒就得到了兩個不同的協程的 `ID`，在調用 `add(callable $callable)` 的時候 `Parallel` 類會為之自動創建一個協程，並加入到 `WaitGroup` 的調度去。    
 不僅如此，我們還可以通過 `parallel(array $callables)` 函數進行更進一步的簡化上面的代碼，達到同樣的目的，下面為簡化後的代碼。
 
 ```php
@@ -311,6 +310,6 @@ $request = Context::override(ServerRequestInterface::class, function (ServerRequ
 ```php
 <?php
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
-```
+``` 
 
 !> 如果 Swoole 版本 >= `v4.5.4`，不需要做任何修改。

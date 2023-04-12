@@ -1,5 +1,23 @@
 # 版本更新記錄
 
+# v3.0.16 - 2023-04-12
+
+## 修復
+
+- [#5627](https://github.com/hyperf/hyperf/pull/5627) 修復方法 `Hyperf\Context\Context::destroy` 支援協程下呼叫。
+
+## 最佳化
+
+- [#5616](https://github.com/hyperf/hyperf/pull/5616) 將 `ApplicationContext` 從 `hyperf/utils` 分離到 `hyperf/context`。
+- [#5617](https://github.com/hyperf/hyperf/pull/5617) 將 `hyperf/guzzle` 從 `hyperf/consul` 依賴中移除。
+- [#5618](https://github.com/hyperf/hyperf/pull/5618) 支援在 Swagger 面板中設定預設路由。
+- [#5619](https://github.com/hyperf/hyperf/pull/5619) [#5620](https://github.com/hyperf/hyperf/pull/5620) 將 `hyperf/coroutine` 從 `hyperf/utils` 分離出來。
+- [#5621](https://github.com/hyperf/hyperf/pull/5621) 使用 `Hyperf\Context\ApplicationContext` 代替 `Hyperf\Utils\ApplicationContext`。
+- [#5622](https://github.com/hyperf/hyperf/pull/5622) 將 `CoroutineProxy` 從 `hyperf/utils` 分離到 `hyperf/context`。
+- [#5623](https://github.com/hyperf/hyperf/pull/5623) 使用 `Hyperf\Coroutine\Coroutine` 替代 `Hyperf\Utils\Coroutine`。
+- [#5624](https://github.com/hyperf/hyperf/pull/5624) 將 `Channel` 相關方法從 `hyperf/utils` 分離到 `hyperf/coroutine`。
+- [#5629](https://github.com/hyperf/hyperf/pull/5629) 將 `Hyperf\Utils\Arr` 繼承 `Hyperf\Collection\Arr`。
+
 # v3.0.15 - 2023-04-07
 
 ## 新增
