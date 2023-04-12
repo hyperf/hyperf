@@ -16,7 +16,7 @@ use SplQueue;
 
 class Pool extends SplQueue
 {
-    private static ?Pool $instance = null;
+    protected static ?Pool $instance = null;
 
     public static function getInstance(): self
     {
