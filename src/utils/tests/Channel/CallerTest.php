@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Utils\Channel;
 
 use Hyperf\Utils\Channel\Caller;
-use Hyperf\Utils\Exception\WaitTimeoutException;
+use Hyperf\Coroutine\Exception\WaitTimeoutException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

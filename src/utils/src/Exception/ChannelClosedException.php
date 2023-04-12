@@ -11,8 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Exception;
 
-use RuntimeException;
-
-class ChannelClosedException extends RuntimeException
+/**
+ * @deprecated since 3.1, use Hyperf\Coroutine\Exception\ChannelClosedException instead.
+ */
+class ChannelClosedException extends \Hyperf\Coroutine\Exception\ChannelClosedException
 {
 }
