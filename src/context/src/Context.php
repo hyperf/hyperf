@@ -54,6 +54,8 @@ class Context
     {
         if (Coroutine::id() > 0) {
             unset(Coroutine::getContextFor($coroutineId)[$id]);
+            // TODO: Only destroy context
+            // return;
         }
 
         unset(static::$nonCoContext[$id]);
