@@ -9,13 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils;
+namespace Hyperf\Coroutine\Exception;
 
-use Hyperf\Coroutine\Channel\Pool;
+use RuntimeException;
 
-/**
- * @deprecated since 3.1, use Hyperf\Coroutine\Channel\Pool instead.
- */
-class ChannelPool extends Pool
+class ChannelClosedException extends RuntimeException
 {
 }
