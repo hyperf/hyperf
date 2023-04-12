@@ -50,8 +50,12 @@ class Context
     /**
      * Release the context when you are not in coroutine environment.
      */
-    public static function destroy(string $id): void
+    public static function destroy(string $id, ?int $coroutineId = null): void
     {
+        if (Coroutine::id() > 0) {
+            unset(Coroutine::getContextFor($coroutineId)[$id]);
+        }
+
         unset(static::$nonCoContext[$id]);
     }
 
