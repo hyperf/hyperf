@@ -11,25 +11,27 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Validation\Cases;
 
-use Hyperf\Context\Context;
-use Hyperf\HttpMessage\Server\Response;
-use Hyperf\HttpMessage\Upload\UploadedFile;
-use Hyperf\Translation\ArrayLoader;
-use Hyperf\Translation\Translator;
-use Hyperf\Validation\Contract\ValidatorFactoryInterface;
-use Hyperf\Validation\ValidationException;
-use Hyperf\Validation\ValidatorFactory;
-use HyperfTest\Validation\Cases\Stub\BarSceneRequest;
-use HyperfTest\Validation\Cases\Stub\DemoRequest;
-use HyperfTest\Validation\Cases\Stub\FooSceneRequest;
 use Mockery;
-use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
-
+use Hyperf\Context\Context;
+use Hyperf\Coroutine\Waiter;
+use PHPUnit\Framework\TestCase;
+use Hyperf\Translation\Translator;
 use function Hyperf\Coroutine\wait;
+use Hyperf\Translation\ArrayLoader;
+use Psr\Container\ContainerInterface;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\HttpMessage\Server\Response;
+use Hyperf\Validation\ValidatorFactory;
+use Psr\Http\Message\ResponseInterface;
+use Hyperf\Validation\ValidationException;
+use Hyperf\HttpMessage\Upload\UploadedFile;
+use Psr\Http\Message\ServerRequestInterface;
+use HyperfTest\Validation\Cases\Stub\DemoRequest;
+
+use HyperfTest\Validation\Cases\Stub\BarSceneRequest;
+use HyperfTest\Validation\Cases\Stub\FooSceneRequest;
+use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 /**
  * @internal
@@ -121,6 +123,8 @@ class FormRequestTest extends TestCase
         Context::set(ServerRequestInterface::class, $psrRequest);
         Context::set(ResponseInterface::class, new Response());
         $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
+        ApplicationContext::setContainer($container);
         $translator = new Translator(new ArrayLoader(), 'en');
         $container->shouldReceive('get')->with(ValidatorFactoryInterface::class)->andReturn(new ValidatorFactory($translator));
 
