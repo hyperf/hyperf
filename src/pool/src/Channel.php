@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel as CoChannel;
-use Hyperf\Utils\Coroutine;
 use SplQueue;
 
 class Channel

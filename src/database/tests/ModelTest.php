@@ -74,6 +74,7 @@ use ReflectionClass;
 use stdClass;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Coroutine\go;
 
 /**
  * @internal

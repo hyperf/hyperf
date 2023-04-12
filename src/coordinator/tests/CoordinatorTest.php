@@ -15,6 +15,8 @@ use Hyperf\Coordinator\Coordinator;
 use Hyperf\Utils\WaitGroup;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Coroutine\go;
+
 /**
  * @internal
  * @coversNothing

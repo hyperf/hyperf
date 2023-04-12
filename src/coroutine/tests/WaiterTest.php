@@ -14,6 +14,7 @@ namespace HyperfTest\Coroutine;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Coroutine\Exception\WaitTimeoutException;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Engine\Channel;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +33,7 @@ class WaiterTest extends TestCase
     {
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
-        $container->shouldReceive('get')->with(\Hyperf\Utils\Waiter::class)->andReturn(new \Hyperf\Utils\Waiter());
+        $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
     }
 
     protected function tearDown(): void

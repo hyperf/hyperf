@@ -13,6 +13,7 @@ namespace HyperfTest\SuperGlobals;
 
 use Hyperf\Context\Context;
 use Hyperf\Contract\SessionInterface;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\SuperGlobals\Proxy\Cookie;
 use Hyperf\SuperGlobals\Proxy\File;
 use Hyperf\SuperGlobals\Proxy\Get;
@@ -20,7 +21,6 @@ use Hyperf\SuperGlobals\Proxy\Post;
 use Hyperf\SuperGlobals\Proxy\Request;
 use Hyperf\SuperGlobals\Proxy\Server;
 use Hyperf\SuperGlobals\Proxy\Session;
-use Hyperf\Utils\Waiter;
 use HyperfTest\SuperGlobals\Stub\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;

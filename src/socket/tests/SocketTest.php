@@ -19,6 +19,8 @@ use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Socket as CoSocket;
 use Swoole\Process;
 
+use function Hyperf\Coroutine\run;
+
 /**
  * @internal
  * @coversNothing

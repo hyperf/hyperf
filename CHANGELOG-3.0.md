@@ -8,7 +8,7 @@
 - [#5619](https://github.com/hyperf/hyperf/pull/5619) [#5620](https://github.com/hyperf/hyperf/pull/5620) Split `hyperf/coroutine` from `hyperf/utils`.
 - [#5621](https://github.com/hyperf/hyperf/pull/5621) Use `Hyperf\Context\ApplicationContext` instead of `Hyperf\Utils\ApplicationContext`.
 - [#5622](https://github.com/hyperf/hyperf/pull/5622) Split `CoroutineProxy` from `hyperf/utils` to `hyperf/context`.
-- [#5625](https://github.com/hyperf/hyperf/pull/5625) Split hyperf/stringable from hyperf/utils.
+- [#5623](https://github.com/hyperf/hyperf/pull/5623) Use `Hyperf\Coroutine\Coroutine` instead of `Hyperf\Utils\Coroutine`.
 
 # v3.0.15 - 2023-04-07
 

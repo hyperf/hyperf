@@ -17,7 +17,7 @@ use Hyperf\Amqp\IO\IOFactoryInterface;
 use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\Coroutine\Locker;
+use Hyperf\Coroutine\Locker;
 use InvalidArgumentException;
 use PhpAmqpLib\Wire\IO\AbstractIO;
 use Psr\Container\ContainerInterface;

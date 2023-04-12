@@ -52,6 +52,9 @@ use Swoole\WebSocket\Server as WebSocketServer;
 use Swow\Psr7\Server\ServerConnection as SwowServerConnection;
 use Throwable;
 
+use function Hyperf\Coroutine\defer;
+use function Hyperf\Coroutine\wait;
+
 class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, OnCloseInterface, OnMessageInterface
 {
     protected ?CoreMiddlewareInterface $coreMiddleware = null;

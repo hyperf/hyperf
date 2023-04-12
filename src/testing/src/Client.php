@@ -33,6 +33,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
+use function Hyperf\Coroutine\wait;
+
 class Client extends Server
 {
     protected PackerInterface $packer;

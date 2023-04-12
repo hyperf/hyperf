@@ -13,12 +13,12 @@ namespace HyperfTest\WebSocketServer;
 
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpServer\ResponseEmitter;
-use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Reflection\ClassInvoker;
-use Hyperf\Utils\Waiter;
 use Hyperf\WebSocketServer\Server;
 use HyperfTest\WebSocketServer\Stub\FooServer;
 use HyperfTest\WebSocketServer\Stub\WebSocketStub;

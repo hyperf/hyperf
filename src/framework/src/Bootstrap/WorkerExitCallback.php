@@ -13,8 +13,8 @@ namespace Hyperf\Framework\Bootstrap;
 
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Framework\Event\OnWorkerExit;
-use Hyperf\Utils\Coroutine;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
 
