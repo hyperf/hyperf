@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Metric;
 
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Retry\Retry;
-use Hyperf\Utils\Coroutine;
 
 use function array_values;
 use function str_replace;

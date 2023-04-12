@@ -13,9 +13,9 @@ namespace Hyperf\Guzzle;
 
 use GuzzleHttp\HandlerStack;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Container;
 use Hyperf\Pool\SimplePool\PoolFactory;
-use Hyperf\Utils\Coroutine;
 
 class HandlerStackFactory
 {

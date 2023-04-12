@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Context;
 
 use Hyperf\Context\Context;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Command;
 
 use Hyperf\Contract\Arrayable;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Utils\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\ExitException;

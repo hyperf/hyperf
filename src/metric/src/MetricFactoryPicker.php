@@ -12,12 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\Metric;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Metric\Adapter\Prometheus\MetricFactory as PrometheusFactory;
 use Hyperf\Metric\Adapter\RemoteProxy\MetricFactory as RemoteFactory;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Exception\InvalidArgumentException;
 use Hyperf\Process\ProcessCollector;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
 class MetricFactoryPicker

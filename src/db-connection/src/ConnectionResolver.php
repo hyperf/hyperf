@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection;
 
 use Hyperf\Context\Context;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Pool\PoolFactory;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
 class ConnectionResolver implements ConnectionResolverInterface
