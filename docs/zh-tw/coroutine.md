@@ -100,7 +100,7 @@ $db->connect($config, function ($db, $r) {
 類似於 `Go` 語言的 `chan`，`Channel` 可為多生產者協程和多消費者協程模式提供支援。底層自動實現了協程的切換和排程。 `Channel` 與 `PHP` 的陣列類似，僅佔用記憶體，沒有其他額外的資源申請，所有操作均為記憶體操作，無 `I/O` 消耗，使用方法與 `SplQueue` 佇列類似。   
 `Channel` 主要用於協程間通訊，當我們希望從一個協程裡返回一些資料到另一個協程時，就可透過 `Channel` 來進行傳遞。   
 
-主要方法：
+主要方法：   
 - `Channel->push` ：當佇列中有其他協程正在等待 `pop` 資料時，自動按順序喚醒一個消費者協程。當佇列已滿時自動 `yield` 讓出控制權，等待其他協程消費資料
 - `Channel->pop` ：當佇列為空時自動 `yield`，等待其他協程生產資料。消費資料後，佇列可寫入新的資料，自動按順序喚醒一個生產者協程。
 
@@ -128,7 +128,7 @@ co(function () {
 
 ```php
 <?php
-$wg = new \Hyperf\Coroutine\WaitGroup();
+$wg = new \Hyperf\Utils\WaitGroup();
 // 計數器加二
 $wg->add(2);
 // 建立協程 A
@@ -177,10 +177,9 @@ try{
     // $e->getThrowables() 獲取協程中出現的異常。
 }
 ```
-
 > 注意 `Hyperf\Utils\Exception\ParallelExecutionException` 異常僅在 1.1.6 版本和更新的版本下會丟擲
 
-透過上面的程式碼我們可以看到僅花了 `1` 秒就得到了兩個不同的協程的 `ID`，在呼叫 `add(callable $callable)` 的時候 `Parallel` 類會為之自動建立一個協程，並加入到 `WaitGroup` 的排程去。
+透過上面的程式碼我們可以看到僅花了 `1` 秒就得到了兩個不同的協程的 `ID`，在呼叫 `add(callable $callable)` 的時候 `Parallel` 類會為之自動建立一個協程，並加入到 `WaitGroup` 的排程去。    
 不僅如此，我們還可以透過 `parallel(array $callables)` 函式進行更進一步的簡化上面的程式碼，達到同樣的目的，下面為簡化後的程式碼。
 
 ```php
@@ -229,7 +228,7 @@ try{
 
 ### Concurrent 協程執行控制
 
-`Hyperf\Coroutine\Coroutine\Concurrent` 基於 `Swoole\Coroutine\Channel` 實現，用來控制一個程式碼塊內同時執行的最大協程數量的特性。
+`Hyperf\Coroutine\Concurrent` 基於 `Swoole\Coroutine\Channel` 實現，用來控制一個程式碼塊內同時執行的最大協程數量的特性。
 
 以下樣例，當同時執行 `10` 個子協程時，會在迴圈中阻塞，但只會阻塞當前協程，直到釋放出一個位置後，迴圈繼續執行下一個子協程。
 
@@ -311,6 +310,6 @@ $request = Context::override(ServerRequestInterface::class, function (ServerRequ
 ```php
 <?php
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
-```
+``` 
 
 !> 如果 Swoole 版本 >= `v4.5.4`，不需要做任何修改。
