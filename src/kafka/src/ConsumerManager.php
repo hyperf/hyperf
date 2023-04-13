@@ -146,7 +146,7 @@ class ConsumerManager
                     }
                 }
 
-                $longLangConsumer->close();~
+                $longLangConsumer->close();
             }
 
             public function getConfig(): array
