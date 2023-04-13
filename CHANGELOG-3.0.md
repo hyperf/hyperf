@@ -1,9 +1,12 @@
 # v3.0.17 - TBD
 
+## Added
+
+- [#5634](https://github.com/hyperf/hyperf/pull/5634) Added `Hyperf\Stringable\str()` helper function.
+
 ## Optimized
 
 - [#5634](https://github.com/hyperf/hyperf/pull/5634) Use `Hyperf\Stringable\Str` instead of `Hyperf\Utils\Str`.
-- [#5634](https://github.com/hyperf/hyperf/pull/5634) Added `Hyperf\Stringable\str()` helper function.
 
 # v3.0.16 - 2023-04-12
 
