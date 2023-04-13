@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Compiler\Concern;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Component\ComponentAttributeBag;
 use Hyperf\ViewEngine\T;
 

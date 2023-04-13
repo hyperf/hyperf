@@ -13,7 +13,7 @@ namespace Hyperf\Validation;
 
 use Closure;
 use Hyperf\Collection\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\Validation\Contract\Rule as RuleContract;
 use Hyperf\Validation\Rules\Exists;
 use Hyperf\Validation\Rules\Unique;

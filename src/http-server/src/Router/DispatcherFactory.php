@@ -31,7 +31,7 @@ use Hyperf\HttpServer\Annotation\PatchMapping;
 use Hyperf\HttpServer\Annotation\PostMapping;
 use Hyperf\HttpServer\Annotation\PutMapping;
 use Hyperf\HttpServer\Annotation\RequestMapping;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use ReflectionMethod;
 
 class DispatcherFactory

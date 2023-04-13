@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Compiler;
 
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Component\AnonymousComponent;
 use Hyperf\ViewEngine\Contract\FactoryInterface;

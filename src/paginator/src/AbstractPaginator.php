@@ -17,7 +17,7 @@ use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
 use Hyperf\Contract\PaginatorInterface;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
 
 use function Hyperf\Collection\collect;

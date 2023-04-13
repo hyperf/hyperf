@@ -14,7 +14,7 @@ namespace Hyperf\Database\PgSQL\Query\Grammars;
 use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Grammars\Grammar;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 use function Hyperf\Collection\collect;
 

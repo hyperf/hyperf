@@ -21,7 +21,7 @@ use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use ReflectionClass;

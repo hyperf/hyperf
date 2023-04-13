@@ -13,7 +13,7 @@ namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\Collection\Collection;
 use Hyperf\Database\Model\SoftDeletes;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use ReflectionClass;

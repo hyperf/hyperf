@@ -13,7 +13,7 @@ namespace Hyperf\ViewEngine\Compiler;
 
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 use PhpToken;
 

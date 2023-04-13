@@ -13,7 +13,7 @@ namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;

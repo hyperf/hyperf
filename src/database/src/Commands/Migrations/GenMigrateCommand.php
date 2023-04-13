@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Commands\Migrations;
 
 use Hyperf\Database\Migrations\MigrationCreator;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Throwable;

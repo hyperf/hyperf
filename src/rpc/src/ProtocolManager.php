@@ -17,7 +17,7 @@ use Hyperf\RpcMultiplex\DataFormatter;
 use Hyperf\RpcMultiplex\Packer\JsonPacker;
 use Hyperf\RpcMultiplex\PathGenerator;
 use Hyperf\RpcMultiplex\Transporter;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 
 class ProtocolManager

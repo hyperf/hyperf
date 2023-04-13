@@ -16,8 +16,8 @@ use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolverInterface as Resolver;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Schema\Grammars\Grammar;
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Seed

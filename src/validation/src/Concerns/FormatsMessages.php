@@ -14,7 +14,7 @@ namespace Hyperf\Validation\Concerns;
 use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\HttpMessage\Upload\UploadedFile;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\Validation\Validator;
 
 trait FormatsMessages

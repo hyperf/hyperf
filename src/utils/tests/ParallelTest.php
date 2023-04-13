@@ -13,9 +13,9 @@ namespace HyperfTest\Utils;
 
 use Exception;
 use Hyperf\Coroutine\Exception\ParallelExecutionException;
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Parallel;
-use Hyperf\Utils\Str;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Throwable;

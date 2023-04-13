@@ -13,7 +13,7 @@ namespace HyperfTest\Resource;
 
 use Hyperf\Collection\Arr;
 use Hyperf\HttpMessage\Server\Response;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PHPUnit\Framework\Assert as PHPUnit;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 

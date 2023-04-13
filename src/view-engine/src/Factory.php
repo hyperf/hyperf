@@ -15,7 +15,7 @@ use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Contract\EngineInterface;
 use Hyperf\ViewEngine\Contract\EngineResolverInterface;
 use Hyperf\ViewEngine\Contract\FactoryInterface;

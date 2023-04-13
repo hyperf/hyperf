@@ -17,7 +17,7 @@ use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\MessageBag;
 use Hyperf\Contract\MessageProvider;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Contract\EngineInterface;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\Contract\Renderable;

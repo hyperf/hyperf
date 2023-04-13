@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Grpc;
 
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 class PathGenerator implements PathGeneratorInterface
 {

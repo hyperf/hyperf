@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Component;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Compiler\CompilerInterface;
 use Hyperf\ViewEngine\Compiler\ComponentTagCompiler;
@@ -51,7 +51,7 @@ class DynamicComponent extends Component
     public function render(): mixed
     {
         $template = <<<'EOF'
-<?php extract(\Hyperf\Collection\collect($attributes->getAttributes())->mapWithKeys(function ($value, $key) { return [Hyperf\Utils\Str::camel(str_replace(':', ' ', $key)) => $value]; })->all(), EXTR_SKIP); ?>
+<?php extract(\Hyperf\Collection\collect($attributes->getAttributes())->mapWithKeys(function ($value, $key) { return [Hyperf\Stringable\Str::camel(str_replace(':', ' ', $key)) => $value]; })->all(), EXTR_SKIP); ?>
 {{ props }}
 <x-{{ component }} {{ bindings }} {{ attributes }}>
 {{ slots }}

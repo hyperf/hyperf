@@ -16,7 +16,7 @@ use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\UnCompressInterface;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use RuntimeException;
 
 /**

@@ -13,8 +13,8 @@ namespace Hyperf\Watcher\Driver;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Channel;
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
 use Symfony\Component\Finder\SplFileInfo;
 
