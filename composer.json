@@ -199,6 +199,7 @@
             "src/config/src/Functions.php",
             "src/coroutine/src/Functions.php",
             "src/nats/src/Functions.php",
+            "src/stringable/src/Functions.php",
             "src/tappable/src/Functions.php",
             "src/translation/src/Functions.php",
             "src/utils/src/Functions.php",

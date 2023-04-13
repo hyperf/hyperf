@@ -30,7 +30,10 @@
     "autoload": {
         "psr-4": {
             "Hyperf\\Stringable\\": "src/"
-        }
+        },
+        "files": [
+            "src/Functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
