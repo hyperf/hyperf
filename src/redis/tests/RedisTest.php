@@ -225,7 +225,7 @@ class RedisTest extends TestCase
 
     public function testTransaction()
     {
-        $pipe = $this->getRedis()->pipeline();
+        $pipe = $this->getRedis()->transaction();
         $this->assertInstanceOf(\Redis::class, $pipe);
 
         $key = 'transaction:'.uniqid();
