@@ -7,6 +7,7 @@
 ## Optimized
 
 - [#5634](https://github.com/hyperf/hyperf/pull/5634) Use `Hyperf\Stringable\Str` instead of `Hyperf\Utils\Str`.
+- [#5636](https://github.com/hyperf/hyperf/pull/5636) Kafka first start time elapsed
 
 # v3.0.16 - 2023-04-12
 
