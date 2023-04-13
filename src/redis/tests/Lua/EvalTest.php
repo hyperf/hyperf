@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Redis\Lua;
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use HyperfTest\Redis\Stub\ContainerStub;
 use HyperfTest\Redis\Stub\HGetAllMultipleStub;
 use Mockery;

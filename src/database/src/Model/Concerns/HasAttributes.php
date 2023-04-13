@@ -23,7 +23,7 @@ use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Contract\Synchronized;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use LogicException;
 
 use function Hyperf\Collection\collect;

@@ -14,8 +14,8 @@ namespace HyperfTest\Session;
 use Hyperf\Session\Handler\FileHandler;
 use Hyperf\Session\Handler\NullHandler;
 use Hyperf\Session\Session;
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
 use PHPUnit\Framework\TestCase;
 
 /**

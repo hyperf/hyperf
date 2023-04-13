@@ -13,7 +13,7 @@ namespace Hyperf\Validation;
 
 use Closure;
 use Hyperf\Database\ConnectionResolverInterface;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 
 class DatabasePresenceVerifier implements PresenceVerifierInterface

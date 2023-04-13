@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Command;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;

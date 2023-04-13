@@ -14,7 +14,7 @@ namespace Hyperf\Resource\Concerns;
 use Hyperf\Collection\Collection;
 use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Resource\Value\MissingValue;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Traversable;
 
 trait CollectsResources

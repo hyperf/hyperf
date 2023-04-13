@@ -29,7 +29,7 @@ use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use RuntimeException;

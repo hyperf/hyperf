@@ -13,8 +13,8 @@ namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\CodeGen\PhpParser;
-use Hyperf\Utils\Str;
 use PhpParser\Node;
 
 class ModelRewriteGetterSetterVisitor extends AbstractVisitor

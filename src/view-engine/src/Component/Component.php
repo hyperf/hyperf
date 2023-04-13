@@ -13,8 +13,8 @@ namespace Hyperf\ViewEngine\Component;
 
 use Closure;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\Htmlable;

@@ -16,7 +16,7 @@ use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\JoinClause;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use RuntimeException;
 
 use function Hyperf\Collection\collect;

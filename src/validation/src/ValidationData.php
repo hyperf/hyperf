@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Validation;
 
 use Hyperf\Collection\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 class ValidationData
 {

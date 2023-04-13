@@ -12,12 +12,12 @@ declare(strict_types=1);
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Backoff;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;
 use Hyperf\Utils\Optional;
 use Hyperf\Utils\Parallel;
-use Hyperf\Utils\Str;
 use Hyperf\Utils\Waiter;
 
 if (! function_exists('value')) {

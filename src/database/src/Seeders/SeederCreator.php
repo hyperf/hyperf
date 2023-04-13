@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Seeders;
 
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
 use InvalidArgumentException;
 
 class SeederCreator

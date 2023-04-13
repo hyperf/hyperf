@@ -13,7 +13,7 @@ namespace Hyperf\Database\Model\Relations\Concerns;
 
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 trait AsPivot
 {

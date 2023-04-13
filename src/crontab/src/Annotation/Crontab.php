@@ -14,7 +14,7 @@ namespace Hyperf\Crontab\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 use ReflectionMethod;
 

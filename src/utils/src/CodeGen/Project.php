@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\CodeGen;
 
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Composer;
-use Hyperf\Utils\Str;
 use RuntimeException;
 
 /**

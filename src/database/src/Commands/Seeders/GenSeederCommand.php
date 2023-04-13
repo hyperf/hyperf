@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Commands\Seeders;
 
 use Hyperf\Database\Seeders\SeederCreator;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 

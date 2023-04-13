@@ -13,7 +13,7 @@ namespace Hyperf\Command;
 
 use Hyperf\Contract\Arrayable;
 use Hyperf\Coroutine\Coroutine;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\ExitException;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;

@@ -21,7 +21,7 @@ use Egulias\EmailValidator\Validation\RFCValidation;
 use Exception;
 use Hyperf\Collection\Arr;
 use Hyperf\HttpMessage\Upload\UploadedFile;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\Validation\Rules\Exists;
 use Hyperf\Validation\Rules\Unique;
 use Hyperf\Validation\ValidationData;

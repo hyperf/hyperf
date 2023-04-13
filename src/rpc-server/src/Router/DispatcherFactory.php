@@ -24,7 +24,7 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\RpcServer\Annotation\RpcService;
 use Hyperf\RpcServer\Event\AfterPathRegister;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionMethod;
 

@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Cache\Collector;
 
 use Hyperf\Collection\Collection;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Traits\StaticInstance;
 
 class CoroutineMemory extends Collection

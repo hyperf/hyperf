@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Di\LazyLoader;
 
 use Hyperf\Coroutine\Locker as CoLocker;
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\CodeGen\PhpParser;
-use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\PrettyPrinter\Standard;

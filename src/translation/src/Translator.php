@@ -18,7 +18,7 @@ use Hyperf\Context\Context;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 class Translator implements TranslatorInterface
 {

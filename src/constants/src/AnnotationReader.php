@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Constants;
 
 use BackedEnum;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use ReflectionClassConstant;
 
 use const PHP_VERSION_ID;

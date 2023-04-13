@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigApollo;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 class Option
 {
