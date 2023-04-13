@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Stringable;
 
-use ReflectionClass;
-use PHPUnit\Framework\TestCase;
-
 use Hyperf\Stringable\Stringable;
+use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+
 use function Hyperf\Stringable\str;
 
 /**
