@@ -140,7 +140,7 @@ class ConsumerManager
                         $this->stdoutLogger->warning((string) $exception);
                         $this->dispatcher?->dispatch(new FailToConsume($this->consumer, [], $exception));
                     }
-                    
+
                     if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(10)) {
                         break;
                     }
