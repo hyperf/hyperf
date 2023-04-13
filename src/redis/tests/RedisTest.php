@@ -227,7 +227,7 @@ class RedisTest extends TestCase
         $pipe = $this->getRedis()->pipeline();
         $this->assertInstanceOf(\Redis::class, $pipe);
 
-        $key = 'pipeline:'.uniqid();
+        $key = 'transaction:'.uniqid();
 
         $this->getRedis()->transaction(function (\Redis|\RedisCluster $pipe) use ($key) {
             $pipe->incr($key);
