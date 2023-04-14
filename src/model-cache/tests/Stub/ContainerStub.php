@@ -19,6 +19,7 @@ use Hyperf\Coroutine\Waiter;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Events\TransactionCommitted;
 use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Database\Model\Events\Saved;
@@ -50,7 +51,7 @@ use Psr\Log\LogLevel;
 
 class ContainerStub
 {
-    public static function mockContainer($ttl = 86400)
+    public static function mockContainer($ttl = 86400, ?callable $listenQueryExecuted = null)
     {
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(TableCollector::class)->andReturn(new TableCollector());
@@ -133,6 +134,9 @@ class ContainerStub
         $provider->on(TransactionCommitted::class, [new DeleteCacheInTransactionListener(), 'process']);
         $provider->on(Saved::class, [$listener, 'process']);
         $provider->on(Deleted::class, [$listener, 'process']);
+        if ($listenQueryExecuted) {
+            $provider->on(QueryExecuted::class, $listenQueryExecuted);
+        }
         $eventDispatcher = new EventDispatcher($provider, $logger);
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($eventDispatcher);
 
