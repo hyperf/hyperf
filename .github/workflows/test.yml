@@ -74,7 +74,7 @@ jobs:
         run: |
           if [ _${{ matrix.sw-version }} = '_v4.8.12' ]
           then
-            rm -rf /etc/php/${{ matrix.php-version }}/cli/conf.d/20-xdebug.ini
+            sudo rm -rf /etc/php/${{ matrix.php-version }}/cli/conf.d/20-xdebug.ini
           fi
           php -i
       - name: Run Test Cases
