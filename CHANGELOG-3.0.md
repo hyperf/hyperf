@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#5642](https://github.com/hyperf/hyperf/pull/5642) Fixed bug that the model cache cannot created when using `find many` to get non-exists models.
+- [#5643](https://github.com/hyperf/hyperf/pull/5643) Fixed bug that the empty caches cannot be used for `Model::findManyFromCache()`.
 
 ## Added
 

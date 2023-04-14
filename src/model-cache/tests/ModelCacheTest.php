@@ -12,9 +12,11 @@ declare(strict_types=1);
 namespace HyperfTest\ModelCache;
 
 use DateInterval;
+use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\DbConnection\Db;
 use Hyperf\DbConnection\Listener\InitTableCollectorListener;
+use Hyperf\Engine\Channel;
 use Hyperf\ModelCache\EagerLoad\EagerLoader;
 use Hyperf\ModelCache\InvalidCacheManager;
 use Hyperf\ModelCache\Listener\EagerLoadListener;
@@ -40,6 +42,16 @@ use function Hyperf\Coroutine\wait;
  */
 class ModelCacheTest extends TestCase
 {
+    /**
+     * @var array
+     */
+    protected $channel;
+
+    protected function setUp(): void
+    {
+        $this->channel = new Channel(999);
+    }
+
     protected function tearDown(): void
     {
         Mockery::close();
@@ -169,7 +181,9 @@ class ModelCacheTest extends TestCase
 
     public function testFindManyNullBeforeCreate()
     {
-        $container = ContainerStub::mockContainer();
+        $container = ContainerStub::mockContainer(listenQueryExecuted: function (QueryExecuted $executed) {
+            $this->channel->push($executed);
+        });
 
         $id = 207;
 
@@ -180,6 +194,15 @@ class ModelCacheTest extends TestCase
         $this->assertSame(0, $models->count());
 
         $this->assertEquals(1, $redis->del('{mc:default:m:user}:id:' . $id));
+        $models = UserModel::findManyFromCache([$id]);
+        $models = UserModel::findManyFromCache([$id]);
+        $models = UserModel::findManyFromCache([$id]);
+        $models = UserModel::findManyFromCache([$id]);
+        $models = UserModel::findManyFromCache([$id]);
+        $models = UserModel::findManyFromCache([$id]);
+
+        $this->assertLessThanOrEqual(2, $this->channel->length());
+
         UserModel::query(true)->where('id', $id)->delete();
     }
 

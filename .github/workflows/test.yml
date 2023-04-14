@@ -70,5 +70,7 @@ jobs:
         run: export TRAVIS_BUILD_DIR=$(pwd) && bash ./.travis/setup.pgsql.sh
       - name: Run Scripts Before Test
         run: cp .travis/.env.example .env
+      - name: Print PHP Environments
+        run: php -i
       - name: Run Test Cases
         run: ./.travis/run.test.sh

@@ -14,6 +14,7 @@ namespace HyperfTest\ModelCache\Handler;
 use DateInterval;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\ModelCache\Config;
+use Hyperf\ModelCache\Handler\DefaultValueInterface;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
 use Hyperf\Redis\RedisProxy;
@@ -83,7 +84,29 @@ class RedisHandlerTest extends TestCase
             $result[] = $item;
         }
 
-        $this->assertSame($result, $handler->getMultiple($keys));
+        $data = $handler->getMultiple($keys);
+        if ($handler instanceof DefaultValueInterface) {
+            foreach ($data as $i => $value) {
+                $data[$i] = $handler->clearDefaultValue($value);
+            }
+        }
+        $this->assertSame($result, $data);
+    }
+
+    public function testDefaultValue()
+    {
+        $handler = $this->mockHandler();
+        if (! $handler instanceof DefaultValueInterface) {
+            $this->markTestSkipped('Don\'t implements DefaultValueInterface');
+        }
+
+        $data = $handler->defaultValue(1);
+        $this->assertSame(['HF-DATA' => 1], $data);
+
+        $this->assertTrue($handler->isDefaultValue($data));
+        $this->assertFalse($handler->isDefaultValue(['HF-DATA' => 1, 'id' => 1]));
+        $this->assertSame(3, $handler->getPrimaryValue(['HF-DATA' => 3]));
+        $this->assertSame([], $handler->clearDefaultValue(['HF-DATA' => 3]));
     }
 
     protected function mockHandler(): HandlerInterface
