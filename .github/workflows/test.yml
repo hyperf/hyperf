@@ -35,6 +35,10 @@ jobs:
           extensions: redis, pdo, pdo_mysql, bcmath
           ini-values: opcache.enable_cli=0
           coverage: none
+      - name: Remove Xdebug
+        run: |
+          ls /etc/php/${{ matrix.php-version }}/cli/conf.d
+          rm -rf /etc/php/${{ matrix.php-version }}/cli/conf.d/xdebug.ini
       - name: Setup Swoole
         run: |
           sudo apt-get clean
@@ -58,10 +62,6 @@ jobs:
           sudo sh -c "echo extension=swoole > /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
           sudo sh -c "echo swoole.use_shortname='Off' >> /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
           php --ri swoole
-      - name: Removed Xdebug
-        run: |
-          ls /etc/php/${{ matrix.php-version }}/cli/conf.d
-          rm -rf /etc/php/${{ matrix.php-version }}/cli/conf.d/xdebug.ini
       - name: Setup Packages
         run: ./.travis/requirement.install.sh
       - name: Run Check
