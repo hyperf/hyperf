@@ -26,6 +26,7 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use RedisCluster;
 
 use function Hyperf\Coroutine\go;
 
@@ -123,8 +124,8 @@ class RedisProxyTest extends TestCase
 
     public function testPipeline()
     {
-        // $pipe = $this->getRedis()->pipeline();
-        // $this->assertInstanceOf(\Redis::class, $pipe);
+        $pipe = $this->getRedis()->pipeline();
+        $this->assertInstanceOf(\Redis::class, $pipe);
 
         $key = 'pipeline:' . uniqid();
 
@@ -141,15 +142,15 @@ class RedisProxyTest extends TestCase
 
     public function testTransaction()
     {
-        // $pipe = $this->getRedis()->transaction();
-        // $this->assertInstanceOf(\Redis::class, $pipe);
+        $transaction = $this->getRedis()->transaction();
+        $this->assertInstanceOf(\Redis::class, $transaction);
 
         $key = 'transaction:' . uniqid();
 
-        $this->getRedis()->transaction(function (\Redis|RedisCluster $pipe) use ($key) {
-            $pipe->incr($key);
-            $pipe->incr($key);
-            $pipe->incr($key);
+        $this->getRedis()->transaction(function (\Redis|RedisCluster $transaction) use ($key) {
+            $transaction->incr($key);
+            $transaction->incr($key);
+            $transaction->incr($key);
         });
 
         $this->assertEquals(3, $this->getRedis()->get($key));
@@ -193,7 +194,7 @@ class RedisProxyTest extends TestCase
 
     /**
      * @param mixed $optinos
-     * @return \Redis
+     * @return \Redis|Redis
      */
     private function getRedis($optinos = [])
     {
