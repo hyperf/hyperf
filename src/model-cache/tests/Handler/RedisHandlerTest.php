@@ -93,6 +93,22 @@ class RedisHandlerTest extends TestCase
         $this->assertSame($result, $data);
     }
 
+    public function testDefaultValue()
+    {
+        $handler = $this->mockHandler();
+        if (! $handler instanceof DefaultValueInterface) {
+            $this->markTestSkipped('Don\'t implements DefaultValueInterface');
+        }
+
+        $data = $handler->defaultValue(1);
+        $this->assertSame(['HF-DATA' => 1], $data);
+
+        $this->assertTrue($handler->isDefaultValue($data));
+        $this->assertFalse($handler->isDefaultValue(['HF-DATA' => 1, 'id' => 1]));
+        $this->assertSame(3, $handler->getPrimaryValue(['HF-DATA' => 3]));
+        $this->assertSame([], $handler->clearDefaultValue(['HF-DATA' => 3]));
+    }
+
     protected function mockHandler(): HandlerInterface
     {
         $config = new Config([
