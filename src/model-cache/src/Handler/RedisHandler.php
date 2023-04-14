@@ -50,6 +50,12 @@ class RedisHandler implements HandlerInterface
             return $default;
         }
 
+        unset($data[$this->defaultKey]);
+
+        if (empty($data)) {
+            return [];
+        }
+
         return $data;
     }
 
