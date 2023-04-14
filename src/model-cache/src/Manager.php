@@ -122,8 +122,8 @@ class Manager
             $items = [];
             $fetchIds = [];
             foreach ($data as $item) {
-                if ($handler->isDefaultValue($item)) {
-                    $fetchIds[] = current($item);
+                if ($handler instanceof DefaultValueInterface && $handler->isDefaultValue($item)) {
+                    $fetchIds[] = $handler->getPrimaryValue($item);
                     continue;
                 }
 
@@ -146,7 +146,7 @@ class Manager
                     if ($model = $dictionary[$id] ?? null) {
                         $handler->set($key, $this->formatModel($model), $ttl);
                     } else {
-                        $handler->set($key, $handler->defaultValue($id), $emptyTtl);
+                        $handler->set($key, $this->defaultValue($handler, $id), $emptyTtl);
                     }
                 }
 
@@ -287,5 +287,14 @@ class Manager
         }
 
         return [];
+    }
+
+    protected function isDefaultValue(mixed $handler, mixed $data): bool
+    {
+        if ($handler instanceof DefaultValueInterface) {
+            return $handler->isDefaultValue($data);
+        }
+
+        return false;
     }
 }
