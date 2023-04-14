@@ -130,8 +130,17 @@ class Manager
             // Get ids that not exist in cache handler.
             $targetIds = array_diff($ids, $fetchIds);
             if ($targetIds) {
-                $models = $instance->newQuery()->whereIn($primaryKey, $targetIds)->get();
+                $models = $instance->newQuery()->whereIn($primaryKey, $targetIds)->get()->getDictionary();
                 $ttl = $this->getCacheTTL($instance, $handler);
+                $emptyTtl = $handler->getConfig()->getEmptyModelTtl();
+                foreach ($targetIds as $id) {
+                    $key = $this->getCacheKey($id, $instance, $handler->getConfig());
+                    if ($model = $models[$id] ?? null) {
+                        $handler->set($key, $this->formatModel($model), $ttl);
+                    } else {
+                        $handler->set($key, [], $emptyTtl);
+                    }
+                }
                 /** @var Model $model */
                 foreach ($models as $model) {
                     $id = $model->getKey();
