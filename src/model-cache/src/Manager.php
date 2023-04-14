@@ -70,6 +70,11 @@ class Manager
         if ($handler = $this->handlers[$name] ?? null) {
             $key = $this->getCacheKey($id, $instance, $handler->getConfig());
             $data = $handler->get($key);
+            if ($data) {
+                return $instance->newFromBuilder(
+                    $this->getAttributes($handler->getConfig(), $instance, $data)
+                );
+            }
             // Fetch it from database, because it not exists in cache handler.
             if ($data === null) {
                 $model = $instance->newQuery()->where($primaryKey, '=', $id)->first();
@@ -81,16 +86,6 @@ class Manager
                     $handler->set($key, $handler->defaultValue($id), $ttl);
                 }
                 return $model;
-            }
-
-            if ($handler->isDefaultValue($data)) {
-                return null;
-            }
-
-            if ($data) {
-                return $instance->newFromBuilder(
-                    $this->getAttributes($handler->getConfig(), $instance, $data)
-                );
             }
 
             // It not exists in cache handler and database.
