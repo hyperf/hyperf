@@ -35,10 +35,6 @@ jobs:
           extensions: redis, pdo, pdo_mysql, bcmath
           ini-values: opcache.enable_cli=0
           coverage: none
-      - name: Remove Xdebug
-        run: |
-          ls /etc/php/${{ matrix.php-version }}/cli/conf.d
-          rm -rf /etc/php/${{ matrix.php-version }}/cli/conf.d/xdebug.ini
       - name: Setup Swoole
         run: |
           sudo apt-get clean
@@ -74,5 +70,10 @@ jobs:
         run: export TRAVIS_BUILD_DIR=$(pwd) && bash ./.travis/setup.pgsql.sh
       - name: Run Scripts Before Test
         run: cp .travis/.env.example .env
+      - name: Print PHP Environments
+        run: |
+          php -i
+          php -m
+          php -v
       - name: Run Test Cases
         run: ./.travis/run.test.sh
