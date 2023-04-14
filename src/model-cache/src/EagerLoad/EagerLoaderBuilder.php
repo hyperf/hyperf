@@ -52,10 +52,10 @@ class EagerLoaderBuilder extends Builder
             // If we actually found models we will also eager load any relationships that
             // have been specified as needing to be eager loaded, which will solve the
             // n+1 query issue for the developers to avoid running a lot of queries.
-            if ($models->count() > 0) {
+            if ($models->count() > 0 && $with = $relation->getEagerLoads()) {
                 $first = $models->first();
                 $self = (new static($this->query->newQuery()));
-                $builder = $first->registerGlobalScopes($self->setModel($first))->setEagerLoads($relation->getEagerLoads());
+                $builder = $first->registerGlobalScopes($self->setModel($first))->setEagerLoads($with);
                 $models = new Collection($builder->eagerLoadRelations($models->all()));
             }
 
