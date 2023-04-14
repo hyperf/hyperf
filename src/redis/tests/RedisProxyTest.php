@@ -121,6 +121,42 @@ class RedisProxyTest extends TestCase
         $this->assertSame(0, $it);
     }
 
+    public function testPipeline()
+    {
+        // $pipe = $this->getRedis()->pipeline();
+        // $this->assertInstanceOf(\Redis::class, $pipe);
+
+        $key = 'pipeline:' . uniqid();
+
+        $this->getRedis()->pipeline(function (\Redis $pipe) use ($key) {
+            $pipe->incr($key);
+            $pipe->incr($key);
+            $pipe->incr($key);
+        });
+
+        $this->assertEquals(3, $this->getRedis()->get($key));
+
+        $this->getRedis()->del($key);
+    }
+
+    public function testTransaction()
+    {
+        // $pipe = $this->getRedis()->transaction();
+        // $this->assertInstanceOf(\Redis::class, $pipe);
+
+        $key = 'transaction:' . uniqid();
+
+        $this->getRedis()->transaction(function (\Redis|RedisCluster $pipe) use ($key) {
+            $pipe->incr($key);
+            $pipe->incr($key);
+            $pipe->incr($key);
+        });
+
+        $this->assertEquals(3, $this->getRedis()->get($key));
+
+        $this->getRedis()->del($key);
+    }
+
     public function testRedisPipeline()
     {
         $redis = $this->getRedis();
