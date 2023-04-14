@@ -17,6 +17,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Collector\TableCollector;
+use Hyperf\ModelCache\Handler\DefaultValueInterface;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
 use InvalidArgumentException;
@@ -75,6 +76,7 @@ class Manager
                     $this->getAttributes($handler->getConfig(), $instance, $data)
                 );
             }
+
             // Fetch it from database, because it not exists in cache handler.
             if ($data === null) {
                 $model = $instance->newQuery()->where($primaryKey, '=', $id)->first();
@@ -83,7 +85,7 @@ class Manager
                     $handler->set($key, $this->formatModel($model), $ttl);
                 } else {
                     $ttl = $handler->getConfig()->getEmptyModelTtl();
-                    $handler->set($key, $handler->defaultValue($id), $ttl);
+                    $handler->set($key, $this->defaultValue($handler, $id), $ttl);
                 }
                 return $model;
             }
@@ -276,5 +278,14 @@ class Manager
     protected function isNull(HandlerInterface $handler, mixed $data): bool
     {
         return $handler->isDefaultValue($data);
+    }
+
+    protected function defaultValue(mixed $handler, mixed $primaryValue): array
+    {
+        if ($handler instanceof DefaultValueInterface) {
+            return $handler->defaultValue($primaryValue);
+        }
+
+        return [];
     }
 }
