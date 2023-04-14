@@ -13,9 +13,9 @@ namespace Hyperf\ModelCache\Handler;
 
 interface DefaultValueInterface
 {
-    public function defaultValue(mixed $primaryValue): mixed;
+    public function defaultValue(mixed $primaryValue): array;
 
-    public function isDefaultValue(mixed $data): bool;
+    public function isDefaultValue(array $data): bool;
 
-    public function getPrimaryValue(mixed $data): mixed;
+    public function getPrimaryValue(array $data): mixed;
 }

@@ -135,20 +135,20 @@ class RedisHandler implements HandlerInterface, DefaultValueInterface
         return is_numeric($data);
     }
 
-    public function defaultValue(mixed $primaryValue): mixed
+    public function defaultValue(mixed $primaryValue): array
     {
         return [
             $this->defaultKey => $primaryValue,
         ];
     }
 
-    public function isDefaultValue(mixed $data): bool
+    public function isDefaultValue(array $data): bool
     {
         $value = current($data);
         return $this->defaultValue($value) === $data;
     }
 
-    public function getPrimaryValue(mixed $data): mixed
+    public function getPrimaryValue(array $data): mixed
     {
         return current($data);
     }
