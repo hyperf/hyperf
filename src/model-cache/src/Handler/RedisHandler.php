@@ -21,7 +21,7 @@ use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\InteractsWithTime;
 use Psr\Container\ContainerInterface;
 
-class RedisHandler implements HandlerInterface
+class RedisHandler implements HandlerInterface, DefaultValueInterface
 {
     use InteractsWithTime;
 
@@ -146,5 +146,10 @@ class RedisHandler implements HandlerInterface
     {
         $value = current($data);
         return $this->defaultValue($value) === $data;
+    }
+
+    public function getPrimaryValue(mixed $data): mixed
+    {
+        return current($data);
     }
 }

@@ -11,12 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache\Handler;
 
-use Hyperf\ModelCache\Config;
-use Psr\SimpleCache\CacheInterface;
-
-interface HandlerInterface extends CacheInterface
+interface DefaultValueInterface
 {
-    public function getConfig(): Config;
+    public function defaultValue(mixed $primaryValue): mixed;
 
-    public function incr($key, $column, $amount): bool;
+    public function isDefaultValue(mixed $data): bool;
+
+    public function getPrimaryValue(mixed $data): mixed;
 }

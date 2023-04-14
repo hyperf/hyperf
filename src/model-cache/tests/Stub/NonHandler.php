@@ -72,14 +72,4 @@ class NonHandler implements HandlerInterface
     {
         return true;
     }
-
-    public function defaultValue(mixed $primaryValue): mixed
-    {
-        return null;
-    }
-
-    public function isDefaultValue(mixed $data): bool
-    {
-        return $data === null;
-    }
 }
