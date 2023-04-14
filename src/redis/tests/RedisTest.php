@@ -37,6 +37,7 @@ use Throwable;
 
 use function Hyperf\Coroutine\defer;
 use function Hyperf\Coroutine\go;
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal

@@ -22,7 +22,8 @@ use function Hyperf\Coroutine\defer;
  */
 class Redis
 {
-    use ScanCaller;
+    use Traits\ScanCaller;
+    use Traits\MultiExec;
 
     protected string $poolName = 'default';
 
