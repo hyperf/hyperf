@@ -1,5 +1,9 @@
 # v3.0.17 - TBD
 
+## Fixed
+
+- [#5642](https://github.com/hyperf/hyperf/pull/5642) Fixed bug that the model cache cannot created when using `find many` to get non-exists models.
+
 ## Added
 
 - [#5634](https://github.com/hyperf/hyperf/pull/5634) Added `Hyperf\Stringable\str()` helper function.
