@@ -18,4 +18,6 @@ interface DefaultValueInterface
     public function isDefaultValue(array $data): bool;
 
     public function getPrimaryValue(array $data): mixed;
+
+    public function clearDefaultValue(array $data): array;
 }

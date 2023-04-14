@@ -128,6 +128,9 @@ class Manager
                 }
 
                 if (isset($item[$primaryKey])) {
+                    if ($handler instanceof DefaultValueInterface) {
+                        $item = $handler->clearDefaultValue($item);
+                    }
                     $items[] = $item;
                     $fetchIds[] = $item[$primaryKey];
                 }

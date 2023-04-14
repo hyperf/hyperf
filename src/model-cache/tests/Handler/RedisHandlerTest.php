@@ -14,6 +14,7 @@ namespace HyperfTest\ModelCache\Handler;
 use DateInterval;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\ModelCache\Config;
+use Hyperf\ModelCache\Handler\DefaultValueInterface;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
 use Hyperf\Redis\RedisProxy;
@@ -83,7 +84,13 @@ class RedisHandlerTest extends TestCase
             $result[] = $item;
         }
 
-        $this->assertSame($result, $handler->getMultiple($keys));
+        $data = $handler->getMultiple($keys);
+        if ($handler instanceof DefaultValueInterface) {
+            foreach ($data as $i => $value) {
+                $data[$i] = $handler->clearDefaultValue($value);
+            }
+        }
+        $this->assertSame($result, $data);
     }
 
     protected function mockHandler(): HandlerInterface

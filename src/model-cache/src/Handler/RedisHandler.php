@@ -152,4 +152,10 @@ class RedisHandler implements HandlerInterface, DefaultValueInterface
     {
         return current($data);
     }
+
+    public function clearDefaultValue(array $data): array
+    {
+        unset($data[$this->defaultKey]);
+        return $data;
+    }
 }
