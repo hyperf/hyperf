@@ -275,11 +275,6 @@ class Manager
         return (string) $this->container->get(ConfigInterface::class)->get('databases.' . $connection . '.prefix');
     }
 
-    protected function isNull(HandlerInterface $handler, mixed $data): bool
-    {
-        return $handler->isDefaultValue($data);
-    }
-
     protected function defaultValue(mixed $handler, mixed $primaryValue): array
     {
         if ($handler instanceof DefaultValueInterface) {
@@ -287,14 +282,5 @@ class Manager
         }
 
         return [];
-    }
-
-    protected function isDefaultValue(mixed $handler, mixed $data): bool
-    {
-        if ($handler instanceof DefaultValueInterface) {
-            return $handler->isDefaultValue($data);
-        }
-
-        return false;
     }
 }
