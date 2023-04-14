@@ -207,54 +207,44 @@ class RedisTest extends TestCase
 
     public function testPipeline()
     {
-        // $redis = $this->getRealRedis()->pipeline();
-        // $this->assertInstanceOf(\Redis::class, $redis);
+        // $pipe = $this->getRedis()->pipeline();
+        // $this->assertInstanceOf(\Redis::class, $pipe);
 
         $key = 'pipeline:' . uniqid();
 
-        $this->getRealRedis()->pipeline(function ($redis) use ($key) {
-            $redis->incr($key);
-            $redis->incr($key);
-            $redis->incr($key);
+        $this->getRedis()->pipeline(function (\Redis $pipe) use ($key) {
+            $pipe->incr($key);
+            $pipe->incr($key);
+            $pipe->incr($key);
         });
 
-        $this->assertEquals(3, $this->getRealRedis()->get($key));
+        $this->assertEquals(3, $this->getRedis()->get($key));
 
-        $this->getRealRedis()->del($key);
+        $this->getRedis()->del($key);
     }
 
     public function testTransaction()
     {
-        // $redis = $this->getRealRedis()->transaction();
-        // $this->assertInstanceOf(\Redis::class, $redis);
+        // $pipe = $this->getRedis()->transaction();
+        // $this->assertInstanceOf(\Redis::class, $pipe);
 
         $key = 'transaction:' . uniqid();
 
-        $this->getRealRedis()->transaction(function ($redis) use ($key) {
-            $redis->incr($key);
-            $redis->incr($key);
-            $redis->incr($key);
+        $this->getRedis()->transaction(function (\Redis|RedisCluster $pipe) use ($key) {
+            $pipe->incr($key);
+            $pipe->incr($key);
+            $pipe->incr($key);
         });
 
-        $this->assertEquals(3, $this->getRealRedis()->get($key));
+        $this->assertEquals(3, $this->getRedis()->get($key));
 
-        $this->getRealRedis()->del($key);
+        $this->getRedis()->del($key);
     }
 
     private function getRedis()
     {
         $container = $this->getContainer();
         $pool = new RedisPoolStub($container, 'default');
-        $container->shouldReceive('make')->once()->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
-        $factory = new PoolFactory($container);
-
-        return new Redis($factory);
-    }
-
-    private function getRealRedis()
-    {
-        $container = $this->getContainer();
-        $pool = new RedisPool($container, 'default');
         $container->shouldReceive('make')->once()->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
         $factory = new PoolFactory($container);
 
