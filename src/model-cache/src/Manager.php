@@ -70,23 +70,27 @@ class Manager
         if ($handler = $this->handlers[$name] ?? null) {
             $key = $this->getCacheKey($id, $instance, $handler->getConfig());
             $data = $handler->get($key);
-            if ($data) {
-                return $instance->newFromBuilder(
-                    $this->getAttributes($handler->getConfig(), $instance, $data)
-                );
-            }
-
             // Fetch it from database, because it not exists in cache handler.
-            if (is_null($data)) {
+            if ($data === null) {
                 $model = $instance->newQuery()->where($primaryKey, '=', $id)->first();
                 if ($model) {
                     $ttl = $this->getCacheTTL($instance, $handler);
                     $handler->set($key, $this->formatModel($model), $ttl);
                 } else {
                     $ttl = $handler->getConfig()->getEmptyModelTtl();
-                    $handler->set($key, [], $ttl);
+                    $handler->set($key, $handler->defaultValue($id), $ttl);
                 }
                 return $model;
+            }
+
+            if ($handler->isDefaultValue($data)) {
+                return null;
+            }
+
+            if ($data) {
+                return $instance->newFromBuilder(
+                    $this->getAttributes($handler->getConfig(), $instance, $data)
+                );
             }
 
             // It not exists in cache handler and database.
@@ -121,6 +125,11 @@ class Manager
             $items = [];
             $fetchIds = [];
             foreach ($data as $item) {
+                if ($handler->isDefaultValue($item)) {
+                    $fetchIds[] = current($item);
+                    continue;
+                }
+
                 if (isset($item[$primaryKey])) {
                     $items[] = $item;
                     $fetchIds[] = $item[$primaryKey];
@@ -140,7 +149,7 @@ class Manager
                     if ($model = $dictionary[$id] ?? null) {
                         $handler->set($key, $this->formatModel($model), $ttl);
                     } else {
-                        $handler->set($key, [], $emptyTtl);
+                        $handler->set($key, $handler->defaultValue($id), $emptyTtl);
                     }
                 }
 
@@ -168,9 +177,8 @@ class Manager
 
     /**
      * Destroy the models for the given IDs from cache.
-     * @param mixed $ids
      */
-    public function destroy($ids, string $class): bool
+    public function destroy(iterable $ids, string $class): bool
     {
         /** @var Model $instance */
         $instance = new $class();
@@ -268,5 +276,10 @@ class Manager
     protected function getPrefix(string $connection): string
     {
         return (string) $this->container->get(ConfigInterface::class)->get('databases.' . $connection . '.prefix');
+    }
+
+    protected function isNull(HandlerInterface $handler, mixed $data): bool
+    {
+        return $handler->isDefaultValue($data);
     }
 }

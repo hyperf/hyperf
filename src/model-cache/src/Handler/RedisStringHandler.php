@@ -119,4 +119,14 @@ class RedisStringHandler implements HandlerInterface
     {
         return $this->delete($key);
     }
+
+    public function defaultValue(mixed $primaryValue): mixed
+    {
+        return [];
+    }
+
+    public function isDefaultValue(mixed $data): bool
+    {
+        return $data === [];
+    }
 }

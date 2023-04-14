@@ -19,4 +19,8 @@ interface HandlerInterface extends CacheInterface
     public function getConfig(): Config;
 
     public function incr($key, $column, $amount): bool;
+
+    public function defaultValue(mixed $primaryValue): mixed;
+
+    public function isDefaultValue(mixed $data): bool;
 }

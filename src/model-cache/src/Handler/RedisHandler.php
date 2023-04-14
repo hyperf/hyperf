@@ -50,12 +50,6 @@ class RedisHandler implements HandlerInterface
             return $default;
         }
 
-        unset($data[$this->defaultKey]);
-
-        if (empty($data)) {
-            return [];
-        }
-
         return $data;
     }
 
@@ -69,7 +63,7 @@ class RedisHandler implements HandlerInterface
             throw new CacheException('The value must is array.');
         }
 
-        $data = array_merge($data, [$this->defaultKey => $this->defaultValue]);
+        $data = array_merge([$this->defaultKey => $this->defaultValue], $data);
         $res = $this->redis->hMSet($key, $data);
         if ($ttl) {
             $seconds = $this->secondsUntil($ttl);
@@ -101,7 +95,6 @@ class RedisHandler implements HandlerInterface
         $data = $this->manager->handle(HashGetMultiple::class, (array) $keys);
         $result = [];
         foreach ($data as $item) {
-            unset($item[$this->defaultKey]);
             if (! empty($item)) {
                 $result[] = $item;
             }
@@ -134,5 +127,18 @@ class RedisHandler implements HandlerInterface
         $data = $this->manager->handle(HashIncr::class, [$key, $column, $amount], 1);
 
         return is_numeric($data);
+    }
+
+    public function defaultValue(mixed $primaryValue): mixed
+    {
+        return [
+            $this->defaultKey => $primaryValue,
+        ];
+    }
+
+    public function isDefaultValue(mixed $data): bool
+    {
+        $value = current($data);
+        return $this->defaultValue($value) === $data;
     }
 }
