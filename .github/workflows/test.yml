@@ -71,6 +71,11 @@ jobs:
       - name: Run Scripts Before Test
         run: cp .travis/.env.example .env
       - name: Print PHP Environments
-        run: php -i
+        run: |
+          if [ _${{ matrix.sw-version }} = '_v4.8.12' ]
+          then
+            sudo rm -rf /etc/php/${{ matrix.php-version }}/cli/conf.d/20-xdebug.ini
+          fi
+          php -i
       - name: Run Test Cases
         run: ./.travis/run.test.sh
