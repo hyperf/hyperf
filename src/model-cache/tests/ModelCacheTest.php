@@ -167,6 +167,22 @@ class ModelCacheTest extends TestCase
         UserModel::query(true)->where('id', $id)->delete();
     }
 
+    public function testFindManyNullBeforeCreate()
+    {
+        $container = ContainerStub::mockContainer();
+
+        $id = 207;
+
+        $models = UserModel::findManyFromCache([$id]);
+        /** @var Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        $this->assertEquals(1, $redis->exists('{mc:default:m:user}:id:' . $id));
+        $this->assertSame(0, $models->count());
+
+        $this->assertEquals(1, $redis->del('{mc:default:m:user}:id:' . $id));
+        UserModel::query(true)->where('id', $id)->delete();
+    }
+
     public function testIncrNotExist()
     {
         $container = ContainerStub::mockContainer();
