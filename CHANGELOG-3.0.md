@@ -10,6 +10,7 @@
 - [#5634](https://github.com/hyperf/hyperf/pull/5634) Added `Hyperf\Stringable\str()` helper function.
 - [#5639](https://github.com/hyperf/hyperf/pull/5639) Added `Redis::pipeline()` and `Redis::transaction()` support.
 - [#5641](https://github.com/hyperf/hyperf/pull/5641) Support deeply nested cache relations for `model-cache`.
+- [#5646](https://github.com/hyperf/hyperf/pull/5646) Added `PriorityDefinition` to sort dependencies.
 
 ## Optimized
 
