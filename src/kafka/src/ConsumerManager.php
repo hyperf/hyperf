@@ -135,14 +135,14 @@ class ConsumerManager
 
                 while (true) {
                     try {
-                        if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(10)) {
-                            break;
-                        }
-
                         $longLangConsumer->start();
                     } catch (Throwable $exception) {
                         $this->stdoutLogger->warning((string) $exception);
                         $this->dispatcher?->dispatch(new FailToConsume($this->consumer, [], $exception));
+                    }
+
+                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(10)) {
+                        break;
                     }
                 }
 
