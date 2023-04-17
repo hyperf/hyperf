@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
@@ -132,6 +133,12 @@ class ConsumerManager
                         }, $config['consume_timeout'] ?? -1);
                     }
                 );
+
+                // stop consumer when worker exit
+                Coroutine::create(function () use ($longLangConsumer) {
+                    CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
+                    $longLangConsumer->stop();
+                });
 
                 while (true) {
                     try {
