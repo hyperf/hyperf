@@ -64,15 +64,15 @@ class ProviderConfig
         $result = array_merge_recursive(...$arrays);
         if (isset($result['dependencies'])) {
             $result['dependencies'] = [];
-            foreach ($arrays as $item){
-                foreach ($item['dependencies'] ?? [] as $key => $value){
+            foreach ($arrays as $item) {
+                foreach ($item['dependencies'] ?? [] as $key => $value) {
                     $depend = $result['dependencies'][$key] ?? null;
-                    if(!$depend instanceof PriorityDefinition){
+                    if (! $depend instanceof PriorityDefinition) {
                         $result['dependencies'][$key] = $value;
                         continue;
                     }
 
-                    if($value instanceof PriorityDefinition){
+                    if ($value instanceof PriorityDefinition) {
                         $depend->merge($value);
                     }
                 }
