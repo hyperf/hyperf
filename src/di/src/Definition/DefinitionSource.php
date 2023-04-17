@@ -102,15 +102,21 @@ class DefinitionSource implements DefinitionSourceInterface
      */
     private function normalizeDefinition(string $identifier, $definition): ?DefinitionInterface
     {
+        if ($definition instanceof PriorityDefinition) {
+            $definition = $definition->getDefinition();
+        }
+
         if (is_string($definition) && class_exists($definition)) {
             if (method_exists($definition, '__invoke')) {
                 return new FactoryDefinition($identifier, $definition, []);
             }
             return $this->autowire($identifier, new ObjectDefinition($identifier, $definition));
         }
+
         if (is_callable($definition)) {
             return new FactoryDefinition($identifier, $definition, []);
         }
+
         return null;
     }
 
