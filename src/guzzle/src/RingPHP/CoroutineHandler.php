@@ -17,7 +17,6 @@ use GuzzleHttp\Ring\Exception\RingException;
 use GuzzleHttp\Ring\Future\CompletedFutureArray;
 use Hyperf\Engine\Http\Client;
 use Hyperf\Engine\Http\RawResponse;
-use Hyperf\Utils\ResourceGenerator;
 use Throwable;
 
 /**

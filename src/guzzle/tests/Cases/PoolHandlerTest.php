@@ -19,7 +19,6 @@ use Hyperf\Pool\PoolOption;
 use Hyperf\Pool\SimplePool\Connection;
 use Hyperf\Pool\SimplePool\Pool;
 use Hyperf\Pool\SimplePool\PoolFactory;
-use Hyperf\Utils\Codec\Json;
 use HyperfTest\Guzzle\Stub\PoolHandlerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -54,7 +53,7 @@ class PoolHandlerTest extends TestCase
 
         $res = $client->get('/stats?format=json');
         $this->assertSame(200, $res->getStatusCode());
-        $this->assertIsArray(Json::decode((string) $res->getBody()));
+        $this->assertIsArray(json_decode((string) $res->getBody()));
         $this->assertSame(1, $handler->count);
         $client->get('/stats?format=json');
         $this->assertSame(1, $handler->count);

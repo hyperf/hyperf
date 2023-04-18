@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": ">=8.0",
+        "ext-curl": "*",
         "guzzlehttp/guzzle": "^6.3|^7.0",
         "hyperf/utils": "~3.0.0",
         "psr/container": "^1.0|^2.0",
