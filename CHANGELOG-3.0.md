@@ -16,6 +16,7 @@
 
 - [#5634](https://github.com/hyperf/hyperf/pull/5634) Use `Hyperf\Stringable\Str` instead of `Hyperf\Utils\Str`.
 - [#5636](https://github.com/hyperf/hyperf/pull/5636) Reduce kafka first start time and handle stop consumer logic
+- [#5648](https://github.com/hyperf/hyperf/pull/5648) Removed requirement `hyperf/utils` from `hyperf/guzzle`.
 
 # v3.0.16 - 2023-04-12
 
