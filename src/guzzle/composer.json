@@ -16,7 +16,8 @@
         "psr/http-message": "^1.0"
     },
     "suggest": {
-        "hyperf/pool": "Required to use pool handler."
+        "hyperf/pool": "Required to use pool handler.",
+        "ext-curl": "Required for CURL handler support"
     },
     "autoload": {
         "psr-4": {
