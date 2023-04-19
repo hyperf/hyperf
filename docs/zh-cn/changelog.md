@@ -1,5 +1,26 @@
 # 版本更新记录
 
+# v3.0.17 - 2023-04-19
+
+## Fixed
+
+- [#5642](https://github.com/hyperf/hyperf/pull/5642) 修复使用批量读取模型缓存时，遇到不存在的数据时，无法初始化空缓存的问题。
+- [#5643](https://github.com/hyperf/hyperf/pull/5643) 修复使用批量读取模型缓存时，空缓存无法正常使用的问题。
+- [#5649](https://github.com/hyperf/hyperf/pull/5649) 修复协程风格下，无法初始化数据库字段收集器的问题。
+
+## Added
+
+- [#5634](https://github.com/hyperf/hyperf/pull/5634) 新增助手函数 `Hyperf\Stringable\str()`。
+- [#5639](https://github.com/hyperf/hyperf/pull/5639) 新增方法 `Redis::pipeline()` 和 `Redis::transaction()`。
+- [#5641](https://github.com/hyperf/hyperf/pull/5641) 为模型缓存 `loadCache` 增加嵌套初始化缓存的能力。
+- [#5646](https://github.com/hyperf/hyperf/pull/5646) 增加 `PriorityDefinition` 类，来处理容器 `dependencies` 优先级的问题。
+
+## Optimized
+
+- [#5634](https://github.com/hyperf/hyperf/pull/5634) 使用 `Hyperf\Stringable\Str` 替代 `Hyperf\Utils\Str`。
+- [#5636](https://github.com/hyperf/hyperf/pull/5636) 优化 `kafka` 消费者，启动时等待消费过长的问题。
+- [#5648](https://github.com/hyperf/hyperf/pull/5648) 将依赖 `hyperf/utils` 从 `hyperf/guzzle` 中移除。
+
 # v3.0.16 - 2023-04-12
 
 ## 修复
