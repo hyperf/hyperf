@@ -329,7 +329,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $data = json_decode((string) $res->getBody());
+        $data = json_decode((string) $res->getBody(), true);
         $this->assertArrayNotHasKey('Content-Length', $data['headers']);
         $this->assertArrayNotHasKey('Expect', $data['headers']);
 
@@ -348,7 +348,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $data = json_decode((string) $res->getBody());
+        $data = json_decode((string) $res->getBody(), true);
         $this->assertArrayHasKey('Content-Length', $data['headers']);
         $this->assertArrayHasKey('Expect', $data['headers']);
     }
