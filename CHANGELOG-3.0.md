@@ -4,6 +4,7 @@
 
 - [#5642](https://github.com/hyperf/hyperf/pull/5642) Fixed bug that the model cache cannot be created when using `find many` to get non-exists models.
 - [#5643](https://github.com/hyperf/hyperf/pull/5643) Fixed bug that the empty caches cannot be used for `Model::findManyFromCache()`.
+- [#5649](https://github.com/hyperf/hyperf/pull/5649) Fixed bug init table collector cannot work for coroutine style server.
 
 ## Added
 
