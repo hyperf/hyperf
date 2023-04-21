@@ -83,21 +83,21 @@ class User extends Model
      *
      * @var string
      */
-    protected $table = 'user';
+    protected ?string $table = 'user';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
+    protected array $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'gender' => 'integer'];
+    protected array $casts = ['id' => 'integer', 'gender' => 'integer'];
 }
 ```
 
@@ -129,7 +129,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $table = 'user';
+    protected ?string $table = 'user';
 }
 ```
 
@@ -154,7 +154,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    public $timestamps = false;
+    public bool $timestamps = false;
 }
 ```
 
@@ -171,7 +171,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $dateFormat = 'U';
+    protected ?string $dateFormat = 'U';
 }
 ```
 
@@ -211,7 +211,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $connection = 'connection-name';
+    protected ?string $connection = 'connection-name';
 }
 ```
 
@@ -230,7 +230,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $attributes = [
+    protected array $attributes = [
         'delayed' => false,
     ];
 }
@@ -403,7 +403,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $fillable = ['name'];
+    protected array $fillable = ['name'];
 }
 ```
 
