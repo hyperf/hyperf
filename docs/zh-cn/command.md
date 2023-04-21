@@ -47,7 +47,7 @@ class FooCommand extends HyperfCommand
     /**
      * 执行的命令行
      */
-    protected string $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 }
 ```
 
@@ -93,7 +93,7 @@ class FooCommand extends HyperfCommand
     /**
      * 执行的命令行
      */
-    protected string $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 
     public function handle()
     {
@@ -128,7 +128,7 @@ class FooCommand extends HyperfCommand
     /**
      * 执行的命令行
      */
-    protected string $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 
     public function handle()
     {

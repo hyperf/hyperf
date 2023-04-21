@@ -49,7 +49,7 @@ class FooCommand extends HyperfCommand
      *
      * @var string
      */
-    protected $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 }
 ```
 
@@ -97,7 +97,7 @@ class FooCommand extends HyperfCommand
      *
      * @var string
      */
-    protected $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
     
     public function handle()
     {
@@ -134,7 +134,7 @@ class FooCommand extends HyperfCommand
      *
      * @var string
      */
-    protected $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 
     public function handle()
     {
