@@ -6,7 +6,7 @@ In Hyperf, you could get the response proxy object by injected `Hyperf\HttpServe
 
 ## Return JSON
 
-You could return a `Json` format content quickly by method `json($data)` of `Hyperf\HttpServer\Contract\ResponseInterface`, and also the `Content-Type` of response object will be set to `application/json`, `$data` accept an array or an object that implemented `Hyperf\Utils\Contracts\Arrayable` interface.
+You could return a `Json` format content quickly by method `json($data)` of `Hyperf\HttpServer\Contract\ResponseInterface`, and also the `Content-Type` of response object will be set to `application/json`, `$data` accept an array or an object that implemented `Hyperf\Contract\Arrayable` interface.
 
 ```php
 <?php
