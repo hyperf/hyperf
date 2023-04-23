@@ -6,7 +6,7 @@
 
 ## 返回 Json 格式
 
-`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `json($data)` 方法用於快速返回 `Json` 格式，並設定 `Content-Type` 為 `application/json`，`$data` 接受一個數組或為一個實現了 `Hyperf\Utils\Contracts\Arrayable` 介面的物件。
+`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `json($data)` 方法用於快速返回 `Json` 格式，並設定 `Content-Type` 為 `application/json`，`$data` 接受一個數組或為一個實現了 `Hyperf\Contract\Arrayable` 介面的物件。
 
 ```php
 <?php
