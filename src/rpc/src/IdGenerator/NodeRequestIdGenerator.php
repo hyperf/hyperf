@@ -13,7 +13,7 @@ namespace Hyperf\Rpc\IdGenerator;
 
 use DateTime;
 use Hyperf\Contract\IdGeneratorInterface;
-use Hyperf\Utils\Codec\Base62;
+use Hyperf\Codec\Base62;
 
 class NodeRequestIdGenerator implements IdGeneratorInterface
 {
