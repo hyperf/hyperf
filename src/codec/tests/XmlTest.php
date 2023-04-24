@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Codec;
 
-use Hyperf\Codec\Xml;
 use Hyperf\Codec\Exception\InvalidArgumentException;
+use Hyperf\Codec\Xml;
 use PHPUnit\Framework\TestCase;
 
 /**

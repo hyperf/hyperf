@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Codec;
 
-use Hyperf\Codec\Json;
 use Hyperf\Codec\Exception\InvalidArgumentException;
+use Hyperf\Codec\Json;
 use HyperfTest\Codec\Stub\Car;
 use HyperfTest\Codec\Stub\StringCodeException;
 use PHPUnit\Framework\TestCase;
