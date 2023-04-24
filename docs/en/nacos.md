@@ -1,14 +1,14 @@
-#Nacos
+# Nacos
 
 A `PHP` coroutine client of `Nacos`, perfectly combined with the configuration center and microservice governance of `Hyperf`.
 
-## Install
+## Installation
 
 ```shell
 composer require hyperf/nacos
 ```
 
-### publish profile
+### Publish the config file
 
 ```shell
 php bin/hyperf.php vendor:publish hyperf/nacos
@@ -59,3 +59,28 @@ return [
 ];
 ```
 
+## Aliyun Service Authentication
+
+When using Aliyun's Nacos service, you may need to use AK and SK authentication. The Nacos component supports it natively. We can easily add the corresponding configuration, as follows:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
+    // 'uri' => 'http://127.0.0.1:8848/',
+    // The nacos host info
+    'host' => '127.0.0.1',
+    'port' => 8848,
+    // The nacos account info
+    'username' => null,
+    'password' => null,
+    'access_key' => 'xxxx',
+    'access_secret' => 'yyyy',
+    'guzzle' => [
+        'config' => null,
+    ],
+];
+```
