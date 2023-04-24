@@ -92,7 +92,7 @@
 - [#5511](https://github.com/hyperf/hyperf/pull/5511) 将 `GRPC` 服务统一到 `RPC` 服务中，可以更加方便的进行服务注册与发现。
 - [#5543](https://github.com/hyperf/hyperf/pull/5543) 增加 `Nacos` 双向流支持，可以监听到配置中心实时更新的事件。
 - [#5545](https://github.com/hyperf/hyperf/pull/5545) 为组件 `hyperf/http2-client` 增加双向流相关的测试。
-- [#5546](https://github.com/hyperf/hyperf/pull/5546) 为 `Naco`s 配置中心增加 `GRPC` 功能，可以实时监听配置的变化。
+- [#5546](https://github.com/hyperf/hyperf/pull/5546) 为 `Nacos` 配置中心增加 `GRPC` 功能，可以实时监听配置的变化。
 
 ## 优化
 
