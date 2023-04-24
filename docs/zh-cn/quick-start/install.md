@@ -43,7 +43,7 @@ composer create-project hyperf/swow-skeleton
 
 假设您的本机环境并不能达到 Hyperf 的环境要求，或对于环境配置不是那么熟悉，那么您可以通过以下方法来运行及开发 Hyperf 项目：
 
-- 启动镜像
+- 启动容器
 
 可以根据实际情况，映射到宿主机对应的目录，以下以 `/workspace/skeleton` 为例
 
