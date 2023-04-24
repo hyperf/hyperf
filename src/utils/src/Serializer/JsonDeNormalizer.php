@@ -16,5 +16,4 @@ namespace Hyperf\Utils\Serializer;
  */
 class JsonDeNormalizer extends \Hyperf\Serializer\JsonDeNormalizer
 {
-    
 }
