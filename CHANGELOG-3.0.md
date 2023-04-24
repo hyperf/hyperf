@@ -1,5 +1,9 @@
 # v3.0.18 - TBD
 
+## Fixed
+
+- [#5662](https://github.com/hyperf/hyperf/pull/5662) Fixed bug that `pgsql-swoole` cannot throw exceptions when statement execution failed.
+
 ## Optimized
 
 - [#5660](https://github.com/hyperf/hyperf/pull/5660) Split `hyperf/codec` from `hyperf/utils`.
