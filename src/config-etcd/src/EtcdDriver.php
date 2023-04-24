@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigEtcd;
 
+use Hyperf\Codec\Packer\JsonPacker;
 use Hyperf\ConfigCenter\AbstractDriver;
 use Hyperf\Contract\PackerInterface;
-use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 
 class EtcdDriver extends AbstractDriver

@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Testing;
 
 use GuzzleHttp\Client;
+use Hyperf\Codec\Packer\JsonPacker;
 use Hyperf\Collection\Arr;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Guzzle\CoroutineHandler;
-use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\UriInterface;
 

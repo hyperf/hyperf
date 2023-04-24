@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc\Listener;
 
+use Hyperf\Codec\Packer\JsonPacker;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\JsonRpc\DataFormatter;
@@ -21,7 +22,6 @@ use Hyperf\JsonRpc\Packer\JsonEofPacker;
 use Hyperf\JsonRpc\Packer\JsonLengthPacker;
 use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\Rpc\ProtocolManager;
-use Hyperf\Utils\Packer\JsonPacker;
 
 class RegisterProtocolListener implements ListenerInterface
 {

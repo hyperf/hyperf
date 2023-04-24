@@ -11,17 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Packer;
 
-use Hyperf\Contract\PackerInterface;
-
-class JsonPacker implements PackerInterface
+/**
+ * @deprecated since 3.1. Use Hyperf\Codec\Packer\JsonPacker instead.
+ */
+class JsonPacker extends \Hyperf\Codec\Packer\JsonPacker
 {
-    public function pack($data): string
-    {
-        return json_encode($data, JSON_UNESCAPED_UNICODE);
-    }
-
-    public function unpack(string $data)
-    {
-        return json_decode($data, true);
-    }
 }

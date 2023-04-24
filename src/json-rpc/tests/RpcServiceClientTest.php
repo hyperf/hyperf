@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\JsonRpc;
 
+use Hyperf\Codec\Packer\JsonPacker;
 use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
@@ -31,7 +32,6 @@ use Hyperf\RpcClient\Exception\RequestException;
 use Hyperf\RpcClient\ProxyFactory;
 use Hyperf\Serializer\SerializerFactory;
 use Hyperf\Serializer\SymfonyNormalizer;
-use Hyperf\Utils\Packer\JsonPacker;
 use HyperfTest\JsonRpc\Stub\CalculatorProxyServiceClient;
 use HyperfTest\JsonRpc\Stub\CalculatorServiceInterface;
 use HyperfTest\JsonRpc\Stub\IntegerValue;
