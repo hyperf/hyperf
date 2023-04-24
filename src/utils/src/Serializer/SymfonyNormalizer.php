@@ -11,22 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Serializer;
 
-use Hyperf\Contract\NormalizerInterface;
-use Symfony\Component\Serializer\Serializer;
-
-class SymfonyNormalizer implements NormalizerInterface
+/**
+ * @deprecated since 3.1, use Hyperf\Serializer\SymfonyNormalizer instead.
+ */
+class SymfonyNormalizer extends \Hyperf\Serializer\SymfonyNormalizer
 {
-    public function __construct(protected Serializer $serializer)
-    {
-    }
-
-    public function normalize($object)
-    {
-        return $this->serializer->normalize($object);
-    }
-
-    public function denormalize($data, string $class)
-    {
-        return $this->serializer->denormalize($data, $class);
-    }
 }

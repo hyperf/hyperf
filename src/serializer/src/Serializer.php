@@ -53,7 +53,7 @@ use function is_resource;
  */
 class Serializer implements Normalizer, SerializerInterface, ContextAwareNormalizerInterface, ContextAwareDenormalizerInterface, ContextAwareEncoderInterface, ContextAwareDecoderInterface
 {
-    private const SCALAR_TYPES = [
+    protected const SCALAR_TYPES = [
         'int' => true,
         'bool' => true,
         'float' => true,
@@ -70,11 +70,11 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
      */
     protected $decoder;
 
-    private $normalizers = [];
+    protected $normalizers = [];
 
-    private $denormalizerCache = [];
+    protected $denormalizerCache = [];
 
-    private $normalizerCache = [];
+    protected $normalizerCache = [];
 
     /**
      * @param (NormalizerInterface|DenormalizerInterface|mixed)[] $normalizers

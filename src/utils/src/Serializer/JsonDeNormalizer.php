@@ -11,9 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Serializer;
 
-use Hyperf\Contract\NormalizerInterface;
-
-class JsonDeNormalizer implements NormalizerInterface
+/**
+ * @deprecated since 3.1. Use Hyperf\Serializer\JsonDeNormalizer instead.
+ */
+class JsonDeNormalizer extends \Hyperf\Serializer\JsonDeNormalizer
 {
     public function normalize($object)
     {
