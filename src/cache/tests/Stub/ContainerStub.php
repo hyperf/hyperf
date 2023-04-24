@@ -13,6 +13,7 @@ namespace HyperfTest\Cache\Stub;
 
 use Hyperf\Cache\CacheManager;
 use Hyperf\Cache\Driver\RedisDriver;
+use Hyperf\Codec\Packer\PhpSerializerPacker;
 use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
@@ -27,7 +28,6 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Mockery;
 
 class ContainerStub

@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache\Handler;
 
+use Hyperf\Codec\Packer\PhpSerializerPacker;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Exception\CacheException;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\InteractsWithTime;
-use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Psr\Container\ContainerInterface;
 
 class RedisStringHandler implements HandlerInterface

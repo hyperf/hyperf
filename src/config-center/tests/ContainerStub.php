@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\ConfigCenter;
 
 use Hyperf\Codec\Json;
+use Hyperf\Codec\Packer\JsonPacker;
 use Hyperf\ConfigCenter\DriverFactory;
 use Hyperf\ConfigEtcd;
 use Hyperf\ConfigNacos;
@@ -20,7 +21,6 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Etcd\KVInterface;
-use Hyperf\Utils\Packer\JsonPacker;
 use Mockery;
 use Psr\EventDispatcher\EventDispatcherInterface;
 

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\JsonRpc;
 
 use Error;
+use Hyperf\Codec\Packer\JsonPacker;
 use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
@@ -41,7 +42,6 @@ use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\RpcServer\Router\DispatcherFactory;
 use Hyperf\Serializer\SerializerFactory;
 use Hyperf\Serializer\SymfonyNormalizer;
-use Hyperf\Utils\Packer\JsonPacker;
 use HyperfTest\JsonRpc\Stub\CalculatorService;
 use InvalidArgumentException;
 use Mockery;

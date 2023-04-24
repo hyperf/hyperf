@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\JsonRpc;
 
+use Hyperf\Codec\Packer\JsonPacker;
 use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
@@ -38,7 +39,6 @@ use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Router\DispatcherFactory;
 use Hyperf\Serializer\SimpleNormalizer;
-use Hyperf\Utils\Packer\JsonPacker;
 use HyperfTest\JsonRpc\Stub\CalculatorService;
 use Mockery;
 use Monolog\Handler\StreamHandler;
