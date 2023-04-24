@@ -8,6 +8,7 @@
 
 - [#5660](https://github.com/hyperf/hyperf/pull/5660) Split `hyperf/codec` from `hyperf/utils`.
 - [#5663](https://github.com/hyperf/hyperf/pull/5663) Split `hyperf/serializer` from `hyperf/utils`.
+- [#5666](https://github.com/hyperf/hyperf/pull/5666) Split Packers to `hyperf/codec`.
 
 # v3.0.17 - 2023-04-19
 
