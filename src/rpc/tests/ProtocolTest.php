@@ -14,7 +14,7 @@ namespace HyperfTest\Rpc;
 use Hyperf\Config\Config;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
-use Hyperf\Utils\Serializer\JsonDeNormalizer;
+use Hyperf\Serializer\JsonDeNormalizer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

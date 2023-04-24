@@ -25,6 +25,7 @@
         "hyperf/exception-handler": "~3.0.0",
         "hyperf/http-message": "~3.0.0",
         "hyperf/macroable": "~3.0.0",
+        "hyperf/serializer": "~3.0.0",
         "hyperf/server": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "nikic/fast-route": "^1.3",

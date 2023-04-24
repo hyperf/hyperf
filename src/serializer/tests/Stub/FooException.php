@@ -9,11 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils\Serializer;
+namespace HyperfTest\Serializer\Stub;
 
-/**
- * @deprecated since 3.1. Use Hyperf\Serializer\ExceptionNormalizer instead.
- */
-class ExceptionNormalizer extends \Hyperf\Serializer\ExceptionNormalizer
+use Exception;
+
+class FooException extends Exception
 {
+    public function __construct($code = 0, $message = '')
+    {
+        parent::__construct($message, $code);
+    }
 }

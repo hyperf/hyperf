@@ -12,13 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\Task;
 
 use Hyperf\Framework\Event\OnTask;
+use Hyperf\Serializer\ExceptionNormalizer;
 use Hyperf\Task\ChannelFactory;
 use Hyperf\Task\Exception;
 use Hyperf\Task\Finish;
 use Hyperf\Task\Listener\OnTaskListener;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
-use Hyperf\Utils\Serializer\ExceptionNormalizer;
 use HyperfTest\Task\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;

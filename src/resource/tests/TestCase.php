@@ -24,7 +24,7 @@ use Hyperf\HttpServer\CoreMiddleware as HttpServerCore;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Serializer\SimpleNormalizer;
 use Mockery;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;

@@ -9,11 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils;
+namespace Hyperf\Serializer;
 
 use Hyperf\Contract\NormalizerInterface;
-use Hyperf\Utils\Serializer\SerializerFactory;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 class ConfigProvider

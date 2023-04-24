@@ -1,12 +1,12 @@
 {
-    "name": "hyperf/task",
-    "description": "A task library for Hyperf.",
+    "name": "hyperf/serializer",
+    "description": "A serializer component for Hyperf.",
     "license": "MIT",
     "keywords": [
         "php",
         "swoole",
         "hyperf",
-        "task"
+        "tappable"
     ],
     "homepage": "https://hyperf.io",
     "support": {
@@ -17,26 +17,21 @@
     },
     "require": {
         "php": ">=8.0",
-        "hyperf/contract": "~3.0.0",
-        "hyperf/framework": "~3.0.0",
-        "hyperf/serializer": "~3.0.0",
-        "hyperf/utils": "~3.0.0",
-        "psr/container": "^1.0|^2.0",
-        "psr/event-dispatcher": "^1.0",
-        "symfony/property-access": "^5.0|^6.0",
-        "symfony/serializer": "^5.0|^6.0"
+        "hyperf/contract": "~3.0.0"
     },
     "suggest": {
-        "hyperf/di": "Required to use annotation."
+        "symfony/serializer": "Required to use SymfonyNormalizer (^5.0|^6.0)",
+        "symfony/property-access": "Required to use SymfonyNormalizer (^5.0|^6.0)",
+        "hyperf/di": "Required to use ExceptionNormalizer"
     },
     "autoload": {
         "psr-4": {
-            "Hyperf\\Task\\": "src/"
+            "Hyperf\\Serializer\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Task\\": "tests/"
+            "HyperfTest\\Serializer\\": "tests/"
         }
     },
     "config": {
@@ -47,7 +42,7 @@
             "dev-master": "3.0-dev"
         },
         "hyperf": {
-            "config": "Hyperf\\Task\\ConfigProvider"
+            "config": "Hyperf\\Serializer\\ConfigProvider"
         }
     }
 }

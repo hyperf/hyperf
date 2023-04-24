@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Task;
 
-use Hyperf\Utils\Serializer\ExceptionNormalizer;
+use Hyperf\Serializer\ExceptionNormalizer;
 use Psr\Container\ContainerInterface;
 use Throwable;
 

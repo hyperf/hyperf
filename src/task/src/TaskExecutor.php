@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Task;
 
+use Hyperf\Serializer\ExceptionNormalizer;
 use Hyperf\Task\Exception\TaskException;
 use Hyperf\Task\Exception\TaskExecuteException;
-use Hyperf\Utils\Serializer\ExceptionNormalizer;
 use Swoole\Server;
 use Throwable;
 
