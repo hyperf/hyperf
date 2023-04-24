@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcMultiplex;
 
+use Hyperf\Codec\Json;
 use Hyperf\Rpc\Context;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
 use Hyperf\Rpc\ErrorResponse;
@@ -18,7 +19,6 @@ use Hyperf\Rpc\Request;
 use Hyperf\Rpc\Response;
 use Hyperf\RpcClient\Exception\RequestException;
 use Hyperf\RpcMultiplex\Contract\DataFetcherInterface;
-use Hyperf\Utils\Codec\Json;
 use Throwable;
 
 class DataFormatter implements DataFormatterInterface, DataFetcherInterface

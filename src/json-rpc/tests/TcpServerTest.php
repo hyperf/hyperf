@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\JsonRpc;
 
+use Hyperf\Codec\Json;
 use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
@@ -36,7 +37,6 @@ use Hyperf\Server\Event;
 use Hyperf\Server\Server;
 use Hyperf\Server\ServerManager;
 use Hyperf\Stringable\Str;
-use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use Mockery;
 use PHPUnit\Framework\TestCase;

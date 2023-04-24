@@ -9,6 +9,7 @@
     "description": "Rpc for multiplexing connection",
     "require": {
         "php": ">=8.0",
+        "hyperf/codec": "~3.0.0",
         "hyperf/framework": "~3.0.0",
         "hyperf/http-message": "~3.0.0",
         "hyperf/load-balancer": "~3.0.0",

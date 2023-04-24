@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Testing;
 
+use Hyperf\Codec\Json;
 use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
@@ -30,7 +31,6 @@ use Hyperf\HttpServer\Router\Router;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
 use Hyperf\Testing\Client;
-use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\Testing\Stub\Exception\Handler\FooExceptionHandler;

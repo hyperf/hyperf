@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ConfigCenter;
 
+use Hyperf\Codec\Json;
 use Hyperf\Config\Config;
 use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
 use Hyperf\ConfigCenter\DriverFactory;
@@ -20,7 +21,6 @@ use Hyperf\ConfigEtcd\EtcdDriver;
 use Hyperf\ConfigNacos;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Codec\Json;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 

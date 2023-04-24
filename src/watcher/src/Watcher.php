@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Watcher;
 
+use Hyperf\Codec\Json;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use Hyperf\Utils\Filesystem\FileNotFoundException;
 use Hyperf\Utils\Filesystem\Filesystem;

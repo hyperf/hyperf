@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils\Serializer;
 
-use Hyperf\Utils\Codec\Json;
+use Hyperf\Codec\Json;
 use Hyperf\Utils\Serializer\JsonDeNormalizer;
 use PHPUnit\Framework\TestCase;
 

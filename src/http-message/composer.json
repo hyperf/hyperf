@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": ">=8.0",
+        "hyperf/codec": "~3.0.0",
         "hyperf/engine": "^1.9|^2.7",
         "hyperf/utils": "~3.0.0",
         "laminas/laminas-mime": "^2.7",

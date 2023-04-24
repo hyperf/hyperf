@@ -13,9 +13,9 @@ namespace Hyperf\Nacos;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use Hyperf\Codec\Json;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Nacos\Provider\AccessToken;
-use Hyperf\Utils\Codec\Json;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 

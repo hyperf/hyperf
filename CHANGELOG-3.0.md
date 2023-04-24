@@ -1,5 +1,9 @@
 # v3.0.18 - TBD
 
+## Optimized
+
+- [#5660](https://github.com/hyperf/hyperf/pull/5660) Split `hyperf/codec` from `hyperf/utils`.
+
 # v3.0.17 - 2023-04-19
 
 ## Fixed

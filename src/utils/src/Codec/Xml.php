@@ -16,6 +16,9 @@ use Hyperf\Contract\Xmlable;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use SimpleXMLElement;
 
+/**
+ * @deprecated since 3.1, use Hyperf\Codec\Xml instead.
+ */
 class Xml
 {
     public static function toXml(mixed $data, ?SimpleXMLElement $parentNode = null, string $root = 'root')

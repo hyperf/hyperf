@@ -33,7 +33,7 @@ class XmlTest extends TestCase
 
     public function testToArrayException()
     {
-        $this->expectException(\Hyperf\Utils\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Syntax error.');
         $xml = 'xxxxx';
         $data = [

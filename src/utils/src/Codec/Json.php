@@ -16,6 +16,9 @@ use Hyperf\Contract\Jsonable;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use Throwable;
 
+/**
+ * @deprecated since 3.1, use Hyperf\Codec\Json instead.
+ */
 class Json
 {
     /**

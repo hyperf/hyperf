@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Paginator;
 
+use Hyperf\Codec\Json;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Codec\Json;
 use PHPUnit\Framework\TestCase;
 
 /**

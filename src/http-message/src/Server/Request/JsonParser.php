@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Server\Request;
 
+use Hyperf\Codec\Json;
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Server\RequestParserInterface;
-use Hyperf\Utils\Codec\Json;
 use InvalidArgumentException;
 
 class JsonParser implements RequestParserInterface

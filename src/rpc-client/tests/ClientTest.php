@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\RpcClient;
 
+use Hyperf\Codec\Json;
 use Hyperf\Engine\Exception\SocketConnectException;
 use Hyperf\Engine\Socket\SocketFactory;
 use Hyperf\Engine\Socket\SocketOption;
-use Hyperf\Utils\Codec\Json;
 use PHPUnit\Framework\TestCase;
 
 /**

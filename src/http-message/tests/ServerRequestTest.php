@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpMessage;
 
+use Hyperf\Codec\Json;
+use Hyperf\Codec\Xml;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Server\Request\JsonParser;
@@ -18,8 +20,6 @@ use Hyperf\HttpMessage\Server\Request\Parser;
 use Hyperf\HttpMessage\Server\Request\XmlParser;
 use Hyperf\HttpMessage\Server\RequestParserInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Codec\Xml;
 use HyperfTest\HttpMessage\Stub\ParserStub;
 use HyperfTest\HttpMessage\Stub\Server\RequestStub;
 use InvalidArgumentException;

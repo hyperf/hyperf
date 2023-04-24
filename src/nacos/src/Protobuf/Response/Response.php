@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Protobuf\Response;
 
+use Hyperf\Codec\Json;
 use Hyperf\Collection\Arr;
 use Hyperf\Contract\JsonDeSerializable;
 use Hyperf\Grpc\Parser;
 use Hyperf\Nacos\Protobuf\Payload;
-use Hyperf\Utils\Codec\Json;
 use Stringable;
 
 class Response implements JsonDeSerializable, Stringable

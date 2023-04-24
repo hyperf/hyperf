@@ -18,6 +18,7 @@
     },
     "require": {
         "php": ">=8.0",
+        "hyperf/codec": "~3.0.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/nacos": "~3.0.0",
         "hyperf/service-governance": "~3.0.0",
