@@ -12,8 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Serializer;
 
 use Hyperf\Contract\NormalizerInterface;
-use Hyperf\Serializer\SerializerFactory;
-use Hyperf\Serializer\SimpleNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 class ConfigProvider
