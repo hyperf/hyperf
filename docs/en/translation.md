@@ -1,4 +1,5 @@
-# 国际化
+# I18n
+
 Hyperf's internationalization support is very friendly, allowing your project to support multiple languages.
 
 # Install
