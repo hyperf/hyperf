@@ -38,7 +38,7 @@ use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Router\DispatcherFactory;
 use Hyperf\Utils\Packer\JsonPacker;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Serializer\SimpleNormalizer;
 use HyperfTest\JsonRpc\Stub\CalculatorService;
 use Mockery;
 use Monolog\Handler\StreamHandler;

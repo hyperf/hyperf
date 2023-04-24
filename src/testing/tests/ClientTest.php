@@ -32,7 +32,7 @@ use Hyperf\Server\Event;
 use Hyperf\Server\Server;
 use Hyperf\Testing\Client;
 use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Serializer\SimpleNormalizer;
 use HyperfTest\Testing\Stub\Exception\Handler\FooExceptionHandler;
 use HyperfTest\Testing\Stub\FooController;
 use Mockery;

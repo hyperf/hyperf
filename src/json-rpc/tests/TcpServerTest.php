@@ -37,7 +37,7 @@ use Hyperf\Server\Event;
 use Hyperf\Server\Server;
 use Hyperf\Server\ServerManager;
 use Hyperf\Stringable\Str;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Serializer\SimpleNormalizer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;

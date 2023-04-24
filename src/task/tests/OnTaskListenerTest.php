@@ -18,7 +18,7 @@ use Hyperf\Task\Finish;
 use Hyperf\Task\Listener\OnTaskListener;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
-use Hyperf\Utils\Serializer\ExceptionNormalizer;
+use Hyperf\Serializer\ExceptionNormalizer;
 use HyperfTest\Task\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;

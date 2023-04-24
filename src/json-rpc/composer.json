@@ -23,6 +23,7 @@
         "hyperf/load-balancer": "~3.0.0",
         "hyperf/http-message": "~3.0.0",
         "hyperf/rpc": "~3.0.0",
+        "hyperf/serializer": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "hyperf/context": "~3.0.0"
     },

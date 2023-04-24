@@ -28,7 +28,7 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Serializer\SimpleNormalizer;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Middleware\ValidationMiddleware;
 use Hyperf\Validation\ValidatorFactory;

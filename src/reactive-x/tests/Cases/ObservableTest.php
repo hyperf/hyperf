@@ -31,7 +31,7 @@ use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Server;
 use Hyperf\ReactiveX\Observable;
 use Hyperf\ReactiveX\RxSwoole;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Serializer\SimpleNormalizer;
 use HyperfTest\ReactiveX\Stub\TestEvent;
 use Mockery;
 use PHPUnit\Framework\TestCase;

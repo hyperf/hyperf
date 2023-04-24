@@ -13,7 +13,7 @@ namespace Hyperf\Task;
 
 use Hyperf\Task\Exception\TaskException;
 use Hyperf\Task\Exception\TaskExecuteException;
-use Hyperf\Utils\Serializer\ExceptionNormalizer;
+use Hyperf\Serializer\ExceptionNormalizer;
 use Swoole\Server;
 use Throwable;
 

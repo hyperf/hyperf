@@ -31,7 +31,7 @@ use Hyperf\HttpServer\Router\Handler;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Router\DispatcherFactory as RPCDispatcherFactory;
 use Hyperf\RpcServer\Router\RouteCollector;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Serializer\SimpleNormalizer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
