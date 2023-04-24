@@ -20,6 +20,7 @@
         "doctrine/inflector": "^2.0",
         "hyperf/codec": "~3.0.0",
         "hyperf/collection": "~3.0.0",
+        "hyperf/composer": "~3.0.0",
         "hyperf/context": "~3.0.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/coordinator": "~3.0.0",

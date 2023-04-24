@@ -15,6 +15,9 @@
         "pull-request": "https://github.com/hyperf/hyperf/pulls",
         "source": "https://github.com/hyperf/hyperf"
     },
+    "require": {
+        "hyperf/composer": "~3.0.0"
+    },
     "autoload-dev": {
         "psr-4": {
             "Hyperf\\IDEHelper\\": "src/"

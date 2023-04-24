@@ -18,6 +18,7 @@
     "require": {
         "php": ">=8.0",
         "hyperf/command": "~3.0.0",
+        "hyperf/composer": "~3.0.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/di": "~3.0.0",
         "hyperf/utils": "~3.0.0"

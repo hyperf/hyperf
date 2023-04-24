@@ -14,12 +14,12 @@ namespace Hyperf\Di;
 use Dotenv\Dotenv;
 use Dotenv\Repository\Adapter;
 use Dotenv\Repository\RepositoryBuilder;
+use Hyperf\Composer\Composer;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\LazyLoader\LazyLoader;
 use Hyperf\Di\ScanHandler\PcntlScanHandler;
 use Hyperf\Di\ScanHandler\ScanHandlerInterface;
-use Hyperf\Utils\Composer;
 
 class ClassLoader
 {
