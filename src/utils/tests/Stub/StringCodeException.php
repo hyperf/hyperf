@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Utils\Stub;
 
 use Exception;
+use Throwable;
 
 class StringCodeException extends Exception
 {
