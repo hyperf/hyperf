@@ -61,9 +61,14 @@ class PostgreSqlSwooleExtConnection extends Connection
 
             $statement = $this->prepare($query);
 
+            $result = $statement->execute($this->prepareBindings($bindings));
+            if ($result === false) {
+                throw new QueryException($query, $bindings, new Exception($statement->error, $statement->errCode));
+            }
+
             $this->recordsHaveBeenModified();
 
-            return $statement->execute($this->prepareBindings($bindings));
+            return true;
         });
     }
 
