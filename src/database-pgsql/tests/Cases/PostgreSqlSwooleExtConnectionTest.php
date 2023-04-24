@@ -101,6 +101,23 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
         $this->assertIsNumeric($id2);
     }
 
+    public function testThrowExceptionWhenStatementExecutionFails()
+    {
+        $connection = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class)->connection();
+
+        $builder = new Builder($connection);
+
+        $this->expectException(QueryException::class);
+        $this->expectExceptionMessage('ERROR:  duplicate key value violates unique constraint "users_email"');
+
+        $result = $builder->from('users')->insert(['email' => 'test@hyperf.io', 'name' => 'hyperf']);
+        $result2 = $builder->from('users')->insert(['email' => 'test@hyperf.io', 'name' => 'hyperf']);
+
+        // Never here
+        $this->assertFalse($result);
+        $this->assertFalse($result2);
+    }
+
     public function testAffectingStatementWithWrongSql()
     {
         $connection = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class)->connection();
