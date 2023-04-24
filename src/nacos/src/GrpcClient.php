@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Nacos;
 
 use Exception;
+use Hyperf\Codec\Json;
 use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
@@ -35,7 +36,6 @@ use Hyperf\Nacos\Protobuf\Response\ConfigChangeBatchListenResponse;
 use Hyperf\Nacos\Protobuf\Response\ConfigChangeNotifyRequest;
 use Hyperf\Nacos\Protobuf\Response\ConfigQueryResponse;
 use Hyperf\Nacos\Protobuf\Response\Response;
-use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Network;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;

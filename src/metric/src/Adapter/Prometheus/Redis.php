@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Adapter\Prometheus;
 
 use Exception;
-use Hyperf\Utils\Codec\Json;
+use Hyperf\Codec\Json;
 use InvalidArgumentException;
 use Prometheus\Counter;
 use Prometheus\Exception\StorageException;

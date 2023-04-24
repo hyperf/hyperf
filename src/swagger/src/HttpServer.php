@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Swagger;
 
+use Hyperf\Codec\Json;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\OnRequestInterface;
 use Hyperf\Engine\Http\Stream;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpServer\ResponseEmitter;
-use Hyperf\Utils\Codec\Json;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

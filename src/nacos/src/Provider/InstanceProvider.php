@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Nacos\Provider;
 
 use GuzzleHttp\RequestOptions;
+use Hyperf\Codec\Json;
 use Hyperf\Nacos\AbstractProvider;
-use Hyperf\Utils\Codec\Json;
 use Psr\Http\Message\ResponseInterface;
 
 class InstanceProvider extends AbstractProvider

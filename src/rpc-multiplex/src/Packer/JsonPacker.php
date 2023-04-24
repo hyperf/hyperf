@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcMultiplex\Packer;
 
+use Hyperf\Codec\Json;
 use Hyperf\Contract\PackerInterface;
-use Hyperf\Utils\Codec\Json;
 
 class JsonPacker implements PackerInterface
 {

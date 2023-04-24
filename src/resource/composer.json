@@ -18,6 +18,7 @@
     "require": {
         "php": ">=8.0",
         "ext-json": "*",
+        "hyperf/codec": "~3.0.0",
         "hyperf/http-message": "~3.0.0",
         "hyperf/paginator": "~3.0.0",
         "hyperf/utils": "~3.0.0",

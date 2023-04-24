@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Cookie;
 
-use Hyperf\Utils\Codec\Json;
+use Hyperf\Codec\Json;
 use RuntimeException;
 
 /**
