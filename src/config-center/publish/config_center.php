@@ -80,7 +80,7 @@ return [
         ],
         'etcd' => [
             'driver' => Hyperf\ConfigEtcd\EtcdDriver::class,
-            'packer' => Hyperf\Utils\Packer\JsonPacker::class,
+            'packer' => Hyperf\Codec\Packer\JsonPacker::class,
             'namespaces' => [
                 '/application',
             ],
