@@ -14,8 +14,8 @@ namespace Hyperf\Config;
 use Hyperf\Composer\Composer;
 use Hyperf\Di\Definition\PriorityDefinition;
 
-use function is_string;
 use function class_exists;
+use function is_string;
 use function method_exists;
 
 /**
