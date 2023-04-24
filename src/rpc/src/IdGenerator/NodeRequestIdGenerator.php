@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Rpc\IdGenerator;
 
 use DateTime;
-use Hyperf\Contract\IdGeneratorInterface;
 use Hyperf\Codec\Base62;
+use Hyperf\Contract\IdGeneratorInterface;
 
 class NodeRequestIdGenerator implements IdGeneratorInterface
 {

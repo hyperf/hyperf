@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\Codec\Json;
+use Hyperf\Codec\Xml;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\Arrayable;
@@ -28,8 +30,6 @@ use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Stringable\Str;
 use Hyperf\Utils\ClearStatCache;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Codec\Xml;
 use Hyperf\Utils\MimeTypeExtensionGuesser;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
