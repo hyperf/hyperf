@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
-use Hyperf\Utils\Codec\Json;
 use Hyperf\Codec\Exception\InvalidArgumentException;
+use Hyperf\Utils\Codec\Json;
 use PHPUnit\Framework\TestCase;
 
 use function Hyperf\Coroutine\go;
