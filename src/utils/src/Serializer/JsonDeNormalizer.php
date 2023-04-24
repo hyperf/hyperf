@@ -16,30 +16,5 @@ namespace Hyperf\Utils\Serializer;
  */
 class JsonDeNormalizer extends \Hyperf\Serializer\JsonDeNormalizer
 {
-    public function normalize($object)
-    {
-        return $object;
-    }
-
-    public function denormalize($data, string $class)
-    {
-        return match ($class) {
-            'int' => (int) $data,
-            'string' => (string) $data,
-            'float' => (float) $data,
-            'array' => (array) $data,
-            'bool' => (bool) $data,
-            'mixed' => $data,
-            default => $this->from($data, $class),
-        };
-    }
-
-    private function from(mixed $data, string $class): mixed
-    {
-        if (method_exists($class, 'jsonDeSerialize')) {
-            return $class::jsonDeSerialize($data);
-        }
-
-        return $data;
-    }
+    
 }
