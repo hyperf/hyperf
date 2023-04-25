@@ -37,7 +37,7 @@ class Filesystem
     /**
      * Get the contents of a file.
      *
-     * @throws \Hyperf\Utils\Filesystem\FileNotFoundException
+     * @throws FileNotFoundException
      */
     public function get(string $path, bool $lock = false): string
     {
@@ -78,7 +78,7 @@ class Filesystem
     /**
      * Get the returned value of a file.
      *
-     * @throws \Hyperf\Utils\Filesystem\FileNotFoundException
+     * @throws FileNotFoundException
      */
     public function getRequire(string $path)
     {
