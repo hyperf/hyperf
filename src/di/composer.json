@@ -19,6 +19,7 @@
     "require": {
         "php": ">=8.0",
         "doctrine/instantiator": "^1.0",
+        "hyperf/code-parser": "~3.0.0",
         "hyperf/pipeline": "~3.0.0",
         "hyperf/support": "~3.0.0",
         "nikic/php-parser": "^4.1",

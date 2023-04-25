@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands;
 
+use Hyperf\CodeParser\Project;
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Commands\Ast\GenerateModelIDEVisitor;
@@ -20,7 +21,6 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Schema\Builder;
 use Hyperf\Stringable\Str;
-use Hyperf\Utils\CodeGen\Project;
 use PhpParser\Lexer;
 use PhpParser\Lexer\Emulative;
 use PhpParser\NodeTraverser;

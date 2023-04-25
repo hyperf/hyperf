@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di;
 
+use Hyperf\CodeParser\PhpParser;
 use Hyperf\Di\LazyLoader\PublicMethodVisitor;
-use Hyperf\Utils\CodeGen\PhpParser;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;

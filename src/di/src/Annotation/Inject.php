@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Di\Annotation;
 
 use Attribute;
+use Hyperf\CodeParser\PhpDocReaderManager;
 use Hyperf\Di\Exception\AnnotationException;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\CodeGen\PhpDocReaderManager;
 use PhpDocReader\AnnotationException as DocReaderAnnotationException;
 use Throwable;
 

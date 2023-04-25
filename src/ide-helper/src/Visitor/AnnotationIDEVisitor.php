@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\IDEHelper\Visitor;
 
+use Hyperf\CodeParser\PhpParser;
 use Hyperf\IDEHelper\Metadata;
-use Hyperf\Utils\CodeGen\PhpParser;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 use ReflectionClass;

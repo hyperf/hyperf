@@ -16,6 +16,7 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
+        "hyperf/code-parser": "~3.0.0",
         "hyperf/support": "~3.0.0"
     },
     "autoload-dev": {

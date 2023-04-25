@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Ast;
 
+use Hyperf\CodeParser\PhpParser;
 use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Stringable\Str;
-use Hyperf\Utils\CodeGen\PhpParser;
 use PhpParser\BuilderFactory;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
