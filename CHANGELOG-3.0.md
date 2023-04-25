@@ -1,5 +1,9 @@
 # v3.0.18 - TBD
 
+## Added
+
+- [#5672](https://github.com/hyperf/hyperf/pull/5672) Added some helper functions in `hyperf/support`.
+
 ## Fixed
 
 - [#5662](https://github.com/hyperf/hyperf/pull/5662) Fixed bug that `pgsql-swoole` cannot throw exceptions when statement execution failed.
