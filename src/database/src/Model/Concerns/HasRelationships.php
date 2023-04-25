@@ -28,6 +28,8 @@ use Hyperf\Database\Model\Relations\MorphToMany;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Stringable\Str;
 
+use function Hyperf\Tappable\tap;
+
 trait HasRelationships
 {
     /**

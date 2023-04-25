@@ -16,6 +16,8 @@ use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Traversable;
 
+use function Hyperf\Tappable\tap;
+
 abstract class HasOneOrMany extends Relation
 {
     /**

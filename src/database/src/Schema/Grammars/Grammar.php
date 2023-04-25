@@ -20,6 +20,8 @@ use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Utils\Fluent;
 use RuntimeException;
 
+use function Hyperf\Tappable\tap;
+
 abstract class Grammar extends BaseGrammar
 {
     /**

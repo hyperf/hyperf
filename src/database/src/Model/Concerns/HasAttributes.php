@@ -27,6 +27,7 @@ use Hyperf\Stringable\Str;
 use LogicException;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Tappable\tap;
 
 trait HasAttributes
 {

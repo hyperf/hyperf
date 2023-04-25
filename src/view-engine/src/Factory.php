@@ -25,6 +25,8 @@ use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+use function Hyperf\Tappable\tap;
+
 class Factory implements FactoryInterface
 {
     use Macroable;

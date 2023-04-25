@@ -29,6 +29,8 @@ use InvalidArgumentException;
 use SplFileInfo;
 use Throwable;
 
+use function Hyperf\Collection\last;
+
 trait ValidatesAttributes
 {
     /**

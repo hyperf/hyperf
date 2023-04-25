@@ -20,6 +20,8 @@ use ReflectionClass;
 use Routeguide\Point;
 use Routeguide\RouteNote;
 
+use function Hyperf\Coroutine\parallel;
+
 /**
  * @internal
  * @coversNothing

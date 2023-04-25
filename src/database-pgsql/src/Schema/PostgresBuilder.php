@@ -14,6 +14,8 @@ namespace Hyperf\Database\PgSQL\Schema;
 use Hyperf\Database\PgSQL\Query\Processors\PostgresProcessor;
 use Hyperf\Database\Schema\Builder;
 
+use function Hyperf\Collection\head;
+
 class PostgresBuilder extends Builder
 {
     /**

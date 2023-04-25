@@ -16,6 +16,8 @@ use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\ViewEngine\Compiler\CompilerInterface;
 use Throwable;
 
+use function Hyperf\Collection\last;
+
 class CompilerEngine extends PhpEngine
 {
     /**

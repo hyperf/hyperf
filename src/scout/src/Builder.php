@@ -20,6 +20,8 @@ use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
 
+use function Hyperf\Tappable\tap;
+
 class Builder
 {
     use Macroable;

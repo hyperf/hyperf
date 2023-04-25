@@ -13,6 +13,8 @@ namespace Hyperf\Cache\Helper;
 
 use Hyperf\Stringable\Str;
 
+use function Hyperf\Collection\data_get;
+
 class StringHelper
 {
     /**

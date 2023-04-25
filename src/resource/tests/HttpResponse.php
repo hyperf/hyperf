@@ -17,6 +17,8 @@ use Hyperf\Stringable\Str;
 use PHPUnit\Framework\Assert as PHPUnit;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
+use function Hyperf\Collection\data_get;
+
 /**
  * Class HttpResponse.
  *

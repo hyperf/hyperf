@@ -20,6 +20,8 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
+use function Hyperf\Coroutine\parallel;
+
 /**
  * @internal
  * @covers \Hyperf\Logger\Logger

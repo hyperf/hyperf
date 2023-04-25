@@ -22,6 +22,8 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 
+use function Hyperf\Coroutine\parallel;
+
 /**
  * @internal
  * @coversNothing
