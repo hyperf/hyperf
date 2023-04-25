@@ -23,7 +23,7 @@ use Hyperf\Metric\CoroutineServerStats;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
-use Hyperf\Utils\System;
+use Hyperf\Support\System;
 use Psr\Container\ContainerInterface;
 use Swoole\Server as SwooleServer;
 
