@@ -18,7 +18,7 @@ use Hyperf\ModelCache\Redis\HashGetMultiple;
 use Hyperf\ModelCache\Redis\HashIncr;
 use Hyperf\ModelCache\Redis\LuaManager;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\InteractsWithTime;
+use Hyperf\Support\Traits\InteractsWithTime;
 use Psr\Container\ContainerInterface;
 
 class RedisHandler implements HandlerInterface, DefaultValueInterface

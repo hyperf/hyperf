@@ -17,7 +17,7 @@ use Hyperf\Contract\PackerInterface;
 use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Exception\CacheException;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\InteractsWithTime;
+use Hyperf\Support\Traits\InteractsWithTime;
 use Psr\Container\ContainerInterface;
 
 class RedisStringHandler implements HandlerInterface
