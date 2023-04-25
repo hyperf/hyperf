@@ -22,6 +22,7 @@
         "hyperf/support": "~3.0.0"
     },
     "suggest": {
+        "jean85/pretty-package-versions": "Required to use PrettyVersions. (^1.2|^2.0)",
         "nikic/php-parser": "Required to use PhpParser. (^4.0)"
     },
     "autoload": {
