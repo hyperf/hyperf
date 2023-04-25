@@ -45,7 +45,7 @@ composer create-project hyperf/swow-skeleton
 
 If your native environment does not meet the Hyperf system requirements, or if you are unfamiliar with  system configuration, you can run and develop the Hyperf project as follows using Docker.
 
-- Run Image
+- Run Container
 
 In the following example the host will be mapped to the local directory `/workspace/skeleton`:
 

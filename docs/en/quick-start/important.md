@@ -26,3 +26,58 @@ composer dump-autoload -o
 # Generate all proxy classes and the annotation cache
 php bin/hyperf.php
 ```
+
+## Avoid switching the coroutines in the magic methods
+
+> Not include __call __callStatic methods
+
+Try to avoid switching between coroutines in `__get`, `__set`, and `__isset` as it may lead to unexpected behavior.
+
+```php
+<?php
+
+require_once 'vendor/autoload.php';
+Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL]);
+
+class Foo
+{
+    public function __get(string $name)
+    {
+        sleep(1);
+        return $name;
+    }
+
+    public function __set(string $name, mixed $value)
+    {
+        sleep(1);
+        var_dump($name, $value);
+    }
+
+    public function __isset(string $name): bool
+    {
+        sleep(1);
+        var_dump($name);
+        return true;
+    }
+}
+
+$foo = new Foo();
+go(static function () use ($foo) {
+    var_dump(isset($foo->xxx));
+});
+
+go(static function () use ($foo) {
+    var_dump(isset($foo->xxx));
+});
+
+\Swoole\Event::wait();
+
+```
+
+When we execute the above code, it will return the following results
+
+```shell
+bool(false)
+string(3) "xxx"
+bool(true)
+```
