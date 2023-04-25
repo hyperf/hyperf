@@ -37,7 +37,7 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server as AsyncStyleServer;
 use Hyperf\Server\ServerManager;
-use Hyperf\Utils\SafeCaller;
+use Hyperf\Support\SafeCaller;
 use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Context as WsContext;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
