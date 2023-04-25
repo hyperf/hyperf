@@ -20,7 +20,7 @@ use Hyperf\Contract\ValidatorInterface as ValidatorContract;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Stringable\Str;
 use Hyperf\Support\Fluent;
-use Hyperf\Utils\MessageBag;
+use Hyperf\Support\MessageBag;
 use Hyperf\Validation\Contract\ImplicitRule;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Contract\Rule as RuleContract;
