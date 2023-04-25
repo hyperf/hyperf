@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace HyperfTest\GrpcClient;
 
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Coroutine\Channel\Pool as ChannelPool;
 use Hyperf\Di\Container;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\GrpcClient\StreamingCall;
-use Hyperf\Utils\ChannelPool;
 use HyperfTest\GrpcClient\Stub\RouteGuideClient;
 use Mockery;
 use PHPUnit\Framework\TestCase;
