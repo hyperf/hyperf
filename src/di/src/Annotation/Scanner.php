@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Annotation;
 
-use Hyperf\Composer\Composer;
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Aop\ProxyManager;
 use Hyperf\Di\Exception\DirectoryNotExistException;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\ScanHandler\ScanHandlerInterface;
+use Hyperf\Support\Composer;
 use Hyperf\Utils\Filesystem\Filesystem;
 use ReflectionClass;
 

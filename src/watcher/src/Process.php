@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Watcher;
 
-use Hyperf\Composer\Composer;
 use Hyperf\Di\Annotation\AnnotationInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\AspectCollector;
@@ -20,6 +19,7 @@ use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Aop\ProxyManager;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\Support\Composer;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Watcher\Ast\Metadata;
 use Hyperf\Watcher\Ast\RewriteClassNameVisitor;

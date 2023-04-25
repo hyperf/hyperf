@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\IDEHelper;
 
-use Hyperf\Composer\Composer;
 use Hyperf\IDEHelper\Visitor\AnnotationIDEVisitor;
+use Hyperf\Support\Composer;
 use ReflectionClass;
 
 class AnnotationGenerator

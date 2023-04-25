@@ -18,7 +18,7 @@ use RuntimeException;
 use function Hyperf\Collection\collect;
 
 /**
- * @deprecated since 3.1, use Hyperf\Composer\Composer instead.
+ * @deprecated since 3.1, use Hyperf\Support\Composer instead.
  */
 class Composer
 {

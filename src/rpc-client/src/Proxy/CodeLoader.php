@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcClient\Proxy;
 
-use Hyperf\Composer\Composer;
+use Hyperf\Support\Composer;
 
 class CodeLoader
 {

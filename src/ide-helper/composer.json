@@ -16,7 +16,7 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "hyperf/composer": "~3.0.0"
+        "hyperf/support": "~3.0.0"
     },
     "autoload-dev": {
         "psr-4": {

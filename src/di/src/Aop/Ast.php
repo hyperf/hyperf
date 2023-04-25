@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
-use Hyperf\Composer\Composer;
+use Hyperf\Support\Composer;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
 use PhpParser\Node\Stmt\Interface_;

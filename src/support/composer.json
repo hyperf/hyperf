@@ -1,12 +1,12 @@
 {
-    "name": "hyperf/composer",
-    "description": "A composer component for Hyperf.",
+    "name": "hyperf/support",
+    "description": "A support component for Hyperf.",
     "license": "MIT",
     "keywords": [
         "php",
         "swoole",
         "hyperf",
-        "composer"
+        "support"
     ],
     "homepage": "https://hyperf.io",
     "support": {
@@ -21,12 +21,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Hyperf\\Composer\\": "src/"
+            "Hyperf\\Support\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Composer\\": "tests/"
+            "HyperfTest\\Support\\": "tests/"
         }
     },
     "config": {
