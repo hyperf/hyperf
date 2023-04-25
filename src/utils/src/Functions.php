@@ -23,6 +23,7 @@ use Hyperf\Utils\Waiter;
 if (! function_exists('value')) {
     /**
      * Return the default value of the given value.
+     * @deprecated since 3.1, use \Hyperf\Support\value instead.
      */
     function value(mixed $value, ...$args)
     {
@@ -35,6 +36,7 @@ if (! function_exists('env')) {
      *
      * @param string $key
      * @param null|mixed $default
+     * @deprecated since 3.1, use \Hyperf\Support\env instead.
      */
     function env($key, $default = null)
     {
@@ -69,6 +71,7 @@ if (! function_exists('retry')) {
      * @param float|int $times
      * @param int $sleep millisecond
      * @throws \Throwable
+     * @deprecated since 3.1, use \Hyperf\Support\retry instead.
      */
     function retry($times, callable $callback, int $sleep = 0)
     {
@@ -93,6 +96,7 @@ if (! function_exists('with')) {
      * Return the given value, optionally passed through the given callback.
      *
      * @param mixed $value
+     * @deprecated since 3.1, use \Hyperf\Support\with instead.
      */
     function with($value, callable $callback = null)
     {
@@ -282,6 +286,7 @@ if (! function_exists('call')) {
      *
      * @param mixed $callback
      * @return null|mixed
+     * @deprecated since 3.1, use \Hyperf\Support\call instead.
      */
     function call($callback, array $args = [])
     {
@@ -342,6 +347,7 @@ if (! function_exists('class_basename')) {
      *
      * @param object|string $class
      * @return string
+     * @deprecated since 3.1, use \Hyperf\Support\class_basename instead.
      */
     function class_basename($class)
     {
@@ -357,6 +363,7 @@ if (! function_exists('trait_uses_recursive')) {
      *
      * @param object|string $trait
      * @return array
+     * @deprecated since 3.1, use \Hyperf\Support\trait_uses_recursive instead.
      */
     function trait_uses_recursive($trait)
     {
@@ -376,6 +383,7 @@ if (! function_exists('class_uses_recursive')) {
      *
      * @param object|string $class
      * @return array
+     * @deprecated since 3.1, use \Hyperf\Support\class_uses_recursive instead.
      */
     function class_uses_recursive($class)
     {
@@ -397,6 +405,7 @@ if (! function_exists('class_uses_recursive')) {
 if (! function_exists('setter')) {
     /**
      * Create a setter string.
+     * @deprecated since 3.1, use \Hyperf\Support\setter instead.
      */
     function setter(string $property): string
     {
@@ -407,6 +416,7 @@ if (! function_exists('setter')) {
 if (! function_exists('getter')) {
     /**
      * Create a getter string.
+     * @deprecated since 3.1, use \Hyperf\Support\getter instead.
      */
     function getter(string $property): string
     {
@@ -436,6 +446,7 @@ if (! function_exists('make')) {
      * Create an object instance, if the DI container exist in ApplicationContext,
      * then the object will be created by DI container via `make()` method, if not,
      * the object will create by `new` keyword.
+     * @deprecated since 3.1, use \Hyperf\Support\make instead.
      */
     function make(string $name, array $parameters = [])
     {
@@ -477,6 +488,7 @@ if (! function_exists('run')) {
 if (! function_exists('swoole_hook_flags')) {
     /**
      * Return the default swoole hook flags, you can rewrite it by defining `SWOOLE_HOOK_FLAGS`.
+     * @deprecated since 3.1, use \Hyperf\Support\swoole_hook_flags instead.
      */
     function swoole_hook_flags(): int
     {
@@ -490,6 +502,7 @@ if (! function_exists('optional')) {
      *
      * @param mixed $value
      * @return mixed
+     * @deprecated since 3.1, use \Hyperf\Support\optional instead.
      */
     function optional($value = null, callable $callback = null)
     {
