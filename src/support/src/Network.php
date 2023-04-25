@@ -9,13 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils;
+namespace Hyperf\Support;
 
+use Hyperf\Stringable\Str;
 use RuntimeException;
 
-/**
- * @deprecated since 3.1, use \Hyperf\Support\Network instead.
- */
 class Network
 {
     public static function ip(): string

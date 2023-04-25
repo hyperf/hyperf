@@ -9,12 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils;
+namespace HyperfTest\Support;
+
+use Hyperf\Support\Network;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @deprecated since 3.1, use \Hyperf\Support\Traits\InteractsWithTime instead.
+ * @internal
+ * @coversNothing
  */
-trait InteractsWithTime
+class NetworkTest extends TestCase
 {
-    use \Hyperf\Support\Traits\InteractsWithTime;
+    public function testNetworkIp()
+    {
+        $this->assertIsString(Network::ip());
+    }
 }

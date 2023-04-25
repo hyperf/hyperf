@@ -11,32 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Reflection;
 
-use ReflectionClass;
-
-class ClassInvoker
+/**
+ * @deprecated since 3.1, use \Hyperf\Support\Reflection\ClassInvoker instead.
+ */
+class ClassInvoker extends \Hyperf\Support\Reflection\ClassInvoker
 {
-    protected ReflectionClass $reflection;
-
-    public function __construct(protected object $instance)
-    {
-        $this->reflection = new ReflectionClass($instance);
-    }
-
-    public function __get($name)
-    {
-        $property = $this->reflection->getProperty($name);
-
-        $property->setAccessible(true);
-
-        return $property->getValue($this->instance);
-    }
-
-    public function __call($name, $arguments)
-    {
-        $method = $this->reflection->getMethod($name);
-
-        $method->setAccessible(true);
-
-        return $method->invokeArgs($this->instance, $arguments);
-    }
 }

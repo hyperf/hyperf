@@ -9,12 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils;
+namespace Hyperf\Support\Exception;
 
-/**
- * @deprecated since 3.1, use \Hyperf\Support\Traits\InteractsWithTime instead.
- */
-trait InteractsWithTime
+use RuntimeException;
+
+class IPReadFailedException extends RuntimeException
 {
-    use \Hyperf\Support\Traits\InteractsWithTime;
 }
