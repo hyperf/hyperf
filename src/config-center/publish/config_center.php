@@ -28,7 +28,7 @@ return [
             ],
             'interval' => 5,
             'strict_mode' => false,
-            'client_ip' => \Hyperf\Utils\Network::ip(),
+            'client_ip' => \Hyperf\Support\Network::ip(),
             'pullTimeout' => 10,
             'interval_timeout' => 1,
         ],

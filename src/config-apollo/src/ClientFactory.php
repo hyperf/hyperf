@@ -13,7 +13,7 @@ namespace Hyperf\ConfigApollo;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
-use Hyperf\Utils\Network;
+use Hyperf\Support\Network;
 use Psr\Container\ContainerInterface;
 
 class ClientFactory

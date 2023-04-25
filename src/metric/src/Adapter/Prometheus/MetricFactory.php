@@ -29,7 +29,7 @@ use Hyperf\Metric\Exception\InvalidArgumentException;
 use Hyperf\Metric\Exception\RuntimeException;
 use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Stringable\Str;
-use Hyperf\Utils\Network;
+use Hyperf\Support\Network;
 use Prometheus\CollectorRegistry;
 use Prometheus\RenderTextFormat;
 use Psr\Http\Message\RequestInterface;

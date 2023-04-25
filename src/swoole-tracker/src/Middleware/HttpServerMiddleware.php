@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\SwooleTracker\Middleware;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\Network;
+use Hyperf\Support\Network;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
