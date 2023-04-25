@@ -20,6 +20,8 @@ use Hyperf\Stringable\Str;
 use RuntimeException;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Collection\head;
+use function Hyperf\Collection\last;
 
 class Grammar extends BaseGrammar
 {

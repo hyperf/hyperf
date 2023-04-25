@@ -23,6 +23,8 @@ use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
 use Stringable;
 
+use function Hyperf\Tappable\tap;
+
 class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable, ResponseInterface, Stringable
 {
     use ConditionallyLoadsAttributes;

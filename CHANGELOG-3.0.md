@@ -15,6 +15,7 @@
 - [#5666](https://github.com/hyperf/hyperf/pull/5666) Split `Packers` to `hyperf/codec`.
 - [#5668](https://github.com/hyperf/hyperf/pull/5668) Split `hyperf/support` from `hyperf/utils`.
 - [#5670](https://github.com/hyperf/hyperf/pull/5670) Split `hyperf/code-parser` from `hyperf/utils`.
+- [#5671](https://github.com/hyperf/hyperf/pull/5671) Use `Hyperf\Coroutine\Channel\Pool` instead of `Hyperf\Utils\ChannelPool`.
 
 # v3.0.17 - 2023-04-19
 

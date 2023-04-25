@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model;
 
+use function Hyperf\Tappable\tap;
+
 class SoftDeletingScope implements Scope
 {
     /**

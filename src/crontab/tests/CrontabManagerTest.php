@@ -16,6 +16,8 @@ use Hyperf\Crontab\CrontabManager;
 use Hyperf\Crontab\Parser;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Tappable\tap;
+
 /**
  * @internal
  * @coversNothing

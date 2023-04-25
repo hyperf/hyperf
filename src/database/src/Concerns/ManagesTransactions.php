@@ -15,6 +15,8 @@ use Closure;
 use Exception;
 use Throwable;
 
+use function Hyperf\Tappable\tap;
+
 trait ManagesTransactions
 {
     /**

@@ -16,6 +16,9 @@ use Hyperf\Contract\SessionInterface;
 use Hyperf\Stringable\Str;
 use SessionHandlerInterface;
 
+use function Hyperf\Collection\data_get;
+use function Hyperf\Collection\data_set;
+
 /**
  * This is a data class, please create a new instance for each request.
  */

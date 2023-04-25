@@ -35,6 +35,8 @@ use InvalidArgumentException;
 use RuntimeException;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Collection\last;
+use function Hyperf\Tappable\tap;
 
 class Builder
 {

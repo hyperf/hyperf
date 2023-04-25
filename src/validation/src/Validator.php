@@ -29,6 +29,8 @@ use RuntimeException;
 use Stringable;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Collection\data_get;
+use function Hyperf\Tappable\tap;
 
 class Validator implements ValidatorContract
 {

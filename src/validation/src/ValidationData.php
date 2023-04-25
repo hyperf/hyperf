@@ -14,6 +14,8 @@ namespace Hyperf\Validation;
 use Hyperf\Collection\Arr;
 use Hyperf\Stringable\Str;
 
+use function Hyperf\Collection\data_set;
+
 class ValidationData
 {
     /**

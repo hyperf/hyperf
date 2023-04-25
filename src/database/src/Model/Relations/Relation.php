@@ -21,6 +21,7 @@ use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Traits\ForwardsCalls;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Collection\last;
 
 /**
  * @mixin \Hyperf\Database\Model\Builder

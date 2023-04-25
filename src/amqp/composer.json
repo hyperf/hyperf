@@ -19,6 +19,7 @@
         "doctrine/instantiator": "^1.2.0",
         "hyperf/codec": "~3.0.0",
         "hyperf/contract": "~3.0.0",
+        "hyperf/coroutine": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "hyperf/process": "~3.0.0",
         "hyperf/pool": "~3.0.0",

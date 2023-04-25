@@ -27,6 +27,8 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 
+use function Hyperf\Coroutine\parallel;
+
 abstract class Driver implements DriverInterface
 {
     protected PackerInterface $packer;

@@ -15,6 +15,9 @@ use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\Context as CoContext;
 
+use function Hyperf\Collection\data_get;
+use function Hyperf\Collection\data_set;
+
 class Context
 {
     public const FD = 'ws.fd';

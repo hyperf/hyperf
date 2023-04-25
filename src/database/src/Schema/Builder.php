@@ -17,6 +17,8 @@ use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Schema\Grammars\Grammar as SchemaGrammar;
 use LogicException;
 
+use function Hyperf\Tappable\tap;
+
 class Builder
 {
     /**
