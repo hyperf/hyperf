@@ -377,10 +377,10 @@ class View implements ArrayAccess, Htmlable, ViewInterface, Stringable
     /**
      * Parse the given errors into an appropriate value.
      */
-    protected function formatErrors(array|MessageProvider|string $provider): \Hyperf\Utils\MessageBag|MessageBag
+    protected function formatErrors(array|MessageProvider|string $provider): \Hyperf\Support\MessageBag|MessageBag
     {
         return $provider instanceof MessageProvider
             ? $provider->getMessageBag()
-            : new \Hyperf\Utils\MessageBag((array) $provider);
+            : new \Hyperf\Support\MessageBag((array) $provider);
     }
 }
