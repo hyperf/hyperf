@@ -21,6 +21,8 @@ use Hyperf\RateLimit\Exception\RateLimitException;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
 use Swoole\Coroutine;
 
+use function Hyperf\Tappable\tap;
+
 class RateLimitAnnotationAspect implements AroundInterface
 {
     public array $classes = [];

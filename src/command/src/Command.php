@@ -30,6 +30,7 @@ use Throwable;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Coroutine\run;
+use function Hyperf\Tappable\tap;
 
 abstract class Command extends SymfonyCommand
 {

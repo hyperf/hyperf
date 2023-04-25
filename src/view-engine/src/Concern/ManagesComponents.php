@@ -18,6 +18,8 @@ use Hyperf\ViewEngine\HtmlString;
 use Hyperf\ViewEngine\View;
 use InvalidArgumentException;
 
+use function Hyperf\Collection\last;
+
 trait ManagesComponents
 {
     /**

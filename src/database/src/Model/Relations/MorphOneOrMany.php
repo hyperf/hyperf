@@ -14,6 +14,8 @@ namespace Hyperf\Database\Model\Relations;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Model;
 
+use function Hyperf\Collection\last;
+
 abstract class MorphOneOrMany extends HasOneOrMany
 {
     /**

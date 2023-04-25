@@ -27,6 +27,8 @@ use Mix\Redis\Subscriber\Subscriber;
 use Redis;
 use Throwable;
 
+use function Hyperf\Collection\data_get;
+
 class RedisAdapter implements AdapterInterface, EphemeralInterface
 {
     use Flagger;

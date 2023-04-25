@@ -17,6 +17,7 @@
     },
     "require": {
         "php": ">=8.0",
+        "hyperf/collection": "~3.0.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/exception-handler": "~3.0.0",
         "hyperf/http-server": "~3.0.0",

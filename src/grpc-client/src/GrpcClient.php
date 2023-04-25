@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcClient;
 
+use Hyperf\Coroutine\Channel\Pool as ChannelPool;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
-use Hyperf\Utils\ChannelPool;
 use InvalidArgumentException;
 use RuntimeException;
 use Swoole\Coroutine\Http2\Client as SwooleHttp2Client;

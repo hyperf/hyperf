@@ -20,6 +20,8 @@ use Hyperf\Validation\Rules\Unique;
 use stdClass;
 use Stringable;
 
+use function Hyperf\Collection\head;
+
 class ValidationRuleParser
 {
     /**

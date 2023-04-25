@@ -18,6 +18,8 @@ use Hyperf\Server\Exception\ServerException;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 
+use function Hyperf\Tappable\tap;
+
 class ValidationException extends ServerException
 {
     /**

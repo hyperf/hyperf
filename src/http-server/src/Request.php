@@ -24,6 +24,8 @@ use Psr\Http\Message\UriInterface;
 use RuntimeException;
 use SplFileInfo;
 
+use function Hyperf\Collection\data_get;
+
 /**
  * @property string $pathInfo
  * @property string $requestUri

@@ -17,6 +17,7 @@ use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Tappable\tap;
 
 class FactoryBuilder
 {

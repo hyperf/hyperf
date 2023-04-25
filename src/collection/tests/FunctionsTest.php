@@ -20,6 +20,8 @@ use Traversable;
 use function Hyperf\Collection\data_fill;
 use function Hyperf\Collection\data_get;
 use function Hyperf\Collection\data_set;
+use function Hyperf\Collection\head;
+use function Hyperf\Collection\last;
 use function Hyperf\Collection\value;
 
 /**

@@ -28,6 +28,7 @@ use ReflectionClass;
 use ReflectionMethod;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Tappable\tap;
 
 /**
  * @mixin \Hyperf\Database\Query\Builder
