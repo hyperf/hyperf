@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\GrpcClient;
 
 use Google\Protobuf\Internal\Message;
+use Hyperf\CodeParser\Package;
 use Hyperf\Grpc\Parser;
-use Hyperf\Utils\CodeGen\Package;
 use Swoole\Http2\Request as BaseRequest;
 
 class Request extends BaseRequest

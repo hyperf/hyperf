@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nsq;
 
-use Hyperf\Utils\CodeGen\Package;
+use Hyperf\CodeParser\Package;
 
 /**
  * NSQ Protocol https://nsq.io/clients/tcp_protocol_spec.html.

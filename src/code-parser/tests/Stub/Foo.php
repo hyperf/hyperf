@@ -9,11 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils\CodeGen;
+namespace HyperfTest\CodeParser\Stub;
 
-/**
- * @deprecated since 3.1, use \Hyperf\CodeParser\PhpDocReaderManager instead.
- */
-class PhpDocReaderManager extends \Hyperf\CodeParser\PhpDocReaderManager
+class Foo
 {
+    /**
+     * @var string
+     */
+    public $string;
+
+    /**
+     * @var int
+     */
+    public $int;
 }
