@@ -13,9 +13,7 @@ namespace Hyperf\Support;
 
 use Closure;
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Coroutine\Coroutine;
 use Hyperf\Stringable\Str;
-use RuntimeException;
 use Throwable;
 
 /**
@@ -199,28 +197,6 @@ function make(string $name, array $parameters = [])
     }
     $parameters = array_values($parameters);
     return new $name(...$parameters);
-}
-
-/**
- * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
- *
- * @param array|callable $callbacks
- *
- * @deprecated since 3.1, use `Hyperf\Coroutine\run` instead.
- */
-function run($callbacks, int $flags = SWOOLE_HOOK_ALL): bool
-{
-    if (Coroutine::inCoroutine()) {
-        throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
-    }
-
-    \Swoole\Runtime::enableCoroutine($flags);
-
-    /* @phpstan-ignore-next-line */
-    $result = \Swoole\Coroutine\run(...(array) $callbacks);
-
-    \Swoole\Runtime::enableCoroutine(false);
-    return $result;
 }
 
 /**
