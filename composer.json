@@ -96,6 +96,7 @@
         "hyperf/async-queue": "*",
         "hyperf/cache": "*",
         "hyperf/circuit-breaker": "*",
+        "hyperf/code-parser": "*",
         "hyperf/codec": "*",
         "hyperf/collection": "*",
         "hyperf/command": "*",

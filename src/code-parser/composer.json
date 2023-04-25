@@ -1,5 +1,5 @@
 {
-    "name": "hyperf/support",
+    "name": "hyperf/code-parser",
     "description": "A code parser component for Hyperf.",
     "license": "MIT",
     "keywords": [
