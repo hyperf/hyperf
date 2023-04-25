@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#5672](https://github.com/hyperf/hyperf/pull/5672) Added some helper functions in `hyperf\support`.
+- [#5672](https://github.com/hyperf/hyperf/pull/5672) Added some helper functions in `hyperf/support`.
 
 ## Fixed
 
