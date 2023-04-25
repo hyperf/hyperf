@@ -11,17 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\CodeGen;
 
-use Jean85\PrettyVersions;
-use Throwable;
-
-class Package
+/**
+ * @deprecated since 3.1, use \Hyperf\CodeParser\Package instead.
+ */
+class Package extends \Hyperf\CodeParser\Package
 {
-    public static function getPrettyVersion(string $package): string
-    {
-        try {
-            return (string) PrettyVersions::getVersion($package);
-        } catch (Throwable $exception) {
-            return 'unknown';
-        }
-    }
 }
