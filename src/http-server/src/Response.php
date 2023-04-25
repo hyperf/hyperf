@@ -29,7 +29,7 @@ use Hyperf\HttpServer\Exception\Http\FileException;
 use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Stringable\Str;
-use Hyperf\Utils\ClearStatCache;
+use Hyperf\Support\ClearStatCache;
 use Hyperf\Utils\MimeTypeExtensionGuesser;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
