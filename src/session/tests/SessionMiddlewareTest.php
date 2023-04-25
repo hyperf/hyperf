@@ -25,7 +25,7 @@ use Hyperf\Session\Middleware\SessionMiddleware;
 use Hyperf\Session\Session;
 use Hyperf\Session\SessionManager;
 use Hyperf\Stringable\Str;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use HyperfTest\Session\Stub\FooHandler;
 use Mockery;
 use PHPUnit\Framework\TestCase;

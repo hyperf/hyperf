@@ -18,7 +18,7 @@ use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use HyperfTest\Cache\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;

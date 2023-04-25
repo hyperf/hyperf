@@ -24,7 +24,7 @@ use Hyperf\Database\PgSQL\Connectors\PostgresSqlSwooleExtConnector;
 use Hyperf\Database\PgSQL\PostgreSqlSwooleExtConnection;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Schema\Schema;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

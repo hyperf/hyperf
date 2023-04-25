@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Translation;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use Psr\Container\ContainerInterface;
 
 class FileLoaderFactory

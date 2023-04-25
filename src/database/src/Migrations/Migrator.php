@@ -17,7 +17,7 @@ use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolverInterface as Resolver;
 use Hyperf\Database\Schema\Grammars\Grammar;
 use Hyperf\Stringable\Str;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 

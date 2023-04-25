@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Session\Handler;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 

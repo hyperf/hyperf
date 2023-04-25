@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine;
 
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\ViewEngine\Contract\FinderInterface;
 use InvalidArgumentException;
 

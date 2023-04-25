@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Translation;
 
 use Hyperf\Contract\TranslatorLoaderInterface;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use RuntimeException;
 
 use function Hyperf\Collection\collect;
