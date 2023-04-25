@@ -30,7 +30,7 @@ use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Stringable\Str;
 use Hyperf\Support\ClearStatCache;
-use Hyperf\Utils\MimeTypeExtensionGuesser;
+use Hyperf\Support\MimeTypeExtensionGuesser;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
