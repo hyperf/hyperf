@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+/**
+ * @deprecated since 3.1, use \Hyperf\Support\System instead.
+ */
 class System
 {
     /**

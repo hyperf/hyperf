@@ -11,18 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
-use Hyperf\Contract\IPReaderInterface;
-use Hyperf\Utils\Exception\IPReadFailedException;
-use Throwable;
-
-class IPReader implements IPReaderInterface
+/**
+ * @deprecated v3.1, use \Hyperf\Support\IPReader instead.
+ */
+class IPReader extends \Hyperf\Support\IPReader
 {
-    public function read(): string
-    {
-        try {
-            return Network::ip();
-        } catch (Throwable $throwable) {
-            throw new IPReadFailedException($throwable->getMessage());
-        }
-    }
 }

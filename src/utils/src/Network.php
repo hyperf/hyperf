@@ -13,6 +13,9 @@ namespace Hyperf\Utils;
 
 use RuntimeException;
 
+/**
+ * @deprecated since 3.1, use \Hyperf\Support\Network instead.
+ */
 class Network
 {
     public static function ip(): string
