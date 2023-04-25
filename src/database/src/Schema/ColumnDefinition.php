@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Schema;
 
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 
 /**
  * @method ColumnDefinition after(string $column) Place the column "after" another column (MySQL)

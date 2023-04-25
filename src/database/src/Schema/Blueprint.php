@@ -18,7 +18,7 @@ use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Schema\Grammars\Grammar;
 use Hyperf\Database\SQLiteConnection;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 
 use function Hyperf\Collection\collect;
 
@@ -88,7 +88,7 @@ class Blueprint
     /**
      * The commands that should be run for the table.
      *
-     * @var \Hyperf\Utils\Fluent[]
+     * @var Fluent[]
      */
     protected $commands = [];
 
@@ -173,7 +173,7 @@ class Blueprint
     /**
      * Indicate that the table needs to be created.
      *
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function create()
     {
@@ -199,7 +199,7 @@ class Blueprint
     /**
      * Indicate that the table should be dropped.
      *
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function drop()
     {
@@ -209,7 +209,7 @@ class Blueprint
     /**
      * Indicate that the table should be dropped if it exists.
      *
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function dropIfExists()
     {
@@ -220,7 +220,7 @@ class Blueprint
      * Indicate that the given columns should be dropped.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function dropColumn($columns)
     {
@@ -234,7 +234,7 @@ class Blueprint
      *
      * @param string $from
      * @param string $to
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function renameColumn($from, $to)
     {
@@ -245,7 +245,7 @@ class Blueprint
      * Indicate that the given primary key should be dropped.
      *
      * @param array|string $index
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function dropPrimary($index = null)
     {
@@ -256,7 +256,7 @@ class Blueprint
      * Indicate that the given unique key should be dropped.
      *
      * @param array|string $index
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function dropUnique($index)
     {
@@ -267,7 +267,7 @@ class Blueprint
      * Indicate that the given index should be dropped.
      *
      * @param array|string $index
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function dropIndex($index)
     {
@@ -278,7 +278,7 @@ class Blueprint
      * Indicate that the given spatial index should be dropped.
      *
      * @param array|string $index
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function dropSpatialIndex($index)
     {
@@ -289,7 +289,7 @@ class Blueprint
      * Indicate that the given foreign key should be dropped.
      *
      * @param array|string $index
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function dropForeign($index)
     {
@@ -301,7 +301,7 @@ class Blueprint
      *
      * @param string $from
      * @param string $to
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function renameIndex($from, $to)
     {
@@ -369,7 +369,7 @@ class Blueprint
      * Rename the table to a given name.
      *
      * @param string $to
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function rename($to)
     {
@@ -382,7 +382,7 @@ class Blueprint
      * @param array|string $columns
      * @param string $name
      * @param null|string $algorithm
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function primary($columns, $name = null, $algorithm = null)
     {
@@ -395,7 +395,7 @@ class Blueprint
      * @param array|string $columns
      * @param string $name
      * @param null|string $algorithm
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function unique($columns, $name = null, $algorithm = null)
     {
@@ -408,7 +408,7 @@ class Blueprint
      * @param array|string $columns
      * @param string $name
      * @param null|string $algorithm
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function index($columns, $name = null, $algorithm = null)
     {
@@ -420,7 +420,7 @@ class Blueprint
      *
      * @param array|string $columns
      * @param string $name
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function spatialIndex($columns, $name = null)
     {
@@ -432,7 +432,7 @@ class Blueprint
      *
      * @param array|string $columns
      * @param string $name
-     * @return \Hyperf\Database\Schema\ForeignKeyDefinition|\Hyperf\Utils\Fluent
+     * @return Fluent|\Hyperf\Database\Schema\ForeignKeyDefinition
      */
     public function foreign($columns, $name = null)
     {
@@ -1203,7 +1203,7 @@ class Blueprint
     /**
      * Get the commands on the blueprint.
      *
-     * @return \Hyperf\Utils\Fluent[]
+     * @return Fluent[]
      */
     public function getCommands()
     {
@@ -1266,7 +1266,7 @@ class Blueprint
      * @param array|string $columns
      * @param null|string $name
      * @param null|string $algorithm
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function fulltext($columns, $name = null, $algorithm = null)
     {
@@ -1278,7 +1278,7 @@ class Blueprint
      *
      * @param string $expression
      * @param string $name
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     public function rawIndex($expression, $name)
     {
@@ -1414,7 +1414,7 @@ class Blueprint
      * @param array|string $columns
      * @param string $index
      * @param null|string $algorithm
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     protected function indexCommand($type, $columns, $index, $algorithm = null)
     {
@@ -1437,7 +1437,7 @@ class Blueprint
      * @param string $command
      * @param string $type
      * @param array|string $index
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     protected function dropIndexCommand($command, $type, $index)
     {
@@ -1470,7 +1470,7 @@ class Blueprint
      * Add a new command to the blueprint.
      *
      * @param string $name
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     protected function addCommand($name, array $parameters = [])
     {
@@ -1483,7 +1483,7 @@ class Blueprint
      * Create a new Fluent command.
      *
      * @param string $name
-     * @return \Hyperf\Utils\Fluent
+     * @return Fluent
      */
     protected function createCommand($name, array $parameters = [])
     {

@@ -17,7 +17,7 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 use RuntimeException;
 
 class ChangeColumn

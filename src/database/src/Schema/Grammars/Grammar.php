@@ -17,7 +17,7 @@ use Hyperf\Database\Connection;
 use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Schema\Blueprint;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 use RuntimeException;
 
 use function Hyperf\Tappable\tap;
@@ -212,7 +212,7 @@ abstract class Grammar extends BaseGrammar
      * Get the primary key command if it exists on the blueprint.
      *
      * @param string $name
-     * @return null|\Hyperf\Utils\Fluent
+     * @return null|Fluent
      */
     protected function getCommandByName(Blueprint $blueprint, $name)
     {
