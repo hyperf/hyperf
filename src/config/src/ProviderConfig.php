@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Config;
 
 use Hyperf\Di\Definition\PriorityDefinition;
-use Hyperf\Utils\Composer;
+use Hyperf\Support\Composer;
 
 use function class_exists;
 use function is_string;

@@ -13,7 +13,7 @@ namespace Hyperf\Devtool;
 
 use Hyperf\Collection\Arr;
 use Hyperf\Command\Annotation\Command;
-use Hyperf\Utils\Composer;
+use Hyperf\Support\Composer;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputArgument;

@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils;
+namespace Hyperf\Support;
 
 use Composer\Autoload\ClassLoader;
 use Hyperf\Collection\Collection;
@@ -17,9 +17,6 @@ use RuntimeException;
 
 use function Hyperf\Collection\collect;
 
-/**
- * @deprecated since 3.1, use Hyperf\Support\Composer instead.
- */
 class Composer
 {
     private static ?Collection $content = null;

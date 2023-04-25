@@ -1,12 +1,12 @@
 {
-    "name": "hyperf/ide-helper",
-    "description": "IDE help files for Hyperf.",
+    "name": "hyperf/support",
+    "description": "A support component for Hyperf.",
     "license": "MIT",
     "keywords": [
         "php",
         "swoole",
         "hyperf",
-        "ide-helper"
+        "support"
     ],
     "homepage": "https://hyperf.io",
     "support": {
@@ -16,11 +16,17 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "hyperf/support": "~3.0.0"
+        "php": ">=8.0",
+        "hyperf/collection": "~3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Support\\": "src/"
+        }
     },
     "autoload-dev": {
         "psr-4": {
-            "Hyperf\\IDEHelper\\": "src/"
+            "HyperfTest\\Support\\": "tests/"
         }
     },
     "config": {

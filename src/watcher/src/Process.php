@@ -19,7 +19,7 @@ use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Aop\ProxyManager;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\Composer;
+use Hyperf\Support\Composer;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Watcher\Ast\Metadata;
 use Hyperf\Watcher\Ast\RewriteClassNameVisitor;

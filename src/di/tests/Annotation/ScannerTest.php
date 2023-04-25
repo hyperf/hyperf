@@ -18,7 +18,7 @@ use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\ScanHandler\NullScanHandler;
-use Hyperf\Utils\Composer;
+use Hyperf\Support\Composer;
 use Hyperf\Utils\Filesystem\Filesystem;
 use HyperfTest\Di\Stub\AnnotationCollector;
 use HyperfTest\Di\Stub\Aspect\Debug1Aspect;

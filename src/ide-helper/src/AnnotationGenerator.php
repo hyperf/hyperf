@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\IDEHelper;
 
 use Hyperf\IDEHelper\Visitor\AnnotationIDEVisitor;
-use Hyperf\Utils\Composer;
+use Hyperf\Support\Composer;
 use ReflectionClass;
 
 class AnnotationGenerator
