@@ -66,7 +66,7 @@ class SeederCreator
     /**
      * Get the filesystem instance.
      *
-     * @return \Hyperf\Utils\Filesystem\Filesystem
+     * @return Filesystem
      */
     public function getFilesystem()
     {
