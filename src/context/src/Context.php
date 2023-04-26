@@ -14,6 +14,8 @@ namespace Hyperf\Context;
 use Closure;
 use Hyperf\Engine\Coroutine;
 
+use function Hyperf\Support\value;
+
 class Context
 {
     protected static array $nonCoContext = [];

@@ -32,6 +32,8 @@ use PhpParser\Node\Stmt\Trait_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\NodeVisitorAbstract;
 
+use function Hyperf\Support\value;
+
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
     /**

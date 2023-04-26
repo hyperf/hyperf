@@ -19,6 +19,8 @@ use Hyperf\Signal\SignalHandlerInterface as SignalHandler;
 use Hyperf\Signal\SignalManager;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\value;
+
 class SignalRegisterListener implements ListenerInterface
 {
     public function __construct(protected ContainerInterface $container)

@@ -24,6 +24,8 @@ use Hyperf\Guzzle\ClientFactory;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Support\value;
+
 /**
  * @internal
  * @coversNothing

@@ -25,6 +25,7 @@ use RuntimeException;
 use SplFileInfo;
 
 use function Hyperf\Collection\data_get;
+use function Hyperf\Support\value;
 
 /**
  * @property string $pathInfo

@@ -19,6 +19,8 @@ use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use RuntimeException;
 
+use function Hyperf\Support\value;
+
 class JsonRpcHttpTransporter implements TransporterInterface
 {
     private ?LoadBalancerInterface $loadBalancer = null;

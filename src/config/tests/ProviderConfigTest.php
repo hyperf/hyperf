@@ -16,6 +16,8 @@ use HyperfTest\Config\Stub\FooConfigProvider;
 use HyperfTest\Config\Stub\ProviderConfig;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Support\value;
+
 /**
  * @internal
  * @coversNothing

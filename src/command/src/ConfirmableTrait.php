@@ -13,6 +13,8 @@ namespace Hyperf\Command;
 
 use Closure;
 
+use function Hyperf\Support\value;
+
 trait ConfirmableTrait
 {
     /**

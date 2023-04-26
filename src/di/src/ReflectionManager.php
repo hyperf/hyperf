@@ -18,6 +18,8 @@ use ReflectionMethod;
 use ReflectionProperty;
 use Symfony\Component\Finder\Finder;
 
+use function Hyperf\Support\value;
+
 class ReflectionManager extends MetadataCollector
 {
     protected static array $container = [];

@@ -15,6 +15,8 @@ use Hyperf\Di\ClassLoader;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
+use function Hyperf\Support\env;
+
 /**
  * @internal
  * @coversNothing

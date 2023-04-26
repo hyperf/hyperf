@@ -23,6 +23,7 @@ use Stringable;
 use Traversable;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Support\value;
 
 class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate, Stringable
 {

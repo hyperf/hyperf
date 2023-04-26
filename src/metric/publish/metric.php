@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 use Hyperf\Metric\Adapter\Prometheus\Constants;
 
+use function Hyperf\Support\env;
+
 return [
     // To disable hyperf/metric temporarily, set default driver to noop.
     'default' => env('METRIC_DRIVER', 'prometheus'),

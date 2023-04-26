@@ -28,6 +28,7 @@ use Redis;
 use Throwable;
 
 use function Hyperf\Collection\data_get;
+use function Hyperf\Support\retry;
 
 class RedisAdapter implements AdapterInterface, EphemeralInterface
 {

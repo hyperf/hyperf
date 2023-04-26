@@ -40,6 +40,7 @@ use Stringable;
 use Throwable;
 
 use function get_class;
+use function Hyperf\Support\value;
 
 class Response implements PsrResponseInterface, ResponseInterface
 {

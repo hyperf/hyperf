@@ -24,6 +24,8 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 
+use function Hyperf\Support\value;
+
 /**
  * @internal
  * @coversNothing

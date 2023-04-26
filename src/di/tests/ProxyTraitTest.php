@@ -22,6 +22,8 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\value;
+
 /**
  * @internal
  * @coversNothing
