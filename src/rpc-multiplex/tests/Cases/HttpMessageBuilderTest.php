@@ -13,7 +13,7 @@ namespace HyperfTest\RpcMultiplex\Cases;
 
 use Hyperf\RpcMultiplex\HttpMessageBuilder;
 use Hyperf\RpcMultiplex\Packer\JsonPacker;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use Psr\Http\Message\UriInterface;
 
 /**

@@ -26,6 +26,8 @@ use Whoops\Handler\XmlResponseHandler;
 use Whoops\Run;
 use Whoops\RunInterface;
 
+use function Hyperf\Support\env;
+
 class WhoopsExceptionHandler extends ExceptionHandler
 {
     protected static array $preference = [

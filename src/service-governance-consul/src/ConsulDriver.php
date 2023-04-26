@@ -22,6 +22,8 @@ use Hyperf\ServiceGovernance\Exception\ComponentRequiredException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
+use function Hyperf\Support\make;
+
 class ConsulDriver implements DriverInterface
 {
     protected LoggerInterface $logger;

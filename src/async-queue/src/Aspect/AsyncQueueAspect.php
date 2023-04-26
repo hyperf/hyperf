@@ -19,6 +19,8 @@ use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class AsyncQueueAspect extends AbstractAspect
 {
     public array $annotations = [

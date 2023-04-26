@@ -13,7 +13,7 @@ namespace Hyperf\Resource\Concerns;
 
 use Exception;
 use Hyperf\Resource\Exception\ResourceException;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Support\Traits\ForwardsCalls;
 
 trait DelegatesToResource
 {

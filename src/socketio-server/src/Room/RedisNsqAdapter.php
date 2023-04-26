@@ -30,6 +30,9 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
+use function Hyperf\Support\make;
+use function Hyperf\Support\retry;
+
 class RedisNsqAdapter extends RedisAdapter
 {
     protected Nsq $nsq;

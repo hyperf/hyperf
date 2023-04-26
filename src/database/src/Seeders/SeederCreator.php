@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Seeders;
 
 use Hyperf\Stringable\Str;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use InvalidArgumentException;
 
 class SeederCreator
@@ -66,7 +66,7 @@ class SeederCreator
     /**
      * Get the filesystem instance.
      *
-     * @return \Hyperf\Utils\Filesystem\Filesystem
+     * @return Filesystem
      */
     public function getFilesystem()
     {

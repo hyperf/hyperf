@@ -22,10 +22,11 @@ use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Pool;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\Rpc\Exception\RecvException;
-use Hyperf\Utils\Exception\ExceptionThrower;
+use Hyperf\Support\Exception\ExceptionThrower;
 use Throwable;
 
 use function Hyperf\Coroutine\defer;
+use function Hyperf\Support\retry;
 
 class JsonRpcPoolTransporter implements TransporterInterface
 {

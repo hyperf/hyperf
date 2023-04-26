@@ -21,6 +21,9 @@ use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\ModelListener\Collector\ListenerCollector;
 use Hyperf\Scout\Engine\Engine;
 
+use function Hyperf\Support\class_uses_recursive;
+use function Hyperf\Support\make;
+
 trait Searchable
 {
     /**

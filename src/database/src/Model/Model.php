@@ -30,6 +30,8 @@ use Throwable;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Collection\last;
+use function Hyperf\Support\class_basename;
+use function Hyperf\Support\class_uses_recursive;
 use function Hyperf\Tappable\tap;
 
 /**

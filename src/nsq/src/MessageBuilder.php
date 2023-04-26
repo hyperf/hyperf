@@ -13,6 +13,8 @@ namespace Hyperf\Nsq;
 
 use Hyperf\CodeParser\Package;
 
+use function Hyperf\Support\value;
+
 /**
  * NSQ Protocol https://nsq.io/clients/tcp_protocol_spec.html.
  */

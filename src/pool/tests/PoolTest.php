@@ -22,6 +22,8 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 
+use function Hyperf\Support\value;
+
 /**
  * @internal
  * @coversNothing

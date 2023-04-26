@@ -15,6 +15,8 @@ use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class RpcPool extends Pool
 {
     public function __construct(ContainerInterface $container, protected string $name, protected array $config)

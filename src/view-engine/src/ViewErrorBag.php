@@ -80,11 +80,11 @@ class ViewErrorBag implements Countable, Stringable
      * Get a MessageBag instance from the bags.
      *
      * @param string $key
-     * @return \Hyperf\Utils\MessageBag
+     * @return \Hyperf\Support\MessageBag
      */
     public function getBag($key)
     {
-        return Arr::get($this->bags, $key) ?: new \Hyperf\Utils\MessageBag();
+        return Arr::get($this->bags, $key) ?: new \Hyperf\Support\MessageBag();
     }
 
     /**

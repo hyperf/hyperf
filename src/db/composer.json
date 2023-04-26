@@ -22,6 +22,7 @@
         "hyperf/config": "~3.0.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/pool": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "psr/container": "^1.0|^2.0"
     },

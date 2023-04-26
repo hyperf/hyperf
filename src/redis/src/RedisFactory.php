@@ -14,6 +14,8 @@ namespace Hyperf\Redis;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Redis\Exception\InvalidRedisProxyException;
 
+use function Hyperf\Support\make;
+
 class RedisFactory
 {
     /**

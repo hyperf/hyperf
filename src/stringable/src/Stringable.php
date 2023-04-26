@@ -19,6 +19,7 @@ use Hyperf\Tappable\Tappable;
 use JsonSerializable;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Support\class_basename;
 
 class Stringable implements JsonSerializable, \Stringable, ArrayAccess
 {

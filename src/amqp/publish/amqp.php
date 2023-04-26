@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 use Hyperf\Amqp\IO\IOFactory;
 
+use function Hyperf\Support\env;
+
 return [
     'enable' => true,
     'default' => [

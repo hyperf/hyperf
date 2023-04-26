@@ -32,6 +32,7 @@ use Rx\Subject\Subject;
 use Swoole\Runtime;
 
 use function Hyperf\Coroutine\go;
+use function Hyperf\Support\swoole_hook_flags;
 
 /**
  * @internal

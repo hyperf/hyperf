@@ -103,7 +103,7 @@ class ArrTest extends TestCase
                     'mixin',
                 ],
                 'class_map' => [
-                    \Hyperf\Utils\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
+                    \Hyperf\Coroutine\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
                 ],
             ],
         ];
@@ -126,7 +126,7 @@ class ArrTest extends TestCase
                     'author',
                 ],
                 'class_map' => [
-                    \Hyperf\Utils\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
+                    \Hyperf\Coroutine\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
                     \Hyperf\Di\Resolver\ResolverDispatcher::class => BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php',
                 ],
             ],

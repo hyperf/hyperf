@@ -18,6 +18,8 @@ use Hyperf\Pool\Pool;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class NsqPool extends Pool
 {
     protected array $config;

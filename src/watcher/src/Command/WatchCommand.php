@@ -18,6 +18,8 @@ use Hyperf\Watcher\Watcher;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputOption;
 
+use function Hyperf\Support\make;
+
 class WatchCommand extends Command
 {
     use NullDisableEventDispatcher;

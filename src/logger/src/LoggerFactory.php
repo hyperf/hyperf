@@ -22,6 +22,8 @@ use Monolog\Handler\StreamHandler;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
+use function Hyperf\Support\make;
+
 class LoggerFactory
 {
     /**

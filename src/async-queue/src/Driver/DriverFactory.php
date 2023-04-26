@@ -15,6 +15,8 @@ use Hyperf\AsyncQueue\Exception\InvalidDriverException;
 use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class DriverFactory
 {
     /**

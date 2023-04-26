@@ -13,6 +13,8 @@ namespace Hyperf\Di\Annotation;
 
 use Hyperf\Config\ProviderConfig;
 
+use function Hyperf\Support\value;
+
 class ScanConfig
 {
     private static ?ScanConfig $instance = null;

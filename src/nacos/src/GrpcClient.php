@@ -36,7 +36,7 @@ use Hyperf\Nacos\Protobuf\Response\ConfigChangeBatchListenResponse;
 use Hyperf\Nacos\Protobuf\Response\ConfigChangeNotifyRequest;
 use Hyperf\Nacos\Protobuf\Response\ConfigQueryResponse;
 use Hyperf\Nacos\Protobuf\Response\Response;
-use Hyperf\Utils\Network;
+use Hyperf\Support\Network;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;

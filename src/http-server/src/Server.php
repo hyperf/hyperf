@@ -27,11 +27,13 @@ use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
-use Hyperf\Utils\SafeCaller;
+use Hyperf\Support\SafeCaller;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
+
+use function Hyperf\Support\make;
 
 class Server implements OnRequestInterface, MiddlewareInitializerInterface
 {

@@ -22,6 +22,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function Hyperf\Support\swoole_hook_flags;
+
 class StartServer extends Command
 {
     public function __construct(private ContainerInterface $container)

@@ -18,7 +18,7 @@ use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Support\Traits\ForwardsCalls;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Collection\last;

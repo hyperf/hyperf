@@ -28,6 +28,8 @@ use Psr\Log\LoggerInterface;
 use Swoole\Server;
 use Throwable;
 
+use function Hyperf\Support\retry;
+
 abstract class AbstractDriver implements DriverInterface
 {
     /**

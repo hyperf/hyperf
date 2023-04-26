@@ -23,7 +23,7 @@ use Hyperf\ServiceGovernance\Listener\RegisterServiceListener;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Hyperf\ServiceGovernanceConsul\ConsulAgent;
 use Hyperf\ServiceGovernanceConsul\ConsulDriver;
-use Hyperf\Utils\IPReader;
+use Hyperf\Support\IPReader;
 use Mockery;
 use Monolog\Handler\StreamHandler;
 use PHPUnit\Framework\TestCase;

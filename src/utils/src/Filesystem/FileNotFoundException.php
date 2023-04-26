@@ -11,9 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Filesystem;
 
-/**
- * @deprecated since 3.1, use \Hyperf\Support\Filesystem\FileNotFoundException instead.
- */
-class FileNotFoundException extends \Hyperf\Support\Filesystem\FileNotFoundException
-{
+class_alias(\Hyperf\Support\Filesystem\FileNotFoundException::class, FileNotFoundException::class);
+
+if (! class_exists(FileNotFoundException::class)) {
+    /**
+     * @deprecated since 3.1, use \Hyperf\Support\Filesystem\FileNotFoundException instead.
+     */
+    class FileNotFoundException extends \Hyperf\Support\Filesystem\FileNotFoundException
+    {
+    }
 }

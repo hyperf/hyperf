@@ -13,6 +13,8 @@ namespace Hyperf\Metric;
 
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 
+use function Hyperf\Support\make;
+
 /**
  * A Facade-like, syntax sugar class to create one-off metrics
  * Beta Feature. API may change.

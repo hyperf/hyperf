@@ -19,7 +19,7 @@ use Hyperf\Database\Schema\Column;
 use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\ModelCache;
 use Hyperf\ModelCache\Handler\HandlerInterface;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\ModelCache\Stub\ManagerStub;
 use HyperfTest\ModelCache\Stub\ModelStub;
 use HyperfTest\ModelCache\Stub\NonHandler;

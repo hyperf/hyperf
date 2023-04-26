@@ -13,6 +13,8 @@ namespace Hyperf\Pool\SimplePool;
 
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class PoolFactory
 {
     /**

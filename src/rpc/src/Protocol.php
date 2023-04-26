@@ -19,6 +19,8 @@ use Hyperf\Rpc\Contract\TransporterInterface;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class Protocol
 {
     public function __construct(private ContainerInterface $container, private ProtocolManager $protocolManager, private string $name, private array $options = [])

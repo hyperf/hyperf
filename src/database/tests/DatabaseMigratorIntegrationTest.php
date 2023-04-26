@@ -20,7 +20,7 @@ use Hyperf\Database\Migrations\DatabaseMigrationRepository;
 use Hyperf\Database\Migrations\Migrator;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\Stringable\Str;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

@@ -13,10 +13,11 @@ namespace Hyperf\Database\PgSQL\Schema\Grammars;
 
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Grammars\Grammar;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 use RuntimeException;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Support\with;
 
 class PostgresGrammar extends Grammar
 {

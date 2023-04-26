@@ -17,6 +17,8 @@ use Hyperf\Dag\Exception\InvalidArgumentException;
 use Hyperf\Engine\Channel;
 use SplStack;
 
+use function Hyperf\Support\call;
+
 class Dag implements Runner
 {
     /**

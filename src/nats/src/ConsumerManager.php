@@ -25,6 +25,8 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 
+use function Hyperf\Support\make;
+
 class ConsumerManager
 {
     public function __construct(private ContainerInterface $container)

@@ -14,6 +14,8 @@ namespace Hyperf\RpcClient\Proxy;
 use Hyperf\RpcClient\ServiceClient;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 abstract class AbstractProxyService
 {
     protected ServiceClient $client;

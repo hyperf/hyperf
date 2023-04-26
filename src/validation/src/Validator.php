@@ -19,8 +19,8 @@ use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface as ValidatorContract;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Stringable\Str;
-use Hyperf\Utils\Fluent;
-use Hyperf\Utils\MessageBag;
+use Hyperf\Support\Fluent;
+use Hyperf\Support\MessageBag;
 use Hyperf\Validation\Contract\ImplicitRule;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Contract\Rule as RuleContract;
@@ -30,6 +30,7 @@ use Stringable;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Collection\data_get;
+use function Hyperf\Support\make;
 use function Hyperf\Tappable\tap;
 
 class Validator implements ValidatorContract

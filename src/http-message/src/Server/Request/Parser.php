@@ -14,6 +14,8 @@ namespace Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Server\RequestParserInterface;
 use InvalidArgumentException;
 
+use function Hyperf\Support\make;
+
 class Parser implements RequestParserInterface
 {
     protected array $parsers = [];

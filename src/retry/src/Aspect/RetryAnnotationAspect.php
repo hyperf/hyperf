@@ -18,6 +18,8 @@ use Hyperf\Retry\Annotation\Retry;
 use Hyperf\Retry\Policy\HybridRetryPolicy;
 use Throwable;
 
+use function Hyperf\Support\make;
+
 class RetryAnnotationAspect extends AbstractAspect
 {
     public array $annotations = [

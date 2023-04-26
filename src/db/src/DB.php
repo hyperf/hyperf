@@ -20,6 +20,7 @@ use Hyperf\DB\Pool\PoolFactory;
 use Throwable;
 
 use function Hyperf\Coroutine\defer;
+use function Hyperf\Support\make;
 
 /**
  * @method beginTransaction()

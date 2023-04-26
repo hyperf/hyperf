@@ -35,6 +35,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 
 use function Hyperf\Coroutine\wait;
+use function Hyperf\Support\make;
 
 class ConsumerManager
 {

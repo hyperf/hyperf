@@ -34,6 +34,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
 
+use function Hyperf\Support\make;
+use function Hyperf\Support\value;
+
 class CoreMiddleware extends HttpCoreMiddleware
 {
     /**

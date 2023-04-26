@@ -17,6 +17,7 @@
     "require": {
         "php": ">=7.2",
         "hyperf/contract": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0"
     },
     "suggest": {

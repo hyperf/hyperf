@@ -23,7 +23,7 @@ use Hyperf\Filesystem\FilesystemFactory;
 use Hyperf\Filesystem\FilesystemInvoker;
 use Hyperf\Filesystem\Version;
 use Hyperf\Flysystem\OSS\Adapter as OSSAdapter;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use League\Flysystem\Adapter\Ftp;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;

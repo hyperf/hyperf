@@ -30,6 +30,7 @@ use Swoole\Coroutine\Http\Server as HttpServer;
 use Swoole\Coroutine\Server;
 
 use function Hyperf\Coroutine\run;
+use function Hyperf\Support\swoole_hook_flags;
 
 class CoroutineServer implements ServerInterface
 {

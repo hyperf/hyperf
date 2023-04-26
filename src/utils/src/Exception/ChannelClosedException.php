@@ -11,9 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Exception;
 
-/**
- * @deprecated since 3.1, use Hyperf\Coroutine\Exception\ChannelClosedException instead.
- */
-class ChannelClosedException extends \Hyperf\Coroutine\Exception\ChannelClosedException
-{
+class_alias(\Hyperf\Coroutine\Exception\ChannelClosedException::class, ChannelClosedException::class);
+
+if (! class_exists(ChannelClosedException::class)) {
+    /**
+     * @deprecated since 3.1, use Hyperf\Coroutine\Exception\ChannelClosedException instead.
+     */
+    class ChannelClosedException extends \Hyperf\Coroutine\Exception\ChannelClosedException
+    {
+    }
 }

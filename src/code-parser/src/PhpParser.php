@@ -23,6 +23,8 @@ use ReflectionParameter;
 use ReflectionType;
 use ReflectionUnionType;
 
+use function Hyperf\Support\value;
+
 class PhpParser
 {
     public const TYPES = [

@@ -35,6 +35,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function Hyperf\Support\make;
+
 class ModelCommand extends Command
 {
     protected ?ConnectionResolverInterface $resolver = null;

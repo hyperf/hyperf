@@ -29,6 +29,8 @@ use InvalidArgumentException;
 use OpenApi\Annotations\Operation;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\value;
+
 class BootSwaggerListener implements ListenerInterface
 {
     public function __construct(private ContainerInterface $container)

@@ -25,6 +25,7 @@
         "hyperf/http-message": "~3.0.0",
         "hyperf/rpc": "~3.0.0",
         "hyperf/serializer": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "hyperf/context": "~3.0.0"
     },

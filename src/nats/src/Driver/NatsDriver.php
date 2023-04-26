@@ -24,6 +24,8 @@ use Hyperf\Pool\SimplePool\Pool;
 use Hyperf\Pool\SimplePool\PoolFactory;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class NatsDriver extends AbstractDriver
 {
     protected Pool $pool;

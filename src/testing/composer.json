@@ -28,6 +28,7 @@
         "hyperf/coroutine": "~3.0.0",
         "hyperf/http-message": "~3.0.0",
         "hyperf/http-server": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0"
     },
     "extra": {

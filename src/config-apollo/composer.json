@@ -22,6 +22,7 @@
         "psr/container": "^1.0|^2.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/config-center": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0"
     },
     "suggest": {

@@ -22,7 +22,7 @@ use Hyperf\Crontab\Listener\CrontabRegisterListener;
 use Hyperf\Crontab\Parser;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Container;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Crontab\Stub\FooCron;
 use HyperfTest\Crontab\Stub\FooCron2;
 use Mockery;

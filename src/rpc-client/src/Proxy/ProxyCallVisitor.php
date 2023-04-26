@@ -17,6 +17,8 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\NodeVisitorAbstract;
 
+use function Hyperf\Support\value;
+
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
     protected array $nodes = [];

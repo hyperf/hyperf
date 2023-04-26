@@ -11,9 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Exception;
 
-/**
- * @deprecated since 3.1, use Hyperf\Coroutine\Exception\WaitTimeoutException instead.
- */
-class WaitTimeoutException extends \Hyperf\Coroutine\Exception\WaitTimeoutException
-{
+class_alias(\Hyperf\Coroutine\Exception\WaitTimeoutException::class, WaitTimeoutException::class);
+
+if (! class_exists(WaitTimeoutException::class)) {
+    /**
+     * @deprecated since 3.1, use Hyperf\Coroutine\Exception\WaitTimeoutException instead.
+     */
+    class WaitTimeoutException extends \Hyperf\Coroutine\Exception\WaitTimeoutException
+    {
+    }
 }

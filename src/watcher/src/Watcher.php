@@ -15,13 +15,15 @@ use Hyperf\Codec\Json;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\Exception\InvalidArgumentException;
-use Hyperf\Utils\Filesystem\FileNotFoundException;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Exception\InvalidArgumentException;
+use Hyperf\Support\Filesystem\FileNotFoundException;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\Watcher\Driver\DriverInterface;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function Hyperf\Support\make;
 
 class Watcher
 {

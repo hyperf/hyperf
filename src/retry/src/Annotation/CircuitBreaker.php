@@ -21,6 +21,8 @@ use Hyperf\Retry\Policy\SleepRetryPolicy;
 use Hyperf\Retry\SleepStrategyInterface;
 use Throwable;
 
+use function Hyperf\Support\make;
+
 #[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractRetry
 {

@@ -17,6 +17,8 @@ use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Stringable\Str;
 use Hyperf\Validation\Validator;
 
+use function Hyperf\Support\make;
+
 trait FormatsMessages
 {
     use ReplacesAttributes;

@@ -18,6 +18,8 @@ use Hyperf\Resource\Value\MergeValue;
 use Hyperf\Resource\Value\MissingValue;
 use Hyperf\Resource\Value\PotentiallyMissing;
 
+use function Hyperf\Support\value;
+
 /**
  * Trait ConditionallyLoadsAttributes.
  *

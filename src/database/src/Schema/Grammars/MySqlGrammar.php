@@ -13,7 +13,7 @@ namespace Hyperf\Database\Schema\Grammars;
 
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 
 class MySqlGrammar extends Grammar
 {
@@ -407,9 +407,9 @@ class MySqlGrammar extends Grammar
     /**
      * Create the main create table clause.
      *
-     * @param \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param \Hyperf\Utils\Fluent $command
-     * @param \Hyperf\Database\Connection $connection
+     * @param Blueprint $blueprint
+     * @param Fluent $command
+     * @param Connection $connection
      * @return string
      */
     protected function compileCreateTable($blueprint, $command, $connection)

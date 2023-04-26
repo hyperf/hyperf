@@ -20,6 +20,8 @@ use Hyperf\Redis\RedisConnection;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class RedisPool extends Pool
 {
     protected array $config;

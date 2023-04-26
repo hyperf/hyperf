@@ -19,6 +19,8 @@ use Hyperf\Task\Task;
 use Psr\Container\ContainerInterface;
 use Throwable;
 
+use function Hyperf\Support\call;
+
 class OnTaskListener implements ListenerInterface
 {
     public function __construct(protected ContainerInterface $container)

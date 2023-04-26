@@ -19,6 +19,8 @@ use Hyperf\Contract\UnCompressInterface;
 use Hyperf\Stringable\Str;
 use RuntimeException;
 
+use function Hyperf\Support\value;
+
 /**
  * @template TKey of array-key
  * @template TModel of \Hyperf\Database\Model\Model

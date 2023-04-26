@@ -22,7 +22,7 @@ use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\ResponseEmitter;
-use Hyperf\Utils\SafeCaller;
+use Hyperf\Support\SafeCaller;
 use HyperfTest\HttpServer\Stub\ServerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;

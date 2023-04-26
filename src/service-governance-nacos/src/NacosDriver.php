@@ -24,6 +24,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
+use function Hyperf\Support\retry;
+
 class NacosDriver implements DriverInterface
 {
     protected Client $client;

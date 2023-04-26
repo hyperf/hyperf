@@ -19,6 +19,7 @@
         "php": ">=8.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/protocol": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0"
     },
     "autoload": {

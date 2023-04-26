@@ -20,6 +20,8 @@ use Hyperf\GrpcClient\Exception\GrpcClientException;
 use InvalidArgumentException;
 use Swoole\Http2\Response;
 
+use function Hyperf\Support\retry;
+
 /**
  * @method int send(Request $request)
  * @method mixed recv(int $streamId, float $timeout = null)

@@ -18,6 +18,8 @@ use Hyperf\LoadBalancer\Node;
 use Hyperf\RpcMultiplex\Exception\NoAvailableNodesException;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class SocketFactory
 {
     protected ?LoadBalancerInterface $loadBalancer = null;

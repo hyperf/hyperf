@@ -22,6 +22,8 @@ use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\value;
+
 /**
  * @property int $errCode
  * @property string $errMsg

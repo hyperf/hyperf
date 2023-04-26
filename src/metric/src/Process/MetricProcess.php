@@ -18,6 +18,8 @@ use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Process\AbstractProcess;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+use function Hyperf\Support\make;
+
 /**
  * Metric Process.
  */

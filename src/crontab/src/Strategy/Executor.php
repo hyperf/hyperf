@@ -32,6 +32,8 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Throwable;
 
+use function Hyperf\Support\make;
+
 class Executor
 {
     protected ?PsrLoggerInterface $logger = null;

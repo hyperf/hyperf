@@ -25,6 +25,8 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Mockery;
 
+use function Hyperf\Support\value;
+
 class ContainerStub
 {
     public static function mockContainer()

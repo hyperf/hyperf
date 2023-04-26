@@ -48,6 +48,7 @@ use Swoole\Runtime;
 use Swoole\Timer;
 
 use function Hyperf\Coroutine\go;
+use function Hyperf\Support\swoole_hook_flags;
 
 /**
  * @internal

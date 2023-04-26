@@ -16,7 +16,7 @@ use Hyperf\Coroutine\Traits\Container;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\RpcClient\Proxy\Ast;
 use Hyperf\RpcClient\Proxy\CodeLoader;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 
 class ProxyFactory
 {

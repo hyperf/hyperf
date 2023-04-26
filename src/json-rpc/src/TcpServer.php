@@ -30,6 +30,8 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function Hyperf\Support\make;
+
 class TcpServer extends Server
 {
     protected ?ResponseBuilder $responseBuilder = null;
