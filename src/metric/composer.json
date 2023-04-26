@@ -16,6 +16,7 @@
         "hyperf/contract": "~3.0.0",
         "hyperf/engine": "^1.5|^2.3",
         "hyperf/guzzle": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "promphp/prometheus_client_php": "2.2.*",
         "psr/container": "^1.0|^2.0",
