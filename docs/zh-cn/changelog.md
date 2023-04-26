@@ -1,21 +1,41 @@
 # 版本更新记录
 
+# v3.0.18 - 2023-04-26
+
+## 新增
+
+- [#5672](https://github.com/hyperf/hyperf/pull/5672) 将部分 `utils` 中的方法，赋值到 `hyperf/support` 组件中，并增加对应的命名空间。
+
+## 修复
+
+- [#5662](https://github.com/hyperf/hyperf/pull/5662) 修复 `pgsql-swoole` 执行失败时，无法抛出异常的问题。
+
+## 优化
+
+- [#5660](https://github.com/hyperf/hyperf/pull/5660) 将 `hyperf/codec` 从 `hyperf/utils` 分离出来。
+- [#5663](https://github.com/hyperf/hyperf/pull/5663) 将 `hyperf/serializer` 从 `hyperf/utils` 分离出来。
+- [#5666](https://github.com/hyperf/hyperf/pull/5666) 将 `Packers` 从 `hyperf/utils` 分离到 `hyperf/codec` 中。
+- [#5668](https://github.com/hyperf/hyperf/pull/5668) 将 `hyperf/support` 从 `hyperf/utils` 分离出来。
+- [#5670](https://github.com/hyperf/hyperf/pull/5670) 将 `hyperf/code-parser` 从 `hyperf/utils` 分离出来。
+- [#5671](https://github.com/hyperf/hyperf/pull/5671) 使用 `Hyperf\Coroutine\Channel\Pool` 代替`Hyperf\Utils\ChannelPool`。
+- [#5674](https://github.com/hyperf/hyperf/pull/5674) 将 `Hyperf\Utils` 命名空间的类和方法，使用新组件进行替换。
+
 # v3.0.17 - 2023-04-19
 
-## Fixed
+## 修复
 
 - [#5642](https://github.com/hyperf/hyperf/pull/5642) 修复使用批量读取模型缓存时，遇到不存在的数据时，无法初始化空缓存的问题。
 - [#5643](https://github.com/hyperf/hyperf/pull/5643) 修复使用批量读取模型缓存时，空缓存无法正常使用的问题。
 - [#5649](https://github.com/hyperf/hyperf/pull/5649) 修复协程风格下，无法初始化数据库字段收集器的问题。
 
-## Added
+## 新增
 
 - [#5634](https://github.com/hyperf/hyperf/pull/5634) 新增助手函数 `Hyperf\Stringable\str()`。
 - [#5639](https://github.com/hyperf/hyperf/pull/5639) 新增方法 `Redis::pipeline()` 和 `Redis::transaction()`。
 - [#5641](https://github.com/hyperf/hyperf/pull/5641) 为模型缓存 `loadCache` 增加嵌套初始化缓存的能力。
 - [#5646](https://github.com/hyperf/hyperf/pull/5646) 增加 `PriorityDefinition` 类，来处理容器 `dependencies` 优先级的问题。
 
-## Optimized
+## 优化
 
 - [#5634](https://github.com/hyperf/hyperf/pull/5634) 使用 `Hyperf\Stringable\Str` 替代 `Hyperf\Utils\Str`。
 - [#5636](https://github.com/hyperf/hyperf/pull/5636) 优化 `kafka` 消费者，启动时等待消费过长的问题。
