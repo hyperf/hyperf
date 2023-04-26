@@ -12,13 +12,3 @@ declare(strict_types=1);
 namespace Hyperf\Utils\Exception;
 
 class_alias(\Hyperf\Support\Exception\ExceptionThrower::class, ExceptionThrower::class);
-
-if (! class_exists(ExceptionThrower::class)) {
-    /**
-     * @deprecated since 3.1, use \Hyperf\Support\Exception\ExceptionThrower instead.
-     * @phpstan-ignore-next-line
-     */
-    final class ExceptionThrower extends \Hyperf\Support\Exception\ExceptionThrower
-    {
-    }
-}

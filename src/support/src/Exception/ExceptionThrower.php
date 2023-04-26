@@ -13,10 +13,7 @@ namespace Hyperf\Support\Exception;
 
 use Throwable;
 
-/**
- * @final It will be final after v3.1
- */
-class ExceptionThrower
+final class ExceptionThrower
 {
     public function __construct(private Throwable $throwable)
     {
