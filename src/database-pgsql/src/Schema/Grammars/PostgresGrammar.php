@@ -17,6 +17,7 @@ use Hyperf\Support\Fluent;
 use RuntimeException;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Support\with;
 
 class PostgresGrammar extends Grammar
 {
