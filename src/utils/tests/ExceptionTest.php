@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Exception;
+use Hyperf\Support\Exception\ExceptionThrower;
 use Hyperf\Support\Filesystem\FileNotFoundException;
 use PHPUnit\Framework\TestCase;
 
@@ -45,5 +47,16 @@ class ExceptionTest extends TestCase
         } catch (\Throwable) {
             $this->assertTrue(false);
         }
+    }
+
+    public function testExceptionThrower()
+    {
+        $thrower = new ExceptionThrower(new Exception('xx'));
+        $this->assertTrue($thrower instanceof ExceptionThrower);
+        $this->assertTrue($thrower instanceof \Hyperf\Utils\Exception\ExceptionThrower);
+
+        $thrower = new \Hyperf\Utils\Exception\ExceptionThrower(new Exception('xx'));
+        $this->assertTrue($thrower instanceof ExceptionThrower);
+        $this->assertTrue($thrower instanceof \Hyperf\Utils\Exception\ExceptionThrower);
     }
 }
