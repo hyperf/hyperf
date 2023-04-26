@@ -21,6 +21,7 @@
         "hyperf/contract": "~3.0.0",
         "hyperf/di": "~3.0.0",
         "hyperf/guzzle": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "jcchavezs/zipkin-opentracing": "^2.0",
         "opentracing/opentracing": "^1.0"

@@ -17,6 +17,7 @@
         "hyperf/rpc-client": "~3.0.0",
         "hyperf/rpc-server": "~3.0.0",
         "hyperf/server": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "multiplex/socket": "^1.0"
     },
