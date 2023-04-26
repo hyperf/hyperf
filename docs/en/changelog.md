@@ -1,5 +1,25 @@
 # Changelogs
 
+# v3.0.18 - 2023-04-26
+
+## Added
+
+- [#5672](https://github.com/hyperf/hyperf/pull/5672) Added some helper functions in `hyperf/support`.
+
+## Fixed
+
+- [#5662](https://github.com/hyperf/hyperf/pull/5662) Fixed bug that `pgsql-swoole` cannot throw exceptions when statement execution failed.
+
+## Optimized
+
+- [#5660](https://github.com/hyperf/hyperf/pull/5660) Split `hyperf/codec` from `hyperf/utils`.
+- [#5663](https://github.com/hyperf/hyperf/pull/5663) Split `hyperf/serializer` from `hyperf/utils`.
+- [#5666](https://github.com/hyperf/hyperf/pull/5666) Split `Packers` to `hyperf/codec`.
+- [#5668](https://github.com/hyperf/hyperf/pull/5668) Split `hyperf/support` from `hyperf/utils`.
+- [#5670](https://github.com/hyperf/hyperf/pull/5670) Split `hyperf/code-parser` from `hyperf/utils`.
+- [#5671](https://github.com/hyperf/hyperf/pull/5671) Use `Hyperf\Coroutine\Channel\Pool` instead of `Hyperf\Utils\ChannelPool`.
+- [#5674](https://github.com/hyperf/hyperf/pull/5674) Instead of `classes` and `functions` of `Hyperf\Utils`.
+
 # v3.0.17 - 2023-04-19
 
 ## Fixed

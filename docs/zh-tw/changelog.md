@@ -1,21 +1,41 @@
 # 版本更新記錄
 
+# v3.0.18 - 2023-04-26
+
+## 新增
+
+- [#5672](https://github.com/hyperf/hyperf/pull/5672) 將部分 `utils` 中的方法，複製到 `hyperf/support` 元件中，並增加對應的名稱空間。
+
+## 修復
+
+- [#5662](https://github.com/hyperf/hyperf/pull/5662) 修復 `pgsql-swoole` 執行失敗時，無法丟擲異常的問題。
+
+## 最佳化
+
+- [#5660](https://github.com/hyperf/hyperf/pull/5660) 將 `hyperf/codec` 從 `hyperf/utils` 分離出來。
+- [#5663](https://github.com/hyperf/hyperf/pull/5663) 將 `hyperf/serializer` 從 `hyperf/utils` 分離出來。
+- [#5666](https://github.com/hyperf/hyperf/pull/5666) 將 `Packers` 從 `hyperf/utils` 分離到 `hyperf/codec` 中。
+- [#5668](https://github.com/hyperf/hyperf/pull/5668) 將 `hyperf/support` 從 `hyperf/utils` 分離出來。
+- [#5670](https://github.com/hyperf/hyperf/pull/5670) 將 `hyperf/code-parser` 從 `hyperf/utils` 分離出來。
+- [#5671](https://github.com/hyperf/hyperf/pull/5671) 使用 `Hyperf\Coroutine\Channel\Pool` 代替`Hyperf\Utils\ChannelPool`。
+- [#5674](https://github.com/hyperf/hyperf/pull/5674) 將 `Hyperf\Utils` 名稱空間的類和方法，使用新元件進行替換。
+
 # v3.0.17 - 2023-04-19
 
-## Fixed
+## 修復
 
 - [#5642](https://github.com/hyperf/hyperf/pull/5642) 修復使用批次讀取模型快取時，遇到不存在的資料時，無法初始化空快取的問題。
 - [#5643](https://github.com/hyperf/hyperf/pull/5643) 修復使用批次讀取模型快取時，空快取無法正常使用的問題。
 - [#5649](https://github.com/hyperf/hyperf/pull/5649) 修復協程風格下，無法初始化資料庫欄位收集器的問題。
 
-## Added
+## 新增
 
 - [#5634](https://github.com/hyperf/hyperf/pull/5634) 新增助手函式 `Hyperf\Stringable\str()`。
 - [#5639](https://github.com/hyperf/hyperf/pull/5639) 新增方法 `Redis::pipeline()` 和 `Redis::transaction()`。
 - [#5641](https://github.com/hyperf/hyperf/pull/5641) 為模型快取 `loadCache` 增加巢狀初始化快取的能力。
 - [#5646](https://github.com/hyperf/hyperf/pull/5646) 增加 `PriorityDefinition` 類，來處理容器 `dependencies` 優先順序的問題。
 
-## Optimized
+## 最佳化
 
 - [#5634](https://github.com/hyperf/hyperf/pull/5634) 使用 `Hyperf\Stringable\Str` 替代 `Hyperf\Utils\Str`。
 - [#5636](https://github.com/hyperf/hyperf/pull/5636) 最佳化 `kafka` 消費者，啟動時等待消費過長的問題。
