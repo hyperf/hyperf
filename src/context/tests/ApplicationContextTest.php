@@ -27,10 +27,10 @@ class ApplicationContextTest extends TestCase
     {
         $container = new Container(Mockery::mock(DefinitionSourceInterface::class));
         ApplicationContext::setContainer($container);
-        $this->assertSame($container, \Hyperf\Utils\ApplicationContext::getContainer());
+        $this->assertSame($container, \Hyperf\Context\ApplicationContext::getContainer());
 
         $container = new Container(Mockery::mock(DefinitionSourceInterface::class));
-        \Hyperf\Utils\ApplicationContext::setContainer($container);
+        \Hyperf\Context\ApplicationContext::setContainer($container);
         $this->assertSame($container, ApplicationContext::getContainer());
     }
 }
