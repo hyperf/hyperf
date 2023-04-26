@@ -19,6 +19,8 @@ use Rx\SchedulerInterface;
 use Swoole\Event;
 use Swoole\Timer;
 
+use function Hyperf\Support\make;
+
 class RxSwoole
 {
     private static bool $initialized = false;

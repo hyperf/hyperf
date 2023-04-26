@@ -23,6 +23,8 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
+use function Hyperf\Support\make;
+
 abstract class AbstractHandler implements HandlerInterface
 {
     protected CircuitBreakerFactory $factory;

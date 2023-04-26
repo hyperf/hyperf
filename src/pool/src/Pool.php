@@ -20,6 +20,8 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Throwable;
 
+use function Hyperf\Support\make;
+
 abstract class Pool implements PoolInterface
 {
     protected Channel $channel;

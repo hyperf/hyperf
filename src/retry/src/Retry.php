@@ -13,6 +13,8 @@ namespace Hyperf\Retry;
 
 use Hyperf\Retry\Policy\RetryPolicyInterface;
 
+use function Hyperf\Support\make;
+
 /**
  * @method static FluentRetry with(RetryPolicyInterface ...$policies)
  * @method static FluentRetry when(callable $when)

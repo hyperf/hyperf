@@ -22,6 +22,8 @@ use Mockery;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 
+use function Hyperf\Support\make;
+
 /**
  * @internal
  * @coversNothing

@@ -15,6 +15,8 @@ use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Pool as AbstractPool;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class Pool extends AbstractPool
 {
     /**

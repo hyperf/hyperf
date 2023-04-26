@@ -21,6 +21,8 @@ use Hyperf\Redis\RedisProxy;
 use Hyperf\Support\Traits\InteractsWithTime;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class RedisHandler implements HandlerInterface, DefaultValueInterface
 {
     use InteractsWithTime;

@@ -18,6 +18,8 @@ use Hyperf\Pool\Pool as HyperfPool;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 abstract class Pool extends HyperfPool
 {
     protected array $config;

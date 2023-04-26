@@ -18,6 +18,8 @@ use Hyperf\Metric\Adapter\RemoteProxy\Histogram;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Process\Event\PipeMessage;
 
+use function Hyperf\Support\make;
+
 /**
  * Receives messages in metric process.
  */

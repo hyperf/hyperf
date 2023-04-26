@@ -22,6 +22,8 @@ use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\WebSocketServer\Sender;
 
+use function Hyperf\Support\make;
+
 class BaseNamespace implements NamespaceInterface
 {
     use Emitter;

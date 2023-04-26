@@ -14,6 +14,8 @@ namespace Hyperf\ConfigCenter;
 use Hyperf\ConfigCenter\Contract\DriverInterface;
 use Hyperf\Contract\ConfigInterface;
 
+use function Hyperf\Support\make;
+
 class DriverFactory
 {
     public function __construct(protected ConfigInterface $config)

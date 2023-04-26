@@ -17,6 +17,8 @@ use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\SuperGlobals\Proxy;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class SuperGlobalsInitializeListener implements ListenerInterface
 {
     public function __construct(protected ContainerInterface $container)

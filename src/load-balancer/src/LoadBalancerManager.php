@@ -13,6 +13,8 @@ namespace Hyperf\LoadBalancer;
 
 use InvalidArgumentException;
 
+use function Hyperf\Support\make;
+
 class LoadBalancerManager
 {
     private array $algorithms = [

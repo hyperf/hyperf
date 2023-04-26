@@ -23,6 +23,8 @@ use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function Hyperf\Support\make;
+
 class Watcher
 {
     protected DriverInterface $driver;

@@ -18,6 +18,8 @@ use Hyperf\SocketIOServer\Emitter\Future;
 use Hyperf\WebSocketServer\Sender;
 use Mockery;
 
+use function Hyperf\Support\make;
+
 /**
  * @internal
  * @coversNothing

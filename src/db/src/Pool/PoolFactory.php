@@ -17,6 +17,8 @@ use Hyperf\DB\Exception\DriverNotFoundException;
 use Hyperf\DB\Exception\InvalidDriverException;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class PoolFactory
 {
     /**

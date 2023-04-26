@@ -16,6 +16,8 @@ use Hyperf\Framework\Event\BootApplication;
 use Hyperf\ServiceGovernance\DriverManager;
 use Hyperf\ServiceGovernanceConsul\ConsulDriver;
 
+use function Hyperf\Support\make;
+
 class RegisterDriverListener implements ListenerInterface
 {
     public function __construct(protected DriverManager $driverManager)

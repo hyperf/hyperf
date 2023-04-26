@@ -18,6 +18,8 @@ use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class ConsumerManager
 {
     public function __construct(private ContainerInterface $container)

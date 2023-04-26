@@ -19,6 +19,8 @@ use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\ModelNotFoundException;
 use Hyperf\Database\Model\SoftDeletes;
 
+use function Hyperf\Support\class_uses_recursive;
+
 class HasManyThrough extends Relation
 {
     /**

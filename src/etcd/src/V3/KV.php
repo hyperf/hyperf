@@ -15,6 +15,8 @@ use GuzzleHttp;
 use Hyperf\Etcd\Client;
 use Hyperf\Etcd\KVInterface;
 
+use function Hyperf\Support\make;
+
 class KV extends Client implements KVInterface
 {
     public function put($key, $value, array $options = [])

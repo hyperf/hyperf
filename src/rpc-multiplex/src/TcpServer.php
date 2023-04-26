@@ -37,6 +37,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Coroutine\Server\Connection;
 use Swoole\Server as SwooleServer;
 
+use function Hyperf\Support\make;
+
 class TcpServer extends Server
 {
     protected ProtocolManager $protocolManager;

@@ -33,6 +33,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
+use function Hyperf\Support\make;
+
 class Server implements OnRequestInterface, MiddlewareInitializerInterface
 {
     protected array $middlewares = [];

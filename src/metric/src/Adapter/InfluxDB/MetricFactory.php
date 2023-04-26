@@ -31,6 +31,8 @@ use InfluxDB\Point;
 use Prometheus\CollectorRegistry;
 use Prometheus\Sample;
 
+use function Hyperf\Support\make;
+
 class MetricFactory implements MetricFactoryInterface
 {
     private string $name;

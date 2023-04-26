@@ -18,6 +18,8 @@ use Hyperf\Snowflake\ConfigurationInterface;
 use Hyperf\Snowflake\MetaGenerator;
 use Redis;
 
+use function Hyperf\Support\make;
+
 abstract class RedisMetaGenerator extends MetaGenerator
 {
     public const DEFAULT_REDIS_KEY = 'hyperf:snowflake:workerId';

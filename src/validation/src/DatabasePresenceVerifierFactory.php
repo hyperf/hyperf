@@ -14,6 +14,8 @@ namespace Hyperf\Validation;
 use Hyperf\Database\ConnectionResolverInterface;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class DatabasePresenceVerifierFactory
 {
     public function __invoke(ContainerInterface $container)

@@ -19,6 +19,8 @@ use HyperfTest\Di\Stub\Demo;
 use HyperfTest\Di\Stub\Foo;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Support\make;
+
 /**
  * @internal
  * @covers \Hyperf\Di\Container

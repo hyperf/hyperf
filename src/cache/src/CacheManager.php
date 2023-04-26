@@ -17,6 +17,8 @@ use Hyperf\Cache\Exception\InvalidArgumentException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 
+use function Hyperf\Support\make;
+
 class CacheManager
 {
     /**

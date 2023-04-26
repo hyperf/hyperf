@@ -16,6 +16,8 @@ use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
 use Hyperf\Support\Network;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class ClientFactory
 {
     public function __invoke(ContainerInterface $container)

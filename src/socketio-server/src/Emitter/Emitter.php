@@ -19,6 +19,8 @@ use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\WebSocketServer\Sender;
 
+use function Hyperf\Support\make;
+
 /**
  * Trait Emitter.
  * @property bool $broadcast

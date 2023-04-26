@@ -20,6 +20,8 @@ use Hyperf\Redis\RedisProxy;
 use Hyperf\Support\Traits\InteractsWithTime;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class RedisStringHandler implements HandlerInterface
 {
     use InteractsWithTime;

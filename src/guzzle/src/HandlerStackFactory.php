@@ -17,6 +17,8 @@ use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Container;
 use Hyperf\Pool\SimplePool\PoolFactory;
 
+use function Hyperf\Support\make;
+
 class HandlerStackFactory
 {
     protected array $option = [

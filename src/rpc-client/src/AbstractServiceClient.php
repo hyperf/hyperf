@@ -29,6 +29,8 @@ use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 
+use function Hyperf\Support\make;
+
 abstract class AbstractServiceClient
 {
     /**

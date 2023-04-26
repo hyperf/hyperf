@@ -15,6 +15,8 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Support\Filesystem\Filesystem;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class FileLoaderFactory
 {
     public function __invoke(ContainerInterface $container)

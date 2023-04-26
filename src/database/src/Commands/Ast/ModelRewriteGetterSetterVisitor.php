@@ -17,6 +17,9 @@ use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Stringable\Str;
 use PhpParser\Node;
 
+use function Hyperf\Support\getter;
+use function Hyperf\Support\setter;
+
 class ModelRewriteGetterSetterVisitor extends AbstractVisitor
 {
     /**
