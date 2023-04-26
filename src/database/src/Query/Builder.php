@@ -30,7 +30,7 @@ use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Stringable\Str;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Support\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use RuntimeException;
 

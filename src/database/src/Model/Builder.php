@@ -22,7 +22,7 @@ use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Stringable\Str;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Support\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionMethod;

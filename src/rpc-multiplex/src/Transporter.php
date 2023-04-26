@@ -14,7 +14,7 @@ namespace Hyperf\RpcMultiplex;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\RpcMultiplex\Exception\NotSupportException;
-use Hyperf\Utils\Exception\ExceptionThrower;
+use Hyperf\Support\Exception\ExceptionThrower;
 use Multiplex\Exception\ChannelClosedException;
 use Multiplex\Exception\ClientConnectFailedException;
 use Psr\Container\ContainerInterface;

@@ -9,11 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils\Exception;
+namespace Hyperf\Support\Exception;
 
-/**
- * @deprecated since 3.1, use \Hyperf\Support\Exception\InvalidArgumentException instead.
- */
-class InvalidArgumentException extends \Hyperf\Support\Exception\InvalidArgumentException
+use Throwable;
+
+class ExceptionThrower
 {
+    public function __construct(private Throwable $throwable)
+    {
+    }
+
+    public function getThrowable(): Throwable
+    {
+        return $this->throwable;
+    }
 }
