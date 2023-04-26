@@ -17,6 +17,8 @@ use Hyperf\Resource\Value\MissingValue;
 use Hyperf\Stringable\Str;
 use Traversable;
 
+use function Hyperf\Support\class_basename;
+
 trait CollectsResources
 {
     /**

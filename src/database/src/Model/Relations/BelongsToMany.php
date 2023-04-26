@@ -20,6 +20,7 @@ use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Support\class_basename;
 use function Hyperf\Tappable\tap;
 
 class BelongsToMany extends Relation

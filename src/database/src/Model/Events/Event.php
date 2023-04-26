@@ -15,7 +15,7 @@ use Hyperf\Database\Model\Model;
 use Hyperf\Event\Stoppable;
 use Psr\EventDispatcher\StoppableEventInterface;
 
-use function class_basename;
+use function Hyperf\Support\class_basename;
 use function lcfirst;
 use function method_exists;
 

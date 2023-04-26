@@ -15,6 +15,8 @@ use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Model;
 use Hyperf\Stringable\Str;
 
+use function Hyperf\Support\class_basename;
+
 trait AsPivot
 {
     /**

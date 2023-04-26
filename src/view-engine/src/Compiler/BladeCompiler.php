@@ -18,6 +18,7 @@ use InvalidArgumentException;
 use PhpToken;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Support\class_basename;
 
 class BladeCompiler extends Compiler implements CompilerInterface
 {
