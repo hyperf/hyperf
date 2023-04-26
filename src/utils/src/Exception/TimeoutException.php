@@ -11,8 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Exception;
 
-use RuntimeException;
-
-class TimeoutException extends RuntimeException
-{
+class_alias(\Hyperf\Coroutine\Exception\TimeoutException::class, TimeoutException::class);
+if (! class_exists(TimeoutException::class)) {
+    /**
+     * @deprecated since 3.1, use Hyperf\Coroutine\Exception\TimeoutException instead.
+     */
+    class TimeoutException extends \Hyperf\Coroutine\Exception\TimeoutException
+    {
+    }
 }
