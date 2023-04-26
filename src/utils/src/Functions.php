@@ -534,3 +534,7 @@ if (! function_exists('wait')) {
 class_exists(\Hyperf\Utils\Collection::class);
 class_exists(\Hyperf\Utils\Filesystem\FileNotFoundException::class);
 class_exists(\Hyperf\Utils\Exception\IPReadFailedException::class);
+class_exists(\Hyperf\Utils\Exception\ParallelExecutionException::class);
+class_exists(\Hyperf\Utils\Exception\WaitTimeoutException::class);
+class_exists(\Hyperf\Utils\Exception\InvalidArgumentException::class);
+class_exists(\Hyperf\Utils\Exception\ChannelClosedException::class);
