@@ -11,9 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Exception;
 
-/**
- * @deprecated since 3.1, use Hyperf\Coroutine\Exception\ParallelExecutionException instead.
- */
-class ParallelExecutionException extends \Hyperf\Coroutine\Exception\ParallelExecutionException
-{
+class_alias(\Hyperf\Coroutine\Exception\ParallelExecutionException::class, ParallelExecutionException::class);
+
+if (! class_exists(ParallelExecutionException::class)) {
+    /**
+     * @deprecated since 3.1, use Hyperf\Coroutine\Exception\ParallelExecutionException instead.
+     */
+    class ParallelExecutionException extends \Hyperf\Coroutine\Exception\ParallelExecutionException
+    {
+    }
 }
