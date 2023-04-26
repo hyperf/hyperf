@@ -21,7 +21,7 @@ use Hyperf\Pool\LowFrequencyInterface;
 use Hyperf\Pool\Pool;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Redis\Frequency;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Redis\Stub\RedisConnectionStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;

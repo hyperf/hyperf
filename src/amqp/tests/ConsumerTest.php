@@ -15,7 +15,7 @@ use Hyperf\Amqp\ConnectionFactory;
 use Hyperf\Amqp\Consumer;
 use Hyperf\Coroutine\Concurrent;
 use Hyperf\Coroutine\Exception\ChannelClosedException;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Amqp\Stub\AMQPConnectionStub;
 use HyperfTest\Amqp\Stub\ContainerStub;
 use HyperfTest\Amqp\Stub\Delay2Consumer;

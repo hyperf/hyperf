@@ -21,7 +21,7 @@ use Hyperf\ModelCache\EagerLoad\EagerLoader;
 use Hyperf\ModelCache\InvalidCacheManager;
 use Hyperf\ModelCache\Listener\EagerLoadListener;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\ModelCache\Stub\BookModel;
 use HyperfTest\ModelCache\Stub\ContainerStub;
 use HyperfTest\ModelCache\Stub\ImageModel;
