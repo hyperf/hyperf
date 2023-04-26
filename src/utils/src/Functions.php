@@ -539,3 +539,4 @@ class_exists(\Hyperf\Utils\Exception\TimeoutException::class);
 class_exists(\Hyperf\Utils\Exception\WaitTimeoutException::class);
 class_exists(\Hyperf\Utils\Exception\InvalidArgumentException::class);
 class_exists(\Hyperf\Utils\Exception\ChannelClosedException::class);
+class_exists(\Hyperf\Utils\Exception\ExceptionThrower::class);
