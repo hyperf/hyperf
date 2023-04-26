@@ -533,3 +533,4 @@ if (! function_exists('wait')) {
 // TODO: Removed when deleting `\Hyperf\Utils\Collection`.
 class_exists(\Hyperf\Utils\Collection::class);
 class_exists(\Hyperf\Utils\Filesystem\FileNotFoundException::class);
+class_exists(\Hyperf\Utils\Exception\IPReadFailedException::class);
