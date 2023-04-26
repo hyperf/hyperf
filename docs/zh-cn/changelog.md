@@ -4,7 +4,7 @@
 
 ## 新增
 
-- [#5672](https://github.com/hyperf/hyperf/pull/5672) 将部分 `utils` 中的方法，赋值到 `hyperf/support` 组件中，并增加对应的命名空间。
+- [#5672](https://github.com/hyperf/hyperf/pull/5672) 将部分 `utils` 中的方法，复制到 `hyperf/support` 组件中，并增加对应的命名空间。
 
 ## 修复
 
