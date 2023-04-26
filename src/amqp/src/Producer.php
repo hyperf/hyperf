@@ -16,6 +16,8 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use PhpAmqpLib\Message\AMQPMessage;
 use Throwable;
 
+use function Hyperf\Support\retry;
+
 class Producer extends Builder
 {
     public function produce(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool

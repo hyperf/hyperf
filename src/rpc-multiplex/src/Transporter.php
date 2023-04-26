@@ -20,6 +20,9 @@ use Multiplex\Exception\ClientConnectFailedException;
 use Psr\Container\ContainerInterface;
 use Throwable;
 
+use function Hyperf\Support\make;
+use function Hyperf\Support\retry;
+
 class Transporter implements TransporterInterface
 {
     protected SocketFactory $factory;

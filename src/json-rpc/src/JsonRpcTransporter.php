@@ -21,6 +21,8 @@ use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use RuntimeException;
 
+use function Hyperf\Support\retry;
+
 class JsonRpcTransporter implements TransporterInterface
 {
     use RecvTrait;

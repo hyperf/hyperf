@@ -26,6 +26,7 @@ use Hyperf\Support\Exception\ExceptionThrower;
 use Throwable;
 
 use function Hyperf\Coroutine\defer;
+use function Hyperf\Support\retry;
 
 class JsonRpcPoolTransporter implements TransporterInterface
 {

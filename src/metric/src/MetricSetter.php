@@ -16,6 +16,7 @@ use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Retry\Retry;
 
 use function array_values;
+use function Hyperf\Support\retry;
 use function str_replace;
 
 /**

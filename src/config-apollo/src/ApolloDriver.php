@@ -22,6 +22,8 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
+use function Hyperf\Support\retry;
+
 class ApolloDriver extends AbstractDriver
 {
     protected string $driverName = 'apollo';
