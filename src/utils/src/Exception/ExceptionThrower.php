@@ -13,6 +13,7 @@ namespace Hyperf\Utils\Exception;
 
 /**
  * @deprecated since 3.1, use \Hyperf\Support\Exception\ExceptionThrower instead.
+ * @phpstan-ignore-next-line
  */
 final class ExceptionThrower extends \Hyperf\Support\Exception\ExceptionThrower
 {
