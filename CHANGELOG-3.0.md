@@ -4,6 +4,10 @@
 
 - [#5679](https://github.com/hyperf/hyperf/pull/5679) Fixed bug that the type of `$timeout` in `#[Task]` don't match `TaskAspect`.
 
+## Added
+
+- [#5680](https://github.com/hyperf/hyperf/pull/5680) Support store context when using `rpc-multiplex`.
+
 # v3.0.18 - 2023-04-26
 
 ## Added
