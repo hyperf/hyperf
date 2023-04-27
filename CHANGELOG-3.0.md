@@ -1,5 +1,9 @@
 # v3.0.19 - TBD
 
+## Fixed
+
+- [#5679](https://github.com/hyperf/hyperf/pull/5679) Fixed bug that the type of `$timeout` in `#[Task]` don't match `TaskAspect`.
+
 # v3.0.18 - 2023-04-26
 
 ## Added
