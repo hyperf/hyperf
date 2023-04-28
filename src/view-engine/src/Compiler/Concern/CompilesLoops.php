@@ -97,7 +97,7 @@ trait CompilesLoops
     /**
      * Compile the break statements into valid PHP.
      */
-    protected function compileBreak(string $expression): string
+    protected function compileBreak(?string $expression): string
     {
         if ($expression) {
             preg_match('/\(\s*(-?\d+)\s*\)$/', $expression, $matches);
