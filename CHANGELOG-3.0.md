@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#5679](https://github.com/hyperf/hyperf/pull/5679) Fixed bug that the type of `$timeout` in `#[Task]` don't match `TaskAspect`.
+- [#5684](https://github.com/hyperf/hyperf/pull/5684) Fixed bug that blade view engine cannot work when using break statement.
 
 ## Added
 
