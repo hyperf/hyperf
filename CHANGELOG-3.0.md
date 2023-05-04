@@ -9,6 +9,10 @@
 
 - [#5680](https://github.com/hyperf/hyperf/pull/5680) Support store context when using `rpc-multiplex`.
 
+## Optimized
+
+- [#5694](https://github.com/hyperf/hyperf/pull/5694) Remove `hyperf/utils` for `hyperf/rpc`.
+
 # v3.0.18 - 2023-04-26
 
 ## Added
