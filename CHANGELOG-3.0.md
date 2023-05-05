@@ -8,6 +8,7 @@
 ## Added
 
 - [#5680](https://github.com/hyperf/hyperf/pull/5680) Support store context when using `rpc-multiplex`.
+- [#5695](https://github.com/hyperf/hyperf/pull/5695) Added creation and update datetime columns.
 
 ## Optimized
 

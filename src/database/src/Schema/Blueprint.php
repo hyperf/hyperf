@@ -909,6 +909,18 @@ class Blueprint
     }
 
     /**
+     * Add creation and update datetime columns to the table.
+     *
+     * @param null|int $precision
+     */
+    public function datetimes($precision = 0)
+    {
+        $this->datetime('created_at', $precision)->nullable();
+
+        $this->datetime('updated_at', $precision)->nullable();
+    }
+
+    /**
      * Add a "deleted at" timestamp for the table.
      *
      * @param string $column
