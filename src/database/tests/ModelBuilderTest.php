@@ -1199,6 +1199,28 @@ class ModelBuilderTest extends TestCase
         $this->assertSame('select "id" from "stub"', $clone->toSql());
     }
 
+    public function testWithAggregateAndSelfRelationConstrain()
+    {
+        ModelBuilderTestStub::resolveRelationUsing('children', function ($model) {
+            return $model->hasMany(ModelBuilderTestStub::class, 'parent_id', 'id')->where('enum_value', new stdClass());
+        });
+
+        ModelBuilderTestStub::resolveRelationUsing('customer', function ($model) {
+            return $model->belongsTo(ModelBuilderTestStub::class, 'customer_id');
+        });
+
+        $model = new ModelBuilderTestStub();
+        $this->mockConnectionForModel($model, '');
+        $relationHash = $model->children()->getRelationCountHash(false);
+        $relationHash2 = $model->customer()->getRelationCountHash(false);
+
+        $builder = $model->withCount('children');
+        $builder2 = $model->has('customer');
+
+        $this->assertSame(vsprintf('select "table".*, (select count(*) from "table" as "%s" where "table"."id" = "%s"."parent_id" and "enum_value" = ?) as "children_count" from "table"', [$relationHash, $relationHash]), $builder->toSql());
+        $this->assertSame(vsprintf('select * from "table" where exists (select * from "table" as "%s" where "%s"."id" = "table"."customer_id")', [$relationHash2, $relationHash2]), $builder2->toSql());
+    }
+
     protected function mockConnectionForModel($model, $database)
     {
         $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';
