@@ -9,6 +9,7 @@
 
 - [#5680](https://github.com/hyperf/hyperf/pull/5680) Support store context when using `rpc-multiplex`.
 - [#5695](https://github.com/hyperf/hyperf/pull/5695) Added creation and update datetime columns.
+- [#5699](https://github.com/hyperf/hyperf/pull/5699) Added `Model::resolveRelationUsing()` which you can set dynamic relation for model.
 
 ## Optimized
 
