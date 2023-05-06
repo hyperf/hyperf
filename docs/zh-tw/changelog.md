@@ -1,5 +1,23 @@
 # 版本更新記錄
 
+# v3.0.19 - 2023-05-06
+
+## 修復
+
+- [#5679](https://github.com/hyperf/hyperf/pull/5679) 修復 `#[Task]` 註解的 `$timeout` 型別與 `TaskAspect` 不一致的問題。
+- [#5684](https://github.com/hyperf/hyperf/pull/5684) 修復使用了 `break` 語法後，`blade` 檢視模板無法正常使用的問題。
+
+## 新增
+
+- [#5680](https://github.com/hyperf/hyperf/pull/5680) 為 `rpc-multiplex` 增加儲存 `RPC` 上下文的能力。
+- [#5695](https://github.com/hyperf/hyperf/pull/5695) 為資料庫遷移元件，增加設定 `datetime` 型別的建立時間和修改時間的功能。
+- [#5699](https://github.com/hyperf/hyperf/pull/5699) 增加 `Model::resolveRelationUsing()`，用來動態建立模型關係。
+
+## 最佳化
+
+- [#5694](https://github.com/hyperf/hyperf/pull/5694) 將 `hyperf/utils` 從 `hyperf/rpc` 元件中移除。
+- [#5696](https://github.com/hyperf/hyperf/pull/5694) 使用 `Hyperf\Coroutine\Coroutine::sleep()` 替代 `Swoole\Coroutine::sleep()`。
+
 # v3.0.18 - 2023-04-26
 
 ## 新增
