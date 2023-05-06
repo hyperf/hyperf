@@ -1,5 +1,23 @@
 # Changelogs
 
+# v3.0.19 - 2023-05-06
+
+## Fixed
+
+- [#5679](https://github.com/hyperf/hyperf/pull/5679) Fixed bug that the type of `$timeout` in `#[Task]` don't match `TaskAspect`.
+- [#5684](https://github.com/hyperf/hyperf/pull/5684) Fixed bug that blade view engine cannot work when using break statement.
+
+## Added
+
+- [#5680](https://github.com/hyperf/hyperf/pull/5680) Support store context when using `rpc-multiplex`.
+- [#5695](https://github.com/hyperf/hyperf/pull/5695) Added creation and update datetime columns.
+- [#5699](https://github.com/hyperf/hyperf/pull/5699) Added `Model::resolveRelationUsing()` which you can set dynamic relation for model.
+
+## Optimized
+
+- [#5694](https://github.com/hyperf/hyperf/pull/5694) Remove `hyperf/utils` from `hyperf/rpc`.
+- [#5696](https://github.com/hyperf/hyperf/pull/5694) Use `Hyperf\Coroutine\Coroutine::sleep()` instead of `Swoole\Coroutine::sleep()`.
+
 # v3.0.18 - 2023-04-26
 
 ## Added
