@@ -57,7 +57,7 @@ abstract class Grammar extends BaseGrammar
      *
      * @throws RuntimeException
      */
-    public function compileFulltext(Blueprint $blueprint, Fluent $command): string
+    public function compileFullText(Blueprint $blueprint, Fluent $command): string
     {
         throw new RuntimeException('This database driver does not support fulltext index creation.');
     }
@@ -65,7 +65,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile a drop fulltext index command.
      */
-    public function compileDropFulltext(Blueprint $blueprint, Fluent $command): string
+    public function compileDropFullText(Blueprint $blueprint, Fluent $command): string
     {
         throw new RuntimeException('This database driver does not support fulltext index creation.');
     }

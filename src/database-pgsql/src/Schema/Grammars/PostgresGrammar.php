@@ -184,7 +184,7 @@ class PostgresGrammar extends Grammar
      *
      * @throws RuntimeException
      */
-    public function compileFulltext(Blueprint $blueprint, Fluent $command): string
+    public function compileFullText(Blueprint $blueprint, Fluent $command): string
     {
         $language = $command->language ?: 'english';
 
@@ -369,7 +369,7 @@ class PostgresGrammar extends Grammar
     /**
      * Compile a drop fulltext index command.
      */
-    public function compileDropFulltext(Blueprint $blueprint, Fluent $command): string
+    public function compileDropFullText(Blueprint $blueprint, Fluent $command): string
     {
         return $this->compileDropIndex($blueprint, $command);
     }
