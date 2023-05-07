@@ -275,6 +275,17 @@ class Blueprint
     }
 
     /**
+     * Indicate that the given fulltext index should be dropped.
+     *
+     * @param array|string $index
+     * @return Fluent
+     */
+    public function dropFullText($index)
+    {
+        return $this->dropIndexCommand('dropFullText', 'fulltext', $index);
+    }
+
+    /**
      * Indicate that the given spatial index should be dropped.
      *
      * @param array|string $index
@@ -1280,7 +1291,7 @@ class Blueprint
      * @param null|string $algorithm
      * @return Fluent
      */
-    public function fulltext($columns, $name = null, $algorithm = null)
+    public function fullText($columns, $name = null, $algorithm = null)
     {
         return $this->indexCommand('fulltext', $columns, $name, $algorithm);
     }
@@ -1385,7 +1396,7 @@ class Blueprint
     protected function addFluentIndexes()
     {
         foreach ($this->columns as $column) {
-            foreach (['primary', 'unique', 'index', 'spatialIndex'] as $index) {
+            foreach (['primary', 'unique', 'index', 'fullText', 'spatialIndex'] as $index) {
                 // If the index has been specified on the given column, but is simply equal
                 // to "true" (boolean), no name has been specified for this index so the
                 // index method can be called without a name and it will generate one.

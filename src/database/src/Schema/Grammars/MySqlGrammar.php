@@ -138,6 +138,14 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile a fulltext index key command.
+     */
+    public function compileFullText(Blueprint $blueprint, Fluent $command): string
+    {
+        return $this->compileKey($blueprint, $command, 'fulltext');
+    }
+
+    /**
      * Compile a spatial index key command.
      *
      * @return string
@@ -211,6 +219,14 @@ class MySqlGrammar extends Grammar
         $index = $this->wrap($command->index);
 
         return "alter table {$this->wrapTable($blueprint)} drop index {$index}";
+    }
+
+    /**
+     * Compile a drop fulltext index command.
+     */
+    public function compileDropFullText(Blueprint $blueprint, Fluent $command): string
+    {
+        return $this->compileDropIndex($blueprint, $command);
     }
 
     /**
