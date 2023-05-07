@@ -11,19 +11,21 @@ declare(strict_types=1);
  */
 namespace Hyperf\Metric\Adapter\Prometheus;
 
-use Exception;
 use Hyperf\Codec\Json;
-use InvalidArgumentException;
+use Hyperf\Metric\Exception\InvalidArgumentException;
 use Prometheus\Counter;
 use Prometheus\Exception\StorageException;
 use Prometheus\Gauge;
 use Prometheus\Histogram;
 use Prometheus\MetricFamilySamples;
 use Prometheus\Storage\Adapter;
+use RedisException;
 
 class Redis implements Adapter
 {
-    public const PROMETHEUS_METRIC_KEYS_SUFFIX = '_METRIC_KEYS';
+    private static string $metricGatherKeySuffix = ':metric_keys';
+
+    private static string $prefix = 'prometheus:';
 
     private static array $defaultOptions = [
         'host' => '127.0.0.1',
@@ -34,70 +36,32 @@ class Redis implements Adapter
         'password' => null,
     ];
 
-    private static string $prefix = 'PROMETHEUS_';
-
-    private array $options;
-
-    /**
-     * @var \Redis
-     */
-    private mixed $redis;
+    private \Hyperf\Redis\Redis|\Redis $redis;
 
     private bool $connectionInitialized = false;
 
-    public function __construct(array $options = [])
+    public function __construct(private array $options = [])
     {
         $this->options = array_merge(self::$defaultOptions, $options);
         $this->redis = new \Redis();
     }
 
     /**
-     * Create an instance from an established redis connection.
-     *
-     * @param \Hyperf\Redis\Redis|\Redis $redis
-     */
-    public static function fromExistingConnection(mixed $redis): self
-    {
-        $self = new self();
-        $self->connectionInitialized = true;
-        $self->redis = $redis;
-        return $self;
-    }
-
-    public static function setDefaultOptions(array $options): void
-    {
-        self::$defaultOptions = array_merge(self::$defaultOptions, $options);
-    }
-
-    public static function setPrefix(string $prefix): void
-    {
-        self::$prefix = $prefix;
-    }
-
-    /**
-     * @throws StorageException
-     */
-    public function flushRedis(): void
-    {
-        $this->wipeStorage();
-    }
-
-    public function wipeStorage(): void
-    {
-        $this->openConnection();
-        $this->redis->flushAll();
-    }
-
-    /**
      * @return MetricFamilySamples[]
+     *
      * @throws StorageException
+     * @throws RedisException
      */
     public function collect(): array
     {
         $this->openConnection();
-        $metrics = $this->collectHistograms();
-        $metrics = array_merge($metrics, $this->collectGauges());
-        $metrics = array_merge($metrics, $this->collectCounters());
+
+        $metrics = array_merge(
+            $this->collectHistograms(),
+            $this->collectGauges(),
+            $this->collectCounters(),
+        );
+
         return array_map(
             fn (array $metric) => new MetricFamilySamples($metric),
             $metrics
@@ -106,11 +70,15 @@ class Redis implements Adapter
 
     /**
      * @throws StorageException
+     * @throws RedisException
      */
     public function updateHistogram(array $data): void
     {
         $this->openConnection();
-        $redisTag = $this->getRedisTag(Histogram::TYPE);
+
+        $metaData = $data;
+        unset($metaData['value'], $metaData['labelValues']);
+
         $bucketToIncrease = '+Inf';
         foreach ($data['buckets'] as $bucket) {
             if ($data['value'] <= $bucket) {
@@ -118,8 +86,6 @@ class Redis implements Adapter
                 break;
             }
         }
-        $metaData = $data;
-        unset($metaData['value'], $metaData['labelValues']);
 
         $this->redis->eval(
             <<<'LUA'
@@ -132,8 +98,8 @@ end
 LUA
             ,
             [
-                $this->toMetricKey($data) . $redisTag,
-                self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $redisTag,
+                $this->toMetricKey($data),
+                $this->getMetricGatherKey(Histogram::TYPE),
                 Json::encode(['b' => 'sum', 'labelValues' => $data['labelValues']]),
                 Json::encode(['b' => $bucketToIncrease, 'labelValues' => $data['labelValues']]),
                 $data['value'],
@@ -145,11 +111,12 @@ LUA
 
     /**
      * @throws StorageException
+     * @throws RedisException
      */
     public function updateGauge(array $data): void
     {
         $this->openConnection();
-        $redisTag = $this->getRedisTag(Gauge::TYPE);
+
         $metaData = $data;
         unset($metaData['value'], $metaData['labelValues'], $metaData['command']);
 
@@ -170,8 +137,8 @@ end
 LUA
             ,
             [
-                $this->toMetricKey($data) . $redisTag,
-                self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $redisTag,
+                $this->toMetricKey($data),
+                $this->getMetricGatherKey(Gauge::TYPE),
                 $this->getRedisCommand($data['command']),
                 Json::encode($data['labelValues']),
                 $data['value'],
@@ -183,11 +150,12 @@ LUA
 
     /**
      * @throws StorageException
+     * @throws RedisException
      */
     public function updateCounter(array $data): void
     {
         $this->openConnection();
-        $redisTag = $this->getRedisTag(Counter::TYPE);
+
         $metaData = $data;
         unset($metaData['value'], $metaData['labelValues'], $metaData['command']);
 
@@ -202,8 +170,8 @@ return result
 LUA
             ,
             [
-                $this->toMetricKey($data) . $redisTag,
-                self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $redisTag,
+                $this->toMetricKey($data),
+                $this->getMetricGatherKey(Counter::TYPE),
                 $this->getRedisCommand($data['command']),
                 $data['value'],
                 Json::encode($data['labelValues']),
@@ -211,6 +179,49 @@ LUA
             ],
             2
         );
+    }
+
+    /**
+     * @throws StorageException
+     * @throws RedisException
+     */
+    public function wipeStorage(): void
+    {
+        $this->openConnection();
+        $this->redis->flushAll();
+    }
+
+    /**
+     * @throws StorageException
+     * @throws RedisException
+     */
+    public function flushRedis(): void
+    {
+        $this->wipeStorage();
+    }
+
+    public static function fromExistingConnection(\Hyperf\Redis\Redis|\Redis $redis): self
+    {
+        $self = new self();
+        $self->connectionInitialized = true;
+        $self->redis = $redis;
+
+        return $self;
+    }
+
+    public static function setDefaultOptions(array $options): void
+    {
+        self::$defaultOptions = array_merge(self::$defaultOptions, $options);
+    }
+
+    public static function setPrefix(string $prefix): void
+    {
+        self::$prefix = $prefix;
+    }
+
+    public static function setMetricGatherKeySuffix(string $suffix): void
+    {
+        self::$metricGatherKeySuffix = $suffix;
     }
 
     protected function getRedisTag(string $metricType): string
@@ -225,22 +236,26 @@ LUA
 
     /**
      * @throws StorageException
+     * @throws RedisException
      */
     private function openConnection(): void
     {
         if ($this->connectionInitialized === true) {
             return;
         }
-        $connectionStatus = $this->connectToServer();
-        if ($connectionStatus === false) {
+
+        if ($this->connectToServer() === false) {
             throw new StorageException("Can't connect to Redis server", 0);
         }
+
         if ($this->options['password']) {
             $this->redis->auth($this->options['password']);
         }
+
         if (isset($this->options['database'])) {
             $this->redis->select($this->options['database']);
         }
+
         $this->redis->setOption(\Redis::OPT_READ_TIMEOUT, $this->options['read_timeout']);
     }
 
@@ -254,39 +269,44 @@ LUA
                     $this->options['timeout']
                 );
             }
+
             return $this->redis->connect($this->options['host'], $this->options['port'], $this->options['timeout']);
-        } catch (\RedisException) {
+        } catch (RedisException) {
             return false;
         }
     }
 
+    /**
+     * @throws RedisException
+     */
     private function collectHistograms(): array
     {
         $keys = $this->redis->sMembers($this->getMetricGatherKey(Histogram::TYPE));
         sort($keys);
-        $histograms = [];
+
         foreach ($keys as $key) {
             $raw = $this->redis->hGetAll(str_replace($this->redis->_prefix(''), '', $key));
-            $histogram = Json::decode($raw['__meta']);
+
+            $histogram = array_merge(Json::decode($raw['__meta'] ?? '{}'), ['samples' => []]);
+
             unset($raw['__meta']);
-            $histogram['samples'] = [];
             // Add the Inf bucket so we can compute it later on
             $histogram['buckets'][] = '+Inf';
-            $allLabelValues = [];
+
             foreach (array_keys($raw) as $k) {
                 $d = Json::decode($k);
-                if ($d['b'] == 'sum') {
+
+                if (($d['b'] ?? '') == 'sum' || count($d['labelValues'] ?? []) !== count($histogram['labelNames'] ?? [])) {
                     continue;
                 }
-                if (count($d['labelValues']) !== count($histogram['labelNames'])) {
-                    continue;
-                }
+
                 $allLabelValues[] = $d['labelValues'];
             }
             // We need set semantics.
             // This is the equivalent of array_unique but for arrays of arrays.
-            $allLabelValues = array_map('unserialize', array_unique(array_map('serialize', $allLabelValues)));
+            $allLabelValues = array_map('unserialize', array_unique(array_map('serialize', $allLabelValues ?? [])));
             sort($allLabelValues);
+
             foreach ($allLabelValues as $labelValues) {
                 // Fill up all buckets.
                 // If the bucket doesn't exist fill in values from
@@ -294,22 +314,16 @@ LUA
                 $acc = 0;
                 foreach ($histogram['buckets'] as $bucket) {
                     $bucketKey = Json::encode(['b' => $bucket, 'labelValues' => $labelValues]);
-                    if (! isset($raw[$bucketKey])) {
-                        $histogram['samples'][] = [
-                            'name' => $histogram['name'] . '_bucket',
-                            'labelNames' => ['le'],
-                            'labelValues' => array_merge($labelValues, [$bucket]),
-                            'value' => $acc,
-                        ];
-                    } else {
+                    if (isset($raw[$bucketKey])) {
                         $acc += $raw[$bucketKey];
-                        $histogram['samples'][] = [
-                            'name' => $histogram['name'] . '_bucket',
-                            'labelNames' => ['le'],
-                            'labelValues' => array_merge($labelValues, [$bucket]),
-                            'value' => $acc,
-                        ];
                     }
+
+                    $histogram['samples'][] = [
+                        'name' => $histogram['name'] . '_bucket',
+                        'labelNames' => ['le'],
+                        'labelValues' => array_merge($labelValues, [$bucket]),
+                        'value' => $acc,
+                    ];
                 }
                 // Add the count
                 $histogram['samples'][] = [
@@ -326,63 +340,37 @@ LUA
                     'value' => $raw[Json::encode(['b' => 'sum', 'labelValues' => $labelValues])],
                 ];
             }
+
             $histograms[] = $histogram;
         }
-        return $histograms;
+
+        return $histograms ?? [];
     }
 
+    /**
+     * @throws RedisException
+     */
     private function collectGauges(): array
     {
-        $keys = $this->redis->sMembers($this->getMetricGatherKey(Gauge::TYPE));
-        sort($keys);
-        $gauges = [];
-        foreach ($keys as $key) {
-            $raw = $this->redis->hGetAll(str_replace($this->redis->_prefix(''), '', $key));
-            $gauge = Json::decode($raw['__meta']);
-            unset($raw['__meta']);
-            $gauge['samples'] = [];
-            foreach ($raw as $k => $value) {
-                if (count($gauge['labelNames']) !== count(json_decode($k, true))) {
-                    continue;
-                }
-                $gauge['samples'][] = [
-                    'name' => $gauge['name'],
-                    'labelNames' => [],
-                    'labelValues' => Json::decode($k),
-                    'value' => $value,
-                ];
-            }
-            usort($gauge['samples'], fn ($a, $b) => strcmp(implode('', $a['labelValues']), implode('', $b['labelValues'])));
-            $gauges[] = $gauge;
-        }
-        return $gauges;
+        return $this->collectSamples(Gauge::TYPE);
     }
 
+    /**
+     * @throws RedisException
+     */
     private function collectCounters(): array
     {
-        $keys = $this->redis->sMembers($this->getMetricGatherKey(Counter::TYPE));
-        sort($keys);
-        $counters = [];
-        foreach ($keys as $key) {
-            $raw = $this->redis->hGetAll(str_replace($this->redis->_prefix(''), '', $key));
-            $counter = Json::decode($raw['__meta']);
-            unset($raw['__meta']);
-            $counter['samples'] = [];
-            foreach ($raw as $k => $value) {
-                if (count($counter['labelNames']) !== count(json_decode($k, true))) {
-                    continue;
-                }
-                $counter['samples'][] = [
-                    'name' => $counter['name'],
-                    'labelNames' => [],
-                    'labelValues' => Json::decode($k),
-                    'value' => $value,
-                ];
-            }
-            usort($counter['samples'], fn ($a, $b) => strcmp(implode('', $a['labelValues']), implode('', $b['labelValues'])));
-            $counters[] = $counter;
-        }
-        return $counters;
+        return $this->collectSamples(Counter::TYPE);
+    }
+
+    private function toMetricKey(array $data): string
+    {
+        return self::$prefix . implode(':', [$data['type'] ?? '', $data['name'] ?? '']) . $this->getRedisTag($data['type'] ?? '');
+    }
+
+    private function getMetricGatherKey(string $metricType): string
+    {
+        return self::$prefix . $metricType . self::$metricGatherKeySuffix . $this->getRedisTag($metricType);
     }
 
     private function getRedisCommand(int $cmd): string
@@ -395,24 +383,40 @@ LUA
         };
     }
 
-    private function toMetricKey(array $data): string
-    {
-        return implode(':', [self::$prefix, $data['type'], $data['name']]);
-    }
-
     /**
-     * Get the indicator collection key.
-     *
-     * @param mixed $metricType
-     * @throws Exception Exception thrown when the incoming metric type does not exist
+     * @throws RedisException
      */
-    private function getMetricGatherKey($metricType): string
+    private function collectSamples(string $metricType): array
     {
-        return match ($metricType) {
-            Counter::TYPE => self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Counter::TYPE),
-            Histogram::TYPE => self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Histogram::TYPE),
-            Gauge::TYPE => self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Gauge::TYPE),
-            default => throw new Exception('Unknown metric type'),
-        };
+        $keys = $this->redis->sMembers($this->getMetricGatherKey($metricType));
+
+        sort($keys);
+
+        foreach ($keys as $key) {
+            $raw = $this->redis->hGetAll(str_replace($this->redis->_prefix(''), '', $key));
+
+            $sample = array_merge(Json::decode($raw['__meta'] ?? '{}'), ['samples' => []]);
+
+            unset($raw['__meta']);
+
+            foreach ($raw as $k => $value) {
+                if (count($sample['labelNames']) !== count(json_decode($k, true))) {
+                    continue;
+                }
+
+                $sample['samples'][] = [
+                    'name' => $sample['name'],
+                    'labelNames' => [],
+                    'labelValues' => Json::decode($k),
+                    'value' => $value,
+                ];
+            }
+
+            usort($sample['samples'], fn ($a, $b) => strcmp(implode('', $a['labelValues']), implode('', $b['labelValues'])));
+
+            $samples[] = $sample;
+        }
+
+        return $samples ?? [];
     }
 }
