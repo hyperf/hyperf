@@ -182,10 +182,9 @@ class PostgresGrammar extends Grammar
     /**
      * Compile a fulltext index key command.
      *
-     * @return string
      * @throws RuntimeException
      */
-    public function compileFulltext(Blueprint $blueprint, Fluent $command)
+    public function compileFullText(Blueprint $blueprint, Fluent $command): string
     {
         $language = $command->language ?: 'english';
 
@@ -369,10 +368,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile a drop fulltext index command.
-     *
-     * @return string
      */
-    public function compileDropFulltext(Blueprint $blueprint, Fluent $command)
+    public function compileDropFullText(Blueprint $blueprint, Fluent $command): string
     {
         return $this->compileDropIndex($blueprint, $command);
     }
