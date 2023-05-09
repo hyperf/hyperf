@@ -4,6 +4,10 @@
 
 - [#5707](https://github.com/hyperf/hyperf/pull/5707) Added `Hyperf\Config\config` function.
 
+## Fixed
+
+- [#5709](https://github.com/hyperf/hyperf/pull/5709) Fixed bug that the error message is wrong when the logger group not found.
+
 # v3.0.19 - 2023-05-06
 
 ## Fixed
