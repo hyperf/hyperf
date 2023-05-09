@@ -13,10 +13,7 @@ namespace Hyperf\Config {
     use Hyperf\Context\ApplicationContext;
     use Hyperf\Contract\ConfigInterface;
 
-    /**
-     * @param mixed $default
-     */
-    function config(string $key, $default = null)
+    function config(string $key, mixed $default = null): mixed
     {
         if (! ApplicationContext::hasContainer()) {
             throw new \RuntimeException('The application context lacks the container.');
@@ -40,7 +37,7 @@ namespace {
          */
         function config(string $key, $default = null)
         {
-            \Hyperf\Config\config($key, $default);
+            return \Hyperf\Config\config($key, $default);
         }
     }
 }
