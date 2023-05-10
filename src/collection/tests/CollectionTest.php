@@ -63,4 +63,75 @@ class CollectionTest extends TestCase
         $col = new Collection([]);
         $this->assertNull($col->avg());
     }
+
+    public function testMapWithKeys()
+    {
+        $data = new Collection([
+            ['name' => 'Blastoise', 'type' => 'Water', 'idx' => 9],
+            ['name' => 'Charmander', 'type' => 'Fire', 'idx' => 4],
+            ['name' => 'Dragonair', 'type' => 'Dragon', 'idx' => 148],
+        ]);
+        $data = $data->mapWithKeys(function ($pokemon) {
+            return [$pokemon['name'] => $pokemon['type']];
+        });
+        $this->assertEquals(
+            ['Blastoise' => 'Water', 'Charmander' => 'Fire', 'Dragonair' => 'Dragon'],
+            $data->all()
+        );
+    }
+
+    public function testMapWithKeysIntegerKeys()
+    {
+        $data = new Collection([
+            ['id' => 1, 'name' => 'A'],
+            ['id' => 3, 'name' => 'B'],
+            ['id' => 2, 'name' => 'C'],
+        ]);
+        $data = $data->mapWithKeys(function ($item) {
+            return [$item['id'] => $item];
+        });
+        $this->assertSame(
+            [1, 3, 2],
+            $data->keys()->all()
+        );
+    }
+
+    public function testMapWithKeysMultipleRows()
+    {
+        $data = new Collection([
+            ['id' => 1, 'name' => 'A'],
+            ['id' => 2, 'name' => 'B'],
+            ['id' => 3, 'name' => 'C'],
+        ]);
+        $data = $data->mapWithKeys(function ($item) {
+            return [$item['id'] => $item['name'], $item['name'] => $item['id']];
+        });
+        $this->assertSame(
+            [
+                1 => 'A',
+                'A' => 1,
+                2 => 'B',
+                'B' => 2,
+                3 => 'C',
+                'C' => 3,
+            ],
+            $data->all()
+        );
+    }
+
+    public function testMapWithKeysCallbackKey()
+    {
+        $data = new Collection([
+            3 => ['id' => 1, 'name' => 'A'],
+            5 => ['id' => 3, 'name' => 'B'],
+            4 => ['id' => 2, 'name' => 'C'],
+        ]);
+        $data = $data->mapWithKeys(function ($item, $key) {
+            return [$key => $item['id']];
+        });
+        $this->assertSame(
+            [3, 5, 4],
+            $data->keys()->all()
+        );
+    }
 }

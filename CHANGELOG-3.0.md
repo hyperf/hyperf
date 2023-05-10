@@ -3,6 +3,7 @@
 ## Added
 
 - [#5707](https://github.com/hyperf/hyperf/pull/5707) Added `Hyperf\Config\config` function.
+- [#5711](https://github.com/hyperf/hyperf/pull/5711) Added `Arr::mapWithKeys()`.
 
 ## Fixed
 
