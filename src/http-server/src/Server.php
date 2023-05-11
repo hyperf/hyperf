@@ -30,6 +30,8 @@ use Hyperf\HttpServer\Event\RequestTerminated;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
+use Hyperf\Server\Option;
+use Hyperf\Server\ServerFactory;
 use Hyperf\Support\SafeCaller;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -39,7 +41,6 @@ use Throwable;
 
 use function Hyperf\Coroutine\defer;
 use function Hyperf\Support\make;
-use function Hyperf\Support\value;
 
 class Server implements OnRequestInterface, MiddlewareInitializerInterface
 {
@@ -51,7 +52,9 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
     protected ?string $serverName = null;
 
-    protected ?EventDispatcherInterface $eventDispatcher = null;
+    protected ?EventDispatcherInterface $event = null;
+
+    protected ?Option $option = null;
 
     public function __construct(
         protected ContainerInterface $container,
@@ -59,6 +62,9 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         protected ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
         protected ResponseEmitter $responseEmitter
     ) {
+        if ($this->container->has(EventDispatcherInterface::class)) {
+            $this->event = $this->container->get(EventDispatcherInterface::class);
+        }
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -70,20 +76,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
         $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
 
-        /** @var bool $enableRequestLifecycle */
-        $enableRequestLifecycle = value(function () use ($config, $serverName) {
-            foreach ($config->get('server.servers', []) as $server) {
-                if ($server['name'] === $serverName) {
-                    return $server['options']['enable_request_lifecycle'] ?? false;
-                }
-            }
-
-            return false;
-        });
-
-        if ($enableRequestLifecycle && $this->container->has(EventDispatcherInterface::class)) {
-            $this->eventDispatcher = $this->container->get(EventDispatcherInterface::class);
-        }
+        $this->initOption();
     }
 
     public function onRequest($request, $response): void
@@ -93,7 +86,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
             [$psr7Request, $psr7Response] = $this->initRequestAndResponse($request, $response);
 
-            $this->eventDispatcher?->dispatch(new RequestReceived($psr7Request, $psr7Response));
+            $this->option?->isEnableRequestLifecycle() && $this->event?->dispatch(new RequestReceived($psr7Request, $psr7Response));
 
             $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
             /** @var Dispatched $dispatched */
@@ -114,10 +107,10 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
                 return (new Psr7Response())->withStatus(400);
             });
         } finally {
-            if (isset($psr7Request) && $this->eventDispatcher) {
-                defer(fn () => $this->eventDispatcher->dispatch(new RequestTerminated($psr7Request, $psr7Response ?? null)));
+            if (isset($psr7Request) && $this->option?->isEnableRequestLifecycle()) {
+                defer(fn () => $this->event?->dispatch(new RequestTerminated($psr7Request, $psr7Response ?? null)));
 
-                $this->eventDispatcher->dispatch(new RequestHandled($psr7Request, $psr7Response ?? null));
+                $this->event?->dispatch(new RequestHandled($psr7Request, $psr7Response ?? null));
             }
 
             // Send the Response to client.
@@ -149,10 +142,25 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     /**
      * @return $this
      */
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    public function setEventDispatcher(EventDispatcherInterface $event)
     {
-        $this->eventDispatcher = $eventDispatcher;
+        $this->event = $event;
         return $this;
+    }
+
+    protected function initOption(): void
+    {
+        $ports = $this->container->get(ServerFactory::class)->getConfig()?->getServers();
+        if (! $ports) {
+            return;
+        }
+
+        foreach ($ports as $port) {
+            if ($port->getName() === $this->serverName) {
+                $this->option = $port->getOptions();
+                return;
+            }
+        }
     }
 
     protected function createDispatcher(string $serverName): Dispatcher
