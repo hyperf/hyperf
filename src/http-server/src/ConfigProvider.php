@@ -25,6 +25,9 @@ class ConfigProvider
                 ServerRequestInterface::class => Request::class,
                 ResponseInterface::class => Response::class,
             ],
+            'listeners' => [
+                Listener\SetEventDispatcherListener::class,
+            ],
         ];
     }
 }

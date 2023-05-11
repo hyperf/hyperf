@@ -146,6 +146,15 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         return $this;
     }
 
+    /**
+     * @return $this
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+        return $this;
+    }
+
     protected function createDispatcher(string $serverName): Dispatcher
     {
         $factory = $this->container->get(DispatcherFactory::class);
