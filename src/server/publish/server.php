@@ -26,6 +26,9 @@ return [
             'callbacks' => [
                 Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
             ],
+            'options' => [
+                'enable_request_lifecycle' => true,
+            ],
         ],
     ],
     'processes' => [

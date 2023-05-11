@@ -39,6 +39,7 @@ use Throwable;
 
 use function Hyperf\Coroutine\defer;
 use function Hyperf\Support\make;
+use function Hyperf\Support\value;
 
 class Server implements OnRequestInterface, MiddlewareInitializerInterface
 {
@@ -68,6 +69,21 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
         $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
+
+        /** @var bool $enableRequestLifecycle */
+        $enableRequestLifecycle = value(function () use ($config, $serverName) {
+            foreach ($config->get('server.servers', []) as $server) {
+                if ($server['name'] === $serverName) {
+                    return $server['options']['enable_request_lifecycle'] ?? false;
+                }
+            }
+
+            return false;
+        });
+
+        if ($enableRequestLifecycle && $this->container->has(EventDispatcherInterface::class)) {
+            $this->eventDispatcher = $this->container->get(EventDispatcherInterface::class);
+        }
     }
 
     public function onRequest($request, $response): void
@@ -127,12 +143,6 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     public function setServerName(string $serverName)
     {
         $this->serverName = $serverName;
-        return $this;
-    }
-
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
         return $this;
     }
 
