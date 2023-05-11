@@ -125,6 +125,13 @@ class ProxyTest extends TestCase
         $this->assertSame('127.0.0.1', $proxy['HTTP_X_FORWARDED_FOR']);
         $this->assertSame('hyperf.io', $proxy['HTTP_HOST']);
 
+        $proxy = new Server($proxy);
+
+        $this->assertSame($name, $proxy['SERVER_NAME']);
+        $this->assertSame($token, $proxy['HTTP_X_TOKEN']);
+        $this->assertSame('127.0.0.1', $proxy['HTTP_X_FORWARDED_FOR']);
+        $this->assertSame('hyperf.io', $proxy['HTTP_HOST']);
+
         (new Waiter())->wait(function () {
             $proxy = new Server([]);
             $this->assertSame([], $proxy->toArray());
