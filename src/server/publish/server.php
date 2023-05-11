@@ -27,7 +27,7 @@ return [
                 Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
             ],
             'options' => [
-                'enable_request_lifecycle' => true,
+                'enable_request_lifecycle' => false,
             ],
         ],
     ],
