@@ -23,9 +23,6 @@ class ConfigProvider
                 Contract\ResponseInterface::class => Response::class,
                 ServerRequestInterface::class => Request::class,
             ],
-            'listeners' => [
-                Listener\EnableRequestLifecycleListener::class,
-            ],
         ];
     }
 }
