@@ -99,9 +99,9 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             });
         } finally {
             if (isset($psr7Request) && $this->eventDispatcher) {
-                defer(fn () => $this->eventDispatcher->dispatch(new RequestTerminated($psr7Request, $psr7Response)));
+                defer(fn () => $this->eventDispatcher->dispatch(new RequestTerminated($psr7Request, $psr7Response ?? null)));
 
-                $this->eventDispatcher->dispatch(new RequestHandled($psr7Request, $psr7Response));
+                $this->eventDispatcher->dispatch(new RequestHandled($psr7Request, $psr7Response ?? null));
             }
 
             // Send the Response to client.
