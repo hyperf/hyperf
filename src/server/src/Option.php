@@ -21,7 +21,7 @@ class Option
     protected int $sendChannelCapacity = 0;
 
     /**
-     * Whether to enable request lifecycle.
+     * Whether to enable request lifecycle event.
      */
     protected bool $enableRequestLifecycle = false;
 

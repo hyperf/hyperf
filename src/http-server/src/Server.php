@@ -139,10 +139,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function setEventDispatcher(EventDispatcherInterface $event)
+    public function setEventDispatcher(EventDispatcherInterface $event): static
     {
         $this->event = $event;
         return $this;
