@@ -24,15 +24,20 @@ use Hyperf\HttpMessage\Server\Connection\SwooleConnection;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
+use Hyperf\HttpServer\Event\RequestHandled;
+use Hyperf\HttpServer\Event\RequestReceived;
+use Hyperf\HttpServer\Event\RequestTerminated;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Support\SafeCaller;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
+use function Hyperf\Coroutine\defer;
 use function Hyperf\Support\make;
 
 class Server implements OnRequestInterface, MiddlewareInitializerInterface
@@ -44,6 +49,8 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     protected array $exceptionHandlers = [];
 
     protected ?string $serverName = null;
+
+    protected ?EventDispatcherInterface $eventDispatcher = null;
 
     public function __construct(
         protected ContainerInterface $container,
@@ -70,10 +77,13 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
             [$psr7Request, $psr7Response] = $this->initRequestAndResponse($request, $response);
 
+            $this->eventDispatcher?->dispatch(new RequestReceived($psr7Request, $psr7Response));
+
             $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
             /** @var Dispatched $dispatched */
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
             $middlewares = $this->middlewares;
+
             if ($dispatched->isFound()) {
                 $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
                 $middlewares = array_merge($middlewares, $registeredMiddlewares);
@@ -88,6 +98,12 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
                 return (new Psr7Response())->withStatus(400);
             });
         } finally {
+            if (isset($psr7Request) && $this->eventDispatcher) {
+                defer(fn () => $this->eventDispatcher->dispatch(new RequestTerminated($psr7Request, $psr7Response)));
+
+                $this->eventDispatcher->dispatch(new RequestHandled($psr7Request, $psr7Response));
+            }
+
             // Send the Response to client.
             if (! isset($psr7Response) || ! $psr7Response instanceof ResponseInterface) {
                 return;
@@ -111,6 +127,12 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     public function setServerName(string $serverName)
     {
         $this->serverName = $serverName;
+        return $this;
+    }
+
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
         return $this;
     }
 
