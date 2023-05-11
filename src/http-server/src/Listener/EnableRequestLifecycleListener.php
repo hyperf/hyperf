@@ -18,7 +18,7 @@ use Hyperf\Server\Event;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-class SetEventDispatcherListener implements ListenerInterface
+class EnableRequestLifecycleListener implements ListenerInterface
 {
     public function __construct(protected ContainerInterface $container)
     {
