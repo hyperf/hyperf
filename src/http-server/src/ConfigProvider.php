@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpServer;
 
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ConfigProvider
@@ -19,8 +21,8 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                Contract\RequestInterface::class => Request::class,
-                Contract\ResponseInterface::class => Response::class,
+                RequestInterface::class => Request::class,
+                ResponseInterface::class => Response::class,
                 ServerRequestInterface::class => Request::class,
             ],
         ];
