@@ -6,7 +6,7 @@
 
 - [#5707](https://github.com/hyperf/hyperf/pull/5707) 新增助手函数 `Hyperf\Config\config`。
 - [#5711](https://github.com/hyperf/hyperf/pull/5711) 新增方法 `Arr::mapWithKeys()`。
-- [#5715](https://github.com/hyperf/hyperf/pull/5715) 增加请求级别声明周期事件。
+- [#5715](https://github.com/hyperf/hyperf/pull/5715) 增加请求级别生命周期事件。
 
 ## 修复
 
