@@ -14,7 +14,6 @@ namespace Hyperf\Metric\Adapter\Prometheus;
 use Hyperf\Codec\Json;
 use Hyperf\Metric\Exception\InvalidArgumentException;
 use Prometheus\Counter;
-use Prometheus\Exception\StorageException;
 use Prometheus\Gauge;
 use Prometheus\Histogram;
 use Prometheus\MetricFamilySamples;
@@ -27,35 +26,17 @@ class Redis implements Adapter
 
     private static string $prefix = 'prometheus:';
 
-    private static array $defaultOptions = [
-        'host' => '127.0.0.1',
-        'port' => 6379,
-        'timeout' => 0.1,
-        'read_timeout' => 10,
-        'persistent_connections' => false,
-        'password' => null,
-    ];
-
-    private \Hyperf\Redis\Redis|\Redis $redis;
-
-    private bool $connectionInitialized = false;
-
-    public function __construct(private array $options = [])
+    public function __construct(private \Hyperf\Redis\Redis|\Redis $redis)
     {
-        $this->options = array_merge(self::$defaultOptions, $options);
-        $this->redis = new \Redis();
     }
 
     /**
      * @return MetricFamilySamples[]
      *
-     * @throws StorageException
      * @throws RedisException
      */
     public function collect(): array
     {
-        $this->openConnection();
-
         $metrics = array_merge(
             $this->collectHistograms(),
             $this->collectGauges(),
@@ -69,13 +50,10 @@ class Redis implements Adapter
     }
 
     /**
-     * @throws StorageException
      * @throws RedisException
      */
     public function updateHistogram(array $data): void
     {
-        $this->openConnection();
-
         $metaData = $data;
         unset($metaData['value'], $metaData['labelValues']);
 
@@ -110,13 +88,10 @@ LUA
     }
 
     /**
-     * @throws StorageException
      * @throws RedisException
      */
     public function updateGauge(array $data): void
     {
-        $this->openConnection();
-
         $metaData = $data;
         unset($metaData['value'], $metaData['labelValues'], $metaData['command']);
 
@@ -149,13 +124,10 @@ LUA
     }
 
     /**
-     * @throws StorageException
      * @throws RedisException
      */
     public function updateCounter(array $data): void
     {
-        $this->openConnection();
-
         $metaData = $data;
         unset($metaData['value'], $metaData['labelValues'], $metaData['command']);
 
@@ -182,36 +154,19 @@ LUA
     }
 
     /**
-     * @throws StorageException
      * @throws RedisException
      */
     public function wipeStorage(): void
     {
-        $this->openConnection();
         $this->redis->flushAll();
     }
 
     /**
-     * @throws StorageException
      * @throws RedisException
      */
     public function flushRedis(): void
     {
         $this->wipeStorage();
-    }
-
-    public static function fromExistingConnection(\Hyperf\Redis\Redis|\Redis $redis): self
-    {
-        $self = new self();
-        $self->connectionInitialized = true;
-        $self->redis = $redis;
-
-        return $self;
-    }
-
-    public static function setDefaultOptions(array $options): void
-    {
-        self::$defaultOptions = array_merge(self::$defaultOptions, $options);
     }
 
     public static function setPrefix(string $prefix): void
@@ -235,48 +190,6 @@ LUA
     }
 
     /**
-     * @throws StorageException
-     * @throws RedisException
-     */
-    private function openConnection(): void
-    {
-        if ($this->connectionInitialized === true) {
-            return;
-        }
-
-        if ($this->connectToServer() === false) {
-            throw new StorageException("Can't connect to Redis server", 0);
-        }
-
-        if ($this->options['password']) {
-            $this->redis->auth($this->options['password']);
-        }
-
-        if (isset($this->options['database'])) {
-            $this->redis->select($this->options['database']);
-        }
-
-        $this->redis->setOption(\Redis::OPT_READ_TIMEOUT, $this->options['read_timeout']);
-    }
-
-    private function connectToServer(): bool
-    {
-        try {
-            if ($this->options['persistent_connections']) {
-                return $this->redis->pconnect(
-                    $this->options['host'],
-                    $this->options['port'],
-                    $this->options['timeout']
-                );
-            }
-
-            return $this->redis->connect($this->options['host'], $this->options['port'], $this->options['timeout']);
-        } catch (RedisException) {
-            return false;
-        }
-    }
-
-    /**
      * @throws RedisException
      */
     private function collectHistograms(): array
@@ -290,7 +203,7 @@ LUA
             $histogram = array_merge(Json::decode($raw['__meta'] ?? '{}'), ['samples' => []]);
 
             unset($raw['__meta']);
-            // Add the Inf bucket so we can compute it later on
+            // Add the Inf bucket, so we can compute it later on
             $histogram['buckets'][] = '+Inf';
 
             foreach (array_keys($raw) as $k) {
@@ -300,7 +213,7 @@ LUA
                     continue;
                 }
 
-                $allLabelValues[] = $d['labelValues'];
+                $allLabelValues[] = $d['labelValues'] ?? [];
             }
             // We need set semantics.
             // This is the equivalent of array_unique but for arrays of arrays.
@@ -400,7 +313,7 @@ LUA
             unset($raw['__meta']);
 
             foreach ($raw as $k => $value) {
-                if (count($sample['labelNames']) !== count(json_decode($k, true))) {
+                if (count($sample['labelNames'] ?? []) !== count(json_decode($k, true))) {
                     continue;
                 }
 

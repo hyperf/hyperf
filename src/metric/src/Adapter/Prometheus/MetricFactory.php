@@ -97,7 +97,7 @@ class MetricFactory implements MetricFactoryInterface
      */
     public function handle(): void
     {
-        switch ($this->config->get("metric.metric.{$this->name}.mode")) {
+        switch ($this->config->get("metric.metric.$this->name.mode")) {
             case Constants::SCRAPE_MODE:
                 if (MetricFactoryPicker::$isCommand) {
                     $this->logger->warning('Using Prometheus scrape mode in a command. This will stop the command from terminating gracefully.');
@@ -117,8 +117,8 @@ class MetricFactory implements MetricFactoryInterface
 
     protected function scrapeHandle(): void
     {
-        $host = $this->config->get("metric.metric.{$this->name}.scrape_host");
-        $port = $this->config->get("metric.metric.{$this->name}.scrape_port");
+        $host = $this->config->get("metric.metric.$this->name.scrape_host");
+        $port = $this->config->get("metric.metric.$this->name.scrape_port");
 
         foreach ($this->config->get('server.servers', []) as $item) {
             if (isset($item['port']) && $item['port'] == $port) {
@@ -152,11 +152,11 @@ class MetricFactory implements MetricFactoryInterface
     protected function pushHandle(): void
     {
         while (true) {
-            $interval = (float) $this->config->get("metric.metric.{$this->name}.push_interval", 5);
-            $host = $this->config->get("metric.metric.{$this->name}.push_host");
-            $port = $this->config->get("metric.metric.{$this->name}.push_port");
+            $interval = (float) $this->config->get("metric.metric.$this->name.push_interval", 5);
+            $host = $this->config->get("metric.metric.$this->name.push_host");
+            $port = $this->config->get("metric.metric.$this->name.push_port");
 
-            $this->doRequest("{$host}:{$port}", $this->getNamespace());
+            $this->doRequest("$host:$port", $this->getNamespace());
 
             $workerExited = CoordinatorManager::until(Coord::WORKER_EXIT)->yield($interval);
             if ($workerExited) {
@@ -172,7 +172,7 @@ class MetricFactory implements MetricFactoryInterface
 
     private function getNamespace(): string
     {
-        $name = $this->config->get("metric.metric.{$this->name}.namespace");
+        $name = $this->config->get("metric.metric.$this->name.namespace");
 
         return preg_replace('#[^a-zA-Z0-9:_]#', '_', Str::snake($name));
     }
