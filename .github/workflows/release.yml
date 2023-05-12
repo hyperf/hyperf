@@ -3,17 +3,13 @@ name: Release Repos
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: 'Input your branch'
-        required: true
-        default: 'master'
       tag:
         description: 'Input your tag'
         required: true
         default: ''
 
 jobs:
-  split:
+  release:
     if: github.repository == 'hyperf/hyperf'
     runs-on: ubuntu-latest
     env:
@@ -34,4 +30,4 @@ jobs:
           git config pull.rebase true
           git config --global user.email "group@hyperf.io"
           git config --global user.name "Hyperf Developers"
-          git checkout "${{ github.event.inputs.branch }}";
+          ./bin/split-linux.sh ${{ github.event.inputs.tag }}
