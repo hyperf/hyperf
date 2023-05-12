@@ -1,5 +1,22 @@
 # 版本更新記錄
 
+# v3.0.20 - 2023-05-12
+
+## 新增
+
+- [#5707](https://github.com/hyperf/hyperf/pull/5707) 新增助手函式 `Hyperf\Config\config`。
+- [#5711](https://github.com/hyperf/hyperf/pull/5711) 新增方法 `Arr::mapWithKeys()`。
+- [#5715](https://github.com/hyperf/hyperf/pull/5715) 增加請求級別宣告週期事件。
+
+## 修復
+
+- [#5709](https://github.com/hyperf/hyperf/pull/5709) 當日志組不存在時，修復錯誤日誌記錄有誤的問題。
+- [#5713](https://github.com/hyperf/hyperf/pull/5713) 為 `Hyperf\SuperGlobals\Proxy\Server` 增加透過自身進行例項化的能力。
+
+## 最佳化
+
+- [#5716](https://github.com/hyperf/hyperf/pull/5716) 為協程風格服務增加超全域性變數的支援。
+
 # v3.0.19 - 2023-05-06
 
 ## 修復
