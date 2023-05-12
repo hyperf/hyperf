@@ -11,6 +11,10 @@
 - [#5709](https://github.com/hyperf/hyperf/pull/5709) Fixed bug that the error message is wrong when the logger group not found.
 - [#5713](https://github.com/hyperf/hyperf/pull/5713) Support Server instance as default.
 
+## Optimized
+
+- [#5716](https://github.com/hyperf/hyperf/pull/5716) Support CoroutineServer for SuperGlobals.
+
 # v3.0.19 - 2023-05-06
 
 ## Fixed
