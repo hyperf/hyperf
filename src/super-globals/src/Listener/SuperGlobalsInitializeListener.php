@@ -14,6 +14,7 @@ namespace Hyperf\SuperGlobals\Listener;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
+use Hyperf\HttpServer\Event\RequestReceived;
 use Hyperf\SuperGlobals\Proxy;
 use Psr\Container\ContainerInterface;
 
@@ -29,6 +30,7 @@ class SuperGlobalsInitializeListener implements ListenerInterface
     {
         return [
             AfterWorkerStart::class,
+            RequestReceived::class,
         ];
     }
 
