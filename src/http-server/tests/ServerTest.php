@@ -26,6 +26,7 @@ use Hyperf\Support\SafeCaller;
 use HyperfTest\HttpServer\Stub\ServerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -110,6 +111,12 @@ class ServerTest extends TestCase
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
         $container->shouldReceive('get')->with(SafeCaller::class)->andReturn(new SafeCaller($container));
+
+        $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+        $dispatcher->shouldReceive('dispatch')->andReturn(true);
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturn(true);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
+
         ApplicationContext::setContainer($container);
 
         return $container;
