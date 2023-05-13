@@ -23,7 +23,7 @@ use Hyperf\Server\Exception\InvalidArgumentException;
  * @method ServerConfig setCallbacks(array $callbacks)
  * @method string getType()
  * @method int getMode()
- * @method array getServers()
+ * @method Port[] getServers()
  * @method array getProcesses()
  * @method array getSettings()
  * @method array getCallbacks()

@@ -39,7 +39,7 @@ class LoggerFactory
     {
         $config = $this->config->get('logger');
         if (! isset($config[$group])) {
-            throw new InvalidConfigException(sprintf('Logger config[%s] is not defined.', $name));
+            throw new InvalidConfigException(sprintf('Logger config[%s] is not defined.', $group));
         }
 
         $config = $config[$group];

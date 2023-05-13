@@ -1,5 +1,22 @@
 # 版本更新记录
 
+# v3.0.20 - 2023-05-12
+
+## 新增
+
+- [#5707](https://github.com/hyperf/hyperf/pull/5707) 新增助手函数 `Hyperf\Config\config`。
+- [#5711](https://github.com/hyperf/hyperf/pull/5711) 新增方法 `Arr::mapWithKeys()`。
+- [#5715](https://github.com/hyperf/hyperf/pull/5715) 增加请求级别生命周期事件。
+
+## 修复
+
+- [#5709](https://github.com/hyperf/hyperf/pull/5709) 当日志组不存在时，修复错误日志记录有误的问题。
+- [#5713](https://github.com/hyperf/hyperf/pull/5713) 为 `Hyperf\SuperGlobals\Proxy\Server` 增加通过自身进行实例化的能力。
+
+## 优化
+
+- [#5716](https://github.com/hyperf/hyperf/pull/5716) 为协程风格服务增加超全局变量的支持。
+
 # v3.0.19 - 2023-05-06
 
 ## 修复

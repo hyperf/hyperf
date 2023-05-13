@@ -1,4 +1,21 @@
-# v3.0.20 - TBD
+# v3.0.21 - TBD
+
+# v3.0.20 - 2023-05-12
+
+## Added
+
+- [#5707](https://github.com/hyperf/hyperf/pull/5707) Added `Hyperf\Config\config` function.
+- [#5711](https://github.com/hyperf/hyperf/pull/5711) Added `Arr::mapWithKeys()`.
+- [#5715](https://github.com/hyperf/hyperf/pull/5715) Support http request lifecycle events.
+
+## Fixed
+
+- [#5709](https://github.com/hyperf/hyperf/pull/5709) Fixed bug that the error message is wrong when the logger group not found.
+- [#5713](https://github.com/hyperf/hyperf/pull/5713) Support Server instance as default.
+
+## Optimized
+
+- [#5716](https://github.com/hyperf/hyperf/pull/5716) Support CoroutineServer for SuperGlobals.
 
 # v3.0.19 - 2023-05-06
 
@@ -16,7 +33,7 @@
 ## Optimized
 
 - [#5694](https://github.com/hyperf/hyperf/pull/5694) Remove `hyperf/utils` from `hyperf/rpc`.
-- [#5696](https://github.com/hyperf/hyperf/pull/5694) Use `Hyperf\Coroutine\Coroutine::sleep()` instead of `Swoole\Coroutine::sleep()`.
+- [#5696](https://github.com/hyperf/hyperf/pull/5696) Use `Hyperf\Coroutine\Coroutine::sleep()` instead of `Swoole\Coroutine::sleep()`.
 
 # v3.0.18 - 2023-04-26
 

@@ -31,12 +31,14 @@ use Hyperf\HttpServer\Router\Router;
 use Hyperf\Serializer\SimpleNormalizer;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
+use Hyperf\Server\ServerFactory;
 use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\Testing\Client;
 use HyperfTest\Testing\Stub\Exception\Handler\FooExceptionHandler;
 use HyperfTest\Testing\Stub\FooController;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -159,6 +161,14 @@ class ClientTest extends TestCase
             return new CoreMiddleware(...array_values($args));
         });
         $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
+        $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+        $dispatcher->shouldReceive('dispatch')->shouldReceive('dispatch')->andReturn(true);
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturn(true);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
+        $container->shouldReceive('get')->with(ServerFactory::class)->andReturn(
+            Mockery::mock(ServerFactory::class)->shouldReceive('getConfig')->andReturn(null)->getMock()
+        );
+
         ApplicationContext::setContainer($container);
 
         Router::init($factory);
