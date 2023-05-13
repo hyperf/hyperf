@@ -58,7 +58,7 @@ trait CompilesIncludes
     {
         $expression = $this->stripParentheses($expression);
 
-        return "<?php echo \$__env->renderWhen(! {$expression}, \\Hyperf\\Utils\\Arr::except(get_defined_vars(), ['__data', '__path'])); ?>";
+        return "<?php echo \$__env->renderUnless({$expression}, \\Hyperf\\Utils\\Arr::except(get_defined_vars(), ['__data', '__path'])); ?>";
     }
 
     /**
