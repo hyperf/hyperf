@@ -18,7 +18,9 @@ use Hyperf\Metric\Adapter\RemoteProxy\MetricFactory as RemoteFactory;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Exception\InvalidArgumentException;
 use Hyperf\Process\ProcessCollector;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class MetricFactoryPicker
 {
@@ -26,7 +28,11 @@ class MetricFactoryPicker
 
     public static bool $isCommand = false;
 
-    public function __invoke(ContainerInterface $container)
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container): MetricFactoryInterface
     {
         // All other metric factories needs to be run in coroutine context
         if (! Coroutine::inCoroutine()) {
