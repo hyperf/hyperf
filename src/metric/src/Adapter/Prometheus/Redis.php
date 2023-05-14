@@ -182,6 +182,11 @@ LUA
         $this->wipeStorage();
     }
 
+    public static function fromExistingConnection(mixed $redis): self
+    {
+        return new self($redis);
+    }
+
     public static function setPrefix(string $prefix): void
     {
         self::$prefix = $prefix;
