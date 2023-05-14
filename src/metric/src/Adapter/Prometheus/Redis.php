@@ -13,6 +13,7 @@ namespace Hyperf\Metric\Adapter\Prometheus;
 
 use Hyperf\Codec\Json;
 use Hyperf\Metric\Exception\InvalidArgumentException;
+use Hyperf\Stringable\Str;
 use Prometheus\Counter;
 use Prometheus\Gauge;
 use Prometheus\Histogram;
@@ -22,11 +23,17 @@ use RedisException;
 
 class Redis implements Adapter
 {
-    private static string $metricGatherKeySuffix = ':metric_keys';
+    /**
+     * @notice TODO: since 3.1, default value will be changed to ':metric_keys'
+     */
+    private static string $metricGatherKeySuffix = '_METRIC_KEYS';
 
-    private static string $prefix = 'prometheus:';
+    /**
+     * @notice TODO: since 3.1, default value will be changed to 'prometheus:'
+     */
+    private static string $prefix = 'PROMETHEUS_';
 
-    public function __construct(private \Hyperf\Redis\Redis|\Redis $redis)
+    public function __construct(protected \Hyperf\Redis\Redis|\Redis $redis)
     {
     }
 
@@ -67,12 +74,13 @@ class Redis implements Adapter
 
         $this->redis->eval(
             <<<'LUA'
-local increment = redis.call('hIncrByFloat', KEYS[1], ARGV[1], ARGV[3])
+local result = redis.call('hIncrByFloat', KEYS[1], ARGV[1], ARGV[3])
 redis.call('hIncrBy', KEYS[1], ARGV[2], 1)
-if increment == ARGV[3] then
+if tonumber(result) >= tonumber(ARGV[3]) then
     redis.call('hSet', KEYS[1], '__meta', ARGV[4])
     redis.call('sAdd', KEYS[2], KEYS[1])
 end
+return result
 LUA
             ,
             [
@@ -134,9 +142,9 @@ LUA
         $this->redis->eval(
             <<<'LUA'
 local result = redis.call(ARGV[1], KEYS[1], ARGV[3], ARGV[2])
-if result == tonumber(ARGV[2]) then
+local added = redis.call('sAdd', KEYS[2], KEYS[1])
+if added == 1 then
     redis.call('hMSet', KEYS[1], '__meta', ARGV[4])
-    redis.call('sAdd', KEYS[2], KEYS[1])
 end
 return result
 LUA
@@ -179,20 +187,10 @@ LUA
         self::$metricGatherKeySuffix = $suffix;
     }
 
-    protected function getRedisTag(string $metricType): string
-    {
-        return match ($metricType) {
-            Counter::TYPE => '{counter}',
-            Histogram::TYPE => '{histogram}',
-            Gauge::TYPE => '{gauge}',
-            default => '',
-        };
-    }
-
     /**
      * @throws RedisException
      */
-    private function collectHistograms(): array
+    protected function collectHistograms(): array
     {
         $keys = $this->redis->sMembers($this->getMetricGatherKey(Histogram::TYPE));
         sort($keys);
@@ -263,7 +261,7 @@ LUA
     /**
      * @throws RedisException
      */
-    private function collectGauges(): array
+    protected function collectGauges(): array
     {
         return $this->collectSamples(Gauge::TYPE);
     }
@@ -271,35 +269,15 @@ LUA
     /**
      * @throws RedisException
      */
-    private function collectCounters(): array
+    protected function collectCounters(): array
     {
         return $this->collectSamples(Counter::TYPE);
-    }
-
-    private function toMetricKey(array $data): string
-    {
-        return self::$prefix . implode(':', [$data['type'] ?? '', $data['name'] ?? '']) . $this->getRedisTag($data['type'] ?? '');
-    }
-
-    private function getMetricGatherKey(string $metricType): string
-    {
-        return self::$prefix . $metricType . self::$metricGatherKeySuffix . $this->getRedisTag($metricType);
-    }
-
-    private function getRedisCommand(int $cmd): string
-    {
-        return match ($cmd) {
-            Adapter::COMMAND_INCREMENT_INTEGER => 'hIncrBy',
-            Adapter::COMMAND_INCREMENT_FLOAT => 'hIncrByFloat',
-            Adapter::COMMAND_SET => 'hSet',
-            default => throw new InvalidArgumentException('Unknown command'),
-        };
     }
 
     /**
      * @throws RedisException
      */
-    private function collectSamples(string $metricType): array
+    protected function collectSamples(string $metricType): array
     {
         $keys = $this->redis->sMembers($this->getMetricGatherKey($metricType));
 
@@ -331,5 +309,40 @@ LUA
         }
 
         return $samples ?? [];
+    }
+
+    protected function toMetricKey(array $data): string
+    {
+        // TODO: This is a hack, we should remove it since v3.1.
+        if (! Str::endsWith(':', self::$prefix)) {
+            $prefix = self::$prefix . ':';
+        }
+
+        return ($prefix ?? self::$prefix) . implode(':', [$data['type'] ?? '', $data['name'] ?? '']) . $this->getRedisTag($data['type'] ?? '');
+    }
+
+    protected function getMetricGatherKey(string $metricType): string
+    {
+        return self::$prefix . $metricType . self::$metricGatherKeySuffix . $this->getRedisTag($metricType);
+    }
+
+    protected function getRedisTag(string $metricType): string
+    {
+        return match ($metricType) {
+            Counter::TYPE => '{counter}',
+            Histogram::TYPE => '{histogram}',
+            Gauge::TYPE => '{gauge}',
+            default => '',
+        };
+    }
+
+    protected function getRedisCommand(int $cmd): string
+    {
+        return match ($cmd) {
+            Adapter::COMMAND_INCREMENT_INTEGER => 'hIncrBy',
+            Adapter::COMMAND_INCREMENT_FLOAT => 'hIncrByFloat',
+            Adapter::COMMAND_SET => 'hSet',
+            default => throw new InvalidArgumentException('Unknown command'),
+        };
     }
 }
