@@ -188,7 +188,6 @@ class MetricFactory implements MetricFactoryInterface
     private function doRequest(string $address, string $job): void
     {
         $url = $this->getUri($address, $job);
-        $client = $this->guzzleClientFactory->create();
         $requestOptions = [
             'headers' => [
                 'Content-Type' => RenderTextFormat::MIME_TYPE,
@@ -198,7 +197,7 @@ class MetricFactory implements MetricFactoryInterface
             'body' => (new RenderTextFormat())->render($this->registry->getMetricFamilySamples()),
         ];
 
-        $response = $client->request('put', $url, $requestOptions);
+        $response = $this->guzzleClientFactory->create()->request('put', $url, $requestOptions);
         $statusCode = $response->getStatusCode();
 
         if ($statusCode != 200 && $statusCode != 202) {
