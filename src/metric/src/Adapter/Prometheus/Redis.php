@@ -24,6 +24,11 @@ use RedisException;
 class Redis implements Adapter
 {
     /**
+     * @deprecated since 3.1, use `$metricGatherKeySuffix` instead
+     */
+    public const PROMETHEUS_METRIC_KEYS_SUFFIX = '_METRIC_KEYS';
+
+    /**
      * @notice TODO: since 3.1, default value will be changed to ':metric_keys'
      */
     private static string $metricGatherKeySuffix = '_METRIC_KEYS';
