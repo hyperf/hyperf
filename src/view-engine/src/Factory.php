@@ -154,6 +154,14 @@ class Factory implements FactoryInterface
     }
 
     /**
+     * Get the rendered content of the view based on the negation of a given condition.
+     */
+    public function renderUnless(bool $condition, string $view, array|Arrayable $data = [], array $mergeData = []): string
+    {
+        return $this->renderWhen(! $condition, $view, $data, $mergeData);
+    }
+
+    /**
      * Get the rendered contents of a partial from a loop.
      *
      * @return string
