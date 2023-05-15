@@ -30,8 +30,6 @@ class RedisStorageFactoryTest extends TestCase
 {
     protected string $prePrefix;
 
-    protected string $preMetricGatherKeySuffix;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -39,11 +37,7 @@ class RedisStorageFactoryTest extends TestCase
         $prefixProperty = new ReflectionProperty(Redis::class, 'prefix');
         $prefixProperty->setAccessible(true);
 
-        $metricGatherKeySuffixProperty = new ReflectionProperty(Redis::class, 'metricGatherKeySuffix');
-        $metricGatherKeySuffixProperty->setAccessible(true);
-
         $this->prePrefix = $prefixProperty->getDefaultValue();
-        $this->preMetricGatherKeySuffix = $metricGatherKeySuffixProperty->getDefaultValue();
     }
 
     protected function tearDown(): void
@@ -51,7 +45,6 @@ class RedisStorageFactoryTest extends TestCase
         parent::tearDown();
 
         Redis::setPrefix($this->prePrefix);
-        Redis::setMetricGatherKeySuffix($this->preMetricGatherKeySuffix);
 
         Mockery::close();
     }

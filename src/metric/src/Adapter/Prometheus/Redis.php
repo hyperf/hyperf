@@ -13,7 +13,6 @@ namespace Hyperf\Metric\Adapter\Prometheus;
 
 use Hyperf\Codec\Json;
 use Hyperf\Metric\Exception\InvalidArgumentException;
-use Hyperf\Stringable\Str;
 use Prometheus\Counter;
 use Prometheus\Gauge;
 use Prometheus\Histogram;
@@ -31,10 +30,10 @@ class Redis implements Adapter
     /**
      * @notice TODO: since 3.1, default value will be changed to ':metric_keys'
      */
-    private static string $metricGatherKeySuffix = '_METRIC_KEYS';
+    protected string $metricGatherKeySuffix = '_METRIC_KEYS';
 
     /**
-     * @notice TODO: since 3.1, default value will be changed to 'prometheus:'
+     * @notice TODO: since 3.1, default value will be changed to 'prometheus:' and should be non static
      */
     private static string $prefix = 'PROMETHEUS_';
 
@@ -192,9 +191,9 @@ LUA
         self::$prefix = $prefix;
     }
 
-    public static function setMetricGatherKeySuffix(string $suffix): void
+    public function setMetricGatherKeySuffix(string $suffix): void
     {
-        self::$metricGatherKeySuffix = $suffix;
+        $this->metricGatherKeySuffix = $suffix;
     }
 
     /**
@@ -324,7 +323,7 @@ LUA
     protected function toMetricKey(array $data): string
     {
         // TODO: This is a hack, we should remove it since v3.1.
-        if (! Str::endsWith(':', self::$prefix)) {
+        if (! str_ends_with(':', self::$prefix)) {
             $prefix = self::$prefix . ':';
         }
 
@@ -333,7 +332,7 @@ LUA
 
     protected function getMetricGatherKey(string $metricType): string
     {
-        return self::$prefix . $metricType . self::$metricGatherKeySuffix . $this->getRedisTag($metricType);
+        return self::$prefix . $metricType . $this->metricGatherKeySuffix . $this->getRedisTag($metricType);
     }
 
     protected function getRedisTag(string $metricType): string
