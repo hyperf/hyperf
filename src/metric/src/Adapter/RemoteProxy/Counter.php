@@ -16,9 +16,6 @@ use Hyperf\Process\ProcessCollector;
 
 class Counter implements CounterInterface
 {
-    /**
-     * @var string
-     */
     protected const TARGET_PROCESS_NAME = 'metric';
 
     /**

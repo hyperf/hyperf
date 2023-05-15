@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Metric\Adapter\Prometheus;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants as Coord;
@@ -31,6 +32,7 @@ use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Stringable\Str;
 use Hyperf\Support\Network;
 use Prometheus\CollectorRegistry;
+use Prometheus\Exception\MetricsRegistrationException;
 use Prometheus\RenderTextFormat;
 use Psr\Http\Message\RequestInterface;
 
@@ -48,6 +50,9 @@ class MetricFactory implements MetricFactoryInterface
         $this->name = $this->config->get('metric.default');
     }
 
+    /**
+     * @throws MetricsRegistrationException
+     */
     public function makeCounter(string $name, ?array $labelNames = []): CounterInterface
     {
         return new Counter(
@@ -59,6 +64,9 @@ class MetricFactory implements MetricFactoryInterface
         );
     }
 
+    /**
+     * @throws MetricsRegistrationException
+     */
     public function makeGauge(string $name, ?array $labelNames = []): GaugeInterface
     {
         return new Gauge(
@@ -70,6 +78,9 @@ class MetricFactory implements MetricFactoryInterface
         );
     }
 
+    /**
+     * @throws MetricsRegistrationException
+     */
     public function makeHistogram(string $name, ?array $labelNames = []): HistogramInterface
     {
         return new Histogram(
@@ -81,6 +92,9 @@ class MetricFactory implements MetricFactoryInterface
         );
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function handle(): void
     {
         switch ($this->config->get("metric.metric.{$this->name}.mode")) {
@@ -101,11 +115,10 @@ class MetricFactory implements MetricFactoryInterface
         }
     }
 
-    protected function scrapeHandle()
+    protected function scrapeHandle(): void
     {
         $host = $this->config->get("metric.metric.{$this->name}.scrape_host");
         $port = $this->config->get("metric.metric.{$this->name}.scrape_port");
-        $path = $this->config->get("metric.metric.{$this->name}.scrape_path");
 
         foreach ($this->config->get('server.servers', []) as $item) {
             if (isset($item['port']) && $item['port'] == $port) {
@@ -113,7 +126,6 @@ class MetricFactory implements MetricFactoryInterface
             }
         }
 
-        $renderer = new RenderTextFormat();
         $server = $this->factory->make($host, (int) $port);
 
         Coroutine::create(static function () use ($server) {
@@ -122,6 +134,7 @@ class MetricFactory implements MetricFactoryInterface
         });
 
         $emitter = new ResponseEmitter($this->logger);
+        $renderer = new RenderTextFormat();
 
         $server->handle(function (RequestInterface $request, mixed $connection) use ($emitter, $renderer) {
             $response = new HyperfResponse();
@@ -133,13 +146,16 @@ class MetricFactory implements MetricFactoryInterface
         $server->start();
     }
 
-    protected function pushHandle()
+    /**
+     * @throws GuzzleException
+     */
+    protected function pushHandle(): void
     {
         while (true) {
             $interval = (float) $this->config->get("metric.metric.{$this->name}.push_interval", 5);
             $host = $this->config->get("metric.metric.{$this->name}.push_host");
             $port = $this->config->get("metric.metric.{$this->name}.push_port");
-            $this->doRequest("{$host}:{$port}", $this->getNamespace(), 'put');
+            $this->doRequest("{$host}:{$port}", $this->getNamespace());
             $workerExited = CoordinatorManager::until(Coord::WORKER_EXIT)->yield($interval);
             if ($workerExited) {
                 break;
@@ -147,7 +163,7 @@ class MetricFactory implements MetricFactoryInterface
         }
     }
 
-    protected function customHandle()
+    protected function customHandle(): void
     {
         CoordinatorManager::until(Coord::WORKER_EXIT)->yield(); // Yield forever
     }
@@ -166,23 +182,24 @@ class MetricFactory implements MetricFactoryInterface
         return $address . '/metrics/job/' . $job . '/ip/' . Network::ip() . '/pid/' . getmypid();
     }
 
-    private function doRequest(string $address, string $job, string $method)
+    /**
+     * @throws GuzzleException
+     */
+    private function doRequest(string $address, string $job): void
     {
         $url = $this->getUri($address, $job);
-        $client = $this->guzzleClientFactory->create();
         $requestOptions = [
             'headers' => [
                 'Content-Type' => RenderTextFormat::MIME_TYPE,
             ],
             'connect_timeout' => 10,
             'timeout' => 20,
+            'body' => (new RenderTextFormat())->render($this->registry->getMetricFamilySamples()),
         ];
-        if ($method != 'delete') {
-            $renderer = new RenderTextFormat();
-            $requestOptions['body'] = $renderer->render($this->registry->getMetricFamilySamples());
-        }
-        $response = $client->request($method, $url, $requestOptions);
+
+        $response = $this->guzzleClientFactory->create()->request('put', $url, $requestOptions);
         $statusCode = $response->getStatusCode();
+
         if ($statusCode != 200 && $statusCode != 202) {
             $msg = 'Unexpected status code ' . $statusCode . ' received from pushgateway ' . $address . ': ' . $response->getBody();
             throw new RuntimeException($msg);
