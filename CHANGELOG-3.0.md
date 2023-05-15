@@ -1,5 +1,9 @@
 # v3.0.21 - TBD
 
+## Added
+
+[#5721](https://github.com/hyperf/hyperf/pull/5721) Added `exception` property to Request Lifecycle Events.
+
 # v3.0.20 - 2023-05-12
 
 ## Added
