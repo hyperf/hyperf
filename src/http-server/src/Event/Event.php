@@ -13,10 +13,11 @@ namespace Hyperf\HttpServer\Event;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 abstract class Event
 {
-    public function __construct(public ?ServerRequestInterface $request, public ?ResponseInterface $response)
+    public function __construct(public ?ServerRequestInterface $request, public ?ResponseInterface $response, public ?Throwable $exception = null)
     {
     }
 }
