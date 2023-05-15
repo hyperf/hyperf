@@ -6,6 +6,7 @@
 
 ## Optimized
 
+- [#5718](https://github.com/hyperf/hyperf/pull/5718) Optimized the code and added some test cases for `view-engine`.
 - [#5719](https://github.com/hyperf/hyperf/pull/5719) Optimized the code of `metric` and added some unit cases.
 - [#5720](https://github.com/hyperf/hyperf/pull/5720) Optimized the code of `Hyperf\Metric\Listener\OnPipeMessage` to avoid message block.
 
