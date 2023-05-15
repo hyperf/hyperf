@@ -108,9 +108,9 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             });
         } finally {
             if (isset($psr7Request) && $this->option?->isEnableRequestLifecycle()) {
-                defer(fn () => $this->event?->dispatch(new RequestTerminated($psr7Request, $psr7Response ?? null)));
+                defer(fn () => $this->event?->dispatch(new RequestTerminated($psr7Request, $psr7Response ?? null, $throwable ?? null)));
 
-                $this->event?->dispatch(new RequestHandled($psr7Request, $psr7Response ?? null));
+                $this->event?->dispatch(new RequestHandled($psr7Request, $psr7Response ?? null, $throwable ?? null));
             }
 
             // Send the Response to client.
