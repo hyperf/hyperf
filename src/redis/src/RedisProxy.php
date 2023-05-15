@@ -26,8 +26,7 @@ class RedisProxy extends Redis
     }
 
     /**
-     * WARN: Can't remove this function, because AOP need it.
-     * @see https://github.com/hyperf/hyperf/issues/1239
+     * @deprecated since version 3.1
      * @param string $name
      * @param array $arguments
      */

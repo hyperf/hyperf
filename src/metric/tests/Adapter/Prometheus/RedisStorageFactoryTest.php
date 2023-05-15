@@ -26,7 +26,7 @@ use ReflectionProperty;
  * @internal
  * @coversNothing
  */
-class RedisStorageFactorTest extends TestCase
+class RedisStorageFactoryTest extends TestCase
 {
     protected string $prePrefix;
 
@@ -59,11 +59,11 @@ class RedisStorageFactorTest extends TestCase
     public function testEmptyMetricRedisConfig()
     {
         $redisFactory = Mockery::mock(RedisFactory::class);
-        $redisFactory->shouldReceive('get')->with('default')->andReturn(Mockery::mock(RedisProxy::class));
+        $redisFactory->shouldReceive('get')->with('default')->times(1)->andReturn(Mockery::mock(RedisProxy::class));
 
         $container = Mockery::mock(ContainerInterface::class);
-        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([]));
-        $container->shouldReceive('get')->with(RedisFactory::class)->andReturn($redisFactory);
+        $container->shouldReceive('get')->with(ConfigInterface::class)->times(1)->andReturn(new Config([]));
+        $container->shouldReceive('get')->with(RedisFactory::class)->times(1)->andReturn($redisFactory);
 
         $factory = new RedisStorageFactory();
         $redis = $factory($container);
