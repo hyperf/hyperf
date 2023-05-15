@@ -432,12 +432,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Append the file path to the compiled string.
-     *
-     * @param string $contents
-     * @param string $path
-     * @return string
      */
-    protected function appendFilePath($contents, $path)
+    protected function appendFilePath(string $contents, string $path): string
     {
         $tokens = $this->getOpenAndClosingPhpTokens($contents);
 
@@ -519,11 +515,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Replace the raw placeholders with the original code stored in the raw blocks.
-     *
-     * @param string $result
-     * @return string
      */
-    protected function restoreRawContent($result)
+    protected function restoreRawContent(string $result): string
     {
         $result = preg_replace_callback('/' . $this->getRawPlaceholder('(\d+)') . '/', fn ($matches) => $this->rawBlocks[$matches[1]], $result);
 
@@ -568,11 +561,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Execute the user defined extensions.
-     *
-     * @param string $value
-     * @return string
      */
-    protected function compileExtensions($value)
+    protected function compileExtensions(string $value): string
     {
         foreach ($this->extensions as $compiler) {
             $value = $compiler($value, $this);
@@ -583,26 +573,96 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Compile Blade statements that start with "@".
-     *
-     * @param string $value
-     * @return string
      */
-    protected function compileStatements($value)
+    protected function compileStatements(string $template): string
     {
-        return preg_replace_callback(
-            '/\B@(@?\w+(?:::\w+)?)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x',
-            fn ($match) => $this->compileStatement($match),
-            $value
-        );
+        preg_match_all('/\B@(@?\w+(?:::\w+)?)([ \t]*)(\( ( [\S\s]*? ) \))?/x', $template, $matches);
+
+        $offset = 0;
+
+        for ($i = 0; isset($matches[0][$i]); ++$i) {
+            $match = [
+                $matches[0][$i],
+                $matches[1][$i],
+                $matches[2][$i],
+                $matches[3][$i] ?: null,
+                $matches[4][$i] ?: null,
+            ];
+
+            // Here we check to see if we have properly found the closing parenthesis by
+            // regex pattern or not, and will recursively continue on to the next ")"
+            // then check again until the tokenizer confirms we find the right one.
+            while (isset($match[4])
+                && Str::endsWith($match[0], ')')
+                && ! $this->hasEvenNumberOfParentheses($match[0])) {
+                $rest = Str::before(Str::after($template, $match[0]), ')');
+
+                $match[0] = $match[0] . $rest . ')';
+                $match[3] = $match[3] . $rest . ')';
+                $match[4] = $match[4] . $rest;
+            }
+
+            [$template, $offset] = $this->replaceFirstStatement(
+                $match[0],
+                $this->compileStatement($match),
+                $template,
+                $offset
+            );
+        }
+
+        return $template;
+    }
+
+    /**
+     * Determine if the given expression has the same number of opening and closing parentheses.
+     */
+    protected function hasEvenNumberOfParentheses(string $expression): bool
+    {
+        $tokens = token_get_all('<?php ' . $expression);
+
+        if (Arr::last($tokens) !== ')') {
+            return false;
+        }
+
+        $opening = 0;
+        $closing = 0;
+
+        foreach ($tokens as $token) {
+            if ($token == ')') {
+                ++$closing;
+            } elseif ($token == '(') {
+                ++$opening;
+            }
+        }
+
+        return $opening === $closing;
+    }
+
+    /**
+     * Replace the first match for a statement compilation operation.
+     */
+    protected function replaceFirstStatement(string $search, string $replace, string $subject, int $offset): array
+    {
+        if ($search === '') {
+            return [$subject, $offset];
+        }
+
+        $position = strpos($subject, $search, $offset);
+
+        if ($position !== false) {
+            return [
+                substr_replace($subject, $replace, $position, strlen($search)),
+                $position + strlen($replace),
+            ];
+        }
+
+        return [$subject, 0];
     }
 
     /**
      * Compile a single Blade @ statement.
-     *
-     * @param array $match
-     * @return string
      */
-    protected function compileStatement($match)
+    protected function compileStatement(array $match): string
     {
         if (Str::contains($match[1], '@')) {
             $match[0] = isset($match[3]) ? $match[1] . $match[3] : $match[1];
@@ -610,6 +670,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
             $match[0] = $this->callCustomDirective($match[1], Arr::get($match, 3));
         } elseif (method_exists($this, $method = 'compile' . ucfirst($match[1]))) {
             $match[0] = $this->{$method}(Arr::get($match, 3));
+        } else {
+            return $match[0];
         }
 
         return isset($match[3]) ? $match[0] : $match[0] . $match[2];
@@ -617,13 +679,10 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Call the given directive with the given value.
-     *
-     * @param string $name
-     * @param null|string $value
-     * @return string
      */
-    protected function callCustomDirective($name, $value)
+    protected function callCustomDirective(string $name, ?string $value): string
     {
+        $value ??= '';
         if (Str::startsWith($value, '(') && Str::endsWith($value, ')')) {
             $value = Str::substr($value, 1, -1);
         }
