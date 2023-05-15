@@ -136,8 +136,7 @@ class MetricFactory implements MetricFactoryInterface
         $emitter = new ResponseEmitter($this->logger);
         $renderer = new RenderTextFormat();
 
-        $server->handle(function (RequestInterface $request, mixed $connection) use ($emitter) {
-            $renderer = new RenderTextFormat();
+        $server->handle(function (RequestInterface $request, mixed $connection) use ($emitter, $renderer) {
             $response = new HyperfResponse();
             $response = $response->withHeader('Content-Type', RenderTextFormat::MIME_TYPE)
                 ->withBody(new Stream($renderer->render($this->registry->getMetricFamilySamples())));
@@ -157,7 +156,6 @@ class MetricFactory implements MetricFactoryInterface
             $host = $this->config->get("metric.metric.{$this->name}.push_host");
             $port = $this->config->get("metric.metric.{$this->name}.push_port");
             $this->doRequest("{$host}:{$port}", $this->getNamespace());
-
             $workerExited = CoordinatorManager::until(Coord::WORKER_EXIT)->yield($interval);
             if ($workerExited) {
                 break;
@@ -173,7 +171,6 @@ class MetricFactory implements MetricFactoryInterface
     private function getNamespace(): string
     {
         $name = $this->config->get("metric.metric.{$this->name}.namespace");
-
         return preg_replace('#[^a-zA-Z0-9:_]#', '_', Str::snake($name));
     }
 

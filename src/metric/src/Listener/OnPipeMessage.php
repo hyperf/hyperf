@@ -43,13 +43,8 @@ class OnPipeMessage implements ListenerInterface
     public function process(object $event): void
     {
         Coroutine::create(function () use ($event) {
-<<<<<<< HEAD
-            $factory = make(MetricFactoryInterface::class);
-            if (property_exists($event, 'data') && $event instanceof PipeMessage) {
-=======
             if ($event instanceof PipeMessage) {
                 $factory = make(MetricFactoryInterface::class);
->>>>>>> master
                 $inner = $event->data;
                 switch (true) {
                     case $inner instanceof Counter:
