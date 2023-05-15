@@ -134,9 +134,9 @@ class MetricFactory implements MetricFactoryInterface
         });
 
         $emitter = new ResponseEmitter($this->logger);
+        $renderer = new RenderTextFormat();
 
-        $server->handle(function (RequestInterface $request, mixed $connection) use ($emitter) {
-            $renderer = new RenderTextFormat();
+        $server->handle(static function (RequestInterface $request, mixed $connection) use ($emitter, $renderer) {
             $response = new HyperfResponse();
             $response = $response->withHeader('Content-Type', RenderTextFormat::MIME_TYPE)
                 ->withBody(new Stream($renderer->render($this->registry->getMetricFamilySamples())));
