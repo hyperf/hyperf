@@ -18,12 +18,12 @@ trait CompilesInjections
      */
     protected function compileInject(string $expression): string
     {
-        $segments = explode(',', preg_replace("/[\\(\\)\\\"\\']/", '', $expression));
+        $segments = explode(',', preg_replace('/[\\(\\)]/', '', $expression));
 
-        $variable = trim($segments[0]);
+        $variable = trim($segments[0], " '\"");
 
         $service = trim($segments[1]);
 
-        return "<?php \${$variable} = \\Hyperf\\ViewEngine\\T::inject('{$service}'); ?>";
+        return "<?php \${$variable} = \\Hyperf\\ViewEngine\\T::inject({$service}); ?>";
     }
 }
