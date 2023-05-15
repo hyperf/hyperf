@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Metric\Listener;
 
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Adapter\RemoteProxy\Counter;
 use Hyperf\Metric\Adapter\RemoteProxy\Gauge;
@@ -41,30 +42,32 @@ class OnPipeMessage implements ListenerInterface
      */
     public function process(object $event): void
     {
-        $factory = make(MetricFactoryInterface::class);
-        if (property_exists($event, 'data') && $event instanceof PipeMessage) {
-            $inner = $event->data;
-            switch (true) {
-                case $inner instanceof Counter:
-                    $counter = $factory->makeCounter($inner->name, $inner->labelNames);
-                    $counter->with(...$inner->labelValues)->add($inner->delta);
-                    break;
-                case $inner instanceof Gauge:
-                    $gauge = $factory->makeGauge($inner->name, $inner->labelNames);
-                    if (isset($inner->value)) {
-                        $gauge->with(...$inner->labelValues)->set($inner->value);
-                    } else {
-                        $gauge->with(...$inner->labelValues)->add($inner->delta);
-                    }
-                    break;
-                case $inner instanceof Histogram:
-                    $histogram = $factory->makeHistogram($inner->name, $inner->labelNames);
-                    $histogram->with(...$inner->labelValues)->put($inner->sample);
-                    break;
-                default:
-                    // Nothing to do
-                    break;
+        Coroutine::create(function () use ($event) {
+            $factory = make(MetricFactoryInterface::class);
+            if ($event instanceof PipeMessage) {
+                $inner = $event->data;
+                switch (true) {
+                    case $inner instanceof Counter:
+                        $counter = $factory->makeCounter($inner->name, $inner->labelNames);
+                        $counter->with(...$inner->labelValues)->add($inner->delta);
+                        break;
+                    case $inner instanceof Gauge:
+                        $gauge = $factory->makeGauge($inner->name, $inner->labelNames);
+                        if (isset($inner->value)) {
+                            $gauge->with(...$inner->labelValues)->set($inner->value);
+                        } else {
+                            $gauge->with(...$inner->labelValues)->add($inner->delta);
+                        }
+                        break;
+                    case $inner instanceof Histogram:
+                        $histogram = $factory->makeHistogram($inner->name, $inner->labelNames);
+                        $histogram->with(...$inner->labelValues)->put($inner->sample);
+                        break;
+                    default:
+                        // Nothing to do
+                        break;
+                }
             }
-        }
+        });
     }
 }

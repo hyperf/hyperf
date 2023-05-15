@@ -1,5 +1,13 @@
 # v3.0.21 - TBD
 
+## Added
+
+- [#5721](https://github.com/hyperf/hyperf/pull/5721) Added `exception` property to Request Lifecycle Events.
+
+## Optimized
+
+- [#5720](https://github.com/hyperf/hyperf/pull/5720) Optimized the code of `Hyperf\Metric\Listener\OnPipeMessage` to avoid message block.
+
 # v3.0.20 - 2023-05-12
 
 ## Added
