@@ -15,6 +15,5 @@ sudo make install
 sudo sh -c "echo extension=swoole > /etc/php/${PHP_VERSION}/cli/conf.d/swoole.ini"
 sudo sh -c "echo swoole.use_shortname='Off' >> /etc/php/${PHP_VERSION}/cli/conf.d/swoole.ini"
 php -v
+php -m
 php --ri swoole
-
-sudo rm -rf /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini
