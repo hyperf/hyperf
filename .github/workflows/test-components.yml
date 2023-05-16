@@ -112,7 +112,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: phpize
           extensions: redis
-          ini-values: opcache.enable_cli=1, phar.readonly='Off'
+          ini-values: opcache.enable_cli=0, phar.readonly='Off'
           coverage: none
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh
