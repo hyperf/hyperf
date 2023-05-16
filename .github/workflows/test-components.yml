@@ -127,6 +127,9 @@ jobs:
           composer dump-autoload -o
       - name: Test
         run: |
+          php -v
+          php -m
+          php --ri swoole
           cd hyperf-phar-tester
           php bin/hyperf.php phar:build --name no_env.phar
           php bin/hyperf.php read:vendor-bin
