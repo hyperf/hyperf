@@ -198,7 +198,7 @@ trait PostgreSqlSwooleExtManagesTransactions
         if ($this->causedByLostConnection($e)) {
             $this->reconnect();
 
-            $this->pdo->query('BEGIN');
+            $this->getPdo()->query('BEGIN');
         } else {
             throw $e;
         }
