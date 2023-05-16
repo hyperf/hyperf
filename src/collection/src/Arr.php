@@ -270,8 +270,6 @@ class Arr
 
     /**
      * Determine if any of the keys exist in an array using "dot" notation.
-     *
-     * @param array|string $keys
      */
     public static function hasAny(array|ArrayAccess $array, int|string|null|array $keys): bool
     {
