@@ -18,6 +18,7 @@ parameters:
     - %currentWorkingDirectory%/src/crontab/*
     - %currentWorkingDirectory%/src/database/*
     - %currentWorkingDirectory%/src/database-pgsql/*
+    - %currentWorkingDirectory%/src/db/src/PgSQL/*
     - %currentWorkingDirectory%/src/filesystem/*
     - %currentWorkingDirectory%/src/graphql/*
     - %currentWorkingDirectory%/src/grpc/*
