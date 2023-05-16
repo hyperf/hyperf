@@ -90,9 +90,9 @@ class RedisTest extends TestCase
             ],
         );
 
-        $r = new Redis($redis);
-        $r->setMetricGatherKeySuffix(':metric_keys');
+        Redis::setMetricGatherKeySuffix(':metric_keys');
 
+        $r = new Redis($redis);
         $method = new ReflectionMethod(Redis::class, 'collectSamples');
         $method->setAccessible(true);
         $result = $method->invoke($r, Counter::TYPE);
@@ -145,9 +145,9 @@ class RedisTest extends TestCase
             ],
         );
 
-        $r = new Redis($redis);
-        $r->setMetricGatherKeySuffix(':metric_keys');
+        Redis::setMetricGatherKeySuffix(':metric_keys');
 
+        $r = new Redis($redis);
         $method = new ReflectionMethod(Redis::class, 'collectSamples');
         $method->setAccessible(true);
         $result = $method->invoke($r, Counter::TYPE);
@@ -182,9 +182,9 @@ class RedisTest extends TestCase
             ],
         );
 
-        $r = new Redis($redis);
-        $r->setMetricGatherKeySuffix(':metric_keys');
+        Redis::setMetricGatherKeySuffix(':metric_keys');
 
+        $r = new Redis($redis);
         $method = new ReflectionMethod(Redis::class, 'collectHistograms');
         $method->setAccessible(true);
         $result = $method->invoke($r, Histogram::TYPE);
@@ -250,9 +250,9 @@ class RedisTest extends TestCase
             ],
         );
 
-        $r = new Redis($redis);
-        $r->setMetricGatherKeySuffix(':metric_keys');
+        Redis::setMetricGatherKeySuffix(':metric_keys');
 
+        $r = new Redis($redis);
         $method = new ReflectionMethod(Redis::class, 'collectHistograms');
         $method->setAccessible(true);
         $result = $method->invoke($r, Histogram::TYPE);
