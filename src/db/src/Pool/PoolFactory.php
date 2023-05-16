@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PoolInterface;
 use Hyperf\DB\Exception\DriverNotFoundException;
 use Hyperf\DB\Exception\InvalidDriverException;
+use Hyperf\DB\PgSQL\PgSQLPool;
 use Psr\Container\ContainerInterface;
 
 use function Hyperf\Support\make;
@@ -54,6 +55,8 @@ class PoolFactory
                 return MySQLPool::class;
             case 'pdo':
                 return PDOPool::class;
+            case 'pgsql':
+                return PgSQLPool::class;
         }
 
         if (class_exists($driver)) {
