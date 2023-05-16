@@ -277,7 +277,7 @@ class Arr
      */
     public static function hasAny($array, $keys)
     {
-        if (is_null($keys)) {
+        if (is_null($keys)) { /** @phpstan-ignore-line */
             return false;
         }
 
