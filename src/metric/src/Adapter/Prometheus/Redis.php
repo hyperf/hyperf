@@ -171,7 +171,7 @@ LUA
     public function wipeStorage(): void
     {
         $searchPattern = '';
-        $globalPrefix = $this->redis->getOption(\Redis::OPT_PREFIX);
+        $globalPrefix = $this->redis->_prefix('');
 
         // @phpstan-ignore-next-line false positive, phpstan thinks getOptions returns int
         if (is_string($globalPrefix)) {
