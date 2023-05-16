@@ -27,10 +27,14 @@ class PgSQLTest extends AbstractTestCase
         }
     }
 
-    public function testInsertAndGetId()
+    public function testExecute()
     {
-        $res = DB::connection('pgsql')->insert('INSERT INTO public.users (email, name) VALUES (?, ?);', ['l@hyperf.io', 'limx']);
+        $res = DB::connection('pgsql')->execute('INSERT INTO public.users (email, name) VALUES (?, ?);', ['l@hyperf.io', 'limx']);
 
         $this->assertGreaterThan(0, $res);
+
+        $res = DB::connection('pgsql')->fetch('SELECT * FROM public.users WHERE name = ? ORDER BY id DESC;', ['limx']);
+
+        $this->assertSame('l@hyperf.io', $res->email);
     }
 }

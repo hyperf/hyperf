@@ -82,19 +82,7 @@ class PgSQLConnection extends AbstractConnection
 
     public function insert(string $query, array $bindings = []): int
     {
-        $statement = $this->prepare($query);
-
-        $result = $statement->execute($bindings);
-        if ($result === false || ! empty($this->connection->error)) {
-            throw new QueryException($this->connection->error);
-        }
-
-        $row = $statement->fetchRow();
-        if (is_array($row)) {
-            return reset($row);
-        }
-
-        return 0;
+        throw new QueryException('cannot support insert.');
     }
 
     public function execute(string $query, array $bindings = []): int
