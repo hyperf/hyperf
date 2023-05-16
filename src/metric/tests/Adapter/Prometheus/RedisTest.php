@@ -27,6 +27,8 @@ class RedisTest extends TestCase
 {
     protected string $prePrefix;
 
+    protected string $preMetricGatherKeySuffix;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -34,7 +36,11 @@ class RedisTest extends TestCase
         $prefixProperty = new ReflectionProperty(Redis::class, 'prefix');
         $prefixProperty->setAccessible(true);
 
+        $metricGatherKeySuffix = new ReflectionProperty(Redis::class, 'metricGatherKeySuffix');
+        $metricGatherKeySuffix->setAccessible(true);
+
         $this->prePrefix = $prefixProperty->getDefaultValue();
+        $this->preMetricGatherKeySuffix = $metricGatherKeySuffix->getDefaultValue();
     }
 
     protected function tearDown(): void
@@ -42,6 +48,7 @@ class RedisTest extends TestCase
         parent::tearDown();
 
         Redis::setPrefix($this->prePrefix);
+        Redis::setMetricGatherKeySuffix($this->preMetricGatherKeySuffix);
 
         Mockery::close();
     }
@@ -70,6 +77,7 @@ class RedisTest extends TestCase
     public function testCollectSamples()
     {
         Redis::setPrefix('prometheus:');
+        Redis::setMetricGatherKeySuffix(':metric_keys');
 
         $redis = Mockery::mock(\Redis::class);
         $redis->shouldReceive('sMembers')->withArgs(['prometheus:counter:metric_keys{counter}'])->times(1)->andReturn([
@@ -90,12 +98,9 @@ class RedisTest extends TestCase
             ],
         );
 
-        Redis::setMetricGatherKeySuffix(':metric_keys');
-
-        $r = new Redis($redis);
         $method = new ReflectionMethod(Redis::class, 'collectSamples');
         $method->setAccessible(true);
-        $result = $method->invoke($r, Counter::TYPE);
+        $result = $method->invoke(new Redis($redis), Counter::TYPE);
 
         self::assertEquals([
             [
@@ -132,6 +137,7 @@ class RedisTest extends TestCase
     public function testCollectSamplesLabelNameNotMatch()
     {
         Redis::setPrefix('prometheus:');
+        Redis::setMetricGatherKeySuffix(':metric_keys');
 
         $redis = Mockery::mock(\Redis::class);
         $redis->shouldReceive('sMembers')->withArgs(['prometheus:counter:metric_keys{counter}'])->times(1)->andReturn([
@@ -145,12 +151,9 @@ class RedisTest extends TestCase
             ],
         );
 
-        Redis::setMetricGatherKeySuffix(':metric_keys');
-
-        $r = new Redis($redis);
         $method = new ReflectionMethod(Redis::class, 'collectSamples');
         $method->setAccessible(true);
-        $result = $method->invoke($r, Counter::TYPE);
+        $result = $method->invoke(new Redis($redis), Counter::TYPE);
 
         self::assertEquals([
             [
@@ -167,6 +170,7 @@ class RedisTest extends TestCase
     public function testCollectHistograms()
     {
         Redis::setPrefix('prometheus:');
+        Redis::setMetricGatherKeySuffix(':metric_keys');
 
         $redis = Mockery::mock(\Redis::class);
         $redis->shouldReceive('sMembers')->withArgs(['prometheus:histogram:metric_keys{histogram}'])->times(1)->andReturn([
@@ -182,12 +186,9 @@ class RedisTest extends TestCase
             ],
         );
 
-        Redis::setMetricGatherKeySuffix(':metric_keys');
-
-        $r = new Redis($redis);
         $method = new ReflectionMethod(Redis::class, 'collectHistograms');
         $method->setAccessible(true);
-        $result = $method->invoke($r, Histogram::TYPE);
+        $result = $method->invoke(new Redis($redis), Histogram::TYPE);
 
         self::assertEquals([
             [
@@ -235,6 +236,7 @@ class RedisTest extends TestCase
     public function testCollectHistogramsLabelNotMatch()
     {
         Redis::setPrefix('prometheus:');
+        Redis::setMetricGatherKeySuffix(':metric_keys');
 
         $redis = Mockery::mock(\Redis::class);
         $redis->shouldReceive('sMembers')->withArgs(['prometheus:histogram:metric_keys{histogram}'])->times(1)->andReturn([
@@ -250,12 +252,9 @@ class RedisTest extends TestCase
             ],
         );
 
-        Redis::setMetricGatherKeySuffix(':metric_keys');
-
-        $r = new Redis($redis);
         $method = new ReflectionMethod(Redis::class, 'collectHistograms');
         $method->setAccessible(true);
-        $result = $method->invoke($r, Histogram::TYPE);
+        $result = $method->invoke(new Redis($redis), Histogram::TYPE);
 
         self::assertEquals([
             [
