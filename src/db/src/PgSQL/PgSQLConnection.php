@@ -92,12 +92,12 @@ class PgSQLConnection extends AbstractConnection
             throw new QueryException($this->connection->error);
         }
 
-        $count = $statement->affectedRows();
-        if ($count === false) {
-            throw new QueryException($this->connection->error);
+        $row = $statement->fetchRow();
+        if (is_array($row)) {
+            return reset($row);
         }
 
-        return $count;
+        return 0;
     }
 
     public function execute(string $query, array $bindings = []): int
