@@ -30,7 +30,7 @@ class Redis implements Adapter
     /**
      * @notice TODO: since 3.1, default value will be changed to ':metric_keys'
      */
-    protected string $metricGatherKeySuffix = '_METRIC_KEYS';
+    private static string $metricGatherKeySuffix = '_METRIC_KEYS';
 
     /**
      * @notice TODO: since 3.1, default value will be changed to 'prometheus:' and should be non static
@@ -170,7 +170,32 @@ LUA
      */
     public function wipeStorage(): void
     {
-        $this->redis->flushAll();
+        $searchPattern = '';
+        $globalPrefix = $this->redis->getOption(\Redis::OPT_PREFIX);
+
+        // @phpstan-ignore-next-line false positive, phpstan thinks getOptions returns int
+        if (is_string($globalPrefix)) {
+            $searchPattern .= $globalPrefix;
+        }
+
+        $searchPattern .= self::$prefix;
+        $searchPattern .= '*';
+
+        $this->redis->eval(
+            <<<'LUA'
+local cursor = "0"
+repeat 
+    local results = redis.call('SCAN', cursor, 'MATCH', ARGV[1])
+    cursor = results[1]
+    for _, key in ipairs(results[2]) do
+        redis.call('DEL', key)
+    end
+until cursor == "0"
+LUA
+            ,
+            [$searchPattern],
+            0
+        );
     }
 
     /**
@@ -191,9 +216,9 @@ LUA
         self::$prefix = $prefix;
     }
 
-    public function setMetricGatherKeySuffix(string $suffix): void
+    public static function setMetricGatherKeySuffix(string $suffix): void
     {
-        $this->metricGatherKeySuffix = $suffix;
+        self::$metricGatherKeySuffix = $suffix;
     }
 
     /**
