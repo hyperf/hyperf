@@ -28,11 +28,6 @@ class PostgreSqlSwooleExtConnection extends Connection
 {
     use PostgreSqlSwooleExtManagesTransactions;
 
-    /**
-     * @var PostgreSQL
-     */
-    protected mixed $pdo;
-
     protected int $fetchMode = SW_PGSQL_ASSOC;
 
     /**
@@ -110,8 +105,8 @@ class PostgreSqlSwooleExtConnection extends Connection
 
             $result = $statement->execute($this->prepareBindings($bindings));
 
-            if ($result === false || ! empty($this->pdo->error)) {
-                throw new QueryException($query, [], new Exception($this->pdo->error));
+            if ($result === false || ! empty($statement->error)) {
+                throw new QueryException($query, [], new Exception($statement->error));
             }
 
             return $statement->fetchAll($this->fetchMode) ?: [];
@@ -153,7 +148,7 @@ class PostgreSqlSwooleExtConnection extends Connection
 
         $result = $statement->execute($bindings);
         if (! $result) {
-            throw new QueryException($query, [], new Exception($this->pdo->error));
+            throw new QueryException($query, [], new Exception($statement->error));
         }
 
         return $statement->fetchAll(SW_PGSQL_ASSOC);
@@ -227,9 +222,11 @@ class PostgreSqlSwooleExtConnection extends Connection
             $query = $this->str_replace_once('?', '$' . $num++, $query);
         }
 
-        $statement = $this->getPdoForSelect($useReadPdo)->prepare($query);
+        /** @var PostgreSQL $pdo */
+        $pdo = $this->getPdoForSelect($useReadPdo);
+        $statement = $pdo->prepare($query);
         if (! $statement) {
-            throw new QueryException($query, [], new Exception($this->pdo->error));
+            throw new QueryException($query, [], new Exception($pdo->error));
         }
 
         return $statement;
