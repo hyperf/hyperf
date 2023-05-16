@@ -271,13 +271,11 @@ class Arr
     /**
      * Determine if any of the keys exist in an array using "dot" notation.
      *
-     * @param array|ArrayAccess $array
      * @param array|string $keys
-     * @return bool
      */
-    public static function hasAny($array, $keys)
+    public static function hasAny(array|ArrayAccess $array, int|string|null|array $keys): bool
     {
-        if (is_null($keys)) { /** @phpstan-ignore-line */
+        if (is_null($keys)) {
             return false;
         }
 
