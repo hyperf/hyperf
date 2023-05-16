@@ -357,7 +357,7 @@ LUA
 
     protected function getMetricGatherKey(string $metricType): string
     {
-        return self::$prefix . $metricType . $this->metricGatherKeySuffix . $this->getRedisTag($metricType);
+        return self::$prefix . $metricType . self::$metricGatherKeySuffix . $this->getRedisTag($metricType);
     }
 
     protected function getRedisTag(string $metricType): string
