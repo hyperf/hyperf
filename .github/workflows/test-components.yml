@@ -132,7 +132,6 @@ jobs:
           php --ri swoole
           cd hyperf-phar-tester
           php bin/hyperf.php phar:build --name no_env.phar
-          php bin/hyperf.php read:vendor-bin
           php no_env.phar show:name -N null
           php no_env.phar read:vendor-bin
           cp .env.example .env
