@@ -4,6 +4,7 @@
 
 - [#5721](https://github.com/hyperf/hyperf/pull/5721) Added `exception` property to Request Lifecycle Events.
 - [#5723](https://github.com/hyperf/hyperf/pull/5723) Support `Swoole 5 PgSQL` for `hyperf/db`.
+- [#5725](https://github.com/hyperf/hyperf/pull/5725) Support `Swoole 4 PgSQL` for `hyperf/db`.
 
 ## Fixed
 

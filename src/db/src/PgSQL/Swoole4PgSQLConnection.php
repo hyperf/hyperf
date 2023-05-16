@@ -18,9 +18,8 @@ use Hyperf\DB\Exception\RuntimeException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\PostgreSQL;
-use Swoole\Coroutine\PostgreSQLStatement;
 
-class PgSQLConnection extends AbstractConnection
+class Swoole4PgSQLConnection extends AbstractConnection
 {
     /**
      * @var PostgreSQL
@@ -89,34 +88,31 @@ class PgSQLConnection extends AbstractConnection
     {
         $statement = $this->prepare($query);
 
-        $result = $statement->execute($bindings);
-        if ($result === false || ! empty($this->connection->error)) {
+        $result = $this->connection->execute($statement, $bindings);
+        if ($result === false) {
             throw new QueryException($this->connection->error);
         }
 
-        $count = $statement->affectedRows();
-        if ($count === false) {
-            throw new QueryException($this->connection->error);
-        }
-
-        return $count;
+        return $this->connection->affectedRows($result);
     }
 
     public function exec(string $sql): int
     {
-        return $this->execute($sql, []);
+        $result = $this->connection->query($sql);
+
+        return $this->connection->affectedRows($result);
     }
 
     public function query(string $query, array $bindings = []): array
     {
         $statement = $this->prepare($query);
 
-        $result = $statement->execute($bindings);
-        if ($result === false || ! empty($this->connection->error)) {
+        $result = $this->connection->execute($statement, $bindings);
+        if ($result === false) {
             throw new QueryException($this->connection->error);
         }
 
-        return $statement->fetchAll() ?: [];
+        return $this->connection->fetchAll($result) ?: [];
     }
 
     public function fetch(string $query, array $bindings = [])
@@ -145,31 +141,15 @@ class PgSQLConnection extends AbstractConnection
         return $closure->call($this, $this->connection);
     }
 
-    public function str_replace_once($needle, $replace, $haystack)
+    protected function prepare(string $query): string
     {
-        // Looks for the first occurence of $needle in $haystack
-        // and replaces it with $replace.
-        $pos = strpos($haystack, $needle);
-        if ($pos === false) {
-            // Nothing found
-            return $haystack;
-        }
+        $id = uniqid();
 
-        return substr_replace($haystack, $replace, $pos, strlen($needle));
-    }
-
-    protected function prepare(string $query): PostgreSQLStatement
-    {
-        $num = 1;
-        while (strpos($query, '?')) {
-            $query = $this->str_replace_once('?', '$' . $num++, $query);
-        }
-
-        $statement = $this->connection->prepare($query);
-        if (! $statement) {
+        $res = $this->connection->prepare($id, $query);
+        if ($res === false) {
             throw new QueryException($this->connection->error);
         }
 
-        return $statement;
+        return $id;
     }
 }
