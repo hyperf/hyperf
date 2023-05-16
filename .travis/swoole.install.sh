@@ -17,4 +17,4 @@ sudo sh -c "echo swoole.use_shortname='Off' >> /etc/php/${PHP_VERSION}/cli/conf.
 php -v
 php --ri swoole
 
-sudo rm -rf /etc/php/${ PHP_VERSION }/cli/conf.d/20-xdebug.ini
+sudo rm -rf /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini
