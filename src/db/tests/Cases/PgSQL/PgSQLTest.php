@@ -35,6 +35,6 @@ class PgSQLTest extends AbstractTestCase
 
         $res = DB::connection('pgsql')->fetch('SELECT * FROM public.users WHERE name = ? ORDER BY id DESC;', ['limx']);
 
-        $this->assertSame('l@hyperf.io', $res->email);
+        $this->assertSame('l@hyperf.io', $res['email']);
     }
 }
