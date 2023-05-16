@@ -9,9 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Testing;
+namespace Hyperf\Testing\Http;
 
-use Hyperf\Codec\Packer\JsonPacker;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
@@ -36,9 +35,6 @@ use Throwable;
 use function Hyperf\Collection\data_get;
 use function Hyperf\Coroutine\wait;
 
-/**
- * @deprecated since 3.1
- */
 class Client extends Server
 {
     protected PackerInterface $packer;
@@ -47,7 +43,7 @@ class Client extends Server
 
     protected string $baseUri = 'http://127.0.0.1/';
 
-    public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
+    public function __construct(ContainerInterface $container, $server = 'http')
     {
         parent::__construct(
             $container,
@@ -56,75 +52,56 @@ class Client extends Server
             $container->get(ResponseEmitter::class)
         );
 
-        $this->packer = $packer ?? new JsonPacker();
-
         $this->initCoreMiddleware($server);
         $this->initBaseUri($server);
     }
 
     public function get(string $uri, array $data = [], array $headers = [])
     {
-        $response = $this->request('GET', $uri, [
+        return $this->request('GET', $uri, [
             'headers' => $headers,
             'query' => $data,
         ]);
-
-        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function post(string $uri, array $data = [], array $headers = [])
     {
-        $response = $this->request('POST', $uri, [
+        return $this->request('POST', $uri, [
             'headers' => $headers,
             'form_params' => $data,
         ]);
-
-        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function put(string $uri, array $data = [], array $headers = [])
     {
-        $response = $this->request('PUT', $uri, [
+        return $this->request('PUT', $uri, [
             'headers' => $headers,
             'form_params' => $data,
         ]);
-
-        return $this->packer->unpack((string) $response->getBody());
-    }
-
-    public function patch(string $uri, array $data = [], array $headers = [])
-    {
-        $response = $this->request('PATCH', $uri, [
-            'headers' => $headers,
-            'form_params' => $data,
-        ]);
-
-        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function delete(string $uri, array $data = [], array $headers = [])
     {
-        $response = $this->request('DELETE', $uri, [
+        return $this->request('DELETE', $uri, [
             'headers' => $headers,
             'query' => $data,
         ]);
-
-        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function json(string $uri, array $data = [], array $headers = [])
     {
         $headers['Content-Type'] = 'application/json';
-        $response = $this->request('POST', $uri, [
+
+        return $this->request('POST', $uri, [
             'headers' => $headers,
             'json' => $data,
         ]);
-        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function file(string $uri, array $data = [], array $headers = [])
     {
         $multipart = [];
+
         if (Arr::isAssoc($data)) {
             $data = [$data];
         }
@@ -140,12 +117,10 @@ class Client extends Server
             ];
         }
 
-        $response = $this->request('POST', $uri, [
+        return $this->request('POST', $uri, [
             'headers' => $headers,
             'multipart' => $multipart,
         ]);
-
-        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function request(string $method, string $path, array $options = [])
@@ -173,6 +148,7 @@ class Client extends Server
         $parsePath = parse_url($path);
         $path = $parsePath['path'];
         $uriPathQuery = $parsePath['query'] ?? [];
+
         if (! empty($uriPathQuery)) {
             parse_str($uriPathQuery, $pathQuery);
             $query = array_merge($pathQuery, $query);

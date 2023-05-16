@@ -20,6 +20,9 @@ use Hyperf\Guzzle\CoroutineHandler;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\UriInterface;
 
+/**
+ * @deprecated since 3.1
+ */
 class HttpClient
 {
     protected Client $client;
