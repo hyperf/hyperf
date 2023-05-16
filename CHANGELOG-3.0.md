@@ -8,7 +8,7 @@
 
 ## Fixed
 
-- [#5726](https://github.com/hyperf/hyperf/pull/5726) Fixed bug that pgsql cannot init when using pgsql-swoole.
+- [#5726](https://github.com/hyperf/hyperf/pull/5726) [#5730](https://github.com/hyperf/hyperf/pull/5730) Fixed bug that pgsql cannot init when using pgsql-swoole.
 
 ## Optimized
 
