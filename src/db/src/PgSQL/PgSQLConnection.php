@@ -27,10 +27,7 @@ class PgSQLConnection extends AbstractConnection
      */
     protected $connection;
 
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'driver' => PgSQLPool::class,
         'host' => '127.0.0.1',
         'port' => 5432,
