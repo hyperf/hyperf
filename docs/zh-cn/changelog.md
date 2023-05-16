@@ -52,7 +52,7 @@
 - [#5666](https://github.com/hyperf/hyperf/pull/5666) 将 `Packers` 从 `hyperf/utils` 分离到 `hyperf/codec` 中。
 - [#5668](https://github.com/hyperf/hyperf/pull/5668) 将 `hyperf/support` 从 `hyperf/utils` 分离出来。
 - [#5670](https://github.com/hyperf/hyperf/pull/5670) 将 `hyperf/code-parser` 从 `hyperf/utils` 分离出来。
-- [#5671](https://github.com/hyperf/hyperf/pull/5671) 使用 `Hyperf\Coroutine\Channel\Pool` 代替`Hyperf\Utils\ChannelPool`。
+- [#5671](https://github.com/hyperf/hyperf/pull/5671) 使用 `Hyperf\Coroutine\Channel\Pool` 代替 `Hyperf\Utils\ChannelPool` 。
 - [#5674](https://github.com/hyperf/hyperf/pull/5674) 将 `Hyperf\Utils` 命名空间的类和方法，使用新组件进行替换。
 
 # v3.0.17 - 2023-04-19
