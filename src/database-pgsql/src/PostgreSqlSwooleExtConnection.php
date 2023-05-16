@@ -57,8 +57,6 @@ class PostgreSqlSwooleExtConnection extends Connection
                 return true;
             }
 
-            $this->getPdo();
-
             $statement = $this->prepare($query);
 
             $result = $statement->execute($this->prepareBindings($bindings));
@@ -81,8 +79,6 @@ class PostgreSqlSwooleExtConnection extends Connection
             if ($this->pretending()) {
                 return 0;
             }
-
-            $this->getPdo();
 
             $statement = $this->prepare($query);
             $this->recordsHaveBeenModified();
@@ -110,9 +106,7 @@ class PostgreSqlSwooleExtConnection extends Connection
                 return [];
             }
 
-            $this->getPdoForSelect($useReadPdo);
-
-            $statement = $this->prepare($query);
+            $statement = $this->prepare($query, $useReadPdo);
 
             $result = $statement->execute($this->prepareBindings($bindings));
 
@@ -134,9 +128,7 @@ class PostgreSqlSwooleExtConnection extends Connection
                 return [];
             }
 
-            $this->getPdoForSelect($useReadPdo);
-
-            $statement = $this->prepare($query);
+            $statement = $this->prepare($query, $useReadPdo);
 
             $statement->execute($this->prepareBindings($bindings));
 
@@ -228,14 +220,14 @@ class PostgreSqlSwooleExtConnection extends Connection
         return new PostgresDriver();
     }
 
-    protected function prepare(string $query): PostgreSQLStatement
+    protected function prepare(string $query, bool $useReadPdo = true): PostgreSQLStatement
     {
         $num = 1;
         while (strpos($query, '?')) {
             $query = $this->str_replace_once('?', '$' . $num++, $query);
         }
 
-        $statement = $this->pdo->prepare($query);
+        $statement = $this->getPdoForSelect($useReadPdo)->prepare($query);
         if (! $statement) {
             throw new QueryException($query, [], new Exception($this->pdo->error));
         }

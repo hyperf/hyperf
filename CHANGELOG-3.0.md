@@ -5,6 +5,10 @@
 - [#5721](https://github.com/hyperf/hyperf/pull/5721) Added `exception` property to Request Lifecycle Events.
 - [#5723](https://github.com/hyperf/hyperf/pull/5723) Support `Swoole 5 PgSQL` for `hyperf/db`.
 
+## Fixed
+
+- [#5726](https://github.com/hyperf/hyperf/pull/5726) Fixed bug that pgsql cannot init when using pgsql-swoole.
+
 ## Optimized
 
 - [#5718](https://github.com/hyperf/hyperf/pull/5718) Optimized the code and added some test cases for `view-engine`.
