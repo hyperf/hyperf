@@ -15,6 +15,8 @@ use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Exception\OperatorNotFoundException;
 use Hyperf\Redis\RedisProxy;
 
+use function Hyperf\Support\make;
+
 class LuaManager
 {
     /**

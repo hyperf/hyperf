@@ -18,8 +18,9 @@ class MultiplyOperator extends Operator
         return '*';
     }
 
-    public function execute(array $parameters, int $scale): string
+    public function execute(array $parameters, int $scale, array $bindings = []): string
     {
+        $parameters = $this->fromBindings($parameters, $bindings);
         $parameters[] = $scale;
         return bcmul(...$parameters);
     }

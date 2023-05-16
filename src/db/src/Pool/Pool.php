@@ -11,11 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\DB\Pool;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\DB\Frequency;
 use Hyperf\Pool\Pool as HyperfPool;
-use Hyperf\Utils\Arr;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\make;
 
 abstract class Pool extends HyperfPool
 {
@@ -26,7 +29,7 @@ abstract class Pool extends HyperfPool
         $config = $container->get(ConfigInterface::class);
         $key = sprintf('db.%s', $name);
         if (! $config->has($key)) {
-            throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
+            throw new InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
 
         $this->config = $config->get($key);

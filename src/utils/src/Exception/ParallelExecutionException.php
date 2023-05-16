@@ -11,29 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Exception;
 
-class ParallelExecutionException extends \RuntimeException
-{
-    private array $results = [];
+class_alias(\Hyperf\Coroutine\Exception\ParallelExecutionException::class, ParallelExecutionException::class);
 
-    private array $throwables = [];
-
-    public function getResults(): array
+if (! class_exists(ParallelExecutionException::class)) {
+    /**
+     * @deprecated since 3.1, use Hyperf\Coroutine\Exception\ParallelExecutionException instead.
+     */
+    class ParallelExecutionException extends \Hyperf\Coroutine\Exception\ParallelExecutionException
     {
-        return $this->results;
-    }
-
-    public function setResults(array $results)
-    {
-        $this->results = $results;
-    }
-
-    public function getThrowables(): array
-    {
-        return $this->throwables;
-    }
-
-    public function setThrowables(array $throwables)
-    {
-        return $this->throwables = $throwables;
     }
 }

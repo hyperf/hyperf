@@ -1,14 +1,14 @@
 # 註解
 
-註解是 Hyperf 非常強大的一項功能，可以通過註解的形式減少很多的配置，以及實現很多非常方便的功能。
+註解是 Hyperf 非常強大的一項功能，可以透過註解的形式減少很多的配置，以及實現很多非常方便的功能。
 
 ## 概念
 
 ### 什麼是註解？
 
-註解功能提供了程式碼中的宣告部分都可以新增結構化、機器可讀的元資料的能力， 註解的目標可以是類、方法、函式、引數、屬性、類常量。 通過 反射 API 可在執行時獲取註解所定義的元資料。 因此註解可以成為直接嵌入程式碼的配置式語言。
+註解功能提供了程式碼中的宣告部分都可以新增結構化、機器可讀的元資料的能力， 註解的目標可以是類、方法、函式、引數、屬性、類常量。 透過 反射 API 可在執行時獲取註解所定義的元資料。 因此註解可以成為直接嵌入程式碼的配置式語言。
 
-通過註解的使用，在應用中實現功能、使用功能可以相互解耦。 某種程度上講，它可以和介面（interface）與其實現（implementation）相比較。 但介面與實現是程式碼相關的，註解則與宣告額外資訊和配置相關。 介面可以通過類來實現，而註解也可以宣告到方法、函式、引數、屬性、類常量中。 因此它們比介面更靈活。
+透過註解的使用，在應用中實現功能、使用功能可以相互解耦。 某種程度上講，它可以和介面（interface）與其實現（implementation）相比較。 但介面與實現是程式碼相關的，註解則與宣告額外資訊和配置相關。 介面可以透過類來實現，而註解也可以宣告到方法、函式、引數、屬性、類常量中。 因此它們比介面更靈活。
 
 註解使用的一個簡單例子：將介面（interface）的可選方法改用註解實現。 我們假設介面 ActionHandler 代表了應用的一個操作： 部分 action handler 的實現需要 setup，部分不需要。 我們可以使用註解，而不用要求所有類必須實現 ActionHandler 介面並實現 setUp() 方法。 因此帶來一個好處——可以多次使用註解。
 
@@ -18,7 +18,7 @@
 
 ### 忽略某些註解
 
-在一些情況下我們可能希望忽略某些 註解，比如我們在接入一些自動生成文件的工具時，有不少工具都是通過註解的形式去定義文件的相關結構內容的，而這些註解可能並不符合 Hyperf 的使用方式，我們可以通過在 `config/autoload/annotations.php` 內將相關注解設定為忽略。
+在一些情況下我們可能希望忽略某些 註解，比如我們在接入一些自動生成文件的工具時，有不少工具都是透過註解的形式去定義文件的相關結構內容的，而這些註解可能並不符合 Hyperf 的使用方式，我們可以透過在 `config/autoload/annotations.php` 內將相關注解設定為忽略。
 
 ```php
 use JetBrains\PhpStorm\ArrayShape;
@@ -138,7 +138,7 @@ return [
 
 ### 利用註解資料
 
-在沒有自定義註解收集方法時，預設會將註解的元資料統一收集在 `Hyperf\Di\Annotation\AnnotationCollector` 類內，通過該類的靜態方法可以方便的獲取對應的元資料用於邏輯判斷或實現。
+在沒有自定義註解收集方法時，預設會將註解的元資料統一收集在 `Hyperf\Di\Annotation\AnnotationCollector` 類內，透過該類的靜態方法可以方便的獲取對應的元資料用於邏輯判斷或實現。
 
 ### ClassMap 功能
 
@@ -217,9 +217,9 @@ class Coroutine
 
 ```
 
-然後，我們實現一個跟 `Hyperf\Utils\Coroutine` 一模一樣的物件。其中 `create()` 方法替換成我們上述實現的方法。
+然後，我們實現一個跟 `Hyperf\Coroutine\Coroutine` 一模一樣的物件。其中 `create()` 方法替換成我們上述實現的方法。
 
-`class_map/Hyperf/Utils/Coroutine.php`
+`class_map/Hyperf/Coroutine/Coroutine.php`
 
 ```php
 <?php
@@ -233,11 +233,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils;
+namespace Hyperf\Coroutine;
 
 use App\Kernel\Context\Coroutine as Co;
 use Swoole\Coroutine as SwooleCoroutine;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 /**
  * @method static void defer(callable $callable)
@@ -306,7 +306,7 @@ class Coroutine
 
 declare(strict_types=1);
 
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 
 return [
     'scan' => [

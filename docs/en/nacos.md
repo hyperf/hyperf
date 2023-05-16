@@ -1,14 +1,14 @@
 # Nacos
 
-一个 `Nacos` 的 `PHP` 协程客户端，与 `Hyperf` 的配置中心、微服务治理完美结合。
+A `PHP` coroutine client of `Nacos`, perfectly combined with the configuration center and microservice governance of `Hyperf`.
 
-## 安装
+## Installation
 
 ```shell
 composer require hyperf/nacos
 ```
 
-### 发布配置文件
+### Publish the config file
 
 ```shell
 php bin/hyperf.php vendor:publish hyperf/nacos
@@ -20,7 +20,7 @@ php bin/hyperf.php vendor:publish hyperf/nacos
 declare(strict_types=1);
 
 return [
-    // 无法使用 IP 端口形式的开发者，直接配置 url 即可
+    // Developers who cannot use the IP port form can directly configure the url
     // 'url' => '',
     'host' => '127.0.0.1',
     'port' => 8848,
@@ -33,17 +33,17 @@ return [
 
 ```
 
-## 服务与实例
+## Services and instances
 
-当前组件仍然保留了之前提供的服务注册功能。
+The current component still retains the previously provided service registration functionality.
 
-只需要安装 `hyperf/service-governance-nacos` 组件，然后配置以下监听器和自定义进程即可。
+Just install the `hyperf/service-governance-nacos` component, then configure the following listeners and custom processes.
 
 `Hyperf\ServiceGovernanceNacos\Listener\MainWorkerStartListener`
 `Hyperf\ServiceGovernanceNacos\Listener\OnShutdownListener`
 `Hyperf\ServiceGovernanceNacos\Process\InstanceBeatProcess`
 
-然后增加如下配置，以监听 `Shutdown` 事件
+Then add the following configuration to listen to the `Shutdown` event
 
 - config/autoload/server.php
 
@@ -59,3 +59,28 @@ return [
 ];
 ```
 
+## Aliyun Service Authentication
+
+When using Aliyun's Nacos service, you may need to use AK and SK authentication. The Nacos component supports it natively. We can easily add the corresponding configuration, as follows:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
+    // 'uri' => 'http://127.0.0.1:8848/',
+    // The nacos host info
+    'host' => '127.0.0.1',
+    'port' => 8848,
+    // The nacos account info
+    'username' => null,
+    'password' => null,
+    'access_key' => 'xxxx',
+    'access_secret' => 'yyyy',
+    'guzzle' => [
+        'config' => null,
+    ],
+];
+```

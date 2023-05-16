@@ -1,6 +1,6 @@
 # Guzzle HTTP 客戶端
 
-[hyperf/guzzle](https://github.com/hyperf/guzzle) 元件基於 Guzzle 進行協程處理，通過 Swoole HTTP 客戶端作為協程驅動替換到 Guzzle 內，以達到 HTTP 客戶端的協程化。
+[hyperf/guzzle](https://github.com/hyperf/guzzle) 元件基於 Guzzle 進行協程處理，透過 Swoole HTTP 客戶端作為協程驅動替換到 Guzzle 內，以達到 HTTP 客戶端的協程化。
 
 ## 安裝
 
@@ -90,7 +90,7 @@ Hyperf 除了實現了 `Hyperf\Guzzle\CoroutineHandler` 外，還基於 `Hyperf\
 ```php
 <?php
 use GuzzleHttp\Client;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use GuzzleHttp\HandlerStack;
 use Hyperf\Guzzle\PoolHandler;
 use Hyperf\Guzzle\RetryMiddleware;
@@ -139,7 +139,7 @@ $client = make(Client::class, [
 
 ## 使用 `ClassMap` 替換 `GuzzleHttp\Client`
 
-如果第三方元件並沒有提供可以替換 `Handler` 的介面，我們也可以通過 `ClassMap` 功能，直接替換 `Client` 來達到將客戶端協程化的目的。
+如果第三方元件並沒有提供可以替換 `Handler` 的介面，我們也可以透過 `ClassMap` 功能，直接替換 `Client` 來達到將客戶端協程化的目的。
 
 > 當然，也可以使用 SWOOLE_HOOK 達到相同的目的。
 
@@ -153,7 +153,7 @@ namespace GuzzleHttp;
 
 use GuzzleHttp\Psr7;
 use Hyperf\Guzzle\CoroutineHandler;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 
 class Client implements ClientInterface
 {

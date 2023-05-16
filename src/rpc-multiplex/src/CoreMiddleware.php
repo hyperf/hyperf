@@ -19,9 +19,11 @@ use Hyperf\Rpc\ErrorResponse;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\Response as RPCResponse;
 use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 {
@@ -53,14 +55,14 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 
             try {
                 $parameters = $this->parseMethodParameters($controller, $action, $request->getParsedBody());
-            } catch (\InvalidArgumentException $exception) {
+            } catch (InvalidArgumentException $exception) {
                 $data = $this->buildErrorData($request, 400, 'The params is invalid.', $exception);
                 return $this->responseBuilder->buildResponse($request, $data);
             }
 
             try {
                 $response = $controllerInstance->{$action}(...$parameters);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $data = $this->buildErrorData($request, 500, $exception->getMessage(), $exception);
                 $response = $this->responseBuilder->buildResponse($request, $data);
                 $this->responseBuilder->persistToContext($response);
@@ -88,7 +90,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         return $this->responseBuilder->buildResponse($request, $response);
     }
 
-    protected function buildErrorData(ServerRequestInterface $request, int $code, string $message = null, \Throwable $throwable = null): array
+    protected function buildErrorData(ServerRequestInterface $request, int $code, string $message = null, Throwable $throwable = null): array
     {
         $id = $request->getAttribute(Constant::REQUEST_ID);
 

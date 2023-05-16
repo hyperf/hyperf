@@ -12,12 +12,12 @@ declare(strict_types=1);
 namespace HyperfTest\RpcMultiplex\Stub;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Framework\Logger\StdoutLogger;
 use Hyperf\RpcMultiplex\Socket;
 use Hyperf\RpcMultiplex\SocketFactory;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use Multiplex\Contract\IdGeneratorInterface;
 use Multiplex\Contract\PackerInterface;

@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\ReactiveX\Observable;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Dispatcher\HttpRequestHandler;
 use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Server;
-use Hyperf\Utils\ApplicationContext;
 use Psr\Http\Message\ServerRequestInterface;
 use Rx\Disposable\EmptyDisposable;
 use Rx\DisposableInterface;
@@ -25,6 +25,7 @@ use Rx\Observable;
 use Rx\ObserverInterface;
 use Rx\Scheduler;
 use Rx\SchedulerInterface;
+use stdClass;
 
 class HttpRouteObservable extends Observable
 {
@@ -56,7 +57,7 @@ class HttpRouteObservable extends Observable
             if ($this->callback !== null) {
                 $serverName = $container->get(Server::class)->getServerName();
                 $middleware = new CoreMiddleware($container, $serverName);
-                $handler = new HttpRequestHandler([], new \stdClass(), $container);
+                $handler = new HttpRequestHandler([], new stdClass(), $container);
                 /** @var Dispatched $dispatched */
                 $dispatched = $request->getAttribute(Dispatched::class);
                 $dispatched->handler->callback = $this->callback;

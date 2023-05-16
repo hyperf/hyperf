@@ -17,7 +17,7 @@ use Hyperf\RateLimit\Storage\RedisStorage;
 use Hyperf\Redis\Redis;
 use Psr\Container\ContainerInterface;
 
-use function make;
+use function Hyperf\Support\make;
 
 class RateLimitHandler
 {

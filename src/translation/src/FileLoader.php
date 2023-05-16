@@ -12,8 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\Translation;
 
 use Hyperf\Contract\TranslatorLoaderInterface;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use RuntimeException;
+
+use function Hyperf\Collection\collect;
 
 class FileLoader implements TranslatorLoaderInterface
 {
@@ -124,7 +126,7 @@ class FileLoader implements TranslatorLoaderInterface
     /**
      * Load a locale from the given JSON file path.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function loadJsonPaths(string $locale): iterable
     {

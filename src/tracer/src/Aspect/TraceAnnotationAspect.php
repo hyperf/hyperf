@@ -16,6 +16,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\Annotation\Trace;
 use Hyperf\Tracer\SpanStarter;
 use OpenTracing\Tracer;
+use Throwable;
 
 class TraceAnnotationAspect extends AbstractAspect
 {
@@ -48,7 +49,7 @@ class TraceAnnotationAspect extends AbstractAspect
         $span->setTag($tag, $source);
         try {
             $result = $proceedingJoinPoint->process();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $span->setTag('error', true);
             $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
             throw $e;

@@ -15,14 +15,16 @@ use Hyperf\Config\Config;
 use Hyperf\ConfigCenter\PipeMessage;
 use Hyperf\ConfigZookeeper\ClientInterface;
 use Hyperf\ConfigZookeeper\ZookeeperDriver;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Framework\Event\OnPipeMessage;
 use Hyperf\Guzzle\ClientFactory;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Support\value;
 
 /**
  * @internal

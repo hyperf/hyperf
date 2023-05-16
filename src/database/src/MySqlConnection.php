@@ -16,6 +16,7 @@ use Hyperf\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Schema\Grammars\MySqlGrammar as SchemaGrammar;
 use Hyperf\Database\Schema\MySqlBuilder;
+use PDOStatement;
 
 class MySqlConnection extends Connection
 {
@@ -34,7 +35,7 @@ class MySqlConnection extends Connection
     /**
      * Bind values to their parameters in the given statement.
      */
-    public function bindValues(\PDOStatement $statement, array $bindings): void
+    public function bindValues(PDOStatement $statement, array $bindings): void
     {
         foreach ($bindings as $key => $value) {
             $statement->bindValue(

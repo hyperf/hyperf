@@ -73,14 +73,12 @@ use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
 use Hyperf\WebSocketServer\Constant\Opcode;
-use Swoole\Http\Request;
 use Swoole\Server;
-use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    public function onMessage($server, Frame $frame): void
+    public function onMessage($server, $frame): void
     {
         if($frame->opcode == Opcode::PING) {
             // 如果使用協程 Server，在判斷是 PING 幀後，需要手動處理，返回 PONG 幀。
@@ -96,14 +94,14 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
         var_dump('closed');
     }
 
-    public function onOpen($server, Request $request): void
+    public function onOpen($server, $request): void
     {
         $server->push($request->fd, 'Opened');
     }
 }
 ```
 
-接下來啟動 Server，便能看到對應啟動了一個 WebSocket Server 並監聽於 9502 端口，此時您便可以通過各種 WebSocket Client 來進行連接和數據傳輸了。
+接下來啓動 Server，便能看到對應啓動了一個 WebSocket Server 並監聽於 9502 端口，此時您便可以通過各種 WebSocket Client 來進行連接和數據傳輸了。
 
 ```
 $ php bin/hyperf.php start
@@ -154,18 +152,16 @@ namespace App\Controller;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
 use Hyperf\WebSocketServer\Context;
-use Swoole\Http\Request;
-use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface
 {
-    public function onMessage($server, Frame $frame): void
+    public function onMessage($server, $frame): void
     {
         $server->push($frame->fd, 'Username: ' . Context::get('username'));
     }
 
-    public function onOpen($server, Request $request): void
+    public function onOpen($server, $request): void
     {
         Context::set('username', $request->cookie['username']);
     }

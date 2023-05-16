@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Utils\CodeGen;
 
 use Hyperf\Utils\CodeGen\Project;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -57,7 +58,7 @@ class ProjectTest extends TestCase
 
     private function createProject(): Project
     {
-        $mock = \Mockery::mock(Project::class)
+        $mock = Mockery::mock(Project::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
         $mock->shouldReceive('getAutoloadRules')

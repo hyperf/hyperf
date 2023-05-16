@@ -11,6 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Server;
 
+/**
+ * @deprecated since 3.1.0, please use `Hyperf\Engine\Contract\Http\Writable` instead.
+ */
 interface ConnectionInterface
 {
+    /**
+     * @return mixed|\Swoole\Http\Response
+     */
+    public function getSocket(): mixed;
 }

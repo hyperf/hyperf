@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab;
 
+use Hyperf\Crontab\Command\RunCommand;
 use Hyperf\Crontab\Listener\CrontabRegisterListener;
 use Hyperf\Crontab\Listener\OnPipeMessageListener;
 use Hyperf\Crontab\Strategy\StrategyInterface;
@@ -21,6 +22,9 @@ class ConfigProvider
     public function __invoke()
     {
         return [
+            'commands' => [
+                RunCommand::class,
+            ],
             'dependencies' => [
                 StrategyInterface::class => WorkerStrategy::class,
             ],

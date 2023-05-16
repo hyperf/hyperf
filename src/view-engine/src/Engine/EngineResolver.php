@@ -16,6 +16,8 @@ use Hyperf\ViewEngine\Contract\EngineInterface;
 use Hyperf\ViewEngine\Contract\EngineResolverInterface;
 use InvalidArgumentException;
 
+use function Hyperf\Support\make;
+
 class EngineResolver implements EngineResolverInterface
 {
     /**

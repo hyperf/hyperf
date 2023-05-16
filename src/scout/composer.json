@@ -15,6 +15,8 @@
         "hyperf/event": "~3.0.0",
         "hyperf/macroable": "~3.0.0",
         "hyperf/model-listener": "~3.0.0",
+        "hyperf/support": "~3.0.0",
+        "hyperf/tappable": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0"

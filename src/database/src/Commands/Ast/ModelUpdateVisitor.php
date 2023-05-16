@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Ast;
 
+use Hyperf\CodeParser\PhpDocReader;
+use Hyperf\CodeParser\PhpParser;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
@@ -28,12 +30,13 @@ use Hyperf\Database\Model\Relations\MorphOne;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\MorphToMany;
 use Hyperf\Database\Model\Relations\Relation;
-use Hyperf\Utils\CodeGen\PhpDocReader;
-use Hyperf\Utils\CodeGen\PhpParser;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionNamedType;
 use RuntimeException;
 
 class ModelUpdateVisitor extends NodeVisitorAbstract
@@ -203,7 +206,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
     protected function initPropertiesFromMethods()
     {
-        $reflection = new \ReflectionClass(get_class($this->class));
+        $reflection = new ReflectionClass(get_class($this->class));
         $casts = $this->class->getCasts();
 
         foreach ($this->methods as $methodStmt) {
@@ -275,7 +278,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             }
 
             if (is_subclass_of($caster, CastsAttributes::class)) {
-                $ref = new \ReflectionClass($caster);
+                $ref = new ReflectionClass($caster);
                 $method = $ref->getMethod('get');
                 if ($type = $method->getReturnType()) {
                     // Get return type which defined in `CastsAttributes::get()`.
@@ -285,10 +288,10 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         }
     }
 
-    protected function getMethodRelationName(\ReflectionMethod $method): ?string
+    protected function getMethodRelationName(ReflectionMethod $method): ?string
     {
         $returnType = $method->getReturnType();
-        if ($returnType instanceof \ReflectionNamedType) {
+        if ($returnType instanceof ReflectionNamedType) {
             $array = explode('\\', $returnType->getName());
             return Str::camel(array_pop($array));
         }

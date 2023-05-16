@@ -17,6 +17,7 @@ use Hyperf\Metric\Aspect\CounterAnnotationAspect;
 use Hyperf\Metric\Aspect\HistogramAnnotationAspect;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Listener\OnBeforeHandle;
+use Hyperf\Metric\Listener\OnCoroutineServerStart;
 use Hyperf\Metric\Listener\OnMetricFactoryReady;
 use Hyperf\Metric\Listener\OnPipeMessage;
 use Hyperf\Metric\Listener\OnWorkerStart;
@@ -54,6 +55,7 @@ class ConfigProvider
                 OnMetricFactoryReady::class,
                 OnBeforeHandle::class,
                 OnWorkerStart::class,
+                OnCoroutineServerStart::class,
             ],
             'processes' => [
                 MetricProcess::class,

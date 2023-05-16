@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Resource\Stubs\Resources;
 
+use function Hyperf\Support\optional;
+
 class AuthorResourceWithOptionalRelationship extends PostResource
 {
     public function toArray(): array

@@ -19,15 +19,17 @@ use DateTimeZone;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Exception;
+use Hyperf\Collection\Arr;
 use Hyperf\HttpMessage\Upload\UploadedFile;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\Validation\Rules\Exists;
 use Hyperf\Validation\Rules\Unique;
 use Hyperf\Validation\ValidationData;
 use InvalidArgumentException;
 use SplFileInfo;
 use Throwable;
+
+use function Hyperf\Collection\last;
 
 trait ValidatesAttributes
 {
@@ -1135,7 +1137,7 @@ trait ValidatesAttributes
     /**
      * Require a certain number of parameters to be present.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function requireParameterCount(int $count, array $parameters, string $rule)
     {
@@ -1217,7 +1219,7 @@ trait ValidatesAttributes
     /**
      * Get a DateTime instance from a string.
      *
-     * @return null|\DateTime
+     * @return null|DateTime
      */
     protected function getDateTimeWithOptionalFormat(string $format, ?string $value)
     {
@@ -1234,7 +1236,7 @@ trait ValidatesAttributes
     /**
      * Get a DateTime instance from a string with no format.
      *
-     * @return null|\DateTime
+     * @return null|DateTime
      */
     protected function getDateTime(string $value)
     {
@@ -1503,7 +1505,7 @@ trait ValidatesAttributes
      *
      * @param mixed $first
      * @param mixed $second
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function compare($first, $second, string $operator): bool
     {

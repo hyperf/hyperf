@@ -2,7 +2,7 @@
 
 [Swoole Tracker](https://business.swoole.com/tracker/index)是 Swoole 官方推出的一整套企業級包括 PHP 和  Swoole 分析除錯工具以及應用效能管理（APM）平臺，針對常規的 FPM 和 Swoole 常駐程序的業務，提供全面的效能監控、分析和除錯的解決方案。（曾命名：Swoole Enterprise）
 
-Swoole Tracker 能夠幫助企業自動分析並彙總統計關鍵系統呼叫並智慧準確的定位到具體的 PHP 業務程式碼，實現業務應用效能最優化、強大的除錯工具鏈為企業業務保駕護航、提高 IT 生產效率。
+Swoole Tracker 能夠幫助企業自動分析並彙總統計關鍵系統呼叫並智慧準確的定位到具體的 PHP 業務程式碼，實現業務應用效能最最佳化、強大的除錯工具鏈為企業業務保駕護航、提高 IT 生產效率。
 
 - 時刻掌握應用架構模型
 > 自動發現應用依賴拓撲結構和展示，時刻掌握應用的架構模型
@@ -230,7 +230,7 @@ php -r "trackerAnalyzeLeak();"
 
 表示第 8 次呼叫 `http_server.php` 的 125 行和 129 行，分別洩漏了 12928 位元組記憶體，總共洩漏了 25216 位元組記憶體。
 
-通過呼叫 `trackerCleanLeak()` 可以清除洩漏日誌，重新開始。[瞭解更多記憶體檢測工具使用細節](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1941569)
+透過呼叫 `trackerCleanLeak()` 可以清除洩漏日誌，重新開始。[瞭解更多記憶體檢測工具使用細節](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1941569)
 
 如果需要在 Hyperf 中檢測 HTTP Server 中的記憶體洩漏，可以在 `config/autoload/middlewares.php` 新增一個全域性中介軟體：
 

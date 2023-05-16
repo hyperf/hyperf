@@ -12,13 +12,15 @@ declare(strict_types=1);
 namespace Hyperf\Scout;
 
 use Closure;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Collection as BaseCollection;
+
+use function Hyperf\Tappable\tap;
 
 class Builder
 {

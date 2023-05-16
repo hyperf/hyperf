@@ -97,6 +97,9 @@ class Sender
     }
 
     /**
+     * The responses of coroutine style swoole server.
+     * Or connections of swow server.
+     * And so on.
      * @param null|Connection|Response $response
      */
     public function setResponse(int $fd, mixed $response): void
@@ -111,6 +114,11 @@ class Sender
     public function getResponse(int $fd): mixed
     {
         return $this->responses[$fd] ?? null;
+    }
+
+    public function getResponses(): array
+    {
+        return $this->responses;
     }
 
     public function getFdAndMethodFromProxyMethod(string $method, array $arguments): array

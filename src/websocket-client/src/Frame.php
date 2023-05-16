@@ -11,9 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\WebSocketClient;
 
+use Stringable;
 use Swoole\WebSocket\Frame as SwFrame;
 
-class Frame implements \Stringable
+class Frame implements Stringable
 {
     public bool $finish = true;
 

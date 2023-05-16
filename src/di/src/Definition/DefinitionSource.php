@@ -13,6 +13,7 @@ namespace Hyperf\Di\Definition;
 
 use Hyperf\Di\ReflectionManager;
 use ReflectionFunctionAbstract;
+use ReflectionNamedType;
 
 use function class_exists;
 use function interface_exists;
@@ -73,7 +74,7 @@ class DefinitionSource implements DefinitionSourceInterface
             }
 
             $parameterType = $parameter->getType();
-            if ($parameterType instanceof \ReflectionNamedType && ! $parameterType->isBuiltin()) {
+            if ($parameterType instanceof ReflectionNamedType && ! $parameterType->isBuiltin()) {
                 $parameters[$index] = new Reference($parameterType->getName());
             }
         }
@@ -101,15 +102,21 @@ class DefinitionSource implements DefinitionSourceInterface
      */
     private function normalizeDefinition(string $identifier, $definition): ?DefinitionInterface
     {
+        if ($definition instanceof PriorityDefinition) {
+            $definition = $definition->getDefinition();
+        }
+
         if (is_string($definition) && class_exists($definition)) {
             if (method_exists($definition, '__invoke')) {
                 return new FactoryDefinition($identifier, $definition, []);
             }
             return $this->autowire($identifier, new ObjectDefinition($identifier, $definition));
         }
+
         if (is_callable($definition)) {
             return new FactoryDefinition($identifier, $definition, []);
         }
+
         return null;
     }
 

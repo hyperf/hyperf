@@ -20,6 +20,7 @@ use Hyperf\Nsq\Pool\NsqPoolFactory;
 use Hyperf\Pool\Exception\ConnectionException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class Nsq
 {
@@ -77,7 +78,7 @@ class Nsq
                         $result = null;
                         try {
                             $result = $callback($message);
-                        } catch (\Throwable $throwable) {
+                        } catch (Throwable $throwable) {
                             $result = Result::DROP;
                             $this->logger->error('Subscribe failed, ' . (string) $throwable);
                         }
@@ -134,7 +135,7 @@ class Nsq
         $connection = $this->pool->get();
         try {
             return $connection->call($closure);
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             $connection->close();
             throw $throwable;
         } finally {

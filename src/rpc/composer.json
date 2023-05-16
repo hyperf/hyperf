@@ -17,8 +17,9 @@
     },
     "require": {
         "php": ">=8.0",
+        "hyperf/codec": "~3.0.0",
         "hyperf/contract": "~3.0.0",
-        "hyperf/utils": "~3.0.0"
+        "hyperf/support": "~3.0.0"
     },
     "autoload": {
         "psr-4": {

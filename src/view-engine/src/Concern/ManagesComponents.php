@@ -12,11 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Concern;
 
 use Closure;
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\HtmlString;
 use Hyperf\ViewEngine\View;
 use InvalidArgumentException;
+
+use function Hyperf\Collection\last;
 
 trait ManagesComponents
 {

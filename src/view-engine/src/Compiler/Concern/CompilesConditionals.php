@@ -62,7 +62,8 @@ trait CompilesConditionals
     protected function compileEnv(string $environments): string
     {
         $config = ConfigInterface::class;
-        return "<?php if(\\in_array(\$__env->getContainer()->get({$config}::class)->get('app_env'), {$environments})): ?>";
+        $environments = trim($environments, '()[]');
+        return "<?php if(\\in_array(\$__env->getContainer()->get({$config}::class)->get('app_env'), [{$environments}])): ?>";
     }
 
     /**
@@ -78,7 +79,7 @@ trait CompilesConditionals
      */
     protected function compileProduction(): string
     {
-        return $this->compileEnv("['prod', 'production']");
+        return $this->compileEnv("'prod', 'production'");
     }
 
     /**

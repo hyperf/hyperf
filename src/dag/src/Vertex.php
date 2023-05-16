@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Dag;
 
+use Closure;
+
 class Vertex
 {
     public ?string $key = null;
@@ -32,7 +34,7 @@ class Vertex
 
     public static function make(callable $job, string $key = null): self
     {
-        $closure = \Closure::fromCallable($job);
+        $closure = Closure::fromCallable($job);
         if ($key === null) {
             $key = spl_object_hash($closure);
         }

@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils\Stub;
 
-class FooException extends \Exception
+use Exception;
+
+class FooException extends Exception
 {
     public function __construct($code = 0, $message = '')
     {

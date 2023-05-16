@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Uri;
 
+use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 use Stringable;
 
@@ -78,7 +79,7 @@ class Uri implements UriInterface, Stringable
         if ($uri) {
             $parts = parse_url($uri);
             if ($parts === false) {
-                throw new \InvalidArgumentException("Unable to parse URI: {$uri}");
+                throw new InvalidArgumentException("Unable to parse URI: {$uri}");
             }
 
             $this->applyParts($parts);
@@ -104,9 +105,8 @@ class Uri implements UriInterface, Stringable
      * - If a fragment is present, it MUST be prefixed by "#".
      *
      * @see http://tools.ietf.org/html/rfc3986#section-4.1
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return self::composeComponents(
             $this->scheme,
@@ -128,7 +128,7 @@ class Uri implements UriInterface, Stringable
      * @see https://tools.ietf.org/html/rfc3986#section-3.1
      * @return string the URI scheme
      */
-    public function getScheme()
+    public function getScheme(): string
     {
         return $this->scheme;
     }
@@ -147,7 +147,7 @@ class Uri implements UriInterface, Stringable
      * @see https://tools.ietf.org/html/rfc3986#section-3.2
      * @return string the URI authority, in "[user-info@]host[:port]" format
      */
-    public function getAuthority()
+    public function getAuthority(): string
     {
         $authority = $this->host;
         if ($this->userInfo !== '') {
@@ -171,7 +171,7 @@ class Uri implements UriInterface, Stringable
      *
      * @return string the URI user information, in "username[:password]" format
      */
-    public function getUserInfo()
+    public function getUserInfo(): string
     {
         return $this->userInfo;
     }
@@ -185,7 +185,7 @@ class Uri implements UriInterface, Stringable
      * @see http://tools.ietf.org/html/rfc3986#section-3.2.2
      * @return string the URI host
      */
-    public function getHost()
+    public function getHost(): string
     {
         return $this->host;
     }
@@ -202,7 +202,7 @@ class Uri implements UriInterface, Stringable
      *
      * @return null|int the URI port
      */
-    public function getPort()
+    public function getPort(): ?int
     {
         return $this->port;
     }
@@ -228,7 +228,7 @@ class Uri implements UriInterface, Stringable
      * @see https://tools.ietf.org/html/rfc3986#section-3.3
      * @return string the URI path
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -249,7 +249,7 @@ class Uri implements UriInterface, Stringable
      * @see https://tools.ietf.org/html/rfc3986#section-3.4
      * @return string the URI query string
      */
-    public function getQuery()
+    public function getQuery(): string
     {
         return $this->query;
     }
@@ -267,7 +267,7 @@ class Uri implements UriInterface, Stringable
      * @see https://tools.ietf.org/html/rfc3986#section-3.5
      * @return string the URI fragment
      */
-    public function getFragment()
+    public function getFragment(): string
     {
         return $this->fragment;
     }
@@ -282,9 +282,9 @@ class Uri implements UriInterface, Stringable
      *
      * @param string $scheme the scheme to use with the new instance
      * @return static a new instance with the specified scheme
-     * @throws \InvalidArgumentException for invalid or unsupported schemes
+     * @throws InvalidArgumentException for invalid or unsupported schemes
      */
-    public function withScheme($scheme)
+    public function withScheme($scheme): static
     {
         $scheme = $this->filterScheme($scheme);
         if ($this->scheme === $scheme) {
@@ -310,7 +310,7 @@ class Uri implements UriInterface, Stringable
      * @param null|string $password the password associated with $user
      * @return static a new instance with the specified user information
      */
-    public function withUserInfo($user, $password = null)
+    public function withUserInfo($user, $password = null): static
     {
         $info = $user;
         if ($password !== '') {
@@ -333,9 +333,9 @@ class Uri implements UriInterface, Stringable
      *
      * @param string $host the hostname to use with the new instance
      * @return static a new instance with the specified host
-     * @throws \InvalidArgumentException for invalid hostnames
+     * @throws InvalidArgumentException for invalid hostnames
      */
-    public function withHost($host)
+    public function withHost($host): static
     {
         $host = $this->filterHost($host);
         if ($this->host === $host) {
@@ -359,9 +359,9 @@ class Uri implements UriInterface, Stringable
      * @param null|int|string $port the port to use with the new instance; a null value
      *                              removes the port information
      * @return static a new instance with the specified port
-     * @throws \InvalidArgumentException for invalid ports
+     * @throws InvalidArgumentException for invalid ports
      */
-    public function withPort($port)
+    public function withPort($port): static
     {
         $port = $this->filterPort($port);
         if ($this->port === $port) {
@@ -389,9 +389,9 @@ class Uri implements UriInterface, Stringable
      *
      * @param string $path the path to use with the new instance
      * @return static a new instance with the specified path
-     * @throws \InvalidArgumentException for invalid paths
+     * @throws InvalidArgumentException for invalid paths
      */
-    public function withPath($path)
+    public function withPath($path): static
     {
         $path = $this->filterPath($path);
         if ($this->path === $path) {
@@ -413,9 +413,9 @@ class Uri implements UriInterface, Stringable
      *
      * @param string $query the query string to use with the new instance
      * @return static a new instance with the specified query string
-     * @throws \InvalidArgumentException for invalid query strings
+     * @throws InvalidArgumentException for invalid query strings
      */
-    public function withQuery($query)
+    public function withQuery($query): static
     {
         $query = $this->filterQueryAndFragment($query);
         if ($this->query === $query) {
@@ -475,7 +475,7 @@ class Uri implements UriInterface, Stringable
      * @param string $fragment the fragment to use with the new instance
      * @return static a new instance with the specified fragment
      */
-    public function withFragment($fragment)
+    public function withFragment($fragment): static
     {
         $fragment = $this->filterQueryAndFragment($fragment);
         if ($this->fragment === $fragment) {
@@ -499,10 +499,9 @@ class Uri implements UriInterface, Stringable
      * `file:///` is the more common syntax for the file scheme anyway (Chrome for example redirects to
      * that format).
      *
-     * @return string
      * @see https://tools.ietf.org/html/rfc3986#section-5.3
      */
-    public static function composeComponents(string $scheme, string $authority, string $path, string $query, string $fragment)
+    public static function composeComponents(string $scheme, string $authority, string $path, string $query, string $fragment): string
     {
         $uri = '';
         if ($scheme != '') {
@@ -543,17 +542,17 @@ class Uri implements UriInterface, Stringable
     /**
      * Common state validate method.
      */
-    private function validateState()
+    private function validateState(): void
     {
         if ($this->host === '' && ($this->scheme === 'http' || $this->scheme === 'https')) {
             $this->host = self::DEFAULT_HTTP_HOST;
         }
         if ($this->getAuthority() === '') {
             if (str_starts_with($this->path, '//')) {
-                throw new \InvalidArgumentException('The path of a URI without an authority must not start with two slashes "//"');
+                throw new InvalidArgumentException('The path of a URI without an authority must not start with two slashes "//"');
             }
             if ($this->scheme === '' && str_contains(explode('/', $this->path, 2)[0], ':')) {
-                throw new \InvalidArgumentException('A relative URI must not have a path beginning with a segment containing a colon');
+                throw new InvalidArgumentException('A relative URI must not have a path beginning with a segment containing a colon');
             }
         } elseif (isset($this->path[0]) && $this->path[0] !== '/') {
             $this->path = '/' . $this->path;
@@ -565,7 +564,7 @@ class Uri implements UriInterface, Stringable
      *
      * @param array $parts array of parse_url parts to apply
      */
-    private function applyParts(array $parts)
+    private function applyParts(array $parts): void
     {
         $this->scheme = isset($parts['scheme']) ? $this->filterScheme($parts['scheme']) : '';
         $this->userInfo = $parts['user'] ?? '';
@@ -602,7 +601,7 @@ class Uri implements UriInterface, Stringable
 
         $port = (int) $port;
         if (1 > $port || 0xFFFF < $port) {
-            throw new \InvalidArgumentException(sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
+            throw new InvalidArgumentException(sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
         }
 
         return $port;
@@ -621,7 +620,7 @@ class Uri implements UriInterface, Stringable
     /**
      * Filters the path of a URI.
      *
-     * @throws \InvalidArgumentException if the path is invalid
+     * @throws InvalidArgumentException if the path is invalid
      */
     private function filterPath(string $path): string
     {

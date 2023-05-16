@@ -18,6 +18,7 @@ use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Tracer;
+use Throwable;
 
 class DbAspect extends AbstractAspect
 {
@@ -41,11 +42,11 @@ class DbAspect extends AbstractAspect
         }
 
         $arguments = $proceedingJoinPoint->arguments['keys'];
-        $span = $this->startSpan('Db' . '::' . $arguments['name']);
+        $span = $this->startSpan('Db::' . $arguments['name']);
         $span->setTag($this->spanTagManager->get('db', 'db.query'), json_encode($arguments['arguments']));
         try {
             $result = $proceedingJoinPoint->process();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $span->setTag('error', true);
             $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
             throw $e;

@@ -19,6 +19,8 @@
         "php": ">=8.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/framework": "~3.0.0",
+        "hyperf/serializer": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0",

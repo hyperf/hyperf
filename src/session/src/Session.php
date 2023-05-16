@@ -11,10 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Session;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\SessionInterface;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use SessionHandlerInterface;
+
+use function Hyperf\Collection\data_get;
+use function Hyperf\Collection\data_set;
 
 /**
  * This is a data class, please create a new instance for each request.

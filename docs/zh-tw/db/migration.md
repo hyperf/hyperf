@@ -6,7 +6,7 @@
 
 # 生成遷移
 
-通過 `gen:migration` 生成一個遷移檔案，命令後面跟的是一個檔名引數，通常為這個遷移要打算做的事情。
+透過 `gen:migration` 生成一個遷移檔案，命令後面跟的是一個檔名引數，通常為這個遷移要打算做的事情。
 
 ```bash
 php bin/hyperf.php gen:migration create_users_table
@@ -59,7 +59,7 @@ class CreateUsersTable extends Migration
 
 # 執行遷移
 
-通過執行 `migrate` 命令執行所有尚未完成的遷移檔案：
+透過執行 `migrate` 命令執行所有尚未完成的遷移檔案：
 
 ```bash
 php bin/hyperf.php migrate
@@ -75,7 +75,7 @@ php bin/hyperf.php migrate --force
 
 ## 回滾遷移
 
-若您希望回滾最後一次的遷移，可以通過 `migrate:rollback` 命令回滾最後一次的遷移，注意一次遷移可能會包含多個遷移檔案：
+若您希望回滾最後一次的遷移，可以透過 `migrate:rollback` 命令回滾最後一次的遷移，注意一次遷移可能會包含多個遷移檔案：
 
 ```bash
 php bin/hyperf.php migrate:rollback
@@ -87,7 +87,7 @@ php bin/hyperf.php migrate:rollback
 php bin/hyperf.php migrate:rollback --step=5
 ```
 
-如果您希望回滾所有的遷移，可以通過 `migrate:reset` 來回滾：
+如果您希望回滾所有的遷移，可以透過 `migrate:reset` 來回滾：
 
 ```bash
 php bin/hyperf.php migrate:reset
@@ -104,7 +104,7 @@ php bin/hyperf.php migrate:refresh
 php bin/hyperf.php migrate:refresh --seed
 ```
 
-通過 `--step` 引數指定回滾和重建次數，比如以下命令將回滾並重新執行最後 5 次遷移：
+透過 `--step` 引數指定回滾和重建次數，比如以下命令將回滾並重新執行最後 5 次遷移：
 
 ```bash
 php bin/hyperf.php migrate:refresh --step=5
@@ -112,7 +112,7 @@ php bin/hyperf.php migrate:refresh --step=5
 
 ## 重建資料庫
 
-通過 `migrate:fresh` 命令可以高效地重建整個資料庫，這個命令會先刪除所有的資料庫，然後再執行 `migrate` 命令：
+透過 `migrate:fresh` 命令可以高效地重建整個資料庫，這個命令會先刪除所有的資料庫，然後再執行 `migrate` 命令：
 
 ```bash
 php bin/hyperf.php migrate:fresh
@@ -123,11 +123,11 @@ php bin/hyperf.php migrate:fresh --seed
 
 # 資料表
 
-在遷移檔案中主要通過 `Hyperf\Database\Schema\Schema` 類來定義資料表和管理遷移流程。
+在遷移檔案中主要透過 `Hyperf\Database\Schema\Schema` 類來定義資料表和管理遷移流程。
 
 ## 建立資料表
 
-通過 `create` 方法來建立新的資料庫表。 `create` 方法接受兩個引數：第一個引數為資料表的名稱，第二個引數是一個 `閉包(Closure)`，此閉包會接收一個用於定義新資料表的 `Hyperf\Database\Schema\Blueprint` 物件：
+透過 `create` 方法來建立新的資料庫表。 `create` 方法接受兩個引數：第一個引數為資料表的名稱，第二個引數是一個 `閉包(Closure)`，此閉包會接收一個用於定義新資料表的 `Hyperf\Database\Schema\Blueprint` 物件：
 
 ```php
 <?php
@@ -163,7 +163,7 @@ $table->temporary();
 
 ## 重新命名資料表
 
-若您希望重新命名一個數據表，可以通過 `rename` 方法：
+若您希望重新命名一個數據表，可以透過 `rename` 方法：
 
 ```php
 Schema::rename($from, $to);
@@ -175,7 +175,7 @@ Schema::rename($from, $to);
 
 ## 刪除資料表
 
-刪除一個已存在的資料表，可以通過 `drop` 或 `dropIfExists` 方法：
+刪除一個已存在的資料表，可以透過 `drop` 或 `dropIfExists` 方法：
 
 ```php
 Schema::drop('users');
@@ -185,7 +185,7 @@ Schema::dropIfExists('users');
 
 ## 檢查資料表或欄位是否存在
 
-可以通過 `hasTable` 和 `hasColumn` 方法來檢查資料表或欄位是否存在:
+可以透過 `hasTable` 和 `hasColumn` 方法來檢查資料表或欄位是否存在:
 
 ```php
 if (Schema::hasTable('users')) {
@@ -199,7 +199,7 @@ if (Schema::hasColumn('name', 'email')) {
 
 ## 資料庫連線選項
 
-如果在同時管理多個數據庫的情況下，不同的遷移會對應不同的資料庫連線，那麼此時我們可以在遷移檔案中通過重寫父類的 `$connection` 類屬性來定義不同的資料庫連線：
+如果在同時管理多個數據庫的情況下，不同的遷移會對應不同的資料庫連線，那麼此時我們可以在遷移檔案中透過重寫父類的 `$connection` 類屬性來定義不同的資料庫連線：
 
 ```php
 <?php
@@ -347,7 +347,7 @@ Schema::table('users', function (Blueprint $table) {
 
 ### 重新命名欄位
 
-可以通過 `renameColumn` 方法來重新命名欄位：
+可以透過 `renameColumn` 方法來重新命名欄位：
 
 ```php
 <?php
@@ -362,7 +362,7 @@ Schema::table('users', function (Blueprint $table) {
 
 ### 刪除欄位
 
-可以通過 `dropColumn` 方法來刪除欄位：
+可以透過 `dropColumn` 方法來刪除欄位：
 
 ```php
 <?php
@@ -390,7 +390,7 @@ Schema::table('users', function (Blueprint $table) {
 ### 建立索引
 
 ###  唯一索引
-通過 `unique` 方法來建立一個唯一索引：
+透過 `unique` 方法來建立一個唯一索引：
 
 ```php
 <?php
@@ -435,7 +435,7 @@ $table->index(['account_id', 'created_at'], '');
 
 ### 重新命名索引
 
-您可通過 `renameIndex` 方法重新命名一個索引的名稱：
+您可透過 `renameIndex` 方法重新命名一個索引的名稱：
 
 ```php
 <?php
@@ -445,7 +445,7 @@ $table->renameIndex('from', 'to');
 
 ### 刪除索引
 
-您可通過下面的方法來刪除索引，預設情況下遷移程式會自動將資料庫名稱、索引的欄位名及索引型別簡單地連線在一起作為名稱。舉例如下:
+您可透過下面的方法來刪除索引，預設情況下遷移程式會自動將資料庫名稱、索引的欄位名及索引型別簡單地連線在一起作為名稱。舉例如下:
 
 | 命令                                                   | 描述                      |
 | ------------------------------------------------------ | ------------------------- |
@@ -454,7 +454,7 @@ $table->renameIndex('from', 'to');
 | $table->dropIndex('geo_state_index');                  | 從 geo 表中刪除基本索引   |
 | $table->dropSpatialIndex('geo_location_spatialindex'); | 從 geo 表中刪除空間索引   |
 
-您也可以通過傳遞欄位陣列到 `dropIndex` 方法，遷移程式會根據表名、欄位和鍵型別生成的索引名稱：
+您也可以透過傳遞欄位陣列到 `dropIndex` 方法，遷移程式會根據表名、欄位和鍵型別生成的索引名稱：
 
 ```php
 <?php
@@ -466,7 +466,7 @@ Schema:table('users', function (Blueprint $table) {
 
 ### 外來鍵約束
 
-我們還可以通過 `foreign`、`references`、`on` 方法建立資料庫層的外來鍵約束。比如我們讓 `posts` 表定義一個引用 `users` 表的 `id` 欄位的 `user_id` 欄位：
+我們還可以透過 `foreign`、`references`、`on` 方法建立資料庫層的外來鍵約束。比如我們讓 `posts` 表定義一個引用 `users` 表的 `id` 欄位的 `user_id` 欄位：
 
 ```php
 Schema::table('posts', function (Blueprint $table) {
@@ -484,7 +484,7 @@ $table->foreign('user_id')
       ->onDelete('cascade');
 ```
 
-您可以通過 `dropForeign` 方法來刪除外來鍵。外來鍵約束採用的命名方式與索引相同，然後加上 `_foreign` 字尾：
+您可以透過 `dropForeign` 方法來刪除外來鍵。外來鍵約束採用的命名方式與索引相同，然後加上 `_foreign` 字尾：
 
 ```php
 $table->dropForeign('posts_user_id_foreign');

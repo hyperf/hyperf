@@ -17,12 +17,15 @@
     },
     "require": {
         "php": ">=8.0",
-        "psr/container": "^1.0|^2.0",
-        "psr/log": "^1.0|^2.0|^3.0",
-        "psr/event-dispatcher": "^1.0",
-        "symfony/console": "^5.0|^6.0",
         "hyperf/contract": "~3.0.0",
-        "hyperf/utils": "~3.0.0"
+        "hyperf/engine": "^1.10|^2.8",
+        "hyperf/support": "~3.0.0",
+        "hyperf/tappable": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
+        "psr/container": "^1.0|^2.0",
+        "psr/event-dispatcher": "^1.0",
+        "psr/log": "^1.0|^2.0|^3.0",
+        "symfony/console": "^5.0|^6.0"
     },
     "suggest": {
         "hyperf/framework": "Dump the info after server start.",

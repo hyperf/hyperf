@@ -18,11 +18,18 @@
     "require": {
         "php": ">=7.2",
         "doctrine/inflector": "^2.0",
+        "hyperf/code-parser": "~3.0.0",
+        "hyperf/codec": "~3.0.0",
+        "hyperf/collection": "~3.0.0",
         "hyperf/context": "~3.0.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/coordinator": "~3.0.0",
+        "hyperf/coroutine": "~3.0.0",
         "hyperf/engine": "^1.2|^2.0",
-        "hyperf/macroable": "~3.0.0"
+        "hyperf/macroable": "~3.0.0",
+        "hyperf/serializer": "~3.0.0",
+        "hyperf/stringable": "~3.0.0",
+        "hyperf/support": "~3.0.0"
     },
     "suggest": {
         "ext-swoole": "Required to use methods related to swoole (>=4.5).",
@@ -30,7 +37,9 @@
         "symfony/serializer": "Required to use SymfonyNormalizer (^5.0|^6.0)",
         "symfony/property-access": "Required to use SymfonyNormalizer (^5.0|^6.0)",
         "hyperf/di": "Required to use ExceptionNormalizer",
-        "nikic/php-parser": "Required to use PhpParser. (^4.0)"
+        "nikic/php-parser": "Required to use PhpParser. (^4.0)",
+        "ramsey/uuid": "Required to use uuid and orderedUuid methods",
+        "symfony/uid": "Required to use ulid method"
     },
     "autoload": {
         "files": [
@@ -49,9 +58,6 @@
         "sort-packages": true
     },
     "extra": {
-        "hyperf": {
-            "config": "Hyperf\\Utils\\ConfigProvider"
-        },
         "branch-alias": {
             "dev-master": "3.0-dev"
         }

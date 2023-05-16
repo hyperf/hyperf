@@ -1,6 +1,6 @@
 # 自定義進程
 
-[hyperf/process](https://github.com/hyperf/process) 可以添加一個用户自定義的工作進程，此函數通常用於創建一個特殊的工作進程，用於監控、上報或者其他特殊的任務。在 Server 啟動時會自動創建進程，並執行指定的子進程函數，進程意外退出時，Server 會重新拉起進程。
+[hyperf/process](https://github.com/hyperf/process) 可以添加一個用户自定義的工作進程，此函數通常用於創建一個特殊的工作進程，用於監控、上報或者其他特殊的任務。在 Server 啓動時會自動創建進程，並執行指定的子進程函數，進程意外退出時，Server 會重新拉起進程。
 
 ## 創建一個自定義進程
 
@@ -38,7 +38,7 @@ return [
 
 ### 通過註解註冊
 
-只需在自定義進程類上定義 `@Process` 註解，Hyperf 會收集並自動完成註冊工作：
+只需在自定義進程類上定義 `#[Process]` 註解，Hyperf 會收集並自動完成註冊工作：
 
 ```php
 <?php
@@ -59,11 +59,11 @@ class FooProcess extends AbstractProcess
 }
 ```
 
-> 使用 `@Process` 註解時需 `use Hyperf\Process\Annotation\Process;` 命名空間；   
+> 使用 `#[Process]` 註解時需 `use Hyperf\Process\Annotation\Process;` 命名空間；   
 
-## 為進程啟動加上條件
+## 為進程啓動加上條件
 
-有些時候，並不是所有時候都應該啟動一個自定義進程，一個自定義進程的啟動與否可能會根據某些配置或者某些條件來決定，我們可以通過在自定義進程類內重寫 `isEnable(): bool` 方法來實現，默認返回 `true`，即會跟隨服務一同啟動，如方法返回 `false`，則服務啟動時不會啟動該自定義進程。
+有些時候，並不是所有時候都應該啓動一個自定義進程，一個自定義進程的啓動與否可能會根據某些配置或者某些條件來決定，我們可以通過在自定義進程類內重寫 `isEnable(): bool` 方法來實現，默認返回 `true`，即會跟隨服務一同啓動，如方法返回 `false`，則服務啓動時不會啓動該自定義進程。
 
 ```php
 <?php
@@ -84,7 +84,7 @@ class FooProcess extends AbstractProcess
     
     public function isEnable($server): bool
     {
-        // 不跟隨服務啟動一同啟動
+        // 不跟隨服務啓動一同啓動
         return false;   
     }
 }
@@ -92,7 +92,7 @@ class FooProcess extends AbstractProcess
 
 ## 設置自定義進程
 
-自定義進程存在一些可設置的參數，均可以通過 在子類上重寫參數對應的屬性 或 在 `@Process` 註解內定義對應的屬性 兩種方式來進行定義。
+自定義進程存在一些可設置的參數，均可以通過 在子類上重寫參數對應的屬性 或 在 `#[Process]` 註解內定義對應的屬性 兩種方式來進行定義。
 
 ```php
 <?php
@@ -127,7 +127,7 @@ class FooProcess extends AbstractProcess
     public int $pipeType = 2;
 
     /**
-     * 是否啟用協程
+     * 是否啓用協程
      */
     public bool $enableCoroutine = true;
 }

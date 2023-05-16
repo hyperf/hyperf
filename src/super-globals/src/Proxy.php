@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\SuperGlobals;
 
 use ArrayAccess;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\Arrayable;
 use Hyperf\SuperGlobals\Exception\ContainerNotFoundException;
 use Hyperf\SuperGlobals\Exception\RequestNotFoundException;
-use Hyperf\Utils\ApplicationContext;
 use JsonSerializable;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;

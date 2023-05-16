@@ -28,10 +28,12 @@
     },
     "require": {
         "php": ">=8.0",
+        "hyperf/codec": "~3.0.0",
         "hyperf/config-center": "~3.0.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/guzzle": "~3.0.0",
         "hyperf/nacos": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0"
     },
     "suggest": {

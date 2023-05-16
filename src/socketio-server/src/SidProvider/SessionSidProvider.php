@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\Session\Session;
 use Hyperf\SocketIOServer\SocketIO;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use SessionHandlerInterface;
 
@@ -69,7 +70,7 @@ class SessionSidProvider implements SidProviderInterface
     {
         $handler = $this->config->get('session.handler');
         if (! $handler || ! class_exists($handler)) {
-            throw new \InvalidArgumentException('Invalid handler of session');
+            throw new InvalidArgumentException('Invalid handler of session');
         }
         return $this->container->get($handler);
     }

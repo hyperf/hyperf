@@ -32,6 +32,8 @@ use PhpParser\Node\Stmt\Trait_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\NodeVisitorAbstract;
 
+use function Hyperf\Support\value;
+
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
     /**
@@ -210,7 +212,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     private function shouldRewrite(ClassMethod $node): bool
     {
-        if ($this->visitorMetadata->classLike == Node\Stmt\Interface_::class) {
+        if ($this->visitorMetadata->classLike == Node\Stmt\Interface_::class || $node->isAbstract()) {
             return false;
         }
 

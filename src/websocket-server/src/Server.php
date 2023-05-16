@@ -37,7 +37,7 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server as AsyncStyleServer;
 use Hyperf\Server\ServerManager;
-use Hyperf\Utils\SafeCaller;
+use Hyperf\Support\SafeCaller;
 use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Context as WsContext;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
@@ -49,8 +49,11 @@ use Swoole\Coroutine\Http\Server as SwCoServer;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Server as SwooleServer;
 use Swoole\WebSocket\Server as WebSocketServer;
-use Swow\Http\Server\Connection;
+use Swow\Psr7\Server\ServerConnection as SwowServerConnection;
 use Throwable;
+
+use function Hyperf\Coroutine\defer;
+use function Hyperf\Coroutine\wait;
 
 class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, OnCloseInterface, OnMessageInterface
 {
@@ -108,7 +111,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
     /**
      * @param \Swoole\Http\Request|\Swow\Http\Server\Request $request
-     * @param Connection|SwooleResponse $response
+     * @param SwooleResponse|SwowServerConnection $response
      */
     public function onHandShake($request, $response): void
     {
@@ -203,7 +206,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
         try {
             $instance->onMessage($server, $frame);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->logger->error((string) $exception);
         }
     }
@@ -228,7 +231,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         if ($instance instanceof OnCloseInterface) {
             try {
                 $instance->onClose($server, $fd, $reactorId);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $this->logger->error((string) $exception);
             }
         }
@@ -241,8 +244,9 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
     /**
      * @param mixed $request
+     * @param SwooleResponse|SwowServerConnection|WebSocketServer $server
      */
-    protected function deferOnOpen($request, string $class, SwooleResponse|WebSocketServer|Connection $server, int $fd)
+    protected function deferOnOpen($request, string $class, mixed $server, int $fd)
     {
         $instance = $this->container->get($class);
         if ($server instanceof WebSocketServer) {

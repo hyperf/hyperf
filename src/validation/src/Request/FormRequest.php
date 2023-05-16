@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation\Request;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\HttpServer\Request;
@@ -200,13 +201,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
         $rules = call_user_func_array([$this, 'rules'], []);
         $scene = $this->getScene();
         if ($scene && isset($this->scenes[$scene]) && is_array($this->scenes[$scene])) {
-            $newRules = [];
-            foreach ($this->scenes[$scene] as $field) {
-                if (array_key_exists($field, $rules)) {
-                    $newRules[$field] = $rules[$field];
-                }
-            }
-            return $newRules;
+            return Arr::only($rules, $this->scenes[$scene]);
         }
         return $rules;
     }

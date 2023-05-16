@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\LazyLoader;
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 trait LazyProxyTrait
 {

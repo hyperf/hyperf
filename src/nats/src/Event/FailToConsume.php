@@ -12,15 +12,16 @@ declare(strict_types=1);
 namespace Hyperf\Nats\Event;
 
 use Hyperf\Nats\AbstractConsumer;
+use Throwable;
 
 class FailToConsume extends Consume
 {
-    public function __construct(AbstractConsumer $consumer, $data, protected \Throwable $throwable)
+    public function __construct(AbstractConsumer $consumer, $data, protected Throwable $throwable)
     {
         parent::__construct($consumer, $data);
     }
 
-    public function getThrowable(): \Throwable
+    public function getThrowable(): Throwable
     {
         return $this->throwable;
     }

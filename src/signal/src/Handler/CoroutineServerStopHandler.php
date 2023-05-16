@@ -15,7 +15,6 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Process\ProcessManager;
-use Hyperf\Server\ServerManager;
 use Hyperf\Signal\SignalHandlerInterface;
 use Psr\Container\ContainerInterface;
 
@@ -40,10 +39,5 @@ class CoroutineServerStopHandler implements SignalHandlerInterface
     {
         ProcessManager::setRunning(false);
         CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
-
-        foreach (ServerManager::list() as [$type, $server]) {
-            // 循环关闭开启的服务
-            $server->shutdown();
-        }
     }
 }

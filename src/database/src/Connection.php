@@ -15,6 +15,8 @@ use Closure;
 use DateTimeInterface;
 use Doctrine\DBAL\Connection as DoctrineConnection;
 use Exception;
+use Generator;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Exception\InvalidArgumentException;
 use Hyperf\Database\Exception\QueryException;
@@ -25,11 +27,11 @@ use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Database\Schema\Builder as SchemaBuilder;
 use Hyperf\Database\Schema\Grammars\Grammar as SchemaGrammar;
-use Hyperf\Utils\Arr;
 use LogicException;
 use PDO;
 use PDOStatement;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Throwable;
 
 class Connection implements ConnectionInterface
 {
@@ -271,7 +273,7 @@ class Connection implements ConnectionInterface
     /**
      * Run a select statement against the database and returns a generator.
      */
-    public function cursor(string $query, array $bindings = [], bool $useReadPdo = true): \Generator
+    public function cursor(string $query, array $bindings = [], bool $useReadPdo = true): Generator
     {
         $statement = $this->run($query, $bindings, function ($query, $bindings) use ($useReadPdo) {
             if ($this->pretending()) {
@@ -447,7 +449,7 @@ class Connection implements ConnectionInterface
 
     /**
      * Log a query in the connection's query log.
-     * @param null|array|int|\Throwable $result
+     * @param null|array|int|Throwable $result
      */
     public function logQuery(string $query, array $bindings, ?float $time = null, $result = null)
     {
@@ -461,7 +463,7 @@ class Connection implements ConnectionInterface
     /**
      * Reconnect to the database.
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function reconnect()
     {
@@ -502,9 +504,7 @@ class Connection implements ConnectionInterface
     public function listen(Closure $callback)
     {
         // FIXME: Dynamic register query event.
-        if (isset($this->events)) {
-            $this->events->listen(Events\QueryExecuted::class, $callback);
-        }
+        $this->events?->listen(Events\QueryExecuted::class, $callback);
     }
 
     /**
@@ -594,7 +594,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the current PDO connection.
      *
-     * @return \PDO
+     * @return PDO
      */
     public function getPdo()
     {
@@ -608,7 +608,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the current PDO connection used for reading.
      *
-     * @return \PDO
+     * @return PDO
      */
     public function getReadPdo()
     {
@@ -637,7 +637,10 @@ class Connection implements ConnectionInterface
     {
         $this->transactions = 0;
 
-        $this->pdo = $pdo;
+        try {
+            $this->pdo = $pdo;
+        } catch (Exception) {
+        }
 
         return $this;
     }
@@ -650,7 +653,10 @@ class Connection implements ConnectionInterface
      */
     public function setReadPdo($pdo)
     {
-        $this->readPdo = $pdo;
+        try {
+            $this->readPdo = $pdo;
+        } catch (Exception) {
+        }
 
         return $this;
     }
@@ -959,7 +965,7 @@ class Connection implements ConnectionInterface
      * Get the PDO connection to use for a select query.
      *
      * @param bool $useReadPdo
-     * @return \PDO
+     * @return PDO
      */
     protected function getPdoForSelect($useReadPdo = true)
     {
@@ -1076,11 +1082,11 @@ class Connection implements ConnectionInterface
     /**
      * Handle a query exception.
      *
-     * @param \Exception $e
+     * @param Exception $e
      * @param string $query
      * @param array $bindings
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function handleQueryException($e, $query, $bindings, Closure $callback)
     {
@@ -1132,28 +1138,20 @@ class Connection implements ConnectionInterface
      */
     protected function fireConnectionEvent($event)
     {
-        if (! isset($this->events)) {
-            return;
-        }
-
-        switch ($event) {
-            case 'beganTransaction':
-                return $this->events->dispatch(new Events\TransactionBeginning($this));
-            case 'committed':
-                return $this->events->dispatch(new Events\TransactionCommitted($this));
-            case 'rollingBack':
-                return $this->events->dispatch(new Events\TransactionRolledBack($this));
-        }
+        return match ($event) {
+            'beganTransaction' => $this->event(new Events\TransactionBeginning($this)),
+            'committed' => $this->event(new Events\TransactionCommitted($this)),
+            'rollingBack' => $this->event(new Events\TransactionRolledBack($this)),
+        };
     }
 
     /**
      * Fire the given event if possible.
-     * @param mixed $event
+     * @param object $event
+     * @return object
      */
     protected function event($event)
     {
-        if (isset($this->events)) {
-            $this->events->dispatch($event);
-        }
+        return $this->events?->dispatch($event);
     }
 }

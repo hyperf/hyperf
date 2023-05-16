@@ -35,6 +35,11 @@ class Coordinator
         return $this->channel->isClosing();
     }
 
+    public function isClosing(): bool
+    {
+        return $this->channel->isClosing();
+    }
+
     /**
      * Wakeup all coroutines yielding for this coordinator.
      */

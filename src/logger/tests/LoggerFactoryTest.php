@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace HyperfTest\Logger;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Logger\LoggerFactory;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Logger\Stub\BarProcessor;
 use HyperfTest\Logger\Stub\FooHandler;
 use HyperfTest\Logger\Stub\FooProcessor;

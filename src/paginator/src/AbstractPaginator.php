@@ -14,11 +14,13 @@ namespace Hyperf\Paginator;
 use ArrayAccess;
 use ArrayIterator;
 use Closure;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
 use Hyperf\Contract\PaginatorInterface;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Traits\ForwardsCalls;
+
+use function Hyperf\Collection\collect;
 
 abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess
 {
@@ -28,6 +30,11 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess
      * The number of links to display on each side of current page link.
      */
     public int $onEachSide = 3;
+
+    /**
+     * The paginator options.
+     */
+    protected array $options = [];
 
     /**
      * All the items being paginated.
@@ -369,6 +376,14 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess
         $this->items = $collection;
 
         return $this;
+    }
+
+    /**
+     * Get the paginator options.
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
     }
 
     public function offsetExists(mixed $offset): bool

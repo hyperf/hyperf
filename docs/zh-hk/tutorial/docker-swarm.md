@@ -23,7 +23,7 @@ usermod -aG docker $USER
 
 ### 配置倉庫鏡像地址
 
-基於跨國線路訪問速度過慢等問題，我們可以為 Docker 配置倉庫鏡像地址，來改善這些網絡問題，如 [阿里雲(Aliyun) Docker 鏡像加速器](https://help.aliyun.com/document_detail/60750.html)，我們可以申請一個 `Docker` 加速器，然後配置到服務器上的 `/etc/docker/daemon.json` 文件，添加以下內容，然後重啟 `Docker`，下面的地址請填寫您自己獲得的加速器地址。
+基於跨國線路訪問速度過慢等問題，我們可以為 Docker 配置倉庫鏡像地址，來改善這些網絡問題，如 [阿里雲(Aliyun) Docker 鏡像加速器](https://help.aliyun.com/document_detail/60750.html)，我們可以申請一個 `Docker` 加速器，然後配置到服務器上的 `/etc/docker/daemon.json` 文件，添加以下內容，然後重啓 `Docker`，下面的地址請填寫您自己獲得的加速器地址。
 
 ```json
 {"registry-mirrors": ["https://xxxxx.mirror.aliyuncs.com"]}
@@ -43,7 +43,7 @@ $ vim /etc/ssh/sshd_config
 # 默認 Port 改為 2222
 Port 2222
 
-# 重啟服務
+# 重啓服務
 $ systemctl restart sshd.service
 ```
 
@@ -55,7 +55,7 @@ ssh -p 2222 root@host
 
 #### 安裝 Gitlab
 
-我們來通過 Docker 啟動一個 Gitlab 服務，如下：
+我們來通過 Docker 啓動一個 Gitlab 服務，如下：
 
 > hostname 一定要加，如果沒有域名可以直接填外網地址
 
@@ -234,7 +234,7 @@ cd /backup
 tar xf data.tar -C /
 ```
 
-最後只需要重啟容器即可
+最後只需要重啓容器即可
 
 ## 創建一個 Demo 項目
 
@@ -359,7 +359,7 @@ docker run --rm \
   kong:latest kong migrations bootstrap
 ```
 
-啟動
+啓動
 
 ```
 docker run -d --name kong \
@@ -443,7 +443,7 @@ grub2-set-default 0
 grub2-mkconfig -o /boot/grub2/grub.cfg
 ```
 
-- 重啟機器
+- 重啓機器
 
 ```
 reboot
@@ -477,7 +477,7 @@ $ git version
 $ yum install gitlab-runner
 ```
 
-### Service 重啟後，內網出現偶發的，容器無法觸達的問題，比如多次在其他容器，訪問此服務的接口，會出現 Connection refused
+### Service 重啓後，內網出現偶發的，容器無法觸達的問題，比如多次在其他容器，訪問此服務的接口，會出現 Connection refused
 
 這是由於 IP 不夠用導致，可以修改網段，增加可用 IP
 

@@ -18,7 +18,7 @@
   * [快速開始](zh-tw/quick-start/overview.md)
   * [常見問題](zh-tw/quick-start/questions.md)
   * [程式設計須知](zh-tw/quick-start/important.md)
-  * [視訊教程](https://space.bilibili.com/1176880220/channel/seriesdetail?sid=2121560)
+  * [影片教程](https://space.bilibili.com/1176880220/channel/seriesdetail?sid=2121560)
 
 * 核心架構
 
@@ -66,6 +66,12 @@
   * [API 資源構造器](zh-tw/db/resource.md)
   * [模型全文檢索](zh-tw/scout.md)
 
+* Hyperf 生態
+
+  * [Nano](https://github.com/hyperf/nano)
+  * [GoTask](https://github.com/hyperf/gotask)
+  * [Box](zh-tw/eco/box.md)
+
 * 微服務
 
   * [架構理念](zh-tw/microservice.md)
@@ -79,6 +85,7 @@
   * [配置中心](zh-tw/config-center.md)
   * [呼叫鏈追蹤](zh-tw/tracer.md)
   * [服務監控](zh-tw/metric.md)
+  * [分散式事務](zh-tw/distributed-transaction.md)
   * [Snowflake](zh-tw/snowflake.md)
 
 * 網路服務
@@ -123,6 +130,7 @@
   * [Phar 打包器](zh-tw/phar.md)
   * [DAG](zh-tw/dag.md)
   * [RPN - 逆波蘭表示法](zh-tw/rpn.md)
+  * [Swagger文件](zh-tw/swagger.md)
 
 * 應用部署
 

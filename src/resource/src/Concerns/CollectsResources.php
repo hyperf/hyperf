@@ -11,11 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Resource\Concerns;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Resource\Value\MissingValue;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Traversable;
+
+use function Hyperf\Support\class_basename;
 
 trait CollectsResources
 {

@@ -20,6 +20,8 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Throwable;
 
+use function Hyperf\Support\make;
+
 abstract class Pool implements PoolInterface
 {
     protected Channel $channel;
@@ -51,7 +53,7 @@ abstract class Pool implements PoolInterface
                     $this->flush();
                 }
             }
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                 $logger->error((string) $exception);
             }
@@ -73,7 +75,7 @@ abstract class Pool implements PoolInterface
             while ($this->currentConnections > $this->option->getMinConnections() && $conn = $this->channel->pop(0.001)) {
                 try {
                     $conn->close();
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                         $logger->error((string) $exception);
                     }
@@ -97,7 +99,7 @@ abstract class Pool implements PoolInterface
             if ($must || ! $conn->check()) {
                 try {
                     $conn->close();
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                         $logger->error((string) $exception);
                     }

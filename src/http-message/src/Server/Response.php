@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Server;
 
+use Hyperf\Engine\Contract\Http\Writable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Server\Chunk\Chunkable;
 use Hyperf\HttpMessage\Server\Chunk\HasChunk;
@@ -24,7 +25,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
 
     protected array $trailers = [];
 
-    protected ?ConnectionInterface $connection = null;
+    protected ?Writable $connection = null;
 
     /**
      * Returns an instance with body content.
@@ -68,7 +69,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
     /**
      * Retrieves a specified trailer value, returns null if the value does not exists.
      */
-    public function getTrailer(string $key)
+    public function getTrailer(string $key): mixed
     {
         return $this->trailers[$key] ?? null;
     }
@@ -81,13 +82,13 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
         return $this->trailers;
     }
 
-    public function setConnection(ConnectionInterface $connection)
+    public function setConnection(ConnectionInterface|Writable $connection)
     {
         $this->connection = $connection;
         return $this;
     }
 
-    public function getConnection(): ?ConnectionInterface
+    public function getConnection(): ConnectionInterface|Writable|null
     {
         return $this->connection;
     }

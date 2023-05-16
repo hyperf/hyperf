@@ -16,6 +16,8 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Migrations\DatabaseMigrationRepository;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class DatabaseMigrationRepositoryFactory
 {
     public function __invoke(ContainerInterface $container)

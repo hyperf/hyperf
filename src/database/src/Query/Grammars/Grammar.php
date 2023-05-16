@@ -11,13 +11,17 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query\Grammars;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\JoinClause;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use RuntimeException;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Collection\head;
+use function Hyperf\Collection\last;
 
 class Grammar extends BaseGrammar
 {
@@ -191,6 +195,16 @@ class Grammar extends BaseGrammar
         $wheres = $this->compileWheres($query);
 
         return trim("update {$table}{$joins} set {$columns} {$wheres}");
+    }
+
+    /**
+     * Compile an "upsert" statement into SQL.
+     *
+     * @throws RuntimeException
+     */
+    public function compileUpsert(Builder $query, array $values, array $uniqueBy, array $update): string
+    {
+        throw new RuntimeException('This database engine does not support upserts.');
     }
 
     /**
@@ -459,6 +473,44 @@ class Grammar extends BaseGrammar
         $value = $this->parameter($where['value']);
 
         return $this->wrap($where['column']) . ' ' . $where['operator'] . ' ' . $value;
+    }
+
+    /**
+     * Compile a "where JSON boolean" clause.
+     *
+     * @param string $value
+     * @param array $where
+     * @return string
+     */
+    protected function whereJsonBoolean(Builder $query, $where)
+    {
+        $column = $this->wrapJsonBooleanSelector($where['column']);
+
+        $value = $this->wrapJsonBooleanValue(
+            $this->parameter($where['value'])
+        );
+
+        return $column . ' ' . $where['operator'] . ' ' . $value;
+    }
+
+    /**
+     * Wrap the given JSON selector for boolean values.
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function wrapJsonBooleanSelector($value)
+    {
+        return $this->wrapJsonSelector($value);
+    }
+
+    /**
+     * Wrap the given JSON boolean value.
+     * @param mixed $value
+     */
+    protected function wrapJsonBooleanValue($value)
+    {
+        return $value;
     }
 
     /**
@@ -731,7 +783,7 @@ class Grammar extends BaseGrammar
      *
      * @param string $column
      * @param string $value
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function compileJsonContains($column, $value): string
     {
@@ -758,7 +810,7 @@ class Grammar extends BaseGrammar
      * @param string $column
      * @param string $operator
      * @param string $value
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function compileJsonLength($column, $operator, $value): string
     {

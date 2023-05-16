@@ -17,6 +17,7 @@ use Rx\Observable;
 use Rx\ObserverInterface;
 use Rx\Scheduler;
 use Rx\SchedulerInterface;
+use Throwable;
 
 class ChannelObservable extends Observable
 {
@@ -34,7 +35,7 @@ class ChannelObservable extends Observable
                 }
                 $observer->onNext($result);
                 $reschedule();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $observer->onError($e);
             }
         };

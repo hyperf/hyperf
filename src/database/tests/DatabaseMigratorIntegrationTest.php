@@ -11,16 +11,19 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Migrations\DatabaseMigrationRepository;
 use Hyperf\Database\Migrations\Migrator;
+use Hyperf\Database\Schema\Blueprint;
+use Hyperf\Database\Schema\Grammars\MySqlGrammar;
 use Hyperf\Database\Schema\Schema;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -234,5 +237,67 @@ class DatabaseMigratorIntegrationTest extends TestCase
         $this->assertFalse($schema->hasTable('users'));
         $this->assertFalse($schema->hasTable('password_resets'));
         $this->assertFalse($schema->hasTable('flights'));
+    }
+
+    public function testChangingColumnsDoesntNeedCharacterOptions()
+    {
+        $builder = $this->getConnection()->getSchemaBuilder();
+        $builder->create('test_change_types', function (Blueprint $table) {
+            $table->string('a');
+            $table->string('b');
+            $table->string('c');
+            $table->string('d');
+            $table->string('e');
+            $table->string('f');
+            $table->string('g');
+            $table->string('h');
+            $table->string('i');
+            $table->string('j');
+            $table->string('k');
+            $table->string('l');
+            $table->charset = 'utf8mb4';
+            $table->collation = 'utf8mb4_unicode_ci';
+        });
+
+        $blueprint = new Blueprint('test_change_types', function (Blueprint $table) {
+            $table->bigInteger('a')->change();
+            $table->binary('b')->change();
+            $table->boolean('c')->change();
+            $table->date('d')->change();
+            $table->dateTime('e')->change();
+            $table->decimal('f')->change();
+            $table->float('g')->change();
+            $table->integer('h')->change();
+            $table->json('i')->change();
+            $table->smallInteger('j')->change();
+            $table->time('k')->change();
+            $table->text('l')->change();
+        });
+
+        $queries = $blueprint->toSql($this->getConnection(), new MySqlGrammar());
+
+        $this->assertSame(
+            'ALTER TABLE test_change_types ' .
+            'CHANGE a a BIGINT NOT NULL, ' .
+            'CHANGE b b TINYBLOB NOT NULL, ' .
+            'CHANGE c c TINYINT(1) NOT NULL, ' .
+            'CHANGE d d DATE NOT NULL, ' .
+            'CHANGE e e DATETIME NOT NULL, ' .
+            'CHANGE f f NUMERIC(8, 2) NOT NULL, ' .
+            'CHANGE g g DOUBLE PRECISION NOT NULL, ' .
+            'CHANGE h h INT NOT NULL, ' .
+            'CHANGE i i JSON NOT NULL, ' .
+            'CHANGE j j SMALLINT NOT NULL, ' .
+            'CHANGE k k TIME NOT NULL, ' .
+            'CHANGE l l TEXT CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`',
+            $queries[0]
+        );
+
+        $builder->drop('test_change_types');
+    }
+
+    protected function getConnection(): Connection
+    {
+        return $this->migrator->resolveConnection('default');
     }
 }

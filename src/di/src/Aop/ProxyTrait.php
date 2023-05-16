@@ -12,10 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use Closure;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\ApplicationContext;
+use SplPriorityQueue;
 
 trait ProxyTrait
 {
@@ -62,7 +63,7 @@ trait ProxyTrait
         if (! AspectManager::has($className, $methodName)) {
             AspectManager::set($className, $methodName, []);
             $aspects = array_unique(array_merge(static::getClassesAspects($className, $methodName), static::getAnnotationAspects($className, $methodName)));
-            $queue = new \SplPriorityQueue();
+            $queue = new SplPriorityQueue();
             foreach ($aspects as $aspect) {
                 $queue->insert($aspect, AspectCollector::getPriority($aspect));
             }

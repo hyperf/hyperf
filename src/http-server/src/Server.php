@@ -24,14 +24,23 @@ use Hyperf\HttpMessage\Server\Connection\SwooleConnection;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
+use Hyperf\HttpServer\Event\RequestHandled;
+use Hyperf\HttpServer\Event\RequestReceived;
+use Hyperf\HttpServer\Event\RequestTerminated;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
-use Hyperf\Utils\SafeCaller;
+use Hyperf\Server\Option;
+use Hyperf\Server\ServerFactory;
+use Hyperf\Support\SafeCaller;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
+
+use function Hyperf\Coroutine\defer;
+use function Hyperf\Support\make;
 
 class Server implements OnRequestInterface, MiddlewareInitializerInterface
 {
@@ -41,9 +50,11 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
     protected array $exceptionHandlers = [];
 
-    protected ?Dispatcher $routerDispatcher = null;
-
     protected ?string $serverName = null;
+
+    protected ?EventDispatcherInterface $event = null;
+
+    protected ?Option $option = null;
 
     public function __construct(
         protected ContainerInterface $container,
@@ -51,17 +62,21 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         protected ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
         protected ResponseEmitter $responseEmitter
     ) {
+        if ($this->container->has(EventDispatcherInterface::class)) {
+            $this->event = $this->container->get(EventDispatcherInterface::class);
+        }
     }
 
     public function initCoreMiddleware(string $serverName): void
     {
         $this->serverName = $serverName;
         $this->coreMiddleware = $this->createCoreMiddleware();
-        $this->routerDispatcher = $this->createDispatcher($serverName);
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
         $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
+
+        $this->initOption();
     }
 
     public function onRequest($request, $response): void
@@ -71,10 +86,13 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
             [$psr7Request, $psr7Response] = $this->initRequestAndResponse($request, $response);
 
+            $this->option?->isEnableRequestLifecycle() && $this->event?->dispatch(new RequestReceived($psr7Request, $psr7Response));
+
             $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
             /** @var Dispatched $dispatched */
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
             $middlewares = $this->middlewares;
+
             if ($dispatched->isFound()) {
                 $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
                 $middlewares = array_merge($middlewares, $registeredMiddlewares);
@@ -89,6 +107,12 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
                 return (new Psr7Response())->withStatus(400);
             });
         } finally {
+            if (isset($psr7Request) && $this->option?->isEnableRequestLifecycle()) {
+                defer(fn () => $this->event?->dispatch(new RequestTerminated($psr7Request, $psr7Response ?? null, $throwable ?? null)));
+
+                $this->event?->dispatch(new RequestHandled($psr7Request, $psr7Response ?? null, $throwable ?? null));
+            }
+
             // Send the Response to client.
             if (! isset($psr7Response) || ! $psr7Response instanceof ResponseInterface) {
                 return;
@@ -113,6 +137,21 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     {
         $this->serverName = $serverName;
         return $this;
+    }
+
+    protected function initOption(): void
+    {
+        $ports = $this->container->get(ServerFactory::class)->getConfig()?->getServers();
+        if (! $ports) {
+            return;
+        }
+
+        foreach ($ports as $port) {
+            if ($port->getName() === $this->serverName) {
+                $this->option = $port->getOptions();
+                return;
+            }
+        }
     }
 
     protected function createDispatcher(string $serverName): Dispatcher
@@ -142,14 +181,16 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     {
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
 
+        $psr7Response->setConnection(new SwooleConnection($response));
+
         if ($request instanceof ServerRequestInterface) {
             $psr7Request = $request;
         } else {
             $psr7Request = Psr7Request::loadFromSwooleRequest($request);
-            $psr7Response->setConnection(new SwooleConnection($response));
         }
 
         Context::set(ServerRequestInterface::class, $psr7Request);
+
         return [$psr7Request, $psr7Response];
     }
 }

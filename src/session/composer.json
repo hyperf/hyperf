@@ -16,6 +16,8 @@
     "require": {
         "php": ">=8.0",
         "psr/http-server-middleware": "^1.0",
+        "hyperf/collection": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0"
     },
     "suggest": {

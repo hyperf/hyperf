@@ -15,7 +15,7 @@ curl -sSL https://get.daocloud.io/docker | sh
 ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
 ```
 
-如果不是使用的 `root` 賬戶，可以通過以下命令，讓每次執行 `docker` 時，不需要增加 `sudo`
+如果不是使用的 `root` 賬戶，可以透過以下命令，讓每次執行 `docker` 時，不需要增加 `sudo`
 
 ```
 usermod -aG docker $USER
@@ -35,7 +35,7 @@ usermod -aG docker $USER
 
 #### 修改 sshd 預設埠號
 
-首先我們需要修改一下伺服器的 `sshd` 服務的埠號，把預設的 `22` 埠改為 `2222` 埠(或其它未被佔用的埠)，這樣可以讓 `gitlab` 通過使用 `22` 埠來進行 `ssh` 連線。
+首先我們需要修改一下伺服器的 `sshd` 服務的埠號，把預設的 `22` 埠改為 `2222` 埠(或其它未被佔用的埠)，這樣可以讓 `gitlab` 透過使用 `22` 埠來進行 `ssh` 連線。
 
 ```
 $ vim /etc/ssh/sshd_config
@@ -55,7 +55,7 @@ ssh -p 2222 root@host
 
 #### 安裝 Gitlab
 
-我們來通過 Docker 啟動一個 Gitlab 服務，如下：
+我們來透過 Docker 啟動一個 Gitlab 服務，如下：
 
 > hostname 一定要加，如果沒有域名可以直接填外網地址
 
@@ -68,7 +68,7 @@ sudo docker run -d --hostname gitlab.xxx.cn \
 gitlab/gitlab-ce:latest
 ```
 
-預設使用者名稱為 `root`，初始密碼通過以下方式獲得
+預設使用者名稱為 `root`，初始密碼透過以下方式獲得
 
 ```shell
 docker exec gitlab cat /etc/gitlab/initial_root_password
@@ -96,7 +96,7 @@ $ yum install gitlab-runner
 
 ### 註冊 gitlab-runner
 
-通過 `gitlab-runner register --clone-url http://your-ip/` 命令來將 gitlab-runner 註冊到 Gitlab 上，注意要替換 `your-ip` 為您的 Gitlab 的內網 IP，如下：
+透過 `gitlab-runner register --clone-url http://your-ip/` 命令來將 gitlab-runner 註冊到 Gitlab 上，注意要替換 `your-ip` 為您的 Gitlab 的內網 IP，如下：
 
 ```
 $ sudo gitlab-runner register --clone-url http://your-ip/
@@ -394,7 +394,7 @@ docker run --rm --network=default-network -p 8080:8080 -d --name kong-dashboard 
 
 接下來只需要把部署 `KONG` 閘道器的機器 `IP` 對外暴露訪問，然後配置對應的 `Service` 即可。
 如果機器直接對外暴露訪問，那麼最好只開放 `80` 和 `443` 埠，然後把 `Kong` 容器的 `8000` 和 `8443` 埠對映到 `80` 和 `443` 埠上。
-當然，如果使用了 `SLB` 等負載均衡服務，也直接通過負載均衡，把 `80` 和 `443` 埠對映到 `KONG` 所在機器的 `8000` `8443` 埠上。
+當然，如果使用了 `SLB` 等負載均衡服務，也直接透過負載均衡，把 `80` 和 `443` 埠對映到 `KONG` 所在機器的 `8000` `8443` 埠上。
 
 ## 如何使用 Linux Crontab
 
@@ -409,11 +409,11 @@ docker run --rm -i -v $basepath/.env:/opt/www/.env \
 /opt/www/bin/hyperf.php your_command
 ```
 
-## 核心優化
+## 核心最佳化
 
 > 本小節內容，有待驗證，謹慎使用
 
-安裝 `KONG` 閘道器時，有介紹 `Ingress 網路` 存在設計的缺陷，這塊可以通過 `優化核心` 處理。
+安裝 `KONG` 閘道器時，有介紹 `Ingress 網路` 存在設計的缺陷，這塊可以透過 `最佳化核心` 處理。
 
 - 指定 TLinux 源
 
@@ -449,7 +449,7 @@ grub2-mkconfig -o /boot/grub2/grub.cfg
 reboot
 ```
 
-### 容器引數優化
+### 容器引數最佳化
 
 > 需要 Docker 19.09.0 以上支援，與 image 配置同級
 

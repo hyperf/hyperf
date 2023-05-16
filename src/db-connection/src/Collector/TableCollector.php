@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection\Collector;
 
 use Hyperf\Database\Schema\Column;
+use InvalidArgumentException;
 
 class TableCollector
 {
@@ -59,13 +60,13 @@ class TableCollector
     }
 
     /**
-     * @throws \InvalidArgumentException When $columns is not equal to Column[]
+     * @throws InvalidArgumentException When $columns is not equal to Column[]
      */
     protected function validateColumns(array $columns): void
     {
         foreach ($columns as $column) {
             if (! $column instanceof Column) {
-                throw new \InvalidArgumentException('Invalid columns.');
+                throw new InvalidArgumentException('Invalid columns.');
             }
         }
     }

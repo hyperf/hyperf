@@ -21,8 +21,15 @@
     "require": {
         "php": ">=8.0",
         "guzzlehttp/guzzle": "^6.5|^7.0",
+        "hyperf/codec": "~3.0.0",
         "hyperf/contract": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0"
+    },
+    "suggests": {
+        "google/protobuf": "Required to use nacos v2 grpc apis.",
+        "hyperf/grpc": "Required to use nacos v2 grpc apis.",
+        "hyperf/http2-client": "Required to use nacos v2 grpc apis."
     },
     "config": {
         "sort-packages": true

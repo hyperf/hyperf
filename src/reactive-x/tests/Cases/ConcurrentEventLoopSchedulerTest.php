@@ -18,6 +18,8 @@ use Hyperf\ReactiveX\Scheduler\ConcurrentEventLoopScheduler;
 use PHPUnit\Framework\TestCase;
 use Swoole\Runtime;
 
+use function Hyperf\Support\swoole_hook_flags;
+
 /**
  * @internal
  * @coversNothing

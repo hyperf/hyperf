@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Di\LazyLoader\LazyProxyTrait;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Di\Stub\LazyLoad\BarLazyLoad;
 use HyperfTest\Di\Stub\LazyLoad\FooLazyLoad;
 use HyperfTest\Di\Stub\LazyProxy;

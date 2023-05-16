@@ -28,4 +28,6 @@ interface DriverInterface extends CacheInterface
      * Clean up data of the same prefix.
      */
     public function clearPrefix(string $prefix): bool;
+
+    public function getConnection(): mixed;
 }

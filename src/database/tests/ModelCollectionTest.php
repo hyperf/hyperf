@@ -11,14 +11,17 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
+use HyperfTest\Database\Stubs\ModelStub;
 use LogicException;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+
+use function Hyperf\Collection\collect;
 
 /**
  * @internal
@@ -93,6 +96,23 @@ class ModelCollectionTest extends TestCase
         $this->assertTrue($c->contains($mockModel));
         $this->assertTrue($c->contains($mockModel2));
         $this->assertFalse($c->contains($mockModel3));
+    }
+
+    public function testCollectionAppends()
+    {
+        $m1 = new ModelStub();
+        $m2 = new ModelStub();
+
+        $col = new Collection([$m1, $m2]);
+
+        $this->assertSame([], $m1->toArray());
+        $this->assertSame([[], []], $col->toArray());
+
+        $col->append(['password']);
+
+        $this->assertSame(['password' => '******'], $m1->toArray());
+        $this->assertSame(['password' => '******'], $m2->toArray());
+        $this->assertSame([['password' => '******'], ['password' => '******']], $col->toArray());
     }
 
     public function testContainsIndicatesIfDifferentModelInArray()
@@ -258,7 +278,7 @@ class ModelCollectionTest extends TestCase
             return 'not-a-model';
         });
 
-        $this->assertEquals(BaseCollection::class, get_class($c));
+        $this->assertInstanceOf(BaseCollection::class, $c);
     }
 
     public function testMapWithKeys()
@@ -417,12 +437,12 @@ class ModelCollectionTest extends TestCase
     {
         $a = new Collection([['foo' => 'bar'], ['foo' => 'baz']]);
         $b = new Collection(['a', 'b', 'c']);
-        $this->assertEquals(BaseCollection::class, get_class($a->pluck('foo')));
-        $this->assertEquals(BaseCollection::class, get_class($a->keys()));
-        $this->assertEquals(BaseCollection::class, get_class($a->collapse()));
-        $this->assertEquals(BaseCollection::class, get_class($a->flatten()));
-        $this->assertEquals(BaseCollection::class, get_class($a->zip(['a', 'b'], ['c', 'd'])));
-        $this->assertEquals(BaseCollection::class, get_class($b->flip()));
+        $this->assertInstanceOf(BaseCollection::class, $a->pluck('foo'));
+        $this->assertInstanceOf(BaseCollection::class, $a->keys());
+        $this->assertInstanceOf(BaseCollection::class, $a->collapse());
+        $this->assertInstanceOf(BaseCollection::class, $a->flatten());
+        $this->assertInstanceOf(BaseCollection::class, $a->zip(['a', 'b'], ['c', 'd']));
+        $this->assertInstanceOf(BaseCollection::class, $b->flip());
     }
 
     public function testMakeVisibleRemovesHiddenAndIncludesVisible()

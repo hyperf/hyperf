@@ -16,6 +16,9 @@ use Doctrine\Inflector\Inflector;
 use Doctrine\Inflector\Rules\English;
 use Doctrine\Inflector\RulesetInflector;
 
+/**
+ * @deprecated v3.1, use \Hyperf\Support\Pluralizer instead.
+ */
 class Pluralizer
 {
     /**

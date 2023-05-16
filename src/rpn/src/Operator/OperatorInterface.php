@@ -17,5 +17,5 @@ interface OperatorInterface
 
     public function length(): ?int;
 
-    public function execute(array $parameters, int $scale): string;
+    public function execute(array $parameters, int $scale, array $bindings = []): string;
 }

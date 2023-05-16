@@ -11,10 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcMultiplex;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
@@ -24,9 +26,8 @@ use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
 use Hyperf\RpcMultiplex\Exception\Handler\DefaultExceptionHandler;
 use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\RpcServer\Server;
+use Hyperf\Server\Connection as HyperfConnection;
 use Hyperf\Server\Exception\InvalidArgumentException;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Coroutine;
 use Multiplex\Contract\HasHeartbeatInterface as Heartbeat;
 use Multiplex\Contract\PackerInterface as PacketPacker;
 use Multiplex\Packet;
@@ -35,6 +36,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Coroutine\Server\Connection;
 use Swoole\Server as SwooleServer;
+
+use function Hyperf\Support\make;
 
 class TcpServer extends Server
 {
@@ -91,7 +94,7 @@ class TcpServer extends Server
     }
 
     /**
-     * @param Connection|SwooleServer $server
+     * @param Connection|HyperfConnection|SwooleServer $server
      */
     protected function send($server, int $fd, ResponseInterface $response): void
     {
@@ -101,7 +104,7 @@ class TcpServer extends Server
 
         if ($server instanceof SwooleServer) {
             $server->send($fd, $packed);
-        } elseif ($server instanceof Connection) {
+        } elseif ($server instanceof Connection || $server instanceof HyperfConnection) {
             $server->send($packed);
         }
     }

@@ -45,16 +45,12 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Hyperf\Logger\LoggerFactory;
 
 class DemoService
 {
-    
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     public function __construct(LoggerFactory $loggerFactory)
     {
@@ -136,7 +132,7 @@ Sometimes, you may wish to keep the habit of logging in most frameworks. Then yo
 namespace App;
 
 use Hyperf\Logger\Logger;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 
 class Log

@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Testing;
 
 use GuzzleHttp\Client;
+use Hyperf\Codec\Packer\JsonPacker;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Guzzle\CoroutineHandler;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -52,6 +52,26 @@ class HttpClient
     public function post(string|UriInterface $uri, array $data = [], array $headers = [])
     {
         $response = $this->client->post($uri, [
+            'headers' => $headers,
+            'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack((string) $response->getBody());
+    }
+
+    public function put(string|UriInterface $uri, array $data = [], array $headers = [])
+    {
+        $response = $this->client->put($uri, [
+            'headers' => $headers,
+            'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack((string) $response->getBody());
+    }
+
+    public function patch(string|UriInterface $uri, array $data = [], array $headers = [])
+    {
+        $response = $this->client->patch($uri, [
             'headers' => $headers,
             'form_params' => $data,
         ]);

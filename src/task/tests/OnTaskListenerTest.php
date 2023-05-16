@@ -12,17 +12,18 @@ declare(strict_types=1);
 namespace HyperfTest\Task;
 
 use Hyperf\Framework\Event\OnTask;
+use Hyperf\Serializer\ExceptionNormalizer;
 use Hyperf\Task\ChannelFactory;
 use Hyperf\Task\Exception;
 use Hyperf\Task\Finish;
 use Hyperf\Task\Listener\OnTaskListener;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
-use Hyperf\Utils\Serializer\ExceptionNormalizer;
 use HyperfTest\Task\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 use Swoole\Server;
 
 /**
@@ -68,7 +69,7 @@ class OnTaskListenerTest extends TestCase
         $event->shouldReceive('setResult')->with(Mockery::any())->andReturnUsing(function ($result) use ($event) {
             $this->assertInstanceOf(Finish::class, $result);
             $this->assertInstanceOf(Exception::class, $result->data);
-            $this->assertSame(\RuntimeException::class, $result->data->class);
+            $this->assertSame(RuntimeException::class, $result->data->class);
             $this->assertSame('Foo::exception failed.', $result->data->attributes['message']);
             $this->assertSame(0, $result->data->attributes['code']);
             return $event;

@@ -14,14 +14,19 @@ namespace HyperfTest\Di;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\ReflectionManager;
 use HyperfTest\Di\Stub\AspectCollector;
+use HyperfTest\Di\Stub\Ast\Abs;
+use HyperfTest\Di\Stub\Ast\AbsAspect;
 use HyperfTest\Di\Stub\Ast\Bar2;
 use HyperfTest\Di\Stub\Ast\Bar3;
 use HyperfTest\Di\Stub\Ast\Bar4;
 use HyperfTest\Di\Stub\Ast\Bar5;
 use HyperfTest\Di\Stub\Ast\BarAspect;
 use HyperfTest\Di\Stub\Ast\BarInterface;
+use HyperfTest\Di\Stub\Ast\Chi;
 use HyperfTest\Di\Stub\Ast\Foo;
 use HyperfTest\Di\Stub\Ast\FooTrait;
+use HyperfTest\Di\Stub\FooEnumStruct;
+use HyperfTest\Di\Stub\Par2;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -62,6 +67,110 @@ class Foo
     function __construct()
     {
         $this->__handlePropertyHandler(__CLASS__);
+    }
+}', $code);
+    }
+
+    public function testParentWith()
+    {
+        $ast = new Ast();
+        $code = $ast->proxy(Par2::class);
+
+        $this->assertSame($this->license . '
+namespace HyperfTest\Di\Stub;
+
+class Par2 extends Par
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    function __construct(?\HyperfTest\Di\Stub\Foo $foo)
+    {
+        if (method_exists(parent::class, \'__construct\')) {
+            parent::__construct(...func_get_args());
+        }
+        $this->__handlePropertyHandler(__CLASS__);
+    }
+}', $code);
+    }
+
+    public function testAstProxyForEnum()
+    {
+        if (PHP_VERSION_ID < 80100) {
+            $this->markTestSkipped('The version below 8.1 does not support enum.');
+        }
+
+        $ast = new Ast();
+        $code = $ast->proxy(FooEnumStruct::class);
+
+        $this->assertEquals($this->license . '
+namespace HyperfTest\Di\Stub;
+
+class FooEnumStruct
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    public function __construct(public FooEnum $enum = FooEnum::DEFAULT)
+    {
+        $this->__handlePropertyHandler(__CLASS__);
+    }
+}', $code);
+    }
+
+    public function testAbstractMethod()
+    {
+        $aspect = AbsAspect::class;
+        AspectCollector::setAround($aspect, [
+            Chi::class,
+            Abs::class,
+        ], []);
+
+        $ast = new Ast();
+        $code = $ast->proxy(Abs::class);
+
+        $this->assertSame($this->license . "
+namespace HyperfTest\\Di\\Stub\\Ast;
+
+abstract class Abs
+{
+    use \\Hyperf\\Di\\Aop\\ProxyTrait;
+    use \\Hyperf\\Di\\Aop\\PropertyHandlerTrait;
+    function __construct()
+    {
+        \$this->__handlePropertyHandler(__CLASS__);
+    }
+    public function abs() : string
+    {
+        \$__function__ = __FUNCTION__;
+        \$__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use(\$__function__, \$__method__) {
+            return 'abs';
+        });
+    }
+    public abstract function absabs() : string;
+}", $code);
+
+        $code = $ast->proxy(Chi::class);
+        $this->assertSame($this->license . '
+namespace HyperfTest\Di\Stub\Ast;
+
+class Chi extends Abs
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    function __construct()
+    {
+        if (method_exists(parent::class, \'__construct\')) {
+            parent::__construct(...func_get_args());
+        }
+        $this->__handlePropertyHandler(__CLASS__);
+    }
+    public function absabs() : string
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
+            return \'chi\';
+        });
     }
 }', $code);
     }

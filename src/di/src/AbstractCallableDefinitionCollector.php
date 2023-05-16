@@ -11,10 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di;
 
+use ReflectionNamedType;
+use ReflectionParameter;
+use ReflectionUnionType;
+
 abstract class AbstractCallableDefinitionCollector extends MetadataCollector
 {
     /**
-     * @param array<\ReflectionParameter> $parameters
+     * @param array<ReflectionParameter> $parameters
      */
     protected function getDefinitionsFromParameters(array $parameters): array
     {
@@ -38,8 +42,8 @@ abstract class AbstractCallableDefinitionCollector extends MetadataCollector
     {
         // TODO: Support ReflectionUnionType.
         $typeName = match (true) {
-            $type instanceof \ReflectionNamedType => $type->getName(),
-            $type instanceof \ReflectionUnionType => $type->getTypes()[0]->getName(),
+            $type instanceof ReflectionNamedType => $type->getName(),
+            $type instanceof ReflectionUnionType => $type->getTypes()[0]->getName(),
             default => 'mixed'
         };
         return new ReflectionType($typeName, $allowsNull, [

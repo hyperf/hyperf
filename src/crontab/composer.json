@@ -17,7 +17,9 @@
     },
     "require": {
         "php": ">=8.0",
+        "hyperf/framework": "~3.0.0",
         "hyperf/utils": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "nesbot/carbon": "^2.0"
     },
     "autoload": {
@@ -29,6 +31,10 @@
         "psr-4": {
             "HyperfTest\\Crontab\\": "tests/"
         }
+    },
+    "suggest": {
+        "hyperf/process": "Auto register the Crontab process for server.",
+        "hyperf/command": "Required to use command trigger."
     },
     "config": {
         "sort-packages": true

@@ -18,11 +18,14 @@
     "require": {
         "php": ">=8.0",
         "psr/container": "^1.0|^2.0",
+        "hyperf/codec": "~3.0.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/engine": ">=1.3",
         "hyperf/load-balancer": "~3.0.0",
         "hyperf/http-message": "~3.0.0",
         "hyperf/rpc": "~3.0.0",
+        "hyperf/serializer": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "hyperf/context": "~3.0.0"
     },

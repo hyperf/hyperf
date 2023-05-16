@@ -17,6 +17,7 @@ use Psr\Container\ContainerInterface;
 /**
  * This file mostly code come from illuminate/pipe,
  * thanks Laravel Team provide such a useful class.
+ * @deprecated since 3.1, use `Hyperf\Pipeline\Pipeline` instead.
  */
 class Pipeline
 {
@@ -78,6 +79,14 @@ class Pipeline
         $pipeline = array_reduce(array_reverse($this->pipes), $this->carry(), $this->prepareDestination($destination));
 
         return $pipeline($this->passable);
+    }
+
+    /**
+     * Run the pipeline and return the result.
+     */
+    public function thenReturn()
+    {
+        return $this->then(fn ($passable) => $passable);
     }
 
     /**

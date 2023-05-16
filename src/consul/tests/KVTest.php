@@ -11,14 +11,15 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Consul;
 
+use Exception;
 use GuzzleHttp\Client;
 use Hyperf\Consul\ConsulResponse;
 use Hyperf\Consul\KV;
 use Hyperf\Consul\KVInterface;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Guzzle\ClientFactory;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -95,7 +96,7 @@ class KVTest extends TestCase
         try {
             $this->kv->get('test/my/key');
             $this->fail('fail because the key does not exist anymore.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertInstanceOf('Hyperf\Consul\Exception\ServerException', $e);
             $this->assertStringContainsString('404 Not Found', $e->getMessage());
         }
@@ -117,7 +118,7 @@ class KVTest extends TestCase
             try {
                 $this->kv->get('test/my/key' . $i);
                 $this->fail('fail because the key does not exist anymore.');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->assertInstanceOf('Hyperf\Consul\Exception\ServerException', $e);
                 $this->assertStringContainsString('404 Not Found', $e->getMessage());
             }

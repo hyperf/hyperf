@@ -17,6 +17,7 @@ use Hyperf\Di\Exception\DirectoryNotExistException;
 use Hyperf\Di\ScanHandler\NullScanHandler;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
@@ -32,7 +33,7 @@ class AnnotationTest extends TestCase
     public function testScanAnnotationsDirectoryNotExist()
     {
         $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
-        $ref = new \ReflectionClass($scanner);
+        $ref = new ReflectionClass($scanner);
         $method = $ref->getMethod('normalizeDir');
         $method->setAccessible(true);
 
@@ -43,7 +44,7 @@ class AnnotationTest extends TestCase
     public function testScanAnnotationsDirectoryEmpty()
     {
         $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
-        $ref = new \ReflectionClass($scanner);
+        $ref = new ReflectionClass($scanner);
         $method = $ref->getMethod('normalizeDir');
         $method->setAccessible(true);
 

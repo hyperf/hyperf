@@ -82,13 +82,13 @@ Router::addGroup('/user/',function (){
 
 ### 通过注解定义路由
 
-`Hyperf` 提供了非常便利的 [注解](zh-cn/annotation.md) 路由功能，您可以直接在任意类上通过定义 `@Controller` 或 `@AutoController` 注解来完成一个路由的定义。
+`Hyperf` 提供了非常便利的 [注解](zh-cn/annotation.md) 路由功能，您可以直接在任意类上通过定义 `#[Controller]` 或 `#[AutoController]` 注解来完成一个路由的定义。
 
-#### `@AutoController` 注解
+#### `#[AutoController]` 注解
 
-`@AutoController` 为绝大多数简单的访问场景提供路由绑定支持，使用 `@AutoController` 时则 `Hyperf` 会自动解析所在类的所有 `public` 方法并提供 `GET` 和 `POST` 两种请求方式。
+`#[AutoController]` 为绝大多数简单的访问场景提供路由绑定支持，使用 `#[AutoController]` 时则 `Hyperf` 会自动解析所在类的所有 `public` 方法并提供 `GET` 和 `POST` 两种请求方式。
 
-> 使用 `@AutoController` 注解时需 `use Hyperf\HttpServer\Annotation\AutoController;` 命名空间；
+> 使用 `#[AutoController]` 注解时需 `use Hyperf\HttpServer\Annotation\AutoController;` 命名空间；
 
 驼峰命名的控制器，会自动转化为蛇形路由，以下为控制器与实际路由的对应关系示例：
 
@@ -120,18 +120,18 @@ class UserController
 }
 ```
 
-#### `@Controller` 注解
+#### `#[Controller]` 注解
 
-`@Controller` 为满足更细致的路由定义需求而存在，使用 `@Controller` 注解用于表明当前类为一个 `Controller` 类，同时需配合 `@RequestMapping` 注解来对请求方法和请求路径进行更详细的定义。   
-我们也提供了多种快速便捷的 `Mapping` 注解，如 `@GetMapping`、`@PostMapping`、`@PutMapping`、`@PatchMapping`、`@DeleteMapping` 5 种便捷的注解用于表明允许不同的请求方法。
+`#[Controller]` 为满足更细致的路由定义需求而存在，使用 `#[Controller]` 注解用于表明当前类为一个 `Controller` 类，同时需配合 `#[RequestMapping]` 注解来对请求方法和请求路径进行更详细的定义。   
+我们也提供了多种快速便捷的 `Mapping` 注解，如 `#[GetMapping]`、`#[PostMapping]`、`#[PutMapping]`、`#[PatchMapping]`、`#[DeleteMapping]` 5 种便捷的注解用于表明允许不同的请求方法。
 
-> 使用 `@Controller` 注解时需 `use Hyperf\HttpServer\Annotation\Controller;` 命名空间；   
-> 使用 `@RequestMapping` 注解时需 `use Hyperf\HttpServer\Annotation\RequestMapping;` 命名空间；   
-> 使用 `@GetMapping` 注解时需 `use Hyperf\HttpServer\Annotation\GetMapping;` 命名空间；   
-> 使用 `@PostMapping` 注解时需 `use Hyperf\HttpServer\Annotation\PostMapping;` 命名空间；   
-> 使用 `@PutMapping` 注解时需 `use Hyperf\HttpServer\Annotation\PutMapping;` 命名空间；   
-> 使用 `@PatchMapping` 注解时需 `use Hyperf\HttpServer\Annotation\PatchMapping;` 命名空间；   
-> 使用 `@DeleteMapping` 注解时需 `use Hyperf\HttpServer\Annotation\DeleteMapping;` 命名空间；  
+> 使用 `#[Controller]` 注解时需 `use Hyperf\HttpServer\Annotation\Controller;` 命名空间；   
+> 使用 `#[RequestMapping]` 注解时需 `use Hyperf\HttpServer\Annotation\RequestMapping;` 命名空间；   
+> 使用 `#[GetMapping]` 注解时需 `use Hyperf\HttpServer\Annotation\GetMapping;` 命名空间；   
+> 使用 `#[PostMapping]` 注解时需 `use Hyperf\HttpServer\Annotation\PostMapping;` 命名空间；   
+> 使用 `#[PutMapping]` 注解时需 `use Hyperf\HttpServer\Annotation\PutMapping;` 命名空间；   
+> 使用 `#[PatchMapping]` 注解时需 `use Hyperf\HttpServer\Annotation\PatchMapping;` 命名空间；   
+> 使用 `#[DeleteMapping]` 注解时需 `use Hyperf\HttpServer\Annotation\DeleteMapping;` 命名空间；  
 
 ```php
 <?php
@@ -159,10 +159,10 @@ class UserController
 
 #### 注解参数
 
-`@Controller` 和 `@AutoController` 都提供了 `prefix` 和 `server` 两个参数。   
+`#[Controller]` 和 `#[AutoController]` 都提供了 `prefix` 和 `server` 两个参数。   
 
 `prefix` 表示该 `Controller` 下的所有方法路由的前缀，默认为类名的小写，如 `UserController` 则 `prefix` 默认为 `user`，如类内某一方法的 `path` 为 `index`，则最终路由为 `/user/index`。   
-需要注意的是 `prefix` 并非一直有效，当类内的方法的 `path` 以 `/` 开头时，则表明路径从 `URI` 头部开始定义，也就意味着会忽略 `prefix` 的值。
+需要注意的是 `prefix` 并非一直有效，当类内的方法的 `path` 以 `/` 开头时，则表明路径从 `URI` 头部开始定义，也就意味着会忽略 `prefix` 的值，同时如果没有设置 `prefix` 属性，那么控制器类命名空间中 `\\Controller\\` 之后的部分会以蛇形命名法(SnakeCase)被用作路由的前缀。
 
 `server` 表示该路由是定义在哪个 `Server` 之上的，由于 `Hyperf` 支持同时启动多个 `Server`，也就意味着有可能会同时存在多个 `HTTP Server`，则在定义路由是可以通过 `server` 参数来进行区分这个路由是为了哪个 `Server` 定义的，默认为 `http`。
 

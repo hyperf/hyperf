@@ -12,12 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Paginator;
 
 use Countable;
+use Hyperf\Collection\Collection;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Contracts\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
+use RuntimeException;
 
 class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Countable, IteratorAggregate, JsonSerializable, Jsonable, LengthAwarePaginatorInterface
 {
@@ -38,6 +39,8 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Count
      */
     public function __construct(mixed $items, int $total, int $perPage, ?int $currentPage = 1, array $options = [])
     {
+        $this->options = $options;
+
         foreach ($options as $key => $value) {
             $this->{$key} = $value;
         }
@@ -69,7 +72,7 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Count
     public function render(?string $view = null, array $data = []): string
     {
         if ($view) {
-            throw new \RuntimeException('WIP.');
+            throw new RuntimeException('WIP.');
         }
         return json_encode(array_merge($data, $this->items()), 0);
     }

@@ -15,6 +15,7 @@ use Hyperf\Amqp\Message\MessageInterface;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 class Builder
 {
@@ -38,7 +39,7 @@ class Builder
             $builder = $message->getExchangeBuilder();
 
             $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             if ($releaseToChannel && isset($channel)) {
                 $channel->close();
             }

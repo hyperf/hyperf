@@ -12,12 +12,18 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use Hyperf\Contract\ResponseEmitterInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\HttpMessage\Stream\FileInterface;
 use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\Response;
+use Throwable;
 
 class ResponseEmitter implements ResponseEmitterInterface
 {
+    public function __construct(protected ?StdoutLoggerInterface $logger)
+    {
+    }
+
     /**
      * @param Response $connection
      */
@@ -39,7 +45,8 @@ class ResponseEmitter implements ResponseEmitterInterface
             } else {
                 $connection->end();
             }
-        } catch (\Throwable) {
+        } catch (Throwable $exception) {
+            $this->logger?->critical((string) $exception);
         }
     }
 

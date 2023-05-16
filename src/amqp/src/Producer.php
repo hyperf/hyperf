@@ -14,6 +14,9 @@ namespace Hyperf\Amqp;
 use Hyperf\Amqp\Message\ProducerMessageInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use PhpAmqpLib\Message\AMQPMessage;
+use Throwable;
+
+use function Hyperf\Support\retry;
 
 class Producer extends Builder
 {
@@ -43,7 +46,7 @@ class Producer extends Builder
             });
             $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
             $channel->wait_for_pending_acks_returns($timeout);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             isset($channel) && $channel->close();
             throw $exception;
         }

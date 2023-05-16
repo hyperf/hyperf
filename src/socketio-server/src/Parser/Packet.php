@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Parser;
 
-class Packet implements \ArrayAccess
+use ArrayAccess;
+
+class Packet implements ArrayAccess
 {
     public const OPEN = '0';
 

@@ -21,6 +21,9 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
+
+use function Hyperf\Support\make;
 
 abstract class AbstractHandler implements HandlerInterface
 {
@@ -139,7 +142,7 @@ abstract class AbstractHandler implements HandlerInterface
 
             $breaker->incrSuccessCounter();
             $this->switch($breaker, $annotation, true);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             if (! $exception instanceof CircuitBreakerException) {
                 throw $exception;
             }

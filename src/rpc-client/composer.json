@@ -20,8 +20,10 @@
     "require": {
         "php": ">=8.0",
         "psr/container": "^1.0|^2.0",
-        "hyperf/rpc": "~3.0.0",
+        "hyperf/code-parser": "~3.0.0",
         "hyperf/load-balancer": "~3.0.0",
+        "hyperf/rpc": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0"
     },
     "suggest": {

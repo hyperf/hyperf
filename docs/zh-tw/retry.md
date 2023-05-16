@@ -1,6 +1,6 @@
 # 重試
 
-網路通訊天然是不穩定的，因此在分散式系統中，需要有良好的容錯設計。無差別重試是非常危險的。當通訊出現問題時，每個請求都重試一次，相當於系統 IO 負載增加了 100%，容易誘發雪崩事故。重試還要考慮錯誤的原因，如果是無法通過重試解決的問題，那麼重試只是浪費資源而已。除此之外，如果重試的介面不具備冪等性，還可能造成資料不一致等問題。
+網路通訊天然是不穩定的，因此在分散式系統中，需要有良好的容錯設計。無差別重試是非常危險的。當通訊出現問題時，每個請求都重試一次，相當於系統 IO 負載增加了 100%，容易誘發雪崩事故。重試還要考慮錯誤的原因，如果是無法透過重試解決的問題，那麼重試只是浪費資源而已。除此之外，如果重試的介面不具備冪等性，還可能造成資料不一致等問題。
 
 本元件提供了豐富的重試機制，可以滿足多種場景的重試需求。
 
@@ -30,11 +30,11 @@ public function foo()
 
 ## 深度定製
 
-本元件通過組合多種重試策略實現了可插拔性。每個策略關注重試過程中的不同側面，如重試判斷、重試間隔，結果處理等。通過調整註解中使用的策略就可以配置出適配任意場景下的重試切面。
+本元件透過組合多種重試策略實現了可插拔性。每個策略關注重試過程中的不同側面，如重試判斷、重試間隔，結果處理等。透過調整註解中使用的策略就可以配置出適配任意場景下的重試切面。
 
 建議根據具體業務需要構造自己的註解別名。下面我們演示如何製作最大嘗試次數為 3 的新註解。
 
-> 在預設的 `Retry` 註解中，您可以通過 `@Retry(maxAttempts=3)` 來控制最大重試次數。為了演示需要，先假裝它不存在。
+> 在預設的 `Retry` 註解中，您可以透過 `#[Retry(maxAttempts=3)]` 來控制最大重試次數。為了演示需要，先假裝它不存在。
 
 首先您要新建一個 `註解類` 並繼承 `\Hyperf\Retry\Annotations\AbstractRetry` 。
 
@@ -74,7 +74,7 @@ class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 }
 ```
 
-現在 `@MyRetry` 這個註解會導致任何方法都會被迴圈執行三次，我們還需要加入一個新的策略 `ClassifierRetryPolicy` 來控制什麼樣的錯誤才能被重試。加入 `ClassifierRetryPolicy` 後預設只會在丟擲 `Throwable` 後重試。
+現在 `#[MyRetry]` 這個註解會導致任何方法都會被迴圈執行三次，我們還需要加入一個新的策略 `ClassifierRetryPolicy` 來控制什麼樣的錯誤才能被重試。加入 `ClassifierRetryPolicy` 後預設只會在丟擲 `Throwable` 後重試。
 
 ```php
 <?php
@@ -122,11 +122,11 @@ class MyRetry extends \Hyperf\Retry\Annotation\Retry
 }
 ```
 
-只要確保該檔案被 Hyperf 掃描，就可以在方法中使用 `@MyRetry` 註解來重試超時錯誤了。
+只要確保該檔案被 Hyperf 掃描，就可以在方法中使用 `#[MyRetry]` 註解來重試超時錯誤了。
 
 ## 預設配置
 
-`@Retry` 的完整註解預設屬性如下：
+`#[Retry]` 的完整註解預設屬性如下：
 
 ```php
 /**
@@ -224,14 +224,14 @@ public $fallback = '';
 
 ### 錯誤分類策略 `ClassifierRetryPolicy`
 
-通過分類器來判斷錯誤是否可以重試。
+透過分類器來判斷錯誤是否可以重試。
 
 |    引數    | 型別 | 說明 |
 | ---------- | --- | --- |
 | ignoreThrowables |  array | 無視的 `Throwable` 類名 。優先於 `retryThrowables` |
 | retryThrowables | array | 需要重試的 `Throwable` 類名 。優先於 `retryOnThrowablePredicate` |
-| retryOnThrowablePredicate | callable | 通過一個函式來判斷 `Throwable` 是否可以重試。如果可以重試，請返回 true, 反之必須返回 false。 |
-| retryOnResultPredicate | callable | 通過一個函式來判斷返回值是否可以重試。如果可以重試，請返回 true，反之必須返回 false。 |
+| retryOnThrowablePredicate | callable | 透過一個函式來判斷 `Throwable` 是否可以重試。如果可以重試，請返回 true, 反之必須返回 false。 |
+| retryOnResultPredicate | callable | 透過一個函式來判斷返回值是否可以重試。如果可以重試，請返回 true，反之必須返回 false。 |
 
 ### 回退策略 `FallbackRetryPolicy`
 
@@ -270,7 +270,7 @@ public $fallback = '';
 
 ### 預算策略 `BudgetRetryPolicy`
 
-每一個 `@Retry` 註解處會生成一個對應的令牌桶，每當註解方法被呼叫時，就在令牌桶中放入一個具有過期時間(ttl)的令牌。如果發生可重試的錯誤，重試前要消耗掉對應的令牌數量(percentCanRetry)，否則就不會重試（錯誤繼續向下傳遞）。比如，當 percentCanRetry=0.2，則每次重試要消耗 5 個令牌。如此，遇到對端宕機時，最多隻會造成 20% 的額外重試消耗，對於大多數系統都應該可以接受了。
+每一個 `#[Retry]` 註解處會生成一個對應的令牌桶，每當註解方法被呼叫時，就在令牌桶中放入一個具有過期時間(ttl)的令牌。如果發生可重試的錯誤，重試前要消耗掉對應的令牌數量(percentCanRetry)，否則就不會重試（錯誤繼續向下傳遞）。比如，當 percentCanRetry=0.2，則每次重試要消耗 5 個令牌。如此，遇到對端宕機時，最多隻會造成 20% 的額外重試消耗，對於大多數系統都應該可以接受了。
 
 為了照顧某些使用頻率較低的方法，每秒還會生成一定數量的“低保”令牌(minRetriesPerSec)，確保系統穩定。
 
@@ -286,17 +286,17 @@ public $fallback = '';
 
 因為重試註解配置較為複雜，這裡提供了一些預設的別名便於書寫。
 
-* `@RetryThrowable` 只重試 `Throwable`。和預設的 `@Retry` 相同。
+* `#[RetryThrowable]` 只重試 `Throwable`。和預設的 `#[Retry]` 相同。
 
-* `@RetryFalsy` 只重試返回值弱等於 false（$result == false)的錯誤，不重試異常。
+* `#[RetryFalsy]` 只重試返回值弱等於 false（$result == false)的錯誤，不重試異常。
 
-* `@BackoffRetryThrowable` `@RetryThrowable` 的變長重試間歇版本，重試間歇至少 100 毫秒。
+* `#[BackoffRetryThrowable]` `#[RetryThrowable]` 的變長重試間歇版本，重試間歇至少 100 毫秒。
 
-* `@BackoffRetryFalsy` `@RetryFalsy` 的變長重試間歇版本，重試間歇至少 100 毫秒。
+* `#[BackoffRetryFalsy]` `#[RetryFalsy]` 的變長重試間歇版本，重試間歇至少 100 毫秒。
 
 ## Fluent 鏈式呼叫
 
-除了註解方法使用本元件外，您還可以通過常規 PHP 函式使用。
+除了註解方法使用本元件外，您還可以透過常規 PHP 函式使用。
 
 ```php
 <?php

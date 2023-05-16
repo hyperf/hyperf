@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\PgSQL;
 
+use Exception;
+use Generator;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Exception\QueryException;
 use Hyperf\Database\PgSQL\Concerns\PostgreSqlSwooleExtManagesTransactions;
@@ -59,9 +61,14 @@ class PostgreSqlSwooleExtConnection extends Connection
 
             $statement = $this->prepare($query);
 
+            $result = $statement->execute($this->prepareBindings($bindings));
+            if ($result === false) {
+                throw new QueryException($query, $bindings, new Exception($statement->error, $statement->errCode));
+            }
+
             $this->recordsHaveBeenModified();
 
-            return $statement->execute($this->prepareBindings($bindings));
+            return true;
         });
     }
 
@@ -80,11 +87,14 @@ class PostgreSqlSwooleExtConnection extends Connection
             $statement = $this->prepare($query);
             $this->recordsHaveBeenModified();
 
-            $result = $statement->execute($this->prepareBindings($bindings));
+            $statement->execute($this->prepareBindings($bindings));
 
-            $this->recordsHaveBeenModified(
-                ($count = $this->pdo->affectedRows($result)) > 0
-            );
+            $count = $statement->affectedRows();
+            if ($count === false) {
+                throw new QueryException($query, $bindings, new Exception($statement->error, $statement->errCode));
+            }
+
+            $this->recordsHaveBeenModified($count > 0);
 
             return $count;
         });
@@ -106,8 +116,8 @@ class PostgreSqlSwooleExtConnection extends Connection
 
             $result = $statement->execute($this->prepareBindings($bindings));
 
-            if ($result === false) {
-                throw new QueryException($query, [], new \Exception($this->pdo->error));
+            if ($result === false || ! empty($this->pdo->error)) {
+                throw new QueryException($query, [], new Exception($this->pdo->error));
             }
 
             return $statement->fetchAll($this->fetchMode) ?: [];
@@ -117,7 +127,7 @@ class PostgreSqlSwooleExtConnection extends Connection
     /**
      * Run a select statement against the database and returns a generator.
      */
-    public function cursor(string $query, array $bindings = [], bool $useReadPdo = true): \Generator
+    public function cursor(string $query, array $bindings = [], bool $useReadPdo = true): Generator
     {
         $statement = $this->run($query, $bindings, function ($query, $bindings) use ($useReadPdo) {
             if ($this->pretending()) {
@@ -151,7 +161,7 @@ class PostgreSqlSwooleExtConnection extends Connection
 
         $result = $statement->execute($bindings);
         if (! $result) {
-            throw new QueryException($query, [], new \Exception($this->pdo->error));
+            throw new QueryException($query, [], new Exception($this->pdo->error));
         }
 
         return $statement->fetchAll(SW_PGSQL_ASSOC);
@@ -168,6 +178,21 @@ class PostgreSqlSwooleExtConnection extends Connection
         }
 
         return substr_replace($haystack, $replace, $pos, strlen($needle));
+    }
+
+    public function unprepared(string $query): bool
+    {
+        return $this->run($query, [], function ($query) {
+            if ($this->pretending()) {
+                return true;
+            }
+
+            $this->recordsHaveBeenModified(
+                $change = $this->getPdo()->query($query) !== false
+            );
+
+            return $change;
+        });
     }
 
     /**
@@ -212,7 +237,7 @@ class PostgreSqlSwooleExtConnection extends Connection
 
         $statement = $this->pdo->prepare($query);
         if (! $statement) {
-            throw new QueryException($query, [], new \Exception($this->pdo->error));
+            throw new QueryException($query, [], new Exception($this->pdo->error));
         }
 
         return $statement;

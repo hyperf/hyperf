@@ -15,6 +15,7 @@ use Attribute;
 use Hyperf\Constants\AnnotationReader;
 use Hyperf\Constants\ConstantsCollector;
 use Hyperf\Di\Annotation\AbstractAnnotation;
+use ReflectionClass;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 class Constants extends AbstractAnnotation
@@ -23,7 +24,7 @@ class Constants extends AbstractAnnotation
     {
         $reader = new AnnotationReader();
 
-        $ref = new \ReflectionClass($className);
+        $ref = new ReflectionClass($className);
         $classConstants = $ref->getReflectionConstants();
         $data = $reader->getAnnotations($classConstants);
 

@@ -11,17 +11,20 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Middleware;
 
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use Hyperf\Utils\Coroutine;
 use OpenTracing\Span;
 use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
+
+use function Hyperf\Coroutine\defer;
 
 class TraceMiddleware implements MiddlewareInterface
 {
@@ -50,7 +53,7 @@ class TraceMiddleware implements MiddlewareInterface
         try {
             $response = $handler->handle($request);
             $span->setTag($this->spanTagManager->get('response', 'status_code'), $response->getStatusCode());
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->switchManager->isEnable('exception') && $this->appendExceptionToSpan($span, $exception);
             if ($exception instanceof HttpException) {
                 $span->setTag($this->spanTagManager->get('response', 'status_code'), $exception->getStatusCode());
@@ -63,7 +66,7 @@ class TraceMiddleware implements MiddlewareInterface
         return $response;
     }
 
-    protected function appendExceptionToSpan(Span $span, \Throwable $exception): void
+    protected function appendExceptionToSpan(Span $span, Throwable $exception): void
     {
         $span->setTag('error', true);
         $span->setTag($this->spanTagManager->get('exception', 'class'), get_class($exception));

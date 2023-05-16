@@ -11,9 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query\Grammars;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\JsonExpression;
-use Hyperf\Utils\Arr;
+
+use function Hyperf\Collection\collect;
 
 class MySqlGrammar extends Grammar
 {
@@ -120,6 +122,34 @@ class MySqlGrammar extends Grammar
         }
 
         return rtrim($sql);
+    }
+
+    /**
+     * Compile an "upsert" statement into SQL.
+     */
+    public function compileUpsert(Builder $query, array $values, array $uniqueBy, array $update): string
+    {
+        $useUpsertAlias = $query->connection->getConfig('use_upsert_alias');
+
+        $sql = $this->compileInsert($query, $values);
+
+        if ($useUpsertAlias) {
+            $sql .= ' as hyperf_upsert_alias';
+        }
+
+        $sql .= ' on duplicate key update ';
+
+        $columns = collect($update)->map(function ($value, $key) use ($useUpsertAlias) {
+            if (! is_numeric($key)) {
+                return $this->wrap($key) . ' = ' . $this->parameter($value);
+            }
+
+            return $useUpsertAlias
+                ? $this->wrap($value) . ' = ' . $this->wrap('hyperf_upsert_alias') . '.' . $this->wrap($value)
+                : $this->wrap($value) . ' = values(' . $this->wrap($value) . ')';
+        })->implode(', ');
+
+        return $sql . $columns;
     }
 
     /**
@@ -303,5 +333,18 @@ class MySqlGrammar extends Grammar
         [$field, $path] = $this->wrapJsonFieldAndPath($value);
 
         return 'json_unquote(json_extract(' . $field . $path . '))';
+    }
+
+    /**
+     * Wrap the given JSON selector for boolean values.
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function wrapJsonBooleanSelector($value)
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($value);
+
+        return 'json_extract(' . $field . $path . ')';
     }
 }

@@ -14,6 +14,7 @@ namespace HyperfTest\Utils\Serializer;
 use Hyperf\Utils\Serializer\SerializerFactory;
 use Hyperf\Utils\Serializer\SymfonyNormalizer;
 use HyperfTest\Utils\Stub\Foo;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 
@@ -80,10 +81,10 @@ class SymfonySerializerTest extends TestCase
     public function testException()
     {
         $serializer = $this->createSerializer();
-        $e = new \InvalidArgumentException('invalid param value foo');
+        $e = new InvalidArgumentException('invalid param value foo');
         $ret = $serializer->normalize($e);
-        $obj = $serializer->denormalize($ret, \InvalidArgumentException::class);
-        $this->assertInstanceOf(\InvalidArgumentException::class, $obj);
+        $obj = $serializer->denormalize($ret, InvalidArgumentException::class);
+        $this->assertInstanceOf(InvalidArgumentException::class, $obj);
         $this->assertEquals($e->getMessage(), $obj->getMessage());
     }
 

@@ -37,7 +37,9 @@ use phpDocumentor\Reflection\Types\Self_;
 use phpDocumentor\Reflection\Types\String_;
 use Psr\Http\Message\UploadedFileInterface;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionMethod;
+use ReflectionParameter;
 use TheCodingMachine\GraphQLite\Annotations\SourceField;
 use TheCodingMachine\GraphQLite\FieldNotFoundException;
 use TheCodingMachine\GraphQLite\FromSourceFieldsInterface;
@@ -62,6 +64,8 @@ use TheCodingMachine\GraphQLite\Types\UnionType;
 
 use function array_merge;
 use function get_parent_class;
+use function iterator_to_array;
+use function ucfirst;
 
 /**
  * A class in charge if returning list of fields for queries / mutations / entities / input types.
@@ -133,7 +137,7 @@ class FieldsBuilder
     /**
      * @param object $controller
      * @return QueryField[]
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function getQueries($controller): array
     {
@@ -143,7 +147,7 @@ class FieldsBuilder
     /**
      * @param object $controller
      * @return QueryField[]
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function getMutations($controller): array
     {
@@ -158,7 +162,7 @@ class FieldsBuilder
     {
         $fieldAnnotations = $this->getFieldsByAnnotations($controller, Field::class, true);
 
-        $refClass = new \ReflectionClass($controller);
+        $refClass = new ReflectionClass($controller);
 
         /** @var SourceField[] $sourceFields */
         $sourceFields = $this->annotationReader->getSourceFields($refClass);
@@ -189,7 +193,7 @@ class FieldsBuilder
     {
         $fieldAnnotations = $this->getFieldsByAnnotations(null, Field::class, false, $className);
 
-        $refClass = new \ReflectionClass($className);
+        $refClass = new ReflectionClass($className);
 
         /** @var SourceField[] $sourceFields */
         $sourceFields = $this->annotationReader->getSourceFields($refClass);
@@ -226,14 +230,14 @@ class FieldsBuilder
      * @param bool $injectSource whether to inject the source object or not as the first argument
      * @return QueryField[]
      * @throws CannotMapTypeExceptionInterface
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function getFieldsByAnnotations($controller, string $annotationName, bool $injectSource, ?string $sourceClassName = null): array
     {
         if ($sourceClassName !== null) {
-            $refClass = new \ReflectionClass($sourceClassName);
+            $refClass = new ReflectionClass($sourceClassName);
         } else {
-            $refClass = new \ReflectionClass($controller);
+            $refClass = new ReflectionClass($controller);
         }
 
         $queryList = [];
@@ -362,7 +366,7 @@ class FieldsBuilder
      * @return QueryField[]
      * @throws CannotMapTypeException
      * @throws CannotMapTypeExceptionInterface
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function getQueryFieldsFromSourceFields(array $sourceFields, ReflectionClass $refClass): array
     {
@@ -381,7 +385,7 @@ class FieldsBuilder
             throw MissingAnnotationException::missingTypeExceptionToUseSourceField();
         }
 
-        $objectRefClass = new \ReflectionClass($objectClass);
+        $objectRefClass = new ReflectionClass($objectClass);
 
         $oldDeclaringClass = null;
         $context = null;
@@ -448,7 +452,7 @@ class FieldsBuilder
         if ($reflectionClass->hasMethod($propertyName)) {
             $methodName = $propertyName;
         } else {
-            $upperCasePropertyName = \ucfirst($propertyName);
+            $upperCasePropertyName = ucfirst($propertyName);
             if ($reflectionClass->hasMethod('get' . $upperCasePropertyName)) {
                 $methodName = 'get' . $upperCasePropertyName;
             } elseif ($reflectionClass->hasMethod('is' . $upperCasePropertyName)) {
@@ -484,7 +488,7 @@ class FieldsBuilder
     /**
      * Note: there is a bug in $refMethod->allowsNull that forces us to use $standardRefMethod->allowsNull instead.
      *
-     * @param \ReflectionParameter[] $refParameters
+     * @param ReflectionParameter[] $refParameters
      * @return array[] An array of ['type'=>Type, 'defaultValue'=>val]
      * @throws MissingTypeHintException
      */
@@ -731,7 +735,7 @@ class FieldsBuilder
     private function typesWithoutNullable(Type $docBlockTypeHint): array
     {
         if ($docBlockTypeHint instanceof Compound) {
-            $docBlockTypeHints = \iterator_to_array($docBlockTypeHint);
+            $docBlockTypeHints = iterator_to_array($docBlockTypeHint);
         } else {
             $docBlockTypeHints = [$docBlockTypeHint];
         }

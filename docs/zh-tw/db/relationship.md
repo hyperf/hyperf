@@ -60,7 +60,7 @@ class User extends Model
 
 記住一點，`Hyperf` 將會自動確定 `Book` 模型的外來鍵屬性。按照約定，`Hyperf` 將會使用所屬模型名稱的 『snake case』形式，再加上 `_id` 字尾作為外來鍵欄位。因此，在上面這個例子中，`Hyperf` 將假定 `User` 對應到 `Book` 模型上的外來鍵就是 `user_id`。
 
-一旦關係被定義好以後，就可以通過訪問 `User` 模型的 `books` 屬性來獲取評論的集合。記住，由於 Hyperf 提供了『動態屬性』 ，所以我們可以像訪問模型的屬性一樣訪問關聯方法：
+一旦關係被定義好以後，就可以透過訪問 `User` 模型的 `books` 屬性來獲取評論的集合。記住，由於 Hyperf 提供了『動態屬性』 ，所以我們可以像訪問模型的屬性一樣訪問關聯方法：
 
 ```php
 $books = User::query()->find(1)->books;
@@ -78,7 +78,7 @@ $book = User::query()->find(1)->books()->where('title', '一個月精通Hyperf�
 
 ### 一對多（反向）
 
-現在，我們已經能獲得一個作者的所有作品，接著再定義一個通過書獲得其作者的關聯關係。這個關聯是 `hasMany` 關聯的反向關聯，需要在子級模型中使用 `belongsTo` 方法定義它：
+現在，我們已經能獲得一個作者的所有作品，接著再定義一個透過書獲得其作者的關聯關係。這個關聯是 `hasMany` 關聯的反向關聯，需要在子級模型中使用 `belongsTo` 方法定義它：
 
 ```php
 <?php
@@ -98,7 +98,7 @@ class Book extends Model
 }
 ```
 
-這個關係定義好以後，我們就可以通過訪問 `Book` 模型的 author 這個『動態屬性』來獲取關聯的 `User` 模型了：
+這個關係定義好以後，我們就可以透過訪問 `Book` 模型的 author 這個『動態屬性』來獲取關聯的 `User` 模型了：
 
 ```php
 $book = Book::find(1);
@@ -110,7 +110,7 @@ echo $book->author->name;
 
 多對多關聯比 `hasOne` 和 `hasMany` 關聯稍微複雜些。舉個例子，一個使用者可以擁有很多種角色，同時這些角色也被其他使用者共享。例如，許多使用者可能都有 「管理員」 這個角色。要定義這種關聯，需要三個資料庫表： `users`，`roles` 和 `role_user`。`role_user` 表的命名是由關聯的兩個模型按照字母順序來的，並且包含了 `user_id` 和 `role_id` 欄位。
 
-多對多關聯通過呼叫 `belongsToMany` 這個內部方法返回的結果來定義，例如，我們在 `User` 模型中定義 `roles` 方法：
+多對多關聯透過呼叫 `belongsToMany` 這個內部方法返回的結果來定義，例如，我們在 `User` 模型中定義 `roles` 方法：
 
 ```php
 <?php
@@ -128,7 +128,7 @@ class User extends Model
 }
 ```
 
-一旦關聯關係被定義後，你可以通過 `roles` 動態屬性獲取使用者角色：
+一旦關聯關係被定義後，你可以透過 `roles` 動態屬性獲取使用者角色：
 
 ```php
 $user = User::query()->find(1);
@@ -150,7 +150,7 @@ $roles = User::find(1)->roles()->orderBy('name')->get();
 return $this->belongsToMany(Role::class, 'role_user');
 ```
 
-除了自定義連線表的表名，你還可以通過傳遞額外的引數到 `belongsToMany` 方法來定義該表中欄位的鍵名。第三個引數是定義此關聯的模型在連線表裡的外來鍵名，第四個引數是另一個模型在連線表裡的外來鍵名：
+除了自定義連線表的表名，你還可以透過傳遞額外的引數到 `belongsToMany` 方法來定義該表中欄位的鍵名。第三個引數是定義此關聯的模型在連線表裡的外來鍵名，第四個引數是另一個模型在連線表裡的外來鍵名：
 
 ```php
 return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
@@ -202,7 +202,7 @@ foreach ($users->flatMap->podcasts as $podcast) {
 }
 ```
 
-#### 通過中間表過濾關係
+#### 透過中間表過濾關係
 
 在定義關係時，你還可以使用 `wherePivot` 和 `wherePivotIn` 方法來過濾 `belongsToMany` 返回的結果：
 
@@ -326,7 +326,7 @@ class User extends Model
 
 #### 獲取關聯
 
-按照上述定義模型後，我們就可以通過模型關係獲取對應的模型。
+按照上述定義模型後，我們就可以透過模型關係獲取對應的模型。
 
 比如，我們獲取某使用者的圖片。
 

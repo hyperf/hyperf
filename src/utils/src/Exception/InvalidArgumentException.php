@@ -11,6 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Exception;
 
-class InvalidArgumentException extends \InvalidArgumentException
-{
+class_alias(\Hyperf\Support\Exception\InvalidArgumentException::class, InvalidArgumentException::class);
+
+if (! class_exists(InvalidArgumentException::class)) {
+    /**
+     * @deprecated since 3.1, use \Hyperf\Support\Exception\InvalidArgumentException instead.
+     */
+    class InvalidArgumentException extends \Hyperf\Support\Exception\InvalidArgumentException
+    {
+    }
 }

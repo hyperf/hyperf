@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Engine\Http\Server as HttpServer;
 use Hyperf\Engine\Server as BaseServer;
 use Hyperf\Server\Event\AllCoroutineServersClosed;
@@ -22,13 +23,15 @@ use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Exception\RuntimeException;
-use Hyperf\Utils\Waiter;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swow\Buffer;
 use Swow\Coroutine;
 use Swow\Socket;
+
+use function Swow\Sync\waitAll;
 
 class SwowServer implements ServerInterface
 {
@@ -60,6 +63,9 @@ class SwowServer implements ServerInterface
         $this->initServer($this->config);
         $servers = ServerManager::list();
         $config = $this->config->toArray();
+        /**
+         * @var HttpServer $server
+         */
         foreach ($servers as $name => [$type, $server]) {
             Coroutine::run(function () use ($name, $server, $config) {
                 if (! $this->mainServerStarted) {
@@ -77,6 +83,8 @@ class SwowServer implements ServerInterface
         if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
             $this->closeAll($servers);
         }
+
+        waitAll();
     }
 
     public function getServer(): Socket
@@ -109,7 +117,7 @@ class SwowServer implements ServerInterface
             $port = $server->getPort();
             $callbacks = array_replace($config->getCallbacks(), $server->getCallbacks());
 
-            $this->server = $this->makeServer($type, $host, $port);
+            $this->server = $this->makeServer($type, $host, $port, $server->getSettings());
 
             $this->bindServerCallbacks($this->server, $type, $name, $callbacks);
 
@@ -141,7 +149,7 @@ class SwowServer implements ServerInterface
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof HttpServer) {
+                    if ($server instanceof HttpServer) {
                         $server->handle(function ($request, $session) use ($handler, $method) {
                             $this->waiter->wait(static function () use ($request, $session, $handler, $method) {
                                 $handler->{$method}($request, $session);
@@ -158,8 +166,8 @@ class SwowServer implements ServerInterface
                     if ($receiveHandler instanceof MiddlewareInitializerInterface) {
                         $receiveHandler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof BaseServer) {
-                        $this->server->handle(function (Socket $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
+                    if ($server instanceof BaseServer) {
+                        $server->handle(function (Socket $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
                             if ($connectHandler && $connectMethod) {
                                 $this->waiter->wait(static function () use ($connectHandler, $connectMethod, $connection) {
                                     $connectHandler->{$connectMethod}($connection, $connection->getId());
@@ -183,6 +191,14 @@ class SwowServer implements ServerInterface
                             }
                         });
                     }
+                    if (isset($callbacks[Event::ON_PACKET])) {
+                        [$receiveHandler, $receiveMethod] = $this->getCallbackMethod(Event::ON_PACKET, $callbacks);
+                        if ($server instanceof BaseServer) {
+                            $server->handle(function (Socket $connection, $data, $clientInfo) use ($receiveHandler, $receiveMethod) {
+                                $receiveHandler->{$receiveMethod}($connection, $data, $clientInfo);
+                            });
+                        }
+                    }
                 }
                 return;
         }
@@ -200,16 +216,18 @@ class SwowServer implements ServerInterface
         return [$handler, $method];
     }
 
-    protected function makeServer($type, $host, $port)
+    protected function makeServer($type, $host, $port, $settings)
     {
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
             case ServerInterface::SERVER_WEBSOCKET:
                 $server = new HttpServer($this->logger);
+                $this->initServerSettings($server, $settings);
                 $server->bind($host, $port);
                 return $server;
             case ServerInterface::SERVER_BASE:
                 $server = new BaseServer($this->logger);
+                $this->initServerSettings($server, $settings);
                 $server->bind($host, $port);
                 return $server;
         }
@@ -223,6 +241,28 @@ class SwowServer implements ServerInterface
         $file = $config->get('server.settings.pid_file');
         if ($file) {
             file_put_contents($file, getmypid());
+        }
+    }
+
+    private function initServerSettings($server, $settings)
+    {
+        // Adapter Swoole server settings
+        $mappings = [
+            'open_tcp_nodelay' => 'tcp_nodelay',
+            'buffer_output_size' => 'send_buffer_size',
+            'output_buffer_size' => 'send_buffer_size',
+            'buffer_input_size' => 'recv_buffer_size',
+            'input_buffer_size' => 'recv_buffer_size',
+        ];
+        foreach ($settings as $key => $value) {
+            if (array_key_exists($key, $mappings)) {
+                $key = $mappings[$key];
+            }
+
+            $method = Str::camel(sprintf('set_%s', $key));
+            if (method_exists($server, $method)) {
+                $server->{$method}($value);
+            }
         }
     }
 }

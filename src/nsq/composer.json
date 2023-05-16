@@ -18,8 +18,11 @@
     "require": {
         "php": ">=8.0",
         "ext-bcmath": "*",
+        "hyperf/code-parser": "~3.0.0",
+        "hyperf/codec": "~3.0.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/engine": ">=1.3",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "jean85/pretty-package-versions": "^1.2|^2.0"
     },

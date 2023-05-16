@@ -11,14 +11,17 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Compiler;
 
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Component\AnonymousComponent;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\FinderInterface;
 use InvalidArgumentException;
+use PhpToken;
 use ReflectionClass;
+
+use function Hyperf\Collection\collect;
 
 class ComponentTagCompiler
 {
@@ -481,7 +484,7 @@ class ComponentTagCompiler
      */
     protected function escapeSingleQuotesOutsideOfPhpBlocks(string $value): string
     {
-        return collect(\PhpToken::tokenize($value))->map(function (\PhpToken $token) {
+        return collect(PhpToken::tokenize($value))->map(function (PhpToken $token) {
             return $token->id === T_INLINE_HTML ? str_replace("'", "\\'", $token->text) : $token->text;
         })->implode('');
     }

@@ -17,6 +17,7 @@ use Hyperf\Cache\CacheManager;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Throwable;
 
 class FailCacheAspect extends AbstractAspect
 {
@@ -43,7 +44,7 @@ class FailCacheAspect extends AbstractAspect
         try {
             $result = $proceedingJoinPoint->process();
             $driver->set($key, $result, $ttl);
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             [$has, $result] = $driver->fetch($key);
             if (! $has) {
                 throw $throwable;

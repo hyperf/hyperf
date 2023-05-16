@@ -13,7 +13,6 @@ namespace Hyperf\Rpn;
 
 use Hyperf\Rpn\Exception\InvalidExpressionException;
 use Hyperf\Rpn\Exception\InvalidOperatorException;
-use Hyperf\Rpn\Exception\InvalidValueException;
 use Hyperf\Rpn\Exception\NotFoundException;
 use Hyperf\Rpn\Operator\AddOperator;
 use Hyperf\Rpn\Operator\DivideOperator;
@@ -21,6 +20,8 @@ use Hyperf\Rpn\Operator\HasBindings;
 use Hyperf\Rpn\Operator\MultiplyOperator;
 use Hyperf\Rpn\Operator\OperatorInterface;
 use Hyperf\Rpn\Operator\SubtractOperator;
+use SplQueue;
+use SplStack;
 
 class Calculator
 {
@@ -47,8 +48,8 @@ class Calculator
 
     public function calculate(string $expression, array $bindings = [], int $scale = 0): string
     {
-        $queue = new \SplQueue();
-        $tags = $this->fromBindings(explode(' ', $expression), $bindings);
+        $queue = new SplQueue();
+        $tags = explode(' ', $expression);
         foreach ($tags as $tag) {
             if (! $this->isOperator($tag)) {
                 $queue->push($tag);
@@ -61,9 +62,6 @@ class Calculator
             $length = $operator->length();
             while (true) {
                 $value = $queue->pop();
-                if (! is_numeric($value)) {
-                    throw new InvalidValueException(sprintf('The value %s is invalid.', $value));
-                }
 
                 if ($length === null && $this->isOperator($value)) {
                     $queue->push($value);
@@ -77,7 +75,7 @@ class Calculator
                 }
             }
 
-            $queue->push($operator->execute(array_reverse($params), $scale));
+            $queue->push($operator->execute(array_reverse($params), $scale, $bindings));
         }
 
         if ($queue->count() !== 1) {
@@ -89,8 +87,8 @@ class Calculator
 
     public function toRPNExpression(string $expression): string
     {
-        $numStack = new \SplStack();
-        $operaStack = new \SplStack();
+        $numStack = new SplStack();
+        $operaStack = new SplStack();
         preg_match_all('/((?:[0-9\.]+)|(?:[\(\)\+\-\*\/])){1}/', $expression, $matches);
         foreach ($matches[0] as $key => &$match) {
             if (is_numeric($match)) {

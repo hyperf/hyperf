@@ -13,15 +13,22 @@ namespace Hyperf\Database\Model;
 
 use BadMethodCallException;
 use Closure;
+use Generator;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Traits\ForwardsCalls;
+use InvalidArgumentException;
+use ReflectionClass;
+use ReflectionMethod;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Tappable\tap;
 
 /**
  * @mixin \Hyperf\Database\Query\Builder
@@ -70,7 +77,7 @@ class Builder
     /**
      * A replacement for the typical delete function.
      *
-     * @var \Closure
+     * @var Closure
      */
     protected $onDelete;
 
@@ -82,6 +89,7 @@ class Builder
     protected $passthru = [
         'insert', 'insertGetId', 'getBindings', 'toSql', 'insertOrIgnore',
         'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'average', 'sum', 'getConnection',
+        'upsert',
     ];
 
     /**
@@ -120,13 +128,17 @@ class Builder
             return;
         }
 
-        if (isset($this->localMacros[$method])) {
+        if ($method === 'mixin') {
+            return static::registerMixin($parameters[0], $parameters[1] ?? true);
+        }
+
+        if ($this->hasMacro($method)) {
             array_unshift($parameters, $this);
 
             return $this->localMacros[$method](...$parameters);
         }
 
-        if (isset(static::$macros[$method])) {
+        if (static::hasGlobalMacro($method)) {
             if (static::$macros[$method] instanceof Closure) {
                 return call_user_func_array(static::$macros[$method]->bindTo($this, static::class), $parameters);
             }
@@ -153,7 +165,7 @@ class Builder
      * @param string $method
      * @param array $parameters
      *
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public static function __callStatic($method, $parameters)
     {
@@ -163,7 +175,11 @@ class Builder
             return;
         }
 
-        if (! isset(static::$macros[$method])) {
+        if ($method === 'mixin') {
+            return static::registerMixin($parameters[0], $parameters[1] ?? true);
+        }
+
+        if (! static::hasGlobalMacro($method)) {
             static::throwBadMethodCallException($method);
         }
 
@@ -183,6 +199,16 @@ class Builder
     }
 
     /**
+     * Clone the Model query builder.
+     *
+     * @return static
+     */
+    public function clone()
+    {
+        return clone $this;
+    }
+
+    /**
      * Create and return an un-saved model instance.
      *
      * @return \Hyperf\Database\Model\Model
@@ -196,7 +222,7 @@ class Builder
      * Register a new global scope.
      *
      * @param string $identifier
-     * @param \Closure|\Hyperf\Database\Model\Scope $scope
+     * @param Closure|\Hyperf\Database\Model\Scope $scope
      * @return $this
      */
     public function withGlobalScope($identifier, $scope)
@@ -294,7 +320,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param array|\Closure|string $column
+     * @param array|Closure|string $column
      * @param string $boolean
      * @param null|mixed $operator
      * @param null|mixed $value
@@ -316,7 +342,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param array|\Closure|string $column
+     * @param array|Closure|string $column
      * @param null|mixed $operator
      * @param null|mixed $value
      * @return \Hyperf\Database\Model\Builder|static
@@ -529,7 +555,7 @@ class Builder
     /**
      * Execute the query and get the first result or call a callback.
      *
-     * @param array|\Closure $columns
+     * @param array|Closure $columns
      * @return \Hyperf\Database\Model\Model|mixed|static
      */
     public function firstOr($columns = ['*'], Closure $callback = null)
@@ -645,7 +671,7 @@ class Builder
     /**
      * Get a generator for the given query.
      *
-     * @return \Generator
+     * @return Generator
      */
     public function cursor()
     {
@@ -704,7 +730,7 @@ class Builder
      *
      * @param string $column
      * @param null|string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     public function pluck($column, $key = null)
     {
@@ -727,7 +753,7 @@ class Builder
     /**
      * Paginate the given query.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
     {
@@ -1080,11 +1106,65 @@ class Builder
      * Get the given macro by name.
      *
      * @param string $name
-     * @return \Closure
+     * @return Closure
      */
     public function getMacro($name)
     {
         return Arr::get($this->localMacros, $name);
+    }
+
+    /**
+     * Checks if a macro is registered.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasMacro($name)
+    {
+        return isset($this->localMacros[$name]);
+    }
+
+    /**
+     * Get the given global macro by name.
+     *
+     * @param string $name
+     * @return Closure
+     */
+    public static function getGlobalMacro($name)
+    {
+        return Arr::get(static::$macros, $name);
+    }
+
+    /**
+     * Checks if a global macro is registered.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public static function hasGlobalMacro($name)
+    {
+        return isset(static::$macros[$name]);
+    }
+
+    /**
+     * Register the given mixin with the builder.
+     *
+     * @param string $mixin
+     * @param bool $replace
+     */
+    protected static function registerMixin($mixin, $replace)
+    {
+        $methods = (new ReflectionClass($mixin))->getMethods(
+            ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED
+        );
+
+        foreach ($methods as $method) {
+            if ($replace || ! static::hasGlobalMacro($method->name)) {
+                $method->setAccessible(true);
+
+                static::macro($method->name, $method->invoke($mixin));
+            }
+        }
     }
 
     /**

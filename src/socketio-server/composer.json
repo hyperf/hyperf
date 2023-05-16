@@ -12,6 +12,8 @@
         "ext-json": "*",
         "ext-redis": "*",
         "ext-swoole": ">=4.4",
+        "hyperf/codec": "~3.0.0",
+        "hyperf/collection": "~3.0.0",
         "hyperf/di": "~3.0.0",
         "hyperf/redis": "~3.0.0",
         "hyperf/websocket-server": "~3.0.0",

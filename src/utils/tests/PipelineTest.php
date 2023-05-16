@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Utils\Pipeline;
 use HyperfTest\Utils\Stub\FooPipeline;
 use Mockery;
@@ -164,7 +164,7 @@ class PipelineTest extends TestCase
         $this->assertSame('data', $result);
     }
 
-    public function testPipelineThenReturnMethodRunsPipelineThenReturnsPassable()
+    public function testPipelineThenMethodRunsPipelineThenReturnsPassable()
     {
         $result = (new Pipeline($this->getContainer()))
             ->send('foo')
@@ -172,6 +172,19 @@ class PipelineTest extends TestCase
             ->then(static function ($passable) {
                 return $passable;
             });
+
+        $this->assertSame('foo', $result);
+        $this->assertSame('foo', $_SERVER['__test.pipe.one']);
+
+        unset($_SERVER['__test.pipe.one']);
+    }
+
+    public function testPipelineThenReturnMethodRunsPipelineThenReturnsTheResult()
+    {
+        $result = (new Pipeline($this->getContainer()))
+            ->send('foo')
+            ->through([PipelineTestPipeOne::class])
+            ->thenReturn();
 
         $this->assertSame('foo', $result);
         $this->assertSame('foo', $_SERVER['__test.pipe.one']);

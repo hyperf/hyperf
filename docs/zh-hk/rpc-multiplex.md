@@ -40,6 +40,10 @@ return [
                 'package_body_offset' => 4,
                 'package_max_length' => 1024 * 1024 * 2,
             ],
+            'options' => [
+                // 多路複用下，避免跨協程 Socket 跨協程多寫報錯
+                'send_channel_capacity' => 65535,
+            ],
         ],
     ],
 ];
@@ -102,7 +106,7 @@ return [
                 'retry_interval' => 100,
                 // 多路複用客户端數量
                 'client_count' => 4,
-                // 心跳間隔 非 numeric 表示不開啟心跳
+                // 心跳間隔 非 numeric 表示不開啓心跳
                 'heartbeat' => 30,
             ],
         ],

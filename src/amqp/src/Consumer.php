@@ -20,9 +20,9 @@ use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
 use Hyperf\Amqp\Message\Type;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coroutine\Concurrent;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Process\ProcessManager;
-use Hyperf\Utils\Coroutine\Concurrent;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -30,6 +30,8 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
+
+use function Hyperf\Coroutine\parallel;
 
 class Consumer extends Builder
 {
@@ -83,13 +85,13 @@ class Consumer extends Builder
                         break;
                     }
                 } catch (AMQPTimeoutException $exception) {
-                    $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
-                } catch (\Throwable $exception) {
+                    $this->eventDispatcher?->dispatch(new WaitTimeout($consumerMessage));
+                } catch (Throwable $exception) {
                     $this->logger->error((string) $exception);
                     break;
                 }
             }
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             isset($channel) && $channel->close();
             throw $exception;
         }
@@ -169,11 +171,11 @@ class Consumer extends Builder
             $deliveryTag = $message->delivery_info['delivery_tag'];
 
             try {
-                $this->eventDispatcher && $this->eventDispatcher->dispatch(new BeforeConsume($consumerMessage));
+                $this->eventDispatcher?->dispatch(new BeforeConsume($consumerMessage));
                 $result = $consumerMessage->consumeMessage($data, $message);
-                $this->eventDispatcher && $this->eventDispatcher->dispatch(new AfterConsume($consumerMessage, $result));
+                $this->eventDispatcher?->dispatch(new AfterConsume($consumerMessage, $result));
             } catch (Throwable $exception) {
-                $this->eventDispatcher && $this->eventDispatcher->dispatch(new FailToConsume($consumerMessage, $exception));
+                $this->eventDispatcher?->dispatch(new FailToConsume($consumerMessage, $exception));
                 if ($this->container->has(FormatterInterface::class)) {
                     $formatter = $this->container->get(FormatterInterface::class);
                     $this->logger->error($formatter->format($exception));

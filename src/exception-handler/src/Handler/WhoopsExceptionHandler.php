@@ -15,7 +15,7 @@ use Hyperf\Context\Context;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -25,6 +25,8 @@ use Whoops\Handler\PrettyPageHandler;
 use Whoops\Handler\XmlResponseHandler;
 use Whoops\Run;
 use Whoops\RunInterface;
+
+use function Hyperf\Support\env;
 
 class WhoopsExceptionHandler extends ExceptionHandler
 {

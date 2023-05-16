@@ -13,10 +13,14 @@ namespace HyperfTest\Logger;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Logger\Logger;
+use Mockery;
 use Monolog\Handler\TestHandler;
 use Monolog\LogRecord;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
+
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
@@ -26,14 +30,14 @@ class LoggerTest extends TestCase
 {
     public function testInstanceOfMonoLogger()
     {
-        $logger = \Mockery::mock(Logger::class);
+        $logger = Mockery::mock(Logger::class);
 
         $this->assertInstanceOf(\Monolog\Logger::class, $logger);
     }
 
     public function testInstanceOfLoggerInterface()
     {
-        $logger = \Mockery::mock(Logger::class);
+        $logger = Mockery::mock(Logger::class);
 
         $this->assertInstanceOf(StdoutLoggerInterface::class, $logger);
         $this->assertInstanceOf(LoggerInterface::class, $logger);
@@ -45,7 +49,7 @@ class LoggerTest extends TestCase
             $handler = new TestHandler(),
         ]);
 
-        $logger->error(new \RuntimeException('Invalid Arguments'));
+        $logger->error(new RuntimeException('Invalid Arguments'));
 
         $this->assertMatchesRegularExpression('/RuntimeException: Invalid Arguments/', $handler->getRecords()[0]['message']);
     }

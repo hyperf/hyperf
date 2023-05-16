@@ -107,13 +107,9 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
-    /**
-     * 通过 `#[Inject]` 注解注入由 `@var` 注解声明的属性类型对象
-     * 
-     * @var UserService
-     */
+
     #[Inject]
-    private $userService;
+    private UserService $userService;
     
     public function index()
     {
@@ -130,7 +126,7 @@ class IndexController
 
 ##### Required 参数
 
-`@Inject` 注解存在一个 `required` 参数，默认值为 `true`，当将该参数定义为 `false` 时，则表明该成员属性为一个可选依赖，当对应 `@var` 的对象不存在于 DI
+`#[Inject]` 注解存在一个 `required` 参数，默认值为 `true`，当将该参数定义为 `false` 时，则表明该成员属性为一个可选依赖，当对应 `@var` 的对象不存在于 DI
 容器或不可创建时，将不会抛出异常而是注入一个 `null`，如下：
 
 ```php
@@ -143,7 +139,7 @@ use Hyperf\Di\Annotation\Inject;
 class IndexController
 {
     /**
-     * 通过 `#[Inject]` 注解注入由 `@var` 注解声明的属性类型对象
+     * 通过 `#[Inject]` 注解注入由注解声明的属性类型对象
      * 当 UserService 不存在于 DI 容器内或不可创建时，则注入 null
      * 
      * @var UserService
@@ -247,8 +243,8 @@ use Psr\Container\ContainerInterface;
 
 class UserServiceFactory
 {
-    // 实现一个 __invoke() 方法来完成对象的生产，方法参数会自动注入一个当前的容器实例
-    public function __invoke(ContainerInterface $container)
+    // 实现一个 __invoke() 方法来完成对象的生产，方法参数会自动注入一个当前的容器实例和一个参数数组
+    public function __invoke(ContainerInterface $container, array $parameters = [])
     {
         $config = $container->get(ConfigInterface::class);
         // 我们假设对应的配置的 key 为 cache.enable
@@ -292,7 +288,7 @@ return [
 
 这样在注入 `UserServiceInterface` 的时候容器就会交由 `UserServiceFactory` 来创建对象了。
 
-> 当然在该场景中可以通过 `@Value` 注解来更便捷的注入配置而无需构建工厂类，此仅为举例
+> 当然在该场景中可以通过 `#[Value]` 注解来更便捷的注入配置而无需构建工厂类，此仅为举例
 
 ### 懒加载
 
@@ -409,10 +405,10 @@ class IndexController
 ```   
 
 在某些更极端动态的情况下，或者非 `容器(Container)` 的管理作用之下时，想要获取到 `容器(Container)`
-对象还可以通过 `\Hyperf\Utils\ApplicationContext::getContaienr()` 方法来获得 `容器(Container)` 对象。
+对象还可以通过 `\Hyperf\Context\ApplicationContext::getContaienr()` 方法来获得 `容器(Container)` 对象。
 
 ```php
-$container = \Hyperf\Utils\ApplicationContext::getContainer();
+$container = \Hyperf\Context\ApplicationContext::getContainer();
 ```
 
 ## 扫描适配器

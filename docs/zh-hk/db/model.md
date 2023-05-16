@@ -7,7 +7,7 @@
 Hyperf 提供了創建模型的命令，您可以很方便的根據數據表創建對應模型。命令通過 `AST` 生成模型，所以當您增加了某些方法後，也可以使用腳本方便的重置模型。
 
 ```
-$ php bin/hyperf.php gen:model table_name
+php bin/hyperf.php gen:model table_name
 ```
 
 可選參數如下：
@@ -83,21 +83,21 @@ class User extends Model
      *
      * @var string
      */
-    protected $table = 'user';
+    protected ?string $table = 'user';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
+    protected array $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'gender' => 'integer'];
+    protected array $casts = ['id' => 'integer', 'gender' => 'integer'];
 }
 ```
 
@@ -129,7 +129,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $table = 'user';
+    protected ?string $table = 'user';
 }
 ```
 
@@ -154,7 +154,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    public $timestamps = false;
+    public bool $timestamps = false;
 }
 ```
 
@@ -171,7 +171,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $dateFormat = 'U';
+    protected ?string $dateFormat = 'U';
 }
 ```
 
@@ -211,7 +211,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $connection = 'connection-name';
+    protected ?string $connection = 'connection-name';
 }
 ```
 
@@ -230,7 +230,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $attributes = [
+    protected array $attributes = [
         'delayed' => false,
     ];
 }
@@ -403,7 +403,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $fillable = ['name'];
+    protected array $fillable = ['name'];
 }
 ```
 
@@ -487,7 +487,7 @@ $user->delete();
 
 ### 通過查詢刪除模型
 
-您可通過在查詢上調用 `delete` 方法來刪除模型數據，在這個例子中，我們將刪除所有 `gender` 為 `1` 的用户。與批量更新一樣，批量刪除不會為刪除的模型啟動任何模型事件：
+您可通過在查詢上調用 `delete` 方法來刪除模型數據，在這個例子中，我們將刪除所有 `gender` 為 `1` 的用户。與批量更新一樣，批量刪除不會為刪除的模型啓動任何模型事件：
 
 ```php
 use App\Model\User;
@@ -510,7 +510,7 @@ User::destroy([1,2,3]);
 
 ### 軟刪除
 
-除了真實刪除數據庫記錄，`Hyperf` 也可以「軟刪除」模型。軟刪除的模型並不是真的從數據庫中刪除了。事實上，是在模型上設置了 `deleted_at` 屬性並將其值寫入數據庫。如果 `deleted_at` 值非空，代表這個模型已被軟刪除。如果要開啟模型軟刪除功能，你需要在模型上使用 `Hyperf\Database\Model\SoftDeletes` trait
+除了真實刪除數據庫記錄，`Hyperf` 也可以「軟刪除」模型。軟刪除的模型並不是真的從數據庫中刪除了。事實上，是在模型上設置了 `deleted_at` 屬性並將其值寫入數據庫。如果 `deleted_at` 值非空，代表這個模型已被軟刪除。如果要開啓模型軟刪除功能，你需要在模型上使用 `Hyperf\Database\Model\SoftDeletes` trait
 
 > `SoftDeletes` trait 會自動將 `deleted_at` 屬性轉換成 `DateTime / Carbon` 實例
 
@@ -526,4 +526,53 @@ class User extends Model
 {
     use SoftDeletes;
 }
+```
+
+`restoreOrCreate` 方法會通過給定的 列 / 值 來匹配數據庫中的數據。如果在數據庫中找到對應的模型，即執行 `restore` 方法恢復模型，否則會從第一個參數的屬性乃至第二個參數的屬性中創建一條記錄插入到數據庫。
+
+```php
+// 通過 name 查找用户，不存在則使用 name 和 gender, age 屬性創建...
+$user = User::restoreOrCreate(
+    ['name' => 'Hyperf'],
+    ['gender' => 1, 'age' => 20]
+);
+```
+
+## Bit 類型
+
+默認情況下，Hyperf 中的數據庫模型轉 SQL 過程中，會將參數值統一轉為 String 類型，以解決 int 在大數問題和使值類型更容易匹配索引，若想要使 `ORM` 支持 `bit` 類型，只需要增加以下事件監聽器代碼即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\Database\Connection;
+use Hyperf\Database\MySqlBitConnection;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\BootApplication;
+
+/**
+ * @Listener()
+ */
+class SupportMySQLBitListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            BootApplication::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        Connection::resolverFor('mysql', static function ($connection, $database, $prefix, $config) {
+            return new MySqlBitConnection($connection, $database, $prefix, $config);
+        });
+    }
+}
+
 ```

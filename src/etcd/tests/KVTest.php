@@ -13,6 +13,7 @@ namespace HyperfTest\Etcd;
 
 use GuzzleHttp\Client;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
 use Hyperf\Etcd\KVFactory;
@@ -26,7 +27,6 @@ use Hyperf\Pool\PoolOption;
 use Hyperf\Pool\SimplePool\Connection;
 use Hyperf\Pool\SimplePool\Pool;
 use Hyperf\Pool\SimplePool\PoolFactory;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Etcd\Stub\GuzzleClientStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;

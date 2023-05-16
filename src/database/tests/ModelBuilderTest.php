@@ -11,9 +11,11 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
+use BadMethodCallException;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Closure;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolver;
@@ -26,13 +28,14 @@ use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\Database\Query\Builder as BaseBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Utils\Collection as BaseCollection;
 use HyperfTest\Database\Stubs\ModelStub;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+
+use function Hyperf\Collection\collect;
 
 /**
  * @internal
@@ -443,7 +446,7 @@ class ModelBuilderTest extends TestCase
 
     public function testMissingStaticMacrosThrowsProperException()
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Call to undefined method Hyperf\Database\Model\Builder::missingMacro()');
         Builder::missingMacro();
     }
@@ -1173,6 +1176,51 @@ class ModelBuilderTest extends TestCase
         $builder->withCasts(['foo' => 'bar']);
     }
 
+    public function testMixin()
+    {
+        \Hyperf\Database\Model\Builder::macro('testAbc', fn () => 'abc');
+        $this->assertEquals('abc', ModelStub::testAbc());
+
+        \Hyperf\Database\Model\Builder::mixin(new UserMixin());
+
+        $this->assertInstanceOf(\Hyperf\Database\Model\Builder::class, ModelStub::whereFoo());
+        $this->assertInstanceOf(\Hyperf\Database\Model\Builder::class, ModelStub::whereBar());
+    }
+
+    public function testClone()
+    {
+        $builder = \HyperfTest\Database\Stubs\ModelStub::query();
+        $clone = $builder->clone();
+
+        $clone->select(['id']);
+
+        $this->assertNotEquals($builder->toSql(), $clone->toSql());
+        $this->assertSame('select * from "stub"', $builder->toSql());
+        $this->assertSame('select "id" from "stub"', $clone->toSql());
+    }
+
+    public function testWithAggregateAndSelfRelationConstrain()
+    {
+        ModelBuilderTestStub::resolveRelationUsing('children', function ($model) {
+            return $model->hasMany(ModelBuilderTestStub::class, 'parent_id', 'id')->where('enum_value', new stdClass());
+        });
+
+        ModelBuilderTestStub::resolveRelationUsing('customer', function ($model) {
+            return $model->belongsTo(ModelBuilderTestStub::class, 'customer_id');
+        });
+
+        $model = new ModelBuilderTestStub();
+        $this->mockConnectionForModel($model, '');
+        $relationHash = $model->children()->getRelationCountHash(false);
+        $relationHash2 = $model->customer()->getRelationCountHash(false);
+
+        $builder = $model->withCount('children');
+        $builder2 = $model->has('customer');
+
+        $this->assertSame(vsprintf('select "table".*, (select count(*) from "table" as "%s" where "table"."id" = "%s"."parent_id" and "enum_value" = ?) as "children_count" from "table"', [$relationHash, $relationHash]), $builder->toSql());
+        $this->assertSame(vsprintf('select * from "table" where exists (select * from "table" as "%s" where "%s"."id" = "table"."customer_id")', [$relationHash2, $relationHash2]), $builder2->toSql());
+    }
+
     protected function mockConnectionForModel($model, $database)
     {
         $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';
@@ -1205,6 +1253,19 @@ class ModelBuilderTest extends TestCase
         $query->shouldReceive('from')->with('foo_table');
 
         return $query;
+    }
+}
+
+class UserMixin
+{
+    public function whereFoo()
+    {
+        return fn () => $this;
+    }
+
+    public function whereBar()
+    {
+        return fn () => $this;
     }
 }
 

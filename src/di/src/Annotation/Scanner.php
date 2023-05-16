@@ -17,8 +17,8 @@ use Hyperf\Di\Exception\DirectoryNotExistException;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\ScanHandler\ScanHandlerInterface;
-use Hyperf\Utils\Composer;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Composer;
+use Hyperf\Support\Filesystem\Filesystem;
 use ReflectionClass;
 
 class Scanner
@@ -131,8 +131,9 @@ class Scanner
         $classMap = array_merge($reflectionClassMap, $classMap);
         $proxyManager = new ProxyManager($classMap, $proxyDir);
         $proxies = $proxyManager->getProxies();
+        $aspectClasses = $proxyManager->getAspectClasses();
 
-        $this->putCache($this->path, serialize([$data, $proxies]));
+        $this->putCache($this->path, serialize([$data, $proxies, $aspectClasses]));
         exit;
     }
 
@@ -171,23 +172,6 @@ class Scanner
         }
 
         return $proxies;
-    }
-
-    protected function deserializeCachedCollectors(array $collectors): int
-    {
-        if (! file_exists($this->path)) {
-            return 0;
-        }
-
-        $data = unserialize(file_get_contents($this->path));
-        foreach ($data as $collector => $deserialized) {
-            /** @var MetadataCollector $collector */
-            if (in_array($collector, $collectors)) {
-                $collector::deserialize($deserialized);
-            }
-        }
-
-        return $this->filesystem->lastModified($this->path);
     }
 
     /**

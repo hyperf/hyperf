@@ -12,11 +12,15 @@ declare(strict_types=1);
 namespace Hyperf\Validation;
 
 use Closure;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Collection\Arr;
+use Hyperf\Stringable\Str;
 use Hyperf\Validation\Contract\Rule as RuleContract;
 use Hyperf\Validation\Rules\Exists;
 use Hyperf\Validation\Rules\Unique;
+use stdClass;
+use Stringable;
+
+use function Hyperf\Collection\head;
 
 class ValidationRuleParser
 {
@@ -37,7 +41,7 @@ class ValidationRuleParser
     /**
      * Parse the human-friendly rules into a full rules array for the validator.
      *
-     * @return \stdClass
+     * @return stdClass
      */
     public function explode(array $rules)
     {
@@ -54,7 +58,7 @@ class ValidationRuleParser
     /**
      * Merge additional rules into a given attribute(s).
      *
-     * @param array|string|\Stringable $rules
+     * @param array|string|Stringable $rules
      */
     public function mergeRules(array $results, array|string $attribute, mixed $rules = []): array
     {
@@ -155,7 +159,7 @@ class ValidationRuleParser
     /**
      * Define a set of rules that apply to each element in an array attribute.
      *
-     * @param array|string|\Stringable $rules
+     * @param array|string|Stringable $rules
      */
     protected function explodeWildcardRules(array $results, string $attribute, mixed $rules): array
     {
@@ -179,7 +183,7 @@ class ValidationRuleParser
     /**
      * Merge additional rules into a given attribute.
      *
-     * @param array|string|\Stringable $rules
+     * @param array|string|Stringable $rules
      */
     protected function mergeRulesForAttribute(array $results, string $attribute, mixed $rules): array
     {

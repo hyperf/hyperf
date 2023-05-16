@@ -14,17 +14,21 @@ namespace Hyperf\Metric\Listener;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Timer;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Pool\Pool;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Psr\Container\ContainerInterface;
-use Swoole\Timer;
 
 abstract class PoolWatcher
 {
+    protected Timer $timer;
+
     public function __construct(protected ContainerInterface $container)
     {
+        $this->timer = new Timer();
     }
 
     /**
@@ -34,11 +38,13 @@ abstract class PoolWatcher
     {
         return [
             BeforeWorkerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
     /**
      * Periodically scan metrics.
+     * @param BeforeWorkerStart|MainCoroutineServerStart $event
      */
     abstract public function process(object $event);
 
@@ -62,7 +68,7 @@ abstract class PoolWatcher
 
         $config = $this->container->get(ConfigInterface::class);
         $timerInterval = $config->get('metric.default_metric_interval', 5);
-        $timerId = Timer::tick($timerInterval * 1000, function () use (
+        $timerId = $this->timer->tick($timerInterval, function () use (
             $connectionsInUseGauge,
             $connectionsInWaitingGauge,
             $maxConnectionsGauge,
@@ -74,7 +80,7 @@ abstract class PoolWatcher
         });
         Coroutine::create(function () use ($timerId) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            Timer::clear($timerId);
+            $this->timer->clear($timerId);
         });
     }
 

@@ -18,6 +18,7 @@ use Hyperf\Contract\ConfigInterface;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use stdClass;
 
 /**
  * @internal
@@ -30,7 +31,7 @@ class BeforeMainServerStartListenerTest extends TestCase
      */
     public function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
     }
 
     public function testProcessWithDisabled()
@@ -51,7 +52,7 @@ class BeforeMainServerStartListenerTest extends TestCase
         })->never();
 
         $listener = new BeforeMainServerStartListener($container);
-        $listener->process(new \stdClass());
+        $listener->process(new stdClass());
 
         $this->assertTrue(true);
     }
@@ -64,7 +65,7 @@ class BeforeMainServerStartListenerTest extends TestCase
         $this->checkEnable($container);
 
         $listener = new BeforeMainServerStartListener($container);
-        $listener->process(new \stdClass());
+        $listener->process(new stdClass());
 
         $this->assertTrue(true);
     }
@@ -84,7 +85,7 @@ class BeforeMainServerStartListenerTest extends TestCase
         $this->checkEnable($container);
 
         $listener = new BeforeMainServerStartListener($container);
-        $listener->process(new \stdClass());
+        $listener->process(new stdClass());
 
         $this->assertTrue(true);
     }
@@ -100,7 +101,7 @@ class BeforeMainServerStartListenerTest extends TestCase
         $this->checkEnable($container);
 
         $listener = new BeforeMainServerStartListener($container);
-        $listener->process(new \stdClass());
+        $listener->process(new stdClass());
 
         $this->assertTrue(true);
     }

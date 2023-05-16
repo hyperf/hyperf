@@ -1,0 +1,48 @@
+{
+    "name": "hyperf/serializer",
+    "description": "A serializer component for Hyperf.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "tappable"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=8.0",
+        "hyperf/contract": "~3.0.0"
+    },
+    "suggest": {
+        "symfony/serializer": "Required to use SymfonyNormalizer (^5.0|^6.0)",
+        "symfony/property-access": "Required to use SymfonyNormalizer (^5.0|^6.0)",
+        "hyperf/di": "Required to use ExceptionNormalizer"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Serializer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Serializer\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.0-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Serializer\\ConfigProvider"
+        }
+    }
+}

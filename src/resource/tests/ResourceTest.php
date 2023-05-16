@@ -11,12 +11,12 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Resource;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Resource\Concerns\ConditionallyLoadsAttributes;
 use Hyperf\Resource\Json\JsonResource;
 use Hyperf\Resource\Value\MergeValue;
 use Hyperf\Resource\Value\MissingValue;
-use Hyperf\Utils\Collection;
 use HyperfTest\Resource\Stubs\Models\Author;
 use HyperfTest\Resource\Stubs\Models\Post;
 use HyperfTest\Resource\Stubs\Models\Subscription;
@@ -32,6 +32,8 @@ use HyperfTest\Resource\Stubs\Resources\PostResourceWithOptionalRelationship;
 use HyperfTest\Resource\Stubs\Resources\PostResourceWithoutWrap;
 use HyperfTest\Resource\Stubs\Resources\ReallyEmptyPostResource;
 use HyperfTest\Resource\Stubs\Resources\ResourceWithPreservedKeys;
+
+use function Hyperf\Collection\collect;
 
 /**
  * @internal

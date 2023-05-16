@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nsq\Pool;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Engine\Contract\Socket\SocketFactoryInterface;
 use Hyperf\Engine\Socket;
 use Hyperf\Nsq\MessageBuilder;
@@ -18,8 +19,8 @@ use Hyperf\Nsq\Subscriber;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\KeepaliveConnection;
 use Hyperf\Pool\Pool;
-use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 class NsqConnection extends KeepaliveConnection
 {
@@ -79,7 +80,7 @@ class NsqConnection extends KeepaliveConnection
     {
         try {
             $connection->send($this->builder->buildCls());
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             // Do nothing
         }
     }

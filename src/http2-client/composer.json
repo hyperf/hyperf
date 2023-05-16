@@ -1,0 +1,45 @@
+{
+    "name": "hyperf/http2-client",
+    "description": "A HTTP2 client library for Hyperf.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "http2-client"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=8.0",
+        "hyperf/contract": "~3.0.0",
+        "hyperf/coordinator": "~3.0.0",
+        "hyperf/engine": "^1.8|^2.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Http2Client\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Http2Client\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.0-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Http2Client\\ConfigProvider"
+        }
+    }
+}

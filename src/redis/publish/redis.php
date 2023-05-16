@@ -9,6 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use function Hyperf\Support\env;
+
 return [
     'default' => [
         'host' => env('REDIS_HOST', 'localhost'),
@@ -30,7 +32,7 @@ return [
             'nodes' => explode(';', env('REDIS_SENTINEL_NODE', '')),
             'persistent' => '',
             'read_timeout' => 0,
-            'auth' => null,
+            'auth' => env('REDIS_SENTINEL_PASSWORD', ''),
         ],
         'pool' => [
             'min_connections' => 1,

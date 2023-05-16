@@ -13,7 +13,6 @@ namespace Hyperf\AsyncQueue\Process;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\AsyncQueue\Driver\DriverInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\AbstractProcess;
 use Psr\Container\ContainerInterface;
 
@@ -39,12 +38,6 @@ class ConsumerProcess extends AbstractProcess
 
     public function handle(): void
     {
-        if (! $this->driver instanceof DriverInterface) {
-            $logger = $this->container->get(StdoutLoggerInterface::class);
-            $logger->critical(sprintf('[CRITICAL] process %s is not work as expected, please check the config in [%s]', ConsumerProcess::class, 'config/autoload/queue.php'));
-            return;
-        }
-
         $this->driver->consume();
     }
 }

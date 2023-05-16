@@ -18,10 +18,11 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class OnPipeMessageListener implements ListenerInterface
 {
-    protected LoggerInterface $logger;
+    protected ?LoggerInterface $logger = null;
 
     public function __construct(protected ContainerInterface $container)
     {
@@ -54,7 +55,7 @@ class OnPipeMessageListener implements ListenerInterface
                         $this->handleCallable($data);
                         break;
                 }
-            } catch (\Throwable $throwable) {
+            } catch (Throwable $throwable) {
                 $this->logger?->error($throwable->getMessage());
             }
         }

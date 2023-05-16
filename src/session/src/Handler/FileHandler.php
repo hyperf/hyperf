@@ -12,8 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Session\Handler;
 
 use Carbon\Carbon;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use SessionHandlerInterface;
+use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
 class FileHandler implements SessionHandlerInterface
@@ -65,7 +66,7 @@ class FileHandler implements SessionHandlerInterface
             ->date('<= now - ' . $max_lifetime . ' seconds');
 
         $count = 0;
-        /** @var \SplFileInfo $file */
+        /** @var SplFileInfo $file */
         foreach ($files as $file) {
             $this->files->delete($file->getRealPath());
             ++$count;

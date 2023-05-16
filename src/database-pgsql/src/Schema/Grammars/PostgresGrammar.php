@@ -13,8 +13,11 @@ namespace Hyperf\Database\PgSQL\Schema\Grammars;
 
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Grammars\Grammar;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 use RuntimeException;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Support\with;
 
 class PostgresGrammar extends Grammar
 {
@@ -179,10 +182,9 @@ class PostgresGrammar extends Grammar
     /**
      * Compile a fulltext index key command.
      *
-     * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
-    public function compileFulltext(Blueprint $blueprint, Fluent $command)
+    public function compileFullText(Blueprint $blueprint, Fluent $command): string
     {
         $language = $command->language ?: 'english';
 
@@ -366,10 +368,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile a drop fulltext index command.
-     *
-     * @return string
      */
-    public function compileDropFulltext(Blueprint $blueprint, Fluent $command)
+    public function compileDropFullText(Blueprint $blueprint, Fluent $command): string
     {
         return $this->compileDropIndex($blueprint, $command);
     }

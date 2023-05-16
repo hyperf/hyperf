@@ -11,11 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcClient\Proxy;
 
+use InvalidArgumentException;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
+use ReflectionClass;
 
 class Ast
 {
@@ -36,7 +38,7 @@ class Ast
     public function proxy(string $className, string $proxyClassName)
     {
         if (! interface_exists($className)) {
-            throw new \InvalidArgumentException("'{$className}' should be an interface name");
+            throw new InvalidArgumentException("'{$className}' should be an interface name");
         }
         if (str_contains($proxyClassName, '\\')) {
             $exploded = explode('\\', $proxyClassName);
@@ -45,8 +47,17 @@ class Ast
 
         $code = $this->codeLoader->getCodeByClassName($className);
         $stmts = $this->astParser->parse($code);
+
+        $ref = new ReflectionClass($className);
+        $parentStmts = [];
+        foreach ($ref->getInterfaces() as $class => $reflection) {
+            $parentStmts[] = $this->astParser->parse(
+                $this->codeLoader->getCodeByClassName($class)
+            );
+        }
+
         $traverser = new NodeTraverser();
-        $traverser->addVisitor(new ProxyCallVisitor($proxyClassName));
+        $traverser->addVisitor(new ProxyCallVisitor($proxyClassName, $parentStmts));
         $modifiedStmts = $traverser->traverse($stmts);
         return $this->printer->prettyPrintFile($modifiedStmts);
     }

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Query\Builder;
@@ -19,10 +20,10 @@ use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Utils\ApplicationContext;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use TypeError;
 
 /**
  * @internal
@@ -340,7 +341,7 @@ class DatabaseQueryBuilderTest extends TestCase
 
     public function testWhereBetweenWithoutArrayValue(): void
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
 
         $builder = $this->getBuilder();
         $builder->select('*')->from('users')->whereBetween('id', 1);

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
@@ -23,9 +24,11 @@ use Hyperf\Redis\Frequency;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use RedisCluster;
+
+use function Hyperf\Coroutine\go;
 
 /**
  * @internal
@@ -119,6 +122,42 @@ class RedisProxyTest extends TestCase
         $this->assertSame(0, $it);
     }
 
+    public function testPipeline()
+    {
+        $pipe = $this->getRedis()->pipeline();
+        $this->assertInstanceOf(\Redis::class, $pipe);
+
+        $key = 'pipeline:' . uniqid();
+
+        $this->getRedis()->pipeline(function (\Redis $pipe) use ($key) {
+            $pipe->incr($key);
+            $pipe->incr($key);
+            $pipe->incr($key);
+        });
+
+        $this->assertEquals(3, $this->getRedis()->get($key));
+
+        $this->getRedis()->del($key);
+    }
+
+    public function testTransaction()
+    {
+        $transaction = $this->getRedis()->transaction();
+        $this->assertInstanceOf(\Redis::class, $transaction);
+
+        $key = 'transaction:' . uniqid();
+
+        $this->getRedis()->transaction(function (\Redis|RedisCluster $transaction) use ($key) {
+            $transaction->incr($key);
+            $transaction->incr($key);
+            $transaction->incr($key);
+        });
+
+        $this->assertEquals(3, $this->getRedis()->get($key));
+
+        $this->getRedis()->del($key);
+    }
+
     public function testRedisPipeline()
     {
         $redis = $this->getRedis();
@@ -155,7 +194,7 @@ class RedisProxyTest extends TestCase
 
     /**
      * @param mixed $optinos
-     * @return \Redis
+     * @return \Redis|Redis
      */
     private function getRedis($optinos = [])
     {

@@ -159,7 +159,7 @@ Hello, {{ $name }}.
 The current UNIX timestamp is {{ time() }}.
 ```
 
-#### 顯示非轉義字元
+#### 顯示非跳脫字元
 
 預設情況下，`Blade {{ }}` 語句將被 `PHP` 的 `htmlspecialchars` 函式自動轉義以防範 `XSS` 攻擊。如果您不想您的資料被轉義，那麼您可使用如下的語法：
 
@@ -506,7 +506,7 @@ Hello, @{{ name }}.
 
 元件和插槽的作用與片段（Section）和佈局（Layout）類似。不過，有些人可能認為元件和插槽使用起來更加方便。Hyperf 支援兩種編寫元件的方法：基於類的元件和匿名元件。
 
-我們可以通過建立一個繼承 `\Hyperf\ViewEngine\Component\Component::class` 類的 class 來定義一個類元件。以下將通過建立一個簡單的 `Alert` 元件來向你說明如何使用元件。
+我們可以透過建立一個繼承 `\Hyperf\ViewEngine\Component\Component::class` 類的 class 來定義一個類元件。以下將透過建立一個簡單的 `Alert` 元件來向你說明如何使用元件。
 
 > app/View/Component/Alert.php
 
@@ -573,7 +573,7 @@ class ConfigProvider
 }
 ```
 
-註冊元件後，你將可以通過 HTML 標籤別名來使用它：
+註冊元件後，你將可以透過 HTML 標籤別名來使用它：
 
 ```html
 <x-alert/>
@@ -591,13 +591,13 @@ class ConfigProvider
 
 #### 元件傳參
 
-你可以使用 HTML 屬性將資料傳遞給 Blade 元件。普通的值可以通過簡單的 HTML 屬性傳遞，而 PHP 表示式及變數應當通過以 `:` 為字首的屬性傳遞：
+你可以使用 HTML 屬性將資料傳遞給 Blade 元件。普通的值可以透過簡單的 HTML 屬性傳遞，而 PHP 表示式及變數應當透過以 `:` 為字首的屬性傳遞：
 
 ```html
 <x-alert type="error" :message="$message"/>
 ```
 
-!> 注意：你可以在元件類的建構函式中定義元件所需的資料。元件類中的所有公共屬性都將自動傳遞給元件檢視。不必通過元件類的 `render` 方法傳遞。渲染元件時，可以通過變數名稱來獲取元件類公共屬性的內容。
+!> 注意：你可以在元件類的建構函式中定義元件所需的資料。元件類中的所有公共屬性都將自動傳遞給元件檢視。不必透過元件類的 `render` 方法傳遞。渲染元件時，可以透過變數名稱來獲取元件類公共屬性的內容。
 
 #### 元件方法
 
@@ -616,7 +616,7 @@ class ConfigProvider
     }
 ```
 
-你可以通過呼叫與方法名稱相同的變數來執行該方法：
+你可以透過呼叫與方法名稱相同的變數來執行該方法：
 
 ```html
     <option {{ $isSelected($value) ? 'selected="selected"' : '' }} value="{{ $value }}">
@@ -653,7 +653,7 @@ class ConfigProvider
     <x-alert type="error" :message="$message" class="mt-4"/>
 ```
 
-所有不屬於元件建構函式的屬性都將自動新增到元件的「屬性包」中。該屬性包將會通過 `$attributes` 變數傳遞給元件檢視。通過輸出此變數，即可在元件中呈現所有屬性：
+所有不屬於元件建構函式的屬性都將自動新增到元件的「屬性包」中。該屬性包將會透過 `$attributes` 變數傳遞給元件檢視。透過輸出此變數，即可在元件中呈現所有屬性：
 
 ```html
     <div {{ $attributes }}>
@@ -731,7 +731,7 @@ class ConfigProvider
 
 #### 插槽
 
-通常，你需要通過 `slots` 向元件傳遞附加內容。 假設我們建立的 `alert` 元件具有以下標記：
+通常，你需要透過 `slots` 向元件傳遞附加內容。 假設我們建立的 `alert` 元件具有以下標記：
 
 ```html
     <!-- /storage/view/components/alert.blade.php -->
@@ -741,7 +741,7 @@ class ConfigProvider
     </div>
 ```
 
-我門可以通過向元件注入內容的方式，將內容傳遞到 `slots` ：
+我門可以透過向元件注入內容的方式，將內容傳遞到 `slots` ：
 
 ```html
     <x-alert>
@@ -790,7 +790,7 @@ class ConfigProvider
 
 #### 匿名元件
 
-與行內元件相同，匿名元件提供了一個通過單個檔案管理元件的機制。然而，匿名元件使用的是一個沒有關聯類的單一檢視檔案。要定義一個匿名元件，您只需將 Blade 模板置於 `/storage/view/components` 目錄下。
+與行內元件相同，匿名元件提供了一個透過單個檔案管理元件的機制。然而，匿名元件使用的是一個沒有關聯類的單一檢視檔案。要定義一個匿名元件，您只需將 Blade 模板置於 `/storage/view/components` 目錄下。
 例如，假設您在 `/storage/view/components/alert.blade.php` 中定義了一個元件：
 
 ```html
@@ -807,7 +807,7 @@ class ConfigProvider
 
 由於匿名元件沒有任何關聯類，您可能想要區分哪些資料應該被作為變數傳遞給元件，而哪些屬性應該被存放於 [屬性包](#管理屬性) 中。
 
-您可以在元件的 Blade 模板的頂層使用 `@props` 指令來指定哪些屬性應該作為資料變數。元件中的其他屬性都將通過屬性包的形式提供。如果您想要為某個資料變數指定一個預設值，您可以將屬性名作為陣列鍵，預設值作為陣列值來實現：
+您可以在元件的 Blade 模板的頂層使用 `@props` 指令來指定哪些屬性應該作為資料變數。元件中的其他屬性都將透過屬性包的形式提供。如果您想要為某個資料變數指定一個預設值，您可以將屬性名作為陣列鍵，預設值作為陣列值來實現：
 
 ```blade
     <!-- /storage/view/components/alert.blade.php -->
@@ -829,7 +829,7 @@ class ConfigProvider
 
 #### 元件自動載入
 
-預設情況下，`App\View\Component\` 及 `components.` 下的元件會自動註冊。你也可以通過配置檔案修改這個配置：
+預設情況下，`App\View\Component\` 及 `components.` 下的元件會自動註冊。你也可以透過配置檔案修改這個配置：
 
 > config/autoload/view.php
 
@@ -845,7 +845,7 @@ return [
 
 ## 檢視空間
 
-通過定義檢視空間，可以方便的在你的擴充套件包中使用檢視檔案，只需要在 `ConfigProvider` 中新增一行配置即可：
+透過定義檢視空間，可以方便的在你的擴充套件包中使用檢視檔案，只需要在 `ConfigProvider` 中新增一行配置即可：
 
 ```php
 <?php
@@ -866,7 +866,7 @@ class ConfigProvider
 }
 ```
 
-在安裝擴充套件包之後，可以通過在專案的 `/storage/view/vendor/package-name` 中定義相同路徑的檢視檔案，來覆蓋擴充套件包中的檢視。
+在安裝擴充套件包之後，可以透過在專案的 `/storage/view/vendor/package-name` 中定義相同路徑的檢視檔案，來覆蓋擴充套件包中的檢視。
 
 ## 可選中介軟體
 

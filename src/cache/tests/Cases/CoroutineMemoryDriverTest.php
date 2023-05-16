@@ -12,10 +12,12 @@ declare(strict_types=1);
 namespace HyperfTest\Cache\Cases;
 
 use Hyperf\Cache\Driver\CoroutineMemoryDriver;
-use Hyperf\Utils\Packer\PhpSerializerPacker;
+use Hyperf\Codec\Packer\PhpSerializerPacker;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal

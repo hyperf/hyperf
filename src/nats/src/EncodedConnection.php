@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nats;
 
+use Closure;
 use Hyperf\Nats\Encoders\Encoder;
 
 /**
@@ -46,9 +47,9 @@ class EncodedConnection extends Connection
      * Subscribes to a specific event given a subject.
      *
      * @param string $subject message topic
-     * @param \Closure $callback closure to be executed as callback
+     * @param Closure $callback closure to be executed as callback
      */
-    public function subscribe(string $subject, \Closure $callback): string
+    public function subscribe(string $subject, Closure $callback): string
     {
         $c = function ($message) use ($callback) {
             $message->setBody($this->encoder->decode($message->getBody()));
@@ -62,9 +63,9 @@ class EncodedConnection extends Connection
      *
      * @param string $subject message topic
      * @param string $queue queue name
-     * @param \Closure $callback closure to be executed as callback
+     * @param Closure $callback closure to be executed as callback
      */
-    public function queueSubscribe(string $subject, string $queue, \Closure $callback): string
+    public function queueSubscribe(string $subject, string $queue, Closure $callback): string
     {
         $c = function ($message) use ($callback) {
             $message->setBody($this->encoder->decode($message->getBody()));

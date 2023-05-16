@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Cache;
 
 use Hyperf\Cache\Aspect\CacheableAspect;
+use Hyperf\Cache\Aspect\CacheAheadAspect;
 use Hyperf\Cache\Aspect\CacheEvictAspect;
 use Hyperf\Cache\Aspect\CachePutAspect;
 use Hyperf\Cache\Aspect\FailCacheAspect;
@@ -38,6 +39,7 @@ class ConfigProvider
             ],
             'aspects' => [
                 CacheableAspect::class,
+                CacheAheadAspect::class,
                 CacheEvictAspect::class,
                 CachePutAspect::class,
                 FailCacheAspect::class,

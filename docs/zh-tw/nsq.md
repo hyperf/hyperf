@@ -12,7 +12,7 @@ composer require hyperf/nsq
 
 ### 配置
 
-NSQ 元件的配置檔案預設位於 `config/autoload/nsq.php` 內，如該檔案不存在，可通過 `php bin/hyperf.php vendor:publish hyperf/nsq` 命令來將釋出對應的配置檔案。
+NSQ 元件的配置檔案預設位於 `config/autoload/nsq.php` 內，如該檔案不存在，可透過 `php bin/hyperf.php vendor:publish hyperf/nsq` 命令來將釋出對應的配置檔案。
 
 預設配置檔案如下：
 
@@ -37,13 +37,13 @@ return [
 
 ### 建立消費者
 
-通過 `gen:nsq-consumer` 命令可以快速的生成一個 消費者(Consumer) 對訊息進行消費。
+透過 `gen:nsq-consumer` 命令可以快速的生成一個 消費者(Consumer) 對訊息進行消費。
 
 ```bash
 php bin/hyperf.php gen:nsq-consumer DemoConsumer
 ```
 
-您也可以通過使用 `Hyperf\Nsq\Annotation\Consumer` 註解來對一個 `Hyperf/Nsq/AbstractConsumer` 抽象類的子類進行宣告，來完成一個 消費者(Consumer) 的定義，其中`Hyperf\Nsq\Annotation\Consumer` 註解和抽象類均包含以下屬性：
+您也可以透過使用 `Hyperf\Nsq\Annotation\Consumer` 註解來對一個 `Hyperf/Nsq/AbstractConsumer` 抽象類的子類進行宣告，來完成一個 消費者(Consumer) 的定義，其中`Hyperf\Nsq\Annotation\Consumer` 註解和抽象類均包含以下屬性：
  
 |   配置  |  型別  |  註解或抽象類預設值 |       備註       |
 |:-------:|:------:|:------:|:----------------:|
@@ -81,9 +81,9 @@ class DemoNsqConsumer extends AbstractConsumer
 
 ### 禁止消費程序自啟
 
-預設情況下，使用了 `@Consumer` 註解定義後，框架會在啟動時自動建立子程序來啟動消費者，並且會在子程序異常退出後，自動重新拉起。但如果在處於開發階段進行某些除錯工作時，可能會因為消費者的自動消費導致除錯的不便。
+預設情況下，使用了 `#[Consumer]` 註解定義後，框架會在啟動時自動建立子程序來啟動消費者，並且會在子程序異常退出後，自動重新拉起。但如果在處於開發階段進行某些除錯工作時，可能會因為消費者的自動消費導致除錯的不便。
 
-在這種情況下，您可通過全域性關閉和區域性關閉兩種形式來控制消費程序的自啟。
+在這種情況下，您可透過全域性關閉和區域性關閉兩種形式來控制消費程序的自啟。
 
 #### 全域性關閉
 
@@ -130,7 +130,7 @@ class DemoConsumer extends AbstractConsumer
 
 ### 投遞訊息
 
-您可以通過呼叫 `Hyperf\Nsq\Nsq::publish(string $topic, $message, float $deferTime = 0.0)` 方法來向 NSQ 投遞訊息, 下面是在 Command 進行訊息投遞的一個示例：
+您可以透過呼叫 `Hyperf\Nsq\Nsq::publish(string $topic, $message, float $deferTime = 0.0)` 方法來向 NSQ 投遞訊息, 下面是在 Command 進行訊息投遞的一個示例：
 
 ```php
 <?php
@@ -200,7 +200,7 @@ class NsqCommand extends HyperfCommand
 
 ### 投遞延遲訊息
 
-當您希望您投遞的訊息在特定的時間後再去消費，也可通過對 `Hyperf\Nsq\Nsq::publish(string $topic, $message, float $deferTime = 0.0)` 方法的第三個引數傳遞對應的延遲時長，單位為秒，示例如下：
+當您希望您投遞的訊息在特定的時間後再去消費，也可透過對 `Hyperf\Nsq\Nsq::publish(string $topic, $message, float $deferTime = 0.0)` 方法的第三個引數傳遞對應的延遲時長，單位為秒，示例如下：
 
 ```php
 <?php
@@ -242,7 +242,7 @@ class NsqCommand extends HyperfCommand
 
 ```php
 <?php
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Nsq\Nsqd\Topic;
 
 $container = ApplicationContext::getContainer();

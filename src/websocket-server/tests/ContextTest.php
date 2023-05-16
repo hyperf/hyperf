@@ -15,6 +15,8 @@ use Hyperf\Context\Context as CoContext;
 use Hyperf\WebSocketServer\Context;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Coroutine\parallel;
+
 /**
  * @internal
  * @coversNothing

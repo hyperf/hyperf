@@ -18,16 +18,15 @@
     "require": {
         "php": ">=7.2",
         "hyperf/command": "~3.0.0",
-        "zircote/swagger-php": "^3.0"
+        "zircote/swagger-php": "^4.6"
     },
     "autoload": {
         "psr-4": {
             "Hyperf\\Swagger\\": "src/"
         }
     },
-    "autoload-dev": {
-        "psr-4": {
-        }
+    "suggest": {
+        "hyperf/validation": "Required to use SwaggerRequest."
     },
     "config": {
         "sort-packages": true

@@ -11,10 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Contracts;
 
-interface MessageProvider
+/**
+ * @deprecated v3.1
+ */
+interface MessageProvider extends \Hyperf\Contract\MessageProvider
 {
-    /**
-     * Get the messages for the instance.
-     */
-    public function getMessageBag(): MessageBag;
 }

@@ -20,6 +20,8 @@
     },
     "require": {
         "php": ">=8.0",
+        "hyperf/tappable": "~3.0.0",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "psr/event-dispatcher": "^1.0",
         "symfony/console": "^5.0|^6.0"

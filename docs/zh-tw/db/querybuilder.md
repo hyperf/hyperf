@@ -19,7 +19,7 @@ $users = Db::table('user')->get();
 $users = Db::table('user')->select('name', 'gender as user_gender')->get();
 ```
 
-`Db::select()` 方法會返回一個 array，而 `get` 方法會返回 `Hyperf\Utils\Collection`。其中元素是 `stdClass`，所以可以通過以下程式碼返回各個元素的資料
+`Db::select()` 方法會返回一個 array，而 `get` 方法會返回 `Hyperf\Utils\Collection`。其中元素是 `stdClass`，所以可以透過以下程式碼返回各個元素的資料
 
 ```php
 <?php
@@ -31,7 +31,7 @@ foreach ($users as $user) {
 
 ### 將結果轉為陣列格式
 
-在某些場景下，您可能會希望查詢出來的結果內採用 `陣列(Array)` 而不是 `stdClass` 物件結構時，而 `Eloquent` 又去除了通過配置的形式配置預設的 `FetchMode`，那麼此時可以通過監聽器來監聽 `Hyperf\Database\Events\StatementPrepared` 事件來變更該配置：
+在某些場景下，您可能會希望查詢出來的結果內採用 `陣列(Array)` 而不是 `stdClass` 物件結構時，而 `Eloquent` 又去除了透過配置的形式配置預設的 `FetchMode`，那麼此時可以透過監聽器來監聽 `Hyperf\Database\Events\StatementPrepared` 事件來變更該配置：
 
 ```php
 <?php
@@ -132,7 +132,7 @@ Db::table('user')->orderBy('id')->chunk(100, function ($users) {
 });
 ```
 
-你可以通過在 閉包 中返回 `false` 來終止繼續獲取分塊結果：
+你可以透過在 閉包 中返回 `false` 來終止繼續獲取分塊結果：
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -171,7 +171,7 @@ $count = Db::table('user')->count();
 
 #### 判斷記錄是否存在
 
-除了通過 `count` 方法可以確定查詢條件的結果是否存在之外，還可以使用 `exists` 和 `doesntExist` 方法：
+除了透過 `count` 方法可以確定查詢條件的結果是否存在之外，還可以使用 `exists` 和 `doesntExist` 方法：
 
 ```php
 return Db::table('orders')->where('finalized', 1)->exists();
@@ -215,7 +215,7 @@ $res = Db::table('user')->select('gender', Db::raw('COUNT(0) AS `count`'))->grou
 
 ### 強制索引
 
-資料庫出現的慢查問題, 90% 以上是索引不對, 其中有部分查詢是因為資料庫伺服器的 `查詢優化器` 沒有使用最佳索引, 這時候就需要使用強制索引:
+資料庫出現的慢查問題, 90% 以上是索引不對, 其中有部分查詢是因為資料庫伺服器的 `查詢最佳化器` 沒有使用最佳索引, 這時候就需要使用強制索引:
 
 ```php
 Db::table(Db::raw("{$table} FORCE INDEX({$index})"));
@@ -453,7 +453,7 @@ Db::table('users')->where('name', '=', 'John')
     ->get();
 ```
 
-你可以看到，通過一個 `Closure` 寫入 `where` 方法構建一個查詢構造器 來約束一個分組。這個 `Closure` 接收一個查詢例項，你可以使用這個例項來設定應該包含的約束。上面的例子將生成以下 SQL:
+你可以看到，透過一個 `Closure` 寫入 `where` 方法構建一個查詢構造器 來約束一個分組。這個 `Closure` 接收一個查詢例項，你可以使用這個例項來設定應該包含的約束。上面的例子將生成以下 SQL:
 
 ```sql
 select * from users where name = 'John' and (votes > 100 or title = 'Admin')
@@ -521,7 +521,7 @@ $users = Db::table('users')
 
 ### orderBy
 
-`orderBy` 方法允許你通過給定欄位對結果集進行排序。 `orderBy` 的第一個引數應該是你希望排序的欄位，第二個引數控制排序的方向，可以是 `asc` 或 `desc`
+`orderBy` 方法允許你透過給定欄位對結果集進行排序。 `orderBy` 的第一個引數應該是你希望排序的欄位，第二個引數控制排序的方向，可以是 `asc` 或 `desc`
 
 ```php
 $users = Db::table('users')
@@ -531,7 +531,7 @@ $users = Db::table('users')
 
 ### latest / oldest
 
-`latest` 和 `oldest` 方法可以使你輕鬆地通過日期排序。它預設使用 `created_at` 列作為排序依據。當然，你也可以傳遞自定義的列名：
+`latest` 和 `oldest` 方法可以使你輕鬆地透過日期排序。它預設使用 `created_at` 列作為排序依據。當然，你也可以傳遞自定義的列名：
 
 ```php
 $user = Db::table('users')->latest()->first();
@@ -583,7 +583,7 @@ $users = Db::table('users')->offset(10)->limit(5)->get();
 
 ## 條件語句
 
-有時候你可能想要子句只適用於某個情況為真是才執行查詢。例如你可能只想給定值在請求中存在的情況下才應用 `where` 語句。 你可以通過使用 `when` 方法：
+有時候你可能想要子句只適用於某個情況為真是才執行查詢。例如你可能只想給定值在請求中存在的情況下才應用 `where` 語句。 你可以透過使用 `when` 方法：
 
 ```php
 $role = $request->input('role');
@@ -642,7 +642,7 @@ $id = Db::table('users')->insertGetId(
 
 ## 更新
 
-當然， 除了插入記錄到資料庫中，查詢構造器也可以通過 `update` 方法更新已有的記錄。 `update` 方法和 `insert` 方法一樣，接受包含要更新的欄位及值的陣列。你可以通過 `where` 子句對 `update` 查詢進行約束：
+當然， 除了插入記錄到資料庫中，查詢構造器也可以透過 `update` 方法更新已有的記錄。 `update` 方法和 `insert` 方法一樣，接受包含要更新的欄位及值的陣列。你可以透過 `where` 子句對 `update` 查詢進行約束：
 
 ```php
 Db::table('users')->where('id', 1)->update(['votes' => 1]);

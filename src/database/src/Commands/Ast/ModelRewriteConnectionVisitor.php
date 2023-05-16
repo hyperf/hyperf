@@ -15,6 +15,7 @@ use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
+use ReflectionClass;
 
 class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
 {
@@ -73,7 +74,7 @@ class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
 
     protected function shouldRemovedConnection(): bool
     {
-        $ref = new \ReflectionClass($this->class);
+        $ref = new ReflectionClass($this->class);
 
         if (! $ref->getParentClass()) {
             return false;

@@ -12,15 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\Rpc\PathGenerator;
 
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 class DotPathGenerator implements PathGeneratorInterface
 {
     public function generate(string $service, string $method): string
     {
         $handledNamespace = explode('\\', $service);
-        $handledNamespace = Str::replaceArray('\\', ['/'], end($handledNamespace));
-        $path = Str::studly($handledNamespace);
+        $path = Str::studly(end($handledNamespace));
 
         return $path . '.' . Str::studly($method);
     }

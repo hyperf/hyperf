@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Strategy;
 
-use Carbon\Carbon;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\PipeMessage;
 use Hyperf\Server\ServerFactory;
@@ -34,7 +33,7 @@ class WorkerStrategy extends AbstractStrategy
     public function dispatch(Crontab $crontab)
     {
         $server = $this->serverFactory->getServer()->getServer();
-        if ($server instanceof Server && $crontab->getExecuteTime() instanceof Carbon) {
+        if ($server instanceof Server) {
             $workerId = $this->getNextWorkerId($server);
             $server->sendMessage(new PipeMessage(
                 'callback',

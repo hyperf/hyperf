@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Connectors;
 
+use PDO;
+
 interface ConnectorInterface
 {
     /**
      * Establish a database connection.
      *
-     * @return \PDO
+     * @return PDO
      */
     public function connect(array $config);
 }

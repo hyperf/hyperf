@@ -12,13 +12,16 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Relations;
 
 use Closure;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Support\Traits\ForwardsCalls;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Collection\last;
 
 /**
  * @mixin \Hyperf\Database\Model\Builder

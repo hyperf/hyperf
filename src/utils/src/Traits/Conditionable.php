@@ -13,6 +13,9 @@ namespace Hyperf\Utils\Traits;
 
 use Closure;
 
+/**
+ * @deprecated since 3.1, use `Hyperf\Conditionable\Conditionable` instead.
+ */
 trait Conditionable
 {
     /**

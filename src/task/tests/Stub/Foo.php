@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Task\Stub;
 
+use RuntimeException;
+
 class Foo
 {
     public function get($id)
@@ -20,7 +22,7 @@ class Foo
 
     public function exception()
     {
-        throw new \RuntimeException('Foo::exception failed.');
+        throw new RuntimeException('Foo::exception failed.');
     }
 
     public function getIdAndName($id, $name)

@@ -93,7 +93,7 @@ Prometheus 有两种工作模式，爬模式与推模式（通过 Prometheus Pus
 
 并配置爬取地址 `scrape_host`、爬取端口 `scrape_port`、爬取路径 `scrape_path`。Prometheus 可以在对应配置下以 HTTP 访问形式拉取全部指标。
 
-> 注意：爬模式下，必须启用独立进程，即 use_standalone_process = true。
+> 注意：异步风格下，爬模式必须启用独立进程，即 `use_standalone_process = true`。
 
 使用推模式时需设置：
 
@@ -313,7 +313,7 @@ class OnMetricFactoryReady implements ListenerInterface
 
 ### 注解
 
-您可以使用 `@Counter(name="stat_name_here")` 和 `@Histogram(name="stat_name_here")` 来统计切面的调用次数和运行时间。
+您可以使用 `#[Counter(name="stat_name_here")]` 和 `#[Histogram(name="stat_name_here")]` 来统计切面的调用次数和运行时间。
 
 关于注解的使用请参阅[注解章节](zh-cn/annotation)。
 
@@ -393,7 +393,7 @@ return [
 use Hyperf\HttpServer\Router\Router;
 
 Router::get('/metrics', function(){
-    $registry = Hyperf\Utils\ApplicationContext::getContainer()->get(Prometheus\CollectorRegistry::class);
+    $registry = Hyperf\Context\ApplicationContext::getContainer()->get(Prometheus\CollectorRegistry::class);
     $renderer = new Prometheus\RenderTextFormat();
     return $renderer->render($registry->getMetricFamilySamples());
 });

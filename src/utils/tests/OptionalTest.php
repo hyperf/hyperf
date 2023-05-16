@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use ArrayObject;
 use Hyperf\Utils\Optional;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -117,13 +118,31 @@ class OptionalTest extends TestCase
 
     public function testArrayObject()
     {
-        $obj = new \ArrayObject(['id' => $id = uniqid()]);
+        $obj = new ArrayObject(['id' => $id = uniqid()]);
 
         $optional = new Optional($obj);
 
         $this->assertTrue(isset($optional['id']));
         $this->assertFalse(isset($optional->id));
         $this->assertFalse(isset($obj->id));
+
+        $this->assertFalse(isset($optional['name']));
+        $this->assertFalse(isset($optional->name));
+        $this->assertFalse(isset($obj->name));
+
+        $this->assertSame($id, $optional['id']);
+    }
+
+    public function testArrayObjectWithAsProps()
+    {
+        $obj = new ArrayObject(['id' => $id = uniqid()]);
+        $obj->setFlags(ArrayObject::ARRAY_AS_PROPS);
+
+        $optional = new Optional($obj);
+
+        $this->assertTrue(isset($optional['id']));
+        $this->assertTrue(isset($optional->id));
+        $this->assertTrue(isset($obj->id));
 
         $this->assertFalse(isset($optional['name']));
         $this->assertFalse(isset($optional->name));

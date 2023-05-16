@@ -32,7 +32,7 @@ composer require hyperf/constants
 
 ### 定義列舉類
 
-通過 `gen:constant` 命令可以快速的生成一個列舉類。
+透過 `gen:constant` 命令可以快速的生成一個列舉類。
 
 ```bash
 php bin/hyperf.php gen:constant ErrorCode

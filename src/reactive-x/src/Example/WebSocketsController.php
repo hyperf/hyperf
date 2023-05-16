@@ -19,6 +19,8 @@ use Hyperf\ReactiveX\IpcSubject;
 use Rx\Subject\ReplaySubject;
 use Swoole\Http\Response;
 
+use function Hyperf\Support\make;
+
 class WebSocketsController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
     private IpcSubject $subject;

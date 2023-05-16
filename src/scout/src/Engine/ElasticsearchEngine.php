@@ -13,11 +13,14 @@ namespace Hyperf\Scout\Engine;
 
 use Elasticsearch\Client;
 use Elasticsearch\Client as Elastic;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
 use Hyperf\Scout\SearchableInterface;
-use Hyperf\Utils\Collection as BaseCollection;
+use Throwable;
+
+use function Hyperf\Collection\collect;
 
 class ElasticsearchEngine extends Engine
 {
@@ -193,7 +196,7 @@ class ElasticsearchEngine extends Engine
         if (! static::$version) {
             try {
                 static::$version = $client->info()['version']['number'];
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 static::$version = '0.0.0';
             }
         }

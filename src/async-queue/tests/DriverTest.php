@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace HyperfTest\AsyncQueue;
 
 use Hyperf\AsyncQueue\Driver\ChannelConfig;
+use Hyperf\Codec\Packer\PhpSerializerPacker;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Coroutine\Concurrent;
 use Hyperf\Di\Container;
 use Hyperf\Redis\RedisFactory;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Coroutine\Concurrent;
-use Hyperf\Utils\Packer\PhpSerializerPacker;
 use HyperfTest\AsyncQueue\Stub\Redis;
 use HyperfTest\AsyncQueue\Stub\RedisDriverStub;
 use Mockery;

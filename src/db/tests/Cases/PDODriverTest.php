@@ -13,6 +13,7 @@ namespace HyperfTest\DB\Cases;
 
 use Hyperf\DB\DB;
 use Hyperf\DB\Pool\PoolFactory;
+use PDO;
 
 /**
  * @internal
@@ -44,8 +45,8 @@ class PDODriverTest extends AbstractTestCase
 
         $sql = 'SELECT * FROM `user` WHERE id = ?;';
         $bindings = [2];
-        $mode = \PDO::FETCH_OBJ;
-        $res = $db->run(function (\PDO $pdo) use ($sql, $bindings, $mode) {
+        $mode = PDO::FETCH_OBJ;
+        $res = $db->run(function (PDO $pdo) use ($sql, $bindings, $mode) {
             $statement = $pdo->prepare($sql);
 
             $this->bindValues($statement, $bindings);

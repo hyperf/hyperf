@@ -14,6 +14,7 @@ namespace HyperfTest\Command\Command;
 use Hyperf\Command\Command;
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
+use RuntimeException;
 
 class FooExceptionCommand extends Command
 {
@@ -28,6 +29,6 @@ class FooExceptionCommand extends Command
 
     public function handle()
     {
-        throw new \RuntimeException('xxx', 99);
+        throw new RuntimeException('xxx', 99);
     }
 }

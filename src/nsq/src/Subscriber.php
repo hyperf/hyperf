@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nsq;
 
+use Hyperf\Codec\Json;
 use Hyperf\Engine\Contract\SocketInterface;
-use Hyperf\Utils\Codec\Json;
 
 class Subscriber
 {

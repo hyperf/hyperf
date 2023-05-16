@@ -18,8 +18,11 @@ use Hyperf\LoadBalancer\Node;
 use Hyperf\LoadBalancer\Random;
 use Hyperf\RpcMultiplex\Socket;
 use Hyperf\RpcMultiplex\SocketFactory;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\RpcMultiplex\Stub\ContainerStub;
+use Mockery;
+
+use function Hyperf\Coroutine\go;
 
 /**
  * @internal
@@ -42,7 +45,7 @@ class SocketFactoryTest extends AbstractTestCase
             'client_count' => 4,
         ]);
 
-        $balancer = \Mockery::mock(LoadBalancerInterface::class);
+        $balancer = Mockery::mock(LoadBalancerInterface::class);
         $balancer->shouldReceive('isAutoRefresh')->andReturnFalse();
         $factory->setLoadBalancer($balancer);
         $balancer->shouldReceive('getNodes')->andReturn([
@@ -168,7 +171,7 @@ class SocketFactoryTest extends AbstractTestCase
         ]);
 
         go(function () use ($factory) {
-            $balancer = \Mockery::mock(LoadBalancerInterface::class);
+            $balancer = Mockery::mock(LoadBalancerInterface::class);
             $balancer->shouldReceive('isAutoRefresh')->andReturnFalse();
             $factory->setLoadBalancer($balancer);
             $balancer->shouldReceive('getNodes')->andReturn([

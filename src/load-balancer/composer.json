@@ -18,7 +18,7 @@
     "require": {
         "php": ">=8.0",
         "hyperf/coordinator": "~3.0.0",
-        "hyperf/utils": "~3.0.0",
+        "hyperf/coroutine": "~3.0.0",
         "markrogoyski/math-php": "^2.0",
         "psr/log": "^1.0|^2.0|^3.0"
     },

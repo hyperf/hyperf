@@ -11,28 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ViewEngine;
 
-use Hyperf\Config\Config;
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Di\Container;
-use Hyperf\Di\Definition\DefinitionSource;
-use Hyperf\Event\EventDispatcher;
-use Hyperf\Event\ListenerProvider;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\View\Mode;
-use Hyperf\ViewEngine\Component\DynamicComponent;
-use Hyperf\ViewEngine\ConfigProvider;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\FinderInterface;
 use Hyperf\ViewEngine\Contract\ViewInterface;
 use Hyperf\ViewEngine\Factory\FinderFactory;
 use Hyperf\ViewEngine\HyperfViewEngine;
-use HyperfTest\ViewEngine\Stub\Alert;
-use HyperfTest\ViewEngine\Stub\AlertAttributeMerge;
-use HyperfTest\ViewEngine\Stub\AlertAttributeMergeForce;
-use HyperfTest\ViewEngine\Stub\AlertSlot;
+use HyperfTest\ViewEngine\Stub\ContainerStub;
 use PHPUnit\Framework\TestCase;
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\EventDispatcher\ListenerProviderInterface;
 
 use function Hyperf\ViewEngine\view;
 
@@ -46,35 +32,7 @@ class BladeTest extends TestCase
     {
         parent::setUp();
 
-        // create container
-        $container = new Container(new DefinitionSource(array_merge([
-            EventDispatcherInterface::class => EventDispatcher::class,
-            ListenerProviderInterface::class => ListenerProvider::class,
-        ], (new ConfigProvider())()['dependencies'])));
-
-        ApplicationContext::setContainer($container);
-
-        // register config
-        $container->set(ConfigInterface::class, new Config([
-            'view' => [
-                'engine' => HyperfViewEngine::class,
-                'mode' => Mode::SYNC,
-                'config' => [
-                    'view_path' => __DIR__ . '/storage/view/',
-                    'cache_path' => __DIR__ . '/storage/cache/',
-                ],
-                'components' => [
-                    'alert' => Alert::class,
-                    'alert-slot' => AlertSlot::class,
-                    'alert-attribute-merge' => AlertAttributeMerge::class,
-                    'alert-attribute-merge-force' => AlertAttributeMergeForce::class,
-                    'dynamic-component' => DynamicComponent::class,
-                ],
-                'namespaces' => [
-                    'admin_config' => __DIR__ . '/admin',
-                ],
-            ],
-        ]));
+        ContainerStub::mockContainer();
 
         // vendor 下的命令空间
         if (! file_exists(__DIR__ . '/storage/view/vendor/admin/simple_4.blade.php')) {

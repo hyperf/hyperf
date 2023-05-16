@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache;
 
+use DateInterval;
+
 class Config
 {
     /**
@@ -28,7 +30,7 @@ class Config
     /**
      * The lifetime of model cache.
      */
-    protected \DateInterval|int $ttl = 3600;
+    protected DateInterval|int $ttl = 3600;
 
     /**
      * The lifetime of empty model cache.
@@ -113,12 +115,12 @@ class Config
         return $this;
     }
 
-    public function getTtl(): \DateInterval|int
+    public function getTtl(): DateInterval|int
     {
         return $this->ttl;
     }
 
-    public function setTtl(\DateInterval|int $ttl): Config
+    public function setTtl(DateInterval|int $ttl): Config
     {
         $this->ttl = $ttl;
         return $this;

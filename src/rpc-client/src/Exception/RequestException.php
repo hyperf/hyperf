@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcClient\Exception;
 
-class RequestException extends \RuntimeException
+use RuntimeException;
+
+class RequestException extends RuntimeException
 {
     /**
      * @param $throwable

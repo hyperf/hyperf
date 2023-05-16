@@ -42,7 +42,7 @@ class FactoryResolver implements ResolverInterface
             if (is_string($callable)) {
                 $callable = $this->container->get($callable);
             }
-            return $callable($this->container);
+            return $callable($this->container, $parameters);
         } catch (NotCallableException $e) {
             // Custom error message to help debugging
             if (is_string($callable) && class_exists($callable) && method_exists($callable, '__invoke')) {

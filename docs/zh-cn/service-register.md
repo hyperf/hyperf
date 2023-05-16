@@ -75,7 +75,7 @@ return [
 
 # 注册服务
 
-注册服务可通过 `@RpcService` 注解对一个类进行定义，即为发布这个服务了，目前 Hyperf 仅适配了 JSON RPC 协议，具体内容也可到 [JSON RPC 服务](zh-cn/json-rpc.md) 章节了解详情。
+注册服务可通过 `#[RpcService]` 注解对一个类进行定义，即为发布这个服务了，目前 Hyperf 仅适配了 JSON RPC 协议，具体内容也可到 [JSON RPC 服务](zh-cn/json-rpc.md) 章节了解详情。
 
 ```php
 <?php
@@ -96,13 +96,13 @@ class CalculatorService implements CalculatorServiceInterface
 }
 ```
 
-`@RpcService` 共有 `4` 个参数：   
+`#[RpcService]` 共有 `4` 个参数：   
 `name` 属性为定义该服务的名称，这里定义一个全局唯一的名字即可，Hyperf 会根据该属性生成对应的 ID 注册到服务中心去；   
 `protocol` 属性为定义该服务暴露的协议，目前仅支持 `jsonrpc` 和 `jsonrpc-http`，分别对应于 TCP 协议和 HTTP 协议下的两种协议，默认值为 `jsonrpc-http`，这里的值对应在 `Hyperf\Rpc\ProtocolManager` 里面注册的协议的 `key`，这两个本质上都是 JSON RPC 协议，区别在于数据格式化、数据打包、数据传输器等不同。   
 `server` 属性为绑定该服务类发布所要承载的 `Server`，默认值为 `jsonrpc-http`，该属性对应 `config/autoload/server.php` 文件内 `servers` 下所对应的 `name`，这里也就意味着我们需要定义一个对应的 `Server`；   
 `publishTo` 属性为定义该服务所要发布的服务中心，目前仅支持 `consul`、`nacos` 或为空，为空时代表不发布该服务到服务中心去，但也就意味着您需要手动处理服务发现的问题，要使用此功能需安装 [hyperf/service-governance](https://github.com/hyperf/service-governance) 组件及对应的驱动依赖；
 
-> 使用 `@RpcService` 注解需 `use Hyperf\RpcServer\Annotation\RpcService;` 命名空间。
+> 使用 `#[RpcService]` 注解需 `use Hyperf\RpcServer\Annotation\RpcService;` 命名空间。
 
 ## 自定义服务治理适配器
 

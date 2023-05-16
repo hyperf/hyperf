@@ -14,10 +14,14 @@ namespace Hyperf\RpcMultiplex;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\RpcMultiplex\Exception\NotSupportException;
-use Hyperf\Utils\Exception\ExceptionThrower;
+use Hyperf\Support\Exception\ExceptionThrower;
 use Multiplex\Exception\ChannelClosedException;
 use Multiplex\Exception\ClientConnectFailedException;
 use Psr\Container\ContainerInterface;
+use Throwable;
+
+use function Hyperf\Support\make;
+use function Hyperf\Support\retry;
 
 class Transporter implements TransporterInterface
 {
@@ -48,7 +52,7 @@ class Transporter implements TransporterInterface
         $result = retry($retryCount, function () use ($data) {
             try {
                 return $this->factory->get()->request($data);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 if ($this->shouldBeRetry($exception)) {
                     throw $exception;
                 }
@@ -80,7 +84,7 @@ class Transporter implements TransporterInterface
         return $this;
     }
 
-    protected function shouldBeRetry(\Throwable $throwable): bool
+    protected function shouldBeRetry(Throwable $throwable): bool
     {
         return $throwable instanceof ClientConnectFailedException
             || $throwable instanceof ChannelClosedException;

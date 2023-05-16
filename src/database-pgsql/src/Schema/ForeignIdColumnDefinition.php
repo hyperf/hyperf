@@ -13,7 +13,7 @@ namespace Hyperf\Database\PgSQL\Schema;
 
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\ColumnDefinition;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 class ForeignIdColumnDefinition extends ColumnDefinition
 {

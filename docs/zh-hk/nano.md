@@ -33,7 +33,7 @@ $app->get('/', function () {
 $app->run();
 ```
 
-啟動：
+啓動：
 
 ```bash
 php index.php start
@@ -45,7 +45,7 @@ php index.php start
 
 * 無骨架
 * 零配置
-* 快速啟動
+* 快速啓動
 * 閉包風格
 * 支持註解外的全部 Hyperf 功能
 * 兼容全部 Hyperf 組件

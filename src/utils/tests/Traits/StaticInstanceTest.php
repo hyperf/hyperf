@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils\Traits;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Waiter;
+use Hyperf\Coroutine\Waiter;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Coroutine\wait;
 
 /**
  * @internal

@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Exception;
 
 use Exception;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PDOException;
 use Throwable;
 

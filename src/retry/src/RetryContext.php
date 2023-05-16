@@ -12,11 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\Retry;
 
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
+use Throwable;
 
 /**
  * @property mixed $lastResult
- * @property null|\Throwable $lastThrowable
+ * @property null|Throwable $lastThrowable
  * @property null|bool $retryExhausted
  * @property null|SleepStrategyInterface $strategy
  * @property null|float $startTime

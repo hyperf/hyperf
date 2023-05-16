@@ -12,16 +12,21 @@ declare(strict_types=1);
 namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\LowFrequencyInterface;
+use Hyperf\Pool\Pool;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Redis\Frequency;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Support\Reflection\ClassInvoker;
+use HyperfTest\Redis\Stub\RedisConnectionStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -97,6 +102,19 @@ class RedisConnectionTest extends TestCase
         $connection->release();
         $connection = $pool->get()->getConnection();
         $this->assertSame(null, $connection->getDatabase());
+    }
+
+    public function testRedisConnectionLog()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnTrue();
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn($logger = Mockery::mock(StdoutLoggerInterface::class));
+        $logger->shouldReceive('log')->once();
+
+        $conn = new RedisConnectionStub($container, Mockery::mock(Pool::class), []);
+        $conn = new ClassInvoker($conn);
+        $conn->log('xxxx');
+        $this->assertTrue(true);
     }
 
     public function testRedisCloseInLowFrequency()

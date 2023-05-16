@@ -247,8 +247,8 @@ use Psr\Container\ContainerInterface;
 
 class UserServiceFactory
 {
-    // Implement an __invoke() method for the production of the object, and parameters will be automatically injected into a current container instance
-    public function __invoke(ContainerInterface $container)
+    // Implement an __invoke() method for the production of the object, and parameters will be automatically injected into a current container instance and the parameters array.
+    public function __invoke(ContainerInterface $container, array $parameters = [])
     {
         $config = $container->get(ConfigInterface::class);
         // Assume that the key of corresponding config is cache.enable
@@ -413,10 +413,10 @@ class IndexController
 }
 ```   
 
-In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Utils\ApplicationContext::getContaienr()` method to obtain the `Container` object.
+In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Context\ApplicationContext::getContaienr()` method to obtain the `Container` object.
 
 ```php
-$container = \Hyperf\Utils\ApplicationContext::getContainer();
+$container = \Hyperf\Context\ApplicationContext::getContainer();
 ```
 
 ## Cautions

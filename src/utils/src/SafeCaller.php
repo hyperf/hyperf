@@ -11,28 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
-use Closure;
-use Hyperf\Contract\StdoutLoggerInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Log\LogLevel;
-use Throwable;
-
-class SafeCaller
+/**
+ * @deprecated since 3.1, use \Hyperf\Support\SafeCaller instead.
+ */
+class SafeCaller extends \Hyperf\Support\SafeCaller
 {
-    public function __construct(private ContainerInterface $container)
-    {
-    }
-
-    public function call(Closure $closure, ?Closure $default = null, string $level = LogLevel::CRITICAL): mixed
-    {
-        try {
-            return $closure();
-        } catch (Throwable $exception) {
-            if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
-                $logger->log($level, (string) $exception);
-            }
-        }
-
-        return value($default);
-    }
 }

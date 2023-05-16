@@ -16,6 +16,9 @@ use Hyperf\Utils\Exception\InvalidArgumentException;
 use HyperfTest\Utils\Stub\Car;
 use HyperfTest\Utils\Stub\StringCodeException;
 use PHPUnit\Framework\TestCase;
+use Throwable;
+
+use function Hyperf\Coroutine\go;
 
 /**
  * @internal
@@ -91,7 +94,7 @@ class JsonTest extends TestCase
     {
         try {
             Json::encode(new Car());
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(InvalidArgumentException::class, $exception);
             $this->assertSame(0, $exception->getCode());
 

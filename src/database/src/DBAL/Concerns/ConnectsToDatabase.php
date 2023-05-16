@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\DBAL\Concerns;
 
 use Hyperf\Database\DBAL\Connection;
+use InvalidArgumentException;
 use PDO;
 
 trait ConnectsToDatabase
@@ -22,7 +23,7 @@ trait ConnectsToDatabase
     public function connect(array $params)
     {
         if (! isset($params['pdo']) || ! $params['pdo'] instanceof PDO) {
-            throw new \InvalidArgumentException('The "pdo" property must be required.');
+            throw new InvalidArgumentException('The "pdo" property must be required.');
         }
 
         return new Connection($params['pdo']);

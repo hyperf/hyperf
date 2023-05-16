@@ -13,6 +13,9 @@ namespace Hyperf\Utils;
 
 use RuntimeException;
 
+/**
+ * @deprecated since 3.1, use \Hyperf\Support\Network instead.
+ */
 class Network
 {
     public static function ip(): string
@@ -27,7 +30,7 @@ class Network
                     if (! isset($item['address'])) {
                         continue;
                     }
-                    if (! Str::contains($item['address'], '::') && $item['address'] !== '127.0.0.1') {
+                    if (! Str::contains($item['address'], ':') && $item['address'] !== '127.0.0.1') {
                         $ips[$name] = $item['address'];
                     }
                 }

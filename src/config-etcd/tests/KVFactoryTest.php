@@ -13,10 +13,10 @@ namespace HyperfTest\ConfigEtcd;
 
 use Hyperf\Config\Config;
 use Hyperf\ConfigEtcd\KVFactory;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Guzzle\HandlerStackFactory;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

@@ -11,6 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Exception;
 
-class IPReadFailedException extends \RuntimeException
-{
+class_alias(\Hyperf\Support\Exception\IPReadFailedException::class, IPReadFailedException::class);
+
+if (! class_exists(IPReadFailedException::class)) {
+    /**
+     * @deprecated since 3.1, use \Hyperf\Support\Exception\IPReadFailedException instead.
+     */
+    class IPReadFailedException extends \Hyperf\Support\Exception\IPReadFailedException
+    {
+    }
 }

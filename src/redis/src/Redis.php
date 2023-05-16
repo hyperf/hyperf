@@ -15,12 +15,15 @@ use Hyperf\Context\Context;
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Pool\PoolFactory;
 
+use function Hyperf\Coroutine\defer;
+
 /**
  * @mixin \Redis
  */
 class Redis
 {
-    use ScanCaller;
+    use Traits\ScanCaller;
+    use Traits\MultiExec;
 
     protected string $poolName = 'default';
 

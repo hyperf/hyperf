@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\SocketIOServer\Cases;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
@@ -28,10 +29,10 @@ use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\Room\MemoryAdapter;
 use Hyperf\SocketIOServer\Room\RedisAdapter;
 use Hyperf\SocketIOServer\SidProvider\LocalSidProvider;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscriber\Subscriber;
 use Mockery;
+use Throwable;
 
 /**
  * @internal
@@ -116,7 +117,7 @@ class RoomAdapterTest extends AbstractTestCase
         // Test empty room
         try {
             $room->del('non-exist');
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             $this->assertTrue(false);
         }
 

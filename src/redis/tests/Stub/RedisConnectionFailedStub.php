@@ -11,10 +11,12 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Redis\Stub;
 
+use Exception;
+
 class RedisConnectionFailedStub extends RedisConnectionStub
 {
     public function getConnection()
     {
-        throw new \Exception('Get connection failed.');
+        throw new Exception('Get connection failed.');
     }
 }

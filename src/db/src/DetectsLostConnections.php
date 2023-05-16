@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\DB;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Throwable;
 
 trait DetectsLostConnections
@@ -43,6 +43,7 @@ trait DetectsLostConnections
             'Name or service not known',
             'ORA-03114',
             'Packets out of order. Expected',
+            'There is no active transaction',
         ]);
     }
 }

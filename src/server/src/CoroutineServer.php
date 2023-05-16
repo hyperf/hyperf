@@ -15,18 +15,22 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Waiter;
+use Hyperf\Engine\SafeSocket;
 use Hyperf\Server\Event\AllCoroutineServersClosed;
 use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Exception\RuntimeException;
-use Hyperf\Utils\Waiter;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Http\Server as HttpServer;
 use Swoole\Coroutine\Server;
+
+use function Hyperf\Coroutine\run;
+use function Hyperf\Support\swoole_hook_flags;
 
 class CoroutineServer implements ServerInterface
 {
@@ -118,13 +122,13 @@ class CoroutineServer implements ServerInterface
             $settings = array_replace($config->getSettings(), $server->getSettings());
             $this->server->set($settings);
 
-            $this->bindServerCallbacks($type, $name, $callbacks);
+            $this->bindServerCallbacks($type, $name, $callbacks, $server);
 
             ServerManager::add($name, [$type, $this->server, $callbacks]);
         }
     }
 
-    protected function bindServerCallbacks(int $type, string $name, array $callbacks)
+    protected function bindServerCallbacks(int $type, string $name, array $callbacks, Port $port)
     {
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
@@ -162,26 +166,34 @@ class CoroutineServer implements ServerInterface
                         $receiveHandler->initCoreMiddleware($name);
                     }
                     if ($this->server instanceof Server) {
-                        $this->server->handle(function (Server\Connection $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
+                        $this->server->handle(function (Server\Connection $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod, $port) {
+                            $socket = $connection->exportSocket();
+                            $fd = $socket->fd;
+                            $options = $port->getOptions();
+                            if ($options && $options->getSendChannelCapacity() > 0) {
+                                $socket = new SafeSocket($socket, $options->getSendChannelCapacity(), false);
+                                $connection = new Connection($socket);
+                            }
+
                             if ($connectHandler && $connectMethod) {
-                                $this->waiter->wait(static function () use ($connectHandler, $connectMethod, $connection) {
-                                    $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
+                                $this->waiter->wait(static function () use ($connectHandler, $connectMethod, $connection, $fd) {
+                                    $connectHandler->{$connectMethod}($connection, $fd);
                                 });
                             }
                             while (true) {
-                                $data = $connection->recv();
+                                $data = $socket->recvPacket();
                                 if (empty($data)) {
                                     if ($closeHandler && $closeMethod) {
-                                        $this->waiter->wait(static function () use ($closeHandler, $closeMethod, $connection) {
-                                            $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
+                                        $this->waiter->wait(static function () use ($closeHandler, $closeMethod, $connection, $fd) {
+                                            $closeHandler->{$closeMethod}($connection, $fd);
                                         });
                                     }
-                                    $connection->close();
+                                    $socket->close();
                                     break;
                                 }
                                 // One coroutine at a time, consistent with other servers
-                                $this->waiter->wait(static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
-                                    $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
+                                $this->waiter->wait(static function () use ($receiveHandler, $receiveMethod, $connection, $data, $fd) {
+                                    $receiveHandler->{$receiveMethod}($connection, $fd, 0, $data);
                                 });
                             }
                         });

@@ -17,6 +17,9 @@ use Hyperf\Task\Exception;
 use Hyperf\Task\Finish;
 use Hyperf\Task\Task;
 use Psr\Container\ContainerInterface;
+use Throwable;
+
+use function Hyperf\Support\call;
 
 class OnTaskListener implements ListenerInterface
 {
@@ -41,7 +44,7 @@ class OnTaskListener implements ListenerInterface
             try {
                 $result = $this->call($data);
                 $this->setResult($event, $result);
-            } catch (\Throwable $throwable) {
+            } catch (Throwable $throwable) {
                 $this->setResult($event, new Exception($this->container, $throwable));
             }
         }

@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcMultiplex;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\RpcMultiplex\Exception\NoAvailableNodesException;
-use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\make;
 
 class SocketFactory
 {

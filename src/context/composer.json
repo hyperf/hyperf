@@ -1,6 +1,6 @@
 {
     "name": "hyperf/context",
-    "description": "A coroutine context library.",
+    "description": "A coroutine/application context library.",
     "license": "MIT",
     "keywords": [
         "php",

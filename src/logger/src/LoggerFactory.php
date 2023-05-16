@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Logger;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Logger\Exception\InvalidConfigException;
-use Hyperf\Utils\Arr;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\FormattableHandlerInterface;
@@ -21,6 +21,8 @@ use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\StreamHandler;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+
+use function Hyperf\Support\make;
 
 class LoggerFactory
 {
@@ -37,7 +39,7 @@ class LoggerFactory
     {
         $config = $this->config->get('logger');
         if (! isset($config[$group])) {
-            throw new InvalidConfigException(sprintf('Logger config[%s] is not defined.', $name));
+            throw new InvalidConfigException(sprintf('Logger config[%s] is not defined.', $group));
         }
 
         $config = $config[$group];

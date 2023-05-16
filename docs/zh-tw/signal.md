@@ -10,7 +10,7 @@ composer require hyperf/signal
 
 ## 釋出配置
 
-您可以通過下面的命令來發布預設的配置檔案到您的專案中：
+您可以透過下面的命令來發布預設的配置檔案到您的專案中：
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/signal

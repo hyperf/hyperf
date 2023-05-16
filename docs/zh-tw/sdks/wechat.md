@@ -13,7 +13,7 @@
 ```php
 <?php
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use EasyWeChat\Factory;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
@@ -83,7 +83,7 @@ $app->rebind('request', $request);
 如果需要使用微信公眾平臺的伺服器配置功能，可以使用以下程式碼。
 
 > 以下 `$response` 為 `Symfony\Component\HttpFoundation\Response` 並非 `Hyperf\HttpMessage\Server\Response` 
-> 所以只需將 `Body` 內容直接返回，即可通過微信驗證。
+> 所以只需將 `Body` 內容直接返回，即可透過微信驗證。
 
 ```php
 $response = $app->server->serve();
@@ -98,7 +98,7 @@ return $response->getContent();
 ```php
 <?php
 use Psr\SimpleCache\CacheInterface;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use EasyWeChat\Factory;
 
 $app = Factory::miniProgram([]);

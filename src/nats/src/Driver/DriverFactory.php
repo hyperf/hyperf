@@ -15,6 +15,8 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Nats\Exception\ConfigNotFoundException;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class DriverFactory
 {
     protected array $config;

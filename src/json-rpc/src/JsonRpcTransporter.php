@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Engine\Contract\Socket\SocketFactoryInterface;
 use Hyperf\Engine\Contract\SocketInterface;
@@ -18,8 +19,9 @@ use Hyperf\Engine\Socket\SocketOption;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
-use Hyperf\Utils\ApplicationContext;
 use RuntimeException;
+
+use function Hyperf\Support\retry;
 
 class JsonRpcTransporter implements TransporterInterface
 {

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\SocketIOServer\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Collector\SocketIORouter;
@@ -19,10 +20,10 @@ use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\SidProvider\LocalSidProvider;
 use Hyperf\SocketIOServer\SocketIO;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 use HyperfTest\SocketIOServer\Stub\EphemeralAdapter;
 use Mockery;
+use ReflectionClass;
 use Swoole\Atomic;
 
 /**
@@ -130,7 +131,7 @@ class IONamespaceTest extends AbstractTestCase
 
         SocketIORouter::addNamespace('/', BaseNamespace::class);
 
-        $ref = new \ReflectionClass($io);
+        $ref = new ReflectionClass($io);
         $m = $ref->getMethod('renewInAllNamespaces');
         $m->setAccessible(true);
         $this->assertFalse(EphemeralAdapter::$isRenew);

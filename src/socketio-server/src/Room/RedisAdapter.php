@@ -11,20 +11,25 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Room;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Server\Exception\RuntimeException;
 use Hyperf\SocketIOServer\Emitter\Flagger;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Coroutine;
 use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscriber\Subscriber;
 use Redis;
+use Throwable;
+
+use function Hyperf\Collection\data_get;
+use function Hyperf\Support\make;
+use function Hyperf\Support\retry;
 
 class RedisAdapter implements AdapterInterface, EphemeralInterface
 {
@@ -139,7 +144,7 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
                         // Fallback to PhpRedis, which has a very bad blocking subscribe model.
                         $this->phpRedisSubscribe();
                     }
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     $container = ApplicationContext::getContainer();
                     if ($container->has(StdoutLoggerInterface::class)) {
                         $logger = $container->get(StdoutLoggerInterface::class);
@@ -310,7 +315,7 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
         }
     }
 
-    private function formatThrowable(\Throwable $throwable): string
+    private function formatThrowable(Throwable $throwable): string
     {
         return (string) $throwable;
     }
@@ -333,10 +338,10 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
         $sub = make(Subscriber::class, [
             'host' => $this->redis->getHost(),
             'port' => $this->redis->getPort(),
-            'password' => $this->redis->getAuth(),
+            'password' => $this->redis->getAuth() ?: '',
             'timeout' => 5,
         ]);
-        $prefix = $this->redis->getOption(\Redis::OPT_PREFIX);
+        $prefix = $this->redis->getOption(Redis::OPT_PREFIX);
         if ($prefix) {
             $sub->prefix = (string) $prefix;
         }

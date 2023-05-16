@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Pool\Stub;
 
+use Exception;
 use Hyperf\Pool\Connection;
 
 class ActiveConnectionStub extends Connection
@@ -21,7 +22,7 @@ class ActiveConnectionStub extends Connection
     {
         if ($this->count === 0) {
             ++$this->count;
-            throw new \Exception();
+            throw new Exception();
         }
 
         return $this;

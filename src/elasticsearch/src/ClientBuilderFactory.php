@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Elasticsearch;
 
 use Elasticsearch\ClientBuilder;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Guzzle\RingPHP\CoroutineHandler;
-use Hyperf\Utils\Coroutine;
 
 class ClientBuilderFactory
 {

@@ -13,7 +13,7 @@ namespace Hyperf\Di\Aop;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 
 class ProxyManager
 {
@@ -46,6 +46,20 @@ class ProxyManager
     public function getProxyDir(): string
     {
         return $this->proxyDir;
+    }
+
+    public function getAspectClasses(): array
+    {
+        $aspectClasses = [];
+        $classesAspects = AspectCollector::get('classes', []);
+        foreach ($classesAspects as $aspect => $rules) {
+            foreach ($rules as $rule) {
+                if (isset($this->proxies[$rule])) {
+                    $aspectClasses[$aspect][$rule] = $this->proxies[$rule];
+                }
+            }
+        }
+        return $aspectClasses;
     }
 
     protected function generateProxyFiles(array $proxies = []): array

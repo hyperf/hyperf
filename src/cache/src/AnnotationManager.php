@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Cache;
 
 use Hyperf\Cache\Annotation\Cacheable;
+use Hyperf\Cache\Annotation\CacheAhead;
 use Hyperf\Cache\Annotation\CacheEvict;
 use Hyperf\Cache\Annotation\CachePut;
 use Hyperf\Cache\Annotation\FailCache;
@@ -32,6 +33,18 @@ class AnnotationManager
     {
         /** @var Cacheable $annotation */
         $annotation = $this->getAnnotation(Cacheable::class, $className, $method);
+
+        $key = $this->getFormattedKey($annotation->prefix, $arguments, $annotation->value);
+        $group = $annotation->group;
+        $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
+
+        return [$key, $ttl + $this->getRandomOffset($annotation->offset), $group, $annotation];
+    }
+
+    public function getCacheAheadValue(string $className, string $method, array $arguments): array
+    {
+        /** @var CacheAhead $annotation */
+        $annotation = $this->getAnnotation(CacheAhead::class, $className, $method);
 
         $key = $this->getFormattedKey($annotation->prefix, $arguments, $annotation->value);
         $group = $annotation->group;

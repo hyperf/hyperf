@@ -16,6 +16,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Tracer;
+use Throwable;
 
 class MethodAspect extends AbstractAspect
 {
@@ -42,7 +43,7 @@ class MethodAspect extends AbstractAspect
         $span = $this->startSpan($key);
         try {
             $result = $proceedingJoinPoint->process();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $span->setTag('error', true);
             $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
             throw $e;

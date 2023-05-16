@@ -13,7 +13,7 @@ namespace HyperfTest\Nats;
 
 use Doctrine\Instantiator\Instantiator;
 use Hyperf\Nats\Driver\NatsDriver;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use PHPUnit\Framework\TestCase;
 
 /**

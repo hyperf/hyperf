@@ -7,7 +7,7 @@
 Hyperf 提供了创建模型的命令，您可以很方便的根据数据表创建对应模型。命令通过 `AST` 生成模型，所以当您增加了某些方法后，也可以使用脚本方便的重置模型。
 
 ```
-$ php bin/hyperf.php gen:model table_name
+php bin/hyperf.php gen:model table_name
 ```
 
 可选参数如下：
@@ -83,21 +83,21 @@ class User extends Model
      *
      * @var string
      */
-    protected $table = 'user';
+    protected ?string $table = 'user';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
+    protected array $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'gender' => 'integer'];
+    protected array $casts = ['id' => 'integer', 'gender' => 'integer'];
 }
 ```
 
@@ -129,7 +129,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $table = 'user';
+    protected ?string $table = 'user';
 }
 ```
 
@@ -154,7 +154,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    public $timestamps = false;
+    public bool $timestamps = false;
 }
 ```
 
@@ -171,7 +171,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $dateFormat = 'U';
+    protected ?string $dateFormat = 'U';
 }
 ```
 
@@ -211,7 +211,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $connection = 'connection-name';
+    protected ?string $connection = 'connection-name';
 }
 ```
 
@@ -230,7 +230,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $attributes = [
+    protected array $attributes = [
         'delayed' => false,
     ];
 }
@@ -403,7 +403,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class User extends Model
 {
-    protected $fillable = ['name'];
+    protected array $fillable = ['name'];
 }
 ```
 
@@ -526,4 +526,53 @@ class User extends Model
 {
     use SoftDeletes;
 }
+```
+
+`restoreOrCreate` 方法会通过给定的 列 / 值 来匹配数据库中的数据。如果在数据库中找到对应的模型，即执行 `restore` 方法恢复模型，否则会从第一个参数的属性乃至第二个参数的属性中创建一条记录插入到数据库。
+
+```php
+// 通过 name 查找用户，不存在则使用 name 和 gender, age 属性创建...
+$user = User::restoreOrCreate(
+    ['name' => 'Hyperf'],
+    ['gender' => 1, 'age' => 20]
+);
+```
+
+## Bit 类型
+
+默认情况下，Hyperf 中的数据库模型转 SQL 过程中，会将参数值统一转为 String 类型，以解决 int 在大数问题和使值类型更容易匹配索引，若想要使 `ORM` 支持 `bit` 类型，只需要增加以下事件监听器代码即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\Database\Connection;
+use Hyperf\Database\MySqlBitConnection;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\BootApplication;
+
+/**
+ * @Listener()
+ */
+class SupportMySQLBitListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            BootApplication::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        Connection::resolverFor('mysql', static function ($connection, $database, $prefix, $config) {
+            return new MySqlBitConnection($connection, $database, $prefix, $config);
+        });
+    }
+}
+
 ```

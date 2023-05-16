@@ -17,6 +17,7 @@ use Hyperf\Database\PgSQL\Query\Grammars\PostgresGrammar as QueryGrammar;
 use Hyperf\Database\PgSQL\Query\Processors\PostgresProcessor;
 use Hyperf\Database\PgSQL\Schema\Grammars\PostgresGrammar as SchemaGrammar;
 use Hyperf\Database\PgSQL\Schema\PostgresBuilder;
+use PDOStatement;
 
 class PostgreSqlConnection extends Connection
 {
@@ -35,7 +36,7 @@ class PostgreSqlConnection extends Connection
     /**
      * Bind values to their parameters in the given statement.
      */
-    public function bindValues(\PDOStatement $statement, array $bindings): void
+    public function bindValues(PDOStatement $statement, array $bindings): void
     {
         foreach ($bindings as $key => $value) {
             $statement->bindValue(

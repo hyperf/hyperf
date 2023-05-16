@@ -18,6 +18,8 @@ use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class ConsumerManager
 {
     public function __construct(private ContainerInterface $container)
@@ -41,7 +43,7 @@ class ConsumerManager
             $annotation->routingKey && $instance->setRoutingKey($annotation->routingKey);
             $annotation->queue && $instance->setQueue($annotation->queue);
             ! is_null($annotation->enable) && $instance->setEnable($annotation->enable);
-            property_exists($instance, 'container') && $instance->container = $this->container;
+            $instance->setContainer($this->container);
             $annotation->maxConsumption && $instance->setMaxConsumption($annotation->maxConsumption);
             ! is_null($annotation->nums) && $instance->setNums($annotation->nums);
             $process = $this->createProcess($instance);

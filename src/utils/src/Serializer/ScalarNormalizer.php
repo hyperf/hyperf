@@ -11,50 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Serializer;
 
-use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-
-use function get_class;
-use function is_scalar;
-
-class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, CacheableSupportsMethodInterface
+/**
+ * @deprecated since 3.1, use Hyperf\Serializer\ScalarNormalizer instead.
+ */
+class ScalarNormalizer extends \Hyperf\Serializer\ScalarNormalizer
 {
-    public function hasCacheableSupportsMethod(): bool
-    {
-        return get_class($this) === __CLASS__;
-    }
-
-    public function denormalize($data, string $type, string $format = null, array $context = [])
-    {
-        return match ($type) {
-            'int' => (int) $data,
-            'string' => (string) $data,
-            'float' => (float) $data,
-            'bool' => (bool) $data,
-            default => $data,
-        };
-    }
-
-    public function supportsDenormalization($data, $type, string $format = null)
-    {
-        return in_array($type, [
-            'int',
-            'string',
-            'float',
-            'bool',
-            'mixed',
-            'array', // TODO: Symfony\Component\Serializer\Normalizer\ArrayDenormalizer not support array, so it denormalized in ScalarNormalizer.
-        ]);
-    }
-
-    public function normalize($object, string $format = null, array $context = [])
-    {
-        return $object;
-    }
-
-    public function supportsNormalization($data, string $format = null)
-    {
-        return is_scalar($data);
-    }
 }

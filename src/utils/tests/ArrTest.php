@@ -11,8 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
@@ -34,7 +35,7 @@ class ArrTest extends TestCase
         $this->assertSame(5, Arr::get($data, 4, 5));
         $this->assertSame(null, Arr::get($data, 5));
 
-        $object = new \stdClass();
+        $object = new stdClass();
         $object->id = 1;
         $this->assertSame(null, Arr::get($object, 'id'));
     }
@@ -179,5 +180,47 @@ class ArrTest extends TestCase
 
         $this->assertTrue(Arr::hasMacro('foo'));
         $this->assertFalse(Arr::hasMacro('bar'));
+    }
+
+    public function testShuffle()
+    {
+        $source = range('a', 'z'); // alphabetic keys to ensure values are returned
+
+        $sameElements = true;
+        $dontMatch = false;
+
+        // Attempt 5x times to prevent random failures
+        for ($i = 0; $i < 5; ++$i) {
+            $shuffled = Arr::shuffle($source);
+
+            $dontMatch = $dontMatch || $source !== $shuffled;
+            $sameElements = $sameElements && $source === array_values(Arr::sort($shuffled));
+        }
+
+        $this->assertTrue($sameElements, 'Shuffled array should always have the same elements.');
+        $this->assertTrue($dontMatch, 'Shuffled array should not have the same order.');
+    }
+
+    public function testShuffleWithSeed()
+    {
+        $this->assertSame(
+            Arr::shuffle(range(0, 100, 10), 1234),
+            Arr::shuffle(range(0, 100, 10), 1234)
+        );
+
+        $this->assertNotSame(
+            Arr::shuffle(range(0, 100, 10)),
+            Arr::shuffle(range(0, 100, 10))
+        );
+
+        $this->assertNotSame(
+            range(0, 100, 10),
+            Arr::shuffle(range(0, 100, 10), 1234)
+        );
+    }
+
+    public function testEmptyShuffle()
+    {
+        $this->assertEquals([], Arr::shuffle([]));
     }
 }

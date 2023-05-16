@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Cache\Helper;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+
+use function Hyperf\Collection\data_get;
 
 class StringHelper
 {

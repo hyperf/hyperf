@@ -11,17 +11,28 @@ declare(strict_types=1);
  */
 namespace Hyperf\Constants;
 
-use Hyperf\Utils\Str;
+use BackedEnum;
+use Hyperf\Stringable\Str;
 use ReflectionClassConstant;
+
+use const PHP_VERSION_ID;
 
 class AnnotationReader
 {
-    public function getAnnotations(array $classConstants)
+    /**
+     * @param array<ReflectionClassConstant> $classConstants
+     */
+    public function getAnnotations(array $classConstants): array
     {
         $result = [];
-        /** @var ReflectionClassConstant $classConstant */
         foreach ($classConstants as $classConstant) {
             $code = $classConstant->getValue();
+            if (PHP_VERSION_ID >= 80100) {
+                /* @phpstan-ignore-next-line */
+                if ($classConstant->isEnumCase()) {
+                    $code = $code instanceof BackedEnum ? $code->value : $code->name;
+                }
+            }
             $docComment = $classConstant->getDocComment();
             // Not support float and bool, because it will be convert to int.
             if ($docComment && (is_int($code) || is_string($code))) {
@@ -32,9 +43,9 @@ class AnnotationReader
         return $result;
     }
 
-    protected function parse(string $doc, array $previous = [])
+    protected function parse(string $doc, array $previous): array
     {
-        $pattern = '/\\@(\\w+)\\(\\"(.+)\\"\\)/U';
+        $pattern = '/@(\w+)\("(.+)"\)/U';
         if (preg_match_all($pattern, $doc, $result)) {
             if (isset($result[1], $result[2])) {
                 $keys = $result[1];

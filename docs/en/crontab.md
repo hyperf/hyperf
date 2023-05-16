@@ -56,6 +56,8 @@ return [
             'fooArgument' => 'barValue',
             // (optional) options
             '--message-limit' => 1,
+            // Remember to add it, otherwise it will cause the main process to exit
+            '--disable-event-dispatcher' => true,
         ]),
     ],
 ];

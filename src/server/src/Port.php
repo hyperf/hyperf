@@ -27,6 +27,8 @@ class Port
 
     protected array $settings = [];
 
+    protected ?Option $options = null;
+
     public static function build(array $config): static
     {
         $config = self::filter($config);
@@ -39,6 +41,7 @@ class Port
         isset($config['sock_type']) && $port->setSockType($config['sock_type']);
         isset($config['callbacks']) && $port->setCallbacks($config['callbacks']);
         isset($config['settings']) && $port->setSettings($config['settings']);
+        isset($config['options']) && $port->setOptions(Option::make($config['options']));
 
         return $port;
     }
@@ -117,6 +120,17 @@ class Port
     public function setSettings(array $settings): static
     {
         $this->settings = $settings;
+        return $this;
+    }
+
+    public function getOptions(): ?Option
+    {
+        return $this->options;
+    }
+
+    public function setOptions(Option $options): static
+    {
+        $this->options = $options;
         return $this;
     }
 

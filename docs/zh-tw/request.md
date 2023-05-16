@@ -16,7 +16,7 @@ composer require hyperf/http-message
 
 ## 獲得請求物件
 
-可以通過容器注入 `Hyperf\HttpServer\Contract\RequestInterface` 獲得 對應的 `Hyperf\HttpServer\Request`，實際注入的物件為一個代理物件，代理的物件為每個請求的 `PSR-7 請求物件(Request)`，也就意味著僅可在 `onRequest` 生命週期內可獲得此物件，下面是一個獲取示例：
+可以透過容器注入 `Hyperf\HttpServer\Contract\RequestInterface` 獲得 對應的 `Hyperf\HttpServer\Request`，實際注入的物件為一個代理物件，代理的物件為每個請求的 `PSR-7 請求物件(Request)`，也就意味著僅可在 `onRequest` 生命週期內可獲得此物件，下面是一個獲取示例：
 
 ```php
 declare(strict_types=1);
@@ -38,7 +38,7 @@ class IndexController
 
 ### 依賴注入與引數
 
-如果希望通過控制器方法引數獲取路由引數，可以在依賴項之後列出對應的引數，框架會自動將對應的引數注入到方法引數內，比如您的路由是這樣定義的：
+如果希望透過控制器方法引數獲取路由引數，可以在依賴項之後列出對應的引數，框架會自動將對應的引數注入到方法引數內，比如您的路由是這樣定義的：
 
 ```php
 // 註解方式
@@ -49,7 +49,7 @@ use Hyperf\HttpServer\Router\Router;
 Router::addRoute(['GET', 'HEAD'], '/user/{id:\d+}', [\App\Controller\IndexController::class, 'user']);
 ```
 
-則可以通過在方法引數上宣告 `$id` 引數獲得 `Query` 引數 `id`，如下所示：
+則可以透過在方法引數上宣告 `$id` 引數獲得 `Query` 引數 `id`，如下所示：
 
 ```php
 declare(strict_types=1);
@@ -69,7 +69,7 @@ class IndexController
 }
 ```
 
-除了可以通過依賴注入獲取路由引數，還可以通過 `route` 方法獲取，如下所示：
+除了可以透過依賴注入獲取路由引數，還可以透過 `route` 方法獲取，如下所示：
 
 ```php
 declare(strict_types=1);
@@ -139,7 +139,7 @@ if ($request->isMethod('post')) {
 
 ### PSR-7 請求及方法
 
-[hyperf/http-message](https://github.com/hyperf/http-message) 元件本身是一個實現了 [PSR-7](https://www.php-fig.org/psr/psr-7/) 標準的元件，相關方法都可以通過注入的 `請求物件(Request)` 來呼叫。   
+[hyperf/http-message](https://github.com/hyperf/http-message) 元件本身是一個實現了 [PSR-7](https://www.php-fig.org/psr/psr-7/) 標準的元件，相關方法都可以透過注入的 `請求物件(Request)` 來呼叫。   
 如果注入時宣告為 [PSR-7](https://www.php-fig.org/psr/psr-7/) 標準的 `Psr\Http\Message\ServerRequestInterface` 介面，則框架會自動轉換為等同於 `Hyperf\HttpServer\Contract\RequestInterface` 的 `Hyperf\HttpServer\Request` 物件。   
 
 > 建議使用 `Hyperf\HttpServer\Contract\RequestInterface` 來注入，這樣可獲得 IDE 對專屬方法的自動完成提醒支援。
@@ -158,7 +158,7 @@ $all = $request->all();
 
 ### 獲取指定輸入值
 
-通過 `input(string $key, $default = null)` 和 `inputs(array $keys, $default = null): array` 獲取 `一個` 或 `多個` 任意形式的輸入值：
+透過 `input(string $key, $default = null)` 和 `inputs(array $keys, $default = null): array` 獲取 `一個` 或 `多個` 任意形式的輸入值：
 
 ```php
 // 存在則返回，不存在則返回 null
@@ -189,7 +189,7 @@ $name = $request->query();
 
 ### 獲取 `JSON` 輸入資訊
 
-如果請求的 `Body` 資料格式是 `JSON`，則只要 `請求物件(Request)` 的 `Content-Type` `Header 值` 正確設定為 `application/json`，就可以通過  `input(string $key, $default = null)` 方法訪問 `JSON` 資料，你甚至可以使用 「點」語法來讀取 `JSON` 陣列：
+如果請求的 `Body` 資料格式是 `JSON`，則只要 `請求物件(Request)` 的 `Content-Type` `Header 值` 正確設定為 `application/json`，就可以透過  `input(string $key, $default = null)` 方法訪問 `JSON` 資料，你甚至可以使用 「點」語法來讀取 `JSON` 陣列：
 
 ```php
 // 存在則返回，不存在則返回 null
@@ -225,7 +225,7 @@ if ($request->has(['name', 'email'])) {
 $cookies = $request->getCookieParams();
 ```
 
-如果希望獲取某一個 `Cookie` 值，可通過 `cookie(string $key, $default = null)` 方法來獲取對應的值：
+如果希望獲取某一個 `Cookie` 值，可透過 `cookie(string $key, $default = null)` 方法來獲取對應的值：
 
  ```php
 // 存在則返回，不存在則返回 null
@@ -257,7 +257,7 @@ if ($request->hasFile('photo')) {
 
 ### 驗證成功上傳
 
-除了檢查上傳的檔案是否存在外，您也可以通過 `isValid(): bool` 方法驗證上傳的檔案是否有效：
+除了檢查上傳的檔案是否存在外，您也可以透過 `isValid(): bool` 方法驗證上傳的檔案是否有效：
 
 ```php
 if ($request->file('photo')->isValid()) {
@@ -279,13 +279,13 @@ $extension = $request->file('photo')->getExtension();
 
 ### 儲存上傳檔案
 
-上傳的檔案在未手動儲存之前，都是存在一個臨時位置上的，如果您沒有對該檔案進行儲存處理，則在請求結束後會從臨時位置上移除，所以我們可能需要對檔案進行持久化儲存處理，通過 `moveTo(string $targetPath): void` 將臨時檔案移動到 `$targetPath` 位置持久化儲存，程式碼示例如下：
+上傳的檔案在未手動儲存之前，都是存在一個臨時位置上的，如果您沒有對該檔案進行儲存處理，則在請求結束後會從臨時位置上移除，所以我們可能需要對檔案進行持久化儲存處理，透過 `moveTo(string $targetPath): void` 將臨時檔案移動到 `$targetPath` 位置持久化儲存，程式碼示例如下：
 
 ```php
 $file = $request->file('photo');
 $file->moveTo('/foo/bar.jpg');
 
-// 通過 isMoved(): bool 方法判斷方法是否已移動
+// 透過 isMoved(): bool 方法判斷方法是否已移動
 if ($file->isMoved()) {
     // ...
 }

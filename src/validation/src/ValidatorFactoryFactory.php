@@ -18,6 +18,8 @@ use Hyperf\Validation\Event\ValidatorFactoryResolved;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+use function Hyperf\Support\make;
+
 class ValidatorFactoryFactory
 {
     public function __invoke(ContainerInterface $container)

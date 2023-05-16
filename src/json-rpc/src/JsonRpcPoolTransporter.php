@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\JsonRpc\Exception\ClientException;
@@ -21,8 +22,11 @@ use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Pool;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\Rpc\Exception\RecvException;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Exception\ExceptionThrower;
+use Hyperf\Support\Exception\ExceptionThrower;
+use Throwable;
+
+use function Hyperf\Coroutine\defer;
+use function Hyperf\Support\retry;
 
 class JsonRpcPoolTransporter implements TransporterInterface
 {
@@ -84,7 +88,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
                     throw new ClientException('Send data failed. ' . $client->errMsg, $client->errCode);
                 }
                 return $this->recvAndCheck($client, $this->recvTimeout);
-            } catch (\Throwable $throwable) {
+            } catch (Throwable $throwable) {
                 if (isset($client)) {
                     $client->close();
                 }
@@ -123,7 +127,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
                     $connection->reconnect();
                 }
                 return $connection;
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $this->log($exception);
             }
         }

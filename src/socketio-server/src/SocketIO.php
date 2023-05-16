@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\SocketIOServer;
 
 use Closure;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
@@ -26,7 +27,6 @@ use Hyperf\SocketIOServer\Parser\Engine;
 use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Constant\Opcode;
 use Hyperf\WebSocketServer\Sender;
 use Swoole\Atomic;
@@ -34,6 +34,9 @@ use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Timer;
 use Swoole\WebSocket\Server;
+use Throwable;
+
+use function Hyperf\Support\make;
 
 /**
  *  packet types
@@ -323,7 +326,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
                 'addCallback' => function (string $ackId, Channel $channel, ?int $timeout = null) {
                     $this->addCallback($ackId, $channel, $timeout);
                 }, ]);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->stdoutLogger->error('Socket.io ' . $exception->getMessage());
             return null;
         }

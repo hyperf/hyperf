@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Server;
 
-use Hyperf\Utils\Traits\Container;
+use Hyperf\Support\Traits\Container;
 
 class ServerManager
 {

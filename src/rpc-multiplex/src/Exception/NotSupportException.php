@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcMultiplex\Exception;
 
-class NotSupportException extends \RuntimeException
+use RuntimeException;
+
+class NotSupportException extends RuntimeException
 {
 }

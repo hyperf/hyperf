@@ -24,6 +24,7 @@ use HyperfTest\RpcServer\Stub\MiddlewareStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use ReflectionClass;
 
 /**
  * @internal
@@ -54,7 +55,7 @@ class RouterDispatcherFactoryTest extends TestCase
             $container->get(EventDispatcherInterface::class),
             $container->get(PathGeneratorInterface::class)
         );
-        $ref = new \ReflectionClass($factory);
+        $ref = new ReflectionClass($factory);
         $m = $ref->getMethod('handleRpcService');
         $m->setAccessible(true);
         $m->invokeArgs($factory, [IdGeneratorStub::class, new RpcService('IdGenerator'), [], []]);
@@ -71,7 +72,7 @@ class RouterDispatcherFactoryTest extends TestCase
             $container->get(EventDispatcherInterface::class),
             $container->get(PathGeneratorInterface::class)
         );
-        $ref = new \ReflectionClass($factory);
+        $ref = new ReflectionClass($factory);
         $m = $ref->getMethod('handleRpcService');
         $m->setAccessible(true);
         $m->invokeArgs($factory, [MiddlewareStub::class, new RpcService('Middleware'), [

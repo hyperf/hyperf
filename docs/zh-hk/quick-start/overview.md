@@ -35,13 +35,13 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', [\App\Controller\IndexContro
 
 ### 通過註解來定義路由
 
-`Hyperf` 提供了極其強大和方便靈活的 [註解](zh-hk/annotation.md) 功能，在路由的定義上也毫無疑問地提供了註解定義的方式，Hyperf 提供了 `@Controller` 和 `@AutoController` 兩種註解來定義一個 `Controller`，此處僅做簡單的説明，更多細節請查閲 [路由](zh-hk/router.md) 章節。
+`Hyperf` 提供了極其強大和方便靈活的 [註解](zh-hk/annotation.md) 功能，在路由的定義上也毫無疑問地提供了註解定義的方式，Hyperf 提供了 `#[Controller]` 和 `#[AutoController]` 兩種註解來定義一個 `Controller`，此處僅做簡單的説明，更多細節請查閲 [路由](zh-hk/router.md) 章節。
 
-### 通過 `@AutoController` 註解定義路由
+### 通過 `#[AutoController]` 註解定義路由
 
-`@AutoController` 為絕大多數簡單的訪問場景提供路由綁定支持，使用 `@AutoController` 時則 Hyperf 會自動解析所在類的所有 `public` 方法並提供 `GET` 和 `POST` 兩種請求方式。
+`#[AutoController]` 為絕大多數簡單的訪問場景提供路由綁定支持，使用 `#[AutoController]` 時則 Hyperf 會自動解析所在類的所有 `public` 方法並提供 `GET` 和 `POST` 兩種請求方式。
 
-> 使用 `@AutoController` 註解時需 `use Hyperf\HttpServer\Annotation\AutoController;` 命名空間；
+> 使用 `#[AutoController]` 註解時需 `use Hyperf\HttpServer\Annotation\AutoController;` 命名空間；
 
 駝峯命名的控制器，會自動轉化為蛇形路由，以下為控制器與實際路由的對應關係示例：
 
@@ -73,17 +73,17 @@ class IndexController
 }
 ```
 
-### 通過 `@Controller` 註解定義路由
-`@Controller` 為滿足更細緻的路由定義需求而存在，使用 `@Controller` 註解用於表明當前類為一個 `Controller 類`，同時需配合 `@RequestMapping` 註解來對請求方法和請求路徑進行更詳細的定義。   
-我們也提供了多種快速便捷的 `Mapping 註解`，如 `@GetMapping`、`@PostMapping`、`@PutMapping`、`@PatchMapping`、`@DeleteMapping` 5 種便捷的註解用於表明允許不同的請求方法。
+### 通過 `#[Controller]` 註解定義路由
+`#[Controller]` 為滿足更細緻的路由定義需求而存在，使用 `#[Controller]` 註解用於表明當前類為一個 `Controller 類`，同時需配合 `#[RequestMapping]` 註解來對請求方法和請求路徑進行更詳細的定義。   
+我們也提供了多種快速便捷的 `Mapping 註解`，如 `#[GetMapping]`、`#[PostMapping]`、`#[PutMapping]`、`#[PatchMapping]`、`#[DeleteMapping]` 5 種便捷的註解用於表明允許不同的請求方法。
 
-> 使用 `@Controller` 註解時需 `use Hyperf\HttpServer\Annotation\Controller;` 命名空間；   
-> 使用 `@RequestMapping` 註解時需 `use Hyperf\HttpServer\Annotation\RequestMapping;` 命名空間；   
-> 使用 `@GetMapping` 註解時需 `use Hyperf\HttpServer\Annotation\GetMapping;` 命名空間；   
-> 使用 `@PostMapping` 註解時需 `use Hyperf\HttpServer\Annotation\PostMapping;` 命名空間；   
-> 使用 `@PutMapping` 註解時需 `use Hyperf\HttpServer\Annotation\PutMapping;` 命名空間；   
-> 使用 `@PatchMapping` 註解時需 `use Hyperf\HttpServer\Annotation\PatchMapping;` 命名空間；   
-> 使用 `@DeleteMapping` 註解時需 `use Hyperf\HttpServer\Annotation\DeleteMapping;` 命名空間；  
+> 使用 `#[Controller]` 註解時需 `use Hyperf\HttpServer\Annotation\Controller;` 命名空間；   
+> 使用 `#[RequestMapping]` 註解時需 `use Hyperf\HttpServer\Annotation\RequestMapping;` 命名空間；   
+> 使用 `#[GetMapping]` 註解時需 `use Hyperf\HttpServer\Annotation\GetMapping;` 命名空間；   
+> 使用 `#[PostMapping]` 註解時需 `use Hyperf\HttpServer\Annotation\PostMapping;` 命名空間；   
+> 使用 `#[PutMapping]` 註解時需 `use Hyperf\HttpServer\Annotation\PutMapping;` 命名空間；   
+> 使用 `#[PatchMapping]` 註解時需 `use Hyperf\HttpServer\Annotation\PatchMapping;` 命名空間；   
+> 使用 `#[DeleteMapping]` 註解時需 `use Hyperf\HttpServer\Annotation\DeleteMapping;` 命名空間；  
 
 ```php
 <?php
@@ -176,7 +176,8 @@ class IndexController
 }
 ```
 
-### 通過 `@Inject` 註解注入
+### 通過 `#[Inject]` 註解注入
+
 只需對對應的類屬性通過 `@var` 聲明參數的類型，並使用 `#[Inject]` 註解標記屬性 ，`Hyperf` 會自動注入對應的對象或值。
 
 > 使用 `#[Inject]` 註解時需 `use Hyperf\Di\Annotation\Inject;` 命名空間；
@@ -195,11 +196,9 @@ use App\Service\UserService;
 #[AutoController]
 class IndexController
 {
-    /**
-     * @var UserService
-     */
+
     #[Inject]
-    private $userService;
+    private UserService $userService;
     
     // /index/info
     public function info(RequestInterface $request)
@@ -214,17 +213,17 @@ class IndexController
 不過這裏的案例並未真正體現出依賴自動注入的好處及其強大之處，我們假設一下 `UserService` 也存在很多的依賴，而這些依賴同時又存在很多其它的依賴時，`new` 實例化的方式就需要手動實例化很多的對象並調整好對應的參數位，而在 `Hyperf` 裏我們就無須手動管理這些依賴，只需要聲明一下最終使用的類即可。   
 而當 `UserService` 需要發生替換等劇烈的內部變化時，比如從一個本地服務替換成了一個 RPC 遠程服務，也只需要通過配置調整依賴中 `UserService` 這個鍵值對應的類為新的 RPC 服務類即可。
 
-## 啟動 Hyperf 服務
+## 啓動 Hyperf 服務
 
-由於 `Hyperf` 內置了協程服務器，也就意味着 `Hyperf` 將以 `CLI` 的形式去運行，所以在定義好路由及實際的邏輯代碼之後，我們需要在項目根目錄並通過命令行運行 `php bin/hyperf.php start` 來啟動服務。   
-當 `Console` 界面顯示服務啟動後便可通過 `cURL` 或 瀏覽器對服務正常發起訪問了，默認服務會提供一個首頁 `http://127.0.0.1:9501/`，對於本章示例引導的情況下，也就是上面的例子所對應的訪問地址為 `http://127.0.0.1:9501/index/info?id=1`。
+由於 `Hyperf` 內置了協程服務器，也就意味着 `Hyperf` 將以 `CLI` 的形式去運行，所以在定義好路由及實際的邏輯代碼之後，我們需要在項目根目錄並通過命令行運行 `php bin/hyperf.php start` 來啓動服務。   
+當 `Console` 界面顯示服務啓動後便可通過 `cURL` 或 瀏覽器對服務正常發起訪問了，默認服務會提供一個首頁 `http://127.0.0.1:9501/`，對於本章示例引導的情況下，也就是上面的例子所對應的訪問地址為 `http://127.0.0.1:9501/index/info?id=1`。
 
 ## 重新加載代碼
 
-由於 `Hyperf` 是持久化的 `CLI` 應用，也就意味着一旦進程啟動，已解析的 `PHP` 代碼會持久化在進程中，也就意味着啟動服務後您再修改的 `PHP` 代碼不會改變已啟動的服務，如您希望服務重新加載您修改後的代碼，您需要通過在啟動的 `Console` 中鍵入 `CTRL + C` 終止服務，再重新執行啟動命令 `php bin/hyperf.php start` 完成啟動和重新加載。
+由於 `Hyperf` 是持久化的 `CLI` 應用，也就意味着一旦進程啓動，已解析的 `PHP` 代碼會持久化在進程中，也就意味着啓動服務後您再修改的 `PHP` 代碼不會改變已啓動的服務，如您希望服務重新加載您修改後的代碼，您需要通過在啓動的 `Console` 中鍵入 `CTRL + C` 終止服務，再重新執行啓動命令 `php bin/hyperf.php start` 完成啓動和重新加載。
 
-> Tips: 您也可以將啟動 Server 的命令配置在 IDE 上，便可直接通過 IDE 的 `啟動/停止` 操作快捷的完成 `啟動服務` 或 `重啟服務` 的操作。
-> 且非視圖開發時可以採用 [TDD(Test-Driven Development)](https://baike.baidu.com/item/TDD/9064369) 測試驅動開發來進行開發，這樣不僅可以省略掉服務重啟和頻繁切換窗口的麻煩，還可保證接口數據的正確性。
+> Tips: 您也可以將啓動 Server 的命令配置在 IDE 上，便可直接通過 IDE 的 `啓動/停止` 操作快捷的完成 `啓動服務` 或 `重啓服務` 的操作。
+> 且非視圖開發時可以採用 [TDD(Test-Driven Development)](https://baike.baidu.com/item/TDD/9064369) 測試驅動開發來進行開發，這樣不僅可以省略掉服務重啓和頻繁切換窗口的麻煩，還可保證接口數據的正確性。
 
 > 另外，在文檔 [協程組件庫](zh-hk/awesome-components?id=%e7%83%ad%e6%9b%b4%e6%96%b0%e7%83%ad%e9%87%8d%e8%bd%bd) 一章中提供了多種由社區開發者支持的 熱更新/熱重載 的解決方案，如仍希望採用 熱更新/熱重載 方案可再深入瞭解。
 

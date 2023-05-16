@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Dag;
 
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Dag\Dag;
 use Hyperf\Dag\Vertex;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\Coroutine;
 use PHPUnit\Framework\TestCase;
 
 /**

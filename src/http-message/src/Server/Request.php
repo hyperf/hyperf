@@ -11,12 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Server;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Server\Request\Parser;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
-use Hyperf\Utils\ApplicationContext;
+use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
@@ -77,10 +78,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * Retrieves data related to the incoming request environment,
      * typically derived from PHP's $_SERVER superglobal. The data IS NOT
      * REQUIRED to originate from $_SERVER.
-     *
-     * @return array
      */
-    public function getServerParams()
+    public function getServerParams(): array
     {
         return $this->serverParams;
     }
@@ -170,9 +169,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @param array $query array of query string arguments, typically from
      *                     $_GET
-     * @return static
      */
-    public function withQueryParams(array $query)
+    public function withQueryParams(array $query): static
     {
         $clone = clone $this;
         $clone->queryParams = $query;
@@ -189,7 +187,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * @return array an array tree of UploadedFileInterface instances; an empty
      *               array MUST be returned if no data is present
      */
-    public function getUploadedFiles()
+    public function getUploadedFiles(): array
     {
         return $this->uploadedFiles;
     }
@@ -201,10 +199,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * updated body parameters.
      *
      * @param array $uploadedFiles an array tree of UploadedFileInterface instances
-     * @return static
-     * @throws \InvalidArgumentException if an invalid structure is provided
+     * @throws InvalidArgumentException if an invalid structure is provided
      */
-    public function withUploadedFiles(array $uploadedFiles)
+    public function withUploadedFiles(array $uploadedFiles): static
     {
         $clone = clone $this;
         $clone->uploadedFiles = $uploadedFiles;
@@ -273,11 +270,10 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @param null|array|object $data The deserialized body data. This will
      *                                typically be in an array or object.
-     * @return static
-     * @throws \InvalidArgumentException if an unsupported argument type is
-     *                                   provided
+     * @throws InvalidArgumentException if an unsupported argument type is
+     *                                  provided
      */
-    public function withParsedBody($data)
+    public function withParsedBody($data): static
     {
         $clone = clone $this;
         $clone->parsedBody = $data;
@@ -304,7 +300,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @return array attributes derived from the request
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -337,10 +333,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @param string $name the attribute name
      * @param mixed $value the value of the attribute
-     * @return static
      * @see getAttributes()
      */
-    public function withAttribute($name, $value)
+    public function withAttribute($name, $value): static
     {
         $clone = clone $this;
         $clone->attributes[$name] = $value;
@@ -356,10 +351,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * the attribute.
      *
      * @param string $name the attribute name
-     * @return static
      * @see getAttributes()
      */
-    public function withoutAttribute($name)
+    public function withoutAttribute($name): static
     {
         if (array_key_exists($name, $this->attributes) === false) {
             return $this;
@@ -442,7 +436,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
             if ($parser->has($contentType) && $content = (string) $request->getBody()) {
                 $data = $parser->parse($content, $contentType);
             }
-        } catch (\InvalidArgumentException $exception) {
+        } catch (InvalidArgumentException $exception) {
             throw new BadRequestHttpException($exception->getMessage());
         }
 
@@ -468,7 +462,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * Return an UploadedFile instance array.
      *
      * @param array $files A array which respect $_FILES structure
-     * @throws \InvalidArgumentException for unrecognized values
+     * @throws InvalidArgumentException for unrecognized values
      */
     private static function normalizeFiles(array $files): array
     {
@@ -532,7 +526,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
     /**
      * Get a Uri populated with values from $swooleRequest->server.
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private static function getUriFromGlobals(Swoole\Http\Request $swooleRequest): UriInterface
     {
@@ -590,6 +584,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
     private static function parseHost(string $httpHost): array
     {
         $parts = parse_url('//' . $httpHost);
+        if (! isset($parts['host'])) {
+            throw new InvalidArgumentException('Invalid host: ' . $httpHost);
+        }
 
         return [$parts['host'], $parts['port'] ?? null];
     }

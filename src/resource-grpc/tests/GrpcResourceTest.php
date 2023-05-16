@@ -20,6 +20,8 @@ use HyperfTest\ResourceGrpc\Stubs\Resources\AllReplyResource;
 use HyperfTest\ResourceGrpc\Stubs\Resources\HiReplyResource;
 use HyperfTest\ResourceGrpc\Stubs\Resources\HiUserResource;
 
+use function Hyperf\Collection\collect;
+
 /**
  * @internal
  * @coversNothing

@@ -117,8 +117,8 @@ class Foo extends AbstractAnnotation
 - `public function collectMethod(string $className, ?string $target): void;` 當註解定義在類方法時被掃描時會觸發該方法
 - `public function collectProperty(string $className, ?string $target): void` 當註解定義在類屬性時被掃描時會觸發該方法
 
-因為框架實現了註解收集器緩存功能，所以需要您將自定義收集器配置到 `annotations.scan.collectors` 中，這樣框架才能自動緩存收集好的註解，在下次啟動時進行復用。
-如果沒有配置對應的收集器，就會導致自定義註解只有在首次啟動 `server` 時生效，而再次啟動時不會生效。
+因為框架實現了註解收集器緩存功能，所以需要您將自定義收集器配置到 `annotations.scan.collectors` 中，這樣框架才能自動緩存收集好的註解，在下次啓動時進行復用。
+如果沒有配置對應的收集器，就會導致自定義註解只有在首次啓動 `server` 時生效，而再次啓動時不會生效。
 
 ```php
 <?php
@@ -217,9 +217,9 @@ class Coroutine
 
 ```
 
-然後，我們實現一個跟 `Hyperf\Utils\Coroutine` 一模一樣的對象。其中 `create()` 方法替換成我們上述實現的方法。
+然後，我們實現一個跟 `Hyperf\Coroutine\Coroutine` 一模一樣的對象。其中 `create()` 方法替換成我們上述實現的方法。
 
-`class_map/Hyperf/Utils/Coroutine.php`
+`class_map/Hyperf/Coroutine/Coroutine.php`
 
 ```php
 <?php
@@ -233,11 +233,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils;
+namespace Hyperf\Coroutine;
 
 use App\Kernel\Context\Coroutine as Co;
 use Swoole\Coroutine as SwooleCoroutine;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 /**
  * @method static void defer(callable $callable)
@@ -306,7 +306,7 @@ class Coroutine
 
 declare(strict_types=1);
 
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 
 return [
     'scan' => [

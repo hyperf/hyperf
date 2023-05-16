@@ -11,11 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nsq\Pool;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Pool;
-use Hyperf\Utils\Arr;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\make;
 
 class NsqPool extends Pool
 {
@@ -26,7 +29,7 @@ class NsqPool extends Pool
         $config = $container->get(ConfigInterface::class);
         $key = sprintf('nsq.%s', $this->name);
         if (! $config->has($key)) {
-            throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
+            throw new InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
 
         $this->config = $config->get($key);

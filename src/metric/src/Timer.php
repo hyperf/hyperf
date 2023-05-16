@@ -13,6 +13,8 @@ namespace Hyperf\Metric;
 
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 
+use function Hyperf\Support\make;
+
 /**
  * Syntax sugar class to handle time.
  */

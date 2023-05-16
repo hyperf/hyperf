@@ -12,8 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\Codec\Json;
+use Hyperf\Codec\Xml;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
+use Hyperf\Contract\Xmlable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Server\Chunk\Chunkable;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
@@ -23,19 +28,19 @@ use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\HttpServer\Exception\Http\FileException;
 use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\ClearStatCache;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Codec\Xml;
-use Hyperf\Utils\Contracts\Jsonable;
-use Hyperf\Utils\Contracts\Xmlable;
-use Hyperf\Utils\MimeTypeExtensionGuesser;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\ClearStatCache;
+use Hyperf\Support\MimeTypeExtensionGuesser;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
+use SplFileInfo;
+use Stringable;
+use Throwable;
 
 use function get_class;
+use function Hyperf\Support\value;
 
 class Response implements PsrResponseInterface, ResponseInterface
 {
@@ -95,7 +100,7 @@ class Response implements PsrResponseInterface, ResponseInterface
     /**
      * Format data to a string and return data with content-type:text/plain header.
      *
-     * @param mixed|\Stringable $data will transfer to a string value
+     * @param mixed|Stringable $data will transfer to a string value
      */
     public function raw($data): PsrResponseInterface
     {
@@ -134,7 +139,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      */
     public function download(string $file, string $name = ''): PsrResponseInterface
     {
-        $file = new \SplFileInfo($file);
+        $file = new SplFileInfo($file);
 
         if (! $file->isReadable()) {
             throw new FileException('File must be readable.');
@@ -293,7 +298,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @param string $name case-insensitive header field name
      * @param string|string[] $value header value(s)
      * @return PsrResponseInterface
-     * @throws \InvalidArgumentException for invalid header names or values
+     * @throws InvalidArgumentException for invalid header names or values
      */
     public function withHeader($name, $value)
     {
@@ -312,7 +317,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @param string $name case-insensitive header field name to add
      * @param string|string[] $value header value(s)
      * @return PsrResponseInterface
-     * @throws \InvalidArgumentException for invalid header names or values
+     * @throws InvalidArgumentException for invalid header names or values
      */
     public function withAddedHeader($name, $value)
     {
@@ -353,7 +358,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      *
      * @param StreamInterface $body body
      * @return PsrResponseInterface
-     * @throws \InvalidArgumentException when the body is not valid
+     * @throws InvalidArgumentException when the body is not valid
      */
     public function withBody(StreamInterface $body)
     {
@@ -388,7 +393,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      *                             provided status code; if none is provided, implementations MAY
      *                             use the defaults as suggested in the HTTP specification
      * @return PsrResponseInterface
-     * @throws \InvalidArgumentException for invalid status code arguments
+     * @throws InvalidArgumentException for invalid status code arguments
      */
     public function withStatus($code, $reasonPhrase = '')
     {
@@ -440,7 +445,7 @@ class Response implements PsrResponseInterface, ResponseInterface
     /**
      * Get ETag header according to the checksum of the file.
      */
-    protected function createEtag(\SplFileInfo $file, bool $weak = false): string
+    protected function createEtag(SplFileInfo $file, bool $weak = false): string
     {
         $etag = '';
         if ($weak) {
@@ -465,7 +470,7 @@ class Response implements PsrResponseInterface, ResponseInterface
     {
         try {
             $result = Json::encode($data);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             throw new EncodingException($exception->getMessage(), (int) $exception->getCode(), $exception);
         }
 

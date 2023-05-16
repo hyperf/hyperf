@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation\Rules;
 
-class RequiredIf implements \Stringable
+use Stringable;
+
+class RequiredIf implements Stringable
 {
     /**
      * The condition that validates the attribute.

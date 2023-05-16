@@ -19,6 +19,7 @@ use Hyperf\Rpc\ErrorResponse;
 use Hyperf\Rpc\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 class ResponseBuilder
 {
@@ -38,7 +39,7 @@ class ResponseBuilder
     {
     }
 
-    public function buildErrorResponse(ServerRequestInterface $request, int $code, \Throwable $error = null): ResponseInterface
+    public function buildErrorResponse(ServerRequestInterface $request, int $code, Throwable $error = null): ResponseInterface
     {
         $body = new SwooleStream($this->formatErrorResponse($request, $code, $error));
         return $this->response()->withHeader('content-type', 'application/json')->withBody($body);
@@ -65,7 +66,7 @@ class ResponseBuilder
         return $this->packer->pack($response);
     }
 
-    protected function formatErrorResponse(ServerRequestInterface $request, int $code, \Throwable $error = null): string
+    protected function formatErrorResponse(ServerRequestInterface $request, int $code, Throwable $error = null): string
     {
         [$code, $message] = $this->error($code, $error?->getMessage());
         $response = $this->dataFormatter->formatErrorResponse(

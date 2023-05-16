@@ -14,7 +14,7 @@ namespace HyperfTest\Database;
 use Hyperf\Database\MySqlConnection;
 use Hyperf\Database\Query\Grammars\MySqlGrammar as MySqlQueryGrammar;
 use Hyperf\Database\Schema\Grammars\MySqlGrammar;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 use PHPUnit\Framework\TestCase;
 
 /**

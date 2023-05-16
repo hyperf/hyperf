@@ -12,11 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Resource\Concerns;
 
 use Countable;
+use Hyperf\Collection\Arr;
 use Hyperf\Resource\Json\JsonResource;
 use Hyperf\Resource\Value\MergeValue;
 use Hyperf\Resource\Value\MissingValue;
 use Hyperf\Resource\Value\PotentiallyMissing;
-use Hyperf\Utils\Arr;
+
+use function Hyperf\Support\value;
 
 /**
  * Trait ConditionallyLoadsAttributes.

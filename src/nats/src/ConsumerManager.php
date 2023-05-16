@@ -23,6 +23,9 @@ use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Throwable;
+
+use function Hyperf\Support\make;
 
 class ConsumerManager
 {
@@ -73,22 +76,22 @@ class ConsumerManager
             public function handle(): void
             {
                 while (true) {
-                    $this->dispatcher && $this->dispatcher->dispatch(new BeforeSubscribe($this->consumer));
+                    $this->dispatcher?->dispatch(new BeforeSubscribe($this->consumer));
                     $this->subscriber->subscribe(
                         $this->consumer->getSubject(),
                         $this->consumer->getQueue(),
                         function ($data) {
                             try {
-                                $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
+                                $this->dispatcher?->dispatch(new BeforeConsume($this->consumer, $data));
                                 $this->consumer->consume($data);
-                                $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data));
-                            } catch (\Throwable $throwable) {
-                                $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
+                                $this->dispatcher?->dispatch(new AfterConsume($this->consumer, $data));
+                            } catch (Throwable $throwable) {
+                                $this->dispatcher?->dispatch(new FailToConsume($this->consumer, $data, $throwable));
                             }
                         }
                     );
 
-                    $this->dispatcher && $this->dispatcher->dispatch(new AfterSubscribe($this->consumer));
+                    $this->dispatcher?->dispatch(new AfterSubscribe($this->consumer));
                     usleep(1000);
                 }
             }

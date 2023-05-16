@@ -4,7 +4,7 @@
 
 # 元件開發的目的
 
-在傳統的 PHP-FPM 架構下的開發，通常在我們需要藉助第三方庫來解決我們的需求時，都會通過 Composer 來直接引入一個對應的 `庫(Library)`，但是在 Hyperf 下，由於 `持久化應用` 和 `協程` 這兩個特性，導致了應用的生命週期和模式存在一些差異，所以並不是所有的 `庫(Library)` 都能在 Hyperf 裡直接使用，當然，一些設計優秀的 `庫(Library)` 也是可以被直接使用的。通讀本指南，便可知道如何甄別一些 `庫(Library)` 是否能直接用於專案內，不能的話該進行如何的改動。
+在傳統的 PHP-FPM 架構下的開發，通常在我們需要藉助第三方庫來解決我們的需求時，都會透過 Composer 來直接引入一個對應的 `庫(Library)`，但是在 Hyperf 下，由於 `持久化應用` 和 `協程` 這兩個特性，導致了應用的生命週期和模式存在一些差異，所以並不是所有的 `庫(Library)` 都能在 Hyperf 裡直接使用，當然，一些設計優秀的 `庫(Library)` 也是可以被直接使用的。通讀本指南，便可知道如何甄別一些 `庫(Library)` 是否能直接用於專案內，不能的話該進行如何的改動。
 
 # 元件開發準備工作
 
@@ -35,7 +35,7 @@ git clone git@github.com:hyperf/hyperf.git
     └── vendor
 ```
 
-這樣做的目的是為了讓 `hyperf-skeleton` 專案可以直接通過 `path` 來源的形式，讓 Composer 直接通過 `hyperf` 資料夾內的專案作為依賴項被載入到 `hyperf-skelton`  專案的 `vendor` 目錄中，我們對 `hyperf-skelton` 內的 `composer.json` 檔案增加一個 `repositories` 項，如下：
+這樣做的目的是為了讓 `hyperf-skeleton` 專案可以直接透過 `path` 來源的形式，讓 Composer 直接透過 `hyperf` 資料夾內的專案作為依賴項被載入到 `hyperf-skelton`  專案的 `vendor` 目錄中，我們對 `hyperf-skelton` 內的 `composer.json` 檔案增加一個 `repositories` 項，如下：
 
 ```json
 {
@@ -58,7 +58,7 @@ cd hyperf-skeleton
 rm -rf composer.lock && rm -rf vendor && composer update
 ```
    
-最終使 `hyperf-skeleton/vendor/hyperf` 資料夾內的專案資料夾全部通過 `軟連線(softlink)` 連線到 `hyperf` 資料夾內。我們可以通過 `ls -l` 命令來驗證 `軟連線(softlink)` 是否已經建立成功：
+最終使 `hyperf-skeleton/vendor/hyperf` 資料夾內的專案資料夾全部透過 `軟連線(softlink)` 連線到 `hyperf` 資料夾內。我們可以透過 `ls -l` 命令來驗證 `軟連線(softlink)` 是否已經建立成功：
 
 ```bash
 cd vendor/hyperf/

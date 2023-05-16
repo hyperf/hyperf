@@ -20,6 +20,8 @@ use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class RedisDriver extends Driver
 {
     protected RedisProxy $redis;

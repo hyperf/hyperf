@@ -12,8 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Base;
 
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use InvalidArgumentException;
 use Laminas\Mime\Decode;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
+use Throwable;
 
 /**
  * Trait implementing functionality common to requests and responses.
@@ -37,7 +40,7 @@ trait MessageTrait
      *
      * @return string HTTP protocol version
      */
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->protocol;
     }
@@ -51,9 +54,8 @@ trait MessageTrait
      * new protocol version.
      *
      * @param string $version HTTP protocol version
-     * @return static
      */
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version): static
     {
         if ($this->protocol === $version) {
             return $this;
@@ -159,10 +161,9 @@ trait MessageTrait
      *
      * @param string $name case-insensitive header field name
      * @param string|string[] $value header value(s)
-     * @return static
-     * @throws \InvalidArgumentException for invalid header names or values
+     * @throws InvalidArgumentException for invalid header names or values
      */
-    public function withHeader($name, $value)
+    public function withHeader($name, $value): static
     {
         if (! is_array($value)) {
             $value = [$value];
@@ -201,10 +202,9 @@ trait MessageTrait
      *
      * @param string $name case-insensitive header field name to add
      * @param string|string[] $value header value(s)
-     * @return static
-     * @throws \InvalidArgumentException for invalid header names or values
+     * @throws InvalidArgumentException for invalid header names or values
      */
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader($name, $value): static
     {
         if (! is_array($value)) {
             $value = [$value];
@@ -233,9 +233,8 @@ trait MessageTrait
      * the named header.
      *
      * @param string $name case-insensitive header field name to remove
-     * @return static
      */
-    public function withoutHeader($name)
+    public function withoutHeader($name): static
     {
         $normalized = strtolower($name);
 
@@ -256,7 +255,7 @@ trait MessageTrait
      *
      * @return StreamInterface returns the body as a stream
      */
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         if (! $this->stream) {
             $this->stream = new SwooleStream('');
@@ -273,10 +272,9 @@ trait MessageTrait
      * new body stream.
      *
      * @param StreamInterface $body body
-     * @return static
-     * @throws \InvalidArgumentException when the body is not valid
+     * @throws InvalidArgumentException when the body is not valid
      */
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): static
     {
         if ($body === $this->stream) {
             return $this;
@@ -300,7 +298,7 @@ trait MessageTrait
      * @param string $wantedPart the wanted part, default is first, if null an array with all parts is returned
      * @param string $firstName key name for the first part
      * @return array|string wanted part or all parts as array($firstName => firstPart, partname => value)
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function getHeaderField(string $name, string $wantedPart = '0', string $firstName = '0')
     {
@@ -321,7 +319,7 @@ trait MessageTrait
     {
         try {
             return stripos($this->getContentType(), 'multipart/') === 0;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return false;
         }
     }

@@ -16,17 +16,19 @@ use Hyperf\Amqp\Exception\SendChannelClosedException;
 use Hyperf\Amqp\Exception\SendChannelTimeoutException;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Channel\Manager as ChannelManager;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Exception\ChannelClosedException;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\Channel\ChannelManager;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Exception\ChannelClosedException;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Channel\Frame;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Wire\AMQPWriter;
 use PhpAmqpLib\Wire\IO\AbstractIO;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class AMQPConnection extends AbstractConnection
 {
@@ -214,9 +216,10 @@ class AMQPConnection extends AbstractConnection
 
                     parent::write($data);
                 }
-            } catch (\Throwable $exception) {
-                $level = $this->exited ? 'warning' : 'error';
-                $this->logger && $this->logger->log($level, 'Send loop broken. The reason is ' . (string) $exception);
+            } catch (Throwable $exception) {
+                if (! $this->exited) {
+                    $this->logger?->error('Send loop broken. The reason is ' . $exception);
+                }
             } finally {
                 $this->loop = false;
                 if (! $this->exited) {
@@ -231,12 +234,13 @@ class AMQPConnection extends AbstractConnection
         Coroutine::create(function () {
             try {
                 while (true) {
-                    [$frame_type, $channel, $payload] = $this->wait_frame(0);
-                    $this->channelManager->get($channel)->push([$frame_type, $payload], 0.001);
+                    $frame = $this->wait_frame(0);
+                    $this->channelManager->get($frame->getChannel())->push($frame, 0.001);
                 }
-            } catch (\Throwable $exception) {
-                $level = $this->exited ? 'warning' : 'error';
-                $this->logger && $this->logger->log($level, 'Recv loop broken. The reason is ' . $exception);
+            } catch (Throwable $exception) {
+                if (! $this->exited) {
+                    $this->logger?->error('Recv loop broken. The reason is ' . $exception);
+                }
             } finally {
                 $this->loop = false;
                 if (! $this->exited) {
@@ -249,7 +253,7 @@ class AMQPConnection extends AbstractConnection
         });
     }
 
-    protected function wait_channel($channel_id, $timeout = 0)
+    protected function wait_channel($channel_id, $timeout = 0): Frame
     {
         $chan = $this->channelManager->get($channel_id);
         if ($chan === null) {
@@ -292,7 +296,7 @@ class AMQPConnection extends AbstractConnection
                             $pkt->write_octet(0xCE);
                             $this->chan->push($pkt->getvalue(), 0.001);
                         }
-                    } catch (\Throwable $exception) {
+                    } catch (Throwable $exception) {
                         $this->logger && $this->logger->error((string) $exception);
                     }
                 }

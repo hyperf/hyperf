@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils\Stub;
 
-class SerializableException extends \RuntimeException
+use RuntimeException;
+
+class SerializableException extends RuntimeException
 {
     public function __unserialize(array $data): void
     {

@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Command;
 
 use Hyperf\Contract\Arrayable;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Str;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Stringable\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\ExitException;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
@@ -26,6 +26,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Coroutine\run;
+use function Hyperf\Support\swoole_hook_flags;
+use function Hyperf\Tappable\tap;
 
 abstract class Command extends SymfonyCommand
 {
@@ -418,10 +424,10 @@ abstract class Command extends SymfonyCommand
 
         $callback = function () {
             try {
-                $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\BeforeHandle($this));
+                $this->eventDispatcher?->dispatch(new Event\BeforeHandle($this));
                 $this->handle();
-                $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterHandle($this));
-            } catch (\Throwable $exception) {
+                $this->eventDispatcher?->dispatch(new Event\AfterHandle($this));
+            } catch (Throwable $exception) {
                 if (class_exists(ExitException::class) && $exception instanceof ExitException) {
                     return $this->exitCode = (int) $exception->getStatus();
                 }
@@ -433,9 +439,9 @@ abstract class Command extends SymfonyCommand
                 $this->output && $this->error($exception->getMessage());
 
                 $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
-                return $this->exitCode = $exception->getCode();
+                return $this->exitCode = (int) $exception->getCode();
             } finally {
-                $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterExecute($this));
+                $this->eventDispatcher?->dispatch(new Event\AfterExecute($this));
             }
 
             return 0;

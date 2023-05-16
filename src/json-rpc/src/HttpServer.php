@@ -29,6 +29,8 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function Hyperf\Support\make;
+
 class HttpServer extends Server
 {
     protected Protocol $protocol;

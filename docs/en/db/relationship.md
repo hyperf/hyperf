@@ -1,16 +1,16 @@
-# 模型关联
+# Model association
 
-## 定义关联
+## Define association
 
-关联在 `Hyperf` 模型类中以方法的形式呈现。如同 `Hyperf` 模型本身，关联也可以作为强大的 `查询语句构造器` 使用，提供了强大的链式调用和查询功能。例如，我们可以在 role 关联的链式调用中附加一个约束条件：
+Associations are presented as methods in the `Hyperf` model class. Like the `Hyperf` model itself, associations can also be used as powerful `query builder`, providing powerful chaining and querying capabilities. For example, we can attach a constraint to the chained calls associated with role:
 
 ```php
 $user->role()->where('level', 1)->get();
 ```
 
-### 一对一
+### One to one
 
-一对一是最基本的关联关系。例如，一个 `User` 模型可能关联一个 `Role` 模型。为了定义这个关联，我们要在 `User` 模型中写一个 `role` 方法。在 `role` 方法内部调用 `hasOne` 方法并返回其结果:
+One-to-one is the most basic relationship. For example, a `User` model might be associated with a `Role` model. To define this association, we need to write a `role` method in the `User` model. Call the `hasOne` method inside the `role` method and return its result:
 
 ```php
 <?php
@@ -30,15 +30,15 @@ class User extends Model
 }
 ```
 
-`hasOne` 方法的第一个参数是关联模型的类名。一旦定义了模型关联，我们就可以使用 `Hyperf` 动态属性获得相关的记录。动态属性允许你访问关系方法就像访问模型中定义的属性一样：
+The first parameter of the `hasOne` method is the class name of the associated model. Once the model associations are defined, we can use the `Hyperf` dynamic properties to get the related records. Dynamic properties allow you to access relationship methods just like properties defined in the model:
 
 ```php
 $role = User::query()->find(1)->role;
 ```
 
-### 一对多
+### One-to-many
 
-『一对多』关联用于定义单个模型拥有任意数量的其它关联模型。例如，一个作者可能写有多本书。正如其它所有的 `Hyperf` 关联一样，一对多关联的定义也是在 `Hyperf` 模型中写一个方法：
+A "one-to-many" association is used to define a single model with any number of other associated models. For example, an author may have written multiple books. As with all other `Hyperf` relationships, the definition of a one-to-many relationship is to write a method in the `Hyperf` model:
 
 ```php
 <?php
@@ -58,9 +58,9 @@ class User extends Model
 }
 ```
 
-记住一点，`Hyperf` 将会自动确定 `Book` 模型的外键属性。按照约定，`Hyperf` 将会使用所属模型名称的 『snake case』形式，再加上 `_id` 后缀作为外键字段。因此，在上面这个例子中，`Hyperf` 将假定 `User` 对应到 `Book` 模型上的外键就是 `user_id`。
+Remember that `Hyperf` will automatically determine the foreign key properties of the `Book` model. By convention, `Hyperf` will use the "snake case" form of the owning model name, plus the `_id` suffix as the foreign key field. Therefore, in the above example, `Hyperf` will assume that the foreign key corresponding to `User` on the `Book` model is `user_id`.
 
-一旦关系被定义好以后，就可以通过访问 `User` 模型的 `books` 属性来获取评论的集合。记住，由于 Hyperf 提供了『动态属性』 ，所以我们可以像访问模型的属性一样访问关联方法：
+Once the relationship is defined, the collection of comments can be obtained by accessing the `books` property of the `User` model. Remember, since Hyperf provides "dynamic properties", we can access associated methods just like properties of the model:
 
 ```php
 $books = User::query()->find(1)->books;
@@ -70,15 +70,15 @@ foreach ($books as $book) {
 }
 ```
 
-当然，由于所有的关联还可以作为查询语句构造器使用，因此你可以使用链式调用的方式，在 books 方法上添加额外的约束条件：
+Of course, since all associations can also be used as query constructors, you can use chained calls to add additional constraints to the books method:
 
 ```php
-$book = User::query()->find(1)->books()->where('title', '一个月精通Hyperf框架')->first();
+$book = User::query()->find(1)->books()->where('title', 'Mastering the Hyperf framework in one month')->first();
 ```
 
-### 一对多（反向）
+### One-to-many (reverse)
 
-现在，我们已经能获得一个作者的所有作品，接着再定义一个通过书获得其作者的关联关系。这个关联是 `hasMany` 关联的反向关联，需要在子级模型中使用 `belongsTo` 方法定义它：
+Now that we can get all the works of an author, let's define an association to get its author through the book. This association is the inverse of the `hasMany` association and needs to be defined in the child model using the `belongsTo` method:
 
 ```php
 <?php
@@ -98,7 +98,7 @@ class Book extends Model
 }
 ```
 
-这个关系定义好以后，我们就可以通过访问 `Book` 模型的 author 这个『动态属性』来获取关联的 `User` 模型了：
+After this relationship is defined, we can get the associated `User` model by accessing the "dynamic property" of the author of the `Book` model:
 
 ```php
 $book = Book::find(1);
@@ -106,11 +106,11 @@ $book = Book::find(1);
 echo $book->author->name;
 ```
 
-### 多对多
+### many-to-many
 
-多对多关联比 `hasOne` 和 `hasMany` 关联稍微复杂些。举个例子，一个用户可以拥有很多种角色，同时这些角色也被其他用户共享。例如，许多用户可能都有 「管理员」 这个角色。要定义这种关联，需要三个数据库表： `users`，`roles` 和 `role_user`。`role_user` 表的命名是由关联的两个模型按照字母顺序来的，并且包含了 `user_id` 和 `role_id` 字段。
+Many-to-many associations are slightly more complicated than `hasOne` and `hasMany` associations. For example, a user can have many roles, and these roles are also shared by other users. For example, many users may have the role of "Administrator". To define this association, three database tables are required: `users`, `roles` and `role_user`. The `role_user` table is named alphabetically by the associated two models, and contains the `user_id` and `role_id` fields.
 
-多对多关联通过调用 `belongsToMany` 这个内部方法返回的结果来定义，例如，我们在 `User` 模型中定义 `roles` 方法：
+Many-to-many associations are defined by calling the result returned by the internal method `belongsToMany`. For example, we define the `roles` method in the `User` model:
 
 ```php
 <?php
@@ -128,7 +128,7 @@ class User extends Model
 }
 ```
 
-一旦关联关系被定义后，你可以通过 `roles` 动态属性获取用户角色：
+Once the relationship is defined, you can get user roles via the `roles` dynamic property:
 
 ```php
 $user = User::query()->find(1);
@@ -138,27 +138,27 @@ foreach ($user->roles as $role) {
 }
 ```
 
-当然，像其它所有关联模型一样，你可以使用 `roles` 方法，利用链式调用对查询语句添加约束条件：
+Of course, like all other relational models, you can use the `roles` method to add constraints to queries using chained calls:
 
 ```php
 $roles = User::find(1)->roles()->orderBy('name')->get();
 ```
 
-正如前面所提到的，为了确定关联连接表的表名，`Hyperf` 会按照字母顺序连接两个关联模型的名字。当然，你也可以不使用这种约定，传递第二个参数到 belongsToMany 方法即可：
+As mentioned earlier, in order to determine the table name of the relational join table, `Hyperf` will concatenate the names of the two relational models in alphabetical order. Of course, you can also skip this convention and pass the second parameter to the belongsToMany method:
 
 ```php
 return $this->belongsToMany(Role::class, 'role_user');
 ```
 
-除了自定义连接表的表名，你还可以通过传递额外的参数到 `belongsToMany` 方法来定义该表中字段的键名。第三个参数是定义此关联的模型在连接表里的外键名，第四个参数是另一个模型在连接表里的外键名：
+In addition to customizing the table name of the join table, you can also define the key name of the field in the table by passing additional parameters to the `belongsToMany` method. The third parameter is the foreign key name of the model that defines this association in the join table, and the fourth parameter is the foreign key name of another model in the join table:
 
 ```php
 return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
 ```
 
-#### 获取中间表字段
+#### Get intermediate table fields
 
-就如你刚才所了解的一样，多对多的关联关系需要一个中间表来提供支持， `Hyperf` 提供了一些有用的方法来和这张表进行交互。例如，假设我们的 `User` 对象关联了多个 `Role` 对象。在获得这些关联对象后，可以使用模型的 `pivot` 属性访问中间表的数据：
+As you just learned, many-to-many relationships require an intermediate table to support, and `Hyperf` provides some useful methods to interact with this table. For example, let's say our `User` object has multiple `Role` objects associated with it. After obtaining these association objects, the data in the intermediate table can be accessed using the model's `pivot` attribute:
 
 ```php
 $user = User::find(1);
@@ -168,31 +168,31 @@ foreach ($user->roles as $role) {
 }
 ```
 
-需要注意的是，我们获取的每个 `Role` 模型对象，都会被自动赋予 `pivot` 属性，它代表中间表的一个模型对象，并且可以像其他的 `Hyperf` 模型一样使用。
+It should be noted that each `Role` model object we get is automatically assigned a `pivot` attribute, which represents a model object of the intermediate table and can be used like other `Hyperf` models.
 
-默认情况下，`pivot` 对象只包含两个关联模型的主键，如果你的中间表里还有其他额外字段，你必须在定义关联时明确指出：
+By default, the `pivot` object contains only the primary keys of the two relational models. If you have additional fields in the intermediate table, you must specify them when defining the relation:
 
 ```php
 return $this->belongsToMany(Role::class)->withPivot('column1', 'column2');
 ```
 
-如果你想让中间表自动维护 `created_at` 和 `updated_at` 时间戳，那么在定义关联时附加上 `withTimestamps` 方法即可：
+If you want the intermediate table to automatically maintain the `created_at` and `updated_at` timestamps, then add the `withTimestamps` method when defining the association:
 
 ```php
 return $this->belongsToMany(Role::class)->withTimestamps();
 ```
 
-#### 自定义 `pivot` 属性名称
+#### custom `pivot` attribute name
 
-如前所述，来自中间表的属性可以使用 `pivot` 属性访问。但是，你可以自由定制此属性的名称，以便更好的反应其在应用中的用途。
+As mentioned earlier, properties from intermediate tables can be accessed using the `pivot` attribute. However, you are free to customize the name of this property to better reflect its use in your application.
 
-例如，如果你的应用中包含可能订阅的用户，则用户与博客之间可能存在多对多的关系。如果是这种情况，你可能希望将中间表访问器命名为 `subscription` 取代 `pivot` 。这可以在定义关系时使用 `as` 方法完成：
+For example, if your app includes users who may subscribe, there may be a many-to-many relationship between users and blogs. If this is the case, you may wish to name the intermediate table accessor `subscription` instead of `pivot` . This can be done using the `as` method when defining the relationship:
 
 ```php
 return $this->belongsToMany(Podcast::class)->as('subscription')->withTimestamps();
 ```
 
-一旦定义完成，你可以使用自定义名称访问中间表数据：
+Once defined, you can access the intermediate table data with a custom name:
 
 ```php
 $users = User::with('podcasts')->get();
@@ -202,9 +202,9 @@ foreach ($users->flatMap->podcasts as $podcast) {
 }
 ```
 
-#### 通过中间表过滤关系
+#### Filter relations by intermediate table
 
-在定义关系时，你还可以使用 `wherePivot` 和 `wherePivotIn` 方法来过滤 `belongsToMany` 返回的结果：
+When defining a relationship, you can also use the `wherePivot` and `wherePivotIn` methods to filter the results returned by `belongsToMany`:
 
 ```php
 return $this->belongsToMany('App\Role')->wherePivot('approved', 1);
@@ -213,9 +213,9 @@ return $this->belongsToMany('App\Role')->wherePivotIn('priority', [1, 2]);
 ```
 
 
-## 预加载
+## Preloading
 
-当以属性方式访问 `Hyperf` 关联时，关联数据「懒加载」。这着直到第一次访问属性时关联数据才会被真实加载。不过 `Hyperf` 能在查询父模型时「预先载入」子关联。预加载可以缓解 N + 1 查询问题。为了说明 N + 1 查询问题，考虑 `User` 模型关联到 `Role` 的情形：
+When accessing a `Hyperf` relationship as an attribute, the associated data is "lazy loaded". This means that the associated data is not actually loaded until the property is accessed for the first time. However, `Hyperf` can "preload" child associations when querying the parent model. Eager loading can alleviate the N+1 query problem. To illustrate the N + 1 query problem, consider a `User` model associated with a `Role`:
 
 ```php
 <?php
@@ -235,7 +235,7 @@ class User extends Model
 }
 ```
 
-现在，我们来获取所有的用户及其对应角色
+Now, let's get all users and their corresponding roles
 
 ```php
 $users = User::query()->get();
@@ -245,9 +245,9 @@ foreach ($users as $user){
 }
 ```
 
-此循环将执行一个查询，用于获取全部用户，然后为每个用户执行获取角色的查询。如果我们有 10 个人，此循环将运行 11 个查询：1 个用于查询用户，10 个附加查询对应的角色。
+This loop will execute a query to get all users, and then execute a query to get roles for each user. If we have 10 people, this loop will run 11 queries: 1 for users and 10 additional queries for roles.
 
-谢天谢地，我们能够使用预加载将操作压缩到只有 2 个查询。在查询时，可以使用 with 方法指定想要预加载的关联：
+Thankfully, we were able to squeeze the operation down to just 2 queries using eager loading. At query time, you can use the with method to specify which associations you want to preload:
 
 ```php
 $users = User::query()->with('role')->get();
@@ -257,7 +257,7 @@ foreach ($users as $user){
 }
 ```
 
-在这个例子中，仅执行了两个查询
+In this example, only two queries are executed
 
 ```
 SELECT * FROM `user`;

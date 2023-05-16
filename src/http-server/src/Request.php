@@ -11,17 +11,21 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpServer;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use RuntimeException;
 use SplFileInfo;
+
+use function Hyperf\Collection\data_get;
+use function Hyperf\Support\value;
 
 /**
  * @property string $pathInfo
@@ -596,7 +600,7 @@ class Request implements RequestInterface
     {
         $request = $this->getRequest();
         if (! method_exists($request, $name)) {
-            throw new \RuntimeException('Method not exist.');
+            throw new RuntimeException('Method not exist.');
         }
         return $request->{$name}(...$arguments);
     }

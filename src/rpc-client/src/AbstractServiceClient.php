@@ -29,6 +29,8 @@ use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 
+use function Hyperf\Support\make;
+
 abstract class AbstractServiceClient
 {
     /**
@@ -66,7 +68,8 @@ abstract class AbstractServiceClient
         $transporter = $protocol->getTransporter()->setLoadBalancer($loadBalancer);
         $this->client = make(Client::class)
             ->setPacker($protocol->getPacker())
-            ->setTransporter($transporter);
+            ->setTransporter($transporter)
+            ->setNormalizer($protocol->getNormalizer());
         $this->idGenerator = $this->getIdGenerator();
         $this->pathGenerator = $protocol->getPathGenerator();
         $this->dataFormatter = $protocol->getDataFormatter();

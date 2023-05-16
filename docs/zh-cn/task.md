@@ -45,8 +45,8 @@ Task 组件提供了 `主动方法投递` 和 `注解投递` 两种使用方法�
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Task\TaskExecutor;
 use Hyperf\Task\Task;
 
@@ -70,13 +70,13 @@ $result = $exec->execute(new Task([MethodTask::class, 'handle'], [Coroutine::id(
 
 ### 使用注解
 
-通过 `主动方法投递` 时，并不是特别直观，这里我们实现了对应的 `@Task` 注解，并通过 `AOP` 重写了方法调用。当在 `Worker` 进程时，自动投递到 `Task` 进程，并协程等待 数据返回。
+通过 `主动方法投递` 时，并不是特别直观，这里我们实现了对应的 `#[Task]` 注解，并通过 `AOP` 重写了方法调用。当在 `Worker` 进程时，自动投递到 `Task` 进程，并协程等待 数据返回。
 
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Task\Annotation\Task;
 
 class AnnotationTask
@@ -97,7 +97,7 @@ $task = $container->get(AnnotationTask::class);
 $result = $task->handle(Coroutine::id());
 ```
 
-> 使用 `@Task` 注解时需 `use Hyperf\Task\Annotation\Task;`
+> 使用 `#[Task]` 注解时需 `use Hyperf\Task\Annotation\Task;`
 
 注解支持以下参数
 
@@ -178,7 +178,7 @@ class MongoTask
 ```php
 <?php
 use App\Task\MongoTask;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $client = ApplicationContext::getContainer()->get(MongoTask::class);
 $client->insert('hyperf.test', ['id' => rand(0, 99999999)]);

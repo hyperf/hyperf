@@ -14,17 +14,18 @@ namespace Hyperf\ViewEngine;
 use ArrayAccess;
 use BadMethodCallException;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\MessageBag;
+use Hyperf\Contract\MessageProvider;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Contracts\MessageBag;
-use Hyperf\Utils\Contracts\MessageProvider;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Contract\EngineInterface;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\Contract\Renderable;
 use Hyperf\ViewEngine\Contract\ViewInterface;
+use Stringable;
 use Throwable;
 
-class View implements ArrayAccess, Htmlable, ViewInterface, \Stringable
+class View implements ArrayAccess, Htmlable, ViewInterface, Stringable
 {
     use Macroable {
         __call as macroCall;
@@ -376,10 +377,10 @@ class View implements ArrayAccess, Htmlable, ViewInterface, \Stringable
     /**
      * Parse the given errors into an appropriate value.
      */
-    protected function formatErrors(array|MessageProvider|string $provider): \Hyperf\Utils\MessageBag|MessageBag
+    protected function formatErrors(array|MessageProvider|string $provider): \Hyperf\Support\MessageBag|MessageBag
     {
         return $provider instanceof MessageProvider
             ? $provider->getMessageBag()
-            : new \Hyperf\Utils\MessageBag((array) $provider);
+            : new \Hyperf\Support\MessageBag((array) $provider);
     }
 }

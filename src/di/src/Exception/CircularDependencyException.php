@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Exception;
 
-class CircularDependencyException extends \RuntimeException
+use RuntimeException;
+
+class CircularDependencyException extends RuntimeException
 {
     protected array $list = [];
 

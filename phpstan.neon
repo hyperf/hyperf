@@ -18,6 +18,7 @@ parameters:
     - %currentWorkingDirectory%/src/crontab/*
     - %currentWorkingDirectory%/src/database/*
     - %currentWorkingDirectory%/src/database-pgsql/*
+    - %currentWorkingDirectory%/src/db/src/PgSQL/*
     - %currentWorkingDirectory%/src/filesystem/*
     - %currentWorkingDirectory%/src/graphql/*
     - %currentWorkingDirectory%/src/grpc/*
@@ -58,7 +59,13 @@ parameters:
       path: src/amqp/src/IO/IOFactory.php
     - '#.*TKey.*TValue#'
     - '#Method Hyperf\\Utils\\Serializer\\Serializer::normalize\(\) should return array\|ArrayObject\|bool\|float\|int\|string\|null#'
+    - '#Method Hyperf\\Serializer\\Serializer::normalize\(\) should return array\|ArrayObject\|bool\|float\|int\|string\|null#'
     - '#Class RedisSentinel constructor invoked with .*#'
     - '#Hyperf\\Engine\\Http\\Server#'
-    - '#Swow\\Socket#'
     - '#Class Hyperf\\Logger\\Logger extends @final class Monolog\\Logger#'
+    - '#has invalid type Swow#'
+    - '#has unknown class Swow#'
+    - '#PHPDoc tag \@var above a method has no effect#'
+    - '#\(Hyperf\\Utils\\Collection\) does not accept Hyperf\\Collection\\Collection#'
+    - '#should return Hyperf\\Utils\\Collection but returns Hyperf\\Collection\\Collectio#'
+    - '#Call to an undefined method Hyperf\\Collection\\HigherOrderCollectionProxy::\w+\(\)#'

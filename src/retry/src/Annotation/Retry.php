@@ -22,6 +22,8 @@ use Hyperf\Retry\RetryBudgetInterface;
 use Hyperf\Retry\SleepStrategyInterface;
 use Throwable;
 
+use function Hyperf\Support\make;
+
 #[Attribute(Attribute::TARGET_METHOD)]
 class Retry extends AbstractRetry
 {

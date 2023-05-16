@@ -19,7 +19,7 @@ use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\LazyLoader\LazyLoader;
 use Hyperf\Di\ScanHandler\PcntlScanHandler;
 use Hyperf\Di\ScanHandler\ScanHandlerInterface;
-use Hyperf\Utils\Composer;
+use Hyperf\Support\Composer;
 
 class ClassLoader
 {

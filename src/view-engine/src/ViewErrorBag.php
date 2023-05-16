@@ -12,10 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine;
 
 use Countable;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Contracts\MessageBag;
+use Hyperf\Collection\Arr;
+use Hyperf\Contract\MessageBag;
+use Stringable;
 
-class ViewErrorBag implements Countable, \Stringable
+class ViewErrorBag implements Countable, Stringable
 {
     /**
      * The array of the view error bags.
@@ -79,11 +80,11 @@ class ViewErrorBag implements Countable, \Stringable
      * Get a MessageBag instance from the bags.
      *
      * @param string $key
-     * @return \Hyperf\Utils\MessageBag
+     * @return \Hyperf\Support\MessageBag
      */
     public function getBag($key)
     {
-        return Arr::get($this->bags, $key) ?: new \Hyperf\Utils\MessageBag();
+        return Arr::get($this->bags, $key) ?: new \Hyperf\Support\MessageBag();
     }
 
     /**

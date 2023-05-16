@@ -44,7 +44,7 @@ $cache = $container->get(\Psr\SimpleCache\CacheInterface::class);
 元件提供 `Hyperf\Cache\Annotation\Cacheable` 註解，作用於類方法，可以配置對應的快取字首、失效時間、監聽器和快取組。
 例如，UserService 提供一個 user 方法，可以查詢對應 id 的使用者資訊。當加上 `Hyperf\Cache\Annotation\Cacheable` 註解後，會自動生成對應的 Redis 快取，key 值為 `user:id` ，超時時間為 `9000` 秒。首次查詢時，會從資料庫中查，後面查詢時，會從快取中查。
 
-> 快取註解基於 [aop](zh-tw/aop.md) 和 [di](zh-tw/di.md)，所以只有在 `Container` 中獲取到的物件例項才有效，比如通過 `$container->get` 和 `make` 方法所獲得的物件，直接 `new` 出來的物件無法使用。
+> 快取註解基於 [aop](zh-tw/aop.md) 和 [di](zh-tw/di.md)，所以只有在 `Container` 中獲取到的物件例項才有效，比如透過 `$container->get` 和 `make` 方法所獲得的物件，直接 `new` 出來的物件無法使用。
 
 ```php
 <?php
@@ -70,7 +70,7 @@ class UserService
 }
 ```
 
-### 清理 `@Cacheable` 生成的快取
+### 清理 `#[Cacheable]` 生成的快取
 
 當然，如果我們資料庫中的資料改變了，如何刪除快取呢？這裡就需要用到後面的監聽器。下面新建一個 Service 提供一方法，來幫我們處理快取。
 
@@ -167,6 +167,60 @@ use Hyperf\Cache\Annotation\Cacheable;
 class UserService
 {
     #[Cacheable(prefix: "user", ttl: 7200, listener: "USER_CACHE")]
+    public function user(int $id): array
+    {
+        $user = User::query()->find($id);
+
+        return [
+            'user' => $user->toArray(),
+            'uuid' => $this->unique(),
+        ];
+    }
+}
+```
+
+當設定 `value` 後，框架會根據設定的規則，進行快取 `KEY` 鍵命名。如下例項，當 `$user->id = 1` 時，快取 `KEY` 為 `c:userBook:_1`
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use App\Models\User;
+use Hyperf\Cache\Annotation\Cacheable;
+
+class UserBookService
+{
+    #[Cacheable(prefix: "userBook", ttl: 6666, value: "_#{user.id}")]
+    public function userBook(User $user): array
+    {
+        return [
+            'book' => $user->book->toArray(),
+            'uuid' => $this->unique(),
+        ];
+    }
+}
+```
+
+### CacheAhead
+
+例如以下配置，快取字首為 `user`, 超時時間為 `7200`, 生成對應快取 KEY 為 `c:user:1`，並且在 7200 - 600 秒的時候，每 10 秒進行一次快取初始化，直到首次成功。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use App\Models\User;
+use Hyperf\Cache\Annotation\CacheAhead;
+
+class UserService
+{
+    #[CacheAhead(prefix: "user", ttl: 7200, aheadSeconds: 600, lockSeconds: 10)]
     public function user(int $id): array
     {
         $user = User::query()->find($id);

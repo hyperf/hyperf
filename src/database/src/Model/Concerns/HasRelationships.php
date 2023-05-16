@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model\Concerns;
 
+use Closure;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
@@ -25,8 +27,10 @@ use Hyperf\Database\Model\Relations\MorphOne;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\MorphToMany;
 use Hyperf\Database\Model\Relations\Relation;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+
+use function Hyperf\Support\class_basename;
+use function Hyperf\Tappable\tap;
 
 trait HasRelationships
 {
@@ -46,6 +50,48 @@ trait HasRelationships
      * The relationships that should be touched on save.
      */
     protected array $touches = [];
+
+    /**
+     * The relation resolver callbacks.
+     */
+    protected static array $relationResolvers = [];
+
+    /**
+     * Get the dynamic relation resolver if defined or inherited, or return null.
+     *
+     * @param string $class
+     * @param string $key
+     * @return mixed
+     */
+    public function relationResolver($class, $key)
+    {
+        if (! static::$relationResolvers) {
+            return null;
+        }
+
+        if ($resolver = static::$relationResolvers[$class][$key] ?? null) {
+            return $resolver;
+        }
+
+        if ($parent = get_parent_class($class)) {
+            return $this->relationResolver($parent, $key);
+        }
+
+        return null;
+    }
+
+    /**
+     * Define a dynamic relation resolver.
+     *
+     * @param string $name
+     */
+    public static function resolveRelationUsing($name, Closure $callback)
+    {
+        static::$relationResolvers = array_replace_recursive(
+            static::$relationResolvers,
+            [static::class => [$name => $callback]]
+        );
+    }
 
     /**
      * Define a one-to-one relationship.

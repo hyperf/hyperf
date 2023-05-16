@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp\Exception;
 
-class SendChannelTimeoutException extends \RuntimeException
+use RuntimeException;
+
+class SendChannelTimeoutException extends RuntimeException
 {
 }

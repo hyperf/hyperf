@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Testing;
 
+use Hyperf\Codec\Packer\JsonPacker;
+use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
@@ -24,13 +26,15 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Server;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\Testing\HttpMessage\Upload\UploadedFile;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
+
+use function Hyperf\Collection\data_get;
+use function Hyperf\Coroutine\wait;
 
 class Client extends Server
 {
@@ -78,6 +82,16 @@ class Client extends Server
     public function put(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('PUT', $uri, [
+            'headers' => $headers,
+            'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack((string) $response->getBody());
+    }
+
+    public function patch(string $uri, array $data = [], array $headers = [])
+    {
+        $response = $this->request('PATCH', $uri, [
             'headers' => $headers,
             'form_params' => $data,
         ]);
@@ -204,7 +218,7 @@ class Client extends Server
 
         try {
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
             $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         }

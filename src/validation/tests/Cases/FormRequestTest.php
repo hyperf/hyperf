@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Validation\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Translation\ArrayLoader;
@@ -27,6 +29,9 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
+
+use function Hyperf\Coroutine\wait;
 
 /**
  * @internal
@@ -100,7 +105,7 @@ class FormRequestTest extends TestCase
             $request = new BarSceneRequest($container);
             $request->validateResolved();
             $this->assertTrue(false);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(ValidationException::class, $exception);
             $this->assertSame('validation.integer', $exception->validator->errors()->first());
         }
@@ -118,6 +123,8 @@ class FormRequestTest extends TestCase
         Context::set(ServerRequestInterface::class, $psrRequest);
         Context::set(ResponseInterface::class, new Response());
         $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
+        ApplicationContext::setContainer($container);
         $translator = new Translator(new ArrayLoader(), 'en');
         $container->shouldReceive('get')->with(ValidatorFactoryInterface::class)->andReturn(new ValidatorFactory($translator));
 
@@ -131,7 +138,7 @@ class FormRequestTest extends TestCase
             try {
                 $request->validateResolved();
                 $this->assertTrue(false);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $this->assertInstanceOf(ValidationException::class, $exception);
             }
         });
@@ -140,7 +147,7 @@ class FormRequestTest extends TestCase
             $request = new FooSceneRequest($container);
             $request->validateResolved();
             $this->assertTrue(false);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(ValidationException::class, $exception);
         }
     }

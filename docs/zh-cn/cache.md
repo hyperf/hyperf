@@ -70,7 +70,7 @@ class UserService
 }
 ```
 
-### 清理 `@Cacheable` 生成的缓存
+### 清理 `#[Cacheable]` 生成的缓存
 
 当然，如果我们数据库中的数据改变了，如何删除缓存呢？这里就需要用到后面的监听器。下面新建一个 Service 提供一方法，来帮我们处理缓存。
 
@@ -167,6 +167,60 @@ use Hyperf\Cache\Annotation\Cacheable;
 class UserService
 {
     #[Cacheable(prefix: "user", ttl: 7200, listener: "USER_CACHE")]
+    public function user(int $id): array
+    {
+        $user = User::query()->find($id);
+
+        return [
+            'user' => $user->toArray(),
+            'uuid' => $this->unique(),
+        ];
+    }
+}
+```
+
+当设置 `value` 后，框架会根据设置的规则，进行缓存 `KEY` 键命名。如下实例，当 `$user->id = 1` 时，缓存 `KEY` 为 `c:userBook:_1`
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use App\Models\User;
+use Hyperf\Cache\Annotation\Cacheable;
+
+class UserBookService
+{
+    #[Cacheable(prefix: "userBook", ttl: 6666, value: "_#{user.id}")]
+    public function userBook(User $user): array
+    {
+        return [
+            'book' => $user->book->toArray(),
+            'uuid' => $this->unique(),
+        ];
+    }
+}
+```
+
+### CacheAhead
+
+例如以下配置，缓存前缀为 `user`, 超时时间为 `7200`, 生成对应缓存 KEY 为 `c:user:1`，并且在 7200 - 600 秒的时候，每 10 秒进行一次缓存初始化，直到首次成功。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use App\Models\User;
+use Hyperf\Cache\Annotation\CacheAhead;
+
+class UserService
+{
+    #[CacheAhead(prefix: "user", ttl: 7200, aheadSeconds: 600, lockSeconds: 10)]
     public function user(int $id): array
     {
         $user = User::query()->find($id);

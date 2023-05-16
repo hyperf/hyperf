@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Context\Context;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Connection;
@@ -30,8 +32,8 @@ use Hyperf\Di\Container;
 use Hyperf\Engine\Channel;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Database\Stubs\ContainerStub;
+use HyperfTest\Database\Stubs\Model\TestModel;
 use HyperfTest\Database\Stubs\Model\User;
 use HyperfTest\Database\Stubs\Model\UserBit;
 use HyperfTest\Database\Stubs\Model\UserExt;
@@ -42,6 +44,7 @@ use HyperfTest\Database\Stubs\Model\UserRolePivot;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use RuntimeException;
 
 /**
  * @internal
@@ -318,6 +321,34 @@ class ModelRealBuilderTest extends TestCase
         $this->assertSame('', $column->getComment());
     }
 
+    public function testUpsert()
+    {
+        $container = $this->getContainer();
+        /** @var ConnectionInterface $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->statement('CREATE TABLE `test` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `uid` bigint(20) unsigned NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
+        $res = TestModel::query()->insert(['user_id' => 1, 'uid' => 1]);
+        $this->assertTrue($res);
+
+        $model = TestModel::query()->find(1);
+        $this->assertSame(1, $model->uid);
+
+        $res = TestModel::query()->upsert(['user_id' => 1, 'uid' => 2], []);
+        $this->assertSame(2, $res);
+
+        $model = TestModel::query()->find(1);
+        $this->assertSame(2, $model->uid);
+    }
+
     public function testBigIntInsertAndGet()
     {
         $container = $this->getContainer();
@@ -382,6 +413,34 @@ class ModelRealBuilderTest extends TestCase
                 $this->assertSame('select * from `user` limit 2 offset 0', $event->sql);
             }
         }
+    }
+
+    public function testChunkById()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('make')->with(PaginatorInterface::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new Paginator(...array_values($args));
+        });
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        Context::set($key = 'chunk.by.id.' . uniqid(), 0);
+        Db::table('user')->chunkById(2, function ($data) use ($key) {
+            $id = $data->first()->id;
+            $this->assertNotSame($id, Context::get($key));
+            Context::set($key, $id);
+        });
+    }
+
+    public function testChunkByIdButNotFound()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('make')->with(PaginatorInterface::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new Paginator(...array_values($args));
+        });
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        $this->expectException(RuntimeException::class);
+
+        Db::table('user')->chunkById(1, fn () => 1, 'created_at');
     }
 
     public function testPaginationCountQuery()

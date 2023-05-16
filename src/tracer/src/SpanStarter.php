@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Rpc;
-use Hyperf\Utils\ApplicationContext;
 use OpenTracing\Span;
 use Psr\Http\Message\ServerRequestInterface;
 

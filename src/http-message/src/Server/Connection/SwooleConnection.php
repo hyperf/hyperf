@@ -11,18 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Server\Connection;
 
+use Hyperf\Engine\Http\WritableConnection;
 use Hyperf\HttpMessage\Server\Chunk\Chunkable;
 use Hyperf\HttpMessage\Server\ConnectionInterface;
-use Swoole\Http\Response;
 
-class SwooleConnection implements ConnectionInterface, Chunkable
+/**
+ * @deprecated since 3.1.0, please use `Hyperf\Engine\Http\WritableConnection` instead.
+ */
+class SwooleConnection extends WritableConnection implements ConnectionInterface, Chunkable
 {
-    public function __construct(protected Response $response)
-    {
-    }
-
-    public function write(string $data): bool
-    {
-        return $this->response->write($data);
-    }
 }

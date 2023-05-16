@@ -47,7 +47,7 @@ class FooCommand extends HyperfCommand
     /**
      * 執行的命令行
      */
-    protected string $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 }
 ```
 
@@ -93,7 +93,7 @@ class FooCommand extends HyperfCommand
     /**
      * 執行的命令行
      */
-    protected string $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 
     public function handle()
     {
@@ -128,7 +128,7 @@ class FooCommand extends HyperfCommand
     /**
      * 執行的命令行
      */
-    protected string $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 
     public function handle()
     {
@@ -403,7 +403,7 @@ class DebugCommand extends HyperfCommand
 
 # 運行命令
 
-!> 注意：在運行命令時，默認不會觸發事件分發，可通過添加 `--enable-event-dispatcher` 參數來開啟。
+!> 注意：在運行命令時，默認會觸發事件分發，可通過添加 `--disable-event-dispatcher` 參數來開啓。
 
 ## 命令行中運行
 
@@ -463,7 +463,7 @@ $input = new ArrayInput($params);
 $output = new NullOutput();
 
 /** @var \Psr\Container\ContainerInterface $container */
-$container = \Hyperf\Utils\ApplicationContext::getContainer();
+$container = \Hyperf\Context\ApplicationContext::getContainer();
 
 /** @var \Symfony\Component\Console\Application $application */
 $application = $container->get(\Hyperf\Contract\ApplicationInterface::class);

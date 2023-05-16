@@ -12,12 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\SwooleTracker\Middleware;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\Network;
+use Hyperf\Support\Network;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SwooleTracker\Stats;
+use Throwable;
 
 class HttpServerMiddleware implements MiddlewareInterface
 {
@@ -40,7 +41,7 @@ class HttpServerMiddleware implements MiddlewareInterface
             try {
                 $response = $handler->handle($request);
                 Stats::afterExecRpc($tick, true, $response->getStatusCode());
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 Stats::afterExecRpc($tick, false, $exception->getCode());
                 throw $exception;
             }

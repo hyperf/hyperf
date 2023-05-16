@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Guzzle;
 
+use Exception;
 use GuzzleHttp;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Promise\Create;
@@ -73,7 +74,7 @@ class CoroutineHandler
 
         try {
             $raw = $client->request($request->getMethod(), $path, $headers, (string) $request->getBody());
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $exception = new ConnectException($exception->getMessage(), $request, null, [
                 'errCode' => $exception->getCode(),
             ]);
@@ -126,7 +127,7 @@ class CoroutineHandler
                 if (is_string($options['verify'])) {
                     // Throw an error if the file/folder/link path is not valid or doesn't exist.
                     if (! file_exists($options['verify'])) {
-                        throw new \InvalidArgumentException("SSL CA bundle not found: {$options['verify']}");
+                        throw new InvalidArgumentException("SSL CA bundle not found: {$options['verify']}");
                     }
                     // If it's a directory or a link to a directory use CURLOPT_CAPATH.
                     // If not, it's probably a file, or a link to a file, so use CURLOPT_CAINFO.
@@ -235,7 +236,7 @@ class CoroutineHandler
     }
 
     /**
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function getPort(UriInterface $uri): int
     {

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ServiceGovernance\Listener;
 
-use Hyperf\Consul\Exception\ServerException;
+use Exception;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -20,6 +20,7 @@ use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\ServiceGovernance\DriverManager;
 use Hyperf\ServiceGovernance\ServiceManager;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -57,8 +58,8 @@ class RegisterServiceListener implements ListenerInterface
      */
     public function process(object $event): void
     {
-        $continue = true;
-        while ($continue) {
+        $attempts = 10;
+        while ($attempts > 0) {
             try {
                 $services = $this->serviceManager->all();
                 $servers = $this->getServers();
@@ -77,14 +78,12 @@ class RegisterServiceListener implements ListenerInterface
                         }
                     }
                 }
-                $continue = false;
-            } catch (ServerException $throwable) {
-                if (str_contains($throwable->getMessage(), 'Connection failed')) {
-                    $this->logger->warning('Cannot register service, connection of service center failed, re-register after 10 seconds.');
-                    sleep(10);
-                } else {
-                    throw $throwable;
-                }
+                break;
+            } catch (Exception $exception) {
+                $this->logger->error('Cannot register service, connect service center failed, re-register after 1 seconds.');
+                $this->logger->error((string) $exception);
+                sleep(1);
+                --$attempts;
             }
         }
     }
@@ -98,18 +97,18 @@ class RegisterServiceListener implements ListenerInterface
                 continue;
             }
             if (! $server['name']) {
-                throw new \InvalidArgumentException('Invalid server name');
+                throw new InvalidArgumentException('Invalid server name');
             }
             $host = $server['host'];
             if (in_array($host, ['0.0.0.0', 'localhost'])) {
                 $host = $this->ipReader->read();
             }
             if (! filter_var($host, FILTER_VALIDATE_IP)) {
-                throw new \InvalidArgumentException(sprintf('Invalid host %s', $host));
+                throw new InvalidArgumentException(sprintf('Invalid host %s', $host));
             }
             $port = $server['port'];
             if (! is_numeric($port) || ($port < 0 || $port > 65535)) {
-                throw new \InvalidArgumentException(sprintf('Invalid port %s', $port));
+                throw new InvalidArgumentException(sprintf('Invalid port %s', $port));
             }
             $port = (int) $port;
             $result[$server['name']] = [$host, $port];

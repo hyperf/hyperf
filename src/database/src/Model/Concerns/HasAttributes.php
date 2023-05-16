@@ -14,6 +14,8 @@ namespace Hyperf\Database\Model\Concerns;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use DateTimeInterface;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
@@ -21,10 +23,11 @@ use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Contract\Synchronized;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use LogicException;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Tappable\tap;
 
 trait HasAttributes
 {
@@ -229,9 +232,17 @@ trait HasAttributes
         // If the "attribute" exists as a method on the model, we will just assume
         // it is a relationship and will load and return results from the query
         // and hydrate the relationship's value on the "relationships" array.
-        if (method_exists($this, $key)) {
+        if ($this->isRelation($key)) {
             return $this->getRelationshipFromMethod($key);
         }
+    }
+
+    /**
+     * Determine if the given key is a relationship method on the model.
+     */
+    public function isRelation(string $key): bool
+    {
+        return method_exists($this, $key) || $this->relationResolver(static::class, $key);
     }
 
     /**
@@ -809,7 +820,7 @@ trait HasAttributes
     /**
      * Get a relationship value from a method.
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     protected function getRelationshipFromMethod(string $method)
     {

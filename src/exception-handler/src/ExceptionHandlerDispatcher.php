@@ -13,6 +13,7 @@ namespace Hyperf\ExceptionHandler;
 
 use Hyperf\Context\Context;
 use Hyperf\Dispatcher\AbstractDispatcher;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
@@ -34,7 +35,7 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
 
         foreach ($handlers as $handler) {
             if (! $this->container->has($handler)) {
-                throw new \InvalidArgumentException(sprintf('Invalid exception handler %s.', $handler));
+                throw new InvalidArgumentException(sprintf('Invalid exception handler %s.', $handler));
             }
             $handlerInstance = $this->container->get($handler);
             if (! $handlerInstance instanceof ExceptionHandler || ! $handlerInstance->isValid($throwable)) {

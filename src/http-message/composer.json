@@ -11,9 +11,12 @@
     ],
     "require": {
         "php": ">=8.0",
+        "hyperf/codec": "~3.0.0",
+        "hyperf/engine": "^1.9|^2.7",
+        "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "laminas/laminas-mime": "^2.7",
-        "psr/http-message": "^1.0"
+        "psr/http-message": "^1.0|^2.0"
     },
     "suggest": {
         "psr/container": "Required to replace RequestParserInterface."

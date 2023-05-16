@@ -21,6 +21,7 @@ use HyperfTest\Amqp\Stub\ContainerStub;
 use HyperfTest\Amqp\Stub\DemoConsumer;
 use HyperfTest\Amqp\Stub\NumsConsumer;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
@@ -55,7 +56,7 @@ class ConsumerManagerTest extends TestCase
                 $hasRegistered = true;
                 /** @var ConsumerMessageInterface $message */
                 $message = $item->getConsumerMessage();
-                $this->assertTrue($item->isEnable(new \stdClass()));
+                $this->assertTrue($item->isEnable(new stdClass()));
                 $this->assertSame($exchange, $message->getExchange());
                 $this->assertSame($routingKey, $message->getRoutingKey());
                 $this->assertSame($queue, $message->getQueue());
@@ -89,7 +90,7 @@ class ConsumerManagerTest extends TestCase
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumerMessage')) {
                 $hasRegistered = true;
-                $this->assertFalse($item->isEnable(new \stdClass()));
+                $this->assertFalse($item->isEnable(new stdClass()));
                 break;
             }
         }

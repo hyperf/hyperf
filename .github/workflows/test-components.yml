@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v5.0.0'
+  SW_VERSION: 'v5.0.3'
 jobs:
   database:
     name: Test for Database
@@ -15,7 +15,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1' ]
+        php-version: [ '8.0', '8.1', '8.2' ]
         mysql-version: [ '5.7', '8.0' ]
       max-parallel: 2
       fail-fast: false
@@ -52,7 +52,7 @@ jobs:
     strategy:
       matrix:
         version: [ '^1.0', '^2.0', '^3.0' ]
-        php-version: [ '8.0', '8.1' ]
+        php-version: [ '8.0', '8.1', '8.2' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -100,7 +100,7 @@ jobs:
     strategy:
       matrix:
         no-dev: [ '--no-dev', '' ]
-        php-version: [ '8.0', '8.1' ]
+        php-version: [ '8.1', '8.2' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -120,7 +120,7 @@ jobs:
         run: |
           git clone https://github.com/limingxinleo/hyperf-phar-tester.git
           cd hyperf-phar-tester
-          git checkout 2.2
+          git checkout 3.0
           composer update -o ${{ matrix.no-dev }}
           rm -rf vendor/hyperf/phar
           cp -rf ../src/phar vendor/hyperf/phar
@@ -147,7 +147,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1' ]
+        php-version: [ '8.0', '8.1', '8.2' ]
         version: [ '^1.0', '^2.0' ]
       max-parallel: 6
       fail-fast: false
@@ -175,6 +175,48 @@ jobs:
         run: |
           composer analyse src/di
           vendor/bin/phpunit src/di
+  http-message:
+    name: Test for Http Message V1.0 ~ V2.0
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '8.0', '8.1', '8.2' ]
+        version: [ '^1.0', '^2.0' ]
+      max-parallel: 6
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          ini-values: opcache.enable_cli=0
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Setup Packages
+        run: |
+          cp .travis/.env.example .env
+          ./.travis/requirement.install.sh
+          composer remove swow/swow --dev -W
+          composer remove league/flysystem-memory --dev -W
+          composer remove league/flysystem-aws-s3-v3 --dev -W
+          composer remove league/flysystem --dev -W
+          composer remove aws/aws-sdk-php --dev -W
+          composer remove influxdb/influxdb-php --dev -W
+          composer remove guzzlehttp/guzzle --dev -W
+          composer remove jcchavezs/zipkin-opentracing -W --dev
+          composer remove psr/http-server-middleware -W
+          composer require "psr/http-message:${{ matrix.version }}" -W
+          composer update -oW
+      - name: Run Test Cases
+        run: |
+          composer analyse src/http-message
+          vendor/bin/phpunit src/http-message
   log:
     name: Test for Psr Log V1.0 ~ V3.0
     runs-on: 'ubuntu-latest'
@@ -182,10 +224,12 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1' ]
+        php-version: [ '8.0', '8.1', '8.2' ]
         log-version: [ '^1.0', '^2.0', '^3.0' ]
         exclude:
           - php-version: '8.1'
+            log-version: '^1.0'
+          - php-version: '8.2'
             log-version: '^1.0'
       max-parallel: 5
       fail-fast: false
@@ -233,7 +277,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1' ]
+        php-version: [ '8.0', '8.1', '8.2' ]
         psr-version: [ '^1.0', '^2.0', '^3.0' ]
       max-parallel: 3
       fail-fast: false

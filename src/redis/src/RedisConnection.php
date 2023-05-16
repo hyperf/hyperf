@@ -18,15 +18,22 @@ use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LogLevel;
+use Redis;
+use RedisCluster;
+use RedisException;
+use RedisSentinel;
+use Throwable;
 
 /**
  * @method bool select(int $db)
  */
 class RedisConnection extends BaseConnection implements ConnectionInterface
 {
-    use ScanCaller;
+    use Traits\ScanCaller;
+    use Traits\MultiExec;
 
-    protected \Redis|\RedisCluster|null $connection = null;
+    protected Redis|RedisCluster|null $connection = null;
 
     protected array $config = [
         'host' => 'localhost',
@@ -73,7 +80,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     {
         try {
             $result = $this->connection->{$name}(...$arguments);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $result = $this->retry($name, $arguments, $exception);
         }
 
@@ -94,7 +101,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     }
 
     /**
-     * @throws \RedisException
+     * @throws RedisException
      * @throws ConnectionException
      */
     public function reconnect(): bool
@@ -117,7 +124,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $redis->setOption($name, $value);
         }
 
-        if ($redis instanceof \Redis && isset($auth) && $auth !== '') {
+        if ($redis instanceof Redis && isset($auth) && $auth !== '') {
             $redis->auth($auth);
         }
 
@@ -141,12 +148,16 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
     public function release(): void
     {
-        if ($this->database && $this->database != $this->config['db']) {
-            // Select the origin db after execute select.
-            $this->select($this->config['db']);
-            $this->database = null;
+        try {
+            if ($this->database && $this->database != $this->config['db']) {
+                // Select the origin db after execute select.
+                $this->select($this->config['db']);
+                $this->database = null;
+            }
+            parent::release();
+        } catch (Throwable $exception) {
+            $this->log('Release connection failed, caused by ' . $exception, LogLevel::CRITICAL);
         }
-        parent::release();
     }
 
     public function setDatabase(?int $database): void
@@ -154,7 +165,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $this->database = $database;
     }
 
-    protected function createRedisCluster(): \RedisCluster
+    protected function createRedisCluster(): RedisCluster
     {
         try {
             $parameters = [];
@@ -170,23 +181,22 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
                 $parameters[] = $this->config['cluster']['context'];
             }
 
-            $redis = new \RedisCluster(...$parameters);
-        } catch (\Throwable $e) {
+            $redis = new RedisCluster(...$parameters);
+        } catch (Throwable $e) {
             throw new ConnectionException('Connection reconnect failed ' . $e->getMessage());
         }
 
         return $redis;
     }
 
-    protected function retry($name, $arguments, \Throwable $exception)
+    protected function retry($name, $arguments, Throwable $exception)
     {
-        $logger = $this->container->get(StdoutLoggerInterface::class);
-        $logger->warning('Redis::__call failed, because ' . $exception->getMessage());
+        $this->log('Redis::__call failed, because ' . $exception->getMessage());
 
         try {
             $this->reconnect();
             $result = $this->connection->{$name}(...$arguments);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->lastUseTime = 0.0;
             throw $exception;
         }
@@ -197,7 +207,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     /**
      * @throws ConnectionException
      */
-    protected function createRedisSentinel(): \Redis
+    protected function createRedisSentinel(): Redis
     {
         try {
             $nodes = $this->config['sentinel']['nodes'] ?? [];
@@ -207,30 +217,43 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $readTimeout = $this->config['sentinel']['read_timeout'] ?? 0;
             $masterName = $this->config['sentinel']['master_name'] ?? '';
             $auth = $this->config['sentinel']['auth'] ?? null;
+            // fixes bug for phpredis
+            // https://github.com/phpredis/phpredis/issues/2098
+            $extendConfig = [];
+            if (! empty($auth)) {
+                $extendConfig[] = $auth;
+            }
+
             shuffle($nodes);
 
             $host = null;
             $port = null;
             foreach ($nodes as $node) {
                 try {
-                    [$sentinelHost, $sentinelPort] = explode(':', $node);
-                    $sentinel = new \RedisSentinel(
+                    $nodeUrlArray = parse_url($node);
+                    $sentinelHost = $nodeUrlArray['host'] ?? null;
+                    $sentinelPort = $nodeUrlArray['port'] ?? null;
+                    if (! $sentinelHost || ! $sentinelPort) {
+                        $this->log(sprintf('The redis sentinel node [%s] is invalid.', $node), LogLevel::ERROR);
+                        continue;
+                    }
+
+                    $sentinel = new RedisSentinel(
                         $sentinelHost,
                         intval($sentinelPort),
                         $timeout,
                         $persistent,
                         $retryInterval,
                         $readTimeout,
-                        $auth
+                        ...$extendConfig
                     );
                     $masterInfo = $sentinel->getMasterAddrByName($masterName);
                     if (is_array($masterInfo) && count($masterInfo) >= 2) {
                         [$host, $port] = $masterInfo;
                         break;
                     }
-                } catch (\Throwable $exception) {
-                    $logger = $this->container->get(StdoutLoggerInterface::class);
-                    $logger->warning('Redis sentinel connection failed, caused by ' . $exception->getMessage());
+                } catch (Throwable $exception) {
+                    $this->log('Redis sentinel connection failed, caused by ' . $exception->getMessage());
                     continue;
                 }
             }
@@ -246,7 +269,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
                 'retry_interval' => $retryInterval,
                 'read_timeout' => $readTimeout,
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             throw new ConnectionException('Connection reconnect failed ' . $e->getMessage());
         }
 
@@ -255,13 +278,13 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
     /**
      * @throws ConnectionException
-     * @throws \RedisException
+     * @throws RedisException
      */
-    protected function createRedis(array $config): \Redis
+    protected function createRedis(array $config): Redis
     {
         $parameters = [
             $config['host'] ?? '',
-            $config['port'] ?? 6379,
+            (int) ($config['port'] ?? 6379),
             $config['timeout'] ?? 0.0,
             $config['reserved'] ?? null,
             $config['retry_interval'] ?? 0,
@@ -272,10 +295,17 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $parameters[] = $config['context'];
         }
 
-        $redis = new \Redis();
+        $redis = new Redis();
         if (! $redis->connect(...$parameters)) {
             throw new ConnectionException('Connection reconnect failed.');
         }
         return $redis;
+    }
+
+    private function log(string $message, string $level = LogLevel::WARNING): void
+    {
+        if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
+            $logger->log($level, $message);
+        }
     }
 }

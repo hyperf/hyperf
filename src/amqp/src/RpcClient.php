@@ -17,6 +17,7 @@ use Hyperf\Amqp\Message\RpcMessageInterface;
 use Hyperf\Engine\Channel;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 class RpcClient extends Builder
 {
@@ -64,7 +65,7 @@ class RpcClient extends Builder
             }
 
             $result = $rpcMessage->unserialize($amqpMessage->getBody());
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             isset($channel) && $channel->close();
             throw $exception;
         }

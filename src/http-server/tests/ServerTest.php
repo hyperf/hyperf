@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpServer;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
@@ -21,11 +22,12 @@ use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\ResponseEmitter;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\SafeCaller;
+use Hyperf\Support\SafeCaller;
 use HyperfTest\HttpServer\Stub\ServerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -55,7 +57,7 @@ class ServerTest extends TestCase
         ]);
 
         $dispatcher->shouldReceive('dispatch')->andReturnUsing(function ($exception) {
-            throw new \RuntimeException('Fatal Error');
+            throw new RuntimeException('Fatal Error');
         });
 
         $emitter->shouldReceive('emit')->once()->andReturnUsing(function ($response) {
@@ -109,6 +111,12 @@ class ServerTest extends TestCase
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
         $container->shouldReceive('get')->with(SafeCaller::class)->andReturn(new SafeCaller($container));
+
+        $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+        $dispatcher->shouldReceive('dispatch')->andReturn(true);
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturn(true);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
+
         ApplicationContext::setContainer($container);
 
         return $container;

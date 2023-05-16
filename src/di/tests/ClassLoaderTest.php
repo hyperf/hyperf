@@ -13,6 +13,9 @@ namespace HyperfTest\Di;
 
 use Hyperf\Di\ClassLoader;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+
+use function Hyperf\Support\env;
 
 /**
  * @internal
@@ -28,7 +31,7 @@ class ClassLoaderTest extends TestCase
             }
         };
 
-        $ref = new \ReflectionClass($class);
+        $ref = new ReflectionClass($class);
         $method = $ref->getMethod('loadDotenv');
         $method->setAccessible(true);
         $method->invoke($class);

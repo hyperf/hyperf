@@ -14,7 +14,7 @@ namespace Hyperf\ConfigApollo;
 use Closure;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\Parallel;
+use Hyperf\Coroutine\Parallel;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 

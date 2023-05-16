@@ -56,11 +56,11 @@ class FooAspect extends AbstractAspect
 }
 ```
 
-每个 `切面(Aspect)` 必须定义 `@Aspect` 注解或在 `config/autoload/aspects.php` 内配置均可发挥作用。
+每个 `切面(Aspect)` 必须定义 `#[Aspect]` 注解或在 `config/autoload/aspects.php` 内配置均可发挥作用。
 
-> 使用 `@Aspect` 注解时需 `use Hyperf\Di\Annotation\Aspect;` 命名空间；
+> 使用 `#[Aspect]` 注解时需 `use Hyperf\Di\Annotation\Aspect;` 命名空间；
 
-您也可以通过 `@Aspect` 注解本身的属性来完成切入目标的配置，通过下面注解的形式可以达到与上面的示例一样的目的：
+您也可以通过 `#[Aspect]` 注解本身的属性来完成切入目标的配置，通过下面注解的形式可以达到与上面的示例一样的目的：
 
 ```php
 <?php

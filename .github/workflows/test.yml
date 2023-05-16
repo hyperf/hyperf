@@ -13,20 +13,17 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php-version: [ '8.0', '8.1' ]
-        sw-version: [ 'v4.5.11', 'v4.6.7', 'v4.7.1', 'v4.8.11', 'v5.0.0', 'master' ]
+        php-version: [ '8.0', '8.1', '8.2' ]
+        sw-version: [ 'v4.8.12', 'v5.0.3', 'master' ]
         exclude:
-          - php-version: '8.1'
-            sw-version: 'v4.5.11'
-          - php-version: '8.1'
-            sw-version: 'v4.6.7'
-          - php-version: '8.1'
-            sw-version: 'v4.7.1'
-      max-parallel: 12
+          - php-version: '8.2'
+            sw-version: 'v4.8.12'
+      max-parallel: 20
       fail-fast: false
     env:
       SW_VERSION: ${{ matrix.sw-version }}
       MYSQL_VERSION: '5.7'
+      PGSQL_VERSION: '14'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -40,7 +37,9 @@ jobs:
           coverage: none
       - name: Setup Swoole
         run: |
+          sudo apt-get clean
           sudo apt-get update
+          sudo apt-get upgrade -f
           sudo apt-get install libcurl4-openssl-dev libc-ares-dev libpq-dev
           wget https://github.com/swoole/swoole-src/archive/${SW_VERSION}.tar.gz -O swoole.tar.gz
           mkdir -p swoole
@@ -48,9 +47,9 @@ jobs:
           rm swoole.tar.gz
           cd swoole
           phpize
-          if [ _${{ matrix.sw-version }} = '_v5.0.0' ] || [ _${{ matrix.sw-version }} = '_master']
+          if [ _${{ matrix.sw-version }} = '_v5.0.3' ] || [ _${{ matrix.sw-version }} = '_master' ]
           then
-            ./configure --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql
+            ./configure --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql --enable-brotli
           else
             ./configure --enable-openssl --enable-http2 --enable-swoole-curl --enable-swoole-json
           fi
@@ -61,27 +60,22 @@ jobs:
           php --ri swoole
       - name: Setup Packages
         run: ./.travis/requirement.install.sh
+      - name: Run Check
+        run: ./.travis/run.check.sh
       - name: Setup Services
-        run: |
-          docker run --name mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:${MYSQL_VERSION} --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
-          docker run --name redis -p 6379:6379 -d redis
-          docker run -d --name dev-consul -e CONSUL_BIND_INTERFACE=eth0 -p 8500:8500 consul
-          docker run --name nsq -p 4150:4150 -p 4151:4151 -p 4160:4160 -p 4161:4161 -p 4170:4170 -p 4171:4171 --entrypoint /bin/nsqd -d nsqio/nsq:latest
-          docker run -d --restart=always --name rabbitmq -p 4369:4369 -p 5672:5672 -p 15672:15672 -p 25672:25672 rabbitmq:management-alpine
-          docker build --tag grpc-server:latest src/grpc-client/tests/Mock
-          docker run -d --name grpc-server -p 50051:50051 grpc-server:latest
-          docker build src/grpc-client/tests/Golang -t go-grpc-server:latest
-          docker run -d --name go-grpc-server -p 50052:50052 go-grpc-server:latest
-          docker build -t tcp-server:latest .travis/tcp_server
-          docker run -d --name tcp-server -p 10001:10001 tcp-server:latest
+        run: ./.travis/setup.services.sh
       - name: Setup Mysql
         run: export TRAVIS_BUILD_DIR=$(pwd) && bash ./.travis/setup.mysql.sh
+      - name: Setup PostgreSQL
+        run: export TRAVIS_BUILD_DIR=$(pwd) && bash ./.travis/setup.pgsql.sh
       - name: Run Scripts Before Test
         run: cp .travis/.env.example .env
-      - name: Run Test Cases
+      - name: Print PHP Environments
         run: |
-          composer analyse src
-          composer test -- --exclude-group NonCoroutine
-          vendor/bin/phpunit --group NonCoroutine
-          vendor/bin/phpunit src/filesystem --group NonCoroutine
-          vendor/bin/php-cs-fixer fix src --dry-run
+          if [ _${{ matrix.sw-version }} = '_v4.8.12' ]
+          then
+            sudo rm -rf /etc/php/${{ matrix.php-version }}/cli/conf.d/20-xdebug.ini
+          fi
+          php -i
+      - name: Run Test Cases
+        run: ./.travis/run.test.sh

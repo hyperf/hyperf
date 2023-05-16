@@ -44,7 +44,7 @@ class CrontabManager
             $time = $this->parser->parse($crontab->getRule(), $last);
             if ($time) {
                 foreach ($time as $t) {
-                    $result[] = clone $crontab->setExecuteTime($t);
+                    $result[] = (clone $crontab)->setExecuteTime($t);
                 }
             }
         }

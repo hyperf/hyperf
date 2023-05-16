@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+/**
+ * @deprecated v3.1, use \Hyperf\Support\ClearStatCache instead.
+ */
 class ClearStatCache
 {
     /**

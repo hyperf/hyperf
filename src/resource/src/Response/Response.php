@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Resource\Response;
 
+use Hyperf\Codec\Json;
+use Hyperf\Collection\Collection;
 use Hyperf\Context\Context;
 use Hyperf\Database\Model\Model;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Collection;
 use Psr\Http\Message\ResponseInterface;
 
 class Response

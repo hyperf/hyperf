@@ -19,6 +19,7 @@ use Rx\Scheduler;
 use Rx\SchedulerInterface;
 use Swoole\Coroutine;
 use Swoole\Coroutine\WaitGroup;
+use Throwable;
 
 class CoroutineObservable extends Observable
 {
@@ -44,7 +45,7 @@ class CoroutineObservable extends Observable
                         $this->scheduler->schedule(function () use ($observer, $result) {
                             $observer->onNext($result);
                         });
-                    } catch (\Throwable $throwable) {
+                    } catch (Throwable $throwable) {
                         $this->scheduler->schedule(function () use ($observer, $throwable) {
                             $observer->onError($throwable);
                         });

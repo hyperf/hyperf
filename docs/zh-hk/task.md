@@ -45,8 +45,8 @@ Task 組件提供了 `主動方法投遞` 和 `註解投遞` 兩種使用方法�
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Task\TaskExecutor;
 use Hyperf\Task\Task;
 
@@ -70,13 +70,13 @@ $result = $exec->execute(new Task([MethodTask::class, 'handle'], [Coroutine::id(
 
 ### 使用註解
 
-通過 `主動方法投遞` 時，並不是特別直觀，這裏我們實現了對應的 `@Task` 註解，並通過 `AOP` 重寫了方法調用。當在 `Worker` 進程時，自動投遞到 `Task` 進程，並協程等待 數據返回。
+通過 `主動方法投遞` 時，並不是特別直觀，這裏我們實現了對應的 `#[Task]` 註解，並通過 `AOP` 重寫了方法調用。當在 `Worker` 進程時，自動投遞到 `Task` 進程，並協程等待 數據返回。
 
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Task\Annotation\Task;
 
 class AnnotationTask
@@ -97,7 +97,7 @@ $task = $container->get(AnnotationTask::class);
 $result = $task->handle(Coroutine::id());
 ```
 
-> 使用 `@Task` 註解時需 `use Hyperf\Task\Annotation\Task;`
+> 使用 `#[Task]` 註解時需 `use Hyperf\Task\Annotation\Task;`
 
 註解支持以下參數
 
@@ -178,7 +178,7 @@ class MongoTask
 ```php
 <?php
 use App\Task\MongoTask;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $client = ApplicationContext::getContainer()->get(MongoTask::class);
 $client->insert('hyperf.test', ['id' => rand(0, 99999999)]);
@@ -191,5 +191,5 @@ $result = $client->query('hyperf.test', [], [
 
 ## 其他方案
 
-如果 Task 機制無法滿足性能要求，可以嘗試一下 Hyperf 組織下的另一個開源項目[GoTask](https://github.com/hyperf/gotask)。GoTask 通過 Swoole 進程管理功能啟動 Go 進程作為 Swoole 主進程邊車(Sidecar)，利用進程通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker。
+如果 Task 機制無法滿足性能要求，可以嘗試一下 Hyperf 組織下的另一個開源項目[GoTask](https://github.com/hyperf/gotask)。GoTask 通過 Swoole 進程管理功能啓動 Go 進程作為 Swoole 主進程邊車(Sidecar)，利用進程通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker。
 

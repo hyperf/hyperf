@@ -11,12 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model;
 
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\UnCompressInterface;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use RuntimeException;
+
+use function Hyperf\Support\value;
 
 /**
  * @template TKey of array-key
@@ -423,6 +426,17 @@ class Collection extends BaseCollection implements CompressInterface
     }
 
     /**
+     * Append an attribute across the entire collection.
+     *
+     * @param array|string $attributes
+     * @return $this
+     */
+    public function append($attributes)
+    {
+        return $this->each->append($attributes);
+    }
+
+    /**
      * Get a dictionary keyed by primary keys.
      *
      * @param null|iterable<array-key, TModel> $items
@@ -534,7 +548,7 @@ class Collection extends BaseCollection implements CompressInterface
 
         $this->each(function ($model) use ($class) {
             if (get_class($model) !== $class) {
-                throw new \RuntimeException('Collections with multiple model types is not supported.');
+                throw new RuntimeException('Collections with multiple model types is not supported.');
             }
         });
 

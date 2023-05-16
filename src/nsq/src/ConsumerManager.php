@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Nsq;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Nsq\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Nsq\Event\AfterConsume;
@@ -21,9 +22,11 @@ use Hyperf\Nsq\Event\BeforeSubscribe;
 use Hyperf\Nsq\Event\FailToConsume;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
-use Hyperf\Utils\Waiter;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Throwable;
+
+use function Hyperf\Support\make;
 
 class ConsumerManager
 {
@@ -97,7 +100,7 @@ class ConsumerManager
 
             public function handle(): void
             {
-                $this->dispatcher && $this->dispatcher->dispatch(new BeforeSubscribe($this->consumer));
+                $this->dispatcher?->dispatch(new BeforeSubscribe($this->consumer));
                 $this->subscriber->subscribe(
                     $this->consumer->getTopic(),
                     $this->consumer->getChannel(),
@@ -105,12 +108,12 @@ class ConsumerManager
                         return $this->waiter->wait(function () use ($data) {
                             $result = null;
                             try {
-                                $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
+                                $this->dispatcher?->dispatch(new BeforeConsume($this->consumer, $data));
                                 $result = $this->consumer->consume($data);
-                                $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data, $result));
-                            } catch (\Throwable $throwable) {
+                                $this->dispatcher?->dispatch(new AfterConsume($this->consumer, $data, $result));
+                            } catch (Throwable $throwable) {
                                 $result = Result::DROP;
-                                $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
+                                $this->dispatcher?->dispatch(new FailToConsume($this->consumer, $data, $throwable));
                             }
 
                             return $result;
@@ -118,7 +121,7 @@ class ConsumerManager
                     }
                 );
 
-                $this->dispatcher && $this->dispatcher->dispatch(new AfterSubscribe($this->consumer));
+                $this->dispatcher?->dispatch(new AfterSubscribe($this->consumer));
             }
         };
     }

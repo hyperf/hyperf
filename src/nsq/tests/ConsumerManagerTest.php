@@ -23,6 +23,7 @@ use HyperfTest\Nsq\Stub\DemoConsumer;
 use HyperfTest\Nsq\Stub\DisabledDemoConsumer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
@@ -61,7 +62,7 @@ class ConsumerManagerTest extends TestCase
                 $hasRegistered = true;
                 /** @var AbstractConsumer $consumer */
                 $consumer = $item->getConsumer();
-                $this->assertTrue($item->isEnable(new \stdClass()));
+                $this->assertTrue($item->isEnable(new stdClass()));
                 $this->assertSame($name, $consumer->getName());
                 $this->assertSame($channel, $consumer->getChannel());
                 $this->assertSame($topic, $consumer->getTopic());
@@ -96,7 +97,7 @@ class ConsumerManagerTest extends TestCase
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumer')) {
                 /* @var AbstractConsumer $consumer */
-                $this->assertFalse($item->isEnable(new \stdClass()));
+                $this->assertFalse($item->isEnable(new stdClass()));
                 break;
             }
         }
@@ -123,7 +124,7 @@ class ConsumerManagerTest extends TestCase
         $manager->run();
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumer') && ($item->getConsumer() instanceof DisabledDemoConsumer)) {
-                $this->assertFalse($item->isEnable(new \stdClass()));
+                $this->assertFalse($item->isEnable(new stdClass()));
                 break;
             }
         }

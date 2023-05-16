@@ -102,7 +102,7 @@
 ## 文档生成
 
 - [hyperf/swagger](https://github.com/hyperf/swagger) Hyperf 官方提供的 Swagger 文档自动生成组件 (beta)
-- [tangwei/swagger](https://github.com/tw2066/api-docs) 一个基于PHP类型(DTO)自动生成swagger文档组件，启动自动扫描、自动生成路由(UI)、注解验证
+- [tangwei/swagger](https://github.com/tw2066/api-docs) 一个基于 PHP 类型(DTO)自动生成 swagger 文档组件，启动自动扫描、自动生成路由(UI)、注解验证
 
 ## Graphql
 
@@ -126,7 +126,6 @@
 
 ## 开发调试
 
-- [swoole/yasd](https://github.com/swoole/yasd) Swoole 调试器，类似 `Xdebug`，完美支持协程，支持断点调试、单步追踪、`watch` 变量
 - [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通过 `WebSocket` 实时观测异常错误的开发调试组件
 - [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支持与 laravel 类似的多 env 配置文件功能，比如通过 `APP_ENV=testing` 可以加载 `.env.testing` 配置覆盖默认的 `.env`
 - [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) 提供一个 `dump` 函数，可以将程序内的变量或数据打印到另一个命令行窗口中，基于 Symfony 的 `Var-Dump Server` 组件

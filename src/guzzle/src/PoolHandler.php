@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Guzzle;
 
+use Exception;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Promise\Create;
 use GuzzleHttp\Promise\FulfilledPromise;
@@ -61,7 +62,7 @@ class PoolHandler extends CoroutineHandler
 
             try {
                 $raw = $client->request($request->getMethod(), $path, $headers, (string) $request->getBody());
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $connection->close();
                 $exception = new ConnectException($exception->getMessage(), $request, null, [
                     'errCode' => $exception->getCode(),

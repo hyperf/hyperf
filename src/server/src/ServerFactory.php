@@ -91,6 +91,11 @@ class ServerFactory
         return $this;
     }
 
+    public function getConfig(): ?ServerConfig
+    {
+        return $this->config;
+    }
+
     private function getDefaultEventDispatcher(): EventDispatcherInterface
     {
         return new EventDispatcher();

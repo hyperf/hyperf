@@ -18,6 +18,7 @@ use Hyperf\Database\Model\Events\Creating;
 use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Database\Model\Events\Deleting;
 use Hyperf\Database\Model\Events\ForceDeleted;
+use Hyperf\Database\Model\Events\ForceDeleting;
 use Hyperf\Database\Model\Events\Restored;
 use Hyperf\Database\Model\Events\Restoring;
 use Hyperf\Database\Model\Events\Retrieved;
@@ -41,6 +42,7 @@ use Psr\EventDispatcher\StoppableEventInterface;
  * @method deleting(Deleting $event)
  * @method deleted(Deleted $event)
  * @method forceDeleted(ForceDeleted $event)
+ * @method forceDeleting(ForceDeleting $event)
  */
 trait HasEvents
 {
@@ -122,6 +124,7 @@ trait HasEvents
             'deleting' => Deleting::class,
             'deleted' => Deleted::class,
             'forceDeleted' => ForceDeleted::class,
+            'forceDeleting' => ForceDeleting::class,
         ];
     }
 

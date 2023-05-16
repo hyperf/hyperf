@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
+use Hyperf\CodeParser\PhpParser;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\CodeGen\PhpParser;
 use PhpParser\Node;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\TraitUse;

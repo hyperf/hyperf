@@ -12,14 +12,15 @@ declare(strict_types=1);
 namespace HyperfTest\Translation;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\Translation\FileLoader;
 use Hyperf\Translation\FileLoaderFactory;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Filesystem\Filesystem;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
@@ -41,7 +42,7 @@ class FileLoaderTest extends TestCase
         $container->shouldReceive('make')->with(FileLoader::class, Mockery::any())->andReturnUsing(fn ($_, $args) => new FileLoader($args['files'], $args['path']));
         $factory = new FileLoaderFactory();
         $loader = $factory($container);
-        $ref = new \ReflectionClass($loader);
+        $ref = new ReflectionClass($loader);
         $path = $ref->getProperty('path');
         $path->setAccessible(true);
         $this->assertSame(BASE_PATH . '/storage/languages', $path->getValue($loader));

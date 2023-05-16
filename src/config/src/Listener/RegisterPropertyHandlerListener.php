@@ -12,12 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\Config\Listener;
 
 use Hyperf\Config\Annotation\Value;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Definition\PropertyHandlerManager;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
-use Hyperf\Utils\ApplicationContext;
 
 class RegisterPropertyHandlerListener implements ListenerInterface
 {

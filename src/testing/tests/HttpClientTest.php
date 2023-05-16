@@ -16,6 +16,8 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Coroutine\run;
+
 /**
  * @internal
  * @coversNothing

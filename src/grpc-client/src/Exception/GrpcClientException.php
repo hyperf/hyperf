@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcClient\Exception;
 
-class GrpcClientException extends \RuntimeException
+use RuntimeException;
+
+class GrpcClientException extends RuntimeException
 {
 }

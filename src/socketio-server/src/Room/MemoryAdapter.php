@@ -15,6 +15,9 @@ use Hyperf\SocketIOServer\Emitter\Flagger;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\WebSocketServer\Sender;
 
+use function Hyperf\Collection\data_get;
+use function Hyperf\Support\make;
+
 class MemoryAdapter implements AdapterInterface
 {
     use Flagger;

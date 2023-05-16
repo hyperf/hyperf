@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp\Exception;
 
-class LoopBrokenException extends \RuntimeException
+use RuntimeException;
+
+class LoopBrokenException extends RuntimeException
 {
 }
