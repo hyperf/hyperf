@@ -26,11 +26,8 @@ class Swoole4PgSQLConnection extends AbstractConnection
      */
     protected $connection;
 
-    /**
-     * @var array
-     */
-    protected $config = [
-        'driver' => Swoole4PgSQLPool::class,
+    protected array $config = [
+        'driver' => 'pgsql',
         'host' => '127.0.0.1',
         'port' => 5432,
         'database' => 'postgres',
@@ -84,19 +81,7 @@ class Swoole4PgSQLConnection extends AbstractConnection
 
     public function insert(string $query, array $bindings = []): int
     {
-        $statement = $this->prepare($query);
-
-        $result = $this->connection->execute($statement, $bindings);
-        if ($result === false) {
-            throw new QueryException($this->connection->error);
-        }
-
-        $row = $this->connection->fetchRow($result);
-        if (is_array($row)) {
-            return reset($row);
-        }
-
-        return 0;
+        throw new QueryException('cannot support insert.');
     }
 
     public function execute(string $query, array $bindings = []): int
