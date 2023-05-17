@@ -36,9 +36,6 @@ use Throwable;
 use function Hyperf\Collection\data_get;
 use function Hyperf\Coroutine\wait;
 
-/**
- * @deprecated since 3.1
- */
 class Client extends Server
 {
     protected PackerInterface $packer;
