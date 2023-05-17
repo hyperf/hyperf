@@ -147,6 +147,10 @@
 
 - [dtm-php/dtm-client](https://github.com/dtm-php/dtm-client) 支持 Hyperf 的 dtm 分布式事务客户端组件
 
+## 注解配置
+
+- [hyperf-helper/dependency](https://github.com/lazychanger/hyperf-helper-dependency) 使用注解快速的配置依赖关系，并且支持依赖优先级。
+
 ## 第三方 SDK
 
 - [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 协程的支付宝/微信支付 SDK
