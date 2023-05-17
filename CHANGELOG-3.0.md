@@ -6,6 +6,7 @@
 - [#5723](https://github.com/hyperf/hyperf/pull/5723) Support `Swoole 5 PgSQL` for `hyperf/db`.
 - [#5725](https://github.com/hyperf/hyperf/pull/5725) Support `Swoole 4 PgSQL` for `hyperf/db`.
 - [#5731](https://github.com/hyperf/hyperf/pull/5731) Added `Arr::hasAny()`.
+- [#5735](https://github.com/hyperf/hyperf/pull/5735) Adds `Container::bind()` and instead of `Container::set()`.
 
 ## Fixed
 
