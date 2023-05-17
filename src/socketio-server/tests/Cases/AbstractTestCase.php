@@ -52,7 +52,7 @@ abstract class AbstractTestCase extends TestCase
         $container->define(SidProviderInterface::class, LocalSidProvider::class);
         $container->define(ConfigInterface::class, Config::class);
         $container->define(Encoder::class, Encoder::class);
-        $container->set(ConfigInterface::class, new Config([]));
+        $container->bind(ConfigInterface::class, new Config([]));
         SocketIO::$messageId = new Atomic();
         ApplicationContext::setContainer($container);
         return $container;

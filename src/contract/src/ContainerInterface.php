@@ -35,8 +35,17 @@ interface ContainerInterface extends PsrContainerInterface
      * Useful for testing 'get'.
      *
      * @param mixed $entry
+     * @deprecated since 3.1 will removed in 4.0, please use bind() instead,
      */
     public function set(string $name, $entry): void;
+
+    /**
+     * Bind an arbitrary resolved entry to an identifier.
+     * Useful for testing 'get'.
+     *
+     * @param mixed $entry
+     */
+    public function bind(string $name, $entry): void;
 
     /**
      * Unbind an arbitrary resolved entry.

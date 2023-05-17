@@ -72,11 +72,19 @@ class Container implements HyperfContainerInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function set(string $name, $entry): void
+    {
+        $this->bind($name, $entry);
+    }
+
+    /**
      * Bind an arbitrary resolved entry to an identifier.
      * Useful for testing 'get'.
      * @param mixed $entry
      */
-    public function set(string $name, $entry): void
+    public function bind(string $name, $entry): void
     {
         $this->resolvedEntries[$name] = $entry;
     }

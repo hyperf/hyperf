@@ -44,7 +44,7 @@ class ContainerTest extends TestCase
         $container = new Container(new DefinitionSource([]));
         $subject = new Foo();
         $this->assertFalse($container->has(FooInterface::class));
-        $container->set(FooInterface::class, $subject);
+        $container->bind(FooInterface::class, $subject);
         $this->assertTrue($container->has(FooInterface::class));
         $this->assertSame($subject, $container->get(FooInterface::class));
     }
@@ -71,7 +71,7 @@ class ContainerTest extends TestCase
     {
         $container = new Container(new DefinitionSource([]));
 
-        $container->set('test', $id = uniqid());
+        $container->bind('test', $id = uniqid());
         $this->assertTrue($container->has('test'));
         $this->assertSame($id, $container->get('test'));
 

@@ -38,7 +38,7 @@ class FutureTest extends AbstractTestCase
         $container = ApplicationContext::getContainer();
         $mock = Mockery::mock(Sender::class);
         $mock->shouldReceive('push')->with(1, Mockery::any(), Mockery::any(), Mockery::any())->once();
-        $container->set(Sender::class, $mock);
+        $container->bind(Sender::class, $mock);
         $future = make(Future::class, ['fd' => 1,
             'event' => 'event',
             'data' => [''],
@@ -57,7 +57,7 @@ class FutureTest extends AbstractTestCase
         $container = ApplicationContext::getContainer();
         $mock = Mockery::mock(Sender::class);
         $mock->shouldReceive('push')->with(1, Mockery::any(), Mockery::any(), Mockery::any())->once();
-        $container->set(Sender::class, $mock);
+        $container->bind(Sender::class, $mock);
         /** @var Future $future */
         $future = make(Future::class, ['fd' => 1,
             'event' => 'event',
@@ -77,7 +77,7 @@ class FutureTest extends AbstractTestCase
         $container = ApplicationContext::getContainer();
         $mock = Mockery::mock(Sender::class);
         $mock->shouldReceive('push')->with(1, Mockery::any(), Mockery::any(), Mockery::any())->once();
-        $container->set(Sender::class, $mock);
+        $container->bind(Sender::class, $mock);
         /** @var Future $future */
         $future = make(Future::class, ['fd' => 1,
             'event' => 'event',

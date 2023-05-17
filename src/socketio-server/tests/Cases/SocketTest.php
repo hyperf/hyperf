@@ -82,7 +82,7 @@ class SocketTest extends AbstractTestCase
         $mock->shouldNotReceive('push')->with(1, Mockery::any(), Mockery::any(), Mockery::any());
         $mock->shouldReceive('push')->with(2, Mockery::any(), Mockery::any(), Mockery::any())->once();
         $mock->shouldReceive('push')->with(3, Mockery::any(), Mockery::any(), Mockery::any())->once();
-        $container->set(Sender::class, $mock);
+        $container->bind(Sender::class, $mock);
         /** @var Socket $socket1 */
         $socket1 = make(Socket::class, [
             'fd' => 1,

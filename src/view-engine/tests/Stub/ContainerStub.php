@@ -38,7 +38,7 @@ class ContainerStub
         ApplicationContext::setContainer($container);
 
         // register config
-        $container->set(ConfigInterface::class, new Config([
+        $container->bind(ConfigInterface::class, new Config([
             'view' => [
                 'engine' => HyperfViewEngine::class,
                 'mode' => Mode::SYNC,
