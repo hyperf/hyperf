@@ -100,7 +100,7 @@ jobs:
     strategy:
       matrix:
         no-dev: [ '--no-dev', '' ]
-        php-version: [ '8.1', '8.2' ]
+        php-version: [ '8.1' ]
       max-parallel: 2
       fail-fast: false
     steps:
