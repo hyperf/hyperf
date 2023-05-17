@@ -24,16 +24,16 @@ abstract class Assert extends PHPUnit
     /**
      * Asserts that an array has a specified subset.
      *
-     * @param array|ArrayAccess|mixed $subset
+     * @param array|ArrayAccess $subset
      * @param array|ArrayAccess $array
      */
     public static function assertArraySubset($subset, $array, bool $checkForIdentity = false, string $msg = ''): void
     {
-        if (! (is_array($subset) || $subset instanceof ArrayAccess)) {
+        if (! (is_array($subset) || $subset instanceof ArrayAccess)) { /* @phpstan-ignore-line */
             throw InvalidArgumentException::create(1, 'array or ArrayAccess');
         }
 
-        if (! (is_array($array) || $array instanceof ArrayAccess)) {
+        if (! (is_array($array) || $array instanceof ArrayAccess)) { /* @phpstan-ignore-line */
             throw InvalidArgumentException::create(2, 'array or ArrayAccess');
         }
 
