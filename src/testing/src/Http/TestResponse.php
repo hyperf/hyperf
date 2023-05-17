@@ -675,7 +675,7 @@ class TestResponse implements ArrayAccess
      */
     public function streamedContent()
     {
-        if (! is_null($this->streamedContent)) {
+        if (! is_null($this->streamedContent)) { /* @phpstan-ignore-line */
             return $this->streamedContent;
         }
 
