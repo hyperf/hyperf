@@ -121,10 +121,6 @@ final class ArraySubset extends Constraint
      */
     private function toArray(iterable $other): array
     {
-        if (is_array($other)) {
-            return $other;
-        }
-
         if ($other instanceof ArrayObject) {
             return $other->getArrayCopy();
         }
@@ -133,7 +129,6 @@ final class ArraySubset extends Constraint
             return iterator_to_array($other);
         }
 
-        // Keep BC even if we know that array would not be the expected one
         return (array) $other;
     }
 }

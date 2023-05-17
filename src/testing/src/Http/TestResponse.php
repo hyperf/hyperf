@@ -41,7 +41,7 @@ class TestResponse implements ArrayAccess
     /**
      * The streamed content of the response.
      *
-     * @var string
+     * @var null|string
      */
     protected $streamedContent;
 
@@ -675,7 +675,7 @@ class TestResponse implements ArrayAccess
      */
     public function streamedContent()
     {
-        if (! is_null($this->streamedContent)) { /* @phpstan-ignore-line */
+        if (! is_null($this->streamedContent)) {
             return $this->streamedContent;
         }
 
@@ -693,7 +693,7 @@ class TestResponse implements ArrayAccess
 
         ob_end_clean();
 
-        return $this->streamedContent;
+        return (string) $this->streamedContent;
     }
 
     /**
