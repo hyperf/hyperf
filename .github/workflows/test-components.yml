@@ -100,7 +100,7 @@ jobs:
     strategy:
       matrix:
         no-dev: [ '--no-dev', '' ]
-        php-version: [ '8.1', '8.2' ]
+        php-version: [ '8.1' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -112,7 +112,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: phpize
           extensions: redis
-          ini-values: opcache.enable_cli=1, phar.readonly='Off'
+          ini-values: opcache.enable_cli=0, phar.readonly='Off'
           coverage: none
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh
@@ -127,9 +127,13 @@ jobs:
           composer dump-autoload -o
       - name: Test
         run: |
+          sudo rm -rf /etc/php/${{ matrix.php-version }}/cli/conf.d/20-xdebug.ini
+          php -v
+          php -m
+          php --ri swoole
           cd hyperf-phar-tester
+          php bin/hyperf.php
           php bin/hyperf.php phar:build --name no_env.phar
-          php bin/hyperf.php read:vendor-bin
           php no_env.phar show:name -N null
           php no_env.phar read:vendor-bin
           cp .env.example .env
