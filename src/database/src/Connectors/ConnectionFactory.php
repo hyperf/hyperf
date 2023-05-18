@@ -63,12 +63,10 @@ class ConnectionFactory
             return $this->container->get($key);
         }
 
-        switch ($config['driver']) {
-            case 'mysql':
-                return new MySqlConnector();
-        }
-
-        throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
+        return match ($config['driver']) {
+            'mysql' => new MySqlConnector(),
+            default => throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]"),
+        };
     }
 
     /**
