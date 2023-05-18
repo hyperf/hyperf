@@ -18,6 +18,9 @@ use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\MySQL;
 use Swoole\Coroutine\MySQL\Statement;
 
+/**
+ * @deprecated since 3.1, use \Hyperf\DB\PDOConnection instead.
+ */
 class MySQLConnection extends AbstractConnection
 {
     protected ?MySQL $connection = null;
