@@ -1,5 +1,9 @@
 # v3.0.22 - TBD
 
+## Optimized
+
+- [#5741](https://github.com/hyperf/hyperf/pull/5741) Added deprecated comments to `Hyperf\DB\MySQLConnection`.
+
 # v3.0.21 - 2023-05-18
 
 ## Added
