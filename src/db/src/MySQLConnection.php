@@ -19,7 +19,7 @@ use Swoole\Coroutine\MySQL;
 use Swoole\Coroutine\MySQL\Statement;
 
 /**
- * @deprecated since 3.1, use \Hyperf\DB\PDOConnection instead.
+ * @deprecated since 3.1, will be removed in 4.0.
  */
 class MySQLConnection extends AbstractConnection
 {
