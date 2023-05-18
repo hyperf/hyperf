@@ -40,29 +40,22 @@ class PoolFactory
         $config = $this->container->get(ConfigInterface::class);
         $driver = $config->get(sprintf('db.%s.driver', $name), 'pdo');
         $class = $this->getPoolName($driver);
-
         $pool = make($class, [$this->container, $name]);
+
         if (! $pool instanceof Pool) {
             throw new InvalidDriverException(sprintf('Driver %s is not invalid.', $driver));
         }
+
         return $this->pools[$name] = $pool;
     }
 
     protected function getPoolName(string $driver): string
     {
-        switch (strtolower($driver)) {
-            case 'mysql':
-                return MySQLPool::class;
-            case 'pdo':
-                return PDOPool::class;
-            case 'pgsql':
-                return PgSQLPool::class;
-        }
-
-        if (class_exists($driver)) {
-            return $driver;
-        }
-
-        throw new DriverNotFoundException(sprintf('Driver %s is not found.', $driver));
+        return match (strtolower($driver)) {
+            'mysql' => MySQLPool::class,
+            'pdo' => PDOPool::class,
+            'pgsql' => PgSQLPool::class,
+            default => class_exists($driver) ? $driver : throw new DriverNotFoundException(sprintf('Driver %s is not found.', $driver)),
+        };
     }
 }
