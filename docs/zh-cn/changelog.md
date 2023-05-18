@@ -1,5 +1,24 @@
 # 版本更新记录
 
+# v3.0.21 - 2023-05-18
+
+## 新增
+
+- [#5721](https://github.com/hyperf/hyperf/pull/5721) 为 `Request` 生命周期事件，增加 `exception` 参数。
+- [#5723](https://github.com/hyperf/hyperf/pull/5723) 为 `hyperf/db` 组件增加 `Swoole5.x` 的 `PgSQL` 支持。
+- [#5725](https://github.com/hyperf/hyperf/pull/5725) 为 `hyperf/db` 组件增加 `Swoole4.x` 的 `PgSQL` 支持。
+- [#5731](https://github.com/hyperf/hyperf/pull/5731) 新增方法 `Arr::hasAny()`。
+
+## 修复
+
+- [#5726](https://github.com/hyperf/hyperf/pull/5726) [#5730](https://github.com/hyperf/hyperf/pull/5730) 修复使用 `pgsql-swoole` 类型的 `ORM` 时，`PgSQL` 链接不会自动初始化的问题。
+
+## 优化
+
+- [#5718](https://github.com/hyperf/hyperf/pull/5718) 优化了 `view-engine` 组件的代码，并增加了一些单元测试。
+- [#5719](https://github.com/hyperf/hyperf/pull/5719) 优化了 `metric` 组件的代码，并增加了一些单元测试。
+- [#5720](https://github.com/hyperf/hyperf/pull/5720) 优化了 `Hyperf\Metric\Listener\OnPipeMessage` 的代码，来避免消息阻塞的问题。
+
 # v3.0.20 - 2023-05-12
 
 ## 新增
