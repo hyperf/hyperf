@@ -29,7 +29,8 @@
         "hyperf/http-message": "~3.0.0",
         "hyperf/http-server": "~3.0.0",
         "hyperf/support": "~3.0.0",
-        "hyperf/utils": "~3.0.0"
+        "hyperf/utils": "~3.0.0",
+        "symfony/http-foundation": "^5.4|^6.0"
     },
     "extra": {
         "branch-alias": {

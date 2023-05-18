@@ -1,5 +1,24 @@
 # 版本更新記錄
 
+# v3.0.21 - 2023-05-18
+
+## 新增
+
+- [#5721](https://github.com/hyperf/hyperf/pull/5721) 為 `Request` 生命週期事件，增加 `exception` 參數。
+- [#5723](https://github.com/hyperf/hyperf/pull/5723) 為 `hyperf/db` 組件增加 `Swoole5.x` 的 `PgSQL` 支持。
+- [#5725](https://github.com/hyperf/hyperf/pull/5725) 為 `hyperf/db` 組件增加 `Swoole4.x` 的 `PgSQL` 支持。
+- [#5731](https://github.com/hyperf/hyperf/pull/5731) 新增方法 `Arr::hasAny()`。
+
+## 修復
+
+- [#5726](https://github.com/hyperf/hyperf/pull/5726) [#5730](https://github.com/hyperf/hyperf/pull/5730) 修復使用 `pgsql-swoole` 類型的 `ORM` 時，`PgSQL` 鏈接不會自動初始化的問題。
+
+## 優化
+
+- [#5718](https://github.com/hyperf/hyperf/pull/5718) 優化了 `view-engine` 組件的代碼，並增加了一些單元測試。
+- [#5719](https://github.com/hyperf/hyperf/pull/5719) 優化了 `metric` 組件的代碼，並增加了一些單元測試。
+- [#5720](https://github.com/hyperf/hyperf/pull/5720) 優化了 `Hyperf\Metric\Listener\OnPipeMessage` 的代碼，來避免消息阻塞的問題。
+
 # v3.0.20 - 2023-05-12
 
 ## 新增
@@ -52,7 +71,7 @@
 - [#5666](https://github.com/hyperf/hyperf/pull/5666) 將 `Packers` 從 `hyperf/utils` 分離到 `hyperf/codec` 中。
 - [#5668](https://github.com/hyperf/hyperf/pull/5668) 將 `hyperf/support` 從 `hyperf/utils` 分離出來。
 - [#5670](https://github.com/hyperf/hyperf/pull/5670) 將 `hyperf/code-parser` 從 `hyperf/utils` 分離出來。
-- [#5671](https://github.com/hyperf/hyperf/pull/5671) 使用 `Hyperf\Coroutine\Channel\Pool` 代替`Hyperf\Utils\ChannelPool`。
+- [#5671](https://github.com/hyperf/hyperf/pull/5671) 使用 `Hyperf\Coroutine\Channel\Pool` 代替 `Hyperf\Utils\ChannelPool` 。
 - [#5674](https://github.com/hyperf/hyperf/pull/5674) 將 `Hyperf\Utils` 命名空間的類和方法，使用新組件進行替換。
 
 # v3.0.17 - 2023-04-19

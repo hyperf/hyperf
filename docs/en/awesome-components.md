@@ -74,3 +74,6 @@ We have provided you with a [Hyperf component development guide](en/component-gu
 - [hyperf/tracer](https://github.com/hyperf/tracer) OpenTracing component provided by Hyperf officially
 - [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) service circuit breaker component provided by Hyperf officially
 
+## Annotation Configuration
+- [hyperf-helper/dependency](https://github.com/lazychanger/hyperf-helper-dependency) Use annotations to quickly configure dependencies and support dependency priority.
+

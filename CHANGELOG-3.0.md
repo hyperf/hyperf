@@ -1,8 +1,17 @@
-# v3.0.21 - TBD
+# v3.0.22 - TBD
+
+# v3.0.21 - 2023-05-18
 
 ## Added
 
 - [#5721](https://github.com/hyperf/hyperf/pull/5721) Added `exception` property to Request Lifecycle Events.
+- [#5723](https://github.com/hyperf/hyperf/pull/5723) Support `Swoole 5 PgSQL` for `hyperf/db`.
+- [#5725](https://github.com/hyperf/hyperf/pull/5725) Support `Swoole 4 PgSQL` for `hyperf/db`.
+- [#5731](https://github.com/hyperf/hyperf/pull/5731) Added `Arr::hasAny()`.
+
+## Fixed
+
+- [#5726](https://github.com/hyperf/hyperf/pull/5726) [#5730](https://github.com/hyperf/hyperf/pull/5730) Fixed bug that pgsql cannot init when using pgsql-swoole.
 
 ## Optimized
 
