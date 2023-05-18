@@ -37,7 +37,10 @@ class Redis implements Adapter
      */
     private static string $prefix = 'PROMETHEUS_';
 
-    public function __construct(protected \Hyperf\Redis\Redis|\Redis $redis)
+    /**
+     * @param \Redis $redis
+     */
+    public function __construct(protected mixed $redis)
     {
     }
 
@@ -173,7 +176,6 @@ LUA
         $searchPattern = '';
         $globalPrefix = $this->redis->_prefix('');
 
-        // @phpstan-ignore-next-line false positive, phpstan thinks getOptions returns int
         if (is_string($globalPrefix)) {
             $searchPattern .= $globalPrefix;
         }
