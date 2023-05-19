@@ -49,7 +49,7 @@ abstract class ProducerMessage extends Message implements ProducerMessageInterfa
         return $packer->pack($this->payload);
     }
 
-    public function isAuthDeclare(): bool
+    public function isAutoDeclare(): bool
     {
         return true;
     }

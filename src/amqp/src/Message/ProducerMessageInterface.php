@@ -19,5 +19,5 @@ interface ProducerMessageInterface extends MessageInterface
 
     public function getProperties(): array;
 
-    public function isAuthDeclare(): bool;
+    public function isAutoDeclare(): bool;
 }

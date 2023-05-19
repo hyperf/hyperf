@@ -62,7 +62,7 @@ class MainWorkerStartListener implements ListenerInterface
              */
             foreach ($producerMessages as $producerMessageClass => $annotation) {
                 $instance = $instantiator->instantiate($producerMessageClass);
-                if (! $instance instanceof ProducerMessageInterface || ! $instance->isAuthDeclare()) {
+                if (! $instance instanceof ProducerMessageInterface || ! $instance->isAutoDeclare()) {
                     continue;
                 }
                 $annotation->exchange && $instance->setExchange($annotation->exchange);
