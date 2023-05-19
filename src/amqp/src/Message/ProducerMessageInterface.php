@@ -18,4 +18,6 @@ interface ProducerMessageInterface extends MessageInterface
     public function payload(): string;
 
     public function getProperties(): array;
+
+    public function isAuthDeclare(): bool;
 }
