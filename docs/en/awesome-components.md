@@ -24,6 +24,7 @@ We have provided you with a [Hyperf component development guide](en/component-gu
 
 ## Route 
  - [nikic/fastroute](https://github.com/nikic/FastRoute) a commonly used high speed routing
+ - [lazychanger/urlrewrite](https://github.com/lazychanger/urlrewrite) A URL rewriting tool based on the same routing rules as [nikic/fastroute](https://github.com/nikic/FastRoute) based on PSR-7
 
 ## Event
  - [hyperf/event](https://github.com/hyperf/event) PSR-14 based event manager provided by Hyperf officially
