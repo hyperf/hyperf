@@ -63,6 +63,8 @@
 - [hyperf/websocket-client](https://github.com/hyperf/websocket-client) Hyperf 官方提供的 WebSocket 协程客户端
 - [hyperf/cache](https://github.com/hyperf/cache) Hyperf 官方提供的基于 PSR-16 的缓存协程客户端，支持注解的使用方式
 - [chungou/elasticsearch](https://github.com/kaychem/hyperf-elasticsearch) 一个简单的 Elasticsearch 构造器
+- [friendsofhyperf/http-client](https://github.com/friendsofhyperf/http-client) 基于 Hyperf 的 Guzzle HTTP 协程客户端
+- [friendsofhyperf/openai-client](https://github.com/friendsofhyperf/openai-client) 基于 Hyperf 的 OpenAI 客户端
 
 ## 消息队列
 
