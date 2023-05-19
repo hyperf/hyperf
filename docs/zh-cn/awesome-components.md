@@ -39,6 +39,7 @@
 - [hyperf/model-cache](https://github.com/hyperf/model-cache) Hyperf 官方提供的基于 [hyperf/database](https://github.com/hyperf/database) 组件的自动模型缓存组件
 - [reasno/fastmongo](https://github.com/Reasno/fastmongo) 基于 `hyperf/gotask` 实现的协程化 `MongoDB` 客户端
 - [hyperf-ext/translatable](https://github.com/hyperf-ext/translatable) 为模型提供多语言能力
+- [chance-fyi/hyperf-database-sqlserver](https://github.com/Chance-fyi/hyperf-database-sqlserver) 通过 AOP 为 Hyperf ORM 扩展 SqlServer 驱动, 使用 Task 组件模拟协程
 
 ## 依赖注入容器
 
