@@ -1,5 +1,9 @@
 # v3.0.22 - TBD
 
+## Added
+
+- [#5745](https://github.com/hyperf/hyperf/pull/5745) Added `Hyperf\Amqp\Message\ProducerMessageInterface::isAuthDeclare()` to control whether to declare automatically.
+
 ## Optimized
 
 - [#5741](https://github.com/hyperf/hyperf/pull/5741) Added deprecated comments to `Hyperf\DB\MySQLConnection`.
