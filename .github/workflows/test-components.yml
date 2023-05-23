@@ -17,6 +17,7 @@ jobs:
       matrix:
         php-version: [ '8.0', '8.1', '8.2' ]
         mysql-version: [ '5.7', '8.0' ]
+        sw-version: [ '5.0.3' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -27,11 +28,11 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis, pdo, pdo_mysql, bcmath
+          extensions: redis, pdo, pdo_mysql, bcmath, swoole-${{ matrix.sw-version }}
           ini-values: opcache.enable_cli=1
           coverage: none
-      - name: Setup Swoole
-        run: ./.travis/swoole.install.sh
+      # - name: Setup Swoole
+      #   run: ./.travis/swoole.install.sh
       - name: Setup Packages
         run: ./.travis/requirement.install.sh
       - name: Setup Services
@@ -64,8 +65,9 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: phpize
           ini-values: opcache.enable_cli=1
-      - name: Setup Swoole
-        run: ./.travis/swoole.install.sh
+          extensions: swoole-${{ matrix.sw-version }}
+      # - name: Setup Swoole
+      #   run: ./.travis/swoole.install.sh
       - name: Setup Packages
         run: composer require "league/flysystem:${{ matrix.version }}" --dev -o -W
       - name: Setup Flysystem(v1.0) Adapters
@@ -111,11 +113,11 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis
+          extensions: redis, swoole-${{ matrix.sw-version }}
           ini-values: opcache.enable_cli=0, phar.readonly='Off'
           coverage: none
-      - name: Setup Swoole
-        run: ./.travis/swoole.install.sh
+      # - name: Setup Swoole
+      #   run: ./.travis/swoole.install.sh
       - name: Build phar tester
         run: |
           git clone https://github.com/limingxinleo/hyperf-phar-tester.git
@@ -165,8 +167,9 @@ jobs:
           tools: phpize
           ini-values: opcache.enable_cli=0
           coverage: none
-      - name: Setup Swoole
-        run: ./.travis/swoole.install.sh
+          extensions: swoole-${{ matrix.sw-version }}
+      # - name: Setup Swoole
+      #   run: ./.travis/swoole.install.sh
       - name: Setup Packages
         run: |
           cp .travis/.env.example .env
@@ -200,8 +203,9 @@ jobs:
           tools: phpize
           ini-values: opcache.enable_cli=0
           coverage: none
-      - name: Setup Swoole
-        run: ./.travis/swoole.install.sh
+          extensions: swoole-${{ matrix.sw-version }}
+      # - name: Setup Swoole
+      #   run: ./.travis/swoole.install.sh
       - name: Setup Packages
         run: |
           cp .travis/.env.example .env
@@ -247,8 +251,9 @@ jobs:
           tools: phpize
           ini-values: opcache.enable_cli=0
           coverage: none
-      - name: Setup Swoole
-        run: ./.travis/swoole.install.sh
+          extensions: swoole-${{ matrix.sw-version }}
+      # - name: Setup Swoole
+      #   run: ./.travis/swoole.install.sh
       - name: Removed conflict Packages
         run: |
           composer remove elasticsearch/elasticsearch --dev -W
@@ -294,10 +299,10 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: phpize
           ini-values: opcache.enable_cli=0
-          extensions: redis, pdo, pdo_mysql, bcmath
+          extensions: redis, pdo, pdo_mysql, bcmath, swoole-${{ matrix.sw-version }}
           coverage: none
-      - name: Setup Swoole
-        run: ./.travis/swoole.install.sh
+      # - name: Setup Swoole
+      #   run: ./.travis/swoole.install.sh
       - name: Setup Services
         run: |
           docker run --name mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:8.0 --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
