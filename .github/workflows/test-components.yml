@@ -17,7 +17,6 @@ jobs:
       matrix:
         php-version: [ '8.0', '8.1', '8.2' ]
         mysql-version: [ '5.7', '8.0' ]
-        sw-version: [ '5.0.3' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -28,7 +27,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis, pdo, pdo_mysql, bcmath, swoole-${{ matrix.sw-version }}
+          extensions: redis, pdo, pdo_mysql, bcmath, swoole-${SW_VERSION}
           ini-values: opcache.enable_cli=1
           coverage: none
       # - name: Setup Swoole
@@ -65,7 +64,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: phpize
           ini-values: opcache.enable_cli=1
-          extensions: swoole-${{ matrix.sw-version }}
+          extensions: swoole-${SW_VERSION}
       # - name: Setup Swoole
       #   run: ./.travis/swoole.install.sh
       - name: Setup Packages
@@ -113,7 +112,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis, swoole-${{ matrix.sw-version }}
+          extensions: redis, swoole-${SW_VERSION}
           ini-values: opcache.enable_cli=0, phar.readonly='Off'
           coverage: none
       # - name: Setup Swoole
@@ -167,7 +166,7 @@ jobs:
           tools: phpize
           ini-values: opcache.enable_cli=0
           coverage: none
-          extensions: swoole-${{ matrix.sw-version }}
+          extensions: swoole-${SW_VERSION}
       # - name: Setup Swoole
       #   run: ./.travis/swoole.install.sh
       - name: Setup Packages
@@ -203,7 +202,7 @@ jobs:
           tools: phpize
           ini-values: opcache.enable_cli=0
           coverage: none
-          extensions: swoole-${{ matrix.sw-version }}
+          extensions: swoole-${SW_VERSION}
       # - name: Setup Swoole
       #   run: ./.travis/swoole.install.sh
       - name: Setup Packages
@@ -251,7 +250,7 @@ jobs:
           tools: phpize
           ini-values: opcache.enable_cli=0
           coverage: none
-          extensions: swoole-${{ matrix.sw-version }}
+          extensions: swoole-${SW_VERSION}
       # - name: Setup Swoole
       #   run: ./.travis/swoole.install.sh
       - name: Removed conflict Packages
@@ -299,7 +298,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: phpize
           ini-values: opcache.enable_cli=0
-          extensions: redis, pdo, pdo_mysql, bcmath, swoole-${{ matrix.sw-version }}
+          extensions: redis, pdo, pdo_mysql, bcmath, swoole-${SW_VERSION}
           coverage: none
       # - name: Setup Swoole
       #   run: ./.travis/swoole.install.sh
