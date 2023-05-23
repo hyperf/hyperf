@@ -32,7 +32,11 @@ abstract class AbstractProvider
         if ($this->config->getAccessKey()) {
             if (str_contains($uri, '/ns/')) { // naming
                 $options[RequestOptions::HEADERS]['ak'] = $this->config->getAccessKey();
-                $signHeaders = $this->getNamingSignHeaders($options[RequestOptions::QUERY]['groupName'] ?? '', $options[RequestOptions::QUERY]['serviceName'] ?? '', $this->config->getAccessSecret());
+                $signHeaders = $this->getNamingSignHeaders(
+                    $options[RequestOptions::QUERY]['groupName'] ?? '',
+                    $options[RequestOptions::QUERY]['serviceName'] ?? '',
+                    $this->config->getAccessSecret()
+                );
                 foreach ($signHeaders as $header => $value) {
                     $options[RequestOptions::HEADERS][$header] = $value;
                 }
