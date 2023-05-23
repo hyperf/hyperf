@@ -176,8 +176,6 @@ class PostgresGrammar extends Grammar
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param array $where
      */
     protected function whereBasic(Builder $query, $where): string

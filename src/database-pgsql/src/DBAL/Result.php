@@ -20,19 +20,16 @@ final class Result implements ResultInterface
     {
     }
 
-    /** {@inheritdoc} */
     public function fetchNumeric()
     {
         return $this->result->fetchArray(result_type: SW_PGSQL_NUM);
     }
 
-    /** {@inheritdoc} */
     public function fetchAssociative()
     {
         return $this->result->fetchAssoc();
     }
 
-    /** {@inheritdoc} */
     public function fetchOne()
     {
         $row = $this->fetchNumeric();
@@ -43,19 +40,16 @@ final class Result implements ResultInterface
         return $row[0];
     }
 
-    /** {@inheritdoc} */
     public function fetchAllNumeric(): array
     {
         return $this->result->fetchAll(SW_PGSQL_NUM);
     }
 
-    /** {@inheritdoc} */
     public function fetchAllAssociative(): array
     {
         return $this->result->fetchAll(SW_PGSQL_ASSOC);
     }
 
-    /** {@inheritdoc} */
     public function fetchFirstColumn(): array
     {
         $resultSet = $this->result->fetchAll(SW_PGSQL_NUM);

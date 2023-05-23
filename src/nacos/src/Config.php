@@ -41,15 +41,15 @@ class Config
 
     /**
      * @param $config = [
-     *     'base_uri' => 'http://127.0.0.1:8848/',
-     *     'username' => null,
-     *     'password' => null,
-     *     'access_key' => null,
-     *     'access_secret' => null,
-     *     'guzzle_config' => [],
-     *     'host' => '127.0.0.1',
-     *     'port' => 8848,
-     * ]
+     *                'base_uri' => 'http://127.0.0.1:8848/',
+     *                'username' => null,
+     *                'password' => null,
+     *                'access_key' => null,
+     *                'access_secret' => null,
+     *                'guzzle_config' => [],
+     *                'host' => '127.0.0.1',
+     *                'port' => 8848,
+     *                ]
      */
     public function __construct(array $config = [])
     {

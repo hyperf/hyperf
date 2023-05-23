@@ -58,11 +58,11 @@ class ConfigProvider extends AbstractProvider
 
     /**
      * @param $options = [
-     *     'dataId' => '',
-     *     'group' => '',
-     *     'contentMD5' => md5(file_get_contents($configPath)),
-     *     'tenant' => '',
-     * ]
+     *                 'dataId' => '',
+     *                 'group' => '',
+     *                 'contentMD5' => md5(file_get_contents($configPath)),
+     *                 'tenant' => '',
+     *                 ]
      */
     public function listener(array $options = []): ResponseInterface
     {

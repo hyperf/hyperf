@@ -35,9 +35,6 @@ class Exception extends BaseException implements DriverExceptionInterface
         $this->sqlState = $sqlState;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSQLState()
     {
         return $this->sqlState;

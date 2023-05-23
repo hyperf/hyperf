@@ -87,9 +87,6 @@ final class ConcurrentEventLoopScheduler extends VirtualTimeScheduler
         $this->insideInvoke = false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function now(): int
     {
         return (int) floor(microtime(true) * 1000);
