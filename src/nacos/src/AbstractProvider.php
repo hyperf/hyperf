@@ -68,13 +68,13 @@ abstract class AbstractProvider
             return false;
         }
 
-        return (string)$response->getBody() === 'ok';
+        return (string) $response->getBody() === 'ok';
     }
 
     protected function handleResponse(ResponseInterface $response): array
     {
         $statusCode = $response->getStatusCode();
-        $contents = (string)$response->getBody();
+        $contents = (string) $response->getBody();
         if ($statusCode !== 200) {
             throw new RequestException($contents, $statusCode);
         }
