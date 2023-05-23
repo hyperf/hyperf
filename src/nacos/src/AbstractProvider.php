@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Nacos;
 
 use GuzzleHttp\Client;
@@ -31,15 +30,13 @@ abstract class AbstractProvider
     public function request(string $method, string|UriInterface $uri, array $options = [])
     {
         if ($this->config->getAccessKey()) {
-            if (str_contains($uri, "/ns/")) {
-                //naming
+            if (str_contains($uri, '/ns/')) { // naming
                 $options[RequestOptions::HEADERS]['ak'] = $this->config->getAccessKey();
-                $signHeaders = $this->getNamingSignHeaders($options[RequestOptions::QUERY]["groupName"] ?? "", $options[RequestOptions::QUERY]['serviceName'] ?? "", $this->config->getAccessSecret());
+                $signHeaders = $this->getNamingSignHeaders($options[RequestOptions::QUERY]['groupName'] ?? '', $options[RequestOptions::QUERY]['serviceName'] ?? '', $this->config->getAccessSecret());
                 foreach ($signHeaders as $header => $value) {
                     $options[RequestOptions::HEADERS][$header] = $value;
                 }
-            } else {
-                //config
+            } else { // config
                 $options[RequestOptions::HEADERS]['Spas-AccessKey'] = $this->config->getAccessKey();
                 $signHeaders = $this->getMseSignHeaders($options[RequestOptions::QUERY] ?? [], $this->config->getAccessSecret());
                 foreach ($signHeaders as $header => $value) {
@@ -47,8 +44,9 @@ abstract class AbstractProvider
                 }
             }
         } else {
-            $token = $this->getAccessToken();
-            $token && $options[RequestOptions::QUERY]['accessToken'] = $token;
+            if ($token = $this->getAccessToken()) {
+                $options[RequestOptions::QUERY]['accessToken'] = $token;
+            }
         }
         return $this->client()->request($method, $uri, $options);
     }
@@ -117,8 +115,8 @@ abstract class AbstractProvider
         $timeStamp = round(microtime(true) * 1000);
         $signStr = $timeStamp;
 
-        if (!empty($serverName)) {
-            if (str_contains($serverName, "@@") || empty($groupName)) {
+        if (! empty($serverName)) {
+            if (str_contains($serverName, '@@') || empty($groupName)) {
                 $signStr .= "@@{$serverName}";
             } else {
                 $signStr .= "@@{$groupName}@@{$serverName}";
