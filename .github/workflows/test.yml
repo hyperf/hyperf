@@ -32,7 +32,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis, pdo, pdo_mysql, bcmath if ${{ matrix.sw_version }} != 'master' ,swoole-${{ matrix.swoole }} else ''
+          extensions: redis, pdo, pdo_mysql, bcmath if ${{ matrix.sw-version }} != 'master' ,swoole-${{ matrix.sw-version }} else ''
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole (master)
@@ -58,7 +58,7 @@ jobs:
           sudo sh -c "echo extension=swoole > /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
           sudo sh -c "echo swoole.use_shortname='Off' >> /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
           php --ri swoole
-        if: ${{ matrix.sw-version }} = 'master'
+        if: matrix.sw-version = 'master'
       - name: Setup Packages
         run: ./.travis/requirement.install.sh
       - name: Run Check
