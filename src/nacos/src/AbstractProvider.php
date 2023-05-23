@@ -29,20 +29,23 @@ abstract class AbstractProvider
 
     public function request(string $method, string|UriInterface $uri, array $options = [])
     {
-        if ($this->config->getAccessKey()) {
+        if ($accessKey = $this->config->getAccessKey()) {
+            $accessSecret = $this->config->getAccessSecret();
+
             if (str_contains($uri, '/ns/')) { // naming
-                $options[RequestOptions::HEADERS]['ak'] = $this->config->getAccessKey();
+                $options[RequestOptions::HEADERS]['ak'] = $accessKey;
                 $signHeaders = $this->getNamingSignHeaders(
                     $options[RequestOptions::QUERY]['groupName'] ?? '',
                     $options[RequestOptions::QUERY]['serviceName'] ?? '',
-                    $this->config->getAccessSecret()
+                    $accessSecret
                 );
                 foreach ($signHeaders as $header => $value) {
                     $options[RequestOptions::HEADERS][$header] = $value;
                 }
             } else { // config
-                $options[RequestOptions::HEADERS]['Spas-AccessKey'] = $this->config->getAccessKey();
-                $signHeaders = $this->getMseSignHeaders($options[RequestOptions::QUERY] ?? [], $this->config->getAccessSecret());
+                $options[RequestOptions::HEADERS]['Spas-AccessKey'] = $accessKey;
+                $signHeaders = $this->getMseSignHeaders($options[RequestOptions::QUERY] ?? [], $accessSecret);
+
                 foreach ($signHeaders as $header => $value) {
                     $options[RequestOptions::HEADERS][$header] = $value;
                 }
@@ -52,6 +55,7 @@ abstract class AbstractProvider
                 $options[RequestOptions::QUERY]['accessToken'] = $token;
             }
         }
+
         return $this->client()->request($method, $uri, $options);
     }
 
@@ -77,15 +81,18 @@ abstract class AbstractProvider
     {
         $statusCode = $response->getStatusCode();
         $contents = (string) $response->getBody();
+
         if ($statusCode !== 200) {
             throw new RequestException($contents, $statusCode);
         }
+
         return Json::decode($contents);
     }
 
     protected function filter(array $input): array
     {
         $result = [];
+
         foreach ($input as $key => $value) {
             if ($value !== null) {
                 $result[$key] = $value;
@@ -101,13 +108,17 @@ abstract class AbstractProvider
         $tenant = $data['tenant'] ?? '';
         $timeStamp = round(microtime(true) * 1000);
         $signStr = '';
+
         if ($tenant) {
             $signStr .= "{$tenant}+";
         }
+
         if ($group) {
             $signStr .= "{$group}+";
         }
+
         $signStr .= "{$timeStamp}";
+
         return [
             'timeStamp' => $timeStamp,
             'Spas-Signature' => base64_encode(hash_hmac('sha1', $signStr, $secretKey, true)),
