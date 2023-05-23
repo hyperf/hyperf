@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nacos;
 
 use GuzzleHttp\Client;
@@ -29,15 +30,25 @@ abstract class AbstractProvider
 
     public function request(string $method, string|UriInterface $uri, array $options = [])
     {
-        $token = $this->getAccessToken();
-        $token && $options[RequestOptions::QUERY]['accessToken'] = $token;
-
         if ($this->config->getAccessKey()) {
-            $options[RequestOptions::HEADERS]['Spas-AccessKey'] = $this->config->getAccessKey();
-            $signHeaders = $this->getMseSignHeaders($options[RequestOptions::QUERY] ?? [], $this->config->getAccessSecret());
-            foreach ($signHeaders as $header => $value) {
-                $options[RequestOptions::HEADERS][$header] = $value;
+            if (str_contains($uri, "/ns/")) {
+                //naming
+                $options[RequestOptions::HEADERS]['ak'] = $this->config->getAccessKey();
+                $signHeaders = $this->getNamingSignHeaders($options[RequestOptions::QUERY]["groupName"] ?? "", $options[RequestOptions::QUERY]['serviceName'] ?? "", $this->config->getAccessSecret());
+                foreach ($signHeaders as $header => $value) {
+                    $options[RequestOptions::HEADERS][$header] = $value;
+                }
+            } else {
+                //config
+                $options[RequestOptions::HEADERS]['Spas-AccessKey'] = $this->config->getAccessKey();
+                $signHeaders = $this->getMseSignHeaders($options[RequestOptions::QUERY] ?? [], $this->config->getAccessSecret());
+                foreach ($signHeaders as $header => $value) {
+                    $options[RequestOptions::HEADERS][$header] = $value;
+                }
             }
+        } else {
+            $token = $this->getAccessToken();
+            $token && $options[RequestOptions::QUERY]['accessToken'] = $token;
         }
         return $this->client()->request($method, $uri, $options);
     }
@@ -57,13 +68,13 @@ abstract class AbstractProvider
             return false;
         }
 
-        return (string) $response->getBody() === 'ok';
+        return (string)$response->getBody() === 'ok';
     }
 
     protected function handleResponse(ResponseInterface $response): array
     {
         $statusCode = $response->getStatusCode();
-        $contents = (string) $response->getBody();
+        $contents = (string)$response->getBody();
         if ($statusCode !== 200) {
             throw new RequestException($contents, $statusCode);
         }
@@ -98,6 +109,25 @@ abstract class AbstractProvider
         return [
             'timeStamp' => $timeStamp,
             'Spas-Signature' => base64_encode(hash_hmac('sha1', $signStr, $secretKey, true)),
+        ];
+    }
+
+    protected function getNamingSignHeaders(string $groupName, string $serverName, string $secretKey): array
+    {
+        $timeStamp = round(microtime(true) * 1000);
+        $signStr = $timeStamp;
+
+        if (!empty($serverName)) {
+            if (str_contains($serverName, "@@") || empty($groupName)) {
+                $signStr .= "@@{$serverName}";
+            } else {
+                $signStr .= "@@{$groupName}@@{$serverName}";
+            }
+        }
+
+        return [
+            'data' => $signStr,
+            'signature' => base64_encode(hash_hmac('sha1', $signStr, $secretKey, true)),
         ];
     }
 }
