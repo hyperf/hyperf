@@ -261,7 +261,7 @@ class TypeMapper implements TypeMapperInterface
      * Returns a GraphQL type by name (can be either an input or output type).
      *
      * @param string $typeName The name of the GraphQL type
-     * @return (InputType|OutputType)&\GraphQL\Type\Definition\Type
+     * @return \GraphQL\Type\Definition\Type&(InputType|OutputType)
      * @throws CannotMapTypeExceptionInterface
      * @throws ReflectionException
      */

@@ -317,7 +317,7 @@ class Arr
      * @template TMapWithKeysValue
      *
      * @param array<TKey, TValue> $array
-     * @param callabTMapWithKeysKey):TMapWithKeysValueysKey, TMapWithKeysValue> $callback
+     * @param callable(TValue, TKey): array<TMapWithKeysKey, TMapWithKeysValue> $callback
      * @return array
      */
     public static function mapWithKeys(array $array, callable $callback)

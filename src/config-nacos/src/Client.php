@@ -79,11 +79,11 @@ class Client implements ClientInterface
 
     /**
      * @param $optional = [
-     *                  'groupName' => '',
-     *                  'namespaceId' => '',
-     *                  'clusters' => '', // 集群名称(字符串，多个集群用逗号分隔)
-     *                  'healthyOnly' => false,
-     *                  ]
+     *     'groupName' => '',
+     *     'namespaceId' => '',
+     *     'clusters' => '', // 集群名称(字符串，多个集群用逗号分隔)
+     *     'healthyOnly' => false,
+     * ]
      */
     public function getValidNodes(string $serviceName, array $optional = []): array
     {

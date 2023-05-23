@@ -36,9 +36,9 @@ class Client extends AbstractServiceClient
 
     /**
      * @param $options = [
-     *                 'service_interface' => '',
-     *                 'load_balancer' => 'random',
-     *                 ]
+     *     'service_interface' => '',
+     *     'load_balancer' => 'random',
+     * ]
      */
     public function __construct(ContainerInterface $container, string $serviceName, string $protocol = 'jsonrpc-http', array $options = [])
     {

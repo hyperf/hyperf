@@ -20,14 +20,14 @@ class InstanceProvider extends AbstractProvider
 {
     /**
      * @param $optional = [
-     *                  'groupName' => '',
-     *                  'clusterName' => '',
-     *                  'namespaceId' => '',
-     *                  'weight' => 99.0,
-     *                  'metadata' => '',
-     *                  'enabled' => true,
-     *                  'ephemeral' => false, // 是否临时实例
-     *                  ]
+     *     'groupName' => '',
+     *     'clusterName' => '',
+     *     'namespaceId' => '',
+     *     'weight' => 99.0,
+     *     'metadata' => '',
+     *     'enabled' => true,
+     *     'ephemeral' => false, // 是否临时实例
+     * ]
      */
     public function register(string $ip, int $port, string $serviceName, array $optional = []): ResponseInterface
     {
@@ -42,10 +42,10 @@ class InstanceProvider extends AbstractProvider
 
     /**
      * @param $optional = [
-     *                  'clusterName' => '',
-     *                  'namespaceId' => '',
-     *                  'ephemeral' => false,
-     *                  ]
+     *     'clusterName' => '',
+     *     'namespaceId' => '',
+     *     'ephemeral' => false,
+     * ]
      */
     public function delete(string $serviceName, string $groupName, string $ip, int $port, array $optional = []): ResponseInterface
     {
@@ -61,14 +61,14 @@ class InstanceProvider extends AbstractProvider
 
     /**
      * @param $optional = [
-     *                  'groupName' => '',
-     *                  'clusterName' => '',
-     *                  'namespaceId' => '',
-     *                  'weight' => 0.99,
-     *                  'metadata' => '', // json
-     *                  'enabled' => false,
-     *                  'ephemeral' => false,
-     *                  ]
+     *     'groupName' => '',
+     *     'clusterName' => '',
+     *     'namespaceId' => '',
+     *     'weight' => 0.99,
+     *     'metadata' => '', // json
+     *     'enabled' => false,
+     *     'ephemeral' => false,
+     * ]
      */
     public function update(string $ip, int $port, string $serviceName, array $optional = []): ResponseInterface
     {
@@ -83,11 +83,11 @@ class InstanceProvider extends AbstractProvider
 
     /**
      * @param $optional = [
-     *                  'groupName' => '',
-     *                  'namespaceId' => '',
-     *                  'clusters' => '', // 集群名称(字符串，多个集群用逗号分隔)
-     *                  'healthyOnly' => false,
-     *                  ]
+     *     'groupName' => '',
+     *     'namespaceId' => '',
+     *     'clusters' => '', // 集群名称(字符串，多个集群用逗号分隔)
+     *     'healthyOnly' => false,
+     * ]
      */
     public function list(string $serviceName, array $optional = []): ResponseInterface
     {
@@ -100,12 +100,12 @@ class InstanceProvider extends AbstractProvider
 
     /**
      * @param $optional = [
-     *                  'groupName' => '',
-     *                  'namespaceId' => '',
-     *                  'cluster' => '',
-     *                  'healthyOnly' => false,
-     *                  'ephemeral' => false,
-     *                  ]
+     *     'groupName' => '',
+     *     'namespaceId' => '',
+     *     'cluster' => '',
+     *     'healthyOnly' => false,
+     *     'ephemeral' => false,
+     * ]
      */
     public function detail(string $ip, int $port, string $serviceName, array $optional = []): ResponseInterface
     {
@@ -120,12 +120,12 @@ class InstanceProvider extends AbstractProvider
 
     /**
      * @param $beat = [
-     *              'ip' => '',
-     *              'port' => 9501,
-     *              'serviceName' => '',
-     *              'cluster' => '',
-     *              'weight' => 1,
-     *              ]
+     *     'ip' => '',
+     *     'port' => 9501,
+     *     'serviceName' => '',
+     *     'cluster' => '',
+     *     'weight' => 1,
+     * ]
      */
     public function beat(string $serviceName, array $beat = [], ?string $groupName = null, ?string $namespaceId = null, ?bool $ephemeral = null, bool $lightBeatEnabled = false): ResponseInterface
     {
@@ -144,10 +144,10 @@ class InstanceProvider extends AbstractProvider
 
     /**
      * @param $optional = [
-     *                  'namespaceId' => '',
-     *                  'groupName' => '',
-     *                  'clusterName' => '',
-     *                  ]
+     *     'namespaceId' => '',
+     *     'groupName' => '',
+     *     'clusterName' => '',
+     * ]
      */
     public function updateHealth(string $ip, int $port, string $serviceName, bool $healthy, array $optional = []): ResponseInterface
     {

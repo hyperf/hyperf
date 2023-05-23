@@ -27,6 +27,9 @@ class RedisPoolWatcher extends PoolWatcher implements ListenerInterface
         return 'redis';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function process(object $event): void
     {
         $config = $this->container->get(ConfigInterface::class);

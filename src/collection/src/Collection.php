@@ -185,7 +185,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @template TTimesValue
      *
-     * @param null|(callable(int): TTimesValue) $callback
+     * @param  (callable(int): TTimesValue)|null  $callback
      * @return static<int, TTimesValue>
      */
     public static function times(int $number, callable $callback = null): self
@@ -212,7 +212,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get the average value of a given key.
      *
-     * @param null|(callable(TValue): float|int)|string $callback
+     * @param  (callable(TValue): float|int)|string|null  $callback
      */
     public function avg($callback = null)
     {
@@ -231,7 +231,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Alias for the "avg" method.
      *
-     * @param null|(callable(TValue): float|int)|string $callback
+     * @param  (callable(TValue): float|int)|string|null  $callback
      * @return null|float|int
      */
     public function average($callback = null)
@@ -307,7 +307,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @param null|mixed $operator
      * @param null|mixed $value
-     * @param (callable(TValue): bool)|string|TValue $key
+     * @param  (callable(TValue): bool)|TValue|string  $key
      */
     public function contains($key, $operator = null, $value = null): bool
     {
@@ -471,7 +471,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Determine if all items in the collection pass the given test.
      *
-     * @param (callable(TValue, TKey): bool)|string|TValue $key
+     * @param  (callable(TValue, TKey): bool)|TValue|string  $key
      * @param mixed $operator
      * @param mixed $value
      */
@@ -508,7 +508,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Run a filter over each of the items.
      *
-     * @param null|(callable(TValue, TKey): bool) $callback
+     * @param (callable(TValue, TKey): bool)|null $callback
      * @return static<TKey, TValue>
      */
     public function filter(callable $callback = null): self
@@ -541,7 +541,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Apply the callback if the value is falsy.
      *
      * @param callable($this): $this $callback
-     * @param $this|callable($this): null $default
+     * @param callable($this): null|$this $default
      * @return $this
      */
     public function unless(bool $value, callable $callback, callable $default = null): self
@@ -640,8 +640,8 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @template TFirstDefault
      *
-     * @param null|(callable(TValue, TKey): bool) $callback
-     * @param (Closure(): TFirstDefault)|TFirstDefault $default
+     * @param (callable(TValue, TKey): bool)|null $callback
+     * @param TFirstDefault|(\Closure(): TFirstDefault)  $default
      * @return TFirstDefault|TValue
      */
     public function first(callable $callback = null, $default = null)
@@ -702,7 +702,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @template TGetDefault
      *
      * @param TKey $key
-     * @param (Closure(): TGetDefault)|TGetDefault $default
+     * @param  TGetDefault|(\Closure(): TGetDefault)  $default
      * @return TGetDefault|TValue
      */
     public function get($key, $default = null)
@@ -748,7 +748,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Key an associative array by a field or using a callback.
      *
-     * @param (callable(TValue, TKey): array-key)|array|string $keyBy
+     * @param  (callable(TValue, TKey): array-key)|array|string  $keyBy
      * @return static<TKey, array<TKey, TValue>>
      */
     public function keyBy($keyBy): self
@@ -843,8 +843,8 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @template TLastDefault
      *
-     * @param null|(callable(TValue, TKey): bool) $callback
-     * @param (Closure(): TLastDefault)|TLastDefault $default
+     * @param  (callable(TValue, TKey): bool)|null  $callback
+     * @param  TLastDefault|(\Closure(): TLastDefault)  $default
      * @return TLastDefault|TValue
      */
     public function last(callable $callback = null, $default = null)
@@ -901,7 +901,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @template TMapToDictionaryKey of array-key
      * @template TMapToDictionaryValue
      *
-     * @param callabTMapToDictionaryKeyrrTMapToDictionaryValuey, TMapToDictionaryValue> $callback
+     * @param callable(TValue, TKey): array<TMapToDictionaryKey, TMapToDictionaryValue> $callback
      * @return static<TMapToDictionaryKey, array<int, TMapToDictionaryValue>>
      */
     public function mapToDictionary(callable $callback): self
@@ -936,7 +936,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @template TMapWithKeysKey of array-key
      * @template TMapWithKeysValue
      *
-     * @param callabTMapWithKeysKey):TMapWithKeysValueysKey, TMapWithKeysValue> $callback
+     * @param callable(TValue, TKey): array<TMapWithKeysKey, TMapWithKeysValue> $callback
      * @return static<TMapWithKeysKey, TMapWithKeysValue>
      */
     public function mapWithKeys(callable $callback): self
@@ -971,7 +971,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get the max value of a given key.
      *
-     * @param null|(callable(TValue):mixed)|string $callback
+     * @param  (callable(TValue):mixed)|string|null  $callback
      * @return TValue
      */
     public function max($callback = null)
@@ -1022,7 +1022,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get the min value of a given key.
      *
-     * @param null|(callable(TValue):mixed)|string $callback
+     * @param  (callable(TValue):mixed)|string|null  $callback
      * @return TValue
      */
     public function min($callback = null)
@@ -1167,7 +1167,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @template TPullDefault
      *
      * @param TKey $key
-     * @param (Closure(): TPullDefault)|TPullDefault $default
+     * @param  TPullDefault|(\Closure(): TPullDefault)  $default
      * @return TPullDefault|TValue
      */
     public function pull($key, $default = null)
@@ -1220,7 +1220,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Create a collection of all elements that do not pass a given truth test.
      *
-     * @param bool|callable(TValue, TKey): bool $callback
+     * @param callable(TValue, TKey): bool|bool $callback
      * @return static<TKey, TValue>
      */
     public function reject($callback): self
@@ -1248,7 +1248,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Search the collection for a given value and return the corresponding key if successful.
      *
-     * @param (callable(TValue,TKey): bool)|TValue $value
+     * @param  TValue|(callable(TValue,TKey): bool)  $value
      * @return bool|TKey
      */
     public function search($value, bool $strict = false)
@@ -1354,7 +1354,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Sort the collection using the given callback.
      *
-     * @param (callable(TValue, TKey): mixed)|array|string $callback
+     * @param (callable(TValue, TKey): mixed)|string|array $callback
      * @return static<TKey, TValue>
      */
     public function sortBy($callback, int $options = SORT_REGULAR, bool $descending = false): self
@@ -1384,7 +1384,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Sort the collection in descending order using the given callback.
      *
-     * @param (callable(TValue, TKey): mixed)|string $callback
+     * @param  (callable(TValue, TKey): mixed)|string  $callback
      * @return static<TKey, TValue>
      */
     public function sortByDesc($callback, int $options = SORT_REGULAR): self
@@ -1431,7 +1431,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get the sum of the given values.
      *
-     * @param null|(callable(TValue): mixed)|string $callback
+     * @param  (callable(TValue): mixed)|string|null  $callback
      * @return mixed
      */
     public function sum($callback = null)
@@ -1461,7 +1461,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Pass the collection to the given callback and then return it.
      *
-     * @param callablTKeyaTValueey,TValue>): mixed $callback
+     * @param callable(static<TKey,TValue>): mixed $callback
      * @return $this
      */
     public function tap(callable $callback): self
@@ -1485,7 +1485,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Return only unique items from the collection array.
      *
-     * @param null|(callable(TValue, TKey): bool)|string $key
+     * @param  (callable(TValue, TKey): bool)|string|null  $key
      * @return static<TKey, TValue>
      */
     public function unique($key = null, bool $strict = false): self
@@ -1503,7 +1503,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Return only unique items from the collection array using strict comparison.
      *
-     * @param null|(callable(TValue, TKey): bool)|string $key
+     * @param  (callable(TValue, TKey): bool)|string|null  $key
      * @return static<TKey, TValue>
      */
     public function uniqueStrict($key = null): self

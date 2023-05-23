@@ -27,6 +27,9 @@ class DBPoolWatcher extends PoolWatcher implements ListenerInterface
         return 'mysql';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function process(object $event): void
     {
         $config = $this->container->get(ConfigInterface::class);

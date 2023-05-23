@@ -478,6 +478,7 @@ class Grammar extends BaseGrammar
     /**
      * Compile a "where JSON boolean" clause.
      *
+     * @param string $value
      * @param array $where
      * @return string
      */

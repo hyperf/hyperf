@@ -28,12 +28,12 @@ class ProtocolManager
 
     /**
      * @param $data = [
-     *              'packer' => JsonPacker::class,
-     *              'transporter' => Transporter::class,
-     *              'path-generator' => PathGenerator::class,
-     *              'data-formatter' => DataFormatter::class,
-     *              'normalizer' => JsonRpcNormalizer::class,
-     *              ]
+     *     'packer' => JsonPacker::class,
+     *     'transporter' => Transporter::class,
+     *     'path-generator' => PathGenerator::class,
+     *     'data-formatter' => DataFormatter::class,
+     *     'normalizer' => JsonRpcNormalizer::class,
+     * ]
      */
     public function register(string $name, array $data): void
     {

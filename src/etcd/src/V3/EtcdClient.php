@@ -125,11 +125,11 @@ class EtcdClient
      * @param string $value
      * @param array $options 可选参数
      * @param $options = [
-     *                 'lease' => 1,
-     *                 'prev_kv' => true,
-     *                 'ignore_value' => true,
-     *                 'ignore_lease' => true,
-     *                 ]
+     *     'lease' => 1,
+     *     'prev_kv' => true,
+     *     'ignore_value' => true,
+     *     'ignore_lease' => true,
+     * ]
      * @return array
      */
     public function put($key, $value, array $options = [])
@@ -160,19 +160,19 @@ class EtcdClient
      *
      * @param string $key
      * @param $options = [
-     *                 'range_end' => '',
-     *                 'limit' => 10,
-     *                 'revision' => 10,
-     *                 'sort_order' => 1,
-     *                 'sort_target' => 1,
-     *                 'serializable' => false,
-     *                 'keys_only' => false,
-     *                 'count_only' => false,
-     *                 'min_mod_revision' => 1,
-     *                 'max_mod_revision' => 1,
-     *                 'min_create_revision' => 1,
-     *                 'max_create_revision' => 1,
-     *                 ]
+     *     'range_end' => '',
+     *     'limit' => 10,
+     *     'revision' => 10,
+     *     'sort_order' => 1,
+     *     'sort_target' => 1,
+     *     'serializable' => false,
+     *     'keys_only' => false,
+     *     'count_only' => false,
+     *     'min_mod_revision' => 1,
+     *     'max_mod_revision' => 1,
+     *     'min_create_revision' => 1,
+     *     'max_create_revision' => 1,
+     * ]
      * @return array
      */
     public function get($key, array $options = [])

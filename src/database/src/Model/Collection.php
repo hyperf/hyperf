@@ -64,7 +64,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationships onto the collection.
      *
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string  $relations
      * @return $this
      */
     public function load($relations)
@@ -85,7 +85,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship counts onto the collection.
      *
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string  $relations
      * @return $this
      */
     public function loadCount($relations)
@@ -117,7 +117,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationships onto the collection if they are not already eager loaded.
      *
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string  $relations
      * @return $this
      */
     public function loadMissing($relations)
@@ -153,7 +153,7 @@ class Collection extends BaseCollection implements CompressInterface
      * Load a set of relationships onto the mixed relationship collection.
      *
      * @param string $relation
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string  $relations
      * @return $this
      */
     public function loadMorph($relation, $relations)
@@ -190,7 +190,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Determine if a key exists in the collection.
      *
-     * @param (callable(TModel, TKey): bool)|string|TModel $key
+     * @param (callable(TModel, TKey): bool)|TModel|string  $key
      * @param mixed $operator
      * @param mixed $value
      */
@@ -328,7 +328,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Return only unique items from the collection.
      *
-     * @param null|(callable(TModel, TKey): bool)|string $key
+     * @param (callable(TModel, TKey): bool)|string|null  $key
      * @return static<int, TModel>
      */
     public function unique($key = null, bool $strict = false): BaseCollection

@@ -19,12 +19,12 @@ class ServiceProvider extends AbstractProvider
 {
     /**
      * @param $optional = [
-     *                  'groupName' => '',
-     *                  'namespaceId' => '',
-     *                  'protectThreshold' => 0.99,
-     *                  'metadata' => '',
-     *                  'selector' => '', // json字符串
-     *                  ]
+     *     'groupName' => '',
+     *     'namespaceId' => '',
+     *     'protectThreshold' => 0.99,
+     *     'metadata' => '',
+     *     'selector' => '', // json字符串
+     * ]
      */
     public function create(string $serviceName, array $optional = []): ResponseInterface
     {
@@ -48,12 +48,12 @@ class ServiceProvider extends AbstractProvider
 
     /**
      * @param $optional = [
-     *                  'groupName' => '',
-     *                  'namespaceId' => '',
-     *                  'protectThreshold' => 0.99,
-     *                  'metadata' => '',
-     *                  'selector' => '', // json字符串
-     *                  ]
+     *     'groupName' => '',
+     *     'namespaceId' => '',
+     *     'protectThreshold' => 0.99,
+     *     'metadata' => '',
+     *     'selector' => '', // json字符串
+     * ]
      */
     public function update(string $serviceName, array $optional = []): ResponseInterface
     {
