@@ -35,7 +35,7 @@ jobs:
           extensions: redis, pdo, pdo_mysql, bcmath if ${{ matrix.sw-version }} != 'master' ,swoole-${{ matrix.sw-version }} else ''
           ini-values: opcache.enable_cli=0
           coverage: none
-      - name: Setup Swoole (master)
+      - name: Setup Swoole (${{ matrix.sw-version }})
         run: |
           sudo apt-get clean
           sudo apt-get update
