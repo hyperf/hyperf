@@ -13,30 +13,24 @@ namespace Hyperf\Translation {
     use Hyperf\Context\ApplicationContext;
     use Hyperf\Contract\TranslatorInterface;
 
-    if (! function_exists('__')) {
-        function __(string $key, array $replace = [], ?string $locale = null)
-        {
-            $translator = ApplicationContext::getContainer()->get(TranslatorInterface::class);
-            return $translator->trans($key, $replace, $locale);
-        }
+    function __(string $key, array $replace = [], ?string $locale = null)
+    {
+        $translator = ApplicationContext::getContainer()->get(TranslatorInterface::class);
+        return $translator->trans($key, $replace, $locale);
     }
 
-    if (! function_exists('trans')) {
-        function trans(string $key, array $replace = [], ?string $locale = null)
-        {
-            return __($key, $replace, $locale);
-        }
+    function trans(string $key, array $replace = [], ?string $locale = null)
+    {
+        return __($key, $replace, $locale);
     }
 
-    if (! function_exists('trans_choice')) {
-        /**
-         * @param mixed $number
-         */
-        function trans_choice(string $key, $number, array $replace = [], ?string $locale = null): string
-        {
-            $translator = ApplicationContext::getContainer()->get(TranslatorInterface::class);
-            return $translator->transChoice($key, $number, $replace, $locale);
-        }
+    /**
+     * @param mixed $number
+     */
+    function trans_choice(string $key, $number, array $replace = [], ?string $locale = null): string
+    {
+        $translator = ApplicationContext::getContainer()->get(TranslatorInterface::class);
+        return $translator->transChoice($key, $number, $replace, $locale);
     }
 }
 
