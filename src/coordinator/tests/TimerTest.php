@@ -113,6 +113,22 @@ class TimerTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function testUntil()
+    {
+        $this->wait(function () {
+            $id = 0;
+            $timer = new Timer();
+            $identifier = uniqid();
+            $timer->until(function () use (&$id) {
+                ++$id;
+            }, $identifier);
+
+            $this->assertSame(0, $id);
+            CoordinatorManager::until($identifier)->resume();
+            $this->assertSame(1, $id);
+        });
+    }
+
     private function wait(Closure $closure)
     {
         $waiter = new Waiter();
