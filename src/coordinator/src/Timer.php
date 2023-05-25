@@ -40,11 +40,11 @@ class Timer
         go(function () use ($timeout, $closure, $identifier, $id) {
             try {
                 ++Timer::$count;
-                if ($timeout > 0) {
-                    $isClosing = CoordinatorManager::until($identifier)->yield($timeout);
-                } else {
-                    $isClosing = CoordinatorManager::until($identifier)->isClosing();
-                }
+                $isClosing = match (true) {
+                    $timeout > 0 => CoordinatorManager::until($identifier)->yield($timeout),
+                    $timeout == 0 => CoordinatorManager::until($identifier)->isClosing(),
+                    default => CoordinatorManager::until($identifier)->yield(),
+                };
                 if (isset($this->closures[$id])) {
                     $closure($isClosing);
                 }
@@ -96,21 +96,7 @@ class Timer
 
     public function until(Closure $closure, string $identifier = Constants::WORKER_EXIT): int
     {
-        $id = ++$this->id;
-        $this->closures[$id] = true;
-        go(function () use ($closure, $identifier, $id) {
-            ++Timer::$count;
-            CoordinatorManager::until($identifier)->yield();
-            try {
-                if (isset($this->closures[$id])) {
-                    $closure();
-                }
-            } finally {
-                unset($this->closures[$id]);
-                --Timer::$count;
-            }
-        });
-        return $id;
+        return $this->after(-1, $closure, $identifier);
     }
 
     public function clear(int $id): void
