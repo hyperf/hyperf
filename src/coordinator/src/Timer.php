@@ -94,6 +94,25 @@ class Timer
         return $id;
     }
 
+    public function until(Closure $closure, string $identifier = Constants::WORKER_EXIT): int
+    {
+        $id = ++$this->id;
+        $this->closures[$id] = true;
+        go(function () use ($closure, $identifier, $id) {
+            ++Timer::$count;
+            CoordinatorManager::until($identifier)->yield();
+            try {
+                if (isset($this->closures[$id])) {
+                    $closure();
+                }
+            } finally {
+                unset($this->closures[$id]);
+                --Timer::$count;
+            }
+        });
+        return $id;
+    }
+
     public function clear(int $id): void
     {
         unset($this->closures[$id]);
