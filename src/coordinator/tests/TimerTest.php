@@ -129,6 +129,22 @@ class TimerTest extends TestCase
         });
     }
 
+    public function testUntilWhenClear()
+    {
+        $this->wait(function () {
+            $id = 0;
+            $timer = new Timer();
+            $identifier = uniqid();
+            $ret = $timer->until(function () use (&$id) {
+                ++$id;
+            }, $identifier);
+            $timer->clear($ret);
+            $this->assertSame(0, $id);
+            CoordinatorManager::until($identifier)->resume();
+            $this->assertSame(0, $id);
+        });
+    }
+
     private function wait(Closure $closure)
     {
         $waiter = new Waiter();
