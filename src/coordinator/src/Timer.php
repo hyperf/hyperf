@@ -40,11 +40,11 @@ class Timer
         go(function () use ($timeout, $closure, $identifier, $id) {
             try {
                 ++Timer::$count;
-                if ($timeout > 0) {
-                    $isClosing = CoordinatorManager::until($identifier)->yield($timeout);
-                } else {
-                    $isClosing = CoordinatorManager::until($identifier)->isClosing();
-                }
+                $isClosing = match (true) {
+                    $timeout > 0 => CoordinatorManager::until($identifier)->yield($timeout), // Run after $timeout seconds.
+                    $timeout == 0 => CoordinatorManager::until($identifier)->isClosing(), // Run immediately.
+                    default => CoordinatorManager::until($identifier)->yield(), // Run until $identifier resume.
+                };
                 if (isset($this->closures[$id])) {
                     $closure($isClosing);
                 }
@@ -92,6 +92,11 @@ class Timer
             }
         });
         return $id;
+    }
+
+    public function until(Closure $closure, string $identifier = Constants::WORKER_EXIT): int
+    {
+        return $this->after(-1, $closure, $identifier);
     }
 
     public function clear(int $id): void
