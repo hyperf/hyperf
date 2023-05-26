@@ -41,9 +41,9 @@ class Timer
             try {
                 ++Timer::$count;
                 $isClosing = match (true) {
-                    $timeout > 0 => CoordinatorManager::until($identifier)->yield($timeout),
-                    $timeout == 0 => CoordinatorManager::until($identifier)->isClosing(),
-                    default => CoordinatorManager::until($identifier)->yield(),
+                    $timeout > 0 => CoordinatorManager::until($identifier)->yield($timeout), // Run after $timeout seconds.
+                    $timeout == 0 => CoordinatorManager::until($identifier)->isClosing(), // Run immediately.
+                    default => CoordinatorManager::until($identifier)->yield(), // Run until $identifier resume.
                 };
                 if (isset($this->closures[$id])) {
                     $closure($isClosing);
