@@ -109,6 +109,7 @@ abstract class AbstractProcess implements ProcessInterface
                     sleep($this->restartInterval);
                 }
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
+            $process->setBlocking(false);
             $server->addProcess($process);
 
             if ($this->enableCoroutine) {
