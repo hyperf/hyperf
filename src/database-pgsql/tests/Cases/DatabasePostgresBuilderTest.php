@@ -33,9 +33,10 @@ class DatabasePostgresBuilderTest extends TestCase
 {
     protected function tearDown(): void
     {
-        ContainerStub::getContainer();
-        Schema::dropIfExists('test');
-        Schema::dropIfExists('test_full_text_index');
+        if (SWOOLE_MAJOR_VERSION >= 5) {
+            ContainerStub::getContainer();
+            Schema::dropIfExists('test_full_text_index');
+        }
         m::close();
     }
 
@@ -108,6 +109,10 @@ class DatabasePostgresBuilderTest extends TestCase
 
     public function testWhereFullTextForReal()
     {
+        if (SWOOLE_MAJOR_VERSION < 5) {
+            $this->markTestSkipped('PostgreSql requires Swoole version >= 5.0.0');
+        }
+
         $container = ContainerStub::getContainer();
         $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
 
