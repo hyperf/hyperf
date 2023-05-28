@@ -1,5 +1,9 @@
 # v3.0.23 - TBD
 
+## Added
+
+- [#5765](https://github.com/hyperf/hyperf/pull/5765) Support Full-Text Search for `database`.
+
 # v3.0.22 - 2023-05-27
 
 ## Added
