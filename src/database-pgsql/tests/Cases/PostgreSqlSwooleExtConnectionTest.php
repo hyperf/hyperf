@@ -13,21 +13,17 @@ namespace HyperfTest\Database\PgSQL\Cases;
 
 use Exception;
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Database\Connection;
-use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Exception\QueryException;
 use Hyperf\Database\Migrations\DatabaseMigrationRepository;
 use Hyperf\Database\Migrations\Migrator;
-use Hyperf\Database\PgSQL\Connectors\PostgresSqlSwooleExtConnector;
-use Hyperf\Database\PgSQL\PostgreSqlSwooleExtConnection;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\Support\Filesystem\Filesystem;
+use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Style\OutputStyle;
 
 /**
@@ -44,29 +40,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
             $this->markTestSkipped('PostgreSql requires Swoole version >= 5.0.0');
         }
 
-        $container = Mockery::mock(ContainerInterface::class);
-        $container->shouldReceive('has')->andReturn(true);
-        $container->shouldReceive('get')->with('db.connector.pgsql-swoole')->andReturn(new PostgresSqlSwooleExtConnector());
-        $connector = new ConnectionFactory($container);
-
-        Connection::resolverFor('pgsql-swoole', static function ($connection, $database, $prefix, $config) {
-            return new PostgreSqlSwooleExtConnection($connection, $database, $prefix, $config);
-        });
-
-        $connection = $connector->make([
-            'driver' => 'pgsql-swoole',
-            'host' => '127.0.0.1',
-            'port' => 5432,
-            'database' => 'postgres',
-            'username' => 'postgres',
-            'password' => 'postgres',
-        ]);
-
-        $resolver = new ConnectionResolver(['default' => $connection]);
-
-        $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
-
-        ApplicationContext::setContainer($container);
+        $resolver = ContainerStub::getContainer()->get(ConnectionResolverInterface::class);
 
         $this->migrator = new Migrator(
             $repository = new DatabaseMigrationRepository($resolver, 'migrations'),
@@ -82,6 +56,12 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
         if (! $repository->repositoryExists()) {
             $repository->createRepository();
         }
+    }
+
+    public function tearDown(): void
+    {
+        Schema::dropIfExists('password_resets_for_pgsql');
+        Schema::dropIfExists('migrations');
     }
 
     public function testSelectMethodDuplicateKeyValueException()
@@ -162,9 +142,6 @@ where c.relname = 'password_resets_for_pgsql'
   and d.objsubid = a.attnum";
 
         $schema = new Schema();
-
-        $this->migrator->rollback([__DIR__ . '/../migrations/two']);
-        $this->migrator->rollback([__DIR__ . '/../migrations/one']);
 
         $this->migrator->run([__DIR__ . '/../migrations/one']);
         $this->assertTrue($schema->hasTable('password_resets_for_pgsql'));
