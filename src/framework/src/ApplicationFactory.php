@@ -16,10 +16,13 @@ use Hyperf\Command\Parser;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Framework\Event\BootApplication;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
+use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
+use Symfony\Component\Console\Exception\LogicException;
 
 class ApplicationFactory
 {
@@ -55,6 +58,11 @@ class ApplicationFactory
         return $application;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     * @throws SymfonyInvalidArgumentException
+     * @throws LogicException
+     */
     protected function pendingCommand(SymfonyCommand $command): SymfonyCommand
     {
         /** @var null|Command $annotation */
@@ -82,15 +90,11 @@ class ApplicationFactory
         }
 
         if ($annotation->arguments) {
-            $command->getDefinition()->setArguments(
-                array_merge($command->getDefinition()->getArguments(), $annotation->arguments)
-            );
+            $command->getDefinition()->addArguments($annotation->arguments);
         }
 
         if ($annotation->options) {
-            $command->getDefinition()->setOptions(
-                array_merge($command->getDefinition()->getOptions(), $annotation->options)
-            );
+            $command->getDefinition()->addOptions($annotation->options);
         }
 
         if ($annotation->description) {
