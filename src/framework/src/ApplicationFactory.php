@@ -57,7 +57,7 @@ class ApplicationFactory
 
     protected function pendingCommand(SymfonyCommand $command): SymfonyCommand
     {
-        /** @var Command $annotation */
+        /** @var null|Command $annotation */
         $annotation = AnnotationCollector::getClassAnnotation($command::class, Command::class) ?? null;
 
         if (! $annotation) {
