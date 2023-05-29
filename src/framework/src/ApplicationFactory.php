@@ -48,14 +48,14 @@ class ApplicationFactory
 
         foreach ($commands as $command) {
             $application->add(
-                $this->setCommandProperties($container->get($command))
+                $this->pendingCommand($container->get($command))
             );
         }
 
         return $application;
     }
 
-    protected function setCommandProperties(SymfonyCommand $command): SymfonyCommand
+    protected function pendingCommand(SymfonyCommand $command): SymfonyCommand
     {
         $annotation = AnnotationCollector::getClassAnnotation($command::class, Command::class) ?? null;
 
