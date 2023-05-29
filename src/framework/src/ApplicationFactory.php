@@ -23,6 +23,8 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class ApplicationFactory
 {
@@ -90,11 +92,27 @@ class ApplicationFactory
         }
 
         if ($annotation->arguments) {
-            $command->getDefinition()->addArguments($annotation->arguments);
+            array_map(static function ($argument) use ($command) {
+                if ($argument instanceof InputArgument) {
+                    $command->getDefinition()->addArgument($argument);
+                } elseif (is_array($argument)) {
+                    $command->addArgument(...$argument);
+                } else {
+                    throw new LogicException(sprintf('Invalid argument type: %s.', gettype($argument)));
+                }
+            }, $annotation->arguments);
         }
 
         if ($annotation->options) {
-            $command->getDefinition()->addOptions($annotation->options);
+            array_map(static function ($option) use ($command) {
+                if ($option instanceof InputOption) {
+                    $command->getDefinition()->addOption($option);
+                } elseif (is_array($option)) {
+                    $command->addOption(...$option);
+                } else {
+                    throw new LogicException(sprintf('Invalid option type: %s.', gettype($option)));
+                }
+            }, $annotation->options);
         }
 
         if ($annotation->description) {
