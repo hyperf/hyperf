@@ -82,11 +82,15 @@ class ApplicationFactory
         }
 
         if ($annotation->arguments) {
-            $command->getDefinition()->setArguments($annotation->arguments);
+            $command->getDefinition()->setArguments(
+                array_merge($command->getDefinition()->getArguments(), $annotation->arguments)
+            );
         }
 
         if ($annotation->options) {
-            $command->getDefinition()->setOptions($annotation->options);
+            $command->getDefinition()->setOptions(
+                array_merge($command->getDefinition()->getOptions(), $annotation->options)
+            );
         }
 
         if ($annotation->description) {
