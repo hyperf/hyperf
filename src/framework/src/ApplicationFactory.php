@@ -80,10 +80,10 @@ class ApplicationFactory
                 $annotation->name = $name;
             }
             if ($arguments) {
-                $annotation->arguments = $arguments;
+                $annotation->arguments = array_merge($annotation->arguments, $arguments);
             }
             if ($options) {
-                $annotation->options = $options;
+                $annotation->options = array_merge($annotation->options, $options);
             }
         }
 
@@ -92,27 +92,35 @@ class ApplicationFactory
         }
 
         if ($annotation->arguments) {
-            array_map(static function ($argument) use ($command) {
+            $annotation->arguments = array_map(static function ($argument): InputArgument {
                 if ($argument instanceof InputArgument) {
-                    $command->getDefinition()->addArgument($argument);
-                } elseif (is_array($argument)) {
-                    $command->addArgument(...$argument);
-                } else {
-                    throw new LogicException(sprintf('Invalid argument type: %s.', gettype($argument)));
+                    return $argument;
                 }
+
+                if (is_array($argument)) {
+                    return new InputArgument(...$argument);
+                }
+
+                throw new LogicException(sprintf('Invalid argument type: %s.', gettype($argument)));
             }, $annotation->arguments);
+
+            $command->getDefinition()->addArguments($annotation->arguments);
         }
 
         if ($annotation->options) {
-            array_map(static function ($option) use ($command) {
+            $annotation->options = array_map(static function ($option): InputOption {
                 if ($option instanceof InputOption) {
-                    $command->getDefinition()->addOption($option);
-                } elseif (is_array($option)) {
-                    $command->addOption(...$option);
-                } else {
-                    throw new LogicException(sprintf('Invalid option type: %s.', gettype($option)));
+                    return $option;
                 }
+
+                if (is_array($option)) {
+                    return new InputOption(...$option);
+                }
+
+                throw new LogicException(sprintf('Invalid option type: %s.', gettype($option)));
             }, $annotation->options);
+
+            $command->getDefinition()->addOptions($annotation->options);
         }
 
         if ($annotation->description) {
