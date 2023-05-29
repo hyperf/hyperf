@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Framework;
 
 use Hyperf\Command\Annotation\Command;
+use Hyperf\Command\Parser;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Framework\Event\BootApplication;
@@ -45,8 +46,55 @@ class ApplicationFactory
         }
 
         foreach ($commands as $command) {
-            $application->add($container->get($command));
+            $application->add(
+                $this->setCommandProperties($container->get($command))
+            );
         }
+
         return $application;
+    }
+
+    protected function setCommandProperties(object $command)
+    {
+        $annotation = AnnotationCollector::get($command::class)['_c'][Command::class] ?? null;
+
+        if (! $annotation) {
+            return $command;
+        }
+
+        if ($annotation->signature) {
+            [$name, $arguments, $options] = Parser::parse($annotation->signature);
+            if ($name) {
+                $annotation->name = $name;
+            }
+            if ($arguments) {
+                $annotation->arguments = $arguments;
+            }
+            if ($options) {
+                $annotation->options = $options;
+            }
+        }
+
+        if ($annotation->name) {
+            $command->setName($annotation->name);
+        }
+
+        if ($annotation->arguments) {
+            $command->getDefinition()->setArguments($annotation->arguments);
+        }
+
+        if ($annotation->options) {
+            $command->getDefinition()->setOptions($annotation->options);
+        }
+
+        if ($annotation->description) {
+            $command->setDescription($annotation->description);
+        }
+
+        if ($annotation->aliases) {
+            $command->setAliases($annotation->aliases);
+        }
+
+        return $command;
     }
 }
