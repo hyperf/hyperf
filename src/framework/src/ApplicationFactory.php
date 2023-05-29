@@ -19,6 +19,7 @@ use Hyperf\Framework\Event\BootApplication;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 
 class ApplicationFactory
 {
@@ -54,9 +55,9 @@ class ApplicationFactory
         return $application;
     }
 
-    protected function setCommandProperties(object $command)
+    protected function setCommandProperties(SymfonyCommand $command): SymfonyCommand
     {
-        $annotation = AnnotationCollector::get($command::class)['_c'][Command::class] ?? null;
+        $annotation = AnnotationCollector::getClassAnnotation($command::class, Command::class) ?? null;
 
         if (! $annotation) {
             return $command;
