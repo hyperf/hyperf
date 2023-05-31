@@ -1,10 +1,25 @@
-# v3.0.22 - TBD
+# v3.0.23 - TBD
+
+## Added
+
+- [#5757](https://github.com/hyperf/hyperf/pull/5757) Support nacos naming signature.
+
+## Optimized
+
+- [#5768](https://github.com/hyperf/hyperf/pull/5768) Improved `Hyperf\Command\Annotation\Command`, support set properties for command.
+
+# v3.0.22 - 2023-05-27
+
+## Added
+
+- [#5760](https://github.com/hyperf/hyperf/pull/5760) Added namespace for functions of `hyperf/translation`.
+- [#5761](https://github.com/hyperf/hyperf/pull/5761) Added `Hyperf\Coordinator\Timer::until()`.
 
 ## Optimized
 
 - [#5741](https://github.com/hyperf/hyperf/pull/5741) Added deprecated comments to `Hyperf\DB\MySQLConnection`.
 - [#5702](https://github.com/hyperf/hyperf/pull/5702) Optimized the code of `Hyperf\Metric\Adapter\Prometheus\Redis` which allowed to rewrite the prefix about redis keys.
-- [#5757](https://github.com/hyperf/hyperf/pull/5757) Support nacos naming signature.
+- [#5762](https://github.com/hyperf/hyperf/pull/5762) Use non-blocking mode for swoole process by default.
 
 # v3.0.21 - 2023-05-18
 

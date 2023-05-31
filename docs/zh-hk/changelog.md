@@ -1,5 +1,18 @@
 # 版本更新記錄
 
+# v3.0.22 - 2023-05-27
+
+## 新增
+
+- [#5760](https://github.com/hyperf/hyperf/pull/5760) 為組件 `hyperf/translation` 組件的助手函數增加命名空間。
+- [#5761](https://github.com/hyperf/hyperf/pull/5761) 新增方法 `Hyperf\Coordinator\Timer::until()`.
+
+## 優化
+
+- [#5741](https://github.com/hyperf/hyperf/pull/5741) 為 `Hyperf\DB\MySQLConnection` 增加即將過期的標籤。
+- [#5702](https://github.com/hyperf/hyperf/pull/5702) 優化了 `Hyperf\Metric\Adapter\Prometheus\Redis` 的代碼，使其允許被重寫 `KEY` 鍵前綴。
+- [#5762](https://github.com/hyperf/hyperf/pull/5762) 自定義進程默認使用非阻塞模式。
+
 # v3.0.21 - 2023-05-18
 
 ## 新增
