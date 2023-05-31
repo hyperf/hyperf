@@ -2,7 +2,12 @@
 
 ## Added
 
+- [#5757](https://github.com/hyperf/hyperf/pull/5757) Support nacos naming signature.
 - [#5765](https://github.com/hyperf/hyperf/pull/5765) Support Full-Text Search for `database`.
+
+## Optimized
+
+- [#5768](https://github.com/hyperf/hyperf/pull/5768) Improved `Hyperf\Command\Annotation\Command`, support set properties for command.
 
 # v3.0.22 - 2023-05-27
 
