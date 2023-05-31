@@ -3,6 +3,7 @@
 ## Added
 
 - [#5757](https://github.com/hyperf/hyperf/pull/5757) Support nacos naming signature.
+- [#5765](https://github.com/hyperf/hyperf/pull/5765) Support Full-Text Search for `database`.
 
 ## Optimized
 

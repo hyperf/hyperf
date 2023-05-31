@@ -1481,6 +1481,36 @@ class Builder
     }
 
     /**
+     * Add a "where fulltext" clause to the query.
+     *
+     * @param string|string[] $columns
+     * @return $this
+     */
+    public function whereFullText(array|string $columns, string $value, array $options = [], string $boolean = 'and'): static
+    {
+        $type = 'FullText';
+
+        $columns = (array) $columns;
+
+        $this->wheres[] = compact('type', 'columns', 'value', 'options', 'boolean');
+
+        $this->addBinding($value);
+
+        return $this;
+    }
+
+    /**
+     * Add a "or where fulltext" clause to the query.
+     *
+     * @param string|string[] $columns
+     * @return $this
+     */
+    public function orWhereFullText(array|string $columns, string $value, array $options = []): static
+    {
+        return $this->whereFullText($columns, $value, $options, 'or');
+    }
+
+    /**
      * Add a "group by" clause to the query.
      *
      * @param array ...$groups

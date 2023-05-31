@@ -25,8 +25,10 @@ use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\MySqlBitConnection;
+use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Column;
 use Hyperf\Database\Schema\MySqlBuilder;
+use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Container;
 use Hyperf\Engine\Channel;
@@ -68,6 +70,7 @@ class ModelRealBuilderTest extends TestCase
         /** @var ConnectionInterface $conn */
         $conn = $container->get(ConnectionResolverInterface::class)->connection();
         $conn->statement('DROP TABLE IF EXISTS `test`;');
+        $conn->statement('DROP TABLE IF EXISTS `test_full_text_index`;');
         Mockery::close();
     }
 
@@ -538,6 +541,41 @@ class ModelRealBuilderTest extends TestCase
         } finally {
             Connection::clearBeforeExecutingCallbacks();
         }
+    }
+
+    public function testWhereFullText()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        Schema::create('test_full_text_index', function (Blueprint $table) {
+            $table->id('id');
+            $table->string('title', 200);
+            $table->text('body');
+            $table->fullText(['title', 'body']);
+        });
+
+        Db::table('test_full_text_index')->insert([
+            ['title' => 'MySQL Tutorial', 'body' => 'DBMS stands for DataBase ...'],
+            ['title' => 'How To Use MySQL Well', 'body' => 'After you went through a ...'],
+            ['title' => 'Optimizing MySQL', 'body' => 'In this tutorial, we show ...'],
+            ['title' => '1001 MySQL Tricks', 'body' => '1. Never run mysqld as root. 2. ...'],
+            ['title' => 'MySQL vs. YourSQL', 'body' => 'In the following database comparison ...'],
+            ['title' => 'MySQL Security', 'body' => 'When configured properly, MySQL ...'],
+        ]);
+
+        $result = Db::table('test_full_text_index')->whereFullText(['title', 'body'], 'database')->get();
+        $this->assertCount(2, $result);
+        $this->assertSame('MySQL Tutorial', $result[0]->title);
+        $this->assertSame('MySQL vs. YourSQL', $result[1]->title);
+
+        // boolean mode
+        $result = Db::table('test_full_text_index')->whereFullText(['title', 'body'], '+MySQL -YourSQL', ['mode' => 'boolean'])->get();
+        $this->assertCount(5, $result);
+
+        // expanded query
+        $result = Db::table('test_full_text_index')->whereFullText(['title', 'body'], 'database', ['expanded' => true])->get();
+        $this->assertCount(6, $result);
     }
 
     protected function getContainer()
