@@ -1,5 +1,9 @@
 # v3.0.23 - TBD
 
+## Added
+
+- [#5757](https://github.com/hyperf/hyperf/pull/5757) Support nacos naming signature.
+
 ## Optimized
 
 - [#5768](https://github.com/hyperf/hyperf/pull/5768) Improved `Hyperf\Command\Annotation\Command`, support set properties for command.
