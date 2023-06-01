@@ -58,14 +58,6 @@ docker run --name hyperf \
 hyperf/hyperf:8.0-alpine-v3.15-swoole
 ```
 
-- 將 Composer 鏡像設置為阿里雲鏡像，加速國內下載速度
-
-> 視情況而定
-
-```shell
-composer config -g repo.packagist composer https://mirrors.aliyun.com/composer
-```
-
 - 創建項目
 
 ```shell

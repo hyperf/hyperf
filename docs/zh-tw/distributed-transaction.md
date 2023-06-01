@@ -1,8 +1,7 @@
 # 分散式事務
 
 [dtm-client](https://github.com/dtm-php/dtm-client) 是由 Hyperf 團隊開發並維護的 DTM 分散式事務客戶端元件，配合 DTM-Server 可以實現分散式事務的管理，穩定可用於生產環境。   
-[seata/seata-php](https://github.com/seata/seata-php) 是由 Hyperf 團隊開發並貢獻給 Seata 開源社群的 Seata PHP 客戶端元件，配合 Seata-Server 可以實現分散式事務的管理，目前仍在開發迭代中，尚未能用於生產環境，已希望大家能夠共同參與進來加速孵化。
-
+[seata/seata-php](https://github.com/seata/seata-php) 是由 Hyperf 團隊開發並貢獻給 Seata 開源社群的 Seata PHP 客戶端元件，配合 Seata-Server 可以實現分散式事務的管理，目前仍在開發迭代中，尚未能用於生產環境，希望大家能夠共同參與進來加速孵化。
 
 # DTM-Client 介紹
 
