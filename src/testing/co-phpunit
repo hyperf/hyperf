@@ -50,6 +50,26 @@ if (isset($options['prepend'])) {
     require $options['prepend'];
 }
 unset($options);
+if (!isset(getopt('', ['prepend:'])['prepend'])) {
+    (function () {
+        $prepend = null;
+        foreach ($_SERVER['argv'] as $index => $argv) {
+            // --prepend /path/to/file
+            if ($argv === '--prepend') {
+                $prepend = $_SERVER['argv'][$index + 1] ?? null;
+                break;
+            }
+            // --prepend=/path/to/file
+            if (strpos($argv, '--prepend=') === 0) {
+                $prepend = substr($argv, 10);
+                break;
+            }
+        }
+        if ($prepend !== null && file_exists($prepend)) {
+            require $prepend;
+        }
+    })();
+}
 require PHPUNIT_COMPOSER_INSTALL;
 $code = 0;
 Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL, 'exit_condition' => function () {
