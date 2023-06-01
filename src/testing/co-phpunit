@@ -50,6 +50,16 @@ if (isset($options['prepend'])) {
     require $options['prepend'];
 }
 unset($options);
+if (!isset(getopt('', ['prepend:'])['prepend'])) {
+    (function () {
+        foreach ($_SERVER['argv'] as $argv) {
+            if (strpos($argv, '--prepend=') === 0) {
+                require substr($argv, 10);
+                break;
+            }
+        }
+    })();
+}
 require PHPUNIT_COMPOSER_INSTALL;
 $code = 0;
 Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL, 'exit_condition' => function () {
