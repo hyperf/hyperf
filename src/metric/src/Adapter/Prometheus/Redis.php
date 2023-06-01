@@ -252,7 +252,7 @@ LUA
             }
             // We need set semantics.
             // This is the equivalent of array_unique but for arrays of arrays.
-            $allLabelValues = array_map('unserialize', array_unique(array_map('serialize', $allLabelValues ?? [])));
+            $allLabelValues = array_map('unserialize', array_unique(array_map('serialize', $allLabelValues)));
             sort($allLabelValues);
 
             foreach ($allLabelValues as $labelValues) {

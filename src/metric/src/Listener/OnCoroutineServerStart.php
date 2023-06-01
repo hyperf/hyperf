@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
@@ -25,7 +26,6 @@ use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\Exception\RuntimeException;
 use Hyperf\Metric\MetricSetter;
 use Hyperf\Server\Event\MainCoroutineServerStart;
-use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 
