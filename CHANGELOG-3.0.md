@@ -5,6 +5,10 @@
 - [#5757](https://github.com/hyperf/hyperf/pull/5757) Support nacos naming signature.
 - [#5765](https://github.com/hyperf/hyperf/pull/5765) Support Full-Text Search for `database`.
 
+## Fixed
+
+- [#5780](https://github.com/hyperf/hyperf/pull/5780) Convert carrier key to string.
+
 ## Optimized
 
 - [#5768](https://github.com/hyperf/hyperf/pull/5768) Improved `Hyperf\Command\Annotation\Command`, support set properties for command.
