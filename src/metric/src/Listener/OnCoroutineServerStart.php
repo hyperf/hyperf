@@ -17,8 +17,8 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
-use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
+use Hyperf\Engine\Coroutine;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Aspect\MetricAspect;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
@@ -151,7 +151,7 @@ class OnCoroutineServerStart implements ListenerInterface
 
         $this->container->set(MetricAspect::METRIC_CHANNEL, $channel);
 
-        \Hyperf\Engine\Coroutine::create(function () use ($channel) {
+        Coroutine::create(function () use ($channel) {
             while (true) {
                 $metric = $channel->pop();
 
