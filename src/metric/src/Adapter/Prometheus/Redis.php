@@ -350,7 +350,7 @@ LUA
     protected function toMetricKey(array $data): string
     {
         // TODO: This is a hack, we should remove it since v3.1.
-        if (! str_ends_with(':', self::$prefix)) {
+        if (! str_ends_with(self::$prefix, ':')) {
             $prefix = self::$prefix . ':';
         }
 

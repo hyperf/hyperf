@@ -60,9 +60,15 @@ class RedisTest extends TestCase
             'name' => 'hyperf_metric',
         ];
 
+        Redis::setPrefix('prometheus:');
         $method = new ReflectionMethod(Redis::class, 'toMetricKey');
         $method->setAccessible(true);
+        self::assertEquals('prometheus:counter:hyperf_metric{counter}', $method->invoke(new Redis(new \Redis()), $data));
 
+        // 兼容 < v3.1
+        Redis::setPrefix('PROMETHEUS_');
+        $method = new ReflectionMethod(Redis::class, 'toMetricKey');
+        $method->setAccessible(true);
         self::assertEquals('PROMETHEUS_:counter:hyperf_metric{counter}', $method->invoke(new Redis(new \Redis()), $data));
     }
 

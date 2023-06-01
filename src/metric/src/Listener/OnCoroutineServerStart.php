@@ -12,11 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
 use Hyperf\Coroutine\Coroutine;
+use Hyperf\Engine\Channel;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Metric\Aspect\MetricAspect;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\Exception\RuntimeException;
@@ -24,7 +27,7 @@ use Hyperf\Metric\MetricSetter;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-
+use Throwable;
 use function gc_status;
 use function getrusage;
 use function memory_get_peak_usage;
@@ -85,6 +88,8 @@ class OnCoroutineServerStart implements ListenerInterface
             );
         }
 
+        $this->metricChannel();
+
         $this->spawnHandle();
 
         $eventDispatcher = $this->container->get(EventDispatcherInterface::class);
@@ -136,6 +141,31 @@ class OnCoroutineServerStart implements ListenerInterface
         Coroutine::create(function () use ($timerId) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
             $this->timer->clear($timerId);
+        });
+    }
+
+    protected function metricChannel(): void
+    {
+        $channel = new Channel(65535);
+
+        $this->container->set(MetricAspect::METRIC_CHANNEL, $channel);
+
+        \Hyperf\Engine\Coroutine::create(function () use ($channel) {
+            while (true) {
+                $metric = $channel->pop();
+
+                Coroutine::create(function () use ($metric) {
+                    if (is_callable($metric)) {
+                        try {
+                            $metric();
+                        } catch (Throwable $exception) {
+                            if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
+                                $logger->warning((string) $exception);
+                            }
+                        }
+                    }
+                });
+            }
         });
     }
 }
