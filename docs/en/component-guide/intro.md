@@ -43,10 +43,6 @@ The purpose of this is to allow the `hyperf-skeleton` project to be directly sou
          "hyperf": {
              "type": "path",
              "url": "../hyperf/src/*"
-         },
-         "packagist": {
-             "type": "composer",
-             "url": "https://mirrors.aliyun.com/composer"
          }
      }
 }
