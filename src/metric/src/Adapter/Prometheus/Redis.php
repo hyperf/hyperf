@@ -239,6 +239,7 @@ LUA
             unset($raw['__meta']);
             // Add the Inf bucket, so we can compute it later on
             $histogram['buckets'][] = '+Inf';
+            $allLabelValues = [];
 
             foreach (array_keys($raw) as $k) {
                 $d = Json::decode($k);
