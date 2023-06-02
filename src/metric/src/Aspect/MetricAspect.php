@@ -11,15 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Metric\Aspect;
 
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\Engine\Channel;
-use Hyperf\Metric\Adapter\Prometheus\Constants;
 use Hyperf\Metric\Annotation\Metric;
-use Psr\Container\ContainerExceptionInterface;
+use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Throwable;
 
 class MetricAspect extends AbstractAspect
@@ -30,8 +26,14 @@ class MetricAspect extends AbstractAspect
 
     public ?int $priority = 1;
 
+    /**
+     * @var \Hyperf\Metric\Adapter\Prometheus\MetricFactory
+     */
+    protected MetricFactoryInterface $factory;
+
     public function __construct(protected ContainerInterface $container)
     {
+        $this->factory = $this->container->get(MetricFactoryInterface::class);
     }
 
     /**
@@ -39,37 +41,6 @@ class MetricAspect extends AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint): void
     {
-        if (is_null($channel = $this->getChannel())) {
-            $proceedingJoinPoint->process();
-
-            return;
-        }
-
-        $channel->push(static function () use ($proceedingJoinPoint) {
-            $proceedingJoinPoint->process();
-        }, 0.0001);
-    }
-
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
-    protected function getChannel(): ?Channel
-    {
-        if (! $this->container->has(ConfigInterface::class) || ! $this->container->has(self::METRIC_CHANNEL)) {
-            return null;
-        }
-
-        if ($this->container->get(ConfigInterface::class)->get('metric.metric.prometheus.mode') !== Constants::CUSTOM_MODE) {
-            return null;
-        }
-
-        $channel = $this->container->get(self::METRIC_CHANNEL);
-
-        if (! $channel instanceof Channel) {
-            return null;
-        }
-
-        return $channel;
+        $this->factory->channel?->push(static fn () => $proceedingJoinPoint->process(), 0.0001);
     }
 }

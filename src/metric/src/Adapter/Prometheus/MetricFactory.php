@@ -17,6 +17,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants as Coord;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coroutine\Coroutine;
+use Hyperf\Engine\Channel;
 use Hyperf\Engine\Http\ServerFactory;
 use Hyperf\Engine\Http\Stream;
 use Hyperf\Engine\ResponseEmitter;
@@ -35,9 +36,12 @@ use Prometheus\CollectorRegistry;
 use Prometheus\Exception\MetricsRegistrationException;
 use Prometheus\RenderTextFormat;
 use Psr\Http\Message\RequestInterface;
+use Throwable;
 
 class MetricFactory implements MetricFactoryInterface
 {
+    public ?Channel $channel = null;
+
     private string $name;
 
     public function __construct(
@@ -165,7 +169,33 @@ class MetricFactory implements MetricFactoryInterface
 
     protected function customHandle(): void
     {
+        $this->channel = new Channel(65535);
+
+        Coroutine::create(function () {
+            while (true) {
+                if (! $this->channel->isAvailable()) {
+                    break;
+                }
+
+                $metric = $this->channel->pop();
+
+                Coroutine::create(function () use ($metric) {
+                    if (! is_callable($metric)) {
+                        return;
+                    }
+
+                    try {
+                        $metric();
+                    } catch (Throwable $exception) {
+                        $this->logger->warning((string) $exception);
+                    }
+                });
+            }
+        });
+
         CoordinatorManager::until(Coord::WORKER_EXIT)->yield(); // Yield forever
+
+        $this->channel->close();
     }
 
     private function getNamespace(): string
