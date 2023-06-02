@@ -1,5 +1,21 @@
 # 版本更新記錄
 
+# v3.0.23 - 2023-06-02
+
+## 新增
+
+- [#5757](https://github.com/hyperf/hyperf/pull/5757) 支持 `Nacos` 服務註冊與發現簽名機制。
+- [#5765](https://github.com/hyperf/hyperf/pull/5765) 為 `database` 組件增加全文檢索的功能。
+
+## 修復
+
+- [#5782](https://github.com/hyperf/hyperf/pull/5782) 修復 `prometheus` 無法正常收集 `histograms` 的問題。
+
+## 優化
+
+- [#5768](https://github.com/hyperf/hyperf/pull/5768) 為 `Hyperf\Command\Annotation\Command` 組件增加參數支持。
+- [#5780](https://github.com/hyperf/hyperf/pull/5780) 修復 `Zipkin\Propagation\Map` 中 `String` 類型檢測錯誤的問題。
+
 # v3.0.22 - 2023-05-27
 
 ## 新增
