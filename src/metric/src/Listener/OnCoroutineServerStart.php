@@ -12,18 +12,25 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
 use Hyperf\Coroutine\Coroutine;
+use Hyperf\Engine\Channel;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Metric\Adapter\Prometheus\Constants as PrometheusConstants;
+use Hyperf\Metric\Aspect\MetricAspect;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\Exception\RuntimeException;
 use Hyperf\Metric\MetricSetter;
 use Hyperf\Server\Event\MainCoroutineServerStart;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Throwable;
 
 use function gc_status;
 use function getrusage;
@@ -46,15 +53,16 @@ class OnCoroutineServerStart implements ListenerInterface
 
     private bool $running = false;
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __construct(protected ContainerInterface $container)
     {
         $this->config = $container->get(ConfigInterface::class);
         $this->timer = new Timer();
     }
 
-    /**
-     * @return string[] returns the events that you want to listen
-     */
     public function listen(): array
     {
         return [
@@ -63,8 +71,8 @@ class OnCoroutineServerStart implements ListenerInterface
     }
 
     /**
-     * Handle the Event when the event is triggered, all listeners will
-     * complete before the event is returned to the EventDispatcher.
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function process(object $event): void
     {
@@ -86,6 +94,7 @@ class OnCoroutineServerStart implements ListenerInterface
         }
 
         $this->spawnHandle();
+        $this->metricChannel();
 
         $eventDispatcher = $this->container->get(EventDispatcherInterface::class);
         $eventDispatcher->dispatch(new MetricFactoryReady($this->factory));
@@ -136,6 +145,36 @@ class OnCoroutineServerStart implements ListenerInterface
         Coroutine::create(function () use ($timerId) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
             $this->timer->clear($timerId);
+        });
+    }
+
+    protected function metricChannel(): void
+    {
+        if ($this->config->get('metric.metric.prometheus.mode') !== PrometheusConstants::CUSTOM_MODE
+            || ! method_exists($this->container, 'set')) {
+            return;
+        }
+
+        $channel = new Channel(65535);
+
+        $this->container->set(MetricAspect::METRIC_CHANNEL, $channel);
+
+        Coroutine::create(function () use ($channel) {
+            while (true) {
+                $metric = $channel->pop();
+
+                Coroutine::create(function () use ($metric) {
+                    if (is_callable($metric)) {
+                        try {
+                            $metric();
+                        } catch (Throwable $exception) {
+                            if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
+                                $logger->warning((string) $exception);
+                            }
+                        }
+                    }
+                });
+            }
         });
     }
 }

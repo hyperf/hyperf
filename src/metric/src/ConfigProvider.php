@@ -15,6 +15,7 @@ use Domnikl\Statsd\Connection;
 use Domnikl\Statsd\Connection\UdpSocket;
 use Hyperf\Metric\Aspect\CounterAnnotationAspect;
 use Hyperf\Metric\Aspect\HistogramAnnotationAspect;
+use Hyperf\Metric\Aspect\MetricAspect;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Listener\OnBeforeHandle;
 use Hyperf\Metric\Listener\OnCoroutineServerStart;
@@ -41,6 +42,7 @@ class ConfigProvider
             'aspects' => [
                 CounterAnnotationAspect::class,
                 HistogramAnnotationAspect::class,
+                MetricAspect::class,
             ],
             'publish' => [
                 [
