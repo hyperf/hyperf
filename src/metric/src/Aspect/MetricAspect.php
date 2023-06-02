@@ -13,10 +13,10 @@ namespace Hyperf\Metric\Aspect;
 
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Metric\Adapter\Prometheus\MetricFactory;
 use Hyperf\Metric\Annotation\Metric;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Psr\Container\ContainerInterface;
-use Throwable;
 
 class MetricAspect extends AbstractAspect
 {
@@ -27,7 +27,7 @@ class MetricAspect extends AbstractAspect
     public ?int $priority = 1;
 
     /**
-     * @var \Hyperf\Metric\Adapter\Prometheus\MetricFactory
+     * @var MetricFactory
      */
     protected MetricFactoryInterface $factory;
 
@@ -36,11 +36,16 @@ class MetricAspect extends AbstractAspect
         $this->factory = $this->container->get(MetricFactoryInterface::class);
     }
 
-    /**
-     * @throws Throwable
-     */
     public function process(ProceedingJoinPoint $proceedingJoinPoint): void
     {
-        $this->factory->channel?->push(static fn () => $proceedingJoinPoint->process(), 0.0001);
+        if (! $this->factory instanceof MetricFactory) {
+            return;
+        }
+
+        if (! $this->factory->channel) {
+            return;
+        }
+
+        $this->factory->channel->push(static fn () => $proceedingJoinPoint->process(), 0.0001);
     }
 }
