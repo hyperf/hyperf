@@ -38,14 +38,11 @@ class MetricAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        if (! $this->factory instanceof MetricFactory) {
-            return $proceedingJoinPoint->process();
+        if ($this->factory instanceof MetricFactory && $this->factory->channel) {
+            $this->factory->channel->push(static fn () => $proceedingJoinPoint->process(), 0.0001);
+            return;
         }
 
-        if (! $this->factory->channel) {
-            return $proceedingJoinPoint->process();
-        }
-
-        $this->factory->channel->push(static fn () => $proceedingJoinPoint->process(), 0.0001);
+        return $proceedingJoinPoint->process();
     }
 }
