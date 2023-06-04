@@ -1,5 +1,9 @@
 # v3.0.24 - TBD
 
+# Optimized
+
+- [#5789](https://github.com/hyperf/hyperf/pull/5789) Support `psr/http-message`.
+
 # v3.0.23 - 2023-06-02
 
 ## Added
