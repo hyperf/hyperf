@@ -73,6 +73,20 @@ class Ast
         return ($namespace && $className) ? $namespace . '\\' . $className : '';
     }
 
+    /**
+     * @deprecated
+     * @param string $className
+     * @return string
+     */
+    private function getCodeByClassName(string $className): string
+    {
+        $file = Composer::getLoader()->findFile($className);
+        if (! $file) {
+            return '';
+        }
+        return file_get_contents($file);
+    }
+
     private function getCodeAndFilePathByClassName(string $className): array
     {
         $file = Composer::getLoader()->findFile($className);
