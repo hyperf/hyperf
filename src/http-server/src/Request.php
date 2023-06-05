@@ -50,7 +50,7 @@ class Request implements RequestInterface
 
     public function __set($name, $value)
     {
-        return $this->storeRequestProperty($name, $value);
+        $this->storeRequestProperty($name, $value);
     }
 
     /**
