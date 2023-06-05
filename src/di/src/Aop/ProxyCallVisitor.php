@@ -48,7 +48,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     private bool $shouldRewrite = false;
 
-    public function __construct(protected VisitorMetadata $visitorMetadata, protected string $filePath)
+    public function __construct(protected VisitorMetadata $visitorMetadata, protected string $filePath = '')
     {
     }
 

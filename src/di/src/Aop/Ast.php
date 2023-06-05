@@ -74,7 +74,7 @@ class Ast
     }
 
     /**
-     * @deprecated
+     * @deprecated since 3.1
      * @param string $className
      * @return string
      */
