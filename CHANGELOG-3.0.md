@@ -1,6 +1,10 @@
 # v3.0.24 - TBD
 
-# Optimized
+## Fixed
+
+- [#5794](https://github.com/hyperf/hyperf/pull/5794) Fixed bug that `__FILE__` and `__DIR__` cannot be rewritten successfully in proxy classes.
+
+## Optimized
 
 - [#5789](https://github.com/hyperf/hyperf/pull/5789) Support `psr/http-message`.
 
