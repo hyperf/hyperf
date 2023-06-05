@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
+use Hyperf\Support\Composer;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Assign;
@@ -48,7 +49,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     private bool $shouldRewrite = false;
 
-    public function __construct(protected VisitorMetadata $visitorMetadata, protected string $filePath = '')
+    public function __construct(protected VisitorMetadata $visitorMetadata)
     {
     }
 
@@ -118,10 +119,16 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 break;
             case $node instanceof MagicConstDir:
                 // Rewrite __DIR__ as the real directory path
-                return new String_(dirname($this->filePath));
+                if($file = Composer::getLoader()->findFile($this->visitorMetadata->className)){
+                    return new String_(dirname(realpath($file)));
+                }
+                break;
             case $node instanceof MagicConstFile:
                 // Rewrite __FILE__ to the real file path
-                return new String_($this->filePath);
+                if($file = Composer::getLoader()->findFile($this->visitorMetadata->className)){
+                    return new String_(realpath($file));
+                }
+                break;
         }
         return null;
     }

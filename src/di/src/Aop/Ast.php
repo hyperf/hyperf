@@ -42,14 +42,14 @@ class Ast
 
     public function proxy(string $className)
     {
-        [$code, $filePath] = $this->getCodeAndFilePathByClassName($className);
+        $code = $this->getCodeByClassName($className);
         $stmts = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
         $visitorMetadata = new VisitorMetadata($className);
         // User could modify or replace the node visitors by Hyperf\Di\Aop\AstVisitorRegistry.
         $queue = clone AstVisitorRegistry::getQueue();
         foreach ($queue as $string) {
-            $visitor = new $string($visitorMetadata, $filePath);
+            $visitor = new $string($visitorMetadata);
             $traverser->addVisitor($visitor);
         }
         $modifiedStmts = $traverser->traverse($stmts);
@@ -73,9 +73,6 @@ class Ast
         return ($namespace && $className) ? $namespace . '\\' . $className : '';
     }
 
-    /**
-     * @deprecated since 3.1
-     */
     private function getCodeByClassName(string $className): string
     {
         $file = Composer::getLoader()->findFile($className);
@@ -83,14 +80,5 @@ class Ast
             return '';
         }
         return file_get_contents($file);
-    }
-
-    private function getCodeAndFilePathByClassName(string $className): array
-    {
-        $file = Composer::getLoader()->findFile($className);
-        if (! $file) {
-            return ['', ''];
-        }
-        return [file_get_contents($file), realpath($file)];
     }
 }
