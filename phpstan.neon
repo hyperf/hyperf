@@ -69,3 +69,5 @@ parameters:
     - '#\(Hyperf\\Utils\\Collection\) does not accept Hyperf\\Collection\\Collection#'
     - '#should return Hyperf\\Utils\\Collection but returns Hyperf\\Collection\\Collectio#'
     - '#Call to an undefined method Hyperf\\Collection\\HigherOrderCollectionProxy::\w+\(\)#'
+    - message: '#Method Hyperf\\Di\\Aop\\Ast::getCodeByClassName\(\) is unused#'
+      path: src/di/src/Aop/Ast.php
