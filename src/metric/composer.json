@@ -11,10 +11,10 @@
     ],
     "description": "hyperf metric component",
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "hyperf/codec": "~3.0.0",
         "hyperf/contract": "~3.0.0",
-        "hyperf/engine": "^1.5|^2.3",
+        "hyperf/engine": "^2.3",
         "hyperf/guzzle": "~3.0.0",
         "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0",

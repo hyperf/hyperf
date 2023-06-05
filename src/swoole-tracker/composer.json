@@ -16,7 +16,7 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "hyperf/contract": "~3.0.0",
         "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0",

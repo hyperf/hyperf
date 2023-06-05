@@ -19,7 +19,7 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "hyperf/codec": "~3.0.0",
         "hyperf/config-center": "~3.0.0",
         "hyperf/contract": "~3.0.0",
