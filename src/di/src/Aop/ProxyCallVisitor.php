@@ -119,13 +119,13 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 break;
             case $node instanceof MagicConstDir:
                 // Rewrite __DIR__ as the real directory path
-                if($file = Composer::getLoader()->findFile($this->visitorMetadata->className)){
+                if ($file = Composer::getLoader()->findFile($this->visitorMetadata->className)) {
                     return new String_(dirname(realpath($file)));
                 }
                 break;
             case $node instanceof MagicConstFile:
                 // Rewrite __FILE__ to the real file path
-                if($file = Composer::getLoader()->findFile($this->visitorMetadata->className)){
+                if ($file = Composer::getLoader()->findFile($this->visitorMetadata->className)) {
                     return new String_(realpath($file));
                 }
                 break;
