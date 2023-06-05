@@ -75,8 +75,6 @@ class Ast
 
     /**
      * @deprecated since 3.1
-     * @param string $className
-     * @return string
      */
     private function getCodeByClassName(string $className): string
     {
