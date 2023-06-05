@@ -53,7 +53,7 @@ CODETEMPLATE;
             'SomeClass',
         ], []);
 
-        $proxyCallVisitor = new ProxyCallVisitor(new VisitorMetadata('SomeClass'));
+        $proxyCallVisitor = new ProxyCallVisitor(new VisitorMetadata('SomeClass'), '');
 
         $reflectionMethod = new ReflectionMethod($proxyCallVisitor, 'shouldRewrite');
         $reflectionMethod->setAccessible(true);
@@ -69,7 +69,7 @@ CODETEMPLATE;
         ], []);
 
         $visitorMetadata = new VisitorMetadata('SomeClass');
-        $proxyCallVisitor = new ProxyCallVisitor($visitorMetadata);
+        $proxyCallVisitor = new ProxyCallVisitor($visitorMetadata, '');
 
         $reflectionMethod = new ReflectionMethod($proxyCallVisitor, 'shouldRewrite');
         $reflectionMethod->setAccessible(true);
