@@ -19,7 +19,6 @@
     },
     "require": {
         "php": ">=8.1",
-        "ext-swoole": ">=5.0",
         "hyperf/collection": "~3.0.0",
         "hyperf/database": "~3.0.0",
         "hyperf/support": "~3.0.0",
