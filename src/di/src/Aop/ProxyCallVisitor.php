@@ -24,6 +24,9 @@ use PhpParser\Node\Scalar\MagicConst\Class_ as MagicConstClass;
 use PhpParser\Node\Scalar\MagicConst\Function_ as MagicConstFunction;
 use PhpParser\Node\Scalar\MagicConst\Method as MagicConstMethod;
 use PhpParser\Node\Scalar\MagicConst\Trait_ as MagicConstTrait;
+use PhpParser\Node\Scalar\MagicConst\Dir as MagicConstDir;
+use PhpParser\Node\Scalar\MagicConst\File as MagicConstFile;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
@@ -45,7 +48,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     private bool $shouldRewrite = false;
 
-    public function __construct(protected VisitorMetadata $visitorMetadata)
+    public function __construct(protected VisitorMetadata $visitorMetadata, protected string $filePath)
     {
     }
 
@@ -113,6 +116,12 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                     return new Variable('__method__');
                 }
                 break;
+            case $node instanceof MagicConstDir:
+                // Rewrite __DIR__ as the real directory path
+                return new String_(dirname($this->filePath));
+            case $node instanceof MagicConstFile:
+                // Rewrite __FILE__ to the real file path
+                return new String_($this->filePath);
         }
         return null;
     }
