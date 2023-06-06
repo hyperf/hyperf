@@ -23,8 +23,7 @@
     "require-dev": {
         "hyperf/guzzle": "~3.0.0"
     },
-    "suggest": {
-    },
+    "suggest": {},
     "autoload": {
         "psr-4": {
             "Hyperf\\Consul\\": "src/"

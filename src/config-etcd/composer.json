@@ -21,11 +21,11 @@
     },
     "require": {
         "php": ">=8.1",
-        "hyperf/codec": "~3.0.0",
-        "hyperf/config-center": "~3.0.0",
-        "hyperf/etcd": "~3.0.0",
-        "hyperf/support": "~3.0.0",
-        "hyperf/utils": "~3.0.0"
+        "hyperf/codec": "~3.1.0",
+        "hyperf/config-center": "~3.1.0",
+        "hyperf/etcd": "~3.1.0",
+        "hyperf/support": "~3.1.0",
+        "hyperf/utils": "~3.1.0"
     },
     "config": {
         "sort-packages": true

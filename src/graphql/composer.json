@@ -11,9 +11,9 @@
     "require": {
         "php": ">=8.1",
         "thecodingmachine/graphqlite": "^3.0",
-        "hyperf/codec": "~3.0.0",
-        "hyperf/contract": "~3.0.0",
-        "hyperf/di": "~3.0.0"
+        "hyperf/codec": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/di": "~3.1.0"
     },
     "suggest": {
         "hyperf/http-server": "Required to use GraphQLMiddleware.",
