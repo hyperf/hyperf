@@ -63,7 +63,7 @@ class AbstractDriverTest extends TestCase
         $this->assertSame($assert, $config->get('test'));
     }
 
-    public function getConfig(): array
+    public static function getConfig(): array
     {
         return [
             [self::getEtcdConfig()],
@@ -71,7 +71,7 @@ class AbstractDriverTest extends TestCase
         ];
     }
 
-    public function getConfigAndPipeMessage()
+    public static function getConfigAndPipeMessage()
     {
         $assert = ['message' => 'Hello Hyperf', 'id' => 1];
         return [
