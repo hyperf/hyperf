@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\DbConnection;
 
 use Hyperf\Contract\ConnectionInterface;
@@ -54,7 +55,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
             return $this;
         }
 
-        if (! $this->reconnect()) {
+        if (!$this->reconnect()) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 
@@ -98,9 +99,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
         return true;
     }
 
-    /**
-     * @deprecated This method will be removed in v3.1, please use `$this->transactionLevel() > 0`.
-     */
+
     public function isTransaction(): bool
     {
         return $this->transactionLevel() > 0;
