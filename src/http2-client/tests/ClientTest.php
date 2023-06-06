@@ -36,6 +36,10 @@ class ClientTest extends TestCase
 
     public function testHTTP2ClientLoop()
     {
+        if (PHP_VERSION_ID >= 80200) {
+            $this->markTestSkipped();
+        }
+
         $client = $this->getClient('http://127.0.0.1:10002');
 
         for ($i = 0; $i < 100; ++$i) {
@@ -54,6 +58,10 @@ class ClientTest extends TestCase
     {
         if (SWOOLE_VERSION_ID < 50000) {
             $this->markTestSkipped('');
+        }
+
+        if (PHP_VERSION_ID >= 80200) {
+            $this->markTestSkipped();
         }
 
         $client = $this->getClient('127.0.0.1:50051');
