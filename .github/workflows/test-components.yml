@@ -220,6 +220,7 @@ jobs:
       - name: Run Test Cases
         run: |
           composer analyse src/http-message
+          composer analyse src/http-server
           vendor/bin/phpunit src/http-message
   log:
     name: Test for Psr Log V1.0 ~ V3.0
