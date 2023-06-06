@@ -24,6 +24,7 @@ We have provided you with a [Hyperf component development guide](en/component-gu
 
 ## Route 
  - [nikic/fastroute](https://github.com/nikic/FastRoute) a commonly used high speed routing
+ - [lazychanger/urlrewrite](https://github.com/lazychanger/urlrewrite) A URL rewriting tool based on the same routing rules as [nikic/fastroute](https://github.com/nikic/FastRoute) based on PSR-7
 
 ## Event
  - [hyperf/event](https://github.com/hyperf/event) PSR-14 based event manager provided by Hyperf officially
@@ -57,6 +58,8 @@ We have provided you with a [Hyperf component development guide](en/component-gu
  - [hyperf/redis](https://github.com/hyperf/redis) The Redis coroutine client provided by Hyperf officially
  - [hyperf/websocket-client](https://github.com/hyperf/websocket-client) The WebSocket coroutine client provided by Hyperf officially
  - [hyperf/cache](https://github.com/hyperf/cache) PSR-16-based cache coroutine client provided by Hyperf officially
+ - [friendsofhyperf/http-client](https://github.com/friendsofhyperf/http-client) The Guzzle HTTP coroutine client based on Hyperf
+ - [friendsofhyperf/openai-client](https://github.com/friendsofhyperf/openai-client) The OpenAI coroutine client based on Hyperf
 
 ## Message queue
  - [hyperf/amqp](https://github.com/hyperf/amqp) AMQP coroutine component provided by Hyperf officially

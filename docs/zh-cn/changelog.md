@@ -1,5 +1,34 @@
 # 版本更新记录
 
+# v3.0.23 - 2023-06-02
+
+## 新增
+
+- [#5757](https://github.com/hyperf/hyperf/pull/5757) 支持 `Nacos` 服务注册与发现签名机制。
+- [#5765](https://github.com/hyperf/hyperf/pull/5765) 为 `database` 组件增加全文检索的功能。
+
+## 修复
+
+- [#5782](https://github.com/hyperf/hyperf/pull/5782) 修复 `prometheus` 无法正常收集 `histograms` 的问题。
+
+## 优化
+
+- [#5768](https://github.com/hyperf/hyperf/pull/5768) 为 `Hyperf\Command\Annotation\Command` 组件增加参数支持。
+- [#5780](https://github.com/hyperf/hyperf/pull/5780) 修复 `Zipkin\Propagation\Map` 中 `String` 类型检测错误的问题。
+
+# v3.0.22 - 2023-05-27
+
+## 新增
+
+- [#5760](https://github.com/hyperf/hyperf/pull/5760) 为组件 `hyperf/translation` 组件的助手函数增加命名空间。
+- [#5761](https://github.com/hyperf/hyperf/pull/5761) 新增方法 `Hyperf\Coordinator\Timer::until()`.
+
+## 优化
+
+- [#5741](https://github.com/hyperf/hyperf/pull/5741) 为 `Hyperf\DB\MySQLConnection` 增加即将过期的标签。
+- [#5702](https://github.com/hyperf/hyperf/pull/5702) 优化了 `Hyperf\Metric\Adapter\Prometheus\Redis` 的代码，使其允许被重写 `KEY` 键前缀。
+- [#5762](https://github.com/hyperf/hyperf/pull/5762) 自定义进程默认使用非阻塞模式。
+
 # v3.0.21 - 2023-05-18
 
 ## 新增

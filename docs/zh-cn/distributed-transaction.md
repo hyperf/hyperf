@@ -1,8 +1,7 @@
 # 分布式事务
 
 [dtm-client](https://github.com/dtm-php/dtm-client) 是由 Hyperf 团队开发并维护的 DTM 分布式事务客户端组件，配合 DTM-Server 可以实现分布式事务的管理，稳定可用于生产环境。   
-[seata/seata-php](https://github.com/seata/seata-php) 是由 Hyperf 团队开发并贡献给 Seata 开源社区的 Seata PHP 客户端组件，配合 Seata-Server 可以实现分布式事务的管理，目前仍在开发迭代中，尚未能用于生产环境，已希望大家能够共同参与进来加速孵化。
-
+[seata/seata-php](https://github.com/seata/seata-php) 是由 Hyperf 团队开发并贡献给 Seata 开源社区的 Seata PHP 客户端组件，配合 Seata-Server 可以实现分布式事务的管理，目前仍在开发迭代中，尚未能用于生产环境，希望大家能够共同参与进来加速孵化。
 
 # DTM-Client 介绍
 

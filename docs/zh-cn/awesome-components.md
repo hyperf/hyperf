@@ -1,7 +1,7 @@
 # 协程组件库
 
 所有官方提供的组件库均已进行协程化处理，可安全地在 Hyperf 内或其它协程框架内使用，基于 Hyperf 的开放性和可扩展性，社区可对此开发或适配各种各样的组件，得益于此，Hyperf 将存在着无限的可能性。
-本页将收录各个适配了 Hyperf 的协程组件 和 已经经过验证可安全地用于协程下的常用库，以便您快速的从中选择合适的组件完成您的需求。
+本页将收录各个适配了 Hyperf 的协程组件和已经经过验证可安全地用于协程下的常用库，以便您快速的从中选择合适的组件完成您的需求。
 
 > 组件顺序以收录时间排序
 
@@ -18,6 +18,7 @@
 ## 路由
 
 - [nikic/fastroute](https://github.com/nikic/FastRoute) 一个常用的高速路由
+- [lazychanger/urlrewrite](https://github.com/lazychanger/urlrewrite) 一个基于PSR-7与 [nikic/fastroute](https://github.com/nikic/FastRoute) 相同路由规则的URL重写工具
 
 ## 事件
 
@@ -42,7 +43,7 @@
 ## 依赖注入容器
 
 - [hyperf/di](https://github.com/hyperf/di) Hyperf 官方提供的支持注解及 AOP 的依赖注入容器
-- [hyperf/pimple](https://github.com/hyperf-cloud/pimple-integration) 基于 `pimple/pimple` 实现的轻量级符合 `PSR11` 规范的容器组件。可以减少其他框架使用 `Hyperf` 组件时的成本。
+- [hyperf/pimple](https://github.com/hyperf-cloud/pimple-integration) 基于 `pimple/pimple` 实现的轻量级符合 `PSR11` 规范的容器组件。可以减少其他框架使用 `Hyperf` 组件时的成本
 
 ## 服务
 
@@ -63,6 +64,8 @@
 - [hyperf/websocket-client](https://github.com/hyperf/websocket-client) Hyperf 官方提供的 WebSocket 协程客户端
 - [hyperf/cache](https://github.com/hyperf/cache) Hyperf 官方提供的基于 PSR-16 的缓存协程客户端，支持注解的使用方式
 - [chungou/elasticsearch](https://github.com/kaychem/hyperf-elasticsearch) 一个简单的 Elasticsearch 构造器
+- [friendsofhyperf/http-client](https://github.com/friendsofhyperf/http-client) 基于 Hyperf 的 Guzzle HTTP 协程客户端
+- [friendsofhyperf/openai-client](https://github.com/friendsofhyperf/openai-client) 基于 Hyperf 的 OpenAI 客户端
 
 ## 消息队列
 
@@ -122,7 +125,7 @@
 
 - [hyperf/swoole-tracker](https://github.com/hyperf/swoole-tracker) Hyperf 官方提供的对接 Swoole Tracker 的组件，提供阻塞分析、性能分析、内存泄漏分析、运行状态及调用统计等功能
 - [hyperf/task](https://github.com/hyperf/task) Hyperf 官方提供的 Task 组件，对 Swoole 的 Task 机制进行了封装及抽象，提供便捷的注解用法
-- [hyperf/gotask](https://github.com/hyperf/gotask) GoTask 通过 Swoole 进程管理功能启动 Go 进程作为 Swoole 主进程边车(Sidecar)，利用进程通讯将任务投递给边车处理并接收返回值。可以理解为 Go 版的 Swoole TaskWorker。
+- [hyperf/gotask](https://github.com/hyperf/gotask) GoTask 通过 Swoole 进程管理功能启动 Go 进程作为 Swoole 主进程边车(Sidecar)，利用进程通讯将任务投递给边车处理并接收返回值。可以理解为 Go 版的 Swoole TaskWorker
 
 ## 开发调试
 
@@ -141,7 +144,7 @@
 
 ## 分布式锁
 
-- [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根据 Laravel 的 lock 组件改写，适配于 Hyperf 框架。
+- [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根据 Laravel 的 lock 组件改写，适配于 Hyperf 框架
 
 ## 分布式事务
 
@@ -149,14 +152,13 @@
 
 ## 注解配置
 
-- [hyperf-helper/dependency](https://github.com/lazychanger/hyperf-helper-dependency) 使用注解快速的配置依赖关系，并且支持依赖优先级。
+- [hyperf-helper/dependency](https://github.com/lazychanger/hyperf-helper-dependency) 使用注解快速的配置依赖关系，并且支持依赖优先级
 
 ## 第三方 SDK
 
 - [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 协程的支付宝/微信支付 SDK
-- [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 协程的第三方登录授权 SDK（QQ、微信、微博、Github、Gitee 等）
+- [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 协程的第三方登录授权 SDK（QQ、微信、微博、GitHub、Gitee 等）
 - [w7corp/wechat](zh-cn/sdks/wechat) EasyWeChat，一个流行的非官方微信 SDK
-- [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 协程环境下的可用的 PHPMailer
-- [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支持 `支付宝/微信` 的支付组件，基于 [yansongda/pay](https://github.com/yansongda/pay) 实现，适配于 `Hyperf` 框架。
+- [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支持 `支付宝/微信` 的支付组件，基于 [yansongda/pay](https://github.com/yansongda/pay) 实现，适配于 `Hyperf` 框架
 - [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch) 为 Hyperf Scout 提供的 meilisearch 客户端
 - [vinchan/message-notify](https://github.com/VinchanGit/message-notify) Hyperf 异常监控报警通知组件(钉钉群机器人、飞书群机器人、邮件、QQ 频道机器人、企业微信群机器人)

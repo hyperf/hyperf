@@ -1,5 +1,34 @@
 # Changelogs
 
+# v3.0.23 - 2023-06-02
+
+## Added
+
+- [#5757](https://github.com/hyperf/hyperf/pull/5757) Support nacos naming signature.
+- [#5765](https://github.com/hyperf/hyperf/pull/5765) Support Full-Text Search for `database`.
+
+## Fixed
+
+- [#5782](https://github.com/hyperf/hyperf/pull/5782) Fixed bug that prometheus cannot collect histograms.
+
+## Optimized
+
+- [#5768](https://github.com/hyperf/hyperf/pull/5768) Improved `Hyperf\Command\Annotation\Command`, support set properties for command.
+- [#5780](https://github.com/hyperf/hyperf/pull/5780) Convert carrier key to string in `Zipkin\Propagation\Map`.
+
+# v3.0.22 - 2023-05-27
+
+## Added
+
+- [#5760](https://github.com/hyperf/hyperf/pull/5760) Added namespace for functions of `hyperf/translation`.
+- [#5761](https://github.com/hyperf/hyperf/pull/5761) Added `Hyperf\Coordinator\Timer::until()`.
+
+## Optimized
+
+- [#5741](https://github.com/hyperf/hyperf/pull/5741) Added deprecated comments to `Hyperf\DB\MySQLConnection`.
+- [#5702](https://github.com/hyperf/hyperf/pull/5702) Optimized the code of `Hyperf\Metric\Adapter\Prometheus\Redis` which allowed to rewrite the prefix about redis keys.
+- [#5762](https://github.com/hyperf/hyperf/pull/5762) Use non-blocking mode for swoole process by default.
+
 # v3.0.21 - 2023-05-18
 
 ## Added
