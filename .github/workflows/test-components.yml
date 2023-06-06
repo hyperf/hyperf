@@ -214,7 +214,6 @@ jobs:
           composer remove influxdb/influxdb-php --dev -W
           composer remove guzzlehttp/guzzle --dev -W
           composer remove jcchavezs/zipkin-opentracing -W --dev
-          composer remove psr/http-server-middleware -W
           composer require "psr/http-message:${{ matrix.version }}" -W
           composer update -oW
       - name: Run Test Cases
