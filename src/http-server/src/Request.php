@@ -19,12 +19,12 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Stringable\Str;
 use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface as Psr7RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use RuntimeException;
 use SplFileInfo;
-use Psr\Http\Message\RequestInterface as Psr7RequestInterface;
 
 use function Hyperf\Collection\data_get;
 use function Hyperf\Support\value;

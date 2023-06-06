@@ -335,7 +335,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @param string $name case-insensitive header field name to remove
      * @return PsrResponseInterface
      */
-    public function withoutHeader($name):MessageInterface
+    public function withoutHeader($name): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -361,7 +361,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @return PsrResponseInterface
      * @throws InvalidArgumentException when the body is not valid
      */
-    public function withBody(StreamInterface $body):MessageInterface
+    public function withBody(StreamInterface $body): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -393,7 +393,6 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @param string $reasonPhrase the reason phrase to use with the
      *                             provided status code; if none is provided, implementations MAY
      *                             use the defaults as suggested in the HTTP specification
-     * @return PsrResponseInterface
      * @throws InvalidArgumentException for invalid status code arguments
      */
     public function withStatus($code, $reasonPhrase = ''): PsrResponseInterface
