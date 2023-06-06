@@ -15,3 +15,11 @@
 
 - [ ] Support v2 and v3 for socketio-server
 - [ ] Support [Psr7Plus](https://github.com/swow/psr7-plus)
+
+## Optimized
+
+- Move Prometheus driver dependency to suggest.
+
+## Removed
+
+## Deprecated
