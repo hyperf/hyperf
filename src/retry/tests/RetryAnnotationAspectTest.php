@@ -42,6 +42,7 @@ use Swoole\Timer;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RetryAnnotationAspectTest extends TestCase
 {
     protected function setUp(): void

@@ -25,6 +25,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class LazyProxyTraitTest extends TestCase
 {
     public function testLaziness()

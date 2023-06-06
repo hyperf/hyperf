@@ -23,6 +23,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RouteCollectorTest extends TestCase
 {
     protected function tearDown(): void

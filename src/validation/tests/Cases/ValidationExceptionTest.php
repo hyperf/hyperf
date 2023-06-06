@@ -28,6 +28,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ValidationExceptionTest extends TestCase
 {
     protected function tearDown(): void

@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class MySqlProcessorTest extends TestCase
 {
     public function testProcessColumnListing()

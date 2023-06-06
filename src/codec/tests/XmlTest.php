@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class XmlTest extends TestCase
 {
     public function testToArray()

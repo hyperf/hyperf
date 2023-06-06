@@ -33,6 +33,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RegisterServiceListenerTest extends TestCase
 {
     public function testRegisterOnceForTheSameService()

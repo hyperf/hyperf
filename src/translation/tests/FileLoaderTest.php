@@ -26,6 +26,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class FileLoaderTest extends TestCase
 {
     protected function tearDown(): void

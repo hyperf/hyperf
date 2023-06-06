@@ -22,6 +22,7 @@ use function Hyperf\Coroutine\go;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class CallerTest extends TestCase
 {
     public function testCallerWithNull()

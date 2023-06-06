@@ -25,6 +25,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ProcessTest extends TestCase
 {
     public static $dispatched = [];
@@ -35,9 +36,7 @@ class ProcessTest extends TestCase
         self::$dispatched = [];
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testEventWhenThrowExceptionInProcess()
     {
         $container = $this->getContainer();

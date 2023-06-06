@@ -26,6 +26,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class HeartbeatConnectionTest extends TestCase
 {
     protected function tearDown(): void

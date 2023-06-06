@@ -21,6 +21,7 @@ use HyperfTest\Nacos\HandlerMockery;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class NacosServiceTest extends AbstractTestCase
 {
     public function testServiceDetail()

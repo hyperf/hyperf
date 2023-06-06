@@ -23,6 +23,7 @@ use Throwable;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class AnnotationReaderTest extends TestCase
 {
     public function testGetNotFoundAttributesOfClass()

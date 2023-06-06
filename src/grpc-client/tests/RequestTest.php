@@ -20,6 +20,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RequestTest extends TestCase
 {
     public function testRequest()

@@ -23,6 +23,7 @@ use Swoole\Http\Response as SwooleResponse;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class SwooleStreamTest extends TestCase
 {
     public function testSwooleFileStream()

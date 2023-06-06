@@ -17,6 +17,7 @@ use Hyperf\SocketIOServer\Parser\Decoder;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class DecoderTest extends AbstractTestCase
 {
     public function testDecode()

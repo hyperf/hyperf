@@ -33,6 +33,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class CrontabRegisterListenerTest extends TestCase
 {
     protected $prevContainer;

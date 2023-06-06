@@ -21,6 +21,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ClosureDefinitionTest extends TestCase
 {
     protected function tearDown(): void

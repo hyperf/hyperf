@@ -26,6 +26,7 @@ use function json_decode;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class WhoopsExceptionHandlerTest extends TestCase
 {
     public function testPlainTextWhoops()

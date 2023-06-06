@@ -17,6 +17,7 @@ use Hyperf\ViewEngine\Exception\ViewCompilationException;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class BladeLoopsTest extends AbstractBladeTestCase
 {
     public function testForelseStatementsAreCompiled()
@@ -94,9 +95,9 @@ empty
     }
 
     /**
-     * @dataProvider invalidForelseStatementsDataProvider
      * @param mixed $initialStatement
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidForelseStatementsDataProvider')]
     public function testForelseStatementsThrowHumanizedMessageWhenInvalidStatement($initialStatement)
     {
         $this->expectException(ViewCompilationException::class);
@@ -236,9 +237,7 @@ tag info
         $this->assertEquals($expected, $this->compiler->compileString($string));
     }
 
-    /**
-     * @dataProvider invalidForeachStatementsDataProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidForeachStatementsDataProvider')]
     public function testForeachStatementsThrowHumanizedMessageWhenInvalidStatement(string $initialStatement)
     {
         $this->expectException(ViewCompilationException::class);

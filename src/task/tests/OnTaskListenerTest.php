@@ -30,6 +30,7 @@ use Swoole\Server;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class OnTaskListenerTest extends TestCase
 {
     protected function tearDown(): void

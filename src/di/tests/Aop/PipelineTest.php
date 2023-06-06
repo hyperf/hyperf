@@ -23,6 +23,7 @@ use WeakReference;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class PipelineTest extends TestCase
 {
     protected function tearDown(): void

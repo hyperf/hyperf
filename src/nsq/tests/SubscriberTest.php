@@ -21,6 +21,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class SubscriberTest extends TestCase
 {
     protected function tearDown(): void

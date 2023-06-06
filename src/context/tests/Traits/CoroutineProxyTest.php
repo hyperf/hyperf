@@ -20,6 +20,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class CoroutineProxyTest extends TestCase
 {
     public function testCoroutineProxy()

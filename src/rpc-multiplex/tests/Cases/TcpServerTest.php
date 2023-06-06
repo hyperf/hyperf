@@ -29,6 +29,7 @@ use Mockery;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class TcpServerTest extends AbstractTestCase
 {
     public function testInitServerConfig()

@@ -28,7 +28,7 @@
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^10.0",
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "autoload": {

@@ -15,6 +15,7 @@ namespace HyperfTest\ViewEngine\Blade;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class BladeStacksTest extends AbstractBladeTestCase
 {
     public function testStackIsCompiled()

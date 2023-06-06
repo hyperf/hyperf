@@ -29,6 +29,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class CommandTest extends TestCase
 {
     protected function tearDown(): void
@@ -45,9 +46,7 @@ class CommandTest extends TestCase
         $this->assertSame(SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL, $command->getHookFlags());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testExitCodeWhenThrowException()
     {
         ApplicationContext::setContainer($container = Mockery::mock(ContainerInterface::class));

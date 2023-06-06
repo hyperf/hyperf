@@ -19,6 +19,7 @@ use PDO;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class PDODriverTest extends AbstractTestCase
 {
     public function testFetch()

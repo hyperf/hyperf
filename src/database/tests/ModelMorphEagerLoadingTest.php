@@ -28,6 +28,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ModelMorphEagerLoadingTest extends TestCase
 {
     /**

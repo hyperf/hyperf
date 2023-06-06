@@ -18,6 +18,7 @@ use Multiplex\ChannelManager;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ChannelManagerTest extends AbstractTestCase
 {
     public function testChannelManagerFlush()

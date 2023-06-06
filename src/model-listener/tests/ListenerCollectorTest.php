@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ListenerCollectorTest extends TestCase
 {
     protected function tearDown(): void

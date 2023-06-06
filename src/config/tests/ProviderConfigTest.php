@@ -22,6 +22,7 @@ use function Hyperf\Support\value;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ProviderConfigTest extends TestCase
 {
     public function testProviderConfigMerge()

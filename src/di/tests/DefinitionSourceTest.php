@@ -21,6 +21,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class DefinitionSourceTest extends TestCase
 {
     public function testAddDefinition()

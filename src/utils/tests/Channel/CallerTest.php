@@ -20,6 +20,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class CallerTest extends TestCase
 {
     public function testCallerWithNull()

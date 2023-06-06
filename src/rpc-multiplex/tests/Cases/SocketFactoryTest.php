@@ -28,6 +28,7 @@ use function Hyperf\Coroutine\go;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class SocketFactoryTest extends AbstractTestCase
 {
     public function testSocketConfig()

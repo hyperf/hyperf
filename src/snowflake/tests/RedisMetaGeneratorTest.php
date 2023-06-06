@@ -40,6 +40,7 @@ use function Hyperf\Coroutine\parallel;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RedisMetaGeneratorTest extends TestCase
 {
     protected function tearDown(): void

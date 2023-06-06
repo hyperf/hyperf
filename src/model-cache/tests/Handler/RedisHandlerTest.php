@@ -26,6 +26,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RedisHandlerTest extends TestCase
 {
     protected $handler = RedisHandler::class;

@@ -24,6 +24,7 @@ use function Hyperf\Support\make;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class FutureTest extends AbstractTestCase
 {
     protected function setUp(): void

@@ -20,6 +20,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ClientFactoryTest extends TestCase
 {
     public function testClientBuilderFactoryCreate()

@@ -21,6 +21,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ApplicationContextTest extends TestCase
 {
     public function testApplicationContext()

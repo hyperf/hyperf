@@ -21,6 +21,7 @@ use function Hyperf\Coroutine\go;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class JsonTest extends TestCase
 {
     public function testEncode()

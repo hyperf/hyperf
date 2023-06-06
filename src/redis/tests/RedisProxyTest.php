@@ -34,6 +34,7 @@ use function Hyperf\Coroutine\go;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RedisProxyTest extends TestCase
 {
     protected function tearDown(): void

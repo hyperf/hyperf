@@ -24,6 +24,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class BeforeMainServerStartListenerTest extends TestCase
 {
     /**

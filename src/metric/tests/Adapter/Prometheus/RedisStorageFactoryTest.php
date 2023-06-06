@@ -26,6 +26,7 @@ use ReflectionProperty;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RedisStorageFactoryTest extends TestCase
 {
     protected string $prePrefix;

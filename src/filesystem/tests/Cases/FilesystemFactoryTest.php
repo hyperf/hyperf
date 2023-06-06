@@ -43,6 +43,7 @@ use Xxtime\Flysystem\Aliyun\OssAdapter as XxtimeOSSAdapter;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class FilesystemFactoryTest extends AbstractTestCase
 {
     protected function setUp(): void

@@ -52,6 +52,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ModelRealBuilderTest extends TestCase
 {
     /**

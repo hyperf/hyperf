@@ -23,6 +23,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ExceptionHandlerListenerTest extends TestCase
 {
     protected function tearDown(): void

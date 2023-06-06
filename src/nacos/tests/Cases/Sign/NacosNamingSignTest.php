@@ -21,6 +21,7 @@ use Psr\Http\Message\RequestInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class NacosNamingSignTest extends AbstractTestCase
 {
     public function testNacosNamingSign()

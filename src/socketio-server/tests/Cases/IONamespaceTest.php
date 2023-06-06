@@ -30,6 +30,7 @@ use Swoole\Atomic;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class IONamespaceTest extends AbstractTestCase
 {
     protected function setUp(): void

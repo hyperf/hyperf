@@ -20,6 +20,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RequestParserTest extends TestCase
 {
     public function testJsonParserFailed()

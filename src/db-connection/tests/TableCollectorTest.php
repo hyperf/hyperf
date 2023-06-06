@@ -17,6 +17,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class TableCollectorTest extends TestCase
 {
     public function testExample()

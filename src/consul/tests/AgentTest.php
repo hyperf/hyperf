@@ -24,8 +24,9 @@ use Psr\Log\NullLogger;
 
 /**
  * @internal
- * @covers \Hyperf\Consul\Agent
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Consul\Agent::class)]
 class AgentTest extends TestCase
 {
     /**

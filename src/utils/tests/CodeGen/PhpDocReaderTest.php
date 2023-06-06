@@ -20,6 +20,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class PhpDocReaderTest extends TestCase
 {
     public function testGetReturnClass()

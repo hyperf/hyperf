@@ -30,6 +30,7 @@ use TypeError;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class BaseClientTest extends TestCase
 {
     public static $server;

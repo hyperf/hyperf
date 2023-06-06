@@ -24,6 +24,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class WaiterTest extends TestCase
 {
     protected function setUp(): void

@@ -24,6 +24,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class StdoutLoggerTest extends TestCase
 {
     protected function tearDown(): void

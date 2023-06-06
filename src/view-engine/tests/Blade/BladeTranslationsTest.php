@@ -15,6 +15,7 @@ namespace HyperfTest\ViewEngine\Blade;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class BladeTranslationsTest extends AbstractBladeTestCase
 {
     public function testStatementThatContainsNonConsecutiveParenthesisAreCompiled()

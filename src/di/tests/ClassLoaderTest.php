@@ -21,6 +21,7 @@ use function Hyperf\Support\env;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ClassLoaderTest extends TestCase
 {
     public function testDotEnv()

@@ -34,6 +34,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class JsonRpcPoolTransporterTest extends TestCase
 {
     protected function tearDown(): void

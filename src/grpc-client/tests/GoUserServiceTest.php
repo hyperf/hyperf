@@ -21,9 +21,10 @@ use UserService\UserId;
 
 /**
  * @internal
- * @coversNothing
  * protoc --php_out=./tests ./tests/Golang/pb/user/user.proto --proto_path=./tests/Golang/pb/user/
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class GoUserServiceTest extends TestCase
 {
     protected function setUp(): void

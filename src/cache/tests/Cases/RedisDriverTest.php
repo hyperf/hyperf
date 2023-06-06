@@ -39,6 +39,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RedisDriverTest extends TestCase
 {
     protected function tearDown(): void

@@ -17,6 +17,7 @@ use Hyperf\ModelCache\Handler\RedisStringHandler;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RedisStringHandlerTest extends RedisHandlerTest
 {
     protected $handler = RedisStringHandler::class;

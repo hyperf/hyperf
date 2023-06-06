@@ -20,6 +20,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class DefinitionSourceTest extends TestCase
 {
     protected function tearDown(): void

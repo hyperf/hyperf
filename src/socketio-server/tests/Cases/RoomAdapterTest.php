@@ -38,6 +38,7 @@ use Throwable;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RoomAdapterTest extends AbstractTestCase
 {
     public function testMemoryAdapter()

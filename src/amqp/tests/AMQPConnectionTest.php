@@ -23,6 +23,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class AMQPConnectionTest extends TestCase
 {
     public function testMakeChannelId()

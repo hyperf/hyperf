@@ -19,6 +19,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ArrTest extends TestCase
 {
     public function testArrGet()

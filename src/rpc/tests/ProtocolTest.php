@@ -23,6 +23,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ProtocolTest extends TestCase
 {
     protected function tearDown(): void

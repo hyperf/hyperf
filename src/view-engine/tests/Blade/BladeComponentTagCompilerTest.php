@@ -19,6 +19,7 @@ use HyperfTest\ViewEngine\Stub\ContainerStub;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class BladeComponentTagCompilerTest extends AbstractBladeTestCase
 {
     public function setUp(): void

@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ServiceManagerTest extends TestCase
 {
     public function testRegister()

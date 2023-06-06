@@ -22,6 +22,7 @@ use function Hyperf\Coroutine\run;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class HttpClientTest extends TestCase
 {
     protected function tearDown(): void
@@ -29,9 +30,7 @@ class HttpClientTest extends TestCase
         Mockery::close();
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testJsonRequest()
     {
         run(function () {

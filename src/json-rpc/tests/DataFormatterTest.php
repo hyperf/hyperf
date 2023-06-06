@@ -26,6 +26,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class DataFormatterTest extends TestCase
 {
     protected function tearDown(): void

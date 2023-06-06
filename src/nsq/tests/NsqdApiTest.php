@@ -24,6 +24,7 @@ use Psr\Http\Message\ResponseInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class NsqdApiTest extends TestCase
 {
     protected function tearDown(): void

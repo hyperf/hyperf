@@ -26,6 +26,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class DatabaseModelCustomCastingTest extends TestCase
 {
     protected function tearDown(): void

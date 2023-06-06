@@ -22,6 +22,7 @@ use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class SymfonySerializerTest extends TestCase
 {
     public function testNormalize()

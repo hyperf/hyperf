@@ -23,6 +23,7 @@ use Swoole\Runtime;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class FunctionTest extends TestCase
 {
     public function testCall()
@@ -133,9 +134,7 @@ class FunctionTest extends TestCase
         $this->assertSame(SWOOLE_HOOK_ALL, swoole_hook_flags());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testRun()
     {
         $asserts = [

@@ -23,6 +23,7 @@ use Redis;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class HashTest extends TestCase
 {
     protected function tearDown(): void

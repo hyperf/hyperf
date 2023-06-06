@@ -20,6 +20,7 @@ use Swoole\WebSocket\Frame as SwFrame;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class FrameTest extends TestCase
 {
     public function testFrame()

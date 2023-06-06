@@ -20,6 +20,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class CoordinatorTest extends TestCase
 {
     public function testYield()

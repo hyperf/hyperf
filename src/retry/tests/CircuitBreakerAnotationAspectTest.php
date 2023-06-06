@@ -30,6 +30,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class CircuitBreakerAnotationAspectTest extends TestCase
 {
     protected function setUp(): void

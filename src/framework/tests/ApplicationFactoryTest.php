@@ -27,6 +27,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ApplicationFactoryTest extends TestCase
 {
     protected function tearDown(): void

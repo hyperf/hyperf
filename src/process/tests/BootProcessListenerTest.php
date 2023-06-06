@@ -25,6 +25,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class BootProcessListenerTest extends TestCase
 {
     protected function tearDown(): void

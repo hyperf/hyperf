@@ -23,6 +23,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class AnnotationTest extends TestCase
 {
     protected function tearDown(): void

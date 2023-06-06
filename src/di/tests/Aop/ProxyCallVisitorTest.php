@@ -24,6 +24,7 @@ use ReflectionMethod;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ProxyCallVisitorTest extends TestCase
 {
     protected function tearDown(): void

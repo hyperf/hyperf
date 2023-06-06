@@ -25,6 +25,7 @@ use function Hyperf\Support\env;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class TracerFactoryTest extends TestCase
 {
     protected function tearDown(): void

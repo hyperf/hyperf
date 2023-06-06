@@ -27,6 +27,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ConsumerManagerTest extends TestCase
 {
     protected function tearDown(): void

@@ -28,6 +28,7 @@ use ReflectionProperty;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ReflectionTest extends TestCase
 {
     public function testReturnType()

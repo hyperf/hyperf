@@ -28,6 +28,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class MainWorkerStartListenerTest extends TestCase
 {
     /**

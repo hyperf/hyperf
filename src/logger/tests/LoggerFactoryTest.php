@@ -29,8 +29,9 @@ use ReflectionClass;
 
 /**
  * @internal
- * @covers \Hyperf\Logger\LoggerFactory
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Logger\LoggerFactory::class)]
 class LoggerFactoryTest extends TestCase
 {
     protected function tearDown(): void

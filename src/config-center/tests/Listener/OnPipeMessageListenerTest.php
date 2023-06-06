@@ -26,6 +26,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class OnPipeMessageListenerTest extends TestCase
 {
     protected function tearDown(): void

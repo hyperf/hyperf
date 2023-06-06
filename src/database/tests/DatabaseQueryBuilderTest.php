@@ -29,6 +29,7 @@ use TypeError;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class DatabaseQueryBuilderTest extends TestCase
 {
     protected function setUp(): void

@@ -30,6 +30,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ConsumerTest extends TestCase
 {
     public function testConsumerConcurrentLimit()

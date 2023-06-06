@@ -21,6 +21,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class JsonRpcHttpTransporterTest extends TestCase
 {
     protected function tearDown(): void

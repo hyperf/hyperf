@@ -32,6 +32,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class DispatcherFactoryTest extends TestCase
 {
     public function testGetPrefix()

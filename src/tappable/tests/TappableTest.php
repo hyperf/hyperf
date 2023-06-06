@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class TappableTest extends TestCase
 {
     public function testTappableClassWithCallback()

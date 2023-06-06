@@ -27,6 +27,7 @@ use ReflectionMethod;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class MetricFactoryTest extends TestCase
 {
     protected function tearDown(): void

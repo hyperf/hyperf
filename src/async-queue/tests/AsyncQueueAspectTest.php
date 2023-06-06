@@ -32,6 +32,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class AsyncQueueAspectTest extends TestCase
 {
     protected function tearDown(): void
@@ -41,9 +42,7 @@ class AsyncQueueAspectTest extends TestCase
         ReflectionManager::clear();
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testNotAsyncMessage()
     {
         $container = $this->getContainer();
@@ -56,9 +55,7 @@ class AsyncQueueAspectTest extends TestCase
         $this->assertSame([$id, $uuid, $data], Context::get(FooProxy::class));
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testAsyncMessage()
     {
         $container = $this->getContainer();
@@ -71,9 +68,7 @@ class AsyncQueueAspectTest extends TestCase
         $this->assertSame($data, Context::get(FooProxy::class));
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testAsyncMessageVariadic()
     {
         $container = $this->getContainer();

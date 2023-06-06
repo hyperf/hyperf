@@ -19,10 +19,11 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internalcomp
- * @coversNothing
  *
  * @internal
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class DagTest extends TestCase
 {
     public function testComplexExample()

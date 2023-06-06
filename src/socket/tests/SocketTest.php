@@ -25,6 +25,7 @@ use function Hyperf\Coroutine\run;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class SocketTest extends TestCase
 {
     protected function tearDown(): void
@@ -63,9 +64,7 @@ class SocketTest extends TestCase
         $this->assertEquals($demo, $res);
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testProcessStreamSocket()
     {
         $demo = new DemoStub();
@@ -87,9 +86,7 @@ class SocketTest extends TestCase
         });
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testProcessDgramSocket()
     {
         $demo = new DemoStub();

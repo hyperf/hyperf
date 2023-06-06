@@ -20,6 +20,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ContextTest extends TestCase
 {
     public function testOverride()

@@ -24,8 +24,9 @@ use ReflectionClass;
 
 /**
  * @internal
- * @covers \Hyperf\Session\SessionManager
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Session\SessionManager::class)]
 class SessionManagerTest extends TestCase
 {
     public function testSetterAndGetter()

@@ -56,6 +56,7 @@ use Throwable;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class AnyParamCoreMiddlewareTest extends TestCase
 {
     public function testProcess()

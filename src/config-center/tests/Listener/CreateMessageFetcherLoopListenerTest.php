@@ -25,6 +25,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class CreateMessageFetcherLoopListenerTest extends TestCase
 {
     protected function tearDown(): void

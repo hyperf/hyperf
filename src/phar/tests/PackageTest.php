@@ -21,6 +21,7 @@ use Psr\Log\LoggerInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class PackageTest extends TestCase
 {
     protected function tearDown(): void

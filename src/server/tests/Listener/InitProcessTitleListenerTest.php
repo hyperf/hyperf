@@ -31,6 +31,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class InitProcessTitleListenerTest extends TestCase
 {
     protected function tearDown(): void

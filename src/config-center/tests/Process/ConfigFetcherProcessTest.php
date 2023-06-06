@@ -34,6 +34,7 @@ use Swoole\Server;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ConfigFetcherProcessTest extends TestCase
 {
     protected function tearDown(): void

@@ -21,6 +21,7 @@ use function Hyperf\Stringable\str;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class FunctionsTest extends TestCase
 {
     public function testStr()

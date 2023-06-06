@@ -36,6 +36,10 @@ use ReflectionClass;
 
 /**
  * @internal
+ */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
+/**
+ * @internal
  * @coversNothing
  */
 class DatabaseConnectionTest extends TestCase
@@ -170,7 +174,7 @@ class DatabaseConnectionTest extends TestCase
         $pdo = $this->createMock(DatabaseConnectionTestMockPDO::class);
         $pdo->expects($this->exactly(2))
             ->method('beginTransaction')
-            ->withConsecutive([], [])
+            // ->withConsecutive([], [])
             ->willReturnOnConsecutiveCalls(
                 $this->throwException(new ErrorException('server has gone away')),
                 true

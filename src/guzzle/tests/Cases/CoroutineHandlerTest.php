@@ -28,6 +28,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class CoroutineHandlerTest extends TestCase
 {
     public function testCreatesCurlErrors()

@@ -19,6 +19,7 @@ use Swoole\Coroutine;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class WaitGroupTest extends TestCase
 {
     public function testWaitAgain()

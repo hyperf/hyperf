@@ -18,14 +18,15 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class MessageSelectorTest extends TestCase
 {
     /**
-     * @dataProvider chooseTestData
      * @param mixed $expected
      * @param mixed $id
      * @param mixed $number
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('chooseTestData')]
     public function testChoose($expected, $id, $number)
     {
         $selector = new MessageSelector();
@@ -33,7 +34,7 @@ class MessageSelectorTest extends TestCase
         $this->assertEquals($expected, $selector->choose($id, $number, 'en'));
     }
 
-    public function chooseTestData()
+    public static function chooseTestData()
     {
         return [
             ['first', 'first', 1],

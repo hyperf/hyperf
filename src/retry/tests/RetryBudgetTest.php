@@ -22,6 +22,7 @@ use Swoole\Timer;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RetryBudgetTest extends TestCase
 {
     protected function tearDown(): void

@@ -22,8 +22,9 @@ use Throwable;
 
 /**
  * @internal
- * @covers \Hyperf\Utils\Parallel
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Utils\Parallel::class)]
 class ParallelTest extends TestCase
 {
     public function testParallel()

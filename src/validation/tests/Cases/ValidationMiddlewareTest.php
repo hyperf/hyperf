@@ -45,6 +45,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ValidationMiddlewareTest extends TestCase
 {
     protected function tearDown(): void

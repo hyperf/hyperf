@@ -22,6 +22,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ConnectionTest extends TestCase
 {
     protected function tearDown(): void

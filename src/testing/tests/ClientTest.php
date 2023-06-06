@@ -44,6 +44,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ClientTest extends TestCase
 {
     public function testClientRequest()

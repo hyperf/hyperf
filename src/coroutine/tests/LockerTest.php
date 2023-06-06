@@ -21,6 +21,7 @@ use function Hyperf\Coroutine\go;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class LockerTest extends TestCase
 {
     public function testLockAndUnlock()

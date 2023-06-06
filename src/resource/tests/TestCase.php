@@ -35,6 +35,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void

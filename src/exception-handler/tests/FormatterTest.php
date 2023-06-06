@@ -19,6 +19,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class FormatterTest extends TestCase
 {
     public function testDefaultFormatter()

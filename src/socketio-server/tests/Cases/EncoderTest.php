@@ -18,6 +18,7 @@ use Hyperf\SocketIOServer\Parser\Packet;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class EncoderTest extends AbstractTestCase
 {
     public function testEncode()

@@ -25,6 +25,7 @@ use function Hyperf\Support\value;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class FunctionTest extends TestCase
 {
     public function testCall()

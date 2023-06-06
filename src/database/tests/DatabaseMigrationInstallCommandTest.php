@@ -23,6 +23,7 @@ use Symfony\Component\Console\Output\NullOutput;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class DatabaseMigrationInstallCommandTest extends TestCase
 {
     use MockeryPHPUnitIntegration;

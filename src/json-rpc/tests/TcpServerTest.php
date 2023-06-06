@@ -48,6 +48,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class TcpServerTest extends TestCase
 {
     public function testGetDefaultExceptionHandler()

@@ -15,6 +15,7 @@ namespace HyperfTest\ViewEngine\Blade;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class BladeCommentsTest extends AbstractBladeTestCase
 {
     public function testCommentsAreCompiled()

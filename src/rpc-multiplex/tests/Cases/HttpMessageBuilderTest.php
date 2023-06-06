@@ -21,6 +21,7 @@ use Psr\Http\Message\UriInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class HttpMessageBuilderTest extends AbstractTestCase
 {
     public function testBuildUri()

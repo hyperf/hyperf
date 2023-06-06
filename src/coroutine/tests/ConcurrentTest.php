@@ -23,6 +23,7 @@ use Swoole\Coroutine;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ConcurrentTest extends TestCase
 {
     protected function setUp(): void

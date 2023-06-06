@@ -27,6 +27,7 @@ use function Hyperf\Coroutine\wait;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class WaiterTest extends TestCase
 {
     protected function setUp(): void

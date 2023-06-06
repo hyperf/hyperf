@@ -33,6 +33,7 @@ use Throwable;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class HandlerStackFactoryTest extends TestCase
 {
     public function testCreateCoroutineHandler()

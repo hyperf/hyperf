@@ -15,6 +15,7 @@ namespace HyperfTest\Rpn;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ExampleTest extends AbstractTestCase
 {
     public function testExample()

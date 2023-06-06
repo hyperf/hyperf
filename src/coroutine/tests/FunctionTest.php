@@ -25,6 +25,7 @@ use function Hyperf\Coroutine\run;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class FunctionTest extends TestCase
 {
     public function testReturnOfGo()
@@ -38,9 +39,7 @@ class FunctionTest extends TestCase
         $this->assertSame('Hyperf', $uniqid);
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testRun()
     {
         $asserts = [

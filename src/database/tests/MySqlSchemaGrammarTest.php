@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class MySqlSchemaGrammarTest extends TestCase
 {
     protected function tearDown(): void

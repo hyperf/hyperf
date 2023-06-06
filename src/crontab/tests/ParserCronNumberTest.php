@@ -19,6 +19,7 @@ use ReflectionMethod;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ParserCronNumberTest extends TestCase
 {
     protected $timezone;

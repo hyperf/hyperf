@@ -38,6 +38,7 @@ use function Hyperf\Support\swoole_hook_flags;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class IpcSubjectTest extends TestCase
 {
     public static function setUpBeforeClass(): void

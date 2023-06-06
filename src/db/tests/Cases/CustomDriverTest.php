@@ -24,6 +24,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class CustomDriverTest extends AbstractTestCase
 {
     public function testCustomDriver()

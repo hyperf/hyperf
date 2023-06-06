@@ -18,6 +18,7 @@ use HyperfTest\HttpMessage\Stub\Server\ResponseStub;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ResponseProxyTest extends ResponseTest
 {
     protected function tearDown(): void

@@ -27,6 +27,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class DriverTest extends TestCase
 {
     protected function tearDown(): void

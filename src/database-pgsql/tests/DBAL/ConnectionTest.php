@@ -21,6 +21,7 @@ use Swoole\Coroutine\PostgreSQL;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ConnectionTest extends TestCase
 {
     protected Connection $connection;

@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RetryFalsyTest extends TestCase
 {
     public function testIsFalsy()

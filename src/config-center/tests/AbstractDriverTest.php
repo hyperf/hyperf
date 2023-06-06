@@ -28,6 +28,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class AbstractDriverTest extends TestCase
 {
     protected function tearDown(): void
@@ -37,9 +38,7 @@ class AbstractDriverTest extends TestCase
         CoordinatorManager::clear(Constants::WORKER_EXIT);
     }
 
-    /**
-     * @dataProvider getConfig
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getConfig')]
     public function testCreateMessageFetcherLoopForCoroutineMode(Config $config)
     {
         ContainerStub::mockContainer($config);
@@ -52,9 +51,7 @@ class AbstractDriverTest extends TestCase
         $this->assertSame(['message' => 'Hello Hyperf', 'id' => 1], $config->get('test'));
     }
 
-    /**
-     * @dataProvider getConfigAndPipeMessage
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getConfigAndPipeMessage')]
     public function testOnPipeMessage(Config $config, PipeMessageInterface $pipeMessage, array $assert)
     {
         ContainerStub::mockContainer($config);

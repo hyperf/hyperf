@@ -34,6 +34,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class HttpDispatcherTest extends TestCase
 {
     use ProphecyTrait;

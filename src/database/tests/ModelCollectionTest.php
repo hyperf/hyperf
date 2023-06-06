@@ -27,6 +27,7 @@ use function Hyperf\Collection\collect;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ModelCollectionTest extends TestCase
 {
     protected function tearDown(): void

@@ -26,6 +26,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class PhpParserTest extends TestCase
 {
     public function testGetAstFromReflectionParameter()

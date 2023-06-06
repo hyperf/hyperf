@@ -18,6 +18,7 @@ use HyperfTest\DB\Cases\AbstractTestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class PgSQLTest extends AbstractTestCase
 {
     public function setUp(): void

@@ -30,6 +30,7 @@ use Symfony\Component\Console\Style\OutputStyle;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class PostgreSqlSwooleExtConnectionTest extends TestCase
 {
     protected Migrator $migrator;

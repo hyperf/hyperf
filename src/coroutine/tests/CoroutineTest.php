@@ -31,6 +31,7 @@ use function Hyperf\Coroutine\run;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class CoroutineTest extends TestCase
 {
     protected function tearDown(): void
@@ -68,9 +69,7 @@ class CoroutineTest extends TestCase
         }
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testCoroutineInTopCoroutine()
     {
         run(function () {

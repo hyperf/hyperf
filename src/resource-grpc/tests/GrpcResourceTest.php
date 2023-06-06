@@ -26,6 +26,7 @@ use function Hyperf\Collection\collect;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class GrpcResourceTest extends \PHPUnit\Framework\TestCase
 {
     public function testResourceToMessage()

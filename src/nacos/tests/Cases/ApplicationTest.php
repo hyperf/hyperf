@@ -24,6 +24,7 @@ use HyperfTest\Nacos\AbstractTestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ApplicationTest extends AbstractTestCase
 {
     public function testApplication()

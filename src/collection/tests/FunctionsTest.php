@@ -28,6 +28,7 @@ use function Hyperf\Collection\value;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class FunctionsTest extends TestCase
 {
     public function testDataGet()

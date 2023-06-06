@@ -23,6 +23,7 @@ use ReflectionProperty;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RedisTest extends TestCase
 {
     protected string $prePrefix;

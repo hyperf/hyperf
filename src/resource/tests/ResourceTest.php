@@ -39,6 +39,7 @@ use function Hyperf\Collection\collect;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ResourceTest extends TestCase
 {
     public function testResourcesMayBeConvertedToJson()

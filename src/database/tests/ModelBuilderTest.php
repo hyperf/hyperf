@@ -41,6 +41,7 @@ use function Hyperf\Collection\collect;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ModelBuilderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;

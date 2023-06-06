@@ -28,6 +28,7 @@ use Routeguide\RouteSummary;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RouteGuideClientTest extends TestCase
 {
     protected function setUp(): void

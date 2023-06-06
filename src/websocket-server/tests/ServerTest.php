@@ -32,6 +32,7 @@ use Swoole\Http\Response as SwooleResponse;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ServerTest extends TestCase
 {
     protected function tearDown(): void

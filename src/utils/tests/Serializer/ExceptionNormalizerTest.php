@@ -21,6 +21,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ExceptionNormalizerTest extends TestCase
 {
     public function testInvalidArgumentException()

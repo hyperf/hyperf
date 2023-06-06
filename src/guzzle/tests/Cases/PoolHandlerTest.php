@@ -27,6 +27,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class PoolHandlerTest extends TestCase
 {
     protected $id = 0;

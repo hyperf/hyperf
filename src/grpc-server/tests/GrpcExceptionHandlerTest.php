@@ -29,6 +29,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class GrpcExceptionHandlerTest extends TestCase
 {
     public function testTransferToResponse200()

@@ -17,6 +17,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class NsqTest extends TestCase
 {
     public function testExample()

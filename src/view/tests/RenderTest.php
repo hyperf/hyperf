@@ -31,6 +31,7 @@ use Throwable;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RenderTest extends TestCase
 {
     protected function tearDown(): void

@@ -26,6 +26,7 @@ use function Hyperf\Watcher\exec;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ScanFileDriverTest extends TestCase
 {
     public function testWatch()

@@ -20,6 +20,7 @@ use ReflectionException;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ClassInvokerTest extends TestCase
 {
     protected function tearDown(): void

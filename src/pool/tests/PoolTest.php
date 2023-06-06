@@ -28,6 +28,7 @@ use function Hyperf\Support\value;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class PoolTest extends TestCase
 {
     protected function tearDown(): void

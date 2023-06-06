@@ -23,6 +23,7 @@ use function Hyperf\Support\optional;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class OptionalTest extends TestCase
 {
     public function testGetExistItemOnObject()

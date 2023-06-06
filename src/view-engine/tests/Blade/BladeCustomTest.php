@@ -17,6 +17,7 @@ use InvalidArgumentException;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class BladeCustomTest extends AbstractBladeTestCase
 {
     public function testCustomPhpCodeIsCorrectlyHandled()

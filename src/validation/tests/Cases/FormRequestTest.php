@@ -37,6 +37,7 @@ use function Hyperf\Coroutine\wait;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class FormRequestTest extends TestCase
 {
     protected function tearDown(): void

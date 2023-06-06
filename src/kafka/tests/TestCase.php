@@ -15,6 +15,7 @@ namespace HyperfTest\Kafka;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     public function setUp(): void

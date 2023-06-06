@@ -22,6 +22,7 @@ use function Hyperf\Tappable\tap;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class CrontabManagerTest extends TestCase
 {
     public function testCrontabRegister()

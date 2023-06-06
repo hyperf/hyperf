@@ -24,6 +24,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RoutesCommandTest extends TestCase
 {
     protected function tearDown(): void

@@ -31,6 +31,7 @@ use Psr\Http\Message\UploadedFileInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ProxyTest extends TestCase
 {
     protected function tearDown(): void

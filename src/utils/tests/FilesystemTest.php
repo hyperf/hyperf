@@ -22,6 +22,7 @@ use Throwable;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class FilesystemTest extends TestCase
 {
     public function testLock()
@@ -45,9 +46,7 @@ class FilesystemTest extends TestCase
         unlink('./test.txt');
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testFopenInCoroutine()
     {
         run(function () {
@@ -85,9 +84,7 @@ class FilesystemTest extends TestCase
         }
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testPutLockInCoroutine()
     {
         run(function () {

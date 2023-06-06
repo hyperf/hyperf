@@ -17,6 +17,7 @@ use HyperfTest\Rpn\Stub\HasBindingsStub;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class HasBindingsTest extends AbstractTestCase
 {
     public function testGetValue()

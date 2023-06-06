@@ -27,6 +27,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class FileSystemDriverTest extends TestCase
 {
     protected function tearDown(): void

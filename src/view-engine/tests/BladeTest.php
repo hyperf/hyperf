@@ -26,6 +26,7 @@ use function Hyperf\ViewEngine\view;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class BladeTest extends TestCase
 {
     protected function setUp(): void

@@ -22,6 +22,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class HttpClientTest extends TestCase
 {
     protected function tearDown(): void

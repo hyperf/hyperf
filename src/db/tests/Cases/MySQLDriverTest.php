@@ -17,6 +17,7 @@ use Hyperf\DB\DB;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class MySQLDriverTest extends PDODriverTest
 {
     protected $driver = 'mysql';

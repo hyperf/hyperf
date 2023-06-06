@@ -24,6 +24,7 @@ use function Hyperf\Coroutine\wait;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class StaticInstanceTest extends TestCase
 {
     protected function tearDown(): void

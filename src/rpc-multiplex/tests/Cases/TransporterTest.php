@@ -21,6 +21,7 @@ use Mockery;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class TransporterTest extends AbstractTestCase
 {
     public function testGetLoadBalancer()

@@ -27,6 +27,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class GenModelTest extends TestCase
 {
     protected $license = '<?php

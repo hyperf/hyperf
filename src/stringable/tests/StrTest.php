@@ -20,6 +20,7 @@ use Ramsey\Uuid\UuidInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class StrTest extends TestCase
 {
     public function testCharAt()

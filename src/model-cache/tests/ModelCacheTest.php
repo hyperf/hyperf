@@ -40,6 +40,7 @@ use function Hyperf\Coroutine\wait;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ModelCacheTest extends TestCase
 {
     /**

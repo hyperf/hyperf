@@ -18,6 +18,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class DBTest extends AbstractTestCase
 {
     public function testDBConnection()

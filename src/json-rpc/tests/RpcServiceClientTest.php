@@ -45,6 +45,7 @@ use Symfony\Component\Serializer\Serializer;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RpcServiceClientTest extends TestCase
 {
     protected function setUp(): void

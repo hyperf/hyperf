@@ -33,6 +33,7 @@ use Symfony\Component\Console\Style\OutputStyle;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class DatabaseMigratorIntegrationTest extends TestCase
 {
     protected $migrator;

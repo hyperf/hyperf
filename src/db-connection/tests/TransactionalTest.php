@@ -27,6 +27,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class TransactionalTest extends TestCase
 {
     protected function tearDown(): void

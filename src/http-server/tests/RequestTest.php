@@ -22,6 +22,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class RequestTest extends TestCase
 {
     protected function tearDown(): void

@@ -30,6 +30,7 @@ use function Hyperf\Support\value;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class PageResolverListenerTest extends TestCase
 {
     protected function setUp(): void

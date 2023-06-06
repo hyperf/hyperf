@@ -24,6 +24,7 @@ use function Hyperf\Config\config;
  * @internal
  * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class ConfigTest extends TestCase
 {
     public function testConfigFunction()
