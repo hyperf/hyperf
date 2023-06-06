@@ -18,8 +18,8 @@
     },
     "require": {
         "php": ">=8.1",
-        "hyperf/http-server": "~3.0.0",
-        "hyperf/rpc": "~3.0.0"
+        "hyperf/http-server": "~3.1.0",
+        "hyperf/rpc": "~3.1.0"
     },
     "suggest": {
         "hyperf/di": "Required to use annotations."

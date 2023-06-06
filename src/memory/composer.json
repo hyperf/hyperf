@@ -24,8 +24,7 @@
         }
     },
     "autoload-dev": {
-        "psr-4": {
-        }
+        "psr-4": {}
     },
     "config": {
         "sort-packages": true
