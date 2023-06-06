@@ -18,6 +18,8 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Stringable\Str;
+use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface as Psr7RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -338,12 +340,12 @@ class Request implements RequestInterface
         return false;
     }
 
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -353,52 +355,52 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function hasHeader($name)
+    public function hasHeader($name): bool
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getHeader($name)
+    public function getHeader($name): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getHeaderLine($name)
+    public function getHeaderLine($name): string
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withHeader($name, $value)
+    public function withHeader($name, $value): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader($name, $value): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withoutHeader($name)
+    public function withoutHeader($name): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getRequestTarget()
+    public function getRequestTarget(): string
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withRequestTarget($requestTarget)
+    public function withRequestTarget($requestTarget): Psr7RequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -408,7 +410,7 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withMethod($method)
+    public function withMethod($method): Psr7RequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -418,42 +420,42 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withUri(UriInterface $uri, $preserveHost = false)
+    public function withUri(UriInterface $uri, $preserveHost = false): Psr7RequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getServerParams()
+    public function getServerParams(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getCookieParams()
+    public function getCookieParams(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withCookieParams(array $cookies)
+    public function withCookieParams(array $cookies): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getQueryParams()
+    public function getQueryParams(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withQueryParams(array $query)
+    public function withQueryParams(array $query): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getUploadedFiles()
+    public function getUploadedFiles(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withUploadedFiles(array $uploadedFiles)
+    public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -463,12 +465,12 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withParsedBody($data)
+    public function withParsedBody($data): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -478,12 +480,12 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withAttribute($name, $value)
+    public function withAttribute($name, $value): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withoutAttribute($name)
+    public function withoutAttribute($name): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
