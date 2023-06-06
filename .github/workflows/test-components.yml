@@ -15,7 +15,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.1', '8.2' ]
         mysql-version: [ '5.7', '8.0' ]
       max-parallel: 2
       fail-fast: false
@@ -52,7 +52,7 @@ jobs:
     strategy:
       matrix:
         version: [ '^1.0', '^2.0', '^3.0' ]
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.1', '8.2' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -151,7 +151,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.1', '8.2' ]
         version: [ '^1.0', '^2.0' ]
       max-parallel: 6
       fail-fast: false
@@ -186,7 +186,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.1', '8.2' ]
         version: [ '^1.0', '^2.0' ]
       max-parallel: 6
       fail-fast: false
@@ -228,7 +228,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.1', '8.2' ]
         log-version: [ '^1.0', '^2.0', '^3.0' ]
         exclude:
           - php-version: '8.1'
@@ -281,7 +281,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.1', '8.2' ]
         psr-version: [ '^1.0', '^2.0', '^3.0' ]
       max-parallel: 3
       fail-fast: false

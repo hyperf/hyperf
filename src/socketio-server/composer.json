@@ -8,10 +8,10 @@
     ],
     "description": "Socket.io implementation for hyperf",
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "ext-json": "*",
         "ext-redis": "*",
-        "ext-swoole": ">=4.4",
+        "ext-swoole": ">=5.0",
         "hyperf/codec": "~3.0.0",
         "hyperf/collection": "~3.0.0",
         "hyperf/di": "~3.0.0",

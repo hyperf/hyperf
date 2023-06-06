@@ -10,7 +10,7 @@
     ],
     "description": "",
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.1",
         "ext-json": "*",
         "hyperf/collection": "~3.0.0",
         "hyperf/config": "~3.0.0",

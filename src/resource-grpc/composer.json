@@ -17,7 +17,7 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "hyperf/grpc-server": "~3.0.0",
         "hyperf/resource": "~3.0.0",
         "hyperf/tappable": "~3.0.0"

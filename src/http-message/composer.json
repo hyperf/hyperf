@@ -10,9 +10,9 @@
         "http-message"
     ],
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "hyperf/codec": "~3.0.0",
-        "hyperf/engine": "^1.9|^2.7",
+        "hyperf/engine": "^2.7",
         "hyperf/support": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "laminas/laminas-mime": "^2.7",

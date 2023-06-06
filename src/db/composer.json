@@ -18,7 +18,7 @@
         }
     },
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "hyperf/config": "~3.0.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/pool": "~3.0.0",
