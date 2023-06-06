@@ -55,7 +55,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
             return $this;
         }
 
-        if (!$this->reconnect()) {
+        if (! $this->reconnect()) {
             throw new ConnectionException('Connection reconnect failed.');
         }
 
@@ -98,7 +98,6 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
         return true;
     }
-
 
     public function isTransaction(): bool
     {
