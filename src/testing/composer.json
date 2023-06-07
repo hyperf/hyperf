@@ -38,6 +38,7 @@
         }
     },
     "bin": [
-        "co-phpunit"
+        "co-phpunit",
+        "co-pest"
     ]
 }
