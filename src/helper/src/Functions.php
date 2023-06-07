@@ -331,3 +331,14 @@ if (! function_exists('trans_choice')) {
         return \Hyperf\Translation\trans_choice($key, $number, $replace, $locale);
     }
 }
+
+if (! function_exists('config')) {
+    /**
+     * @deprecated since v3.1, use `Hyperf\Config\config()` instead.
+     * @param null|mixed $default
+     */
+    function config(string $key, $default = null)
+    {
+        return \Hyperf\Config\config($key, $default);
+    }
+}
