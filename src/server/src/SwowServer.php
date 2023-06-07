@@ -116,6 +116,7 @@ class SwowServer implements ServerInterface
             $host = $server->getHost();
             $port = $server->getPort();
             $callbacks = array_replace($config->getCallbacks(), $server->getCallbacks());
+            $server->setSettings(array_replace($config->getSettings(), $server->getSettings()));
 
             $this->server = $this->makeServer($type, $host, $port, $server->getSettings());
 
