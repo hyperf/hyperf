@@ -334,7 +334,6 @@ if (! function_exists('trans_choice')) {
 
 if (! function_exists('config')) {
     /**
-     * @deprecated since v3.1, use `Hyperf\Config\config()` instead.
      * @param null|mixed $default
      */
     function config(string $key, $default = null)
