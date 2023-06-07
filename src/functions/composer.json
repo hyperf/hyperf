@@ -27,15 +27,7 @@
     "autoload": {
         "files": [
             "src/Functions.php"
-        ],
-        "psr-4": {
-            "Hyperf\\Utils\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "HyperfTest\\Utils\\": "tests/"
-        }
+        ]
     },
     "config": {
         "sort-packages": true
