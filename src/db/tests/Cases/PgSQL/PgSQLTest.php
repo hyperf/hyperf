@@ -13,11 +13,13 @@ namespace Cases\PgSQL;
 
 use Hyperf\DB\DB;
 use HyperfTest\DB\Cases\AbstractTestCase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PgSQLTest extends AbstractTestCase
 {
     public function setUp(): void

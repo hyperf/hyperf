@@ -13,12 +13,14 @@ namespace HyperfTest\DbConnection;
 
 use Hyperf\DbConnection\Frequency;
 use HyperfTest\DbConnection\Stubs\FrequencyStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FrequencyTest extends TestCase
 {
     public function testFreq()

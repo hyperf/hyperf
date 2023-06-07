@@ -14,12 +14,14 @@ namespace HyperfTest\Utils;
 use Exception;
 use Hyperf\Support\Exception\ExceptionThrower;
 use Hyperf\Support\Filesystem\FileNotFoundException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ExceptionTest extends TestCase
 {
     public function testFileNotFoundException()

@@ -15,6 +15,7 @@ use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Coroutine\Waiter;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -24,6 +25,7 @@ use function Hyperf\Coroutine\wait;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class StaticInstanceTest extends TestCase
 {
     protected function tearDown(): void

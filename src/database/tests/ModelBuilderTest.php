@@ -32,6 +32,7 @@ use HyperfTest\Database\Stubs\ModelStub;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PDO;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -41,6 +42,7 @@ use function Hyperf\Collection\collect;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelBuilderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;

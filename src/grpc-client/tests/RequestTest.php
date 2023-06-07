@@ -14,12 +14,14 @@ namespace HyperfTest\GrpcClient;
 use Grpc\Info;
 use Hyperf\Grpc\Parser;
 use Hyperf\GrpcClient\Request;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RequestTest extends TestCase
 {
     public function testRequest()

@@ -13,12 +13,14 @@ namespace HyperfTest\Utils;
 
 use Hyperf\Utils\Stringable;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class StringableTest extends TestCase
 {
     public function testCharAt()

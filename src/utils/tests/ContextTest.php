@@ -13,6 +13,7 @@ namespace HyperfTest\Utils;
 
 use Hyperf\Context\Context;
 use Hyperf\Utils\Coroutine;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -20,6 +21,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ContextTest extends TestCase
 {
     public function testOverride()

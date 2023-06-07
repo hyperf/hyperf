@@ -21,6 +21,7 @@ use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Query\Processors\Processor;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use TypeError;
@@ -29,6 +30,7 @@ use TypeError;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabaseQueryBuilderTest extends TestCase
 {
     protected function setUp(): void

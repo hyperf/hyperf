@@ -13,12 +13,14 @@ namespace HyperfTest\Server;
 
 use Hyperf\Server\Port;
 use Hyperf\Server\Server;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PortTest extends TestCase
 {
     public function testSetting()

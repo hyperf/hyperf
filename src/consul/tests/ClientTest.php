@@ -19,8 +19,9 @@ use ReflectionMethod;
 
 /**
  * @internal
- * @covers \Hyperf\Consul\Client
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Consul\Client::class)]
 class ClientTest extends TestCase
 {
     /**

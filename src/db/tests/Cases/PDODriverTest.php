@@ -14,11 +14,13 @@ namespace HyperfTest\DB\Cases;
 use Hyperf\DB\DB;
 use Hyperf\DB\Pool\PoolFactory;
 use PDO;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PDODriverTest extends AbstractTestCase
 {
     public function testFetch()

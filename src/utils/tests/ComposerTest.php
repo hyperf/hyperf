@@ -13,12 +13,14 @@ namespace HyperfTest\Utils;
 
 use Composer\Autoload\ClassLoader;
 use Hyperf\Utils\Composer;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ComposerTest extends TestCase
 {
     public function testFindLoader()

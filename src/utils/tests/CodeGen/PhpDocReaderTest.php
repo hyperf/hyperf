@@ -13,6 +13,7 @@ namespace HyperfTest\Utils\CodeGen;
 
 use Hyperf\Utils\CodeGen\PhpDocReader;
 use HyperfTest\Utils\Stub\DocFoo;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -20,6 +21,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PhpDocReaderTest extends TestCase
 {
     public function testGetReturnClass()

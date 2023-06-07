@@ -18,6 +18,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\RateLimit\Aspect\RateLimitAnnotationAspect;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -25,6 +26,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RateLimitTest extends TestCase
 {
     protected function tearDown(): void

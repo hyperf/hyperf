@@ -16,12 +16,14 @@ use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Mockery;
 use PDO;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConnectionTest extends TestCase
 {
     protected function tearDown(): void

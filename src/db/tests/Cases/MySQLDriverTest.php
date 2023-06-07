@@ -12,11 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\DB\Cases;
 
 use Hyperf\DB\DB;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MySQLDriverTest extends PDODriverTest
 {
     protected $driver = 'mysql';

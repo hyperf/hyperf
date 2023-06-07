@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Utils\Traits;
 
 use Hyperf\Utils\Traits\Container;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ContainerTest extends TestCase
 {
     public function testGet()

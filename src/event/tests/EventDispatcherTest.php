@@ -33,8 +33,9 @@ use ReflectionClass;
 
 /**
  * @internal
- * @covers \Hyperf\Event\EventDispatcher
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Event\EventDispatcher::class)]
 class EventDispatcherTest extends TestCase
 {
     use MockeryPHPUnitIntegration;

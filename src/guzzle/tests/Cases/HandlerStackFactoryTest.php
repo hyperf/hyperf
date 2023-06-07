@@ -24,6 +24,7 @@ use Hyperf\Pool\SimplePool\PoolFactory;
 use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
 use HyperfTest\Guzzle\Stub\HandlerStackFactoryStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
@@ -33,6 +34,7 @@ use Throwable;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class HandlerStackFactoryTest extends TestCase
 {
     public function testCreateCoroutineHandler()

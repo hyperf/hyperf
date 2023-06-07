@@ -22,6 +22,7 @@ use HyperfTest\RpcServer\Stub\ContainerStub;
 use HyperfTest\RpcServer\Stub\IdGeneratorStub;
 use HyperfTest\RpcServer\Stub\MiddlewareStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionClass;
@@ -30,6 +31,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RouterDispatcherFactoryTest extends TestCase
 {
     protected function tearDown(): void

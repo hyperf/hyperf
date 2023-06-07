@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Crontab;
 
 use Hyperf\Crontab\Parser;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
@@ -19,6 +20,7 @@ use ReflectionMethod;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ParserCronNumberTest extends TestCase
 {
     protected $timezone;

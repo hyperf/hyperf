@@ -17,6 +17,7 @@ use Hyperf\HttpServer\Router\Handler;
 use HyperfTest\Devtool\Stub\ContainerStub;
 use HyperfTest\Devtool\Stub\IndexController;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -24,6 +25,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RoutesCommandTest extends TestCase
 {
     protected function tearDown(): void

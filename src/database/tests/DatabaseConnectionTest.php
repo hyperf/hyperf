@@ -30,6 +30,7 @@ use Mockery as m;
 use PDO;
 use PDOException;
 use PDOStatement;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionClass;
@@ -38,6 +39,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabaseConnectionTest extends TestCase
 {
     protected function tearDown(): void
@@ -170,7 +172,7 @@ class DatabaseConnectionTest extends TestCase
         $pdo = $this->createMock(DatabaseConnectionTestMockPDO::class);
         $pdo->expects($this->exactly(2))
             ->method('beginTransaction')
-            ->withConsecutive([], [])
+            // ->withConsecutive([], [])
             ->willReturnOnConsecutiveCalls(
                 $this->throwException(new ErrorException('server has gone away')),
                 true

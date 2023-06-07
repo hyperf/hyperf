@@ -39,6 +39,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\ServerManager;
 use Hyperf\Stringable\Str;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionClass;
@@ -48,6 +49,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TcpServerTest extends TestCase
 {
     public function testGetDefaultExceptionHandler()

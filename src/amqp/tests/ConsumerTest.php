@@ -22,6 +22,7 @@ use HyperfTest\Amqp\Stub\Delay2Consumer;
 use HyperfTest\Amqp\Stub\DelayConsumer;
 use Mockery;
 use PhpAmqpLib\Channel\Frame;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
@@ -30,6 +31,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConsumerTest extends TestCase
 {
     public function testConsumerConcurrentLimit()

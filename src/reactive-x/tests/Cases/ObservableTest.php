@@ -34,6 +34,7 @@ use Hyperf\ReactiveX\RxSwoole;
 use Hyperf\Serializer\SimpleNormalizer;
 use HyperfTest\ReactiveX\Stub\TestEvent;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -54,6 +55,7 @@ use function Hyperf\Support\swoole_hook_flags;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ObservableTest extends TestCase
 {
     public static function setUpBeforeClass(): void

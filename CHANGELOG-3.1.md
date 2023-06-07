@@ -5,6 +5,7 @@
 - Upgrade the php version to `>=8.1`
 - Upgrade the swoole version to `>=5.0`
 - Upgrade `hyperf/engine` to `^2.0`
+- Upgrade `phpunit/phpunit` to `^10.0`
 
 ## Swow Supported
 

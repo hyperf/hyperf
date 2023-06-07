@@ -13,6 +13,7 @@ namespace HyperfTest\Metric\Adapter\Prometheus;
 
 use Hyperf\Metric\Adapter\Prometheus\Redis;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Prometheus\Counter;
 use Prometheus\Histogram;
@@ -23,6 +24,7 @@ use ReflectionProperty;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RedisTest extends TestCase
 {
     protected string $prePrefix;

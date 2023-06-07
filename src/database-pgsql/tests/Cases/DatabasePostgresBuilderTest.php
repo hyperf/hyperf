@@ -23,12 +23,14 @@ use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabasePostgresBuilderTest extends TestCase
 {
     protected function tearDown(): void

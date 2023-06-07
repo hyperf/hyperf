@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Macroable;
 
 use Hyperf\Macroable\Macroable;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MacroableTest extends TestCase
 {
     private $macroable;

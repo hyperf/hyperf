@@ -14,12 +14,14 @@ namespace HyperfTest\Crontab;
 use Hyperf\Crontab\Annotation\Crontab;
 use HyperfTest\Crontab\Stub\FooCron;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CrontabAnnotationTest extends TestCase
 {
     public function testCallableNotExist()

@@ -15,6 +15,7 @@ use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coroutine;
 use HyperfTest\Utils\Exception\RetryException;
 use HyperfTest\Utils\Stub\FooClosure;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Swoole\Runtime;
@@ -23,6 +24,7 @@ use Swoole\Runtime;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FunctionTest extends TestCase
 {
     public function testCall()
@@ -133,9 +135,7 @@ class FunctionTest extends TestCase
         $this->assertSame(SWOOLE_HOOK_ALL, swoole_hook_flags());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testRun()
     {
         $asserts = [

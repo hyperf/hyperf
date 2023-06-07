@@ -15,6 +15,7 @@ use Hyperf\Context\ApplicationContext;
 use Hyperf\Utils\Pipeline;
 use HyperfTest\Utils\Stub\FooPipeline;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -22,6 +23,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PipelineTest extends TestCase
 {
     protected function tearDown(): void

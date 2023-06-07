@@ -16,8 +16,9 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- * @covers \Hyperf\Utils\Backoff
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Utils\Backoff::class)]
 class BackoffTest extends TestCase
 {
     public function testBackoff()

@@ -23,6 +23,7 @@ use Hyperf\SocketIOServer\SocketIO;
 use Hyperf\WebSocketServer\Sender;
 use HyperfTest\SocketIOServer\Stub\EphemeralAdapter;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use ReflectionClass;
 use Swoole\Atomic;
 
@@ -30,6 +31,7 @@ use Swoole\Atomic;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class IONamespaceTest extends AbstractTestCase
 {
     protected function setUp(): void

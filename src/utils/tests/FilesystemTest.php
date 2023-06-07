@@ -11,32 +11,38 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Hyperf\Coroutine\Parallel;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Parallel;
+use Hyperf\Support\Filesystem\Filesystem;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Runtime;
 use Throwable;
+
+use function Hyperf\Coroutine\go;
+use function Hyperf\Coroutine\run;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FilesystemTest extends TestCase
 {
     public function testLock()
     {
+        $this->assertTrue(true);
         Runtime::enableCoroutine(SWOOLE_HOOK_ALL);
         file_put_contents('./test.txt', str_repeat('a', 10000));
         $p = new Parallel();
         for ($i = 0; $i < 100; ++$i) {
             $p->add(function () {
-                $fs = new \Hyperf\Utils\Filesystem\Filesystem();
+                $fs = new Filesystem();
                 $fs->put('./test.txt', str_repeat('b', 100000), true);
                 $this->assertEquals(100000, strlen($fs->get('./test.txt', true)));
             });
             $p->add(function () {
-                $fs = new \Hyperf\Utils\Filesystem\Filesystem();
+                $fs = new Filesystem();
                 $this->assertEquals(100000, strlen($fs->get('./test.txt', true)));
                 $fs->put('./test.txt', str_repeat('c', 100000), true);
             });
@@ -45,11 +51,10 @@ class FilesystemTest extends TestCase
         unlink('./test.txt');
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testFopenInCoroutine()
     {
+        $this->assertTrue(true);
         run(function () {
             $max = 2;
             $chan = new Channel($max);
@@ -70,6 +75,7 @@ class FilesystemTest extends TestCase
 
     public function testMakeDirection()
     {
+        $this->assertTrue(true);
         $system = new Filesystem();
         if (SWOOLE_VERSION_ID > 40701) {
             try {
@@ -85,11 +91,10 @@ class FilesystemTest extends TestCase
         }
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testPutLockInCoroutine()
     {
+        $this->assertTrue(true);
         run(function () {
             $max = 3;
             $chan = new Channel($max);
@@ -122,8 +127,9 @@ class FilesystemTest extends TestCase
 
     public function testLastModified()
     {
+        $this->assertTrue(true);
         $path = BASE_PATH . '/runtime/data.log';
-        $fs = new \Hyperf\Utils\Filesystem\Filesystem();
+        $fs = new Filesystem();
 
         $this->assertNotFalse($fs->put($path, 'hello'));
         $lastModified = $fs->lastModified($path);

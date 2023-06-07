@@ -19,6 +19,7 @@ use Hyperf\Engine\Exception\CoroutineDestroyedException;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Utils\Coroutine;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Throwable;
@@ -27,6 +28,7 @@ use Throwable;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CoroutineTest extends TestCase
 {
     protected function tearDown(): void
@@ -64,9 +66,7 @@ class CoroutineTest extends TestCase
         }
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testCoroutineInTopCoroutine()
     {
         run(function () {

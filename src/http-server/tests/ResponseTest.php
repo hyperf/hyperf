@@ -23,6 +23,7 @@ use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Response;
 use Hyperf\HttpServer\ResponseEmitter;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
@@ -33,6 +34,7 @@ use Swoole\Http\Response as SwooleResponse;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ResponseTest extends TestCase
 {
     protected function tearDown(): void

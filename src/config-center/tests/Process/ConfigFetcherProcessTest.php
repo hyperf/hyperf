@@ -26,6 +26,7 @@ use Hyperf\Di\Container;
 use Hyperf\Process\ProcessManager;
 use HyperfTest\ConfigCenter\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
@@ -34,6 +35,7 @@ use Swoole\Server;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConfigFetcherProcessTest extends TestCase
 {
     protected function tearDown(): void

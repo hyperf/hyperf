@@ -13,6 +13,7 @@ namespace HyperfTest\Utils\Channel;
 
 use Hyperf\Coroutine\Exception\WaitTimeoutException;
 use Hyperf\Utils\Channel\Caller;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -20,6 +21,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CallerTest extends TestCase
 {
     public function testCallerWithNull()

@@ -28,6 +28,7 @@ use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -37,6 +38,7 @@ use function Hyperf\Collection\collect;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class QueryBuilderTest extends TestCase
 {
     protected function tearDown(): void

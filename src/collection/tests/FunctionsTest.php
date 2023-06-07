@@ -14,6 +14,7 @@ namespace HyperfTest\Collection;
 use ArrayAccess;
 use ArrayIterator;
 use IteratorAggregate;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Traversable;
 
@@ -28,6 +29,7 @@ use function Hyperf\Collection\value;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FunctionsTest extends TestCase
 {
     public function testDataGet()

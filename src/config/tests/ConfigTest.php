@@ -15,6 +15,7 @@ use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -24,6 +25,7 @@ use function Hyperf\Config\config;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConfigTest extends TestCase
 {
     public function testConfigFunction()

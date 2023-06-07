@@ -37,9 +37,10 @@ use SessionHandlerInterface;
 
 /**
  * @internal
- * @covers \Hyperf\Session\Middleware\SessionMiddleware
- * @covers \Hyperf\Session\SessionManager
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Session\Middleware\SessionMiddleware::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Session\SessionManager::class)]
 class SessionMiddlewareTest extends TestCase
 {
     public function testHandle()

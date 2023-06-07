@@ -36,6 +36,7 @@ use HyperfTest\HttpServer\Stub\FooController;
 use HyperfTest\HttpServer\Stub\SetHeaderMiddleware;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -47,6 +48,7 @@ use ReflectionMethod;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CoreMiddlewareTest extends TestCase
 {
     public function testParseParameters()

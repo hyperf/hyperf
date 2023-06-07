@@ -44,6 +44,7 @@ use HyperfTest\Database\Stubs\Model\UserRole;
 use HyperfTest\Database\Stubs\Model\UserRoleMorphPivot;
 use HyperfTest\Database\Stubs\Model\UserRolePivot;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
@@ -52,6 +53,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelRealBuilderTest extends TestCase
 {
     /**

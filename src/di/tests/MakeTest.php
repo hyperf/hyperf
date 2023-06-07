@@ -23,8 +23,9 @@ use function Hyperf\Support\make;
 
 /**
  * @internal
- * @covers \Hyperf\Di\Container
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Di\Container::class)]
 class MakeTest extends TestCase
 {
     protected function setUp(): void

@@ -25,6 +25,7 @@ use HyperfTest\Validation\Cases\Stub\BarSceneRequest;
 use HyperfTest\Validation\Cases\Stub\DemoRequest;
 use HyperfTest\Validation\Cases\Stub\FooSceneRequest;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -37,6 +38,7 @@ use function Hyperf\Coroutine\wait;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FormRequestTest extends TestCase
 {
     protected function tearDown(): void

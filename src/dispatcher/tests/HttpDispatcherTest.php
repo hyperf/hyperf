@@ -19,6 +19,7 @@ use HyperfTest\Dispatcher\Middlewares\CoreMiddleware;
 use HyperfTest\Dispatcher\Middlewares\Test2Middleware;
 use HyperfTest\Dispatcher\Middlewares\TestMiddleware;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ProphecyInterface;
@@ -34,6 +35,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class HttpDispatcherTest extends TestCase
 {
     use ProphecyTrait;

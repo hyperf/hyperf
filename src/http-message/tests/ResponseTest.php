@@ -15,6 +15,7 @@ use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Server\Connection\SwooleConnection;
 use Hyperf\HttpMessage\Server\Response;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Http\Response as SwooleResponse;
 
@@ -22,6 +23,7 @@ use Swoole\Http\Response as SwooleResponse;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ResponseTest extends TestCase
 {
     protected function tearDown(): void

@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Utils;
 
 use Hyperf\Collection\Collection;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CollectionTest extends TestCase
 {
     public function testOperatorForWhere()

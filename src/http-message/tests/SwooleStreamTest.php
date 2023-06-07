@@ -16,6 +16,7 @@ use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\ResponseEmitter;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Http\Response as SwooleResponse;
 
@@ -23,6 +24,7 @@ use Swoole\Http\Response as SwooleResponse;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class SwooleStreamTest extends TestCase
 {
     public function testSwooleFileStream()

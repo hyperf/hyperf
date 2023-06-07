@@ -22,6 +22,7 @@ use Hyperf\Translation\MessageSelector;
 use Hyperf\Translation\Translator;
 use Hyperf\Translation\TranslatorFactory;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -31,6 +32,7 @@ use function Hyperf\Coroutine\parallel;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TranslatorTest extends TestCase
 {
     protected function tearDown(): void

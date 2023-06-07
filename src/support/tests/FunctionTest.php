@@ -13,6 +13,7 @@ namespace HyperfTest\Support;
 
 use HyperfTest\Utils\Exception\RetryException;
 use HyperfTest\Utils\Stub\FooClosure;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 use function Hyperf\Support\call;
@@ -25,6 +26,7 @@ use function Hyperf\Support\value;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FunctionTest extends TestCase
 {
     public function testCall()

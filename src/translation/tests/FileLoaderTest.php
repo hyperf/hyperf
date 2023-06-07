@@ -19,6 +19,7 @@ use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\Translation\FileLoader;
 use Hyperf\Translation\FileLoaderFactory;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -26,6 +27,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FileLoaderTest extends TestCase
 {
     protected function tearDown(): void

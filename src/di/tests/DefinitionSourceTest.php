@@ -15,12 +15,14 @@ use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
 use HyperfTest\Di\Stub\Foo;
 use HyperfTest\Di\Stub\FooFactory;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DefinitionSourceTest extends TestCase
 {
     public function testAddDefinition()

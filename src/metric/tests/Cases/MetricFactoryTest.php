@@ -18,6 +18,7 @@ use Hyperf\Guzzle\ClientFactory;
 use Hyperf\Metric\Adapter\Prometheus\Constants;
 use Hyperf\Metric\Adapter\Prometheus\MetricFactory as PrometheusFactory;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Prometheus\CollectorRegistry;
 use ReflectionClass;
@@ -27,6 +28,7 @@ use ReflectionMethod;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MetricFactoryTest extends TestCase
 {
     protected function tearDown(): void

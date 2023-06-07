@@ -25,6 +25,7 @@ use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RedisCluster;
 
@@ -34,6 +35,7 @@ use function Hyperf\Coroutine\go;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RedisProxyTest extends TestCase
 {
     protected function tearDown(): void

@@ -16,6 +16,7 @@ use Hyperf\Stringable\Str;
 use HyperfTest\Redis\Stub\ContainerStub;
 use HyperfTest\Redis\Stub\HGetAllMultipleStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Redis;
 
@@ -23,6 +24,7 @@ use Redis;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class EvalTest extends TestCase
 {
     protected function tearDown(): void

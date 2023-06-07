@@ -24,6 +24,7 @@ use HyperfTest\HttpMessage\Stub\ParserStub;
 use HyperfTest\HttpMessage\Stub\Server\RequestStub;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
@@ -34,6 +35,7 @@ use Swoole\Http\Request as SwooleRequest;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ServerRequestTest extends TestCase
 {
     protected function tearDown(): void
@@ -157,9 +159,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame(null, $uri->getPort());
     }
 
-    /**
-     * @group ParseHost
-     */
+    #[\PHPUnit\Framework\Attributes\Group('ParseHost')]
     public function testParseHost()
     {
         $hostStrIPv4 = '192.168.119.100:9501';
@@ -182,11 +182,11 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * @dataProvider  getIPv6Examples
      * @param mixed $originHost
      * @param mixed $host
      * @param mixed $port
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getIPv6Examples')]
     public function testGetUriFromGlobalsForIPv6Host($originHost, $host, $port)
     {
         $swooleRequest = Mockery::mock(SwooleRequest::class);
@@ -211,7 +211,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame($host, $uri->getHost());
     }
 
-    public function getIPv6Examples(): array
+    public static function getIPv6Examples(): array
     {
         return [
             ['localhost:9501', 'localhost', 9501],

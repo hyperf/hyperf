@@ -23,6 +23,7 @@ use Hyperf\Database\Schema\Schema;
 use Hyperf\Support\Filesystem\Filesystem;
 use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Style\OutputStyle;
 
@@ -30,6 +31,7 @@ use Symfony\Component\Console\Style\OutputStyle;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PostgreSqlSwooleExtConnectionTest extends TestCase
 {
     protected Migrator $migrator;

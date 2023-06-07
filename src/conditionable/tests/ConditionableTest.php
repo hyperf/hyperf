@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Conditionable;
 
 use Hyperf\Conditionable\Conditionable;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConditionableTest extends TestCase
 {
     public function testWhenConditionCallback()
