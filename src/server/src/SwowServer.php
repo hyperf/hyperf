@@ -116,6 +116,7 @@ class SwowServer implements ServerInterface
             $host = $server->getHost();
             $port = $server->getPort();
             $callbacks = array_replace($config->getCallbacks(), $server->getCallbacks());
+            $server->setSettings(array_replace($config->getSettings(), $server->getSettings()));
 
             $this->server = $this->makeServer($type, $host, $port, $server->getSettings());
 
@@ -260,6 +261,7 @@ class SwowServer implements ServerInterface
             }
 
             $method = Str::camel(sprintf('set_%s', $key));
+            dump($method);
             if (method_exists($server, $method)) {
                 $server->{$method}($value);
             }
