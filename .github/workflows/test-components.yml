@@ -172,6 +172,7 @@ jobs:
           cp .travis/.env.example .env
           ./.travis/requirement.install.sh
           composer remove friendsofphp/php-cs-fixer --dev -W
+          composer remove "pestphp/*" --dev -W
           composer remove symfony/console --dev -W
           composer require "psr/container:${{ matrix.version }}"
           composer update -oW
@@ -255,6 +256,7 @@ jobs:
           composer remove jonahgeorge/jaeger-client-php --dev -W
           composer remove bandwidth-throttle/token-bucket --dev -W
           composer remove friendsofphp/php-cs-fixer --dev -W
+          composer remove "pestphp/*" --dev -W
           composer remove "symfony/*" --dev -W
       - name: Run Test Cases
         run: |
