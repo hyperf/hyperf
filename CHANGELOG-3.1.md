@@ -17,6 +17,7 @@
 - [ ] Support v2 and v3 for socketio-server
 - [ ] Support [Psr7Plus](https://github.com/swow/psr7-plus)
 - [x] Support [pest](https://github.com/pestphp/pest)
+- [x] Added `hyperf/functions` component
 
 ## Optimized
 
