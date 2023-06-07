@@ -36,6 +36,10 @@ use Swoole\Http\Request as SwooleRequest;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class ServerRequestTest extends TestCase
 {
     protected function tearDown(): void
@@ -166,7 +170,6 @@ class ServerRequestTest extends TestCase
         $hostStrIPv6 = '[fe80::a464:1aff:fe88:7b5a]:9502';
         $objReflectClass = new ReflectionClass('Hyperf\HttpMessage\Server\Request');
         $method = $objReflectClass->getMethod('parseHost');
-        $method->setAccessible(true);
 
         $resIPv4 = $method->invokeArgs(null, [$hostStrIPv4]);
         $this->assertSame('192.168.119.100', $resIPv4[0]);

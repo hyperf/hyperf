@@ -26,5 +26,6 @@
 ## Removed
 
 - [x] Remove unused codes in `hyperf/utils`.
+- [x] Remove redundant `setAccessible` methods.
 
 ## Deprecated

@@ -32,6 +32,10 @@ use Swoole\Atomic;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class IONamespaceTest extends AbstractTestCase
 {
     protected function setUp(): void
@@ -135,7 +139,6 @@ class IONamespaceTest extends AbstractTestCase
 
         $ref = new ReflectionClass($io);
         $m = $ref->getMethod('renewInAllNamespaces');
-        $m->setAccessible(true);
         $this->assertFalse(EphemeralAdapter::$isRenew);
         $m->invokeArgs($io, [1]);
         $this->assertTrue(EphemeralAdapter::$isRenew);

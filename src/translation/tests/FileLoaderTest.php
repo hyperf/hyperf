@@ -28,6 +28,10 @@ use ReflectionClass;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class FileLoaderTest extends TestCase
 {
     protected function tearDown(): void
@@ -46,7 +50,6 @@ class FileLoaderTest extends TestCase
         $loader = $factory($container);
         $ref = new ReflectionClass($loader);
         $path = $ref->getProperty('path');
-        $path->setAccessible(true);
         $this->assertSame(BASE_PATH . '/storage/languages', $path->getValue($loader));
     }
 

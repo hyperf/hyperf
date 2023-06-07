@@ -35,6 +35,10 @@ use Swoole\Http\Response as SwooleResponse;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class ResponseTest extends TestCase
 {
     protected function tearDown(): void
@@ -88,7 +92,6 @@ class ResponseTest extends TestCase
         $response = new Response();
         $reflectionClass = new ReflectionClass(Response::class);
         $reflectionMethod = $reflectionClass->getMethod('toXml');
-        $reflectionMethod->setAccessible(true);
 
         $expected = '<?xml version="1.0" encoding="utf-8"?>
 <root><kstring>string</kstring><kint1>1</kint1><kint0>0</kint0><kfloat>0.12345</kfloat><kfalse/><ktrue>1</ktrue><karray><kstring>string</kstring><kint1>1</kint1><kint0>0</kint0><kfloat>0.12345</kfloat><kfalse/><ktrue>1</ktrue></karray></root>';

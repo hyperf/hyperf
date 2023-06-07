@@ -27,6 +27,10 @@ use ReflectionClass;
  * @coversNothing
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Session\SessionManager::class)]
+/**
+ * @internal
+ * @coversNothing
+ */
 class SessionManagerTest extends TestCase
 {
     public function testSetterAndGetter()
@@ -46,7 +50,6 @@ class SessionManagerTest extends TestCase
         $sessionManager = new SessionManager(Mockery::mock(ContainerInterface::class), MockStub::makeConfig());
         $reflectionClass = new ReflectionClass(SessionManager::class);
         $parseSessionIdMethod = $reflectionClass->getMethod('parseSessionId');
-        $parseSessionIdMethod->setAccessible(true);
         $id = Str::random(40);
         $this->assertSame($id, $parseSessionIdMethod->invoke($sessionManager, $request->withCookieParams([
             'HYPERF_SESSION_ID' => $id,

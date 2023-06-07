@@ -24,6 +24,10 @@ use Swoole\Timer;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class RetryBudgetTest extends TestCase
 {
     protected function tearDown(): void
@@ -81,7 +85,6 @@ class RetryBudgetTest extends TestCase
         $budget->init();
         $ref = new ReflectionClass(RetryBudget::class);
         $prop = $ref->getProperty('budget');
-        $prop->setAccessible(true);
         System::sleep(1.2);
         $this->assertLessThanOrEqual(1, $prop->getValue($budget)->count());
         System::sleep(1.2);

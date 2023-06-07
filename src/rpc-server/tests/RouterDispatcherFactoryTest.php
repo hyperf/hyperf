@@ -32,6 +32,10 @@ use ReflectionClass;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class RouterDispatcherFactoryTest extends TestCase
 {
     protected function tearDown(): void
@@ -59,7 +63,6 @@ class RouterDispatcherFactoryTest extends TestCase
         );
         $ref = new ReflectionClass($factory);
         $m = $ref->getMethod('handleRpcService');
-        $m->setAccessible(true);
         $m->invokeArgs($factory, [IdGeneratorStub::class, new RpcService('IdGenerator'), [], []]);
     }
 
@@ -76,7 +79,6 @@ class RouterDispatcherFactoryTest extends TestCase
         );
         $ref = new ReflectionClass($factory);
         $m = $ref->getMethod('handleRpcService');
-        $m->setAccessible(true);
         $m->invokeArgs($factory, [MiddlewareStub::class, new RpcService('Middleware'), [
             'generate' => [
                 Middleware::class => new Middleware('Bar'),

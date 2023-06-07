@@ -26,6 +26,10 @@ use ReflectionClass;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class RoutesCommandTest extends TestCase
 {
     protected function tearDown(): void
@@ -40,7 +44,6 @@ class RoutesCommandTest extends TestCase
 
         $ref = new ReflectionClass($command);
         $method = $ref->getMethod('analyzeHandler');
-        $method->setAccessible(true);
 
         $data = [];
         $method->invokeArgs($command, [&$data, 'http', 'GET', null, new Handler(IndexController::class . '::index', '/')]);

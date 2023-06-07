@@ -43,7 +43,6 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
                 foreach (['code', 'message', 'file', 'line'] as $attribute) {
                     if (isset($data[$attribute])) {
                         $property = ReflectionManager::reflectProperty($type, $attribute);
-                        $property->setAccessible(true);
                         $property->setValue($exception, $data[$attribute]);
                     }
                 }

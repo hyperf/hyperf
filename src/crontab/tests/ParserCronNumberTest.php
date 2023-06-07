@@ -21,6 +21,10 @@ use ReflectionMethod;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class ParserCronNumberTest extends TestCase
 {
     protected $timezone;
@@ -40,7 +44,6 @@ class ParserCronNumberTest extends TestCase
     {
         $parser = new Parser();
         $reflectionMethod = new ReflectionMethod(Parser::class, 'parseSegment');
-        $reflectionMethod->setAccessible(true);
 
         $result = $reflectionMethod->invoke($parser, '*', 0, 59);
         $expected = [];
@@ -72,7 +75,6 @@ class ParserCronNumberTest extends TestCase
     {
         $parser = new Parser();
         $reflectionMethod = new ReflectionMethod(Parser::class, 'parseSegment');
-        $reflectionMethod->setAccessible(true);
 
         $result = $reflectionMethod->invoke($parser, '*', 0, 59, 12);
         $expected = [];
