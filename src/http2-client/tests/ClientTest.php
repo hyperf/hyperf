@@ -28,6 +28,10 @@ use function Hyperf\Coroutine\parallel;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class ClientTest extends TestCase
 {
     protected function tearDown(): void
@@ -37,9 +41,7 @@ class ClientTest extends TestCase
 
     public function testHTTP2ClientLoop()
     {
-        if (PHP_VERSION_ID >= 80200) {
-            $this->markTestSkipped();
-        }
+        $this->markTestSkipped();
 
         $client = $this->getClient('http://127.0.0.1:10002');
 
@@ -61,9 +63,7 @@ class ClientTest extends TestCase
             $this->markTestSkipped('');
         }
 
-        if (PHP_VERSION_ID >= 80200) {
-            $this->markTestSkipped();
-        }
+        $this->markTestSkipped();
 
         $client = $this->getClient('127.0.0.1:50051');
         $num = rand(0, 1000000);

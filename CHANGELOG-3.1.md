@@ -14,15 +14,17 @@
 
 ## Added
 
-- [ ] Support v2 and v3 for socketio-server
-- [ ] Support [Psr7Plus](https://github.com/swow/psr7-plus)
-- [x] Support [pest](https://github.com/pestphp/pest)
-- [x] Added `hyperf/helper` component
+- [ ] Support v2 and v3 for socketio-server.
+- [ ] Support [Psr7Plus](https://github.com/swow/psr7-plus).
+- [x] Support [pest](https://github.com/pestphp/pest).
+- [x] Added `hyperf/helper` component.
 
 ## Optimized
 
 - Move Prometheus driver dependency to suggest.
 
 ## Removed
+
+- [x] Remove unused codes in `hyperf/utils`.
 
 ## Deprecated

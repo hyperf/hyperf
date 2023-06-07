@@ -18,6 +18,10 @@ use PHPUnit\Framework\Attributes\CoversNothing;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class BladeLayoutsTest extends AbstractBladeTestCase
 {
     public function testAppendSectionsAreCompiled()
@@ -34,11 +38,11 @@ class BladeLayoutsTest extends AbstractBladeTestCase
     {
         $string = '@extends(\'foo\')
 test';
-        $expected = "test\n" . '<?php echo $__env->make(\'foo\', \Hyperf\Utils\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>';
+        $expected = "test\n" . '<?php echo $__env->make(\'foo\', \Hyperf\Collection\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>';
         $this->assertEquals($expected, $this->compiler->compileString($string));
 
         $string = '@extends(name(foo))' . "\n" . 'test';
-        $expected = "test\n" . '<?php echo $__env->make(name(foo), \Hyperf\Utils\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>';
+        $expected = "test\n" . '<?php echo $__env->make(name(foo), \Hyperf\Collection\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>';
         $this->assertEquals($expected, $this->compiler->compileString($string));
     }
 
@@ -46,12 +50,12 @@ test';
     {
         $string = '@extends(\'foo\')
 test';
-        $expected = "test\n" . '<?php echo $__env->make(\'foo\', \Hyperf\Utils\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>';
+        $expected = "test\n" . '<?php echo $__env->make(\'foo\', \Hyperf\Collection\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>';
         $this->assertEquals($expected, $this->compiler->compileString($string));
 
         // use the same compiler instance to compile another template with @extends directive
         $string = "@extends(name(foo))\ntest";
-        $expected = "test\n" . '<?php echo $__env->make(name(foo), \Hyperf\Utils\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>';
+        $expected = "test\n" . '<?php echo $__env->make(name(foo), \Hyperf\Collection\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>';
         $this->assertEquals($expected, $this->compiler->compileString($string));
     }
 

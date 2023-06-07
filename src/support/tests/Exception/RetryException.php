@@ -9,11 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils;
+namespace HyperfTest\Support\Exception;
 
-/**
- * @deprecated since 3.1, please use Hyperf\Coroutine\Parallel instead.
- */
-class Parallel extends \Hyperf\Coroutine\Parallel
+use Exception;
+
+class RetryException extends Exception
 {
 }

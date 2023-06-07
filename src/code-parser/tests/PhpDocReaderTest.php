@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\CodeParser;
 
 use Hyperf\CodeParser\PhpDocReader;
-use HyperfTest\Utils\Stub\DocFoo;
+use HyperfTest\CodeParser\Stub\DocFoo;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -22,6 +22,10 @@ use ReflectionClass;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class PhpDocReaderTest extends TestCase
 {
     public function testGetReturnClass()
