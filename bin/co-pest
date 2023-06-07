@@ -1,6 +1,14 @@
 #!/usr/bin/env php
-<?php 
-declare (strict_types=1);
+<?php
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 use Pest\Kernel;
 use Pest\Panic;
 use Pest\TestCaseFilters\GitDirtyTestCaseFilter;
@@ -8,11 +16,12 @@ use Pest\TestCaseMethodFilters\TodoTestCaseFilter;
 use Pest\TestSuite;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
+
 $code = 0;
-Swoole\Coroutine::set(["hook_flags" => SWOOLE_HOOK_ALL, "exit_condition" => function () {
-    return Swoole\Coroutine::stats()["coroutine_num"] === 0;
+Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL, 'exit_condition' => function () {
+    return Swoole\Coroutine::stats()['coroutine_num'] === 0;
 }]);
-Swoole\Coroutine\run(function () use(&$code) {
+Swoole\Coroutine\run(function () use (&$code) {
     try {
         $code = (static function () {
             // Ensures Collision's Printer is registered.
@@ -76,7 +85,7 @@ Swoole\Coroutine\run(function () use(&$code) {
             } catch (Throwable|Error $e) {
                 Panic::with($e);
             }
-            exit($result);
+            return $result;
         })();
     } catch (Swoole\ExitException $e) {
         $code = $e->getStatus();
@@ -84,4 +93,4 @@ Swoole\Coroutine\run(function () use(&$code) {
     Swoole\Timer::clearAll();
     Hyperf\Coordinator\CoordinatorManager::until(Hyperf\Coordinator\Constants::WORKER_EXIT)->resume();
 });
-die($code);
+exit($code);

@@ -9,6 +9,7 @@
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 use PhpParser\Node;
+use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Parser;
@@ -40,8 +41,13 @@ class RunInCoroutineVisitor extends NodeVisitorAbstract
         return $nodes;
     }
 
+    /**
+     * @param PhpParser\Node\Expr\FuncCall $expr
+     */
     protected function wrapCoroutine($expr): array
     {
+        $exit = array_pop($expr->name->stmts);
+        $expr->name->stmts[] = new Return_(new Node\Expr\Variable($exit->expr->expr->name));
         /** @var PhpParser\Node\Stmt\Expression[] $nodes */
         $nodes = $this->parser->parse('<?php
 $code = 0;
