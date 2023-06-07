@@ -25,6 +25,6 @@
 
 ## Removed
 
-- [ ] Remove unused codes in `hyperf/utils`.
+- [x] Remove unused codes in `hyperf/utils`.
 
 ## Deprecated
