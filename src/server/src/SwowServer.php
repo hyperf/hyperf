@@ -261,7 +261,6 @@ class SwowServer implements ServerInterface
             }
 
             $method = Str::camel(sprintf('set_%s', $key));
-            dump($method);
             if (method_exists($server, $method)) {
                 $server->{$method}($value);
             }
