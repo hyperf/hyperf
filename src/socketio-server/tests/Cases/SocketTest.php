@@ -30,6 +30,10 @@ use function Hyperf\Support\make;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class SocketTest extends AbstractTestCase
 {
     protected function setUp(): void
@@ -115,7 +119,6 @@ class SocketTest extends AbstractTestCase
         ]);
         $reflection = new ReflectionClass(Socket::class);
         $prop = $reflection->getProperty('broadcast');
-        $prop->setAccessible(true);
         $this->assertFalse($prop->getValue($socket1));
         $this->assertTrue($prop->getValue($socket1->broadcast));
     }

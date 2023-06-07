@@ -36,6 +36,10 @@ use ReflectionClass;
  * @coversNothing
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Event\EventDispatcher::class)]
+/**
+ * @internal
+ * @coversNothing
+ */
 class EventDispatcherTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
@@ -53,7 +57,6 @@ class EventDispatcherTest extends TestCase
         $this->assertInstanceOf(EventDispatcherInterface::class, $instance = new EventDispatcher($listeners, $logger));
         $reflectionClass = new ReflectionClass($instance);
         $loggerProperty = $reflectionClass->getProperty('logger');
-        $loggerProperty->setAccessible(true);
         $this->assertInstanceOf(StdoutLoggerInterface::class, $loggerProperty->getValue($instance));
     }
 
@@ -67,7 +70,6 @@ class EventDispatcherTest extends TestCase
         $this->assertInstanceOf(EventDispatcherInterface::class, $instance = (new EventDispatcherFactory())($container));
         $reflectionClass = new ReflectionClass($instance);
         $loggerProperty = $reflectionClass->getProperty('logger');
-        $loggerProperty->setAccessible(true);
         $this->assertInstanceOf(StdoutLoggerInterface::class, $loggerProperty->getValue($instance));
     }
 

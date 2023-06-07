@@ -25,6 +25,10 @@ use ReflectionClass;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class AnnotationTest extends TestCase
 {
     protected function tearDown(): void
@@ -37,7 +41,6 @@ class AnnotationTest extends TestCase
         $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
         $ref = new ReflectionClass($scanner);
         $method = $ref->getMethod('normalizeDir');
-        $method->setAccessible(true);
 
         $this->expectException(DirectoryNotExistException::class);
         $method->invokeArgs($scanner, [['/not_exists']]);
@@ -48,7 +51,6 @@ class AnnotationTest extends TestCase
         $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
         $ref = new ReflectionClass($scanner);
         $method = $ref->getMethod('normalizeDir');
-        $method->setAccessible(true);
 
         $this->assertSame([], $method->invokeArgs($scanner, [[]]));
     }

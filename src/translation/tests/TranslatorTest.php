@@ -33,6 +33,10 @@ use function Hyperf\Coroutine\parallel;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class TranslatorTest extends TestCase
 {
     protected function tearDown(): void
@@ -51,7 +55,6 @@ class TranslatorTest extends TestCase
         $loader = $factory($container);
         $ref = new ReflectionClass($loader);
         $locale = $ref->getProperty('locale');
-        $locale->setAccessible(true);
         $this->assertSame('zh_CN', $locale->getValue($loader));
     }
 

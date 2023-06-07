@@ -115,7 +115,6 @@ class ClientTest extends TestCase
         $client = new Client($baseUri);
         $ref = new ReflectionClass($client);
         $identifier = $ref->getProperty('identifier');
-        $identifier->setAccessible(true);
         $identifier->setValue($client, 'HTTP2ClientUnit');
         return $client;
     }

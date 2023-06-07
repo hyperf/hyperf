@@ -26,6 +26,10 @@ use ReflectionMethod;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class ProxyCallVisitorTest extends TestCase
 {
     protected function tearDown(): void
@@ -58,7 +62,6 @@ CODETEMPLATE;
         $proxyCallVisitor = new ProxyCallVisitor(new VisitorMetadata('SomeClass'));
 
         $reflectionMethod = new ReflectionMethod($proxyCallVisitor, 'shouldRewrite');
-        $reflectionMethod->setAccessible(true);
         $this->assertFalse($reflectionMethod->invoke($proxyCallVisitor, $stmts->stmts[0]));
         $this->assertTrue($reflectionMethod->invoke($proxyCallVisitor, $stmts->stmts[1]));
     }
@@ -74,7 +77,6 @@ CODETEMPLATE;
         $proxyCallVisitor = new ProxyCallVisitor($visitorMetadata);
 
         $reflectionMethod = new ReflectionMethod($proxyCallVisitor, 'shouldRewrite');
-        $reflectionMethod->setAccessible(true);
         $this->assertTrue($reflectionMethod->invoke($proxyCallVisitor, new ClassMethod('foo')));
 
         $visitorMetadata->classLike = Node\Stmt\Interface_::class;

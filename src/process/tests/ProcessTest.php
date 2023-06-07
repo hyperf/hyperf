@@ -27,6 +27,10 @@ use ReflectionClass;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class ProcessTest extends TestCase
 {
     public static $dispatched = [];
@@ -71,7 +75,6 @@ class ProcessTest extends TestCase
         $server->shouldReceive('addProcess')->withAnyArgs()->andReturnUsing(function ($process) {
             $ref = new ReflectionClass($process);
             $property = $ref->getProperty('callback');
-            $property->setAccessible(true);
             $callback = $property->getValue($process);
             $callback($process);
             return 1;

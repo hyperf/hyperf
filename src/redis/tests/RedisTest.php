@@ -45,6 +45,10 @@ use function Hyperf\Coroutine\parallel;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class RedisTest extends TestCase
 {
     protected function tearDown(): void
@@ -95,7 +99,6 @@ class RedisTest extends TestCase
         $redis = $this->getRedis();
         $ref = new ReflectionClass($redis);
         $method = $ref->getMethod('getConnection');
-        $method->setAccessible(true);
 
         go(function () use ($chan, $redis, $method) {
             $id = null;
@@ -128,7 +131,6 @@ class RedisTest extends TestCase
 
         $chan->pop();
         $factory = $ref->getProperty('factory');
-        $factory->setAccessible(true);
         $factory = $factory->getValue($redis);
         $pool = $factory->getPool('default');
         $pool->flushAll();

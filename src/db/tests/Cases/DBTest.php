@@ -20,6 +20,10 @@ use ReflectionClass;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class DBTest extends AbstractTestCase
 {
     public function testDBConnection()
@@ -33,7 +37,6 @@ class DBTest extends AbstractTestCase
 
         $ref = new ReflectionClass($db);
         $property = $ref->getProperty('poolName');
-        $property->setAccessible(true);
         $this->assertSame('default', $property->getValue($db));
         $this->assertSame('pdo', $property->getValue($db2));
     }

@@ -50,6 +50,10 @@ use stdClass;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class TcpServerTest extends TestCase
 {
     public function testGetDefaultExceptionHandler()
@@ -65,7 +69,6 @@ class TcpServerTest extends TestCase
 
         $ref = new ReflectionClass($server);
         $method = $ref->getMethod('getDefaultExceptionHandler');
-        $method->setAccessible(true);
         $res = $method->invoke($server);
 
         $this->assertSame([TcpExceptionHandler::class], $res);
@@ -90,7 +93,6 @@ class TcpServerTest extends TestCase
 
         $ref = new ReflectionClass($server);
         $method = $ref->getMethod('buildRequest');
-        $method->setAccessible(true);
         /** @var Request $request */
         $request = $method->invoke($server, 1, 1, Json::encode([
             'jsonrpc' => '2.0',

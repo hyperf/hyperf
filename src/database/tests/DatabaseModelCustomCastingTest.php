@@ -28,6 +28,10 @@ use stdClass;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class DatabaseModelCustomCastingTest extends TestCase
 {
     protected function tearDown(): void
@@ -207,7 +211,6 @@ class DatabaseModelCustomCastingTest extends TestCase
         $model = new TestModelWithCustomCast();
         $ref = new ReflectionClass($model);
         $method = $ref->getMethod('resolveCasterClass');
-        $method->setAccessible(true);
         CastUsing::$castsAttributes = UppercaseCaster::class;
         $this->assertNotSame($method->invokeArgs($model, ['cast_using']), $method->invokeArgs($model, ['cast_using']));
 
