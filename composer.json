@@ -522,6 +522,7 @@
     },
     "bin": [],
     "scripts": {
+        "pest": "./bin/co-pest --colors=always",
         "test": "./bin/co-phpunit --colors=always",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
         "license-check": "docheader check src/ test/",
