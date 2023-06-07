@@ -50,6 +50,29 @@ class RunInCoroutineVisitor extends NodeVisitorAbstract
         $expr->name->stmts[] = new Return_(new Node\Expr\Variable($exit->expr->expr->name));
         /** @var PhpParser\Node\Stmt\Expression[] $nodes */
         $nodes = $this->parser->parse('<?php
+(function () {
+    $prepend = null;
+    foreach ($_SERVER["argv"] as $index => $argv) {
+        // --prepend /path/to/file
+        if ($argv === "--prepend") {
+            unset($_SERVER["argv"][$index]);
+            if (isset($_SERVER["argv"][$index + 1])) {
+                $prepend = $_SERVER["argv"][$index + 1];
+                unset($_SERVER["argv"][$index + 1]);
+            }
+            break;
+        }
+        // --prepend=/path/to/file
+        if (strpos($argv, "--prepend=") === 0) {
+            $prepend = substr($argv, 10);
+            unset($_SERVER["argv"][$index]);
+            break;
+        }
+    }
+    if ($prepend !== null && file_exists($prepend)) {
+        require $prepend;
+    }
+})();
 $code = 0;
 Swoole\Coroutine::set(["hook_flags" => SWOOLE_HOOK_ALL, "exit_condition" => function () {
     return Swoole\Coroutine::stats()["coroutine_num"] === 0;
@@ -64,7 +87,7 @@ Swoole\Coroutine\run(function () use(&$code) {
 });
 die($code);
 ');
-        $nodes[2]->expr->args[0]->value->stmts[0]->stmts[0] = new Node\Stmt\Expression(new Node\Expr\Assign(
+        $nodes[3]->expr->args[0]->value->stmts[0]->stmts[0] = new Node\Stmt\Expression(new Node\Expr\Assign(
             new Node\Expr\Variable('code'),
             $expr
         ));
