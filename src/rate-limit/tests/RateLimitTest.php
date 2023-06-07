@@ -51,37 +51,6 @@ class RateLimitTest extends TestCase
         $this->assertSame($config['rate_limit'], $aspect->getConfig());
     }
 
-    /**
-     * @deprecated
-     */
-    public function testAspectConfigDeprecated()
-    {
-        $container = $this->getContainer();
-        $container->shouldReceive('has')->andReturn(true);
-        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturnUsing(function () {
-            $logger = Mockery::mock(StdoutLoggerInterface::class);
-            $logger->shouldReceive('warning')->andReturnUsing(function ($message) {
-                $this->assertSame('Config rate-limit.php will be removed in v1.2, please use rate_limit.php instead.', $message);
-            });
-
-            return $logger;
-        });
-
-        $request = Mockery::mock(RequestInterface::class);
-        $handler = Mockery::mock(RateLimitHandler::class);
-        $aspect = new RateLimitAnnotationAspect(new Config($config = [
-            'rate-limit' => [
-                'create' => 1,
-                'consume' => 1,
-                'capacity' => 2,
-                'limitCallback' => [],
-                'waitTimeout' => 1,
-            ],
-        ]), $request, $handler);
-
-        $this->assertSame($config['rate-limit'], $aspect->getConfig());
-    }
-
     protected function getContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
