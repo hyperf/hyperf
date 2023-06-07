@@ -114,8 +114,6 @@ if (! function_exists('head')) {
      * Get the first element of an array. Useful for method chaining.
      *
      * @param array $array
-     *
-     * @deprecated since 3.1, use `Hyperf\Collection\head()` instead.
      */
     function head($array)
     {
