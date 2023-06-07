@@ -14,13 +14,14 @@ namespace HyperfTest\Di\Definition;
 use Hyperf\Di\Definition\DefinitionSource;
 use HyperfTest\Di\Stub\Bar;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class DefinitionSourceTest extends TestCase
 {
     protected function tearDown(): void

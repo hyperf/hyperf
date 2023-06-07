@@ -18,6 +18,7 @@ use Hyperf\Metric\Adapter\Prometheus\RedisStorageFactory;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use ReflectionProperty;
@@ -26,7 +27,7 @@ use ReflectionProperty;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RedisStorageFactoryTest extends TestCase
 {
     protected string $prePrefix;

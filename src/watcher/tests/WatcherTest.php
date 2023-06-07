@@ -13,13 +13,14 @@ namespace HyperfTest\Watcher;
 
 use Hyperf\Config\Config;
 use Hyperf\Watcher\Option;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class WatcherTest extends TestCase
 {
     public function testOption()

@@ -13,6 +13,7 @@ namespace HyperfTest\Utils;
 
 use ArrayObject;
 use Hyperf\Utils\Optional;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -20,7 +21,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class OptionalTest extends TestCase
 {
     public function testGetExistItemOnObject()

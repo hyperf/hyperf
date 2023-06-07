@@ -22,6 +22,7 @@ use HyperfTest\Nsq\Stub\ContainerStub;
 use HyperfTest\Nsq\Stub\DemoConsumer;
 use HyperfTest\Nsq\Stub\DisabledDemoConsumer;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -29,7 +30,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ConsumerManagerTest extends TestCase
 {
     protected function tearDown(): void

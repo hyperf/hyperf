@@ -17,6 +17,7 @@ use Hyperf\Di\Aop\VisitorMetadata;
 use HyperfTest\Di\Stub\AspectCollector;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
@@ -24,7 +25,7 @@ use ReflectionMethod;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ProxyCallVisitorTest extends TestCase
 {
     protected function tearDown(): void

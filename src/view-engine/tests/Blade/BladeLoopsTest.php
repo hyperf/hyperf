@@ -12,12 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\ViewEngine\Blade;
 
 use Hyperf\ViewEngine\Exception\ViewCompilationException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class BladeLoopsTest extends AbstractBladeTestCase
 {
     public function testForelseStatementsAreCompiled()

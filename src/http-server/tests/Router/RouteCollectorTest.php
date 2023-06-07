@@ -17,13 +17,14 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Router\RouteCollector;
 use HyperfTest\HttpServer\Stub\RouteCollectorStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RouteCollectorTest extends TestCase
 {
     protected function tearDown(): void

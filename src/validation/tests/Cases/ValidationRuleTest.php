@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Validation\Rule;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ValidationRuleTest extends TestCase
 {
     public function testMacroable()

@@ -14,6 +14,7 @@ namespace HyperfTest\Support\Filesystem;
 use Hyperf\Coroutine\Parallel;
 use Hyperf\Engine\Channel;
 use Hyperf\Support\Filesystem\Filesystem;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Runtime;
 use Throwable;
@@ -25,7 +26,7 @@ use function Hyperf\Coroutine\run;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class FilesystemTest extends TestCase
 {
     public function testLock()

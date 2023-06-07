@@ -15,13 +15,14 @@ use Hyperf\Rpc\Context;
 use Hyperf\RpcMultiplex\HttpMessageBuilder;
 use Hyperf\RpcMultiplex\Packer\JsonPacker;
 use Hyperf\Support\Reflection\ClassInvoker;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Psr\Http\Message\UriInterface;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class HttpMessageBuilderTest extends AbstractTestCase
 {
     public function testBuildUri()

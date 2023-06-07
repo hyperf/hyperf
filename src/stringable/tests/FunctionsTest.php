@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Stringable;
 
 use Hyperf\Stringable\Stringable;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -21,7 +22,7 @@ use function Hyperf\Stringable\str;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class FunctionsTest extends TestCase
 {
     public function testStr()

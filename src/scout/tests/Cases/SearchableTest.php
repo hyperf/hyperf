@@ -14,13 +14,14 @@ namespace HyperfTest\Scout\Cases;
 use HyperfTest\Scout\Stub\ModelStubForMakeAllSearchable;
 use HyperfTest\Scout\Stub\SearchableModel;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class SearchableTest extends TestCase
 {
     protected function tearDown(): void

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Utils;
 
 use Hyperf\Collection\Arr;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -19,7 +20,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ArrTest extends TestCase
 {
     public function testArrGet()

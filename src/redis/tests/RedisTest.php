@@ -29,6 +29,7 @@ use Hyperf\Redis\RedisProxy;
 use HyperfTest\Redis\Stub\RedisPoolFailedStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RedisCluster;
 use RedisSentinel;
@@ -43,7 +44,7 @@ use function Hyperf\Coroutine\parallel;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RedisTest extends TestCase
 {
     protected function tearDown(): void

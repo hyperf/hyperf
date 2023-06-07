@@ -13,6 +13,7 @@ namespace HyperfTest\Retry;
 
 use Hyperf\Retry\RetryBudget;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Swoole\Coroutine\System;
@@ -22,7 +23,7 @@ use Swoole\Timer;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RetryBudgetTest extends TestCase
 {
     protected function tearDown(): void

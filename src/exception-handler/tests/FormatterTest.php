@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\ExceptionHandler;
 
 use Hyperf\ExceptionHandler\Formatter\DefaultFormatter;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -19,7 +20,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class FormatterTest extends TestCase
 {
     public function testDefaultFormatter()

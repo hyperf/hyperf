@@ -22,6 +22,7 @@ use Hyperf\View\Exception\RenderException;
 use Hyperf\View\Mode;
 use Hyperf\View\Render;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -31,7 +32,7 @@ use Throwable;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RenderTest extends TestCase
 {
     protected function tearDown(): void

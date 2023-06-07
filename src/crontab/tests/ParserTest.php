@@ -13,13 +13,14 @@ namespace HyperfTest\Crontab;
 
 use Carbon\Carbon;
 use Hyperf\Crontab\Parser;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ParserTest extends TestCase
 {
     protected $timezone;

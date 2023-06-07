@@ -21,6 +21,7 @@ use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
 use HyperfTest\Task\Stub\Foo;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -30,7 +31,7 @@ use Swoole\Server;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class OnTaskListenerTest extends TestCase
 {
     protected function tearDown(): void

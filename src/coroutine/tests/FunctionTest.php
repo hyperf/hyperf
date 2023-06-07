@@ -13,6 +13,7 @@ namespace HyperfTest\Coroutine;
 
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Runtime;
 
@@ -25,7 +26,7 @@ use function Hyperf\Coroutine\run;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class FunctionTest extends TestCase
 {
     public function testReturnOfGo()

@@ -11,13 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\DbConnection;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class TableCollectorTest extends TestCase
 {
     public function testExample()

@@ -38,6 +38,7 @@ use HyperfTest\JsonRpc\Stub\IntegerValue;
 use Mockery;
 use Mockery\MockInterface;
 use Monolog\Handler\StreamHandler;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Serializer;
 
@@ -45,7 +46,7 @@ use Symfony\Component\Serializer\Serializer;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RpcServiceClientTest extends TestCase
 {
     protected function setUp(): void

@@ -21,6 +21,7 @@ use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
 use HyperfTest\Constants\Stub\ErrorCodeStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -28,7 +29,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class AnnotationReaderTest extends TestCase
 {
     protected function setUp(): void

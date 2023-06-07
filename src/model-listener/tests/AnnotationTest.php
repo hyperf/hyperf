@@ -14,13 +14,14 @@ namespace HyperfTest\ModelListener;
 use Hyperf\ModelListener\Annotation\ModelListener;
 use Hyperf\ModelListener\Collector\ListenerCollector;
 use HyperfTest\ModelListener\Stub\ModelStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class AnnotationTest extends TestCase
 {
     protected function tearDown(): void

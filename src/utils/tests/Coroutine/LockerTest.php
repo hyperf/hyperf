@@ -13,13 +13,14 @@ namespace HyperfTest\Utils\Coroutine;
 
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coroutine\Locker;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class LockerTest extends TestCase
 {
     public function testLockAndUnlock()

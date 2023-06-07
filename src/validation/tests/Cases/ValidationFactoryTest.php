@@ -16,13 +16,14 @@ use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Validator;
 use Hyperf\Validation\ValidatorFactory;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ValidationFactoryTest extends TestCase
 {
     protected function tearDown(): void

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Utils;
 
 use Hyperf\Utils\WaitGroup;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine;
 
@@ -19,7 +20,7 @@ use Swoole\Coroutine;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class WaitGroupTest extends TestCase
 {
     public function testWaitAgain()

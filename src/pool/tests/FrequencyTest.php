@@ -18,13 +18,14 @@ use Hyperf\Pool\Pool;
 use HyperfTest\Pool\Stub\ConstantFrequencyStub;
 use HyperfTest\Pool\Stub\FrequencyStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class FrequencyTest extends TestCase
 {
     protected function tearDown(): void

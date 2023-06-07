@@ -13,6 +13,7 @@ namespace HyperfTest\Utils;
 
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Exception\InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 use function Hyperf\Coroutine\go;
@@ -21,7 +22,7 @@ use function Hyperf\Coroutine\go;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class JsonTest extends TestCase
 {
     public function testEncode()

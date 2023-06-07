@@ -14,13 +14,14 @@ namespace HyperfTest\RpcClient;
 use Hyperf\RpcClient\Proxy\Ast;
 use HyperfTest\RpcClient\Stub\FooInterface;
 use HyperfTest\RpcClient\Stub\ParInterface;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class AstTest extends TestCase
 {
     protected $license = '<?php

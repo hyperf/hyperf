@@ -46,13 +46,14 @@ use HyperfTest\Di\Stub\Inject\Parent4Class;
 use HyperfTest\Di\Stub\Inject\ParentClass;
 use HyperfTest\Di\Stub\Inject\Tar;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class InjectTest extends TestCase
 {
     protected function tearDown(): void

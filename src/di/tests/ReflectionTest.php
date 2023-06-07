@@ -17,6 +17,7 @@ use HyperfTest\Di\Stub\Ast\FooTrait;
 use HyperfTest\Di\Stub\Foo;
 use HyperfTest\Di\Stub\FooInterface;
 use HyperfTest\Di\Stub\Inject\Foo3Trait;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionFunction;
@@ -28,7 +29,7 @@ use ReflectionProperty;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ReflectionTest extends TestCase
 {
     public function testReturnType()

@@ -13,6 +13,7 @@ namespace HyperfTest\WebSocketClient;
 
 use Hyperf\WebSocketClient\Frame;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\WebSocket\Frame as SwFrame;
 
@@ -20,7 +21,7 @@ use Swoole\WebSocket\Frame as SwFrame;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class FrameTest extends TestCase
 {
     public function testFrame()

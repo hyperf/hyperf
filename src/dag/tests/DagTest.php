@@ -15,15 +15,14 @@ use Hyperf\Coroutine\Coroutine;
 use Hyperf\Dag\Dag;
 use Hyperf\Dag\Vertex;
 use Hyperf\Engine\Channel;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @internalcomp
- *
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class DagTest extends TestCase
 {
     public function testComplexExample()

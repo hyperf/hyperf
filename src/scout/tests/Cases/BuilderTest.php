@@ -16,6 +16,7 @@ use Hyperf\Database\Model\Model;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Scout\Builder;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -23,7 +24,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class BuilderTest extends TestCase
 {
     protected function tearDown(): void

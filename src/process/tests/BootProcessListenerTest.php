@@ -17,6 +17,7 @@ use Hyperf\Process\Annotation\Process;
 use Hyperf\Process\Listener\BootProcessListener;
 use HyperfTest\Process\Stub\FooProcess;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
@@ -25,7 +26,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class BootProcessListenerTest extends TestCase
 {
     protected function tearDown(): void

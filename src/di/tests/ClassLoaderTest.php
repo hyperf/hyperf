@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Di;
 
 use Hyperf\Di\ClassLoader;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -21,7 +22,7 @@ use function Hyperf\Support\env;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ClassLoaderTest extends TestCase
 {
     public function testDotEnv()

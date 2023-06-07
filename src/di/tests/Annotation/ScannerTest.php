@@ -26,6 +26,7 @@ use HyperfTest\Di\Stub\Aspect\Debug2Aspect;
 use HyperfTest\Di\Stub\Aspect\Debug3Aspect;
 use HyperfTest\Di\Stub\AspectCollector;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -33,7 +34,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ScannerTest extends TestCase
 {
     protected function tearDown(): void

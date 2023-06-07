@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\View;
 
 use Hyperf\View\Engine\TwigEngine;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class TwigTest extends TestCase
 {
     public function testRender()

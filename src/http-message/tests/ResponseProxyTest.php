@@ -13,12 +13,13 @@ namespace HyperfTest\HttpMessage;
 
 use Hyperf\HttpMessage\Server\Response;
 use HyperfTest\HttpMessage\Stub\Server\ResponseStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ResponseProxyTest extends ResponseTest
 {
     protected function tearDown(): void

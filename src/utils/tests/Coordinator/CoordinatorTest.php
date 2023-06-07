@@ -14,13 +14,14 @@ namespace HyperfTest\Utils\Coordinator;
 use Hyperf\Utils\Coordinator\Coordinator;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\WaitGroup;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class CoordinatorTest extends TestCase
 {
     public function testYield()

@@ -13,13 +13,14 @@ namespace HyperfTest\Utils\CodeGen;
 
 use Hyperf\Utils\CodeGen\Project;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ProjectTest extends TestCase
 {
     public function testNamespaceFor()

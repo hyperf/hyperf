@@ -15,6 +15,7 @@ use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use HyperfTest\Utils\Stub\Car;
 use HyperfTest\Utils\Stub\StringCodeException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
@@ -24,7 +25,7 @@ use function Hyperf\Coroutine\go;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class JsonTest extends TestCase
 {
     public function testEncode()

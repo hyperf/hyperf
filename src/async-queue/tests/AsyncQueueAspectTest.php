@@ -25,6 +25,7 @@ use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\ReflectionManager;
 use HyperfTest\AsyncQueue\Stub\FooProxy;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -32,7 +33,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class AsyncQueueAspectTest extends TestCase
 {
     protected function tearDown(): void

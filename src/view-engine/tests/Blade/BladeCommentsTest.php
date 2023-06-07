@@ -11,11 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ViewEngine\Blade;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
+
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class BladeCommentsTest extends AbstractBladeTestCase
 {
     public function testCommentsAreCompiled()

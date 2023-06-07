@@ -23,6 +23,7 @@ use Hyperf\Retry\CircuitBreakerState;
 use Hyperf\Retry\FlatStrategy;
 use HyperfTest\Retry\Stub\Foo;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -30,7 +31,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class CircuitBreakerAnotationAspectTest extends TestCase
 {
     protected function setUp(): void

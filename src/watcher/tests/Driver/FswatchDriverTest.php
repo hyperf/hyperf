@@ -18,6 +18,7 @@ use Hyperf\Watcher\Driver\FswatchDriver;
 use Hyperf\Watcher\Option;
 use HyperfTest\Watcher\Stub\ContainerStub;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 use function Hyperf\Watcher\exec;
@@ -26,7 +27,7 @@ use function Hyperf\Watcher\exec;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class FswatchDriverTest extends TestCase
 {
     public function testWatch()

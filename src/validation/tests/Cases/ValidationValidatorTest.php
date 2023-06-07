@@ -32,6 +32,7 @@ use Hyperf\Validation\ValidationException;
 use Hyperf\Validation\Validator;
 use InvalidArgumentException;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use SplFileInfo;
 
@@ -39,7 +40,7 @@ use SplFileInfo;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ValidationValidatorTest extends TestCase
 {
     protected function tearDown(): void

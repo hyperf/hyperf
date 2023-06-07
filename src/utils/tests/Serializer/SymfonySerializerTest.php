@@ -15,6 +15,7 @@ use Hyperf\Utils\Serializer\SerializerFactory;
 use Hyperf\Utils\Serializer\SymfonyNormalizer;
 use HyperfTest\Utils\Stub\Foo;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 
@@ -22,7 +23,7 @@ use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class SymfonySerializerTest extends TestCase
 {
     public function testNormalize()

@@ -18,6 +18,7 @@ use Hyperf\Support\Fluent;
 use HyperfTest\Database\Stubs\ModelStub;
 use LogicException;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -27,7 +28,7 @@ use function Hyperf\Collection\collect;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ModelCollectionTest extends TestCase
 {
     protected function tearDown(): void

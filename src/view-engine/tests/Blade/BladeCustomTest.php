@@ -12,12 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\ViewEngine\Blade;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class BladeCustomTest extends AbstractBladeTestCase
 {
     public function testCustomPhpCodeIsCorrectlyHandled()

@@ -19,6 +19,7 @@ use HyperfTest\Command\Command\FooExceptionCommand;
 use HyperfTest\Command\Command\FooExitCommand;
 use HyperfTest\Command\Command\SwooleFlagsCommand;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -29,7 +30,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class CommandTest extends TestCase
 {
     protected function tearDown(): void

@@ -17,13 +17,14 @@ use Hyperf\Database\Model\Register;
 use Hyperf\Database\Model\Relations\Pivot;
 use HyperfTest\DbConnection\Stubs\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RelationTest extends TestCase
 {
     protected function tearDown(): void

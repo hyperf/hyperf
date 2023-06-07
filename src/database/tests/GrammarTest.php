@@ -15,13 +15,14 @@ use Hyperf\Database\MySqlConnection;
 use Hyperf\Database\Query\Grammars\MySqlGrammar as MySqlQueryGrammar;
 use Hyperf\Database\Schema\Grammars\MySqlGrammar;
 use Hyperf\Support\Fluent;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class GrammarTest extends TestCase
 {
     public function testWrap()

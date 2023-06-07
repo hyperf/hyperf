@@ -13,12 +13,13 @@ namespace HyperfTest\RpcMultiplex\Cases;
 
 use Hyperf\Coroutine\Coroutine;
 use Multiplex\ChannelManager;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ChannelManagerTest extends AbstractTestCase
 {
     public function testChannelManagerFlush()

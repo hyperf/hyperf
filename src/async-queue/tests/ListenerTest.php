@@ -16,13 +16,14 @@ use Hyperf\AsyncQueue\Event\QueueLength;
 use Hyperf\AsyncQueue\Listener\ReloadChannelListener;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ListenerTest extends TestCase
 {
     protected function tearDown(): void

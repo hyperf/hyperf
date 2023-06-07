@@ -13,13 +13,14 @@ namespace HyperfTest\LoadBalancer;
 
 use Hyperf\LoadBalancer\Node;
 use Hyperf\LoadBalancer\WeightedRoundRobin;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class WeightedRoundRobinTest extends TestCase
 {
     public function testRandom()

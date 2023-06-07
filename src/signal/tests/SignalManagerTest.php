@@ -20,6 +20,7 @@ use Hyperf\Signal\SignalManager;
 use HyperfTest\Signal\Stub\SignalHandler2Stub;
 use HyperfTest\Signal\Stub\SignalHandlerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -27,7 +28,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class SignalManagerTest extends TestCase
 {
     protected function tearDown(): void

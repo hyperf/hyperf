@@ -13,13 +13,14 @@ namespace HyperfTest\ExceptionHandler;
 
 use ErrorException;
 use Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ErrorExceptionHandlerTest extends TestCase
 {
     public function testHandleError()

@@ -19,6 +19,7 @@ use Hyperf\SocketIOServer\Socket;
 use Hyperf\WebSocketServer\Context;
 use Hyperf\WebSocketServer\Sender;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 
@@ -28,7 +29,7 @@ use function Hyperf\Support\make;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class SocketTest extends AbstractTestCase
 {
     protected function setUp(): void

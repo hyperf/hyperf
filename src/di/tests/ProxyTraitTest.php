@@ -19,6 +19,7 @@ use HyperfTest\Di\Stub\Aspect\IncrAspect;
 use HyperfTest\Di\Stub\Aspect\IncrAspectAnnotation;
 use HyperfTest\Di\Stub\ProxyTraitObject;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -28,7 +29,7 @@ use function Hyperf\Support\value;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ProxyTraitTest extends TestCase
 {
     public function testGetParamsMap()

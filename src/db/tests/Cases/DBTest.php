@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\DB\Cases;
 
 use Hyperf\DB\DB;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use ReflectionClass;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class DBTest extends AbstractTestCase
 {
     public function testDBConnection()

@@ -15,6 +15,7 @@ use Hyperf\Protocol\Packer\SerializePacker;
 use Hyperf\Socket\Socket;
 use HyperfTest\Socket\Stub\DemoStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Socket as CoSocket;
 use Swoole\Process;
@@ -25,7 +26,7 @@ use function Hyperf\Coroutine\run;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class SocketTest extends TestCase
 {
     protected function tearDown(): void

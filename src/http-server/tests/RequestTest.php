@@ -15,6 +15,7 @@ use Hyperf\Context\Context;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpServer\Request;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -22,7 +23,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RequestTest extends TestCase
 {
     protected function tearDown(): void

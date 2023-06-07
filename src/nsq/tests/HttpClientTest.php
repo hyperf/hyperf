@@ -16,13 +16,14 @@ use Hyperf\Guzzle\CoroutineHandler;
 use Hyperf\Nsq\Nsqd\Client;
 use HyperfTest\Nsq\Stub\CoroutineHandlerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class HttpClientTest extends TestCase
 {
     protected function tearDown(): void

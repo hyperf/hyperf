@@ -15,6 +15,7 @@ use Exception;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Utils\Coroutine\Concurrent;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine;
@@ -23,7 +24,7 @@ use Swoole\Coroutine;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ConcurrentTest extends TestCase
 {
     protected function setUp(): void

@@ -21,13 +21,14 @@ use Hyperf\Di\Container;
 use Hyperf\Support\Filesystem\Filesystem;
 use HyperfTest\Cache\Stub\Foo;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class FileSystemDriverTest extends TestCase
 {
     protected function tearDown(): void

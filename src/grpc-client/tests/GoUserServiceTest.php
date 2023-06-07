@@ -16,6 +16,7 @@ use Hyperf\Coroutine\Channel\Pool as ChannelPool;
 use Hyperf\Di\Container;
 use HyperfTest\GrpcClient\Stub\UserServiceClient;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use UserService\UserId;
 
@@ -24,7 +25,7 @@ use UserService\UserId;
  * protoc --php_out=./tests ./tests/Golang/pb/user/user.proto --proto_path=./tests/Golang/pb/user/
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class GoUserServiceTest extends TestCase
 {
     protected function setUp(): void

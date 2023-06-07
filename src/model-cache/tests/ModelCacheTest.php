@@ -29,6 +29,7 @@ use HyperfTest\ModelCache\Stub\UserExtModel;
 use HyperfTest\ModelCache\Stub\UserHiddenModel;
 use HyperfTest\ModelCache\Stub\UserModel;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Redis;
 use stdClass;
@@ -40,7 +41,7 @@ use function Hyperf\Coroutine\wait;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ModelCacheTest extends TestCase
 {
     /**

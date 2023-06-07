@@ -18,6 +18,7 @@ use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\DriverManager;
 use HyperfTest\RpcClient\Stub\FooServiceClient;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -25,7 +26,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class AbstractServiceClientTest extends TestCase
 {
     protected function tearDown(): void

@@ -18,6 +18,7 @@ use Hyperf\Retry\Retry;
 use HyperfTest\Retry\Stub\Foo;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -26,7 +27,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RetryTest extends TestCase
 {
     protected function tearDown(): void

@@ -16,13 +16,14 @@ use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
 use Hyperf\Snowflake\Meta;
 use Hyperf\Snowflake\MetaGenerator\RandomMilliSecondMetaGenerator;
 use Hyperf\Snowflake\MetaGeneratorInterface;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class SnowflakeGeneratorTest extends TestCase
 {
     public function testGenerateReturnInt()

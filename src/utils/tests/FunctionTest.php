@@ -15,6 +15,7 @@ use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coroutine;
 use HyperfTest\Utils\Exception\RetryException;
 use HyperfTest\Utils\Stub\FooClosure;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Swoole\Runtime;
@@ -23,7 +24,7 @@ use Swoole\Runtime;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class FunctionTest extends TestCase
 {
     public function testCall()

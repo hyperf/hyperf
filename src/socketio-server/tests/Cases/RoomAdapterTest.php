@@ -32,13 +32,14 @@ use Hyperf\SocketIOServer\SidProvider\LocalSidProvider;
 use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscriber\Subscriber;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Throwable;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RoomAdapterTest extends AbstractTestCase
 {
     public function testMemoryAdapter()

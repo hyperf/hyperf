@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Rpc\IdGenerator;
 
 use Hyperf\Rpc\IdGenerator\RequestIdGenerator;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RequestIdGeneratorTest extends TestCase
 {
     public function testGenerate()

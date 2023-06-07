@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Support;
 
 use Hyperf\Support\ResourceGenerator;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ResourceGeneratorTest extends TestCase
 {
     public function testFrom()

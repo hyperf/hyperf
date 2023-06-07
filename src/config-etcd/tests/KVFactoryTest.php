@@ -18,6 +18,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Guzzle\HandlerStackFactory;
 use Hyperf\Support\Reflection\ClassInvoker;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -25,7 +26,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class KVFactoryTest extends TestCase
 {
     protected function tearDown(): void

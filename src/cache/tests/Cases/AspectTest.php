@@ -18,13 +18,14 @@ use Hyperf\Cache\CacheManager;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use HyperfTest\Cache\Stub\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class AspectTest extends TestCase
 {
     protected function tearDown(): void

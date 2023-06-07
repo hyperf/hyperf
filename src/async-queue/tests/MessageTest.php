@@ -15,13 +15,14 @@ use Hyperf\AsyncQueue\JobInterface;
 use Hyperf\AsyncQueue\JobMessage;
 use Hyperf\AsyncQueue\MessageInterface;
 use HyperfTest\AsyncQueue\Stub\DemoJob;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class MessageTest extends TestCase
 {
     public function testMessageSerialize()

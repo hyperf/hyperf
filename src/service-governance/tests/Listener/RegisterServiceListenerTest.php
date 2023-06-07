@@ -26,6 +26,7 @@ use Hyperf\ServiceGovernanceConsul\ConsulDriver;
 use Hyperf\Support\IPReader;
 use Mockery;
 use Monolog\Handler\StreamHandler;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -33,7 +34,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RegisterServiceListenerTest extends TestCase
 {
     public function testRegisterOnceForTheSameService()

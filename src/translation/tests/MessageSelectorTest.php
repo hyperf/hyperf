@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Translation;
 
 use Hyperf\Translation\MessageSelector;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class MessageSelectorTest extends TestCase
 {
     /**

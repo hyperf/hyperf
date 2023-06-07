@@ -21,6 +21,7 @@ use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Listener\PageResolverListener;
 use Hyperf\Paginator\Paginator;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
 
@@ -30,7 +31,7 @@ use function Hyperf\Support\value;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class PageResolverListenerTest extends TestCase
 {
     protected function setUp(): void

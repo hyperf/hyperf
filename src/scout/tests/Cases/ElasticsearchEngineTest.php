@@ -18,13 +18,14 @@ use Hyperf\Scout\Engine\ElasticsearchEngine;
 use HyperfTest\Scout\Stub\ElasticsearchEngineTestModel;
 use HyperfTest\Scout\Stub\SearchableModel;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ElasticsearchEngineTest extends TestCase
 {
     protected function tearDown(): void

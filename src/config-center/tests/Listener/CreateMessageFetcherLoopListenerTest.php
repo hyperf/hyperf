@@ -18,6 +18,7 @@ use Hyperf\ConfigCenter\Listener\CreateMessageFetcherLoopListener;
 use Hyperf\ConfigCenter\Mode;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -25,7 +26,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class CreateMessageFetcherLoopListenerTest extends TestCase
 {
     protected function tearDown(): void

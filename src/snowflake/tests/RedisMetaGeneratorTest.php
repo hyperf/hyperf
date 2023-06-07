@@ -30,6 +30,7 @@ use Hyperf\Snowflake\MetaGenerator\RedisSecondMetaGenerator;
 use Hyperf\Snowflake\MetaGeneratorInterface;
 use HyperfTest\Snowflake\Stub\UserDefinedIdGenerator;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
@@ -40,7 +41,7 @@ use function Hyperf\Coroutine\parallel;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RedisMetaGeneratorTest extends TestCase
 {
     protected function tearDown(): void

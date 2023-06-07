@@ -16,6 +16,7 @@ use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Exception\DirectoryNotExistException;
 use Hyperf\Di\ScanHandler\NullScanHandler;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -23,7 +24,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class AnnotationTest extends TestCase
 {
     protected function tearDown(): void

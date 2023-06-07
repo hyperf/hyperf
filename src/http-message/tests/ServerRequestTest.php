@@ -24,6 +24,7 @@ use HyperfTest\HttpMessage\Stub\ParserStub;
 use HyperfTest\HttpMessage\Stub\Server\RequestStub;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
@@ -34,7 +35,7 @@ use Swoole\Http\Request as SwooleRequest;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ServerRequestTest extends TestCase
 {
     protected function tearDown(): void

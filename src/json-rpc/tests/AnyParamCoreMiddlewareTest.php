@@ -46,6 +46,7 @@ use HyperfTest\JsonRpc\Stub\CalculatorService;
 use InvalidArgumentException;
 use Mockery;
 use Monolog\Handler\StreamHandler;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -56,7 +57,7 @@ use Throwable;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class AnyParamCoreMiddlewareTest extends TestCase
 {
     public function testProcess()

@@ -22,13 +22,14 @@ use GuzzleHttp\TransferStats;
 use Hyperf\Guzzle\CoroutineHandler;
 use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class CoroutineHandlerTest extends TestCase
 {
     public function testCreatesCurlErrors()

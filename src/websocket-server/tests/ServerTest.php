@@ -23,6 +23,7 @@ use Hyperf\WebSocketServer\Server;
 use HyperfTest\WebSocketServer\Stub\FooServer;
 use HyperfTest\WebSocketServer\Stub\WebSocketStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Swoole\Http\Request as SwooleRequest;
@@ -32,7 +33,7 @@ use Swoole\Http\Response as SwooleResponse;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ServerTest extends TestCase
 {
     protected function tearDown(): void

@@ -18,13 +18,14 @@ use Hyperf\Contract\ConnectionInterface;
 use Hyperf\DB\Pool\Pool;
 use Hyperf\DB\Pool\PoolFactory;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Psr\Container\ContainerInterface;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class CustomDriverTest extends AbstractTestCase
 {
     public function testCustomDriver()

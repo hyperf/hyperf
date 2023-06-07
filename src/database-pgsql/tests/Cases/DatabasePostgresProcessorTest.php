@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Database\PgSQL\Cases;
 
 use Hyperf\Database\PgSQL\Query\Processors\PostgresProcessor;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class DatabasePostgresProcessorTest extends TestCase
 {
     public function testProcessColumnListing()

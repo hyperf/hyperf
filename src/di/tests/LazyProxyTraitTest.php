@@ -19,13 +19,14 @@ use HyperfTest\Di\Stub\LazyLoad\FooLazyLoad;
 use HyperfTest\Di\Stub\LazyProxy;
 use HyperfTest\Di\Stub\Proxied;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class LazyProxyTraitTest extends TestCase
 {
     public function testLaziness()

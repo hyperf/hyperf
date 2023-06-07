@@ -30,18 +30,16 @@ use Mockery as m;
 use PDO;
 use PDOException;
 use PDOStatement;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionClass;
 
 /**
  * @internal
- */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
-/**
- * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabaseConnectionTest extends TestCase
 {
     protected function tearDown(): void

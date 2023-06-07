@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Rpc\PathGenerator;
 
 use Hyperf\Rpc\PathGenerator\FullPathGenerator;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class FullPathGeneratorTest extends TestCase
 {
     public function testGeneratorFromClassName()

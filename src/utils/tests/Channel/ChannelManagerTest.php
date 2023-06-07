@@ -13,13 +13,14 @@ namespace HyperfTest\Utils\Channel;
 
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Channel\ChannelManager;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ChannelManagerTest extends TestCase
 {
     public function testChannelManager()

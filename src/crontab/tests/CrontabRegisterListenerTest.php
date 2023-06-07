@@ -26,6 +26,7 @@ use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Crontab\Stub\FooCron;
 use HyperfTest\Crontab\Stub\FooCron2;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -33,7 +34,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class CrontabRegisterListenerTest extends TestCase
 {
     protected $prevContainer;

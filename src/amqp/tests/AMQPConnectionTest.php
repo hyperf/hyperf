@@ -17,13 +17,14 @@ use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use HyperfTest\Amqp\Stub\AMQPConnectionStub;
 use HyperfTest\Amqp\Stub\ContainerStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class AMQPConnectionTest extends TestCase
 {
     public function testMakeChannelId()

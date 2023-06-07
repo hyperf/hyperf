@@ -12,12 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\SocketIOServer\Cases;
 
 use Hyperf\SocketIOServer\Parser\Decoder;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class DecoderTest extends AbstractTestCase
 {
     public function testDecode()

@@ -33,13 +33,14 @@ use Hyperf\Redis\RedisProxy;
 use HyperfTest\Cache\Stub\Foo;
 use HyperfTest\Cache\Stub\SerializeRedisDriver;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class RedisDriverTest extends TestCase
 {
     protected function tearDown(): void

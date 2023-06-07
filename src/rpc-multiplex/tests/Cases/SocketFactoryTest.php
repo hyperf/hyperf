@@ -21,6 +21,7 @@ use Hyperf\RpcMultiplex\SocketFactory;
 use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\RpcMultiplex\Stub\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 use function Hyperf\Coroutine\go;
 
@@ -28,7 +29,7 @@ use function Hyperf\Coroutine\go;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class SocketFactoryTest extends AbstractTestCase
 {
     public function testSocketConfig()

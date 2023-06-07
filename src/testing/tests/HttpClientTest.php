@@ -13,6 +13,7 @@ namespace tests;
 
 use Hyperf\Testing\HttpClient;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -22,7 +23,7 @@ use function Hyperf\Coroutine\run;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class HttpClientTest extends TestCase
 {
     protected function tearDown(): void

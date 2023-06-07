@@ -18,6 +18,7 @@ use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Model\CastsValue;
 use Hyperf\Database\Model\Model;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use stdClass;
@@ -26,7 +27,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class DatabaseModelCustomCastingTest extends TestCase
 {
     protected function tearDown(): void

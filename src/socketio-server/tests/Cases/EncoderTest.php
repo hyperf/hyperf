@@ -13,12 +13,13 @@ namespace HyperfTest\SocketIOServer\Cases;
 
 use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Parser\Packet;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class EncoderTest extends AbstractTestCase
 {
     public function testEncode()

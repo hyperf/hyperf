@@ -18,6 +18,7 @@ use Hyperf\HttpMessage\Base\Response;
 use HyperfTest\ExceptionHandler\Stub\BarExceptionHandler;
 use HyperfTest\ExceptionHandler\Stub\FooExceptionHandler;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -28,7 +29,7 @@ use function Hyperf\Coroutine\parallel;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ExceptionHandlerTest extends TestCase
 {
     protected function tearDown(): void

@@ -16,12 +16,13 @@ use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Config;
 use HyperfTest\Nacos\AbstractTestCase;
 use HyperfTest\Nacos\HandlerMockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class NacosConfigTest extends AbstractTestCase
 {
     public function testGet()

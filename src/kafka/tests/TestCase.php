@@ -11,11 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Kafka;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
+
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     public function setUp(): void

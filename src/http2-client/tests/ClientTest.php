@@ -15,6 +15,7 @@ use Hyperf\Engine\Http\V2\Request;
 use Hyperf\Grpc\Parser;
 use Hyperf\Http2Client\Client;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Routeguide\Point;
@@ -26,7 +27,7 @@ use function Hyperf\Coroutine\parallel;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ClientTest extends TestCase
 {
     protected function tearDown(): void

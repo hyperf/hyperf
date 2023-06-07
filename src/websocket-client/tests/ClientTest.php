@@ -13,13 +13,14 @@ namespace HyperfTest\WebSocketClient;
 
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\WebSocketClient\Client;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class ClientTest extends TestCase
 {
     public function testClientConnectFailed()

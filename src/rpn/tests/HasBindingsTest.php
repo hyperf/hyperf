@@ -12,12 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\Rpn;
 
 use HyperfTest\Rpn\Stub\HasBindingsStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[CoversNothing]
 class HasBindingsTest extends AbstractTestCase
 {
     public function testGetValue()
