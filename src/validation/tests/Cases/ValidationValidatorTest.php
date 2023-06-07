@@ -1812,7 +1812,7 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
         $this->assertEquals(2, $v->messages()->first('items'));
 
-        $v = new Validator($trans, ['items' => 5, 'less' => "26"], ['items' => 'numeric|lte:less']);
+        $v = new Validator($trans, ['items' => 5, 'less' => '26'], ['items' => 'numeric|lte:less']);
         $this->assertTrue($v->passes());
 
         $v = new Validator($trans, ['items' => 'abc', 'less' => 'ab'], ['items' => 'lte:less']);
