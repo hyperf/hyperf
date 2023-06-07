@@ -129,14 +129,6 @@ class Dag implements Runner
         return $this;
     }
 
-    /**
-     * @deprecated v3.1 Use checkCircularDependencies() instead
-     */
-    public function checkCircularDependences(): array
-    {
-        return $this->checkCircularDependencies();
-    }
-
     public function checkCircularDependencies(): array
     {
         $this->circularDependencies = [];

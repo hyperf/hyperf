@@ -37,6 +37,5 @@ class ConfigTest extends TestCase
         ]));
 
         $this->assertSame($id, config('id'));
-        $this->assertSame($id, \config('id'));
     }
 }

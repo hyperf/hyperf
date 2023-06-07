@@ -310,3 +310,34 @@ if (! function_exists('wait')) {
         return \Hyperf\Coroutine\wait($closure, $timeout);
     }
 }
+
+if (! function_exists('__')) {
+    function __(string $key, array $replace = [], ?string $locale = null)
+    {
+        return \Hyperf\Translation\__($key, $replace, $locale);
+    }
+}
+
+if (! function_exists('trans')) {
+    function trans(string $key, array $replace = [], ?string $locale = null)
+    {
+        return \Hyperf\Translation\__($key, $replace, $locale);
+    }
+}
+
+if (! function_exists('trans_choice')) {
+    function trans_choice(string $key, $number, array $replace = [], ?string $locale = null): string
+    {
+        return \Hyperf\Translation\trans_choice($key, $number, $replace, $locale);
+    }
+}
+
+if (! function_exists('config')) {
+    /**
+     * @param null|mixed $default
+     */
+    function config(string $key, $default = null)
+    {
+        return \Hyperf\Config\config($key, $default);
+    }
+}
