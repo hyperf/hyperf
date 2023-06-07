@@ -1,12 +1,12 @@
 {
-    "name": "hyperf/functions",
-    "description": "A functions package that could help developer solved the problem quickly.",
+    "name": "hyperf/helper",
+    "description": "A function helper package that could help developer solved the problem quickly.",
     "license": "MIT",
     "keywords": [
         "php",
         "swoole",
         "hyperf",
-        "functions"
+        "helper"
     ],
     "homepage": "https://hyperf.io",
     "support": {

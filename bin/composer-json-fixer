@@ -19,7 +19,7 @@ foreach ([__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', 
 
 $files = Finder::create()
     ->in(__DIR__ . '/../src')
-    ->exclude('functions')
+    ->exclude('helper')
     ->name('composer.json')
     ->files();
 
