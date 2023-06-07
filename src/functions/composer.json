@@ -1,0 +1,48 @@
+{
+    "name": "hyperf/functions",
+    "description": "A functions package that could help developer solved the problem quickly.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "functions"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=8.1",
+        "hyperf/collection": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/coroutine": "~3.1.0",
+        "hyperf/stringable": "~3.1.0",
+        "hyperf/support": "~3.1.0",
+        "hyperf/tappable": "~3.1.0"
+    },
+    "autoload": {
+        "files": [
+            "src/Functions.php"
+        ],
+        "psr-4": {
+            "Hyperf\\Utils\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Utils\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.1-dev"
+        }
+    }
+}
