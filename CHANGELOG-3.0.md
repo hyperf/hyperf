@@ -8,6 +8,7 @@
 ## Optimized
 
 - [#5789](https://github.com/hyperf/hyperf/pull/5789) Support `psr/http-message`.
+- [#5806](https://github.com/hyperf/hyperf/pull/5806) Merge swow server settings with config settings.
 
 # v3.0.23 - 2023-06-02
 
