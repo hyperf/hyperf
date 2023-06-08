@@ -20,15 +20,12 @@ use PHPUnit\Framework\Attributes\CoversNothing;
  * @coversNothing
  */
 #[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class PgSQLTest extends AbstractTestCase
 {
-    public function setUp(): void
-    {
-        if (SWOOLE_MAJOR_VERSION < 5) {
-            $this->markTestSkipped('PostgreSql requires Swoole version >= 5.0.0');
-        }
-    }
-
     public function testExecute()
     {
         $res = DB::connection('pgsql')->execute('INSERT INTO public.users (email, name) VALUES (?, ?);', ['l@hyperf.io', 'limx']);
