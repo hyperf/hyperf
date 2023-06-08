@@ -38,10 +38,6 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function setUp(): void
     {
-        if (SWOOLE_MAJOR_VERSION < 5) {
-            $this->markTestSkipped('PostgreSql requires Swoole version >= 5.0.0');
-        }
-
         $resolver = ContainerStub::getContainer()->get(ConnectionResolverInterface::class);
 
         $this->migrator = new Migrator(

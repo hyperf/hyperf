@@ -29,10 +29,6 @@ class ConnectionTest extends TestCase
 
     public function setUp(): void
     {
-        if (SWOOLE_MAJOR_VERSION < 5) {
-            $this->markTestSkipped('PostgreSql requires Swoole version >= 5.0.0');
-        }
-
         $pgsql = new PostgreSQL();
         $connected = $pgsql->connect('host=127.0.0.1 port=5432 dbname=postgres user=postgres password=postgres');
         if (! $connected) {

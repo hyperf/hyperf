@@ -28,6 +28,7 @@
 - [x] Remove unused codes in `hyperf/utils`.
 - [x] Remove redundant `setAccessible` methods.
 - [x] Remove deprecated codes.
+- [#5813](https://github.com/hyperf/hyperf/pull/5813) Removed support for swoole 4.x
 
 ## Deprecated
 
