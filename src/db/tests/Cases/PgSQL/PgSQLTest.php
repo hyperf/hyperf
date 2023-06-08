@@ -20,10 +20,6 @@ use PHPUnit\Framework\Attributes\CoversNothing;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class PgSQLTest extends AbstractTestCase
 {
     public function testExecute()
