@@ -30,3 +30,5 @@
 - [x] Remove deprecated codes.
 
 ## Deprecated
+
+- [x] Drop support swoole 4.x.
