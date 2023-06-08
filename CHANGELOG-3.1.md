@@ -31,4 +31,4 @@
 
 ## Deprecated
 
-- [x] Drop support swoole 4.x.
+- [x] Drop support swoole for 4.x.
