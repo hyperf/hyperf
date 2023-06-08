@@ -18,6 +18,8 @@ use Mockery;
 use PDO;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Support\buildSql;
+
 /**
  * @internal
  * @coversNothing
@@ -54,8 +56,8 @@ class ConnectionTest extends TestCase
 
     public function testBuildSql()
     {
-        $this->assertSame(Connection::buildSql('select * from `user`', []), 'select * from `user`');
-        $this->assertSame(Connection::buildSql('select * from `user` where `id` = ? and `name` = ? and sex = ? and age = ?', [
+        $this->assertSame(buildSql('select * from `user`', []), 'select * from `user`');
+        $this->assertSame(buildSql('select * from `user` where `id` = ? and `name` = ? and sex = ? and age = ?', [
             1, '1', false, true,
         ]), "select * from `user` where `id` = 1 and `name` = '1' and sex = 0 and age = 1");
     }

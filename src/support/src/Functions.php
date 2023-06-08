@@ -223,3 +223,19 @@ function optional($value = null, callable $callback = null)
     }
     return null;
 }
+
+/**
+ * Build SQL contain bind.
+ */
+function buildSql(string $sql, array $bindings = []): string
+{
+    $bindings = array_map(function ($value) {
+        return match (gettype($value)) {
+            'integer', 'double' => $value,
+            'boolean' => (int) $value,
+            default => sprintf("'%s'", $value),
+        };
+    }, $bindings);
+
+    return Str::replaceArray('?', $bindings, $sql);
+}
