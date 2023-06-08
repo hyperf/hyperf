@@ -27,7 +27,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis, pdo, pdo_mysql, bcmath
+          extensions: redis, pdo, pdo_mysql, bcmath, swoole
           ini-values: opcache.enable_cli=1
           coverage: none
       - name: Setup Swoole
@@ -63,6 +63,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
+          extensions: swoole
           ini-values: opcache.enable_cli=1
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh
@@ -111,7 +112,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis
+          extensions: redis, swoole
           ini-values: opcache.enable_cli=0, phar.readonly='Off'
           coverage: none
       - name: Setup Swoole
@@ -163,6 +164,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
+          extensions: swoole
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
@@ -198,6 +200,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
+          extensions: swoole
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
@@ -214,12 +217,12 @@ jobs:
           composer remove influxdb/influxdb-php --dev -W
           composer remove guzzlehttp/guzzle --dev -W
           composer remove jcchavezs/zipkin-opentracing -W --dev
-          composer remove psr/http-server-middleware -W
           composer require "psr/http-message:${{ matrix.version }}" -W
           composer update -oW
       - name: Run Test Cases
         run: |
           composer analyse src/http-message
+          composer analyse src/http-server
           vendor/bin/phpunit src/http-message
   log:
     name: Test for Psr Log V1.0 ~ V3.0
@@ -245,6 +248,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
+          extensions: swoole
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
@@ -294,7 +298,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: phpize
           ini-values: opcache.enable_cli=0
-          extensions: redis, pdo, pdo_mysql, bcmath
+          extensions: redis, pdo, pdo_mysql, bcmath, swoole
           coverage: none
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh
