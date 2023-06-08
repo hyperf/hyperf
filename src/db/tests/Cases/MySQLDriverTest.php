@@ -21,10 +21,6 @@ use PHPUnit\Framework\Attributes\CoversNothing;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class MySQLDriverTest extends AbstractTestCase
 {
     public function testFetch()
