@@ -12,12 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\DB\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
-use Hyperf\DB\PDOConnection;
+use Hyperf\DB\MySQLConnection;
 
-class PDOPool extends Pool
+class MySQLPool extends Pool
 {
     protected function createConnection(): ConnectionInterface
     {
-        return new PDOConnection($this->container, $this, $this->config);
+        return new MySQLConnection($this->container, $this, $this->config);
     }
 }

@@ -21,7 +21,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
  * @coversNothing
  */
 #[CoversNothing]
-class PDODriverTest extends AbstractTestCase
+class MySQLDriverTest extends AbstractTestCase
 {
     public function testFetch()
     {

@@ -19,7 +19,7 @@ use PDOStatement;
 use Psr\Container\ContainerInterface;
 use Throwable;
 
-class PDOConnection extends AbstractConnection
+class MySQLConnection extends AbstractConnection
 {
     protected ?PDO $connection = null;
 
