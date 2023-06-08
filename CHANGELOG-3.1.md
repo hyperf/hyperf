@@ -18,6 +18,7 @@
 - [ ] Support [Psr7Plus](https://github.com/swow/psr7-plus).
 - [x] Support [pest](https://github.com/pestphp/pest).
 - [x] Added `hyperf/helper` component.
+- [#5815](https://github.com/hyperf/hyperf/pull/5815) Added alias as `mysql` from `pdo` in `hyperf/db`.
 
 ## Optimized
 
