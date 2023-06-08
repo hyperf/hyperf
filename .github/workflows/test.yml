@@ -44,12 +44,7 @@ jobs:
           rm swoole.tar.gz
           cd swoole
           phpize
-          if [ _${{ matrix.sw-version }} = '_v5.0.3' ] || [ _${{ matrix.sw-version }} = '_master' ]
-          then
-            ./configure --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql --enable-brotli
-          else
-            ./configure --enable-openssl --enable-http2 --enable-swoole-curl --enable-swoole-json
-          fi
+          ./configure --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql --enable-brotli
           make -j$(nproc)
           sudo make install
           sudo sh -c "echo extension=swoole > /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
