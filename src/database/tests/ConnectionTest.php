@@ -51,4 +51,12 @@ class ConnectionTest extends TestCase
 
         $this->assertSame('select * from (select 1 as id) a', $sql);
     }
+
+    public function testBuildSql()
+    {
+        $this->assertSame(Connection::buildSql('select * from `user`', []), 'select * from `user`');
+        $this->assertSame(Connection::buildSql('select * from `user` where `id` = ? and `name` = ? and sex = ? and age = ?', [
+            1, '1', false, true,
+        ]), "select * from `user` where `id` = 1 and `name` = '1' and sex = 0 and age = 1");
+    }
 }

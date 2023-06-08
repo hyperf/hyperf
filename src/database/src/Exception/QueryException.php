@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Exception;
 
 use Exception;
-use Hyperf\Stringable\Str;
+use Hyperf\Database\Connection;
 use PDOException;
 use Throwable;
 
@@ -57,6 +57,6 @@ class QueryException extends PDOException
      */
     protected function formatMessage(string $sql, array $bindings, Throwable $previous): string
     {
-        return $previous->getMessage() . ' (SQL: ' . Str::replaceArray('?', $bindings, $sql) . ')';
+        return $previous->getMessage() . ' (SQL: ' . Connection::buildSql($sql, $bindings) . ')';
     }
 }

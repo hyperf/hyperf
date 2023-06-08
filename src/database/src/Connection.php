@@ -27,6 +27,7 @@ use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Database\Schema\Builder as SchemaBuilder;
 use Hyperf\Database\Schema\Grammars\Grammar as SchemaGrammar;
+use Hyperf\Stringable\Str;
 use LogicException;
 use PDO;
 use PDOStatement;
@@ -458,6 +459,22 @@ class Connection implements ConnectionInterface
         if ($this->loggingQueries) {
             $this->queryLog[] = compact('query', 'bindings', 'time');
         }
+    }
+
+    /**
+     * Build SQL contain bind.
+     */
+    public static function buildSql(string $sql, array $bindings = []): string
+    {
+        $bindings = array_map(function ($value) {
+            return match (gettype($value)) {
+                'integer', 'double' => $value,
+                'boolean' => (int) $value,
+                default => sprintf("'%s'", $value),
+            };
+        }, $bindings);
+
+        return Str::replaceArray('?', $bindings, $sql);
     }
 
     /**
