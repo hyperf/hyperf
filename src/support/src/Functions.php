@@ -233,15 +233,16 @@ function build_sql(string $sql, array $bindings = []): string
     if (! Arr::isAssoc($bindings)) {
         $position = 0;
         foreach ($bindings as $value) {
+            $position = strpos($sql, '?', $position);
+            if ($position === false) {
+                break;
+            }
+
             $value = (string) match (gettype($value)) {
                 'integer', 'double' => $value,
                 'boolean' => (int) $value,
                 default => sprintf("'%s'", $value),
             };
-            $position = strpos($sql, '?', $position);
-            if ($position === false) {
-                break;
-            }
             $sql = substr_replace($sql, $value, $position, 1);
             $position += strlen($value);
         }
