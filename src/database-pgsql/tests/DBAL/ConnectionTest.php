@@ -23,10 +23,6 @@ use Swoole\Coroutine\PostgreSQL;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class ConnectionTest extends TestCase
 {
     protected Connection $connection;

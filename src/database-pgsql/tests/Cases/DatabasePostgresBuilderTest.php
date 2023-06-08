@@ -31,10 +31,6 @@ use PHPUnit\Framework\TestCase;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class DatabasePostgresBuilderTest extends TestCase
 {
     protected function tearDown(): void
