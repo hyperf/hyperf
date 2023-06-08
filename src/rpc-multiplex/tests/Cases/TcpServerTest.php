@@ -24,11 +24,13 @@ use Hyperf\Server\Server;
 use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\RpcMultiplex\Stub\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TcpServerTest extends AbstractTestCase
 {
     public function testInitServerConfig()

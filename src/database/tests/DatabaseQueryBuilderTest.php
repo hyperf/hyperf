@@ -21,6 +21,7 @@ use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Query\Processors\Processor;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use TypeError;
@@ -29,6 +30,7 @@ use TypeError;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabaseQueryBuilderTest extends TestCase
 {
     protected function setUp(): void
@@ -679,7 +681,35 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertEquals(['1', '10'], $builder->getBindings());
     }
 
-    protected function getBuilder()
+    public function testWhereFulltext()
+    {
+        $builder = $this->getMySqlBuilderWithProcessor();
+        $builder->select('*')->from('users')->whereFullText('body', 'Hello World');
+        $this->assertSame('select * from `users` where match (`body`) against (? in natural language mode)', $builder->toSql());
+        $this->assertEquals(['Hello World'], $builder->getBindings());
+
+        $builder = $this->getMySqlBuilderWithProcessor();
+        $builder->select('*')->from('users')->whereFullText('body', 'Hello World', ['expanded' => true]);
+        $this->assertSame('select * from `users` where match (`body`) against (? in natural language mode with query expansion)', $builder->toSql());
+        $this->assertEquals(['Hello World'], $builder->getBindings());
+
+        $builder = $this->getMySqlBuilderWithProcessor();
+        $builder->select('*')->from('users')->whereFullText('body', '+Hello -World', ['mode' => 'boolean']);
+        $this->assertSame('select * from `users` where match (`body`) against (? in boolean mode)', $builder->toSql());
+        $this->assertEquals(['+Hello -World'], $builder->getBindings());
+
+        $builder = $this->getMySqlBuilderWithProcessor();
+        $builder->select('*')->from('users')->whereFullText('body', '+Hello -World', ['mode' => 'boolean', 'expanded' => true]);
+        $this->assertSame('select * from `users` where match (`body`) against (? in boolean mode)', $builder->toSql());
+        $this->assertEquals(['+Hello -World'], $builder->getBindings());
+
+        $builder = $this->getMySqlBuilderWithProcessor();
+        $builder->select('*')->from('users')->whereFullText(['body', 'title'], 'Car,Plane');
+        $this->assertSame('select * from `users` where match (`body`, `title`) against (? in natural language mode)', $builder->toSql());
+        $this->assertEquals(['Car,Plane'], $builder->getBindings());
+    }
+
+    protected function getBuilder(): Builder
     {
         $grammar = new Grammar();
         $processor = m::mock(Processor::class);
@@ -687,7 +717,7 @@ class DatabaseQueryBuilderTest extends TestCase
         return new Builder(m::mock(ConnectionInterface::class), $grammar, $processor);
     }
 
-    protected function getMySqlBuilder()
+    protected function getMySqlBuilder(): Builder
     {
         $grammar = new MySqlGrammar();
         $processor = m::mock(Processor::class);
@@ -695,7 +725,7 @@ class DatabaseQueryBuilderTest extends TestCase
         return new Builder(m::mock(ConnectionInterface::class), $grammar, $processor);
     }
 
-    protected function getMySqlBuilderWithProcessor()
+    protected function getMySqlBuilderWithProcessor(): Builder
     {
         $grammar = new MySqlGrammar();
         $processor = new MySqlProcessor();
@@ -703,10 +733,7 @@ class DatabaseQueryBuilderTest extends TestCase
         return new Builder(m::mock(ConnectionInterface::class), $grammar, $processor);
     }
 
-    /**
-     * @return m\MockInterface
-     */
-    protected function getMockQueryBuilder()
+    protected function getMockQueryBuilder(): m\MockInterface
     {
         return m::mock(Builder::class, [
             m::mock(ConnectionInterface::class),

@@ -34,6 +34,7 @@ use Hyperf\Retry\RetryBudgetInterface;
 use HyperfTest\Retry\Stub\Foo;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Swoole\Timer;
@@ -42,6 +43,7 @@ use Swoole\Timer;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RetryAnnotationAspectTest extends TestCase
 {
     protected function setUp(): void

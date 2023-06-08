@@ -26,9 +26,15 @@ use HyperfTest\Di\Stub\Aspect\Debug2Aspect;
 use HyperfTest\Di\Stub\Aspect\Debug3Aspect;
 use HyperfTest\Di\Stub\AspectCollector;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -59,7 +65,6 @@ class ScannerTest extends TestCase
         $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
         $ref = new ReflectionClass($scanner);
         $property = $ref->getProperty('filesystem');
-        $property->setAccessible(true);
         $property->setValue($scanner, $filesystem = Mockery::mock(Filesystem::class . '[lastModified]'));
         $times = [
             Debug1Aspect::class => 5,
@@ -71,7 +76,6 @@ class ScannerTest extends TestCase
         });
 
         $method = $ref->getMethod('getChangedAspects');
-        $method->setAccessible(true);
 
         $reader = new AnnotationReader();
         $scanner->collect($reader, ReflectionManager::reflectClass(Debug2Aspect::class));

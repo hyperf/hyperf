@@ -18,12 +18,14 @@ use Hyperf\Database\Schema\ForeignIdColumnDefinition;
 use Hyperf\Database\Schema\Grammars\MySqlGrammar;
 use Mockery as m;
 use PDO;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MySqlSchemaGrammarTest extends TestCase
 {
     protected function tearDown(): void

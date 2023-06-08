@@ -23,9 +23,15 @@ use Hyperf\SocketIOServer\SocketIO;
 use Hyperf\WebSocketServer\Sender;
 use HyperfTest\SocketIOServer\Stub\EphemeralAdapter;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use ReflectionClass;
 use Swoole\Atomic;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -133,7 +139,6 @@ class IONamespaceTest extends AbstractTestCase
 
         $ref = new ReflectionClass($io);
         $m = $ref->getMethod('renewInAllNamespaces');
-        $m->setAccessible(true);
         $this->assertFalse(EphemeralAdapter::$isRenew);
         $m->invokeArgs($io, [1]);
         $this->assertTrue(EphemeralAdapter::$isRenew);

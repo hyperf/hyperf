@@ -22,10 +22,16 @@ use HyperfTest\Amqp\Stub\Delay2Consumer;
 use HyperfTest\Amqp\Stub\DelayConsumer;
 use Mockery;
 use PhpAmqpLib\Channel\Frame;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -38,7 +44,6 @@ class ConsumerTest extends TestCase
         $consumer = new Consumer($container, Mockery::mock(ConnectionFactory::class), Mockery::mock(LoggerInterface::class));
         $ref = new ReflectionClass($consumer);
         $method = $ref->getMethod('getConcurrent');
-        $method->setAccessible(true);
         /** @var Concurrent $concurrent */
         $concurrent = $method->invokeArgs($consumer, ['default']);
         $this->assertSame(10, $concurrent->getLimit());

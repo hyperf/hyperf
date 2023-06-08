@@ -36,6 +36,7 @@ use HyperfTest\HttpServer\Stub\FooController;
 use HyperfTest\HttpServer\Stub\SetHeaderMiddleware;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -43,6 +44,11 @@ use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 use ReflectionMethod;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -63,7 +69,6 @@ class CoreMiddlewareTest extends TestCase
     {
         $middleware = new CoreMiddlewareStub($container = $this->getContainer(), 'http');
         $reflectionMethod = new ReflectionMethod(CoreMiddleware::class, 'transferToResponse');
-        $reflectionMethod->setAccessible(true);
         $request = Mockery::mock(ServerRequestInterface::class);
         /** @var ResponseInterface $response */
 
@@ -195,7 +200,6 @@ class CoreMiddlewareTest extends TestCase
         $middleware = new CoreMiddleware($container, 'http');
         $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('handleFound');
-        $method->setAccessible(true);
 
         $handler = new Handler([DemoController::class, 'demo'], '/');
         $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
@@ -210,7 +214,6 @@ class CoreMiddlewareTest extends TestCase
         $middleware = new CoreMiddleware($container, 'http');
         $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('handleFound');
-        $method->setAccessible(true);
 
         $handler = new Handler(DemoController::class, '/');
         $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
@@ -225,7 +228,6 @@ class CoreMiddlewareTest extends TestCase
         $middleware = new CoreMiddleware($container, 'http');
         $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('handleFound');
-        $method->setAccessible(true);
 
         $this->expectException(ServerErrorHttpException::class);
         $this->expectExceptionMessage('Method of class does not exist.');

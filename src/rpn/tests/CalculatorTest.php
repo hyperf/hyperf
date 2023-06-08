@@ -13,12 +13,14 @@ namespace HyperfTest\Rpn;
 
 use Hyperf\Rpn\Calculator;
 use Hyperf\Rpn\Exception\InvalidOperatorException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use stdClass;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CalculatorTest extends AbstractTestCase
 {
     public function testCalculateBasic()

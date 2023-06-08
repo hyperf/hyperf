@@ -23,6 +23,7 @@ use HyperfTest\Server\Stub\DemoProcess;
 use HyperfTest\Server\Stub\InitProcessTitleListenerStub;
 use HyperfTest\Server\Stub\InitProcessTitleListenerStub2;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -31,6 +32,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class InitProcessTitleListenerTest extends TestCase
 {
     protected function tearDown(): void

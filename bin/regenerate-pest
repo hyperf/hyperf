@@ -1,0 +1,116 @@
+#!/usr/bin/env php
+<?php
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+use PhpParser\Node;
+use PhpParser\Node\Stmt\Return_;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
+use PhpParser\Parser;
+use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter\Standard;
+
+require_once 'vendor/autoload.php';
+
+class RunInCoroutineVisitor extends NodeVisitorAbstract
+{
+    /**
+     * @var Parser
+     */
+    protected $parser;
+
+    public function __construct(Parser $parser)
+    {
+        $this->parser = $parser;
+    }
+
+    public function afterTraverse(array $nodes)
+    {
+        /** @var Node\Stmt\Expression $main */
+        $main = array_pop($nodes);
+        $main = $main->expr;
+        foreach ($this->wrapCoroutine($main) as $node) {
+            $nodes[] = $node;
+        }
+        return $nodes;
+    }
+
+    /**
+     * @param PhpParser\Node\Expr\FuncCall $expr
+     */
+    protected function wrapCoroutine($expr): array
+    {
+        $exit = array_pop($expr->name->stmts);
+        $expr->name->stmts[] = new Return_(new Node\Expr\Variable($exit->expr->expr->name));
+        /** @var PhpParser\Node\Stmt\Expression[] $nodes */
+        $nodes = $this->parser->parse('<?php
+(function () {
+    $prepend = null;
+    foreach ($_SERVER["argv"] as $index => $argv) {
+        // --prepend /path/to/file
+        if ($argv === "--prepend") {
+            unset($_SERVER["argv"][$index]);
+            if (isset($_SERVER["argv"][$index + 1])) {
+                $prepend = $_SERVER["argv"][$index + 1];
+                unset($_SERVER["argv"][$index + 1]);
+            }
+            break;
+        }
+        // --prepend=/path/to/file
+        if (strpos($argv, "--prepend=") === 0) {
+            $prepend = substr($argv, 10);
+            unset($_SERVER["argv"][$index]);
+            break;
+        }
+    }
+    if ($prepend !== null && file_exists($prepend)) {
+        require $prepend;
+    }
+})();
+$code = 0;
+Swoole\Coroutine::set(["hook_flags" => SWOOLE_HOOK_ALL, "exit_condition" => function () {
+    return Swoole\Coroutine::stats()["coroutine_num"] === 0;
+}]);
+Swoole\Coroutine\run(function () use(&$code) {
+    try {
+    } catch (Swoole\ExitException $e) {
+        $code = $e->getStatus();
+    }
+    Swoole\Timer::clearAll();
+    Hyperf\Coordinator\CoordinatorManager::until(Hyperf\Coordinator\Constants::WORKER_EXIT)->resume();
+});
+die($code);
+');
+        $nodes[3]->expr->args[0]->value->stmts[0]->stmts[0] = new Node\Stmt\Expression(new Node\Expr\Assign(
+            new Node\Expr\Variable('code'),
+            $expr
+        ));
+        return $nodes;
+    }
+}
+
+$parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+$printer = new Standard();
+$traverser = new NodeTraverser();
+
+$code = file_get_contents(__DIR__ . '/../vendor/pestphp/pest/bin/pest');
+
+$stmts = $parser->parse($code);
+$traverser->addVisitor(new RunInCoroutineVisitor($parser));
+$stmts = $traverser->traverse($stmts);
+
+$code = $printer->prettyPrint($stmts);
+
+// TODO: Unknown reason
+$code = ltrim($code, '?>' . PHP_EOL);
+
+file_put_contents($coPest = __DIR__ . '/co-pest', $code);
+chmod($coPest, 0755);
+file_put_contents($coPest = __DIR__ . '/../src/testing/co-pest', $code);
+chmod($coPest, 0755);

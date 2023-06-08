@@ -31,11 +31,12 @@ use SplPriorityQueue;
 
 /**
  * @internal
- * @covers \Hyperf\Event\Annotation\Listener
- * @covers \Hyperf\Event\EventDispatcher
- * @covers \Hyperf\Event\ListenerProvider
- * @covers \Hyperf\Event\ListenerProviderFactory
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Event\Annotation\Listener::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Event\EventDispatcher::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Event\ListenerProvider::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Event\ListenerProviderFactory::class)]
 class ListenerTest extends TestCase
 {
     use MockeryPHPUnitIntegration;

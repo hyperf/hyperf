@@ -22,20 +22,9 @@ use RedisException;
 
 class Redis implements Adapter
 {
-    /**
-     * @deprecated since 3.1, use `$metricGatherKeySuffix` instead
-     */
-    public const PROMETHEUS_METRIC_KEYS_SUFFIX = '_METRIC_KEYS';
+    private static string $metricGatherKeySuffix = ':metric_keys';
 
-    /**
-     * @notice TODO: since 3.1, default value will be changed to ':metric_keys'
-     */
-    private static string $metricGatherKeySuffix = '_METRIC_KEYS';
-
-    /**
-     * @notice TODO: since 3.1, default value will be changed to 'prometheus:' and should be non static
-     */
-    private static string $prefix = 'PROMETHEUS_';
+    private static string $prefix = 'prometheus:';
 
     /**
      * @param \Redis $redis
@@ -239,6 +228,7 @@ LUA
             unset($raw['__meta']);
             // Add the Inf bucket, so we can compute it later on
             $histogram['buckets'][] = '+Inf';
+            $allLabelValues = [];
 
             foreach (array_keys($raw) as $k) {
                 $d = Json::decode($k);
@@ -251,7 +241,7 @@ LUA
             }
             // We need set semantics.
             // This is the equivalent of array_unique but for arrays of arrays.
-            $allLabelValues = array_map('unserialize', array_unique(array_map('serialize', $allLabelValues ?? [])));
+            $allLabelValues = array_map('unserialize', array_unique(array_map('serialize', $allLabelValues)));
             sort($allLabelValues);
 
             foreach ($allLabelValues as $labelValues) {
@@ -350,7 +340,7 @@ LUA
     protected function toMetricKey(array $data): string
     {
         // TODO: This is a hack, we should remove it since v3.1.
-        if (! str_ends_with(':', self::$prefix)) {
+        if (! str_ends_with(self::$prefix, ':')) {
             $prefix = self::$prefix . ':';
         }
 

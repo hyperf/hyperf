@@ -13,12 +13,14 @@ namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Validation\Rule;
 use Hyperf\Validation\Rules\Dimensions;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationDimensionsRuleTest extends TestCase
 {
     public function testItCorrectlyFormatsAStringVersionOfTheRule()

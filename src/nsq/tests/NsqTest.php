@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Nsq;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class NsqTest extends TestCase
 {
     public function testExample()

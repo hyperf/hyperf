@@ -1,8 +1,28 @@
-# v3.0.23 - TBD
+# v3.0.24 - TBD
+
+## Fixed
+
+- [#5794](https://github.com/hyperf/hyperf/pull/5794) Fixed bug that `__FILE__` and `__DIR__` cannot be rewritten successfully in proxy classes.
+
+## Optimized
+
+- [#5789](https://github.com/hyperf/hyperf/pull/5789) Support `psr/http-message`.
+
+# v3.0.23 - 2023-06-02
+
+## Added
+
+- [#5757](https://github.com/hyperf/hyperf/pull/5757) Support nacos naming signature.
+- [#5765](https://github.com/hyperf/hyperf/pull/5765) Support Full-Text Search for `database`.
+
+## Fixed
+
+- [#5782](https://github.com/hyperf/hyperf/pull/5782) Fixed bug that prometheus cannot collect histograms.
 
 ## Optimized
 
 - [#5768](https://github.com/hyperf/hyperf/pull/5768) Improved `Hyperf\Command\Annotation\Command`, support set properties for command.
+- [#5780](https://github.com/hyperf/hyperf/pull/5780) Convert carrier key to string in `Zipkin\Propagation\Map`.
 
 # v3.0.22 - 2023-05-27
 

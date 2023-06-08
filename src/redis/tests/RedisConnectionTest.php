@@ -25,6 +25,7 @@ use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Redis\Stub\RedisConnectionStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -32,6 +33,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RedisConnectionTest extends TestCase
 {
     protected function tearDown(): void

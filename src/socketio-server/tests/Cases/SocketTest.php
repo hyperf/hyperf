@@ -19,11 +19,17 @@ use Hyperf\SocketIOServer\Socket;
 use Hyperf\WebSocketServer\Context;
 use Hyperf\WebSocketServer\Sender;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 
 use function Hyperf\Support\make;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -113,7 +119,6 @@ class SocketTest extends AbstractTestCase
         ]);
         $reflection = new ReflectionClass(Socket::class);
         $prop = $reflection->getProperty('broadcast');
-        $prop->setAccessible(true);
         $this->assertFalse($prop->getValue($socket1));
         $this->assertTrue($prop->getValue($socket1->broadcast));
     }

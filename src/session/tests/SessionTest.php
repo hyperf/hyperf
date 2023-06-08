@@ -20,8 +20,9 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- * @covers \Hyperf\Session\Session
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Session\Session::class)]
 class SessionTest extends TestCase
 {
     public function testSession()

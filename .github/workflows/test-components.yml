@@ -15,7 +15,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.1', '8.2' ]
         mysql-version: [ '5.7', '8.0' ]
       max-parallel: 2
       fail-fast: false
@@ -27,7 +27,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis, pdo, pdo_mysql, bcmath
+          extensions: redis, pdo, pdo_mysql, bcmath, swoole
           ini-values: opcache.enable_cli=1
           coverage: none
       - name: Setup Swoole
@@ -52,7 +52,7 @@ jobs:
     strategy:
       matrix:
         version: [ '^1.0', '^2.0', '^3.0' ]
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.1', '8.2' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -63,6 +63,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
+          extensions: swoole
           ini-values: opcache.enable_cli=1
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh
@@ -111,7 +112,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis
+          extensions: redis, swoole
           ini-values: opcache.enable_cli=0, phar.readonly='Off'
           coverage: none
       - name: Setup Swoole
@@ -151,7 +152,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.1', '8.2' ]
         version: [ '^1.0', '^2.0' ]
       max-parallel: 6
       fail-fast: false
@@ -163,6 +164,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
+          extensions: swoole
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
@@ -172,6 +174,7 @@ jobs:
           cp .travis/.env.example .env
           ./.travis/requirement.install.sh
           composer remove friendsofphp/php-cs-fixer --dev -W
+          composer remove "pestphp/*" --dev -W
           composer remove symfony/console --dev -W
           composer require "psr/container:${{ matrix.version }}"
           composer update -oW
@@ -186,7 +189,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.1', '8.2' ]
         version: [ '^1.0', '^2.0' ]
       max-parallel: 6
       fail-fast: false
@@ -198,6 +201,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
+          extensions: swoole
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
@@ -228,7 +232,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.1', '8.2' ]
         log-version: [ '^1.0', '^2.0', '^3.0' ]
         exclude:
           - php-version: '8.1'
@@ -245,6 +249,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
+          extensions: swoole
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
@@ -255,6 +260,7 @@ jobs:
           composer remove jonahgeorge/jaeger-client-php --dev -W
           composer remove bandwidth-throttle/token-bucket --dev -W
           composer remove friendsofphp/php-cs-fixer --dev -W
+          composer remove "pestphp/*" --dev -W
           composer remove "symfony/*" --dev -W
       - name: Run Test Cases
         run: |
@@ -281,7 +287,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.1', '8.2' ]
         psr-version: [ '^1.0', '^2.0', '^3.0' ]
       max-parallel: 3
       fail-fast: false
@@ -294,7 +300,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: phpize
           ini-values: opcache.enable_cli=0
-          extensions: redis, pdo, pdo_mysql, bcmath
+          extensions: redis, pdo, pdo_mysql, bcmath, swoole
           coverage: none
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh

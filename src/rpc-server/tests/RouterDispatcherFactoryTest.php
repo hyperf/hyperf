@@ -22,10 +22,16 @@ use HyperfTest\RpcServer\Stub\ContainerStub;
 use HyperfTest\RpcServer\Stub\IdGeneratorStub;
 use HyperfTest\RpcServer\Stub\MiddlewareStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -57,7 +63,6 @@ class RouterDispatcherFactoryTest extends TestCase
         );
         $ref = new ReflectionClass($factory);
         $m = $ref->getMethod('handleRpcService');
-        $m->setAccessible(true);
         $m->invokeArgs($factory, [IdGeneratorStub::class, new RpcService('IdGenerator'), [], []]);
     }
 
@@ -74,7 +79,6 @@ class RouterDispatcherFactoryTest extends TestCase
         );
         $ref = new ReflectionClass($factory);
         $m = $ref->getMethod('handleRpcService');
-        $m->setAccessible(true);
         $m->invokeArgs($factory, [MiddlewareStub::class, new RpcService('Middleware'), [
             'generate' => [
                 Middleware::class => new Middleware('Bar'),

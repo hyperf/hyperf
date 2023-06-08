@@ -23,6 +23,7 @@ use Hyperf\SuperGlobals\Proxy\Server;
 use Hyperf\SuperGlobals\Proxy\Session;
 use HyperfTest\SuperGlobals\Stub\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
@@ -31,6 +32,7 @@ use Psr\Http\Message\UploadedFileInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ProxyTest extends TestCase
 {
     protected function tearDown(): void

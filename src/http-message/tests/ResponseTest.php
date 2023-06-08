@@ -11,10 +11,11 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpMessage;
 
+use Hyperf\Engine\Http\WritableConnection;
 use Hyperf\HttpMessage\Cookie\Cookie;
-use Hyperf\HttpMessage\Server\Connection\SwooleConnection;
 use Hyperf\HttpMessage\Server\Response;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Http\Response as SwooleResponse;
 
@@ -22,6 +23,7 @@ use Swoole\Http\Response as SwooleResponse;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ResponseTest extends TestCase
 {
     protected function tearDown(): void
@@ -62,7 +64,7 @@ class ResponseTest extends TestCase
         $swooleResponse->shouldReceive('write')->with($content)->once()->andReturn(true);
 
         $response = $this->newResponse();
-        $response->setConnection(new SwooleConnection($swooleResponse));
+        $response->setConnection(new WritableConnection($swooleResponse));
         $status = $response->write($content);
         $this->assertTrue($status);
     }

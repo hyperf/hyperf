@@ -15,6 +15,7 @@ use Hyperf\Engine\Channel;
 use Hyperf\ReactiveX\Observable;
 use Hyperf\ReactiveX\RxSwoole;
 use Hyperf\ReactiveX\Scheduler\ConcurrentEventLoopScheduler;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Runtime;
 
@@ -24,6 +25,7 @@ use function Hyperf\Support\swoole_hook_flags;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConcurrentEventLoopSchedulerTest extends TestCase
 {
     public static function setUpBeforeClass(): void

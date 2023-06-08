@@ -82,13 +82,13 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
         return $this->trailers;
     }
 
-    public function setConnection(ConnectionInterface|Writable $connection)
+    public function setConnection(Writable $connection)
     {
         $this->connection = $connection;
         return $this;
     }
 
-    public function getConnection(): ConnectionInterface|Writable|null
+    public function getConnection(): ?Writable
     {
         return $this->connection;
     }

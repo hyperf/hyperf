@@ -31,6 +31,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
+use function Hyperf\Coroutine\go;
+
 class Client implements ClientInterface
 {
     protected ?HTTP2ClientInterface $client = null;

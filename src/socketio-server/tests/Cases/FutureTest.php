@@ -17,6 +17,7 @@ use Hyperf\Engine\Channel;
 use Hyperf\SocketIOServer\Emitter\Future;
 use Hyperf\WebSocketServer\Sender;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 use function Hyperf\Support\make;
 
@@ -24,6 +25,7 @@ use function Hyperf\Support\make;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FutureTest extends AbstractTestCase
 {
     protected function setUp(): void

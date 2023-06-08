@@ -805,6 +805,14 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Compile a "where fulltext" clause.
+     */
+    protected function whereFullText(Builder $query, array $where): string
+    {
+        throw new RuntimeException('This database engine does not support fulltext search operations.');
+    }
+
+    /**
      * Compile a "JSON length" statement into SQL.
      *
      * @param string $column

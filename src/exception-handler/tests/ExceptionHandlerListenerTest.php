@@ -16,6 +16,7 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\ExceptionHandler\Annotation\ExceptionHandler;
 use Hyperf\ExceptionHandler\Listener\ExceptionHandlerListener;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -23,6 +24,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ExceptionHandlerListenerTest extends TestCase
 {
     protected function tearDown(): void

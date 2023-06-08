@@ -22,14 +22,6 @@ class CacheListenerCollector extends MetadataCollector
         static::$container[$listener] = $value;
     }
 
-    /**
-     * @deprecated
-     */
-    public static function getListner(string $listener, ?array $default = null)
-    {
-        return self::getListener($listener, $default);
-    }
-
     public static function getListener(string $listener, ?array $default = null)
     {
         return static::$container[$listener] ?? $default;

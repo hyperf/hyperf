@@ -13,6 +13,7 @@ namespace HyperfTest\Coroutine;
 
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Runtime;
 
@@ -25,6 +26,7 @@ use function Hyperf\Coroutine\run;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FunctionTest extends TestCase
 {
     public function testReturnOfGo()
@@ -38,9 +40,7 @@ class FunctionTest extends TestCase
         $this->assertSame('Hyperf', $uniqid);
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testRun()
     {
         $asserts = [
