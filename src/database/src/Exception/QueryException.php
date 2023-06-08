@@ -15,7 +15,7 @@ use Exception;
 use PDOException;
 use Throwable;
 
-use function Hyperf\Support\buildSql;
+use function Hyperf\Support\build_sql;
 
 class QueryException extends PDOException
 {
@@ -58,6 +58,6 @@ class QueryException extends PDOException
      */
     protected function formatMessage(string $sql, array $bindings, Throwable $previous): string
     {
-        return $previous->getMessage() . ' (SQL: ' . buildSql($sql, $bindings) . ')';
+        return $previous->getMessage() . ' (SQL: ' . build_sql($sql, $bindings) . ')';
     }
 }

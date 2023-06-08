@@ -227,7 +227,7 @@ function optional($value = null, callable $callback = null)
 /**
  * Build SQL contain bind.
  */
-function buildSql(string $sql, array $bindings = []): string
+function build_sql(string $sql, array $bindings = []): string
 {
     $bindings = array_map(function ($value) {
         return match (gettype($value)) {
