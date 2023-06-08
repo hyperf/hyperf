@@ -32,3 +32,7 @@
 ## Deprecated
 
 - [x] Drop support swoole for 4.x.
+
+## Fixed
+
+- [#5771](https://github.com/hyperf/hyperf/pull/5771) Fixed bug that the return type of `Model::updateOrInsert` isn't boolean.
