@@ -61,5 +61,6 @@ class ConnectionTest extends TestCase
             1, '1', false, true,
         ]), "select * from `user` where `id` = 1 and `name` = '1' and sex = 0 and age = 1");
         $this->assertSame(build_sql('select * from `user` where `name` = ? and `sex` = ?', ['?name', 1]), "select * from `user` where `name` = '?name' and `sex` = 1");
+        $this->assertSame(build_sql('select * from `user` where `name` = ? and `sex` = ?', ['?name', 1, 2]), "select * from `user` where `name` = '?name' and `sex` = 1");
     }
 }
