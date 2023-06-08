@@ -230,18 +230,14 @@ function optional($value = null, callable $callback = null)
  */
 function build_sql(string $sql, array $bindings = []): string
 {
-    $bindings = array_map(function ($value) {
-        return match (gettype($value)) {
-            'integer', 'double' => $value,
-            'boolean' => (int) $value,
-            default => sprintf("'%s'", $value),
-        };
-    }, $bindings);
-
     if (! Arr::isAssoc($bindings)) {
         $position = 0;
         foreach ($bindings as $value) {
-            $value = (string) $value;
+            $value = (string) match (gettype($value)) {
+                'integer', 'double' => $value,
+                'boolean' => (int) $value,
+                default => sprintf("'%s'", $value),
+            };
             $position = strpos($sql, '?', $position);
             if ($position === false) {
                 break;
