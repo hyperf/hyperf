@@ -85,6 +85,16 @@ return (new PhpCsFixer\Config())
         'single_quote' => true,
         'standardize_not_equals' => true,
         'multiline_comment_opening_closing' => true,
+        'php_unit_test_class_requires_covers' => false,
+        'php_unit_internal_class' => false,
+        'ordered_types' => [
+            'null_adjustment' => 'always_last',
+            'sort_algorithm' => 'none'
+        ],
+        'phpdoc_types_order' => [
+            'null_adjustment' => 'always_last',
+            'sort_algorithm' => 'none'
+        ],
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()
