@@ -52,7 +52,7 @@ class PoolFactory
     protected function getPoolName(string $driver): string
     {
         return match (strtolower($driver)) {
-            'mysql', 'pdo' => PDOPool::class,
+            'mysql', 'pdo' => MySQLPool::class,
             'pgsql' => PgSQLPool::class,
             default => class_exists($driver) ? $driver : throw new DriverNotFoundException(sprintf('Driver %s is not found.', $driver)),
         };
