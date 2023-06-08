@@ -10,7 +10,7 @@
 
 - [#5789](https://github.com/hyperf/hyperf/pull/5789) Support `psr/http-message`.
 - [#5806](https://github.com/hyperf/hyperf/pull/5806) Merge swow server settings with config settings.
-- [#5814](https://github.com/hyperf/hyperf/pull/5814) Added function `build_sql` which can be used in `QueryException`.
+- [#5814](https://github.com/hyperf/hyperf/pull/5814) Added function `build_sql` which be used in `QueryException`.
 
 # v3.0.23 - 2023-06-02
 
