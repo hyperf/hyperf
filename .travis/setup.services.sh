@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # build docker images
-docker build -t grpc-server:latest src/grpc-client/tests/Mock &
-docker build -t go-grpc-server:latest src/grpc-client/tests/Golang &
+docker build --tag grpc-server:latest src/grpc-client/tests/Mock &
+docker build src/grpc-client/tests/Golang -t go-grpc-server:latest &
 docker build -t tcp-server:latest .travis/tcp_server &
 docker build -t http-server:latest .travis/http_server &
 wait
