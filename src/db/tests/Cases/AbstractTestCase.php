@@ -32,7 +32,7 @@ use PHPUnit\Framework\TestCase;
  */
 abstract class AbstractTestCase extends TestCase
 {
-    protected $driver = 'pdo';
+    protected $driver = 'mysql';
 
     protected function tearDown(): void
     {
