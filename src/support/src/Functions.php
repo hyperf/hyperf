@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Support;
 
 use Closure;
+use Hyperf\Collection\Arr;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Stringable\Str;
 use Throwable;
@@ -237,5 +238,18 @@ function build_sql(string $sql, array $bindings = []): string
         };
     }, $bindings);
 
-    return Str::replaceArray('?', $bindings, $sql);
+    if (! Arr::isAssoc($bindings)) {
+        $position = 0;
+        foreach ($bindings as $value) {
+            $value = (string) $value;
+            $position = strpos($sql, '?', $position);
+            if ($position === false) {
+                break;
+            }
+            $sql = substr_replace($sql, $value, $position, 1);
+            $position += strlen($value);
+        }
+    }
+
+    return $sql;
 }
