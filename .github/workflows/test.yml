@@ -29,6 +29,7 @@ jobs:
       - name: Run CS Fix
         run: vendor/bin/php-cs-fixer fix src --dry-run
   tests:
+    needs: cs-fix
     name: Test on PHP${{ matrix.php-version }} Swoole-${{ matrix.sw-version }}
     runs-on: "${{ matrix.os }}"
     strategy:
