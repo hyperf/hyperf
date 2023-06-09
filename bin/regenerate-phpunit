@@ -74,28 +74,31 @@ class RunInCoroutineVisitor extends NodeVisitorAbstract
 
     protected function getPrependSetter(): array
     {
-        return $this->parser->parse("<?php
-if (!isset(getopt('', ['prepend:'])['prepend'])) {
-    (function () {
-        \$prepend = null;
-        foreach (\$_SERVER['argv'] as \$index => \$argv) {
-            // --prepend /path/to/file
-            if (\$argv === '--prepend') {
-                \$prepend = \$_SERVER['argv'][\$index + 1] ?? null;
-                break;
+        return $this->parser->parse('<?php
+(function () {
+    $prepend = null;
+    foreach ($_SERVER["argv"] as $index => $argv) {
+        // --prepend /path/to/file
+        if ($argv === "--prepend") {
+            unset($_SERVER["argv"][$index]);
+            if (isset($_SERVER["argv"][$index + 1])) {
+                $prepend = $_SERVER["argv"][$index + 1];
+                unset($_SERVER["argv"][$index + 1]);
             }
-            // --prepend=/path/to/file
-            if (strpos(\$argv, '--prepend=') === 0) {
-                \$prepend = substr(\$argv, 10);
-                break;
-            }
+            break;
         }
-        if (\$prepend !== null && file_exists(\$prepend)) {
-            require \$prepend;
+        // --prepend=/path/to/file
+        if (strpos($argv, "--prepend=") === 0) {
+            $prepend = substr($argv, 10);
+            unset($_SERVER["argv"][$index]);
+            break;
         }
-    })();
-}
-");
+    }
+    if ($prepend !== null && file_exists($prepend)) {
+        require $prepend;
+    }
+})();
+');
     }
 
     protected function getCoroutineSetter(): array

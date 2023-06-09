@@ -1,14 +1,6 @@
 #!/usr/bin/env php
-<?php
-declare(strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
+<?php 
+declare (strict_types=1);
 use Pest\Kernel;
 use Pest\Panic;
 use Pest\TestCaseFilters\GitDirtyTestCaseFilter;
@@ -16,23 +8,22 @@ use Pest\TestCaseMethodFilters\TodoTestCaseFilter;
 use Pest\TestSuite;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
-
 (function () {
     $prepend = null;
-    foreach ($_SERVER['argv'] as $index => $argv) {
+    foreach ($_SERVER["argv"] as $index => $argv) {
         // --prepend /path/to/file
-        if ($argv === '--prepend') {
-            unset($_SERVER['argv'][$index]);
-            if (isset($_SERVER['argv'][$index + 1])) {
-                $prepend = $_SERVER['argv'][$index + 1];
-                unset($_SERVER['argv'][$index + 1]);
+        if ($argv === "--prepend") {
+            unset($_SERVER["argv"][$index]);
+            if (isset($_SERVER["argv"][$index + 1])) {
+                $prepend = $_SERVER["argv"][$index + 1];
+                unset($_SERVER["argv"][$index + 1]);
             }
             break;
         }
         // --prepend=/path/to/file
-        if (strpos($argv, '--prepend=') === 0) {
+        if (strpos($argv, "--prepend=") === 0) {
             $prepend = substr($argv, 10);
-            unset($_SERVER['argv'][$index]);
+            unset($_SERVER["argv"][$index]);
             break;
         }
     }
@@ -41,10 +32,10 @@ use Symfony\Component\Console\Output\ConsoleOutput;
     }
 })();
 $code = 0;
-Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL, 'exit_condition' => function () {
-    return Swoole\Coroutine::stats()['coroutine_num'] === 0;
+Swoole\Coroutine::set(["hook_flags" => SWOOLE_HOOK_ALL, "exit_condition" => function () {
+    return Swoole\Coroutine::stats()["coroutine_num"] === 0;
 }]);
-Swoole\Coroutine\run(function () use (&$code) {
+Swoole\Coroutine\run(function () use(&$code) {
     try {
         $code = (static function () {
             // Ensures Collision's Printer is registered.
@@ -116,4 +107,4 @@ Swoole\Coroutine\run(function () use (&$code) {
     Swoole\Timer::clearAll();
     Hyperf\Coordinator\CoordinatorManager::until(Hyperf\Coordinator\Constants::WORKER_EXIT)->resume();
 });
-exit($code);
+die($code);

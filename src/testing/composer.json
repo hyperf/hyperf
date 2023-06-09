@@ -32,6 +32,9 @@
         "hyperf/utils": "~3.1.0",
         "symfony/http-foundation": "^5.4|^6.0"
     },
+    "suggest": {
+        "pestphp/pest": "For testing with Pest"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "3.0-dev"
@@ -39,6 +42,6 @@
     },
     "bin": [
         "co-phpunit",
-        "co-pest"
+        "bin/co-pest"
     ]
 }
