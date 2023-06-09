@@ -112,5 +112,5 @@ $code = ltrim($code, '?>' . PHP_EOL);
 
 file_put_contents($coPest = __DIR__ . '/co-pest', $code);
 chmod($coPest, 0755);
-file_put_contents($coPest = __DIR__ . '/../src/testing/co-pest', $code);
+file_put_contents($coPest = __DIR__ . '/../src/testing/bin/co-pest', $code);
 chmod($coPest, 0755);

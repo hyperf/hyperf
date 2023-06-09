@@ -39,6 +39,6 @@
     },
     "bin": [
         "co-phpunit",
-        "co-pest"
+        "bin/co-pest"
     ]
 }
