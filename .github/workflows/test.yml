@@ -7,7 +7,28 @@ on:
     - cron: '0 2 * * *'
 
 jobs:
-  ci:
+  cs-fix:
+    name: PHP CS Fix on PHP${{ matrix.php }} Swoole-${{ matrix.swoole }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        php: [ '8.1' ]
+        swoole: [ 'swoole']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: php-cs-fixer
+          extensions: redis, pdo, pdo_mysql, bcmath, ${{ matrix.swoole }}
+      - name: Setup Packages
+        run: composer update -oW
+      - name: Run CS Fix
+        run: vendor/bin/php-cs-fixer fix src --dry-run
+  tests:
     name: Test on PHP${{ matrix.php-version }} Swoole-${{ matrix.sw-version }}
     runs-on: "${{ matrix.os }}"
     strategy:
@@ -52,8 +73,8 @@ jobs:
           php --ri swoole
       - name: Setup Packages
         run: ./.travis/requirement.install.sh
-      - name: Run Check
-        run: ./.travis/run.check.sh
+      - name: Run PHPStan
+        run: composer an src
       - name: Setup Services
         run: ./.travis/setup.services.sh
       - name: Setup Mysql
