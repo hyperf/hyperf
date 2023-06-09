@@ -8,7 +8,7 @@ on:
 
 jobs:
   cs-fix:
-    name: PHP CS Fix on PHP${{ matrix.php }} Swoole-${{ matrix.swoole }}
+    name: PHP CS Fix on PHP${{ matrix.php }} ${{ matrix.swoole }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
