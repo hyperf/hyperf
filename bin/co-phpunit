@@ -45,26 +45,29 @@ if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
     fwrite(STDERR, 'You need to set up the project dependencies using Composer:' . PHP_EOL . PHP_EOL . '    composer install' . PHP_EOL . PHP_EOL . 'You can learn all about Composer on https://getcomposer.org/.' . PHP_EOL);
     die(1);
 }
-if (!isset(getopt('', ['prepend:'])['prepend'])) {
-    (function () {
-        $prepend = null;
-        foreach ($_SERVER['argv'] as $index => $argv) {
-            // --prepend /path/to/file
-            if ($argv === '--prepend') {
-                $prepend = $_SERVER['argv'][$index + 1] ?? null;
-                break;
+(function () {
+    $prepend = null;
+    foreach ($_SERVER["argv"] as $index => $argv) {
+        // --prepend /path/to/file
+        if ($argv === "--prepend") {
+            unset($_SERVER["argv"][$index]);
+            if (isset($_SERVER["argv"][$index + 1])) {
+                $prepend = $_SERVER["argv"][$index + 1];
+                unset($_SERVER["argv"][$index + 1]);
             }
-            // --prepend=/path/to/file
-            if (strpos($argv, '--prepend=') === 0) {
-                $prepend = substr($argv, 10);
-                break;
-            }
+            break;
         }
-        if ($prepend !== null && file_exists($prepend)) {
-            require $prepend;
+        // --prepend=/path/to/file
+        if (strpos($argv, "--prepend=") === 0) {
+            $prepend = substr($argv, 10);
+            unset($_SERVER["argv"][$index]);
+            break;
         }
-    })();
-}
+    }
+    if ($prepend !== null && file_exists($prepend)) {
+        require $prepend;
+    }
+})();
 require PHPUNIT_COMPOSER_INSTALL;
 $code = 0;
 Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL, 'exit_condition' => function () {
