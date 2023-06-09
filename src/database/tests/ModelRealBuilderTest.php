@@ -36,6 +36,7 @@ use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\TestModel;
+use HyperfTest\Database\Stubs\Model\TestVersionModel;
 use HyperfTest\Database\Stubs\Model\User;
 use HyperfTest\Database\Stubs\Model\UserBit;
 use HyperfTest\Database\Stubs\Model\UserExt;
@@ -350,6 +351,58 @@ class ModelRealBuilderTest extends TestCase
 
         $model = TestModel::query()->find(1);
         $this->assertSame(2, $model->uid);
+    }
+
+    public function testRewriteSetKeysForSaveQuery()
+    {
+        $container = $this->getContainer();
+        /** @var ConnectionInterface $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->statement('CREATE TABLE `test` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `uid` bigint(20) unsigned NOT NULL,
+  `version` bigint(20) unsigned NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
+        $res = TestVersionModel::query()->insert(['user_id' => 1, 'uid' => 1, 'version' => 2]);
+        $this->assertTrue($res);
+
+        /** @var TestVersionModel $model */
+        $model = TestVersionModel::query()->first();
+        $model->user_id = 2;
+        $model->version = 1;
+        $model->save();
+
+        $this->assertSame(2, TestVersionModel::query()->first()->user_id);
+
+        $model->mustVersion = true;
+        $model->user_id = 3;
+        $model->version = 0;
+        $model->save();
+
+        $this->assertSame(2, TestVersionModel::query()->first()->user_id);
+
+        $model->user_id = 4;
+        $model->version = 2;
+        $model->save();
+
+        $this->assertSame(4, TestVersionModel::query()->first()->user_id);
+
+        $sqls = [
+            'update `test` set `user_id` = ?, `version` = ?, `test`.`updated_at` = ? where `id` = ?',
+            'update `test` set `user_id` = ?, `version` = ?, `test`.`updated_at` = ? where `id` = ? and `version` <= ?',
+            'update `test` set `user_id` = ?, `version` = ?, `test`.`updated_at` = ? where `id` = ? and `version` <= ?',
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted && str_starts_with($event->sql, 'update')) {
+                $this->assertSame($event->sql, array_shift($sqls));
+            }
+        }
     }
 
     public function testBigIntInsertAndGet()
