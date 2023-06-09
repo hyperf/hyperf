@@ -9,6 +9,7 @@ parameters:
   treatPhpDocTypesAsCertain: true
   reportUnmatchedIgnoredErrors: false
   excludePaths:
+    - %currentWorkingDirectory%/src/helper/*
     - %currentWorkingDirectory%/src/*/tests/*
     - %currentWorkingDirectory%/src/*/publish/*
     - %currentWorkingDirectory%/src/*/class_map/*
