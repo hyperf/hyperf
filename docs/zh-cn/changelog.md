@@ -1,5 +1,19 @@
 # 版本更新记录
 
+# v3.0.24 - 2023-06-10
+
+## 修复
+
+- [#5794](https://github.com/hyperf/hyperf/pull/5794) 修复代理类中 `__FILE__` 和 `__DIR__` 定位错误的问题。
+- [#5803](https://github.com/hyperf/hyperf/pull/5803) 修复组件 `hyperf/http-server` 不适配新版本 `Psr7` 的问题。
+- [#5808](https://github.com/hyperf/hyperf/pull/5808) 修复验证器规则 `le`、`lte`、`gt`、`gte` 不发正常比较 `numeric` 和 `string`。
+
+## 优化
+
+- [#5789](https://github.com/hyperf/hyperf/pull/5789) 支持高版本 `psr/http-message`。
+- [#5806](https://github.com/hyperf/hyperf/pull/5806) 优化 Swow 服务，默认情况下合并通用配置。
+- [#5814](https://github.com/hyperf/hyperf/pull/5814) 增加方法 `build_sql`，在抛出异常 `QueryException` 时，可以快速的构建 `SQL` .
+
 # v3.0.23 - 2023-06-02
 
 ## 新增

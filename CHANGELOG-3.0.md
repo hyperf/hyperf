@@ -1,12 +1,18 @@
-# v3.0.24 - TBD
+# v3.0.25 - TBD
+
+# v3.0.24 - 2023-06-10
 
 ## Fixed
 
 - [#5794](https://github.com/hyperf/hyperf/pull/5794) Fixed bug that `__FILE__` and `__DIR__` cannot be rewritten successfully in proxy classes.
+- [#5803](https://github.com/hyperf/hyperf/pull/5803) Fixed bug that `hyperf/http-server` cannot match psr7.
+- [#5808](https://github.com/hyperf/hyperf/pull/5808) Fixed bug that validation rules `le`、`lte`、`gt`、`gte` do not support comparison between numeric and string values.
 
 ## Optimized
 
 - [#5789](https://github.com/hyperf/hyperf/pull/5789) Support `psr/http-message`.
+- [#5806](https://github.com/hyperf/hyperf/pull/5806) Merge swow server settings with config settings.
+- [#5814](https://github.com/hyperf/hyperf/pull/5814) Added function `build_sql` which be used in `QueryException`.
 
 # v3.0.23 - 2023-06-02
 

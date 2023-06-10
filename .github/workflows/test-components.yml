@@ -218,12 +218,12 @@ jobs:
           composer remove influxdb/influxdb-php --dev -W
           composer remove guzzlehttp/guzzle --dev -W
           composer remove jcchavezs/zipkin-opentracing -W --dev
-          composer remove psr/http-server-middleware -W
           composer require "psr/http-message:${{ matrix.version }}" -W
           composer update -oW
       - name: Run Test Cases
         run: |
           composer analyse src/http-message
+          composer analyse src/http-server
           vendor/bin/phpunit src/http-message
   log:
     name: Test for Psr Log V1.0 ~ V3.0
