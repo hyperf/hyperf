@@ -13,8 +13,9 @@ namespace Hyperf\HttpMessage\Base;
 
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
-class Response implements ResponseInterface
+class Response implements ResponseInterface, ResponsePlusInterface
 {
     use MessageTrait;
 
@@ -330,5 +331,33 @@ class Response implements ResponseInterface
     public function isEmpty(): bool
     {
         return in_array($this->statusCode, [204, 304]);
+    }
+
+    public function toString(bool $withoutBody = false): string
+    {
+        $headerString = '';
+        foreach ($this->getStandardHeaders() as $key => $values) {
+            foreach ($values as $value) {
+                $headerString .= sprintf("%s: %s\r\n", $key, $value);
+            }
+        }
+        return sprintf(
+            "HTTP/%s %s %s\r\n%s\r\n%s",
+            $this->getProtocolVersion(),
+            $this->getStatusCode(),
+            $this->getReasonPhrase(),
+            $headerString,
+            $this->getBody()
+        );
+    }
+
+    public function setStatus(int $code, string $reasonPhrase = ''): static
+    {
+        $this->statusCode = $code;
+        if (! $reasonPhrase && isset(self::$phrases[$code])) {
+            $reasonPhrase = self::$phrases[$code];
+        }
+        $this->reasonPhrase = $reasonPhrase;
+        return $this;
     }
 }
