@@ -14,8 +14,9 @@ namespace Hyperf\HttpMessage\Uri;
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 use Stringable;
+use Swow\Psr7\Message\UriPlusInterface;
 
-class Uri implements UriInterface, Stringable
+class Uri implements UriInterface, Stringable, UriPlusInterface
 {
     /**
      * Absolute http and https URIs require a host per RFC 7230 Section 2.7
@@ -70,6 +71,9 @@ class Uri implements UriInterface, Stringable
      * uri fragment.
      */
     private string $fragment = '';
+
+    /** @var null|array<string, string> */
+    private ?array $queryParams = null;
 
     /**
      * @param string $uri URI to parse
@@ -149,13 +153,19 @@ class Uri implements UriInterface, Stringable
      */
     public function getAuthority(): string
     {
+        if ($this->host === '') {
+            return '';
+        }
+
         $authority = $this->host;
         if ($this->userInfo !== '') {
             $authority = $this->userInfo . '@' . $authority;
         }
+
         if ($this->port !== null) {
             $authority .= ':' . $this->port;
         }
+
         return $authority;
     }
 
@@ -320,9 +330,9 @@ class Uri implements UriInterface, Stringable
             return $this;
         }
         $clone = clone $this;
-        $clone->userInfo = $user;
+        $clone->userInfo = $info;
         $clone->validateState();
-        return $this;
+        return $clone;
     }
 
     /**
@@ -537,6 +547,122 @@ class Uri implements UriInterface, Stringable
     public function getDefaultPort(): ?int
     {
         return self::$defaultPorts[$this->getScheme()] ?? null;
+    }
+
+    public function setScheme(string $scheme): static
+    {
+        $scheme = $this->filterScheme($scheme);
+        if ($this->scheme === $scheme) {
+            return $this;
+        }
+        $this->scheme = $scheme;
+        // TODO add method
+        $this->removeDefaultPort();
+        $this->validateState();
+        return $this;
+    }
+
+    public function setUserInfo(string $user, string $password = ''): static
+    {
+        $info = $user;
+        if ($password !== '') {
+            $info .= ':' . $password;
+        }
+        $this->userInfo = $info;
+        $this->validateState();
+        return $this;
+    }
+
+    public function setHost(string $host): static
+    {
+        $this->host = $this->filterHost($host);
+        $this->validateState();
+        return $this;
+    }
+
+    public function setPort(?int $port): static
+    {
+        $port = $this->filterPort($port);
+        if ($this->port === $port) {
+            return $this;
+        }
+
+        $this->port = $port;
+        $this->validateState();
+        return $this;
+    }
+
+    public function setPath(string $path): static
+    {
+        $path = $this->filterPath($path);
+        if ($this->path === $path) {
+            return $this;
+        }
+
+        $this->path = $path;
+        $this->validateState();
+        return $this;
+    }
+
+    public function setQuery(string $query): static
+    {
+        $query = $this->filterQueryAndFragment($query);
+        $this->query = $query;
+        return $this;
+    }
+
+    public function getQueryParams(): array
+    {
+        if (! isset($this->queryParams)) {
+            $query = $this->query;
+            if ($query === '') {
+                $this->queryParams = [];
+            } else {
+                parse_str($query, $this->queryParams);
+            }
+        }
+
+        return $this->queryParams;
+    }
+
+    public function setQueryParams(array $queryParams): static
+    {
+        $this->query = http_build_query($queryParams);
+        $this->queryParams = $queryParams;
+
+        return $this;
+    }
+
+    public function withQueryParams(array $queryParams): static
+    {
+        return (clone $this)->setQueryParams($queryParams);
+    }
+
+    public function setFragment(string $fragment): static
+    {
+        $fragment = $this->filterQueryAndFragment($fragment);
+        $this->fragment = $fragment;
+        return $this;
+    }
+
+    public static function build(string $scheme, string $authority, string $path, string $query, string $fragment): string
+    {
+        $schemeSuffix = $scheme !== '' ? ':' : '';
+        $authorityPrefix = $authority !== '' ? '//' : '';
+        $pathPrefix = '';
+        if ($path !== '' && ! str_starts_with($path, '/') && $authority !== '') {
+            // If the path is rootless and an authority is present, the path MUST be prefixed by "/"
+            $pathPrefix = '/';
+        }
+        $queryPrefix = $query !== '' ? '?' : '';
+        $fragmentPrefix = $fragment !== '' ? '#' : '';
+
+        return $scheme . $schemeSuffix . $authorityPrefix . $authority . $pathPrefix . $path . $queryPrefix . $query . $fragmentPrefix . $fragment;
+    }
+
+    public function toString(): string
+    {
+        return static::build($this->scheme, $this->getAuthority(), $this->path, $this->query, $this->fragment);
     }
 
     /**
