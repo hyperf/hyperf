@@ -17,8 +17,9 @@ use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use Swow\Psr7\Message\RequestPlusInterface;
 
-class Request implements RequestInterface
+class Request implements RequestInterface, RequestPlusInterface
 {
     use MessageTrait;
 
@@ -60,6 +61,11 @@ class Request implements RequestInterface
         if ($body !== '' && $body !== null) {
             $this->stream = ($body instanceof StreamInterface ? $body : new SwooleStream($body));
         }
+    }
+
+    public function __toString()
+    {
+        return $this->toString();
     }
 
     /**
@@ -201,6 +207,58 @@ class Request implements RequestInterface
         }
 
         return $new;
+    }
+
+    public function setMethod(string $method): static
+    {
+        $method = strtoupper($method);
+        $methods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'HEAD'];
+        if (! in_array($method, $methods)) {
+            throw new InvalidArgumentException('Invalid Method');
+        }
+        $this->method = $method;
+        return $this;
+    }
+
+    public function setUri(UriInterface|string $uri, ?bool $preserveHost = null): static
+    {
+        $this->uri = $uri;
+
+        if (! $preserveHost) {
+            $this->updateHostFromUri();
+        }
+
+        return $this;
+    }
+
+    public function setRequestTarget(string $requestTarget): static
+    {
+        if (preg_match('#\s#', $requestTarget)) {
+            throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
+        }
+
+        $this->requestTarget = $requestTarget;
+        return $this;
+    }
+
+    public function toString(bool $withoutBody = false): string
+    {
+        $headerString = '';
+        if (! $withoutBody) {
+            foreach ($this->getStandardHeaders() as $key => $values) {
+                foreach ($values as $value) {
+                    $headerString .= sprintf("%s: %s\r\n", $key, $value);
+                }
+            }
+        }
+        return sprintf(
+            "%s %s HTTP/%s\r\n%s\r\n%s",
+            $this->getMethod(),
+            $this->getUri()->getPath(),
+            $this->getProtocolVersion(),
+            $headerString,
+            $this->getBody()
+        );
     }
 
     /**

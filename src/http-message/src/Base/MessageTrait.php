@@ -324,7 +324,92 @@ trait MessageTrait
         }
     }
 
-    private function setHeaders(array $headers): static
+    public function setProtocolVersion(string $version): static
+    {
+        $this->protocol = $version;
+        return $this;
+    }
+
+    public function setHeader(string $name, mixed $value): static
+    {
+        if (! is_array($value)) {
+            $value = [$value];
+        }
+
+        $value = $this->trimHeaderValues($value);
+        $normalized = strtolower($name);
+
+        if (isset($this->headerNames[$normalized])) {
+            unset($this->headers[$this->headerNames[$normalized]]);
+        }
+        $this->headerNames[$normalized] = $name;
+        $this->headers[$name] = $value;
+
+        return $this;
+    }
+
+    public function addHeader(string $name, mixed $value): static
+    {
+        if (! is_array($value)) {
+            $value = [$value];
+        }
+
+        $value = $this->trimHeaderValues($value);
+        $normalized = strtolower($name);
+
+        if (isset($this->headerNames[$normalized])) {
+            $name = $this->headerNames[$normalized];
+            $this->headers[$name] = array_merge($this->headers[$name], $value);
+        } else {
+            $this->headerNames[$normalized] = $name;
+            $this->headers[$name] = $value;
+        }
+
+        return $this;
+    }
+
+    public function unsetHeader(string $name): static
+    {
+        $normalized = strtolower($name);
+
+        if (! isset($this->headerNames[$normalized])) {
+            return $this;
+        }
+
+        $name = $this->headerNames[$normalized];
+
+        unset($this->headers[$name], $this->headerNames[$normalized]);
+
+        return $this;
+    }
+
+    public function getStandardHeaders(): array
+    {
+        $headers = $this->getHeaders();
+        if (! $this->hasHeader('connection')) {
+            $headers['Connection'] = [$this->shouldKeepAlive() ? 'keep-alive' : 'close'];
+        }
+        if (! $this->hasHeader('content-length')) {
+            $headers['Content-Length'] = [(string) ($this->getBody()->getSize() ?? 0)];
+        }
+        return $headers;
+    }
+
+    public function shouldKeepAlive(): bool
+    {
+        return strtolower($this->getHeaderLine('Connection')) === 'keep-alive';
+    }
+
+    public function setBody(StreamInterface $body): static
+    {
+        $this->stream = $body;
+        return $this;
+    }
+
+    /**
+     * @param array<string, array<string>|string> $headers
+     */
+    public function setHeaders(array $headers): static
     {
         $this->headerNames = $this->headers = [];
         foreach ($headers as $header => $value) {
