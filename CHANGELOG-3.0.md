@@ -1,5 +1,7 @@
 # v3.0.25 - TBD
 
+- [#5831](https://github.com/hyperf/hyperf/pull/5831) Fixed an endless loop when socket.io parses namespace
+
 # v3.0.24 - 2023-06-10
 
 ## Fixed
