@@ -141,7 +141,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
         // Check that the namespace is correct
         if (! str_contains($frame->data, ',') && ! str_contains($frame->data, '?')) {
-            $this->stdoutLogger->error("The data format is incorrect:{$frame->data}");
+            $this->stdoutLogger->error("The data format is incorrect: {$frame->data}");
             return;
         }
         $packet = $this->decoder->decode(substr($frame->data, 1));
