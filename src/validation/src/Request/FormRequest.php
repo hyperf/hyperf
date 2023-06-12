@@ -174,7 +174,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
             return call_user_func_array([$this, 'authorize'], []);
         }
 
-        return false;
+        return true;
     }
 
     /**
