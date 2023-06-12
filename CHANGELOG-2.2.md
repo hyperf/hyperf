@@ -1,5 +1,7 @@
 # v2.2.39 - TBD
 
+- [#5832](https://github.com/hyperf/hyperf/pull/5832) Fixed an endless loop when socket.io parses namespace
+
 # v2.2.38 - 2023-02-09
 
 - [#5359](https://github.com/hyperf/hyperf/pull/5359) Fixed the bug that nacos no output error log when heartbeat timed out.
