@@ -21,9 +21,11 @@ use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Stringable\Str;
 use Hyperf\Support\Fluent;
 use Hyperf\Support\MessageBag;
+use Hyperf\Validation\Contract\DataAwareRule;
 use Hyperf\Validation\Contract\ImplicitRule;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Contract\Rule as RuleContract;
+use Hyperf\Validation\Contract\ValidatorAwareRule;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Stringable;
@@ -888,6 +890,14 @@ class Validator implements ValidatorContract
      */
     protected function validateUsingCustomRule(string $attribute, $value, RuleContract $rule)
     {
+        if ($rule instanceof ValidatorAwareRule) {
+            $rule->setValidator($this);
+        }
+
+        if ($rule instanceof DataAwareRule) {
+            $rule->setData($this->data);
+        }
+
         if (! $rule->passes($attribute, $value)) {
             $this->failedRules[$attribute][$rule::class] = [];
 
