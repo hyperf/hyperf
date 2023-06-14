@@ -33,15 +33,19 @@
         "symfony/http-foundation": "^5.4|^6.0"
     },
     "suggest": {
-        "pestphp/pest": "For testing with Pest"
+        "pestphp/pest": "For testing with Pest.(^2.0)"
     },
     "extra": {
         "branch-alias": {
             "dev-master": "3.0-dev"
+        },
+        "pest": {
+            "plugins": [
+                "Hyperf\\Testing\\Plugin\\Pest"
+            ]
         }
     },
     "bin": [
-        "co-phpunit",
-        "bin/co-pest"
+        "co-phpunit"
     ]
 }
