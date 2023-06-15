@@ -123,7 +123,6 @@ class Response implements ResponseInterface, ResponsePlusInterface
      *
      * @param string $name the attribute name
      * @param mixed $default default value to return if the attribute does not exist
-     * @return mixed
      * @see getAttributes()
      */
     public function getAttribute(string $name, mixed $default = null): mixed

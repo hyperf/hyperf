@@ -316,7 +316,6 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @param string $name the attribute name
      * @param mixed $default default value to return if the attribute does not exist
-     * @return mixed
      * @see getAttributes()
      */
     public function getAttribute(mixed $name, mixed $default = null): mixed
