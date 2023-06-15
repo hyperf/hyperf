@@ -59,7 +59,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
      * Returns an instance with specified trailer.
      * @param string $value
      */
-    public function withTrailer(string $key, $value): static
+    public function withTrailer(string $key, mixed $value): static
     {
         $new = clone $this;
         $new->trailers[$key] = $value;
