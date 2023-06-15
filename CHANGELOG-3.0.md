@@ -1,5 +1,10 @@
 # v3.0.25 - TBD
 
+## Fixed
+
+- [#5829](https://github.com/hyperf/hyperf/pull/5829) Fixed bug that the method `Hyperf\Database\Model\Builder::value()` cannot work when using column like `table.column`.
+- [#5831](https://github.com/hyperf/hyperf/pull/5831) Fixed an endless loop when socket.io parses namespace.
+
 # v3.0.24 - 2023-06-10
 
 ## Fixed

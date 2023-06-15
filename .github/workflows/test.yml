@@ -86,6 +86,7 @@ jobs:
         run: cp .travis/.env.example .env
       - name: Print PHP Environments
         run: |
+          sudo rm -rf /etc/php/${{ matrix.php-version }}/cli/conf.d/20-xdebug.ini
           php -i
           php -m
       - name: Run Test Cases

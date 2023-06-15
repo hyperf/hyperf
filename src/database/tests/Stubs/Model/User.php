@@ -17,8 +17,8 @@ namespace HyperfTest\Database\Stubs\Model;
  * @property int $gender
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property \App\Model\Book $book
- * @property \App\Model\Book[]|\Hyperf\Database\Model\Collection $books
+ * @property Book $book
+ * @property Book[]|\Hyperf\Database\Model\Collection $books
  */
 class User extends Model
 {
