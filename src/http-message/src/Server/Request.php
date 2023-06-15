@@ -435,7 +435,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         return $this;
     }
 
-    public function setParsedBody(object|array $data): static
+    public function setParsedBody(object|array|null $data): static
     {
         $this->parsedBody = $data;
         return $this;
