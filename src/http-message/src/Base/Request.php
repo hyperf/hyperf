@@ -63,7 +63,7 @@ class Request implements RequestInterface, RequestPlusInterface
         }
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toString();
     }
@@ -108,9 +108,9 @@ class Request implements RequestInterface, RequestPlusInterface
      *
      * @see http://tools.ietf.org/html/rfc7230#section-5.3 (for the various
      *     request-target forms allowed in request messages)
-     * @param mixed $requestTarget
+     * @param string $requestTarget
      */
-    public function withRequestTarget($requestTarget): static
+    public function withRequestTarget(mixed $requestTarget): static
     {
         if (preg_match('#\s#', $requestTarget)) {
             throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
@@ -143,7 +143,7 @@ class Request implements RequestInterface, RequestPlusInterface
      * @param string $method case-sensitive method
      * @throws InvalidArgumentException for invalid HTTP methods
      */
-    public function withMethod($method): static
+    public function withMethod(mixed $method): static
     {
         $method = strtoupper($method);
         $methods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'HEAD'];

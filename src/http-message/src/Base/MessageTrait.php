@@ -55,7 +55,7 @@ trait MessageTrait
      *
      * @param string $version HTTP protocol version
      */
-    public function withProtocolVersion($version): static
+    public function withProtocolVersion(mixed $version): static
     {
         if ($this->protocol === $version) {
             return $this;
@@ -100,7 +100,7 @@ trait MessageTrait
      *              name using a case-insensitive string comparison. Returns false if
      *              no matching header name is found in the message.
      */
-    public function hasHeader($name): bool
+    public function hasHeader(mixed $name): bool
     {
         return isset($this->headerNames[strtolower($name)]);
     }
@@ -117,7 +117,7 @@ trait MessageTrait
      *                  header. If the header does not appear in the message, this method MUST
      *                  return an empty array.
      */
-    public function getHeader($name): array
+    public function getHeader(mixed $name): array
     {
         $name = strtolower($name);
 
@@ -146,7 +146,7 @@ trait MessageTrait
      *                concatenated together using a comma. If the header does not appear in
      *                the message, this method MUST return an empty string.
      */
-    public function getHeaderLine($name): string
+    public function getHeaderLine(mixed $name): string
     {
         return implode(', ', $this->getHeader($name));
     }
@@ -163,7 +163,7 @@ trait MessageTrait
      * @param string|string[] $value header value(s)
      * @throws InvalidArgumentException for invalid header names or values
      */
-    public function withHeader($name, $value): static
+    public function withHeader(mixed $name, mixed $value): static
     {
         if (! is_array($value)) {
             $value = [$value];
@@ -204,7 +204,7 @@ trait MessageTrait
      * @param string|string[] $value header value(s)
      * @throws InvalidArgumentException for invalid header names or values
      */
-    public function withAddedHeader($name, $value): static
+    public function withAddedHeader(mixed $name, mixed $value): static
     {
         if (! is_array($value)) {
             $value = [$value];
@@ -234,7 +234,7 @@ trait MessageTrait
      *
      * @param string $name case-insensitive header field name to remove
      */
-    public function withoutHeader($name): static
+    public function withoutHeader(mixed $name): static
     {
         $normalized = strtolower($name);
 

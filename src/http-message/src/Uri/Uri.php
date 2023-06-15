@@ -294,7 +294,7 @@ class Uri implements UriInterface, Stringable, UriPlusInterface
      * @return static a new instance with the specified scheme
      * @throws InvalidArgumentException for invalid or unsupported schemes
      */
-    public function withScheme($scheme): static
+    public function withScheme(mixed $scheme): static
     {
         $scheme = $this->filterScheme($scheme);
         if ($this->scheme === $scheme) {
@@ -320,7 +320,7 @@ class Uri implements UriInterface, Stringable, UriPlusInterface
      * @param null|string $password the password associated with $user
      * @return static a new instance with the specified user information
      */
-    public function withUserInfo($user, $password = null): static
+    public function withUserInfo(mixed $user, mixed $password = null): static
     {
         $info = $user;
         if ($password !== '') {
@@ -345,7 +345,7 @@ class Uri implements UriInterface, Stringable, UriPlusInterface
      * @return static a new instance with the specified host
      * @throws InvalidArgumentException for invalid hostnames
      */
-    public function withHost($host): static
+    public function withHost(mixed $host): static
     {
         $host = $this->filterHost($host);
         if ($this->host === $host) {
@@ -401,7 +401,7 @@ class Uri implements UriInterface, Stringable, UriPlusInterface
      * @return static a new instance with the specified path
      * @throws InvalidArgumentException for invalid paths
      */
-    public function withPath($path): static
+    public function withPath(mixed $path): static
     {
         $path = $this->filterPath($path);
         if ($this->path === $path) {
@@ -425,7 +425,7 @@ class Uri implements UriInterface, Stringable, UriPlusInterface
      * @return static a new instance with the specified query string
      * @throws InvalidArgumentException for invalid query strings
      */
-    public function withQuery($query): static
+    public function withQuery(mixed $query): static
     {
         $query = $this->filterQueryAndFragment($query);
         if ($this->query === $query) {
@@ -485,7 +485,7 @@ class Uri implements UriInterface, Stringable, UriPlusInterface
      * @param string $fragment the fragment to use with the new instance
      * @return static a new instance with the specified fragment
      */
-    public function withFragment($fragment): static
+    public function withFragment(mixed $fragment): static
     {
         $fragment = $this->filterQueryAndFragment($fragment);
         if ($this->fragment === $fragment) {

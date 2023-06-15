@@ -126,7 +126,7 @@ class Response implements ResponseInterface, ResponsePlusInterface
      * @return mixed
      * @see getAttributes()
      */
-    public function getAttribute($name, $default = null)
+    public function getAttribute(string $name, mixed $default = null): mixed
     {
         return array_key_exists($name, $this->attributes) ? $this->attributes[$name] : $default;
     }
@@ -143,7 +143,7 @@ class Response implements ResponseInterface, ResponsePlusInterface
      * @param mixed $value the value of the attribute
      * @see getAttributes()
      */
-    public function withAttribute($name, $value): static
+    public function withAttribute(string $name, mixed $value): static
     {
         $clone = clone $this;
         $clone->attributes[$name] = $value;

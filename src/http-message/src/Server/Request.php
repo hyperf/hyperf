@@ -222,7 +222,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * @return null|array|object The deserialized body parameters, if any.
      *                           These will typically be an array or object.
      */
-    public function getParsedBody()
+    public function getParsedBody(): array|object|null
     {
         return $this->parsedBody;
     }
@@ -319,7 +319,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * @return mixed
      * @see getAttributes()
      */
-    public function getAttribute($name, $default = null)
+    public function getAttribute(mixed $name, mixed $default = null): mixed
     {
         return array_key_exists($name, $this->attributes) ? $this->attributes[$name] : $default;
     }
@@ -336,7 +336,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * @param mixed $value the value of the attribute
      * @see getAttributes()
      */
-    public function withAttribute($name, $value): static
+    public function withAttribute(mixed $name, mixed $value): static
     {
         $clone = clone $this;
         $clone->attributes[$name] = $value;
