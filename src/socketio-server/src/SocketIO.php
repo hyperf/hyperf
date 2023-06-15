@@ -139,6 +139,11 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
             $this->stdoutLogger->error("EngineIO event type {$frame->data[0]} not supported");
             return;
         }
+        // Check that the namespace is correct
+        if (! str_contains($frame->data, ',') && ! str_contains($frame->data, '?')) {
+            $this->stdoutLogger->error("The data format is incorrect: {$frame->data}");
+            return;
+        }
         $packet = $this->decoder->decode(substr($frame->data, 1));
         switch ($packet->type) {
             case Packet::OPEN: // client open

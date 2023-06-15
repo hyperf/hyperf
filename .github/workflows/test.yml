@@ -72,10 +72,7 @@ jobs:
         run: cp .travis/.env.example .env
       - name: Print PHP Environments
         run: |
-          if [ _${{ matrix.sw-version }} = '_v4.8.13' ]
-          then
-            sudo rm -rf /etc/php/${{ matrix.php-version }}/cli/conf.d/20-xdebug.ini
-          fi
+          sudo rm -rf /etc/php/${{ matrix.php-version }}/cli/conf.d/20-xdebug.ini
           php -i
       - name: Run Test Cases
         run: ./.travis/run.test.sh
