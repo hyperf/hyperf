@@ -596,6 +596,21 @@ class ModelRealBuilderTest extends TestCase
         }
     }
 
+    public function testModelBuilderValue()
+    {
+        $this->getContainer();
+
+        $res = User::query()->join('book', 'user.id', '=', 'book.user_id')->value('book.title');
+
+        $this->assertNotEmpty($res);
+
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, 'select `book`.`title` from `user` inner join `book` on `user`.`id` = `book`.`user_id` limit 1');
+            }
+        }
+    }
+
     public function testWhereFullText()
     {
         $container = $this->getContainer();
