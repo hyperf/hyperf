@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\RpcServer;
 
 use Hyperf\Context\Context;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\DispatcherInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
@@ -126,13 +127,9 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
     abstract protected function buildResponse(int $fd, $server): ResponseInterface;
 
-    protected function transferToResponse($response): ?ResponseInterface
+    protected function transferToResponse($response): ResponseInterface
     {
-        $psr7Response = Context::get(ResponseInterface::class);
-        if ($psr7Response instanceof ResponseInterface) {
-            return $psr7Response->withBody(new SwooleStream($response));
-        }
-        return null;
+        return ResponseContext::get()->setBody(new SwooleStream($response));
     }
 
     protected function getContext()

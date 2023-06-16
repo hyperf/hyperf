@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Context;
 
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 use Swow\Psr7\Message\ResponsePlusInterface;
 
 class ResponseContext
@@ -21,8 +22,12 @@ class ResponseContext
         return Context::get(ResponseInterface::class, $coroutineId);
     }
 
-    public static function set(ResponsePlusInterface $request, ?int $coroutineId = null): ResponsePlusInterface
+    public static function set(ResponseInterface $response, ?int $coroutineId = null): ResponsePlusInterface
     {
-        return Context::set(ResponseInterface::class, $request, $coroutineId);
+        if (! $response instanceof ResponsePlusInterface) {
+            throw new RuntimeException('The response must instanceof ResponsePlusInterface');
+        }
+
+        return Context::set(ResponseInterface::class, $response, $coroutineId);
     }
 }

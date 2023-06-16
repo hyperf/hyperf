@@ -21,8 +21,8 @@ use Hyperf\Rpc\Response as RPCResponse;
 use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 use Throwable;
 
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
@@ -85,7 +85,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         return $this->handleNotFound($request);
     }
 
-    protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
+    protected function transferToResponse($response, ServerRequestInterface $request): ResponsePlusInterface
     {
         return $this->responseBuilder->buildResponse($request, $response);
     }

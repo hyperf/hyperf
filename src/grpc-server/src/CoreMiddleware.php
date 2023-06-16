@@ -33,6 +33,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
 use function Hyperf\Support\make;
 use function Hyperf\Support\value;
@@ -115,29 +116,29 @@ class CoreMiddleware extends HttpCoreMiddleware
      *
      * @param array|string $response
      */
-    protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
+    protected function transferToResponse($response, ServerRequestInterface $request): ResponsePlusInterface
     {
         if ($response instanceof Message) {
             $body = Parser::serializeMessage($response);
             return $this->response()
-                ->withAddedHeader('Content-Type', 'application/grpc')
-                ->withAddedHeader('trailer', 'grpc-status, grpc-message')
-                ->withBody(new SwooleStream($body))
+                ->addHeader('Content-Type', 'application/grpc')
+                ->addHeader('trailer', 'grpc-status, grpc-message')
+                ->setBody(new SwooleStream($body))
                 ->withTrailer('grpc-status', '0')
                 ->withTrailer('grpc-message', '');
         }
 
         if (is_string($response)) {
-            return $this->response()->withBody(new SwooleStream($response));
+            return $this->response()->setBody(new SwooleStream($response));
         }
 
         if (is_array($response)) {
             return $this->response()
-                ->withAddedHeader('Content-Type', 'application/json')
-                ->withBody(new SwooleStream(json_encode($response)));
+                ->addHeader('Content-Type', 'application/json')
+                ->setBody(new SwooleStream(json_encode($response)));
         }
 
-        return $this->response()->withBody(new SwooleStream((string) $response));
+        return $this->response()->setBody(new SwooleStream((string) $response));
     }
 
     protected function parseMethodParameters(string $controller, string $action, array $arguments): array
