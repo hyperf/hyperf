@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\SocketIOServer;
 
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Context\RequestContext;
 use Hyperf\SocketIOServer\Emitter\Emitter;
 use Hyperf\SocketIOServer\Exception\ConnectionClosedException;
 use Hyperf\SocketIOServer\Parser\Encoder;
@@ -96,6 +95,11 @@ class Socket
         // If the connection is closed (onClose called)，
         // WebSocketContext would have been released.
         // $serverRequest is null in this case.
-        return RequestContext::get();
+
+        $serverRequest = Context::get(ServerRequestInterface::class);
+        if (! $serverRequest instanceof ServerRequestInterface) {
+            throw new ConnectionClosedException('the request has been freed');
+        }
+        return $serverRequest;
     }
 }

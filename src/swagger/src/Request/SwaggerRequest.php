@@ -11,12 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Swagger\Request;
 
-use Hyperf\Context\Context;
 use Hyperf\Context\RequestContext;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Swagger\Exception\RuntimeException;
 use Hyperf\Validation\Request\FormRequest;
-use Psr\Http\Message\ServerRequestInterface;
 
 class SwaggerRequest extends FormRequest
 {

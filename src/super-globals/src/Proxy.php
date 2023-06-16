@@ -17,7 +17,6 @@ use Hyperf\Context\Context;
 use Hyperf\Context\RequestContext;
 use Hyperf\Contract\Arrayable;
 use Hyperf\SuperGlobals\Exception\ContainerNotFoundException;
-use Hyperf\SuperGlobals\Exception\RequestNotFoundException;
 use JsonSerializable;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
