@@ -16,6 +16,7 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Rpc\Protocol;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 use Throwable;
 
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware

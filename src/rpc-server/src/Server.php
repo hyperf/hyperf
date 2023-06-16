@@ -127,9 +127,9 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
     abstract protected function buildResponse(int $fd, $server): ResponsePlusInterface;
 
-    protected function transferToResponse($response): ResponseInterface
+    protected function transferToResponse($response): ?ResponseInterface
     {
-        return ResponseContext::get()->setBody(new SwooleStream($response));
+        return ResponseContext::getOrNull()?->setBody(new SwooleStream($response));
     }
 
     protected function getContext()

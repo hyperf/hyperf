@@ -48,7 +48,7 @@ class ResponseBuilder
         return $this->response()->addHeader('content-type', 'application/json')->setBody($body);
     }
 
-    public function buildResponse(ServerRequestInterface $request, $response): ResponseInterface
+    public function buildResponse(ServerRequestInterface $request, $response): ResponsePlusInterface
     {
         $body = new SwooleStream($this->formatResponse($response, $request));
         return $this->response()
@@ -98,6 +98,6 @@ class ResponseBuilder
      */
     protected function response(): ResponsePlusInterface
     {
-        return RequestContext::get();
+        return ResponseContext::get();
     }
 }
