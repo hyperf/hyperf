@@ -12,10 +12,17 @@ declare(strict_types=1);
 namespace HyperfTest\Context;
 
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Coroutine\Coroutine;
+use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use stdClass;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 use function Hyperf\Coroutine\parallel;
 
@@ -129,5 +136,29 @@ class ContextTest extends TestCase
         $this->assertSame($value, Context::get($id));
         Context::destroy($id);
         $this->assertNull(Context::get($id));
+    }
+
+    public function testRequestContext()
+    {
+        $request = Mockery::mock(ServerRequestPlusInterface::class);
+        RequestContext::set($request);
+        $this->assertSame($request, RequestContext::get());
+
+        Context::set(ServerRequestInterface::class, $req = Mockery::mock(ServerRequestPlusInterface::class));
+        $this->assertNotSame($request, RequestContext::get());
+        $this->assertSame($req, RequestContext::get());
+        $this->assertSame($req, Context::get(ServerRequestInterface::class));
+    }
+
+    public function testResponseContext()
+    {
+        $response = Mockery::mock(ResponsePlusInterface::class);
+        ResponseContext::set($response);
+        $this->assertSame($response, ResponseContext::get());
+
+        Context::set(ResponseInterface::class, $req = Mockery::mock(ResponsePlusInterface::class));
+        $this->assertNotSame($response, ResponseContext::get());
+        $this->assertSame($req, ResponseContext::get());
+        $this->assertSame($req, Context::get(ResponseInterface::class));
     }
 }
