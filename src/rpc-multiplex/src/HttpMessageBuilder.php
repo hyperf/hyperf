@@ -20,7 +20,6 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Swow\Psr7\Message\ResponsePlusInterface;
@@ -56,7 +55,7 @@ class HttpMessageBuilder implements HttpMessageBuilderInterface
         return $this->response()->setBody(new SwooleStream($packed));
     }
 
-    public function persistToContext(ResponseInterface $response): ResponsePlusInterface
+    public function persistToContext(ResponsePlusInterface $response): ResponsePlusInterface
     {
         return ResponseContext::set($response);
     }

@@ -55,7 +55,7 @@ class ResponseBuilder
             ->setBody($body);
     }
 
-    public function persistToContext(ResponseInterface $response): ResponsePlusInterface
+    public function persistToContext(ResponsePlusInterface $response): ResponsePlusInterface
     {
         return ResponseContext::set($response);
     }
