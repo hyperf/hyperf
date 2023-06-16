@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ExceptionHandler;
 
-use GuzzleHttp\Psr7\Response;
 use Hyperf\Context\Context;
 use Hyperf\ExceptionHandler\Handler\WhoopsExceptionHandler;
+use Hyperf\HttpMessage\Base\Response;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\Nats\Exception;
 use PHPUnit\Framework\Attributes\CoversNothing;

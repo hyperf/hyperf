@@ -184,11 +184,7 @@ trait MessageTrait
 
     public function withHeaders(array $headers): static
     {
-        $new = clone $this;
-        foreach ($headers as $name => $value) {
-            $new = $new->withHeader(str_replace('_', '-', $name), $value);
-        }
-        return $new;
+        return (clone $this)->setHeaders($headers);
     }
 
     /**
@@ -444,8 +440,10 @@ trait MessageTrait
      */
     private function trimHeaderValues(array $values): array
     {
-        return array_map(function ($value) {
-            return trim((string) $value, " \t");
-        }, $values);
+        $result = [];
+        foreach ($values as $value) {
+            $result[] = trim((string) $value, " \t");
+        }
+        return $result;
     }
 }

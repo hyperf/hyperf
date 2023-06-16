@@ -12,7 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use FastRoute\Dispatcher;
-use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\OnRequestInterface;
@@ -179,7 +180,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
      */
     protected function initRequestAndResponse($request, $response): array
     {
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
+        ResponseContext::set($psr7Response = new Psr7Response());
 
         $psr7Response->setConnection(new WritableConnection($response));
 
@@ -189,7 +190,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Request = Psr7Request::loadFromSwooleRequest($request);
         }
 
-        Context::set(ServerRequestInterface::class, $psr7Request);
+        RequestContext::set($psr7Request);
 
         return [$psr7Request, $psr7Response];
     }

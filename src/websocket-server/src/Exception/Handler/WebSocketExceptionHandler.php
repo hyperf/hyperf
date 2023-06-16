@@ -16,7 +16,7 @@ use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Psr\Http\Message\ResponseInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 use Throwable;
 
 class WebSocketExceptionHandler extends ExceptionHandler
@@ -25,14 +25,14 @@ class WebSocketExceptionHandler extends ExceptionHandler
     {
     }
 
-    public function handle(Throwable $throwable, ResponseInterface $response)
+    public function handle(Throwable $throwable, ResponsePlusInterface $response)
     {
         $this->logger->warning($this->formatter->format($throwable));
         if ($throwable instanceof HttpException) {
-            $response = $response->withStatus($throwable->getStatusCode());
+            $response = $response->setStatus($throwable->getStatusCode());
         }
         $stream = new SwooleStream($throwable->getMessage());
-        return $response->withBody($stream);
+        return $response->setBody($stream);
     }
 
     public function isValid(Throwable $throwable): bool

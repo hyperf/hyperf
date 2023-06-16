@@ -95,6 +95,7 @@ class Socket
         // If the connection is closed (onClose called)，
         // WebSocketContext would have been released.
         // $serverRequest is null in this case.
+
         $serverRequest = Context::get(ServerRequestInterface::class);
         if (! $serverRequest instanceof ServerRequestInterface) {
             throw new ConnectionClosedException('the request has been freed');

@@ -43,6 +43,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 use ReflectionMethod;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
 /**
  * @internal
@@ -175,9 +176,9 @@ class CoreMiddlewareTest extends TestCase
             return Context::get(ServerRequestInterface::class)->getHeaders();
         });
 
-        $response = Mockery::mock(ResponseInterface::class);
-        $response->shouldReceive('withAddedHeader')->andReturn($response);
-        $response->shouldReceive('withBody')->with(Mockery::any())->andReturnUsing(function ($stream) use ($response, $id) {
+        $response = Mockery::mock(ResponsePlusInterface::class);
+        $response->shouldReceive('addHeader')->andReturn($response);
+        $response->shouldReceive('setBody')->with(Mockery::any())->andReturnUsing(function ($stream) use ($response, $id) {
             $this->assertInstanceOf(SwooleStream::class, $stream);
             /* @var SwooleStream $stream */
             $this->assertSame(json_encode(['DEBUG' => [$id]]), (string) $stream);

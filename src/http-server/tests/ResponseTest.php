@@ -13,11 +13,12 @@ namespace HyperfTest\HttpServer;
 
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Xmlable;
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Response;
@@ -51,7 +52,7 @@ class ResponseTest extends TestCase
     {
         $container = Mockery::mock(ContainerInterface::class);
         $request = Mockery::mock(RequestInterface::class);
-        $request->shouldReceive('getUri')->andReturn(new Uri('http://127.0.0.1:9501'));
+        RequestContext::set(new Request('GET', 'http://127.0.0.1:9501'));
         $container->shouldReceive('get')->with(RequestInterface::class)->andReturn($request);
         ApplicationContext::setContainer($container);
 

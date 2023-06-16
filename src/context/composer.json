@@ -19,6 +19,9 @@
         "php": ">=8.1",
         "hyperf/engine": "^2.0"
     },
+    "suggest": {
+        "swow/psr7-plus": "Required to use RequestContext and ResponseContext"
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\Context\\": "src/"
