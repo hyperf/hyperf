@@ -33,7 +33,7 @@ class Timer
     {
     }
 
-    public function after(float $timeout, Closure $closure, string $identifier = Constants::WORKER_EXIT): int
+    public function after(float $timeout, callable $closure, string $identifier = Constants::WORKER_EXIT): int
     {
         $id = ++$this->id;
         $this->closures[$id] = true;
@@ -56,7 +56,7 @@ class Timer
         return $id;
     }
 
-    public function tick(float $timeout, Closure $closure, string $identifier = Constants::WORKER_EXIT): int
+    public function tick(float $timeout, callable $closure, string $identifier = Constants::WORKER_EXIT): int
     {
         $id = ++$this->id;
         $this->closures[$id] = true;
@@ -94,7 +94,7 @@ class Timer
         return $id;
     }
 
-    public function until(Closure $closure, string $identifier = Constants::WORKER_EXIT): int
+    public function until(callable $closure, string $identifier = Constants::WORKER_EXIT): int
     {
         return $this->after(-1, $closure, $identifier);
     }
