@@ -30,4 +30,14 @@ class RequestContext
 
         return Context::set(ServerRequestInterface::class, $request, $coroutineId);
     }
+
+    public static function has(?int $coroutineId = null): bool
+    {
+        return Context::has(ServerRequestInterface::class, $coroutineId);
+    }
+
+    public static function getOrNull(?int $coroutineId = null): ?ServerRequestPlusInterface
+    {
+        return Context::get(ServerRequestInterface::class, $coroutineId);
+    }
 }

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Aspect;
 
+use Hyperf\Context\RequestContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
@@ -37,8 +38,7 @@ class SessionAspect extends AbstractAspect
         if (! $this->isSessionAvailable()) {
             return $proceedingJoinPoint->process();
         }
-        $request = Context::get(ServerRequestInterface::class);
-        $session = $this->sessionManager->start($request);
+        $session = $this->sessionManager->start(RequestContext::get());
         defer(function () use ($session) {
             $this->sessionManager->end($session);
         });

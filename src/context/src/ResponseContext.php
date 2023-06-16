@@ -30,4 +30,14 @@ class ResponseContext
 
         return Context::set(ResponseInterface::class, $response, $coroutineId);
     }
+
+    public static function has(?int $coroutineId = null): bool
+    {
+        return Context::has(ResponseInterface::class, $coroutineId);
+    }
+
+    public static function getOrNull(?int $coroutineId = null): ?ResponsePlusInterface
+    {
+        return Context::get(ResponseInterface::class, $coroutineId);
+    }
 }

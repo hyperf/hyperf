@@ -20,7 +20,7 @@ use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcServer\Exception\GrpcException;
 use Hyperf\GrpcServer\Exception\GrpcStatusException;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Psr\Http\Message\ResponseInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 use Throwable;
 
 class GrpcExceptionHandler extends ExceptionHandler
@@ -35,7 +35,7 @@ class GrpcExceptionHandler extends ExceptionHandler
         $this->formatter = $formatter;
     }
 
-    public function handle(Throwable $throwable, ResponseInterface $response)
+    public function handle(Throwable $throwable, ResponsePlusInterface $response)
     {
         if ($throwable instanceof GrpcStatusException) {
             return $this->transferToStatusResponse($throwable->getStatus(), $response);
@@ -59,12 +59,12 @@ class GrpcExceptionHandler extends ExceptionHandler
     /**
      * Transfer the non-standard response content to a standard response object.
      */
-    protected function transferToResponse(int $code, string $message, ResponseInterface $response): ResponseInterface
+    protected function transferToResponse(int $code, string $message, ResponsePlusInterface $response): ResponsePlusInterface
     {
-        $response = $response->withAddedHeader('Content-Type', 'application/grpc')
-            ->withAddedHeader('trailer', 'grpc-status, grpc-message')
-            ->withBody(new SwooleStream(Parser::serializeMessage(null)))
-            ->withStatus(200);
+        $response = $response->addHeader('Content-Type', 'application/grpc')
+            ->addHeader('trailer', 'grpc-status, grpc-message')
+            ->setBody(new SwooleStream(Parser::serializeMessage(null)))
+            ->setStatus(200);
 
         if (method_exists($response, 'withTrailer')) {
             $response = $response->withTrailer('grpc-status', (string) $code)->withTrailer('grpc-message', (string) $message);
@@ -76,12 +76,12 @@ class GrpcExceptionHandler extends ExceptionHandler
     /**
      * Transfer the non-standard response content to a standard response object with status trailer.
      */
-    protected function transferToStatusResponse(Status $status, ResponseInterface $response): ResponseInterface
+    protected function transferToStatusResponse(Status $status, ResponsePlusInterface $response): ResponsePlusInterface
     {
-        return $response->withStatus(200)
-            ->withAddedHeader('Content-Type', 'application/grpc')
-            ->withAddedHeader('trailer', 'grpc-status, grpc-message, grpc-status-details-bin')
-            ->withBody(new SwooleStream(Parser::serializeMessage(null)))
+        return $response->setStatus(200)
+            ->addHeader('Content-Type', 'application/grpc')
+            ->addHeader('trailer', 'grpc-status, grpc-message, grpc-status-details-bin')
+            ->setBody(new SwooleStream(Parser::serializeMessage(null)))
             ->withTrailer('grpc-status', (string) $status->getCode())
             ->withTrailer('grpc-message', $status->getMessage())
             ->withTrailer('grpc-status-details-bin', Parser::statusToDetailsBin($status));
