@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Context\Context;
-use Hyperf\Context\RequestContext;
 use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
