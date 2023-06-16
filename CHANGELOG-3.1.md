@@ -20,6 +20,7 @@
     - [#5839](https://github.com/hyperf/hyperf/pull/5839) Support swow psr7-plus interface for all components.
 - [x] Support [pest](https://github.com/pestphp/pest).
 - [x] Added `hyperf/helper` component.
+- [x] Added `hyperf/polyfill-coroutine` component.
 - [#5815](https://github.com/hyperf/hyperf/pull/5815) Added alias as `mysql` for `pdo` in `hyperf/db`.
 
 ## Optimized
