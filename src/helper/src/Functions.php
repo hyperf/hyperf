@@ -160,33 +160,6 @@ if (! function_exists('call')) {
     }
 }
 
-if (! function_exists('go')) {
-    /**
-     * @return bool|int
-     */
-    function go(callable $callable)
-    {
-        return \Hyperf\Coroutine\go($callable);
-    }
-}
-
-if (! function_exists('co')) {
-    /**
-     * @return bool|int
-     */
-    function co(callable $callable)
-    {
-        return \Hyperf\Coroutine\co($callable);
-    }
-}
-
-if (! function_exists('defer')) {
-    function defer(callable $callable): void
-    {
-        \Hyperf\Coroutine\defer($callable);
-    }
-}
-
 if (! function_exists('class_basename')) {
     /**
      * Get the class "basename" of the given object / class.
