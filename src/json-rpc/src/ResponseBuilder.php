@@ -18,7 +18,6 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
 use Hyperf\Rpc\ErrorResponse;
 use Hyperf\Rpc\Response;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swow\Psr7\Message\ResponsePlusInterface;
 use Throwable;
