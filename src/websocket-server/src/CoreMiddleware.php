@@ -33,6 +33,7 @@ class CoreMiddleware extends HttpCoreMiddleware
             throw new WebSocketHandeShakeException('Router not exist.');
         }
 
+        /** @var Response $response */
         $response = ResponseContext::get();
 
         $security = $this->container->get(Security::class);
