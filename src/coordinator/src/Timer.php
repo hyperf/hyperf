@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Coordinator;
 
-use Closure;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Throwable;
 
