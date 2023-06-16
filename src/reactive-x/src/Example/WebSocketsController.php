@@ -14,10 +14,11 @@ namespace Hyperf\ReactiveX\Example;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
+use Hyperf\Engine\WebSocket\Frame;
+use Hyperf\Engine\WebSocket\Response as WsResponse;
 use Hyperf\ReactiveX\Contract\BroadcasterInterface;
 use Hyperf\ReactiveX\IpcSubject;
 use Rx\Subject\ReplaySubject;
-use Swoole\Http\Response;
 
 use function Hyperf\Support\make;
 
@@ -45,12 +46,8 @@ class WebSocketsController implements OnMessageInterface, OnOpenInterface, OnClo
 
     public function onOpen($server, $request): void
     {
-        $this->subscriber[$request->fd] = $this->subject->subscribe(function ($data) use ($server, $request) {
-            if ($server instanceof Response) {
-                $server->push($data);
-            } else {
-                $server->push($request->fd, $data);
-            }
+        $this->subscriber[$request->fd] = $this->subject->subscribe(function ($data) use ($server) {
+            (new WsResponse($server))->push(new Frame(payloadData: (string) $data));
         });
     }
 }
