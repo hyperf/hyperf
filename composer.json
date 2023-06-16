@@ -205,7 +205,6 @@
             "src/collection/src/Functions.php",
             "src/config/src/Functions.php",
             "src/coroutine/src/Functions.php",
-            "src/coroutine/src/Helper.php",
             "src/nats/src/Functions.php",
             "src/stringable/src/Functions.php",
             "src/support/src/Functions.php",
