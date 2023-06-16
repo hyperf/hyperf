@@ -14,9 +14,14 @@ namespace Hyperf\ReactiveX\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\ReactiveX\RxSwoole;
+use Psr\Container\ContainerInterface;
 
 class BootApplicationListener implements ListenerInterface
 {
+    public function __construct(private ContainerInterface $container)
+    {
+    }
+
     public function listen(): array
     {
         return [
@@ -26,6 +31,6 @@ class BootApplicationListener implements ListenerInterface
 
     public function process(object $event): void
     {
-        RxSwoole::init();
+        RxSwoole::init($this->container);
     }
 }

@@ -66,7 +66,7 @@ class IpcSubject implements MessageBusInterface
     public function dispose()
     {
         $this->init();
-        return $this->subject->dispose();
+        $this->subject->dispose();
     }
 
     public function onNext($value)

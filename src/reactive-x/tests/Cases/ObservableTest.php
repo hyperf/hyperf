@@ -129,9 +129,10 @@ class ObservableTest extends TestCase
     {
         $result = new Channel(1);
         $listenerProvider = new ListenerProvider();
-        $container = Mockery::mock(Container::class);
+        $container = Mockery::mock(Container::class . '[get]', [new DefinitionSource([])]);
         $container->shouldReceive('get')->with(ListenerProviderInterface::class)
             ->andReturn($listenerProvider);
+        $container->define(SchedulerInterface::class, EventLoopScheduler::class);
         ApplicationContext::setContainer($container);
 
         $o = Observable::fromEvent(TestEvent::class);

@@ -9,7 +9,7 @@
 
 ## Swow Supported
 
-- [ ] reactive-x
+- [#5843](https://github.com/hyperf/hyperf/pull/5843) Support `Swow` for `reactive-x`.
 - [ ] socketio-server
 
 ## Added
