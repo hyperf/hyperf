@@ -11,7 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc;
 
-use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
@@ -26,8 +27,6 @@ use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 use function Hyperf\Support\make;
 
@@ -69,7 +68,7 @@ class HttpServer extends Server
 
     protected function initRequestAndResponse($request, $response): array
     {
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
+        ResponseContext::set($psr7Response = new Psr7Response());
         // Initialize PSR-7 Request and Response objects.
         $psr7Request = Psr7Request::loadFromSwooleRequest($request);
         if (! $this->isHealthCheck($psr7Request)) {
@@ -82,15 +81,15 @@ class HttpServer extends Server
                 $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, ResponseBuilder::INVALID_REQUEST);
             }
         }
-        $psr7Request = $psr7Request->withUri($psr7Request->getUri()->withPath($content['method'] ?? '/'))
-            ->withParsedBody($content['params'] ?? null)
-            ->withAttribute('data', $content ?? [])
-            ->withAttribute('request_id', $content['id'] ?? null);
+        $psr7Request = $psr7Request->setUri($psr7Request->getUri()->withPath($content['method'] ?? '/'))
+            ->setParsedBody($content['params'] ?? null)
+            ->setAttribute('data', $content ?? [])
+            ->setAttribute('request_id', $content['id'] ?? null);
 
         $this->getContext()->setData($content['context'] ?? []);
 
-        Context::set(ServerRequestInterface::class, $psr7Request);
-        Context::set(ResponseInterface::class, $psr7Response);
+        RequestContext::set($psr7Request);
+        ResponseContext::set($psr7Response);
         return [$psr7Request, $psr7Response];
     }
 

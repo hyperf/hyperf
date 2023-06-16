@@ -149,6 +149,12 @@ class Response implements ResponseInterface, ResponsePlusInterface
         return $clone;
     }
 
+    public function setAttribute(string $name, mixed $value): static
+    {
+        $this->attributes[$name] = $value;
+        return $this;
+    }
+
     /**
      * Gets the response status code.
      * The status code is a 3-digit integer result code of the server's attempt

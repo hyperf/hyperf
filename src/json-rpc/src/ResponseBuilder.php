@@ -42,7 +42,7 @@ class ResponseBuilder
     {
     }
 
-    public function buildErrorResponse(ServerRequestInterface $request, int $code, Throwable $error = null): ResponseInterface
+    public function buildErrorResponse(ServerRequestInterface $request, int $code, Throwable $error = null): ResponsePlusInterface
     {
         $body = new SwooleStream($this->formatErrorResponse($request, $code, $error));
         return $this->response()->addHeader('content-type', 'application/json')->setBody($body);

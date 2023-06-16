@@ -24,6 +24,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 class HttpMessageBuilder implements HttpMessageBuilderInterface
 {
@@ -31,7 +32,7 @@ class HttpMessageBuilder implements HttpMessageBuilderInterface
     {
     }
 
-    public function buildRequest(array $data): ServerRequestInterface
+    public function buildRequest(array $data): ServerRequestPlusInterface
     {
         $uri = $this->buildUri(
             $data[Constant::PATH] ?? '/',
@@ -45,7 +46,7 @@ class HttpMessageBuilder implements HttpMessageBuilderInterface
 
         $request = new Request('POST', $uri, ['Content-Type' => 'application/json'], new SwooleStream(Json::encode($parsedData)));
 
-        return $request->withParsedBody($parsedData);
+        return $request->setParsedBody($parsedData);
     }
 
     public function buildResponse(ServerRequestInterface $request, array $data): ResponsePlusInterface
