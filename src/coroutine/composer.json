@@ -26,8 +26,7 @@
             "Hyperf\\Coroutine\\": "src/"
         },
         "files": [
-            "src/Functions.php",
-            "src/Helper.php"
+            "src/Functions.php"
         ]
     },
     "autoload-dev": {
