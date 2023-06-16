@@ -15,8 +15,9 @@
 ## Added
 
 - [ ] Support v2 and v3 for socketio-server.
-- [ ] Support [Psr7Plus](https://github.com/swow/psr7-plus).
+- [x] Support [Psr7Plus](https://github.com/swow/psr7-plus).
     - [#5828](https://github.com/hyperf/hyperf/pull/5828) Support swow psr7-plus interface for `http-message`.
+    - [#5839](https://github.com/hyperf/hyperf/pull/5839) Support swow psr7-plus interface for all components.
 - [x] Support [pest](https://github.com/pestphp/pest).
 - [x] Added `hyperf/helper` component.
 - [#5815](https://github.com/hyperf/hyperf/pull/5815) Added alias as `mysql` for `pdo` in `hyperf/db`.
