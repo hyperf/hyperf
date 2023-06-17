@@ -25,10 +25,6 @@ use ReflectionProperty;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class RedisTest extends TestCase
 {
     protected string $prePrefix;
@@ -40,7 +36,6 @@ class RedisTest extends TestCase
         parent::setUp();
 
         $prefixProperty = new ReflectionProperty(Redis::class, 'prefix');
-
         $metricGatherKeySuffix = new ReflectionProperty(Redis::class, 'metricGatherKeySuffix');
 
         $this->prePrefix = $prefixProperty->getDefaultValue();

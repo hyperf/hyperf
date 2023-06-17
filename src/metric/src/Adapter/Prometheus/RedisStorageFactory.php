@@ -29,8 +29,7 @@ class RedisStorageFactory
         $redisFactory = $container->get(RedisFactory::class);
 
         Redis::setPrefix($config->get('metric.metric.prometheus.redis_prefix', $config->get('app_name', 'skeleton')));
-        // TODO: since 3.1, default value will be changed to ':metric_keys'
-        Redis::setMetricGatherKeySuffix($config->get('metric.metric.prometheus.redis_gather_key_suffix', '_METRIC_KEYS'));
+        Redis::setMetricGatherKeySuffix($config->get('metric.metric.prometheus.redis_gather_key_suffix', ':metric_keys'));
 
         return new Redis($redisFactory->get($config->get('metric.metric.prometheus.redis_config', 'default')));
     }
