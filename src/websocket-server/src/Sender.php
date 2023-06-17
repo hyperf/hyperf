@@ -22,6 +22,7 @@ use Psr\Log\LoggerInterface;
 use Swoole\Http\Response;
 use Swoole\Server;
 use Swow\Psr7\Server\ServerConnection;
+use function Hyperf\Engine\swoole_get_flags_from_frame;
 
 /**
  * @method push(int $fd, $data, int $opcode = null, $finish = null)
@@ -70,17 +71,22 @@ class Sender
         }
     }
 
-    public function pushFrame(int $fd, FrameInterface $frame)
+    public function pushFrame(int $fd, FrameInterface $frame): bool
     {
-        if (! $this->isCoroutineServer) {
-            $response = new WsResponse($this->getServer());
-        } elseif (isset($this->responses[$fd])) {
-            $response = new WsResponse($this->responses[$fd]);
-        } else {
+        if ($this->isCoroutineServer) {
+            if (isset($this->responses[$fd])) {
+                return (new WsResponse($this->responses[$fd]))->init($fd)->push($frame);
+            }
+
             return false;
         }
 
-        return $response->init($fd)->push($frame);
+        if ($this->check($fd)) {
+            return (new WsResponse($this->getServer()))->init($fd)->push($frame);
+        }
+
+        $this->sendPipeMessage('push', [$fd, (string) $frame->getPayloadData(), $frame->getOpcode(), swoole_get_flags_from_frame($frame)]);
+        return false;
     }
 
     public function proxy(int $fd, string $method, array $arguments): bool
