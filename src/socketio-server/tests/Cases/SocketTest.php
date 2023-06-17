@@ -85,9 +85,9 @@ class SocketTest extends AbstractTestCase
         /** @var ContainerInterface $container */
         $container = ApplicationContext::getContainer();
         $mock = Mockery::mock(Sender::class);
-        $mock->shouldNotReceive('push')->with(1, Mockery::any(), Mockery::any(), Mockery::any());
-        $mock->shouldReceive('push')->with(2, Mockery::any(), Mockery::any(), Mockery::any())->once();
-        $mock->shouldReceive('push')->with(3, Mockery::any(), Mockery::any(), Mockery::any())->once();
+        $mock->shouldNotReceive('pushFrame')->with(1, Mockery::any());
+        $mock->shouldReceive('pushFrame')->with(2, Mockery::any())->once();
+        $mock->shouldReceive('pushFrame')->with(3, Mockery::any())->once();
         $container->set(Sender::class, $mock);
         /** @var Socket $socket1 */
         $socket1 = make(Socket::class, [

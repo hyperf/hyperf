@@ -23,9 +23,6 @@
             "phpunit/phpunit": "^9.4",
             "swoole/ide-helper": "dev-master"
         },
-        "suggest": {
-            "ext-swoole": ">=4.5"
-        },
         "time": "2021-07-11T10:22:13+00:00",
         "type": "library",
         "extra": {

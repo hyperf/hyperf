@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer;
 
-use Hyperf\Context\ApplicationContext;
 use Hyperf\SocketIOServer\Emitter\Emitter;
 use Hyperf\SocketIOServer\Exception\ConnectionClosedException;
 use Hyperf\SocketIOServer\Parser\Encoder;
@@ -22,7 +21,6 @@ use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\WebSocketServer\Context;
 use Hyperf\WebSocketServer\Sender;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Server;
 
 class Socket
 {
@@ -77,9 +75,7 @@ class Socket
         ]);
         // notice client is about to disconnect
         $this->sender->push($this->fd, Engine::MESSAGE . $this->encoder->encode($closePacket));
-        /** @var \Swoole\WebSocket\Server $server */
-        $server = ApplicationContext::getContainer()->get(Server::class);
-        $server->disconnect($this->fd);
+        $this->sender->disconnect($this->fd);
     }
 
     public function getNamespace(): string
