@@ -13,6 +13,7 @@ namespace HyperfTest\SocketIOServer\Cases;
 
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\SocketIOServer\Atomic;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Collector\SocketIORouter;
 use Hyperf\SocketIOServer\Parser\Decoder;
@@ -25,17 +26,12 @@ use HyperfTest\SocketIOServer\Stub\EphemeralAdapter;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use ReflectionClass;
-use Swoole\Atomic;
 
 /**
  * @internal
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class IONamespaceTest extends AbstractTestCase
 {
     protected function setUp(): void
@@ -52,7 +48,7 @@ class IONamespaceTest extends AbstractTestCase
         $io->getAdapter()->add('1');
         $io->getAdapter()->add('2');
         $io->emit('hello', 'world');
-        $sender->shouldHaveReceived('push')->twice();
+        $sender->shouldHaveReceived('pushFrame')->twice();
         $this->assertTrue(true);
     }
 
@@ -82,7 +78,7 @@ class IONamespaceTest extends AbstractTestCase
         $io->getAdapter()->add('1');
         $io->getAdapter()->add('2');
         $io->emit('hello', 'world', true);
-        $sender->shouldHaveReceived('push')->twice();
+        $sender->shouldHaveReceived('pushFrame')->twice();
         $this->assertTrue(true);
     }
 
@@ -117,7 +113,7 @@ class IONamespaceTest extends AbstractTestCase
         $io->getAdapter()->add('1', 'room');
         $io->getAdapter()->add('2', 'room');
         $io->to('room')->emit('hello', 'world', false);
-        $sender->shouldHaveReceived('push')->withAnyArgs()->twice();
+        $sender->shouldHaveReceived('pushFrame')->withAnyArgs()->twice();
         $this->assertTrue(true);
     }
 
