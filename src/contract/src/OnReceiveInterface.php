@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Contract;
 
+use Hyperf\Server\Connection as HyperfConnection;
 use Swoole\Coroutine\Server\Connection;
 use Swoole\Server as SwooleServer;
 use Swow\Socket;
@@ -18,7 +19,7 @@ use Swow\Socket;
 interface OnReceiveInterface
 {
     /**
-     * @param Connection|Socket|SwooleServer $server
+     * @param Connection|HyperfConnection|Socket|SwooleServer $server
      */
     public function onReceive($server, int $fd, int $reactorId, string $data): void;
 }
