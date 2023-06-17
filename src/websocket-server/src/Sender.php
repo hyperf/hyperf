@@ -101,7 +101,7 @@ class Sender
      * The responses of coroutine style swoole server.
      * Or connections of swow server.
      * And so on.
-     * @param null|Connection|Response $response
+     * @param null|Response|ServerConnection $response
      */
     public function setResponse(int $fd, mixed $response): void
     {
