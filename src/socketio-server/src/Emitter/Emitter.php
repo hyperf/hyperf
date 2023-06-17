@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\SocketIOServer\Emitter;
 
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Engine\WebSocket\Frame;
 use Hyperf\Engine\WebSocket\Opcode;
 use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Parser\Engine;
@@ -140,6 +141,7 @@ trait Emitter
             'event' => $event,
             'data' => $data,
             'encode' => fn ($i, $event, $data) => $this->encode($i, $event, $data),
+            'frame' => new Frame(),
             'opcode' => Opcode::TEXT,
             'flag' => $this->guessFlags($this->compress),
         ]);

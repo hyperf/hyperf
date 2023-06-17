@@ -13,6 +13,8 @@ namespace Hyperf\WebSocketServer;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Contract\WebSocket\FrameInterface;
+use Hyperf\Engine\WebSocket\Response as WsResponse;
 use Hyperf\Server\CoroutineServer;
 use Hyperf\WebSocketServer\Exception\InvalidMethodException;
 use Psr\Container\ContainerInterface;
@@ -66,6 +68,19 @@ class Sender
         if (! $this->proxy($fd, $method, $arguments)) {
             $this->sendPipeMessage($name, $arguments);
         }
+    }
+
+    public function pushFrame(int $fd, FrameInterface $frame)
+    {
+        if (! $this->isCoroutineServer) {
+            $response = new WsResponse($this->getServer());
+        } elseif (isset($this->responses[$fd])) {
+            $response = new WsResponse($this->responses[$fd]);
+        } else {
+            return false;
+        }
+
+        return $response->init($fd)->push($frame);
     }
 
     public function proxy(int $fd, string $method, array $arguments): bool
