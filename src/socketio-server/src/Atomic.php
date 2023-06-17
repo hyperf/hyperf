@@ -22,11 +22,9 @@ class Atomic
 
     protected int $id = 0;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(?ContainerInterface $container = null)
     {
-        $config = $container->get(ServerFactory::class)->getConfig();
-
-        if ($config->getType() === Server::class) {
+        if ($config = $container?->get(ServerFactory::class)->getConfig() and $config->getType() === Server::class) {
             $this->atomic = new SwooleAtomic();
         }
     }
