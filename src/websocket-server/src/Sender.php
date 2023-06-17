@@ -19,7 +19,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Http\Response;
 use Swoole\Server;
-use Swow\Http\Server\Connection;
+use Swow\Psr7\Server\ServerConnection;
 
 /**
  * @method push(int $fd, $data, int $opcode = null, $finish = null)
@@ -32,7 +32,7 @@ class Sender
     protected ?int $workerId = null;
 
     /**
-     * @var Connection[]|Response[]
+     * @var Response[]|ServerConnection[]
      */
     protected array $responses = [];
 
@@ -56,6 +56,7 @@ class Sender
                 if ($method === 'disconnect') {
                     $method = 'close';
                 }
+
                 $this->responses[$fd]->{$method}(...$arguments);
                 $this->logger->debug("[WebSocket] Worker send to #{$fd}");
             }
