@@ -19,7 +19,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Http\Response;
 use Swoole\Server;
-use Swow\Http\Server\Connection;
+use Swow\Psr7\Server\ServerConnection;
 
 /**
  * @method push(int $fd, $data, int $opcode = null, $finish = null)
@@ -32,7 +32,7 @@ class Sender
     protected ?int $workerId = null;
 
     /**
-     * @var Connection[]|Response[]
+     * @var Response[]|ServerConnection[]
      */
     protected array $responses = [];
 
@@ -100,7 +100,7 @@ class Sender
      * The responses of coroutine style swoole server.
      * Or connections of swow server.
      * And so on.
-     * @param null|Connection|Response $response
+     * @param null|Response|ServerConnection $response
      */
     public function setResponse(int $fd, mixed $response): void
     {

@@ -46,8 +46,10 @@ class WebSocketsController implements OnMessageInterface, OnOpenInterface, OnClo
 
     public function onOpen($server, $request): void
     {
-        $this->subscriber[$request->fd] = $this->subject->subscribe(function ($data) use ($server) {
-            (new WsResponse($server))->push(new Frame(payloadData: (string) $data));
+        $this->subscriber[$request->fd] = $this->subject->subscribe(function ($data) use ($server, $request) {
+            (new WsResponse($server))
+                ->init($request->fd)
+                ->push(new Frame(payloadData: (string) $data));
         });
     }
 }
