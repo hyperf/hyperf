@@ -18,6 +18,8 @@ use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Channel;
+use Hyperf\Engine\WebSocket\Frame;
+use Hyperf\Engine\WebSocket\Response as WsResponse;
 use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
 use Hyperf\SocketIOServer\Collector\SocketIORouter;
 use Hyperf\SocketIOServer\Exception\RouteNotFoundException;
@@ -29,7 +31,6 @@ use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\WebSocketServer\Constant\Opcode;
 use Hyperf\WebSocketServer\Sender;
-use Swoole\Atomic;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Timer;
@@ -109,25 +110,20 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
      */
     public function onMessage($server, $frame): void
     {
+        $response = (new WsResponse($server))->init($frame);
         if ($frame->opcode == Opcode::PING) {
-            if ($server instanceof Response) {
-                $server->push('', Opcode::PONG);
-            } else {
-                $server->push($frame->fd, '', Opcode::PONG);
-            }
+            $response->push(new Frame(opcode: Opcode::PONG));
             return;
         }
 
         if ($frame->data[0] === Engine::PING) {
             $this->renewInAllNamespaces($frame->fd);
-            if ($server instanceof Response) {
-                $server->push(Engine::PONG); // sever pong
-            } else {
-                $server->push($frame->fd, Engine::PONG); // sever pong
-            }
+            $response->push(new Frame(payloadData: Engine::PONG));
             return;
         }
         if ($frame->data[0] === Engine::CLOSE) {
+            // $this->sender->disconnect();
+            $response->close();
             if ($server instanceof Response) {
                 $server->close();
             } else {
@@ -200,27 +196,21 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
     }
 
-    /**
-     * @param Response|Server $server
-     * @param Request $request
-     */
     public function onOpen($server, $request): void
     {
+        $response = (new WsResponse($server))->init($request);
+
         $data = [
-            'sid' => $this->sidProvider->getSid($request->fd),
+            'sid' => $this->sidProvider->getSid($response->getFd()),
             'upgrades' => ['websocket'],
             'pingInterval' => $this->config->getPingInterval(),
             'pingTimeout' => $this->config->getPingTimeout(),
         ];
-        if ($server instanceof Response) {
-            $server->push(Engine::OPEN . json_encode($data)); // socket is open
-            $server->push(Engine::MESSAGE . Packet::OPEN); // server open
-        } else {
-            $server->push($request->fd, Engine::OPEN . json_encode($data)); // socket is open
-            $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); // server open
-        }
 
-        $this->dispatchEventInAllNamespaces($request->fd, 'connect');
+        $response->push(new Frame(payloadData: Engine::OPEN . json_encode($data))); // socket is open
+        $response->push(new Frame(payloadData: Engine::MESSAGE . Packet::OPEN)); // server open
+
+        $this->dispatchEventInAllNamespaces($response->getFd(), 'connect');
     }
 
     public function onClose($server, int $fd, int $reactorId): void
@@ -330,7 +320,8 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
                 'nsp' => $nsp,
                 'addCallback' => function (string $ackId, Channel $channel, ?int $timeout = null) {
                     $this->addCallback($ackId, $channel, $timeout);
-                }, ]);
+                },
+            ]);
         } catch (Throwable $exception) {
             $this->stdoutLogger->error('Socket.io ' . $exception->getMessage());
             return null;
