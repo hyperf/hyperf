@@ -1,6 +1,7 @@
 # WebSocket 服務
 
-Hyperf 提供了對 WebSocket Server 的封裝，可基於 [hyperf/websocket-server](https://github.com/hyperf/websocket-server) 元件快速搭建一個 WebSocket 應用。
+Hyperf 提供了對 WebSocket Server 的封裝，可基於 [hyperf/websocket-server](https://github.com/hyperf/websocket-server)
+元件快速搭建一個 WebSocket 應用。
 
 ## 安裝
 
@@ -37,7 +38,8 @@ return [
 
 > 目前暫時只支援配置檔案的模式配置路由，後續會提供註解模式。
 
-在 `config/routes.php` 檔案內增加對應 `ws` 的 Server 的路由配置，這裡的 `ws` 值取決於您在 `config/autoload/server.php` 內配置的 WebSocket Server 的 `name` 值。
+在 `config/routes.php` 檔案內增加對應 `ws` 的 Server 的路由配置，這裡的 `ws` 值取決於您在 `config/autoload/server.php`
+內配置的 WebSocket Server 的 `name` 值。
 
 ```php
 <?php
@@ -49,7 +51,8 @@ Router::addServer('ws', function () {
 
 ## 配置中介軟體
 
-在 `config/autoload/middlewares.php` 檔案內增加對應 `ws` 的 Server 的全域性中介軟體配置，這裡的 `ws` 值取決於您在 `config/autoload/server.php` 內配置的 WebSocket Server 的 `name` 值。
+在 `config/autoload/middlewares.php` 檔案內增加對應 `ws` 的 Server 的全域性中介軟體配置，這裡的 `ws`
+值取決於您在 `config/autoload/server.php` 內配置的 WebSocket Server 的 `name` 值。
 
 ```php
 <?php
@@ -72,6 +75,8 @@ namespace App\Controller;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
+use Hyperf\Engine\WebSocket\Frame;
+use Hyperf\Engine\WebSocket\Response;
 use Hyperf\WebSocketServer\Constant\Opcode;
 use Swoole\Server;
 use Swoole\WebSocket\Server as WebSocketServer;
@@ -80,13 +85,14 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
 {
     public function onMessage($server, $frame): void
     {
+        $response = (new Response($server))->init($frame);
         if($frame->opcode == Opcode::PING) {
             // 如果使用協程 Server，在判斷是 PING 幀後，需要手動處理，返回 PONG 幀。
             // 非同步風格 Server，可以直接透過 Swoole 配置處理，詳情請見 https://wiki.swoole.com/#/websocket_server?id=open_websocket_ping_frame
-            $server->push('', Opcode::PONG);
+            $response->push(new Frame(opcode: Opcode::PONG));
             return;
         }
-        $server->push($frame->fd, 'Recv: ' . $frame->data);
+        $response->push(new Frame(payloadData: 'Recv: ' . $frame->data));
     }
 
     public function onClose($server, int $fd, int $reactorId): void
@@ -96,12 +102,14 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
 
     public function onOpen($server, $request): void
     {
-        $server->push($request->fd, 'Opened');
+        $response = (new Response($server))->init($request);
+        $response->push(new Frame(payloadData: 'Opened'));
     }
 }
 ```
 
-接下來啟動 Server，便能看到對應啟動了一個 WebSocket Server 並監聽於 9502 埠，此時您便可以透過各種 WebSocket Client 來進行連線和資料傳輸了。
+接下來啟動 Server，便能看到對應啟動了一個 WebSocket Server 並監聽於 9502 埠，此時您便可以透過各種 WebSocket Client
+來進行連線和資料傳輸了。
 
 ```
 $ php bin/hyperf.php start
@@ -111,9 +119,11 @@ $ php bin/hyperf.php start
 [INFO] HTTP Server listening at 0.0.0.0:9501
 ```
 
-!> 當我們同時監聽了 HTTP Server 的 9501 埠和 WebSocket Server 的 9502 埠時， WebSocket Client 可以透過 9501 和 9502 兩個埠連線 WebSocket Server，即連線 `ws://0.0.0.0:9501` 和 `ws://0.0.0.0:9502` 都可以成功。
+!> 當我們同時監聽了 HTTP Server 的 9501 埠和 WebSocket Server 的 9502 埠時， WebSocket Client 可以透過 9501 和 9502
+兩個埠連線 WebSocket Server，即連線 `ws://0.0.0.0:9501` 和 `ws://0.0.0.0:9502` 都可以成功。
 
-因為 Swoole\WebSocket\Server 繼承自 Swoole\Http\Server，可以使用 HTTP 觸發所有 WebSocket 的推送，瞭解詳情可檢視 [Swoole 文件](https://wiki.swoole.com/#/websocket_server?id=websocketserver) onRequest 回撥部分。
+因為 Swoole\WebSocket\Server 繼承自 Swoole\Http\Server，可以使用 HTTP 觸發所有 WebSocket
+的推送，瞭解詳情可檢視 [Swoole 文件](https://wiki.swoole.com/#/websocket_server?id=websocketserver) onRequest 回撥部分。
 
 如需關閉，可以修改 `config/autoload/server.php` 檔案給 `http` 服務中增加 `open_websocket_protocol` 配置項。
 
@@ -141,7 +151,8 @@ return [
 
 ## 連線上下文
 
-WebSocket 服務的 onOpen, onMessage, onClose 回撥並不在同一個協程下觸發，因此不能直接使用協程上下文儲存狀態資訊。WebSocket Server 元件提供了 **連線級** 的上下文，API 與協程上下文完全一樣。
+WebSocket 服務的 onOpen, onMessage, onClose 回撥並不在同一個協程下觸發，因此不能直接使用協程上下文儲存狀態資訊。WebSocket
+Server 元件提供了 **連線級** 的上下文，API 與協程上下文完全一樣。
 
 ```php
 <?php
@@ -151,6 +162,8 @@ namespace App\Controller;
 
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
+use Hyperf\Engine\WebSocket\Frame;
+use Hyperf\Engine\WebSocket\Response;
 use Hyperf\WebSocketServer\Context;
 use Swoole\WebSocket\Server as WebSocketServer;
 
@@ -158,7 +171,8 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface
 {
     public function onMessage($server, $frame): void
     {
-        $server->push($frame->fd, 'Username: ' . Context::get('username'));
+        $response = (new Response($server))->init($frame);
+        $response->push(new Frame(payloadData: 'Username: ' . Context::get('username')));
     }
 
     public function onOpen($server, $request): void
@@ -196,7 +210,8 @@ server {
 
 當我們想在 `HTTP` 服務中，關閉 `WebSocket` 連線時，可以直接使用 `Hyperf\WebSocketServer\Sender`。
 
-`Sender` 會判斷 `fd` 是否被當前 `Worker` 所持有，如果是，則會直接傳送資料，如果不是，則會透過 `PipeMessage` 傳送給除自己外的所有 `Worker`，然後由其他 `Worker` 進行判斷，
+`Sender` 會判斷 `fd` 是否被當前 `Worker` 所持有，如果是，則會直接傳送資料，如果不是，則會透過 `PipeMessage`
+傳送給除自己外的所有 `Worker`，然後由其他 `Worker` 進行判斷，
 如果是自己持有的 `fd`，就會發送對應資料到客戶端。
 
 `Sender` 支援 `push` 和 `disconnect` 兩個 `API`，如下：
