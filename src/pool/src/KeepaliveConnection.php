@@ -164,15 +164,6 @@ abstract class KeepaliveConnection implements ConnectionInterface
     }
 
     /**
-     * @deprecated
-     * @return int ms
-     */
-    protected function getHeartbeat(): int
-    {
-        return $this->getHeartbeatSeconds() * 1000;
-    }
-
-    /**
      * @return int seconds
      */
     protected function getHeartbeatSeconds(): int

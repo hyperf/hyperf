@@ -27,6 +27,7 @@ use Hyperf\Validation\DatabasePresenceVerifier;
 use Hyperf\Validation\Rules\Exists;
 use Hyperf\Validation\Validator;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -35,6 +36,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationExistsRuleTest extends TestCase
 {
     /**

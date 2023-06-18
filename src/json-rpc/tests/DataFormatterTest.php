@@ -19,6 +19,7 @@ use Hyperf\RpcClient\Exception\RequestException;
 use Hyperf\Serializer\SerializerFactory;
 use Hyperf\Serializer\SymfonyNormalizer;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -26,6 +27,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DataFormatterTest extends TestCase
 {
     protected function tearDown(): void

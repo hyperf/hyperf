@@ -26,12 +26,14 @@ use HyperfTest\HttpServer\Stub\DemoController;
 use HyperfTest\HttpServer\Stub\DispatcherFactory;
 use HyperfTest\HttpServer\Stub\FooMiddleware;
 use HyperfTest\HttpServer\Stub\SetHeaderMiddleware;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DispatcherFactoryTest extends TestCase
 {
     public function testGetPrefix()

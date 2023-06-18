@@ -14,9 +14,9 @@ namespace Hyperf\SuperGlobals;
 use ArrayAccess;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\Contract\Arrayable;
 use Hyperf\SuperGlobals\Exception\ContainerNotFoundException;
-use Hyperf\SuperGlobals\Exception\RequestNotFoundException;
 use JsonSerializable;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -68,12 +68,7 @@ abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable
 
     protected function getRequest(): ServerRequestInterface
     {
-        $request = Context::get(ServerRequestInterface::class);
-        if (! $request instanceof ServerRequestInterface) {
-            throw new RequestNotFoundException(sprintf('%s is not found.', ServerRequestInterface::class));
-        }
-
-        return $request;
+        return RequestContext::get();
     }
 
     protected function hasRequest(): bool

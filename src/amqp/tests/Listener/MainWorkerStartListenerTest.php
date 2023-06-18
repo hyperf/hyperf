@@ -20,6 +20,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use HyperfTest\Amqp\Stub\DemoProducer;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use stdClass;
@@ -28,6 +29,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MainWorkerStartListenerTest extends TestCase
 {
     /**

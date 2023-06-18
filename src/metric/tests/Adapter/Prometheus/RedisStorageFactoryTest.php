@@ -18,10 +18,16 @@ use Hyperf\Metric\Adapter\Prometheus\RedisStorageFactory;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use ReflectionProperty;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -37,10 +43,8 @@ class RedisStorageFactoryTest extends TestCase
         parent::setUp();
 
         $prefixProperty = new ReflectionProperty(Redis::class, 'prefix');
-        $prefixProperty->setAccessible(true);
 
         $metricGatherKeySuffix = new ReflectionProperty(Redis::class, 'metricGatherKeySuffix');
-        $metricGatherKeySuffix->setAccessible(true);
 
         $this->prePrefix = $prefixProperty->getDefaultValue();
         $this->preMetricGatherKeySuffix = $metricGatherKeySuffix->getDefaultValue();
@@ -69,10 +73,8 @@ class RedisStorageFactoryTest extends TestCase
         $redis = $factory($container);
 
         $prefixProperty = new ReflectionProperty(Redis::class, 'prefix');
-        $prefixProperty->setAccessible(true);
 
         $metricGatherKeySuffixProperty = new ReflectionProperty(Redis::class, 'metricGatherKeySuffix');
-        $metricGatherKeySuffixProperty->setAccessible(true);
 
         self::assertInstanceOf(Redis::class, $redis);
         self::assertEquals('skeleton', $prefixProperty->getValue($redis));
@@ -102,10 +104,8 @@ class RedisStorageFactoryTest extends TestCase
         $redis = $factory($container);
 
         $prefixProperty = new ReflectionProperty(Redis::class, 'prefix');
-        $prefixProperty->setAccessible(true);
 
         $metricGatherKeySuffixProperty = new ReflectionProperty(Redis::class, 'metricGatherKeySuffix');
-        $metricGatherKeySuffixProperty->setAccessible(true);
 
         self::assertInstanceOf(Redis::class, $redis);
         self::assertEquals('prometheus:', $prefixProperty->getValue($redis));

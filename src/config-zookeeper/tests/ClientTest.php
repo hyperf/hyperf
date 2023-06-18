@@ -22,6 +22,7 @@ use Hyperf\Di\Container;
 use Hyperf\Framework\Event\OnPipeMessage;
 use Hyperf\Guzzle\ClientFactory;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 use function Hyperf\Support\value;
@@ -30,6 +31,7 @@ use function Hyperf\Support\value;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ClientTest extends TestCase
 {
     public function testPull()

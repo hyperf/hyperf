@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\View;
 
 use Hyperf\View\Engine\PlatesEngine;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PlatesTest extends TestCase
 {
     public function testRender()

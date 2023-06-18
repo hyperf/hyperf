@@ -147,14 +147,6 @@ class Container implements HyperfContainerInterface
     }
 
     /**
-     * @deprecated
-     */
-    public function getDefinitionSource(): Definition\DefinitionSourceInterface
-    {
-        return $this->definitionSource;
-    }
-
-    /**
      * @param array|callable|string $definition
      */
     private function setDefinition(string $name, $definition): void

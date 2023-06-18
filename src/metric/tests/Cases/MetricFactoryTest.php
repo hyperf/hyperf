@@ -18,11 +18,17 @@ use Hyperf\Guzzle\ClientFactory;
 use Hyperf\Metric\Adapter\Prometheus\Constants;
 use Hyperf\Metric\Adapter\Prometheus\MetricFactory as PrometheusFactory;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Prometheus\CollectorRegistry;
 use ReflectionClass;
 use ReflectionMethod;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -55,7 +61,6 @@ class MetricFactoryTest extends TestCase
         $p = new PrometheusFactory($config, $r, $c, $l, new ServerFactory($l));
         $ref = new ReflectionClass($p);
         $method = $ref->getMethod('getUri');
-        $method->setAccessible(true);
         $this->assertStringContainsString('http://127.0.0.1/metrics/job/metric/ip/', $method->invokeArgs($p, ['127.0.0.1', 'metric']));
         $this->assertStringContainsString('https://127.0.0.1/metrics/job/metric/ip/', $method->invokeArgs($p, ['https://127.0.0.1', 'metric']));
         $this->assertStringContainsString('http://127.0.0.1:8080/metrics/job/metric/ip/', $method->invokeArgs($p, ['127.0.0.1:8080', 'metric']));
@@ -81,7 +86,6 @@ class MetricFactoryTest extends TestCase
         $l = Mockery::mock(StdoutLoggerInterface::class);
         $p = new PrometheusFactory($config, $r, $c, $l, new ServerFactory($l));
         $method = new ReflectionMethod(PrometheusFactory::class, 'getNamespace');
-        $method->setAccessible(true);
         $this->assertEquals('hello__world_', $method->invoke($p));
     }
 }

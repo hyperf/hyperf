@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Crontab;
 
 use Hyperf\Crontab\Crontab;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CrontabTest extends TestCase
 {
     public function testCrontab()

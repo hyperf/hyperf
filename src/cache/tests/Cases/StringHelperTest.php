@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Cache\Cases;
 
 use Hyperf\Cache\Helper\StringHelper;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class StringHelperTest extends TestCase
 {
     public function testFormat()

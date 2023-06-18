@@ -13,6 +13,7 @@ namespace HyperfTest\Stringable;
 
 use Hyperf\Stringable\Str;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidInterface;
 
@@ -20,6 +21,7 @@ use Ramsey\Uuid\UuidInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class StrTest extends TestCase
 {
     public function testCharAt()

@@ -14,6 +14,7 @@ namespace HyperfTest\Phar;
 use Hyperf\Phar\Package;
 use Hyperf\Phar\PharBuilder;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -21,6 +22,7 @@ use Psr\Log\LoggerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PackageTest extends TestCase
 {
     protected function tearDown(): void

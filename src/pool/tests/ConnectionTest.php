@@ -15,6 +15,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Pool;
 use HyperfTest\Pool\Stub\ActiveConnectionStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -22,6 +23,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConnectionTest extends TestCase
 {
     protected function tearDown(): void

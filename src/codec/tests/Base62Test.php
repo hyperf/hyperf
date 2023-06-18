@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Codec;
 
 use Hyperf\Codec\Base62;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class Base62Test extends TestCase
 {
     public function testEncode()

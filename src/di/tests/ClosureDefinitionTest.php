@@ -15,12 +15,14 @@ use Closure;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ReflectionType;
 use HyperfTest\Di\Stub\Foo;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ClosureDefinitionTest extends TestCase
 {
     protected function tearDown(): void

@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Retry;
 
 use Hyperf\Retry\Annotation\RetryFalsy;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RetryFalsyTest extends TestCase
 {
     public function testIsFalsy()

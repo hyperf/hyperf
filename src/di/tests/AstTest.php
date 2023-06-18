@@ -28,12 +28,14 @@ use HyperfTest\Di\Stub\Ast\FooTrait;
 use HyperfTest\Di\Stub\FooEnumStruct;
 use HyperfTest\Di\Stub\Par2;
 use HyperfTest\Di\Stub\PathStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class AstTest extends TestCase
 {
     protected $license = '<?php

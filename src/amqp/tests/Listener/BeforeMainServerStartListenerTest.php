@@ -16,6 +16,7 @@ use Hyperf\Amqp\Listener\BeforeMainServerStartListener;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use stdClass;
@@ -24,6 +25,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class BeforeMainServerStartListenerTest extends TestCase
 {
     /**

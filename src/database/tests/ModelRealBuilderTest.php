@@ -47,6 +47,7 @@ use HyperfTest\Database\Stubs\Model\UserRoleMorphPivot;
 use HyperfTest\Database\Stubs\Model\UserRolePivot;
 use HyperfTest\Database\Stubs\StringStatus;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
@@ -59,6 +60,7 @@ if (PHP_VERSION_ID >= 80100) {
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelRealBuilderTest extends TestCase
 {
     /**

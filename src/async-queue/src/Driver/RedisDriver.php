@@ -14,7 +14,6 @@ namespace Hyperf\AsyncQueue\Driver;
 use Hyperf\AsyncQueue\Exception\InvalidQueueException;
 use Hyperf\AsyncQueue\JobInterface;
 use Hyperf\AsyncQueue\JobMessage;
-use Hyperf\AsyncQueue\Message;
 use Hyperf\AsyncQueue\MessageInterface;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
