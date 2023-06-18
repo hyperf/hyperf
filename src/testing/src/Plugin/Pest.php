@@ -18,15 +18,13 @@ use Pest\Exceptions\InvalidOption;
 use Pest\Kernel;
 use Pest\Plugins\Concerns\HandleArguments;
 use Pest\Support\Container;
-use PHPUnit\TextUI\Application;
 use Swoole\Coroutine;
 use Swoole\Timer;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @property string $vendorDir
  */
-class Pest implements HandlesArguments
+final class Pest implements HandlesArguments
 {
     use HandleArguments;
 
@@ -43,22 +41,19 @@ class Pest implements HandlesArguments
         }
 
         if ($this->hasArgument('--parallel', $arguments) || $this->hasArgument('-p', $arguments)) {
-            throw new InvalidOption('The coroutine mode is not supported when running in parallel.');
+            throw new InvalidOption('The [--coroutine] option is not supported when running in parallel.');
         }
 
         $arguments = $this->popArgument('--coroutine', $arguments);
 
-        exit($this->runInCoroutine($arguments));
+        exit($this->runTestsInCoroutine($arguments));
     }
 
-    private function runInCoroutine(array $arguments): int
+    private function runTestsInCoroutine(array $arguments): int
     {
         $code = 0;
-        $output = Container::getInstance()->get(OutputInterface::class);
-        $kernel = new Kernel(
-            new Application(),
-            $output,
-        );
+        /** @var Kernel $kernel */
+        $kernel = Container::getInstance()->get(Kernel::class);
 
         Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL, 'exit_condition' => function () {
             return Coroutine::stats()['coroutine_num'] === 0;
@@ -79,12 +74,14 @@ class Pest implements HandlesArguments
     private function prepend(array $arguments): array
     {
         $prepend = null;
+
         foreach ($arguments as $key => $argument) {
             if (str_starts_with($argument, '--prepend=')) {
                 $prepend = explode('=', $argument, 2)[1];
                 unset($arguments[$key]);
                 break;
             }
+
             if (str_starts_with($argument, '--prepend')) {
                 if (isset($arguments[$key + 1])) {
                     $prepend = $arguments[$key + 1];
