@@ -101,14 +101,8 @@ class StringableTest extends TestCase
         $this->assertSame('before<br>after', (string) $this->stringable('before<br>after')->stripTags('<br>'));
         $this->assertSame('before<br>after', (string) $this->stringable('<strong>before</strong><br>after')->stripTags('<br>'));
         $this->assertSame('<strong>before</strong><br>after', (string) $this->stringable('<strong>before</strong><br>after')->stripTags('<br><strong>'));
-
-        if (PHP_VERSION_ID >= 70400) {
-            $this->assertSame('<strong>before</strong><br>after', (string) $this->stringable('<strong>before</strong><br>after')->stripTags(['<br>', '<strong>']));
-        }
-
-        if (PHP_VERSION_ID >= 80000) {
-            $this->assertSame('beforeafter', (string) $this->stringable('before<br>after')->stripTags(null));
-        }
+        $this->assertSame('<strong>before</strong><br>after', (string) $this->stringable('<strong>before</strong><br>after')->stripTags(['<br>', '<strong>']));
+        $this->assertSame('beforeafter', (string) $this->stringable('before<br>after')->stripTags(null));
     }
 
     public function testWhenEmptyAndNot()

@@ -127,10 +127,6 @@ class Par2 extends Par
 
     public function testAstProxyForEnum()
     {
-        if (PHP_VERSION_ID < 80100) {
-            $this->markTestSkipped('The version below 8.1 does not support enum.');
-        }
-
         $ast = new Ast();
         $code = $ast->proxy(FooEnumStruct::class);
 
