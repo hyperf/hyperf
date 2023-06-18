@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Di\Stub;
+namespace HyperfTest\Database\Stubs;
 
-enum FooEnum: int
+enum IntegerStatus: int
 {
-    case DEFAULT = 1;
+    case Active = 1;
+    case Inactive = 2;
 }

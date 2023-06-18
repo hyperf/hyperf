@@ -179,14 +179,8 @@ class StrTest extends TestCase
         $this->assertSame('before<br>after', Str::stripTags('before<br>after', '<br>'));
         $this->assertSame('before<br>after', Str::stripTags('<strong>before</strong><br>after', '<br>'));
         $this->assertSame('<strong>before</strong><br>after', Str::stripTags('<strong>before</strong><br>after', '<br><strong>'));
-
-        if (PHP_VERSION_ID >= 70400) {
-            $this->assertSame('<strong>before</strong><br>after', Str::stripTags('<strong>before</strong><br>after', ['<br>', '<strong>']));
-        }
-
-        if (PHP_VERSION_ID >= 80000) {
-            $this->assertSame('beforeafter', Str::stripTags('before<br>after', null));
-        }
+        $this->assertSame('<strong>before</strong><br>after', Str::stripTags('<strong>before</strong><br>after', ['<br>', '<strong>']));
+        $this->assertSame('beforeafter', Str::stripTags('before<br>after', null));
     }
 
     public function testPadBoth()

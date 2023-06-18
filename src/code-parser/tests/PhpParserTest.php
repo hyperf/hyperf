@@ -49,24 +49,18 @@ class PhpParserTest extends TestCase
         $this->assertSame(['', 'HyperfTest', 'CodeParser', 'Stub', 'Foo'], $foo2->type->parts);
         $this->assertNodeParam($extra, $parser->getNodeFromReflectionParameter($parameters[2]));
 
-        if (PHP_VERSION_ID > 80000) {
-            $stmts = $parser7->parse(file_get_contents(__DIR__ . '/Stub/UnionTypeFoo.php'));
-            /** @var ClassMethod $classMethod */
-            $classMethod = $stmts[1]->stmts[0]->stmts[0];
-            $name = $classMethod->getParams()[0];
+        $stmts = $parser7->parse(file_get_contents(__DIR__ . '/Stub/UnionTypeFoo.php'));
+        /** @var ClassMethod $classMethod */
+        $classMethod = $stmts[1]->stmts[0]->stmts[0];
+        $name = $classMethod->getParams()[0];
 
-            $foo = new ReflectionClass(UnionTypeFoo::class);
-            $parameters = $foo->getMethod('__construct')->getParameters();
-            $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
-        }
+        $foo = new ReflectionClass(UnionTypeFoo::class);
+        $parameters = $foo->getMethod('__construct')->getParameters();
+        $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
     }
 
     public function testGetExprFromEnum()
     {
-        if (PHP_VERSION_ID < 80100) {
-            $this->markTestSkipped('The version below 8.1 does not support enum.');
-        }
-
         $parser = new PhpParser();
         $printer = new Standard();
 
