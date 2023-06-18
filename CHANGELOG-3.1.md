@@ -35,7 +35,9 @@
 - [x] Remove deprecated codes.
 - [#5813](https://github.com/hyperf/hyperf/pull/5813) Removed support for swoole 4.x
 
-## Deprecated
+## Changed
+
+- [#5847](https://github.com/hyperf/hyperf/pull/5847) Changed the default redis key for metric.
 
 ## Fixed
 
