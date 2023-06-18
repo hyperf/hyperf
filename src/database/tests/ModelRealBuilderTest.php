@@ -35,6 +35,7 @@ use Hyperf\Engine\Channel;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
 use HyperfTest\Database\Stubs\ContainerStub;
+use HyperfTest\Database\Stubs\IntegerStatus;
 use HyperfTest\Database\Stubs\Model\TestModel;
 use HyperfTest\Database\Stubs\Model\TestVersionModel;
 use HyperfTest\Database\Stubs\Model\User;
@@ -44,10 +45,15 @@ use HyperfTest\Database\Stubs\Model\UserExtCamel;
 use HyperfTest\Database\Stubs\Model\UserRole;
 use HyperfTest\Database\Stubs\Model\UserRoleMorphPivot;
 use HyperfTest\Database\Stubs\Model\UserRolePivot;
+use HyperfTest\Database\Stubs\StringStatus;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
+
+if (PHP_VERSION_ID >= 80100) {
+    include_once 'Stubs/Enums.php';
+}
 
 /**
  * @internal
@@ -72,6 +78,7 @@ class ModelRealBuilderTest extends TestCase
         $conn = $container->get(ConnectionResolverInterface::class)->connection();
         $conn->statement('DROP TABLE IF EXISTS `test`;');
         $conn->statement('DROP TABLE IF EXISTS `test_full_text_index`;');
+        $conn->statement('DROP TABLE IF EXISTS `test_enum_cast`;');
         Mockery::close();
     }
 
@@ -644,6 +651,46 @@ class ModelRealBuilderTest extends TestCase
         // expanded query
         $result = Db::table('test_full_text_index')->whereFullText(['title', 'body'], 'database', ['expanded' => true])->get();
         $this->assertCount(6, $result);
+    }
+
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testEnumCast()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        Schema::create('test_enum_cast', function (Blueprint $table) {
+            $table->id();
+            $table->string('string_status', 64);
+            $table->integer('integer_status');
+        });
+
+        // test insert with enum
+        DB::table('test_enum_cast')->insert([
+            'string_status' => StringStatus::Active,
+            'integer_status' => IntegerStatus::Active,
+        ]);
+
+        // test select with enum
+        $record = DB::table('test_enum_cast')->where('string_status', StringStatus::Active)->first();
+
+        $this->assertNotNull($record);
+        $this->assertEquals('active', $record->string_status);
+        $this->assertEquals(1, $record->integer_status);
+
+        // test update with enum
+        DB::table('test_enum_cast')->where('id', $record->id)->update([
+            'string_status' => StringStatus::Inactive,
+            'integer_status' => IntegerStatus::Inactive,
+        ]);
+
+        $record2 = DB::table('test_enum_cast')->where('id', $record->id)->first();
+
+        $this->assertNotNull($record2);
+        $this->assertEquals('inactive', $record2->string_status);
+        $this->assertEquals(2, $record2->integer_status);
     }
 
     protected function getContainer()

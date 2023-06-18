@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query;
 
+use BackedEnum;
 use BadMethodCallException;
 use Closure;
 use DateTimeInterface;
@@ -2520,12 +2521,28 @@ class Builder
         }
 
         if (is_array($value)) {
-            $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $value));
+            $this->bindings[$type] = Collection::make($this->bindings[$type])
+                ->merge($value)
+                ->map([$this, 'castBinding'])
+                ->values()
+                ->toArray();
         } else {
-            $this->bindings[$type][] = $value;
+            $this->bindings[$type][] = $this->castBinding($value);
         }
 
         return $this;
+    }
+
+    /**
+     * Cast the given binding value.
+     */
+    public function castBinding(mixed $value)
+    {
+        if (function_exists('enum_exists') && $value instanceof BackedEnum) {
+            return $value->value;
+        }
+
+        return $value;
     }
 
     /**
@@ -3014,14 +3031,14 @@ class Builder
 
     /**
      * Remove all of the expressions from a list of bindings.
-     *
-     * @return array
      */
-    protected function cleanBindings(array $bindings)
+    protected function cleanBindings(array $bindings): array
     {
-        return array_values(array_filter($bindings, function ($binding) {
-            return ! $binding instanceof Expression;
-        }));
+        return Collection::make($bindings)
+            ->reject(fn ($binding) => $binding instanceof Expression)
+            ->map([$this, 'castBinding'])
+            ->values()
+            ->toArray();
     }
 
     /**
