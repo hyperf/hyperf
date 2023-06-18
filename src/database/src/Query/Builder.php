@@ -2521,11 +2521,7 @@ class Builder
         }
 
         if (is_array($value)) {
-            $this->bindings[$type] = Collection::make($this->bindings[$type])
-                ->merge($value)
-                ->map([$this, 'castBinding'])
-                ->values()
-                ->toArray();
+            $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $this->castBindings($value)));
         } else {
             $this->bindings[$type][] = $this->castBinding($value);
         }
@@ -2538,11 +2534,24 @@ class Builder
      */
     public function castBinding(mixed $value)
     {
-        if (function_exists('enum_exists') && $value instanceof BackedEnum) {
+        if ($value instanceof BackedEnum) {
             return $value->value;
         }
 
         return $value;
+    }
+
+    /**
+     * Cast the given binding value.
+     */
+    public function castBindings(array $values)
+    {
+        $result = [];
+        foreach ($values as $value){
+            $result[] = $this->castBinding($value);
+        }
+
+        return $result;
     }
 
     /**
