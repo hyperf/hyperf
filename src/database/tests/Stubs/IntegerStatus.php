@@ -16,9 +16,3 @@ enum IntegerStatus: int
     case Active = 1;
     case Inactive = 2;
 }
-
-enum StringStatus: string
-{
-    case Active = 'active';
-    case Inactive = 'inactive';
-}

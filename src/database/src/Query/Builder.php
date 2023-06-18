@@ -3034,11 +3034,16 @@ class Builder
      */
     protected function cleanBindings(array $bindings): array
     {
-        return Collection::make($bindings)
-            ->reject(fn ($binding) => $binding instanceof Expression)
-            ->map([$this, 'castBinding'])
-            ->values()
-            ->toArray();
+        $result = [];
+        foreach ($bindings as $binding) {
+            if ($binding instanceof Expression) {
+                continue;
+            }
+
+            $result[] = $this->castBinding($binding);
+        }
+
+        return $result;
     }
 
     /**

@@ -25,6 +25,10 @@ use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\MySqlBitConnection;
+use Hyperf\Database\Query\Builder as QueryBuilder;
+use Hyperf\Database\Query\Expression;
+use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
+use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Column;
 use Hyperf\Database\Schema\MySqlBuilder;
@@ -34,6 +38,7 @@ use Hyperf\Di\Container;
 use Hyperf\Engine\Channel;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\IntegerStatus;
 use HyperfTest\Database\Stubs\Model\TestModel;
@@ -51,10 +56,6 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
-
-if (PHP_VERSION_ID >= 80100) {
-    include_once 'Stubs/Enums.php';
-}
 
 /**
  * @internal
@@ -655,9 +656,6 @@ class ModelRealBuilderTest extends TestCase
         $this->assertCount(6, $result);
     }
 
-    /**
-     * @requires PHP >= 8.1
-     */
     public function testEnumCast()
     {
         $container = $this->getContainer();
@@ -693,6 +691,28 @@ class ModelRealBuilderTest extends TestCase
         $this->assertNotNull($record2);
         $this->assertEquals('inactive', $record2->string_status);
         $this->assertEquals(2, $record2->integer_status);
+    }
+
+    public function testCleanBindings()
+    {
+        $query = new QueryBuilder(
+            Mockery::mock(ConnectionInterface::class),
+            Mockery::mock(QueryGrammar::class),
+            Mockery::mock(Processor::class)
+        );
+
+        $invoker = new ClassInvoker($query);
+        $res = $invoker->cleanBindings([0, 2, '2', '']);
+        $this->assertSame([0, 2, '2', ''], $res);
+
+        $res = $invoker->cleanBindings([0, 2, new Expression('1'), '2', '']);
+        $this->assertSame([0, 2, '2', ''], $res);
+
+        $res = $invoker->cleanBindings([new Expression('1')]);
+        $this->assertSame([], $res);
+
+        $res = $invoker->cleanBindings([StringStatus::Active, IntegerStatus::Active, new Expression('1')]);
+        $this->assertSame(['active', 1], $res);
     }
 
     protected function getContainer()
