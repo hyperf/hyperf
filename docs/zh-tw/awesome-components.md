@@ -134,6 +134,11 @@
 - [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) 提供一個 `dump` 函式，可以將程式內的變數或資料列印到另一個命令列視窗中，基於 Symfony 的 `Var-Dump Server` 元件
 - [leearvin/hyperf-tinker](https://github.com/Arvin-Lee/hyperf-tinker) 基於 PsySH 提供一個互動式的 Hyperf shell 容器
 
+## 測試
+
+- [hyperf/testing](https://github.com/hyperf/testing) Hyperf 官方提供的單元測試元件
+- [friendsofhyperf/pest-plugin-hyperf](https://github.com/friendsofhyperf/pest-plugin-hyperf) 適配於 Hyperf 的 [Pest](https://pestphp.com/) 外掛，為 Pest 提供協程環境支援
+
 ## 許可權認證
 
 - [fx/hyperf-http-auth](https://github.com/nfangxu/hyperf-http-auth) 根據 laravel 中的 auth 元件改寫的, 適配 hyperf 框架
