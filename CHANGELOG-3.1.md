@@ -22,6 +22,7 @@
 - [x] Added `hyperf/helper` component.
 - [x] Added `hyperf/polyfill-coroutine` component.
 - [#5815](https://github.com/hyperf/hyperf/pull/5815) Added alias as `mysql` for `pdo` in `hyperf/db`.
+- [#5849](https://github.com/hyperf/hyperf/pull/5849) Support for insert update and select using enums.
 
 ## Optimized
 

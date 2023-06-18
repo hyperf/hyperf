@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query;
 
+use BackedEnum;
 use BadMethodCallException;
 use Closure;
 use DateTimeInterface;
@@ -2520,12 +2521,37 @@ class Builder
         }
 
         if (is_array($value)) {
-            $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $value));
+            $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $this->castBindings($value)));
         } else {
-            $this->bindings[$type][] = $value;
+            $this->bindings[$type][] = $this->castBinding($value);
         }
 
         return $this;
+    }
+
+    /**
+     * Cast the given binding value.
+     */
+    public function castBinding(mixed $value)
+    {
+        if ($value instanceof BackedEnum) {
+            return $value->value;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Cast the given binding value.
+     */
+    public function castBindings(array $values)
+    {
+        $result = [];
+        foreach ($values as $value) {
+            $result[] = $this->castBinding($value);
+        }
+
+        return $result;
     }
 
     /**
@@ -3014,14 +3040,19 @@ class Builder
 
     /**
      * Remove all of the expressions from a list of bindings.
-     *
-     * @return array
      */
-    protected function cleanBindings(array $bindings)
+    protected function cleanBindings(array $bindings): array
     {
-        return array_values(array_filter($bindings, function ($binding) {
-            return ! $binding instanceof Expression;
-        }));
+        $result = [];
+        foreach ($bindings as $binding) {
+            if ($binding instanceof Expression) {
+                continue;
+            }
+
+            $result[] = $this->castBinding($binding);
+        }
+
+        return $result;
     }
 
     /**
