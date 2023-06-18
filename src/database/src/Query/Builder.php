@@ -2547,7 +2547,7 @@ class Builder
     public function castBindings(array $values)
     {
         $result = [];
-        foreach ($values as $value){
+        foreach ($values as $value) {
             $result[] = $this->castBinding($value);
         }
 

@@ -1,9 +1,5 @@
 # v3.0.25 - TBD
 
-## Added
-
-- [#5849](https://github.com/hyperf/hyperf/pull/5849) Support for insert update and select using enums.
-
 ## Fixed
 
 - [#5829](https://github.com/hyperf/hyperf/pull/5829) Fixed bug that the method `Hyperf\Database\Model\Builder::value()` cannot work when using column like `table.column`.
