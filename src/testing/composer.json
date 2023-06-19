@@ -33,7 +33,7 @@
         "symfony/http-foundation": "^5.4|^6.0"
     },
     "suggest": {
-        "pestphp/pest": "For testing with Pest.(^2.0)"
+        "pestphp/pest": "For testing with Pest.(^2.8.0)"
     },
     "extra": {
         "branch-alias": {
