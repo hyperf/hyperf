@@ -4,13 +4,13 @@
 
 但由于 Hyperf 是一个协程框架，所以默认的 `phpunit/pest` 并不能很好的工作，因此我们提供了对应的协程脚本来进行适配，您可直接调用脚本或者使用对应的 composer 命令来运行。自动化测试没有特定的组件，但是在 Hyperf 提供的骨架包里都会有对应实现。
 
-```
+```shell
 composer require hyperf/testing
 ```
 
 ```json
 "scripts": {
-    "pest": "co-pest --colors=always",
+    "pest": "pest --coroutine --colors=always",
     "test": "co-phpunit -c phpunit.xml --colors=always"
 },
 ```
@@ -18,8 +18,7 @@ composer require hyperf/testing
 | package         | version |
 | --------------- | ------- |
 | phpunit/phpunit | ^10.1   |
-| pestphp/pest    | ^2.6    |
-
+| pestphp/pest    | ^2.8.0  |
 
 ## Bootstrap
 
