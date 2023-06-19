@@ -5,6 +5,7 @@
 ## Fixed
 
 - [#5832](https://github.com/hyperf/hyperf/pull/5832) Fixed an endless loop when socket.io parses namespace
+- [#5860](https://github.com/hyperf/hyperf/pull/5860) Fixed bug that `CoroutineMemory::clearPrefix()` cannot work as expected.
 
 # v2.2.38 - 2023-02-09
 
