@@ -13,7 +13,7 @@
 
 - [#5794](https://github.com/hyperf/hyperf/pull/5794) 修复代理类中 `__FILE__` 和 `__DIR__` 定位错误的问题。
 - [#5803](https://github.com/hyperf/hyperf/pull/5803) 修复组件 `hyperf/http-server` 不适配新版本 `Psr7` 的问题。
-- [#5808](https://github.com/hyperf/hyperf/pull/5808) 修复验证器规则 `le`、`lte`、`gt`、`gte` 不发正常比较 `numeric` 和 `string`。
+- [#5808](https://github.com/hyperf/hyperf/pull/5808) 修复验证器规则 `le`、`lte`、`gt`、`gte` 不会正常比较 `numeric` 和 `string`。
 
 ## 优化
 
