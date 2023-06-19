@@ -29,10 +29,6 @@ final class Pest implements HandlesArguments
     {
         $arguments = $this->prepend($arguments);
 
-        if (Coroutine::getCid() > 0) {
-            return $arguments;
-        }
-
         if (! $this->hasArgument('--coroutine', $arguments)) {
             return $arguments;
         }
@@ -40,6 +36,10 @@ final class Pest implements HandlesArguments
         $arguments = $this->popArgument('--coroutine', $arguments);
 
         if (! extension_loaded('swoole')) { // Return with arguments if Swoole extension is not loaded.
+            return $arguments;
+        }
+
+        if (Coroutine::getCid() > 0) {
             return $arguments;
         }
 
