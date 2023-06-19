@@ -18,7 +18,7 @@ composer require hyperf/testing
 | package         | version |
 | --------------- | ------- |
 | phpunit/phpunit | ^10.1   |
-| pestphp/pest    | ^2.8.0  |
+| pestphp/pest    | ^2.8  |
 
 ## Bootstrap
 
