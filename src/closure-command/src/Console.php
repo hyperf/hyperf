@@ -49,21 +49,4 @@ class Console
     {
         return self::$commands;
     }
-
-    public static function call(string $command, array $arguments = []): int
-    {
-        $arguments['command'] = $command;
-
-        $input = new ArrayInput($arguments);
-        $output = new NullOutput();
-
-        /** @var ContainerInterface $container */
-        $container = ApplicationContext::getContainer();
-
-        /** @var Application $application */
-        $application = $container->get(ApplicationInterface::class);
-        $application->setAutoExit(false);
-
-        return $application->run($input, $output);
-    }
 }
