@@ -12,12 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\ClosureCommand;
 
 use Closure;
-use Hyperf\Context\ApplicationContext;
-use Hyperf\Contract\ApplicationInterface;
-use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
 
 use function Hyperf\Support\make;
 use function Hyperf\Tappable\tap;
