@@ -1,5 +1,9 @@
 # v3.0.26 - TBD
 
+## Fixed
+
+- [#5858](https://github.com/hyperf/hyperf/pull/5858) Throw exception when using `chunkById` but the column is not existed.
+
 # v3.0.25 - 2023-06-19
 
 ## Fixed
