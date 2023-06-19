@@ -245,4 +245,28 @@ class StrTest extends TestCase
         $this->assertTrue(Str::isMatch(['/laravel/i', '/laravel!(.*)/'], 'Hello, Laravel!'));
         $this->assertTrue(Str::isMatch(['/^[a-zA-Z,!]+$/', '/^(.*(.*(.*)))/'], 'Hello, Laravel!'));
     }
+
+    public function testCamel()
+    {
+        $this->assertSame('helloWorld', Str::camel('HelloWorld'));
+        $this->assertSame('helloWorld', Str::camel('hello_world'));
+        $this->assertSame('helloWorld', Str::camel('hello-world'));
+        $this->assertSame('helloWorld', Str::camel('hello world'));
+    }
+
+    public function testSnake()
+    {
+        $this->assertSame('hello_world', Str::snake('HelloWorld'));
+        $this->assertSame('hello_world', Str::snake('hello_world'));
+        $this->assertSame('hello_world', Str::snake('hello world'));
+    }
+
+    public function testStudly()
+    {
+        $this->assertSame('HelloWorld', Str::studly('helloWorld'));
+        $this->assertSame('HelloWorld', Str::studly('hello_world'));
+        $this->assertSame('HelloWorld', Str::studly('hello-world'));
+        $this->assertSame('HelloWorld', Str::studly('hello world'));
+        $this->assertSame('Hello-World', Str::studly('hello world', '-'));
+    }
 }
