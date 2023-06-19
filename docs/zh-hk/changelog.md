@@ -1,5 +1,12 @@
 # 版本更新記錄
 
+# v3.0.25 - 2023-06-19
+
+## 修復
+
+- [#5829](https://github.com/hyperf/hyperf/pull/5829) 修復 `Hyperf\Database\Model\Builder::value()` 當使用形如 `table.column` 的字段時，無法正常使用的問題。
+- [#5831](https://github.com/hyperf/hyperf/pull/5831) 修復在特殊場景下 `socket.io` 組件在解析 `namespace` 時，會造成死循環的問題。
+
 # v3.0.24 - 2023-06-10
 
 ## 修復
