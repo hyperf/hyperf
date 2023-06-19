@@ -21,7 +21,6 @@
         "hyperf/collection": "~3.1.0",
         "hyperf/contract": "~3.1.0",
         "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0",
         "psr/container": "^1.0|^2.0",
         "symfony/finder": "^5.0|^6.0"
     },
@@ -29,7 +28,8 @@
         "vlucas/phpdotenv": "Allows using enviroment value to override the config",
         "hyperf/di": "Allows using @Value annotation",
         "hyperf/event": "Allows using @Value annotation",
-        "hyperf/framework": "Allows using @Value annotation"
+        "hyperf/framework": "Allows using @Value annotation",
+        "hyperf/context": "Required to use config()"
     },
     "autoload": {
         "files": [
