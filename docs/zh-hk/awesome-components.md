@@ -134,11 +134,6 @@
 - [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) 提供一個 `dump` 函數，可以將程序內的變量或數據打印到另一個命令行窗口中，基於 Symfony 的 `Var-Dump Server` 組件
 - [leearvin/hyperf-tinker](https://github.com/Arvin-Lee/hyperf-tinker) 基於 PsySH 提供一個交互式的 Hyperf shell 容器
 
-## 測試
-
-- [hyperf/testing](https://github.com/hyperf/testing) Hyperf 官方提供的單元測試組件
-- [friendsofhyperf/pest-plugin-hyperf](https://github.com/friendsofhyperf/pest-plugin-hyperf) 適配於 Hyperf 的 [Pest](https://pestphp.com/) 插件，為 Pest 提供協程環境支持
-
 ## 權限認證
 
 - [fx/hyperf-http-auth](https://github.com/nfangxu/hyperf-http-auth) 根據 laravel 中的 auth 組件改寫的, 適配 hyperf 框架
@@ -146,6 +141,11 @@
 - [hyperf-ext/jwt](https://github.com/hyperf-ext/jwt) JWT 組件，實現了完整用於 JWT 認證的能力
 - [hyperf-ext/auth](https://github.com/hyperf-ext/auth) 移植自 `illuminate/auth`，基本完整的實現了 Laravel Auth 的功能特性
 - [donjan-deng/hyperf-casbin](https://github.com/donjan-deng/hyperf-casbin) 適配於 Hyperf 的開源訪問控制框架 [Casbin](https://casbin.org/docs/zh-CN/overview)
+
+## 測試
+
+- [hyperf/testing](https://github.com/hyperf/testing) Hyperf 官方提供的單元測試組件
+- [friendsofhyperf/pest-plugin-hyperf](https://github.com/friendsofhyperf/pest-plugin-hyperf) 適配於 Hyperf 的 [Pest](https://pestphp.com/) 插件，為 Pest 提供協程環境支持
 
 ## 分佈式鎖
 
