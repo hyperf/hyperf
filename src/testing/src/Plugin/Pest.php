@@ -21,9 +21,6 @@ use Pest\Support\Container;
 use Swoole\Coroutine;
 use Swoole\Timer;
 
-/**
- * @property string $vendorDir
- */
 final class Pest implements HandlesArguments
 {
     use HandleArguments;
