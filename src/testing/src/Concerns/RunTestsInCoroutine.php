@@ -13,6 +13,9 @@ namespace Hyperf\Testing\Concerns;
 
 use Throwable;
 
+/**
+ * @method string getName()
+ */
 trait RunTestsInCoroutine
 {
     protected bool $enableCoroutine = true;
@@ -26,6 +29,7 @@ trait RunTestsInCoroutine
         $testResult = null;
         $exception = null;
 
+        /* @phpstan-ignore-next-line */
         \Swoole\Coroutine\run(function () use (&$testResult, &$exception, $arguments) {
             try {
                 $testResult = $this->{$this->realTestName}(...$arguments);
@@ -44,7 +48,7 @@ trait RunTestsInCoroutine
         return $testResult;
     }
 
-    final protected function runTest()
+    final protected function runTest(): mixed
     {
         if (extension_loaded('swoole') && $this->enableCoroutine) {
             $this->realTestName = $this->getName();
