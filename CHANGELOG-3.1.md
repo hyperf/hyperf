@@ -35,6 +35,7 @@
 - [x] Remove redundant `setAccessible` methods.
 - [x] Remove deprecated codes.
 - [#5813](https://github.com/hyperf/hyperf/pull/5813) Removed support for swoole 4.x
+- [#5859](https://github.com/hyperf/hyperf/pull/5859) Removed string cache from `Hyperf\Stringable\Str`
 
 ## Changed
 

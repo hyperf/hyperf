@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Stringable;
 
 use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -240,5 +241,47 @@ class StrTest extends TestCase
         $this->assertTrue(Str::isMatch(['/^laravel!/i', '/^.*$(.*)/'], 'Hello, Laravel!'));
         $this->assertTrue(Str::isMatch(['/laravel/i', '/laravel!(.*)/'], 'Hello, Laravel!'));
         $this->assertTrue(Str::isMatch(['/^[a-zA-Z,!]+$/', '/^(.*(.*(.*)))/'], 'Hello, Laravel!'));
+    }
+
+    public function testCamel()
+    {
+        $this->assertSame('helloWorld', Str::camel('HelloWorld'));
+        $this->assertSame('helloWorld', Str::camel('hello_world'));
+        $this->assertSame('helloWorld', Str::camel('hello-world'));
+        $this->assertSame('helloWorld', Str::camel('hello world'));
+
+        $this->assertSame('helloWorld', StrCache::camel('HelloWorld'));
+        $this->assertSame('helloWorld', StrCache::camel('HelloWorld'));
+        $this->assertSame('helloWorld', StrCache::camel('hello_world'));
+        $this->assertSame('helloWorld', StrCache::camel('hello-world'));
+        $this->assertSame('helloWorld', StrCache::camel('hello world'));
+    }
+
+    public function testSnake()
+    {
+        $this->assertSame('hello_world', Str::snake('HelloWorld'));
+        $this->assertSame('hello_world', Str::snake('hello_world'));
+        $this->assertSame('hello_world', Str::snake('hello world'));
+
+        $this->assertSame('hello_world', StrCache::snake('HelloWorld'));
+        $this->assertSame('hello_world', StrCache::snake('HelloWorld'));
+        $this->assertSame('hello_world', StrCache::snake('hello_world'));
+        $this->assertSame('hello_world', StrCache::snake('hello world'));
+    }
+
+    public function testStudly()
+    {
+        $this->assertSame('HelloWorld', Str::studly('helloWorld'));
+        $this->assertSame('HelloWorld', Str::studly('hello_world'));
+        $this->assertSame('HelloWorld', Str::studly('hello-world'));
+        $this->assertSame('HelloWorld', Str::studly('hello world'));
+        $this->assertSame('Hello-World', Str::studly('hello world', '-'));
+
+        $this->assertSame('HelloWorld', StrCache::studly('helloWorld'));
+        $this->assertSame('HelloWorld', StrCache::studly('helloWorld'));
+        $this->assertSame('HelloWorld', StrCache::studly('hello_world'));
+        $this->assertSame('HelloWorld', StrCache::studly('hello-world'));
+        $this->assertSame('HelloWorld', StrCache::studly('hello world'));
+        $this->assertSame('Hello-World', StrCache::studly('hello world', '-'));
     }
 }

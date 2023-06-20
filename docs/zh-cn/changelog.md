@@ -1,12 +1,19 @@
 # 版本更新记录
 
+# v3.0.25 - 2023-06-19
+
+## 修复
+
+- [#5829](https://github.com/hyperf/hyperf/pull/5829) 修复 `Hyperf\Database\Model\Builder::value()` 当使用形如 `table.column` 的字段时，无法正常使用的问题。
+- [#5831](https://github.com/hyperf/hyperf/pull/5831) 修复在特殊场景下 `socket.io` 组件在解析 `namespace` 时，会造成死循环的问题。
+
 # v3.0.24 - 2023-06-10
 
 ## 修复
 
 - [#5794](https://github.com/hyperf/hyperf/pull/5794) 修复代理类中 `__FILE__` 和 `__DIR__` 定位错误的问题。
 - [#5803](https://github.com/hyperf/hyperf/pull/5803) 修复组件 `hyperf/http-server` 不适配新版本 `Psr7` 的问题。
-- [#5808](https://github.com/hyperf/hyperf/pull/5808) 修复验证器规则 `le`、`lte`、`gt`、`gte` 不发正常比较 `numeric` 和 `string`。
+- [#5808](https://github.com/hyperf/hyperf/pull/5808) 修复验证器规则 `le`、`lte`、`gt`、`gte` 不会正常比较 `numeric` 和 `string`。
 
 ## 优化
 
