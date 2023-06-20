@@ -157,3 +157,4 @@
   * [2.1 升級指南](zh-tw/upgrade/2.1.md)
   * [2.2 升級指南](zh-tw/upgrade/2.2.md)
   * [3.0 升級指南](zh-tw/upgrade/3.0.md)
+  * [3.1 升級指南](zh-tw/upgrade/3.1.md)

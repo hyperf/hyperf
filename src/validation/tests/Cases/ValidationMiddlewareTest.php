@@ -36,6 +36,7 @@ use HyperfTest\Validation\Cases\Stub\DemoController;
 use HyperfTest\Validation\Cases\Stub\DemoRequest;
 use HyperfTest\Validation\Cases\Stub\FooMiddleware;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -45,6 +46,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationMiddlewareTest extends TestCase
 {
     protected function tearDown(): void

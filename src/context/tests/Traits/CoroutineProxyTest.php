@@ -13,6 +13,7 @@ namespace HyperfTest\Context\Traits;
 
 use Hyperf\Context\Context;
 use Hyperf\Context\Traits\CoroutineProxy;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -20,6 +21,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CoroutineProxyTest extends TestCase
 {
     public function testCoroutineProxy()

@@ -13,13 +13,17 @@ namespace Hyperf\WebSocketServer;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Contract\WebSocket\FrameInterface;
+use Hyperf\Engine\WebSocket\Response as WsResponse;
 use Hyperf\Server\CoroutineServer;
 use Hyperf\WebSocketServer\Exception\InvalidMethodException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Http\Response;
 use Swoole\Server;
-use Swow\Http\Server\Connection;
+use Swow\Psr7\Server\ServerConnection;
+
+use function Hyperf\Engine\swoole_get_flags_from_frame;
 
 /**
  * @method push(int $fd, $data, int $opcode = null, $finish = null)
@@ -32,7 +36,7 @@ class Sender
     protected ?int $workerId = null;
 
     /**
-     * @var Connection[]|Response[]
+     * @var Response[]|ServerConnection[]
      */
     protected array $responses = [];
 
@@ -56,6 +60,7 @@ class Sender
                 if ($method === 'disconnect') {
                     $method = 'close';
                 }
+
                 $this->responses[$fd]->{$method}(...$arguments);
                 $this->logger->debug("[WebSocket] Worker send to #{$fd}");
             }
@@ -65,6 +70,24 @@ class Sender
         if (! $this->proxy($fd, $method, $arguments)) {
             $this->sendPipeMessage($name, $arguments);
         }
+    }
+
+    public function pushFrame(int $fd, FrameInterface $frame): bool
+    {
+        if ($this->isCoroutineServer) {
+            if (isset($this->responses[$fd])) {
+                return (new WsResponse($this->responses[$fd]))->init($fd)->push($frame);
+            }
+
+            return false;
+        }
+
+        if ($this->check($fd)) {
+            return (new WsResponse($this->getServer()))->init($fd)->push($frame);
+        }
+
+        $this->sendPipeMessage('push', [$fd, (string) $frame->getPayloadData(), $frame->getOpcode(), swoole_get_flags_from_frame($frame)]);
+        return false;
     }
 
     public function proxy(int $fd, string $method, array $arguments): bool
@@ -100,7 +123,7 @@ class Sender
      * The responses of coroutine style swoole server.
      * Or connections of swow server.
      * And so on.
-     * @param null|Connection|Response $response
+     * @param null|Response|ServerConnection $response
      */
     public function setResponse(int $fd, mixed $response): void
     {

@@ -14,6 +14,7 @@ namespace HyperfTest\Database;
 use Hyperf\Database\Commands\Migrations\GenMigrateCommand;
 use Hyperf\Database\Migrations\MigrationCreator;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
@@ -22,6 +23,7 @@ use Symfony\Component\Console\Output\NullOutput;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabaseGenMigrationCommandTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;

@@ -28,12 +28,14 @@ use HyperfTest\Di\Stub\Ast\FooTrait;
 use HyperfTest\Di\Stub\FooEnumStruct;
 use HyperfTest\Di\Stub\Par2;
 use HyperfTest\Di\Stub\PathStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class AstTest extends TestCase
 {
     protected $license = '<?php
@@ -125,10 +127,6 @@ class Par2 extends Par
 
     public function testAstProxyForEnum()
     {
-        if (PHP_VERSION_ID < 80100) {
-            $this->markTestSkipped('The version below 8.1 does not support enum.');
-        }
-
         $ast = new Ast();
         $code = $ast->proxy(FooEnumStruct::class);
 

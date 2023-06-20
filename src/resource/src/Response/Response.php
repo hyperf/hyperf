@@ -13,10 +13,11 @@ namespace Hyperf\Resource\Response;
 
 use Hyperf\Codec\Json;
 use Hyperf\Collection\Collection;
-use Hyperf\Context\Context;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Database\Model\Model;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Psr\Http\Message\ResponseInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
 class Response
 {
@@ -32,9 +33,9 @@ class Response
     public function toResponse(): ResponseInterface
     {
         return $this->response()
-            ->withStatus($this->calculateStatus())
-            ->withAddedHeader('content-type', 'application/json; charset=utf-8')
-            ->withBody(new SwooleStream(Json::encode($this->wrap(
+            ->setStatus($this->calculateStatus())
+            ->addHeader('content-type', 'application/json; charset=utf-8')
+            ->setBody(new SwooleStream(Json::encode($this->wrap(
                 $this->resource->resolve(),
                 $this->resource->with(),
                 $this->resource->additional
@@ -93,8 +94,8 @@ class Response
         && $this->resource->resource->wasRecentlyCreated ? 201 : 200;
     }
 
-    protected function response(): ResponseInterface
+    protected function response(): ResponsePlusInterface
     {
-        return Context::get(ResponseInterface::class);
+        return ResponseContext::get();
     }
 }

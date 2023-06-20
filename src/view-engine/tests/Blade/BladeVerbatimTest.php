@@ -11,6 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ViewEngine\Blade;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
+
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -83,7 +90,7 @@ class BladeVerbatimTest extends AbstractBladeTestCase
     <?php echo \Hyperf\ViewEngine\T::e($third); ?>
 
 <?php endif; ?>
-<?php echo $__env->make("users", \Hyperf\Utils\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>
+<?php echo $__env->make("users", \Hyperf\Collection\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>
 
     {{ $fourth }} @include("test")
 

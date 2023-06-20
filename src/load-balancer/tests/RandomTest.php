@@ -16,12 +16,14 @@ use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\LoadBalancer\Random;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RandomTest extends TestCase
 {
     public function testRandom()

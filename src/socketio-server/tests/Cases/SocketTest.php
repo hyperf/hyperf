@@ -19,11 +19,17 @@ use Hyperf\SocketIOServer\Socket;
 use Hyperf\WebSocketServer\Context;
 use Hyperf\WebSocketServer\Sender;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 
 use function Hyperf\Support\make;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -79,9 +85,9 @@ class SocketTest extends AbstractTestCase
         /** @var ContainerInterface $container */
         $container = ApplicationContext::getContainer();
         $mock = Mockery::mock(Sender::class);
-        $mock->shouldNotReceive('push')->with(1, Mockery::any(), Mockery::any(), Mockery::any());
-        $mock->shouldReceive('push')->with(2, Mockery::any(), Mockery::any(), Mockery::any())->once();
-        $mock->shouldReceive('push')->with(3, Mockery::any(), Mockery::any(), Mockery::any())->once();
+        $mock->shouldNotReceive('pushFrame')->with(1, Mockery::any());
+        $mock->shouldReceive('pushFrame')->with(2, Mockery::any())->once();
+        $mock->shouldReceive('pushFrame')->with(3, Mockery::any())->once();
         $container->set(Sender::class, $mock);
         /** @var Socket $socket1 */
         $socket1 = make(Socket::class, [
@@ -113,7 +119,6 @@ class SocketTest extends AbstractTestCase
         ]);
         $reflection = new ReflectionClass(Socket::class);
         $prop = $reflection->getProperty('broadcast');
-        $prop->setAccessible(true);
         $this->assertFalse($prop->getValue($socket1));
         $this->assertTrue($prop->getValue($socket1->broadcast));
     }

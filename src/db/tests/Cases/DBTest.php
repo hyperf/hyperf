@@ -12,8 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\DB\Cases;
 
 use Hyperf\DB\DB;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use ReflectionClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -31,7 +37,6 @@ class DBTest extends AbstractTestCase
 
         $ref = new ReflectionClass($db);
         $property = $ref->getProperty('poolName');
-        $property->setAccessible(true);
         $this->assertSame('default', $property->getValue($db));
         $this->assertSame('pdo', $property->getValue($db2));
     }

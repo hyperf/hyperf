@@ -26,6 +26,7 @@ use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
 use Hyperf\Serializer\SimpleNormalizer;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -35,6 +36,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void

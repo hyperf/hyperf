@@ -20,8 +20,9 @@ use Psr\EventDispatcher\ListenerProviderInterface;
 
 /**
  * @internal
- * @covers \Hyperf\Event\ConfigProvider
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Event\ConfigProvider::class)]
 class ConfigProviderTest extends TestCase
 {
     public function testInvoke()

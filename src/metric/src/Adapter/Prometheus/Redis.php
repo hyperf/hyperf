@@ -22,20 +22,9 @@ use RedisException;
 
 class Redis implements Adapter
 {
-    /**
-     * @deprecated since 3.1, use `$metricGatherKeySuffix` instead
-     */
-    public const PROMETHEUS_METRIC_KEYS_SUFFIX = '_METRIC_KEYS';
+    private static string $metricGatherKeySuffix = ':metric_keys';
 
-    /**
-     * @notice TODO: since 3.1, default value will be changed to ':metric_keys'
-     */
-    private static string $metricGatherKeySuffix = '_METRIC_KEYS';
-
-    /**
-     * @notice TODO: since 3.1, default value will be changed to 'prometheus:' and should be non static
-     */
-    private static string $prefix = 'PROMETHEUS_';
+    private static string $prefix = 'prometheus:';
 
     /**
      * @param \Redis $redis
@@ -350,12 +339,7 @@ LUA
 
     protected function toMetricKey(array $data): string
     {
-        // TODO: This is a hack, we should remove it since v3.1.
-        if (! str_ends_with(self::$prefix, ':')) {
-            $prefix = self::$prefix . ':';
-        }
-
-        return ($prefix ?? self::$prefix) . implode(':', [$data['type'] ?? '', $data['name'] ?? '']) . $this->getRedisTag($data['type'] ?? '');
+        return self::$prefix . implode(':', [$data['type'] ?? '', $data['name'] ?? '']) . $this->getRedisTag($data['type'] ?? '');
     }
 
     protected function getMetricGatherKey(string $metricType): string

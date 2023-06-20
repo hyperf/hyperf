@@ -13,6 +13,7 @@ namespace Hyperf\HttpServer;
 
 use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Router\Dispatched;
@@ -609,6 +610,6 @@ class Request implements RequestInterface
 
     protected function getRequest(): ServerRequestInterface
     {
-        return Context::get(ServerRequestInterface::class);
+        return RequestContext::get();
     }
 }

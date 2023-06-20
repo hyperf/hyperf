@@ -13,15 +13,17 @@ namespace Hyperf\RpcMultiplex;
 
 use Hyperf\Codec\Json;
 use Hyperf\Context\Context;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 class HttpMessageBuilder implements HttpMessageBuilderInterface
 {
@@ -29,7 +31,7 @@ class HttpMessageBuilder implements HttpMessageBuilderInterface
     {
     }
 
-    public function buildRequest(array $data): ServerRequestInterface
+    public function buildRequest(array $data): ServerRequestPlusInterface
     {
         $uri = $this->buildUri(
             $data[Constant::PATH] ?? '/',
@@ -43,19 +45,19 @@ class HttpMessageBuilder implements HttpMessageBuilderInterface
 
         $request = new Request('POST', $uri, ['Content-Type' => 'application/json'], new SwooleStream(Json::encode($parsedData)));
 
-        return $request->withParsedBody($parsedData);
+        return $request->setParsedBody($parsedData);
     }
 
-    public function buildResponse(ServerRequestInterface $request, array $data): ResponseInterface
+    public function buildResponse(ServerRequestInterface $request, array $data): ResponsePlusInterface
     {
         $packed = $this->packer->pack($data);
 
-        return $this->response()->withBody(new SwooleStream($packed));
+        return $this->response()->setBody(new SwooleStream($packed));
     }
 
-    public function persistToContext(ResponseInterface $response): ResponseInterface
+    public function persistToContext(ResponsePlusInterface $response): ResponsePlusInterface
     {
-        return Context::set(ResponseInterface::class, $response);
+        return ResponseContext::set($response);
     }
 
     protected function buildUri($path, $host, $port, $scheme = 'http'): UriInterface
@@ -68,8 +70,8 @@ class HttpMessageBuilder implements HttpMessageBuilderInterface
     /**
      * Get response instance from context.
      */
-    protected function response(): ResponseInterface
+    protected function response(): ResponsePlusInterface
     {
-        return Context::get(ResponseInterface::class);
+        return ResponseContext::get();
     }
 }

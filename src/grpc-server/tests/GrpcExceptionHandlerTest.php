@@ -22,6 +22,7 @@ use Hyperf\HttpMessage\Server\Response;
 use HyperfTest\GrpcServer\Stub\GrpcExceptionHandlerStub;
 use HyperfTest\GrpcServer\Stub\GrpcStatusExceptionHandlerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -29,6 +30,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class GrpcExceptionHandlerTest extends TestCase
 {
     public function testTransferToResponse200()

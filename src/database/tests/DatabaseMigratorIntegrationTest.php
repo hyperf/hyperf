@@ -25,6 +25,7 @@ use Hyperf\Database\Schema\Schema;
 use Hyperf\Stringable\Str;
 use Hyperf\Support\Filesystem\Filesystem;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Style\OutputStyle;
@@ -33,6 +34,7 @@ use Symfony\Component\Console\Style\OutputStyle;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabaseMigratorIntegrationTest extends TestCase
 {
     protected $migrator;

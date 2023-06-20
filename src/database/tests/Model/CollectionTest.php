@@ -13,12 +13,14 @@ namespace HyperfTest\Database\Model;
 
 use Hyperf\Database\Model\Collection;
 use HyperfTest\Database\Stubs\ModelStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CollectionTest extends TestCase
 {
     public function testMacroForCollection()

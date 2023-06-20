@@ -16,8 +16,9 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- * @covers \Hyperf\Logger\ConfigProvider
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Logger\ConfigProvider::class)]
 class ConfigProviderTest extends TestCase
 {
     public function testInvoke()

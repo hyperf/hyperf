@@ -20,7 +20,6 @@ use Hyperf\DB\DB;
 use Hyperf\DB\Frequency;
 use Hyperf\DB\PgSQL\PgSQLPool;
 use Hyperf\DB\Pool\MySQLPool;
-use Hyperf\DB\Pool\PDOPool;
 use Hyperf\DB\Pool\PoolFactory;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
@@ -33,7 +32,7 @@ use PHPUnit\Framework\TestCase;
  */
 abstract class AbstractTestCase extends TestCase
 {
-    protected $driver = 'pdo';
+    protected $driver = 'mysql';
 
     protected function tearDown(): void
     {
@@ -78,9 +77,6 @@ abstract class AbstractTestCase extends TestCase
                 ],
             ],
         ]));
-        $container->shouldReceive('make')->with(PDOPool::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new PDOPool(...array_values($args));
-        });
         $container->shouldReceive('make')->with(MySQLPool::class, Mockery::any())->andReturnUsing(function ($_, $args) {
             return new MySQLPool(...array_values($args));
         });

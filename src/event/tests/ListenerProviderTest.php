@@ -15,12 +15,14 @@ use Hyperf\Event\ListenerProvider;
 use HyperfTest\Event\Event\Alpha;
 use HyperfTest\Event\Event\Beta;
 use HyperfTest\Event\Listener\AlphaListener;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ListenerProviderTest extends TestCase
 {
     public function testListenNotExistEvent()

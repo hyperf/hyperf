@@ -37,6 +37,7 @@ use Hyperf\Testing\Client;
 use HyperfTest\Testing\Stub\Exception\Handler\FooExceptionHandler;
 use HyperfTest\Testing\Stub\FooController;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -44,6 +45,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ClientTest extends TestCase
 {
     public function testClientRequest()

@@ -14,12 +14,14 @@ namespace HyperfTest\Elasticsearch;
 use Elasticsearch\ClientBuilder;
 use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ClientFactoryTest extends TestCase
 {
     public function testClientBuilderFactoryCreate()

@@ -29,6 +29,7 @@ use Hyperf\Redis\RedisProxy;
 use HyperfTest\Redis\Stub\RedisPoolFailedStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RedisCluster;
 use RedisSentinel;
@@ -39,6 +40,11 @@ use function Hyperf\Coroutine\defer;
 use function Hyperf\Coroutine\go;
 use function Hyperf\Coroutine\parallel;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -93,7 +99,6 @@ class RedisTest extends TestCase
         $redis = $this->getRedis();
         $ref = new ReflectionClass($redis);
         $method = $ref->getMethod('getConnection');
-        $method->setAccessible(true);
 
         go(function () use ($chan, $redis, $method) {
             $id = null;
@@ -126,7 +131,6 @@ class RedisTest extends TestCase
 
         $chan->pop();
         $factory = $ref->getProperty('factory');
-        $factory->setAccessible(true);
         $factory = $factory->getValue($redis);
         $pool = $factory->getPool('default');
         $pool->flushAll();

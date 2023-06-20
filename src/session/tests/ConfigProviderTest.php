@@ -16,8 +16,9 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- * @covers \Hyperf\Session\ConfigProvider
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Session\ConfigProvider::class)]
 class ConfigProviderTest extends TestCase
 {
     public function testConfigProvider()

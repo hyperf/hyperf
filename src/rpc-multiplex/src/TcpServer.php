@@ -19,6 +19,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Response;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
@@ -33,9 +34,10 @@ use Multiplex\Contract\PackerInterface as PacketPacker;
 use Multiplex\Packet;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Coroutine\Server\Connection;
 use Swoole\Server as SwooleServer;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 use function Hyperf\Support\make;
 
@@ -82,8 +84,7 @@ class TcpServer extends Server
         Coroutine::create(function () use ($server, $fd, $reactorId, $data) {
             $packet = $this->packetPacker->unpack($data);
             if ($packet->isHeartbeat()) {
-                $response = new Response();
-                $this->send($server, $fd, $response->withContent(Heartbeat::PONG));
+                $this->send($server, $fd, (new Response())->setBody(new SwooleStream(Heartbeat::PONG)));
                 return;
             }
 
@@ -114,7 +115,7 @@ class TcpServer extends Server
         return new CoreMiddleware($this->container, $this->protocol, $this->messageBuilder, $this->serverName);
     }
 
-    protected function buildRequest(int $fd, int $reactorId, string $data): ServerRequestInterface
+    protected function buildRequest(int $fd, int $reactorId, string $data): ServerRequestPlusInterface
     {
         $parsed = $this->packer->unpack($data);
 
@@ -123,9 +124,9 @@ class TcpServer extends Server
         return $request->withAttribute('fd', $fd)->withAttribute('request_id', $parsed['id'] ?? null);
     }
 
-    protected function buildResponse(int $fd, $server): ResponseInterface
+    protected function buildResponse(int $fd, $server): ResponsePlusInterface
     {
-        return (new Response())->withAttribute('fd', $fd)->withAttribute('server', $server);
+        return (new Response())->setAttribute('fd', $fd)->setAttribute('server', $server);
     }
 
     protected function initProtocol()
