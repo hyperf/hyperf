@@ -64,7 +64,6 @@
         "nikic/fast-route": "^1.3",
         "nikic/php-parser": "^4.1",
         "opentracing/opentracing": "^1.0",
-        "pestphp/pest": "^2.8",
         "php-amqplib/php-amqplib": "^3.5",
         "php-di/phpdoc-reader": "^2.2",
         "phpspec/prophecy-phpunit": "^2.0",
@@ -427,10 +426,7 @@
     "prefer-stable": true,
     "config": {
         "optimize-autoloader": true,
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
+        "sort-packages": true
     },
     "extra": {
         "branch-alias": {},
@@ -520,16 +516,10 @@
                 "Hyperf\\WebSocketClient\\ConfigProvider",
                 "Hyperf\\WebSocketServer\\ConfigProvider"
             ]
-        },
-        "pest": {
-            "plugins": [
-                "Hyperf\\Testing\\Plugin\\Pest"
-            ]
         }
     },
     "bin": [],
     "scripts": {
-        "pest": "pest --coroutine --colors=always",
         "test": "./bin/co-phpunit --colors=always",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
         "license-check": "docheader check src/ test/",
