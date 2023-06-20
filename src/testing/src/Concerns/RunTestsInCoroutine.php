@@ -15,7 +15,7 @@ use Throwable;
 
 trait RunTestsInCoroutine
 {
-    protected bool $enableCoroutine = false;
+    protected bool $enableCoroutine = true;
 
     protected string $realTestName = '';
 
