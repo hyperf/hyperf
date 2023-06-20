@@ -18,6 +18,7 @@ use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use RuntimeException;
 
 trait QueriesRelationships
@@ -285,7 +286,7 @@ trait QueriesRelationships
             // Finally, we will make the proper column alias to the query and run this sub-select on
             // the query builder. Then, we will return the builder instance back to the developer
             // for further constraint chaining that needs to take place on the query as needed.
-            $alias = $alias ?? Str::snake(
+            $alias = $alias ?? StrCache::snake(
                 preg_replace('/[^[:alnum:][:space:]_]/u', '', "{$name} {$function} {$column}")
             );
 

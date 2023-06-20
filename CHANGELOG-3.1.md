@@ -28,6 +28,7 @@
 ## Optimized
 
 - Move Prometheus driver dependency to suggest.
+- [#5866](https://github.com/hyperf/hyperf/pull/5866) Use `StrCache` instead of `Str` in special cases.
 
 ## Removed
 
