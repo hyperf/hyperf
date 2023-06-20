@@ -5,7 +5,8 @@
 但由於 Hyperf 是一個協程框架，所以默認的 `phpunit/pest` 並不能很好的工作，因此我們提供了對應的協程腳本來進行適配，您可直接調用腳本或者使用對應的 composer 命令來運行。自動化測試沒有特定的組件，但是在 Hyperf 提供的骨架包裏都會有對應實現。
 
 ```shell
-composer require hyperf/testing
+composer require hyperf/testing --dev
+composer require friendsofhyperf/pest-plugin-hyperf --dev
 ```
 
 ```json

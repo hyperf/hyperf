@@ -22,6 +22,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     use Concerns\InteractsWithContainer;
     use Concerns\MakesHttpRequests;
+    use Concerns\RunTestsInCoroutine;
 
     protected function setUp(): void
     {

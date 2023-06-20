@@ -32,17 +32,9 @@
         "hyperf/utils": "~3.1.0",
         "symfony/http-foundation": "^5.4|^6.0"
     },
-    "suggest": {
-        "pestphp/pest": "For testing with Pest.(^2.8.0)"
-    },
     "extra": {
         "branch-alias": {
             "dev-master": "3.0-dev"
-        },
-        "pest": {
-            "plugins": [
-                "Hyperf\\Testing\\Plugin\\Pest"
-            ]
         }
     },
     "bin": [
