@@ -46,7 +46,7 @@ trait RunTestsInCoroutine
 
     final protected function runTest()
     {
-        if ($this->enableCoroutine) {
+        if (extension_loaded('swoole') && $this->enableCoroutine) {
             $this->realTestName = $this->getName();
             parent::setName('runTestsInCoroutine');
         }
