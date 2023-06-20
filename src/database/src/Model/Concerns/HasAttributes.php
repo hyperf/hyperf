@@ -24,6 +24,7 @@ use Hyperf\Contract\Synchronized;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use LogicException;
 
 use function Hyperf\Collection\collect;
@@ -165,7 +166,7 @@ trait HasAttributes
             // key so that the relation attribute is snake cased in this returned
             // array to the developers, making this consistent with attributes.
             if (static::$snakeAttributes) {
-                $key = Str::snake($key);
+                $key = StrCache::snake($key);
             }
 
             // If the relation value has been set, we will set it on this attributes
@@ -250,7 +251,7 @@ trait HasAttributes
      */
     public function hasGetMutator(string $key): bool
     {
-        return method_exists($this, 'get' . Str::studly($key) . 'Attribute');
+        return method_exists($this, 'get' . StrCache::studly($key) . 'Attribute');
     }
 
     /**
@@ -307,7 +308,7 @@ trait HasAttributes
      */
     public function hasSetMutator(string $key): bool
     {
-        return method_exists($this, 'set' . Str::studly($key) . 'Attribute');
+        return method_exists($this, 'set' . StrCache::studly($key) . 'Attribute');
     }
 
     /**
@@ -676,7 +677,7 @@ trait HasAttributes
     public static function cacheMutatedAttributes(string $class): void
     {
         static::$mutatorCache[$class] = collect(static::getMutatorMethods($class))->map(function ($match) {
-            return lcfirst(static::$snakeAttributes ? Str::snake($match) : $match);
+            return lcfirst(static::$snakeAttributes ? StrCache::snake($match) : $match);
         })->all();
     }
 
@@ -852,7 +853,7 @@ trait HasAttributes
      */
     protected function mutateAttribute(string $key, mixed $value)
     {
-        return $this->{'get' . Str::studly($key) . 'Attribute'}($value);
+        return $this->{'get' . StrCache::studly($key) . 'Attribute'}($value);
     }
 
     /**
@@ -977,7 +978,7 @@ trait HasAttributes
      */
     protected function setMutatedAttributeValue(string $key, mixed $value)
     {
-        return $this->{'set' . Str::studly($key) . 'Attribute'}($value);
+        return $this->{'set' . StrCache::studly($key) . 'Attribute'}($value);
     }
 
     /**

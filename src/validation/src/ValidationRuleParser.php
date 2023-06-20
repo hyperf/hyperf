@@ -14,6 +14,7 @@ namespace Hyperf\Validation;
 use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use Hyperf\Validation\Contract\Rule as RuleContract;
 use Hyperf\Validation\Rules\Exists;
 use Hyperf\Validation\Rules\Unique;
@@ -202,7 +203,7 @@ class ValidationRuleParser
      */
     protected static function parseArrayRule(array $rules): array
     {
-        return [Str::studly(trim((string) Arr::get($rules, 0))), array_slice($rules, 1)];
+        return [StrCache::studly(trim((string) Arr::get($rules, 0))), array_slice($rules, 1)];
     }
 
     /**
@@ -221,7 +222,7 @@ class ValidationRuleParser
             $parameters = static::parseParameters($rules, $parameter);
         }
 
-        return [Str::studly(trim($rules)), $parameters];
+        return [StrCache::studly(trim($rules)), $parameters];
     }
 
     /**

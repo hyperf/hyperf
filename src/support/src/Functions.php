@@ -15,6 +15,7 @@ use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use Throwable;
 
 /**
@@ -171,7 +172,7 @@ function class_uses_recursive($class)
  */
 function setter(string $property): string
 {
-    return 'set' . Str::studly($property);
+    return 'set' . StrCache::studly($property);
 }
 
 /**
@@ -179,7 +180,7 @@ function setter(string $property): string
  */
 function getter(string $property): string
 {
-    return 'get' . Str::studly($property);
+    return 'get' . StrCache::studly($property);
 }
 
 /**

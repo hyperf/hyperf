@@ -13,6 +13,7 @@ namespace Hyperf\Rpc\PathGenerator;
 
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 
 class PathGenerator implements PathGeneratorInterface
 {
@@ -20,7 +21,7 @@ class PathGenerator implements PathGeneratorInterface
     {
         $handledNamespace = explode('\\', $service);
         $handledNamespace = Str::replaceLast('Service', '', end($handledNamespace));
-        $path = Str::snake($handledNamespace);
+        $path = StrCache::snake($handledNamespace);
 
         if ($path[0] !== '/') {
             $path = '/' . $path;

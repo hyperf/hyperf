@@ -30,6 +30,7 @@ use Hyperf\Metric\Exception\InvalidArgumentException;
 use Hyperf\Metric\Exception\RuntimeException;
 use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use Hyperf\Support\Network;
 use Prometheus\CollectorRegistry;
 use Prometheus\Exception\MetricsRegistrationException;
@@ -171,7 +172,7 @@ class MetricFactory implements MetricFactoryInterface
     private function getNamespace(): string
     {
         $name = $this->config->get("metric.metric.{$this->name}.namespace");
-        return preg_replace('#[^a-zA-Z0-9:_]#', '_', Str::snake($name));
+        return preg_replace('#[^a-zA-Z0-9:_]#', '_', StrCache::snake($name));
     }
 
     private function getUri(string $address, string $job): string
