@@ -50,7 +50,7 @@ trait RunTestsInCoroutine
 
     final protected function runTest(): mixed
     {
-        if (extension_loaded('swoole') && $this->enableCoroutine) {
+        if (extension_loaded('swoole') && \Swoole\Coroutine::getCid() === -1 && $this->enableCoroutine) {
             $this->realTestName = $this->getName();
             parent::setName('runTestsInCoroutine');
         }
