@@ -14,7 +14,6 @@ namespace Hyperf\Validation;
 use Closure;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface;
-use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;

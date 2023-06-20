@@ -14,7 +14,6 @@ namespace Hyperf\Support;
 use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
 use Throwable;
 

@@ -22,7 +22,6 @@ use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
-use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
 use InfluxDB\Client;
 use InfluxDB\Database;
