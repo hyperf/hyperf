@@ -79,7 +79,7 @@ trait FormatsMessages
             return $attribute;
         }
 
-        return str_replace('_', ' ', Str::snake($attribute));
+        return str_replace('_', ' ', StrCache::snake($attribute));
     }
 
     /**
