@@ -167,3 +167,7 @@
 - [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支援 `支付寶/微信` 的支付元件，基於 [yansongda/pay](https://github.com/yansongda/pay) 實現，適配於 `Hyperf` 框架
 - [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch) 為 Hyperf Scout 提供的 meilisearch 客戶端
 - [vinchan/message-notify](https://github.com/VinchanGit/message-notify) Hyperf 異常監控報警通知元件(釘釘群機器人、飛書群機器人、郵件、QQ 頻道機器人、企業微信群機器人)
+
+## 工具
+
+- [pudongping/hyperf-throttle-requests](https://github.com/pudongping/hyperf-throttle-requests) 適配 Hyperf 框架嘅請求頻率限流器。功能類似於 Laravel 框架嘅 throttle 中介軟體。
