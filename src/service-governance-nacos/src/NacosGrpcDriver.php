@@ -32,6 +32,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
+use function Hyperf\Support\retry;
+
 class NacosGrpcDriver implements DriverInterface
 {
     protected Client $client;
@@ -103,14 +105,12 @@ class NacosGrpcDriver implements DriverInterface
             throw new RegisterInstanceException('Register instance failed. The response is ' . $res);
         }
 
-        var_dump(123);
         $res = $client->request(new ServiceQueryRequest(
             new NamingRequest($name, $groupName, $namespaceId),
             'DEFAULT',
             false,
             0
         ));
-        var_dump(123123);
 
         $this->serviceRegistered[$name] = true;
 
