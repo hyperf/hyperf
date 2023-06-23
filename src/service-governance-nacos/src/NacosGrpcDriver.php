@@ -18,6 +18,7 @@ use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Nacos\Exception\RequestException;
+use Hyperf\Nacos\Protobuf\ListenHandler\NamingPushRequestHandler;
 use Hyperf\Nacos\Protobuf\Message\Instance;
 use Hyperf\Nacos\Protobuf\Request\InstanceRequest;
 use Hyperf\Nacos\Protobuf\Request\NamingRequest;
@@ -49,6 +50,8 @@ class NacosGrpcDriver implements DriverInterface
     protected array $registerHeartbeat = [];
 
     private array $metadata = [];
+
+    private array $nodes = [];
 
     public function __construct(protected ContainerInterface $container)
     {
@@ -86,6 +89,7 @@ class NacosGrpcDriver implements DriverInterface
     {
         $namespaceId = $this->config->get('services.drivers.nacos.namespace_id');
         $groupName = $this->config->get('services.drivers.nacos.group_name');
+        $cluster = $this->config->get('services.drivers.nacos.cluster', 'DEFAULT');
         $ephemeral = (bool) $this->config->get('services.drivers.nacos.ephemeral');
         $this->setMetadata($name, $metadata);
 
@@ -105,9 +109,9 @@ class NacosGrpcDriver implements DriverInterface
             throw new RegisterInstanceException('Register instance failed. The response is ' . $res);
         }
 
-        $res = $client->request(new ServiceQueryRequest(
+        $client->request(new ServiceQueryRequest(
             new NamingRequest($name, $groupName, $namespaceId),
-            'DEFAULT',
+            $cluster,
             false,
             0
         ));
@@ -125,9 +129,13 @@ class NacosGrpcDriver implements DriverInterface
 
         $namespaceId = $this->config->get('services.drivers.nacos.namespace_id');
         $groupName = $this->config->get('services.drivers.nacos.group_name');
+        $cluster = $this->config->get('services.drivers.nacos.cluster', 'DEFAULT');
         $this->setMetadata($name, $metadata);
 
         $client = $this->client->grpc->get($namespaceId, 'naming');
+        $client->listenNaming($cluster, $groupName, $name, new NamingPushRequestHandler(function () {
+
+        }));
         /** @var SubscribeServiceResponse $response */
         $response = $client->request(new SubscribeServiceRequest(
             new NamingRequest(

@@ -35,7 +35,9 @@ use Hyperf\Nacos\Protobuf\Request\ServerCheckRequest;
 use Hyperf\Nacos\Protobuf\Response\ConfigChangeBatchListenResponse;
 use Hyperf\Nacos\Protobuf\Response\ConfigChangeNotifyRequest;
 use Hyperf\Nacos\Protobuf\Response\ConfigQueryResponse;
+use Hyperf\Nacos\Protobuf\Response\NotifySubscriberRequest;
 use Hyperf\Nacos\Protobuf\Response\Response;
+use Hyperf\Nacos\Protobuf\ServiceInfo;
 use Hyperf\Support\Network;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -60,6 +62,16 @@ class GrpcClient
      * @var array<string, ?ListenHandlerInterface>
      */
     protected array $configListenHandlers = [];
+
+    /**
+     * @var array<string, ServiceInfo>
+     */
+    protected array $namingListenContexts = [];
+
+    /**
+     * @var array<string, ?ListenHandlerInterface>
+     */
+    protected array $namingListenHandlers = [];
 
     protected int $streamId;
 
@@ -120,6 +132,13 @@ class GrpcClient
         $listenContext = new ListenContext($this->namespaceId, $group, $dataId, $md5);
         $this->configListenContexts[$listenContext->toKeyString()] = $listenContext;
         $this->configListenHandlers[$listenContext->toKeyString()] = $callback;
+    }
+
+    public function listenNaming(string $clusters, string $group, string $service, ListenHandlerInterface $callback)
+    {
+        $serviceInfo = new ServiceInfo($service, $group, $clusters);
+        $this->namingListenContexts[$serviceInfo->toKeyString()] = $serviceInfo;
+        $this->namingListenHandlers[$serviceInfo->toKeyString()] = $callback;
     }
 
     public function listen(): void
@@ -188,7 +207,6 @@ class GrpcClient
                 try {
                     $response = $client->recv($id, -1);
                     $response = Response::jsonDeSerialize($response->getBody());
-                    var_dump($response);
                     match (true) {
                         $response instanceof ConfigChangeNotifyRequest => $this->handleConfig(
                             $response->tenant,
@@ -196,6 +214,7 @@ class GrpcClient
                             $response->dataId,
                             $response
                         ),
+                        $response instanceof NotifySubscriberRequest => $this->configNaming(),
                     };
 
                     $this->listen();

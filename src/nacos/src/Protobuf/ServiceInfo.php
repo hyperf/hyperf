@@ -20,13 +20,13 @@ class ServiceInfo implements JsonDeSerializable, JsonSerializable
         public string $name,
         public string $groupName,
         public string $clusters,
-        public int $cacheMillis,
-        public array $hosts,
-        public int $lastRefTime,
-        public string $checksum,
-        public bool $allIPs,
-        public bool $reachProtectionThreshold,
-        public bool $valid,
+        public int $cacheMillis = 0,
+        public array $hosts = [],
+        public int $lastRefTime = 0,
+        public string $checksum = '',
+        public bool $allIPs = false,
+        public bool $reachProtectionThreshold = false,
+        public bool $valid = false,
     ) {
     }
 
@@ -64,5 +64,15 @@ class ServiceInfo implements JsonDeSerializable, JsonSerializable
             'reachProtectionThreshold' => $this->reachProtectionThreshold,
             'valid' => $this->valid,
         ];
+    }
+
+    public function toKeyString(): string
+    {
+        return self::getKeyString($this->clusters, $this->groupName, $this->name);
+    }
+
+    public static function getKeyString(string $clusters, string $group, string $service): string
+    {
+        return sprintf('%s#%s@@%s', $clusters, $group, $service);
     }
 }

@@ -167,7 +167,6 @@ abstract class AbstractServiceClient
      */
     protected function createNodes(): array
     {
-        $refreshCallback = null;
         $consumer = $this->getConsumerConfig();
 
         $registryProtocol = $consumer['registry']['protocol'] ?? null;
@@ -197,7 +196,7 @@ abstract class AbstractServiceClient
                     $nodes[] = new Node($item['host'], $item['port'], $item['weight'] ?? 0, $item['path_prefix'] ?? '');
                 }
             }
-            return [$nodes, $refreshCallback];
+            return [$nodes, null];
         }
 
         throw new InvalidArgumentException('Config of registry or nodes missing.');
