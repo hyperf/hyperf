@@ -11,8 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Protobuf\Response;
 
-use Hyperf\Nacos\Protobuf\Request\NotifySubscriberRequest;
-
 class Mapping
 {
     public static $mappings = [

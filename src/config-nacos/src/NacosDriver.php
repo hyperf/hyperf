@@ -48,7 +48,7 @@ class NacosDriver extends AbstractDriver
             $tenant = $item['tenant'] ?? '';
             $type = $item['type'] ?? null;
 
-            $client = $application->grpc->get($tenant);
+            $client = $application->grpc->get($tenant, 'config');
             $client->listenConfig($group, $dataId, new ConfigChangeNotifyRequestHandler(function (ConfigQueryResponse $response) use ($key, $type) {
                 $this->updateConfig([
                     $key => $this->client->decode($response->getContent(), $type),

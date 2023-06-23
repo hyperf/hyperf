@@ -93,7 +93,7 @@ class NacosGrpcDriver implements DriverInterface
             throw new InvalidArgumentException('nacos grpc driver only support ephemeral.');
         }
 
-        $client = $this->client->grpc->get($namespaceId);
+        $client = $this->client->grpc->get($namespaceId, 'naming');
 
         $res = $client->request(new InstanceRequest(
             new NamingRequest($name, $groupName, $namespaceId),
@@ -127,7 +127,7 @@ class NacosGrpcDriver implements DriverInterface
         $groupName = $this->config->get('services.drivers.nacos.group_name');
         $this->setMetadata($name, $metadata);
 
-        $client = $this->client->grpc->get($namespaceId);
+        $client = $this->client->grpc->get($namespaceId, 'naming');
         /** @var SubscribeServiceResponse $response */
         $response = $client->request(new SubscribeServiceRequest(
             new NamingRequest(

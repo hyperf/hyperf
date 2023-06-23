@@ -9,16 +9,22 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos\Protobuf\Request;
+namespace Hyperf\Nacos\Protobuf\Response;
 
-use Hyperf\Nacos\Protobuf\Response\Response;
+use Hyperf\Nacos\Protobuf\ServiceInfo;
 use JsonSerializable;
 
 class NotifySubscriberRequest extends Response implements JsonSerializable
 {
+    public string $module;
+
+    public ServiceInfo $serviceInfo;
+
     public function __construct(private array $json)
     {
-        var_dump($json);
+        $this->requestId = $json['requestId'];
+        $this->module = $json['module'];
+        $this->serviceInfo = ServiceInfo::jsonDeSerialize($this->json['serviceInfo']);
     }
 
     public function jsonSerialize(): mixed

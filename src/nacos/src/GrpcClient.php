@@ -67,7 +67,8 @@ class GrpcClient
         protected Application $app,
         protected Config $config,
         protected ContainerInterface $container,
-        protected string $namespaceId = ''
+        protected string $namespaceId = '',
+        protected string $module = 'config',
     ) {
         if ($this->container->has(StdoutLoggerInterface::class)) {
             $this->logger = $this->container->get(StdoutLoggerInterface::class);
@@ -204,7 +205,7 @@ class GrpcClient
             }
         });
 
-        $request = new ConnectionSetupRequest($this->namespaceId);
+        $request = new ConnectionSetupRequest($this->namespaceId, $this->module);
         $this->write($id, $request);
         sleep(1);
 
