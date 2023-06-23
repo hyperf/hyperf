@@ -13,9 +13,9 @@ namespace Hyperf\ViewEngine\Contract;
 
 use Countable;
 use Exception;
+use Hyperf\Collection\Collection;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
-use Hyperf\Utils\Collection;
 use InvalidArgumentException;
 use IteratorAggregate;
 use JsonSerializable;

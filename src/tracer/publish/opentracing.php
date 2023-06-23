@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 use Zipkin\Samplers\BinarySampler;
 
+use function Hyperf\Support\env;
+
 return [
     'default' => env('TRACER_DRIVER', 'zipkin'),
     'enable' => [

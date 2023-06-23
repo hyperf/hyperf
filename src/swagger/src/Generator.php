@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Swagger;
 
+use Hyperf\Codec\Json;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Swagger\Processor\BuildPathsProcessor;
-use Hyperf\Utils\Codec\Json;
 use OpenApi\Processors;
 
 class Generator

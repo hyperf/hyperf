@@ -11,9 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Coordinator;
 
-use Closure;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Throwable;
+
+use function Hyperf\Coroutine\go;
 
 class Timer
 {
@@ -31,18 +32,18 @@ class Timer
     {
     }
 
-    public function after(float $timeout, Closure $closure, string $identifier = Constants::WORKER_EXIT): int
+    public function after(float $timeout, callable $closure, string $identifier = Constants::WORKER_EXIT): int
     {
         $id = ++$this->id;
         $this->closures[$id] = true;
         go(function () use ($timeout, $closure, $identifier, $id) {
             try {
                 ++Timer::$count;
-                if ($timeout > 0) {
-                    $isClosing = CoordinatorManager::until($identifier)->yield($timeout);
-                } else {
-                    $isClosing = CoordinatorManager::until($identifier)->isClosing();
-                }
+                $isClosing = match (true) {
+                    $timeout > 0 => CoordinatorManager::until($identifier)->yield($timeout), // Run after $timeout seconds.
+                    $timeout == 0 => CoordinatorManager::until($identifier)->isClosing(), // Run immediately.
+                    default => CoordinatorManager::until($identifier)->yield(), // Run until $identifier resume.
+                };
                 if (isset($this->closures[$id])) {
                     $closure($isClosing);
                 }
@@ -54,7 +55,7 @@ class Timer
         return $id;
     }
 
-    public function tick(float $timeout, Closure $closure, string $identifier = Constants::WORKER_EXIT): int
+    public function tick(float $timeout, callable $closure, string $identifier = Constants::WORKER_EXIT): int
     {
         $id = ++$this->id;
         $this->closures[$id] = true;
@@ -90,6 +91,11 @@ class Timer
             }
         });
         return $id;
+    }
+
+    public function until(callable $closure, string $identifier = Constants::WORKER_EXIT): int
+    {
+        return $this->after(-1, $closure, $identifier);
     }
 
     public function clear(int $id): void

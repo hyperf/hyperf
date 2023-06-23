@@ -413,10 +413,10 @@ class IndexController
 }
 ```   
 
-In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Utils\ApplicationContext::getContaienr()` method to obtain the `Container` object.
+In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Context\ApplicationContext::getContaienr()` method to obtain the `Container` object.
 
 ```php
-$container = \Hyperf\Utils\ApplicationContext::getContainer();
+$container = \Hyperf\Context\ApplicationContext::getContainer();
 ```
 
 ## Cautions

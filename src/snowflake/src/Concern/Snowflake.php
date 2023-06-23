@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Snowflake\Concern;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Snowflake\IdGeneratorInterface;
-use Hyperf\Utils\ApplicationContext;
 
 trait Snowflake
 {

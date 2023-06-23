@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Concern;
 
 use Closure;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Contract\ViewInterface;
 

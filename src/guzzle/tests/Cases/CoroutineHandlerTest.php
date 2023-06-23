@@ -20,15 +20,16 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\TransferStats;
 use Hyperf\Guzzle\CoroutineHandler;
-use Hyperf\Utils\Codec\Json;
 use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CoroutineHandlerTest extends TestCase
 {
     public function testCreatesCurlErrors()
@@ -330,7 +331,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $data = Json::decode((string) $res->getBody());
+        $data = json_decode((string) $res->getBody(), true);
         $this->assertArrayNotHasKey('Content-Length', $data['headers']);
         $this->assertArrayNotHasKey('Expect', $data['headers']);
 
@@ -349,7 +350,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $data = Json::decode((string) $res->getBody());
+        $data = json_decode((string) $res->getBody(), true);
         $this->assertArrayHasKey('Content-Length', $data['headers']);
         $this->assertArrayHasKey('Expect', $data['headers']);
     }

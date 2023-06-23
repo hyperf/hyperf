@@ -14,6 +14,8 @@ namespace Hyperf\Di\Aop;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 
+use function Hyperf\Support\value;
+
 class Aspect
 {
     /**

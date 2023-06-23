@@ -13,12 +13,16 @@ namespace HyperfTest\Snowflake;
 
 use Hyperf\Snowflake\Configuration;
 use Hyperf\Snowflake\MetaGenerator;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MetaGeneratorTest extends TestCase
 {
     public function testGenerate()

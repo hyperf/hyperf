@@ -11,13 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Scout;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Model\Builder as EloquentBuilder;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Scope;
 use Hyperf\Scout\Event\ModelsFlushed;
 use Hyperf\Scout\Event\ModelsImported;
-use Hyperf\Utils\ApplicationContext;
 use Psr\EventDispatcher\EventDispatcherInterface;
+
+use function Hyperf\Config\config;
 
 class SearchableScope implements Scope
 {

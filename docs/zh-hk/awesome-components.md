@@ -1,7 +1,7 @@
 # 協程組件庫
 
 所有官方提供的組件庫均已進行協程化處理，可安全地在 Hyperf 內或其它協程框架內使用，基於 Hyperf 的開放性和可擴展性，社區可對此開發或適配各種各樣的組件，得益於此，Hyperf 將存在着無限的可能性。
-本頁將收錄各個適配了 Hyperf 的協程組件 和 已經經過驗證可安全地用於協程下的常用庫，以便您快速的從中選擇合適的組件完成您的需求。
+本頁將收錄各個適配了 Hyperf 的協程組件和已經經過驗證可安全地用於協程下的常用庫，以便您快速的從中選擇合適的組件完成您的需求。
 
 > 組件順序以收錄時間排序
 
@@ -18,6 +18,7 @@
 ## 路由
 
 - [nikic/fastroute](https://github.com/nikic/FastRoute) 一個常用的高速路由
+- [lazychanger/urlrewrite](https://github.com/lazychanger/urlrewrite) 一個基於 PSR- 7 與 [nikic/fastroute](https://github.com/nikic/FastRoute) 相同路由規則的 URL 重寫工具
 
 ## 事件
 
@@ -42,7 +43,7 @@
 ## 依賴注入容器
 
 - [hyperf/di](https://github.com/hyperf/di) Hyperf 官方提供的支持註解及 AOP 的依賴注入容器
-- [hyperf/pimple](https://github.com/hyperf-cloud/pimple-integration) 基於 `pimple/pimple` 實現的輕量級符合 `PSR11` 規範的容器組件。可以減少其他框架使用 `Hyperf` 組件時的成本。
+- [hyperf/pimple](https://github.com/hyperf-cloud/pimple-integration) 基於 `pimple/pimple` 實現的輕量級符合 `PSR11` 規範的容器組件。可以減少其他框架使用 `Hyperf` 組件時的成本
 
 ## 服務
 
@@ -63,6 +64,8 @@
 - [hyperf/websocket-client](https://github.com/hyperf/websocket-client) Hyperf 官方提供的 WebSocket 協程客户端
 - [hyperf/cache](https://github.com/hyperf/cache) Hyperf 官方提供的基於 PSR-16 的緩存協程客户端，支持註解的使用方式
 - [chungou/elasticsearch](https://github.com/kaychem/hyperf-elasticsearch) 一個簡單的 Elasticsearch 構造器
+- [friendsofhyperf/http-client](https://github.com/friendsofhyperf/http-client) 基於 Hyperf 的 Guzzle HTTP 協程客户端
+- [friendsofhyperf/openai-client](https://github.com/friendsofhyperf/openai-client) 基於 Hyperf 的 OpenAI 客户端
 
 ## 消息隊列
 
@@ -122,7 +125,7 @@
 
 - [hyperf/swoole-tracker](https://github.com/hyperf/swoole-tracker) Hyperf 官方提供的對接 Swoole Tracker 的組件，提供阻塞分析、性能分析、內存泄漏分析、運行狀態及調用統計等功能
 - [hyperf/task](https://github.com/hyperf/task) Hyperf 官方提供的 Task 組件，對 Swoole 的 Task 機制進行了封裝及抽象，提供便捷的註解用法
-- [hyperf/gotask](https://github.com/hyperf/gotask) GoTask 通過 Swoole 進程管理功能啓動 Go 進程作為 Swoole 主進程邊車(Sidecar)，利用進程通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker。
+- [hyperf/gotask](https://github.com/hyperf/gotask) GoTask 通過 Swoole 進程管理功能啓動 Go 進程作為 Swoole 主進程邊車(Sidecar)，利用進程通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker
 
 ## 開發調試
 
@@ -139,20 +142,28 @@
 - [hyperf-ext/auth](https://github.com/hyperf-ext/auth) 移植自 `illuminate/auth`，基本完整的實現了 Laravel Auth 的功能特性
 - [donjan-deng/hyperf-casbin](https://github.com/donjan-deng/hyperf-casbin) 適配於 Hyperf 的開源訪問控制框架 [Casbin](https://casbin.org/docs/zh-CN/overview)
 
+## 測試
+
+- [hyperf/testing](https://github.com/hyperf/testing) Hyperf 官方提供的單元測試組件
+- [friendsofhyperf/pest-plugin-hyperf](https://github.com/friendsofhyperf/pest-plugin-hyperf) 適配於 Hyperf 的 [Pest](https://pestphp.com/) 插件，為 Pest 提供協程環境支持
+
 ## 分佈式鎖
 
-- [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根據 Laravel 的 lock 組件改寫，適配於 Hyperf 框架。
+- [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根據 Laravel 的 lock 組件改寫，適配於 Hyperf 框架
 
 ## 分佈式事務
 
 - [dtm-php/dtm-client](https://github.com/dtm-php/dtm-client) 支持 Hyperf 的 dtm 分佈式事務客户端組件
 
+## 註解配置
+
+- [hyperf-helper/dependency](https://github.com/lazychanger/hyperf-helper-dependency) 使用註解快速的配置依賴關係，並且支持依賴優先級
+
 ## 第三方 SDK
 
 - [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 協程的支付寶/微信支付 SDK
-- [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 協程的第三方登錄授權 SDK（QQ、微信、微博、Github、Gitee 等）
+- [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 協程的第三方登錄授權 SDK（QQ、微信、微博、GitHub、Gitee 等）
 - [w7corp/wechat](zh-hk/sdks/wechat) EasyWeChat，一個流行的非官方微信 SDK
-- [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 協程環境下的可用的 PHPMailer
-- [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支持 `支付寶/微信` 的支付組件，基於 [yansongda/pay](https://github.com/yansongda/pay) 實現，適配於 `Hyperf` 框架。
+- [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支持 `支付寶/微信` 的支付組件，基於 [yansongda/pay](https://github.com/yansongda/pay) 實現，適配於 `Hyperf` 框架
 - [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch) 為 Hyperf Scout 提供的 meilisearch 客户端
 - [vinchan/message-notify](https://github.com/VinchanGit/message-notify) Hyperf 異常監控報警通知組件(釘釘羣機器人、飛書羣機器人、郵件、QQ 頻道機器人、企業微信羣機器人)

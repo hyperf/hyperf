@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Ast;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\Collection;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\NodeTraverser;

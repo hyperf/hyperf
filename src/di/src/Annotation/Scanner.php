@@ -17,8 +17,8 @@ use Hyperf\Di\Exception\DirectoryNotExistException;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\ScanHandler\ScanHandlerInterface;
-use Hyperf\Utils\Composer;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Composer;
+use Hyperf\Support\Filesystem\Filesystem;
 use ReflectionClass;
 
 class Scanner

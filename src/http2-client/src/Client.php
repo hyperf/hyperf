@@ -13,6 +13,7 @@ namespace Hyperf\Http2Client;
 
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
 use Hyperf\Engine\Contract\Http\V2\ClientInterface as HTTP2ClientInterface;
 use Hyperf\Engine\Contract\Http\V2\RequestInterface as HTTP2RequestInterface;
@@ -24,12 +25,13 @@ use Hyperf\Http2Client\Exception\ClientClosedException;
 use Hyperf\Http2Client\Exception\StreamLostException;
 use Hyperf\Http2Client\Exception\TimeoutException;
 use Hyperf\HttpMessage\Base\Response;
-use Hyperf\Utils\Coroutine;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
+
+use function Hyperf\Coroutine\go;
 
 class Client implements ClientInterface
 {

@@ -13,7 +13,7 @@ namespace HyperfTest\HttpServer\Stub;
 
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpServer\CoreMiddleware;
-use Psr\Http\Message\ResponseInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
 class CoreMiddlewareStub extends CoreMiddleware
 {
@@ -22,7 +22,7 @@ class CoreMiddlewareStub extends CoreMiddleware
         return parent::parseMethodParameters($controller, $action, $arguments);
     }
 
-    protected function response(): ResponseInterface
+    protected function response(): ResponsePlusInterface
     {
         return new Response();
     }

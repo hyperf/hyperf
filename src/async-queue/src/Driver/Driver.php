@@ -17,15 +17,17 @@ use Hyperf\AsyncQueue\Event\FailedHandle;
 use Hyperf\AsyncQueue\Event\QueueLength;
 use Hyperf\AsyncQueue\Event\RetryHandle;
 use Hyperf\AsyncQueue\MessageInterface;
+use Hyperf\Codec\Packer\PhpSerializerPacker;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coroutine\Concurrent;
 use Hyperf\Process\ProcessManager;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Coroutine\Concurrent;
-use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;
+
+use function Hyperf\Coroutine\parallel;
 
 abstract class Driver implements DriverInterface
 {

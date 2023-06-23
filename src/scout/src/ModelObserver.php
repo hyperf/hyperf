@@ -19,6 +19,9 @@ use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\SoftDeletes;
 
+use function Hyperf\Config\config;
+use function Hyperf\Support\class_uses_recursive;
+
 class ModelObserver
 {
     /**

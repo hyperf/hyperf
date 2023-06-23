@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Scout\Console;
 
 use Hyperf\Command\Command;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Scout\Event\ModelsImported;
-use Hyperf\Utils\ApplicationContext;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;

@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Compiler\Concern;
 
+use Hyperf\ViewEngine\Exception\ViewCompilationException;
+
 trait CompilesLoops
 {
     /**
@@ -21,11 +23,15 @@ trait CompilesLoops
     /**
      * Compile the for-else statements into valid PHP.
      */
-    protected function compileForelse(string $expression): string
+    protected function compileForelse(?string $expression): string
     {
         $empty = '$__empty_' . ++$this->forElseCounter;
 
-        preg_match('/\( *(.*) +as *(.*)\)$/is', $expression, $matches);
+        preg_match('/\( *(.+) +as +(.+)\)$/is', $expression ?? '', $matches);
+
+        if (count($matches) === 0) {
+            throw new ViewCompilationException('Malformed @forelse statement.');
+        }
 
         $iteratee = trim($matches[1]);
 
@@ -41,7 +47,7 @@ trait CompilesLoops
     /**
      * Compile the for-else-empty and empty statements into valid PHP.
      */
-    protected function compileEmpty(string $expression): string
+    protected function compileEmpty(?string $expression): string
     {
         if ($expression) {
             return "<?php if(empty{$expression}): ?>";
@@ -78,10 +84,15 @@ trait CompilesLoops
 
     /**
      * Compile the for-each statements into valid PHP.
+     * @throws ViewCompilationException
      */
-    protected function compileForeach(string $expression): string
+    protected function compileForeach(?string $expression): string
     {
-        preg_match('/\( *(.*) +as *(.*)\)$/is', $expression, $matches);
+        preg_match('/\( *(.+) +as +(.*)\)$/is', $expression ?? '', $matches);
+
+        if (count($matches) === 0) {
+            throw new ViewCompilationException('Malformed @foreach statement.');
+        }
 
         $iteratee = trim($matches[1]);
 
@@ -97,7 +108,7 @@ trait CompilesLoops
     /**
      * Compile the break statements into valid PHP.
      */
-    protected function compileBreak(string $expression): string
+    protected function compileBreak(?string $expression): string
     {
         if ($expression) {
             preg_match('/\(\s*(-?\d+)\s*\)$/', $expression, $matches);

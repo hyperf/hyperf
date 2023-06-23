@@ -85,15 +85,15 @@ $db->connect($config, function ($db, $r) {
 
 ### 建立一個協程
 
-只需透過 `co(callable $callable)` 或 `go(callable $callable)` 函式或 `Hyperf\Utils\Coroutine::create(callable $callable)` 即可建立一個協程，協程內可以使用協程相關的方法和客戶端。
+只需透過 `co(callable $callable)` 或 `go(callable $callable)` 函式或 `Hyperf\Coroutine\Coroutine::create(callable $callable)` 即可建立一個協程，協程內可以使用協程相關的方法和客戶端。
 
 ### 判斷當前是否處於協程環境內
 
-在一些情況下我們希望判斷一些當前是否運行於協程環境內，對於一些相容協程環境與非協程環境的程式碼來說會作為一個判斷的依據，我們可以透過 `Hyperf\Utils\Coroutine::inCoroutine(): bool` 方法來得到結果。
+在一些情況下我們希望判斷一些當前是否運行於協程環境內，對於一些相容協程環境與非協程環境的程式碼來說會作為一個判斷的依據，我們可以透過 `Hyperf\Coroutine\Coroutine::inCoroutine(): bool` 方法來得到結果。
 
 ### 獲得當前協程的 ID
 
-在一些情況下，我們需要根據 `協程 ID` 去做一些邏輯，比如 `協程上下文` 之類的邏輯，可以透過 `Hyperf\Utils\Coroutine::id(): int` 獲得當前的 `協程 ID`，如不處於協程環境下，會返回 `-1`。
+在一些情況下，我們需要根據 `協程 ID` 去做一些邏輯，比如 `協程上下文` 之類的邏輯，可以透過 `Hyperf\Coroutine\Coroutine::id(): int` 獲得當前的 `協程 ID`，如不處於協程環境下，會返回 `-1`。
 
 ### Channel 通道
 
@@ -155,9 +155,9 @@ $wg->wait();
 
 ```php
 <?php
-use Hyperf\Utils\Exception\ParallelExecutionException;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Parallel;
+use Hyperf\Coroutine\Exception\ParallelExecutionException;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Parallel;
 
 $parallel = new Parallel();
 $parallel->add(function () {
@@ -184,7 +184,7 @@ try{
 
 ```php
 <?php
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 
 // 傳遞的陣列引數您也可以帶上 key 便於區分子協程，返回的結果也會根據 key 返回對應的結果
 $result = parallel([
@@ -206,9 +206,9 @@ $result = parallel([
 當我們新增到 `Parallel` 裡的任務有很多時，假設都是一些請求任務，那麼一瞬間發出全部請求很有可能會導致對端服務因為一瞬間接收到了大量的請求而處理不過來，有宕機的風險，所以需要對對端進行適當的保護，但我們又希望可以透過 `Parallel` 機制來加速這些請求的耗時，那麼可以透過在例項化 `Parallel` 物件時傳遞第一個引數，來設定最大執行的協程數，比如我們希望最大設定的協程數為 `5` ，也就意味著 `Parallel` 裡最多隻會有 `5` 個協程在執行，只有當 `5` 個裡有協程完成結束後，後續的協程才會繼續啟動，直至所有協程完成任務，示例程式碼如下：
 
 ```php
-use Hyperf\Utils\Exception\ParallelExecutionException;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Parallel;
+use Hyperf\Coroutine\Exception\ParallelExecutionException;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Parallel;
 
 $parallel = new Parallel(5);
 for ($i = 0; $i < 20; $i++) {
@@ -228,14 +228,14 @@ try{
 
 ### Concurrent 協程執行控制
 
-`Hyperf\Utils\Coroutine\Concurrent` 基於 `Swoole\Coroutine\Channel` 實現，用來控制一個程式碼塊內同時執行的最大協程數量的特性。
+`Hyperf\Coroutine\Concurrent` 基於 `Swoole\Coroutine\Channel` 實現，用來控制一個程式碼塊內同時執行的最大協程數量的特性。
 
 以下樣例，當同時執行 `10` 個子協程時，會在迴圈中阻塞，但只會阻塞當前協程，直到釋放出一個位置後，迴圈繼續執行下一個子協程。
 
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine\Concurrent;
+use Hyperf\Coroutine\Concurrent;
 
 $concurrent = new Concurrent(10);
 
@@ -248,7 +248,7 @@ for ($i = 0; $i < 15; ++$i) {
 
 ### 協程上下文
 
-由於同一個程序內協程間是記憶體共享的，但協程的執行/切換是非順序的，也就意味著我們很難掌控當前的協程是哪一個**（事實上可以，但通常沒人這麼幹）**，所以我們需要在發生協程切換時能夠同時切換對應的上下文。   
+由於同一個程序內協程間是記憶體共享的，但協程的執行/切換是非順序的，也就意味著我們很難掌控當前的協程是哪一個**（事實上可以，但通常沒人這麼幹）**，所以我們需要在發生協程切換時能夠同時切換對應的上下文。
 在 `Hyperf` 裡實現協程的上下文管理將非常簡單，基於 `Hyperf\Context\Context` 類的 `set(string $id, $value)`、`get(string $id, $default = null)`、`has(string $id)`、`override(string $id, \Closure $closure)` 靜態方法即可完成上下文資料的管理，透過這些方法設定和獲取的值，都僅限於當前的協程，在協程結束時，對應的上下文也會自動跟隨釋放掉，無需手動管理，無需擔憂記憶體洩漏的風險。
 
 #### Hyperf\Context\Context::set()

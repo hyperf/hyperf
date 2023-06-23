@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Seeders;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolverInterface as Resolver;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Schema\Grammars\Grammar;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Seed

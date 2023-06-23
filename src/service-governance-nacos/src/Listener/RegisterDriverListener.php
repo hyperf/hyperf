@@ -18,6 +18,8 @@ use Hyperf\ServiceGovernance\DriverManager;
 use Hyperf\ServiceGovernanceNacos\NacosDriver;
 use Hyperf\ServiceGovernanceNacos\NacosGrpcDriver;
 
+use function Hyperf\Support\make;
+
 class RegisterDriverListener implements ListenerInterface
 {
     public function __construct(protected DriverManager $driverManager, protected ConfigInterface $config)

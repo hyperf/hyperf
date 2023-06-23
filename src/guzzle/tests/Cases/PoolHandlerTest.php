@@ -12,22 +12,23 @@ declare(strict_types=1);
 namespace HyperfTest\Guzzle\Cases;
 
 use GuzzleHttp\Client;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Pool\SimplePool\Connection;
 use Hyperf\Pool\SimplePool\Pool;
 use Hyperf\Pool\SimplePool\PoolFactory;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Codec\Json;
 use HyperfTest\Guzzle\Stub\PoolHandlerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PoolHandlerTest extends TestCase
 {
     protected $id = 0;
@@ -54,7 +55,7 @@ class PoolHandlerTest extends TestCase
 
         $res = $client->get('/stats?format=json');
         $this->assertSame(200, $res->getStatusCode());
-        $this->assertIsArray(Json::decode((string) $res->getBody()));
+        $this->assertIsArray(json_decode((string) $res->getBody(), true));
         $this->assertSame(1, $handler->count);
         $client->get('/stats?format=json');
         $this->assertSame(1, $handler->count);

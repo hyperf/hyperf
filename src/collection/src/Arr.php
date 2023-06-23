@@ -269,6 +269,34 @@ class Arr
     }
 
     /**
+     * Determine if any of the keys exist in an array using "dot" notation.
+     */
+    public static function hasAny(array|ArrayAccess $array, int|string|null|array $keys): bool
+    {
+        if (is_null($keys)) {
+            return false;
+        }
+
+        $keys = (array) $keys;
+
+        if (! $array) {
+            return false;
+        }
+
+        if ($keys === []) {
+            return false;
+        }
+
+        foreach ($keys as $key) {
+            if (static::has($array, $key)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Determines if an array is associative.
      * An array is "associative" if it doesn't have sequential numerical keys beginning with zero.
      */
@@ -276,6 +304,35 @@ class Arr
     {
         $keys = array_keys($array);
         return array_keys($keys) !== $keys;
+    }
+
+    /**
+     * Run an associative map over each of the items.
+     *
+     * The callback should return an associative array with a single key/value pair.
+     *
+     * @template TKey
+     * @template TValue
+     * @template TMapWithKeysKey of array-key
+     * @template TMapWithKeysValue
+     *
+     * @param array<TKey, TValue> $array
+     * @param callable(TValue, TKey): array<TMapWithKeysKey, TMapWithKeysValue> $callback
+     * @return array
+     */
+    public static function mapWithKeys(array $array, callable $callback)
+    {
+        $result = [];
+
+        foreach ($array as $key => $value) {
+            $assoc = $callback($value, $key);
+
+            foreach ($assoc as $mapKey => $mapValue) {
+                $result[$mapKey] = $mapValue;
+            }
+        }
+
+        return $result;
     }
 
     /**

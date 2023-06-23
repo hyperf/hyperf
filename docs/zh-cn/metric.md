@@ -393,7 +393,7 @@ return [
 use Hyperf\HttpServer\Router\Router;
 
 Router::get('/metrics', function(){
-    $registry = Hyperf\Utils\ApplicationContext::getContainer()->get(Prometheus\CollectorRegistry::class);
+    $registry = Hyperf\Context\ApplicationContext::getContainer()->get(Prometheus\CollectorRegistry::class);
     $renderer = new Prometheus\RenderTextFormat();
     return $renderer->render($registry->getMetricFamilySamples());
 });

@@ -1,0 +1,33 @@
+name: Release Repos
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Input your tag'
+        required: true
+        default: ''
+
+jobs:
+  release:
+    if: github.repository == 'hyperf/hyperf'
+    runs-on: ubuntu-latest
+    env:
+      SSH_PRIVATE_KEY: ${{ secrets.SPLIT_PRIVATE_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Private Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+      - name: Split And Push
+        run: |
+          git config pull.rebase true
+          git config --global user.email "group@hyperf.io"
+          git config --global user.name "Hyperf Developers"
+          ./bin/release.sh ${{ github.event.inputs.tag }}

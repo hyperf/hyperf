@@ -11,11 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\ExceptionHandler;
 
-use Hyperf\Context\Context;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Dispatcher\AbstractDispatcher;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 class ExceptionHandlerDispatcher extends AbstractDispatcher
@@ -31,7 +30,7 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
          * @param string[] $handlers
          */
         [$throwable, $handlers] = $params;
-        $response = Context::get(ResponseInterface::class);
+        $response = ResponseContext::get();
 
         foreach ($handlers as $handler) {
             if (! $this->container->has($handler)) {

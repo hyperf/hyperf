@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Paginator;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Di\Container;
 use Hyperf\Framework\Event\BootApplication;
@@ -19,15 +20,18 @@ use Hyperf\HttpServer\Request;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Listener\PageResolverListener;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
+
+use function Hyperf\Support\value;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PageResolverListenerTest extends TestCase
 {
     protected function setUp(): void

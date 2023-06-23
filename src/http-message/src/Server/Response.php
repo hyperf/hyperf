@@ -59,7 +59,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
      * Returns an instance with specified trailer.
      * @param string $value
      */
-    public function withTrailer(string $key, $value): static
+    public function withTrailer(string $key, mixed $value): static
     {
         $new = clone $this;
         $new->trailers[$key] = $value;
@@ -69,7 +69,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
     /**
      * Retrieves a specified trailer value, returns null if the value does not exists.
      */
-    public function getTrailer(string $key)
+    public function getTrailer(string $key): mixed
     {
         return $this->trailers[$key] ?? null;
     }
@@ -82,13 +82,13 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
         return $this->trailers;
     }
 
-    public function setConnection(ConnectionInterface|Writable $connection)
+    public function setConnection(Writable $connection)
     {
         $this->connection = $connection;
         return $this;
     }
 
-    public function getConnection(): ConnectionInterface|Writable|null
+    public function getConnection(): ?Writable
     {
         return $this->connection;
     }

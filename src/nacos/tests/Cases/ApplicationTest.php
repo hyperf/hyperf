@@ -19,11 +19,13 @@ use Hyperf\Nacos\Provider\InstanceProvider;
 use Hyperf\Nacos\Provider\OperatorProvider;
 use Hyperf\Nacos\Provider\ServiceProvider;
 use HyperfTest\Nacos\AbstractTestCase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ApplicationTest extends AbstractTestCase
 {
     public function testApplication()

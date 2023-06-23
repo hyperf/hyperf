@@ -30,7 +30,7 @@ $message = $__bag->first($__errorArgs[0]); ?>';
     /**
      * Compile the enderror statements into valid PHP.
      */
-    protected function compileEnderror(string $expression): string
+    protected function compileEnderror(?string $expression): string
     {
         return '<?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }

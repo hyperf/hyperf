@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Constants;
 
 use Hyperf\Constants\Exception\ConstantsException;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\TranslatorInterface;
-use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 

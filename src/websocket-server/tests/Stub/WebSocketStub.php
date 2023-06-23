@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\WebSocketServer\Stub;
 
 use Hyperf\Contract\OnOpenInterface;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 
 class WebSocketStub implements OnOpenInterface
 {

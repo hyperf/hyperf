@@ -12,12 +12,12 @@ declare(strict_types=1);
 namespace HyperfTest\Kafka\Stub;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Kafka\Constants\KafkaStrategy;
 use Hyperf\Kafka\Producer;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;

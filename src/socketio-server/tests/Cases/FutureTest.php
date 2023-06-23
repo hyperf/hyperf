@@ -11,17 +11,21 @@ declare(strict_types=1);
  */
 namespace HyperfTest\SocketIOServer\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Engine\Channel;
 use Hyperf\SocketIOServer\Emitter\Future;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
+
+use function Hyperf\Support\make;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FutureTest extends AbstractTestCase
 {
     protected function setUp(): void
@@ -35,7 +39,7 @@ class FutureTest extends AbstractTestCase
         /** @var ContainerInterface $container */
         $container = ApplicationContext::getContainer();
         $mock = Mockery::mock(Sender::class);
-        $mock->shouldReceive('push')->with(1, Mockery::any(), Mockery::any(), Mockery::any())->once();
+        $mock->shouldReceive('pushFrame')->with(1, Mockery::any())->once();
         $container->set(Sender::class, $mock);
         $future = make(Future::class, ['fd' => 1,
             'event' => 'event',
@@ -54,7 +58,7 @@ class FutureTest extends AbstractTestCase
         /** @var ContainerInterface $container */
         $container = ApplicationContext::getContainer();
         $mock = Mockery::mock(Sender::class);
-        $mock->shouldReceive('push')->with(1, Mockery::any(), Mockery::any(), Mockery::any())->once();
+        $mock->shouldReceive('pushFrame')->with(1, Mockery::any())->once();
         $container->set(Sender::class, $mock);
         /** @var Future $future */
         $future = make(Future::class, ['fd' => 1,
@@ -74,7 +78,7 @@ class FutureTest extends AbstractTestCase
         /** @var ContainerInterface $container */
         $container = ApplicationContext::getContainer();
         $mock = Mockery::mock(Sender::class);
-        $mock->shouldReceive('push')->with(1, Mockery::any(), Mockery::any(), Mockery::any())->once();
+        $mock->shouldReceive('pushFrame')->with(1, Mockery::any())->once();
         $container->set(Sender::class, $mock);
         /** @var Future $future */
         $future = make(Future::class, ['fd' => 1,

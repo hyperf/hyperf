@@ -11,18 +11,20 @@ declare(strict_types=1);
  */
 namespace Hyperf\ServiceGovernanceNacos;
 
+use Hyperf\Codec\Json;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\ServiceGovernance\DriverInterface;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
+
+use function Hyperf\Support\retry;
 
 class NacosDriver implements DriverInterface
 {

@@ -16,6 +16,8 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
+use Hyperf\Collection\Collection as BaseCollection;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionInterface as Connection;
@@ -36,10 +38,8 @@ use Hyperf\Database\Query\Builder as BaseBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\InteractsWithTime;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Traits\InteractsWithTime;
 use HyperfTest\Database\Stubs\DateModelStub;
 use HyperfTest\Database\Stubs\DifferentConnectionModelStub;
 use HyperfTest\Database\Stubs\KeyTypeModelStub;
@@ -67,16 +67,21 @@ use HyperfTest\Database\Stubs\NoConnectionModelStub;
 use HyperfTest\Database\Stubs\User;
 use LogicException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use ReflectionClass;
 use stdClass;
 
+use function Hyperf\Collection\collect;
+use function Hyperf\Coroutine\go;
+
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelTest extends TestCase
 {
     use InteractsWithTime;
@@ -856,7 +861,6 @@ class ModelTest extends TestCase
 
         $class = new ReflectionClass($model);
         $method = $class->getMethod('getArrayableRelations');
-        $method->setAccessible(true);
 
         $model->setRelation('foo', ['bar']);
         $model->setRelation('bam', ['boom']);

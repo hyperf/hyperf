@@ -12,16 +12,17 @@ declare(strict_types=1);
 namespace HyperfTest\View;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\View\Engine\SmartyEngine;
 use Hyperf\View\Exception\RenderException;
 use Hyperf\View\Mode;
 use Hyperf\View\Render;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -31,6 +32,7 @@ use Throwable;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RenderTest extends TestCase
 {
     protected function tearDown(): void

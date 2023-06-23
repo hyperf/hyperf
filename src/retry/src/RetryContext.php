@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Retry;
 
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 use Throwable;
 
 /**

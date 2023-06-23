@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Nacos\Exception\InvalidArgumentException;
-use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 
 class GrpcFactory

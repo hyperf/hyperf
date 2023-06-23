@@ -13,11 +13,17 @@ namespace HyperfTest\Retry;
 
 use Hyperf\Retry\RetryBudget;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Swoole\Coroutine\System;
 use Swoole\Timer;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -79,7 +85,6 @@ class RetryBudgetTest extends TestCase
         $budget->init();
         $ref = new ReflectionClass(RetryBudget::class);
         $prop = $ref->getProperty('budget');
-        $prop->setAccessible(true);
         System::sleep(1.2);
         $this->assertLessThanOrEqual(1, $prop->getValue($budget)->count());
         System::sleep(1.2);

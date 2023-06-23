@@ -17,12 +17,14 @@ use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\ModelObserver;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelObserverTest extends TestCase
 {
     protected function tearDown(): void

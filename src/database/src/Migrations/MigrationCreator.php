@@ -13,8 +13,8 @@ namespace Hyperf\Database\Migrations;
 
 use Closure;
 use Exception;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
 use InvalidArgumentException;
 
 class MigrationCreator

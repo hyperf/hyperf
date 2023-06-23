@@ -11,10 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query;
 
+use BackedEnum;
 use BadMethodCallException;
 use Closure;
 use DateTimeInterface;
 use Generator;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
@@ -26,13 +30,15 @@ use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
+use Hyperf\Support\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use RuntimeException;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Collection\last;
+use function Hyperf\Tappable\tap;
 
 class Builder
 {
@@ -1477,6 +1483,36 @@ class Builder
     }
 
     /**
+     * Add a "where fulltext" clause to the query.
+     *
+     * @param string|string[] $columns
+     * @return $this
+     */
+    public function whereFullText(array|string $columns, string $value, array $options = [], string $boolean = 'and'): static
+    {
+        $type = 'FullText';
+
+        $columns = (array) $columns;
+
+        $this->wheres[] = compact('type', 'columns', 'value', 'options', 'boolean');
+
+        $this->addBinding($value);
+
+        return $this;
+    }
+
+    /**
+     * Add a "or where fulltext" clause to the query.
+     *
+     * @param string|string[] $columns
+     * @return $this
+     */
+    public function orWhereFullText(array|string $columns, string $value, array $options = []): static
+    {
+        return $this->whereFullText($columns, $value, $options, 'or');
+    }
+
+    /**
      * Add a "group by" clause to the query.
      *
      * @param array ...$groups
@@ -2013,7 +2049,7 @@ class Builder
      *
      * @param string $column
      * @param null|string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     public function pluck($column, $key = null)
     {
@@ -2486,12 +2522,37 @@ class Builder
         }
 
         if (is_array($value)) {
-            $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $value));
+            $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $this->castBindings($value)));
         } else {
-            $this->bindings[$type][] = $value;
+            $this->bindings[$type][] = $this->castBinding($value);
         }
 
         return $this;
+    }
+
+    /**
+     * Cast the given binding value.
+     */
+    public function castBinding(mixed $value)
+    {
+        if ($value instanceof BackedEnum) {
+            return $value->value;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Cast the given binding value.
+     */
+    public function castBindings(array $values)
+    {
+        $result = [];
+        foreach ($values as $value) {
+            $result[] = $this->castBinding($value);
+        }
+
+        return $result;
     }
 
     /**
@@ -2773,7 +2834,7 @@ class Builder
         // clause on the query. Then we'll increment the parameter index values.
         $bool = strtolower($connector);
 
-        $this->where(Str::snake($segment), '=', $parameters[$index], $bool);
+        $this->where(StrCache::snake($segment), '=', $parameters[$index], $bool);
     }
 
     /**
@@ -2882,7 +2943,7 @@ class Builder
      * @param array $queryResult
      * @param string $column
      * @param string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     protected function pluckFromObjectColumn($queryResult, $column, $key)
     {
@@ -2907,7 +2968,7 @@ class Builder
      * @param array $queryResult
      * @param string $column
      * @param string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     protected function pluckFromArrayColumn($queryResult, $column, $key)
     {
@@ -2980,14 +3041,19 @@ class Builder
 
     /**
      * Remove all of the expressions from a list of bindings.
-     *
-     * @return array
      */
-    protected function cleanBindings(array $bindings)
+    protected function cleanBindings(array $bindings): array
     {
-        return array_values(array_filter($bindings, function ($binding) {
-            return ! $binding instanceof Expression;
-        }));
+        $result = [];
+        foreach ($bindings as $binding) {
+            if ($binding instanceof Expression) {
+                continue;
+            }
+
+            $result[] = $this->castBinding($binding);
+        }
+
+        return $result;
     }
 
     /**

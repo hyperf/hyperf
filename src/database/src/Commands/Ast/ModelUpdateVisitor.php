@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Ast;
 
+use Hyperf\CodeParser\PhpDocReader;
+use Hyperf\CodeParser\PhpParser;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
@@ -28,9 +30,7 @@ use Hyperf\Database\Model\Relations\MorphOne;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\MorphToMany;
 use Hyperf\Database\Model\Relations\Relation;
-use Hyperf\Utils\CodeGen\PhpDocReader;
-use Hyperf\Utils\CodeGen\PhpParser;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;

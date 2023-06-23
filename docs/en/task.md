@@ -45,8 +45,8 @@ The Task component provides two usage methods: `active method delivery` and `ann
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Task\TaskExecutor;
 use Hyperf\Task\Task;
 
@@ -75,8 +75,8 @@ It is not particularly intuitive to use `active method delivery`. Here we implem
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Task\Annotation\Task;
 
 class AnnotationTask
@@ -178,7 +178,7 @@ Use as follows
 ```php
 <?php
 use App\Task\MongoTask;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $client = ApplicationContext::getContainer()->get(MongoTask::class);
 $client->insert('hyperf.test', ['id' => rand(0, 99999999)]);

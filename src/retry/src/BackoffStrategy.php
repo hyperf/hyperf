@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Retry;
 
-use Hyperf\Utils\Backoff;
+use Hyperf\Support\Backoff;
 
 class BackoffStrategy implements SleepStrategyInterface
 {

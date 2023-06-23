@@ -11,15 +11,19 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Config;
 
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 use HyperfTest\Config\Stub\FooConfigProvider;
 use HyperfTest\Config\Stub\ProviderConfig;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Support\value;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ProviderConfigTest extends TestCase
 {
     public function testProviderConfigMerge()

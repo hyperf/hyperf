@@ -19,15 +19,17 @@ use DateTimeZone;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Exception;
+use Hyperf\Collection\Arr;
 use Hyperf\HttpMessage\Upload\UploadedFile;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\Validation\Rules\Exists;
 use Hyperf\Validation\Rules\Unique;
 use Hyperf\Validation\ValidationData;
 use InvalidArgumentException;
 use SplFileInfo;
 use Throwable;
+
+use function Hyperf\Collection\last;
 
 trait ValidatesAttributes
 {
@@ -531,6 +533,10 @@ trait ValidatesAttributes
             return $this->getSize($attribute, $value) > $parameters[0];
         }
 
+        if ($this->hasRule($attribute, $this->numericRules) && is_numeric($value) && is_numeric($comparedToValue)) {
+            return $value > $comparedToValue;
+        }
+
         if (! $this->isSameType($value, $comparedToValue)) {
             return false;
         }
@@ -553,6 +559,10 @@ trait ValidatesAttributes
 
         if (is_null($comparedToValue) && (is_numeric($value) && is_numeric($parameters[0]))) {
             return $this->getSize($attribute, $value) < $parameters[0];
+        }
+
+        if ($this->hasRule($attribute, $this->numericRules) && is_numeric($value) && is_numeric($comparedToValue)) {
+            return $value < $comparedToValue;
         }
 
         if (! $this->isSameType($value, $comparedToValue)) {
@@ -579,6 +589,10 @@ trait ValidatesAttributes
             return $this->getSize($attribute, $value) >= $parameters[0];
         }
 
+        if ($this->hasRule($attribute, $this->numericRules) && is_numeric($value) && is_numeric($comparedToValue)) {
+            return $value >= $comparedToValue;
+        }
+
         if (! $this->isSameType($value, $comparedToValue)) {
             return false;
         }
@@ -601,6 +615,10 @@ trait ValidatesAttributes
 
         if (is_null($comparedToValue) && (is_numeric($value) && is_numeric($parameters[0]))) {
             return $this->getSize($attribute, $value) <= $parameters[0];
+        }
+
+        if ($this->hasRule($attribute, $this->numericRules) && is_numeric($value) && is_numeric($comparedToValue)) {
+            return $value <= $comparedToValue;
         }
 
         if (! $this->isSameType($value, $comparedToValue)) {

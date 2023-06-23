@@ -12,8 +12,10 @@ declare(strict_types=1);
 namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Container;
 use Hyperf\Engine\Channel as Chan;
 use Hyperf\Pool\Channel;
@@ -24,17 +26,25 @@ use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Coroutine;
 use HyperfTest\Redis\Stub\RedisPoolFailedStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RedisCluster;
 use RedisSentinel;
 use ReflectionClass;
 use Throwable;
 
+use function Hyperf\Coroutine\defer;
+use function Hyperf\Coroutine\go;
+use function Hyperf\Coroutine\parallel;
+
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -89,7 +99,6 @@ class RedisTest extends TestCase
         $redis = $this->getRedis();
         $ref = new ReflectionClass($redis);
         $method = $ref->getMethod('getConnection');
-        $method->setAccessible(true);
 
         go(function () use ($chan, $redis, $method) {
             $id = null;
@@ -122,7 +131,6 @@ class RedisTest extends TestCase
 
         $chan->pop();
         $factory = $ref->getProperty('factory');
-        $factory->setAccessible(true);
         $factory = $factory->getValue($redis);
         $pool = $factory->getPool('default');
         $pool->flushAll();

@@ -16,6 +16,21 @@ use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
+use function clearstatcache;
+use function fclose;
+use function feof;
+use function fopen;
+use function fread;
+use function fseek;
+use function fstat;
+use function ftell;
+use function fwrite;
+use function is_resource;
+use function is_string;
+use function stream_get_contents;
+use function stream_get_meta_data;
+use function var_export;
+
 use const SEEK_CUR;
 use const SEEK_SET;
 
@@ -100,17 +115,17 @@ final class StandardStream implements StreamInterface
             return $body;
         }
 
-        if (\is_string($body)) {
-            $resource = \fopen('php://temp', 'rw+');
-            \fwrite($resource, $body);
+        if (is_string($body)) {
+            $resource = fopen('php://temp', 'rw+');
+            fwrite($resource, $body);
             $body = $resource;
         }
 
-        if (\is_resource($body)) {
+        if (is_resource($body)) {
             $new = new self();
             $new->stream = $body;
-            $meta = \stream_get_meta_data($new->stream);
-            $new->seekable = $meta['seekable'] && \fseek($new->stream, 0, SEEK_CUR) === 0;
+            $meta = stream_get_meta_data($new->stream);
+            $new->seekable = $meta['seekable'] && fseek($new->stream, 0, SEEK_CUR) === 0;
             $new->readable = isset(self::READ_WRITE_HASH['read'][$meta['mode']]);
             $new->writable = isset(self::READ_WRITE_HASH['write'][$meta['mode']]);
             $new->uri = $new->getMetadata('uri');
@@ -124,8 +139,8 @@ final class StandardStream implements StreamInterface
     public function close(): void
     {
         if (isset($this->stream)) {
-            if (\is_resource($this->stream)) {
-                \fclose($this->stream);
+            if (is_resource($this->stream)) {
+                fclose($this->stream);
             }
             $this->detach();
         }
@@ -157,10 +172,10 @@ final class StandardStream implements StreamInterface
 
         // Clear the stat cache if the stream has a URI
         if ($this->uri) {
-            \clearstatcache(true, $this->uri);
+            clearstatcache(true, $this->uri);
         }
 
-        $stats = \fstat($this->stream);
+        $stats = fstat($this->stream);
         if (isset($stats['size'])) {
             $this->size = $stats['size'];
 
@@ -172,7 +187,7 @@ final class StandardStream implements StreamInterface
 
     public function tell(): int
     {
-        if (false === $result = \ftell($this->stream)) {
+        if (false === $result = ftell($this->stream)) {
             throw new RuntimeException('Unable to determine stream position');
         }
 
@@ -181,7 +196,7 @@ final class StandardStream implements StreamInterface
 
     public function eof(): bool
     {
-        return ! $this->stream || \feof($this->stream);
+        return ! $this->stream || feof($this->stream);
     }
 
     public function isSeekable(): bool
@@ -195,8 +210,8 @@ final class StandardStream implements StreamInterface
             throw new RuntimeException('Stream is not seekable');
         }
 
-        if (\fseek($this->stream, $offset, $whence) === -1) {
-            throw new RuntimeException('Unable to seek to stream position ' . $offset . ' with whence ' . \var_export($whence, true));
+        if (fseek($this->stream, $offset, $whence) === -1) {
+            throw new RuntimeException('Unable to seek to stream position ' . $offset . ' with whence ' . var_export($whence, true));
         }
     }
 
@@ -219,7 +234,7 @@ final class StandardStream implements StreamInterface
         // We can't know the size after writing anything
         $this->size = null;
 
-        if (false === $result = \fwrite($this->stream, $string)) {
+        if (false === $result = fwrite($this->stream, $string)) {
             throw new RuntimeException('Unable to write to stream');
         }
 
@@ -237,7 +252,7 @@ final class StandardStream implements StreamInterface
             throw new RuntimeException('Cannot read from non-readable stream');
         }
 
-        return \fread($this->stream, $length);
+        return fread($this->stream, $length);
     }
 
     public function getContents(): string
@@ -246,7 +261,7 @@ final class StandardStream implements StreamInterface
             throw new RuntimeException('Unable to read stream contents');
         }
 
-        if (false === $contents = \stream_get_contents($this->stream)) {
+        if (false === $contents = stream_get_contents($this->stream)) {
             throw new RuntimeException('Unable to read stream contents');
         }
 
@@ -259,7 +274,7 @@ final class StandardStream implements StreamInterface
             return $key ? null : [];
         }
 
-        $meta = \stream_get_meta_data($this->stream);
+        $meta = stream_get_meta_data($this->stream);
 
         if ($key === null) {
             return $meta;

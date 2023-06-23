@@ -16,6 +16,8 @@ use Hyperf\Scout\Provider\ElasticsearchProvider;
 use Hyperf\Scout\Provider\ProviderInterface;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class EngineFactory
 {
     public function __invoke(ContainerInterface $container)

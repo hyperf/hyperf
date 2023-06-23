@@ -15,6 +15,7 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Logger\StdoutLogger;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 use RuntimeException;
@@ -24,6 +25,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class StdoutLoggerTest extends TestCase
 {
     protected function tearDown(): void

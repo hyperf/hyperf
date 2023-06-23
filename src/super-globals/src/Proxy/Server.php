@@ -11,15 +11,18 @@ declare(strict_types=1);
  */
 namespace Hyperf\SuperGlobals\Proxy;
 
+use Hyperf\Stringable\Str;
 use Hyperf\SuperGlobals\Exception\InvalidOperationException;
 use Hyperf\SuperGlobals\Proxy;
-use Hyperf\Utils\Str;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Server extends Proxy
 {
-    public function __construct(protected array $default)
+    public function __construct(protected array|Server $default)
     {
+        if ($default instanceof Server) {
+            $this->default = $default->toArray();
+        }
     }
 
     public function toArray(): array

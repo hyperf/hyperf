@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use function Hyperf\Support\env;
+
 return [
     'default' => [
-        'driver' => 'pdo',
+        'driver' => 'mysql',
         'host' => env('DB_HOST', 'localhost'),
         'port' => env('DB_PORT', 3306),
         'database' => env('DB_DATABASE', 'hyperf'),

@@ -14,6 +14,8 @@ namespace Hyperf\Context;
 use Closure;
 use Hyperf\Engine\Coroutine;
 
+use function Hyperf\Support\value;
+
 class Context
 {
     protected static array $nonCoContext = [];
@@ -50,8 +52,12 @@ class Context
     /**
      * Release the context when you are not in coroutine environment.
      */
-    public static function destroy(string $id): void
+    public static function destroy(string $id, ?int $coroutineId = null): void
     {
+        if (Coroutine::id() > 0) {
+            unset(Coroutine::getContextFor($coroutineId)[$id]);
+        }
+
         unset(static::$nonCoContext[$id]);
     }
 

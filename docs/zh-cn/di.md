@@ -405,10 +405,10 @@ class IndexController
 ```   
 
 在某些更极端动态的情况下，或者非 `容器(Container)` 的管理作用之下时，想要获取到 `容器(Container)`
-对象还可以通过 `\Hyperf\Utils\ApplicationContext::getContaienr()` 方法来获得 `容器(Container)` 对象。
+对象还可以通过 `\Hyperf\Context\ApplicationContext::getContaienr()` 方法来获得 `容器(Container)` 对象。
 
 ```php
-$container = \Hyperf\Utils\ApplicationContext::getContainer();
+$container = \Hyperf\Context\ApplicationContext::getContainer();
 ```
 
 ## 扫描适配器

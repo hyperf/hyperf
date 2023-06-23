@@ -12,11 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\SocketIOServer\Cases;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
 use Hyperf\Framework\Logger\StdoutLogger;
+use Hyperf\SocketIOServer\Atomic;
 use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\Room\MemoryAdapter;
@@ -25,10 +27,8 @@ use Hyperf\SocketIOServer\Room\RoomInterface;
 use Hyperf\SocketIOServer\SidProvider\LocalSidProvider;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\SocketIOServer\SocketIO;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Swoole\Atomic;
 use Swoole\Timer;
 
 /**

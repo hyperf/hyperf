@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Protobuf\Response;
 
-use Hyperf\Utils\Codec\Json;
+use Hyperf\Codec\Json;
 use JsonSerializable;
 
 class ConfigChangeNotifyRequest extends Response implements JsonSerializable

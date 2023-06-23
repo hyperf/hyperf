@@ -12,17 +12,21 @@ declare(strict_types=1);
 namespace HyperfTest\Tracer;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Tracer\TracerFactory;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Zipkin\Samplers\BinarySampler;
+
+use function Hyperf\Support\env;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TracerFactoryTest extends TestCase
 {
     protected function tearDown(): void

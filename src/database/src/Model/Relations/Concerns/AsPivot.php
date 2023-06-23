@@ -13,7 +13,10 @@ namespace Hyperf\Database\Model\Relations\Concerns;
 
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
+
+use function Hyperf\Support\class_basename;
 
 trait AsPivot
 {
@@ -112,7 +115,7 @@ trait AsPivot
             $this->setTable(str_replace(
                 '\\',
                 '',
-                Str::snake(Str::singular(class_basename($this)))
+                StrCache::snake(Str::singular(class_basename($this)))
             ));
         }
 

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
@@ -20,11 +21,11 @@ use Hyperf\Pool\LowFrequencyInterface;
 use Hyperf\Pool\Pool;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Redis\Frequency;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Redis\Stub\RedisConnectionStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -32,6 +33,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RedisConnectionTest extends TestCase
 {
     protected function tearDown(): void

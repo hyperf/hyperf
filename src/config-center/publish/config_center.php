@@ -12,6 +12,8 @@ declare(strict_types=1);
 use Hyperf\ConfigApollo\PullMode;
 use Hyperf\ConfigCenter\Mode;
 
+use function Hyperf\Support\env;
+
 return [
     'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
     'driver' => env('CONFIG_CENTER_DRIVER', 'apollo'),
@@ -28,7 +30,7 @@ return [
             ],
             'interval' => 5,
             'strict_mode' => false,
-            'client_ip' => \Hyperf\Utils\Network::ip(),
+            'client_ip' => \Hyperf\Support\Network::ip(),
             'pullTimeout' => 10,
             'interval_timeout' => 1,
         ],
@@ -80,7 +82,7 @@ return [
         ],
         'etcd' => [
             'driver' => Hyperf\ConfigEtcd\EtcdDriver::class,
-            'packer' => Hyperf\Utils\Packer\JsonPacker::class,
+            'packer' => Hyperf\Codec\Packer\JsonPacker::class,
             'namespaces' => [
                 '/application',
             ],

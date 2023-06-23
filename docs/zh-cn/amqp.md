@@ -108,7 +108,7 @@ class DemoProducer extends ProducerMessage
 <?php
 use Hyperf\Amqp\Producer;
 use App\Amqp\Producers\DemoProducer;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $message = new DemoProducer(1);
 $producer = ApplicationContext::getContainer()->get(Producer::class);
@@ -320,7 +320,7 @@ use App\Amqp\Producer\DelayDirectProducer;
 use Hyperf\Amqp\Producer;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Psr\Container\ContainerInterface;
 
 #[Command]
@@ -404,7 +404,7 @@ class ReplyConsumer extends ConsumerMessage
 <?php
 use Hyperf\Amqp\Message\DynamicRpcMessage;
 use Hyperf\Amqp\RpcClient;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $rpcClient = ApplicationContext::getContainer()->get(RpcClient::class);
 // 在 DynamicRpcMessage 上设置与 Consumer 一致的 Exchange 和 RoutingKey

@@ -17,7 +17,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Task extends AbstractAnnotation
 {
-    public function __construct(public int $workerId = -1, public int $timeout = 10)
+    public function __construct(public int $workerId = -1, public float $timeout = 10)
     {
     }
 }

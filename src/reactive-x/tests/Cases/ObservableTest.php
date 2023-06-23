@@ -11,8 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
 use Hyperf\Di\MethodDefinitionCollector;
@@ -29,11 +31,10 @@ use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Server;
 use Hyperf\ReactiveX\Observable;
 use Hyperf\ReactiveX\RxSwoole;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Serializer\SimpleNormalizer;
 use HyperfTest\ReactiveX\Stub\TestEvent;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -47,10 +48,14 @@ use Swoole\Event;
 use Swoole\Runtime;
 use Swoole\Timer;
 
+use function Hyperf\Coroutine\go;
+use function Hyperf\Support\swoole_hook_flags;
+
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ObservableTest extends TestCase
 {
     public static function setUpBeforeClass(): void
@@ -124,9 +129,10 @@ class ObservableTest extends TestCase
     {
         $result = new Channel(1);
         $listenerProvider = new ListenerProvider();
-        $container = Mockery::mock(Container::class);
+        $container = Mockery::mock(Container::class . '[get]', [new DefinitionSource([])]);
         $container->shouldReceive('get')->with(ListenerProviderInterface::class)
             ->andReturn($listenerProvider);
+        $container->define(SchedulerInterface::class, EventLoopScheduler::class);
         ApplicationContext::setContainer($container);
 
         $o = Observable::fromEvent(TestEvent::class);

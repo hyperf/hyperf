@@ -17,7 +17,8 @@ use Hyperf\RpcMultiplex\DataFormatter;
 use Hyperf\RpcMultiplex\Packer\JsonPacker;
 use Hyperf\RpcMultiplex\PathGenerator;
 use Hyperf\RpcMultiplex\Transporter;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use InvalidArgumentException;
 
 class ProtocolManager
@@ -84,7 +85,7 @@ class ProtocolManager
                 return $default;
             }
 
-            throw new InvalidArgumentException(sprintf('%s is not exists.', Str::studly($target, ' ')));
+            throw new InvalidArgumentException(sprintf('%s is not exists.', StrCache::studly($target, ' ')));
         }
         return $result;
     }

@@ -20,9 +20,9 @@ use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
 use Hyperf\Amqp\Message\Type;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coroutine\Concurrent;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Process\ProcessManager;
-use Hyperf\Utils\Coroutine\Concurrent;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -30,6 +30,8 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
+
+use function Hyperf\Coroutine\parallel;
 
 class Consumer extends Builder
 {

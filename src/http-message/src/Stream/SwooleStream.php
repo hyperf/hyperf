@@ -40,9 +40,8 @@ class SwooleStream implements StreamInterface, Stringable
      * string casting operations.
      *
      * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         try {
             return $this->getContents();
@@ -54,7 +53,7 @@ class SwooleStream implements StreamInterface, Stringable
     /**
      * Closes the stream and any underlying resources.
      */
-    public function close()
+    public function close(): void
     {
         $this->detach();
     }
@@ -79,7 +78,7 @@ class SwooleStream implements StreamInterface, Stringable
      *
      * @return null|int returns the size in bytes if known, or null if unknown
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         if (! $this->size) {
             $this->size = strlen($this->getContents());
@@ -93,27 +92,23 @@ class SwooleStream implements StreamInterface, Stringable
      * @return int Position of the file pointer
      * @throws RuntimeException on error
      */
-    public function tell()
+    public function tell(): int
     {
         throw new RuntimeException('Cannot determine the position of a SwooleStream');
     }
 
     /**
      * Returns true if the stream is at the end of the stream.
-     *
-     * @return bool
      */
-    public function eof()
+    public function eof(): bool
     {
         return $this->getSize() === 0;
     }
 
     /**
      * Returns whether or not the stream is seekable.
-     *
-     * @return bool
      */
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return false;
     }
@@ -130,7 +125,7 @@ class SwooleStream implements StreamInterface, Stringable
      *                    SEEK_END: Set position to end-of-stream plus offset.
      * @throws RuntimeException on failure
      */
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET): void
     {
         throw new RuntimeException('Cannot seek a SwooleStream');
     }
@@ -140,21 +135,19 @@ class SwooleStream implements StreamInterface, Stringable
      * If the stream is not seekable, this method will raise an exception;
      * otherwise, it will perform a seek(0).
      *
-     * @see seek()
-     * @see http://www.php.net/manual/en/function.fseek.php
      * @throws RuntimeException on failure
+     * @see http://www.php.net/manual/en/function.fseek.php
+     * @see seek()
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->seek(0);
     }
 
     /**
      * Returns whether or not the stream is writable.
-     *
-     * @return bool
      */
-    public function isWritable()
+    public function isWritable(): bool
     {
         return $this->writable;
     }
@@ -166,7 +159,7 @@ class SwooleStream implements StreamInterface, Stringable
      * @return int returns the number of bytes written to the stream
      * @throws RuntimeException on failure
      */
-    public function write($string)
+    public function write($string): int
     {
         if (! $this->writable) {
             throw new RuntimeException('Cannot write to a non-writable stream');
@@ -182,10 +175,8 @@ class SwooleStream implements StreamInterface, Stringable
 
     /**
      * Returns whether or not the stream is readable.
-     *
-     * @return bool
      */
-    public function isReadable()
+    public function isReadable(): bool
     {
         return true;
     }
@@ -200,7 +191,7 @@ class SwooleStream implements StreamInterface, Stringable
      *                if no bytes are available
      * @throws RuntimeException if an error occurs
      */
-    public function read($length)
+    public function read($length): string
     {
         if ($length >= $this->getSize()) {
             $result = $this->contents;
@@ -218,11 +209,10 @@ class SwooleStream implements StreamInterface, Stringable
     /**
      * Returns the remaining contents in a string.
      *
-     * @return string
      * @throws RuntimeException if unable to read or an error occurs while
      *                          reading
      */
-    public function getContents()
+    public function getContents(): string
     {
         return $this->contents;
     }

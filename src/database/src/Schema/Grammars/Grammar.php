@@ -17,8 +17,10 @@ use Hyperf\Database\Connection;
 use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Schema\Blueprint;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 use RuntimeException;
+
+use function Hyperf\Tappable\tap;
 
 abstract class Grammar extends BaseGrammar
 {
@@ -48,6 +50,24 @@ abstract class Grammar extends BaseGrammar
     public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection): array
     {
         return ChangeColumn::compile($this, $blueprint, $command, $connection);
+    }
+
+    /**
+     * Compile a fulltext index key command.
+     *
+     * @throws RuntimeException
+     */
+    public function compileFullText(Blueprint $blueprint, Fluent $command): string
+    {
+        throw new RuntimeException('This database driver does not support fulltext index creation.');
+    }
+
+    /**
+     * Compile a drop fulltext index command.
+     */
+    public function compileDropFullText(Blueprint $blueprint, Fluent $command): string
+    {
+        throw new RuntimeException('This database driver does not support fulltext index creation.');
     }
 
     /**
@@ -210,7 +230,7 @@ abstract class Grammar extends BaseGrammar
      * Get the primary key command if it exists on the blueprint.
      *
      * @param string $name
-     * @return null|\Hyperf\Utils\Fluent
+     * @return null|Fluent
      */
     protected function getCommandByName(Blueprint $blueprint, $name)
     {

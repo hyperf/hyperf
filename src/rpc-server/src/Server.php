@@ -11,7 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcServer;
 
-use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\DispatcherInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
@@ -27,10 +28,11 @@ use Hyperf\Rpc\Protocol;
 use Hyperf\Server\ServerManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine\Server\Connection;
 use Swoole\Server as SwooleServer;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 use Throwable;
 
 abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterface
@@ -70,10 +72,9 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
             CoordinatorManager::until(Constants::WORKER_START)->yield();
 
             // Initialize PSR-7 Request and Response objects.
-            Context::set(ServerRequestInterface::class, $request = $this->buildRequest($fd, $reactorId, $data));
-            Context::set(ResponseInterface::class, $this->buildResponse($fd, $server));
+            RequestContext::set($request = $this->buildRequest($fd, $reactorId, $data));
+            ResponseContext::set($this->buildResponse($fd, $server));
 
-            // $middlewares = array_merge($this->middlewares, MiddlewareManager::get());
             $middlewares = $this->middlewares;
 
             $request = $this->coreMiddleware->dispatch($request);
@@ -84,7 +85,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
             $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
             $response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
-            if (! $response || ! $response instanceof ResponseInterface) {
+            if (! $response instanceof ResponseInterface) {
                 $response = $this->transferToResponse($response);
             }
             if ($response) {
@@ -122,17 +123,13 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
     abstract protected function createCoreMiddleware(): CoreMiddlewareInterface;
 
-    abstract protected function buildRequest(int $fd, int $reactorId, string $data): ServerRequestInterface;
+    abstract protected function buildRequest(int $fd, int $reactorId, string $data): ServerRequestPlusInterface;
 
-    abstract protected function buildResponse(int $fd, $server): ResponseInterface;
+    abstract protected function buildResponse(int $fd, $server): ResponsePlusInterface;
 
     protected function transferToResponse($response): ?ResponseInterface
     {
-        $psr7Response = Context::get(ResponseInterface::class);
-        if ($psr7Response instanceof ResponseInterface) {
-            return $psr7Response->withBody(new SwooleStream($response));
-        }
-        return null;
+        return ResponseContext::getOrNull()?->setBody(new SwooleStream($response));
     }
 
     protected function getContext()

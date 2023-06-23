@@ -17,7 +17,7 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 use RuntimeException;
 
 class ChangeColumn
@@ -119,9 +119,10 @@ class ChangeColumn
             $options['length'] = static::calculateDoctrineTextLength($fluent['type']);
         }
 
-        if ($fluent['type'] === 'json') {
+        if (static::doesntNeedCharacterOptions($fluent['type'])) {
             $options['customSchemaOptions'] = [
                 'collation' => '',
+                'charset' => '',
             ];
         }
 
@@ -173,6 +174,33 @@ class ChangeColumn
             default:
                 return 255 + 1;
         }
+    }
+
+    /**
+     * Determine if the given type does not need character / collation options.
+     *
+     * @param string $type
+     * @return bool
+     */
+    protected static function doesntNeedCharacterOptions($type)
+    {
+        return in_array($type, [
+            'bigInteger',
+            'binary',
+            'boolean',
+            'date',
+            'dateTime',
+            'decimal',
+            'double',
+            'float',
+            'integer',
+            'json',
+            'mediumInteger',
+            'smallInteger',
+            'time',
+            'timestamp',
+            'tinyInteger',
+        ]);
     }
 
     /**

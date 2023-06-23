@@ -21,6 +21,8 @@ use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 
+use function Hyperf\Support\make;
+
 class MetricFactory implements MetricFactoryInterface
 {
     private Client $client;

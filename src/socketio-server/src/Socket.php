@@ -18,11 +18,9 @@ use Hyperf\SocketIOServer\Parser\Engine;
 use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Context;
 use Hyperf\WebSocketServer\Sender;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Server;
 
 class Socket
 {
@@ -77,9 +75,7 @@ class Socket
         ]);
         // notice client is about to disconnect
         $this->sender->push($this->fd, Engine::MESSAGE . $this->encoder->encode($closePacket));
-        /** @var \Swoole\WebSocket\Server $server */
-        $server = ApplicationContext::getContainer()->get(Server::class);
-        $server->disconnect($this->fd);
+        $this->sender->disconnect($this->fd);
     }
 
     public function getNamespace(): string
@@ -95,6 +91,7 @@ class Socket
         // If the connection is closed (onClose called)，
         // WebSocketContext would have been released.
         // $serverRequest is null in this case.
+
         $serverRequest = Context::get(ServerRequestInterface::class);
         if (! $serverRequest instanceof ServerRequestInterface) {
             throw new ConnectionClosedException('the request has been freed');

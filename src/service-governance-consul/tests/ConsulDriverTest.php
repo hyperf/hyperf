@@ -13,12 +13,13 @@ namespace HyperfTest\ServiceGovernanceConsul;
 
 use Hyperf\Config\Config;
 use Hyperf\Consul\ConsulResponse;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ServiceGovernanceConsul\ConsulAgent;
 use Hyperf\ServiceGovernanceConsul\ConsulDriver;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -26,6 +27,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConsulDriverTest extends TestCase
 {
     protected function tearDown(): void

@@ -19,14 +19,16 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Process\ProcessCollector;
-use Hyperf\Utils\Coroutine;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Server;
 use Throwable;
+
+use function Hyperf\Support\retry;
 
 abstract class AbstractDriver implements DriverInterface
 {

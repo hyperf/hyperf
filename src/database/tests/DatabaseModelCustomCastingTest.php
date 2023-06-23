@@ -11,17 +11,23 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Model\CastsValue;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\Arr;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use stdClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -205,7 +211,6 @@ class DatabaseModelCustomCastingTest extends TestCase
         $model = new TestModelWithCustomCast();
         $ref = new ReflectionClass($model);
         $method = $ref->getMethod('resolveCasterClass');
-        $method->setAccessible(true);
         CastUsing::$castsAttributes = UppercaseCaster::class;
         $this->assertNotSame($method->invokeArgs($model, ['cast_using']), $method->invokeArgs($model, ['cast_using']));
 

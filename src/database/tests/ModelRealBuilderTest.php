@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
@@ -24,16 +25,24 @@ use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\MySqlBitConnection;
+use Hyperf\Database\Query\Builder as QueryBuilder;
+use Hyperf\Database\Query\Expression;
+use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
+use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Column;
 use Hyperf\Database\Schema\MySqlBuilder;
+use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Container;
 use Hyperf\Engine\Channel;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Database\Stubs\ContainerStub;
+use HyperfTest\Database\Stubs\IntegerStatus;
 use HyperfTest\Database\Stubs\Model\TestModel;
+use HyperfTest\Database\Stubs\Model\TestVersionModel;
 use HyperfTest\Database\Stubs\Model\User;
 use HyperfTest\Database\Stubs\Model\UserBit;
 use HyperfTest\Database\Stubs\Model\UserExt;
@@ -41,7 +50,9 @@ use HyperfTest\Database\Stubs\Model\UserExtCamel;
 use HyperfTest\Database\Stubs\Model\UserRole;
 use HyperfTest\Database\Stubs\Model\UserRoleMorphPivot;
 use HyperfTest\Database\Stubs\Model\UserRolePivot;
+use HyperfTest\Database\Stubs\StringStatus;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
@@ -50,6 +61,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelRealBuilderTest extends TestCase
 {
     /**
@@ -68,6 +80,8 @@ class ModelRealBuilderTest extends TestCase
         /** @var ConnectionInterface $conn */
         $conn = $container->get(ConnectionResolverInterface::class)->connection();
         $conn->statement('DROP TABLE IF EXISTS `test`;');
+        $conn->statement('DROP TABLE IF EXISTS `test_full_text_index`;');
+        $conn->statement('DROP TABLE IF EXISTS `test_enum_cast`;');
         Mockery::close();
     }
 
@@ -349,6 +363,58 @@ class ModelRealBuilderTest extends TestCase
         $this->assertSame(2, $model->uid);
     }
 
+    public function testRewriteSetKeysForSaveQuery()
+    {
+        $container = $this->getContainer();
+        /** @var ConnectionInterface $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->statement('CREATE TABLE `test` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `uid` bigint(20) unsigned NOT NULL,
+  `version` bigint(20) unsigned NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
+        $res = TestVersionModel::query()->insert(['user_id' => 1, 'uid' => 1, 'version' => 2]);
+        $this->assertTrue($res);
+
+        /** @var TestVersionModel $model */
+        $model = TestVersionModel::query()->first();
+        $model->user_id = 2;
+        $model->version = 1;
+        $model->save();
+
+        $this->assertSame(2, TestVersionModel::query()->first()->user_id);
+
+        $model->mustVersion = true;
+        $model->user_id = 3;
+        $model->version = 0;
+        $model->save();
+
+        $this->assertSame(2, TestVersionModel::query()->first()->user_id);
+
+        $model->user_id = 4;
+        $model->version = 2;
+        $model->save();
+
+        $this->assertSame(4, TestVersionModel::query()->first()->user_id);
+
+        $sqls = [
+            'update `test` set `user_id` = ?, `version` = ?, `test`.`updated_at` = ? where `id` = ?',
+            'update `test` set `user_id` = ?, `version` = ?, `test`.`updated_at` = ? where `id` = ? and `version` <= ?',
+            'update `test` set `user_id` = ?, `version` = ?, `test`.`updated_at` = ? where `id` = ? and `version` <= ?',
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted && str_starts_with($event->sql, 'update')) {
+                $this->assertSame($event->sql, array_shift($sqls));
+            }
+        }
+    }
+
     public function testBigIntInsertAndGet()
     {
         $container = $this->getContainer();
@@ -538,6 +604,115 @@ class ModelRealBuilderTest extends TestCase
         } finally {
             Connection::clearBeforeExecutingCallbacks();
         }
+    }
+
+    public function testModelBuilderValue()
+    {
+        $this->getContainer();
+
+        $res = User::query()->join('book', 'user.id', '=', 'book.user_id')->value('book.title');
+
+        $this->assertNotEmpty($res);
+
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, 'select `book`.`title` from `user` inner join `book` on `user`.`id` = `book`.`user_id` limit 1');
+            }
+        }
+    }
+
+    public function testWhereFullText()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        Schema::create('test_full_text_index', function (Blueprint $table) {
+            $table->id('id');
+            $table->string('title', 200);
+            $table->text('body');
+            $table->fullText(['title', 'body']);
+        });
+
+        Db::table('test_full_text_index')->insert([
+            ['title' => 'MySQL Tutorial', 'body' => 'DBMS stands for DataBase ...'],
+            ['title' => 'How To Use MySQL Well', 'body' => 'After you went through a ...'],
+            ['title' => 'Optimizing MySQL', 'body' => 'In this tutorial, we show ...'],
+            ['title' => '1001 MySQL Tricks', 'body' => '1. Never run mysqld as root. 2. ...'],
+            ['title' => 'MySQL vs. YourSQL', 'body' => 'In the following database comparison ...'],
+            ['title' => 'MySQL Security', 'body' => 'When configured properly, MySQL ...'],
+        ]);
+
+        $result = Db::table('test_full_text_index')->whereFullText(['title', 'body'], 'database')->get();
+        $this->assertCount(2, $result);
+        $this->assertSame('MySQL Tutorial', $result[0]->title);
+        $this->assertSame('MySQL vs. YourSQL', $result[1]->title);
+
+        // boolean mode
+        $result = Db::table('test_full_text_index')->whereFullText(['title', 'body'], '+MySQL -YourSQL', ['mode' => 'boolean'])->get();
+        $this->assertCount(5, $result);
+
+        // expanded query
+        $result = Db::table('test_full_text_index')->whereFullText(['title', 'body'], 'database', ['expanded' => true])->get();
+        $this->assertCount(6, $result);
+    }
+
+    public function testEnumCast()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        Schema::create('test_enum_cast', function (Blueprint $table) {
+            $table->id();
+            $table->string('string_status', 64);
+            $table->integer('integer_status');
+        });
+
+        // test insert with enum
+        DB::table('test_enum_cast')->insert([
+            'string_status' => StringStatus::Active,
+            'integer_status' => IntegerStatus::Active,
+        ]);
+
+        // test select with enum
+        $record = DB::table('test_enum_cast')->where('string_status', StringStatus::Active)->first();
+
+        $this->assertNotNull($record);
+        $this->assertEquals('active', $record->string_status);
+        $this->assertEquals(1, $record->integer_status);
+
+        // test update with enum
+        DB::table('test_enum_cast')->where('id', $record->id)->update([
+            'string_status' => StringStatus::Inactive,
+            'integer_status' => IntegerStatus::Inactive,
+        ]);
+
+        $record2 = DB::table('test_enum_cast')->where('id', $record->id)->first();
+
+        $this->assertNotNull($record2);
+        $this->assertEquals('inactive', $record2->string_status);
+        $this->assertEquals(2, $record2->integer_status);
+    }
+
+    public function testCleanBindings()
+    {
+        $query = new QueryBuilder(
+            Mockery::mock(ConnectionInterface::class),
+            Mockery::mock(QueryGrammar::class),
+            Mockery::mock(Processor::class)
+        );
+
+        $invoker = new ClassInvoker($query);
+        $res = $invoker->cleanBindings([0, 2, '2', '']);
+        $this->assertSame([0, 2, '2', ''], $res);
+
+        $res = $invoker->cleanBindings([0, 2, new Expression('1'), '2', '']);
+        $this->assertSame([0, 2, '2', ''], $res);
+
+        $res = $invoker->cleanBindings([new Expression('1')]);
+        $this->assertSame([], $res);
+
+        $res = $invoker->cleanBindings([StringStatus::Active, IntegerStatus::Active, new Expression('1')]);
+        $this->assertSame(['active', 1], $res);
     }
 
     protected function getContainer()

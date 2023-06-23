@@ -13,6 +13,8 @@ namespace Hyperf\Kafka;
 
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class ProducerManager
 {
     /**

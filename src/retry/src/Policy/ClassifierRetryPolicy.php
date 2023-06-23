@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Retry\Policy;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Retry\RetryContext;
-use Hyperf\Utils\Arr;
 use Throwable;
 
 class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface

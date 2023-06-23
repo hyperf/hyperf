@@ -13,6 +13,8 @@ namespace Hyperf\ResourceGrpc;
 
 use Hyperf\Resource\Json\JsonResource;
 
+use function Hyperf\Tappable\tap;
+
 class GrpcResource extends JsonResource
 {
     public function expect(): string

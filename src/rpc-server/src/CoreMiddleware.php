@@ -21,6 +21,8 @@ use Hyperf\RpcServer\Router\DispatcherFactory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function Hyperf\Support\make;
+
 class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
 {
     protected Protocol $protocol;

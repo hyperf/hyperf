@@ -13,7 +13,7 @@ namespace Hyperf\Watcher\Driver;
 
 use Hyperf\Engine\Channel;
 use Hyperf\Engine\Coroutine;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\Watcher\Option;
 use InvalidArgumentException;
 use RuntimeException;

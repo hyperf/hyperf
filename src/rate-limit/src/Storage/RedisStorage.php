@@ -20,7 +20,7 @@ use malkusch\lock\mutex\Mutex;
 use malkusch\lock\mutex\PHPRedisMutex;
 use Psr\SimpleCache\InvalidArgumentException;
 
-use function make;
+use function Hyperf\Support\make;
 
 class RedisStorage implements Storage, GlobalScope
 {

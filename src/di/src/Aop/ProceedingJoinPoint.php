@@ -18,6 +18,8 @@ use Hyperf\Di\ReflectionManager;
 use ReflectionFunction;
 use ReflectionMethod;
 
+use function Hyperf\Support\value;
+
 class ProceedingJoinPoint
 {
     /**

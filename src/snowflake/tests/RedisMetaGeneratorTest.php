@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Snowflake;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Di\Container;
@@ -27,16 +28,20 @@ use Hyperf\Snowflake\Meta;
 use Hyperf\Snowflake\MetaGenerator\RedisMilliSecondMetaGenerator;
 use Hyperf\Snowflake\MetaGenerator\RedisSecondMetaGenerator;
 use Hyperf\Snowflake\MetaGeneratorInterface;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Snowflake\Stub\UserDefinedIdGenerator;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Throwable;
+
+use function Hyperf\Coroutine\go;
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RedisMetaGeneratorTest extends TestCase
 {
     protected function tearDown(): void

@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Cache\Driver;
 
 use Hyperf\Cache\Exception\InvalidArgumentException;
+use Hyperf\Codec\Packer\PhpSerializerPacker;
 use Hyperf\Contract\PackerInterface;
-use Hyperf\Utils\InteractsWithTime;
-use Hyperf\Utils\Packer\PhpSerializerPacker;
+use Hyperf\Support\Traits\InteractsWithTime;
 use Psr\Container\ContainerInterface;
 
 abstract class Driver implements DriverInterface

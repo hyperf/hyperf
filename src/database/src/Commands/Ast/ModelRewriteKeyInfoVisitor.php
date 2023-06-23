@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Ast;
 
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Str;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
+use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;

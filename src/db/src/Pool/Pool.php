@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\DB\Pool;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\DB\Frequency;
 use Hyperf\Pool\Pool as HyperfPool;
-use Hyperf\Utils\Arr;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\make;
 
 abstract class Pool extends HyperfPool
 {

@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Resource\Response;
 
+use Hyperf\Codec\Json;
+use Hyperf\Collection\Arr;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Codec\Json;
 use Psr\Http\Message\ResponseInterface;
 
 class PaginatedResponse extends Response
@@ -21,9 +21,9 @@ class PaginatedResponse extends Response
     public function toResponse(): ResponseInterface
     {
         return $this->response()
-            ->withStatus($this->calculateStatus())
-            ->withAddedHeader('content-type', 'application/json; charset=utf-8')
-            ->withBody(new SwooleStream(Json::encode($this->wrap(
+            ->setStatus($this->calculateStatus())
+            ->addHeader('content-type', 'application/json; charset=utf-8')
+            ->setBody(new SwooleStream(Json::encode($this->wrap(
                 $this->resource->resolve(),
                 array_merge_recursive(
                     $this->paginationInformation(),

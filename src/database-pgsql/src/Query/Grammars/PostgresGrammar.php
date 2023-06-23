@@ -11,10 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\PgSQL\Query\Grammars;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Grammars\Grammar;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Collection\last;
 
 class PostgresGrammar extends Grammar
 {
@@ -213,6 +216,34 @@ class PostgresGrammar extends Grammar
         $value = $this->parameter($where['value']);
 
         return $this->wrap($where['column']) . '::time ' . $where['operator'] . ' ' . $value;
+    }
+
+    /**
+     * Compile a "where fulltext" clause.
+     */
+    protected function whereFullText(Builder $query, array $where): string
+    {
+        $language = $where['options']['language'] ?? 'english';
+
+        if (! in_array($language, $this->validFullTextLanguages())) {
+            $language = 'english';
+        }
+
+        $columns = collect($where['columns'])->map(function ($column) use ($language) {
+            return "to_tsvector('{$language}', {$this->wrap($column)})";
+        })->implode(' || ');
+
+        $mode = 'plainto_tsquery';
+
+        if (($where['options']['mode'] ?? []) === 'phrase') {
+            $mode = 'phraseto_tsquery';
+        }
+
+        if (($where['options']['mode'] ?? []) === 'websearch') {
+            $mode = 'websearch_to_tsquery';
+        }
+
+        return "({$columns}) @@ {$mode}('{$language}', {$this->parameter($where['value'])})";
     }
 
     /**
@@ -475,5 +506,36 @@ class PostgresGrammar extends Grammar
                 ? $attribute
                 : "'{$attribute}'";
         }, $path);
+    }
+
+    /**
+     * Get an array of valid full text languages.
+     */
+    protected function validFullTextLanguages(): array
+    {
+        return [
+            'simple',
+            'arabic',
+            'danish',
+            'dutch',
+            'english',
+            'finnish',
+            'french',
+            'german',
+            'hungarian',
+            'indonesian',
+            'irish',
+            'italian',
+            'lithuanian',
+            'nepali',
+            'norwegian',
+            'portuguese',
+            'romanian',
+            'russian',
+            'spanish',
+            'swedish',
+            'tamil',
+            'turkish',
+        ];
     }
 }

@@ -12,13 +12,17 @@ declare(strict_types=1);
 namespace HyperfTest\Rpc;
 
 use Hyperf\Rpc\Context;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ContextTest extends TestCase
 {
     protected function tearDown(): void

@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use BadMethodCallException;
+use Hyperf\Collection\Collection;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Builder as ModelBuilder;
@@ -24,17 +26,19 @@ use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Di\Container;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Collection;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+
+use function Hyperf\Collection\collect;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class QueryBuilderTest extends TestCase
 {
     protected function tearDown(): void

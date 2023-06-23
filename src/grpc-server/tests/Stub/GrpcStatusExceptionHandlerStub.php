@@ -13,11 +13,11 @@ namespace HyperfTest\GrpcServer\Stub;
 
 use Google\Rpc\Status;
 use Hyperf\GrpcServer\Exception\Handler\GrpcExceptionHandler;
-use Psr\Http\Message\ResponseInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
 class GrpcStatusExceptionHandlerStub extends GrpcExceptionHandler
 {
-    public function transferToStatusResponse(Status $status, ResponseInterface $response): ResponseInterface
+    public function transferToStatusResponse(Status $status, ResponsePlusInterface $response): ResponsePlusInterface
     {
         return parent::transferToStatusResponse($status, $response);
     }

@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Rpc;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Context\Context as ContextUtil;
-use Hyperf\Utils\Arr;
 
 class Context
 {

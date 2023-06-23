@@ -14,10 +14,11 @@ namespace HyperfTest\ConfigApollo;
 use Hyperf\Config\Config;
 use Hyperf\ConfigApollo\Client;
 use Hyperf\ConfigApollo\Option;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Guzzle\ClientFactory;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -25,6 +26,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ClientTest extends TestCase
 {
     public function testPull()

@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Session\Handler;
 
 use Carbon\Carbon;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use SessionHandlerInterface;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;

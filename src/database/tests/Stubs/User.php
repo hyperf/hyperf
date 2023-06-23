@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database\Stubs;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\ApplicationContext;
 
 class User extends Model
 {

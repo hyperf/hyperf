@@ -11,17 +11,19 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di;
 
+use Hyperf\CodeParser\PhpParser;
 use Hyperf\Di\LazyLoader\PublicMethodVisitor;
-use Hyperf\Utils\CodeGen\PhpParser;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PublicMethodVisitorTest extends TestCase
 {
     public function testVisitInterface()

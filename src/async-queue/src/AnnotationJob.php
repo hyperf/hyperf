@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\AsyncQueue;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\UnCompressInterface;
-use Hyperf\Utils\ApplicationContext;
 
 class AnnotationJob extends Job
 {

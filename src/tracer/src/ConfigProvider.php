@@ -18,6 +18,7 @@ use Hyperf\Tracer\Aspect\TraceAnnotationAspect;
 use Hyperf\Tracer\Listener\DbQueryExecutedListener;
 use Jaeger\ThriftUdpTransport;
 use OpenTracing\Tracer;
+use Zipkin\Propagation\Map;
 
 class ConfigProvider
 {
@@ -36,6 +37,7 @@ class ConfigProvider
             'annotations' => [
                 'scan' => [
                     'class_map' => [
+                        Map::class => __DIR__ . '/../class_map/Map.php',
                         ThriftUdpTransport::class => __DIR__ . '/../class_map/ThriftUdpTransport.php',
                     ],
                 ],

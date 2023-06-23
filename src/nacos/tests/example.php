@@ -18,6 +18,8 @@ use Hyperf\Nacos\Protobuf\ListenHandler\ConfigChangeNotifyRequestHandler;
 use Hyperf\Nacos\Protobuf\Response\ConfigQueryResponse;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Coroutine\run;
+
 require __DIR__ . '/../../../vendor/autoload.php';
 
 run(function () {

@@ -13,14 +13,15 @@ namespace HyperfTest\Constants;
 
 use Hyperf\Constants\AnnotationReader;
 use Hyperf\Constants\ConstantsCollector;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Constants\Stub\ErrorCodeStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -28,6 +29,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class AnnotationReaderTest extends TestCase
 {
     protected function setUp(): void

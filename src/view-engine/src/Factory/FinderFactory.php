@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Factory;
 
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Finder;
 use Psr\Container\ContainerInterface;

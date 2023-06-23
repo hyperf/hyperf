@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer\Annotation;
 
 use Attribute;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 class RequestMapping extends Mapping

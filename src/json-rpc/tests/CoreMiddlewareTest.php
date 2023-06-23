@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\JsonRpc;
 
+use Hyperf\Codec\Packer\JsonPacker;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
@@ -36,12 +38,11 @@ use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Router\DispatcherFactory;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Packer\JsonPacker;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Serializer\SimpleNormalizer;
 use HyperfTest\JsonRpc\Stub\CalculatorService;
 use Mockery;
 use Monolog\Handler\StreamHandler;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -52,6 +53,7 @@ use Throwable;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CoreMiddlewareTest extends TestCase
 {
     public function testProcess()

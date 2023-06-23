@@ -13,6 +13,8 @@ namespace Hyperf\Watcher;
 
 use RuntimeException;
 
+use function passthru;
+
 if (function_exists('exec')) {
     /**
      * @return mixed
@@ -32,7 +34,7 @@ if (function_exists('exec')) {
 
         if (function_exists('\passthru')) {
             ob_start();
-            \passthru($command, $code);
+            passthru($command, $code);
             $output = ob_get_clean();
             ob_end_clean();
 

@@ -17,9 +17,15 @@ use Hyperf\Di\Aop\VisitorMetadata;
 use HyperfTest\Di\Stub\AspectCollector;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -56,7 +62,6 @@ CODETEMPLATE;
         $proxyCallVisitor = new ProxyCallVisitor(new VisitorMetadata('SomeClass'));
 
         $reflectionMethod = new ReflectionMethod($proxyCallVisitor, 'shouldRewrite');
-        $reflectionMethod->setAccessible(true);
         $this->assertFalse($reflectionMethod->invoke($proxyCallVisitor, $stmts->stmts[0]));
         $this->assertTrue($reflectionMethod->invoke($proxyCallVisitor, $stmts->stmts[1]));
     }
@@ -72,7 +77,6 @@ CODETEMPLATE;
         $proxyCallVisitor = new ProxyCallVisitor($visitorMetadata);
 
         $reflectionMethod = new ReflectionMethod($proxyCallVisitor, 'shouldRewrite');
-        $reflectionMethod->setAccessible(true);
         $this->assertTrue($reflectionMethod->invoke($proxyCallVisitor, new ClassMethod('foo')));
 
         $visitorMetadata->classLike = Node\Stmt\Interface_::class;

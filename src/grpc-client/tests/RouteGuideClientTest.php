@@ -11,13 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\GrpcClient;
 
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Coroutine\Channel\Pool as ChannelPool;
 use Hyperf\Di\Container;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\GrpcClient\StreamingCall;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\ChannelPool;
 use HyperfTest\GrpcClient\Stub\RouteGuideClient;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Routeguide\Point;
 use Routeguide\Rectangle;
@@ -28,6 +29,7 @@ use Routeguide\RouteSummary;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RouteGuideClientTest extends TestCase
 {
     protected function setUp(): void

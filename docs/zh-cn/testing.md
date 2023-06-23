@@ -1,16 +1,25 @@
 # 自动化测试
 
-在 Hyperf 里测试默认通过 `phpunit` 来实现，但由于 Hyperf 是一个协程框架，所以默认的 `phpunit` 并不能很好的工作，因此我们提供了一个 `co-phpunit` 脚本来进行适配，您可直接调用脚本或者使用对应的 composer 命令来运行。自动化测试没有特定的组件，但是在 Hyperf 提供的骨架包里都会有对应实现。
+在 Hyperf 里测试默认通过 `phpunit` 来实现，并在 3.1 引入了基于 phpunit 的框架 `pest` [文档](https://pestphp.com/docs/installation)。
 
-```
-composer require hyperf/testing
+但由于 Hyperf 是一个协程框架，所以默认的 `phpunit/pest` 并不能很好的工作，因此我们提供了对应的协程脚本来进行适配，您可直接调用脚本或者使用对应的 composer 命令来运行。自动化测试没有特定的组件，但是在 Hyperf 提供的骨架包里都会有对应实现。
+
+```shell
+composer require hyperf/testing --dev
+composer require friendsofhyperf/pest-plugin-hyperf --dev
 ```
 
 ```json
 "scripts": {
+    "pest": "pest --coroutine --colors=always",
     "test": "co-phpunit -c phpunit.xml --colors=always"
 },
 ```
+
+| package         | version |
+| --------------- | ------- |
+| phpunit/phpunit | ^10.1   |
+| pestphp/pest    | ^2.8  |
 
 ## Bootstrap
 
@@ -231,7 +240,7 @@ class UserTest extends HttpTestCase
 {
     public function testUserDaoFirst()
     {
-        $model = \Hyperf\Utils\ApplicationContext::getContainer()->get(UserDao::class)->first(1);
+        $model = \Hyperf\Context\ApplicationContext::getContainer()->get(UserDao::class)->first(1);
 
         var_dump($model);
 
@@ -392,7 +401,7 @@ namespace HyperfTest\Cases;
 use App\Api\DemoApi;
 use App\Logic\DemoLogic;
 use Hyperf\Di\Container;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use HyperfTest\HttpTestCase;
 use Mockery;
 

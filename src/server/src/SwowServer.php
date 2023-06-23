@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Engine\Http\Server as HttpServer;
 use Hyperf\Engine\Server as BaseServer;
 use Hyperf\Server\Event\AllCoroutineServersClosed;
@@ -22,8 +23,7 @@ use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Exception\RuntimeException;
-use Hyperf\Utils\Str;
-use Hyperf\Utils\Waiter;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
@@ -116,6 +116,7 @@ class SwowServer implements ServerInterface
             $host = $server->getHost();
             $port = $server->getPort();
             $callbacks = array_replace($config->getCallbacks(), $server->getCallbacks());
+            $server->setSettings(array_replace($config->getSettings(), $server->getSettings()));
 
             $this->server = $this->makeServer($type, $host, $port, $server->getSettings());
 

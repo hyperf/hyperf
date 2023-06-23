@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\ScanHandler;
 
+use function Hyperf\Support\env;
+
 class ProcScanHandler implements ScanHandlerInterface
 {
     public const SCAN_PROC_WORKER = 'SCAN_PROC_WORKER';

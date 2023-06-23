@@ -15,6 +15,7 @@ use Hyperf\Database\Commands\Migrations\InstallCommand;
 use Hyperf\Database\Migrations\MigrationRepositoryInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
@@ -23,6 +24,7 @@ use Symfony\Component\Console\Output\NullOutput;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabaseMigrationInstallCommandTest extends TestCase
 {
     use MockeryPHPUnitIntegration;

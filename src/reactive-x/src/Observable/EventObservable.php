@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ReactiveX\Observable;
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Rx\Disposable\EmptyDisposable;
 use Rx\DisposableInterface;

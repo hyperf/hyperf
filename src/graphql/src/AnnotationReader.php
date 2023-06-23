@@ -27,6 +27,7 @@ use RuntimeException;
 use TheCodingMachine\GraphQLite\Annotations\AbstractRequest;
 use TheCodingMachine\GraphQLite\Annotations\Exceptions\ClassNotFoundException;
 
+use function array_filter;
 use function in_array;
 use function strpos;
 use function substr;
@@ -146,7 +147,7 @@ class AnnotationReader
         do {
             try {
                 $allAnnotations = $this->reader->getClassAnnotations($refClass);
-                $toAddAnnotations[] = \array_filter($allAnnotations, function ($annotation) use ($annotationClass): bool {
+                $toAddAnnotations[] = array_filter($allAnnotations, function ($annotation) use ($annotationClass): bool {
                     return $annotation instanceof $annotationClass;
                 });
             } catch (AnnotationException $e) {

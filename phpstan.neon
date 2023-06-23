@@ -9,6 +9,7 @@ parameters:
   treatPhpDocTypesAsCertain: true
   reportUnmatchedIgnoredErrors: false
   excludePaths:
+    - %currentWorkingDirectory%/src/helper/*
     - %currentWorkingDirectory%/src/*/tests/*
     - %currentWorkingDirectory%/src/*/publish/*
     - %currentWorkingDirectory%/src/*/class_map/*
@@ -18,6 +19,7 @@ parameters:
     - %currentWorkingDirectory%/src/crontab/*
     - %currentWorkingDirectory%/src/database/*
     - %currentWorkingDirectory%/src/database-pgsql/*
+    - %currentWorkingDirectory%/src/db/src/PgSQL/*
     - %currentWorkingDirectory%/src/filesystem/*
     - %currentWorkingDirectory%/src/graphql/*
     - %currentWorkingDirectory%/src/grpc/*
@@ -58,6 +60,7 @@ parameters:
       path: src/amqp/src/IO/IOFactory.php
     - '#.*TKey.*TValue#'
     - '#Method Hyperf\\Utils\\Serializer\\Serializer::normalize\(\) should return array\|ArrayObject\|bool\|float\|int\|string\|null#'
+    - '#Method Hyperf\\Serializer\\Serializer::normalize\(\) should return array\|ArrayObject\|bool\|float\|int\|string\|null#'
     - '#Class RedisSentinel constructor invoked with .*#'
     - '#Hyperf\\Engine\\Http\\Server#'
     - '#Class Hyperf\\Logger\\Logger extends @final class Monolog\\Logger#'

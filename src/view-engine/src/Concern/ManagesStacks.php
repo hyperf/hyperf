@@ -13,6 +13,8 @@ namespace Hyperf\ViewEngine\Concern;
 
 use InvalidArgumentException;
 
+use function Hyperf\Tappable\tap;
+
 trait ManagesStacks
 {
     /**

@@ -14,7 +14,7 @@ namespace Hyperf\Nats;
 use Closure;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use Throwable;
 
 /**

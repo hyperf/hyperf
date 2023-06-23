@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Devtool;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Command\Annotation\Command;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Composer;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Composer;
+use Hyperf\Support\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

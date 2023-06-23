@@ -11,14 +11,15 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Command;
 
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Command\Command\DefaultSwooleFlagsCommand;
 use HyperfTest\Command\Command\FooCommand;
 use HyperfTest\Command\Command\FooExceptionCommand;
 use HyperfTest\Command\Command\FooExitCommand;
 use HyperfTest\Command\Command\SwooleFlagsCommand;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -29,6 +30,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CommandTest extends TestCase
 {
     protected function tearDown(): void
@@ -45,9 +47,7 @@ class CommandTest extends TestCase
         $this->assertSame(SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL, $command->getHookFlags());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testExitCodeWhenThrowException()
     {
         ApplicationContext::setContainer($container = Mockery::mock(ContainerInterface::class));

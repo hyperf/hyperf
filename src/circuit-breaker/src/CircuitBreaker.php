@@ -13,6 +13,8 @@ namespace Hyperf\CircuitBreaker;
 
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class CircuitBreaker implements CircuitBreakerInterface
 {
     protected string $name;

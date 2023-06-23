@@ -12,8 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\WebSocketServer;
 
 use Closure;
+use Hyperf\Collection\Arr;
 use Hyperf\Context\Context as CoContext;
-use Hyperf\Utils\Arr;
+
+use function Hyperf\Collection\data_get;
+use function Hyperf\Collection\data_set;
+use function Hyperf\Support\value;
 
 class Context
 {

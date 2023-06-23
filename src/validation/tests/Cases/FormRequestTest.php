@@ -11,7 +11,11 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Validation\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
+use Hyperf\Context\ResponseContext;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Translation\ArrayLoader;
@@ -23,16 +27,21 @@ use HyperfTest\Validation\Cases\Stub\BarSceneRequest;
 use HyperfTest\Validation\Cases\Stub\DemoRequest;
 use HyperfTest\Validation\Cases\Stub\FooSceneRequest;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 use Throwable;
+
+use function Hyperf\Coroutine\wait;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FormRequestTest extends TestCase
 {
     protected function tearDown(): void
@@ -44,7 +53,7 @@ class FormRequestTest extends TestCase
 
     public function testRequestValidationData()
     {
-        $psrRequest = Mockery::mock(ServerRequestInterface::class);
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
         $file = new UploadedFile('/tmp/tmp_name', 32, 0);
         $psrRequest->shouldReceive('getUploadedFiles')->andReturn([
             'file' => $file,
@@ -54,7 +63,7 @@ class FormRequestTest extends TestCase
         ]);
         $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
 
-        Context::set(ServerRequestInterface::class, $psrRequest);
+        RequestContext::set($psrRequest);
         $request = new DemoRequest(Mockery::mock(ContainerInterface::class));
 
         $this->assertEquals(['id' => 1, 'file' => $file], $request->getValidationData());
@@ -62,7 +71,7 @@ class FormRequestTest extends TestCase
 
     public function testRequestValidationDataWithSameKey()
     {
-        $psrRequest = Mockery::mock(ServerRequestInterface::class);
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
         $file = new UploadedFile('/tmp/tmp_name', 32, 0);
         $psrRequest->shouldReceive('getUploadedFiles')->andReturn([
             'file' => [$file],
@@ -72,7 +81,7 @@ class FormRequestTest extends TestCase
         ]);
         $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
 
-        Context::set(ServerRequestInterface::class, $psrRequest);
+        RequestContext::set($psrRequest);
         $request = new DemoRequest(Mockery::mock(ContainerInterface::class));
 
         $this->assertEquals(['file' => ['Invalid File.', $file]], $request->getValidationData());
@@ -80,15 +89,15 @@ class FormRequestTest extends TestCase
 
     public function testRewriteGetRules()
     {
-        $psrRequest = Mockery::mock(ServerRequestInterface::class);
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
         $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
         $psrRequest->shouldReceive('getUploadedFiles')->andReturn([]);
         $psrRequest->shouldReceive('getParsedBody')->andReturn([
             'name' => 'xxx',
         ]);
 
-        Context::set(ServerRequestInterface::class, $psrRequest);
-        Context::set(ResponseInterface::class, new Response());
+        RequestContext::set($psrRequest);
+        ResponseContext::set(new Response());
         $container = Mockery::mock(ContainerInterface::class);
         $translator = new Translator(new ArrayLoader(), 'en');
         $container->shouldReceive('get')->with(ValidatorFactoryInterface::class)->andReturn(new ValidatorFactory($translator));
@@ -109,16 +118,18 @@ class FormRequestTest extends TestCase
 
     public function testSceneForFormRequest()
     {
-        $psrRequest = Mockery::mock(ServerRequestInterface::class);
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
         $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
         $psrRequest->shouldReceive('getUploadedFiles')->andReturn([]);
         $psrRequest->shouldReceive('getParsedBody')->andReturn([
             'mobile' => '12345',
         ]);
 
-        Context::set(ServerRequestInterface::class, $psrRequest);
-        Context::set(ResponseInterface::class, new Response());
+        RequestContext::set($psrRequest);
+        ResponseContext::set(new Response());
         $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
+        ApplicationContext::setContainer($container);
         $translator = new Translator(new ArrayLoader(), 'en');
         $container->shouldReceive('get')->with(ValidatorFactoryInterface::class)->andReturn(new ValidatorFactory($translator));
 

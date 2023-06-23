@@ -12,14 +12,15 @@ declare(strict_types=1);
 namespace HyperfTest\AsyncQueue;
 
 use Hyperf\AsyncQueue\Driver\ChannelConfig;
+use Hyperf\Codec\Packer\PhpSerializerPacker;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Coroutine\Concurrent;
 use Hyperf\Di\Container;
 use Hyperf\Redis\RedisFactory;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Coroutine\Concurrent;
-use Hyperf\Utils\Packer\PhpSerializerPacker;
 use HyperfTest\AsyncQueue\Stub\Redis;
 use HyperfTest\AsyncQueue\Stub\RedisDriverStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -27,6 +28,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DriverTest extends TestCase
 {
     protected function tearDown(): void

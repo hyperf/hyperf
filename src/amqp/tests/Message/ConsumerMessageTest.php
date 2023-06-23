@@ -19,12 +19,14 @@ use HyperfTest\Amqp\Stub\ContainerStub;
 use HyperfTest\Amqp\Stub\QosConsumer;
 use Mockery;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConsumerMessageTest extends TestCase
 {
     protected function tearDown(): void

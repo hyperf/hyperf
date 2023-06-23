@@ -11,9 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Testing;
 
+use Hyperf\Codec\Json;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\MethodDefinitionCollector;
@@ -24,24 +28,24 @@ use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Router;
+use Hyperf\Serializer\SimpleNormalizer;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
+use Hyperf\Server\ServerFactory;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\Testing\Client;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
-use Hyperf\Utils\Waiter;
 use HyperfTest\Testing\Stub\Exception\Handler\FooExceptionHandler;
 use HyperfTest\Testing\Stub\FooController;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ClientTest extends TestCase
 {
     public function testClientRequest()
@@ -159,6 +163,14 @@ class ClientTest extends TestCase
             return new CoreMiddleware(...array_values($args));
         });
         $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
+        $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+        $dispatcher->shouldReceive('dispatch')->shouldReceive('dispatch')->andReturn(true);
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturn(true);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
+        $container->shouldReceive('get')->with(ServerFactory::class)->andReturn(
+            Mockery::mock(ServerFactory::class)->shouldReceive('getConfig')->andReturn(null)->getMock()
+        );
+
         ApplicationContext::setContainer($container);
 
         Router::init($factory);

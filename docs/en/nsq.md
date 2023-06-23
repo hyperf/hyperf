@@ -251,7 +251,7 @@ For example, when you need to delete a `Topic`, you could execute the following 
 
 ```php
 <?php
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Nsq\Nsqd\Topic;
 
 $container = ApplicationContext::getContainer();

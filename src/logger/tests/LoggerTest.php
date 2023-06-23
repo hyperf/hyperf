@@ -20,10 +20,13 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
+use function Hyperf\Coroutine\parallel;
+
 /**
  * @internal
- * @covers \Hyperf\Logger\Logger
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Logger\Logger::class)]
 class LoggerTest extends TestCase
 {
     public function testInstanceOfMonoLogger()

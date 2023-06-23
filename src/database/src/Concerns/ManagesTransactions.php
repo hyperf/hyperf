@@ -15,6 +15,8 @@ use Closure;
 use Exception;
 use Throwable;
 
+use function Hyperf\Tappable\tap;
+
 trait ManagesTransactions
 {
     /**
@@ -196,7 +198,7 @@ trait ManagesTransactions
         if ($this->causedByLostConnection($e)) {
             $this->reconnect();
 
-            $this->pdo->beginTransaction();
+            $this->getPdo()->beginTransaction();
         } else {
             throw $e;
         }

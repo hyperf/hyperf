@@ -16,18 +16,19 @@ use GuzzleHttp\Client;
 use Hyperf\Consul\ConsulResponse;
 use Hyperf\Consul\KV;
 use Hyperf\Consul\KVInterface;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Guzzle\ClientFactory;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
 /**
  * @internal
- * @covers \Hyperf\Consul\KV
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Consul\KV::class)]
 class KVTest extends TestCase
 {
     private $kv;

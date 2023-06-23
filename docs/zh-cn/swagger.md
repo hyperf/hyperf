@@ -2,7 +2,7 @@
 
 hyperf/swagger 组件基于 zircote/swagger-php 进行封装
 
-如需完整支持的注释列表，请查看[OpenApi\Annotations命名空间](https://github.com/zircote/swagger-php/blob/master/src/Annotations)或[文档网站](https://zircote.github.io/swagger-php/guide/annotations.html#arrays-and-objects)
+如需完整支持的注释列表，请查看[OpenApi\Annotations 命名空间](https://github.com/zircote/swagger-php/blob/master/src/Annotations)或[文档网站](https://zircote.github.io/swagger-php/guide/annotations.html#arrays-and-objects)
 
 
 ## 安装
@@ -29,7 +29,7 @@ php bin/hyperf.php vendor:publish hyperf/swagger
 
 ## 生成文档
 
-如果配置了`auto_generate`，在框架初始化的事件中便会自动生成文档，无需再次调用
+如果配置了 `auto_generate` ，在框架初始化的事件中便会自动生成文档，无需再次调用
 ```shell
 php bin/hyperf.php gen:swagger
 ```

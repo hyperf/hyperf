@@ -140,7 +140,7 @@ When each resource corresponds to a static scene, the proxy class is a good way 
 ```php
 <?php
 use Hyperf\Redis\RedisFactory;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ExceptionHandler;
 
-use Hyperf\Utils\Traits\StaticInstance;
+use Hyperf\Support\Traits\StaticInstance;
 
 class Propagation
 {

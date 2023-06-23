@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Listener;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Stringable\Str;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
 use OpenTracing\Tracer;
 
 class DbQueryExecutedListener implements ListenerInterface

@@ -11,15 +11,17 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Paginator;
 
+use Hyperf\Codec\Json;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Codec\Json;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class LengthAwarePaginatorTest extends TestCase
 {
     public function testNextPageUrl()

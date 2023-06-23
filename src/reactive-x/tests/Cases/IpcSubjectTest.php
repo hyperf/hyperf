@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
 use Hyperf\Engine\Channel;
@@ -21,8 +22,8 @@ use Hyperf\ReactiveX\Contract\BroadcasterInterface;
 use Hyperf\ReactiveX\IpcMessageWrapper;
 use Hyperf\ReactiveX\IpcSubject;
 use Hyperf\ReactiveX\RxSwoole;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Rx\Notification\OnNextNotification;
@@ -31,10 +32,14 @@ use Rx\SchedulerInterface;
 use Rx\Subject\Subject;
 use Swoole\Runtime;
 
+use function Hyperf\Coroutine\go;
+use function Hyperf\Support\swoole_hook_flags;
+
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class IpcSubjectTest extends TestCase
 {
     public static function setUpBeforeClass(): void

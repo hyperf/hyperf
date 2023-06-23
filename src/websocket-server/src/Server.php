@@ -37,7 +37,7 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server as AsyncStyleServer;
 use Hyperf\Server\ServerManager;
-use Hyperf\Utils\SafeCaller;
+use Hyperf\Support\SafeCaller;
 use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Context as WsContext;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
@@ -51,6 +51,9 @@ use Swoole\Server as SwooleServer;
 use Swoole\WebSocket\Server as WebSocketServer;
 use Swow\Psr7\Server\ServerConnection as SwowServerConnection;
 use Throwable;
+
+use function Hyperf\Coroutine\defer;
+use function Hyperf\Coroutine\wait;
 
 class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, OnCloseInterface, OnMessageInterface
 {

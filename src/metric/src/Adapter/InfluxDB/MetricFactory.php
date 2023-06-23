@@ -22,7 +22,7 @@ use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\StrCache;
 use InfluxDB\Client;
 use InfluxDB\Database;
 use InfluxDB\Database\RetentionPolicy;
@@ -30,6 +30,8 @@ use InfluxDB\Driver\DriverInterface;
 use InfluxDB\Point;
 use Prometheus\CollectorRegistry;
 use Prometheus\Sample;
+
+use function Hyperf\Support\make;
 
 class MetricFactory implements MetricFactoryInterface
 {
@@ -127,6 +129,6 @@ class MetricFactory implements MetricFactoryInterface
     private function getNamespace(): string
     {
         $name = $this->config->get("metric.metric.{$this->name}.namespace");
-        return preg_replace('#[^a-zA-Z0-9:_]#', '_', Str::snake($name));
+        return preg_replace('#[^a-zA-Z0-9:_]#', '_', StrCache::snake($name));
     }
 }

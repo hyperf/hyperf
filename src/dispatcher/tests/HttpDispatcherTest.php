@@ -11,14 +11,15 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Dispatcher;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\HttpMessage\Server\Response;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Dispatcher\Middlewares\CoreMiddleware;
 use HyperfTest\Dispatcher\Middlewares\Test2Middleware;
 use HyperfTest\Dispatcher\Middlewares\TestMiddleware;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ProphecyInterface;
@@ -34,6 +35,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class HttpDispatcherTest extends TestCase
 {
     use ProphecyTrait;

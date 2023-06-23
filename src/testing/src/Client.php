@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Testing;
 
+use Hyperf\Codec\Packer\JsonPacker;
+use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
@@ -24,14 +26,15 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Server;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\Testing\HttpMessage\Upload\UploadedFile;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
+
+use function Hyperf\Collection\data_get;
+use function Hyperf\Coroutine\wait;
 
 class Client extends Server
 {
@@ -190,14 +193,6 @@ class Client extends Server
         return $request->withQueryParams($query)
             ->withParsedBody($data)
             ->withUploadedFiles($this->normalizeFiles($multipart));
-    }
-
-    /**
-     * @deprecated It will be removed in v3.0
-     */
-    protected function init(string $method, string $path, array $options = []): ServerRequestInterface
-    {
-        return $this->initRequest($method, $path, $options);
     }
 
     protected function execute(ServerRequestInterface $psr7Request): ResponseInterface

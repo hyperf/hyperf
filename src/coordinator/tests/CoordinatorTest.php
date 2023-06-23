@@ -12,13 +12,17 @@ declare(strict_types=1);
 namespace HyperfTest\Coordinator;
 
 use Hyperf\Coordinator\Coordinator;
-use Hyperf\Utils\WaitGroup;
+use Hyperf\Coroutine\WaitGroup;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Coroutine\go;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CoordinatorTest extends TestCase
 {
     public function testYield()

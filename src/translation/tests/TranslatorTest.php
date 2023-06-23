@@ -12,19 +12,27 @@ declare(strict_types=1);
 namespace HyperfTest\Translation;
 
 use Countable;
+use Hyperf\Collection\Collection;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;
 use Hyperf\Di\Container;
 use Hyperf\Translation\MessageSelector;
 use Hyperf\Translation\Translator;
 use Hyperf\Translation\TranslatorFactory;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Collection;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
+use function Hyperf\Coroutine\parallel;
+
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -47,7 +55,6 @@ class TranslatorTest extends TestCase
         $loader = $factory($container);
         $ref = new ReflectionClass($loader);
         $locale = $ref->getProperty('locale');
-        $locale->setAccessible(true);
         $this->assertSame('zh_CN', $locale->getValue($loader));
     }
 

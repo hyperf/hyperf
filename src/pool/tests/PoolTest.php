@@ -11,21 +11,25 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Pool;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\FrequencyInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Pool;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Pool\Stub\FooPool;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+
+use function Hyperf\Support\value;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PoolTest extends TestCase
 {
     protected function tearDown(): void

@@ -14,6 +14,8 @@ namespace Hyperf\Database\Model\Concerns;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use DateTimeInterface;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
@@ -21,10 +23,12 @@ use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Contract\Synchronized;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use LogicException;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Tappable\tap;
 
 trait HasAttributes
 {
@@ -162,7 +166,7 @@ trait HasAttributes
             // key so that the relation attribute is snake cased in this returned
             // array to the developers, making this consistent with attributes.
             if (static::$snakeAttributes) {
-                $key = Str::snake($key);
+                $key = StrCache::snake($key);
             }
 
             // If the relation value has been set, we will set it on this attributes
@@ -229,9 +233,17 @@ trait HasAttributes
         // If the "attribute" exists as a method on the model, we will just assume
         // it is a relationship and will load and return results from the query
         // and hydrate the relationship's value on the "relationships" array.
-        if (method_exists($this, $key)) {
+        if ($this->isRelation($key)) {
             return $this->getRelationshipFromMethod($key);
         }
+    }
+
+    /**
+     * Determine if the given key is a relationship method on the model.
+     */
+    public function isRelation(string $key): bool
+    {
+        return method_exists($this, $key) || $this->relationResolver(static::class, $key);
     }
 
     /**
@@ -239,7 +251,7 @@ trait HasAttributes
      */
     public function hasGetMutator(string $key): bool
     {
-        return method_exists($this, 'get' . Str::studly($key) . 'Attribute');
+        return method_exists($this, 'get' . StrCache::studly($key) . 'Attribute');
     }
 
     /**
@@ -296,7 +308,7 @@ trait HasAttributes
      */
     public function hasSetMutator(string $key): bool
     {
-        return method_exists($this, 'set' . Str::studly($key) . 'Attribute');
+        return method_exists($this, 'set' . StrCache::studly($key) . 'Attribute');
     }
 
     /**
@@ -665,7 +677,7 @@ trait HasAttributes
     public static function cacheMutatedAttributes(string $class): void
     {
         static::$mutatorCache[$class] = collect(static::getMutatorMethods($class))->map(function ($match) {
-            return lcfirst(static::$snakeAttributes ? Str::snake($match) : $match);
+            return lcfirst(static::$snakeAttributes ? StrCache::snake($match) : $match);
         })->all();
     }
 
@@ -841,7 +853,7 @@ trait HasAttributes
      */
     protected function mutateAttribute(string $key, mixed $value)
     {
-        return $this->{'get' . Str::studly($key) . 'Attribute'}($value);
+        return $this->{'get' . StrCache::studly($key) . 'Attribute'}($value);
     }
 
     /**
@@ -966,7 +978,7 @@ trait HasAttributes
      */
     protected function setMutatedAttributeValue(string $key, mixed $value)
     {
-        return $this->{'set' . Str::studly($key) . 'Attribute'}($value);
+        return $this->{'set' . StrCache::studly($key) . 'Attribute'}($value);
     }
 
     /**

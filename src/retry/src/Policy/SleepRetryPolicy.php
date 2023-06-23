@@ -13,6 +13,8 @@ namespace Hyperf\Retry\Policy;
 
 use Hyperf\Retry\RetryContext;
 
+use function Hyperf\Support\make;
+
 class SleepRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
     public function __construct(private int $base, private string $sleepStrategyClass)

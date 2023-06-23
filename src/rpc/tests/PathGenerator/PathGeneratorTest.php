@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Rpc\PathGenerator;
 
 use Hyperf\JsonRpc\PathGenerator;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PathGeneratorTest extends TestCase
 {
     public function testGenerateFromClassName()

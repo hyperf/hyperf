@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
+use Hyperf\Support\Composer;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Assign;
@@ -21,9 +22,12 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\MagicConst\Class_ as MagicConstClass;
+use PhpParser\Node\Scalar\MagicConst\Dir as MagicConstDir;
+use PhpParser\Node\Scalar\MagicConst\File as MagicConstFile;
 use PhpParser\Node\Scalar\MagicConst\Function_ as MagicConstFunction;
 use PhpParser\Node\Scalar\MagicConst\Method as MagicConstMethod;
 use PhpParser\Node\Scalar\MagicConst\Trait_ as MagicConstTrait;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
@@ -31,6 +35,8 @@ use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\Trait_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\NodeVisitorAbstract;
+
+use function Hyperf\Support\value;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
@@ -109,6 +115,18 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 // Rewrite __METHOD__ to $__method__ variable.
                 if ($this->shouldRewrite) {
                     return new Variable('__method__');
+                }
+                break;
+            case $node instanceof MagicConstDir:
+                // Rewrite __DIR__ as the real directory path
+                if ($file = Composer::getLoader()->findFile($this->visitorMetadata->className)) {
+                    return new String_(dirname(realpath($file)));
+                }
+                break;
+            case $node instanceof MagicConstFile:
+                // Rewrite __FILE__ to the real file path
+                if ($file = Composer::getLoader()->findFile($this->visitorMetadata->className)) {
+                    return new String_(realpath($file));
                 }
                 break;
         }

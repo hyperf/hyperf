@@ -77,7 +77,7 @@ Get the Producer instance through container, and you can deliver the message. It
 <?php
 use Hyperf\Amqp\Producer;
 use App\Amqp\Producers\DemoProducer;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $message = new DemoProducer(1);
 $producer = ApplicationContext::getContainer()->get(Producer::class);

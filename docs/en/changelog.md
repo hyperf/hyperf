@@ -1,5 +1,195 @@
 # Changelogs
 
+# v3.0.25 - 2023-06-19
+
+## Fixed
+
+- [#5829](https://github.com/hyperf/hyperf/pull/5829) Fixed bug that the method `Hyperf\Database\Model\Builder::value()` cannot work when using column like `table.column`.
+- [#5831](https://github.com/hyperf/hyperf/pull/5831) Fixed an endless loop when socket.io parses namespace.
+
+# v3.0.24 - 2023-06-10
+
+## Fixed
+
+- [#5794](https://github.com/hyperf/hyperf/pull/5794) Fixed bug that `__FILE__` and `__DIR__` cannot be rewritten successfully in proxy classes.
+- [#5803](https://github.com/hyperf/hyperf/pull/5803) Fixed bug that `hyperf/http-server` cannot match psr7.
+- [#5808](https://github.com/hyperf/hyperf/pull/5808) Fixed bug that validation rules `le`、`lte`、`gt`、`gte` do not support comparison between numeric and string values.
+
+## Optimized
+
+- [#5789](https://github.com/hyperf/hyperf/pull/5789) Support `psr/http-message`.
+- [#5806](https://github.com/hyperf/hyperf/pull/5806) Merge swow server settings with config settings.
+- [#5814](https://github.com/hyperf/hyperf/pull/5814) Added function `build_sql` which be used in `QueryException`.
+
+# v3.0.23 - 2023-06-02
+
+## Added
+
+- [#5757](https://github.com/hyperf/hyperf/pull/5757) Support nacos naming signature.
+- [#5765](https://github.com/hyperf/hyperf/pull/5765) Support Full-Text Search for `database`.
+
+## Fixed
+
+- [#5782](https://github.com/hyperf/hyperf/pull/5782) Fixed bug that prometheus cannot collect histograms.
+
+## Optimized
+
+- [#5768](https://github.com/hyperf/hyperf/pull/5768) Improved `Hyperf\Command\Annotation\Command`, support set properties for command.
+- [#5780](https://github.com/hyperf/hyperf/pull/5780) Convert carrier key to string in `Zipkin\Propagation\Map`.
+
+# v3.0.22 - 2023-05-27
+
+## Added
+
+- [#5760](https://github.com/hyperf/hyperf/pull/5760) Added namespace for functions of `hyperf/translation`.
+- [#5761](https://github.com/hyperf/hyperf/pull/5761) Added `Hyperf\Coordinator\Timer::until()`.
+
+## Optimized
+
+- [#5741](https://github.com/hyperf/hyperf/pull/5741) Added deprecated comments to `Hyperf\DB\MySQLConnection`.
+- [#5702](https://github.com/hyperf/hyperf/pull/5702) Optimized the code of `Hyperf\Metric\Adapter\Prometheus\Redis` which allowed to rewrite the prefix about redis keys.
+- [#5762](https://github.com/hyperf/hyperf/pull/5762) Use non-blocking mode for swoole process by default.
+
+# v3.0.21 - 2023-05-18
+
+## Added
+
+- [#5721](https://github.com/hyperf/hyperf/pull/5721) Added `exception` property to Request Lifecycle Events.
+- [#5723](https://github.com/hyperf/hyperf/pull/5723) Support `Swoole 5 PgSQL` for `hyperf/db`.
+- [#5725](https://github.com/hyperf/hyperf/pull/5725) Support `Swoole 4 PgSQL` for `hyperf/db`.
+- [#5731](https://github.com/hyperf/hyperf/pull/5731) Added `Arr::hasAny()`.
+
+## Fixed
+
+- [#5726](https://github.com/hyperf/hyperf/pull/5726) [#5730](https://github.com/hyperf/hyperf/pull/5730) Fixed bug that pgsql cannot init when using pgsql-swoole.
+
+## Optimized
+
+- [#5718](https://github.com/hyperf/hyperf/pull/5718) Optimized the code and added some test cases for `view-engine`.
+- [#5719](https://github.com/hyperf/hyperf/pull/5719) Optimized the code of `metric` and added some unit cases.
+- [#5720](https://github.com/hyperf/hyperf/pull/5720) Optimized the code of `Hyperf\Metric\Listener\OnPipeMessage` to avoid message block.
+
+# v3.0.20 - 2023-05-12
+
+## Added
+
+- [#5707](https://github.com/hyperf/hyperf/pull/5707) Added `Hyperf\Config\config` function.
+- [#5711](https://github.com/hyperf/hyperf/pull/5711) Added `Arr::mapWithKeys()`.
+- [#5715](https://github.com/hyperf/hyperf/pull/5715) Support http request lifecycle events.
+
+## Fixed
+
+- [#5709](https://github.com/hyperf/hyperf/pull/5709) Fixed bug that the error message is wrong when the logger group not found.
+- [#5713](https://github.com/hyperf/hyperf/pull/5713) Support Server instance as default.
+
+## Optimized
+
+- [#5716](https://github.com/hyperf/hyperf/pull/5716) Support CoroutineServer for SuperGlobals.
+
+# v3.0.19 - 2023-05-06
+
+## Fixed
+
+- [#5679](https://github.com/hyperf/hyperf/pull/5679) Fixed bug that the type of `$timeout` in `#[Task]` don't match `TaskAspect`.
+- [#5684](https://github.com/hyperf/hyperf/pull/5684) Fixed bug that blade view engine cannot work when using break statement.
+
+## Added
+
+- [#5680](https://github.com/hyperf/hyperf/pull/5680) Support store context when using `rpc-multiplex`.
+- [#5695](https://github.com/hyperf/hyperf/pull/5695) Added creation and update datetime columns.
+- [#5699](https://github.com/hyperf/hyperf/pull/5699) Added `Model::resolveRelationUsing()` which you can set dynamic relation for model.
+
+## Optimized
+
+- [#5694](https://github.com/hyperf/hyperf/pull/5694) Remove `hyperf/utils` from `hyperf/rpc`.
+- [#5696](https://github.com/hyperf/hyperf/pull/5694) Use `Hyperf\Coroutine\Coroutine::sleep()` instead of `Swoole\Coroutine::sleep()`.
+
+# v3.0.18 - 2023-04-26
+
+## Added
+
+- [#5672](https://github.com/hyperf/hyperf/pull/5672) Added some helper functions in `hyperf/support`.
+
+## Fixed
+
+- [#5662](https://github.com/hyperf/hyperf/pull/5662) Fixed bug that `pgsql-swoole` cannot throw exceptions when statement execution failed.
+
+## Optimized
+
+- [#5660](https://github.com/hyperf/hyperf/pull/5660) Split `hyperf/codec` from `hyperf/utils`.
+- [#5663](https://github.com/hyperf/hyperf/pull/5663) Split `hyperf/serializer` from `hyperf/utils`.
+- [#5666](https://github.com/hyperf/hyperf/pull/5666) Split `Packers` to `hyperf/codec`.
+- [#5668](https://github.com/hyperf/hyperf/pull/5668) Split `hyperf/support` from `hyperf/utils`.
+- [#5670](https://github.com/hyperf/hyperf/pull/5670) Split `hyperf/code-parser` from `hyperf/utils`.
+- [#5671](https://github.com/hyperf/hyperf/pull/5671) Use `Hyperf\Coroutine\Channel\Pool` instead of `Hyperf\Utils\ChannelPool`.
+- [#5674](https://github.com/hyperf/hyperf/pull/5674) Instead of `classes` and `functions` of `Hyperf\Utils`.
+
+# v3.0.17 - 2023-04-19
+
+## Fixed
+
+- [#5642](https://github.com/hyperf/hyperf/pull/5642) Fixed bug that the model cache cannot be created when using `find many` to get non-exists models.
+- [#5643](https://github.com/hyperf/hyperf/pull/5643) Fixed bug that the empty caches cannot be used for `Model::findManyFromCache()`.
+- [#5649](https://github.com/hyperf/hyperf/pull/5649) Fixed bug init table collector cannot work for coroutine style server.
+
+## Added
+
+- [#5634](https://github.com/hyperf/hyperf/pull/5634) Added `Hyperf\Stringable\str()` helper function.
+- [#5639](https://github.com/hyperf/hyperf/pull/5639) Added `Redis::pipeline()` and `Redis::transaction()` support.
+- [#5641](https://github.com/hyperf/hyperf/pull/5641) Support deeply nested cache relations for `model-cache`.
+- [#5646](https://github.com/hyperf/hyperf/pull/5646) Added `PriorityDefinition` to sort dependencies.
+
+## Optimized
+
+- [#5634](https://github.com/hyperf/hyperf/pull/5634) Use `Hyperf\Stringable\Str` instead of `Hyperf\Utils\Str`.
+- [#5636](https://github.com/hyperf/hyperf/pull/5636) Reduce kafka first start time and handle stop consumer logic
+- [#5648](https://github.com/hyperf/hyperf/pull/5648) Removed requirement `hyperf/utils` from `hyperf/guzzle`.
+
+# v3.0.16 - 2023-04-12
+
+## Fixed
+
+- [#5627](https://github.com/hyperf/hyperf/pull/5627) Fixed issue where coroutine context was not destroyed in `Hyperf\Context\Context::destroy` method.
+
+## Optimized
+
+- [#5616](https://github.com/hyperf/hyperf/pull/5616) Split `ApplicationContext` from `hyperf/utils` to `hyperf/context`.
+- [#5617](https://github.com/hyperf/hyperf/pull/5617) Removed the requirement `hyperf/guzzle` from `hyperf/consul`.
+- [#5618](https://github.com/hyperf/hyperf/pull/5618) Support to set the default router for swagger.
+- [#5619](https://github.com/hyperf/hyperf/pull/5619) [#5620](https://github.com/hyperf/hyperf/pull/5620) Split `hyperf/coroutine` from `hyperf/utils`.
+- [#5621](https://github.com/hyperf/hyperf/pull/5621) Use `Hyperf\Context\ApplicationContext` instead of `Hyperf\Utils\ApplicationContext`.
+- [#5622](https://github.com/hyperf/hyperf/pull/5622) Split `CoroutineProxy` from `hyperf/utils` to `hyperf/context`.
+- [#5623](https://github.com/hyperf/hyperf/pull/5623) Use `Hyperf\Coroutine\Coroutine` instead of `Hyperf\Utils\Coroutine`.
+- [#5624](https://github.com/hyperf/hyperf/pull/5624) Split Channel utils from `hyperf/utils` to `hyperf/coroutine`.
+- [#5629](https://github.com/hyperf/hyperf/pull/5629) Refactor `Hyperf\Utils\Arr` that let it extends `Hyperf\Collection\Arr`.
+
+# v3.0.15 - 2023-04-07
+
+## Added
+
+- [#5606](https://github.com/hyperf/hyperf/pull/5606) Added `server.options.send_channel_capacity` to control whether to use safe socket.
+
+## Optimized
+
+- [#5593](https://github.com/hyperf/hyperf/pull/5593) [#5598](https://github.com/hyperf/hyperf/pull/5598) Use `Hyperf\Collection\Collection` instead of `Hyperf\Utils\Collection`.
+- [#5594](https://github.com/hyperf/hyperf/pull/5594) Use `Hyperf\Collection\Arr` instead of `Hyperf\Utils\Arr`.
+- [#5596](https://github.com/hyperf/hyperf/pull/5596) Split `hyperf/pipeline` from `hyperf/utils`.
+- [#5599](https://github.com/hyperf/hyperf/pull/5599) Use Hyperf\Pipeline\Pipeline instead of Hyperf\Utils\Pipeline。
+
+# v3.0.14 - 2023-04-01
+
+## Fixed
+
+- [#5578](https://github.com/hyperf/hyperf/pull/5578) Fixed bug that unable to serialize `Channel` in `Crontab`.
+- [#5579](https://github.com/hyperf/hyperf/pull/5579) Fixed bug that `crontab:run` cannot work.
+
+## Optimized
+
+- [#5572](https://github.com/hyperf/hyperf/pull/5572) Update Http Server to use new WritableConnection implementation.
+- [#5577](https://github.com/hyperf/hyperf/pull/5577) Split `hyperf/collection` from `hyperf/utils`.
+- [#5580](https://github.com/hyperf/hyperf/pull/5580) Split `hyperf/conditionable` and `hyperf/tappable` from `hyperf/utils`.
+- [#5585](https://github.com/hyperf/hyperf/pull/5585) Removed the requirement `consul` from `service-governance`.
+
 # v3.0.13 - 2023-03-26
 
 ## Added
@@ -2592,7 +2782,7 @@ config/container.php
 
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSourceFactory;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = new Container((new DefinitionSourceFactory(true))());
 

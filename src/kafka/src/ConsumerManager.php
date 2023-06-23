@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
@@ -32,6 +33,9 @@ use longlang\phpkafka\Timer\SwooleTimer;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;
+
+use function Hyperf\Coroutine\wait;
+use function Hyperf\Support\make;
 
 class ConsumerManager
 {
@@ -131,16 +135,22 @@ class ConsumerManager
                     }
                 );
 
+                // stop consumer when worker exit
+                Coroutine::create(function () use ($longLangConsumer) {
+                    CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
+                    $longLangConsumer->stop();
+                });
+
                 while (true) {
                     try {
-                        if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(10)) {
-                            break;
-                        }
-
                         $longLangConsumer->start();
                     } catch (Throwable $exception) {
                         $this->stdoutLogger->warning((string) $exception);
                         $this->dispatcher?->dispatch(new FailToConsume($this->consumer, [], $exception));
+                    }
+
+                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(10)) {
+                        break;
                     }
                 }
 

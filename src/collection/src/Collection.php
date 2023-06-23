@@ -522,8 +522,8 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Apply the callback if the value is truthy.
      *
-     * @param callable($this): $this $callback
-     * @param callable($this): $this $default
+     * @param callable($this, $value): $this $callback
+     * @param callable($this, $value): $this $default
      * @return $this
      */
     public function when(bool $value, callable $callback, callable $default = null): self
@@ -941,14 +941,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      */
     public function mapWithKeys(callable $callback): self
     {
-        $result = [];
-        foreach ($this->items as $key => $value) {
-            $assoc = $callback($value, $key);
-            foreach ($assoc as $mapKey => $mapValue) {
-                $result[$mapKey] = $mapValue;
-            }
-        }
-        return new static($result);
+        return new static(Arr::mapWithKeys($this->items, $callback));
     }
 
     /**

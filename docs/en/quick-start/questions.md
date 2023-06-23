@@ -64,7 +64,7 @@ Normally this issue is caused by running version `3.0.5` of [zircote/swagger](ht
 
 If you have installed [hyperf/swagger](https://github.com/hyperf/swagger), please lock the version of [zircote/swagger](https://github.com/zircote/swagger-php) at `3.0.4`.
 
-## `Hyperf` will not execute commands because the memory_limit is too small
+## `Hyperf` cannot start because the memory_limit is too small
 
 By default, the `memory_limit` of `PHP` is set to `128M`. Because `Hyperf` makes use of the `BetterReflection` package to perform code analysis, a large amount of memory may be consumed and the `PHP` process may throw fatal exceptions when it runs out of memory.
 
@@ -135,6 +135,7 @@ This issue can be fixed using the following methods:
 
 * Create an alias in the sub-class to prevent a conflict: `use Psr\Http\Message\ResponseInterface as PsrResponseInterface;`
 * In `PHP` version `7.4` you can add a type to the attribute within the trait class: `protected ResponseInterface $response;`
+
 ## `Hyperf` will not execute commands because `gprc` or `pcntl` extensions are not installed
 
 `Hyperf` version `2.2` requires the `pcntl` extension, you can check if it's installed by running the command `php --ri pcntl`:
@@ -163,3 +164,37 @@ http2 => enabled
 If the result of this command is empty, you need to recompile `Swoole` with the `--enabled-http2` parameter
 
 2. Check the `open_http2_protocol` configuration value is set to `true` in the `config/autoload/server.php` configuration file
+
+## Command cannot be closed properly
+
+After using multiplex technologies such as AMQP in Command, it will not be able to close normally. In this case, you only need to add the following code at the end of the execution logic.
+
+```php
+<?php
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coordinator\Constants;
+
+CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+```
+
+## OSS upload component reports iconv error
+
+- fix Aliyun oss wrong charset: https://github.com/aliyun/aliyun-oss-php-sdk/issues/101
+- https://github.com/docker-library/php/issues/240#issuecomment-762438977
+- https://github.com/docker-library/php/pull/1264
+
+When using the `aliyuncs/oss-sdk-php` component to upload, an iconv error will be reported. You can try to avoid it by using the following methods:
+
+When using `hyperf/hyperf:8.0-alpine-v3.12-swoole` image
+
+```
+RUN apk --no-cache --allow-untrusted --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ add gnu-libiconv=1.15-r2
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so
+```
+
+When using `hyperf/hyperf:8.0-alpine-v3.13-swoole` image
+
+```dockerfile
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/gnu-libiconv=1.15-r3
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
+```

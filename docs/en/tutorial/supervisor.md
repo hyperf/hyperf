@@ -49,7 +49,7 @@ Run the following command to start the Supervisor program based on the configura
 supervisord -c /etc/supervisord.d/supervisord.conf
 ```
 
-## 使用 supervisorctl 管理项目
+## Use `supervisorctl` to manage the application
 
 ```bash
 # start the hyperf application

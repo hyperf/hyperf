@@ -13,12 +13,16 @@ namespace HyperfTest\WebSocketServer;
 
 use Hyperf\Context\Context as CoContext;
 use Hyperf\WebSocketServer\Context;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ContextTest extends TestCase
 {
     public function testHas()

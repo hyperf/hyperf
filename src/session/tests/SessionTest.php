@@ -14,14 +14,15 @@ namespace HyperfTest\Session;
 use Hyperf\Session\Handler\FileHandler;
 use Hyperf\Session\Handler\NullHandler;
 use Hyperf\Session\Session;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- * @covers \Hyperf\Session\Session
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Session\Session::class)]
 class SessionTest extends TestCase
 {
     public function testSession()

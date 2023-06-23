@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Metric\Adapter\NoOp;
 
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Metric\Contract\CounterInterface;
@@ -21,10 +20,6 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 
 class MetricFactory implements MetricFactoryInterface
 {
-    public function __construct(private ConfigInterface $config)
-    {
-    }
-
     public function makeCounter(string $name, ?array $labelNames = []): CounterInterface
     {
         return new Counter();

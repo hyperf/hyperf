@@ -13,13 +13,15 @@ namespace Hyperf\RateLimit\Aspect;
 
 use bandwidthThrottle\tokenBucket\storage\StorageException;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\RateLimit\Annotation\RateLimit;
 use Hyperf\RateLimit\Exception\RateLimitException;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
-use Swoole\Coroutine;
+
+use function Hyperf\Tappable\tap;
 
 class RateLimitAnnotationAspect implements AroundInterface
 {

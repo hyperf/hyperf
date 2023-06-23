@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Collections;
 
 use Hyperf\Collection\Arr;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -19,6 +20,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ArrTest extends TestCase
 {
     public function testArrGet()
@@ -103,7 +105,7 @@ class ArrTest extends TestCase
                     'mixin',
                 ],
                 'class_map' => [
-                    \Hyperf\Utils\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
+                    \Hyperf\Coroutine\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
                 ],
             ],
         ];
@@ -126,7 +128,7 @@ class ArrTest extends TestCase
                     'author',
                 ],
                 'class_map' => [
-                    \Hyperf\Utils\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
+                    \Hyperf\Coroutine\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
                     \Hyperf\Di\Resolver\ResolverDispatcher::class => BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php',
                 ],
             ],
@@ -222,5 +224,45 @@ class ArrTest extends TestCase
     public function testEmptyShuffle()
     {
         $this->assertEquals([], Arr::shuffle([]));
+    }
+
+    public function testMapWithKeys()
+    {
+        $data = [
+            ['name' => 'Blastoise', 'type' => 'Water', 'idx' => 9],
+            ['name' => 'Charmander', 'type' => 'Fire', 'idx' => 4],
+            ['name' => 'Dragonair', 'type' => 'Dragon', 'idx' => 148],
+        ];
+
+        $data = Arr::mapWithKeys($data, function ($pokemon) {
+            return [$pokemon['name'] => $pokemon['type']];
+        });
+
+        $this->assertEquals(
+            ['Blastoise' => 'Water', 'Charmander' => 'Fire', 'Dragonair' => 'Dragon'],
+            $data
+        );
+    }
+
+    public function testHasAnyMethod()
+    {
+        $array = ['name' => 'Taylor', 'age' => '', 'city' => null];
+        $this->assertTrue(Arr::hasAny($array, 'name'));
+        $this->assertTrue(Arr::hasAny($array, 'age'));
+        $this->assertTrue(Arr::hasAny($array, 'city'));
+        $this->assertFalse(Arr::hasAny($array, 'foo'));
+        $this->assertTrue(Arr::hasAny($array, 'name', 'email'));
+        $this->assertTrue(Arr::hasAny($array, ['name', 'email']));
+
+        $array = ['name' => 'Taylor', 'email' => 'foo'];
+        $this->assertTrue(Arr::hasAny($array, 'name', 'email'));
+        $this->assertFalse(Arr::hasAny($array, 'surname', 'password'));
+        $this->assertFalse(Arr::hasAny($array, ['surname', 'password']));
+
+        $array = ['foo' => ['bar' => null, 'baz' => '']];
+        $this->assertTrue(Arr::hasAny($array, 'foo.bar'));
+        $this->assertTrue(Arr::hasAny($array, 'foo.baz'));
+        $this->assertFalse(Arr::hasAny($array, 'foo.bax'));
+        $this->assertTrue(Arr::hasAny($array, ['foo.bax', 'foo.baz']));
     }
 }

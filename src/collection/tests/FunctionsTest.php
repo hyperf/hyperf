@@ -14,18 +14,22 @@ namespace HyperfTest\Collection;
 use ArrayAccess;
 use ArrayIterator;
 use IteratorAggregate;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Traversable;
 
 use function Hyperf\Collection\data_fill;
 use function Hyperf\Collection\data_get;
 use function Hyperf\Collection\data_set;
+use function Hyperf\Collection\head;
+use function Hyperf\Collection\last;
 use function Hyperf\Collection\value;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FunctionsTest extends TestCase
 {
     public function testDataGet()

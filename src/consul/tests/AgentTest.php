@@ -14,18 +14,19 @@ namespace HyperfTest\Consul;
 use GuzzleHttp\Client;
 use Hyperf\Consul\Agent;
 use Hyperf\Consul\AgentInterface;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Guzzle\ClientFactory;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
 /**
  * @internal
- * @covers \Hyperf\Consul\Agent
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Consul\Agent::class)]
 class AgentTest extends TestCase
 {
     /**

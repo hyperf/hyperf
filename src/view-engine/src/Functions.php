@@ -11,9 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\Arrayable;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\View\RenderInterface;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\ViewInterface;
@@ -31,11 +32,7 @@ if (! function_exists('Hyperf\\ViewEngine\\view')) {
         $container = ApplicationContext::getContainer();
         if (interface_exists(ResponseInterface::class) && Context::has(ResponseInterface::class)) {
             $contentType = $container->get(RenderInterface::class)->getContentType();
-            Context::set(
-                ResponseInterface::class,
-                Context::get(ResponseInterface::class)
-                    ->withAddedHeader('content-type', $contentType)
-            );
+            ResponseContext::get()->addHeader('content-type', $contentType);
         }
 
         $factory = $container->get(FactoryInterface::class);

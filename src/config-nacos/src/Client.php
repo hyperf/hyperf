@@ -11,12 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigNacos;
 
+use Hyperf\Codec\Json;
+use Hyperf\Codec\Xml;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Exception\RequestException;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Codec\Xml;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 

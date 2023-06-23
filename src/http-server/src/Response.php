@@ -12,7 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\Codec\Json;
+use Hyperf\Codec\Xml;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Contract\Xmlable;
@@ -23,33 +28,28 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\HttpServer\Exception\Http\FileException;
-use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\ClearStatCache;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Codec\Xml;
-use Hyperf\Utils\MimeTypeExtensionGuesser;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\ClearStatCache;
+use Hyperf\Support\MimeTypeExtensionGuesser;
 use InvalidArgumentException;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use SplFileInfo;
 use Stringable;
+use Swow\Psr7\Message\ResponsePlusInterface;
 use Throwable;
 
 use function get_class;
+use function Hyperf\Support\value;
 
 class Response implements PsrResponseInterface, ResponseInterface
 {
     use Macroable;
 
-    protected ?PsrResponseInterface $response = null;
-
-    public function __construct(?PsrResponseInterface $response = null)
+    public function __construct(protected ?ResponsePlusInterface $response = null)
     {
-        $this->response = $response;
     }
 
     public function __call($method, $parameters)
@@ -79,8 +79,8 @@ class Response implements PsrResponseInterface, ResponseInterface
     {
         $data = $this->toJson($data);
         return $this->getResponse()
-            ->withAddedHeader('content-type', 'application/json; charset=utf-8')
-            ->withBody(new SwooleStream($data));
+            ->addHeader('content-type', 'application/json; charset=utf-8')
+            ->setBody(new SwooleStream($data));
     }
 
     /**
@@ -92,8 +92,8 @@ class Response implements PsrResponseInterface, ResponseInterface
     {
         $data = $this->toXml($data, null, $root);
         return $this->getResponse()
-            ->withAddedHeader('content-type', 'application/xml; charset=utf-8')
-            ->withBody(new SwooleStream($data));
+            ->addHeader('content-type', 'application/xml; charset=utf-8')
+            ->setBody(new SwooleStream($data));
     }
 
     /**
@@ -104,8 +104,8 @@ class Response implements PsrResponseInterface, ResponseInterface
     public function raw($data): PsrResponseInterface
     {
         return $this->getResponse()
-            ->withAddedHeader('content-type', 'text/plain; charset=utf-8')
-            ->withBody(new SwooleStream((string) $data));
+            ->addHeader('content-type', 'text/plain; charset=utf-8')
+            ->setBody(new SwooleStream((string) $data));
     }
 
     /**
@@ -117,13 +117,12 @@ class Response implements PsrResponseInterface, ResponseInterface
         string $schema = 'http'
     ): PsrResponseInterface {
         $toUrl = value(function () use ($toUrl, $schema) {
-            if (! ApplicationContext::hasContainer() || Str::startsWith($toUrl, ['http://', 'https://'])) {
+            if (Str::startsWith($toUrl, ['http://', 'https://'])) {
                 return $toUrl;
             }
-            /** @var Contract\RequestInterface $request */
-            $request = ApplicationContext::getContainer()->get(Contract\RequestInterface::class);
-            $uri = $request->getUri();
-            $host = $uri->getAuthority();
+
+            $host = RequestContext::get()->getUri()->getAuthority();
+
             // Build the url by $schema and host.
             return $schema . '://' . $host . (Str::startsWith($toUrl, '/') ? $toUrl : '/' . $toUrl);
         });
@@ -156,25 +155,23 @@ class Response implements PsrResponseInterface, ResponseInterface
         });
 
         // Determine if ETag the client expects matches calculated ETag
-        $request = Context::get(ServerRequestInterface::class);
-        if ($request instanceof ServerRequestInterface) {
-            $ifMatch = $request->getHeaderLine('if-match');
-            $ifNoneMatch = $request->getHeaderLine('if-none-match');
-            $clientEtags = explode(',', $ifMatch ?: $ifNoneMatch);
-            /* @phpstan-ignore-next-line */
-            array_walk($clientEtags, 'trim');
-            if (in_array($etag, $clientEtags, true)) {
-                return $this->withStatus(304)->withAddedHeader('content-type', $contentType);
-            }
+        $request = RequestContext::get();
+        $ifMatch = $request->getHeaderLine('if-match');
+        $ifNoneMatch = $request->getHeaderLine('if-none-match');
+        $clientEtags = explode(',', $ifMatch ?: $ifNoneMatch);
+        /* @phpstan-ignore-next-line */
+        array_walk($clientEtags, 'trim');
+        if (in_array($etag, $clientEtags, true)) {
+            return $this->getResponse()->setStatus(304)->addHeader('content-type', $contentType);
         }
 
-        return $this->withHeader('content-description', 'File Transfer')
-            ->withHeader('content-type', $contentType)
-            ->withHeader('content-disposition', "attachment; filename={$filename}; filename*=UTF-8''" . rawurlencode($filename))
-            ->withHeader('content-transfer-encoding', 'binary')
-            ->withHeader('pragma', 'public')
-            ->withHeader('etag', $etag)
-            ->withBody(new SwooleFileStream($file));
+        return $this->getResponse()->setHeader('content-description', 'File Transfer')
+            ->setHeader('content-type', $contentType)
+            ->setHeader('content-disposition', "attachment; filename={$filename}; filename*=UTF-8''" . rawurlencode($filename))
+            ->setHeader('content-transfer-encoding', 'binary')
+            ->setHeader('pragma', 'public')
+            ->setHeader('etag', $etag)
+            ->setBody(new SwooleFileStream($file));
     }
 
     public function withCookie(Cookie $cookie): ResponseInterface
@@ -204,7 +201,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @param string $version HTTP protocol version
      * @return PsrResponseInterface
      */
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -299,7 +296,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @return PsrResponseInterface
      * @throws InvalidArgumentException for invalid header names or values
      */
-    public function withHeader($name, $value)
+    public function withHeader($name, $value): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -318,7 +315,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @return PsrResponseInterface
      * @throws InvalidArgumentException for invalid header names or values
      */
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader($name, $value): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -333,7 +330,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @param string $name case-insensitive header field name to remove
      * @return PsrResponseInterface
      */
-    public function withoutHeader($name)
+    public function withoutHeader($name): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -359,7 +356,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @return PsrResponseInterface
      * @throws InvalidArgumentException when the body is not valid
      */
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -391,10 +388,9 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @param string $reasonPhrase the reason phrase to use with the
      *                             provided status code; if none is provided, implementations MAY
      *                             use the defaults as suggested in the HTTP specification
-     * @return PsrResponseInterface
      * @throws InvalidArgumentException for invalid status code arguments
      */
-    public function withStatus($code, $reasonPhrase = '')
+    public function withStatus($code, $reasonPhrase = ''): PsrResponseInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -429,10 +425,6 @@ class Response implements PsrResponseInterface, ResponseInterface
     protected function call($name, $arguments)
     {
         $response = $this->getResponse();
-
-        if (! $response instanceof PsrResponseInterface) {
-            throw new InvalidResponseException('The response is not instanceof ' . PsrResponseInterface::class);
-        }
 
         if (! method_exists($response, $name)) {
             throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
@@ -490,14 +482,14 @@ class Response implements PsrResponseInterface, ResponseInterface
     /**
      * Get the response object from context.
      *
-     * @return object|PsrResponseInterface it's an object that implemented PsrResponseInterface, or maybe it's a proxy class
+     * @return ResponsePlusInterface it's an object that implemented PsrResponseInterface, or maybe it's a proxy class
      */
-    protected function getResponse()
+    protected function getResponse(): ResponsePlusInterface
     {
-        if ($this->response instanceof PsrResponseInterface) {
+        if ($this->response instanceof ResponsePlusInterface) {
             return $this->response;
         }
 
-        return Context::get(PsrResponseInterface::class);
+        return ResponseContext::get();
     }
 }

@@ -132,7 +132,7 @@ Sometimes, you may wish to keep the habit of logging in most frameworks. Then yo
 namespace App;
 
 use Hyperf\Logger\Logger;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 
 class Log

@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace HyperfTest\Watcher\Stub;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use Mockery\MockInterface;
 use Psr\Container\ContainerInterface;

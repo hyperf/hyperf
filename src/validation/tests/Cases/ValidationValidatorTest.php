@@ -14,14 +14,14 @@ namespace HyperfTest\Validation\Cases;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeImmutable;
+use Hyperf\Collection\Arr;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\TranslatorInterface as TranslatorContract;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSourceInterface;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Arr;
 use Hyperf\Validation\Contract\ImplicitRule;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Contract\Rule;
@@ -32,6 +32,7 @@ use Hyperf\Validation\ValidationException;
 use Hyperf\Validation\Validator;
 use InvalidArgumentException;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use SplFileInfo;
 
@@ -39,6 +40,7 @@ use SplFileInfo;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationValidatorTest extends TestCase
 {
     protected function tearDown(): void
@@ -1692,6 +1694,9 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
         $this->assertEquals(5, $v->messages()->first('items'));
 
+        $v = new Validator($trans, ['items' => '26', 'more' => 5], ['items' => 'gt:more']);
+        $this->assertTrue($v->passes());
+
         $v = new Validator($trans, ['items' => 'abc', 'more' => 'abcde'], ['items' => 'gt:more']);
         $this->assertFalse($v->passes());
         $this->assertEquals(5, $v->messages()->first('items'));
@@ -1728,6 +1733,9 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['items' => 3, 'less' => 2], ['items' => 'numeric|lt:less']);
         $this->assertFalse($v->passes());
         $this->assertEquals(2, $v->messages()->first('items'));
+
+        $v = new Validator($trans, ['items' => '5', 'less' => 26], ['items' => 'numeric|lt:less']);
+        $this->assertTrue($v->passes());
 
         $v = new Validator($trans, ['items' => 'abc', 'less' => 'ab'], ['items' => 'lt:less']);
         $this->assertFalse($v->passes());
@@ -1766,6 +1774,9 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
         $this->assertEquals(5, $v->messages()->first('items'));
 
+        $v = new Validator($trans, ['items' => '26', 'more' => 26], ['items' => 'numeric|gte:more']);
+        $this->assertTrue($v->passes());
+
         $v = new Validator($trans, ['items' => 'abc', 'more' => 'abcde'], ['items' => 'gte:more']);
         $this->assertFalse($v->passes());
         $this->assertEquals(5, $v->messages()->first('items'));
@@ -1802,6 +1813,9 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['items' => 3, 'less' => 2], ['items' => 'numeric|lte:less']);
         $this->assertFalse($v->passes());
         $this->assertEquals(2, $v->messages()->first('items'));
+
+        $v = new Validator($trans, ['items' => 5, 'less' => '26'], ['items' => 'numeric|lte:less']);
+        $this->assertTrue($v->passes());
 
         $v = new Validator($trans, ['items' => 'abc', 'less' => 'ab'], ['items' => 'lte:less']);
         $this->assertFalse($v->passes());
@@ -2146,9 +2160,9 @@ class ValidationValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider validUrls
      * @param mixed $validUrl
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validUrls')]
     public function testValidateUrlWithValidUrls($validUrl)
     {
         $trans = $this->getIlluminateArrayTranslator();
@@ -2157,9 +2171,9 @@ class ValidationValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidUrls
      * @param mixed $invalidUrl
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidUrls')]
     public function testValidateUrlWithInvalidUrls($invalidUrl)
     {
         $trans = $this->getIlluminateArrayTranslator();
@@ -2167,7 +2181,7 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
     }
 
-    public function validUrls()
+    public static function validUrls()
     {
         return [
             ['aaa://fully.qualified.domain/path'],
@@ -2408,7 +2422,7 @@ class ValidationValidatorTest extends TestCase
         ];
     }
 
-    public function invalidUrls()
+    public static function invalidUrls()
     {
         return [
             ['aslsdlks'],
@@ -4522,9 +4536,9 @@ class ValidationValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider validUuidList
      * @param mixed $uuid
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validUuidList')]
     public function testValidateWithValidUuid($uuid)
     {
         $trans = $this->getIlluminateArrayTranslator();
@@ -4533,9 +4547,9 @@ class ValidationValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidUuidList
      * @param mixed $uuid
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidUuidList')]
     public function testValidateWithInvalidUuid($uuid)
     {
         $trans = $this->getIlluminateArrayTranslator();
@@ -4543,7 +4557,7 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
     }
 
-    public function validUuidList()
+    public static function validUuidList()
     {
         return [
             ['a0a2a2d2-0b87-4a18-83f2-2529882be2de'],
@@ -4559,7 +4573,7 @@ class ValidationValidatorTest extends TestCase
         ];
     }
 
-    public function invalidUuidList()
+    public static function invalidUuidList()
     {
         return [
             ['not a valid uuid so we can test this'],

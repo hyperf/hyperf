@@ -11,11 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Swagger\Request;
 
-use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Swagger\Exception\RuntimeException;
 use Hyperf\Validation\Request\FormRequest;
-use Psr\Http\Message\ServerRequestInterface;
 
 class SwaggerRequest extends FormRequest
 {
@@ -33,7 +32,7 @@ class SwaggerRequest extends FormRequest
     public function rules(): array
     {
         /** @var Dispatched $dispatched */
-        $dispatched = Context::get(ServerRequestInterface::class)?->getAttribute(Dispatched::class);
+        $dispatched = RequestContext::getOrNull()?->getAttribute(Dispatched::class);
         if (! $dispatched) {
             throw new RuntimeException('The request is invalid.');
         }

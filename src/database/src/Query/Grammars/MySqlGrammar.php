@@ -11,9 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query\Grammars;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\JsonExpression;
-use Hyperf\Utils\Arr;
+
+use function Hyperf\Collection\collect;
 
 class MySqlGrammar extends Grammar
 {
@@ -344,5 +346,25 @@ class MySqlGrammar extends Grammar
         [$field, $path] = $this->wrapJsonFieldAndPath($value);
 
         return 'json_extract(' . $field . $path . ')';
+    }
+
+    /**
+     * Compile a "where fulltext" clause.
+     */
+    protected function whereFullText(Builder $query, array $where): string
+    {
+        $columns = $this->columnize($where['columns']);
+
+        $value = $this->parameter($where['value']);
+
+        $mode = ($where['options']['mode'] ?? []) === 'boolean'
+            ? ' in boolean mode'
+            : ' in natural language mode';
+
+        $expanded = ($where['options']['expanded'] ?? []) && ($where['options']['mode'] ?? []) !== 'boolean'
+            ? ' with query expansion'
+            : '';
+
+        return "match ({$columns}) against (" . $value . "{$mode}{$expanded})";
     }
 }

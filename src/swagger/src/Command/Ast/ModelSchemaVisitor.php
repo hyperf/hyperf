@@ -14,7 +14,7 @@ namespace Hyperf\Swagger\Command\Ast;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Schema\Builder;
 use Hyperf\Database\Schema\Column;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 use ReflectionClass;

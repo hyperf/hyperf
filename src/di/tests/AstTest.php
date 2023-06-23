@@ -27,12 +27,15 @@ use HyperfTest\Di\Stub\Ast\Foo;
 use HyperfTest\Di\Stub\Ast\FooTrait;
 use HyperfTest\Di\Stub\FooEnumStruct;
 use HyperfTest\Di\Stub\Par2;
+use HyperfTest\Di\Stub\PathStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class AstTest extends TestCase
 {
     protected $license = '<?php
@@ -71,6 +74,35 @@ class Foo
 }', $code);
     }
 
+    public function testMagicConstDirAndFile()
+    {
+        $ast = new Ast();
+        $code = $ast->proxy(PathStub::class);
+        $path = (new PathStub())->file();
+        $dir = (new PathStub())->dir();
+
+        $this->assertSame($this->license . '
+namespace HyperfTest\Di\Stub;
+
+class PathStub
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    function __construct()
+    {
+        $this->__handlePropertyHandler(__CLASS__);
+    }
+    public function file() : string
+    {
+        return \'' . $path . '\';
+    }
+    public function dir() : string
+    {
+        return \'' . $dir . '\';
+    }
+}', $code);
+    }
+
     public function testParentWith()
     {
         $ast = new Ast();
@@ -95,10 +127,6 @@ class Par2 extends Par
 
     public function testAstProxyForEnum()
     {
-        if (PHP_VERSION_ID < 80100) {
-            $this->markTestSkipped('The version below 8.1 does not support enum.');
-        }
-
         $ast = new Ast();
         $code = $ast->proxy(FooEnumStruct::class);
 

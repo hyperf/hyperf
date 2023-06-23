@@ -14,18 +14,21 @@ namespace Hyperf\Database\Model;
 use BadMethodCallException;
 use Closure;
 use Generator;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionMethod;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Tappable\tap;
 
 /**
  * @mixin \Hyperf\Database\Query\Builder
@@ -86,7 +89,7 @@ class Builder
     protected $passthru = [
         'insert', 'insertGetId', 'getBindings', 'toSql', 'insertOrIgnore',
         'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'average', 'sum', 'getConnection',
-        'upsert',
+        'upsert', 'updateOrInsert',
     ];
 
     /**
@@ -578,7 +581,7 @@ class Builder
     public function value($column)
     {
         if ($result = $this->first([$column])) {
-            return $result->{$column};
+            return $result->{Str::afterLast($column, '.')};
         }
     }
 
@@ -727,7 +730,7 @@ class Builder
      *
      * @param string $column
      * @param null|string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     public function pluck($column, $key = null)
     {
@@ -1157,8 +1160,6 @@ class Builder
 
         foreach ($methods as $method) {
             if ($replace || ! static::hasGlobalMacro($method->name)) {
-                $method->setAccessible(true);
-
                 static::macro($method->name, $method->invoke($mixin));
             }
         }

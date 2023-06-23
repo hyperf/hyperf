@@ -13,14 +13,16 @@ namespace HyperfTest\RpcMultiplex\Cases;
 
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\RpcMultiplex\Transporter;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\RpcMultiplex\Stub\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TransporterTest extends AbstractTestCase
 {
     public function testGetLoadBalancer()

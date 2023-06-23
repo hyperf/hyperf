@@ -15,7 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\Session\Session;
 use Hyperf\Session\SessionManager;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use HyperfTest\Session\Stub\MockStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -24,7 +24,12 @@ use ReflectionClass;
 
 /**
  * @internal
- * @covers \Hyperf\Session\SessionManager
+ * @coversNothing
+ */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Session\SessionManager::class)]
+/**
+ * @internal
+ * @coversNothing
  */
 class SessionManagerTest extends TestCase
 {
@@ -45,7 +50,6 @@ class SessionManagerTest extends TestCase
         $sessionManager = new SessionManager(Mockery::mock(ContainerInterface::class), MockStub::makeConfig());
         $reflectionClass = new ReflectionClass(SessionManager::class);
         $parseSessionIdMethod = $reflectionClass->getMethod('parseSessionId');
-        $parseSessionIdMethod->setAccessible(true);
         $id = Str::random(40);
         $this->assertSame($id, $parseSessionIdMethod->invoke($sessionManager, $request->withCookieParams([
             'HYPERF_SESSION_ID' => $id,

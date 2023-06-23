@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Strategy;
 
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Crontab\Crontab;
-use Hyperf\Utils\Coroutine;
 
 class CoroutineStrategy extends AbstractStrategy
 {

@@ -17,8 +17,9 @@ use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use Swow\Psr7\Message\RequestPlusInterface;
 
-class Request implements RequestInterface
+class Request implements RequestInterface, RequestPlusInterface
 {
     use MessageTrait;
 
@@ -62,6 +63,11 @@ class Request implements RequestInterface
         }
     }
 
+    public function __toString(): string
+    {
+        return $this->toString();
+    }
+
     /**
      * Retrieves the message's request target.
      * Retrieves the message's request-target either as it will appear (for
@@ -72,10 +78,8 @@ class Request implements RequestInterface
      * withRequestTarget() below).
      * If no URI is available, and no request-target has been specifically
      * provided, this method MUST return the string "/".
-     *
-     * @return string
      */
-    public function getRequestTarget()
+    public function getRequestTarget(): string
     {
         if ($this->requestTarget !== null) {
             return $this->requestTarget;
@@ -104,10 +108,9 @@ class Request implements RequestInterface
      *
      * @see http://tools.ietf.org/html/rfc7230#section-5.3 (for the various
      *     request-target forms allowed in request messages)
-     * @param mixed $requestTarget
-     * @return static
+     * @param string $requestTarget
      */
-    public function withRequestTarget($requestTarget)
+    public function withRequestTarget(mixed $requestTarget): static
     {
         if (preg_match('#\s#', $requestTarget)) {
             throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
@@ -123,7 +126,7 @@ class Request implements RequestInterface
      *
      * @return string returns the request method
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
@@ -138,10 +141,9 @@ class Request implements RequestInterface
      * changed request method.
      *
      * @param string $method case-sensitive method
-     * @return static
      * @throws InvalidArgumentException for invalid HTTP methods
      */
-    public function withMethod($method)
+    public function withMethod(mixed $method): static
     {
         $method = strtoupper($method);
         $methods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'HEAD'];
@@ -190,9 +192,8 @@ class Request implements RequestInterface
      * @see http://tools.ietf.org/html/rfc3986#section-4.3
      * @param UriInterface $uri new request URI to use
      * @param bool $preserveHost preserve the original state of the Host header
-     * @return static
      */
-    public function withUri(UriInterface $uri, $preserveHost = false): self
+    public function withUri(UriInterface $uri, $preserveHost = false): static
     {
         if ($uri === $this->uri) {
             return $this;
@@ -206,6 +207,58 @@ class Request implements RequestInterface
         }
 
         return $new;
+    }
+
+    public function setMethod(string $method): static
+    {
+        $method = strtoupper($method);
+        $methods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'HEAD'];
+        if (! in_array($method, $methods)) {
+            throw new InvalidArgumentException('Invalid Method');
+        }
+        $this->method = $method;
+        return $this;
+    }
+
+    public function setUri(UriInterface|string $uri, ?bool $preserveHost = null): static
+    {
+        $this->uri = $uri;
+
+        if (! $preserveHost) {
+            $this->updateHostFromUri();
+        }
+
+        return $this;
+    }
+
+    public function setRequestTarget(string $requestTarget): static
+    {
+        if (preg_match('#\s#', $requestTarget)) {
+            throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
+        }
+
+        $this->requestTarget = $requestTarget;
+        return $this;
+    }
+
+    public function toString(bool $withoutBody = false): string
+    {
+        $headerString = '';
+        if (! $withoutBody) {
+            foreach ($this->getStandardHeaders() as $key => $values) {
+                foreach ($values as $value) {
+                    $headerString .= sprintf("%s: %s\r\n", $key, $value);
+                }
+            }
+        }
+        return sprintf(
+            "%s %s HTTP/%s\r\n%s\r\n%s",
+            $this->getMethod(),
+            $this->getUri()->getPath(),
+            $this->getProtocolVersion(),
+            $headerString,
+            $this->getBody()
+        );
     }
 
     /**

@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\ConfigAliyunAcm;
 
 use GuzzleHttp;
+use Hyperf\Codec\Json;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
-use Hyperf\Utils\Codec\Json;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;

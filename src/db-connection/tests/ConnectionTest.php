@@ -20,12 +20,17 @@ use HyperfTest\DbConnection\Stubs\ConnectionStub;
 use HyperfTest\DbConnection\Stubs\ContainerStub;
 use HyperfTest\DbConnection\Stubs\PDOStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Coroutine\defer;
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConnectionTest extends TestCase
 {
     protected function tearDown(): void

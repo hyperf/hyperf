@@ -200,7 +200,7 @@ foreach ($books as $book){
 
 ```php
 use Hyperf\ModelCache\EagerLoad\EagerLoader;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $books = Book::findManyFromCache([1,2,3]);
 $loader = ApplicationContext::getContainer()->get(EagerLoader::class);

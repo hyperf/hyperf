@@ -13,8 +13,9 @@ namespace Hyperf\HttpMessage\Base;
 
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
-class Response implements ResponseInterface
+class Response implements ResponseInterface, ResponsePlusInterface
 {
     use MessageTrait;
 
@@ -92,7 +93,7 @@ class Response implements ResponseInterface
 
     private array $attributes = [];
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->getBody();
     }
@@ -122,10 +123,9 @@ class Response implements ResponseInterface
      *
      * @param string $name the attribute name
      * @param mixed $default default value to return if the attribute does not exist
-     * @return mixed
      * @see getAttributes()
      */
-    public function getAttribute($name, $default = null)
+    public function getAttribute(string $name, mixed $default = null): mixed
     {
         return array_key_exists($name, $this->attributes) ? $this->attributes[$name] : $default;
     }
@@ -140,14 +140,19 @@ class Response implements ResponseInterface
      *
      * @param string $name the attribute name
      * @param mixed $value the value of the attribute
-     * @return static
      * @see getAttributes()
      */
-    public function withAttribute($name, $value)
+    public function withAttribute(string $name, mixed $value): static
     {
         $clone = clone $this;
         $clone->attributes[$name] = $value;
         return $clone;
+    }
+
+    public function setAttribute(string $name, mixed $value): static
+    {
+        $this->attributes[$name] = $value;
+        return $this;
     }
 
     /**
@@ -177,10 +182,9 @@ class Response implements ResponseInterface
      * @param string $reasonPhrase the reason phrase to use with the
      *                             provided status code; if none is provided, implementations MAY
      *                             use the defaults as suggested in the HTTP specification
-     * @return static
      * @throws InvalidArgumentException for invalid status code arguments
      */
-    public function withStatus($code, $reasonPhrase = '')
+    public function withStatus($code, $reasonPhrase = ''): static
     {
         $clone = clone $this;
         $clone->statusCode = (int) $code;
@@ -202,10 +206,9 @@ class Response implements ResponseInterface
     /**
      * Return an instance with the specified charset content type.
      *
-     * @return static
      * @throws InvalidArgumentException
      */
-    public function withCharset(string $charset)
+    public function withCharset(string $charset): static
     {
         return $this->withAddedHeader('Content-Type', sprintf('charset=%s', $charset));
     }
@@ -232,7 +235,7 @@ class Response implements ResponseInterface
         return $this->charset;
     }
 
-    public function setCharset(string $charset): Response
+    public function setCharset(string $charset): static
     {
         $this->charset = $charset;
         return $this;
@@ -333,5 +336,33 @@ class Response implements ResponseInterface
     public function isEmpty(): bool
     {
         return in_array($this->statusCode, [204, 304]);
+    }
+
+    public function toString(bool $withoutBody = false): string
+    {
+        $headerString = '';
+        foreach ($this->getStandardHeaders() as $key => $values) {
+            foreach ($values as $value) {
+                $headerString .= sprintf("%s: %s\r\n", $key, $value);
+            }
+        }
+        return sprintf(
+            "HTTP/%s %s %s\r\n%s\r\n%s",
+            $this->getProtocolVersion(),
+            $this->getStatusCode(),
+            $this->getReasonPhrase(),
+            $headerString,
+            $this->getBody()
+        );
+    }
+
+    public function setStatus(int $code, string $reasonPhrase = ''): static
+    {
+        $this->statusCode = $code;
+        if (! $reasonPhrase && isset(self::$phrases[$code])) {
+            $reasonPhrase = self::$phrases[$code];
+        }
+        $this->reasonPhrase = $reasonPhrase;
+        return $this;
     }
 }

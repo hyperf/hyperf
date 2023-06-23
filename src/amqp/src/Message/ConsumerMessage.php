@@ -14,7 +14,7 @@ namespace Hyperf\Amqp\Message;
 use Hyperf\Amqp\Builder\QueueBuilder;
 use Hyperf\Amqp\Packer\Packer;
 use Hyperf\Amqp\Result;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;

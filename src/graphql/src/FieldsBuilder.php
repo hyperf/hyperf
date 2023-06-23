@@ -64,6 +64,8 @@ use TheCodingMachine\GraphQLite\Types\UnionType;
 
 use function array_merge;
 use function get_parent_class;
+use function iterator_to_array;
+use function ucfirst;
 
 /**
  * A class in charge if returning list of fields for queries / mutations / entities / input types.
@@ -450,7 +452,7 @@ class FieldsBuilder
         if ($reflectionClass->hasMethod($propertyName)) {
             $methodName = $propertyName;
         } else {
-            $upperCasePropertyName = \ucfirst($propertyName);
+            $upperCasePropertyName = ucfirst($propertyName);
             if ($reflectionClass->hasMethod('get' . $upperCasePropertyName)) {
                 $methodName = 'get' . $upperCasePropertyName;
             } elseif ($reflectionClass->hasMethod('is' . $upperCasePropertyName)) {
@@ -733,7 +735,7 @@ class FieldsBuilder
     private function typesWithoutNullable(Type $docBlockTypeHint): array
     {
         if ($docBlockTypeHint instanceof Compound) {
-            $docBlockTypeHints = \iterator_to_array($docBlockTypeHint);
+            $docBlockTypeHints = iterator_to_array($docBlockTypeHint);
         } else {
             $docBlockTypeHints = [$docBlockTypeHint];
         }

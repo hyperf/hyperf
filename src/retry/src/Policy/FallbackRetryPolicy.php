@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Retry\Policy;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Retry\RetryContext;
-use Hyperf\Utils\ApplicationContext;
 use Throwable;
 
 class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface

@@ -152,7 +152,7 @@ function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
 
 ```php
 <?php
-$io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
+$io = \Hyperf\Context\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
 
 // sending to all clients in 'game' room, including sender
 // 向 game 房间内的所有连接推送 bigger-announcement 事件。

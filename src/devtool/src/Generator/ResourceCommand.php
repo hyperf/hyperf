@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Symfony\Component\Console\Input\InputOption;
 
 #[Command]

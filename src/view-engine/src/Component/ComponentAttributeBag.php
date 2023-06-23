@@ -13,14 +13,17 @@ namespace Hyperf\ViewEngine\Component;
 
 use ArrayAccess;
 use ArrayIterator;
+use Hyperf\Collection\Arr;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\HtmlString;
 use IteratorAggregate;
 use Stringable;
 use Traversable;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Support\value;
 
 class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate, Stringable
 {
@@ -258,7 +261,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate,
 
             unset($attributes['attributes']);
 
-            $attributes = $parentBag->merge($attributes);
+            $attributes = $parentBag->merge($attributes)->getAttributes();
         }
 
         $this->attributes = $attributes;

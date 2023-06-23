@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\WebSocketServer;
 
-use Hyperf\Context\Context;
+use Hyperf\Context\ResponseContext;
 use Hyperf\HttpMessage\Base\Response;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
@@ -34,16 +34,16 @@ class CoreMiddleware extends HttpCoreMiddleware
         }
 
         /** @var Response $response */
-        $response = Context::get(ResponseInterface::class);
+        $response = ResponseContext::get();
 
         $security = $this->container->get(Security::class);
 
         $key = $request->getHeaderLine(Security::SEC_WEBSOCKET_KEY);
-        $response = $response->withStatus(101)->withHeaders($security->handshakeHeaders($key));
+        $response = $response->setStatus(101)->setHeaders($security->handshakeHeaders($key));
         if ($wsProtocol = $request->getHeaderLine(Security::SEC_WEBSOCKET_PROTOCOL)) {
-            $response = $response->withHeader(Security::SEC_WEBSOCKET_PROTOCOL, $wsProtocol);
+            $response = $response->setHeader(Security::SEC_WEBSOCKET_PROTOCOL, $wsProtocol);
         }
 
-        return $response->withAttribute(self::HANDLER_NAME, $controller);
+        return $response->setAttribute(self::HANDLER_NAME, $controller);
     }
 }

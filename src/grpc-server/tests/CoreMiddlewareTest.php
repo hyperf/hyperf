@@ -13,6 +13,7 @@ namespace HyperfTest\GrpcServer;
 
 use Closure;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\NormalizerInterface;
@@ -30,9 +31,9 @@ use Hyperf\HttpServer\Router\Handler;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Router\DispatcherFactory as RPCDispatcherFactory;
 use Hyperf\RpcServer\Router\RouteCollector;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Serializer\SimpleNormalizer;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -40,6 +41,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CoreMiddlewareTest extends TestCase
 {
     public function testGRPCCoreMiddlewareDispatch()

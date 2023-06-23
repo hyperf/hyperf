@@ -16,11 +16,13 @@ use Hyperf\ConfigCenter\AbstractDriver;
 use Hyperf\ConfigCenter\Contract\ClientInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
+
+use function Hyperf\Support\retry;
 
 class ApolloDriver extends AbstractDriver
 {

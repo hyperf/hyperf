@@ -13,9 +13,9 @@ namespace Hyperf\GraphQL;
 
 use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
-use Hyperf\Context\Context;
+use Hyperf\Codec\Json;
+use Hyperf\Context\ResponseContext;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Codec\Json;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -44,12 +44,7 @@ class GraphQLMiddleware implements MiddlewareInterface
         $variableValues = isset($input['variables']) ? $input['variables'] : null;
 
         $result = GraphQL::executeQuery($this->schema, $query, null, null, $variableValues);
-        return $this->getResponse()->withBody(new SwooleStream(Json::encode($result)));
-    }
-
-    protected function getResponse(): ResponseInterface
-    {
-        return Context::get(ResponseInterface::class);
+        return ResponseContext::get()->setBody(new SwooleStream(Json::encode($result)));
     }
 
     protected function isGraphQL(ServerRequestInterface $request): bool

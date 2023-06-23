@@ -12,14 +12,25 @@ declare(strict_types=1);
 namespace HyperfTest\Context;
 
 use Hyperf\Context\Context;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Context\RequestContext;
+use Hyperf\Context\ResponseContext;
+use Hyperf\Coroutine\Coroutine;
+use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use stdClass;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
+
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ContextTest extends TestCase
 {
     public function testOverride()
@@ -51,24 +62,28 @@ class ContextTest extends TestCase
     {
         Context::set('test.store.id', $uid = uniqid());
         $id = Coroutine::id();
-        parallel([function () use ($id, $uid) {
-            Context::copy($id, ['test.store.id']);
-            $this->assertSame($uid, Context::get('test.store.id'));
-        }]);
+        parallel([
+            function () use ($id, $uid) {
+                Context::copy($id, ['test.store.id']);
+                $this->assertSame($uid, Context::get('test.store.id'));
+            },
+        ]);
     }
 
     public function testCopyAfterSet()
     {
         Context::set('test.store.id', $uid = uniqid());
         $id = Coroutine::id();
-        parallel([function () use ($id, $uid) {
-            Context::set('test.store.name', 'Hyperf');
-            Context::copy($id, ['test.store.id']);
-            $this->assertSame($uid, Context::get('test.store.id'));
+        parallel([
+            function () use ($id, $uid) {
+                Context::set('test.store.name', 'Hyperf');
+                Context::copy($id, ['test.store.id']);
+                $this->assertSame($uid, Context::get('test.store.id'));
 
-            // TODO: Context::copy will delete origin values.
-            $this->assertNull(Context::get('test.store.name'));
-        }]);
+                // TODO: Context::copy will delete origin values.
+                $this->assertNull(Context::get('test.store.name'));
+            },
+        ]);
     }
 
     public function testContextChangeAfterCopy()
@@ -80,13 +95,15 @@ class ContextTest extends TestCase
         Context::set('test.store.useless.id', 1);
         $id = Coroutine::id();
         $tid = uniqid();
-        parallel([function () use ($id, $uid, $tid) {
-            Context::copy($id, ['test.store.id']);
-            $obj = Context::get('test.store.id');
-            $this->assertSame($uid, $obj->id);
-            $obj->id = $tid;
-            $this->assertFalse(Context::has('test.store.useless.id'));
-        }]);
+        parallel([
+            function () use ($id, $uid, $tid) {
+                Context::copy($id, ['test.store.id']);
+                $obj = Context::get('test.store.id');
+                $this->assertSame($uid, $obj->id);
+                $obj->id = $tid;
+                $this->assertFalse(Context::has('test.store.useless.id'));
+            },
+        ]);
 
         $this->assertSame($tid, Context::get('test.store.id')->id);
     }
@@ -103,10 +120,45 @@ class ContextTest extends TestCase
 
         Context::copy(-1);
 
-        parallel([function () {
-            Context::set('id', $id = uniqid());
-            Context::copy(-1, ['id']);
-            $this->assertSame($id, Context::get('id'));
-        }]);
+        parallel([
+            function () {
+                Context::set('id', $id = uniqid());
+                Context::copy(-1, ['id']);
+                $this->assertSame($id, Context::get('id'));
+            },
+        ]);
+    }
+
+    public function testContextDestroy()
+    {
+        Context::set($id = uniqid(), $value = uniqid());
+
+        $this->assertSame($value, Context::get($id));
+        Context::destroy($id);
+        $this->assertNull(Context::get($id));
+    }
+
+    public function testRequestContext()
+    {
+        $request = Mockery::mock(ServerRequestPlusInterface::class);
+        RequestContext::set($request);
+        $this->assertSame($request, RequestContext::get());
+
+        Context::set(ServerRequestInterface::class, $req = Mockery::mock(ServerRequestPlusInterface::class));
+        $this->assertNotSame($request, RequestContext::get());
+        $this->assertSame($req, RequestContext::get());
+        $this->assertSame($req, Context::get(ServerRequestInterface::class));
+    }
+
+    public function testResponseContext()
+    {
+        $response = Mockery::mock(ResponsePlusInterface::class);
+        ResponseContext::set($response);
+        $this->assertSame($response, ResponseContext::get());
+
+        Context::set(ResponseInterface::class, $req = Mockery::mock(ResponsePlusInterface::class));
+        $this->assertNotSame($response, ResponseContext::get());
+        $this->assertSame($req, ResponseContext::get());
+        $this->assertSame($req, Context::get(ResponseInterface::class));
     }
 }

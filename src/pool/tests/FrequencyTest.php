@@ -12,18 +12,20 @@ declare(strict_types=1);
 namespace HyperfTest\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\Pool;
-use Hyperf\Utils\Coroutine;
 use HyperfTest\Pool\Stub\ConstantFrequencyStub;
 use HyperfTest\Pool\Stub\FrequencyStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FrequencyTest extends TestCase
 {
     protected function tearDown(): void

@@ -130,7 +130,7 @@
   * [Phar 打包器](zh-cn/phar.md)
   * [DAG](zh-cn/dag.md)
   * [RPN - 逆波兰表示法](zh-cn/rpn.md)
-  * [Swagger文档](zh-cn/swagger.md)
+  * [Swagger 文档](zh-cn/swagger.md)
 
 * 应用部署
 
@@ -157,3 +157,4 @@
   * [2.1 升级指南](zh-cn/upgrade/2.1.md)
   * [2.2 升级指南](zh-cn/upgrade/2.2.md)
   * [3.0 升级指南](zh-cn/upgrade/3.0.md)
+  * [3.1 升级指南](zh-cn/upgrade/3.1.md)

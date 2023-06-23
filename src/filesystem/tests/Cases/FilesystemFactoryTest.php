@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Filesystem\Cases;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
@@ -22,8 +23,7 @@ use Hyperf\Filesystem\FilesystemFactory;
 use Hyperf\Filesystem\FilesystemInvoker;
 use Hyperf\Filesystem\Version;
 use Hyperf\Flysystem\OSS\Adapter as OSSAdapter;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use League\Flysystem\Adapter\Ftp;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
@@ -35,14 +35,17 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\Memory\MemoryAdapter;
 use Overtrue\Flysystem\Cos\CosAdapter;
 use Overtrue\Flysystem\Qiniu\QiniuAdapter;
-use Xxtime\Flysystem\Aliyun\OssAdapter as XxtimeOSSAdapter;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 ! defined('BASE_PATH') && define('BASE_PATH', '.');
+
+use Xxtime\Flysystem\Aliyun\OssAdapter as XxtimeOSSAdapter;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FilesystemFactoryTest extends AbstractTestCase
 {
     protected function setUp(): void

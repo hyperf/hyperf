@@ -12,19 +12,21 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Closure;
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Migrations\DatabaseMigrationRepository;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Schema\Builder as SchemaBuilder;
-use Hyperf\Utils\Collection;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabaseMigrationRepositoryTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;

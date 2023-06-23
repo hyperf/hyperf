@@ -13,6 +13,8 @@ namespace Hyperf\Database\Commands\Migrations;
 
 use Hyperf\Command\Command;
 
+use function Hyperf\Collection\collect;
+
 abstract class BaseCommand extends Command
 {
     /**

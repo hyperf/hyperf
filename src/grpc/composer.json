@@ -16,7 +16,7 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.1",
         "google/common-protos": "^3.2",
         "google/protobuf": "^3.6.1"
     },

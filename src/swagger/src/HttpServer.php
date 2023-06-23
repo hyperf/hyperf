@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Swagger;
 
+use Hyperf\Codec\Json;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\OnRequestInterface;
 use Hyperf\Engine\Http\Stream;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpServer\ResponseEmitter;
-use Hyperf\Utils\Codec\Json;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -107,7 +107,7 @@ class HttpServer implements OnRequestInterface
   <script>
     window.onload = () => {
       window.ui = SwaggerUIBundle({
-        url: '/http.json',
+        url: GetQueryString("search"),
         dom_id: '#swagger-ui',
         presets: [
           SwaggerUIBundle.presets.apis,
@@ -116,6 +116,16 @@ class HttpServer implements OnRequestInterface
         layout: "StandaloneLayout",
       });
     };
+    function GetQueryString(name) {
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+      var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
+      var context = "";
+      if (r != null)
+        context = decodeURIComponent(r[2]);
+      reg = null;
+      r = null;
+      return context == null || context == "" || context == "undefined" ? "/http.json" : context;
+    }
   </script>
   </body>
 </html>

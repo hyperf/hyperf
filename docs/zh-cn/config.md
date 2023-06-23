@@ -151,17 +151,17 @@ $config->get($key，$default);
 `#[Value]` 内的字符串则对应到 `$config->get($key)` 内的 `$key` 参数，在创建该对象实例时，对应的配置会自动注入到定义的类属性中。
 
 ```php
+use Hyperf\Config\Annotation\Value;
+
 class IndexController
 {
-    
     #[Value("config.key")]
     private $configValue;
-    
+
     public function index()
     {
         return $this->configValue;
     }
-    
 }
 ```
 

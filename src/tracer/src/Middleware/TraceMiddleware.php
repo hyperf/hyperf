@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Middleware;
 
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use Hyperf\Utils\Coroutine;
 use OpenTracing\Span;
 use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
@@ -23,6 +23,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
+
+use function Hyperf\Coroutine\defer;
 
 class TraceMiddleware implements MiddlewareInterface
 {

@@ -45,8 +45,8 @@ Task 组件提供了 `主动方法投递` 和 `注解投递` 两种使用方法�
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Task\TaskExecutor;
 use Hyperf\Task\Task;
 
@@ -75,8 +75,8 @@ $result = $exec->execute(new Task([MethodTask::class, 'handle'], [Coroutine::id(
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Task\Annotation\Task;
 
 class AnnotationTask
@@ -178,7 +178,7 @@ class MongoTask
 ```php
 <?php
 use App\Task\MongoTask;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $client = ApplicationContext::getContainer()->get(MongoTask::class);
 $client->insert('hyperf.test', ['id' => rand(0, 99999999)]);

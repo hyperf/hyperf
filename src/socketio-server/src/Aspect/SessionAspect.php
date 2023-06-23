@@ -18,6 +18,8 @@ use Hyperf\Session\SessionManager;
 use Hyperf\WebSocketServer\Context;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function Hyperf\Coroutine\defer;
+
 class SessionAspect extends AbstractAspect
 {
     public array $classes = [

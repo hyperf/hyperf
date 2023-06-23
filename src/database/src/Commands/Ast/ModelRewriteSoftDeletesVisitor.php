@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Ast;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Model\SoftDeletes;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use ReflectionClass;

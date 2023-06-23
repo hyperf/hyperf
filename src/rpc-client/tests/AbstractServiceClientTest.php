@@ -12,12 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\RpcClient;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\DriverManager;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\RpcClient\Stub\FooServiceClient;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -25,6 +26,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class AbstractServiceClientTest extends TestCase
 {
     protected function tearDown(): void

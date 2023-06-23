@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Listener;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab as CrontabAnnotation;
@@ -20,7 +21,6 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
-use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 use ReflectionException;
 
