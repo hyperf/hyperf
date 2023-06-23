@@ -139,7 +139,7 @@ class NacosGrpcDriver implements DriverInterface
 
         if ($response->errorCode !== 0) {
             $this->logger->error((string) $response);
-            throw new RequestException(sprintf('Failed to get nacos service %s!', $name), $response->errorCode());
+            throw new RequestException(sprintf('Failed to get nacos service %s!', $name), $response->errorCode);
         }
 
         $this->serviceCreated[$name] = true;
