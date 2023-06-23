@@ -178,7 +178,7 @@ abstract class AbstractServiceClient
                 throw new InvalidArgumentException(sprintf('Invalid protocol of registry %s', $registryProtocol));
             }
             $nodes = $this->getNodes($governance, $registryAddress);
-            $refreshCallback = function () use ($governance, $registryAddress) {
+            $refreshCallback = $governance->isAutoRefresh() ? null : function () use ($governance, $registryAddress) {
                 return $this->getNodes($governance, $registryAddress);
             };
 
@@ -196,7 +196,7 @@ abstract class AbstractServiceClient
                     $nodes[] = new Node($item['host'], $item['port'], $item['weight'] ?? 0, $item['path_prefix'] ?? '');
                 }
             }
-            return [$nodes, null];
+            return [$nodes, null, false];
         }
 
         throw new InvalidArgumentException('Config of registry or nodes missing.');

@@ -17,6 +17,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coroutine\Coroutine;
+use Hyperf\Engine\Channel;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Nacos\Protobuf\ListenHandler\NamingPushRequestHandler;
 use Hyperf\Nacos\Protobuf\Message\Instance;
@@ -51,7 +52,7 @@ class NacosGrpcDriver implements DriverInterface
 
     private array $metadata = [];
 
-    private array $nodes = [];
+    private Channel $nodeChannel;
 
     public function __construct(protected ContainerInterface $container)
     {
@@ -60,28 +61,49 @@ class NacosGrpcDriver implements DriverInterface
         $this->config = $container->get(ConfigInterface::class);
     }
 
+    public function isAutoRefresh(): bool
+    {
+        return true;
+    }
+
     public function getNodes(string $uri, string $name, array $metadata): array
     {
-        $response = $this->client->instance->list($name, [
-            'groupName' => $this->config->get('services.drivers.nacos.group_name'),
-            'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-        ]);
-        if ($response->getStatusCode() !== 200) {
-            throw new RequestException((string) $response->getBody(), $response->getStatusCode());
-        }
+        $namespaceId = $this->config->get('services.drivers.nacos.namespace_id');
+        $groupName = $this->config->get('services.drivers.nacos.group_name');
+        $cluster = $this->config->get('services.drivers.nacos.cluster', 'DEFAULT');
 
-        $data = Json::decode((string) $response->getBody());
-        $hosts = $data['hosts'] ?? [];
-        $nodes = [];
-        foreach ($hosts as $node) {
-            if (isset($node['ip'], $node['port']) && ($node['healthy'] ?? false)) {
-                $nodes[] = [
-                    'host' => $node['ip'],
-                    'port' => $node['port'],
-                    'weight' => $this->getWeight($node['weight'] ?? 1),
-                ];
-            }
-        }
+        $client = $this->client->grpc->get($namespaceId, 'naming');
+        $client->listenNaming($cluster, $groupName, $name, new NamingPushRequestHandler(function () {
+
+        }));
+
+        $client->request(new ServiceQueryRequest(
+            new NamingRequest($name, $groupName, $namespaceId),
+            $cluster,
+            false,
+            0
+        ));
+
+        // $response = $this->client->instance->list($name, [
+        //     'groupName' => $this->config->get('services.drivers.nacos.group_name'),
+        //     'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
+        // ]);
+        // if ($response->getStatusCode() !== 200) {
+        //     throw new RequestException((string) $response->getBody(), $response->getStatusCode());
+        // }
+        //
+        // $data = Json::decode((string) $response->getBody());
+        // $hosts = $data['hosts'] ?? [];
+        // $nodes = [];
+        // foreach ($hosts as $node) {
+        //     if (isset($node['ip'], $node['port']) && ($node['healthy'] ?? false)) {
+        //         $nodes[] = [
+        //             'host' => $node['ip'],
+        //             'port' => $node['port'],
+        //             'weight' => $this->getWeight($node['weight'] ?? 1),
+        //         ];
+        //     }
+        // }
         return $nodes;
     }
 
@@ -133,9 +155,6 @@ class NacosGrpcDriver implements DriverInterface
         $this->setMetadata($name, $metadata);
 
         $client = $this->client->grpc->get($namespaceId, 'naming');
-        $client->listenNaming($cluster, $groupName, $name, new NamingPushRequestHandler(function () {
-
-        }));
         /** @var SubscribeServiceResponse $response */
         $response = $client->request(new SubscribeServiceRequest(
             new NamingRequest(

@@ -22,6 +22,11 @@ interface DriverInterface
     public function getNodes(string $uri, string $name, array $metadata): array;
 
     /**
+     * Whether to refresh nodes automatically.
+     */
+    public function isAutoRefresh(): bool;
+
+    /**
      * @param $metadata = [
      *     'protocol' => 'default',
      * ]
