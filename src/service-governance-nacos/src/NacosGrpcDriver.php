@@ -11,10 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\ServiceGovernanceNacos;
 
+use Hyperf\Codec\Json;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Nacos\Protobuf\Message\Instance;
 use Hyperf\Nacos\Protobuf\Request\InstanceRequest;
@@ -24,8 +26,6 @@ use Hyperf\Nacos\Protobuf\Request\SubscribeServiceRequest;
 use Hyperf\Nacos\Protobuf\Response\SubscribeServiceResponse;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\Exception\RegisterInstanceException;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Coroutine;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
