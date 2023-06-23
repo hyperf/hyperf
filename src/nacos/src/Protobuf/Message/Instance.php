@@ -54,7 +54,7 @@ class Instance implements JsonDeSerializable, JsonSerializable
 
     public static function jsonDeSerialize(mixed $data): static
     {
-        return new Instance(
+        return new static(
             $data['ip'],
             $data['port'],
             $data['weight'],

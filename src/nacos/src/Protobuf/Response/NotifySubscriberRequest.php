@@ -16,13 +16,13 @@ use JsonSerializable;
 
 class NotifySubscriberRequest extends Response implements JsonSerializable
 {
-    public function __construct(array $json)
+    public function __construct(private array $json)
     {
         var_dump($json);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
-        // TODO: Implement jsonSerialize() method.
+        return $this->json;
     }
 }

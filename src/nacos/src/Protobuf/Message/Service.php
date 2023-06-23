@@ -40,6 +40,6 @@ class Service implements JsonDeSerializable
         }
 
         $data['hosts'] = $hosts;
-        return new Service(...$data);
+        return new static(...$data);
     }
 }
