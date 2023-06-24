@@ -61,7 +61,7 @@ class NacosGrpcDriver implements DriverInterface
         $this->config = $container->get(ConfigInterface::class);
     }
 
-    public function isAutoRefresh(): bool
+    public function isLongPolling(): bool
     {
         return true;
     }
@@ -74,7 +74,6 @@ class NacosGrpcDriver implements DriverInterface
 
         $client = $this->client->grpc->get($namespaceId, 'naming');
         $client->listenNaming($cluster, $groupName, $name, new NamingPushRequestHandler(function () {
-
         }));
 
         $client->request(new ServiceQueryRequest(

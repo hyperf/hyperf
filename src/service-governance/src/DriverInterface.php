@@ -24,7 +24,7 @@ interface DriverInterface
     /**
      * Whether to refresh nodes automatically.
      */
-    public function isAutoRefresh(): bool;
+    public function isLongPolling(): bool;
 
     /**
      * @param $metadata = [

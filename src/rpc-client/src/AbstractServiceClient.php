@@ -125,10 +125,10 @@ abstract class AbstractServiceClient
         return $this->container->get(IdGenerator\UniqidIdGenerator::class);
     }
 
-    protected function createLoadBalancer(array $nodes, callable $refresh = null): LoadBalancerInterface
+    protected function createLoadBalancer(array $nodes, callable $refresh = null, bool $isLongPolling = false): LoadBalancerInterface
     {
         $loadBalancer = $this->loadBalancerManager->getInstance($this->serviceName, $this->loadBalancer)->setNodes($nodes);
-        $refresh && $loadBalancer->refresh($refresh);
+        $refresh && $loadBalancer->refresh($refresh, $isLongPolling ? 1 : 5000);
         return $loadBalancer;
     }
 
@@ -178,11 +178,11 @@ abstract class AbstractServiceClient
                 throw new InvalidArgumentException(sprintf('Invalid protocol of registry %s', $registryProtocol));
             }
             $nodes = $this->getNodes($governance, $registryAddress);
-            $refreshCallback = $governance->isAutoRefresh() ? null : function () use ($governance, $registryAddress) {
+            $refreshCallback = function () use ($governance, $registryAddress) {
                 return $this->getNodes($governance, $registryAddress);
             };
 
-            return [$nodes, $refreshCallback];
+            return [$nodes, $refreshCallback, $governance->isLongPolling()];
         }
 
         // Not exists the registry config, then looking for the 'nodes' property.

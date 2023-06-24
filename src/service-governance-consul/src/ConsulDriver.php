@@ -40,7 +40,7 @@ class ConsulDriver implements DriverInterface
         $this->config = $container->get(ConfigInterface::class);
     }
 
-    public function isAutoRefresh(): bool
+    public function isLongPolling(): bool
     {
         return false;
     }
