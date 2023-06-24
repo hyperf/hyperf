@@ -21,7 +21,7 @@ class ConnectionSetupRequest extends Request
     {
         return [
             'tenant' => $this->tenant,
-            'clientVersion' => 'Nacos-Hyperf-Client:v3.0',
+            'clientVersion' => 'Nacos-Hyperf-Client:v3.1',
             'labels' => [
                 'source' => 'sdk',
                 'AppName' => '',

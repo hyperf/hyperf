@@ -23,6 +23,7 @@ use Hyperf\Http2Client\Client;
 use Hyperf\Nacos\Exception\ConnectToServerFailedException;
 use Hyperf\Nacos\Protobuf\Any;
 use Hyperf\Nacos\Protobuf\ListenContext;
+use Hyperf\Nacos\Protobuf\ListenHandler\NamingPushRequestHandler;
 use Hyperf\Nacos\Protobuf\ListenHandlerInterface;
 use Hyperf\Nacos\Protobuf\Metadata;
 use Hyperf\Nacos\Protobuf\Payload;
@@ -81,7 +82,8 @@ class GrpcClient
         protected ContainerInterface $container,
         protected string $namespaceId = '',
         protected string $module = 'config',
-    ) {
+    )
+    {
         if ($this->container->has(StdoutLoggerInterface::class)) {
             $this->logger = $this->container->get(StdoutLoggerInterface::class);
         }
@@ -127,16 +129,22 @@ class GrpcClient
         return $client->write($streamId, Parser::serializeMessage($payload));
     }
 
-    public function listenConfig(string $group, string $dataId, ListenHandlerInterface $callback, string $md5 = '')
+    public function listenConfig(string $group, string $dataId, ListenHandlerInterface $callback, string $md5 = ''): void
     {
         $listenContext = new ListenContext($this->namespaceId, $group, $dataId, $md5);
         $this->configListenContexts[$listenContext->toKeyString()] = $listenContext;
         $this->configListenHandlers[$listenContext->toKeyString()] = $callback;
     }
 
-    public function listenNaming(string $clusters, string $group, string $service, ListenHandlerInterface $callback)
+    public function listenNaming(string $clusters, string $group, string $service, ListenHandlerInterface $callback): void
     {
         $serviceInfo = new ServiceInfo($service, $group, $clusters);
+        if ($context = $this->namingListenContexts[$serviceInfo->toKeyString()] ?? null) {
+            $callback->handle(new NotifySubscriberRequest(['requestId' => '', 'module' => 'naming', 'serviceInfo' => $context]));
+            $this->namingListenHandlers[$serviceInfo->toKeyString()] = $callback;
+            return;
+        }
+
         $this->namingListenContexts[$serviceInfo->toKeyString()] = $serviceInfo;
         $this->namingListenHandlers[$serviceInfo->toKeyString()] = $callback;
     }
@@ -214,7 +222,7 @@ class GrpcClient
                             $response->dataId,
                             $response
                         ),
-                        $response instanceof NotifySubscriberRequest => $this->hanldeNaming(),
+                        $response instanceof NotifySubscriberRequest => $this->hanldeNaming($response),
                     };
 
                     $this->listen();
@@ -247,8 +255,27 @@ class GrpcClient
         }
     }
 
-    protected function hanldeNaming(): void
+    protected function hanldeNaming(NotifySubscriberRequest $response): void
     {
+        if ($serviceInfo = $response->serviceInfo) {
+            $key = $serviceInfo->toKeyString();
+            if (! isset($this->namingListenContexts[$key])) {
+                $this->namingListenContexts[$key] = $serviceInfo;
+            }
+
+            if ($serviceInfo->lastRefTime > $this->namingListenContexts[$key]->lastRefTime) {
+                $this->namingListenContexts[$key] = $serviceInfo;
+            }
+
+            if ($handler = $this->namingListenHandlers[$key] ?? null) {
+                $handler->handle($response);
+                if ($ack = $handler->ack($response)) {
+                    $this->write($this->streamId, $ack);
+                }
+            } else {
+                $this->write($this->streamId, (new NamingPushRequestHandler(fn() => null))->ack($response));
+            }
+        }
     }
 
     protected function serverCheck(): bool
@@ -280,7 +307,7 @@ class GrpcClient
         return [
             'content-type' => 'application/grpc+proto',
             'te' => 'trailers',
-            'user-agent' => 'Nacos-Hyperf-Client:v3.0',
+            'user-agent' => 'Nacos-Hyperf-Client:v3.1',
         ];
     }
 }

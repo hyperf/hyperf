@@ -24,7 +24,7 @@ class NotifySubscriberRequest extends Response implements JsonSerializable
     {
         $this->requestId = $json['requestId'];
         $this->module = $json['module'];
-        $this->serviceInfo = ServiceInfo::jsonDeSerialize($this->json['serviceInfo']);
+        $this->serviceInfo = is_array($json['serviceInfo']) ? ServiceInfo::jsonDeSerialize($json['serviceInfo']) : $json['serviceInfo'];
     }
 
     public function jsonSerialize(): mixed

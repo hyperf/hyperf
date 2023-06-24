@@ -94,6 +94,8 @@ class NacosGrpcDriver implements DriverInterface
                     }
                 }
 
+                var_dump($nodes);
+
                 $this->nodes = $nodes;
                 $chan = $this->nodeChannel;
                 $this->nodeChannel = new Channel(1);
@@ -136,7 +138,7 @@ class NacosGrpcDriver implements DriverInterface
 
         $res = $client->request(new InstanceRequest(
             new NamingRequest($name, $groupName, $namespaceId),
-            new Instance($host, $port, 10, true, true, 'DEFAULT', true, $metadata),
+            new Instance($host, $port, 0, true, true, $cluster, $ephemeral, $metadata),
             InstanceRequest::TYPE_REGISTER
         ));
 
@@ -262,6 +264,12 @@ class NacosGrpcDriver implements DriverInterface
         Coroutine::create(function () use ($name, $host, $port) {
             retry(INF, function () use ($name, $host, $port) {
                 $lightBeatEnabled = false;
+
+                $namespaceId = $this->config->get('services.drivers.nacos.namespace_id');
+                $groupName = $this->config->get('services.drivers.nacos.group_name');
+                $cluster = $this->config->get('services.drivers.nacos.cluster', 'DEFAULT');
+                $ephemeral = (bool) $this->config->get('services.drivers.nacos.ephemeral');
+
                 while (true) {
                     try {
                         $heartbeat = $this->config->get('services.drivers.nacos.heartbeat', 5);
@@ -269,18 +277,17 @@ class NacosGrpcDriver implements DriverInterface
                             break;
                         }
 
-                        $groupName = $this->config->get('services.drivers.nacos.group_name');
-
                         $response = $this->client->instance->beat(
                             $name,
                             [
                                 'ip' => $host,
                                 'port' => $port,
                                 'serviceName' => $groupName . '@@' . $name,
+                                'cluster' => $cluster,
                             ],
                             $groupName,
-                            $this->config->get('services.drivers.nacos.namespace_id'),
-                            null,
+                            $namespaceId,
+                            $ephemeral,
                             $lightBeatEnabled
                         );
 

@@ -37,7 +37,7 @@ class ServiceHost implements JsonDeSerializable, JsonSerializable
     public static function jsonDeSerialize(mixed $data): static
     {
         return new static(
-            $data['instanceId'],
+            $data['instanceId'] ?? '',
             $data['ip'],
             $data['port'],
             $data['weight'],
@@ -49,7 +49,7 @@ class ServiceHost implements JsonDeSerializable, JsonSerializable
             $data['metadata'],
             $data['instanceHeartBeatTimeOut'],
             $data['instanceHeartBeatInterval'],
-            $data['instanceIdGenerator'],
+            $data['instanceIdGenerator'] ?? '',
             $data['ipDeleteTimeout'],
         );
     }
