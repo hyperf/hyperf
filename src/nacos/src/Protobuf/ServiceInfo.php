@@ -16,6 +16,9 @@ use JsonSerializable;
 
 class ServiceInfo implements JsonDeSerializable, JsonSerializable
 {
+    /**
+     * @param ServiceHost[] $hosts
+     */
     public function __construct(
         public string $name,
         public string $groupName,
