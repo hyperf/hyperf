@@ -1,5 +1,15 @@
 # 版本更新记录
 
+# v3.0.26 - 2023-06-24
+
+## 修复
+
+- [#5861](https://github.com/hyperf/hyperf/pull/5861) 修复缓存组件中，使用 `CoroutineMemory` 时，`CoroutineMemory::clearPrefix()` 无法正常工作的问题。
+
+## 优化
+
+- [#5858](https://github.com/hyperf/hyperf/pull/5858) 当调用数据库组件中 `chunkById` 时，如果 `Id` 为 `Null`，则抛出异常。
+
 # v3.0.25 - 2023-06-19
 
 ## 修复
