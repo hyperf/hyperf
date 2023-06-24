@@ -21,7 +21,7 @@ interface DriverInterface
      * @return array = [['host' => '127.0.0.1', 'port' => 9501]]
      */
     public function getNodes(string $uri, string $name, array $metadata): array;
-    
+
     public function isLongPolling(): bool;
 
     /**
