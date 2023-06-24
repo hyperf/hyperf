@@ -52,7 +52,7 @@ class NacosGrpcDriver implements DriverInterface
 
     private array $metadata = [];
 
-    private Channel $nodeChannel;
+    // private Channel $nodeChannel;
 
     public function __construct(protected ContainerInterface $container)
     {
@@ -103,7 +103,7 @@ class NacosGrpcDriver implements DriverInterface
         //         ];
         //     }
         // }
-        return $nodes;
+        return [];
     }
 
     public function register(string $name, string $host, int $port, array $metadata): void
@@ -282,8 +282,8 @@ class NacosGrpcDriver implements DriverInterface
         });
     }
 
-    private function getWeight($weight): int
-    {
-        return intval(100 * $weight);
-    }
+    // private function getWeight($weight): int
+    // {
+    //     return intval(100 * $weight);
+    // }
 }

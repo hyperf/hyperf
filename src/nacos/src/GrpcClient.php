@@ -214,7 +214,7 @@ class GrpcClient
                             $response->dataId,
                             $response
                         ),
-                        $response instanceof NotifySubscriberRequest => $this->configNaming(),
+                        $response instanceof NotifySubscriberRequest => $this->hanldeNaming(),
                     };
 
                     $this->listen();
@@ -231,7 +231,7 @@ class GrpcClient
         return $id;
     }
 
-    protected function handleConfig(string $tenant, string $group, string $dataId, ?ConfigChangeNotifyRequest $request = null)
+    protected function handleConfig(string $tenant, string $group, string $dataId, ?ConfigChangeNotifyRequest $request = null): void
     {
         $response = $this->request(new ConfigQueryRequest($tenant, $group, $dataId));
         $key = ListenContext::getKeyString($tenant, $group, $dataId);
@@ -245,6 +245,10 @@ class GrpcClient
                 $this->write($this->streamId, $ack);
             }
         }
+    }
+
+    protected function hanldeNaming(): void
+    {
     }
 
     protected function serverCheck(): bool
