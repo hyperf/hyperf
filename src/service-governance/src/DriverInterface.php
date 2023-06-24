@@ -21,10 +21,7 @@ interface DriverInterface
      * @return array = [['host' => '127.0.0.1', 'port' => 9501]]
      */
     public function getNodes(string $uri, string $name, array $metadata): array;
-
-    /**
-     * Whether to refresh nodes automatically.
-     */
+    
     public function isLongPolling(): bool;
 
     /**
