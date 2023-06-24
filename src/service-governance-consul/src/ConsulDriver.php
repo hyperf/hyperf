@@ -40,6 +40,11 @@ class ConsulDriver implements DriverInterface
         $this->config = $container->get(ConfigInterface::class);
     }
 
+    public function isLongPolling(): bool
+    {
+        return false;
+    }
+
     public function getNodes(string $uri, string $name, array $metadata): array
     {
         $health = $this->createConsulHealth($uri);

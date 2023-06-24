@@ -59,8 +59,8 @@ Nacos 传统的配置中心，是基于短轮询进行配置同步的，就会�
 - 首先，我们安装必要的组件
 
 ```shell
-composer require "hyperf/http2-client:~3.0.0"
-composer require "hyperf/grpc:~3.0.0"
+composer require "hyperf/http2-client:3.1.*"
+composer require "hyperf/grpc:3.1.*"
 ```
 
 - 修改配置项

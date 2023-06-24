@@ -40,7 +40,13 @@ return [
             'group_name' => 'api',
             'namespace_id' => 'namespace_id',
             'heartbeat' => 5,
-            'ephemeral' => false,
+            'ephemeral' => true,
+            'cluster' => 'DEFAULT',
+            // Only support for nacos v2.
+            'grpc' => [
+                'enable' => false,
+                'heartbeat' => 10,
+            ],
         ],
     ],
 ];
