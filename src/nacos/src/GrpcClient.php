@@ -256,24 +256,21 @@ class GrpcClient
 
     protected function hanldeNaming(NotifySubscriberRequest $response): void
     {
-        if ($serviceInfo = $response->serviceInfo) {
-            $key = $serviceInfo->toKeyString();
-            if (! isset($this->namingListenContexts[$key])) {
-                $this->namingListenContexts[$key] = $serviceInfo;
-            }
+        $serviceInfo = $response->serviceInfo;
+        $key = $serviceInfo->toKeyString();
+        if (! isset($this->namingListenContexts[$key])) {
+            $this->namingListenContexts[$key] = $serviceInfo;
+        }
 
-            if ($serviceInfo->lastRefTime > $this->namingListenContexts[$key]->lastRefTime) {
-                $this->namingListenContexts[$key] = $serviceInfo;
-            }
+        if ($serviceInfo->lastRefTime > $this->namingListenContexts[$key]->lastRefTime) {
+            $this->namingListenContexts[$key] = $serviceInfo;
+        }
 
-            if ($handler = $this->namingListenHandlers[$key] ?? null) {
-                $handler->handle($response);
-                if ($ack = $handler->ack($response)) {
-                    $this->write($this->streamId, $ack);
-                }
-            } else {
-                $this->write($this->streamId, (new NamingPushRequestHandler(fn () => null))->ack($response));
-            }
+        if ($handler = $this->namingListenHandlers[$key] ?? null) {
+            $handler->handle($response);
+            $this->write($this->streamId, $handler->ack($response));
+        } else {
+            $this->write($this->streamId, (new NamingPushRequestHandler(fn () => null))->ack($response));
         }
     }
 
