@@ -82,8 +82,7 @@ class GrpcClient
         protected ContainerInterface $container,
         protected string $namespaceId = '',
         protected string $module = 'config',
-    )
-    {
+    ) {
         if ($this->container->has(StdoutLoggerInterface::class)) {
             $this->logger = $this->container->get(StdoutLoggerInterface::class);
         }
@@ -273,7 +272,7 @@ class GrpcClient
                     $this->write($this->streamId, $ack);
                 }
             } else {
-                $this->write($this->streamId, (new NamingPushRequestHandler(fn() => null))->ack($response));
+                $this->write($this->streamId, (new NamingPushRequestHandler(fn () => null))->ack($response));
             }
         }
     }

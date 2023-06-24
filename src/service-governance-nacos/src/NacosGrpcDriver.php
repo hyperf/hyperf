@@ -101,13 +101,6 @@ class NacosGrpcDriver implements DriverInterface
                 $this->nodeChannel = new Channel(1);
                 $chan->close();
             }));
-
-            $client->request(new ServiceQueryRequest(
-                new NamingRequest($name, $groupName, $namespaceId),
-                $cluster,
-                false,
-                0
-            ));
         }
 
         /** @var Node[] $nodes */
@@ -117,7 +110,7 @@ class NacosGrpcDriver implements DriverInterface
             return $this->nodes;
         }
 
-        $this->nodeChannel->pop(5);
+        $this->nodeChannel->pop(60);
 
         return $this->nodes;
     }
@@ -204,17 +197,17 @@ class NacosGrpcDriver implements DriverInterface
      */
     protected function isChanged(array $nodes): bool
     {
-        $key = '';
+        $now = [];
         foreach ($nodes as $node) {
-            $key .= $node->host . ':' . $node->port . ':' . $node->weight . ':' . $node->pathPrefix;
+            $now[] = $node->host . ':' . $node->port . ':' . $node->weight . ':' . $node->pathPrefix;
         }
 
-        $assert = '';
+        $assert = [];
         foreach ($this->nodes as $node) {
-            $assert .= $node['host'] . ':' . $node['port'] . ':' . $node['weight'] . ':' . $node['path_prefix'];
+            $assert[] = $node['host'] . ':' . $node['port'] . ':' . $node['weight'] . ':' . $node['path_prefix'];
         }
 
-        return $key !== $assert;
+        return Json::encode($now) !== Json::encode($assert);
     }
 
     protected function isNoIpsFound(ResponseInterface $response): bool
