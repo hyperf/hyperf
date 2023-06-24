@@ -94,8 +94,6 @@ class NacosGrpcDriver implements DriverInterface
                     }
                 }
 
-                var_dump($nodes);
-
                 $this->nodes = $nodes;
                 $chan = $this->nodeChannel;
                 $this->nodeChannel = new Channel(1);
