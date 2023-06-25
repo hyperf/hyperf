@@ -33,21 +33,21 @@ class Str
 
     /**
      * The cache of snake-cased words.
-     *
+     * @deprecated since 3.0.27, remove in 3.1.0.
      * @var array
      */
     protected static $snakeCache = [];
 
     /**
      * The cache of camel-cased words.
-     *
+     * @deprecated since 3.0.27, remove in 3.1.0.
      * @var array
      */
     protected static $camelCache = [];
 
     /**
      * The cache of studly-cased words.
-     *
+     * @deprecated since 3.0.27, remove in 3.1.0.
      * @var array
      */
     protected static $studlyCache = [];
