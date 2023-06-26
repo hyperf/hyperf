@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Migrations;
 
-use Hyperf\Command\ConfirmableTrait;
+use Hyperf\Command\Concerns\Confirmable as ConfirmableTrait;
 use Hyperf\Database\Migrations\Migrator;
 use Symfony\Component\Console\Input\InputOption;
 

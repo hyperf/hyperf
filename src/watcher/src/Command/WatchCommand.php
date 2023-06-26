@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Watcher\Command;
 
 use Hyperf\Command\Command;
-use Hyperf\Command\NullDisableEventDispatcher;
+use Hyperf\Command\Concerns\NullDisableEventDispatcher;
 use Hyperf\Watcher\Option;
 use Hyperf\Watcher\Watcher;
 use Psr\Container\ContainerInterface;
