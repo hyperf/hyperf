@@ -6,11 +6,11 @@ Hyperf can only run on the Linux and MacOS system environments. However, due to 
 
 Various Dockerfiles have been prepared for in the [hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker) project, or you can use a prebuilt image based on [hyperf\Hyperf](https://hub.docker.com/r/hyperf/hyperf).
 
-If you don't use Docker as the basis for your system environment, you can also consider using [Box]((en/eco/box.md)) as the basic environment for running. If you wish to set up the environment yourself, you need to make sure that your native environment meets the following requirements:
+If you don't use Docker as the basis for your system environment, you can also consider using [Box](en/eco/box.md) as the basic environment for running. If you wish to set up the environment yourself, you need to make sure that your native environment meets the following requirements:
 
  - PHP >= 8.0
  - Any of the following network engines
-   - [Swoole PHP extension]((https://github.com/swoole/swoole-src)) >= 4.5，with `swoole.use_shortname` set to `Off` in your `php.ini`
+   - [Swoole PHP extension](https://github.com/swoole/swoole-src) >= 4.5，with `swoole.use_shortname` set to `Off` in your `php.ini`
    - [Swow PHP extension](https://github.com/swow/swow)
  - JSON PHP extension
  - Pcntl PHP extension (Only on Swoole engine)
