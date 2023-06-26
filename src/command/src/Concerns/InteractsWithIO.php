@@ -20,7 +20,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\OutputStyle;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 trait InteractsWithIO
@@ -28,7 +27,7 @@ trait InteractsWithIO
     protected ?InputInterface $input = null;
 
     /**
-     * @var null|OutputInterface|SymfonyStyle
+     * @var null|SymfonyStyle
      */
     protected ?OutputInterface $output = null;
 
@@ -380,8 +379,9 @@ trait InteractsWithIO
 
     /**
      * Set the output interface implementation.
+     * @param SymfonyStyle $output
      */
-    public function setOutput(OutputStyle $output)
+    public function setOutput($output)
     {
         $this->output = $output;
     }
@@ -389,7 +389,7 @@ trait InteractsWithIO
     /**
      * Get the output implementation.
      *
-     * @return OutputStyle
+     * @return null|SymfonyStyle
      */
     public function getOutput()
     {
