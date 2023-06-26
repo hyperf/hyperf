@@ -62,7 +62,7 @@ class BootSwaggerListener implements ListenerInterface
         }
 
         $servers[] = [
-            'name' => uniqid(),
+            'name' => 'swagger_' . uniqid(),
             'type' => Server::SERVER_HTTP,
             'host' => '0.0.0.0',
             'port' => $port,
