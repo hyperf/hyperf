@@ -1,5 +1,9 @@
 # v3.0.27 - TBD
 
+## Fixed
+
+- [#5880](https://github.com/hyperf/hyperf/pull/5880) Fixed bug that start server failed caused by swagger server name isn't string.
+
 # v3.0.26 - 2023-06-24
 
 ## Fixed
