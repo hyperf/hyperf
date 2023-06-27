@@ -9,12 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Command;
+namespace Hyperf\Command\Concerns;
 
-/**
- * @deprecated since 3.0.27, remove in 3.1.0, use \Hyperf\Command\Concerns\NullDisableEventDispatcher instead.
- */
+use Symfony\Component\Console\Input\InputInterface;
+
 trait NullDisableEventDispatcher
 {
-    use Concerns\NullDisableEventDispatcher;
+    public function addDisableDispatcherOption(): void
+    {
+    }
+
+    public function disableDispatcher(InputInterface $input)
+    {
+    }
 }

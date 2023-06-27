@@ -28,9 +28,9 @@ use function Hyperf\Tappable\tap;
 
 abstract class Command extends SymfonyCommand
 {
-    use DisableEventDispatcher;
     use Concerns\InteractsWithIO;
     use Concerns\HasParameters;
+    use Concerns\DisableEventDispatcher;
 
     /**
      * The name of the command.
