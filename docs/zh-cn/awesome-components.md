@@ -93,6 +93,7 @@
 - [hyperf/service-governance](https://github.com/hyperf/service-governance) Hyperf 官方提供的服务治理组件
 - [hyperf/tracer](https://github.com/hyperf/tracer) Hyperf 官方提供的 OpenTracing 分布式调用链追踪组件
 - [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) Hyperf 官方提供的服务熔断组件
+- [pudongping/hyperf-throttle-requests](https://github.com/pudongping/hyperf-throttle-requests) 适配 Hyperf 框架的请求频率限流器。功能类似于 Laravel 框架的 throttle 中间件。
 
 ## 定时任务
 
