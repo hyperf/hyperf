@@ -499,10 +499,11 @@ return $driver->push(new ExampleJob());
 安装信号处理器
 
 ```
-composer require hyperf/signal
+composer require hyperf/signal:^2.2.0
 ```
 
-添加配置
+添加配置 `config/autoload/signal.php`
+
 
 ```php
 <?php
@@ -511,13 +512,12 @@ declare(strict_types=1);
 
 return [
     'handlers' => [
-        Hyperf\AsyncQueue\Signal\DriverStopHandler::class,
+        //Hyperf\AsyncQueue\Signal\DriverStopHandler::class, # 2.2版本开始，DriverStopHandler 已被弃用，替换为 ProcessStopHandler
+        Hyperf\Process\Handler\ProcessStopHandler::class,
     ],
     'timeout' => 5.0,
 ];
-
 ```
-
 
 ## 异步驱动之间的区别
 
