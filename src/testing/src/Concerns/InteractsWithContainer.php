@@ -21,7 +21,7 @@ use Psr\Container\ContainerInterface;
 trait InteractsWithContainer
 {
     /**
-     * @var null|\Hyperf\Di\Container
+     * @var null|ContainerInterface|\Hyperf\Di\Container
      */
     protected ?ContainerInterface $container = null;
 
@@ -46,6 +46,7 @@ trait InteractsWithContainer
      */
     protected function instance($abstract, $instance)
     {
+        /* @phpstan-ignore-next-line */
         $this->container->set($abstract, $instance);
 
         return $instance;
