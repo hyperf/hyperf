@@ -4,6 +4,10 @@
 
 - [#5880](https://github.com/hyperf/hyperf/pull/5880) Fixed bug that start server failed caused by swagger server name isn't string.
 
+## Optimized
+
+- [#5886](https://github.com/hyperf/hyperf/pull/5886) Throw exception (executing sql failed) when used `clickhouse` for `hyperf/db`.
+
 # v3.0.26 - 2023-06-24
 
 ## Fixed
