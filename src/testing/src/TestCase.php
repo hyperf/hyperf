@@ -26,15 +26,12 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        /* @phpstan-ignore-next-line */
-        if (! $this->container) {
-            $this->refreshContainer();
-        }
+        $this->refreshContainer();
     }
 
     protected function tearDown(): void
     {
-        $this->container = null;
+        $this->flushContainer();
 
         try {
             m::close();
