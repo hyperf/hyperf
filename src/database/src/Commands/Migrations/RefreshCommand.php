@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Commands\Migrations;
 
 use Hyperf\Command\Command;
-use Hyperf\Command\ConfirmableTrait;
+use Hyperf\Command\Concerns\Confirmable as ConfirmableTrait;
 use Symfony\Component\Console\Input\InputOption;
 
 class RefreshCommand extends Command

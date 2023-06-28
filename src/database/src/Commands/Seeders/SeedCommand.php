@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Seeders;
 
-use Hyperf\Command\ConfirmableTrait;
+use Hyperf\Command\Concerns\Confirmable as ConfirmableTrait;
 use Hyperf\Database\Seeders\Seed;
 use Symfony\Component\Console\Input\InputOption;
 

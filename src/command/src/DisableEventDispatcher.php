@@ -11,33 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Command;
 
-use Hyperf\Context\ApplicationContext;
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-
+/**
+ * @deprecated since 3.0.27, remove in 3.1.0, use \Hyperf\Command\Concerns\DisableEventDispatcher instead.
+ */
 trait DisableEventDispatcher
 {
-    public function addDisableDispatcherOption(): void
-    {
-        $this->addOption('disable-event-dispatcher', null, InputOption::VALUE_NONE, 'Whether disable event dispatcher.');
-    }
-
-    public function disableDispatcher(InputInterface $input)
-    {
-        if (! $input->getOption('disable-event-dispatcher')) {
-            if (! ApplicationContext::hasContainer()) {
-                return;
-            }
-
-            $container = ApplicationContext::getContainer();
-            if (! $container->has(EventDispatcherInterface::class)) {
-                return;
-            }
-
-            $dispatcher = $container->get(EventDispatcherInterface::class);
-
-            $this->eventDispatcher = $dispatcher instanceof EventDispatcherInterface ? $dispatcher : null;
-        }
-    }
+    use Concerns\DisableEventDispatcher;
 }

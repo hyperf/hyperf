@@ -1,5 +1,15 @@
 # 版本更新記錄
 
+# v3.0.26 - 2023-06-24
+
+## 修復
+
+- [#5861](https://github.com/hyperf/hyperf/pull/5861) 修復快取元件中，使用 `CoroutineMemory` 時，`CoroutineMemory::clearPrefix()` 無法正常工作的問題。
+
+## 最佳化
+
+- [#5858](https://github.com/hyperf/hyperf/pull/5858) 當呼叫資料庫元件中 `chunkById` 時，如果 `Id` 為 `Null`，則丟擲異常。
+
 # v3.0.25 - 2023-06-19
 
 ## 修復
@@ -13,7 +23,7 @@
 
 - [#5794](https://github.com/hyperf/hyperf/pull/5794) 修復代理類中 `__FILE__` 和 `__DIR__` 定位錯誤的問題。
 - [#5803](https://github.com/hyperf/hyperf/pull/5803) 修復元件 `hyperf/http-server` 不適配新版本 `Psr7` 的問題。
-- [#5808](https://github.com/hyperf/hyperf/pull/5808) 修復驗證器規則 `le`、`lte`、`gt`、`gte` 不發正常比較 `numeric` 和 `string`。
+- [#5808](https://github.com/hyperf/hyperf/pull/5808) 修復驗證器規則 `le`、`lte`、`gt`、`gte` 不會正常比較 `numeric` 和 `string`。
 
 ## 最佳化
 

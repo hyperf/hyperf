@@ -1,9 +1,23 @@
-# v3.0.26 - TBD
+# v3.0.27 - TBD
 
 ## Fixed
 
-- [#5858](https://github.com/hyperf/hyperf/pull/5858) Throw exception when using `chunkById` but the column is not existed.
+- [#5880](https://github.com/hyperf/hyperf/pull/5880) Fixed bug that start server failed caused by swagger server name isn't string.
+
+## Optimized
+
+- [#5886](https://github.com/hyperf/hyperf/pull/5886) Throw exception (executing sql failed) when used `clickhouse` for `hyperf/db`.
+
+# v3.0.26 - 2023-06-24
+
+## Fixed
+
 - [#5861](https://github.com/hyperf/hyperf/pull/5861) Fixed bug that `CoroutineMemory::clearPrefix()` cannot work as expected.
+
+## Optimized
+
+- [#5858](https://github.com/hyperf/hyperf/pull/5858) Throw exception when using `chunkById` but the column is not existed.
+- [#5882](https://github.com/hyperf/hyperf/pull/5882) Move `ConfirmableTrait`/`DisableEventDispatcher`/`NullDisableEventDispatcher` to Concerns.
 
 # v3.0.25 - 2023-06-19
 
