@@ -5,7 +5,7 @@
 ## 修复
 
 - [#5880](https://github.com/hyperf/hyperf/pull/5880) 修复因 `Swagger` 服务名随机成为数字时，导致服务无法正常启动的问题。
-- [#5890](https://github.com/hyperf/hyperf/pull/5890) 增了了部分，需要重连 `PDO` 的错误信息。
+- [#5890](https://github.com/hyperf/hyperf/pull/5890) 增加了部分，需要重连 `PDO` 的错误信息，避免 `PDO` 链接无法重连的问题。
 
 ## 优化
 
