@@ -4,7 +4,7 @@
 
 | Version  | Status                 | End of mainstream support | End of Security-fixes support | Release Date (or estimated date) |
 |----------|------------------------|---------------------------|-------------------------------|----------------------------------|
-| 3.1(LTS) | Mainstream support     | 2027-08-30                | 2028-08-30                    | 2027-09-01                       |
+| 3.1(LTS) | Mainstream support     | 2027-08-30                | 2028-08-30                    | 2023-09-01                       |
 | 3.0      | Mainstream support     | 2023-08-30                | 2024-06-30                    | 2023-01-03                       |
 | 2.2      | Security fixes support | 2022-06-20                | 2023-6-30                     | 2021-07-19                       |
 | 2.1      | Deprecated             | 2021-06-30                | 2021-12-31                    | 2020-12-28                       |
