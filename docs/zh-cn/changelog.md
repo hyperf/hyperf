@@ -9,7 +9,7 @@
 
 ## 优化
 
-- [#5886](https://github.com/hyperf/hyperf/pull/5886) 当使用 `hyperf/db` 连接 `clickhouse` 时，`SQL` 执行错误不抛出异常的问题。
+- [#5886](https://github.com/hyperf/hyperf/pull/5886) 当使用 `hyperf/db` 连接 `clickhouse` 时，如果 `SQL` 执行错误，则会抛出异常。
 
 # v3.0.26 - 2023-06-24
 
