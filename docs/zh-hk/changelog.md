@@ -1,5 +1,16 @@
 # 版本更新記錄
 
+# v3.0.27 - 2023-06-30
+
+## 修復
+
+- [#5880](https://github.com/hyperf/hyperf/pull/5880) 修復因 `Swagger` 服務名隨機成為數字時，導致服務無法正常啓動的問題。
+- [#5890](https://github.com/hyperf/hyperf/pull/5890) 增了了部分，需要重連 `PDO` 的錯誤信息。
+
+## 優化
+
+- [#5886](https://github.com/hyperf/hyperf/pull/5886) 當使用 `hyperf/db` 連接 `clickhouse` 時，`SQL` 執行錯誤不拋出異常的問題。
+
 # v3.0.26 - 2023-06-24
 
 ## 修復
