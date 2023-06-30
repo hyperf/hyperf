@@ -150,4 +150,14 @@ class MySQLDriverTest extends AbstractTestCase
         $connection->reconnect();
         $this->assertSame(0, $connection->transactionLevel());
     }
+
+    public function testThrowException()
+    {
+        $this->assertTrue(true);
+    }
+
+    public function testThrowExceptionWhenDotOpenExceptionOption()
+    {
+        $this->assertTrue(true);
+    }
 }

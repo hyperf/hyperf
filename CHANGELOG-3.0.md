@@ -1,8 +1,15 @@
-# v3.0.27 - TBD
+# v3.0.28 - TBD
+
+# v3.0.27 - 2023-06-30
 
 ## Fixed
 
 - [#5880](https://github.com/hyperf/hyperf/pull/5880) Fixed bug that start server failed caused by swagger server name isn't string.
+- [#5890](https://github.com/hyperf/hyperf/pull/5890) Added some exception messages which used to reconnect PDO connection.
+
+## Optimized
+
+- [#5886](https://github.com/hyperf/hyperf/pull/5886) Throw exception (executing sql failed) when used `clickhouse` for `hyperf/db`.
 
 # v3.0.26 - 2023-06-24
 
