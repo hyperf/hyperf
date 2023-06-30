@@ -93,6 +93,7 @@
 - [hyperf/service-governance](https://github.com/hyperf/service-governance) Hyperf 官方提供的服務治理組件
 - [hyperf/tracer](https://github.com/hyperf/tracer) Hyperf 官方提供的 OpenTracing 分佈式調用鏈追蹤組件
 - [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) Hyperf 官方提供的服務熔斷組件
+- [pudongping/hyperf-throttle-requests](https://github.com/pudongping/hyperf-throttle-requests) 適配 Hyperf 框架的請求頻率限流器。功能類似於 Laravel 框架的 throttle 中間件。
 
 ## 定時任務
 
@@ -167,7 +168,3 @@
 - [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支持 `支付寶/微信` 的支付組件，基於 [yansongda/pay](https://github.com/yansongda/pay) 實現，適配於 `Hyperf` 框架
 - [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch) 為 Hyperf Scout 提供的 meilisearch 客户端
 - [vinchan/message-notify](https://github.com/VinchanGit/message-notify) Hyperf 異常監控報警通知組件(釘釘羣機器人、飛書羣機器人、郵件、QQ 頻道機器人、企業微信羣機器人)
-
-## 工具
-
-- [pudongping/hyperf-throttle-requests](https://github.com/pudongping/hyperf-throttle-requests) 適配 Hyperf 框架嘅請求頻率限流器。功能類似於 Laravel 框架嘅 throttle 中間件。
