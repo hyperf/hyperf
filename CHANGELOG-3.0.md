@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#5880](https://github.com/hyperf/hyperf/pull/5880) Fixed bug that start server failed caused by swagger server name isn't string.
+- [#5890](https://github.com/hyperf/hyperf/pull/5890) Added some exception messages which used to reconnect PDO connection.
 
 ## Optimized
 
