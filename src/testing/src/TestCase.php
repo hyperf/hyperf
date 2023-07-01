@@ -25,21 +25,18 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     use Concerns\InteractsWithContainer;
     use Concerns\MakesHttpRequests;
+    use Concerns\InteractsWithModelFactory;
     use Concerns\RunTestsInCoroutine;
 
     /**
      * The callbacks that should be run after the application is created.
-     *
-     * @var array
      */
-    protected $afterApplicationCreatedCallbacks = [];
+    protected array $afterApplicationCreatedCallbacks = [];
 
     /**
      * The callbacks that should be run before the application is destroyed.
-     *
-     * @var array
      */
-    protected $beforeApplicationDestroyedCallbacks = [];
+    protected array $beforeApplicationDestroyedCallbacks = [];
 
     /**
      * The exception thrown while running an application destruction callback.
