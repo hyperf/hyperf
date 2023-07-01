@@ -36,4 +36,9 @@ trait InteractsWithModelFactory
             }
         }
     }
+
+    protected function tearDownInteractsWithModelFactory()
+    {
+        $this->modelFactory = null;
+    }
 }
