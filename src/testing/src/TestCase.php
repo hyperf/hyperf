@@ -24,8 +24,8 @@ use function Hyperf\Support\class_uses_recursive;
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     use Concerns\InteractsWithContainer;
-    use Concerns\MakesHttpRequests;
     use Concerns\InteractsWithModelFactory;
+    use Concerns\MakesHttpRequests;
     use Concerns\RunTestsInCoroutine;
 
     /**
