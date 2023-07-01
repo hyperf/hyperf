@@ -1447,10 +1447,10 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
 
         $v = new Validator($trans, ['foo' => '-1'], ['foo' => 'Integer']);
-        $this->assertTrue($v->passes());
+        $this->assertFalse($v->passes());
 
         $v = new Validator($trans, ['foo' => '1'], ['foo' => 'Integer']);
-        $this->assertTrue($v->passes());
+        $this->assertFalse($v->passes());
     }
 
     public function testValidateInt()
@@ -1463,10 +1463,10 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
 
         $v = new Validator($trans, ['foo' => '-1'], ['foo' => 'Int']);
-        $this->assertTrue($v->passes());
+        $this->assertFalse($v->passes());
 
         $v = new Validator($trans, ['foo' => '1'], ['foo' => 'Int']);
-        $this->assertTrue($v->passes());
+        $this->assertFalse($v->passes());
     }
 
     public function testValidateDigits()
@@ -2092,10 +2092,10 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
 
         $trans = $this->getIlluminateArrayTranslator();
-        $v = new Validator($trans, ['id' => '1'], ['id' => 'Integer|Exists:users,id']);
+        $v = new Validator($trans, ['id' => 1], ['id' => 'Integer|Exists:users,id']);
         $mock = m::mock(PresenceVerifierInterface::class);
         $mock->shouldReceive('setConnection')->once()->with(null);
-        $mock->shouldReceive('getCount')->once()->with('users', 'id', '1', null, null, [])->andReturn(1);
+        $mock->shouldReceive('getCount')->once()->with('users', 'id', 1, null, null, [])->andReturn(1);
         $v->setPresenceVerifier($mock);
         $this->assertTrue($v->passes());
     }

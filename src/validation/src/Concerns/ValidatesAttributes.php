@@ -683,7 +683,7 @@ trait ValidatesAttributes
      */
     public function validateInteger(string $attribute, $value): bool
     {
-        return filter_var($value, FILTER_VALIDATE_INT) !== false;
+        return is_int($value);
     }
 
     /**

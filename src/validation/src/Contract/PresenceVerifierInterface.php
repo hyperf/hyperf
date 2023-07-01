@@ -16,10 +16,11 @@ interface PresenceVerifierInterface
     /**
      * Count the number of objects in a collection having the given value.
      *
+     * @param mixed $value
      * @param null|int $excludeId
      * @param null|string $idColumn
      */
-    public function getCount(string $collection, string $column, string $value, $excludeId = null, $idColumn = null, array $extra = []): int;
+    public function getCount(string $collection, string $column, $value, $excludeId = null, $idColumn = null, array $extra = []): int;
 
     /**
      * Count the number of objects in a collection with the given values.
