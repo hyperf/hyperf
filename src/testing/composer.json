@@ -32,6 +32,9 @@
         "hyperf/utils": "~3.1.0",
         "symfony/http-foundation": "^5.4|^6.0"
     },
+    "suggest": {
+        "fakerphp/faker": "Required to use Faker feature.(^1.23)"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "3.0-dev"
