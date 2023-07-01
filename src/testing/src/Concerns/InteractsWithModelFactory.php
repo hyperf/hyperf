@@ -18,6 +18,8 @@ trait InteractsWithModelFactory
 {
     protected ?ModelFactory $modelFactory = null;
 
+    protected string|array $factoryPath = BASE_PATH . '/database/factories';
+
     protected function setUpInteractsWithModelFactory()
     {
         if (! class_exists(FakerFactory::class)) {
@@ -28,10 +30,10 @@ trait InteractsWithModelFactory
             FakerFactory::create('en_US')
         );
 
-        if (is_dir($path = BASE_PATH . '/database/factories')) {
-            $this->modelFactory->load($path);
+        foreach ((array) $this->factoryPath as $path) {
+            if (is_dir($path)) {
+                $this->modelFactory->load($path);
+            }
         }
-
-        $this->modelFactory->load($path);
     }
 }
