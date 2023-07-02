@@ -18,7 +18,10 @@ trait InteractsWithModelFactory
 {
     protected ?ModelFactory $modelFactory = null;
 
-    protected string|array $factoryPath = BASE_PATH . '/database/factories';
+    /**
+     * @var string|string[]
+     */
+    protected $factoryPath = BASE_PATH . '/database/factories';
 
     protected function setUpInteractsWithModelFactory()
     {
