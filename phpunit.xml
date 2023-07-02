@@ -141,5 +141,8 @@
             <directory suffix="Test.php">./src/websocket-client/tests</directory>
             <directory suffix="Test.php">./src/websocket-server/tests</directory>
         </testsuite>
+        <testsuite name="valid">
+            <directory suffix="Test.php">./src/validation/tests</directory>
+        </testsuite>
     </testsuites>
 </phpunit>

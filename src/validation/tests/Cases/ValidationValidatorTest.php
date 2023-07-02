@@ -1447,10 +1447,10 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
 
         $v = new Validator($trans, ['foo' => '-1'], ['foo' => 'Integer']);
-        $this->assertFalse($v->passes());
+        $this->assertTrue($v->passes());
 
         $v = new Validator($trans, ['foo' => '1'], ['foo' => 'Integer']);
-        $this->assertFalse($v->passes());
+        $this->assertTrue($v->passes());
     }
 
     public function testValidateInt()
@@ -1463,10 +1463,120 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
 
         $v = new Validator($trans, ['foo' => '-1'], ['foo' => 'Int']);
-        $this->assertFalse($v->passes());
+        $this->assertTrue($v->passes());
 
         $v = new Validator($trans, ['foo' => '1'], ['foo' => 'Int']);
-        $this->assertFalse($v->passes());
+        $this->assertTrue($v->passes());
+    }
+
+    public function testValidateIntStrict()
+    {
+        $translator = $this->getIlluminateArrayTranslator();
+
+        $validator = new Validator($translator, ['foo' => '1'], ['foo' => 'Int|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '-1'], ['foo' => 'Int|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '1.23'], ['foo' => 'Int|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 1.23], ['foo' => 'Int|Strict']);
+        $this->assertFalse($validator->passes());
+    }
+
+    public function testValidateIntegerStrict()
+    {
+        $translator = $this->getIlluminateArrayTranslator();
+
+        $validator = new Validator($translator, ['foo' => '1'], ['foo' => 'Integer|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '-1'], ['foo' => 'Integer|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '1.23'], ['foo' => 'Integer|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 1.23], ['foo' => 'Integer|Strict']);
+        $this->assertFalse($validator->passes());
+    }
+
+    public function testValidateBoolStrict()
+    {
+        $translator = $this->getIlluminateArrayTranslator();
+
+        $validator = new Validator($translator, ['foo' => 'no'], ['foo' => 'Bool|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'yes'], ['foo' => 'Bool|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'false'], ['foo' => 'Bool|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'true'], ['foo' => 'Bool|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, [], ['foo' => 'Bool|Strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => false], ['foo' => 'Bool|Strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => true], ['foo' => 'Bool|Strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '1'], ['foo' => 'Bool|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 1], ['foo' => 'Bool|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '0'], ['foo' => 'Bool|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 0], ['foo' => 'Bool|Strict']);
+        $this->assertFalse($validator->passes());
+    }
+
+    public function testValidateBooleanStrict()
+    {
+        $translator = $this->getIlluminateArrayTranslator();
+
+        $validator = new Validator($translator, ['foo' => 'no'], ['foo' => 'Boolean|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'yes'], ['foo' => 'Boolean|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'false'], ['foo' => 'Boolean|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'true'], ['foo' => 'Boolean|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, [], ['foo' => 'Boolean|Strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => false], ['foo' => 'Boolean|Strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => true], ['foo' => 'Boolean|Strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '1'], ['foo' => 'Boolean|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 1], ['foo' => 'Boolean|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '0'], ['foo' => 'Boolean|Strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 0], ['foo' => 'Boolean|Strict']);
+        $this->assertFalse($validator->passes());
     }
 
     public function testValidateDigits()
@@ -2092,10 +2202,10 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
 
         $trans = $this->getIlluminateArrayTranslator();
-        $v = new Validator($trans, ['id' => 1], ['id' => 'Integer|Exists:users,id']);
+        $v = new Validator($trans, ['id' => '1'], ['id' => 'Integer|Exists:users,id']);
         $mock = m::mock(PresenceVerifierInterface::class);
         $mock->shouldReceive('setConnection')->once()->with(null);
-        $mock->shouldReceive('getCount')->once()->with('users', 'id', 1, null, null, [])->andReturn(1);
+        $mock->shouldReceive('getCount')->once()->with('users', 'id', '1', null, null, [])->andReturn(1);
         $v->setPresenceVerifier($mock);
         $this->assertTrue($v->passes());
     }

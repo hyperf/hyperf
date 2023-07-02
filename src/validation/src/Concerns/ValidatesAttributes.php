@@ -683,7 +683,27 @@ trait ValidatesAttributes
      */
     public function validateInteger(string $attribute, $value): bool
     {
-        return is_int($value);
+        return filter_var($value, FILTER_VALIDATE_INT) !== false;
+    }
+
+    /**
+     * Validate that an attribute is a strictly defined type.
+     * Only "int|integer" and "bool|boolean" are supported.
+     *
+     * @param mixed $value
+     */
+    public function validateStrict(string $attribute, $value): bool
+    {
+        $acceptRules = ['Integer', 'Boolean'];
+        $isValid = true;
+
+        foreach ($acceptRules as $rule) {
+            if ($this->hasRule($attribute, $rule)) {
+                $isValid = gettype($value) === strtolower($rule);
+            }
+        }
+
+        return $isValid;
     }
 
     /**
