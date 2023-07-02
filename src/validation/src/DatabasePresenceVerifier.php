@@ -37,7 +37,7 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
     /**
      * Count the number of objects in a collection having the given value.
      *
-     * @param mixed $value
+     * @param string $value
      * @param null|int $excludeId
      * @param null|string $idColumn
      */
