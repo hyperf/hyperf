@@ -25,6 +25,7 @@
 - [#5849](https://github.com/hyperf/hyperf/pull/5849) Support for insert update and select using enums.
 - [#5855](https://github.com/hyperf/hyperf/pull/5855) Added `hyperf/closure-command` component.
 - [#5894](https://github.com/hyperf/hyperf/pull/5894) [#5897](https://github.com/hyperf/hyperf/pull/5897) Added `model-factory` support for `hyperf/testing`.
+- [#5898](https://github.com/hyperf/hyperf/pull/5898) Added `toRawSql()` to Query Builders.
 
 ## Optimized
 
