@@ -991,7 +991,9 @@ class Connection implements ConnectionInterface
      */
     protected function getDefaultQueryGrammar(): QueryGrammar
     {
-        return new QueryGrammar();
+        ($grammar = new QueryGrammar)->setConnection($this);
+
+        return $grammar;
     }
 
     /**
