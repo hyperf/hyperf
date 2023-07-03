@@ -31,6 +31,7 @@ use LogicException;
 use PDO;
 use PDOStatement;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use RuntimeException;
 use Throwable;
 
 class Connection implements ConnectionInterface
@@ -517,6 +518,36 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Escape a value for safe SQL embedding.
+     *
+     * @param null|bool|float|int|string $value
+     */
+    public function escape(mixed $value, bool $binary = false): string
+    {
+        if ($value === null) {
+            return 'null';
+        }
+        if ($binary) {
+            return $this->escapeBinary($value);
+        }
+        if (is_int($value) || is_float($value)) {
+            return (string) $value;
+        }
+        if (is_bool($value)) {
+            return $this->escapeBool($value);
+        }
+        if (str_contains($value, "\00")) {
+            throw new RuntimeException('Strings with null bytes cannot be escaped. Use the binary escape option.');
+        }
+
+        if (preg_match('//u', $value) === false) {
+            throw new RuntimeException('Strings with invalid UTF-8 byte sequences cannot be escaped.');
+        }
+
+        return $this->escapeString($value);
+    }
+
+    /**
      * Indicate if any records have been modified.
      */
     public function recordsHaveBeenModified(bool $value = true)
@@ -918,6 +949,30 @@ class Connection implements ConnectionInterface
     public static function getResolver(string $driver): ?Closure
     {
         return static::$resolvers[$driver] ?? null;
+    }
+
+    /**
+     * Escape a string value for safe SQL embedding.
+     */
+    protected function escapeString(string $value): string
+    {
+        return $this->getPdo()->quote($value);
+    }
+
+    /**
+     * Escape a boolean value for safe SQL embedding.
+     */
+    protected function escapeBool(bool $value): string
+    {
+        return $value ? '1' : '0';
+    }
+
+    /**
+     * Escape a binary value for safe SQL embedding.
+     */
+    protected function escapeBinary(mixed $value): string
+    {
+        throw new RuntimeException('The database connection does not support escaping binary values.');
     }
 
     /**

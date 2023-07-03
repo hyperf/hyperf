@@ -1886,6 +1886,21 @@ class Builder
     }
 
     /**
+     * Get the raw SQL representation of the query with embedded bindings.
+     *
+     * @return string
+     */
+    public function toRawSql()
+    {
+        $bindings = array_map(fn ($value) => $this->connection->escape($value), $this->connection->prepareBindings($this->getBindings()));
+
+        return $this->grammar->substituteBindingsIntoRawSql(
+            $this->toSql(),
+            $bindings
+        );
+    }
+
+    /**
      * Execute a query for a single record by ID.
      *
      * @param mixed $id

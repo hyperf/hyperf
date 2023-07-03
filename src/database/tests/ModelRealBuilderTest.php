@@ -363,6 +363,17 @@ class ModelRealBuilderTest extends TestCase
         $this->assertSame(2, $model->uid);
     }
 
+    public function testToRawSql()
+    {
+        $container = $this->getContainer();
+
+        $sql = TestModel::query()->toRawSql();
+        $this->assertSame('select * from `test`', $sql);
+
+        $sql = TestModel::query()->where('user_id', 1)->toRawSql();
+        $this->assertSame('select * from `test` where `user_id` = 1', $sql);
+    }
+
     public function testRewriteSetKeysForSaveQuery()
     {
         $container = $this->getContainer();

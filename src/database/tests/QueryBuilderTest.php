@@ -3012,6 +3012,20 @@ class QueryBuilderTest extends TestCase
         $this->assertNotSame($builder, $clone);
     }
 
+    public function testToRawSql()
+    {
+        $connection = Mockery::mock(ConnectionInterface::class);
+        $connection->shouldReceive('prepareBindings')
+            ->with(['foo'])
+            ->andReturn(['foo']);
+        $connection->shouldReceive('escape')->with('foo')->andReturn('\'foo\'');
+        $grammar = Mockery::mock(Grammar::class)->makePartial();
+        $builder = new Builder($connection, $grammar, Mockery::mock(Processor::class));
+        $builder->select('*')->from('users')->where('email', 'foo');
+
+        $this->assertSame('select * from "users" where "email" = \'foo\'', $builder->toRawSql());
+    }
+
     protected function getBuilderWithProcessor(): Builder
     {
         return new Builder(Mockery::mock(ConnectionInterface::class), new Grammar(), new Processor());
