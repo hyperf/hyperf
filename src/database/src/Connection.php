@@ -953,33 +953,24 @@ class Connection implements ConnectionInterface
 
     /**
      * Escape a string value for safe SQL embedding.
-     *
-     * @param string $value
-     * @return string
      */
-    protected function escapeString($value)
+    protected function escapeString(string $value): string
     {
         return $this->getPdo()->quote($value);
     }
 
     /**
      * Escape a boolean value for safe SQL embedding.
-     *
-     * @param bool $value
-     * @return string
      */
-    protected function escapeBool($value)
+    protected function escapeBool(bool $value): string
     {
         return $value ? '1' : '0';
     }
 
     /**
      * Escape a binary value for safe SQL embedding.
-     *
-     * @param string $value
-     * @return string
      */
-    protected function escapeBinary($value)
+    protected function escapeBinary(mixed $value): string
     {
         throw new RuntimeException('The database connection does not support escaping binary values.');
     }
