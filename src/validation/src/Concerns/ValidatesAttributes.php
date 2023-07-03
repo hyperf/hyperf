@@ -200,10 +200,15 @@ trait ValidatesAttributes
      * Validate that an attribute is a boolean.
      *
      * @param mixed $value
+     * @param mixed $parameters
      */
-    public function validateBoolean(string $attribute, $value): bool
+    public function validateBoolean(string $attribute, $value, $parameters = []): bool
     {
         $acceptable = [true, false, 0, 1, '0', '1'];
+
+        if (isset($parameters[0]) && $parameters[0] == 'strict') {
+            $acceptable = [true, false];
+        }
 
         return in_array($value, $acceptable, true);
     }
@@ -680,30 +685,15 @@ trait ValidatesAttributes
      * Validate that an attribute is an integer.
      *
      * @param mixed $value
+     * @param mixed $parameters
      */
-    public function validateInteger(string $attribute, $value): bool
+    public function validateInteger(string $attribute, $value, $parameters = []): bool
     {
-        return filter_var($value, FILTER_VALIDATE_INT) !== false;
-    }
-
-    /**
-     * Validate that an attribute is a strictly defined type.
-     * Only "int|integer" and "bool|boolean" are supported.
-     *
-     * @param mixed $value
-     */
-    public function validateStrict(string $attribute, $value): bool
-    {
-        $acceptRules = ['Integer', 'Boolean'];
-        $isValid = true;
-
-        foreach ($acceptRules as $rule) {
-            if ($this->hasRule($attribute, $rule)) {
-                $isValid = gettype($value) === strtolower($rule);
-            }
+        if (isset($parameters[0]) && $parameters[0] == 'strict' && gettype($value) != 'integer') {
+            return false;
         }
 
-        return $isValid;
+        return filter_var($value, FILTER_VALIDATE_INT) !== false;
     }
 
     /**
