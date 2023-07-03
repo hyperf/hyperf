@@ -319,8 +319,6 @@ class Grammar extends BaseGrammar
      */
     public function substituteBindingsIntoRawSql($sql, $bindings)
     {
-        $bindings = array_map(fn ($value) => $this->escape($value), $bindings);
-
         $query = '';
 
         $isStringLiteral = false;

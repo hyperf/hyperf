@@ -32,11 +32,12 @@ class DatabasePostgresQueryGrammarTest extends TestCase
         $connection = m::mock(Connection::class);
         $connection->shouldReceive('escape')->with('foo', false)->andReturn("'foo'");
         $grammar = new PostgresGrammar();
-        $grammar->setConnection($connection);
+
+        $bindings = array_map(fn ($value) => $connection->escape($value), ['foo']);
 
         $query = $grammar->substituteBindingsIntoRawSql(
             'select * from "users" where \'{}\' ?? \'Hello\\\'\\\'World?\' AND "email" = ?',
-            ['foo'],
+            $bindings,
         );
 
         $this->assertSame('select * from "users" where \'{}\' ? \'Hello\\\'\\\'World?\' AND "email" = \'foo\'', $query);

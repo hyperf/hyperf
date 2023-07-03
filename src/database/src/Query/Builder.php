@@ -1892,9 +1892,11 @@ class Builder
      */
     public function toRawSql()
     {
+        $bindings = array_map(fn ($value) => $this->connection->escape($value), $this->connection->prepareBindings($this->getBindings()));
+
         return $this->grammar->substituteBindingsIntoRawSql(
             $this->toSql(),
-            $this->connection->prepareBindings($this->getBindings())
+            $bindings
         );
     }
 
