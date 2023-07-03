@@ -183,7 +183,7 @@ abstract class Grammar
     /**
      * Set the grammar's database connection.
      *
-     * @param \Illuminate\Database\Connection $prefix
+     * @param \Hyperf\Database\Connection $prefix
      * @param mixed $connection
      * @return $this
      */
