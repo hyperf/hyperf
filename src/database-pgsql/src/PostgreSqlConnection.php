@@ -52,7 +52,7 @@ class PostgreSqlConnection extends Connection
      */
     protected function getDefaultQueryGrammar(): QueryGrammar
     {
-        ($grammar = new QueryGrammar)->setConnection($this);
+        ($grammar = new QueryGrammar())->setConnection($this);
 
         return $this->withTablePrefix($grammar);
     }
