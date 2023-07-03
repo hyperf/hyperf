@@ -13,12 +13,20 @@ namespace Hyperf\Database;
 
 use Hyperf\Database\Query\Expression;
 use Hyperf\Macroable\Macroable;
+use RuntimeException;
 
 use function Hyperf\Collection\collect;
 
 abstract class Grammar
 {
     use Macroable;
+
+    /**
+     * The connection used for escaping values.
+     *
+     * @var \Hyperf\Database\Connection
+     */
+    protected $connection;
 
     /**
      * The grammar table prefix.
@@ -111,6 +119,22 @@ abstract class Grammar
     }
 
     /**
+     * Escapes a value for safe SQL embedding.
+     *
+     * @param null|bool|float|int|string $value
+     * @param bool $binary
+     * @return string
+     */
+    public function escape($value, $binary = false)
+    {
+        if (is_null($this->connection)) {
+            throw new RuntimeException("The database driver's grammar implementation does not support escaping values.");
+        }
+
+        return $this->connection->escape($value, $binary);
+    }
+
+    /**
      * Determine if the given value is a raw expression.
      */
     public function isExpression(mixed $value): bool
@@ -152,6 +176,20 @@ abstract class Grammar
     public function setTablePrefix(string $prefix): static
     {
         $this->tablePrefix = $prefix;
+
+        return $this;
+    }
+
+    /**
+     * Set the grammar's database connection.
+     *
+     * @param \Illuminate\Database\Connection $prefix
+     * @param mixed $connection
+     * @return $this
+     */
+    public function setConnection($connection)
+    {
+        $this->connection = $connection;
 
         return $this;
     }

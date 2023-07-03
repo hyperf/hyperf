@@ -1201,6 +1201,17 @@ class ModelBuilderTest extends TestCase
         $this->assertSame('select "id" from "stub"', $clone->toSql());
     }
 
+    public function testToRawSql()
+    {
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('toRawSql')
+            ->andReturn('select * from "users" where "email" = \'foo\'');
+
+        $builder = new Builder($query);
+
+        $this->assertSame('select * from "users" where "email" = \'foo\'', $builder->toRawSql());
+    }
+
     public function testWithAggregateAndSelfRelationConstrain()
     {
         ModelBuilderTestStub::resolveRelationUsing('children', function ($model) {
