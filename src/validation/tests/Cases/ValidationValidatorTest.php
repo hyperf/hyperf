@@ -1469,6 +1469,116 @@ class ValidationValidatorTest extends TestCase
         $this->assertTrue($v->passes());
     }
 
+    public function testValidateIntStrict()
+    {
+        $translator = $this->getIlluminateArrayTranslator();
+
+        $validator = new Validator($translator, ['foo' => '1'], ['foo' => 'Int:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '-1'], ['foo' => 'Int:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '1.23'], ['foo' => 'Int:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 1.23], ['foo' => 'Int:strict']);
+        $this->assertFalse($validator->passes());
+    }
+
+    public function testValidateIntegerStrict()
+    {
+        $translator = $this->getIlluminateArrayTranslator();
+
+        $validator = new Validator($translator, ['foo' => '1'], ['foo' => 'Integer:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '-1'], ['foo' => 'Integer:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '1.23'], ['foo' => 'Integer:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 1.23], ['foo' => 'Integer:strict']);
+        $this->assertFalse($validator->passes());
+    }
+
+    public function testValidateBoolStrict()
+    {
+        $translator = $this->getIlluminateArrayTranslator();
+
+        $validator = new Validator($translator, ['foo' => 'no'], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'yes'], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'false'], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'true'], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, [], ['foo' => 'Bool:strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => false], ['foo' => 'Bool:strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => true], ['foo' => 'Bool:strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '1'], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 1], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '0'], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 0], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+    }
+
+    public function testValidateBooleanStrict()
+    {
+        $translator = $this->getIlluminateArrayTranslator();
+
+        $validator = new Validator($translator, ['foo' => 'no'], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'yes'], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'false'], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'true'], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, [], ['foo' => 'Boolean:strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => false], ['foo' => 'Boolean:strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => true], ['foo' => 'Boolean:strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '1'], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 1], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '0'], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 0], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+    }
+
     public function testValidateDigits()
     {
         $trans = $this->getIlluminateArrayTranslator();
