@@ -33,7 +33,7 @@ class DatabasePostgresQueryGrammarTest extends TestCase
         $connection->shouldReceive('escape')->with('foo', false)->andReturn("'foo'");
         $grammar = new PostgresGrammar();
 
-        $bindings = array_map(fn ($value) => $connection->escape($value), ['foo']);
+        $bindings = array_map(fn ($value) => $connection->escape($value, false), ['foo']);
 
         $query = $grammar->substituteBindingsIntoRawSql(
             'select * from "users" where \'{}\' ?? \'Hello\\\'\\\'World?\' AND "email" = ?',
