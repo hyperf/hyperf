@@ -521,10 +521,8 @@ class Connection implements ConnectionInterface
      * Escape a value for safe SQL embedding.
      *
      * @param null|bool|float|int|string $value
-     * @param bool $binary
-     * @return string
      */
-    public function escape($value, $binary = false)
+    public function escape(mixed $value, bool $binary = false): string
     {
         if ($value === null) {
             return 'null';

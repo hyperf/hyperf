@@ -3018,10 +3018,8 @@ class QueryBuilderTest extends TestCase
         $connection->shouldReceive('prepareBindings')
             ->with(['foo'])
             ->andReturn(['foo']);
+        $connection->shouldReceive('escape')->with('foo')->andReturn('\'foo\'');
         $grammar = Mockery::mock(Grammar::class)->makePartial();
-        $grammar->shouldReceive('substituteBindingsIntoRawSql')
-            ->with('select * from "users" where "email" = ?', ['foo'])
-            ->andReturn('select * from "users" where "email" = \'foo\'');
         $builder = new Builder($connection, $grammar, Mockery::mock(Processor::class));
         $builder->select('*')->from('users')->where('email', 'foo');
 
