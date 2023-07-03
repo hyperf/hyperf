@@ -205,7 +205,7 @@ trait ValidatesAttributes
     {
         $acceptable = [true, false, 0, 1, '0', '1'];
 
-        if (isset($parameters[0]) && $parameters[0] == 'strict') {
+        if (isset($parameters[0]) && strtolower($parameters[0]) == 'strict') {
             $acceptable = [true, false];
         }
 
@@ -687,7 +687,7 @@ trait ValidatesAttributes
      */
     public function validateInteger(string $attribute, $value, array $parameters = []): bool
     {
-        if (isset($parameters[0]) && $parameters[0] == 'strict' && gettype($value) != 'integer') {
+        if (isset($parameters[0]) && strtolower($parameters[0]) == 'strict' && gettype($value) != 'integer') {
             return false;
         }
 
