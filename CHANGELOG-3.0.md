@@ -1,5 +1,9 @@
 # v3.0.28 - TBD
 
+## Added
+
+- [#5895](https://github.com/hyperf/hyperf/pull/5895) Added strict mode support for `Integer` and `Boolean`.
+
 # v3.0.27 - 2023-06-30
 
 ## Fixed
