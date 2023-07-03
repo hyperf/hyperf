@@ -28,22 +28,27 @@ class ModelFactory
         return new static(new Factory($faker));
     }
 
+    public function define(string $class, callable $attributes, string $name = 'default'): void
+    {
+        $this->factory->define(...func_get_args());
+    }
+
     /**
-     * @param class-string<T> $model
+     * @param class-string<T> $class
      * @return T
      */
-    public function factory(string $model, ...$arguments)
+    public function factory(string $class)
     {
-        $factory = $this->factory;
+        $arguments = func_get_args();
 
         if (isset($arguments[1]) && is_string($arguments[1])) {
-            return $factory->of($arguments[0], $arguments[1])->times($arguments[2] ?? null);
+            return $this->factory->of($arguments[0], $arguments[1])->times($arguments[2] ?? null);
         }
         if (isset($arguments[1])) {
-            return $factory->of($arguments[0])->times($arguments[1]);
+            return $this->factory->of($arguments[0])->times($arguments[1]);
         }
 
-        return $factory->of($arguments[0]);
+        return $this->factory->of($arguments[0]);
     }
 
     public function load(string $path): void
