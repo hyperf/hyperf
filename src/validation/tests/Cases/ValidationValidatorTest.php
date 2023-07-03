@@ -1440,7 +1440,7 @@ class ValidationValidatorTest extends TestCase
     public function testValidateInteger()
     {
         $trans = $this->getIlluminateArrayTranslator();
-        $v = new Validator($trans, ['foo' => 'asdad'], ['foo' => 'Integer:strict']);
+        $v = new Validator($trans, ['foo' => 'asdad'], ['foo' => 'Integer']);
         $this->assertFalse($v->passes());
 
         $v = new Validator($trans, ['foo' => '1.23'], ['foo' => 'Integer']);
