@@ -363,6 +363,28 @@ class ModelRealBuilderTest extends TestCase
         $this->assertSame(2, $model->uid);
     }
 
+    public function testToRawSql()
+    {
+        $container = $this->getContainer();
+        /** @var ConnectionInterface $conn */
+//         $conn = $container->get(ConnectionResolverInterface::class)->connection();
+//         $conn->statement('CREATE TABLE `test` (
+//   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+//   `user_id` bigint(20) unsigned NOT NULL,
+//   `uid` bigint(20) unsigned NOT NULL,
+//   `created_at` datetime DEFAULT NULL,
+//   `updated_at` datetime DEFAULT NULL,
+//   PRIMARY KEY (`id`),
+//   UNIQUE KEY (`user_id`)
+// ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
+        $sql = TestModel::query()->toRawSql();
+        $this->assertSame('select * from `test`', $sql);
+
+        $sql = TestModel::query()->where('user_id', 1)->toRawSql();
+        $this->assertSame('select * from `test` where `user_id` = 1', $sql);
+    }
+
     public function testRewriteSetKeysForSaveQuery()
     {
         $container = $this->getContainer();
