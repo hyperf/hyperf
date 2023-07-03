@@ -200,9 +200,8 @@ trait ValidatesAttributes
      * Validate that an attribute is a boolean.
      *
      * @param mixed $value
-     * @param mixed $parameters
      */
-    public function validateBoolean(string $attribute, $value, $parameters = []): bool
+    public function validateBoolean(string $attribute, $value, array $parameters = []): bool
     {
         $acceptable = [true, false, 0, 1, '0', '1'];
 
@@ -685,9 +684,8 @@ trait ValidatesAttributes
      * Validate that an attribute is an integer.
      *
      * @param mixed $value
-     * @param mixed $parameters
      */
-    public function validateInteger(string $attribute, $value, $parameters = []): bool
+    public function validateInteger(string $attribute, $value, array $parameters = []): bool
     {
         if (isset($parameters[0]) && $parameters[0] == 'strict' && gettype($value) != 'integer') {
             return false;
