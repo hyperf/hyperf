@@ -379,6 +379,17 @@ class ModelRealBuilderTest extends TestCase
         $container = $this->getContainer();
         /** @var \Hyperf\Database\Connection $conn */
         $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->statement('CREATE TABLE `test` (
+            `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            `user_id` bigint(20) unsigned NOT NULL,
+            `uid` bigint(20) unsigned NOT NULL,
+            `version` bigint(20) unsigned NOT NULL,
+            `created_at` datetime DEFAULT NULL,
+            `updated_at` datetime DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY (`user_id`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
         TestVersionModel::query()->where('user_id', 1)->get();
         $logs = $conn->getRawQueryLog();
         $this->assertIsArray($logs);
