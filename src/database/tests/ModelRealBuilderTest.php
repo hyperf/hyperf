@@ -380,7 +380,10 @@ class ModelRealBuilderTest extends TestCase
         /** @var \Hyperf\Database\Connection $conn */
         $conn = $container->get(ConnectionResolverInterface::class)->connection();
         TestVersionModel::query()->where('user_id', 1)->get();
-        $this->assertSame('select * from `test` where `user_id` = 1', $conn->getRawQueryLog()[0]['raw_query']);
+        $logs = $conn->getRawQueryLog();
+        $this->assertIsArray($logs);
+        $this->assertCount(1, $logs);
+        $this->assertSame('select * from `test` where `user_id` = 1', $logs[0]['raw_query']);
     }
 
     public function testRewriteSetKeysForSaveQuery()
