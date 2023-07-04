@@ -8,9 +8,20 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 
-#[Command(name: "demo:command", description: "Hyperf Demo Command")]
+#[Command()]
 class %CLASS% extends HyperfCommand
 {
+    public function __construct(protected ContainerInterface $container)
+    {
+        parent::__construct('demo:command');
+    }
+
+    public function configure()
+    {
+        parent::configure();
+        $this->setDescription('Hyperf Demo Command');
+    }
+
     public function handle()
     {
         $this->line('Hello Hyperf!', 'info');
