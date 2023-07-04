@@ -481,7 +481,8 @@ class DatabaseConnectionTest extends TestCase
 
     public function testGetRawQueryLog()
     {
-        $mock = $this->getMockConnection(['getQueryLog']);
+        $mock = $this->getMockConnection(['getQueryLog', 'escape']);
+        $mock->expects($this->once())->method('escape')->with('foo')->willReturn('foo');
         $mock->expects($this->once())->method('getQueryLog')->willReturn([
             [
                 'query' => 'select * from tbl where col = ?',

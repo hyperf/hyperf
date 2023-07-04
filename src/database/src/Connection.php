@@ -858,7 +858,7 @@ class Connection implements ConnectionInterface
         return array_map(fn (array $log) => [
             'raw_query' => $this->queryGrammar->substituteBindingsIntoRawSql(
                 $log['query'],
-                $this->prepareBindings($log['bindings'])
+                array_map(fn ($value) => $this->escape($value), $this->prepareBindings($log['bindings']))
             ),
             'time' => $log['time'],
         ], $this->getQueryLog());
