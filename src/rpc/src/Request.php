@@ -13,7 +13,7 @@ namespace Hyperf\Rpc;
 
 class Request
 {
-    public function __construct(protected string $path, protected array $params, protected ?string $id = null)
+    public function __construct(protected string $path, protected array $params, protected null|int|string $id = null)
     {
     }
 
@@ -33,7 +33,7 @@ class Request
         return $this->params;
     }
 
-    public function getId(): ?string
+    public function getId(): null|int|string
     {
         return $this->id;
     }

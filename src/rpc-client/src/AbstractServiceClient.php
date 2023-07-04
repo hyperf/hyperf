@@ -102,7 +102,7 @@ abstract class AbstractServiceClient
         return $this->pathGenerator->generate($this->serviceName, $methodName);
     }
 
-    protected function __generateData(string $methodName, array $params, ?string $id)
+    protected function __generateData(string $methodName, array $params, null|int|string $id)
     {
         return $this->dataFormatter->formatRequest(new Request($this->__generateRpcPath($methodName), $params, $id));
     }
