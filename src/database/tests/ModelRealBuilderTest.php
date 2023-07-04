@@ -390,6 +390,7 @@ class ModelRealBuilderTest extends TestCase
             UNIQUE KEY (`user_id`)
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
 
+        $conn->enableQueryLog();
         $conn->select('select * from `test` where `user_id` = ?', [1]);
         $logs = $conn->getRawQueryLog();
         $this->assertIsArray($logs);
