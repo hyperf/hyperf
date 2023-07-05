@@ -849,6 +849,22 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Get the connection query log with embedded bindings.
+     *
+     * @return array
+     */
+    public function getRawQueryLog()
+    {
+        return array_map(fn (array $log) => [
+            'raw_query' => $this->queryGrammar->substituteBindingsIntoRawSql(
+                $log['query'],
+                array_map(fn ($value) => $this->escape($value), $this->prepareBindings($log['bindings']))
+            ),
+            'time' => $log['time'],
+        ], $this->getQueryLog());
+    }
+
+    /**
      * Clear the query log.
      */
     public function flushQueryLog()
