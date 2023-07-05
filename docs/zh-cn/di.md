@@ -306,7 +306,7 @@ Hyperf 的长生命周期依赖注入在项目启动时完成。这意味着长�
 
 另一个方案是使用 PHP 中常用的惰性代理模式，注入一个代理对象，在使用时再实例化目标对象。Hyperf DI 组件设计了懒加载注入功能。
 
-添加 `config/autoload/lazy_loader.php` 文件并绑定懒加载关系：
+添加 `config/lazy_loader.php` 文件并绑定懒加载关系：
 
 ```php
 <?php
