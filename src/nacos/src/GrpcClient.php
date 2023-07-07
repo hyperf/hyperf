@@ -83,16 +83,8 @@ class GrpcClient
 
     public function request(RequestInterface $request, ?Client $client = null): Response
     {
-        $headers = [];
-        if ($token = $this->getAccessToken()) {
-            $headers['accessToken'] = $token;
-        }
         $payload = new Payload([
-            'metadata' => new Metadata([
-                'type' => $request->getType(),
-                'clientIp' => $this->ip(),
-                'headers' => $headers,
-            ]),
+            'metadata' => new Metadata($this->getMetadata($request)),
             'body' => new Any([
                 'value' => Json::encode($request->getValue()),
             ]),
@@ -110,10 +102,7 @@ class GrpcClient
     public function write(int $streamId, RequestInterface $request, ?Client $client = null): bool
     {
         $payload = new Payload([
-            'metadata' => new Metadata([
-                'type' => $request->getType(),
-                'clientIp' => $this->ip(),
-            ]),
+            'metadata' => new Metadata($this->getMetadata($request)),
             'body' => new Any([
                 'value' => Json::encode($request->getValue()),
             ]),
@@ -258,6 +247,24 @@ class GrpcClient
         }
 
         throw new ConnectToServerFailedException('the nacos server is not ready to work in 30 seconds, connect to server failed');
+    }
+
+    private function getMetadata(RequestInterface $request): array
+    {
+        if ($token = $this->getAccessToken()) {
+            return [
+                'type' => $request->getType(),
+                'clientIp' => $this->ip(),
+                'headers' => [
+                    'accessToken' => $token,
+                ],
+            ];
+        }
+
+        return [
+            'type' => $request->getType(),
+            'clientIp' => $this->ip(),
+        ];
     }
 
     private function grpcDefaultHeaders(): array
