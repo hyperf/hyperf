@@ -1,5 +1,9 @@
 # v3.0.28 - TBD
 
+## Fixed
+
+- [#5909](https://github.com/hyperf/hyperf/pull/5909) Fixed bug that acm `client::$servers` must be accessed before initialization.
+
 ## Added
 
 - [#5895](https://github.com/hyperf/hyperf/pull/5895) Added strict mode support for `Integer` and `Boolean`.
