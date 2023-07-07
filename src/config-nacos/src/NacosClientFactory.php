@@ -12,35 +12,37 @@ declare(strict_types=1);
 namespace Hyperf\ConfigNacos;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Config;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
 class NacosClientFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $config = $container->get(ConfigInterface::class)->get('config_center.drivers.nacos.client', []);
-        if (empty($config)) {
-            return $container->get(Application::class);
+        $config = $container->get(ConfigInterface::class);
+        $options = $config->get('config_center.drivers.nacos.client', []) ?: $config->get('nacos', []);
+
+        if (empty($options)) {
+            throw new InvalidArgumentException("The config 'config_center.drivers.nacos.client' is missing.");
         }
 
-        if (! empty($config['uri'])) {
-            $baseUri = $config['uri'];
+        if (! empty($options['uri'])) {
+            $baseUri = $options['uri'];
         } else {
-            $baseUri = sprintf('http://%s:%d', $config['host'] ?? '127.0.0.1', $config['port'] ?? 8848);
+            $baseUri = sprintf('http://%s:%d', $options['host'] ?? '127.0.0.1', $options['port'] ?? 8848);
         }
 
-        return new Application(new Config([
+        return new NacosClient(new Config([
             'base_uri' => $baseUri,
-            'username' => $config['username'] ?? null,
-            'password' => $config['password'] ?? null,
-            'access_key' => $config['access_key'] ?? null,
-            'access_secret' => $config['access_secret'] ?? null,
-            'guzzle_config' => $config['guzzle']['config'] ?? null,
-            'host' => $config['host'] ?? null,
-            'port' => $config['port'] ?? null,
-            'grpc' => $config['grpc'] ?? [],
+            'username' => $options['username'] ?? null,
+            'password' => $options['password'] ?? null,
+            'access_key' => $options['access_key'] ?? null,
+            'access_secret' => $options['access_secret'] ?? null,
+            'guzzle_config' => $options['guzzle']['config'] ?? null,
+            'host' => $options['host'] ?? null,
+            'port' => $options['port'] ?? null,
+            'grpc' => $options['grpc'] ?? [],
         ]));
     }
 }
