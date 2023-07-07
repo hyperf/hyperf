@@ -8,6 +8,10 @@
 
 - [#5895](https://github.com/hyperf/hyperf/pull/5895) Added strict mode support for `Integer` and `Boolean`.
 
+## Optimized
+
+- [#5910] (https://github.com/hyperf/hyperf/pull/5910) Optimize `NacosClientFactory`.
+
 # v3.0.27 - 2023-06-30
 
 ## Fixed
