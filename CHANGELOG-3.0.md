@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#5909](https://github.com/hyperf/hyperf/pull/5909) Fixed bug that acm `client::$servers` must be accessed before initialization.
+- [#5911](https://github.com/hyperf/hyperf/pull/5911) Fixed bug that nacos grpc client auth failed.
 
 ## Added
 
@@ -10,7 +11,7 @@
 
 ## Optimized
 
-- [#5910] (https://github.com/hyperf/hyperf/pull/5910) Optimize `NacosClientFactory`.
+- [#5910](https://github.com/hyperf/hyperf/pull/5910) Optimized code about `NacosClientFactory` which will create nacos client instead of nacos application.
 
 # v3.0.27 - 2023-06-30
 
