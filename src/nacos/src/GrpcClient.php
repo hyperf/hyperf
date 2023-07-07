@@ -83,10 +83,15 @@ class GrpcClient
 
     public function request(RequestInterface $request, ?Client $client = null): Response
     {
+        $headers = [];
+        if ($token = $this->getAccessToken()) {
+            $headers['accessToken'] = $token;
+        }
         $payload = new Payload([
             'metadata' => new Metadata([
                 'type' => $request->getType(),
                 'clientIp' => $this->ip(),
+                'headers' => $headers,
             ]),
             'body' => new Any([
                 'value' => Json::encode($request->getValue()),
@@ -257,16 +262,11 @@ class GrpcClient
 
     private function grpcDefaultHeaders(): array
     {
-        $headers = [
+        return [
             'content-type' => 'application/grpc+proto',
             'te' => 'trailers',
             'user-agent' => 'Nacos-Hyperf-Client:v3.0',
         ];
-        if ($token = $this->getAccessToken()) {
-            $headers['accessToken'] = $token;
-        }
-
-        return $headers;
     }
 
     private function handleResponse(ResponseInterface $response): array
