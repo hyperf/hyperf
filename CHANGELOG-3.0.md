@@ -1,4 +1,20 @@
-# v3.0.28 - TBD
+# v3.0.29 - TBD
+
+# v3.0.28 - 2023-07-08
+
+## Fixed
+
+- [#5909](https://github.com/hyperf/hyperf/pull/5909) Fixed bug that acm `client::$servers` must be accessed before initialization.
+- [#5911](https://github.com/hyperf/hyperf/pull/5911) Fixed bug that nacos grpc client auth failed.
+- [#5912](https://github.com/hyperf/hyperf/pull/5912) Fixed bug that nacos grpc client cannot reconnect when the client closed.
+
+## Added
+
+- [#5895](https://github.com/hyperf/hyperf/pull/5895) Added strict mode support for `Integer` and `Boolean`.
+
+## Optimized
+
+- [#5910](https://github.com/hyperf/hyperf/pull/5910) Optimized code about `NacosClientFactory` which will create nacos client instead of nacos application.
 
 # v3.0.27 - 2023-06-30
 

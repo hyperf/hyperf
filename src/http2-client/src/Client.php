@@ -122,12 +122,12 @@ class Client implements ClientInterface
 
     public function request(HTTP2RequestInterface $request): HTTP2ResponseInterface
     {
-        $streamId = $this->send($request);
-
         try {
+            $streamId = $this->send($request);
+
             return $this->recv($streamId);
         } finally {
-            $this->closeChannel($streamId);
+            isset($streamId) && $this->closeChannel($streamId);
         }
     }
 
@@ -166,6 +166,11 @@ class Client implements ClientInterface
         foreach ($channels as $channel) {
             $channel->close();
         }
+    }
+
+    public function inLoop(): bool
+    {
+        return $this->loop;
     }
 
     public function loop(): void

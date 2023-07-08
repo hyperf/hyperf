@@ -201,9 +201,13 @@ trait ValidatesAttributes
      *
      * @param mixed $value
      */
-    public function validateBoolean(string $attribute, $value): bool
+    public function validateBoolean(string $attribute, $value, array $parameters = []): bool
     {
         $acceptable = [true, false, 0, 1, '0', '1'];
+
+        if (isset($parameters[0]) && strtolower($parameters[0]) == 'strict') {
+            $acceptable = [true, false];
+        }
 
         return in_array($value, $acceptable, true);
     }
@@ -681,8 +685,12 @@ trait ValidatesAttributes
      *
      * @param mixed $value
      */
-    public function validateInteger(string $attribute, $value): bool
+    public function validateInteger(string $attribute, $value, array $parameters = []): bool
     {
+        if (isset($parameters[0]) && strtolower($parameters[0]) == 'strict' && gettype($value) != 'integer') {
+            return false;
+        }
+
         return filter_var($value, FILTER_VALIDATE_INT) !== false;
     }
 

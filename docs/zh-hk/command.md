@@ -27,7 +27,7 @@ php bin/hyperf.php gen:command FooCommand
 
 ### 定義命令
 
-定義該命令類所對應的命令有兩種形式，一種是通過 `$name` 屬性定義，另一種是通過構造函數傳參來定義，我們通過代碼示例來演示一下，假設我們希望定義該命令類的命令為 `foo:hello`：
+定義該命令類所對應的命令有三種形式，第一種是通過 `$name` 屬性定義，第二種是通過構造函數傳參來定義，最後一種是通過註解來定義，我們通過代碼示例來演示一下，假設我們希望定義該命令類的命令為 `foo:hello`：
 
 #### `$name` 屬性定義：
 
@@ -70,6 +70,25 @@ class FooCommand extends HyperfCommand
     {
         parent::__construct('foo:hello');
     }
+}
+```
+
+#### 註解定義：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Command\Annotation\Command;
+
+#[Command(name: "foo:hello")]
+class FooCommand extends HyperfCommand
+{
+
 }
 ```
 
