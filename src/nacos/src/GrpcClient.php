@@ -21,6 +21,7 @@ use Hyperf\Engine\Http\V2\Request;
 use Hyperf\Grpc\Parser;
 use Hyperf\Http2Client\Client;
 use Hyperf\Nacos\Exception\ConnectToServerFailedException;
+use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Nacos\Protobuf\Any;
 use Hyperf\Nacos\Protobuf\ListenContext;
 use Hyperf\Nacos\Protobuf\ListenHandlerInterface;
@@ -36,8 +37,10 @@ use Hyperf\Nacos\Protobuf\Response\ConfigChangeBatchListenResponse;
 use Hyperf\Nacos\Protobuf\Response\ConfigChangeNotifyRequest;
 use Hyperf\Nacos\Protobuf\Response\ConfigQueryResponse;
 use Hyperf\Nacos\Protobuf\Response\Response;
+use Hyperf\Nacos\Provider\AccessToken;
 use Hyperf\Support\Network;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -45,6 +48,8 @@ use function Hyperf\Coroutine\go;
 
 class GrpcClient
 {
+    use AccessToken;
+
     protected array $listeners = [];
 
     protected ?Client $client = null;
@@ -79,10 +84,7 @@ class GrpcClient
     public function request(RequestInterface $request, ?Client $client = null): Response
     {
         $payload = new Payload([
-            'metadata' => new Metadata([
-                'type' => $request->getType(),
-                'clientIp' => $this->ip(),
-            ]),
+            'metadata' => new Metadata($this->getMetadata($request)),
             'body' => new Any([
                 'value' => Json::encode($request->getValue()),
             ]),
@@ -100,10 +102,7 @@ class GrpcClient
     public function write(int $streamId, RequestInterface $request, ?Client $client = null): bool
     {
         $payload = new Payload([
-            'metadata' => new Metadata([
-                'type' => $request->getType(),
-                'clientIp' => $this->ip(),
-            ]),
+            'metadata' => new Metadata($this->getMetadata($request)),
             'body' => new Any([
                 'value' => Json::encode($request->getValue()),
             ]),
@@ -250,6 +249,24 @@ class GrpcClient
         throw new ConnectToServerFailedException('the nacos server is not ready to work in 30 seconds, connect to server failed');
     }
 
+    private function getMetadata(RequestInterface $request): array
+    {
+        if ($token = $this->getAccessToken()) {
+            return [
+                'type' => $request->getType(),
+                'clientIp' => $this->ip(),
+                'headers' => [
+                    'accessToken' => $token,
+                ],
+            ];
+        }
+
+        return [
+            'type' => $request->getType(),
+            'clientIp' => $this->ip(),
+        ];
+    }
+
     private function grpcDefaultHeaders(): array
     {
         return [
@@ -257,5 +274,17 @@ class GrpcClient
             'te' => 'trailers',
             'user-agent' => 'Nacos-Hyperf-Client:v3.0',
         ];
+    }
+
+    private function handleResponse(ResponseInterface $response): array
+    {
+        $statusCode = $response->getStatusCode();
+        $contents = (string) $response->getBody();
+
+        if ($statusCode !== 200) {
+            throw new RequestException($contents, $statusCode);
+        }
+
+        return Json::decode($contents);
     }
 }
