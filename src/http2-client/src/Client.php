@@ -166,6 +166,11 @@ class Client implements ClientInterface
         }
     }
 
+    public function inLoop(): bool
+    {
+        return $this->loop;
+    }
+
     public function loop(): void
     {
         if ($this->loop) {

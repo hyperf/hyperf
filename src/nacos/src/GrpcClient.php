@@ -155,7 +155,7 @@ class GrpcClient
         go(function () {
             $client = $this->client;
             $heartbeat = $this->config->getGrpc()['heartbeat'];
-            while ($heartbeat > 0) {
+            while ($heartbeat > 0 && $client->inLoop()) {
                 if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
                     break;
                 }
@@ -184,6 +184,9 @@ class GrpcClient
             $client = $this->client;
             while (true) {
                 try {
+                    if (! $client->inLoop()) {
+                        break;
+                    }
                     $response = $client->recv($id, -1);
                     $response = Response::jsonDeSerialize($response->getBody());
                     match (true) {
@@ -200,6 +203,8 @@ class GrpcClient
                     $this->logger->error((string) $e);
                 }
             }
+
+            $this->reconnect();
         });
 
         $request = new ConnectionSetupRequest($this->namespaceId);
