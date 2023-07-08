@@ -208,7 +208,7 @@ class GrpcClient
         });
 
         $request = new ConnectionSetupRequest($this->namespaceId);
-        $res = $this->write($id, $request);
+        $this->write($id, $request);
         sleep(1);
 
         return $id;
