@@ -4,6 +4,7 @@
 
 - [#5909](https://github.com/hyperf/hyperf/pull/5909) Fixed bug that acm `client::$servers` must be accessed before initialization.
 - [#5911](https://github.com/hyperf/hyperf/pull/5911) Fixed bug that nacos grpc client auth failed.
+- [#5912](https://github.com/hyperf/hyperf/pull/5912) Fixed bug that nacos grpc client cannot reconnect when the client closed.
 
 ## Added
 

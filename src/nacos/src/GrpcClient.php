@@ -155,7 +155,7 @@ class GrpcClient
         go(function () {
             $client = $this->client;
             $heartbeat = $this->config->getGrpc()['heartbeat'];
-            while ($heartbeat > 0) {
+            while ($heartbeat > 0 && $client->inLoop()) {
                 if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
                     break;
                 }
@@ -179,11 +179,13 @@ class GrpcClient
     protected function bindStreamCall(): int
     {
         $id = $this->client->send(new Request('/BiRequestStream/requestBiStream', 'POST', '', $this->grpcDefaultHeaders(), true));
-
         go(function () use ($id) {
             $client = $this->client;
             while (true) {
                 try {
+                    if (! $client->inLoop()) {
+                        break;
+                    }
                     $response = $client->recv($id, -1);
                     $response = Response::jsonDeSerialize($response->getBody());
                     match (true) {
@@ -200,6 +202,9 @@ class GrpcClient
                     $this->logger->error((string) $e);
                 }
             }
+
+            $this->reconnect();
+            $this->listen();
         });
 
         $request = new ConnectionSetupRequest($this->namespaceId);
@@ -229,12 +234,12 @@ class GrpcClient
     {
         $request = new ServerCheckRequest();
 
-        for ($i = 0; $i < 30; ++$i) {
+        while (true) {
             try {
                 $response = $this->request($request);
                 if ($response->errorCode !== 0) {
                     $this->logger?->error('Nacos check server failed.');
-                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(1)) {
+                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(5)) {
                         break;
                     }
                     continue;
@@ -243,6 +248,9 @@ class GrpcClient
                 return true;
             } catch (Exception $exception) {
                 $this->logger?->error((string) $exception);
+                if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(5)) {
+                    break;
+                }
             }
         }
 
