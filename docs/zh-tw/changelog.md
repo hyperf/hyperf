@@ -1,5 +1,21 @@
 # 版本更新記錄
 
+# v3.0.28 - 2023-07-08
+
+## 修復
+
+- [#5909](https://github.com/hyperf/hyperf/pull/5909) 修復 `ACM` 配置中心因 `client::$servers` 沒有進行初始化而報錯的問題。
+- [#5911](https://github.com/hyperf/hyperf/pull/5911) 修復 `Nacos Grpc 客戶端` 許可權驗證失敗的問題。
+- [#5912](https://github.com/hyperf/hyperf/pull/5912) 修復 `Nacos Grpc 客戶端` 在 `Nacos 服務` 重啟後，重連失敗的問題。
+
+## 新增
+
+- [#5895](https://github.com/hyperf/hyperf/pull/5895) 為驗證器規則 `Integer` 和 `Boolean` 增加嚴格模式。
+
+## 最佳化
+
+- [#5910](https://github.com/hyperf/hyperf/pull/5910) 優化工廠類 `NacosClientFactory`，使其例項化 `NacosClient` 而非 `Nacos Application` 物件。
+
 # v3.0.27 - 2023-06-30
 
 ## 修復
