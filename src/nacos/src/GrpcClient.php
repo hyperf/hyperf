@@ -179,7 +179,6 @@ class GrpcClient
     protected function bindStreamCall(): int
     {
         $id = $this->client->send(new Request('/BiRequestStream/requestBiStream', 'POST', '', $this->grpcDefaultHeaders(), true));
-
         go(function () use ($id) {
             $client = $this->client;
             while (true) {
@@ -205,10 +204,11 @@ class GrpcClient
             }
 
             $this->reconnect();
+            $this->listen();
         });
 
         $request = new ConnectionSetupRequest($this->namespaceId);
-        $this->write($id, $request);
+        $res = $this->write($id, $request);
         sleep(1);
 
         return $id;
@@ -234,12 +234,12 @@ class GrpcClient
     {
         $request = new ServerCheckRequest();
 
-        for ($i = 0; $i < 30; ++$i) {
+        while (true) {
             try {
                 $response = $this->request($request);
                 if ($response->errorCode !== 0) {
                     $this->logger?->error('Nacos check server failed.');
-                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(1)) {
+                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(5)) {
                         break;
                     }
                     continue;
@@ -248,6 +248,9 @@ class GrpcClient
                 return true;
             } catch (Exception $exception) {
                 $this->logger?->error((string) $exception);
+                if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(5)) {
+                    break;
+                }
             }
         }
 

@@ -120,12 +120,12 @@ class Client implements ClientInterface
 
     public function request(HTTP2RequestInterface $request): HTTP2ResponseInterface
     {
-        $streamId = $this->send($request);
-
         try {
+            $streamId = $this->send($request);
+
             return $this->recv($streamId);
         } finally {
-            $this->closeChannel($streamId);
+            isset($streamId) && $this->closeChannel($streamId);
         }
     }
 
