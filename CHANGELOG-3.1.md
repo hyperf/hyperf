@@ -28,6 +28,7 @@
 - [#5898](https://github.com/hyperf/hyperf/pull/5898) Added `toRawSql()` to Query Builders.
 - [#5906](https://github.com/hyperf/hyperf/pull/5906) Added `getRawQueryLog()` to Database Connection.
 - [#5915](https://github.com/hyperf/hyperf/pull/5915) Added `data_forget` helper.
+- [#5914](https://github.com/hyperf/hyperf/pull/5914) Added `Str::isUrl()` and use it from the validator.
 
 ## Optimized
 
