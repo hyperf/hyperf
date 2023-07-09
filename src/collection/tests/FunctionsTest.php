@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 use Traversable;
 
 use function Hyperf\Collection\data_fill;
+use function Hyperf\Collection\data_forget;
 use function Hyperf\Collection\data_get;
 use function Hyperf\Collection\data_set;
 use function Hyperf\Collection\head;
@@ -293,6 +294,95 @@ class FunctionsTest extends TestCase
                     'comments' => [
                         (object) ['name' => 'Filled'],
                         (object) ['name' => 'Filled'],
+                    ],
+                ],
+            ],
+        ], $data);
+    }
+
+    public function testDataForget()
+    {
+        $data = ['foo' => 'bar', 'hello' => 'world'];
+
+        $this->assertEquals(
+            ['hello' => 'world'],
+            data_forget($data, 'foo')
+        );
+
+        $data = ['foo' => 'bar', 'hello' => 'world'];
+
+        $this->assertEquals(
+            ['foo' => 'bar', 'hello' => 'world'],
+            data_forget($data, 'nothing')
+        );
+
+        $data = ['one' => ['two' => ['three' => 'hello', 'four' => ['five']]]];
+
+        $this->assertEquals(
+            ['one' => ['two' => ['four' => ['five']]]],
+            data_forget($data, 'one.two.three')
+        );
+    }
+
+    public function testDataForgetWithStar()
+    {
+        $data = [
+            'article' => [
+                'title' => 'Foo',
+                'comments' => [
+                    ['comment' => 'foo', 'name' => 'First'],
+                    ['comment' => 'bar', 'name' => 'Second'],
+                ],
+            ],
+        ];
+
+        $this->assertEquals(
+            [
+                'article' => [
+                    'title' => 'Foo',
+                    'comments' => [
+                        ['comment' => 'foo'],
+                        ['comment' => 'bar'],
+                    ],
+                ],
+            ],
+            data_forget($data, 'article.comments.*.name')
+        );
+    }
+
+    public function testDataForgetWithDoubleStar()
+    {
+        $data = [
+            'posts' => [
+                (object) [
+                    'comments' => [
+                        (object) ['name' => 'First', 'comment' => 'foo'],
+                        (object) ['name' => 'Second', 'comment' => 'bar'],
+                    ],
+                ],
+                (object) [
+                    'comments' => [
+                        (object) ['name' => 'Third', 'comment' => 'hello'],
+                        (object) ['name' => 'Fourth', 'comment' => 'world'],
+                    ],
+                ],
+            ],
+        ];
+
+        data_forget($data, 'posts.*.comments.*.name');
+
+        $this->assertEquals([
+            'posts' => [
+                (object) [
+                    'comments' => [
+                        (object) ['comment' => 'foo'],
+                        (object) ['comment' => 'bar'],
+                    ],
+                ],
+                (object) [
+                    'comments' => [
+                        (object) ['comment' => 'hello'],
+                        (object) ['comment' => 'world'],
                     ],
                 ],
             ],
