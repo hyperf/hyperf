@@ -72,23 +72,26 @@ jobs:
       - name: Setup Flysystem(v1.0) Adapters
         if: ${{ matrix.version == '^1.0' }}
         run: |
-          composer require xxtime/flysystem-aliyun-oss
-          composer require "overtrue/flysystem-cos:^3.0"
-          composer require "overtrue/flysystem-qiniu:^1.0"
+          composer require xxtime/flysystem-aliyun-oss --no-update
+          composer require "overtrue/flysystem-cos:^3.0" --no-update
+          composer require "overtrue/flysystem-qiniu:^1.0" --no-update
+          composer update -oW --ignore-platform-reqs
       - name: Setup Flysystem(v2.0) Adapters
         if: ${{ matrix.version == '^2.0' }}
         run: |
-          composer require hyperf/flysystem-oss
-          composer require "league/flysystem-ftp:^3.0"
-          composer require "overtrue/flysystem-cos:^4.0"
-          composer require "overtrue/flysystem-qiniu:^2.0"
+          composer require hyperf/flysystem-oss --no-update
+          composer require "league/flysystem-ftp:^3.0" --no-update
+          composer require "overtrue/flysystem-cos:^4.0" --no-update
+          composer require "overtrue/flysystem-qiniu:^2.0" --no-update
+          composer update -oW --ignore-platform-reqs
       - name: Setup Flysystem(v3.0) Adapters
         if: ${{ matrix.version == '^3.0' }}
         run: |
-          composer require hyperf/flysystem-oss
-          composer require league/flysystem-ftp
-          composer require "overtrue/flysystem-cos:^5.0"
-          composer require "overtrue/flysystem-qiniu:^3.0"
+          composer require hyperf/flysystem-oss --no-update
+          composer require league/flysystem-ftp --no-update
+          composer require "overtrue/flysystem-cos:^5.0" --no-update
+          composer require "overtrue/flysystem-qiniu:^3.0" --no-update
+          composer update -oW --ignore-platform-reqs
       - name: Run Test Cases
         run: |
           ./.travis/requirement.install.sh
@@ -173,9 +176,9 @@ jobs:
         run: |
           cp .travis/.env.example .env
           ./.travis/requirement.install.sh
-          composer remove friendsofphp/php-cs-fixer --dev -W
-          composer remove symfony/console --dev -W
-          composer require "psr/container:${{ matrix.version }}"
+          composer remove friendsofphp/php-cs-fixer --dev --no-update
+          composer remove symfony/console --dev --no-update
+          composer require "psr/container:${{ matrix.version }}" --no-update
           composer update -oW
       - name: Run Test Cases
         run: |
@@ -209,15 +212,15 @@ jobs:
         run: |
           cp .travis/.env.example .env
           ./.travis/requirement.install.sh
-          composer remove swow/swow --dev -W
-          composer remove league/flysystem-memory --dev -W
-          composer remove league/flysystem-aws-s3-v3 --dev -W
-          composer remove league/flysystem --dev -W
-          composer remove aws/aws-sdk-php --dev -W
-          composer remove influxdb/influxdb-php --dev -W
-          composer remove guzzlehttp/guzzle --dev -W
-          composer remove jcchavezs/zipkin-opentracing -W --dev
-          composer require "psr/http-message:${{ matrix.version }}" -W
+          composer remove swow/swow --dev --no-update
+          composer remove league/flysystem-memory --dev --no-update
+          composer remove league/flysystem-aws-s3-v3 --dev --no-update
+          composer remove league/flysystem --dev --no-update
+          composer remove aws/aws-sdk-php --dev --no-update
+          composer remove influxdb/influxdb-php --dev --no-update
+          composer remove guzzlehttp/guzzle --dev --no-update
+          composer remove jcchavezs/zipkin-opentracing --no-update --dev
+          composer require "psr/http-message:${{ matrix.version }}" --no-update
           composer update -oW
       - name: Run Test Cases
         run: |
@@ -255,22 +258,23 @@ jobs:
         run: ./.travis/swoole.install.sh
       - name: Removed conflict Packages
         run: |
-          composer remove elasticsearch/elasticsearch --dev -W
-          composer remove jonahgeorge/jaeger-client-php --dev -W
-          composer remove bandwidth-throttle/token-bucket --dev -W
-          composer remove friendsofphp/php-cs-fixer --dev -W
-          composer remove "symfony/*" --dev -W
+          composer remove elasticsearch/elasticsearch --dev --no-update
+          composer remove jonahgeorge/jaeger-client-php --dev --no-update
+          composer remove bandwidth-throttle/token-bucket --dev --no-update
+          composer remove friendsofphp/php-cs-fixer --dev --no-update
+          composer remove "symfony/*" --dev --no-update
+          composer update -oW
       - name: Run Test Cases
         run: |
           ./.travis/requirement.install.sh
           composer require "psr/log:${{ matrix.log-version }}"
           if [ ${{ matrix.log-version }} == '^3.0' ]
           then
-            composer require "symfony/console:^6.0" --dev -W
+            composer require "symfony/console:^6.0" --dev --no-update
           else
-            composer require "symfony/console:^5.0" --dev -W
+            composer require "symfony/console:^5.0" --dev --no-update
           fi
-          composer require symfony/event-dispatcher --dev -W
+          composer require symfony/event-dispatcher --dev --no-update
           composer update -oW
           composer analyse src/framework
           composer analyse src/server/src/Entry/Logger.php
@@ -312,7 +316,7 @@ jobs:
       - name: Run Test Cases
         run: |
           ./.travis/requirement.install.sh
-          composer require "psr/simple-cache:${{ matrix.psr-version }}"
+          composer require "psr/simple-cache:${{ matrix.psr-version }}" --no-update
           composer update -oW
           composer analyse src/cache
           composer test src/cache
