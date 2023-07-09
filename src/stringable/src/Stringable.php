@@ -319,6 +319,11 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
         return Str::isUlid($this->value);
     }
 
+    public function isUrl(): bool
+    {
+        return Str::isUrl($this->value);
+    }
+
     public function isUuid(): bool
     {
         return Str::isUuid($this->value);
