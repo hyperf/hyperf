@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Http2Client;
 
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Http\V2\Request;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Grpc\Parser;
@@ -106,6 +107,7 @@ class ClientTest extends TestCase
     protected function getClient(string $baseUri)
     {
         ApplicationContext::setContainer($container = Mockery::mock(ContainerInterface::class));
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
         $container->shouldReceive('has')->with(FormatterInterface::class)->andReturnFalse();
 
         $client = new Client($baseUri);
