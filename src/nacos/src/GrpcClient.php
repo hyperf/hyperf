@@ -203,7 +203,7 @@ class GrpcClient
                 }
             }
 
-            if (CoordinatorManager::until(Constants::WORKER_EXIT)->isClosing()) {
+            if (! CoordinatorManager::until(Constants::WORKER_EXIT)->isClosing()) {
                 $this->reconnect();
                 $this->listen();
             }
