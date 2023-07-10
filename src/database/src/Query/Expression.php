@@ -25,10 +25,8 @@ class Expression implements Stringable
 
     /**
      * Get the value of the expression.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->getValue();
     }

@@ -26,7 +26,7 @@ function str($string = null)
                 return Str::$method(...$parameters);
             }
 
-            public function __toString()
+            public function __toString(): string
             {
                 return '';
             }

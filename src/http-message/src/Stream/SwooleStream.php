@@ -14,8 +14,9 @@ namespace Hyperf\HttpMessage\Stream;
 use BadMethodCallException;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
+use Stringable;
 
-class SwooleStream implements StreamInterface
+class SwooleStream implements StreamInterface, Stringable
 {
     protected int $size;
 
