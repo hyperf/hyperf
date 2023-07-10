@@ -199,11 +199,11 @@ class GrpcClient
 
                     $this->listen();
                 } catch (Throwable $e) {
-                    $this->logger->error((string) $e);
+                    ! $this->isWorkerExit() && $this->logger->error((string) $e);
                 }
             }
 
-            if (! CoordinatorManager::until(Constants::WORKER_EXIT)->isClosing()) {
+            if (! $this->isWorkerExit()) {
                 $this->reconnect();
                 $this->listen();
             }
@@ -257,6 +257,11 @@ class GrpcClient
         }
 
         throw new ConnectToServerFailedException('the nacos server is not ready to work in 30 seconds, connect to server failed');
+    }
+
+    private function isWorkerExit(): bool
+    {
+        return CoordinatorManager::until(Constants::WORKER_EXIT)->isClosing();
     }
 
     private function getMetadata(RequestInterface $request): array
