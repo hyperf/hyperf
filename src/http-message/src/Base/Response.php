@@ -13,9 +13,10 @@ namespace Hyperf\HttpMessage\Base;
 
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
+use Stringable;
 use Swow\Psr7\Message\ResponsePlusInterface;
 
-class Response implements ResponseInterface, ResponsePlusInterface
+class Response implements ResponseInterface, ResponsePlusInterface, Stringable
 {
     use MessageTrait;
 

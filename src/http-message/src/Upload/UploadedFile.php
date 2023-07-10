@@ -17,8 +17,9 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
 use SplFileInfo;
+use Stringable;
 
-class UploadedFile extends SplFileInfo implements UploadedFileInterface
+class UploadedFile extends SplFileInfo implements UploadedFileInterface, Stringable
 {
     /**
      * @var int[]

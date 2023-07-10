@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query;
 
-class Expression
+use Stringable;
+
+class Expression implements Stringable
 {
     /**
      * Create a new raw query expression.
