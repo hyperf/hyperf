@@ -1,5 +1,9 @@
 # v3.0.29 - TBD
 
+## Fixed
+
+- [#5921](https://github.com/hyperf/hyperf/pull/5921) Fixed bug that `http2-client` cannot be closed when didn't open heartbeat.
+
 # v3.0.28 - 2023-07-08
 
 ## Fixed
