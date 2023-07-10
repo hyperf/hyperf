@@ -29,6 +29,7 @@
 - [#5906](https://github.com/hyperf/hyperf/pull/5906) Added `getRawQueryLog()` to Database Connection.
 - [#5915](https://github.com/hyperf/hyperf/pull/5915) Added `data_forget` helper.
 - [#5914](https://github.com/hyperf/hyperf/pull/5914) Added `Str::isUrl()` and use it from the validator.
+- [#5918](https://github.com/hyperf/hyperf/pull/5918) Added `Arr::isList()` method.
 
 ## Optimized
 
