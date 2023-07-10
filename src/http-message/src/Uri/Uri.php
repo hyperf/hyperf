@@ -16,7 +16,7 @@ use Psr\Http\Message\UriInterface;
 use Stringable;
 use Swow\Psr7\Message\UriPlusInterface;
 
-class Uri implements UriInterface, Stringable, UriPlusInterface
+class Uri implements UriInterface, UriPlusInterface, Stringable
 {
     /**
      * Absolute http and https URIs require a host per RFC 7230 Section 2.7

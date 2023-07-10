@@ -22,10 +22,9 @@ use Hyperf\ViewEngine\Contract\EngineInterface;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\Contract\Renderable;
 use Hyperf\ViewEngine\Contract\ViewInterface;
-use Stringable;
 use Throwable;
 
-class View implements ArrayAccess, Htmlable, ViewInterface, Stringable
+class View implements ArrayAccess, Htmlable, ViewInterface
 {
     use Macroable {
         __call as macroCall;

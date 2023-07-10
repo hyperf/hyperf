@@ -16,9 +16,8 @@ use Hyperf\HttpServer\Exception\Http\FileException;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 use SplFileInfo;
-use Stringable;
 
-class SwooleFileStream implements StreamInterface, FileInterface, Stringable
+class SwooleFileStream implements StreamInterface, FileInterface
 {
     protected int $size;
 
