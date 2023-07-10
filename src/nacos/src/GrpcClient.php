@@ -203,8 +203,10 @@ class GrpcClient
                 }
             }
 
-            $this->reconnect();
-            $this->listen();
+            if (CoordinatorManager::until(Constants::WORKER_EXIT)->isClosing()) {
+                $this->reconnect();
+                $this->listen();
+            }
         });
 
         $request = new ConnectionSetupRequest($this->namespaceId);
