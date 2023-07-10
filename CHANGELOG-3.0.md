@@ -3,7 +3,8 @@
 ## Fixed
 
 - [#5921](https://github.com/hyperf/hyperf/pull/5921) Fixed bug that `http2-client` cannot be closed when didn't open heartbeat.
-- [#5922](https://github.com/hyperf/hyperf/pull/5922) Fixed the bug that cannot found ApplicationContext.
+- [#5923](https://github.com/hyperf/hyperf/pull/5923) Fixed bug that `nacos grpc client` cannot be closed friendly when worker exit.
+- [#5922](https://github.com/hyperf/hyperf/pull/5922) Fixed bug that `ApplicationContext` cannot be found when using `grpc-client`.
 
 # v3.0.28 - 2023-07-08
 

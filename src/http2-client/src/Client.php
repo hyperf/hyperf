@@ -81,6 +81,9 @@ class Client implements ClientInterface
             }
         }
 
+        if (! $this->client) {
+            throw new ClientClosedException('http2 client send request failed caused by closed connection.');
+        }
         $streamId = $this->client->send($request);
 
         $this->channels[$streamId] = new Channel(1);
@@ -188,18 +191,18 @@ class Client implements ClientInterface
         Coroutine::create(function () {
             try {
                 $client = $this->client;
-                while (true) {
-                    $response = $client->recv(-1);
-                    if (! $client->isConnected()) {
-                        throw new ClientClosedException('Read failed, because the http2 client is closed.');
-                    }
+                if ($client) {
+                    while (true) {
+                        $response = $client->recv(-1);
+                        if (! $client->isConnected()) {
+                            throw new ClientClosedException('Read failed, because the http2 client is closed.');
+                        }
 
-                    $this->channels[$response->getStreamId()]?->push($response);
+                        $this->channels[$response->getStreamId()]?->push($response);
+                    }
                 }
-            } catch (Throwable $throwable) {
-                $this->logger?->error((string) $throwable);
             } finally {
-                $this->close();
+                isset($client) && $this->close();
             }
         });
 
