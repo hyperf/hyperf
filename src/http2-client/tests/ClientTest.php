@@ -11,11 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Http2Client;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Engine\Http\V2\Request;
+use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Grpc\Parser;
 use Hyperf\Http2Client\Client;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use Routeguide\Point;
 use Routeguide\RouteNote;
@@ -102,6 +105,9 @@ class ClientTest extends TestCase
 
     protected function getClient(string $baseUri)
     {
+        ApplicationContext::setContainer($container = Mockery::mock(ContainerInterface::class));
+        $container->shouldReceive('has')->with(FormatterInterface::class)->andReturnFalse();
+
         $client = new Client($baseUri);
         $ref = new ReflectionClass($client);
         $identifier = $ref->getProperty('identifier');
