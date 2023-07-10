@@ -32,6 +32,13 @@ use function Hyperf\Coroutine\parallel;
  */
 class ClientTest extends TestCase
 {
+    public function setUp(): void
+    {
+        ApplicationContext::setContainer($container = Mockery::mock(ContainerInterface::class));
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(FormatterInterface::class)->andReturnFalse();
+    }
+
     protected function tearDown(): void
     {
         Mockery::close();
@@ -106,10 +113,6 @@ class ClientTest extends TestCase
 
     protected function getClient(string $baseUri)
     {
-        ApplicationContext::setContainer($container = Mockery::mock(ContainerInterface::class));
-        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
-        $container->shouldReceive('has')->with(FormatterInterface::class)->andReturnFalse();
-
         $client = new Client($baseUri);
         $ref = new ReflectionClass($client);
         $identifier = $ref->getProperty('identifier');
