@@ -1116,21 +1116,6 @@ trait HasAttributes
     /**
      * Get an array attribute with the given key and value set.
      *
-     * @param string $path
-     * @param string $key
-     * @param mixed $value
-     * @return $this
-     */
-    protected function getArrayAttributeWithValue($path, $key, $value)
-    {
-        return tap($this->getArrayAttributeByKey($key), function (&$array) use ($path, $value) {
-            Arr::set($array, str_replace('->', '.', $path), $value);
-        });
-    }
-
-    /**
-     * Get an array attribute with the given key and value set.
-     *
      * @return $this
      */
     protected function getArrayAttributeWithValue(string $path, string $key, mixed $value)
