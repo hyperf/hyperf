@@ -41,10 +41,12 @@ use Hyperf\Paginator\Paginator;
 use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\IntegerStatus;
+use HyperfTest\Database\Stubs\Model\Gender;
 use HyperfTest\Database\Stubs\Model\TestModel;
 use HyperfTest\Database\Stubs\Model\TestVersionModel;
 use HyperfTest\Database\Stubs\Model\User;
 use HyperfTest\Database\Stubs\Model\UserBit;
+use HyperfTest\Database\Stubs\Model\UserEnum;
 use HyperfTest\Database\Stubs\Model\UserExt;
 use HyperfTest\Database\Stubs\Model\UserExtCamel;
 use HyperfTest\Database\Stubs\Model\UserRole;
@@ -112,6 +114,33 @@ class ModelRealBuilderTest extends TestCase
         }
 
         $this->assertTrue($hit);
+    }
+
+    public function testModelEnum()
+    {
+        $this->getContainer();
+
+        /** @var UserEnum $user */
+        $user = UserEnum::find(1);
+        $this->assertTrue($user->gender instanceof Gender);
+        $this->assertSame(Gender::MALE, $user->gender);
+
+        $user->gender = Gender::FEMALE;
+        $user->save();
+
+        $sqls = [
+            ['select * from `user` where `user`.`id` = ? limit 1', [1]],
+            ['update `user` set `gender` = ?, `user`.`updated_at` = ? where `id` = ?', [Gender::FEMALE->value, Carbon::now()->toDateTimeString(), 1]],
+        ];
+
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
+            }
+        }
+
+        $user->gender = Gender::MALE;
+        $user->save();
     }
 
     public function testForPageBeforeId()
