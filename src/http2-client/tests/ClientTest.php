@@ -58,6 +58,7 @@ class ClientTest extends TestCase
         $result = parallel($callbacks);
         $this->assertSame(100, array_sum($result));
         $client->close();
+        sleep(2);
     }
 
     public function testHTTP2Pipeline()
@@ -109,6 +110,7 @@ class ClientTest extends TestCase
         $this->assertSame(0, $res->getStatusCode());
 
         $client->close();
+        sleep(2);
     }
 
     protected function getClient(string $baseUri)
