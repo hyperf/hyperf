@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\GrpcClient;
 
 use Google\Protobuf\Internal\Message;
-use Hyperf\Context\ApplicationContext;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Coroutine\Channel\Pool as ChannelPool;
 use Hyperf\Grpc\Parser;
 use Hyperf\Grpc\StatusCode;
