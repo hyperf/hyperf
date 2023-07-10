@@ -17,9 +17,10 @@ use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use Stringable;
 use Swow\Psr7\Message\RequestPlusInterface;
 
-class Request implements RequestInterface, RequestPlusInterface
+class Request implements RequestInterface, RequestPlusInterface, Stringable
 {
     use MessageTrait;
 

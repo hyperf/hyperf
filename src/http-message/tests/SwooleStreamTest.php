@@ -18,6 +18,7 @@ use Hyperf\HttpServer\ResponseEmitter;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Stringable;
 use Swoole\Http\Response as SwooleResponse;
 
 /**
@@ -181,5 +182,12 @@ class SwooleStreamTest extends TestCase
         $this->assertSame($random, $stream->getContents());
 
         $this->assertSame($random, $stream->getContents());
+    }
+
+    public function testInstanceOfStringable()
+    {
+        $random = microtime();
+        $stream = new SwooleStream($random);
+        $this->assertInstanceOf(Stringable::class, $stream);
     }
 }

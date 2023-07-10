@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Contract;
 
-interface Xmlable
+use Stringable;
+
+interface Xmlable extends Stringable
 {
     public function __toString(): string;
 }

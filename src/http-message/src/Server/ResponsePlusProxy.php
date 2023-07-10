@@ -13,15 +13,16 @@ namespace Hyperf\HttpMessage\Server;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Stringable;
 use Swow\Psr7\Message\ResponsePlusInterface;
 
-class ResponsePlusProxy implements ResponsePlusInterface
+class ResponsePlusProxy implements ResponsePlusInterface, Stringable
 {
     public function __construct(protected ResponseInterface $response)
     {
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toString();
     }
