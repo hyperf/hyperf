@@ -201,8 +201,10 @@ class Client implements ClientInterface
                         $this->channels[$response->getStreamId()]?->push($response);
                     }
                 }
+            } catch (Throwable $e) {
+                isset($this->client) && throw $e;
             } finally {
-                isset($client) && $this->close();
+                isset($this->client) && $this->close();
             }
         });
 
