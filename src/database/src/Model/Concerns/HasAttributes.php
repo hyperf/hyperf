@@ -22,6 +22,7 @@ use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Contract\Synchronized;
+use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Stringable\Str;
@@ -958,12 +959,8 @@ trait HasAttributes
 
     /**
      * Cast the given attribute to an enum.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return mixed
      */
-    protected function getEnumCastableAttributeValue($key, $value)
+    protected function getEnumCastableAttributeValue(string $key, mixed $value): mixed
     {
         if (is_null($value)) {
             return null;
@@ -1068,10 +1065,9 @@ trait HasAttributes
     /**
      * Set the value of an enum castable attribute.
      *
-     * @param string $key
      * @param int|string|UnitEnum $value
      */
-    protected function setEnumCastableAttribute($key, $value)
+    protected function setEnumCastableAttribute(string $key, mixed $value): void
     {
         $enumClass = $this->getCasts()[$key];
 
@@ -1088,25 +1084,16 @@ trait HasAttributes
 
     /**
      * Get an enum case instance from a given class and value.
-     *
-     * @param string $enumClass
-     * @param int|string $value
-     * @return BackedEnum|UnitEnum
      */
-    protected function getEnumCaseFromValue($enumClass, $value)
+    protected function getEnumCaseFromValue(string $enumClass, int|string $value): BackedEnum|UnitEnum
     {
-        return is_subclass_of($enumClass, BackedEnum::class)
-            ? $enumClass::from($value)
-            : constant($enumClass . '::' . $value);
+        return EnumCollector::getEnumCaseFromValue($enumClass, $value);
     }
 
     /**
      * Get the storable value from the given enum.
-     *
-     * @param BackedEnum|UnitEnum $value
-     * @return int|string
      */
-    protected function getStorableEnumValue($value)
+    protected function getStorableEnumValue(UnitEnum $value): int|string
     {
         return $value instanceof BackedEnum
             ? $value->value
@@ -1284,11 +1271,8 @@ trait HasAttributes
 
     /**
      * Determine if the given key is cast using an enum.
-     *
-     * @param string $key
-     * @return bool
      */
-    protected function isEnumCastable($key)
+    protected function isEnumCastable(string $key): bool
     {
         $casts = $this->getCasts();
 
