@@ -1088,9 +1088,6 @@ trait HasAttributes
     protected function getEnumCaseFromValue(string $enumClass, int|string $value): BackedEnum|UnitEnum
     {
         return EnumCollector::getEnumCaseFromValue($enumClass, $value);
-        // return is_subclass_of($enumClass, BackedEnum::class)
-        //     ? $enumClass::from($value)
-        //     : constant($enumClass . '::' . $value);
     }
 
     /**
