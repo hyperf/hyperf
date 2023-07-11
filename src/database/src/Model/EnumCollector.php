@@ -24,7 +24,7 @@ class EnumCollector
 
     public static function get(string $class): ReflectionEnum
     {
-        if (isset(static::$reflections)) {
+        if (isset(static::$reflections[$class])) {
             return static::$reflections[$class];
         }
 
@@ -33,7 +33,7 @@ class EnumCollector
 
     public static function has(string $class): bool
     {
-        return isset(static::$reflections);
+        return isset(static::$reflections[$class]);
     }
 
     public static function getEnumCaseFromValue(string $class, int|string $value): BackedEnum|UnitEnum
