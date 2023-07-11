@@ -353,6 +353,10 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             $cast = $this->formatDatabaseType($type) ?? 'string';
         }
 
+        if (enum_exists($cast)) {
+            return '\\' . $cast;
+        }
+
         return match ($cast) {
             'integer' => 'int',
             'date', 'datetime' => '\Carbon\Carbon',

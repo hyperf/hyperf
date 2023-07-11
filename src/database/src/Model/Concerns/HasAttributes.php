@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model\Concerns;
 
+use BackedEnum;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use DateTimeInterface;
@@ -26,6 +27,7 @@ use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
 use LogicException;
+use UnitEnum;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Tappable\tap;
@@ -279,6 +281,12 @@ trait HasAttributes
         // the connection grammar's date format. We will auto set the values.
         if ($value && $this->isDateAttribute($key)) {
             $value = $this->fromDateTime($value);
+        }
+
+        if ($this->isEnumCastable($key)) {
+            $this->setEnumCastableAttribute($key, $value);
+
+            return $this;
         }
 
         if ($this->isClassCastable($key)) {
@@ -754,6 +762,10 @@ trait HasAttributes
                 $attributes[$key] = $attributes[$key]->format(explode(':', $value, 2)[1]);
             }
 
+            if ($this->isEnumCastable($key) && (! ($attributes[$key] ?? null) instanceof Arrayable)) {
+                $attributes[$key] = isset($attributes[$key]) ? $this->getStorableEnumValue($attributes[$key]) : null;
+            }
+
             if ($attributes[$key] instanceof Arrayable) {
                 $attributes[$key] = $attributes[$key]->toArray();
             }
@@ -910,6 +922,10 @@ trait HasAttributes
                 return $this->asTimestamp($value);
         }
 
+        if ($this->isEnumCastable($key)) {
+            return $this->getEnumCastableAttributeValue($key, $value);
+        }
+
         if ($this->isClassCastable($key)) {
             return $this->getClassCastableAttributeValue($key, $value);
         }
@@ -938,6 +954,28 @@ trait HasAttributes
         }
 
         return $value;
+    }
+
+    /**
+     * Cast the given attribute to an enum.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function getEnumCastableAttributeValue($key, $value)
+    {
+        if (is_null($value)) {
+            return null;
+        }
+
+        $castType = $this->getCasts()[$key];
+
+        if ($value instanceof $castType) {
+            return $value;
+        }
+
+        return $this->getEnumCaseFromValue($castType, $value);
     }
 
     /**
@@ -1025,6 +1063,54 @@ trait HasAttributes
         } else {
             $this->classCastCache[$key] = $value;
         }
+    }
+
+    /**
+     * Set the value of an enum castable attribute.
+     *
+     * @param string $key
+     * @param int|string|UnitEnum $value
+     */
+    protected function setEnumCastableAttribute($key, $value)
+    {
+        $enumClass = $this->getCasts()[$key];
+
+        if (! isset($value)) {
+            $this->attributes[$key] = null;
+        } elseif (is_object($value)) {
+            $this->attributes[$key] = $this->getStorableEnumValue($value);
+        } else {
+            $this->attributes[$key] = $this->getStorableEnumValue(
+                $this->getEnumCaseFromValue($enumClass, $value)
+            );
+        }
+    }
+
+    /**
+     * Get an enum case instance from a given class and value.
+     *
+     * @param string $enumClass
+     * @param int|string $value
+     * @return BackedEnum|UnitEnum
+     */
+    protected function getEnumCaseFromValue($enumClass, $value)
+    {
+        return is_subclass_of($enumClass, BackedEnum::class)
+            ? $enumClass::from($value)
+            : constant($enumClass . '::' . $value);
+    }
+
+    /**
+     * Get the storable value from the given enum.
+     *
+     * @param BackedEnum|UnitEnum $value
+     * @return int|string
+     */
+    protected function getStorableEnumValue($value)
+    {
+        return $value instanceof BackedEnum
+            ? $value->value
+            : $value->name;
     }
 
     /**
@@ -1194,6 +1280,29 @@ trait HasAttributes
         return array_key_exists($key, $this->getCasts())
             && class_exists($class = $this->parseCasterClass($this->getCasts()[$key]))
             && ! in_array($class, static::$primitiveCastTypes);
+    }
+
+    /**
+     * Determine if the given key is cast using an enum.
+     *
+     * @param string $key
+     * @return bool
+     */
+    protected function isEnumCastable($key)
+    {
+        $casts = $this->getCasts();
+
+        if (! array_key_exists($key, $casts)) {
+            return false;
+        }
+
+        $castType = $casts[$key];
+
+        if (in_array($castType, static::$primitiveCastTypes)) {
+            return false;
+        }
+
+        return enum_exists($castType);
     }
 
     /**

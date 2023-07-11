@@ -30,6 +30,7 @@
 - [#5915](https://github.com/hyperf/hyperf/pull/5915) Added `data_forget` helper.
 - [#5914](https://github.com/hyperf/hyperf/pull/5914) Added `Str::isUrl()` and use it from the validator.
 - [#5918](https://github.com/hyperf/hyperf/pull/5918) Added `Arr::isList()` method.
+- [#5925](https://github.com/hyperf/hyperf/pull/5925) Allow model attributes to be casted to/from an Enum.
 
 ## Optimized
 
