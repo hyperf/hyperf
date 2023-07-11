@@ -23,6 +23,7 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
+use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\MySqlBitConnection;
 use Hyperf\Database\Query\Builder as QueryBuilder;
@@ -141,6 +142,8 @@ class ModelRealBuilderTest extends TestCase
 
         $user->gender = Gender::MALE;
         $user->save();
+
+        $this->assertTrue(EnumCollector::has(Gender::class));
     }
 
     public function testForPageBeforeId()

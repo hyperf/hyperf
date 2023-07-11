@@ -22,13 +22,18 @@ class EnumCollector
      */
     protected static array $reflections = [];
 
-    public static function get(string $class): ?ReflectionEnum
+    public static function get(string $class): ReflectionEnum
     {
-        if (array_key_exists($class, static::$reflections)) {
+        if (isset(static::$reflections)) {
             return static::$reflections[$class];
         }
 
         return static::$reflections[$class] = new ReflectionEnum($class);
+    }
+
+    public static function has(string $class): bool
+    {
+        return isset(static::$reflections);
     }
 
     public static function getEnumCaseFromValue(string $class, int|string $value): BackedEnum|UnitEnum
