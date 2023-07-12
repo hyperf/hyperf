@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Command;
 
-use Hyperf\Command\Annotation\CommandCollector;
+use Hyperf\Command\Annotation\AsCommandCollector;
 use Hyperf\Command\Listener\RegisterCommandListener;
 
 class ConfigProvider
@@ -22,7 +22,7 @@ class ConfigProvider
             'annotations' => [
                 'scan' => [
                     'collectors' => [
-                        CommandCollector::class,
+                        AsCommandCollector::class,
                     ],
                 ],
             ],

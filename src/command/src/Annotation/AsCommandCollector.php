@@ -13,7 +13,7 @@ namespace Hyperf\Command\Annotation;
 
 use Hyperf\Di\MetadataCollector;
 
-class CommandCollector extends MetadataCollector
+class AsCommandCollector extends MetadataCollector
 {
     protected static array $container = [];
 }

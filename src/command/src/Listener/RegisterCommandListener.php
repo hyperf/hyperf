@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Command\Listener;
 
-use Hyperf\Command\Annotation\CommandCollector;
+use Hyperf\Command\Annotation\AsCommandCollector;
 use Hyperf\Command\AsCommand;
 use Hyperf\Command\Console;
 use Hyperf\Contract\ConfigInterface;
@@ -62,7 +62,7 @@ class RegisterCommandListener implements ListenerInterface
 
     private function registerAnnotationCommands(): void
     {
-        $commands = CommandCollector::list();
+        $commands = AsCommandCollector::list();
 
         foreach ($commands as $commandId => $metadata) {
             $command = new AsCommand(

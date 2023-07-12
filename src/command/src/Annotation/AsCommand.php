@@ -23,7 +23,7 @@ final class AsCommand extends AbstractMultipleAnnotation
 
     public function collectMethod(string $className, ?string $target): void
     {
-        CommandCollector::set($className . '@' . $target, [
+        AsCommandCollector::set($className . '@' . $target, [
             'class' => $className,
             'method' => $target,
             'signature' => $this->signature,
