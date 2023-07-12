@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Command;
 
-use Hyperf\Command\Concerns\InjectWithInputAndOutput;
+use Hyperf\Command\Concerns\InteractsWithIO;
 use Psr\Container\ContainerInterface;
 
 use function Hyperf\Support\class_uses_recursive;
@@ -34,7 +34,7 @@ final class AsCommand extends Command
         $parameters = $this->parameterParser->parseMethodParameters($this->class, $this->method, $inputs);
         $instance = $this->container->get($this->class);
 
-        if (in_array(InjectWithInputAndOutput::class, class_uses_recursive($this->class))) {
+        if (in_array(InteractsWithIO::class, class_uses_recursive($this->class))) {
             (function ($input, $output) {
                 $this->input = $input;
                 $this->output = $output;
