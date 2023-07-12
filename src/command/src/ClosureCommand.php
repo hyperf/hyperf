@@ -18,8 +18,11 @@ final class ClosureCommand extends Command
 {
     private ParameterParser $parameterParser;
 
-    public function __construct(ContainerInterface $container, string $signature, protected Closure $closure)
-    {
+    public function __construct(
+        private ContainerInterface $container,
+        string $signature,
+        private Closure $closure
+    ) {
         $this->signature = $signature;
         $this->parameterParser = $container->get(ParameterParser::class);
 
