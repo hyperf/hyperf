@@ -17,8 +17,11 @@ use Hyperf\Di\Annotation\AbstractMultipleAnnotation;
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 final class AsCommand extends AbstractMultipleAnnotation
 {
-    public function __construct(public string $signature = '', public string $description = '', public ?string $handle = null)
-    {
+    public function __construct(
+        public string $signature = '',
+        public string $description = '',
+        public ?string $handle = null
+    ) {
     }
 
     public function collectMethod(string $className, ?string $target): void
