@@ -13,6 +13,7 @@ namespace Hyperf\Command\Listener;
 
 use Hyperf\Command\Annotation\CommandCollector;
 use Hyperf\Command\AsCommand;
+use Hyperf\Command\Console;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
@@ -37,9 +38,26 @@ class RegisterCommandListener implements ListenerInterface
 
     public function process(object $event): void
     {
+        $this->registerClosureCommands();
         $this->registerAnnotationCommands();
 
         $this->logger->debug(sprintf('[closure-command] Commands registered by %s', self::class));
+    }
+
+    private function registerClosureCommands(): void
+    {
+        $route = Console::ROUTE;
+
+        if (! file_exists($route)) {
+            return;
+        }
+
+        require_once $route;
+
+        foreach (Console::getCommands() as $handlerId => $command) {
+            $this->container->set($handlerId, $command);
+            $this->appendConfig('commands', $handlerId);
+        }
     }
 
     private function registerAnnotationCommands(): void
@@ -60,7 +78,7 @@ class RegisterCommandListener implements ListenerInterface
         }
     }
 
-    private function appendConfig(string $key, $configValues)
+    private function appendConfig(string $key, $configValues): void
     {
         $configs = $this->config->get($key, []);
         array_push($configs, $configValues);

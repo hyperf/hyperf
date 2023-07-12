@@ -29,6 +29,14 @@ class ConfigProvider
             'listeners' => [
                 RegisterCommandListener::class,
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The console route file of command.',
+                    'source' => __DIR__ . '/../publish/console.php',
+                    'destination' => Console::ROUTE,
+                ],
+            ],
         ];
     }
 }
