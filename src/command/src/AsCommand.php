@@ -22,11 +22,12 @@ final class AsCommand extends Command
 
     public function __construct(
         private ContainerInterface $container,
-        protected ?string $signature,
+        string $signature,
         private string $class,
         private string $method,
         string $description = ''
     ) {
+        $this->signature = $signature;
         $this->parameterParser = $container->get(ParameterParser::class);
 
         parent::__construct();
