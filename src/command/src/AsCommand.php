@@ -20,8 +20,13 @@ final class AsCommand extends Command
 {
     private ParameterParser $parameterParser;
 
-    public function __construct(private ContainerInterface $container, protected ?string $signature, private string $class, private string $method, string $description = '')
-    {
+    public function __construct(
+        private ContainerInterface $container,
+        protected ?string $signature,
+        private string $class,
+        private string $method,
+        string $description = ''
+    ) {
         $this->parameterParser = $container->get(ParameterParser::class);
 
         parent::__construct();
