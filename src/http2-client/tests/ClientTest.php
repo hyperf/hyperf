@@ -11,12 +11,16 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Http2Client;
 
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Http\V2\Request;
+use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Grpc\Parser;
 use Hyperf\Http2Client\Client;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use Routeguide\Point;
 use Routeguide\RouteNote;
@@ -34,6 +38,13 @@ use function Hyperf\Coroutine\parallel;
  */
 class ClientTest extends TestCase
 {
+    public function setUp(): void
+    {
+        ApplicationContext::setContainer($container = Mockery::mock(ContainerInterface::class));
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(FormatterInterface::class)->andReturnFalse();
+    }
+
     protected function tearDown(): void
     {
         Mockery::close();
@@ -55,6 +66,7 @@ class ClientTest extends TestCase
         $result = parallel($callbacks);
         $this->assertSame(100, array_sum($result));
         $client->close();
+        sleep(2);
     }
 
     public function testHTTP2Pipeline()
@@ -108,6 +120,7 @@ class ClientTest extends TestCase
         $this->assertSame(0, $res->getStatusCode());
 
         $client->close();
+        sleep(2);
     }
 
     protected function getClient(string $baseUri)
