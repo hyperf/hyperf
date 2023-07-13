@@ -20,7 +20,8 @@ final class AsCommand extends AbstractMultipleAnnotation
     public function __construct(
         public string $signature = '',
         public string $description = '',
-        public string $handle = 'handle'
+        public string $handle = 'handle',
+        public array $aliases = [],
     ) {
     }
 
@@ -33,6 +34,7 @@ final class AsCommand extends AbstractMultipleAnnotation
                 'method' => $target,
                 'signature' => $this->signature,
                 'description' => $this->description,
+                'aliases' => $this->aliases,
             ]
         );
     }

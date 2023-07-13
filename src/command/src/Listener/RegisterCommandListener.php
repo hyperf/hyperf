@@ -70,8 +70,14 @@ class RegisterCommandListener implements ListenerInterface
                 $metadata['signature'],
                 $metadata['class'],
                 $metadata['method'],
-                $metadata['description'] ?? ''
             );
+
+            if ($metadata['description'] ?? '') {
+                $command->setDescription($metadata['description']);
+            }
+            if ($metadata['aliases'] ?? []) {
+                $command->setAliases((array) $metadata['aliases']);
+            }
 
             $this->container->set($commandId, $command);
             $this->appendConfig('commands', $commandId);

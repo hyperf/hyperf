@@ -25,13 +25,11 @@ final class AsCommand extends Command
         string $signature,
         private string $class,
         private string $method,
-        string $description = ''
     ) {
         $this->signature = $signature;
         $this->parameterParser = $container->get(ParameterParser::class);
 
         parent::__construct();
-        parent::setDescription($description);
     }
 
     public function handle()
