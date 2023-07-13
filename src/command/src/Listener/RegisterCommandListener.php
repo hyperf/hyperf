@@ -41,14 +41,14 @@ class RegisterCommandListener implements ListenerInterface
     public function process(object $event): void
     {
         if (! $this->container instanceof ContainerPlusInterface) {
-            $this->logger->error(sprintf('[closure-command] Commands registered failed, because the container cannot implements %s', ContainerPlusInterface::class));
+            $this->logger->error(sprintf('[command] Commands registered failed, because the container cannot implements %s', ContainerPlusInterface::class));
             return;
         }
 
         $this->registerClosureCommands();
         $this->registerAnnotationCommands();
 
-        $this->logger->debug(sprintf('[closure-command] Commands registered by %s', self::class));
+        $this->logger->debug(sprintf('[command] Commands registered by %s', self::class));
     }
 
     private function registerClosureCommands(): void
