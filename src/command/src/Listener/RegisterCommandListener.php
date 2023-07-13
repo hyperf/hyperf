@@ -11,11 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Command\Listener;
 
-use Hyperf\Command\Annotation\AsCommandCollector;
+use Hyperf\Command\Annotation\AsCommand as AsCommandAnnotation;
 use Hyperf\Command\AsCommand;
 use Hyperf\Command\Console;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\ContainerInterface as ContainerPlusInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Psr\Container\ContainerInterface;
@@ -23,7 +25,7 @@ use Psr\Container\ContainerInterface;
 class RegisterCommandListener implements ListenerInterface
 {
     /**
-     * @param \Hyperf\Di\Container $container
+     * @param ContainerPlusInterface $container
      */
     public function __construct(private ContainerInterface $container, private ConfigInterface $config, private StdoutLoggerInterface $logger)
     {
@@ -38,6 +40,11 @@ class RegisterCommandListener implements ListenerInterface
 
     public function process(object $event): void
     {
+        if (! $this->container instanceof ContainerPlusInterface) {
+            $this->logger->error(sprintf('[closure-command] Commands registered failed, because the container cannot implements %s', ContainerPlusInterface::class));
+            return;
+        }
+
         $this->registerClosureCommands();
         $this->registerAnnotationCommands();
 
@@ -62,32 +69,34 @@ class RegisterCommandListener implements ListenerInterface
 
     private function registerAnnotationCommands(): void
     {
-        $commands = AsCommandCollector::list();
+        $commands = AnnotationCollector::getMethodsByAnnotation(AsCommandAnnotation::class);
 
-        foreach ($commands as $commandId => $metadata) {
+        foreach ($commands as $metadata) {
+            /** @var AsCommandAnnotation $annotation */
+            $annotation = $metadata['annotation'];
             $command = new AsCommand(
                 $this->container,
-                $metadata['signature'],
+                $annotation->signature,
                 $metadata['class'],
                 $metadata['method'],
             );
 
-            if ($metadata['description'] ?? '') {
-                $command->setDescription($metadata['description']);
+            if ($annotation->description) {
+                $command->setDescription($annotation->description);
             }
-            if ($metadata['aliases'] ?? []) {
-                $command->setAliases((array) $metadata['aliases']);
+            if ($annotation->aliases) {
+                $command->setAliases($annotation->aliases);
             }
 
-            $this->container->set($commandId, $command);
-            $this->appendConfig('commands', $commandId);
+            $this->container->set($annotation->id, $command);
+            $this->appendConfig('commands', $annotation->id);
         }
     }
 
     private function appendConfig(string $key, $configValues): void
     {
         $configs = $this->config->get($key, []);
-        array_push($configs, $configValues);
+        $configs[] = $configValues;
         $this->config->set($key, $configs);
     }
 }

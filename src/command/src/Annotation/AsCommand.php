@@ -17,6 +17,8 @@ use Hyperf\Di\Annotation\AbstractMultipleAnnotation;
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 final class AsCommand extends AbstractMultipleAnnotation
 {
+    public string $id;
+
     public function __construct(
         public string $signature = '',
         public string $description = '',
@@ -25,24 +27,15 @@ final class AsCommand extends AbstractMultipleAnnotation
     ) {
     }
 
-    public function collectMethod(string $className, ?string $target): void
-    {
-        AsCommandCollector::set(
-            sprintf('%s@%s:%s', $className, $target, crc32($this->signature)),
-            [
-                'class' => $className,
-                'method' => $target,
-                'signature' => $this->signature,
-                'description' => $this->description,
-                'aliases' => $this->aliases,
-            ]
-        );
-    }
-
     public function collectClass(string $className): void
     {
-        $target = $this->handle ?: 'handle';
+        $this->collectMethod($className, $this->handle);
+    }
 
-        $this->collectMethod($className, $target);
+    public function collectMethod(string $className, ?string $target): void
+    {
+        $this->id = sprintf('%s@%s:%s', $className, $target, crc32($this->signature));
+
+        parent::collectMethod($className, $target);
     }
 }
