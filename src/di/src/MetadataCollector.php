@@ -31,7 +31,7 @@ abstract class MetadataCollector implements MetadataCollectorInterface
 
     /**
      * Set the metadata to holder.
-     * @param mixed $value
+     * @param array $value
      */
     public static function set(string $key, $value): void
     {
@@ -73,6 +73,9 @@ abstract class MetadataCollector implements MetadataCollectorInterface
         return true;
     }
 
+    /**
+     * @return array{class: string, method: string, signature: string, description: string, aliases: array<string, string>}
+     */
     public static function list(): array
     {
         return static::$container;
