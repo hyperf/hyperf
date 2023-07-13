@@ -438,6 +438,7 @@
                 "Hyperf\\Cache\\ConfigProvider",
                 "Hyperf\\CircuitBreaker\\ConfigProvider",
                 "Hyperf\\ClosureCommand\\ConfigProvider",
+                "Hyperf\\Command\\ConfigProvider",
                 "Hyperf\\ConfigAliyunAcm\\ConfigProvider",
                 "Hyperf\\ConfigApollo\\ConfigProvider",
                 "Hyperf\\ConfigCenter\\ConfigProvider",

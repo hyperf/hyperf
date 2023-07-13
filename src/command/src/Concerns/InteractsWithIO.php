@@ -128,7 +128,7 @@ trait InteractsWithIO
      */
     public function confirm($question, $default = false)
     {
-        return $this->output->confirm($question, $default);
+        return $this->output?->confirm($question, $default);
     }
 
     /**
@@ -140,7 +140,7 @@ trait InteractsWithIO
      */
     public function ask($question, $default = null)
     {
-        return $this->output->ask($question, $default);
+        return $this->output?->ask($question, $default);
     }
 
     /**
@@ -172,7 +172,7 @@ trait InteractsWithIO
             ? $question->setAutocompleterCallback($choices)
             : $question->setAutocompleterValues($choices);
 
-        return $this->output->askQuestion($question);
+        return $this->output?->askQuestion($question);
     }
 
     /**
@@ -188,7 +188,7 @@ trait InteractsWithIO
 
         $question->setHidden(true)->setHiddenFallback($fallback);
 
-        return $this->output->askQuestion($question);
+        return $this->output?->askQuestion($question);
     }
 
     /**
@@ -206,7 +206,7 @@ trait InteractsWithIO
 
         $question->setMaxAttempts($attempts)->setMultiselect($multiple);
 
-        return $this->output->askQuestion($question);
+        return $this->output?->askQuestion($question);
     }
 
     /**
@@ -241,7 +241,7 @@ trait InteractsWithIO
      */
     public function withProgressBar($totalSteps, Closure $callback)
     {
-        $bar = $this->output->createProgressBar(
+        $bar = $this->output?->createProgressBar(
             is_iterable($totalSteps) ? count($totalSteps) : $totalSteps
         );
 
@@ -286,7 +286,7 @@ trait InteractsWithIO
     {
         $styled = $style ? "<{$style}>{$string}</{$style}>" : $string;
 
-        $this->output->writeln($styled, $this->parseVerbosity($verbosity));
+        $this->output?->writeln($styled, $this->parseVerbosity($verbosity));
     }
 
     /**
@@ -330,10 +330,10 @@ trait InteractsWithIO
      */
     public function warn($string, $verbosity = null)
     {
-        if (! $this->output->getFormatter()->hasStyle('warning')) {
+        if (! $this->output?->getFormatter()->hasStyle('warning')) {
             $style = new OutputFormatterStyle('yellow');
 
-            $this->output->getFormatter()->setStyle('warning', $style);
+            $this->output?->getFormatter()->setStyle('warning', $style);
         }
 
         $this->line($string, 'warning', $verbosity);
@@ -364,7 +364,7 @@ trait InteractsWithIO
      */
     public function newLine($count = 1)
     {
-        $this->output->newLine($count);
+        $this->output?->newLine($count);
 
         return $this;
     }
