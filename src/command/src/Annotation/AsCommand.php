@@ -20,23 +20,26 @@ final class AsCommand extends AbstractMultipleAnnotation
     public function __construct(
         public string $signature = '',
         public string $description = '',
-        public ?string $handle = null
+        public string $handle = 'handle'
     ) {
     }
 
     public function collectMethod(string $className, ?string $target): void
     {
-        AsCommandCollector::set($className . '@' . $target, [
-            'class' => $className,
-            'method' => $target,
-            'signature' => $this->signature,
-            'description' => $this->description,
-        ]);
+        AsCommandCollector::set(
+            sprintf('%s@%s:%s', $className, $target, crc32($this->signature)),
+            [
+                'class' => $className,
+                'method' => $target,
+                'signature' => $this->signature,
+                'description' => $this->description,
+            ]
+        );
     }
 
     public function collectClass(string $className): void
     {
-        $target = $this->handle ?? 'handle';
+        $target = $this->handle ?: 'handle';
 
         $this->collectMethod($className, $target);
     }
