@@ -78,8 +78,9 @@ class Nsq
             $this->listen = true;
             Coroutine::create(function () {
                 while (true) {
-                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(5)) {
+                    if (! $this->subscribing || CoordinatorManager::until(Constants::WORKER_EXIT)->yield(5)) {
                         $this->stopSubscribe();
+                        break;
                     }
                 }
             });

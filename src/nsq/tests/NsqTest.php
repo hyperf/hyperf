@@ -35,7 +35,7 @@ class NsqTest extends TestCase
             Coroutine::create(function () use ($nsq, $confirm) {
                 $nsq->subscribe('test', 'test', function (Message $message) use ($confirm) {
                     $confirm->push($message->getBody());
-                });
+                }, true);
             });
 
             $res = $nsq->publish('test', $body, confirm: true);
