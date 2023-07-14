@@ -43,6 +43,7 @@
 - [#5905](https://github.com/hyperf/hyperf/pull/5905) Forget with collections.
 - [#5917](https://github.com/hyperf/hyperf/pull/5917) Upgrade URL pattern for `Str::isUrl()`.
 - [#5920](https://github.com/hyperf/hyperf/pull/5920) add the `\Stringable` interface to classes that have `__toString()` method.
+- [#5945](https://github.com/hyperf/hyperf/pull/5945) Don't sync config frequently when listen more than one namespace for apollo config center.
 
 ## Removed
 
@@ -60,4 +61,3 @@
 ## Fixed
 
 - [#5771](https://github.com/hyperf/hyperf/pull/5771) Fixed bug that the return type of `Model::updateOrInsert` isn't boolean.
-- [#5945](https://github.com/hyperf/hyperf/pull/5945) Fixed bug that sync config frequently when listen more than one namespace for apollo config center.
