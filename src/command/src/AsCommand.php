@@ -39,10 +39,8 @@ final class AsCommand extends Command
         $instance = $this->container->get($this->class);
 
         if (in_array(InteractsWithIO::class, class_uses_recursive($this->class))) {
-            (function ($input, $output) {
-                $this->input = $input;
-                $this->output = $output;
-            })->call($instance, $this->input, $this->output);
+            $instance->setInput($this->input);
+            $instance->setOutput($this->output);
         }
 
         return (fn ($method) => $this->{$method}(...$parameters))->call($instance, $this->method);
