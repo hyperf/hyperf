@@ -36,7 +36,6 @@ final class AsCommand extends Command
     {
         $inputs = array_merge($this->input->getArguments(), $this->input->getOptions());
         $parameters = $this->parameterParser->parseMethodParameters($this->class, $this->method, $inputs);
-        /** @var InteractsWithIO $instance */
         $instance = $this->container->get($this->class);
 
         if (in_array(InteractsWithIO::class, class_uses_recursive($this->class))) {
