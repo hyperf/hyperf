@@ -55,6 +55,7 @@
 ## Changed
 
 - [#5847](https://github.com/hyperf/hyperf/pull/5847) Changed the default redis key for metric.
+- [#5943](https://github.com/hyperf/hyperf/pull/5943) Don't remove the node from load balancer of `json rpc http transporter` when the status code isn't 200.
 
 ## Fixed
 
