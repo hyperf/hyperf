@@ -30,7 +30,7 @@
 - [#5914](https://github.com/hyperf/hyperf/pull/5914) Added `Str::isUrl()` and use it from the validator.
 - [#5918](https://github.com/hyperf/hyperf/pull/5918) Added `Arr::isList()` method.
 - [#5925](https://github.com/hyperf/hyperf/pull/5925) [#5926](https://github.com/hyperf/hyperf/pull/5926) Allow model attributes to be casted to/from an Enum.
-- [#5930](https://github.com/hyperf/hyperf/pull/5930) Adds `AsCommand` annotation and `ClosureCommand` support.
+- [#5930](https://github.com/hyperf/hyperf/pull/5930) [#5934](https://github.com/hyperf/hyperf/pull/5934) Added `AsCommand` annotation and `ClosureCommand` support.
 
 ## Optimized
 
