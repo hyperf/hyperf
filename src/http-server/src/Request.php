@@ -80,6 +80,20 @@ class Request implements RequestInterface
     }
 
     /**
+     * List the data from route parameters.
+     */
+    public function routeParameters(): array
+    {
+        /** @var null|Dispatched $route */
+        $route = $this->getAttribute(Dispatched::class);
+        if (is_null($route)) {
+            return [];
+        }
+
+        return $route->isFound() ? $route->params : [];
+    }
+
+    /**
      * Retrieve the data from parsed body, if $key is null, will return all parsed body.
      */
     public function post(?string $key = null, mixed $default = null): mixed

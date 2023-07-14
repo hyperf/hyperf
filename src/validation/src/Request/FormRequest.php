@@ -144,7 +144,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected function validationData(): array
     {
-        return array_merge_recursive($this->all(), $this->getUploadedFiles());
+        return array_merge_recursive($this->all(), $this->getUploadedFiles(), $this->routeParameters());
     }
 
     /**
