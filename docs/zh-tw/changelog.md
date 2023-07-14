@@ -1,5 +1,17 @@
 # 版本更新記錄
 
+# v3.0.29 - 2023-07-14
+
+## 修復
+
+- [#5921](https://github.com/hyperf/hyperf/pull/5921) 修復 `http2-client` 在沒有開啟心跳時，無法正常關閉的問題。
+- [#5923](https://github.com/hyperf/hyperf/pull/5923) 修復 `nacos grpc client` 當程序退出時，無法友好關閉的問題。
+- [#5922](https://github.com/hyperf/hyperf/pull/5922) 修復使用 `grpc-client` 時，會找不到 `ApplicationContext` 的問題。
+
+## 最佳化
+
+- [#5924](https://github.com/hyperf/hyperf/pull/5924) 當程序退出時，隱藏 `nacos grpc client` 相關的正常的錯誤資訊。
+
 # v3.0.28 - 2023-07-08
 
 ## 修復
