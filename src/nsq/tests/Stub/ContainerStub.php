@@ -66,30 +66,29 @@ class ContainerStub
             return new MessageBuilder();
         });
 
-        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturnUsing(function () {
-            return new Config([
-                'nsq' => [
-                    'default' => [
-                        'enable' => true,
-                        'host' => '127.0.0.1',
-                        'port' => 4150,
-                        'pool' => [
-                            'min_connections' => 1,
-                            'max_connections' => 10,
-                            'connect_timeout' => 10.0,
-                            'wait_timeout' => 3.0,
-                            'heartbeat' => -1,
-                            'max_idle_time' => 30.0,
-                        ],
-                        'nsqd' => [
-                            'port' => 4151,
-                            'options' => [
-                            ],
+        $config = new Config([
+            'nsq' => [
+                'default' => [
+                    'enable' => true,
+                    'host' => '127.0.0.1',
+                    'port' => 4150,
+                    'pool' => [
+                        'min_connections' => 1,
+                        'max_connections' => 10,
+                        'connect_timeout' => 10.0,
+                        'wait_timeout' => 3.0,
+                        'heartbeat' => -1,
+                        'max_idle_time' => 30.0,
+                    ],
+                    'nsqd' => [
+                        'port' => 4151,
+                        'options' => [
                         ],
                     ],
                 ],
-            ]);
-        });
+            ],
+        ]);
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
 
         $container->shouldReceive('make')->with(DemoConsumer::class, Mockery::any())->andReturnUsing(function () use ($container) {
             return new DemoConsumer($container);
