@@ -29,8 +29,8 @@ use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 /**
  * @internal
@@ -90,7 +90,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
 
         $handle = Mockery::mock(RequestHandlerInterface::class);
 
-        $request = Mockery::mock(ServerRequestInterface::class);
+        $request = Mockery::mock(ServerRequestPlusInterface::class);
 
         $request->shouldReceive(...['getAttribute'])
             ->with(...[Dispatched::class])
