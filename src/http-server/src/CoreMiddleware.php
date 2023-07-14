@@ -193,6 +193,10 @@ class CoreMiddleware implements CoreMiddlewareInterface
             return $this->response()->addHeader('content-type', 'text/plain')->setBody(new SwooleStream($response));
         }
 
+        if ($response instanceof ResponseInterface) {
+            return new ResponsePlusProxy($response);
+        }
+
         if (is_array($response) || $response instanceof Arrayable) {
             return $this->response()
                 ->addHeader('content-type', 'application/json')
@@ -203,10 +207,6 @@ class CoreMiddleware implements CoreMiddlewareInterface
             return $this->response()
                 ->addHeader('content-type', 'application/json')
                 ->setBody(new SwooleStream((string) $response));
-        }
-
-        if ($response instanceof ResponseInterface) {
-            return new ResponsePlusProxy($response);
         }
 
         if ($this->response()->hasHeader('content-type')) {
