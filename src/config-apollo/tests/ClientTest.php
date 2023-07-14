@@ -23,6 +23,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\HttpMessage\Base\Response;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\Support\Reflection\ClassInvoker;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -74,5 +75,20 @@ class ClientTest extends TestCase
         $driver->fetchConfig();
 
         $this->assertSame(['test-key' => 'after-value'], $config->get('apollo'));
+    }
+
+    public function testConfigurationsChanged()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([]));
+        $container->shouldReceive('get')->with(ClientInterface::class)->andReturn(Mockery::mock(ClientInterface::class));
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn(Mockery::mock(StdoutLoggerInterface::class));
+
+        $driver = (new ClassInvoker(new ApolloDriver($container)));
+        $prevConfig = ['a' => ['id' => 1], 'b' => ['id' => 2]];
+        ksort($prevConfig);
+
+        $this->assertFalse($driver->configChanged(['a' => ['id' => 1], 'b' => ['id' => 2]], $prevConfig));
+        $this->assertFalse($driver->configChanged(['a' => ['id' => 1], 'b' => ['id' => 2]], $prevConfig));
     }
 }

@@ -76,7 +76,7 @@ class ApolloDriver extends AbstractDriver
                         break;
                     }
                     $config = $this->client->parallelPull($namespaces);
-                    if ($config !== $prevConfig) {
+                    if ($this->configChanged($config, $prevConfig)) {
                         $this->syncConfig($config, $prevConfig);
                         $prevConfig = $config;
                     }
@@ -85,6 +85,13 @@ class ApolloDriver extends AbstractDriver
                 }
             }
         });
+    }
+
+    protected function configChanged(array $config, array $prevConfig): bool
+    {
+        ksort($config);
+
+        return $config !== $prevConfig;
     }
 
     protected function loop(callable $callable, ?Channel $channel = null): int
