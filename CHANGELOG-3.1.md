@@ -60,3 +60,4 @@
 ## Fixed
 
 - [#5771](https://github.com/hyperf/hyperf/pull/5771) Fixed bug that the return type of `Model::updateOrInsert` isn't boolean.
+- [#5945](https://github.com/hyperf/hyperf/pull/5945) Fixed bug that sync config frequently when listen more than one namespace for apollo config center.
