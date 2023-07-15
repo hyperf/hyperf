@@ -1,5 +1,9 @@
 # v3.0.30 - TBD
 
+## Fixed
+
+- [#5947](https://github.com/hyperf/hyperf/pull/5947) Fixed bug that lock failed when using more than one pool for amqp.
+
 # v3.0.29 - 2023-07-14
 
 ## Fixed

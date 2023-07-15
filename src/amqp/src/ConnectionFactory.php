@@ -41,14 +41,15 @@ class ConnectionFactory
         $config = $this->getConfig($pool);
         $count = $config['pool']['connections'] ?? 1;
 
-        if (Locker::lock(static::class)) {
+        $key = $this->lockKey($pool, 'refresh');
+        if (Locker::lock($key)) {
             try {
                 for ($i = 0; $i < $count; ++$i) {
                     $connection = $this->make($config);
                     $this->connections[$pool][] = $connection;
                 }
             } finally {
-                Locker::unlock(static::class);
+                Locker::unlock($key);
             }
         }
     }
@@ -59,14 +60,15 @@ class ConnectionFactory
             $index = array_rand($this->connections[$pool]);
             $connection = $this->connections[$pool][$index];
             if (! $connection->isConnected()) {
-                if (Locker::lock(static::class . 'getConnection')) {
+                $key = $this->lockKey($pool, 'connection');
+                if (Locker::lock($key)) {
                     try {
                         unset($this->connections[$pool][$index]);
                         $connection->close();
                         $connection = $this->make($this->getConfig($pool));
                         $this->connections[$pool][] = $connection;
                     } finally {
-                        Locker::unlock(static::class . 'getConnection');
+                        Locker::unlock($key);
                     }
                 } else {
                     return $this->getConnection($pool);
@@ -130,5 +132,10 @@ class ConnectionFactory
         }
 
         return $ioFactory->create($config, $params);
+    }
+
+    private function lockKey(string $pool, string $position): string
+    {
+        return sprintf('%s:%s:%s', static::class, $pool, $position);
     }
 }
