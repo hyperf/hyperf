@@ -22,6 +22,6 @@ function dispatch(JobInterface $job, ?int $delay = null, ?int $maxAttempts = nul
 
     return ApplicationContext::getContainer()
         ->get(DriverFactory::class)
-        ->get($pool)
-        ->push($job, $delay);
+        ->get($pool ?? $job->getPool())
+        ->push($job, $delay ?? $job->getDelay());
 }
