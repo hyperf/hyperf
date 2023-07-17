@@ -6,7 +6,7 @@
 
 ## Optimized
 
-- [#5954](https://github.com/hyperf/hyperf/pull/5954) 
+- [#5954](https://github.com/hyperf/hyperf/pull/5954) Optimized the model generator to generate correct property comments.
 
 ## Added
 
