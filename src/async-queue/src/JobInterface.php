@@ -18,5 +18,7 @@ interface JobInterface
      */
     public function handle();
 
+    public function setMaxAttempts(int $maxAttempts): static;
+
     public function getMaxAttempts(): int;
 }

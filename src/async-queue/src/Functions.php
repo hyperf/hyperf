@@ -14,14 +14,10 @@ namespace Hyperf\AsyncQueue;
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\Context\ApplicationContext;
 
-function dispatch(JobInterface $job, ?string $pool = null, ?int $delay = null, ?int $maxAttempts = null): bool
+function dispatch(JobInterface $job, ?int $delay = null, ?int $maxAttempts = null, ?string $pool = null): bool
 {
-    if (! is_null($maxAttempts)) {
-        (function ($maxAttempts) {
-            if (property_exists($this, 'maxAttempts')) {
-                $this->maxAttempts = $maxAttempts;
-            }
-        })->call($job, $maxAttempts);
+    if ($maxAttempts) {
+        $job->setMaxAttempts($maxAttempts);
     }
 
     $pool = $pool ?? (fn () => $this->pool ?? null)->call($job) ?? 'default'; // @phpstan-ignore-line
