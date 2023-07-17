@@ -1,5 +1,33 @@
 # 版本更新记录
 
+# v3.0.29 - 2023-07-14
+
+## 修复
+
+- [#5921](https://github.com/hyperf/hyperf/pull/5921) 修复 `http2-client` 在没有开启心跳时，无法正常关闭的问题。
+- [#5923](https://github.com/hyperf/hyperf/pull/5923) 修复 `nacos grpc client` 当进程退出时，无法友好关闭的问题。
+- [#5922](https://github.com/hyperf/hyperf/pull/5922) 修复使用 `grpc-client` 时，会找不到 `ApplicationContext` 的问题。
+
+## 优化
+
+- [#5924](https://github.com/hyperf/hyperf/pull/5924) 当进程退出时，隐藏 `nacos grpc client` 相关的正常的错误信息。
+
+# v3.0.28 - 2023-07-08
+
+## 修复
+
+- [#5909](https://github.com/hyperf/hyperf/pull/5909) 修复 `ACM` 配置中心因 `client::$servers` 没有进行初始化而报错的问题。
+- [#5911](https://github.com/hyperf/hyperf/pull/5911) 修复 `Nacos Grpc 客户端` 权限验证失败的问题。
+- [#5912](https://github.com/hyperf/hyperf/pull/5912) 修复 `Nacos Grpc 客户端` 在 `Nacos 服务` 重启后，重连失败的问题。
+
+## 新增
+
+- [#5895](https://github.com/hyperf/hyperf/pull/5895) 为验证器规则 `Integer` 和 `Boolean` 增加严格模式。
+
+## 优化
+
+- [#5910](https://github.com/hyperf/hyperf/pull/5910) 优化工厂类 `NacosClientFactory`，使其实例化 `NacosClient` 而非 `Nacos Application` 对象。
+
 # v3.0.27 - 2023-06-30
 
 ## 修复
