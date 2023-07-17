@@ -20,8 +20,8 @@ function dispatch(JobInterface $job, ?int $delay = null, ?int $maxAttempts = nul
         $job->setMaxAttempts($maxAttempts);
     }
 
-    $pool = $pool ?? (fn () => $this->pool ?? null)->call($job) ?? 'default'; // @phpstan-ignore-line
-    $delay = $delay ?? (fn () => $this->delay ?? null)->call($job) ?? 0; // @phpstan-ignore-line
+    $pool = $pool ?? (fn () => $this->pool ?? 'default')->call($job); // @phpstan-ignore-line
+    $delay = $delay ?? (fn () => $this->delay ?? 0)->call($job); // @phpstan-ignore-line
 
     return ApplicationContext::getContainer()
         ->get(DriverFactory::class)
