@@ -29,6 +29,11 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
         return $this;
     }
 
+    public function getDelay(): int
+    {
+        return $this->delay;
+    }
+
     public function setMaxAttempts(int $maxAttempts): static
     {
         $this->maxAttempts = $maxAttempts;
@@ -46,6 +51,11 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
         $this->pool = $pool;
 
         return $this;
+    }
+
+    public function getPool(): string
+    {
+        return $this->pool;
     }
 
     public function uncompress(): static
