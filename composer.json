@@ -202,6 +202,7 @@
     "suggest": {},
     "autoload": {
         "files": [
+            "src/async-queue/src/Functions.php",
             "src/collection/src/Functions.php",
             "src/config/src/Functions.php",
             "src/coroutine/src/Functions.php",
@@ -434,7 +435,6 @@
                 "Hyperf\\AsyncQueue\\ConfigProvider",
                 "Hyperf\\Cache\\ConfigProvider",
                 "Hyperf\\CircuitBreaker\\ConfigProvider",
-                "Hyperf\\ClosureCommand\\ConfigProvider",
                 "Hyperf\\Command\\ConfigProvider",
                 "Hyperf\\ConfigAliyunAcm\\ConfigProvider",
                 "Hyperf\\ConfigApollo\\ConfigProvider",
