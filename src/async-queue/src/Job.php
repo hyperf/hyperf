@@ -16,7 +16,23 @@ use Hyperf\Contract\UnCompressInterface;
 
 abstract class Job implements JobInterface, CompressInterface, UnCompressInterface
 {
+    protected int $delay = 0;
+
     protected int $maxAttempts = 0;
+
+    protected string $pool = 'default';
+
+    public function setDelay(int $delay): static
+    {
+        $this->delay = $delay;
+
+        return $this;
+    }
+
+    public function getDelay(): int
+    {
+        return $this->delay;
+    }
 
     public function setMaxAttempts(int $maxAttempts): static
     {
@@ -28,6 +44,18 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
     public function getMaxAttempts(): int
     {
         return $this->maxAttempts;
+    }
+
+    public function setPool(string $pool): static
+    {
+        $this->pool = $pool;
+
+        return $this;
+    }
+
+    public function getPool(): string
+    {
+        return $this->pool;
     }
 
     public function uncompress(): static
