@@ -4,6 +4,10 @@
 
 - [#5947](https://github.com/hyperf/hyperf/pull/5947) Fixed bug that lock failed when using more than one pool for amqp.
 
+## Optimized
+
+- [#5954](https://github.com/hyperf/hyperf/pull/5954) Optimized the model generator to generate correct property comments.
+
 ## Added
 
 - [#5951](https://github.com/hyperf/hyperf/pull/5951) Added `SameSite` support to session cookies.
