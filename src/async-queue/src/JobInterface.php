@@ -18,6 +18,10 @@ interface JobInterface
      */
     public function handle();
 
+    public function setDelay(int $delay): static;
+
+    public function getDelay(): int;
+
     public function setMaxAttempts(int $maxAttempts): static;
 
     public function getMaxAttempts(): int;
@@ -25,8 +29,4 @@ interface JobInterface
     public function setPool(string $pool): static;
 
     public function getPool(): string;
-
-    public function setDelay(int $delay): static;
-
-    public function getDelay(): int;
 }
