@@ -318,8 +318,8 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             $type[] = 'null';
         }
         $this->properties[$name]['type'] = implode('|', array_unique($type));
-        $this->properties[$name]['read'] = $read;
-        $this->properties[$name]['write'] = $write;
+        $this->properties[$name]['read'] = $this->properties[$name]['read'] || $read;
+        $this->properties[$name]['write'] = $this->properties[$name]['write'] || $write;
         $this->properties[$name]['priority'] = $priority;
     }
 
