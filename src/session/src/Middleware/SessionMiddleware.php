@@ -103,7 +103,9 @@ class SessionMiddleware implements MiddlewareInterface
 
         $domain = $this->config->get('session.options.domain') ?? $uri->getHost();
 
-        $cookie = new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, true);
+        $sameSite = $this->config->get('session.options.cookie_same_site');
+
+        $cookie = new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, true, false, $sameSite);
         if (! method_exists($response, 'withCookie')) {
             return $response->withHeader('Set-Cookie', (string) $cookie);
         }

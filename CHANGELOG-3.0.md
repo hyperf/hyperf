@@ -4,6 +4,10 @@
 
 - [#5947](https://github.com/hyperf/hyperf/pull/5947) Fixed bug that lock failed when using more than one pool for amqp.
 
+## Added
+
+- [#5951](https://github.com/hyperf/hyperf/pull/5951) Added `SameSite` support to session cookies.
+
 # v3.0.29 - 2023-07-14
 
 ## Fixed
