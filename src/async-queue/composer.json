@@ -32,6 +32,9 @@
         "hyperf/process": "Auto register the consumer process for server."
     },
     "autoload": {
+        "files": [
+            "src/Functions.php"
+        ],
         "psr-4": {
             "Hyperf\\AsyncQueue\\": "src/"
         }

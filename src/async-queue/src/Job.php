@@ -18,6 +18,13 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
 {
     protected int $maxAttempts = 0;
 
+    public function setMaxAttempts(int $maxAttempts): static
+    {
+        $this->maxAttempts = $maxAttempts;
+
+        return $this;
+    }
+
     public function getMaxAttempts(): int
     {
         return $this->maxAttempts;
