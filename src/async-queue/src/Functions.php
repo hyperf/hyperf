@@ -16,7 +16,7 @@ use Hyperf\Context\ApplicationContext;
 
 function dispatch(JobInterface $job, ?int $delay = null, ?int $maxAttempts = null, ?string $pool = null): bool
 {
-    if ($maxAttempts) {
+    if (is_int($maxAttempts)) {
         $job->setMaxAttempts($maxAttempts);
     }
 
