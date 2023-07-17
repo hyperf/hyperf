@@ -4,6 +4,10 @@
 
 - [#5947](https://github.com/hyperf/hyperf/pull/5947) Fixed bug that lock failed when using more than one pool for amqp.
 
+## Optimized
+
+- [#5954](https://github.com/hyperf/hyperf/pull/5954) 
+
 # v3.0.29 - 2023-07-14
 
 ## Fixed
