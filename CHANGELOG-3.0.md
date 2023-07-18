@@ -11,6 +11,7 @@
 ## Added
 
 - [#5951](https://github.com/hyperf/hyperf/pull/5951) Added `SameSite` support to session cookies.
+- [#5955](https://github.com/hyperf/hyperf/pull/5955) Support `access_key` and `access_secret` for nacos service governance.
 
 # v3.0.29 - 2023-07-14
 
