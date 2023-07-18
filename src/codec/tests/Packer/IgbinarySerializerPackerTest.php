@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Codec\Packer;
 
+use Exception;
 use Hyperf\Codec\Packer\IgbinarySerializerPacker;
 use PHPUnit\Framework\TestCase;
 
@@ -31,7 +32,7 @@ class IgbinarySerializerPackerTest extends TestCase
     public function testIgbinaryUnserializeFailed()
     {
         $packer = new IgbinarySerializerPacker();
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $packer->unpack('invalid binary string');
     }
 }
