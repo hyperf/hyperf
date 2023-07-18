@@ -1,0 +1,51 @@
+{
+    "name": "hyperf/encryption",
+    "description": "A encryption component for hyperf.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf",
+        "encrypt",
+        "encryption"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=8.1",
+        "ext-hash": "*",
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
+        "hyperf/command": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "psr/container": "^1.0|^2.0"
+    },
+    "suggest": {
+        "hyperf/di": "Create the Encrypter via dependency injection."
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Encryption\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Encryption\\": "tests"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.0-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Encryption\\ConfigProvider"
+        }
+    }
+}
