@@ -57,6 +57,12 @@ abstract class Message implements MessageInterface
         return $this->routingKey;
     }
 
+    public function setPoolName(string $name): static
+    {
+        $this->poolName = $name;
+        return $this;
+    }
+
     public function getPoolName(): string
     {
         return $this->poolName;

@@ -15,6 +15,8 @@ use Hyperf\Amqp\Builder\ExchangeBuilder;
 
 interface MessageInterface
 {
+    public function setPoolName(string $name);
+
     /**
      * Pool name for amqp.
      */

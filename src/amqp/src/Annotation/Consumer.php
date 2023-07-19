@@ -24,7 +24,8 @@ class Consumer extends AbstractAnnotation
         public string $name = 'Consumer',
         public ?int $nums = null,
         public ?bool $enable = null,
-        public int $maxConsumption = 0
+        public int $maxConsumption = 0,
+        public ?string $pool = null
     ) {
     }
 }
