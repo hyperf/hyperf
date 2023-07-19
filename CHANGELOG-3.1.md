@@ -46,6 +46,7 @@
 - [#5920](https://github.com/hyperf/hyperf/pull/5920) add the `\Stringable` interface to classes that have `__toString()` method.
 - [#5945](https://github.com/hyperf/hyperf/pull/5945) Don't sync config frequently when listen more than one namespace for apollo config center.
 - [#5948](https://github.com/hyperf/hyperf/pull/5948) Optimized `Hyperf\Coroutine\Locker`.
+- [#5960](https://github.com/hyperf/hyperf/pull/5960) Allowed set poolName in Annotation.
 
 ## Removed
 
