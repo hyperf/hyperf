@@ -46,6 +46,7 @@ class ConsumerManager
             $instance->setContainer($this->container);
             $annotation->maxConsumption && $instance->setMaxConsumption($annotation->maxConsumption);
             ! is_null($annotation->nums) && $instance->setNums($annotation->nums);
+            $annotation->pool && $instance->setPoolName($annotation->pool);
             $process = $this->createProcess($instance);
             $process->nums = $instance->getNums();
             $process->name = $annotation->name . '-' . $instance->getQueue();
