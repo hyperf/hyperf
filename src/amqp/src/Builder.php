@@ -38,7 +38,7 @@ class Builder
         try {
             $builder = $message->getExchangeBuilder();
 
-            $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
+            $channel->exchange_declare($builder->getExchange(), $builder->getType()->value, $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
         } catch (Throwable $exception) {
             if ($releaseToChannel && isset($channel)) {
                 $channel->close();

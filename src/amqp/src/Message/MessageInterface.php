@@ -22,9 +22,9 @@ interface MessageInterface
      */
     public function getPoolName(): string;
 
-    public function setType(string $type);
+    public function setType(Type $type);
 
-    public function getType(): string;
+    public function getType(): Type;
 
     public function setExchange(string $exchange);
 

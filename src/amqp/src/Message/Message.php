@@ -20,17 +20,17 @@ abstract class Message implements MessageInterface
 
     protected string $exchange = '';
 
-    protected string $type = Type::TOPIC;
+    protected Type $type = Type::TOPIC;
 
     protected array|string $routingKey = '';
 
-    public function setType(string $type): static
+    public function setType(Type $type): static
     {
         $this->type = $type;
         return $this;
     }
 
-    public function getType(): string
+    public function getType(): Type
     {
         return $this->type;
     }

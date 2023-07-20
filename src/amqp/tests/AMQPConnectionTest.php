@@ -47,7 +47,7 @@ class AMQPConnectionTest extends TestCase
         $container = ContainerStub::getContainer();
         $connection = (new ConnectionFactory($container))->make([]);
         $channel = $connection->getChannel();
-        $channel->exchange_declare('test', Type::TOPIC);
+        $channel->exchange_declare('test', Type::TOPIC->value);
         $this->assertNull($connection->close());
     }
 
@@ -60,7 +60,7 @@ class AMQPConnectionTest extends TestCase
             ],
         ]);
         $channel = $connection->getChannel();
-        $channel->exchange_declare('test', Type::TOPIC);
+        $channel->exchange_declare('test', Type::TOPIC->value);
 
         CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
         CoordinatorManager::clear(Constants::WORKER_EXIT);
