@@ -23,7 +23,7 @@ class DelayProducerStub extends ProducerMessage
 
     protected string $exchange = 'ext.hyperf.delay';
 
-    protected Type $type = Type::DIRECT;
+    protected Type|string $type = Type::DIRECT;
 
     protected array|string $routingKey = '';
 
