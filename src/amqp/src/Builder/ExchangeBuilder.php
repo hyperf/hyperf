@@ -37,7 +37,7 @@ class ExchangeBuilder extends Builder
         return $this->type;
     }
 
-    public function setType(Type $type): static
+    public function setType(Type|string $type): static
     {
         $this->type = $type;
         return $this;
