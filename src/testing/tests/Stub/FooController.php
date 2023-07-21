@@ -33,6 +33,13 @@ class FooController
         return ['code' => 0, 'data' => Coroutine::id()];
     }
 
+    public function context()
+    {
+        return [
+            'request_id' => Context::getOrSet('request_id', uniqid()),
+        ];
+    }
+
     public function request()
     {
         /** @var ServerRequestInterface $request */

@@ -14,6 +14,7 @@ namespace HyperfTest\Testing;
 use Hyperf\Codec\Json;
 use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Coroutine\Coroutine;
@@ -119,6 +120,19 @@ class ClientTest extends TestCase
         $this->assertSame($id, $data['params']['id']);
     }
 
+    public function testClientCallable()
+    {
+        $container = $this->getContainer();
+
+        $client = new Client($container);
+
+        $id = uniqid();
+
+        $res = $client->request('GET', '/context', callable: fn () => Context::set('request_id', $id));
+
+        $this->assertSame(['request_id' => $id], Json::decode((string) $res->getBody()));
+    }
+
     public function getContainer()
     {
         $container = Mockery::mock(Container::class);
@@ -175,6 +189,7 @@ class ClientTest extends TestCase
         Router::get('/', [FooController::class, 'index']);
         Router::get('/exception', [FooController::class, 'exception']);
         Router::get('/id', [FooController::class, 'id']);
+        Router::get('/context', [FooController::class, 'context']);
         Router::addRoute(['GET', 'POST'], '/request', [FooController::class, 'request']);
 
         return $container;
