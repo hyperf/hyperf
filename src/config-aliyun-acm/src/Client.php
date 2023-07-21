@@ -29,7 +29,7 @@ class Client implements ClientInterface
 
     private LoggerInterface $logger;
 
-    private array $servers;
+    private array $servers = [];
 
     /**
      * @var array[]

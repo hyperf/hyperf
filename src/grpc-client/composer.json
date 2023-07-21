@@ -18,10 +18,16 @@
     },
     "require": {
         "php": ">=8.0",
+        "hyperf/contract": "~3.0.0",
         "hyperf/code-parser": "~3.0.0",
+        "hyperf/context": "~3.0.0",
         "hyperf/coroutine": "~3.0.0",
+        "hyperf/event": "~3.0.0",
         "hyperf/grpc": "~3.0.0",
         "jean85/pretty-package-versions": "^1.2|^2.0"
+    },
+    "suggest": {
+        "hyperf/load-balancer": "Use LoadBalancer for GrpcTransporter.(~3.0.0)"
     },
     "autoload": {
         "psr-4": {

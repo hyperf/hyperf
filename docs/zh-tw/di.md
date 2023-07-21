@@ -306,7 +306,7 @@ Hyperf 的長生命週期依賴注入在專案啟動時完成。這意味著長�
 
 另一個方案是使用 PHP 中常用的惰性代理模式，注入一個代理物件，在使用時再例項化目標物件。Hyperf DI 元件設計了懶載入注入功能。
 
-新增 `config/autoload/lazy_loader.php` 檔案並繫結懶載入關係：
+新增 `config/lazy_loader.php` 檔案並繫結懶載入關係：
 
 ```php
 <?php

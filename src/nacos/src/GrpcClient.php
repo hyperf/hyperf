@@ -21,6 +21,7 @@ use Hyperf\Engine\Http\V2\Request;
 use Hyperf\Grpc\Parser;
 use Hyperf\Http2Client\Client;
 use Hyperf\Nacos\Exception\ConnectToServerFailedException;
+use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Nacos\Protobuf\Any;
 use Hyperf\Nacos\Protobuf\ListenContext;
 use Hyperf\Nacos\Protobuf\ListenHandlerInterface;
@@ -36,8 +37,10 @@ use Hyperf\Nacos\Protobuf\Response\ConfigChangeBatchListenResponse;
 use Hyperf\Nacos\Protobuf\Response\ConfigChangeNotifyRequest;
 use Hyperf\Nacos\Protobuf\Response\ConfigQueryResponse;
 use Hyperf\Nacos\Protobuf\Response\Response;
+use Hyperf\Nacos\Provider\AccessToken;
 use Hyperf\Support\Network;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -45,6 +48,8 @@ use function Hyperf\Coroutine\go;
 
 class GrpcClient
 {
+    use AccessToken;
+
     protected array $listeners = [];
 
     protected ?Client $client = null;
@@ -79,10 +84,7 @@ class GrpcClient
     public function request(RequestInterface $request, ?Client $client = null): Response
     {
         $payload = new Payload([
-            'metadata' => new Metadata([
-                'type' => $request->getType(),
-                'clientIp' => $this->ip(),
-            ]),
+            'metadata' => new Metadata($this->getMetadata($request)),
             'body' => new Any([
                 'value' => Json::encode($request->getValue()),
             ]),
@@ -100,10 +102,7 @@ class GrpcClient
     public function write(int $streamId, RequestInterface $request, ?Client $client = null): bool
     {
         $payload = new Payload([
-            'metadata' => new Metadata([
-                'type' => $request->getType(),
-                'clientIp' => $this->ip(),
-            ]),
+            'metadata' => new Metadata($this->getMetadata($request)),
             'body' => new Any([
                 'value' => Json::encode($request->getValue()),
             ]),
@@ -156,7 +155,7 @@ class GrpcClient
         go(function () {
             $client = $this->client;
             $heartbeat = $this->config->getGrpc()['heartbeat'];
-            while ($heartbeat > 0) {
+            while ($heartbeat > 0 && $client->inLoop()) {
                 if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
                     break;
                 }
@@ -180,11 +179,13 @@ class GrpcClient
     protected function bindStreamCall(): int
     {
         $id = $this->client->send(new Request('/BiRequestStream/requestBiStream', 'POST', '', $this->grpcDefaultHeaders(), true));
-
         go(function () use ($id) {
             $client = $this->client;
             while (true) {
                 try {
+                    if (! $client->inLoop()) {
+                        break;
+                    }
                     $response = $client->recv($id, -1);
                     $response = Response::jsonDeSerialize($response->getBody());
                     match (true) {
@@ -198,8 +199,13 @@ class GrpcClient
 
                     $this->listen();
                 } catch (Throwable $e) {
-                    $this->logger->error((string) $e);
+                    ! $this->isWorkerExit() && $this->logger->error((string) $e);
                 }
+            }
+
+            if (! $this->isWorkerExit()) {
+                $this->reconnect();
+                $this->listen();
             }
         });
 
@@ -230,12 +236,12 @@ class GrpcClient
     {
         $request = new ServerCheckRequest();
 
-        for ($i = 0; $i < 30; ++$i) {
+        while (true) {
             try {
                 $response = $this->request($request);
                 if ($response->errorCode !== 0) {
                     $this->logger?->error('Nacos check server failed.');
-                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(1)) {
+                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(5)) {
                         break;
                     }
                     continue;
@@ -244,10 +250,36 @@ class GrpcClient
                 return true;
             } catch (Exception $exception) {
                 $this->logger?->error((string) $exception);
+                if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(5)) {
+                    break;
+                }
             }
         }
 
         throw new ConnectToServerFailedException('the nacos server is not ready to work in 30 seconds, connect to server failed');
+    }
+
+    private function isWorkerExit(): bool
+    {
+        return CoordinatorManager::until(Constants::WORKER_EXIT)->isClosing();
+    }
+
+    private function getMetadata(RequestInterface $request): array
+    {
+        if ($token = $this->getAccessToken()) {
+            return [
+                'type' => $request->getType(),
+                'clientIp' => $this->ip(),
+                'headers' => [
+                    'accessToken' => $token,
+                ],
+            ];
+        }
+
+        return [
+            'type' => $request->getType(),
+            'clientIp' => $this->ip(),
+        ];
     }
 
     private function grpcDefaultHeaders(): array
@@ -257,5 +289,17 @@ class GrpcClient
             'te' => 'trailers',
             'user-agent' => 'Nacos-Hyperf-Client:v3.0',
         ];
+    }
+
+    private function handleResponse(ResponseInterface $response): array
+    {
+        $statusCode = $response->getStatusCode();
+        $contents = (string) $response->getBody();
+
+        if ($statusCode !== 200) {
+            throw new RequestException($contents, $statusCode);
+        }
+
+        return Json::decode($contents);
     }
 }
