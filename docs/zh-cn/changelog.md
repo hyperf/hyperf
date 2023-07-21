@@ -1,5 +1,22 @@
 # 版本更新记录
 
+# v3.0.30 - 2023-07-21
+
+## 修复
+
+- [#5947](https://github.com/hyperf/hyperf/pull/5947) 修复使用 `amqp` 时，存在多个配置时，协程锁失效的问题。
+
+## 优化
+
+- [#5954](https://github.com/hyperf/hyperf/pull/5954) 优化模型生成器，使其生成正确的参数注释。
+
+## 新增
+
+- [#5951](https://github.com/hyperf/hyperf/pull/5951) 为 `Session` 的 `Cookies` 功能增加 `SameSite` 支持。
+- [#5955](https://github.com/hyperf/hyperf/pull/5955) 为 `Nacos` 服务注册与发现，增加 `access_key` 和 `access_secret` 的支持。
+- [#5957](https://github.com/hyperf/hyperf/pull/5957) 新增 `Hyperf\Codec\Packer\IgbinarySerializerPacker`.
+- [#5962](https://github.com/hyperf/hyperf/pull/5962) 当使用测试组件时，增加支持修改子协程上下文的能力。
+
 # v3.0.29 - 2023-07-14
 
 ## 修复

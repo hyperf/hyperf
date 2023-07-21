@@ -1,5 +1,22 @@
 # Changelogs
 
+# v3.0.30 - 2023-07-21
+
+## Fixed
+
+- [#5947](https://github.com/hyperf/hyperf/pull/5947) Fixed bug that lock failed when using more than one pool for amqp.
+
+## Optimized
+
+- [#5954](https://github.com/hyperf/hyperf/pull/5954) Optimized the model generator to generate correct property comments.
+
+## Added
+
+- [#5951](https://github.com/hyperf/hyperf/pull/5951) Added `SameSite` support to session cookies.
+- [#5955](https://github.com/hyperf/hyperf/pull/5955) Support `access_key` and `access_secret` for nacos service governance.
+- [#5957](https://github.com/hyperf/hyperf/pull/5957) Added `Hyperf\Codec\Packer\IgbinarySerializerPacker`.
+- [#5962](https://github.com/hyperf/hyperf/pull/5962) Support modify the context of sub coroutine when using test components.
+
 # v3.0.29 - 2023-07-14
 
 ## Fixed
