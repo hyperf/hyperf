@@ -2118,7 +2118,7 @@ class Builder
     /**
      * Retrieve the "count" result of the query.
      *
-     * @param string $columns
+     * @param mixed $columns
      * @return int
      */
     public function count($columns = '*')
