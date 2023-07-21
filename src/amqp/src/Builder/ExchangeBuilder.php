@@ -17,7 +17,7 @@ class ExchangeBuilder extends Builder
 {
     protected ?string $exchange = null;
 
-    protected ?Type $type = null;
+    protected null|string|Type $type = null;
 
     protected bool $internal = false;
 
@@ -32,7 +32,7 @@ class ExchangeBuilder extends Builder
         return $this;
     }
 
-    public function getType(): Type
+    public function getType(): Type|string
     {
         return $this->type;
     }

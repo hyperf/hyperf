@@ -37,8 +37,19 @@ class Builder
 
         try {
             $builder = $message->getExchangeBuilder();
+            $type = is_string($builder->getType()) ? $builder->getType() : $builder->getType()->value;
 
-            $channel->exchange_declare($builder->getExchange(), $builder->getType()->value, $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
+            $channel->exchange_declare(
+                $builder->getExchange(),
+                $type,
+                $builder->isPassive(),
+                $builder->isDurable(),
+                $builder->isAutoDelete(),
+                $builder->isInternal(),
+                $builder->isNowait(),
+                $builder->getArguments(),
+                $builder->getTicket()
+            );
         } catch (Throwable $exception) {
             if ($releaseToChannel && isset($channel)) {
                 $channel->close();
