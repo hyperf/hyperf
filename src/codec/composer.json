@@ -21,6 +21,9 @@
         "php": ">=8.1",
         "hyperf/contract": "~3.1.0"
     },
+    "suggest": {
+        "ext-igbinary": "Required to use IgbinarySerializerPacker."
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\Codec\\": "src/"
