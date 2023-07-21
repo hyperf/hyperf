@@ -217,7 +217,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
                     $type = PhpDocReader::getInstance()->getReturnType($method, true);
-                    $this->setProperty($name, $type, true, null, '', false, 1);
+                    $this->setProperty($name, $type, true, false, '', false, 1);
                 }
                 continue;
             }
@@ -226,7 +226,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 // Magic set<name>Attribute
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
-                    $this->setProperty($name, null, null, true, '', false, 1);
+                    $this->setProperty($name, [], false, true, '', false, 1);
                 }
                 continue;
             }
@@ -255,15 +255,15 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                     if (array_key_exists($name, self::RELATION_METHODS)) {
                         if ($name === 'morphTo') {
                             // Model isn't specified because relation is polymorphic
-                            $this->setProperty($method->getName(), ['\\' . Model::class], true);
+                            $this->setProperty($method->getName(), ['\\' . Model::class], true, false, '', true);
                         } elseif (isset($expr->args[0]) && $expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
                             $related = $expr->args[0]->value->class->toCodeString();
                             if (str_contains($name, 'Many')) {
                                 // Collection or array of models (because Collection is Arrayable)
-                                $this->setProperty($method->getName(), [$this->getCollectionClass($related), $related . '[]'], true);
+                                $this->setProperty($method->getName(), [$this->getCollectionClass($related), $related . '[]'], true, false, '', true);
                             } else {
                                 // Single model is returned
-                                $this->setProperty($method->getName(), [$related], true);
+                                $this->setProperty($method->getName(), [$related], true, false, '', true);
                             }
                         }
                     }
@@ -282,7 +282,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 $method = $ref->getMethod('get');
                 if ($type = $method->getReturnType()) {
                     // Get return type which defined in `CastsAttributes::get()`.
-                    $this->setProperty($key, ['\\' . ltrim($type->getName(), '\\')], true, true);
+                    $this->setProperty($key, ['\\' . ltrim($type->getName(), '\\')], true, true, '', true);
                 }
             }
         }
@@ -299,11 +299,11 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         return null;
     }
 
-    protected function setProperty(string $name, array $type = null, bool $read = null, bool $write = null, string $comment = '', bool $nullable = false, int $priority = 0)
+    protected function setProperty(string $name, array $type = [], bool $read = false, bool $write = false, string $comment = '', bool $nullable = false, int $priority = 0)
     {
         if (! isset($this->properties[$name])) {
             $this->properties[$name] = [];
-            $this->properties[$name]['type'] = 'mixed';
+            $this->properties[$name]['type'] = implode('|', array_unique($type ?: ['mixed']));
             $this->properties[$name]['read'] = false;
             $this->properties[$name]['write'] = false;
             $this->properties[$name]['comment'] = $comment;
@@ -312,18 +312,14 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         if ($this->properties[$name]['priority'] > $priority) {
             return;
         }
-        if ($type !== null) {
-            if ($nullable) {
-                $type[] = 'null';
-            }
-            $this->properties[$name]['type'] = implode('|', array_unique($type));
+
+        $type = array_merge(explode('|', $this->properties[$name]['type'] ?? []), $type);
+        if ($nullable) {
+            $type[] = 'null';
         }
-        if ($read !== null) {
-            $this->properties[$name]['read'] = $read;
-        }
-        if ($write !== null) {
-            $this->properties[$name]['write'] = $write;
-        }
+        $this->properties[$name]['type'] = implode('|', array_unique($type));
+        $this->properties[$name]['read'] = $this->properties[$name]['read'] || $read;
+        $this->properties[$name]['write'] = $this->properties[$name]['write'] || $write;
         $this->properties[$name]['priority'] = $priority;
     }
 
