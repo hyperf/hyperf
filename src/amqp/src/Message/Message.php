@@ -35,6 +35,11 @@ abstract class Message implements MessageInterface
         return $this->type;
     }
 
+    public function getTypeString(): string
+    {
+        return $this->type instanceof Type ? $this->type->value : $this->type;
+    }
+
     public function setExchange(string $exchange): static
     {
         $this->exchange = $exchange;

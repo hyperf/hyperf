@@ -16,7 +16,7 @@ use PhpAmqpLib\Wire\AMQPTable;
 
 /**
  * @method string getExchange()
- * @method string getType()
+ * @method string getTypeString()
  * @property array $properties
  */
 trait ProducerDelayedMessageTrait
@@ -38,6 +38,6 @@ trait ProducerDelayedMessageTrait
     {
         return (new ExchangeBuilder())->setExchange($this->getExchange())
             ->setType('x-delayed-message')
-            ->setArguments(new AMQPTable(['x-delayed-type' => $this->getType()]));
+            ->setArguments(new AMQPTable(['x-delayed-type' => $this->getTypeString()]));
     }
 }

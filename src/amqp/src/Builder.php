@@ -37,11 +37,10 @@ class Builder
 
         try {
             $builder = $message->getExchangeBuilder();
-            $type = is_string($builder->getType()) ? $builder->getType() : $builder->getType()->value;
 
             $channel->exchange_declare(
                 $builder->getExchange(),
-                $type,
+                $builder->getTypeString(),
                 $builder->isPassive(),
                 $builder->isDurable(),
                 $builder->isAutoDelete(),

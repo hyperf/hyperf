@@ -37,6 +37,11 @@ class ExchangeBuilder extends Builder
         return $this->type;
     }
 
+    public function getTypeString(): string
+    {
+        return $this->type instanceof Type ? $this->type->value : $this->type;
+    }
+
     public function setType(Type|string $type): static
     {
         $this->type = $type;
