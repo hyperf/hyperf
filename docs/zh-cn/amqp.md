@@ -241,11 +241,11 @@ class DelayDirectProducer extends ProducerMessage
 {
     use ProducerDelayedMessageTrait;
 
-    protected $exchange = 'ext.hyperf.delay';
+    protected string $exchange = 'ext.hyperf.delay';
 
-    protected $type = Type::DIRECT;
+    protected string $type = Type::DIRECT;
 
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
     public function __construct($data)
     {
