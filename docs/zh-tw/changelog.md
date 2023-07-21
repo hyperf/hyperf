@@ -14,7 +14,7 @@
 
 - [#5951](https://github.com/hyperf/hyperf/pull/5951) 為 `Session` 的 `Cookies` 功能增加 `SameSite` 支援。
 - [#5955](https://github.com/hyperf/hyperf/pull/5955) 為 `Nacos` 服務註冊與發現，增加 `access_key` 和 `access_secret` 的支援。
-- [#5957](https://github.com/hyperf/hyperf/pull/5957) 新增 `Hyperf\Codec\Packer\IgbinarySerializerPacker`.
+- [#5957](https://github.com/hyperf/hyperf/pull/5957) 新增 `Hyperf\Codec\Packer\IgbinarySerializerPacker`。
 - [#5962](https://github.com/hyperf/hyperf/pull/5962) 當使用測試元件時，增加支援修改子協程上下文的能力。
 
 # v3.0.29 - 2023-07-14
