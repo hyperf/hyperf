@@ -11,17 +11,17 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp\Event;
 
-use BackedEnum;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
+use Hyperf\Amqp\Result;
 
 class AfterConsume extends ConsumeEvent
 {
-    public function __construct(ConsumerMessageInterface $message, protected BackedEnum $result)
+    public function __construct(ConsumerMessageInterface $message, protected Result $result)
     {
         parent::__construct($message);
     }
 
-    public function getResult(): BackedEnum
+    public function getResult(): Result
     {
         return $this->result;
     }
