@@ -9,18 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Cases;
+namespace HyperfTest\MigrationGenerator\Cases;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\MigrationGenerator\MigrationGenerator;
-use HyperfTest\ContainerStub;
+use HyperfTest\MigrationGenerator\ContainerStub;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-class MigrationGeneratorTest extends AbstractTestCase
+class MigrationGeneratorTest extends TestCase
 {
     public function testGenerateDefault()
     {
