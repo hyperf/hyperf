@@ -54,7 +54,7 @@ CREATE TABLE `user` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `INDEX_NAME` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
 INSERT INTO `user` (`id`, `name`, `gender`, `created_at`, `updated_at`)
 VALUES
