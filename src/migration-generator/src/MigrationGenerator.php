@@ -15,9 +15,11 @@ use Hyperf\Collection\Collection;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Commands\ModelOption;
+use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Schema\Builder;
 use Hyperf\Database\Schema\Column;
+use Hyperf\Database\Schema\MySqlBuilder;
 use Hyperf\Support\Filesystem\Filesystem;
 use InvalidArgumentException;
 use PhpParser\NodeTraverser;
@@ -175,6 +177,7 @@ class MigrationGenerator
 
     public function createMigrations(ModelOption $option)
     {
+        /** @var MySqlBuilder $builder */
         $builder = $this->getSchemaBuilder($option->getPool());
         $tables = [];
 
@@ -208,6 +211,7 @@ class MigrationGenerator
 
     protected function getSchemaBuilder(string $poolName): Builder
     {
+        /** @var Connection $connection */
         $connection = $this->resolver->connection($poolName);
         return $connection->getSchemaBuilder();
     }

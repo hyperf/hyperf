@@ -11,36 +11,39 @@ declare(strict_types=1);
  */
 namespace Hyperf\MigrationGenerator;
 
+use JetBrains\PhpStorm\ArrayShape;
+
 final class TableData
 {
     public function __construct(protected array $columns, protected array $indexes, protected string $comment)
     {
     }
 
-    /**
-     * @return [[
-     *     'extra' => 'auto_increment',
-     *     'column_type' => '',
-     *     'character_maximum_length' => 4,
-     *     'numeric_precision' => 0,
-     *     'numeric_scale' => 0,
-     * ]]
-     */
+    #[ArrayShape([
+        [
+            'column_name' => 'string',
+            'extra' => 'string',
+            'column_type' => 'string',
+            'character_maximum_length' => 'int',
+            'numeric_precision' => 'int',
+            'numeric_scale' => 'int',
+        ],
+    ])]
     public function getColumns(): array
     {
         return $this->columns;
     }
 
-    /**
-     * @return [[
-     *     'table' => '',
-     *     'key_name' => '',
-     *     'non_unique' => '',
-     *     'seq_in_index' => '',
-     *     'column_name' => '',
-     *     'index_type' => 'BTREE',
-     * ]]
-     */
+    #[ArrayShape([
+        [
+            'table' => 'string',
+            'key_name' => 'string',
+            'non_unique' => 'string',
+            'seq_in_index' => 'string',
+            'column_name' => 'string',
+            'index_type' => 'string',
+        ],
+    ])]
     public function getIndexes(): array
     {
         return $this->indexes;

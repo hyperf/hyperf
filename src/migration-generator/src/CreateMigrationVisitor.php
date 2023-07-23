@@ -35,7 +35,7 @@ class CreateMigrationVisitor extends NodeVisitorAbstract
     {
         foreach ($nodes as $class) {
             if ($class instanceof Node\Stmt\Class_) {
-                $class->name = Str::studly('create_' . Str::snake($this->table) . '_table');
+                $class->name = new Node\Identifier(Str::studly('create_' . Str::snake($this->table) . '_table'));
                 $upStmt = new Node\Stmt\ClassMethod('up', [
                     'returnType' => new Node\Identifier('void'),
                     'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_FINAL,

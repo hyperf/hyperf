@@ -15,8 +15,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\MigrationGenerator\MigrationGenerator;
-use Hyperf\Utils\Filesystem\Filesystem;
-use PhpParser\Parser;
+use Hyperf\Support\Filesystem\Filesystem;
 use PhpParser\PrettyPrinterAbstract;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -28,8 +27,6 @@ class GenerateMigrationCommand extends HyperfCommand
     protected ?ConnectionResolverInterface $resolver = null;
 
     protected ?ConfigInterface $config = null;
-
-    protected ?Parser $astParser = null;
 
     protected ?PrettyPrinterAbstract $printer = null;
 
