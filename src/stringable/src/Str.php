@@ -211,7 +211,8 @@ class Str
     public static function contains(string $haystack, $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && str_contains($haystack, (string) $needle)) {
+            $needle = (string) $needle;
+            if ($needle !== '' && str_contains($haystack, $needle)) {
                 return true;
             }
         }
