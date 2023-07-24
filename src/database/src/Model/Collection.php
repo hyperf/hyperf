@@ -398,6 +398,10 @@ class Collection extends BaseCollection implements CompressInterface
      */
     public function except($keys): BaseCollection
     {
+        if (is_null($keys)) {
+            return new static($this->items);
+        }
+
         $dictionary = Arr::except($this->getDictionary(), $keys);
 
         return new static(array_values($dictionary));
