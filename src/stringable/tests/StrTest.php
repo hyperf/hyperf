@@ -251,5 +251,6 @@ class StrTest extends TestCase
         $this->assertTrue(Str::contains('Hperfy', ['H']));
         $this->assertFalse(Str::contains('Hperfy', ['']));
         $this->assertFalse(Str::contains('Hperfy', [null]));
+        $this->assertFalse(Str::contains('Hperfy', null));
     }
 }
