@@ -169,6 +169,9 @@ class StrTest extends TestCase
         $this->assertFalse(Str::startsWith('hyperf.wiki', ['http://', 'https://']));
         $this->assertTrue(Str::startsWith('http://www.hyperf.io', 'http://'));
         $this->assertTrue(Str::startsWith('https://www.hyperf.io', ['http://', 'https://']));
+        $this->assertFalse(Str::startsWith('Hperfy', ['']));
+        $this->assertFalse(Str::startsWith('Hperfy', [null]));
+        $this->assertFalse(Str::startsWith('Hperfy', null));
     }
 
     public function testStripTags()
@@ -252,5 +255,13 @@ class StrTest extends TestCase
         $this->assertFalse(Str::contains('Hperfy', ['']));
         $this->assertFalse(Str::contains('Hperfy', [null]));
         $this->assertFalse(Str::contains('Hperfy', null));
+    }
+
+    public function testEndsWith()
+    {
+        $this->assertTrue(Str::endsWith('Hperfy', ['y']));
+        $this->assertFalse(Str::endsWith('Hperfy', ['']));
+        $this->assertFalse(Str::endsWith('Hperfy', [null]));
+        $this->assertFalse(Str::endsWith('Hperfy', null));
     }
 }
