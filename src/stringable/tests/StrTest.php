@@ -245,4 +245,12 @@ class StrTest extends TestCase
         $this->assertTrue(Str::isMatch(['/laravel/i', '/laravel!(.*)/'], 'Hello, Laravel!'));
         $this->assertTrue(Str::isMatch(['/^[a-zA-Z,!]+$/', '/^(.*(.*(.*)))/'], 'Hello, Laravel!'));
     }
+
+    public function testContains()
+    {
+        $this->assertTrue(Str::contains('Hperfy', ['H']));
+        $this->assertFalse(Str::contains('Hperfy', ['']));
+        $this->assertFalse(Str::contains('Hperfy', [null]));
+        $this->assertFalse(Str::contains('Hperfy', null));
+    }
 }

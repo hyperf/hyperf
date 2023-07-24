@@ -1,5 +1,9 @@
 # v3.0.31 - TBD
 
+## Fixed
+
+- [#5969](https://github.com/hyperf/hyperf/pull/5969) Fixed bug that `Str::contains` with `null` will case the error result.
+
 # v3.0.30 - 2023-07-21
 
 ## Fixed
