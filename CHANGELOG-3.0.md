@@ -2,7 +2,8 @@
 
 ## Fixed
 
-- [#5969](https://github.com/hyperf/hyperf/pull/5969) Fixed bug that `Str::contains` with `null` will case the error result.
+- [#5969](https://github.com/hyperf/hyperf/pull/5969) Fixed bug that `Str::contains` will cause the error result when the `$needles` is `[null]`.
+- [#5970](https://github.com/hyperf/hyperf/pull/5970) Fixed bug that `Str::startsWith` and `Str::endsWith` will cause the error result when the `$needles` is `[null]`.
 
 # v3.0.30 - 2023-07-21
 
