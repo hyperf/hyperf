@@ -171,7 +171,7 @@ class StrTest extends TestCase
         $this->assertTrue(Str::startsWith('https://www.hyperf.io', ['http://', 'https://']));
         $this->assertFalse(Str::startsWith('Hyperf', ['']));
         $this->assertFalse(Str::startsWith('Hyperf', [null]));
-        $this->assertFalse(Str::startsWith('Hyperf', null)); 
+        $this->assertFalse(Str::startsWith('Hyperf', null));
     }
 
     public function testStripTags()
