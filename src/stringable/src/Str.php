@@ -212,14 +212,29 @@ class Str
     public static function contains(string $haystack, $needles, $ignoreCase = false): bool
     {
         if ($ignoreCase) {
-            $haystack = static::lower($haystack);
+            return static::containsIgnoreCase($haystack, $needles);
         }
+
         foreach ((array) $needles as $needle) {
             $needle = (string) $needle;
-            if ($ignoreCase) {
-                $needle = static::lower($needle);
-            }
             if ($needle !== '' && str_contains($haystack, $needle)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine if a given string contains a given substring regardless of case sensitivity.
+     *
+     * @param array|string $needles
+     */
+    public static function containsIgnoreCase(string $haystack, $needles): bool
+    {
+        foreach ((array) $needles as $needle) {
+            $needle = (string) $needle;
+            if ($needle !== '' && stripos($haystack, $needle) !== false) {
                 return true;
             }
         }
