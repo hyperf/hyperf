@@ -5,6 +5,10 @@
 - [#5969](https://github.com/hyperf/hyperf/pull/5969) Fixed bug that `Str::contains` will cause the error result when the `$needles` is `[null]`.
 - [#5970](https://github.com/hyperf/hyperf/pull/5970) Fixed bug that `Str::startsWith` and `Str::endsWith` will cause the error result when the `$needles` is `[null]`.
 
+## Added
+
+- [#5971](https://github.com/hyperf/hyperf/pull/5971) Added `Str::containsIgnoreCase()` which determine if a given string contains a given substring regardless of case sensitivity.
+
 # v3.0.30 - 2023-07-21
 
 ## Fixed

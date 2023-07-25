@@ -208,8 +208,12 @@ class Str
      *
      * @param array|string $needles
      */
-    public static function contains(string $haystack, $needles): bool
+    public static function contains(string $haystack, mixed $needles, bool $ignoreCase = false): bool
     {
+        if ($ignoreCase) {
+            return static::containsIgnoreCase($haystack, $needles);
+        }
+
         foreach ((array) $needles as $needle) {
             $needle = (string) $needle;
             if ($needle !== '' && str_contains($haystack, $needle)) {
@@ -221,16 +225,32 @@ class Str
     }
 
     /**
+     * Determine if a given string contains a given substring regardless of case sensitivity.
+     *
+     * @param array|string $needles
+     */
+    public static function containsIgnoreCase(string $haystack, $needles): bool
+    {
+        foreach ((array) $needles as $needle) {
+            $needle = (string) $needle;
+            if ($needle !== '' && stripos($haystack, $needle) !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Determine if a given string contains all array values.
      *
-     * @param string $haystack
      * @param string[] $needles
      * @return bool
      */
-    public static function containsAll($haystack, array $needles)
+    public static function containsAll(string $haystack, array $needles, bool $ignoreCase = false)
     {
         foreach ($needles as $needle) {
-            if (! static::contains($haystack, $needle)) {
+            if (! static::contains($haystack, $needle, $ignoreCase)) {
                 return false;
             }
         }

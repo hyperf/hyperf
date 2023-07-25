@@ -251,6 +251,7 @@ class StrTest extends TestCase
 
     public function testContains()
     {
+        $this->assertTrue(Str::contains('Hyperf', ['h'], true));
         $this->assertTrue(Str::contains('Hyperf', ['H']));
         $this->assertFalse(Str::contains('Hyperf', ['']));
         $this->assertFalse(Str::contains('Hyperf', [null]));
@@ -263,5 +264,11 @@ class StrTest extends TestCase
         $this->assertFalse(Str::endsWith('Hyperf', ['']));
         $this->assertFalse(Str::endsWith('Hyperf', [null]));
         $this->assertFalse(Str::endsWith('Hyperf', null));
+    }
+
+    public function testContainsAll()
+    {
+        $this->assertTrue(Str::containsAll('Hyperf', ['h'], true));
+        $this->assertFalse(Str::containsAll('Hyperf', ['h']));
     }
 }
