@@ -207,11 +207,18 @@ class Str
      * Determine if a given string contains a given substring.
      *
      * @param array|string $needles
+     * @param bool $ignoreCase
      */
-    public static function contains(string $haystack, $needles): bool
+    public static function contains(string $haystack, $needles, $ignoreCase = false): bool
     {
+        if ($ignoreCase) {
+            $haystack = static::lower($haystack);
+        }
         foreach ((array) $needles as $needle) {
             $needle = (string) $needle;
+            if ($ignoreCase) {
+                $needle = static::lower($needle);
+            }
             if ($needle !== '' && str_contains($haystack, $needle)) {
                 return true;
             }
@@ -225,12 +232,13 @@ class Str
      *
      * @param string $haystack
      * @param string[] $needles
+     * @param bool $ignoreCase
      * @return bool
      */
-    public static function containsAll($haystack, array $needles)
+    public static function containsAll($haystack, array $needles, $ignoreCase = false)
     {
         foreach ($needles as $needle) {
-            if (! static::contains($haystack, $needle)) {
+            if (! static::contains($haystack, $needle, $ignoreCase)) {
                 return false;
             }
         }
