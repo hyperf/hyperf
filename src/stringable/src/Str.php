@@ -248,7 +248,7 @@ class Str
     {
         foreach ((array) $needles as $needle) {
             $needle = (string) $needle;
-            if ($needle !== '' && str_ends_with($haystack, (string) $needle)) {
+            if ($needle !== '' && str_ends_with($haystack, $needle)) {
                 return true;
             }
         }
@@ -706,7 +706,7 @@ class Str
     {
         foreach ((array) $needles as $needle) {
             $needle = (string) $needle;
-            if ($needle !== '' && str_starts_with($haystack, (string) $needle)) {
+            if ($needle !== '' && str_starts_with($haystack, $needle)) {
                 return true;
             }
         }
