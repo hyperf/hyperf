@@ -2,7 +2,8 @@
 
 ## Fixed
 
-- [#5969](https://github.com/hyperf/hyperf/pull/5969) Fixed bug that `Str::contains` with `null` will case the error result.
+- [#5969](https://github.com/hyperf/hyperf/pull/5969) Fixed bug that `Str::contains` with `null` will cause the error result.
+- [#5970](https://github.com/hyperf/hyperf/pull/5970) Fixed bug that `Str::startsWith` and `Str::endsWith` with `null` will cause the error result.
 
 # v3.0.30 - 2023-07-21
 
