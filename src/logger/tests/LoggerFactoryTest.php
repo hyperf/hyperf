@@ -31,11 +31,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Logger\LoggerFactory::class)]
-/**
- * @internal
- * @coversNothing
- */
+#[\PHPUnit\Framework\Attributes\CoversClass(LoggerFactory::class)]
 class LoggerFactoryTest extends TestCase
 {
     protected function tearDown(): void
@@ -57,6 +53,15 @@ class LoggerFactoryTest extends TestCase
         ApplicationContext::setContainer($container);
         $factory = $container->get(LoggerFactory::class);
         $logger = $factory->get('hyperf');
+        $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
+    }
+
+    public function testInvokeLoggerFromFactoryByString()
+    {
+        $container = $this->mockContainer();
+        ApplicationContext::setContainer($container);
+        $factory = $container->get(LoggerFactory::class);
+        $logger = $factory->get(group: 'string');
         $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
     }
 
@@ -179,6 +184,7 @@ class LoggerFactoryTest extends TestCase
                         'constructor' => [],
                     ],
                 ],
+                'string' => ['handlers' => ['default']],
                 'default-handlers' => [
                     'handlers' => [
                         [
