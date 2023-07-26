@@ -492,11 +492,14 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get all items except for those with the specified keys.
      *
-     * @param array<array-key, TKey>|static<array-key, TKey> $keys
+     * @param null|array<array-key, TKey>|static<array-key, TKey> $keys
      * @return static<TKey, TValue>
      */
     public function except($keys): self
     {
+        if (is_null($keys)) {
+            return new static($this->items);
+        }
         if ($keys instanceof self) {
             $keys = $keys->all();
         } elseif (! is_array($keys)) {

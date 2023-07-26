@@ -48,6 +48,7 @@
 - [#5945](https://github.com/hyperf/hyperf/pull/5945) Don't sync config frequently when listen more than one namespace for apollo config center.
 - [#5948](https://github.com/hyperf/hyperf/pull/5948) Optimized `Hyperf\Coroutine\Locker`.
 - [#5960](https://github.com/hyperf/hyperf/pull/5960) Allowed set poolName in Annotation.
+- [#5972](https://github.com/hyperf/hyperf/pull/5972) `Collection::except()` with null returns all.
 
 ## Removed
 

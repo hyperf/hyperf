@@ -180,4 +180,18 @@ class CollectionTest extends TestCase
         $this->assertFalse(isset($c['baz']));
         $this->assertTrue(isset($c['name']));
     }
+
+    public function testExcept()
+    {
+        $data = new Collection(['first' => 'Swoole', 'last' => 'Hyperf', 'email' => 'hyperf@gmail.com']);
+
+        $this->assertEquals($data->all(), $data->except(null)->all());
+        $this->assertEquals(['first' => 'Swoole'], $data->except(['last', 'email', 'missing'])->all());
+        $this->assertEquals(['first' => 'Swoole'], $data->except('last', 'email', 'missing')->all());
+        $this->assertEquals(['first' => 'Swoole'], $data->except(collect(['last', 'email', 'missing']))->all());
+
+        $this->assertEquals(['first' => 'Swoole', 'email' => 'hyperf@gmail.com'], $data->except(['last'])->all());
+        $this->assertEquals(['first' => 'Swoole', 'email' => 'hyperf@gmail.com'], $data->except('last')->all());
+        $this->assertEquals(['first' => 'Swoole', 'email' => 'hyperf@gmail.com'], $data->except(collect(['last']))->all());
+    }
 }
