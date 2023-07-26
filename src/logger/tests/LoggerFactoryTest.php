@@ -61,7 +61,7 @@ class LoggerFactoryTest extends TestCase
         $container = $this->mockContainer();
         ApplicationContext::setContainer($container);
         $factory = $container->get(LoggerFactory::class);
-        $logger = $factory->get('string');
+        $logger = $factory->get(group: 'string');
         $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
     }
 
@@ -184,7 +184,7 @@ class LoggerFactoryTest extends TestCase
                         'constructor' => [],
                     ],
                 ],
-                'string' => ['default'],
+                'string' => ['handlers' => ['default']],
                 'default-handlers' => [
                     'handlers' => [
                         [
