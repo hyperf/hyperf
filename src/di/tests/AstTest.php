@@ -20,6 +20,7 @@ use HyperfTest\Di\Stub\Ast\Bar2;
 use HyperfTest\Di\Stub\Ast\Bar3;
 use HyperfTest\Di\Stub\Ast\Bar4;
 use HyperfTest\Di\Stub\Ast\Bar5;
+use HyperfTest\Di\Stub\Ast\Bar6;
 use HyperfTest\Di\Stub\Ast\BarAspect;
 use HyperfTest\Di\Stub\Ast\BarInterface;
 use HyperfTest\Di\Stub\Ast\Chi;
@@ -406,6 +407,35 @@ namespace HyperfTest\Di\Stub\Ast;
 interface BarInterface
 {
     public function toArray() : array;
+}', $code);
+    }
+
+    public function testNewAFunctionReturnValue()
+    {
+        $ast = new Ast();
+        $code = $ast->proxy(Bar6::class);
+        $this->assertSame($this->license . '
+namespace HyperfTest\Di\Stub\Ast;
+
+class Bar6
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    function __construct()
+    {
+        $this->__handlePropertyHandler(__CLASS__);
+    }
+    public function test() : void
+    {
+        substr(\'Hello\', 0) . substr(\'Chance\', 0);
+        new (get_class());
+        new (substr(\'Bar6\', 0));
+        new ($this->className());
+    }
+    public function className() : string
+    {
+        return __CLASS__;
+    }
 }', $code);
     }
 }

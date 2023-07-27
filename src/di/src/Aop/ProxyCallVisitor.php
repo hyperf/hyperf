@@ -36,6 +36,7 @@ use PhpParser\Node\Stmt\Trait_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\NodeVisitorAbstract;
 
+use PhpParser\PrettyPrinter\Standard;
 use function Hyperf\Support\value;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
@@ -127,6 +128,13 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 // Rewrite __FILE__ to the real file path
                 if ($file = Composer::getLoader()->findFile($this->visitorMetadata->className)) {
                     return new String_(realpath($file));
+                }
+                break;
+            case $node instanceof Node\Expr\New_:
+                if ($node->class instanceof FuncCall || $node->class instanceof Node\Expr\MethodCall) {
+                    $printer = new Standard();
+                    $code = $printer->prettyPrint([$node->class]);
+                    return new Identifier("new ($code)");
                 }
                 break;
         }
