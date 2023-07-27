@@ -35,8 +35,8 @@ use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\Trait_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\NodeVisitorAbstract;
-
 use PhpParser\PrettyPrinter\Standard;
+
 use function Hyperf\Support\value;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
@@ -134,7 +134,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 if ($node->class instanceof FuncCall || $node->class instanceof Node\Expr\MethodCall) {
                     $printer = new Standard();
                     $code = $printer->prettyPrint([$node->class]);
-                    return new Identifier("new ($code)");
+                    return new Identifier("new ({$code})");
                 }
                 break;
         }
