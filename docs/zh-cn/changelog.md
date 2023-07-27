@@ -1,5 +1,16 @@
 # 版本更新记录
 
+# v3.0.31 - 2023-07-27
+
+## 修复
+
+- [#5969](https://github.com/hyperf/hyperf/pull/5969) 修复使用 `Str::contains` 时，如果 `$needles` 为 `[null]` 则会导致判断错误的问题。
+- [#5970](https://github.com/hyperf/hyperf/pull/5970) 修复使用 `Str::startsWith` 和 `Str::endsWith` 时，如果 `$needles` 为 `[null]` 则会导致判断错误的问题。
+
+## 新增
+
+- [#5971](https://github.com/hyperf/hyperf/pull/5971) 新增方法 `Str::containsIgnoreCase()` 可以在不区分大小写的情况下，用来判断是否是包含关系。
+
 # v3.0.30 - 2023-07-21
 
 ## 修复
