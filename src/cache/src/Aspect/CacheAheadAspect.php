@@ -54,7 +54,7 @@ class CacheAheadAspect extends AbstractAspect
 
         $result = $proceedingJoinPoint->process();
 
-        if (! in_array($result, $annotation->skipCacheResults)) {
+        if (! in_array($result, $annotation->skipCacheResults, true)) {
             $driver->set(
                 $key,
                 [
