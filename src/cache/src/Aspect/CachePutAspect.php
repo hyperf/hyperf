@@ -40,11 +40,9 @@ class CachePutAspect extends AbstractAspect
 
         $result = $proceedingJoinPoint->process();
 
-        if (in_array($result, $annotation->skipCacheResults)) {
-            return $result;
+        if (! in_array($result, $annotation->skipCacheResults)) {
+            $driver->set($key, $result, $ttl);
         }
-
-        $driver->set($key, $result, $ttl);
 
         return $result;
     }
