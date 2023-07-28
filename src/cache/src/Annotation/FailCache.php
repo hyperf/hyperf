@@ -24,7 +24,8 @@ class FailCache extends AbstractAnnotation
         public ?string $value = null,
         public ?int $ttl = null,
         public ?string $listener = null,
-        public string $group = 'default'
+        public string $group = 'default',
+        public array $skipCacheResults = []
     ) {
     }
 

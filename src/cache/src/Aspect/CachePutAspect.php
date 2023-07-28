@@ -33,13 +33,16 @@ class CachePutAspect extends AbstractAspect
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
 
-        [$key, $ttl, $group] = $this->annotationManager->getCachePutValue($className, $method, $arguments);
+        /** @var CachePut $annotation */
+        [$key, $ttl, $group, $annotation] = $this->annotationManager->getCachePutValue($className, $method, $arguments);
 
         $driver = $this->manager->getDriver($group);
 
         $result = $proceedingJoinPoint->process();
 
-        $driver->set($key, $result, $ttl);
+        if (! in_array($result, $annotation->skipCacheResults, true)) {
+            $driver->set($key, $result, $ttl);
+        }
 
         return $result;
     }

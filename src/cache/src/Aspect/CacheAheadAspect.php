@@ -54,17 +54,19 @@ class CacheAheadAspect extends AbstractAspect
 
         $result = $proceedingJoinPoint->process();
 
-        $driver->set(
-            $key,
-            [
-                'expired_time' => $now + $annotation->ttl - $annotation->aheadSeconds,
-                'data' => $result,
-            ],
-            $ttl
-        );
+        if (! in_array($result, $annotation->skipCacheResults, true)) {
+            $driver->set(
+                $key,
+                [
+                    'expired_time' => $now + $annotation->ttl - $annotation->aheadSeconds,
+                    'data' => $result,
+                ],
+                $ttl
+            );
 
-        if ($driver instanceof KeyCollectorInterface && $annotation instanceof CacheAhead && $annotation->collect) {
-            $driver->addKey($annotation->prefix . 'MEMBERS', $key);
+            if ($driver instanceof KeyCollectorInterface && $annotation instanceof CacheAhead && $annotation->collect) {
+                $driver->addKey($annotation->prefix . 'MEMBERS', $key);
+            }
         }
 
         return $result;

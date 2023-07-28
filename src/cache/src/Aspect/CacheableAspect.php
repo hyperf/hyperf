@@ -47,9 +47,12 @@ class CacheableAspect extends AbstractAspect
 
         $result = $proceedingJoinPoint->process();
 
-        $driver->set($key, $result, $ttl);
-        if ($driver instanceof KeyCollectorInterface && $annotation instanceof Cacheable && $annotation->collect) {
-            $driver->addKey($annotation->prefix . 'MEMBERS', $key);
+        if (! in_array($result, $annotation->skipCacheResults, true)) {
+            $driver->set($key, $result, $ttl);
+
+            if ($driver instanceof KeyCollectorInterface && $annotation instanceof Cacheable && $annotation->collect) {
+                $driver->addKey($annotation->prefix . 'MEMBERS', $key);
+            }
         }
 
         return $result;

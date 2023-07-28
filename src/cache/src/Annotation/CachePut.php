@@ -25,7 +25,8 @@ class CachePut extends AbstractAnnotation
         public ?string $value = null,
         public ?int $ttl = null,
         public int $offset = 0,
-        public string $group = 'default'
+        public string $group = 'default',
+        public array $skipCacheResults = []
     ) {
     }
 }
