@@ -97,6 +97,14 @@ class AspectTest extends TestCase
         $res = $aspect->process($point);
         $this->assertNull($res);
         $this->assertFalse($redis->has('test'));
+
+        $point->pipe = static function (ProceedingJoinPoint $res) {
+            return 0;
+        };
+
+        $res = $aspect->process($point);
+        $this->assertSame(0, $res);
+        $this->assertTrue($redis->has('test'));
     }
 
     public function testCacheAheadAspect()
