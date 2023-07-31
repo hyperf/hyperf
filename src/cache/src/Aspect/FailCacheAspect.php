@@ -45,7 +45,7 @@ class FailCacheAspect extends AbstractAspect
         try {
             $result = $proceedingJoinPoint->process();
 
-            if (! in_array($result, $annotation->skipCacheResults, true)) {
+            if (! in_array($result, (array) $annotation->skipCacheResults, true)) {
                 $driver->set($key, $result, $ttl);
             }
         } catch (Throwable $throwable) {

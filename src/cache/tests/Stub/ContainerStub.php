@@ -41,6 +41,7 @@ class ContainerStub
                     'driver' => RedisDriver::class,
                     'packer' => PhpSerializerPacker::class,
                     'prefix' => 'c:',
+                    'skip_cache_results' => [],
                 ],
                 'serialize' => [
                     'driver' => SerializeRedisDriver::class,

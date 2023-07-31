@@ -37,6 +37,7 @@ class AnnotationManager
         $key = $this->getFormattedKey($annotation->prefix, $arguments, $annotation->value);
         $group = $annotation->group;
         $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
+        $annotation->skipCacheResults ??= (array) $this->config->get("cache.{$group}.skip_cache_results", []);
 
         return [$key, $ttl + $this->getRandomOffset($annotation->offset), $group, $annotation];
     }
@@ -49,6 +50,7 @@ class AnnotationManager
         $key = $this->getFormattedKey($annotation->prefix, $arguments, $annotation->value);
         $group = $annotation->group;
         $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
+        $annotation->skipCacheResults ??= (array) $this->config->get("cache.{$group}.skip_cache_results", []);
 
         return [$key, $ttl + $this->getRandomOffset($annotation->offset), $group, $annotation];
     }
@@ -61,6 +63,7 @@ class AnnotationManager
         $prefix = $annotation->prefix;
         $all = $annotation->all;
         $group = $annotation->group;
+
         if (! $all) {
             $key = $this->getFormattedKey($prefix, $arguments, $annotation->value);
         } else {
@@ -78,6 +81,7 @@ class AnnotationManager
         $key = $this->getFormattedKey($annotation->prefix, $arguments, $annotation->value);
         $group = $annotation->group;
         $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
+        $annotation->skipCacheResults ??= (array) $this->config->get("cache.{$group}.skip_cache_results", []);
 
         return [$key, $ttl + $this->getRandomOffset($annotation->offset), $group, $annotation];
     }
@@ -91,6 +95,7 @@ class AnnotationManager
         $key = $this->getFormattedKey($prefix, $arguments, $annotation->value);
         $group = $annotation->group;
         $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
+        $annotation->skipCacheResults ??= (array) $this->config->get("cache.{$group}.skip_cache_results", []);
 
         return [$key, $ttl, $group, $annotation];
     }

@@ -30,7 +30,7 @@ class Cacheable extends AbstractAnnotation
         public int $offset = 0,
         public string $group = 'default',
         public bool $collect = false,
-        public array $skipCacheResults = []
+        public ?array $skipCacheResults = null
     ) {
     }
 
