@@ -11,13 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Event;
 
-use Hyperf\Crontab\Crontab;
-use Throwable;
-
-class FailToExecute extends Event
+class AfterExecute extends Event
 {
-    public function __construct(Crontab $crontab, public Throwable $throwable)
-    {
-        parent::__construct($crontab);
-    }
 }
