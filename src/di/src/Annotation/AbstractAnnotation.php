@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Contract\Arrayable;
@@ -21,7 +22,7 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
     {
         $formattedValue = $this->formatParams($value);
         foreach ($formattedValue as $key => $val) {
-            if (property_exists($this, $key)) {
+            if (is_string($key) && property_exists($this, $key)) {
                 $this->{$key} = $val;
             }
         }
@@ -57,13 +58,13 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
         if (isset($value[0])) {
             $value = $value[0];
         }
-        if (! is_array($value)) {
+        if (!is_array($value)) {
             $value = ['value' => $value];
         }
         return $value;
     }
 
-    protected function bindMainProperty(string $key, array $value)
+    protected function bindMainProperty(string $key, array $value): void
     {
         $formattedValue = $this->formatParams($value);
         if (isset($formattedValue['value'])) {
