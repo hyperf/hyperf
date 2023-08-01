@@ -1,5 +1,9 @@
 # v3.0.32 - TBD
 
+## Added
+
+- [#5995](https://github.com/hyperf/hyperf/pull/5995) Added `CrontabFailed` instead of `FailToExecute`.
+
 # v3.0.31 - 2023-07-27
 
 ## Fixed
