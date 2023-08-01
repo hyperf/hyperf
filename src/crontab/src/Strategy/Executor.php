@@ -17,7 +17,7 @@ use Hyperf\Contract\ApplicationInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Timer;
 use Hyperf\Crontab\Crontab;
-use Hyperf\Crontab\Event\FailToExecute;
+use Hyperf\Crontab\Event\CrontabFailed;
 use Hyperf\Crontab\Exception\InvalidArgumentException;
 use Hyperf\Crontab\LoggerInterface;
 use Hyperf\Crontab\Mutex\RedisServerMutex;
@@ -189,7 +189,7 @@ class Executor
                 $runnable();
             } catch (Throwable $throwable) {
                 $result = false;
-                $this->dispatcher?->dispatch(new FailToExecute($crontab, $throwable));
+                $this->dispatcher?->dispatch(new CrontabFailed($crontab, $throwable));
             } finally {
                 $this->logResult($crontab, $result, $throwable ?? null);
             }

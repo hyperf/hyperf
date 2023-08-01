@@ -11,13 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Event;
 
-class_alias(CrontabFailed::class, FailToExecute::class);
+use Hyperf\Crontab\Crontab;
+use Throwable;
 
-if (! class_exists(FailToExecute::class)) {
-    /**
-     * @deprecated since 3.0, please use Hyperf\Crontab\Event\CrontabFailed instead.
-     */
-    class FailToExecute extends CrontabFailed
+class CrontabFailed
+{
+    public function __construct(public Crontab $crontab, public Throwable $throwable)
     {
     }
 }
