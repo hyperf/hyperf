@@ -28,6 +28,7 @@ class HttpClientAspect extends AbstractAspect
     use SpanStarter;
 
     public array $classes = [
+        Client::class . '::request',
         Client::class . '::requestAsync',
     ];
 
@@ -46,6 +47,10 @@ class HttpClientAspect extends AbstractAspect
         $options = $proceedingJoinPoint->arguments['keys']['options'];
         if (isset($options['no_aspect']) && $options['no_aspect'] === true) {
             return $proceedingJoinPoint->process();
+        }
+        // Disable the aspect for the requestAsync method.
+        if ($proceedingJoinPoint->methodName == 'request') {
+            $proceedingJoinPoint->arguments['keys']['options']['no_aspect'] = true;
         }
         $arguments = $proceedingJoinPoint->arguments;
         $method = $arguments['keys']['method'] ?? 'Null';
