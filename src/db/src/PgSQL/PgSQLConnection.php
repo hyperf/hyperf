@@ -22,10 +22,7 @@ use Swoole\Coroutine\PostgreSQLStatement;
 
 class PgSQLConnection extends AbstractConnection
 {
-    /**
-     * @var PostgreSQL
-     */
-    protected $connection;
+    protected PostgreSQL $connection;
 
     protected array $config = [
         'driver' => 'pgsql',
@@ -104,7 +101,7 @@ class PgSQLConnection extends AbstractConnection
 
     public function exec(string $sql): int
     {
-        return $this->execute($sql, []);
+        return $this->execute($sql);
     }
 
     public function query(string $query, array $bindings = []): array
@@ -128,16 +125,12 @@ class PgSQLConnection extends AbstractConnection
 
     public function call(string $method, array $argument = [])
     {
-        switch ($method) {
-            case 'beginTransaction':
-                return $this->connection->query('BEGIN');
-            case 'rollBack':
-                return $this->connection->query('ROLLBACK');
-            case 'commit':
-                return $this->connection->query('COMMIT');
-        }
-
-        return $this->connection->{$method}(...$argument);
+        return match ($method) {
+            'beginTransaction' => $this->connection->query('BEGIN'),
+            'rollBack' => $this->connection->query('ROLLBACK'),
+            'commit' => $this->connection->query('COMMIT'),
+            default => $this->connection->{$method}(...$argument),
+        };
     }
 
     public function run(Closure $closure)
@@ -145,7 +138,7 @@ class PgSQLConnection extends AbstractConnection
         return $closure->call($this, $this->connection);
     }
 
-    public function str_replace_once($needle, $replace, $haystack)
+    public function str_replace_once($needle, $replace, $haystack): array|string
     {
         // Looks for the first occurence of $needle in $haystack
         // and replaces it with $replace.
