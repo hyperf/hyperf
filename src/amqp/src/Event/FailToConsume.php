@@ -16,7 +16,7 @@ use Throwable;
 
 class FailToConsume extends ConsumeEvent
 {
-    public function __construct(ConsumerMessageInterface $message, protected Throwable $throwable)
+    public function __construct(protected ConsumerMessageInterface $message, protected Throwable $throwable)
     {
         parent::__construct($message);
     }

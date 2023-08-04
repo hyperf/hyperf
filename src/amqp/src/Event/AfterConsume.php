@@ -15,7 +15,7 @@ use Hyperf\Amqp\Message\ConsumerMessageInterface;
 
 class AfterConsume extends ConsumeEvent
 {
-    public function __construct(ConsumerMessageInterface $message, protected string $result)
+    public function __construct(protected ConsumerMessageInterface $message, protected string $result)
     {
         parent::__construct($message);
     }
