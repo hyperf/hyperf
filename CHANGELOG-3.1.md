@@ -70,3 +70,8 @@
 ## Fixed
 
 - [#5771](https://github.com/hyperf/hyperf/pull/5771) Fixed bug that the return type of `Model::updateOrInsert` isn't boolean.
+
+## Deprecated
+
+- `Hyperf\DB\PgSQL\PgSQLConnection::str_replace_once` will be deprecated, please use `Hyperf\DB\PgSQL\PgSQLConnection::strReplaceOnce` instead.
+- `Hyperf\Database\PgSQL\PostgreSqlSwooleExtConnection::str_replace_once` will be deprecated, please use `Hyperf\Database\PgSQL\PostgreSqlSwooleExtConnection::strReplaceOnce` instead.

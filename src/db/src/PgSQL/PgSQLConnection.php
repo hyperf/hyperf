@@ -131,7 +131,6 @@ class PgSQLConnection extends AbstractConnection
             'commit' => $this->connection->query('COMMIT'),
             default => $this->connection->{$method}(...$argument),
         };
-
     }
 
     public function run(Closure $closure)
@@ -139,7 +138,18 @@ class PgSQLConnection extends AbstractConnection
         return $closure->call($this, $this->connection);
     }
 
+    /**
+     * @param string $needle
+     * @param string $replace
+     * @param string $haystack
+     * @deprecated ,using `strReplaceOnce` instead
+     */
     public function str_replace_once($needle, $replace, $haystack): array|string
+    {
+        return $this->strReplaceOnce($needle, $replace, $haystack);
+    }
+
+    public function strReplaceOnce(string $needle, string $replace, string $haystack): array|string
     {
         // Looks for the first occurence of $needle in $haystack
         // and replaces it with $replace.
@@ -156,7 +166,7 @@ class PgSQLConnection extends AbstractConnection
     {
         $num = 1;
         while (strpos($query, '?')) {
-            $query = $this->str_replace_once('?', '$' . $num++, $query);
+            $query = $this->strReplaceOnce('?', '$' . $num++, $query);
         }
 
         $statement = $this->connection->prepare($query);

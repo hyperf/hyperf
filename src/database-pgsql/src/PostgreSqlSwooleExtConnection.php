@@ -151,10 +151,21 @@ class PostgreSqlSwooleExtConnection extends Connection
             throw new QueryException($query, [], new Exception($statement->error));
         }
 
-        return $statement->fetchAll(SW_PGSQL_ASSOC);
+        return $statement->fetchAll();
     }
 
-    public function str_replace_once($needle, $replace, $haystack)
+    /**
+     * @param string $needle
+     * @param string $replace
+     * @param string $haystack
+     * @deprecated ,using `strReplaceOnce` instead
+     */
+    public function str_replace_once($needle, $replace, $haystack): array|string
+    {
+        return $this->strReplaceOnce($needle, $replace, $haystack);
+    }
+
+    public function strReplaceOnce(string $needle, string $replace, string $haystack): array|string
     {
         // Looks for the first occurence of $needle in $haystack
         // and replaces it with $replace.
@@ -219,7 +230,7 @@ class PostgreSqlSwooleExtConnection extends Connection
     {
         $num = 1;
         while (strpos($query, '?')) {
-            $query = $this->str_replace_once('?', '$' . $num++, $query);
+            $query = $this->strReplaceOnce('?', '$' . $num++, $query);
         }
 
         /** @var PostgreSQL $pdo */
