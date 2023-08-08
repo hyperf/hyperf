@@ -317,11 +317,6 @@ abstract class Command extends SymfonyCommand
     }
 
     /**
-     * Handle the current command.
-     */
-    abstract public function handle();
-
-    /**
      * Set the verbosity level.
      *
      * @param mixed $level
@@ -422,11 +417,12 @@ abstract class Command extends SymfonyCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->disableDispatcher($input);
+        $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
 
-        $callback = function () {
+        $callback = function () use ($method) {
             try {
                 $this->eventDispatcher?->dispatch(new Event\BeforeHandle($this));
-                $statusCode = $this->handle();
+                $statusCode = $this->{$method}();
                 $this->eventDispatcher?->dispatch(new Event\AfterHandle($this));
             } catch (Throwable $exception) {
                 if (class_exists(ExitException::class) && $exception instanceof ExitException) {
