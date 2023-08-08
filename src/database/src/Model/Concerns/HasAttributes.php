@@ -23,6 +23,7 @@ use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Contract\Synchronized;
 use Hyperf\Database\Model\EnumCollector;
+use Hyperf\Database\Exception\InvalidCastException;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Stringable\Str;
@@ -1264,9 +1265,23 @@ trait HasAttributes
      */
     protected function isClassCastable(string $key): bool
     {
-        return array_key_exists($key, $this->getCasts())
-            && class_exists($class = $this->parseCasterClass($this->getCasts()[$key]))
-            && ! in_array($class, static::$primitiveCastTypes);
+        $casts = $this->getCasts();
+
+        if (! array_key_exists($key, $casts)) {
+            return false;
+        }
+
+        $castType = $this->parseCasterClass($casts[$key]);
+
+        if (in_array($castType, static::$primitiveCastTypes)) {
+            return false;
+        }
+
+        if (class_exists($castType)) {
+            return true;
+        }
+
+        throw new InvalidCastException($this->getModel(), $key, $castType);
     }
 
     /**
