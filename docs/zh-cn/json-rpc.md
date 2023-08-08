@@ -78,6 +78,8 @@ return [
             'name' => 'jsonrpc-http',
             'type' => Server::SERVER_HTTP,
             'host' => '0.0.0.0',
+            //服务地址，可以配外网地址,设置了之后服务就不会自动绑定内网地址
+            'address' => getenv('CONSUL_SERVICE_HOST'),
             'port' => 9504,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [

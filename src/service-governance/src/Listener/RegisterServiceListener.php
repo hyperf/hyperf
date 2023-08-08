@@ -99,7 +99,7 @@ class RegisterServiceListener implements ListenerInterface
             if (! $server['name']) {
                 throw new InvalidArgumentException('Invalid server name');
             }
-            $host = $server['host'];
+            $host = isset($server['address']) ? $server['address'] : $server['host'];
             if (in_array($host, ['0.0.0.0', 'localhost'])) {
                 $host = $this->ipReader->read();
             }
