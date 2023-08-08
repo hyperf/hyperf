@@ -438,7 +438,7 @@ abstract class Command extends SymfonyCommand
                     $this->output && $this->error($exception->getMessage());
 
                     $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
-                    $statusCode = (int) $exception->getCode();
+                    $statusCode = $exception->getCode() ?: self::FAILURE;
                 }
             } finally {
                 $this->eventDispatcher?->dispatch(new Event\AfterExecute($this));
