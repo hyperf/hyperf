@@ -55,7 +55,7 @@ class Watcher
 
     public function run()
     {
-        $this->dumpautoload();
+        $this->dumpAutoload();
         $this->restart(true);
 
         $channel = new Channel(999);
@@ -84,7 +84,7 @@ class Watcher
         }
     }
 
-    public function dumpautoload()
+    public function dumpAutoload()
     {
         $ret = exec('composer dump-autoload -o --no-scripts -d ' . BASE_PATH);
         $this->output->writeln($ret['output'] ?? '');
