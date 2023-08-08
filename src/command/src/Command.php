@@ -84,6 +84,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * The exit code of the command.
+     * @deprecated since v3.0, will be removed in v3.1.
      */
     protected int $exitCode = 0;
 
