@@ -4,6 +4,10 @@
 
 - [#5996](https://github.com/hyperf/hyperf/pull/5996) Support aspect to `GuzzleHttp\Client::request()`.
 
+## Optimized
+
+- [#6007](https://github.com/hyperf/hyperf/pull/6007) Throw exception when cast class is not existed.
+
 # v3.0.31 - 2023-07-27
 
 ## Fixed
