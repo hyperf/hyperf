@@ -425,33 +425,43 @@ abstract class Command extends SymfonyCommand
         $callback = function () {
             try {
                 $this->eventDispatcher?->dispatch(new Event\BeforeHandle($this));
-                $this->handle();
+                $statusCode = $this->handle();
                 $this->eventDispatcher?->dispatch(new Event\AfterHandle($this));
             } catch (Throwable $exception) {
                 if (class_exists(ExitException::class) && $exception instanceof ExitException) {
-                    return $this->exitCode = (int) $exception->getStatus();
+                    $statusCode = (int) $exception->getStatus();
+                } else {
+                    if (! $this->eventDispatcher) {
+                        throw $exception;
+                    }
+
+                    $this->output && $this->error($exception->getMessage());
+
+                    $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
+                    $statusCode = (int) $exception->getCode();
                 }
-
-                if (! $this->eventDispatcher) {
-                    throw $exception;
-                }
-
-                $this->output && $this->error($exception->getMessage());
-
-                $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
-                return $this->exitCode = (int) $exception->getCode() ?: -1;
             } finally {
                 $this->eventDispatcher?->dispatch(new Event\AfterExecute($this));
             }
 
-            return 0;
+            return $statusCode;
         };
 
+        $statusCode = self::SUCCESS;
+
         if ($this->coroutine && ! Coroutine::inCoroutine()) {
-            run($callback, $this->hookFlags);
-            return $this->exitCode;
+            run(function () use (&$statusCode, $callback) {
+                $statusCode = $callback();
+            }, $this->hookFlags);
+        } else {
+            $statusCode = $callback();
         }
 
-        return $callback();
+        if (is_numeric($statusCode)) {
+            $statusCode = (int) $statusCode;
+            return $statusCode >= 0 && $statusCode <= 255 ? $statusCode : 255;
+        }
+
+        return self::SUCCESS;
     }
 }
