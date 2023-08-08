@@ -133,8 +133,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             case $node instanceof Node\Expr\New_:
                 if ($node->class instanceof FuncCall || $node->class instanceof Node\Expr\MethodCall) {
                     $printer = new Standard();
-                    $code = $printer->prettyPrint([$node->class]);
-                    return new Identifier("new ({$code})");
+                    $classCode = $printer->prettyPrint([$node->class]);
+                    $argsCode = str_replace(PHP_EOL, ', ', $printer->prettyPrint($node->args));
+                    return new Identifier("new ({$classCode})({$argsCode})");
                 }
                 break;
         }
