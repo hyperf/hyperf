@@ -4,6 +4,10 @@
 
 - [#5996](https://github.com/hyperf/hyperf/pull/5996) Support aspect to `GuzzleHttp\Client::request()`.
 
+## Optimized
+
+- [#6004](https://github.com/hyperf/hyperf/pull/6004) Allowed return `statusCode` via `handle` method.
+
 # v3.0.31 - 2023-07-27
 
 ## Fixed
