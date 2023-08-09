@@ -52,6 +52,7 @@
 - [#5960](https://github.com/hyperf/hyperf/pull/5960) Allowed set poolName in Annotation.
 - [#5972](https://github.com/hyperf/hyperf/pull/5972) `Collection::except()` with null returns all.
 - [#5973](https://github.com/hyperf/hyperf/pull/5973) Simplified the handlers definition of logger.
+- [#6010](https://github.com/hyperf/hyperf/pull/6010) Throw exception when cast class is not existed.
 
 ## Removed
 
