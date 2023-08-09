@@ -16,28 +16,12 @@ use RuntimeException;
 class InvalidCastException extends RuntimeException
 {
     /**
-     * The name of the affected model.
+     * @param string $model the name of the affected model
+     * @param string $column the name of the column
+     * @param string $castType the name of the cast type
      */
-    public string $model;
-
-    /**
-     * The name of the column.
-     */
-    public string $column;
-
-    /**
-     * The name of the cast type.
-     */
-    public string $castType;
-
-    public function __construct(object $model, string $column, string $castType)
+    public function __construct(public string $model, public string $column, public string $castType)
     {
-        $class = get_class($model);
-
-        parent::__construct("Call to undefined cast [{$castType}] on column [{$column}] in model [{$class}].");
-
-        $this->model = $class;
-        $this->column = $column;
-        $this->castType = $castType;
+        parent::__construct("Call to undefined cast [{$castType}] on column [{$column}] in model [{$model}].");
     }
 }

@@ -257,8 +257,7 @@ class DatabaseModelCustomCastingTest extends TestCase
     {
         $this->expectException(InvalidCastException::class);
         $this->expectExceptionMessage('Call to undefined cast [HyperfTest\Database\InvalidCaster] on column [invalid_caster] in model [HyperfTest\Database\TestModelWithCustomCast].');
-        $model = Mockery::mock(TestModelWithCustomCast::class)->makePartial();
-        $model->shouldReceive('getModel')->once()->andReturn(new TestModelWithCustomCast());
+        $model = new TestModelWithCustomCast();
         $model->invalid_caster = 'foo';
     }
 }

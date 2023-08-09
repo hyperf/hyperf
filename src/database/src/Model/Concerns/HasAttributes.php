@@ -1281,7 +1281,7 @@ trait HasAttributes
             return true;
         }
 
-        throw new InvalidCastException($this, $key, $castType);
+        throw new InvalidCastException($this::class, $key, $castType);
     }
 
     /**
