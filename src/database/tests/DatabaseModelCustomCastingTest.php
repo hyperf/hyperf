@@ -15,6 +15,7 @@ use Hyperf\Collection\Arr;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
+use Hyperf\Database\Exception\InvalidCastException;
 use Hyperf\Database\Model\CastsValue;
 use Hyperf\Database\Model\Model;
 use Mockery;
@@ -251,6 +252,14 @@ class DatabaseModelCustomCastingTest extends TestCase
         unset($user->not_found);
         $this->assertSame(['name' => 'Hyperf', 'gender' => 1, 'role_id' => null], $model->getAttributes());
     }
+
+    public function testThrowExceptionWhenCastClassNotExist()
+    {
+        $this->expectException(InvalidCastException::class);
+        $this->expectExceptionMessage('Call to undefined cast [HyperfTest\Database\InvalidCaster] on column [invalid_caster] in model [HyperfTest\Database\TestModelWithCustomCast].');
+        $model = new TestModelWithCustomCast();
+        $model->invalid_caster = 'foo';
+    }
 }
 
 class TestModelWithCustomCast extends Model
@@ -274,6 +283,7 @@ class TestModelWithCustomCast extends Model
         'value_object_caster_with_argument' => ValueObject::class . ':argument',
         'value_object_caster_with_caster_instance' => ValueObjectWithCasterInstance::class,
         'cast_using' => CastUsing::class,
+        'invalid_caster' => InvalidCaster::class,
     ];
 }
 
