@@ -1,4 +1,14 @@
-# v3.0.32 - TBD
+# v3.0.33 - TBD
+
+# v3.0.32 - 2023-08-09
+
+## Added
+
+- [#5996](https://github.com/hyperf/hyperf/pull/5996) Support aspect to `GuzzleHttp\Client::request()`.
+
+## Fixed
+
+- [#6004](https://github.com/hyperf/hyperf/pull/6004) Fixed bug that the exit code is invalid when using command to throw exceptions.
 
 # v3.0.31 - 2023-07-27
 

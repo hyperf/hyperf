@@ -61,7 +61,7 @@ class CommandTest extends TestCase
         $output->shouldReceive('writeln')->withAnyArgs()->andReturnNull();
 
         $exitCode = $command->execute($input, $output);
-        $this->assertSame(99, $exitCode);
+        $this->assertSame(1, $exitCode);
 
         /** @var FooExitCommand $command */
         $command = new ClassInvoker(new FooExitCommand());
