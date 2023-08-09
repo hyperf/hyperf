@@ -421,7 +421,8 @@ abstract class Command extends SymfonyCommand
         $callback = function () use ($method) {
             try {
                 $this->eventDispatcher?->dispatch(new Event\BeforeHandle($this));
-                if ($statusCode = $this->{$method}() and is_int($statusCode)) {
+                $statusCode = $this->{$method}();
+                if (is_int($statusCode)) {
                     $this->exitCode = $statusCode;
                 }
                 $this->eventDispatcher?->dispatch(new Event\AfterHandle($this));
