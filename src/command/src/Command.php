@@ -84,9 +84,8 @@ abstract class Command extends SymfonyCommand
 
     /**
      * The exit code of the command.
-     * @deprecated since v3.0, will be removed in v3.1.
      */
-    protected int $exitCode = 0;
+    protected int $exitCode = self::SUCCESS;
 
     public function __construct(string $name = null)
     {
@@ -419,16 +418,16 @@ abstract class Command extends SymfonyCommand
         $this->disableDispatcher($input);
         $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
 
-        $statusCode = self::SUCCESS;
-
-        $callback = function () use (&$statusCode, $method) {
+        $callback = function () use ($method) {
             try {
                 $this->eventDispatcher?->dispatch(new Event\BeforeHandle($this));
-                $statusCode = $this->{$method}();
+                if ($statusCode = $this->{$method}() and is_int($statusCode)) {
+                    $this->exitCode = $statusCode;
+                }
                 $this->eventDispatcher?->dispatch(new Event\AfterHandle($this));
             } catch (Throwable $exception) {
                 if (class_exists(ExitException::class) && $exception instanceof ExitException) {
-                    $statusCode = (int) $exception->getStatus();
+                    $this->exitCode = (int) $exception->getStatus();
                 } else {
                     if (! $this->eventDispatcher) {
                         throw $exception;
@@ -436,8 +435,9 @@ abstract class Command extends SymfonyCommand
 
                     $this->output && $this->error($exception->getMessage());
 
+                    $this->exitCode = self::FAILURE;
+
                     $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
-                    $statusCode = $exception->getCode() ?: self::FAILURE;
                 }
             } finally {
                 $this->eventDispatcher?->dispatch(new Event\AfterExecute($this));
@@ -450,11 +450,6 @@ abstract class Command extends SymfonyCommand
             $callback();
         }
 
-        if (is_numeric($statusCode)) {
-            $statusCode = (int) $statusCode;
-            return $statusCode >= 0 && $statusCode <= 255 ? $statusCode : 255;
-        }
-
-        return self::SUCCESS;
+        return $this->exitCode >= 0 && $this->exitCode <= 255 ? $this->exitCode : self::INVALID;
     }
 }
