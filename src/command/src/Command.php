@@ -419,7 +419,9 @@ abstract class Command extends SymfonyCommand
         $this->disableDispatcher($input);
         $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
 
-        $callback = function () use ($method) {
+        $statusCode = self::SUCCESS;
+
+        $callback = function () use (&$statusCode, $method) {
             try {
                 $this->eventDispatcher?->dispatch(new Event\BeforeHandle($this));
                 $statusCode = $this->{$method}();
@@ -440,18 +442,12 @@ abstract class Command extends SymfonyCommand
             } finally {
                 $this->eventDispatcher?->dispatch(new Event\AfterExecute($this));
             }
-
-            return $statusCode;
         };
 
-        $statusCode = self::SUCCESS;
-
         if ($this->coroutine && ! Coroutine::inCoroutine()) {
-            run(function () use (&$statusCode, $callback) {
-                $statusCode = $callback();
-            }, $this->hookFlags);
+            run($callback, $this->hookFlags);
         } else {
-            $statusCode = $callback();
+            $callback();
         }
 
         if (is_numeric($statusCode)) {
