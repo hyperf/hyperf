@@ -1,5 +1,9 @@
 # v3.0.33 - TBD
 
+## Fixed
+
+- [#6011](https://github.com/hyperf/hyperf/pull/6011) Fixed the issue where validation for invocable controller route requests was not working.
+
 # v3.0.32 - 2023-08-09
 
 ## Added
