@@ -133,15 +133,14 @@ class ValidationMiddleware implements MiddlewareInterface
     protected function prepareHandler(array|string $handler): array
     {
         if (is_string($handler)) {
-            if (str_contains($handler, '@')) {
-                return explode('@', $handler);
-            }
-            if (str_contains($handler, '::')) {
-                return explode('::', $handler);
-            }
             if (class_exists($handler) && method_exists($handler, '__invoke')) {
                 return [$handler, '__invoke'];
             }
+            if (str_contains($handler, '@')) {
+                return explode('@', $handler);
+            }
+            $array = explode('::', $handler);
+            return [$array[0], $array[1] ?? null];
         }
         if (is_array($handler) && isset($handler[0], $handler[1])) {
             return $handler;
