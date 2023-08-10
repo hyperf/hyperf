@@ -136,10 +136,8 @@ class ValidationMiddleware implements MiddlewareInterface
             if (str_contains($handler, '@')) {
                 return explode('@', $handler);
             }
-            if (class_exists($handler)) {
-                if (method_exists($handler, '__invoke')) {
-                    return [$handler, '__invoke'];
-                }
+            if (class_exists($handler) && method_exists($handler, '__invoke')) {
+                return [$handler, '__invoke'];
             }
             $array = explode('::', $handler);
             return [$array[0], $array[1] ?? null];
