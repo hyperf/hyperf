@@ -135,12 +135,15 @@ class FooAspect extends AbstractAspect
         $arguments = $proceedingJoinPoint->getArguments(); // array
 
         // 获取原类的实例并调用原类的其他方法
-        $originalInstance = $proceedingJoinPoint->getReflectMethod();
+        $originalInstance = $proceedingJoinPoint->getInstance();
         $originalInstance->yourFunction();
 
         // 获取注解元数据
         /** @var \Hyperf\Di\Aop\AnnotationMetadata **/
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
+
+        // 调用不受代理类影响的原方法
+        $proceedingJoinPoint->processOriginalMethod();
 
         // 不执行原方法，做其他操作
         $result = date('YmdHis', time() - 86400);
@@ -149,7 +152,7 @@ class FooAspect extends AbstractAspect
 }
 ```
 
-> 注意：`getReflectMethod`获取到的类为代理类，里面的方法仍会被其他切面影响，相互嵌套调用会死循环耗尽内存。
+> 注意：`getInstance`获取到的类为代理类，里面的方法仍会被其他切面影响，相互嵌套调用会死循环耗尽内存。
 
 ## 代理类缓存
 
