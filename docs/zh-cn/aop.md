@@ -148,7 +148,8 @@ class FooAspect extends AbstractAspect
     }
 }
 ```
-> 注意：getReflectMethod获取到的类为代理类，里面的方法仍会被其他切面影响，相互嵌套调用会死循环耗尽内存。
+
+> 注意：`getReflectMethod`获取到的类为代理类，里面的方法仍会被其他切面影响，相互嵌套调用会死循环耗尽内存。
 
 ## 代理类缓存
 
