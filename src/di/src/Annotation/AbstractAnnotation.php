@@ -57,6 +57,7 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
 
     /**
      * @deprecated will be removed in v3.1
+     * @param mixed $value
      */
     protected function formatParams($value): array
     {
