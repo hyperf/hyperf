@@ -42,32 +42,42 @@ class OnPipeMessage implements ListenerInterface
      */
     public function process(object $event): void
     {
-        Coroutine::create(function () use ($event) {
-            if ($event instanceof PipeMessage) {
-                $factory = make(MetricFactoryInterface::class);
-                $inner = $event->data;
-                switch (true) {
-                    case $inner instanceof Counter:
-                        $counter = $factory->makeCounter($inner->name, $inner->labelNames);
-                        $counter->with(...$inner->labelValues)->add($inner->delta);
-                        break;
-                    case $inner instanceof Gauge:
-                        $gauge = $factory->makeGauge($inner->name, $inner->labelNames);
-                        if (isset($inner->value)) {
-                            $gauge->with(...$inner->labelValues)->set($inner->value);
-                        } else {
-                            $gauge->with(...$inner->labelValues)->add($inner->delta);
-                        }
-                        break;
-                    case $inner instanceof Histogram:
-                        $histogram = $factory->makeHistogram($inner->name, $inner->labelNames);
-                        $histogram->with(...$inner->labelValues)->put($inner->sample);
-                        break;
-                    default:
-                        // Nothing to do
-                        break;
+        if (! $event instanceof PipeMessage) {
+            return;
+        }
+
+        $inner = ! is_array($event->data) ? [$event->data] : $value;
+        foreach ($inner as $data) {
+            Coroutine::create(function () use ($data) {
+                $this->processData($data);
+            });
+        }
+    }
+
+    protected function processData(object $data): void
+    {
+        $factory = make(MetricFactoryInterface::class);
+
+        switch (true) {
+            case $data instanceof Counter:
+                $counter = $factory->makeCounter($data->name, $data->labelNames);
+                $counter->with(...$data->labelValues)->add($data->delta);
+                break;
+            case $data instanceof Gauge:
+                $gauge = $factory->makeGauge($data->name, $data->labelNames);
+                if (isset($data->value)) {
+                    $gauge->with(...$data->labelValues)->set($data->value);
+                } else {
+                    $gauge->with(...$data->labelValues)->add($data->delta);
                 }
-            }
-        });
+                break;
+            case $data instanceof Histogram:
+                $histogram = $factory->makeHistogram($data->name, $data->labelNames);
+                $histogram->with(...$data->labelValues)->put($data->sample);
+                break;
+            default:
+                // Nothing to do
+                break;
+        }
     }
 }
