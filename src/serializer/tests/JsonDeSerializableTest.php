@@ -13,12 +13,14 @@ namespace HyperfTest\Serializer;
 
 use Hyperf\Codec\Json;
 use Hyperf\Serializer\JsonDeNormalizer;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class JsonDeSerializableTest extends TestCase
 {
     public function testJsonDeSerializable()

@@ -12,18 +12,20 @@ declare(strict_types=1);
 namespace Hyperf\DB;
 
 use Closure;
-use Hyperf\DB\Exception\RuntimeException;
+use Hyperf\Codec\Json;
+use Hyperf\DB\Exception\QueryException;
+use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
+use PDO;
+use PDOStatement;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\MySQL;
-use Swoole\Coroutine\MySQL\Statement;
+use Throwable;
 
-/**
- * @deprecated since 3.1, will be removed in 4.0.
- */
+use function Hyperf\Support\build_sql;
+
 class MySQLConnection extends AbstractConnection
 {
-    protected ?MySQL $connection = null;
+    protected ?PDO $connection = null;
 
     protected array $config = [
         'driver' => 'pdo',
@@ -34,6 +36,7 @@ class MySQLConnection extends AbstractConnection
         'password' => '',
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
+        'fetch_mode' => PDO::FETCH_ASSOC,
         'defer_release' => false,
         'pool' => [
             'min_connections' => 1,
@@ -43,7 +46,19 @@ class MySQLConnection extends AbstractConnection
             'heartbeat' => -1,
             'max_idle_time' => 60.0,
         ],
+        'options' => [
+            PDO::ATTR_CASE => PDO::CASE_NATURAL,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
+            PDO::ATTR_STRINGIFY_FETCHES => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ],
     ];
+
+    /**
+     * Current mysql database.
+     */
+    protected ?int $database = null;
 
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
@@ -62,19 +77,20 @@ class MySQLConnection extends AbstractConnection
      */
     public function reconnect(): bool
     {
-        $connection = new MySQL();
-        $connection->connect([
-            'host' => $this->config['host'],
-            'port' => $this->config['port'],
-            'user' => $this->config['username'],
-            'password' => $this->config['password'],
-            'database' => $this->config['database'],
-            'timeout' => $this->config['pool']['connect_timeout'],
-            'charset' => $this->config['charset'],
-            'fetch_mode' => true,
-        ]);
+        $username = $this->config['username'];
+        $password = $this->config['password'];
+        $dsn = $this->buildDsn($this->config);
+        try {
+            $pdo = new PDO($dsn, $username, $password, $this->config['options']);
+        } catch (Throwable $e) {
+            throw new ConnectionException('Connection reconnect failed.:' . $e->getMessage());
+        }
 
-        $this->connection = $connection;
+        $this->configureCharset($pdo, $this->config);
+
+        $this->configureTimezone($pdo, $this->config);
+
+        $this->connection = $pdo;
         $this->lastUseTime = microtime(true);
         $this->transactions = 0;
         return true;
@@ -90,44 +106,26 @@ class MySQLConnection extends AbstractConnection
         return true;
     }
 
-    public function insert(string $query, array $bindings = []): int
-    {
-        $statement = $this->prepare($query);
-
-        $statement->execute($bindings);
-
-        return $statement->insert_id;
-    }
-
-    public function execute(string $query, array $bindings = []): int
-    {
-        $statement = $this->prepare($query);
-
-        $statement->execute($bindings);
-
-        return $statement->affected_rows;
-    }
-
-    public function exec(string $sql): int
-    {
-        $res = $this->connection->query($sql);
-        if ($res === false) {
-            throw new RuntimeException($this->connection->error);
-        }
-
-        return $this->connection->affected_rows;
-    }
-
     public function query(string $query, array $bindings = []): array
     {
         // For select statements, we'll simply execute the query and return an array
         // of the database result set. Each element in the array will be a single
         // row from the database table, and will either be an array or objects.
-        $statement = $this->prepare($query);
+        $statement = $this->connection->prepare($query);
+        if (! $statement) {
+            throw new QueryException('PDO prepare failed ' . sprintf('(SQL: %s)', build_sql($query, $bindings)));
+        }
 
-        $statement->execute($bindings);
+        $this->bindValues($statement, $bindings);
 
-        return $statement->fetchAll();
+        $res = $statement->execute();
+        if (! $res) {
+            throw new QueryException('PDO execute failed ' . sprintf('(ERR: [%s](%s)) (SQL: %s)', $statement->errorCode(), Json::encode($statement->errorCode()), build_sql($query, $bindings)));
+        }
+
+        $fetchMode = $this->config['fetch_mode'];
+
+        return $statement->fetchAll($fetchMode);
     }
 
     public function fetch(string $query, array $bindings = [])
@@ -137,16 +135,42 @@ class MySQLConnection extends AbstractConnection
         return array_shift($records);
     }
 
+    public function execute(string $query, array $bindings = []): int
+    {
+        $statement = $this->connection->prepare($query);
+
+        $this->bindValues($statement, $bindings);
+
+        $res = $statement->execute();
+        if (! $res) {
+            throw new QueryException('PDO execute failed ' . sprintf('(ERR: [%s](%s)) (SQL: %s)', $statement->errorCode(), Json::encode($statement->errorCode()), build_sql($query, $bindings)));
+        }
+
+        return $statement->rowCount();
+    }
+
+    public function exec(string $sql): int
+    {
+        return $this->connection->exec($sql);
+    }
+
+    public function insert(string $query, array $bindings = []): int
+    {
+        $statement = $this->connection->prepare($query);
+
+        $this->bindValues($statement, $bindings);
+
+        $res = $statement->execute();
+        if (! $res) {
+            throw new QueryException('PDO execute failed ' . sprintf('(ERR: [%s](%s)) (SQL: %s)', $statement->errorCode(), Json::encode($statement->errorCode()), build_sql($query, $bindings)));
+        }
+
+        return (int) $this->connection->lastInsertId();
+    }
+
     public function call(string $method, array $argument = [])
     {
-        $timeout = $this->config['pool']['wait_timeout'];
-
-        return match ($method) {
-            'beginTransaction' => $this->connection->begin($timeout),
-            'rollBack' => $this->connection->rollback($timeout),
-            'commit' => $this->connection->commit($timeout),
-            default => $this->connection->{$method}(...$argument),
-        };
+        return $this->connection->{$method}(...$argument);
     }
 
     public function run(Closure $closure)
@@ -154,14 +178,56 @@ class MySQLConnection extends AbstractConnection
         return $closure->call($this, $this->connection);
     }
 
-    protected function prepare(string $query): Statement
+    /**
+     * Bind values to their parameters in the given statement.
+     */
+    protected function bindValues(PDOStatement $statement, array $bindings): void
     {
-        $statement = $this->connection->prepare($query);
-
-        if ($statement === false) {
-            throw new RuntimeException($this->connection->error);
+        foreach ($bindings as $key => $value) {
+            $statement->bindValue(
+                is_string($key) ? $key : $key + 1,
+                $value,
+                is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR
+            );
         }
+    }
 
-        return $statement;
+    /**
+     * Build the DSN string for a host / port configuration.
+     */
+    protected function buildDsn(array $config): string
+    {
+        $host = $config['host'] ?? null;
+        $port = $config['port'] ?? 3306;
+        $database = $config['database'] ?? null;
+        return sprintf('mysql:host=%s;port=%d;dbname=%s', $host, $port, $database);
+    }
+
+    /**
+     * Configure the connection character set and collation.
+     */
+    protected function configureCharset(PDO $connection, array $config)
+    {
+        if (isset($config['charset'])) {
+            $connection->prepare(sprintf("set names '%s'%s", $config['charset'], $this->getCollation($config)))->execute();
+        }
+    }
+
+    /**
+     * Get the collation for the configuration.
+     */
+    protected function getCollation(array $config): string
+    {
+        return isset($config['collation']) ? " collate '{$config['collation']}'" : '';
+    }
+
+    /**
+     * Configure the timezone on the connection.
+     */
+    protected function configureTimezone(PDO $connection, array $config): void
+    {
+        if (isset($config['timezone'])) {
+            $connection->prepare(sprintf('set time_zone="%s"', $config['timezone']))->execute();
+        }
     }
 }

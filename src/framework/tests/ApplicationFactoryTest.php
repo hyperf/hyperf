@@ -17,6 +17,7 @@ use Hyperf\Framework\ApplicationFactory;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\Support\Reflection\ClassInvoker;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface as PsrEventDispatcherInterface;
@@ -27,6 +28,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ApplicationFactoryTest extends TestCase
 {
     protected function tearDown(): void

@@ -20,6 +20,7 @@ use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -27,6 +28,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TransactionalTest extends TestCase
 {
     protected function tearDown(): void

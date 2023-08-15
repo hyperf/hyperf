@@ -24,6 +24,7 @@ use Hyperf\Nacos\Exception\ConnectToServerFailedException;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Nacos\Protobuf\Any;
 use Hyperf\Nacos\Protobuf\ListenContext;
+use Hyperf\Nacos\Protobuf\ListenHandler\NamingPushRequestHandler;
 use Hyperf\Nacos\Protobuf\ListenHandlerInterface;
 use Hyperf\Nacos\Protobuf\Metadata;
 use Hyperf\Nacos\Protobuf\Payload;
@@ -36,7 +37,9 @@ use Hyperf\Nacos\Protobuf\Request\ServerCheckRequest;
 use Hyperf\Nacos\Protobuf\Response\ConfigChangeBatchListenResponse;
 use Hyperf\Nacos\Protobuf\Response\ConfigChangeNotifyRequest;
 use Hyperf\Nacos\Protobuf\Response\ConfigQueryResponse;
+use Hyperf\Nacos\Protobuf\Response\NotifySubscriberRequest;
 use Hyperf\Nacos\Protobuf\Response\Response;
+use Hyperf\Nacos\Protobuf\ServiceInfo;
 use Hyperf\Nacos\Provider\AccessToken;
 use Hyperf\Support\Network;
 use Psr\Container\ContainerInterface;
@@ -66,13 +69,24 @@ class GrpcClient
      */
     protected array $configListenHandlers = [];
 
+    /**
+     * @var array<string, ServiceInfo>
+     */
+    protected array $namingListenContexts = [];
+
+    /**
+     * @var array<string, ?ListenHandlerInterface>
+     */
+    protected array $namingListenHandlers = [];
+
     protected int $streamId;
 
     public function __construct(
         protected Application $app,
         protected Config $config,
         protected ContainerInterface $container,
-        protected string $namespaceId = ''
+        protected string $namespaceId = '',
+        protected string $module = 'config',
     ) {
         if ($this->container->has(StdoutLoggerInterface::class)) {
             $this->logger = $this->container->get(StdoutLoggerInterface::class);
@@ -113,11 +127,24 @@ class GrpcClient
         return $client->write($streamId, Parser::serializeMessage($payload));
     }
 
-    public function listenConfig(string $group, string $dataId, ListenHandlerInterface $callback, string $md5 = '')
+    public function listenConfig(string $group, string $dataId, ListenHandlerInterface $callback, string $md5 = ''): void
     {
         $listenContext = new ListenContext($this->namespaceId, $group, $dataId, $md5);
         $this->configListenContexts[$listenContext->toKeyString()] = $listenContext;
         $this->configListenHandlers[$listenContext->toKeyString()] = $callback;
+    }
+
+    public function listenNaming(string $clusters, string $group, string $service, ListenHandlerInterface $callback): void
+    {
+        $serviceInfo = new ServiceInfo($service, $group, $clusters);
+        if ($context = $this->namingListenContexts[$serviceInfo->toKeyString()] ?? null) {
+            $callback->handle(new NotifySubscriberRequest(['requestId' => '', 'module' => 'naming', 'serviceInfo' => $context]));
+            $this->namingListenHandlers[$serviceInfo->toKeyString()] = $callback;
+            return;
+        }
+
+        $this->namingListenContexts[$serviceInfo->toKeyString()] = $serviceInfo;
+        $this->namingListenHandlers[$serviceInfo->toKeyString()] = $callback;
     }
 
     public function listen(): void
@@ -194,7 +221,8 @@ class GrpcClient
                             $response->group,
                             $response->dataId,
                             $response
-                        )
+                        ),
+                        $response instanceof NotifySubscriberRequest => $this->hanldeNaming($response),
                     };
 
                     $this->listen();
@@ -209,14 +237,14 @@ class GrpcClient
             }
         });
 
-        $request = new ConnectionSetupRequest($this->namespaceId);
+        $request = new ConnectionSetupRequest($this->namespaceId, $this->module);
         $this->write($id, $request);
         sleep(1);
 
         return $id;
     }
 
-    protected function handleConfig(string $tenant, string $group, string $dataId, ?ConfigChangeNotifyRequest $request = null)
+    protected function handleConfig(string $tenant, string $group, string $dataId, ?ConfigChangeNotifyRequest $request = null): void
     {
         $response = $this->request(new ConfigQueryRequest($tenant, $group, $dataId));
         $key = ListenContext::getKeyString($tenant, $group, $dataId);
@@ -229,6 +257,26 @@ class GrpcClient
             if ($request && $ack = $this->configListenHandlers[$key]?->ack($request)) {
                 $this->write($this->streamId, $ack);
             }
+        }
+    }
+
+    protected function hanldeNaming(NotifySubscriberRequest $response): void
+    {
+        $serviceInfo = $response->serviceInfo;
+        $key = $serviceInfo->toKeyString();
+        if (! isset($this->namingListenContexts[$key])) {
+            $this->namingListenContexts[$key] = $serviceInfo;
+        }
+
+        if ($serviceInfo->lastRefTime > $this->namingListenContexts[$key]->lastRefTime) {
+            $this->namingListenContexts[$key] = $serviceInfo;
+        }
+
+        if ($handler = $this->namingListenHandlers[$key] ?? null) {
+            $handler->handle($response);
+            $this->write($this->streamId, $handler->ack($response));
+        } else {
+            $this->write($this->streamId, (new NamingPushRequestHandler(fn () => null))->ack($response));
         }
     }
 
@@ -287,7 +335,7 @@ class GrpcClient
         return [
             'content-type' => 'application/grpc+proto',
             'te' => 'trailers',
-            'user-agent' => 'Nacos-Hyperf-Client:v3.0',
+            'user-agent' => 'Nacos-Hyperf-Client:v3.1',
         ];
     }
 

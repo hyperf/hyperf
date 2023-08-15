@@ -26,7 +26,7 @@ class QosConsumer extends ConsumerMessage
         'prefetch_count' => 10,
     ];
 
-    public function consume($data): string
+    public function consume($data): Result
     {
         return Result::ACK;
     }

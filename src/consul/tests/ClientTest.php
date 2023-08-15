@@ -19,7 +19,12 @@ use ReflectionMethod;
 
 /**
  * @internal
- * @covers \Hyperf\Consul\Client
+ * @coversNothing
+ */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Consul\Client::class)]
+/**
+ * @internal
+ * @coversNothing
  */
 class ClientTest extends TestCase
 {
@@ -40,7 +45,6 @@ class ClientTest extends TestCase
         });
         $reflectionClass = new ReflectionClass(Client::class);
         $method = $reflectionClass->getMethod('resolveOptions');
-        $method->setAccessible(true);
         $this->method = $method;
     }
 

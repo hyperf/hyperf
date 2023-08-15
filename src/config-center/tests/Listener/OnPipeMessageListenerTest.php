@@ -20,12 +20,14 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\Event\PipeMessage as UserProcessPipeMessage;
 use HyperfTest\ConfigCenter\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class OnPipeMessageListenerTest extends TestCase
 {
     protected function tearDown(): void

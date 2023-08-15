@@ -32,12 +32,6 @@ php -d swoole.use_shortname=Off bin/hyperf.php start
 
 可以在 `config/autoload/amqp.php` 配置文件中將 `params.close_on_destruct` 改為 `false` 即可。
 
-## 使用 Swoole 4.5 版本和 view 組件時訪問接口出現 404
-
-使用 Swoole 4.5 版本和 view 組件如果出現接口 404 的問題，可以嘗試刪除 `config/autoload/server.php` 文件中的 `static_handler_locations` 配置項。
-
-此配置下的路徑都會被認為是靜態文件路由，所以如果配置了`/`，就會導致所有接口都會被認為是文件路徑，導致接口 404。
-
 ## 代碼不生效
 
 當碰到修改後的代碼不生效的問題，請執行以下命令
@@ -65,7 +59,7 @@ Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line
 
 ## 內存限制太小導致項目無法運行
 
-PHP 默認的 `memory_limit` 只有 `128M`，因為 `Hyperf` 使用了 `BetterReflection`，不使用掃描緩存時，會消耗大量內存，所以可能會出現內存不夠的情況。
+PHP 默認的 `memory_limit` 只有 `128M`。
 
 我們可以使用 `php -d memory_limit=-1 bin/hyperf.php start` 運行, 或者修改 `php.ini` 配置文件
 
@@ -75,36 +69,6 @@ php --ini
 
 # 修改 memory_limit 配置
 memory_limit=-1
-```
-
-## PHP 7.3 版本對 DI 的兼容性有所下降
-
-在 `2.0` - `2.1` 版本時，為了實現 `AOP` 作用於非 `DI` 管理的對象（如 `new` 關鍵詞實例化的對象時），底層實現採用了 `BetterReflection` 組件來實現相關功能，帶來新的編程體驗的同時，也帶來了一些很難攻克的問題，如下:
-
-- 無掃描緩存時項目啓動很慢
-- 特殊場景下 `Inject` 和 `Value` 不生效
-- `BetterReflection` 尚未支持 PHP 8 (截止 2.2 發版時)
-
-在新的版本里，棄用了 `BetterReflection` 的應用，採用了 `子進程掃描` 的方式來解決以上這些痛點，但在低版本的 `PHP` 中也有一些不兼容的情況：
-
-使用 `PHP 7.3` 啓動應用後遇到類似如下錯誤：
-
-```bash
-PHP Fatal error:  Interface 'Hyperf\Signal\SignalHandlerInterface' not found in vendor/hyperf/process/src/Handler/ProcessStopHandler.php on line 17
-
-PHP Fatal error:  Interface 'Symfony\Component\Serializer\SerializerInterface' not found in vendor/hyperf/utils/src/Serializer/Serializer.php on line 46
-```
-
-此問題是由於在 `PHP 7.3` 中通過 `子進程掃描` 的方式去獲取反射，在某個類中實現了一個不存在的 `Interface` ，就會導致拋出 `Interface not found` 的異常，而高版本的 `PHP` 則不會。
-
-解決方法為創建對應的 `Interface` 並正常引入。上文中的報錯解決方法為安裝對應所依賴的組件即可。
-
-> 當然，最好還是可以升級到 7.4 或者 8.0 版本
-
-```bash
-composer require hyperf/signal
-
-composer require symfony/serializer
 ```
 
 ## Trait 內使用 `#[Inject]` 注入報錯 `Error while injecting dependencies into ... No entry or class found ...`

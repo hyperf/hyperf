@@ -32,6 +32,7 @@ use Hyperf\Validation\ValidationException;
 use Hyperf\Validation\Validator;
 use InvalidArgumentException;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use SplFileInfo;
 
@@ -39,6 +40,7 @@ use SplFileInfo;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationValidatorTest extends TestCase
 {
     protected function tearDown(): void
@@ -2268,9 +2270,9 @@ class ValidationValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider validUrls
      * @param mixed $validUrl
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validUrls')]
     public function testValidateUrlWithValidUrls($validUrl)
     {
         $trans = $this->getIlluminateArrayTranslator();
@@ -2279,9 +2281,9 @@ class ValidationValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidUrls
      * @param mixed $invalidUrl
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidUrls')]
     public function testValidateUrlWithInvalidUrls($invalidUrl)
     {
         $trans = $this->getIlluminateArrayTranslator();
@@ -2289,7 +2291,7 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
     }
 
-    public function validUrls()
+    public static function validUrls()
     {
         return [
             ['aaa://fully.qualified.domain/path'],
@@ -2513,6 +2515,7 @@ class ValidationValidatorTest extends TestCase
             ['http://localhost/url.php'],
             ['http://local.dev'],
             ['http://google.com'],
+            ['http://goog_le.com'],
             ['http://www.google.com'],
             ['https://google.com'],
             ['http://illuminate.dev'],
@@ -2530,7 +2533,7 @@ class ValidationValidatorTest extends TestCase
         ];
     }
 
-    public function invalidUrls()
+    public static function invalidUrls()
     {
         return [
             ['aslsdlks'],
@@ -2538,7 +2541,6 @@ class ValidationValidatorTest extends TestCase
             ['://google.com'],
             ['http ://google.com'],
             ['http:/google.com'],
-            ['http://goog_le.com'],
             ['http://google.com::aa'],
             ['http://google.com:aa'],
             ['http://127.0.0.1:aa'],
@@ -4644,9 +4646,9 @@ class ValidationValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider validUuidList
      * @param mixed $uuid
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validUuidList')]
     public function testValidateWithValidUuid($uuid)
     {
         $trans = $this->getIlluminateArrayTranslator();
@@ -4655,9 +4657,9 @@ class ValidationValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidUuidList
      * @param mixed $uuid
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidUuidList')]
     public function testValidateWithInvalidUuid($uuid)
     {
         $trans = $this->getIlluminateArrayTranslator();
@@ -4665,7 +4667,7 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
     }
 
-    public function validUuidList()
+    public static function validUuidList()
     {
         return [
             ['a0a2a2d2-0b87-4a18-83f2-2529882be2de'],
@@ -4681,7 +4683,7 @@ class ValidationValidatorTest extends TestCase
         ];
     }
 
-    public function invalidUuidList()
+    public static function invalidUuidList()
     {
         return [
             ['not a valid uuid so we can test this'],

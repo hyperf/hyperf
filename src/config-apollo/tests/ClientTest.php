@@ -11,13 +11,21 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ConfigApollo;
 
+use GuzzleHttp;
+use Hyperf\Codec\Json;
 use Hyperf\Config\Config;
+use Hyperf\ConfigApollo\ApolloDriver;
 use Hyperf\ConfigApollo\Client;
+use Hyperf\ConfigApollo\ClientInterface;
 use Hyperf\ConfigApollo\Option;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\HttpMessage\Base\Response;
+use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\Support\Reflection\ClassInvoker;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -25,6 +33,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ClientTest extends TestCase
 {
     public function testPull()
@@ -34,31 +43,52 @@ class ClientTest extends TestCase
         $container = Mockery::mock(ContainerInterface::class);
         $configInstance = new Config([]);
         $configInstance->set('apollo.test-key', 'pre-value');
+        $configInstance->set('config_center.drivers.apollo.namespaces', ['application']);
+        // drivers.apollo.namespaces
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($configInstance);
         ApplicationContext::setContainer($container);
-        $callbacks = [
-            'application' => function ($configs) {
-                $container = ApplicationContext::getContainer();
-                $config = $container->get(ConfigInterface::class);
-                // Mock the configurations.
-                $configs['configurations'] = [
-                    'apollo.test-key' => 'after-value',
-                ];
-                foreach ($configs['configurations'] ?? [] as $key => $value) {
-                    $config->set($key, $value);
-                }
-            },
-        ];
-        $client = new Client($option, $callbacks, function (array $options = []) use ($container) {
-            return (new ClientFactory($container))->create($options);
-        });
-        $client->pull([
-            'application',
-        ]);
+
         $config = $container->get(ConfigInterface::class);
-        $this->assertSame('after-value', $config->get('apollo.test-key'));
-        $this->assertSame([
-            'test-key' => 'after-value',
-        ], $config->get('apollo'));
+        $client = new Client(
+            $option,
+            function (array $options = []) {
+                $client = Mockery::mock(GuzzleHttp\Client::class);
+                $response = (new Response())->setStatus(200)->addHeader('content-type', 'application/json')
+                    ->setBody(new SwooleStream(Json::encode([
+                        'configurations' => [
+                            'apollo.test-key' => 'after-value',
+                        ],
+                    ])));
+                $client->shouldReceive('get')->andReturn($response);
+                return $client;
+            },
+            $config,
+            $logger = Mockery::mock(StdoutLoggerInterface::class)
+        );
+        $res = $client->pull();
+        $this->assertSame(['application' => ['apollo.test-key' => 'after-value']], $res);
+
+        $container->shouldReceive('get')->with(ClientInterface::class)->andReturn($client);
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn($logger);
+        $logger->shouldReceive('debug')->withAnyArgs()->andReturnNull();
+        $driver = new ApolloDriver($container);
+        $driver->fetchConfig();
+
+        $this->assertSame(['test-key' => 'after-value'], $config->get('apollo'));
+    }
+
+    public function testConfigurationsChanged()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([]));
+        $container->shouldReceive('get')->with(ClientInterface::class)->andReturn(Mockery::mock(ClientInterface::class));
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn(Mockery::mock(StdoutLoggerInterface::class));
+
+        $driver = (new ClassInvoker(new ApolloDriver($container)));
+        $prevConfig = ['a' => ['id' => 1], 'b' => ['id' => 2]];
+        ksort($prevConfig);
+
+        $this->assertFalse($driver->configChanged(['a' => ['id' => 1], 'b' => ['id' => 2]], $prevConfig));
+        $this->assertFalse($driver->configChanged(['a' => ['id' => 1], 'b' => ['id' => 2]], $prevConfig));
     }
 }

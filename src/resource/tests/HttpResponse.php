@@ -194,12 +194,11 @@ class HttpResponse
      */
     public function assertJson(array $data, $strict = false)
     {
-        PHPUnit::assertArraySubset(
-            $data,
-            $this->decodeResponseJson(),
-            $strict,
-            $this->assertJsonMessage($data)
-        );
+        if ($strict) {
+            PHPUnit::assertSame($data, $this->decodeResponseJson());
+        } else {
+            PHPUnit::assertEquals($data, $this->decodeResponseJson());
+        }
 
         return $this;
     }

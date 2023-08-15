@@ -13,6 +13,7 @@ namespace Hyperf\Validation\Request;
 
 use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\HttpServer\Request;
 use Hyperf\Validation\Contract\ValidatesWhenResolved;
@@ -64,10 +65,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     public function response(): ResponseInterface
     {
-        /** @var ResponseInterface $response */
-        $response = Context::get(ResponseInterface::class);
-
-        return $response->withStatus(422);
+        return ResponseContext::get()->setStatus(422);
     }
 
     /**

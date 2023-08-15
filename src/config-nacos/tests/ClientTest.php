@@ -13,12 +13,14 @@ namespace HyperfTest\ConfigNacos;
 
 use Hyperf\ConfigNacos\Client;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ClientTest extends TestCase
 {
     protected function tearDown(): void

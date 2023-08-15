@@ -241,11 +241,11 @@ class DelayDirectProducer extends ProducerMessage
 {
     use ProducerDelayedMessageTrait;
 
-    protected $exchange = 'ext.hyperf.delay';
+    protected string $exchange = 'ext.hyperf.delay';
 
-    protected $type = Type::DIRECT;
+    protected Type|string $type = Type::DIRECT;
 
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
     public function __construct($data)
     {
@@ -253,6 +253,7 @@ class DelayDirectProducer extends ProducerMessage
     }
 }
 ```
+
 ### 消费者
 
 使用 `gen:amqp-consumer` 命令创建一个 `consumer`。
@@ -284,13 +285,13 @@ class DelayDirectConsumer extends ConsumerMessage
     use ProducerDelayedMessageTrait;
     use ConsumerDelayedMessageTrait;
 
-    protected $exchange = 'ext.hyperf.delay';
+    protected string $exchange = 'ext.hyperf.delay';
     
-    protected $queue = 'queue.hyperf.delay';
+    protected string $queue = 'queue.hyperf.delay';
     
-    protected $type = Type::DIRECT; //Type::FANOUT;
+    protected Type|string $type = Type::DIRECT; //Type::FANOUT;
     
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
     public function consumeMessage($data, AMQPMessage $message): string
     {
@@ -356,11 +357,12 @@ class DelayCommand extends HyperfCommand
 }
 
 ```
+
 执行命令行生产消息
+
 ```
 php bin/hyperf.php demo:command
 ```
-
 
 ## RPC 远程过程调用
 
@@ -430,9 +432,9 @@ use Hyperf\Amqp\Message\RpcMessage;
 class FooRpcMessage extends RpcMessage
 {
 
-    protected $exchange = 'hyperf';
+    protected string $exchange = 'hyperf';
 
-    protected $routingKey = 'hyperf';
+    protected array|string $routingKey = 'hyperf';
     
     public function __construct($data)
     {

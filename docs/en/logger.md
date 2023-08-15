@@ -4,7 +4,7 @@ The `hyperf/logger` component is implemented based on [psr/logger](https://githu
 
 ## Installation
 
-```
+```shell
 composer require hyperf/logger
 ```
 
@@ -308,9 +308,62 @@ return [
 
 ```
 
-The result is as follows
+Or
+
+```php
+
+declare(strict_types=1);
+
+use Monolog\Handler;
+use Monolog\Formatter;
+use Monolog\Logger;
+
+return [
+    'default' => [
+        'handlers' => ['single', 'daily'],
+    ],
+
+    'single' => [
+        'handler' => [
+            'class' => Handler\StreamHandler::class,
+            'constructor' => [
+                'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                'level' => Logger::INFO,
+            ],
+        ],
+        'formatter' => [
+            'class' => Formatter\LineFormatter::class,
+            'constructor' => [
+                'format' => null,
+                'dateFormat' => null,
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
+
+    'daily' => [
+        'handler' => [
+            'class' => Handler\StreamHandler::class,
+            'constructor' => [
+                'stream' => BASE_PATH . '/runtime/logs/hyperf-debug.log',
+                'level' => Logger::DEBUG,
+            ],
+        ],
+        'formatter' => [
+            'class' => Formatter\JsonFormatter::class,
+            'constructor' => [
+                'batchMode' => Formatter\JsonFormatter::BATCH_MODE_JSON,
+                'appendNewline' => true,
+            ],
+        ],
+    ],
+];
 
 ```
+
+The result is as follows
+
+```shell
 ==> runtime/logs/hyperf.log <==
 [2019-11-08 11:11:35] hyperf.INFO: 5dc4dce791690 [] []
 

@@ -46,12 +46,14 @@ use HyperfTest\Di\Stub\Inject\Parent4Class;
 use HyperfTest\Di\Stub\Inject\ParentClass;
 use HyperfTest\Di\Stub\Inject\Tar;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class InjectTest extends TestCase
 {
     protected function tearDown(): void
@@ -62,9 +64,7 @@ class InjectTest extends TestCase
         ReflectionManager::clear();
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testInject()
     {
         $this->getContainer();
@@ -75,9 +75,7 @@ class InjectTest extends TestCase
         $this->assertSame(null, $demoInject->getDemo1());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testInjectWithTraitAndParent()
     {
         $this->getContainer();
@@ -95,9 +93,7 @@ class InjectTest extends TestCase
         $this->assertInstanceOf(Tar::class, $origin->getFoo());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testInjectTraitAndParent()
     {
         $this->markTestSkipped('@var does not works as expect.');
@@ -116,9 +112,7 @@ class InjectTest extends TestCase
         $this->assertInstanceOf(Bar::class, $origin->getFoo());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testInjectParent()
     {
         $this->getContainer();
@@ -136,9 +130,7 @@ class InjectTest extends TestCase
         $this->assertInstanceOf(Foo::class, $origin->getFoo());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testInject2Trait()
     {
         $this->markTestSkipped('@var does not works as expect.');
@@ -158,9 +150,7 @@ class InjectTest extends TestCase
         $this->assertInstanceOf(Tar::class, $origin->getFoo());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testInjectTraitNesting()
     {
         $this->getContainer();
@@ -180,9 +170,7 @@ class InjectTest extends TestCase
         $this->assertSame('foo3', $origin->getValue());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testInjectParentParent()
     {
         $this->getContainer();
@@ -199,9 +187,7 @@ class InjectTest extends TestCase
         $this->assertInstanceOf(Foo::class, $origin->getFoo());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testInjectParentNoRunParent()
     {
         $this->getContainer();
@@ -218,9 +204,7 @@ class InjectTest extends TestCase
         $this->assertInstanceOf(Foo::class, $origin->getFoo());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testInjectParentPrivateProperty()
     {
         $this->getContainer();

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query;
 
+use BackedEnum;
 use BadMethodCallException;
 use Closure;
 use DateTimeInterface;
@@ -30,6 +31,7 @@ use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use Hyperf\Support\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use RuntimeException;
@@ -1513,7 +1515,7 @@ class Builder
     /**
      * Add a "group by" clause to the query.
      *
-     * @param array ...$groups
+     * @param array|string ...$groups
      * @return $this
      */
     public function groupBy(...$groups)
@@ -1881,6 +1883,21 @@ class Builder
     public function toSql()
     {
         return $this->grammar->compileSelect($this);
+    }
+
+    /**
+     * Get the raw SQL representation of the query with embedded bindings.
+     *
+     * @return string
+     */
+    public function toRawSql()
+    {
+        $bindings = array_map(fn ($value) => $this->connection->escape($value), $this->connection->prepareBindings($this->getBindings()));
+
+        return $this->grammar->substituteBindingsIntoRawSql(
+            $this->toSql(),
+            $bindings
+        );
     }
 
     /**
@@ -2520,12 +2537,37 @@ class Builder
         }
 
         if (is_array($value)) {
-            $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $value));
+            $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $this->castBindings($value)));
         } else {
-            $this->bindings[$type][] = $value;
+            $this->bindings[$type][] = $this->castBinding($value);
         }
 
         return $this;
+    }
+
+    /**
+     * Cast the given binding value.
+     */
+    public function castBinding(mixed $value)
+    {
+        if ($value instanceof BackedEnum) {
+            return $value->value;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Cast the given binding value.
+     */
+    public function castBindings(array $values)
+    {
+        $result = [];
+        foreach ($values as $value) {
+            $result[] = $this->castBinding($value);
+        }
+
+        return $result;
     }
 
     /**
@@ -2807,7 +2849,7 @@ class Builder
         // clause on the query. Then we'll increment the parameter index values.
         $bool = strtolower($connector);
 
-        $this->where(Str::snake($segment), '=', $parameters[$index], $bool);
+        $this->where(StrCache::snake($segment), '=', $parameters[$index], $bool);
     }
 
     /**
@@ -3014,14 +3056,19 @@ class Builder
 
     /**
      * Remove all of the expressions from a list of bindings.
-     *
-     * @return array
      */
-    protected function cleanBindings(array $bindings)
+    protected function cleanBindings(array $bindings): array
     {
-        return array_values(array_filter($bindings, function ($binding) {
-            return ! $binding instanceof Expression;
-        }));
+        $result = [];
+        foreach ($bindings as $binding) {
+            if ($binding instanceof Expression) {
+                continue;
+            }
+
+            $result[] = $this->castBinding($binding);
+        }
+
+        return $result;
     }
 
     /**

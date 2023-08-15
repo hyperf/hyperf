@@ -23,6 +23,7 @@ use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use JsonSerializable;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
@@ -968,7 +969,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function getTable(): string
     {
-        return $this->table ?? Str::snake(Str::pluralStudly(class_basename($this)));
+        return $this->table ?? StrCache::snake(Str::pluralStudly(class_basename($this)));
     }
 
     /**
@@ -1107,7 +1108,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function getForeignKey()
     {
-        return Str::snake(class_basename($this)) . '_' . $this->getKeyName();
+        return StrCache::snake(class_basename($this)) . '_' . $this->getKeyName();
     }
 
     /**

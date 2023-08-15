@@ -19,12 +19,14 @@ use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
 use HyperfTest\Task\Stub\Foo;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TaskAspectTest extends TestCase
 {
     protected $isTaskEnvironment = false;

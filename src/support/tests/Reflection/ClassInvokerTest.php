@@ -13,6 +13,7 @@ namespace HyperfTest\Support\Reflection;
 
 use Hyperf\Support\Reflection\ClassInvoker;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
@@ -20,6 +21,7 @@ use ReflectionException;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ClassInvokerTest extends TestCase
 {
     protected function tearDown(): void

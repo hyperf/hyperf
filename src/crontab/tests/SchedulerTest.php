@@ -15,12 +15,14 @@ use Hyperf\Crontab\CrontabManager;
 use Hyperf\Crontab\Parser;
 use Hyperf\Crontab\Scheduler;
 use Hyperf\Support\Reflection\ClassInvoker;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class SchedulerTest extends TestCase
 {
     public function testGetSchedules()

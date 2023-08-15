@@ -21,6 +21,7 @@ use Hyperf\ModelListener\Listener\ModelEventListener;
 use HyperfTest\ModelListener\Stub\ModelListenerStub;
 use HyperfTest\ModelListener\Stub\ModelStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -28,6 +29,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelListenerTest extends TestCase
 {
     protected function tearDown(): void

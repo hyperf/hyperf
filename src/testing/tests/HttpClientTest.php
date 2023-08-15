@@ -13,6 +13,7 @@ namespace tests;
 
 use Hyperf\Testing\HttpClient;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -22,6 +23,7 @@ use function Hyperf\Coroutine\run;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class HttpClientTest extends TestCase
 {
     protected function tearDown(): void
@@ -29,9 +31,7 @@ class HttpClientTest extends TestCase
         Mockery::close();
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testJsonRequest()
     {
         run(function () {

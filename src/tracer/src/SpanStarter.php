@@ -13,6 +13,7 @@ namespace Hyperf\Tracer;
 
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\Rpc;
 use OpenTracing\Span;
 use Psr\Http\Message\ServerRequestInterface;
@@ -34,8 +35,7 @@ trait SpanStarter
         $root = Context::get('tracer.root');
         if (! $root instanceof Span) {
             $container = ApplicationContext::getContainer();
-            /** @var ServerRequestInterface $request */
-            $request = Context::get(ServerRequestInterface::class);
+            $request = RequestContext::getOrNull();
             if (! $request instanceof ServerRequestInterface) {
                 // If the request object is absent, we are probably in a commandline context.
                 // Throwing an exception is unnecessary.

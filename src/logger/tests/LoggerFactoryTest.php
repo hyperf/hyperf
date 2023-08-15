@@ -29,8 +29,9 @@ use ReflectionClass;
 
 /**
  * @internal
- * @covers \Hyperf\Logger\LoggerFactory
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(LoggerFactory::class)]
 class LoggerFactoryTest extends TestCase
 {
     protected function tearDown(): void
@@ -55,6 +56,15 @@ class LoggerFactoryTest extends TestCase
         $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
     }
 
+    public function testInvokeLoggerFromFactoryByString()
+    {
+        $container = $this->mockContainer();
+        ApplicationContext::setContainer($container);
+        $factory = $container->get(LoggerFactory::class);
+        $logger = $factory->get(group: 'string');
+        $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
+    }
+
     public function testHandlerConfig()
     {
         $container = $this->mockContainer();
@@ -63,7 +73,6 @@ class LoggerFactoryTest extends TestCase
         $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
         $reflectionClass = new ReflectionClass($logger);
         $handlersProperty = $reflectionClass->getProperty('handlers');
-        $handlersProperty->setAccessible(true);
         $handlers = $handlersProperty->getValue($logger);
         $this->assertCount(1, $handlers);
         $this->assertInstanceOf(StreamHandler::class, current($handlers));
@@ -77,7 +86,6 @@ class LoggerFactoryTest extends TestCase
         $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
         $reflectionClass = new ReflectionClass($logger);
         $handlersProperty = $reflectionClass->getProperty('handlers');
-        $handlersProperty->setAccessible(true);
         $handlers = $handlersProperty->getValue($logger);
         $this->assertCount(2, $handlers);
         $this->assertInstanceOf(StreamHandler::class, $handlers[0]);
@@ -92,7 +100,6 @@ class LoggerFactoryTest extends TestCase
         $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
         $reflectionClass = new ReflectionClass($logger);
         $handlersProperty = $reflectionClass->getProperty('handlers');
-        $handlersProperty->setAccessible(true);
         $handlers = $handlersProperty->getValue($logger);
         $this->assertCount(1, $handlers);
         $this->assertInstanceOf(StreamHandler::class, $handlers[0]);
@@ -101,7 +108,6 @@ class LoggerFactoryTest extends TestCase
         $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
         $reflectionClass = new ReflectionClass($logger);
         $handlersProperty = $reflectionClass->getProperty('handlers');
-        $handlersProperty->setAccessible(true);
         $handlers = $handlersProperty->getValue($logger);
         $this->assertCount(2, $handlers);
         $this->assertInstanceOf(StreamHandler::class, $handlers[0]);
@@ -115,7 +121,6 @@ class LoggerFactoryTest extends TestCase
         $logger = $factory->get('hyperf');
         $reflectionClass = new ReflectionClass($logger);
         $handlersProperty = $reflectionClass->getProperty('processors');
-        $handlersProperty->setAccessible(true);
         $processors = $handlersProperty->getValue($logger);
         $this->assertSame([], $processors);
     }
@@ -127,7 +132,6 @@ class LoggerFactoryTest extends TestCase
         $logger = $factory->get('hyperf', 'processor-test');
         $reflectionClass = new ReflectionClass($logger);
         $handlersProperty = $reflectionClass->getProperty('processors');
-        $handlersProperty->setAccessible(true);
         $processors = $handlersProperty->getValue($logger);
         $this->assertSame(3, count($processors));
         $this->assertInstanceOf(FooProcessor::class, $processors[0]);
@@ -149,7 +153,6 @@ class LoggerFactoryTest extends TestCase
         $logger = $factory->get('hyperf', 'default-processor');
         $reflectionClass = new ReflectionClass($logger);
         $handlersProperty = $reflectionClass->getProperty('processors');
-        $handlersProperty->setAccessible(true);
         $processors = $handlersProperty->getValue($logger);
         $this->assertSame(1, count($processors));
         $this->assertInstanceOf(FooProcessor::class, $processors[0]);
@@ -181,6 +184,7 @@ class LoggerFactoryTest extends TestCase
                         'constructor' => [],
                     ],
                 ],
+                'string' => ['handlers' => ['default']],
                 'default-handlers' => [
                     'handlers' => [
                         [

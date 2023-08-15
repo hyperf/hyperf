@@ -13,6 +13,7 @@ namespace HyperfTest\Coroutine;
 
 use Hyperf\Coroutine\Locker;
 use Hyperf\Engine\Channel;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 use function Hyperf\Coroutine\go;
@@ -21,6 +22,7 @@ use function Hyperf\Coroutine\go;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class LockerTest extends TestCase
 {
     public function testLockAndUnlock()

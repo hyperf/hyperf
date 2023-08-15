@@ -13,12 +13,14 @@ namespace HyperfTest\HttpMessage;
 
 use Hyperf\HttpMessage\Base\Request;
 use Hyperf\HttpMessage\Server\Request as ServerRequest;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MessageTraitTest extends TestCase
 {
     public function testSetHeaders()

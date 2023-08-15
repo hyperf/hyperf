@@ -14,12 +14,14 @@ namespace HyperfTest\Di;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\ReflectionType;
 use HyperfTest\Di\Stub\Foo;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MethodDefinitionTest extends TestCase
 {
     public function testGetOrParse()

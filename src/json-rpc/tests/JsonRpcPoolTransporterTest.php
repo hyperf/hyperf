@@ -27,6 +27,7 @@ use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
 use HyperfTest\JsonRpc\Stub\RpcPoolStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -34,6 +35,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class JsonRpcPoolTransporterTest extends TestCase
 {
     protected function tearDown(): void

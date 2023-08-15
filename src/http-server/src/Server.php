@@ -12,15 +12,16 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use FastRoute\Dispatcher;
-use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\OnRequestInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Dispatcher\HttpDispatcher;
+use Hyperf\Engine\Http\WritableConnection;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
-use Hyperf\HttpMessage\Server\Connection\SwooleConnection;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
@@ -179,9 +180,9 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
      */
     protected function initRequestAndResponse($request, $response): array
     {
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
+        ResponseContext::set($psr7Response = new Psr7Response());
 
-        $psr7Response->setConnection(new SwooleConnection($response));
+        $psr7Response->setConnection(new WritableConnection($response));
 
         if ($request instanceof ServerRequestInterface) {
             $psr7Request = $request;
@@ -189,7 +190,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Request = Psr7Request::loadFromSwooleRequest($request);
         }
 
-        Context::set(ServerRequestInterface::class, $psr7Request);
+        RequestContext::set($psr7Request);
 
         return [$psr7Request, $psr7Response];
     }

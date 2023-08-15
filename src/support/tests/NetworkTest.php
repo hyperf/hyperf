@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Support;
 
 use Hyperf\Support\Network;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class NetworkTest extends TestCase
 {
     public function testNetworkIp()

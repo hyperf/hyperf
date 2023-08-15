@@ -15,12 +15,14 @@ use GuzzleHttp\Psr7\Response;
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Config;
 use HyperfTest\Nacos\AbstractTestCase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Psr\Http\Message\RequestInterface;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class NacosNamingSignTest extends AbstractTestCase
 {
     public function testNacosNamingSign()

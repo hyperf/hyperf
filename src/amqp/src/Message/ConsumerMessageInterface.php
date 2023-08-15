@@ -12,12 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\QueueBuilder;
+use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
 
 interface ConsumerMessageInterface extends MessageInterface
 {
-    public function consumeMessage($data, AMQPMessage $message): string;
+    public function consumeMessage($data, AMQPMessage $message): Result;
 
     public function setQueue(string $queue): static;
 

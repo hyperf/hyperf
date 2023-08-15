@@ -11,11 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp\Builder;
 
+use Hyperf\Amqp\Message\Type;
+
 class ExchangeBuilder extends Builder
 {
     protected ?string $exchange = null;
 
-    protected ?string $type = null;
+    protected null|string|Type $type = null;
 
     protected bool $internal = false;
 
@@ -30,12 +32,17 @@ class ExchangeBuilder extends Builder
         return $this;
     }
 
-    public function getType(): string
+    public function getType(): Type|string
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function getTypeString(): string
+    {
+        return $this->type instanceof Type ? $this->type->value : $this->type;
+    }
+
+    public function setType(Type|string $type): static
     {
         $this->type = $type;
         return $this;

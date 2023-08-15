@@ -492,11 +492,14 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get all items except for those with the specified keys.
      *
-     * @param array<array-key, TKey>|static<array-key, TKey> $keys
+     * @param null|array<array-key, TKey>|static<array-key, TKey> $keys
      * @return static<TKey, TValue>
      */
     public function except($keys): self
     {
+        if (is_null($keys)) {
+            return new static($this->items);
+        }
         if ($keys instanceof self) {
             $keys = $keys->all();
         } elseif (! is_array($keys)) {
@@ -685,12 +688,12 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Remove an item from the collection by key.
      *
-     * @param array<array-key, TKey>|TKey $keys
+     * @param \Hyperf\Contract\Arrayable<array-key, TValue>|iterable<array-key, TKey>|TKey $keys
      * @return $this
      */
     public function forget($keys): self
     {
-        foreach ((array) $keys as $key) {
+        foreach ($this->getArrayableItems($keys) as $key) {
             $this->offsetUnset($key);
         }
         return $this;

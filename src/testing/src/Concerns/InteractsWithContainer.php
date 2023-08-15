@@ -20,6 +20,9 @@ use Psr\Container\ContainerInterface;
 
 trait InteractsWithContainer
 {
+    /**
+     * @var null|ContainerInterface|\Hyperf\Di\Container
+     */
     protected ?ContainerInterface $container = null;
 
     /**
@@ -82,14 +85,29 @@ trait InteractsWithContainer
         return $this->instance($abstract, Mockery::spy(...array_filter(func_get_args())));
     }
 
+    protected function createContainer(): ContainerInterface
+    {
+        return new Container((new DefinitionSourceFactory())());
+    }
+
+    protected function getContainer(): ContainerInterface
+    {
+        return $this->container;
+    }
+
+    protected function flushContainer(): void
+    {
+        $this->container = null;
+    }
+
+    protected function setContainer(ContainerInterface $container): void
+    {
+        $this->container = $container;
+    }
+
     protected function refreshContainer(): void
     {
         $this->container = ApplicationContext::setContainer($this->createContainer());
         $this->container->get(\Hyperf\Contract\ApplicationInterface::class);
-    }
-
-    protected function createContainer(): ContainerInterface
-    {
-        return new Container((new DefinitionSourceFactory())());
     }
 }

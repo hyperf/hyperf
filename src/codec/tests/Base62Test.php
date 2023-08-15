@@ -13,6 +13,7 @@ namespace HyperfTest\Codec;
 
 use Hyperf\Codec\Base62;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
@@ -20,6 +21,7 @@ use Throwable;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class Base62Test extends TestCase
 {
     public function testEncode()

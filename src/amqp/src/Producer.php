@@ -69,6 +69,7 @@ class Producer extends Builder
             if ($annotation) {
                 $annotation->routingKey && $producerMessage->setRoutingKey($annotation->routingKey);
                 $annotation->exchange && $producerMessage->setExchange($annotation->exchange);
+                $annotation->pool && $producerMessage->setPoolName($annotation->pool);
             }
         }
     }

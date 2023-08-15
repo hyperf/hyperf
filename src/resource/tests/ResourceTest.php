@@ -32,6 +32,7 @@ use HyperfTest\Resource\Stubs\Resources\PostResourceWithOptionalRelationship;
 use HyperfTest\Resource\Stubs\Resources\PostResourceWithoutWrap;
 use HyperfTest\Resource\Stubs\Resources\ReallyEmptyPostResource;
 use HyperfTest\Resource\Stubs\Resources\ResourceWithPreservedKeys;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 use function Hyperf\Collection\collect;
 
@@ -39,6 +40,7 @@ use function Hyperf\Collection\collect;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ResourceTest extends TestCase
 {
     public function testResourcesMayBeConvertedToJson()

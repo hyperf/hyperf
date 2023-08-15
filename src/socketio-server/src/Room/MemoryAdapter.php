@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Room;
 
-use Hyperf\SocketIOServer\Emitter\Flagger;
+use Hyperf\Engine\WebSocket\Frame;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\WebSocketServer\Sender;
 
@@ -20,8 +20,6 @@ use function Hyperf\Support\make;
 
 class MemoryAdapter implements AdapterInterface
 {
-    use Flagger;
-
     protected array $rooms = [];
 
     protected array $sids = [];
@@ -68,9 +66,6 @@ class MemoryAdapter implements AdapterInterface
     {
         $rooms = data_get($opts, 'rooms', []);
         $except = data_get($opts, 'except', []);
-        $volatile = data_get($opts, 'flag.volatile', false);
-        $compress = data_get($opts, 'flag.compress', false);
-        $wsFlag = $this->guessFlags((bool) $compress);
         $pushed = [];
         if (! empty($rooms)) {
             foreach ($rooms as $room) {
@@ -84,12 +79,7 @@ class MemoryAdapter implements AdapterInterface
                         continue;
                     }
                     $fd = $this->sidProvider->getFd($sid);
-                    $this->sender->push(
-                        $fd,
-                        $packet,
-                        SWOOLE_WEBSOCKET_OPCODE_TEXT,
-                        $wsFlag
-                    );
+                    $this->sender->pushFrame($fd, new Frame(payloadData: $packet));
                     $pushed[$fd] = true;
                 }
             }
@@ -100,7 +90,7 @@ class MemoryAdapter implements AdapterInterface
                     continue;
                 }
                 $fd = $this->sidProvider->getFd($sid);
-                $this->sender->push($fd, $packet, SWOOLE_WEBSOCKET_OPCODE_TEXT, $wsFlag);
+                $this->sender->pushFrame($fd, new Frame(payloadData: $packet));
             }
         }
     }

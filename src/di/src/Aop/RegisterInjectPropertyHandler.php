@@ -35,7 +35,6 @@ class RegisterInjectPropertyHandler
             if ($annotation instanceof Inject) {
                 try {
                     $reflectionProperty = ReflectionManager::reflectProperty($currentClassName, $property);
-                    $reflectionProperty->setAccessible(true);
                     $container = ApplicationContext::getContainer();
                     if ($container->has($annotation->value)) {
                         $reflectionProperty->setValue($object, $container->get($annotation->value));

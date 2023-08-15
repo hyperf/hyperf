@@ -29,13 +29,13 @@ class GrpcFactory
         }
     }
 
-    public function get(string $namespaceId): GrpcClient
+    public function get(string $namespaceId, string $module = 'config'): GrpcClient
     {
-        if (isset($this->clients[$namespaceId])) {
-            return $this->clients[$namespaceId];
+        if (isset($this->clients[$namespaceId][$module])) {
+            return $this->clients[$namespaceId][$module];
         }
 
-        return $this->clients[$namespaceId] = new GrpcClient($this->app, $this->config, $this->container(), $namespaceId);
+        return $this->clients[$namespaceId][$module] = new GrpcClient($this->app, $this->config, $this->container(), $namespaceId, $module);
     }
 
     /**

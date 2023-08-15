@@ -16,6 +16,7 @@ use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Tracer\TracerFactory;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Zipkin\Samplers\BinarySampler;
 
@@ -25,6 +26,7 @@ use function Hyperf\Support\env;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TracerFactoryTest extends TestCase
 {
     protected function tearDown(): void

@@ -19,6 +19,7 @@ use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface as ValidatorContract;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use Hyperf\Support\Fluent;
 use Hyperf\Support\MessageBag;
 use Hyperf\Validation\Contract\ImplicitRule;
@@ -172,7 +173,7 @@ class Validator implements ValidatorContract
      */
     public function __call($method, $parameters)
     {
-        $rule = Str::snake(substr($method, 8));
+        $rule = StrCache::snake(substr($method, 8));
 
         if (isset($this->extensions[$rule])) {
             return $this->callExtension($rule, $parameters);
@@ -498,7 +499,7 @@ class Validator implements ValidatorContract
     public function addExtensions(array $extensions)
     {
         if ($extensions) {
-            $keys = array_map('\Hyperf\Stringable\Str::snake', array_keys($extensions));
+            $keys = array_map('\Hyperf\Stringable\StrCache::snake', array_keys($extensions));
 
             $extensions = array_combine($keys, array_values($extensions));
         }
@@ -514,7 +515,7 @@ class Validator implements ValidatorContract
         $this->addExtensions($extensions);
 
         foreach ($extensions as $rule => $extension) {
-            $this->implicitRules[] = Str::studly($rule);
+            $this->implicitRules[] = StrCache::studly($rule);
         }
     }
 
@@ -526,7 +527,7 @@ class Validator implements ValidatorContract
         $this->addExtensions($extensions);
 
         foreach ($extensions as $rule => $extension) {
-            $this->dependentRules[] = Str::studly($rule);
+            $this->dependentRules[] = StrCache::studly($rule);
         }
     }
 
@@ -535,7 +536,7 @@ class Validator implements ValidatorContract
      */
     public function addExtension(string $rule, Closure|string $extension)
     {
-        $this->extensions[Str::snake($rule)] = $extension;
+        $this->extensions[StrCache::snake($rule)] = $extension;
     }
 
     /**
@@ -545,7 +546,7 @@ class Validator implements ValidatorContract
     {
         $this->addExtension($rule, $extension);
 
-        $this->implicitRules[] = Str::studly($rule);
+        $this->implicitRules[] = StrCache::studly($rule);
     }
 
     /**
@@ -555,7 +556,7 @@ class Validator implements ValidatorContract
     {
         $this->addExtension($rule, $extension);
 
-        $this->dependentRules[] = Str::studly($rule);
+        $this->dependentRules[] = StrCache::studly($rule);
     }
 
     /**
@@ -564,7 +565,7 @@ class Validator implements ValidatorContract
     public function addReplacers(array $replacers)
     {
         if ($replacers) {
-            $keys = array_map('\Hyperf\Stringable\Str::snake', array_keys($replacers));
+            $keys = array_map('\Hyperf\Stringable\StrCache::snake', array_keys($replacers));
 
             $replacers = array_combine($keys, array_values($replacers));
         }
@@ -577,7 +578,7 @@ class Validator implements ValidatorContract
      */
     public function addReplacer(string $rule, Closure|string $replacer)
     {
-        $this->replacers[Str::snake($rule)] = $replacer;
+        $this->replacers[StrCache::snake($rule)] = $replacer;
     }
 
     /**

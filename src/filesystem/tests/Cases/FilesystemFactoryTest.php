@@ -35,14 +35,17 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\Memory\MemoryAdapter;
 use Overtrue\Flysystem\Cos\CosAdapter;
 use Overtrue\Flysystem\Qiniu\QiniuAdapter;
-use Xxtime\Flysystem\Aliyun\OssAdapter as XxtimeOSSAdapter;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 ! defined('BASE_PATH') && define('BASE_PATH', '.');
+
+use Xxtime\Flysystem\Aliyun\OssAdapter as XxtimeOSSAdapter;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FilesystemFactoryTest extends AbstractTestCase
 {
     protected function setUp(): void

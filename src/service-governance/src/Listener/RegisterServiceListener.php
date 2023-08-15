@@ -58,6 +58,10 @@ class RegisterServiceListener implements ListenerInterface
      */
     public function process(object $event): void
     {
+        if (! $this->config->get('services.enable.register', true)) {
+            return;
+        }
+
         $attempts = 10;
         while ($attempts > 0) {
             try {

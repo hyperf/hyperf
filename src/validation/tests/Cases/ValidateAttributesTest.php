@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Validation\Cases;
 
 use HyperfTest\Validation\Cases\Stub\ValidatesAttributesStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidateAttributesTest extends TestCase
 {
     public function testValidateAlpha()
