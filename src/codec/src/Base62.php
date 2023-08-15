@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Codec;
 
-use InvalidArgumentException;
+use Hyperf\Codec\Exception\InvalidArgumentException;
 
 class Base62
 {

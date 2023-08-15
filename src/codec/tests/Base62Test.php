@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Codec;
 
 use Hyperf\Codec\Base62;
-use InvalidArgumentException;
+use Hyperf\Codec\Exception\InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Throwable;
