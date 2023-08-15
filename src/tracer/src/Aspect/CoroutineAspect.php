@@ -26,7 +26,6 @@ class CoroutineAspect extends AbstractAspect
 {
     public array $classes = [
         'Hyperf\Coroutine\Coroutine::create',
-        // 'Hyperf\Engine\Coroutine::create',
     ];
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
