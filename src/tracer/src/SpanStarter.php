@@ -15,7 +15,6 @@ use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Rpc;
 use OpenTracing\Span;
-use OpenTracing\Tracer;
 use Psr\Http\Message\ServerRequestInterface;
 
 use const OpenTracing\Formats\TEXT_MAP;
@@ -32,9 +31,8 @@ trait SpanStarter
         array $option = [],
         string $kind = SPAN_KIND_RPC_SERVER
     ): Span {
-        $root = Context::get('tracer.root');
-        /** @var Tracer $tracer */
-        $tracer = Context::get('tracer.tracer') ?: $this->tracer;
+        $root = TracerContext::getRoot();
+        $tracer = TracerContext::getTracer() ?: $this->tracer;
         if (! $root instanceof Span) {
             $container = ApplicationContext::getContainer();
             /** @var ServerRequestInterface $request */
@@ -44,7 +42,7 @@ trait SpanStarter
                 // Throwing an exception is unnecessary.
                 $root = $tracer->startSpan($name, $option);
                 $root->setTag(SPAN_KIND, $kind);
-                Context::set('tracer.root', $root);
+                TracerContext::setRoot($root);
                 return $root;
             }
             $carrier = array_map(function ($header) {
@@ -63,7 +61,7 @@ trait SpanStarter
             }
             $root = $tracer->startSpan($name, $option);
             $root->setTag(SPAN_KIND, $kind);
-            Context::set('tracer.root', $root);
+            TracerContext::setRoot($root);
             return $root;
         }
         $option['child_of'] = $root->getContext();
