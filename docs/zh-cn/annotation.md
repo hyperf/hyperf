@@ -97,17 +97,20 @@ class Foo extends AbstractAnnotation
 {
     public function __construct(public array $bar, public int $baz = 0)
     {
-        parent::__construct(compact('bar', 'baz'));
     }
 }
 ```
+
 使用注解类：
+
 ```php
 <?php
+use App\Annotation\Foo;
+
 #[Foo(bar: [1, 2], baz: 3)]
 class IndexController extends AbstractController
 {
-    //利用注解数据
+    // 利用注解数据
 }
 ```
 
