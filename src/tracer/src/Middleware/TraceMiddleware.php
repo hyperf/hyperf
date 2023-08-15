@@ -23,6 +23,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
+use Zipkin\Propagation\TraceContext;
+use ZipkinOpenTracing\SpanContext;
 
 use function Hyperf\Coroutine\defer;
 
@@ -51,7 +53,12 @@ class TraceMiddleware implements MiddlewareInterface
             }
         });
         try {
-            $response = $handler->handle($request)->withHeader('Trace-Id', $span->getContext()->getContext()->getTraceId());
+            $response = $handler->handle($request);
+            /** @var \ZipkinOpenTracing\SpanContext $spanContent */
+            $spanContent = $span->getContext();
+            /** @var \Zipkin\Propagation\TraceContext $traceContext */
+            $traceContext = $spanContent->getContext();
+            $response = $response->withHeader('Trace-Id', $traceContext->getTraceId());
             $span->setTag($this->spanTagManager->get('response', 'status_code'), $response->getStatusCode());
         } catch (Throwable $exception) {
             $this->switchManager->isEnable('exception') && $this->appendExceptionToSpan($span, $exception);
