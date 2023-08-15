@@ -23,8 +23,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
-use Zipkin\Propagation\TraceContext;
-use ZipkinOpenTracing\SpanContext;
 
 use function Hyperf\Coroutine\defer;
 
