@@ -50,7 +50,7 @@ class HttpClientAspect extends AbstractAspect
         }
         // Disable the aspect for the requestAsync method.
         if ($proceedingJoinPoint->methodName == 'request') {
-            $proceedingJoinPoint->arguments['keys']['options']['no_aspect'] = true;
+            $options['no_aspect'] = true;
         }
         $arguments = $proceedingJoinPoint->arguments;
         $method = $arguments['keys']['method'] ?? 'Null';

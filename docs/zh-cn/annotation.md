@@ -86,8 +86,6 @@ class Foo
 
 ### 创建一个注解类
 
-在任意地方创建注解类，如下代码示例：
-
 ```php
 <?php
 namespace App\Annotation;
@@ -95,15 +93,24 @@ namespace App\Annotation;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
-class Bar extends AbstractAnnotation
-{
-    // some code
-}
-
-#[Attribute(Attribute::TARGET_CLASS)]
 class Foo extends AbstractAnnotation
 {
-    // some code
+    public function __construct(public array $bar, public int $baz = 0)
+    {
+    }
+}
+```
+
+使用注解类：
+
+```php
+<?php
+use App\Annotation\Foo;
+
+#[Foo(bar: [1, 2], baz: 3)]
+class IndexController extends AbstractController
+{
+    // 利用注解数据
 }
 ```
 
@@ -111,7 +118,7 @@ class Foo extends AbstractAnnotation
 
 ### 自定义注解收集器
 
-注解的收集时具体的执行流程也是在注解类内实现的，相关的方法由 `Hyperf\Di\Annotation\AnnotationInterface` 约束着，该接口类要求了下面 3 个方法的实现，您可以根据自己的需求实现对应的逻辑：
+收集注解的具体执行流程也是在注解类内实现，相关的方法由 `Hyperf\Di\Annotation\AnnotationInterface` 约束着，该接口类要求了下面 3 个方法的实现，您可以根据自己的需求实现对应的逻辑：
 
 - `public function collectClass(string $className): void;` 当注解定义在类时被扫描时会触发该方法
 - `public function collectMethod(string $className, ?string $target): void;` 当注解定义在类方法时被扫描时会触发该方法
