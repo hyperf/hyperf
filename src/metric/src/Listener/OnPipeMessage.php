@@ -46,7 +46,7 @@ class OnPipeMessage implements ListenerInterface
             return;
         }
 
-        $inner = ! is_array($event->data) ? [$event->data] : $value;
+        $inner = ! is_array($event->data) ? [$event->data] : $event->data;
         foreach ($inner as $data) {
             Coroutine::create(function () use ($data) {
                 $this->processData($data);
