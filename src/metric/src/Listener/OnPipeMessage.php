@@ -19,13 +19,16 @@ use Hyperf\Metric\Adapter\RemoteProxy\Histogram;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Process\Event\PipeMessage;
 
-use function Hyperf\Support\make;
-
 /**
  * Receives messages in metric process.
  */
 class OnPipeMessage implements ListenerInterface
 {
+    public function __construct(
+        protected MetricFactoryInterface $factory
+    ) {
+    }
+
     /**
      * @return string[] returns the events that you want to listen
      */
@@ -56,15 +59,13 @@ class OnPipeMessage implements ListenerInterface
 
     protected function processData(object $data): void
     {
-        $factory = make(MetricFactoryInterface::class);
-
         switch (true) {
             case $data instanceof Counter:
-                $counter = $factory->makeCounter($data->name, $data->labelNames);
+                $counter = $this->factory->makeCounter($data->name, $data->labelNames);
                 $counter->with(...$data->labelValues)->add($data->delta);
                 break;
             case $data instanceof Gauge:
-                $gauge = $factory->makeGauge($data->name, $data->labelNames);
+                $gauge = $this->factory->makeGauge($data->name, $data->labelNames);
                 if (isset($data->value)) {
                     $gauge->with(...$data->labelValues)->set($data->value);
                 } else {
@@ -72,7 +73,7 @@ class OnPipeMessage implements ListenerInterface
                 }
                 break;
             case $data instanceof Histogram:
-                $histogram = $factory->makeHistogram($data->name, $data->labelNames);
+                $histogram = $this->factory->makeHistogram($data->name, $data->labelNames);
                 $histogram->with(...$data->labelValues)->put($data->sample);
                 break;
             default:
