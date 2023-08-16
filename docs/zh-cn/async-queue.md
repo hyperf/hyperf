@@ -117,7 +117,7 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 ### 如何使用多个配置
 
-有的开发者会在特殊场景穿件多个配置，比如某些消息要优先处理，所以会放到更加清闲的队列当中。例如以下配置
+有的开发者会在特殊场景创建多个配置，比如某些消息要优先处理，所以会放到更加清闲的队列当中。例如以下配置
 
 ```php
 <?php
@@ -155,7 +155,7 @@ return [
 
 ```
 
-我们默认的 `Hyperf\AsyncQueue\Process\ConsumerProcess` 只会处理 `default` 配置，所以我们需要创建一个新的 Process
+但是，我们默认的 `Hyperf\AsyncQueue\Process\ConsumerProcess` 只会处理 `default` 配置，所以我们需要创建一个新的 `Process`
 
 ```php
 <?php
