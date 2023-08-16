@@ -82,7 +82,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * The connection name for the model.
      */
-    protected ?string $connection = 'default';
+    protected ?string $connection = null;
 
     /**
      * The table associated with the model.

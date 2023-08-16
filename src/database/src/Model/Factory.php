@@ -13,6 +13,8 @@ namespace Hyperf\Database\Model;
 
 use ArrayAccess;
 use Faker\Generator as Faker;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\ConfigInterface;
 use Symfony\Component\Finder\Finder;
 
 class Factory implements ArrayAccess
@@ -89,11 +91,13 @@ class Factory implements ArrayAccess
      * Define a class with a given set of attributes.
      *
      * @param string $class
-     * @param string $name
+     * @param null|string $name
      * @return $this
      */
-    public function define($class, callable $attributes, $name = 'default')
+    public function define($class, callable $attributes, $name = null)
     {
+        $name = $name ?: $this->getConnection();
+
         $this->definitions[$class][$name] = $attributes;
 
         return $this;
@@ -118,11 +122,13 @@ class Factory implements ArrayAccess
      * Define a callback to run after making a model.
      *
      * @param string $class
-     * @param string $name
+     * @param null|string $name
      * @return $this
      */
-    public function afterMaking($class, callable $callback, $name = 'default')
+    public function afterMaking($class, callable $callback, $name = null)
     {
+        $name = $name ?: $this->getConnection();
+
         $this->afterMaking[$class][$name][] = $callback;
 
         return $this;
@@ -144,11 +150,13 @@ class Factory implements ArrayAccess
      * Define a callback to run after creating a model.
      *
      * @param string $class
-     * @param string $name
+     * @param null|string $name
      * @return $this
      */
-    public function afterCreating($class, callable $callback, $name = 'default')
+    public function afterCreating($class, callable $callback, $name = null)
     {
+        $name = $name ?: $this->getConnection();
+
         $this->afterCreating[$class][$name][] = $callback;
 
         return $this;
@@ -180,7 +188,7 @@ class Factory implements ArrayAccess
      * Create an instance of the given model and type and persist it to the database.
      *
      * @param string $class
-     * @param string $name
+     * @param null|string $name
      */
     public function createAs($class, $name, array $attributes = [])
     {
@@ -201,7 +209,7 @@ class Factory implements ArrayAccess
      * Create an instance of the given model and type.
      *
      * @param string $class
-     * @param string $name
+     * @param null|string $name
      */
     public function makeAs($class, $name, array $attributes = [])
     {
@@ -212,7 +220,7 @@ class Factory implements ArrayAccess
      * Get the raw attribute array for a given named model.
      *
      * @param string $class
-     * @param string $name
+     * @param null|string $name
      * @return array
      */
     public function rawOf($class, $name, array $attributes = [])
@@ -224,11 +232,13 @@ class Factory implements ArrayAccess
      * Get the raw attribute array for a given model.
      *
      * @param string $class
-     * @param string $name
+     * @param null|string $name
      * @return array
      */
-    public function raw($class, array $attributes = [], $name = 'default')
+    public function raw($class, array $attributes = [], $name = null)
     {
+        $name = $name ?: $this->getConnection();
+
         return array_merge(
             call_user_func($this->definitions[$class][$name], $this->faker),
             $attributes
@@ -239,12 +249,14 @@ class Factory implements ArrayAccess
      * Create a builder for the given model.
      *
      * @param string $class
-     * @param string $name
+     * @param null|string $name
      * @return \Hyperf\Database\Model\FactoryBuilder
      */
-    public function of($class, $name = 'default')
+    public function of($class, $name = null)
     {
-        return new FactoryBuilder(
+        $name = $name ?: $this->getConnection();
+
+        return (new FactoryBuilder(
             $class,
             $name,
             $this->definitions,
@@ -252,7 +264,7 @@ class Factory implements ArrayAccess
             $this->afterMaking,
             $this->afterCreating,
             $this->faker
-        );
+        ))->connection($name);
     }
 
     /**
@@ -307,5 +319,12 @@ class Factory implements ArrayAccess
     public function offsetUnset(mixed $offset): void
     {
         unset($this->definitions[$offset]);
+    }
+
+    protected function getConnection(): string
+    {
+        return ApplicationContext::getContainer()
+            ->get(ConfigInterface::class)
+            ->get('databases.connection', 'default');
     }
 }

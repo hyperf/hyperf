@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Migrations;
 
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\ConfigInterface;
+
 abstract class Migration
 {
     /**
@@ -21,13 +24,19 @@ abstract class Migration
     /**
      * The name of the database connection to use.
      */
-    protected string $connection = 'default';
+    protected ?string $connection = null;
 
     /**
      * Get the migration connection name.
      */
     public function getConnection(): string
     {
-        return $this->connection;
+        if ($connection = $this->connection) {
+            return $connection;
+        }
+
+        return ApplicationContext::getContainer()
+            ->get(ConfigInterface::class)
+            ->get('databases.connection', 'default');
     }
 }
