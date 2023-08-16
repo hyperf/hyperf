@@ -129,6 +129,8 @@ $log->alert('czl');
 
 可能有些时候您更想保持大多数框架使用日志的习惯，那么您可以在 `App` 下创建一个 `Log` 类，并通过 `__callStatic` 魔术方法静态方法调用实现对 `Logger` 的取用以及各个等级的日志记录，我们通过代码来演示一下：
 
+> 切记在使用时，不要让 $name 跟 请求 挂钩，比如把 $request_id 当 logger name 来使用，就会导致 Factory 中存储请求级别的日志对象，会导致严重的内存泄漏。
+
 ```php
 namespace App;
 
