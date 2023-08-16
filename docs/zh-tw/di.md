@@ -65,8 +65,7 @@ class IndexController
 
 > 注意使用建構函式注入時，呼叫方也就是 `IndexController` 必須是由 DI 建立的物件才能完成自動注入，而 Controller 預設是由 DI 建立的，所以可以直接使用建構函式注入
 
-當您希望定義一個可選的依賴項時，可以透過給引數定義為 `nullable` 或將引數的預設值定義為 `null`，即表示該引數如果在 DI 容器中沒有找到或無法建立對應的物件時，不丟擲異常而是直接使用 `null` 來注入。*(該功能僅在
-1.1.0 或更高版本可用)*
+當您希望定義一個可選的依賴項時，可以透過給引數定義為 `nullable` 或將引數的預設值定義為 `null`，即表示該引數如果在 DI 容器中沒有找到或無法建立對應的物件時，不丟擲異常而是直接使用 `null` 來注入。
 
 ```php
 <?php
@@ -141,11 +140,9 @@ class IndexController
     /**
      * 透過 `#[Inject]` 註解注入由註解宣告的屬性型別物件
      * 當 UserService 不存在於 DI 容器內或不可建立時，則注入 null
-     * 
-     * @var UserService
      */
     #[Inject(required: false)]
-    private $userService;
+    private ?UserService $userService;
     
     public function index()
     {
@@ -212,11 +209,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
-    /**
-     * @var UserServiceInterface
-     */
     #[Inject]
-    private $userService;
+    private UserServiceInterface $userService;
     
     public function index()
     {
