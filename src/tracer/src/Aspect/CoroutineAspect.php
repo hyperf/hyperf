@@ -50,7 +50,7 @@ class CoroutineAspect extends AbstractAspect
                     });
                 }
 
-                call($callable);
+                $callable();
             } catch (Throwable $e) {
                 if (isset($child)) {
                     $child->setTag('error', true);
