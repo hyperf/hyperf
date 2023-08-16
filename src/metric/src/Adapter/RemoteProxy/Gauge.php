@@ -14,7 +14,6 @@ namespace Hyperf\Metric\Adapter\RemoteProxy;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\MetricCollectorInterface;
-use Hyperf\Process\ProcessCollector;
 
 class Gauge implements GaugeInterface
 {
