@@ -19,7 +19,7 @@ class ResponseContext
 {
     public static function get(?int $coroutineId = null): ResponsePlusInterface
     {
-        return Context::get(ResponseInterface::class, $coroutineId);
+        return Context::get(ResponseInterface::class, null, $coroutineId);
     }
 
     public static function set(ResponseInterface $response, ?int $coroutineId = null): ResponsePlusInterface
@@ -38,6 +38,6 @@ class ResponseContext
 
     public static function getOrNull(?int $coroutineId = null): ?ResponsePlusInterface
     {
-        return Context::get(ResponseInterface::class, $coroutineId);
+        return Context::get(ResponseInterface::class, null, $coroutineId);
     }
 }
