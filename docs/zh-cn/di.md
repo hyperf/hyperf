@@ -140,11 +140,9 @@ class IndexController
     /**
      * 通过 `#[Inject]` 注解注入由注解声明的属性类型对象
      * 当 UserService 不存在于 DI 容器内或不可创建时，则注入 null
-     * 
-     * @var UserService
      */
     #[Inject(required: false)]
-    private $userService;
+    private ?UserService $userService;
     
     public function index()
     {
@@ -211,11 +209,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
-    /**
-     * @var UserServiceInterface
-     */
     #[Inject]
-    private $userService;
+    private UserServiceInterface $userService;
     
     public function index()
     {
