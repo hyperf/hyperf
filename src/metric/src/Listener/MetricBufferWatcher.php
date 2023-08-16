@@ -18,7 +18,6 @@ use Hyperf\Coordinator\Timer;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
-use Hyperf\Metric\Adapter\RemoteProxy\MetricCollector;
 use Hyperf\Metric\Contract\MetricCollectorInterface;
 use Psr\Container\ContainerInterface;
 
@@ -39,7 +38,7 @@ class MetricBufferWatcher implements ListenerInterface
     public function __construct(protected ContainerInterface $container)
     {
         $this->config = $container->get(ConfigInterface::class);
-        $this->collector = $container->get(MetricCollector::class);
+        $this->collector = $container->get(MetricCollectorInterface::class);
         $this->timer = new Timer();
     }
 
