@@ -581,7 +581,7 @@ trait ManagesFrequencies
      */
     protected function setCrontabInSeconds(): static
     {
-        $this->rule = '* * * * * *';
+        $this->setRule('* * * * * *');
 
         return $this;
     }
