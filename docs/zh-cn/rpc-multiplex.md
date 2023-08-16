@@ -40,6 +40,10 @@ return [
                 'package_body_offset' => 4,
                 'package_max_length' => 1024 * 1024 * 2,
             ],
+            'options' => [
+                // 多路复用下，避免跨协程 Socket 跨协程多写报错
+                'send_channel_capacity' => 65535,
+            ],
         ],
     ],
 ];
@@ -57,9 +61,7 @@ use App\JsonRpc\CalculatorServiceInterface;
 use Hyperf\RpcMultiplex\Constant;
 use Hyperf\RpcServer\Annotation\RpcService;
 
-/**
- * @RpcService(name="CalculatorService", server="rpc", protocol=Constant::PROTOCOL_DEFAULT)
- */
+#[RpcService(name: "CalculatorService", server: "rpc", protocol: Constant::PROTOCOL_DEFAULT)]
 class CalculatorService implements CalculatorServiceInterface
 {
 }

@@ -13,10 +13,12 @@ namespace Hyperf\Database\Commands\Migrations;
 
 use Hyperf\Command\Command;
 
+use function Hyperf\Collection\collect;
+
 abstract class BaseCommand extends Command
 {
     /**
-     * Get all of the migration paths.
+     * Get all the migration paths.
      */
     protected function getMigrationPaths(): array
     {

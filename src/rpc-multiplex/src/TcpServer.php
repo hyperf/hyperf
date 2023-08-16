@@ -11,9 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcMultiplex;
 
+use Hyperf\Collection\Arr;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
@@ -23,11 +26,10 @@ use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
 use Hyperf\RpcMultiplex\Exception\Handler\DefaultExceptionHandler;
 use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\RpcServer\Server;
+use Hyperf\Server\Connection as HyperfConnection;
 use Hyperf\Server\Exception\InvalidArgumentException;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Coroutine;
-use Multiplex\Constract\PackerInterface as PacketPacker;
+use Multiplex\Contract\HasHeartbeatInterface as Heartbeat;
+use Multiplex\Contract\PackerInterface as PacketPacker;
 use Multiplex\Packet;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -35,37 +37,21 @@ use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Coroutine\Server\Connection;
 use Swoole\Server as SwooleServer;
 
+use function Hyperf\Support\make;
+
 class TcpServer extends Server
 {
-    /**
-     * @var ProtocolManager
-     */
-    protected $protocolManager;
+    protected ProtocolManager $protocolManager;
 
-    /**
-     * @var HttpMessageBuilderInterface
-     */
-    protected $messageBuilder;
+    protected ?HttpMessageBuilderInterface $messageBuilder = null;
 
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
+    protected ?PackerInterface $packer = null;
 
-    /**
-     * @var array
-     */
-    protected $serverConfig;
+    protected array $serverConfig = [];
 
-    /**
-     * @var string
-     */
-    protected $proto;
+    protected string $proto;
 
-    /**
-     * @var PacketPacker
-     */
-    protected $packetPacker;
+    protected PacketPacker $packetPacker;
 
     public function __construct(
         ContainerInterface $container,
@@ -97,7 +83,7 @@ class TcpServer extends Server
             $packet = $this->packetPacker->unpack($data);
             if ($packet->isHeartbeat()) {
                 $response = new Response();
-                $this->send($server, $fd, $response->withContent(Packet::PONG));
+                $this->send($server, $fd, $response->withContent(Heartbeat::PONG));
                 return;
             }
 
@@ -108,7 +94,7 @@ class TcpServer extends Server
     }
 
     /**
-     * @param Connection|SwooleServer $server
+     * @param Connection|HyperfConnection|SwooleServer $server
      */
     protected function send($server, int $fd, ResponseInterface $response): void
     {
@@ -118,7 +104,7 @@ class TcpServer extends Server
 
         if ($server instanceof SwooleServer) {
             $server->send($fd, $packed);
-        } elseif ($server instanceof Connection) {
+        } elseif ($server instanceof Connection || $server instanceof HyperfConnection) {
             $server->send($packed);
         }
     }

@@ -18,18 +18,12 @@ use Psr\Container\ContainerInterface;
 class PoolFactory
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * @var RpcPool[]
      */
-    protected $pools = [];
+    protected array $pools = [];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     /**

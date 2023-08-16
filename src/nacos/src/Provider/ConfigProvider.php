@@ -17,9 +17,13 @@ use Psr\Http\Message\ResponseInterface;
 
 class ConfigProvider extends AbstractProvider
 {
+    public const WORD_SEPARATOR = "\x02";
+
+    public const LINE_SEPARATOR = "\x01";
+
     public function get(string $dataId, string $group, ?string $tenant = null): ResponseInterface
     {
-        return $this->request('GET', '/nacos/v1/cs/configs', [
+        return $this->request('GET', 'nacos/v1/cs/configs', [
             RequestOptions::QUERY => $this->filter([
                 'dataId' => $dataId,
                 'group' => $group,
@@ -30,7 +34,7 @@ class ConfigProvider extends AbstractProvider
 
     public function set(string $dataId, string $group, string $content, ?string $type = null, ?string $tenant = null): ResponseInterface
     {
-        return $this->request('POST', '/nacos/v1/cs/configs', [
+        return $this->request('POST', 'nacos/v1/cs/configs', [
             RequestOptions::FORM_PARAMS => $this->filter([
                 'dataId' => $dataId,
                 'group' => $group,
@@ -43,12 +47,36 @@ class ConfigProvider extends AbstractProvider
 
     public function delete(string $dataId, string $group, ?string $tenant = null): ResponseInterface
     {
-        return $this->request('DELETE', '/nacos/v1/cs/configs', [
+        return $this->request('DELETE', 'nacos/v1/cs/configs', [
             RequestOptions::QUERY => $this->filter([
                 'dataId' => $dataId,
                 'group' => $group,
                 'tenant' => $tenant,
             ]),
+        ]);
+    }
+
+    /**
+     * @param $options = [
+     *     'dataId' => '',
+     *     'group' => '',
+     *     'contentMD5' => md5(file_get_contents($configPath)),
+     *     'tenant' => '',
+     * ]
+     */
+    public function listener(array $options = []): ResponseInterface
+    {
+        $config = ($options['dataId'] ?? null) . self::WORD_SEPARATOR .
+            ($options['group'] ?? null) . self::WORD_SEPARATOR .
+            ($options['contentMD5'] ?? null) . self::WORD_SEPARATOR .
+            ($options['tenant'] ?? null) . self::LINE_SEPARATOR;
+        return $this->request('POST', 'nacos/v1/cs/configs/listener', [
+            RequestOptions::QUERY => [
+                'Listening-Configs' => $config,
+            ],
+            RequestOptions::HEADERS => [
+                'Long-Pulling-Timeout' => 30,
+            ],
         ]);
     }
 }

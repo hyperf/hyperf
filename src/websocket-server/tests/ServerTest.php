@@ -11,15 +11,16 @@ declare(strict_types=1);
  */
 namespace HyperfTest\WebSocketServer;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpServer\ResponseEmitter;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Reflection\ClassInvoker;
-use Hyperf\Utils\Waiter;
+use Hyperf\Support\Reflection\ClassInvoker;
 use Hyperf\WebSocketServer\Server;
+use HyperfTest\WebSocketServer\Stub\FooServer;
 use HyperfTest\WebSocketServer\Stub\WebSocketStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -54,8 +55,15 @@ class ServerTest extends TestCase
         );
 
         $server = new ClassInvoker($server);
-        $server->deferOnOpen(new SwooleRequest(), WebSocketStub::class, new SwooleResponse());
+        $server->deferOnOpen(new SwooleRequest(), WebSocketStub::class, new SwooleResponse(), 1);
         $this->assertNotEquals(Coroutine::id(), WebSocketStub::$coroutineId);
         $this->assertFalse(\Swoole\Coroutine::exists(WebSocketStub::$coroutineId));
+    }
+
+    public function testEngineServer()
+    {
+        $serv = new FooServer();
+        $id = rand(0, 99999);
+        $this->assertSame($id, $serv->getServer($id));
     }
 }

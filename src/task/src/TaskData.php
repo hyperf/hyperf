@@ -13,19 +13,7 @@ namespace Hyperf\Task;
 
 class TaskData
 {
-    /**
-     * @var int
-     */
-    public $taskId;
-
-    /**
-     * @var mixed
-     */
-    public $data;
-
-    public function __construct(int $taskId, $data)
+    public function __construct(public int $taskId, public mixed $data)
     {
-        $this->taskId = $taskId;
-        $this->data = $data;
     }
 }

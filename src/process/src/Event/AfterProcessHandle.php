@@ -15,19 +15,7 @@ use Hyperf\Process\AbstractProcess;
 
 class AfterProcessHandle
 {
-    /**
-     * @var AbstractProcess
-     */
-    public $process;
-
-    /**
-     * @var int
-     */
-    public $index;
-
-    public function __construct(AbstractProcess $process, int $index)
+    public function __construct(public AbstractProcess $process, public int $index)
     {
-        $this->process = $process;
-        $this->index = $index;
     }
 }

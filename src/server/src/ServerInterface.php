@@ -29,7 +29,7 @@ interface ServerInterface
 
     public function init(ServerConfig $config): ServerInterface;
 
-    public function start();
+    public function start(): void;
 
     /**
      * @return SwooleCoServer|SwooleServer

@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Process\Exception;
 
-class SocketAcceptException extends \RuntimeException
+use RuntimeException;
+
+class SocketAcceptException extends RuntimeException
 {
     public function isTimeout(): bool
     {

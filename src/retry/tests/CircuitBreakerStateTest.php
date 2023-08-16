@@ -27,7 +27,7 @@ class CircuitBreakerStateTest extends TestCase
         );
         $this->assertFalse($state->isOpen());
         $state->open();
-        $this->assertTrue($state->isOpen()); //open
+        $this->assertTrue($state->isOpen()); // open
         usleep(1000);
         $this->assertFalse($state->isOpen());
     }

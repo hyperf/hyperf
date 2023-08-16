@@ -15,7 +15,7 @@ use Hyperf\Metric\Contract\GaugeInterface;
 
 class Gauge implements GaugeInterface
 {
-    public function with(string ...$labelValues): GaugeInterface
+    public function with(string ...$labelValues): static
     {
         return $this;
     }

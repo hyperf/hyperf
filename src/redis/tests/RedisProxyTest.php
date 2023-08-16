@@ -12,8 +12,11 @@ declare(strict_types=1);
 namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
+use Hyperf\Engine\Channel as Chan;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\LowFrequencyInterface;
 use Hyperf\Pool\PoolOption;
@@ -21,9 +24,11 @@ use Hyperf\Redis\Frequency;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use RedisCluster;
+
+use function Hyperf\Coroutine\go;
 
 /**
  * @internal
@@ -117,13 +122,84 @@ class RedisProxyTest extends TestCase
         $this->assertSame(0, $it);
     }
 
+    public function testPipeline()
+    {
+        $pipe = $this->getRedis()->pipeline();
+        $this->assertInstanceOf(\Redis::class, $pipe);
+
+        $key = 'pipeline:' . uniqid();
+
+        $this->getRedis()->pipeline(function (\Redis $pipe) use ($key) {
+            $pipe->incr($key);
+            $pipe->incr($key);
+            $pipe->incr($key);
+        });
+
+        $this->assertEquals(3, $this->getRedis()->get($key));
+
+        $this->getRedis()->del($key);
+    }
+
+    public function testTransaction()
+    {
+        $transaction = $this->getRedis()->transaction();
+        $this->assertInstanceOf(\Redis::class, $transaction);
+
+        $key = 'transaction:' . uniqid();
+
+        $this->getRedis()->transaction(function (\Redis|RedisCluster $transaction) use ($key) {
+            $transaction->incr($key);
+            $transaction->incr($key);
+            $transaction->incr($key);
+        });
+
+        $this->assertEquals(3, $this->getRedis()->get($key));
+
+        $this->getRedis()->del($key);
+    }
+
+    public function testRedisPipeline()
+    {
+        $redis = $this->getRedis();
+
+        $redis->rPush('pipeline:list', 'A');
+        $redis->rPush('pipeline:list', 'B');
+        $redis->rPush('pipeline:list', 'C');
+        $redis->rPush('pipeline:list', 'D');
+        $redis->rPush('pipeline:list', 'E');
+
+        $chan = new Chan(1);
+        $chan2 = new Chan(1);
+        go(static function () use ($redis, $chan) {
+            $redis->pipeline();
+            usleep(2000);
+            $redis->lRange('pipeline:list', 0, 1);
+            $redis->lTrim('pipeline:list', 2, -1);
+            usleep(1000);
+            $chan->push($redis->exec());
+        });
+
+        go(static function () use ($redis, $chan2) {
+            $redis->pipeline();
+            usleep(1000);
+            $redis->lRange('pipeline:list', 0, 1);
+            $redis->lTrim('pipeline:list', 2, -1);
+            usleep(10000);
+            $chan2->push($redis->exec());
+        });
+
+        $this->assertSame([['A', 'B'], true], $chan->pop());
+        $this->assertSame([['C', 'D'], true], $chan2->pop());
+    }
+
     /**
      * @param mixed $optinos
-     * @return \Redis
+     * @return \Redis|Redis
      */
     private function getRedis($optinos = [])
     {
         $container = Mockery::mock(Container::class);
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
                 'default' => [

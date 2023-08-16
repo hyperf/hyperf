@@ -19,13 +19,6 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'listeners' => [
                 SignalRegisterListener::class => PHP_INT_MAX,
                 SignalDeregisterListener::class,

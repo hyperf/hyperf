@@ -25,13 +25,6 @@ class ConfigProvider
                 LogAfterProcessStoppedListener::class,
                 LogBeforeProcessStartListener::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

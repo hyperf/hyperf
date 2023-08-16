@@ -11,28 +11,20 @@ declare(strict_types=1);
  */
 namespace Hyperf\Scout\Console;
 
-use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Symfony\Component\Console\Input\InputArgument;
 
-/**
- * @Command
- */
 class FlushCommand extends HyperfCommand
 {
     /**
      * The name and signature of the console command.
-     *
-     * @var string
      */
-    protected $name = 'scout:flush';
+    protected ?string $name = 'scout:flush';
 
     /**
      * The console command description.
-     *
-     * @var string
      */
-    protected $description = "Flush all of the model's records from the index";
+    protected string $description = "Flush all of the model's records from the index";
 
     /**
      * Execute the console command.

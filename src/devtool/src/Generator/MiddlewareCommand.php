@@ -13,16 +13,19 @@ namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
 #[Command]
 class MiddlewareCommand extends GeneratorCommand
 {
     public function __construct()
     {
         parent::__construct('gen:middleware');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new middleware class');
+
+        parent::configure();
     }
 
     protected function getStub(): string

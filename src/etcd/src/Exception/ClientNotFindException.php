@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Etcd\Exception;
 
-class ClientNotFindException extends \RuntimeException
+use RuntimeException;
+
+class ClientNotFindException extends RuntimeException
 {
 }

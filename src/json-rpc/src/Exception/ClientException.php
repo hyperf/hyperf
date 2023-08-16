@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc\Exception;
 
-class ClientException extends \RuntimeException
+use RuntimeException;
+
+class ClientException extends RuntimeException
 {
 }

@@ -22,7 +22,7 @@ abstract class ExceptionHandler
     abstract public function handle(Throwable $throwable, ResponseInterface $response);
 
     /**
-     * Determine if the current exception handler should handle the exception,.
+     * Determine if the current exception handler should handle the exception.
      *
      * @return bool
      *              If return true, then this exception handler will handle the exception,
@@ -42,7 +42,7 @@ abstract class ExceptionHandler
     /**
      * Is propagation stopped ?
      * This will typically only be used by the handler to determine if the
-     * provious handler halted propagation.
+     * previous handler halted propagation.
      */
     public function isPropagationStopped(): bool
     {

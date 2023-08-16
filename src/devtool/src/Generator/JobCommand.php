@@ -13,16 +13,19 @@ namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
 #[Command]
 class JobCommand extends GeneratorCommand
 {
     public function __construct()
     {
         parent::__construct('gen:job');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new job class');
+
+        parent::configure();
     }
 
     protected function getStub(): string

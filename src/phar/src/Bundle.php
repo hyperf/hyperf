@@ -22,13 +22,12 @@ class Bundle implements IteratorAggregate
     /**
      * @var Finder[]|string[]
      */
-    private $resources = [];
+    private array $resources = [];
 
     /**
      * Add a file to the resource bundle.
-     * @return $this
      */
-    public function addFile(string $file)
+    public function addFile(string $file): static
     {
         $this->resources[] = $file;
         return $this;
@@ -36,18 +35,16 @@ class Bundle implements IteratorAggregate
 
     /**
      * @param string[] $dirs
-     * @return $this
      */
-    public function addDirs(array $dirs)
+    public function addDirs(array $dirs): static
     {
         return $this->addFinder((new Finder())->files()->ignoreVCS(true)->in($dirs));
     }
 
     /**
      * Add a directory package to a resource package.
-     * @return $this
      */
-    public function addFinder(Finder $dir)
+    public function addFinder(Finder $dir): static
     {
         $this->resources[] = $dir;
         return $this;

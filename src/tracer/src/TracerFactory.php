@@ -19,15 +19,10 @@ use Psr\Container\ContainerInterface;
 
 class TracerFactory
 {
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
     public function __invoke(ContainerInterface $container)
     {
-        $this->config = $container->get(ConfigInterface::class);
-        $name = $this->config->get('opentracing.default');
+        $config = $container->get(ConfigInterface::class);
+        $name = $config->get('opentracing.default');
 
         // v1.0 has no 'default' config. Fallback to v1.0 mode for backward compatibility.
         if (empty($name)) {
@@ -35,16 +30,16 @@ class TracerFactory
             return $factory->make('');
         }
 
-        $driver = $this->config->get("opentracing.tracer.{$name}.driver");
+        $driver = $config->get("opentracing.tracer.{$name}.driver");
         if (empty($driver)) {
             throw new InvalidArgumentException(
-                sprintf('The tracing config [%s] doesn\'t contain a valid driver.', $name)
+                sprintf('The tracing config [%s] does not contain a valid driver.', $name)
             );
         }
 
         $factory = $container->get($driver);
 
-        if (! ($factory instanceof NamedFactoryInterface)) {
+        if (! $factory instanceof NamedFactoryInterface) {
             throw new InvalidArgumentException(
                 sprintf('The driver %s is not a valid factory.', $driver)
             );

@@ -11,26 +11,17 @@ declare(strict_types=1);
  */
 namespace Hyperf\Kafka;
 
+use Hyperf\Context\Context as RequestContext;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\Context as RequestContext;
 use Psr\Container\ContainerInterface;
 
 class Context
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected StdoutLoggerInterface $logger;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 

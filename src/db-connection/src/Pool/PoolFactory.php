@@ -17,18 +17,12 @@ use Psr\Container\ContainerInterface;
 class PoolFactory
 {
     /**
-     * @var ContainerInterface
+     * @var array<string, DbPool>
      */
-    protected $container;
+    protected array $pools = [];
 
-    /**
-     * @var DbPool[]
-     */
-    protected $pools = [];
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function getPool(string $name): DbPool

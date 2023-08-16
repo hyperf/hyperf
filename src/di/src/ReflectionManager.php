@@ -18,12 +18,11 @@ use ReflectionMethod;
 use ReflectionProperty;
 use Symfony\Component\Finder\Finder;
 
+use function Hyperf\Support\value;
+
 class ReflectionManager extends MetadataCollector
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
     public static function reflectClass(string $className): ReflectionClass
     {
@@ -41,7 +40,7 @@ class ReflectionManager extends MetadataCollector
         $key = $className . '::' . $method;
         if (! isset(static::$container['method'][$key])) {
             // TODO check interface_exist
-            if (! class_exists($className)) {
+            if (! class_exists($className) && ! trait_exists($className)) {
                 throw new InvalidArgumentException("Class {$className} not exist");
             }
             static::$container['method'][$key] = static::reflectClass($className)->getMethod($method);
@@ -108,7 +107,7 @@ class ReflectionManager extends MetadataCollector
                     continue;
                 }
                 $reflectionClasses[$className] = static::reflectClass($className);
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
             }
         }
         return $reflectionClasses;

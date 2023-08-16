@@ -9,24 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Stringable\Str;
 use Hyperf\Utils\Backoff;
-use Hyperf\Utils\Collection;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;
 use Hyperf\Utils\Optional;
 use Hyperf\Utils\Parallel;
-use Hyperf\Utils\Str;
 use Hyperf\Utils\Waiter;
 
 if (! function_exists('value')) {
     /**
      * Return the default value of the given value.
-     *
-     * @param mixed $value
+     * @deprecated since 3.1, use \Hyperf\Support\value instead.
      */
-    function value($value, ...$args)
+    function value(mixed $value, ...$args)
     {
         return $value instanceof Closure ? $value(...$args) : $value;
     }
@@ -37,6 +36,7 @@ if (! function_exists('env')) {
      *
      * @param string $key
      * @param null|mixed $default
+     * @deprecated since 3.1, use \Hyperf\Support\env instead.
      */
     function env($key, $default = null)
     {
@@ -56,7 +56,7 @@ if (! function_exists('env')) {
                 return '';
             case 'null':
             case '(null)':
-                return;
+                return null;
         }
         if (($valueLength = strlen($value)) > 1 && $value[0] === '"' && $value[$valueLength - 1] === '"') {
             return substr($value, 1, -1);
@@ -71,6 +71,7 @@ if (! function_exists('retry')) {
      * @param float|int $times
      * @param int $sleep millisecond
      * @throws \Throwable
+     * @deprecated since 3.1, use \Hyperf\Support\retry instead.
      */
     function retry($times, callable $callback, int $sleep = 0)
     {
@@ -95,6 +96,7 @@ if (! function_exists('with')) {
      * Return the given value, optionally passed through the given callback.
      *
      * @param mixed $value
+     * @deprecated since 3.1, use \Hyperf\Support\with instead.
      */
     function with($value, callable $callback = null)
     {
@@ -106,6 +108,7 @@ if (! function_exists('collect')) {
     /**
      * Create a collection from the given value.
      *
+     * @deprecated since 3.1, use \Hyperf\Collection\collect instead.
      * @param null|mixed $value
      * @return Collection
      */
@@ -121,6 +124,8 @@ if (! function_exists('data_fill')) {
      * @param mixed $target
      * @param array|string $key
      * @param mixed $value
+     *
+     * @deprecated since 3.1, use `Hyperf\Collection\data_fill()` instead.
      */
     function data_fill(&$target, $key, $value)
     {
@@ -134,6 +139,8 @@ if (! function_exists('data_get')) {
      * @param null|array|int|string $key
      * @param null|mixed $default
      * @param mixed $target
+     *
+     * @deprecated since 3.1, use `Hyperf\Collection\data_get()` instead.
      */
     function data_get($target, $key, $default = null)
     {
@@ -174,6 +181,8 @@ if (! function_exists('data_set')) {
      * @param array|string $key
      * @param bool $overwrite
      * @param mixed $value
+     *
+     * @deprecated since 3.1, use `Hyperf\Collection\data_set()` instead.
      */
     function data_set(&$target, $key, $value, $overwrite = true)
     {
@@ -226,6 +235,8 @@ if (! function_exists('head')) {
      * Get the first element of an array. Useful for method chaining.
      *
      * @param array $array
+     *
+     * @deprecated since 3.1, use `Hyperf\Collection\head()` instead.
      */
     function head($array)
     {
@@ -237,6 +248,8 @@ if (! function_exists('last')) {
      * Get the last element from an array.
      *
      * @param array $array
+     *
+     * @deprecated since 3.1, use `Hyperf\Collection\last()` instead.
      */
     function last($array)
     {
@@ -247,15 +260,22 @@ if (! function_exists('tap')) {
     /**
      * Call the given Closure with the given value then return the value.
      *
+     * @template TValue
+     *
      * @param null|callable $callback
-     * @param mixed $value
+     * @param TValue $value
+     * @return TValue
+     *
+     * @deprecated since 3.1, please use `Hyperf\Tappable\tap()` instead.
      */
     function tap($value, $callback = null)
     {
         if (is_null($callback)) {
             return new HigherOrderTapProxy($value);
         }
+
         $callback($value);
+
         return $value;
     }
 }
@@ -266,6 +286,7 @@ if (! function_exists('call')) {
      *
      * @param mixed $callback
      * @return null|mixed
+     * @deprecated since 3.1, use \Hyperf\Support\call instead.
      */
     function call($callback, array $args = [])
     {
@@ -287,6 +308,8 @@ if (! function_exists('call')) {
 if (! function_exists('go')) {
     /**
      * @return bool|int
+     *
+     * @deprecated since 3.1, use `Hyperf\Coroutine\go` instead.
      */
     function go(callable $callable)
     {
@@ -298,6 +321,8 @@ if (! function_exists('go')) {
 if (! function_exists('co')) {
     /**
      * @return bool|int
+     *
+     * @deprecated since 3.1, use `Hyperf\Coroutine\co` instead.
      */
     function co(callable $callable)
     {
@@ -307,6 +332,9 @@ if (! function_exists('co')) {
 }
 
 if (! function_exists('defer')) {
+    /**
+     * @deprecated since 3.1, use `Hyperf\Coroutine\defer` instead.
+     */
     function defer(callable $callable): void
     {
         Coroutine::defer($callable);
@@ -319,6 +347,7 @@ if (! function_exists('class_basename')) {
      *
      * @param object|string $class
      * @return string
+     * @deprecated since 3.1, use \Hyperf\Support\class_basename instead.
      */
     function class_basename($class)
     {
@@ -332,8 +361,9 @@ if (! function_exists('trait_uses_recursive')) {
     /**
      * Returns all traits used by a trait and its traits.
      *
-     * @param string $trait
+     * @param object|string $trait
      * @return array
+     * @deprecated since 3.1, use \Hyperf\Support\trait_uses_recursive instead.
      */
     function trait_uses_recursive($trait)
     {
@@ -353,6 +383,7 @@ if (! function_exists('class_uses_recursive')) {
      *
      * @param object|string $class
      * @return array
+     * @deprecated since 3.1, use \Hyperf\Support\class_uses_recursive instead.
      */
     function class_uses_recursive($class)
     {
@@ -374,6 +405,7 @@ if (! function_exists('class_uses_recursive')) {
 if (! function_exists('setter')) {
     /**
      * Create a setter string.
+     * @deprecated since 3.1, use \Hyperf\Support\setter instead.
      */
     function setter(string $property): string
     {
@@ -384,6 +416,7 @@ if (! function_exists('setter')) {
 if (! function_exists('getter')) {
     /**
      * Create a getter string.
+     * @deprecated since 3.1, use \Hyperf\Support\getter instead.
      */
     function getter(string $property): string
     {
@@ -394,7 +427,9 @@ if (! function_exists('getter')) {
 if (! function_exists('parallel')) {
     /**
      * @param callable[] $callables
-     * @param int $concurrent if $concurrent is equal to 0, that means unlimit
+     * @param int $concurrent if $concurrent is equal to 0, that means unlimited
+     *
+     * @deprecated since 3.1, use `Hyperf\Coroutine\parallel` instead.
      */
     function parallel(array $callables, int $concurrent = 0)
     {
@@ -411,6 +446,7 @@ if (! function_exists('make')) {
      * Create an object instance, if the DI container exist in ApplicationContext,
      * then the object will be created by DI container via `make()` method, if not,
      * the object will create by `new` keyword.
+     * @deprecated since 3.1, use \Hyperf\Support\make instead.
      */
     function make(string $name, array $parameters = [])
     {
@@ -430,6 +466,8 @@ if (! function_exists('run')) {
      * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
      *
      * @param array|callable $callbacks
+     *
+     * @deprecated since 3.1, use `Hyperf\Coroutine\run` instead.
      */
     function run($callbacks, int $flags = SWOOLE_HOOK_ALL): bool
     {
@@ -439,7 +477,8 @@ if (! function_exists('run')) {
 
         \Swoole\Runtime::enableCoroutine($flags);
 
-        $result = \Swoole\Coroutine\Run(...(array) $callbacks);
+        /* @phpstan-ignore-next-line */
+        $result = \Swoole\Coroutine\run(...(array) $callbacks);
 
         \Swoole\Runtime::enableCoroutine(false);
         return $result;
@@ -449,6 +488,7 @@ if (! function_exists('run')) {
 if (! function_exists('swoole_hook_flags')) {
     /**
      * Return the default swoole hook flags, you can rewrite it by defining `SWOOLE_HOOK_FLAGS`.
+     * @deprecated since 3.1, use \Hyperf\Support\swoole_hook_flags instead.
      */
     function swoole_hook_flags(): int
     {
@@ -462,6 +502,7 @@ if (! function_exists('optional')) {
      *
      * @param mixed $value
      * @return mixed
+     * @deprecated since 3.1, use \Hyperf\Support\optional instead.
      */
     function optional($value = null, callable $callback = null)
     {
@@ -471,10 +512,14 @@ if (! function_exists('optional')) {
         if (! is_null($value)) {
             return $callback($value);
         }
+        return null;
     }
 }
 
 if (! function_exists('wait')) {
+    /**
+     * @deprecated since 3.1, use `Hyperf\Coroutine\wait` instead.
+     */
     function wait(Closure $closure, ?float $timeout = null)
     {
         if (ApplicationContext::hasContainer()) {
@@ -484,3 +529,14 @@ if (! function_exists('wait')) {
         return (new Waiter())->wait($closure, $timeout);
     }
 }
+
+// TODO: Removed when deleting `\Hyperf\Utils\Collection`.
+class_exists(\Hyperf\Utils\Collection::class);
+class_exists(\Hyperf\Utils\Filesystem\FileNotFoundException::class);
+class_exists(\Hyperf\Utils\Exception\IPReadFailedException::class);
+class_exists(\Hyperf\Utils\Exception\ParallelExecutionException::class);
+class_exists(\Hyperf\Utils\Exception\TimeoutException::class);
+class_exists(\Hyperf\Utils\Exception\WaitTimeoutException::class);
+class_exists(\Hyperf\Utils\Exception\InvalidArgumentException::class);
+class_exists(\Hyperf\Utils\Exception\ChannelClosedException::class);
+class_exists(\Hyperf\Utils\Exception\ExceptionThrower::class);

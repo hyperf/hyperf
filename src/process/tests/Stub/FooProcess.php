@@ -15,9 +15,9 @@ use Hyperf\Process\AbstractProcess;
 
 class FooProcess extends AbstractProcess
 {
-    public $enableCoroutine = false;
+    public bool $enableCoroutine = false;
 
-    public $restartInterval = 0;
+    public int $restartInterval = 0;
 
     public static $handled = false;
 

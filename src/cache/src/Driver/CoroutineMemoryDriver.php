@@ -16,27 +16,30 @@ use Hyperf\Cache\Collector\CoroutineMemoryKey;
 
 class CoroutineMemoryDriver extends Driver implements KeyCollectorInterface
 {
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
         return $this->getCollection()->get($key, $default);
     }
 
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
-        return $this->getCollection()->offsetSet($key, $value);
+        $this->getCollection()->offsetSet($key, $value);
+        return true;
     }
 
-    public function delete($key)
+    public function delete($key): bool
     {
-        return $this->getCollection()->offsetUnset($key);
+        $this->getCollection()->offsetUnset($key);
+        return true;
     }
 
-    public function clear()
+    public function clear(): bool
     {
-        return $this->getCollection()->clear();
+        $this->getCollection()->clear();
+        return true;
     }
 
-    public function getMultiple($keys, $default = null)
+    public function getMultiple($keys, $default = null): iterable
     {
         $result = [];
         foreach ($keys as $key) {
@@ -46,7 +49,7 @@ class CoroutineMemoryDriver extends Driver implements KeyCollectorInterface
         return $result;
     }
 
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple($values, $ttl = null): bool
     {
         foreach ($values as $key => $value) {
             $this->set($key, $values, $ttl);
@@ -55,7 +58,7 @@ class CoroutineMemoryDriver extends Driver implements KeyCollectorInterface
         return true;
     }
 
-    public function deleteMultiple($keys)
+    public function deleteMultiple($keys): bool
     {
         foreach ($keys as $key) {
             $this->delete($key);
@@ -64,7 +67,7 @@ class CoroutineMemoryDriver extends Driver implements KeyCollectorInterface
         return true;
     }
 
-    public function has($key)
+    public function has($key): bool
     {
         return $this->getCollection()->has($key);
     }
@@ -98,7 +101,7 @@ class CoroutineMemoryDriver extends Driver implements KeyCollectorInterface
         return CoroutineMemoryKey::instance()->get($collector, []);
     }
 
-    public function delKey(string $collector, ...$key): bool
+    public function delKey(string $collector, string ...$key): bool
     {
         $instance = CoroutineMemoryKey::instance();
         $result = [];

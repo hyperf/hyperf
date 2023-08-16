@@ -14,35 +14,15 @@ namespace Hyperf\Nsq\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Consumer extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $topic = '';
-
-    /**
-     * @var string
-     */
-    public $channel = '';
-
-    /**
-     * @var string
-     */
-    public $name = '';
-
-    /**
-     * @var int
-     */
-    public $nums = 1;
-
-    /**
-     * @var string
-     */
-    public $pool = '';
+    public function __construct(
+        public string $topic = '',
+        public string $channel = '',
+        public string $name = '',
+        public int $nums = 1,
+        public string $pool = ''
+    ) {
+    }
 }

@@ -56,6 +56,8 @@ return [
             'fooArgument' => 'barValue',
             // (optional) options
             '--message-limit' => 1,
+            // 记住要加上，否则会导致主进程退出
+            '--disable-event-dispatcher' => true,
         ]),
     ],
 ];
@@ -63,7 +65,7 @@ return [
 
 ### 通过注解定义
 
-通过 `@Crontab` 注解可以快速完成对一个任务的定义，以下的定义示例与配置文件定义所达到的目的都是一样的。定义一个名为 `Foo` 每分钟执行一次 `App\Task\FooTask::execute()` 的定时任务。
+通过 `#[Crontab]` 注解可以快速完成对一个任务的定义，以下的定义示例与配置文件定义所达到的目的都是一样的。定义一个名为 `Foo` 每分钟执行一次 `App\Task\FooTask::execute()` 的定时任务。
 
 ```php
 <?php
@@ -73,25 +75,18 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab;
 use Hyperf\Di\Annotation\Inject;
 
-/**
- * @Crontab(name="Foo", rule="* * * * *", callback="execute", memo="这是一个示例的定时任务")
- */
+#[Crontab(name: "Foo", rule: "* * * * *", callback: "execute", memo: "这是一个示例的定时任务")]
 class FooTask
 {
-    /**
-     * @Inject()
-     * @var \Hyperf\Contract\StdoutLoggerInterface
-     */
-    private $logger;
+    #[Inject]
+    private StdoutLoggerInterface $logger;
 
     public function execute()
     {
         $this->logger->info(date('Y-m-d H:i:s', time()));
     }
-    
-    /**
-     * @Crontab(rule="* * * * * *", memo="foo")
-     */
+
+    #[Crontab(rule: "* * * * *", memo: "foo")]
     public function foo()
     {
         var_dump('foo');
@@ -149,9 +144,7 @@ namespace App\Crontab;
 use Carbon\Carbon;
 use Hyperf\Crontab\Annotation\Crontab;
 
-/**
- * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable="isEnable", memo="这是一个示例的定时任务")
- */
+#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: "isEnable", memo: "这是一个示例的定时任务")]
 class EchoCrontab
 {
     public function execute()
@@ -190,9 +183,7 @@ namespace App\Crontab;
 use Carbon\Carbon;
 use Hyperf\Crontab\Annotation\Crontab;
 
-/**
- * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable={EnableChecker::class, "isEnable"}, memo="这是一个示例的定时任务")
- */
+#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: [EnableChecker::class, "isEnable"], memo: "这是一个示例的定时任务")]
 class EchoCrontab
 {
     public function execute()

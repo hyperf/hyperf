@@ -13,7 +13,7 @@ namespace Hyperf\SocketIOServer\Room;
 
 class MemoryRoom implements RoomInterface
 {
-    protected $container = [];
+    protected array $container = [];
 
     public function add(string $sid)
     {

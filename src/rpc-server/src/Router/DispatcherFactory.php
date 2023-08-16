@@ -24,38 +24,26 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\RpcServer\Annotation\RpcService;
 use Hyperf\RpcServer\Event\AfterPathRegister;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionMethod;
 
 class DispatcherFactory
 {
-    protected $routes = [BASE_PATH . '/config/services.php'];
+    protected array $routes = [BASE_PATH . '/config/services.php'];
 
     /**
      * @var RouteCollector[]
      */
-    private $routers = [];
+    private array $routers = [];
 
     /**
      * @var Dispatcher[]
      */
-    private $dispatchers = [];
+    private array $dispatchers = [];
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var PathGeneratorInterface
-     */
-    private $pathGenerator;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher, PathGeneratorInterface $pathGenerator)
+    public function __construct(private EventDispatcherInterface $eventDispatcher, private PathGeneratorInterface $pathGenerator)
     {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->pathGenerator = $pathGenerator;
         $this->initAnnotationRoute(AnnotationCollector::list());
         $this->initConfigRoute();
     }

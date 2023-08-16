@@ -12,14 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Di\Annotation;
 
 /**
- * This collector is use to collect the relation of parent class and sub-class, also include the trait and sub-class.
+ * This collector is used to collect the relation of parent class and sub-class, also include the trait and sub-class.
  */
 class RelationCollector
 {
-    /**
-     * @var array
-     */
-    public static $container = [];
+    public static array $container = [];
 
     public static function addRelation(string $key, string $className): void
     {

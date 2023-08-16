@@ -11,30 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Traits;
 
-use Hyperf\Utils\Context;
-
+/**
+ * @deprecated since 3.1, use \Hyperf\Support\Traits\StaticInstance instead.
+ */
 trait StaticInstance
 {
-    protected $instanceKey;
-
-    /**
-     * @param array $params
-     * @param bool $refresh
-     * @return static
-     */
-    public static function instance($params = [], $refresh = false)
-    {
-        $key = get_called_class();
-        $instance = null;
-        if (Context::has($key)) {
-            $instance = Context::get($key);
-        }
-
-        if ($refresh || is_null($instance) || ! $instance instanceof static) {
-            $instance = new static(...$params);
-            Context::set($key, $instance);
-        }
-
-        return $instance;
-    }
+    use \Hyperf\Support\Traits\StaticInstance;
 }

@@ -11,11 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Resource;
 
+use Hyperf\Collection\Arr;
 use Hyperf\HttpMessage\Server\Response;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PHPUnit\Framework\Assert as PHPUnit;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+
+use function Hyperf\Collection\data_get;
 
 /**
  * Class HttpResponse.

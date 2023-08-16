@@ -16,6 +16,8 @@ use Hyperf\Validation\Rules\In;
 use HyperfTest\Validation\Cases\fixtures\Values;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Collection\collect;
+
 /**
  * @internal
  * @coversNothing

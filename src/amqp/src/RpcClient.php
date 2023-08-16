@@ -17,20 +17,14 @@ use Hyperf\Amqp\Message\RpcMessageInterface;
 use Hyperf\Engine\Channel;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 class RpcClient extends Builder
 {
     protected $poolChannels = [];
 
-    /**
-     * @var int
-     */
-    protected $maxChannels;
-
-    public function __construct(ContainerInterface $container, ConnectionFactory $factory, int $maxChannels = 64)
+    public function __construct(ContainerInterface $container, ConnectionFactory $factory, protected int $maxChannels = 64)
     {
-        $this->maxChannels = $maxChannels;
-
         parent::__construct($container, $factory);
     }
 
@@ -71,7 +65,7 @@ class RpcClient extends Builder
             }
 
             $result = $rpcMessage->unserialize($amqpMessage->getBody());
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             isset($channel) && $channel->close();
             throw $exception;
         }

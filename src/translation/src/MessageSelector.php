@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Translation;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+
+use function Hyperf\Collection\collect;
 
 class MessageSelector
 {
@@ -406,8 +408,6 @@ class MessageSelector
      */
     private function stripConditions(array $segments): array
     {
-        return collect($segments)->map(function ($part) {
-            return preg_replace('/^[\{\[]([^\[\]\{\}]*)[\}\]]/', '', $part);
-        })->all();
+        return collect($segments)->map(fn ($part) => preg_replace('/^[\{\[]([^\[\]\{\}]*)[\}\]]/', '', $part))->all();
     }
 }

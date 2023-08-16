@@ -21,11 +21,9 @@ class YAMLEncoder implements Encoder
     /**
      * Encodes a message to YAML.
      *
-     * @param string $payload message to decode
-     *
-     * @return mixed
+     * @param mixed $payload message to decode
      */
-    public function encode($payload)
+    public function encode(mixed $payload): string
     {
         return yaml_emit($payload);
     }
@@ -34,10 +32,8 @@ class YAMLEncoder implements Encoder
      * Decodes a message from YAML.
      *
      * @param string $payload message to decode
-     *
-     * @return mixed
      */
-    public function decode($payload)
+    public function decode(string $payload): mixed
     {
         return yaml_parse($payload);
     }

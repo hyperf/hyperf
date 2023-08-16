@@ -19,10 +19,12 @@ use Hyperf\Database\Query\Builder as QueryBuilder;
 
 class EagerLoader
 {
-    public function load(Collection $collection, array $relations)
+    /**
+     * @param Collection<int, Model> $collection
+     */
+    public function load(Collection $collection, array $relations): void
     {
         if ($collection->isNotEmpty()) {
-            /** @var Model $first */
             $first = $collection->first();
             $query = $first->registerGlobalScopes($this->newBuilder($first))->with($relations);
             $collection->fill($query->eagerLoadRelations($collection->all()));
@@ -38,10 +40,8 @@ class EagerLoader
 
     /**
      * Get a new query builder instance for the connection.
-     *
-     * @return \Hyperf\Database\Query\Builder
      */
-    protected function newBaseQueryBuilder(Model $model)
+    protected function newBaseQueryBuilder(Model $model): QueryBuilder
     {
         /** @var Connection $connection */
         $connection = $model->getConnection();

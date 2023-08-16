@@ -17,10 +17,8 @@ trait ManagesTransactions
 {
     /**
      * The number of active transactions.
-     *
-     * @var int
      */
-    protected $transactions = 0;
+    protected int $transactions = 0;
 
     /**
      * Start a new database transaction.
@@ -65,7 +63,7 @@ trait ManagesTransactions
 
         // Next, we will actually perform this rollback within this database and fire the
         // rollback event. We will also set the current transaction level to the given
-        // level that was passed into this method so it will be right from here out.
+        // level that was passed into this method, so it will be right from here out.
         try {
             $this->performRollBack($toLevel);
         } catch (Throwable $e) {

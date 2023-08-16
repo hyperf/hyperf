@@ -23,36 +23,44 @@ class NonHandler implements HandlerInterface
         $this->config = $config;
     }
 
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
+        return null;
     }
 
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
+        return true;
     }
 
-    public function delete($key)
+    public function delete($key): bool
     {
+        return true;
     }
 
-    public function clear()
+    public function clear(): bool
     {
+        return true;
     }
 
-    public function getMultiple($keys, $default = null)
+    public function getMultiple($keys, $default = null): iterable
     {
+        return [];
     }
 
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple($values, $ttl = null): bool
     {
+        return true;
     }
 
-    public function deleteMultiple($keys)
+    public function deleteMultiple($keys): bool
     {
+        return true;
     }
 
-    public function has($key)
+    public function has($key): bool
     {
+        return true;
     }
 
     public function getConfig(): Config

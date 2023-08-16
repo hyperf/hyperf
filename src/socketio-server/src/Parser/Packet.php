@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Parser;
 
-class Packet implements \ArrayAccess
+use ArrayAccess;
+
+class Packet implements ArrayAccess
 {
     public const OPEN = '0';
 
@@ -21,27 +23,15 @@ class Packet implements \ArrayAccess
 
     public const ACK = '3';
 
-    /**
-     * @var string
-     */
-    public $id;
+    public string $id;
 
-    /**
-     * @var string
-     */
-    public $type;
+    public string $type;
 
-    /**
-     * @var string
-     */
-    public $nsp;
+    public string $nsp;
 
-    /**
-     * @var ?array
-     */
-    public $data;
+    public ?array $data = null;
 
-    public $query;
+    public mixed $query;
 
     private function __construct()
     {
@@ -50,34 +40,35 @@ class Packet implements \ArrayAccess
     public static function create(array $decoded)
     {
         $new = new Packet();
-        $new->id = $decoded['id'] ?? '';
-        $new->type = $decoded['type'];
+        $new->id = (string) ($decoded['id'] ?? '');
+        $new->type = (string) $decoded['type'];
         if (isset($decoded['nsp'])) {
-            $new->nsp = $decoded['nsp'] ?: '/';
+            $new->nsp = (string) ($decoded['nsp'] ?: '/');
         } else {
             $new->nsp = '/';
         }
-        $new->data = $decoded['data'] ?? null;
+        $data = $decoded['data'] ?? null;
+        $new->data = is_array($data) ? $data : null;
         $new->query = $decoded['query'] ?? null;
         return $new;
     }
 
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->{$offset});
     }
 
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->{$offset};
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->{$offset} = $value;
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->{$offset});
     }

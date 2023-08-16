@@ -17,21 +17,9 @@ use Traversable;
 
 class TargetPhar
 {
-    /**
-     * @var Phar
-     */
-    private $phar;
-
-    /**
-     * @var PharBuilder
-     */
-    private $pharBuilder;
-
-    public function __construct(Phar $phar, PharBuilder $pharBuilder)
+    public function __construct(private Phar $phar, private PharBuilder $pharBuilder)
     {
         $phar->startBuffering();
-        $this->phar = $phar;
-        $this->pharBuilder = $pharBuilder;
     }
 
     public function __toString(): string
@@ -43,7 +31,7 @@ class TargetPhar
     /**
      * Start writing the Phar package.
      */
-    public function stopBuffering()
+    public function stopBuffering(): void
     {
         $this->phar->stopBuffering();
     }
@@ -51,7 +39,7 @@ class TargetPhar
     /**
      * Add a resource bundle to the Phar package.
      */
-    public function addBundle(Bundle $bundle)
+    public function addBundle(Bundle $bundle): void
     {
         /** @var Finder|string $resource */
         foreach ($bundle as $resource) {

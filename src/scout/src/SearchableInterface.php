@@ -40,15 +40,11 @@ interface SearchableInterface
 
     /**
      * Get the index name for the model.
-     *
-     * @return string
      */
-    public function searchableAs();
+    public function searchableAs(): string;
 
     /**
      * Determine if the model should be searchable.
-     *
-     * @return bool
      */
-    public function shouldBeSearchable();
+    public function shouldBeSearchable(): bool;
 }

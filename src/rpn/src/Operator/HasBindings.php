@@ -15,12 +15,12 @@ use Hyperf\Rpn\Exception\InvalidValueException;
 
 trait HasBindings
 {
-    public function fromBindings(array $paramaters, array $bindings): array
+    public function fromBindings(array $parameters, array $bindings): array
     {
         $result = [];
-        foreach ($paramaters as $paramater) {
-            if ($this->isBinding($paramater)) {
-                $index = $this->getBindingIndex($paramater);
+        foreach ($parameters as $parameter) {
+            if ($this->isBinding($parameter)) {
+                $index = $this->getBindingIndex($parameter);
                 $value = $bindings[$index] ?? null;
                 if ($value === null) {
                     throw new InvalidValueException(sprintf('The value of index %d is not found.', $index));
@@ -30,7 +30,7 @@ trait HasBindings
                 continue;
             }
 
-            $result[] = (string) $paramater;
+            $result[] = (string) $parameter;
         }
 
         return $result;
@@ -43,7 +43,6 @@ trait HasBindings
 
     protected function isBinding(string $tag): bool
     {
-        return substr($tag, 0, 1) === '['
-            && substr($tag, -1) === ']';
+        return str_starts_with($tag, '[') && str_ends_with($tag, ']');
     }
 }

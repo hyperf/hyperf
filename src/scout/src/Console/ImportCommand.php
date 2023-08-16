@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Scout\Console;
 
 use Hyperf\Command\Command;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Scout\Event\ModelsImported;
-use Hyperf\Utils\ApplicationContext;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -22,17 +22,13 @@ class ImportCommand extends Command
 {
     /**
      * The name and signature of the console command.
-     *
-     * @var string
      */
-    protected $name = 'scout:import';
+    protected ?string $name = 'scout:import';
 
     /**
      * The console command description.
-     *
-     * @var string
      */
-    protected $description = 'Import the given model into the search index';
+    protected string $description = 'Import the given model into the search index';
 
     /**
      * Execute the console command.

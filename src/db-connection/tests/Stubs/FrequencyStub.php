@@ -15,7 +15,7 @@ use Hyperf\DbConnection\Frequency;
 
 class FrequencyStub extends Frequency
 {
-    protected $time = 2;
+    protected int $time = 2;
 
     public function getHits(): array
     {

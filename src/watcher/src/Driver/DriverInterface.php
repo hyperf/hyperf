@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Watcher\Driver;
 
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 
 interface DriverInterface
 {

@@ -15,14 +15,8 @@ use Hyperf\Retry\RetryContext;
 
 class TimeoutRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
-    /**
-     * @var float
-     */
-    private $timeout;
-
-    public function __construct($timeout)
+    public function __construct(private float $timeout)
     {
-        $this->timeout = $timeout;
     }
 
     public function canRetry(RetryContext &$retryContext): bool

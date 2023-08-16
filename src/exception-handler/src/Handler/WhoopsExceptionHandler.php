@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\ExceptionHandler\Handler;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -24,10 +24,13 @@ use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Handler\XmlResponseHandler;
 use Whoops\Run;
+use Whoops\RunInterface;
+
+use function Hyperf\Support\env;
 
 class WhoopsExceptionHandler extends ExceptionHandler
 {
-    protected static $preference = [
+    protected static array $preference = [
         'text/html' => PrettyPageHandler::class,
         'application/json' => JsonResponseHandler::class,
         'application/xml' => XmlResponseHandler::class,
@@ -41,7 +44,7 @@ class WhoopsExceptionHandler extends ExceptionHandler
         $whoops->pushHandler($handler);
         $whoops->allowQuit(false);
         ob_start();
-        $whoops->{Run::EXCEPTION_HANDLER}($throwable);
+        $whoops->{RunInterface::EXCEPTION_HANDLER}($throwable);
         $content = ob_get_clean();
         return $response
             ->withStatus(500)
@@ -61,10 +64,10 @@ class WhoopsExceptionHandler extends ExceptionHandler
         $accepts = $request->getHeaderLine('accept');
         foreach (self::$preference as $contentType => $handler) {
             if (Str::contains($accepts, $contentType)) {
-                return [$this->setupHandler(new $handler()),  $contentType];
+                return [$this->setupHandler(new $handler()), $contentType];
             }
         }
-        return [new PlainTextHandler(),  'text/plain'];
+        return [new PlainTextHandler(), 'text/plain'];
     }
 
     protected function setupHandler($handler)

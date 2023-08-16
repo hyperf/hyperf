@@ -15,5 +15,5 @@ use Hyperf\ReactiveX\IpcMessageWrapper;
 
 interface BroadcasterInterface
 {
-    public function broadcast(IpcMessageWrapper $message);
+    public function broadcast(IpcMessageWrapper $message): void;
 }

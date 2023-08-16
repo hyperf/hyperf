@@ -19,9 +19,8 @@ class MySqlBuilder extends Builder
      * Determine if the given table exists.
      *
      * @param string $table
-     * @return bool
      */
-    public function hasTable($table)
+    public function hasTable($table): bool
     {
         $table = $this->connection->getTablePrefix() . $table;
 
@@ -35,9 +34,8 @@ class MySqlBuilder extends Builder
      * Get the column listing for a given table.
      *
      * @param string $table
-     * @return array
      */
-    public function getColumnListing($table)
+    public function getColumnListing($table): array
     {
         $table = $this->connection->getTablePrefix() . $table;
 
@@ -87,7 +85,7 @@ class MySqlBuilder extends Builder
     /**
      * Drop all tables from the database.
      */
-    public function dropAllTables()
+    public function dropAllTables(): void
     {
         $tables = [];
 
@@ -113,7 +111,7 @@ class MySqlBuilder extends Builder
     /**
      * Drop all views from the database.
      */
-    public function dropAllViews()
+    public function dropAllViews(): void
     {
         $views = [];
 
@@ -133,7 +131,7 @@ class MySqlBuilder extends Builder
     }
 
     /**
-     * Get all of the table names for the database.
+     * Get all the table names for the database.
      *
      * @return array
      */
@@ -145,7 +143,7 @@ class MySqlBuilder extends Builder
     }
 
     /**
-     * Get all of the view names for the database.
+     * Get all the view names for the database.
      *
      * @return array
      */

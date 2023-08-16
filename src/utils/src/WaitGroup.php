@@ -11,8 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
-use Swoole\Coroutine\WaitGroup as SwooleWaitGroup;
-
-class WaitGroup extends SwooleWaitGroup
+/**
+ * This file mostly code come from `swoole/library`.
+ *
+ * @deprecated since 3.1, please use Hyperf\Coroutine\WaitGroup instead.
+ */
+class WaitGroup extends \Hyperf\Coroutine\WaitGroup
 {
 }

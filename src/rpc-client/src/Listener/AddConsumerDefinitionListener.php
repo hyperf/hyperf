@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\RpcClient\Listener;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Di\Container;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\RpcClient\ProxyFactory;
@@ -20,14 +19,8 @@ use Psr\Container\ContainerInterface;
 
 class AddConsumerDefinitionListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
@@ -42,14 +35,12 @@ class AddConsumerDefinitionListener implements ListenerInterface
      *
      * @param BootApplication $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
-        /** @var Container $container */
         $container = $this->container;
-        if ($container instanceof Container) {
+        if ($container instanceof \Hyperf\Contract\ContainerInterface) {
             $consumers = $container->get(ConfigInterface::class)->get('services.consumers', []);
             $serviceFactory = $container->get(ProxyFactory::class);
-            $definitions = $container->getDefinitionSource();
             foreach ($consumers as $consumer) {
                 if (empty($consumer['name'])) {
                     continue;
@@ -61,7 +52,7 @@ class AddConsumerDefinitionListener implements ListenerInterface
 
                 $proxyClass = $serviceFactory->createProxy($serviceClass);
 
-                $definitions->addDefinition(
+                $container->define(
                     $consumer['id'] ?? $serviceClass,
                     function (ContainerInterface $container) use ($consumer, $serviceClass, $proxyClass) {
                         return new $proxyClass(

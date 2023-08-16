@@ -15,6 +15,7 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Annotation\Listener as ListenerAnnotation;
 use Hyperf\Event\EventDispatcher;
+use Hyperf\Event\ListenerData;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\Event\ListenerProviderFactory;
 use HyperfTest\Event\Event\Alpha;
@@ -81,7 +82,7 @@ class ListenerTest extends TestCase
         $this->assertInstanceOf(ListenerProviderInterface::class, $listenerProvider);
     }
 
-    public function testListnerInvokeByFactoryWithConfig()
+    public function testListenerInvokeByFactoryWithConfig()
     {
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
@@ -113,7 +114,7 @@ class ListenerTest extends TestCase
         $this->assertSame(2, $betaListener->value);
     }
 
-    public function testListnerInvokeByFactoryWithAnnotationConfig()
+    public function testListenerInvokeByFactoryWithAnnotationConfig()
     {
         $listenerAnnotation = new ListenerAnnotation();
         $listenerAnnotation->collectClass(AlphaListener::class, ListenerAnnotation::class);
@@ -147,26 +148,10 @@ class ListenerTest extends TestCase
 
     public function testListenerAnnotationWithPriority()
     {
-        // Default value.
         $listenerAnnotation = new ListenerAnnotation();
-        $this->assertSame(1, $listenerAnnotation->priority);
-        // With a integer.
+        $this->assertSame(ListenerData::DEFAULT_PRIORITY, $listenerAnnotation->priority);
+
         $listenerAnnotation = new ListenerAnnotation(2);
-        $this->assertSame(1, $listenerAnnotation->priority);
-        // Define the priority.
-        $listenerAnnotation = new ListenerAnnotation([
-            'priority' => 2,
-        ]);
         $this->assertSame(2, $listenerAnnotation->priority);
-        // String number
-        $listenerAnnotation = new ListenerAnnotation([
-            'priority' => '2',
-        ]);
-        $this->assertSame(2, $listenerAnnotation->priority);
-        // Non-number
-        $listenerAnnotation = new ListenerAnnotation([
-            'priority' => 'string',
-        ]);
-        $this->assertSame(1, $listenerAnnotation->priority);
     }
 }

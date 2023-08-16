@@ -16,7 +16,6 @@ use Hyperf\Di\Annotation\Inject;
 class ParentClass
 {
     /**
-     * @Inject
      * @var Foo
      */
     #[Inject]

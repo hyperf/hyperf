@@ -17,47 +17,33 @@ use Psr\Container\ContainerInterface;
 /**
  * This file mostly code come from illuminate/pipe,
  * thanks Laravel Team provide such a useful class.
+ * @deprecated since 3.1, use `Hyperf\Pipeline\Pipeline` instead.
  */
 class Pipeline
 {
     /**
-     * The container implementation.
-     *
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * The object being passed through the pipeline.
-     *
-     * @var mixed
      */
-    protected $passable;
+    protected mixed $passable = null;
 
     /**
      * The array of class pipes.
-     *
-     * @var array
      */
-    protected $pipes = [];
+    protected array $pipes = [];
 
     /**
      * The method to call on each pipe.
-     *
-     * @var string
      */
-    protected $method = 'handle';
+    protected string $method = 'handle';
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     /**
      * Set the object being sent through the pipeline.
-     * @param mixed $passable
      */
-    public function send($passable): self
+    public function send(mixed $passable): self
     {
         $this->passable = $passable;
 
@@ -96,6 +82,14 @@ class Pipeline
     }
 
     /**
+     * Run the pipeline and return the result.
+     */
+    public function thenReturn()
+    {
+        return $this->then(fn ($passable) => $passable);
+    }
+
+    /**
      * Get the final piece of the Closure onion.
      */
     protected function prepareDestination(Closure $destination): Closure
@@ -113,7 +107,7 @@ class Pipeline
         return function ($stack, $pipe) {
             return function ($passable) use ($stack, $pipe) {
                 if (is_callable($pipe)) {
-                    // If the pipe is an instance of a Closure, we will just call it directly but
+                    // If the pipe is an instance of a Closure, we will just call it directly, but
                     // otherwise we'll resolve the pipes out of the container and call it with
                     // the appropriate method and arguments, returning the results back out.
                     return $pipe($passable, $stack);

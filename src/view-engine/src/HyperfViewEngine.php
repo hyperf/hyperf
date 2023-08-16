@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine;
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\View\Engine\EngineInterface;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 
 class HyperfViewEngine implements EngineInterface
 {
-    public function render($template, $data, $config): string
+    public function render(string $template, array $data, array $config): string
     {
         /** @var FactoryInterface $factory */
         $factory = ApplicationContext::getContainer()->get(FactoryInterface::class);

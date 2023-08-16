@@ -11,14 +11,15 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Process;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Process\Event\AfterProcessHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Process\Stub\FooProcess;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use ReflectionClass;
 
 /**
  * @internal
@@ -68,7 +69,7 @@ class ProcessTest extends TestCase
     {
         $server = Mockery::mock(\Swoole\Server::class);
         $server->shouldReceive('addProcess')->withAnyArgs()->andReturnUsing(function ($process) {
-            $ref = new \ReflectionClass($process);
+            $ref = new ReflectionClass($process);
             $property = $ref->getProperty('callback');
             $property->setAccessible(true);
             $callback = $property->getValue($process);

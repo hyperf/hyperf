@@ -15,26 +15,19 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Nats\Exception\ConfigNotFoundException;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class DriverFactory
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var array
-     */
-    protected $config;
+    protected array $config;
 
     /**
      * @var DriverInterface[]
      */
-    protected $drivers = [];
+    protected array $drivers = [];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class)->get('nats', []);
     }
 

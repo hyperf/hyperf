@@ -17,11 +17,13 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
+        "php": ">=8.0",
+        "hyperf/collection": "~3.0.0",
+        "hyperf/contract": "~3.0.0",
+        "hyperf/support": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
         "psr/container": "^1.0|^2.0",
-        "symfony/finder": "^5.0"
+        "symfony/finder": "^5.0|^6.0"
     },
     "suggest": {
         "vlucas/phpdotenv": "Allows using enviroment value to override the config",
@@ -47,7 +49,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Config\\ConfigProvider"

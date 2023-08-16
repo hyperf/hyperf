@@ -11,6 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Cache;
 
+use Hyperf\Cache\Aspect\CacheableAspect;
+use Hyperf\Cache\Aspect\CacheAheadAspect;
+use Hyperf\Cache\Aspect\CacheEvictAspect;
+use Hyperf\Cache\Aspect\CachePutAspect;
+use Hyperf\Cache\Aspect\FailCacheAspect;
 use Hyperf\Cache\Listener\DeleteListener;
 use Psr\SimpleCache\CacheInterface;
 
@@ -27,13 +32,17 @@ class ConfigProvider
             ],
             'annotations' => [
                 'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
                     'collectors' => [
                         CacheListenerCollector::class,
                     ],
                 ],
+            ],
+            'aspects' => [
+                CacheableAspect::class,
+                CacheAheadAspect::class,
+                CacheEvictAspect::class,
+                CachePutAspect::class,
+                FailCacheAspect::class,
             ],
             'publish' => [
                 [

@@ -15,6 +15,8 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Snowflake\MetaGenerator\RedisMilliSecondMetaGenerator;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class MetaGeneratorFactory
 {
     public function __invoke(ContainerInterface $container)

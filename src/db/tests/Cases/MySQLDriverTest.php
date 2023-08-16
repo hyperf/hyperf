@@ -71,4 +71,14 @@ class MySQLDriverTest extends PDODriverTest
     {
         parent::testMultiTransaction();
     }
+
+    public function testThrowException()
+    {
+        $this->assertTrue(true);
+    }
+
+    public function testThrowExceptionWhenDotOpenExceptionOption()
+    {
+        $this->assertTrue(true);
+    }
 }

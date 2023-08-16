@@ -11,9 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model;
 
+use Closure;
 use Faker\Generator as Faker;
 use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Tappable\tap;
 
 class FactoryBuilder
 {
@@ -166,7 +170,7 @@ class FactoryBuilder
     /**
      * Create a model and persist it in the database if requested.
      *
-     * @return \Closure
+     * @return Closure
      */
     public function lazy(array $attributes = [])
     {
@@ -240,7 +244,7 @@ class FactoryBuilder
     /**
      * Run after making callbacks on a collection of models.
      *
-     * @param \Hyperf\Utils\Collection $models
+     * @param \Hyperf\Collection\Collection $models
      */
     public function callAfterMaking($models)
     {
@@ -250,7 +254,7 @@ class FactoryBuilder
     /**
      * Run after creating callbacks on a collection of models.
      *
-     * @param \Hyperf\Utils\Collection $models
+     * @param \Hyperf\Collection\Collection $models
      */
     public function callAfterCreating($models)
     {
@@ -260,7 +264,7 @@ class FactoryBuilder
     /**
      * Set the connection name on the results and store them.
      *
-     * @param \Hyperf\Utils\Collection $results
+     * @param \Hyperf\Collection\Collection $results
      */
     protected function store($results)
     {
@@ -276,7 +280,7 @@ class FactoryBuilder
     /**
      * Get a raw attributes array for the model.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function getRawAttributes(array $attributes = [])
     {
@@ -318,8 +322,8 @@ class FactoryBuilder
     /**
      * Apply the active states to the model definition array.
      *
-     * @throws \InvalidArgumentException
      * @return array
+     * @throws InvalidArgumentException
      */
     protected function applyStates(array $definition, array $attributes = [])
     {
@@ -389,7 +393,7 @@ class FactoryBuilder
     /**
      * Call after callbacks for each model and state.
      *
-     * @param \Hyperf\Utils\Collection $models
+     * @param \Hyperf\Collection\Collection $models
      */
     protected function callAfter(array $afterCallbacks, $models)
     {

@@ -15,14 +15,8 @@ use Hyperf\Command\Command;
 
 abstract class Event
 {
-    /**
-     * @var Command
-     */
-    protected $command;
-
-    public function __construct(Command $command)
+    public function __construct(protected Command $command)
     {
-        $this->command = $command;
     }
 
     public function getCommand(): Command

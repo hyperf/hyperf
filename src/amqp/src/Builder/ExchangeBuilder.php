@@ -13,18 +13,18 @@ namespace Hyperf\Amqp\Builder;
 
 class ExchangeBuilder extends Builder
 {
-    protected $exchange;
+    protected ?string $exchange = null;
 
-    protected $type;
+    protected ?string $type = null;
 
-    protected $internal = false;
+    protected bool $internal = false;
 
     public function getExchange(): string
     {
         return $this->exchange;
     }
 
-    public function setExchange(string $exchange): self
+    public function setExchange(string $exchange): static
     {
         $this->exchange = $exchange;
         return $this;
@@ -35,7 +35,7 @@ class ExchangeBuilder extends Builder
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(string $type): static
     {
         $this->type = $type;
         return $this;
@@ -46,7 +46,7 @@ class ExchangeBuilder extends Builder
         return $this->internal;
     }
 
-    public function setInternal(bool $internal): self
+    public function setInternal(bool $internal): static
     {
         $this->internal = $internal;
         return $this;

@@ -19,9 +19,9 @@ use Hyperf\Di\Annotation\Inject;
 class DemoInjectException
 {
     /**
-     * @Inject(required=true)
      * @var Demo1
      */
+    #[Inject(required: true)]
     private $demo;
 
     public function getDemo()

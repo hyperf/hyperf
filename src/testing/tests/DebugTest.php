@@ -13,6 +13,7 @@ namespace HyperfTest\Testing;
 
 use Hyperf\Testing\Debug;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
@@ -22,10 +23,10 @@ class DebugTest extends TestCase
 {
     public function testGetRefCount()
     {
-        $this->assertSame('1', Debug::getRefCount(new \stdClass()));
-        $obj = new \stdClass();
+        $this->assertSame('1', Debug::getRefCount(new stdClass()));
+        $obj = new stdClass();
         $this->assertSame('2', Debug::getRefCount($obj));
-        $obj2 = new \stdClass();
+        $obj2 = new stdClass();
         $obj2->obj = $obj;
         $this->assertSame('2', Debug::getRefCount($obj2));
         $this->assertSame('3', Debug::getRefCount($obj));

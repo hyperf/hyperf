@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Context\Context;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Connection;
@@ -23,14 +25,18 @@ use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\MySqlBitConnection;
+use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Column;
 use Hyperf\Database\Schema\MySqlBuilder;
+use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Container;
+use Hyperf\Engine\Channel;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Database\Stubs\ContainerStub;
+use HyperfTest\Database\Stubs\Model\TestModel;
+use HyperfTest\Database\Stubs\Model\TestVersionModel;
 use HyperfTest\Database\Stubs\Model\User;
 use HyperfTest\Database\Stubs\Model\UserBit;
 use HyperfTest\Database\Stubs\Model\UserExt;
@@ -41,7 +47,7 @@ use HyperfTest\Database\Stubs\Model\UserRolePivot;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Coroutine\Channel;
+use RuntimeException;
 
 /**
  * @internal
@@ -65,6 +71,7 @@ class ModelRealBuilderTest extends TestCase
         /** @var ConnectionInterface $conn */
         $conn = $container->get(ConnectionResolverInterface::class)->connection();
         $conn->statement('DROP TABLE IF EXISTS `test`;');
+        $conn->statement('DROP TABLE IF EXISTS `test_full_text_index`;');
         Mockery::close();
     }
 
@@ -318,6 +325,86 @@ class ModelRealBuilderTest extends TestCase
         $this->assertSame('', $column->getComment());
     }
 
+    public function testUpsert()
+    {
+        $container = $this->getContainer();
+        /** @var ConnectionInterface $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->statement('CREATE TABLE `test` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `uid` bigint(20) unsigned NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
+        $res = TestModel::query()->insert(['user_id' => 1, 'uid' => 1]);
+        $this->assertTrue($res);
+
+        $model = TestModel::query()->find(1);
+        $this->assertSame(1, $model->uid);
+
+        $res = TestModel::query()->upsert(['user_id' => 1, 'uid' => 2], []);
+        $this->assertSame(2, $res);
+
+        $model = TestModel::query()->find(1);
+        $this->assertSame(2, $model->uid);
+    }
+
+    public function testRewriteSetKeysForSaveQuery()
+    {
+        $container = $this->getContainer();
+        /** @var ConnectionInterface $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->statement('CREATE TABLE `test` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `uid` bigint(20) unsigned NOT NULL,
+  `version` bigint(20) unsigned NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
+        $res = TestVersionModel::query()->insert(['user_id' => 1, 'uid' => 1, 'version' => 2]);
+        $this->assertTrue($res);
+
+        /** @var TestVersionModel $model */
+        $model = TestVersionModel::query()->first();
+        $model->user_id = 2;
+        $model->version = 1;
+        $model->save();
+
+        $this->assertSame(2, TestVersionModel::query()->first()->user_id);
+
+        $model->mustVersion = true;
+        $model->user_id = 3;
+        $model->version = 0;
+        $model->save();
+
+        $this->assertSame(2, TestVersionModel::query()->first()->user_id);
+
+        $model->user_id = 4;
+        $model->version = 2;
+        $model->save();
+
+        $this->assertSame(4, TestVersionModel::query()->first()->user_id);
+
+        $sqls = [
+            'update `test` set `user_id` = ?, `version` = ?, `test`.`updated_at` = ? where `id` = ?',
+            'update `test` set `user_id` = ?, `version` = ?, `test`.`updated_at` = ? where `id` = ? and `version` <= ?',
+            'update `test` set `user_id` = ?, `version` = ?, `test`.`updated_at` = ? where `id` = ? and `version` <= ?',
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted && str_starts_with($event->sql, 'update')) {
+                $this->assertSame($event->sql, array_shift($sqls));
+            }
+        }
+    }
+
     public function testBigIntInsertAndGet()
     {
         $container = $this->getContainer();
@@ -382,6 +469,34 @@ class ModelRealBuilderTest extends TestCase
                 $this->assertSame('select * from `user` limit 2 offset 0', $event->sql);
             }
         }
+    }
+
+    public function testChunkById()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('make')->with(PaginatorInterface::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new Paginator(...array_values($args));
+        });
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        Context::set($key = 'chunk.by.id.' . uniqid(), 0);
+        Db::table('user')->chunkById(2, function ($data) use ($key) {
+            $id = $data->first()->id;
+            $this->assertNotSame($id, Context::get($key));
+            Context::set($key, $id);
+        });
+    }
+
+    public function testChunkByIdButNotFound()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('make')->with(PaginatorInterface::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new Paginator(...array_values($args));
+        });
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        $this->expectException(RuntimeException::class);
+
+        Db::table('user')->chunkById(1, fn () => 1, 'created_at');
     }
 
     public function testPaginationCountQuery()
@@ -450,6 +565,85 @@ class ModelRealBuilderTest extends TestCase
         $this->assertSame('ref', $res[0]->type);
         $res = Db::select('EXPLAIN SELECT * FROM `user` WHERE `name` = ?;', [1]);
         $this->assertSame('ref', $res[0]->type);
+    }
+
+    public function testBeforeExecuting()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        $res = Db::selectOne('SELECT * FROM `user` WHERE id = ?;', [1]);
+        $this->assertSame('Hyperf', $res->name);
+
+        try {
+            $chan = new Channel(2);
+            Db::beforeExecuting(function (string $sql, array $bindings, Connection $connection) use ($chan) {
+                $this->assertSame(null, $connection->getConfig('name'));
+                $chan->push(1);
+            });
+            Db::beforeExecuting(function (string $sql, array $bindings, Connection $connection) use ($chan) {
+                $this->assertSame('SELECT * FROM `user` WHERE id = ?;', $sql);
+                $this->assertSame([1], $bindings);
+                $chan->push(2);
+            });
+
+            $res = Db::selectOne('SELECT * FROM `user` WHERE id = ?;', [1]);
+            $this->assertSame('Hyperf', $res->name);
+            $this->assertSame(1, $chan->pop(1));
+            $this->assertSame(2, $chan->pop(1));
+        } finally {
+            Connection::clearBeforeExecutingCallbacks();
+        }
+    }
+
+    public function testModelBuilderValue()
+    {
+        $this->getContainer();
+
+        $res = User::query()->join('book', 'user.id', '=', 'book.user_id')->value('book.title');
+
+        $this->assertNotEmpty($res);
+
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, 'select `book`.`title` from `user` inner join `book` on `user`.`id` = `book`.`user_id` limit 1');
+            }
+        }
+    }
+
+    public function testWhereFullText()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        Schema::create('test_full_text_index', function (Blueprint $table) {
+            $table->id('id');
+            $table->string('title', 200);
+            $table->text('body');
+            $table->fullText(['title', 'body']);
+        });
+
+        Db::table('test_full_text_index')->insert([
+            ['title' => 'MySQL Tutorial', 'body' => 'DBMS stands for DataBase ...'],
+            ['title' => 'How To Use MySQL Well', 'body' => 'After you went through a ...'],
+            ['title' => 'Optimizing MySQL', 'body' => 'In this tutorial, we show ...'],
+            ['title' => '1001 MySQL Tricks', 'body' => '1. Never run mysqld as root. 2. ...'],
+            ['title' => 'MySQL vs. YourSQL', 'body' => 'In the following database comparison ...'],
+            ['title' => 'MySQL Security', 'body' => 'When configured properly, MySQL ...'],
+        ]);
+
+        $result = Db::table('test_full_text_index')->whereFullText(['title', 'body'], 'database')->get();
+        $this->assertCount(2, $result);
+        $this->assertSame('MySQL Tutorial', $result[0]->title);
+        $this->assertSame('MySQL vs. YourSQL', $result[1]->title);
+
+        // boolean mode
+        $result = Db::table('test_full_text_index')->whereFullText(['title', 'body'], '+MySQL -YourSQL', ['mode' => 'boolean'])->get();
+        $this->assertCount(5, $result);
+
+        // expanded query
+        $result = Db::table('test_full_text_index')->whereFullText(['title', 'body'], 'database', ['expanded' => true])->get();
+        $this->assertCount(6, $result);
     }
 
     protected function getContainer()

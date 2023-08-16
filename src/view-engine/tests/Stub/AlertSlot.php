@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ViewEngine\Stub;
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\ViewEngine\Component\Component;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 
 class AlertSlot extends Component
 {
-    public function render()
+    public function render(): mixed
     {
         $factory = ApplicationContext::getContainer()
             ->get(FactoryInterface::class);

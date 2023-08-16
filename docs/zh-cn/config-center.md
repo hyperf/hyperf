@@ -50,6 +50,72 @@ composer require hyperf/config-etcd
 composer require hyperf/config-nacos
 ```
 
+#### GRPC 双向流
+
+Nacos 传统的配置中心，是基于短轮询进行配置同步的，就会导致轮训间隔内，服务无法拿到最新的配置。`Nacos V2` 版本增加了 GRPC 双向流的支持，如果你想让 Nacos 在发现配置变更后，及时推送给相关服务。
+
+可以按照以下步骤，开启 GRPC 双向流功能。
+
+- 首先，我们安装必要的组件
+
+```shell
+composer require "hyperf/http2-client:~3.0.0"
+composer require "hyperf/grpc:~3.0.0"
+```
+
+- 修改配置项
+
+修改 `config_center.drivers.nacos.client.grpc.enable` 为 `true`，具体如下
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\ConfigApollo\PullMode;
+use Hyperf\ConfigCenter\Mode;
+
+return [
+    'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
+    'driver' => env('CONFIG_CENTER_DRIVER', 'nacos'),
+    'mode' => env('CONFIG_CENTER_MODE', Mode::PROCESS),
+    'drivers' => [
+        'nacos' => [
+            'driver' => Hyperf\ConfigNacos\NacosDriver::class,
+            'merge_mode' => Hyperf\ConfigNacos\Constants::CONFIG_MERGE_OVERWRITE,
+            'interval' => 3,
+            'default_key' => 'nacos_config',
+            'listener_config' => [
+                'nacos_config' => [
+                    'tenant' => 'tenant', // corresponding with service.namespaceId
+                    'data_id' => 'hyperf-service-config',
+                    'group' => 'DEFAULT_GROUP',
+                ],
+            ],
+            'client' => [
+                // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
+                // 'uri' => '',
+                'host' => '127.0.0.1',
+                'port' => 8848,
+                'username' => null,
+                'password' => null,
+                'guzzle' => [
+                    'config' => null,
+                ],
+                // Only support for nacos v2.
+                'grpc' => [
+                    'enable' => true,
+                    'heartbeat' => 10,
+                ],
+            ],
+        ],
+    ],
+];
+
+```
+
+- 接下里启动服务即可
+
 ### 使用 Zookeeper 需安装
 
 ```bash
@@ -184,12 +250,39 @@ return [
 
 如配置文件不存在可执行 `php bin/hyperf.php vendor:publish hyperf/config-center` 命令来生成。
 
-
 ## 配置更新的作用范围
 
 在默认的功能实现下，是由一个 `ConfigFetcherProcess` 进程根据配置的 `interval` 来向 配置中心 Server 拉取对应 `namespace` 的配置，并通过 IPC 通讯将拉取到的新配置传递到各个 Worker 中，并更新到 `Hyperf\Contract\ConfigInterface` 对应的对象内。   
 需要注意的是，更新的配置只会更新 `Config` 对象，故仅限应用层或业务层的配置，不涉及框架层的配置改动，因为框架层的配置改动需要重启服务，如果您有这样的需求，也可以通过自行实现 `ConfigFetcherProcess` 来达到目的。
 
-## 注意事项
+## 配置更新事件
 
-在命令行模式时，默认不会触发事件分发，导致无法正常获取到相关配置，可通过添加 `--enable-event-dispatcher` 参数来开启。
+配置中心运行期间，但配置发生变化会对应触发 `Hyperf\ConfigCenter\Event\ConfigChanged` 事件，您可以进行对这些事件进行监听以满足您的需求。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\ConfigCenter\Event\ConfigChanged;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+
+#[Listener]
+class DbQueryExecutedListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            ConfigChanged::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        var_dump($event);
+    }
+}
+```

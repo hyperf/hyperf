@@ -14,8 +14,6 @@ namespace Hyperf\SocketIOServer\Room;
 interface EphemeralInterface
 {
     /**
-     * @return EphemeralInterface
-     *
      * Set the ttl in milliseconds for a sid. Should be called during
      * starting up.
      */

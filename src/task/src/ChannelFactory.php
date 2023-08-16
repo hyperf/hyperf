@@ -11,12 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Task;
 
+use Hyperf\Engine\Channel;
 use Hyperf\Task\Exception\TaskExecuteTimeoutException;
-use Swoole\Coroutine\Channel;
 
 class ChannelFactory
 {
-    protected $channels = [];
+    protected array $channels = [];
 
     public function get(int $taskId): ?Channel
     {

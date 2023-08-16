@@ -11,9 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Hyperf\Utils\Coroutine;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
@@ -72,7 +73,7 @@ class ContextTest extends TestCase
 
     public function testContextChangeAfterCopy()
     {
-        $obj = new \stdClass();
+        $obj = new stdClass();
         $obj->id = $uid = uniqid();
 
         Context::set('test.store.id', $obj);

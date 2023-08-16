@@ -11,7 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Contracts;
 
-interface Jsonable
+use Hyperf\Contract;
+
+/**
+ * @deprecated v3.1
+ */
+interface Jsonable extends Contract\Jsonable
 {
-    public function __toString(): string;
 }

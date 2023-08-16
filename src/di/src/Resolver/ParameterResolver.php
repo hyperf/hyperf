@@ -19,14 +19,8 @@ use ReflectionParameter;
 
 class ParameterResolver
 {
-    /**
-     * @var ResolverInterface
-     */
-    private $definitionResolver;
-
-    public function __construct(ResolverInterface $definitionResolver)
+    public function __construct(private ResolverInterface $definitionResolver)
     {
-        $this->definitionResolver = $definitionResolver;
     }
 
     public function resolveParameters(
@@ -79,7 +73,7 @@ class ParameterResolver
     {
         try {
             return $parameter->getDefaultValue();
-        } catch (\ReflectionException $e) {
+        } catch (\ReflectionException) {
             throw new InvalidDefinitionException(sprintf(
                 'The parameter "%s" of %s has no type defined or guessable. It has a default value, '
                 . 'but the default value can\'t be read through Reflection because it is a PHP internal class.',

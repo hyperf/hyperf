@@ -17,7 +17,6 @@ interface DataFetcherInterface
 {
     /**
      * @throws RequestException
-     * @return mixed
      */
-    public function fetch(array $data);
+    public function fetch(array $data): mixed;
 }

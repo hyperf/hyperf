@@ -13,7 +13,7 @@ class DummyClass extends Migration
     {
         Schema::create('DummyTable', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->timestamps();
+            $table->datetimes();
         });
     }
 

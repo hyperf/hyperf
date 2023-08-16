@@ -18,10 +18,7 @@ use RuntimeException;
 
 trait ResponseProxyTrait
 {
-    /**
-     * @var null|ResponseInterface
-     */
-    protected $response;
+    protected ?ResponseInterface $response = null;
 
     public function setResponse(ResponseInterface $response)
     {
@@ -36,78 +33,78 @@ trait ResponseProxyTrait
         return $this->response;
     }
 
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->getResponse()->getProtocolVersion();
     }
 
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version): static
     {
         $this->setResponse($this->getResponse()->withProtocolVersion($version));
         return $this;
     }
 
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->getResponse()->getHeaders();
     }
 
-    public function hasHeader($name)
+    public function hasHeader($name): bool
     {
         return $this->getResponse()->hasHeader($name);
     }
 
-    public function getHeader($name)
+    public function getHeader($name): array
     {
         return $this->getResponse()->getHeader($name);
     }
 
-    public function getHeaderLine($name)
+    public function getHeaderLine($name): string
     {
         return $this->getResponse()->getHeaderLine($name);
     }
 
-    public function withHeader($name, $value)
+    public function withHeader($name, $value): static
     {
         $this->setResponse($this->getResponse()->withHeader($name, $value));
         return $this;
     }
 
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader($name, $value): static
     {
         $this->setResponse($this->getResponse()->withAddedHeader($name, $value));
         return $this;
     }
 
-    public function withoutHeader($name)
+    public function withoutHeader($name): static
     {
         $this->setResponse($this->getResponse()->withoutHeader($name));
         return $this;
     }
 
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         return $this->getResponse()->getBody();
     }
 
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): static
     {
         $this->setResponse($this->getResponse()->withBody($body));
         return $this;
     }
 
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->getResponse()->getStatusCode();
     }
 
-    public function withStatus($code, $reasonPhrase = '')
+    public function withStatus($code, $reasonPhrase = ''): static
     {
         $this->setResponse($this->getResponse()->withStatus($code, $reasonPhrase));
         return $this;
     }
 
-    public function getReasonPhrase()
+    public function getReasonPhrase(): string
     {
         return $this->getResponse()->getReasonPhrase();
     }
@@ -115,7 +112,7 @@ trait ResponseProxyTrait
     /**
      * Returns an instance with specified cookies.
      */
-    public function withCookie(Cookie $cookie): self
+    public function withCookie(Cookie $cookie): static
     {
         $response = $this->getResponse();
         if (! method_exists($response, 'withCookie')) {
@@ -142,7 +139,7 @@ trait ResponseProxyTrait
      * Returns an instance with specified trailer.
      * @param string $value
      */
-    public function withTrailer(string $key, $value): self
+    public function withTrailer(string $key, $value): static
     {
         $response = $this->getResponse();
         if (! method_exists($response, 'withTrailer')) {

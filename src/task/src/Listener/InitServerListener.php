@@ -18,14 +18,8 @@ use Psr\Container\ContainerInterface;
 
 class InitServerListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
@@ -35,7 +29,7 @@ class InitServerListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($event instanceof BeforeMainServerStart) {
             if (! $this->container->has(TaskExecutor::class)) {

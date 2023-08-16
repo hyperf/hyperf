@@ -27,12 +27,11 @@ LUA;
 
     /**
      * @param null|float $data
-     * @return null|float
      */
-    public function format($data)
+    public function format($data): ?float
     {
         if (is_numeric($data)) {
-            return $data;
+            return (float) $data;
         }
         return null;
     }

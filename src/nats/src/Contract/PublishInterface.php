@@ -13,5 +13,5 @@ namespace Hyperf\Nats\Contract;
 
 interface PublishInterface
 {
-    public function publish(string $subject, $payload = null, $inbox = null);
+    public function publish(string $subject, $payload = null, $inbox = null): void;
 }

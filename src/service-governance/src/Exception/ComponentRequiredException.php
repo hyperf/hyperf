@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ServiceGovernance\Exception;
 
-class ComponentRequiredException extends \RuntimeException
+use RuntimeException;
+
+class ComponentRequiredException extends RuntimeException
 {
 }

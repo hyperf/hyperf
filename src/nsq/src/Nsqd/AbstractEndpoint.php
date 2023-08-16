@@ -13,13 +13,7 @@ namespace Hyperf\Nsq\Nsqd;
 
 abstract class AbstractEndpoint
 {
-    /**
-     * @var ClientInterface
-     */
-    protected $client;
-
-    public function __construct(ClientInterface $client)
+    public function __construct(protected ClientInterface $client)
     {
-        $this->client = $client;
     }
 }

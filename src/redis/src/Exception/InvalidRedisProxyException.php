@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Redis\Exception;
 
-class InvalidRedisProxyException extends \RuntimeException
+use RuntimeException;
+
+class InvalidRedisProxyException extends RuntimeException
 {
 }

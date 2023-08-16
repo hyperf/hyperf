@@ -15,7 +15,7 @@ use Hyperf\Process\AbstractProcess;
 
 class DemoProcess extends AbstractProcess
 {
-    public $name = 'test.demo';
+    public string $name = 'test.demo';
 
     public function handle(): void
     {

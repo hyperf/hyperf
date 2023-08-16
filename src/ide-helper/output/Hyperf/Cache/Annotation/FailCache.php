@@ -14,14 +14,10 @@ namespace Hyperf\Cache\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class FailCache extends AbstractAnnotation
 {
-    public function __construct($prefix, $value, $ttl, $listener, $group)
+    public function __construct(?string $prefix = null, ?string $value = null, ?int $ttl = null, ?string $listener = null, string $group = 'default')
     {
     }
 }

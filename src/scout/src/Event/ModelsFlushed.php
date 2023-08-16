@@ -12,13 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Scout\Event;
 
 use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Model;
+use Hyperf\Scout\Searchable;
 
 class ModelsFlushed
 {
     /**
-     * The model collection.
-     *
-     * @var Collection
+     * @param Collection<int, Model&Searchable>
      */
     public $models;
 

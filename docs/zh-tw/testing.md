@@ -1,6 +1,6 @@
 # 自動化測試
 
-在 Hyperf 裡測試預設通過 `phpunit` 來實現，但由於 Hyperf 是一個協程框架，所以預設的 `phpunit` 並不能很好的工作，因此我們提供了一個 `co-phpunit` 指令碼來進行適配，您可直接呼叫指令碼或者使用對應的 composer 命令來執行。自動化測試沒有特定的元件，但是在 Hyperf 提供的骨架包裡都會有對應實現。
+在 Hyperf 裡測試預設透過 `phpunit` 來實現，但由於 Hyperf 是一個協程框架，所以預設的 `phpunit` 並不能很好的工作，因此我們提供了一個 `co-phpunit` 指令碼來進行適配，您可直接呼叫指令碼或者使用對應的 composer 命令來執行。自動化測試沒有特定的元件，但是在 Hyperf 提供的骨架包裡都會有對應實現。
 
 ```
 composer require hyperf/testing
@@ -137,10 +137,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ExampleTest extends TestCase
 {
-    /**
-     * @var Client
-     */
-    protected $client;
+    protected Client $client;
 
     public function __construct($name = null, array $data = [], $dataName = '')
     {
@@ -191,7 +188,7 @@ class ExampleTest extends TestCase
 
 在 FPM 場景下，我們通常改完程式碼，然後開啟瀏覽器訪問對應介面，所以我們通常會需要兩個函式 `dd` 和 `dump`，但 `Hyperf` 跑在 `CLI` 模式下，就算提供了這兩個函式，也需要在 `CLI` 中重啟 `Server`，然後再到瀏覽器中呼叫對應介面檢視結果。這樣其實並沒有簡化流程，反而更麻煩了。
 
-接下來，我來介紹如何通過配合 `testing`，來快速除錯程式碼，順便完成單元測試。
+接下來，我來介紹如何透過配合 `testing`，來快速除錯程式碼，順便完成單元測試。
 
 假設我們在 `UserDao` 中實現了一個查詢使用者資訊的函式
 ```php
@@ -234,7 +231,7 @@ class UserTest extends HttpTestCase
 {
     public function testUserDaoFirst()
     {
-        $model = \Hyperf\Utils\ApplicationContext::getContainer()->get(UserDao::class)->first(1);
+        $model = \Hyperf\Context\ApplicationContext::getContainer()->get(UserDao::class)->first(1);
 
         var_dump($model);
 
@@ -257,7 +254,7 @@ composer test -- --filter=testUserDaoFirst
 
 如果在編寫測試時無法使用（或選擇不使用）實際的依賴元件(DOC)，可以用測試替身來代替。測試替身不需要和真正的依賴元件有完全一樣的的行為方式；他只需要提供和真正的元件同樣的 API 即可，這樣被測系統就會以為它是真正的元件！
 
-下面展示分別通過建構函式注入依賴、通過 `@Inject` 註釋注入依賴的測試替身
+下面展示分別透過建構函式注入依賴、透過 `#[Inject]` 註釋注入依賴的測試替身
 
 ### 建構函式注入依賴的測試替身
 
@@ -270,10 +267,7 @@ use App\Api\DemoApi;
 
 class DemoLogic
 {
-    /**
-     * @var DemoApi $demoApi
-     */
-    private $demoApi;
+    private DemoApi $demoApi;
 
     public function __construct(DemoApi $demoApi)
     {
@@ -350,7 +344,7 @@ class DemoLogicTest extends HttpTestCase
 }
 ```
 
-### 通過 Inject 註釋注入依賴的測試替身
+### 透過 Inject 註釋注入依賴的測試替身
 
 ```php
 <?php
@@ -362,11 +356,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class DemoLogic
 {
-    /**
-     * @var DemoApi $demoApi
-     * @Inject()
-     */
-    private $demoApi;
+    #[Inject]
+    private DemoApi $demoApi;
 
     public function test()
     {
@@ -401,7 +392,7 @@ namespace HyperfTest\Cases;
 use App\Api\DemoApi;
 use App\Logic\DemoLogic;
 use Hyperf\Di\Container;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use HyperfTest\HttpTestCase;
 use Mockery;
 
@@ -437,7 +428,7 @@ class DemoLogicTest extends HttpTestCase
             'status' => 11
         ]);
 
-        $container->getDefinitionSource()->addDefinition(DemoApi::class, function () use ($apiStub) {
+        $container->define(DemoApi::class, function () use ($apiStub) {
             return $apiStub;
         });
         
@@ -503,6 +494,3 @@ class DemoLogicTest extends HttpTestCase
 ```shell
 phpdbg -dmemory_limit=1024M -qrr ./vendor/bin/co-phpunit -c phpunit.xml --colors=always
 ```
-
-
-

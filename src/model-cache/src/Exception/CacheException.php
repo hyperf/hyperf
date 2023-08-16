@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache\Exception;
 
-class CacheException extends \RuntimeException
+use RuntimeException;
+
+class CacheException extends RuntimeException
 {
 }

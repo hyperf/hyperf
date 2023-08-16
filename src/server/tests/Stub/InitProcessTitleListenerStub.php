@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Server\Stub;
 
+use Hyperf\Context\Context;
 use Hyperf\Server\Listener\InitProcessTitleListener;
-use Hyperf\Utils\Context;
 
 class InitProcessTitleListenerStub extends InitProcessTitleListener
 {

@@ -15,15 +15,9 @@ use Hyperf\Di\Exception\AnnotationException;
 
 class MultipleAnnotation implements MultipleAnnotationInterface
 {
-    /**
-     * @var AnnotationInterface[]
-     */
-    protected $annotations = [];
+    protected array $annotations = [];
 
-    /**
-     * @var string
-     */
-    protected $className;
+    protected string $className;
 
     public function __construct(AnnotationInterface $annotation)
     {
@@ -45,7 +39,7 @@ class MultipleAnnotation implements MultipleAnnotationInterface
         return $this->className;
     }
 
-    public function insert(AnnotationInterface $annotation)
+    public function insert(AnnotationInterface $annotation): static
     {
         if (! $annotation instanceof $this->className) {
             throw new AnnotationException(get_class($annotation) . ' must instanceof ' . $this->className);

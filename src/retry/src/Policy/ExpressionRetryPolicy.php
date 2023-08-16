@@ -18,7 +18,7 @@ class ExpressionRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterf
     /**
      * @var callable
      */
-    private $callable;
+    private mixed $callable;
 
     public function __construct(callable $callable)
     {

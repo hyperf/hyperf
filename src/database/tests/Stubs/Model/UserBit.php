@@ -22,15 +22,15 @@ class UserBit extends Model
     /**
      * The table associated with the model.
      */
-    protected $table = 'user_bit';
+    protected ?string $table = 'user_bit';
 
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = ['id', 'bit', 'created_at', 'updated_at'];
+    protected array $fillable = ['id', 'bit', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
      */
-    protected $casts = ['id' => 'integer', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+    protected array $casts = ['id' => 'integer', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
 }

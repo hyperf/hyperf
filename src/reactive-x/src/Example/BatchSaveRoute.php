@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ReactiveX\Example;
 
+use Exception;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
@@ -28,20 +29,18 @@ class BatchSaveRoute implements ListenerInterface
 
     /**
      * @param QueryExecuted $event
-     * @throws \Exception
+     * @throws Exception
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         Observable::fromHttpRoute('POST', '/save')
             ->map(
-                function (RequestInterface $request) {
-                    return $request->getBody();
-                }
+                fn (RequestInterface $request) => $request->getBody()
             )
             ->bufferWithCount(10)
             ->subscribe(
                 function (array $bodies) {
-                    echo count($bodies); //10
+                    echo count($bodies); // 10
                 }
             );
     }

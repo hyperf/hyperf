@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model\Relations;
 
+use Hyperf\Context\Context;
 use Hyperf\Engine\Extension;
-use Hyperf\Utils\Context;
 
 class Constraint
 {

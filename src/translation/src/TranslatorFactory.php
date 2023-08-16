@@ -15,6 +15,8 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class TranslatorFactory
 {
     public function __invoke(ContainerInterface $container)

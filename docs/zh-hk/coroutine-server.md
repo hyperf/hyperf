@@ -10,7 +10,7 @@ Hyperf 還提供了協程風格服務，此類型為單進程模型，所有的�
 
 ## 配置
 
-修改 `autoload/server.php` 配置文件，設置 `type` 為 `Hyperf\Server\CoroutineServer::class` 即可啟動協程風格。
+修改 `autoload/server.php` 配置文件，設置 `type` 為 `Hyperf\Server\CoroutineServer::class` 即可啓動協程風格。
 
 ```php
 <?php

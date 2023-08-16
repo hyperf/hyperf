@@ -11,15 +11,18 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ExceptionHandler;
 
+use Exception;
+use Hyperf\Context\Context;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Base\Response;
-use Hyperf\Utils\Context;
 use HyperfTest\ExceptionHandler\Stub\BarExceptionHandler;
 use HyperfTest\ExceptionHandler\Stub\FooExceptionHandler;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
@@ -44,7 +47,7 @@ class ExceptionHandlerTest extends TestCase
         $container = $this->getContainer();
 
         parallel([function () use ($container, $handlers) {
-            $exception = new \Exception('xxx', 500);
+            $exception = new Exception('xxx', 500);
 
             Context::set(ResponseInterface::class, new Response());
 
@@ -55,7 +58,7 @@ class ExceptionHandlerTest extends TestCase
         }]);
 
         parallel([function () use ($container, $handlers) {
-            $exception = new \Exception('xxx', 0);
+            $exception = new Exception('xxx', 0);
 
             Context::set(ResponseInterface::class, new Response());
 
@@ -66,7 +69,7 @@ class ExceptionHandlerTest extends TestCase
         }]);
 
         parallel([function () use ($container, $handlers) {
-            $exception = new \Exception('xxx', 500);
+            $exception = new Exception('xxx', 500);
 
             Context::set(ResponseInterface::class, new Response());
 

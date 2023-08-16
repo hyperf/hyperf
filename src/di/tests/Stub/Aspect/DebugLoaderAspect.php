@@ -17,15 +17,15 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class DebugLoaderAspect extends AbstractAspect
 {
-    public $classes = [
+    public array $classes = [
         'Debug1AspectFoo',
     ];
 
-    public $annotations = [
+    public array $annotations = [
         Inject::class,
     ];
 
-    public $priority = 100;
+    public ?int $priority = 100;
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {

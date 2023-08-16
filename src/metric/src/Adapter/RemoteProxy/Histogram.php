@@ -16,35 +16,20 @@ use Hyperf\Process\ProcessCollector;
 
 class Histogram implements HistogramInterface
 {
-    /**
-     * @var string
-     */
     protected const TARGET_PROCESS_NAME = 'metric';
-
-    /**
-     * @var string
-     */
-    public $name;
-
-    public $labelNames = [];
 
     /**
      * @var string[]
      */
-    public $labelValues = [];
+    public array $labelValues = [];
 
-    /**
-     * @var float
-     */
-    public $sample;
+    public float $sample;
 
-    public function __construct(string $name, array $labelNames)
+    public function __construct(public string $name, public array $labelNames)
     {
-        $this->name = $name;
-        $this->labelNames = $labelNames;
     }
 
-    public function with(string ...$labelValues): HistogramInterface
+    public function with(string ...$labelValues): static
     {
         $this->labelValues = $labelValues;
         return $this;

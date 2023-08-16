@@ -11,22 +11,4 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Exception;
 
-use Throwable;
-
-final class ExceptionThrower
-{
-    /**
-     * @var Throwable
-     */
-    private $throwable;
-
-    public function __construct(Throwable $throwable)
-    {
-        $this->throwable = $throwable;
-    }
-
-    public function getThrowable(): Throwable
-    {
-        return $this->throwable;
-    }
-}
+class_alias(\Hyperf\Support\Exception\ExceptionThrower::class, ExceptionThrower::class);

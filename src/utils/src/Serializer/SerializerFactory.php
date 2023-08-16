@@ -11,29 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Serializer;
 
-use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
-
-class SerializerFactory
+/**
+ * @deprecated since 3.1, use Hyperf\Serializer\SerializerFactory instead.
+ */
+class SerializerFactory extends \Hyperf\Serializer\SerializerFactory
 {
-    /**
-     * @var string
-     */
-    protected $serializer;
-
-    public function __construct(string $serializer = Serializer::class)
-    {
-        $this->serializer = $serializer;
-    }
-
-    public function __invoke()
-    {
-        return new $this->serializer([
-            new ExceptionNormalizer(),
-            new ObjectNormalizer(),
-            new ArrayDenormalizer(),
-            new ScalarNormalizer(),
-        ]);
-    }
 }

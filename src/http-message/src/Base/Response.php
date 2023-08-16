@@ -11,29 +11,24 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Base;
 
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 
 class Response implements ResponseInterface
 {
     use MessageTrait;
 
-    /**
-     * @var string
-     */
-    protected $reasonPhrase = '';
+    protected string $reasonPhrase = '';
+
+    protected int $statusCode = 200;
+
+    protected string $charset = 'utf-8';
 
     /**
-     * @var int
+     * Map of standard HTTP status code/reason phrases.
+     * @var array<int, string>
      */
-    protected $statusCode = 200;
-
-    /**
-     * @var string
-     */
-    protected $charset = 'utf-8';
-
-    /** @var array Map of standard HTTP status code/reason phrases */
-    private static $phrases
+    private static array $phrases
         = [
             100 => 'Continue',
             101 => 'Switching Protocols',
@@ -95,12 +90,9 @@ class Response implements ResponseInterface
             511 => 'Network Authentication Required',
         ];
 
-    /**
-     * @var array
-     */
-    private $attributes = [];
+    private array $attributes = [];
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->getBody();
     }
@@ -115,7 +107,7 @@ class Response implements ResponseInterface
      *
      * @return array attributes derived from the request
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -148,10 +140,9 @@ class Response implements ResponseInterface
      *
      * @param string $name the attribute name
      * @param mixed $value the value of the attribute
-     * @return static
      * @see getAttributes()
      */
-    public function withAttribute($name, $value)
+    public function withAttribute($name, $value): static
     {
         $clone = clone $this;
         $clone->attributes[$name] = $value;
@@ -185,10 +176,9 @@ class Response implements ResponseInterface
      * @param string $reasonPhrase the reason phrase to use with the
      *                             provided status code; if none is provided, implementations MAY
      *                             use the defaults as suggested in the HTTP specification
-     * @throws \InvalidArgumentException for invalid status code arguments
-     * @return static
+     * @throws InvalidArgumentException for invalid status code arguments
      */
-    public function withStatus($code, $reasonPhrase = '')
+    public function withStatus($code, $reasonPhrase = ''): static
     {
         $clone = clone $this;
         $clone->statusCode = (int) $code;
@@ -210,10 +200,9 @@ class Response implements ResponseInterface
     /**
      * Return an instance with the specified charset content type.
      *
-     * @throws \InvalidArgumentException
-     * @return static
+     * @throws InvalidArgumentException
      */
-    public function withCharset(string $charset)
+    public function withCharset(string $charset): static
     {
         return $this->withAddedHeader('Content-Type', sprintf('charset=%s', $charset));
     }
@@ -240,7 +229,7 @@ class Response implements ResponseInterface
         return $this->charset;
     }
 
-    public function setCharset(string $charset): Response
+    public function setCharset(string $charset): static
     {
         $this->charset = $charset;
         return $this;
@@ -332,7 +321,7 @@ class Response implements ResponseInterface
             303,
             307,
             308,
-        ]) && ($location === null ?: $location == $this->getHeaderLine('Location'));
+        ]) && ($location === null || $location == $this->getHeaderLine('Location'));
     }
 
     /**

@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Rpn\Exception;
 
-class InvalidOperatorException extends \InvalidArgumentException
+use InvalidArgumentException;
+
+class InvalidOperatorException extends InvalidArgumentException
 {
 }

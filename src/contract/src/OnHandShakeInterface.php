@@ -16,5 +16,9 @@ use Swoole\Http\Response;
 
 interface OnHandShakeInterface
 {
-    public function onHandShake(Request $request, Response $response): void;
+    /**
+     * @param Request $request
+     * @param Response $response
+     */
+    public function onHandShake($request, $response): void;
 }

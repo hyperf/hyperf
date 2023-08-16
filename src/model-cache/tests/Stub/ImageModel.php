@@ -29,24 +29,18 @@ class ImageModel extends Model implements CacheableInterface
 
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table = 'images';
+    protected ?string $table = 'images';
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = ['id', 'url', 'imageable_id', 'imageable_type', 'created_at', 'updated_at'];
+    protected array $fillable = ['id', 'url', 'imageable_id', 'imageable_type', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
-    protected $casts = ['id' => 'integer', 'imageable_id' => 'integer', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+    protected array $casts = ['id' => 'integer', 'imageable_id' => 'integer', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
 
     public function imageable()
     {

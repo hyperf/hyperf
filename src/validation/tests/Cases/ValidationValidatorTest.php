@@ -14,14 +14,14 @@ namespace HyperfTest\Validation\Cases;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeImmutable;
+use Hyperf\Collection\Arr;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\TranslatorInterface as TranslatorContract;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSourceInterface;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Arr;
 use Hyperf\Validation\Contract\ImplicitRule;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Contract\Rule;
@@ -318,7 +318,7 @@ class ValidationValidatorTest extends TestCase
         $v->messages()->setFormat(':message');
         $this->assertEquals('Name is required!', $v->messages()->first('name'));
 
-        //set customAttributes by setter
+        // set customAttributes by setter
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.required' => ':attribute is required!'], 'en');
         $customAttributes = ['name' => 'Name'];
@@ -425,7 +425,7 @@ class ValidationValidatorTest extends TestCase
 
     public function testDisplayableValuesAreReplaced()
     {
-        //required_if:foo,bar
+        // required_if:foo,bar
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.required_if' => 'The :attribute field is required when :other is :value.'], 'en');
         $trans->addLines(['validation.values.color.1' => 'red'], 'en');
@@ -434,7 +434,7 @@ class ValidationValidatorTest extends TestCase
         $v->messages()->setFormat(':message');
         $this->assertEquals('The bar field is required when color is red.', $v->messages()->first('bar'));
 
-        //required_unless:foo,bar
+        // required_unless:foo,bar
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.required_unless' => 'The :attribute field is required unless :other is in :values.'], 'en');
         $trans->addLines(['validation.values.color.1' => 'red'], 'en');
@@ -443,7 +443,7 @@ class ValidationValidatorTest extends TestCase
         $v->messages()->setFormat(':message');
         $this->assertEquals('The bar field is required unless color is in red.', $v->messages()->first('bar'));
 
-        //in:foo,bar,...
+        // in:foo,bar,...
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.in' => ':attribute must be included in :values.'], 'en');
         $trans->addLines(['validation.values.type.5' => 'Short'], 'en');
@@ -453,7 +453,7 @@ class ValidationValidatorTest extends TestCase
         $v->messages()->setFormat(':message');
         $this->assertEquals('type must be included in Short, Long.', $v->messages()->first('type'));
 
-        //date_equals:tomorrow
+        // date_equals:tomorrow
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.date_equals' => 'The :attribute must be a date equal to :date.'], 'en');
         $trans->addLines(['validation.values.date.tomorrow' => 'the day after today'], 'en');
@@ -1469,6 +1469,116 @@ class ValidationValidatorTest extends TestCase
         $this->assertTrue($v->passes());
     }
 
+    public function testValidateIntStrict()
+    {
+        $translator = $this->getIlluminateArrayTranslator();
+
+        $validator = new Validator($translator, ['foo' => '1'], ['foo' => 'Int:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '-1'], ['foo' => 'Int:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '1.23'], ['foo' => 'Int:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 1.23], ['foo' => 'Int:strict']);
+        $this->assertFalse($validator->passes());
+    }
+
+    public function testValidateIntegerStrict()
+    {
+        $translator = $this->getIlluminateArrayTranslator();
+
+        $validator = new Validator($translator, ['foo' => '1'], ['foo' => 'Integer:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '-1'], ['foo' => 'Integer:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '1.23'], ['foo' => 'Integer:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 1.23], ['foo' => 'Integer:strict']);
+        $this->assertFalse($validator->passes());
+    }
+
+    public function testValidateBoolStrict()
+    {
+        $translator = $this->getIlluminateArrayTranslator();
+
+        $validator = new Validator($translator, ['foo' => 'no'], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'yes'], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'false'], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'true'], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, [], ['foo' => 'Bool:strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => false], ['foo' => 'Bool:strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => true], ['foo' => 'Bool:strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '1'], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 1], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '0'], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 0], ['foo' => 'Bool:strict']);
+        $this->assertFalse($validator->passes());
+    }
+
+    public function testValidateBooleanStrict()
+    {
+        $translator = $this->getIlluminateArrayTranslator();
+
+        $validator = new Validator($translator, ['foo' => 'no'], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'yes'], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'false'], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 'true'], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, [], ['foo' => 'Boolean:strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => false], ['foo' => 'Boolean:strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => true], ['foo' => 'Boolean:strict']);
+        $this->assertTrue($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '1'], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 1], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => '0'], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+
+        $validator = new Validator($translator, ['foo' => 0], ['foo' => 'Boolean:strict']);
+        $this->assertFalse($validator->passes());
+    }
+
     public function testValidateDigits()
     {
         $trans = $this->getIlluminateArrayTranslator();
@@ -1692,6 +1802,9 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
         $this->assertEquals(5, $v->messages()->first('items'));
 
+        $v = new Validator($trans, ['items' => '26', 'more' => 5], ['items' => 'gt:more']);
+        $this->assertTrue($v->passes());
+
         $v = new Validator($trans, ['items' => 'abc', 'more' => 'abcde'], ['items' => 'gt:more']);
         $this->assertFalse($v->passes());
         $this->assertEquals(5, $v->messages()->first('items'));
@@ -1728,6 +1841,9 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['items' => 3, 'less' => 2], ['items' => 'numeric|lt:less']);
         $this->assertFalse($v->passes());
         $this->assertEquals(2, $v->messages()->first('items'));
+
+        $v = new Validator($trans, ['items' => '5', 'less' => 26], ['items' => 'numeric|lt:less']);
+        $this->assertTrue($v->passes());
 
         $v = new Validator($trans, ['items' => 'abc', 'less' => 'ab'], ['items' => 'lt:less']);
         $this->assertFalse($v->passes());
@@ -1766,6 +1882,9 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
         $this->assertEquals(5, $v->messages()->first('items'));
 
+        $v = new Validator($trans, ['items' => '26', 'more' => 26], ['items' => 'numeric|gte:more']);
+        $this->assertTrue($v->passes());
+
         $v = new Validator($trans, ['items' => 'abc', 'more' => 'abcde'], ['items' => 'gte:more']);
         $this->assertFalse($v->passes());
         $this->assertEquals(5, $v->messages()->first('items'));
@@ -1802,6 +1921,9 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['items' => 3, 'less' => 2], ['items' => 'numeric|lte:less']);
         $this->assertFalse($v->passes());
         $this->assertEquals(2, $v->messages()->first('items'));
+
+        $v = new Validator($trans, ['items' => 5, 'less' => '26'], ['items' => 'numeric|lte:less']);
+        $this->assertTrue($v->passes());
 
         $v = new Validator($trans, ['items' => 'abc', 'less' => 'ab'], ['items' => 'lte:less']);
         $this->assertFalse($v->passes());
@@ -4258,12 +4380,12 @@ class ValidationValidatorTest extends TestCase
             $this->getIlluminateArrayTranslator(),
             ['name' => 'taylor'],
             ['name' => new class() implements Rule {
-                public function passes(string $attribute, $value): bool
+                public function passes(string $attribute, mixed $value): bool
                 {
                     return $value === 'taylor';
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return ':attribute must be taylor';
                 }
@@ -4277,12 +4399,12 @@ class ValidationValidatorTest extends TestCase
             $this->getIlluminateArrayTranslator(),
             ['name' => 'adam'],
             ['name' => [new class() implements Rule {
-                public function passes(string $attribute, $value): bool
+                public function passes(string $attribute, mixed $value): bool
                 {
                     return $value === 'taylor';
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return ':attribute must be taylor';
                 }
@@ -4325,12 +4447,12 @@ class ValidationValidatorTest extends TestCase
             ['name' => 'taylor', 'states' => ['AR', 'TX'], 'number' => 9],
             [
                 'states.*' => new class() implements Rule {
-                    public function passes(string $attribute, $value): bool
+                    public function passes(string $attribute, mixed $value): bool
                     {
                         return in_array($value, ['AK', 'HI']);
                     }
 
-                    public function message()
+                    public function message(): array|string
                     {
                         return ':attribute must be AR or TX';
                     }
@@ -4362,12 +4484,12 @@ class ValidationValidatorTest extends TestCase
             $this->getIlluminateArrayTranslator(),
             ['name' => 42],
             ['name' => new class() implements Rule {
-                public function passes(string $attribute, $value): bool
+                public function passes(string $attribute, mixed $value): bool
                 {
                     return $value === 'taylor';
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return [':attribute must be taylor', ':attribute must be a first name'];
                 }
@@ -4383,12 +4505,12 @@ class ValidationValidatorTest extends TestCase
             $this->getIlluminateArrayTranslator(),
             ['name' => 42],
             ['name' => [new class() implements Rule {
-                public function passes(string $attribute, $value): bool
+                public function passes(string $attribute, mixed $value): bool
                 {
                     return $value === 'taylor';
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return [':attribute must be taylor', ':attribute must be a first name'];
                 }
@@ -4410,14 +4532,14 @@ class ValidationValidatorTest extends TestCase
             ['name' => $rule = new class() implements ImplicitRule {
                 public $called = false;
 
-                public function passes(string $attribute, $value): bool
+                public function passes(string $attribute, mixed $value): bool
                 {
                     $this->called = true;
 
                     return true;
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return 'message';
                 }

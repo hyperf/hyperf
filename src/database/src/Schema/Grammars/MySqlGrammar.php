@@ -13,33 +13,27 @@ namespace Hyperf\Database\Schema\Grammars;
 
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 
 class MySqlGrammar extends Grammar
 {
     /**
      * The possible column modifiers.
-     *
-     * @var array
      */
-    protected $modifiers = [
+    protected array $modifiers = [
         'Unsigned', 'VirtualAs', 'StoredAs', 'Charset', 'Collate', 'Nullable',
         'Default', 'Increment', 'Comment', 'After', 'First', 'Srid',
     ];
 
     /**
      * The possible column serials.
-     *
-     * @var array
      */
-    protected $serials = ['bigInteger', 'integer', 'mediumInteger', 'smallInteger', 'tinyInteger'];
+    protected array $serials = ['bigInteger', 'integer', 'mediumInteger', 'smallInteger', 'tinyInteger'];
 
     /**
      * Compile the query to determine the list of tables.
-     *
-     * @return string
      */
-    public function compileTableExists()
+    public function compileTableExists(): string
     {
         return 'select * from information_schema.tables where table_schema = ? and table_name = ?';
     }
@@ -91,7 +85,7 @@ class MySqlGrammar extends Grammar
             $blueprint
         );
 
-        // Finally we will append table comment.
+        // Finally, we will append table comment.
         return $this->compileCreateComment(
             $sql,
             $connection,
@@ -141,6 +135,14 @@ class MySqlGrammar extends Grammar
     public function compileIndex(Blueprint $blueprint, Fluent $command)
     {
         return $this->compileKey($blueprint, $command, 'index');
+    }
+
+    /**
+     * Compile a fulltext index key command.
+     */
+    public function compileFullText(Blueprint $blueprint, Fluent $command): string
+    {
+        return $this->compileKey($blueprint, $command, 'fulltext');
     }
 
     /**
@@ -217,6 +219,14 @@ class MySqlGrammar extends Grammar
         $index = $this->wrap($command->index);
 
         return "alter table {$this->wrapTable($blueprint)} drop index {$index}";
+    }
+
+    /**
+     * Compile a drop fulltext index command.
+     */
+    public function compileDropFullText(Blueprint $blueprint, Fluent $command): string
+    {
+        return $this->compileDropIndex($blueprint, $command);
     }
 
     /**
@@ -413,9 +423,9 @@ class MySqlGrammar extends Grammar
     /**
      * Create the main create table clause.
      *
-     * @param \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param \Hyperf\Utils\Fluent $command
-     * @param \Hyperf\Database\Connection $connection
+     * @param Blueprint $blueprint
+     * @param Fluent $command
+     * @param Connection $connection
      * @return string
      */
     protected function compileCreateTable($blueprint, $command, $connection)
@@ -954,9 +964,8 @@ class MySqlGrammar extends Grammar
      * Wrap a single string in keyword identifiers.
      *
      * @param string $value
-     * @return string
      */
-    protected function wrapValue($value)
+    protected function wrapValue($value): string
     {
         if ($value !== '*') {
             return '`' . str_replace('`', '``', $value) . '`';

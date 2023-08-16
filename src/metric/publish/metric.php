@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 use Hyperf\Metric\Adapter\Prometheus\Constants;
 
+use function Hyperf\Support\env;
+
 return [
     // To disable hyperf/metric temporarily, set default driver to noop.
     'default' => env('METRIC_DRIVER', 'prometheus'),
@@ -22,6 +24,9 @@ return [
             'driver' => Hyperf\Metric\Adapter\Prometheus\MetricFactory::class,
             'mode' => Constants::SCRAPE_MODE,
             'namespace' => env('APP_NAME', 'skeleton'),
+            'redis_config' => env('PROMETHEUS_REDIS_CONFIG', 'default'),
+            'redis_prefix' => env('PROMETHEUS_REDIS_PREFIX', 'prometheus:'),
+            'redis_gather_key_suffix' => env('PROMETHEUS_REDIS_GATHER_KEY_SUFFIX', ':metric_keys'),
             'scrape_host' => env('PROMETHEUS_SCRAPE_HOST', '0.0.0.0'),
             'scrape_port' => env('PROMETHEUS_SCRAPE_PORT', '9502'),
             'scrape_path' => env('PROMETHEUS_SCRAPE_PATH', '/metrics'),
@@ -34,6 +39,8 @@ return [
             'namespace' => env('APP_NAME', 'skeleton'),
             'udp_host' => env('STATSD_UDP_HOST', '127.0.0.1'),
             'udp_port' => env('STATSD_UDP_PORT', '8125'),
+            'timeout' => env('STATSD_CONNECTION_TIMEOUT', null),
+            'persistent' => env('STATSD_CONNECTION_PERSISTENT', true),
             'enable_batch' => env('STATSD_ENABLE_BATCH', true),
             'push_interval' => env('STATSD_PUSH_INTERVAL', 5),
             'sample_rate' => env('STATSD_SAMPLE_RATE', 1.0),

@@ -15,8 +15,6 @@ class GlobalScope
 {
     /**
      * The array of global scopes on the model.
-     *
-     * @var array
      */
-    public static $container = [];
+    public static array $container = [];
 }

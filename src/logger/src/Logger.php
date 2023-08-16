@@ -11,9 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\Logger;
 
+use DateTimeZone;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Monolog\Logger as MonoLogger;
 
 class Logger extends MonoLogger implements StdoutLoggerInterface
 {
+    public function __construct(string $name, array $handlers = [], array $processors = [], ?DateTimeZone $timezone = null)
+    {
+        parent::__construct($name, $handlers, $processors, $timezone);
+
+        $this->useLoggingLoopDetection(false);
+    }
 }

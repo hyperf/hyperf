@@ -13,29 +13,25 @@ namespace Hyperf\Amqp;
 
 class Params
 {
-    protected $insist = false;
+    protected bool $insist = false;
 
-    protected $loginMethod = 'AMQPLAIN';
+    protected string $loginMethod = 'AMQPLAIN';
 
-    protected $loginResponse;
+    protected string $locale = 'en_US';
 
-    protected $locale = 'en_US';
+    protected int $connectionTimeout = 3;
 
-    protected $connectionTimeout = 3;
+    protected int $readWriteTimeout = 3;
 
-    protected $readWriteTimeout = 3;
+    protected bool $keepalive = false;
 
-    protected $context;
+    protected int $heartbeat = 0;
 
-    protected $keepalive = false;
+    protected bool $closeOnDestruct = true;
 
-    protected $heartbeat = 0;
+    protected float $channelRpcTimeout = 0.0;
 
-    protected $closeOnDestruct = true;
-
-    protected $channelRpcTimeout = 0.0;
-
-    protected $maxIdleChannels = 10;
+    protected int $maxIdleChannels = 10;
 
     public function __construct(array $data)
     {
@@ -45,10 +41,6 @@ class Params
 
         if (isset($data['login_method'])) {
             $this->setLoginMethod($data['login_method']);
-        }
-
-        if (isset($data['login_response'])) {
-            $this->setLoginResponse($data['login_response']);
         }
 
         if (isset($data['locale'])) {
@@ -61,10 +53,6 @@ class Params
 
         if (isset($data['read_write_timeout'])) {
             $this->setReadWriteTimeout((int) $data['read_write_timeout']);
-        }
-
-        if (isset($data['context'])) {
-            $this->setContext($data['context']);
         }
 
         if (isset($data['keepalive'])) {
@@ -98,11 +86,6 @@ class Params
         return $this->loginMethod;
     }
 
-    public function getLoginResponse()
-    {
-        return $this->loginResponse;
-    }
-
     public function getLocale(): string
     {
         return $this->locale;
@@ -116,11 +99,6 @@ class Params
     public function getReadWriteTimeout(): int
     {
         return $this->readWriteTimeout;
-    }
-
-    public function getContext()
-    {
-        return $this->context;
     }
 
     public function isKeepalive(): bool
@@ -154,11 +132,6 @@ class Params
         $this->loginMethod = $loginMethod;
     }
 
-    public function setLoginResponse($loginResponse)
-    {
-        $this->loginResponse = $loginResponse;
-    }
-
     public function setLocale(string $locale)
     {
         $this->locale = $locale;
@@ -172,11 +145,6 @@ class Params
     public function setReadWriteTimeout(int $readWriteTimeout)
     {
         $this->readWriteTimeout = $readWriteTimeout;
-    }
-
-    public function setContext($context)
-    {
-        $this->context = $context;
     }
 
     public function setKeepalive(bool $keepalive)

@@ -88,19 +88,16 @@ trait DbConnection
 
     public function beginTransaction(): void
     {
-        $this->setTransaction(true);
         $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function commit(): void
     {
-        $this->setTransaction(false);
         $this->__call(__FUNCTION__, func_get_args());
     }
 
     public function rollBack(): void
     {
-        $this->setTransaction(false);
         $this->__call(__FUNCTION__, func_get_args());
     }
 

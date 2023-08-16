@@ -13,20 +13,11 @@ namespace Hyperf\SocketIOServer;
 
 class SocketIOConfig
 {
-    /**
-     * @var int
-     */
-    private $clientCallbackTimeout = 10000;
+    private int $clientCallbackTimeout = 10000;
 
-    /**
-     * @var int
-     */
-    private $pingInterval = 10000;
+    private int $pingInterval = 10000;
 
-    /**
-     * @var int
-     */
-    private $pingTimeout = 100;
+    private int $pingTimeout = 100;
 
     public function getClientCallbackTimeout(): int
     {

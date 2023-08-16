@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Listener;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab as CrontabAnnotation;
@@ -19,32 +20,20 @@ use Hyperf\Crontab\CrontabManager;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Process\Event\BeforeCoroutineHandle;
-use Hyperf\Process\Event\BeforeProcessHandle;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Framework\Event\BootApplication;
+use Psr\Container\ContainerInterface;
+use ReflectionException;
 
 class CrontabRegisterListener implements ListenerInterface
 {
-    /**
-     * @var \Hyperf\Crontab\CrontabManager
-     */
-    protected $crontabManager;
+    protected CrontabManager $crontabManager;
 
-    /**
-     * @var \Hyperf\Contract\StdoutLoggerInterface
-     */
-    protected $logger;
+    protected StdoutLoggerInterface $logger;
 
-    /**
-     * @var \Hyperf\Contract\ConfigInterface
-     */
-    private $config;
+    protected ConfigInterface $config;
 
-    public function __construct(CrontabManager $crontabManager, StdoutLoggerInterface $logger, ConfigInterface $config)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->crontabManager = $crontabManager;
-        $this->logger = $logger;
-        $this->config = $config;
     }
 
     /**
@@ -53,8 +42,7 @@ class CrontabRegisterListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            BeforeProcessHandle::class,
-            BeforeCoroutineHandle::class,
+            BootApplication::class,
         ];
     }
 
@@ -62,8 +50,12 @@ class CrontabRegisterListener implements ListenerInterface
      * Handle the Event when the event is triggered, all listeners will
      * complete before the event is returned to the EventDispatcher.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
+        $this->crontabManager = $this->container->get(CrontabManager::class);
+        $this->logger = $this->container->get(StdoutLoggerInterface::class);
+        $this->config = $this->container->get(ConfigInterface::class);
+
         $crontabs = $this->parseCrontabs();
         foreach ($crontabs as $crontab) {
             if ($crontab instanceof Crontab && $this->crontabManager->register($crontab)) {
@@ -116,10 +108,7 @@ class CrontabRegisterListener implements ListenerInterface
         return $crontab;
     }
 
-    /**
-     * @param array|bool $enable
-     */
-    private function resolveCrontabEnableMethod($enable): bool
+    private function resolveCrontabEnableMethod(array|bool $enable): bool
     {
         if (is_bool($enable)) {
             return $enable;
@@ -144,8 +133,8 @@ class CrontabRegisterListener implements ListenerInterface
             }
 
             $this->logger->info('Crontab enable method is not public, skip register.');
-        } catch (\ReflectionException $e) {
-            $this->logger->error('Resolve crontab enable failed, skip register.');
+        } catch (ReflectionException $e) {
+            $this->logger->error('Resolve crontab enable failed, skip register.' . $e);
         }
 
         return false;

@@ -11,27 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Framework\Event;
 
+use Swoole\Server;
+
 class OnClose
 {
-    /**
-     * @var \Swoole\Server
-     */
-    public $server;
-
-    /**
-     * @var int
-     */
-    public $fd;
-
-    /**
-     * @var int
-     */
-    public $reactorId;
-
-    public function __construct($server, int $fd, int $reactorId)
+    public function __construct(public Server $server, public int $fd, public int $reactorId)
     {
-        $this->server = $server;
-        $this->fd = $fd;
-        $this->reactorId = $reactorId;
     }
 }

@@ -14,12 +14,11 @@ namespace Hyperf\RpcClient\Proxy;
 use Hyperf\RpcClient\ServiceClient;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 abstract class AbstractProxyService
 {
-    /**
-     * @var ServiceClient
-     */
-    protected $client;
+    protected ServiceClient $client;
 
     public function __construct(ContainerInterface $container, string $serviceName, string $protocol, array $options = [])
     {

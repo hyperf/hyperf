@@ -24,13 +24,6 @@ class ConfigProvider
             'listeners' => [
                 RegisterDriverListener::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

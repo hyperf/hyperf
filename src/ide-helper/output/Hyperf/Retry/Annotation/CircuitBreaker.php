@@ -12,15 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\Retry\Annotation;
 
 use Attribute;
+use Hyperf\Retry\CircuitBreakerState;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractRetry
 {
-    public function __construct($policies, $sleepStrategyClass, $maxAttempts, $circuitBreakerState, $base, $retryOnThrowablePredicate, $retryOnResultPredicate, $retryThrowables, $ignoreThrowables, $fallback)
+    public function __construct(array $policies = ['Hyperf\\Retry\\Policy\\FallbackRetryPolicy', 'Hyperf\\Retry\\Policy\\ClassifierRetryPolicy', 'Hyperf\\Retry\\Policy\\CircuitBreakerRetryPolicy', 'Hyperf\\Retry\\Policy\\MaxAttemptsRetryPolicy', 'Hyperf\\Retry\\Policy\\SleepRetryPolicy'], string $sleepStrategyClass = 'Hyperf\\Retry\\SleepStrategyInterface', int $maxAttempts = 10, CircuitBreakerState|array $circuitBreakerState = [10], int $base = 0, mixed $retryOnThrowablePredicate = '', mixed $retryOnResultPredicate = '', array $retryThrowables = ['Throwable'], array $ignoreThrowables = [], mixed $fallback = '')
     {
     }
 }

@@ -16,27 +16,15 @@ use Hyperf\Amqp\Exception\MessageException;
 
 abstract class Message implements MessageInterface
 {
-    /**
-     * @var string
-     */
-    protected $poolName = 'default';
+    protected string $poolName = 'default';
 
-    /**
-     * @var string
-     */
-    protected $exchange = '';
+    protected string $exchange = '';
 
-    /**
-     * @var string
-     */
-    protected $type = Type::TOPIC;
+    protected string $type = Type::TOPIC;
 
-    /**
-     * @var array|string
-     */
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
-    public function setType(string $type): self
+    public function setType(string $type): static
     {
         $this->type = $type;
         return $this;
@@ -47,7 +35,7 @@ abstract class Message implements MessageInterface
         return $this->type;
     }
 
-    public function setExchange(string $exchange): self
+    public function setExchange(string $exchange): static
     {
         $this->exchange = $exchange;
         return $this;
@@ -58,13 +46,13 @@ abstract class Message implements MessageInterface
         return $this->exchange;
     }
 
-    public function setRoutingKey($routingKey): self
+    public function setRoutingKey($routingKey): static
     {
         $this->routingKey = $routingKey;
         return $this;
     }
 
-    public function getRoutingKey()
+    public function getRoutingKey(): array|string
     {
         return $this->routingKey;
     }

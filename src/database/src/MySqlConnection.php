@@ -16,6 +16,7 @@ use Hyperf\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Schema\Grammars\MySqlGrammar as SchemaGrammar;
 use Hyperf\Database\Schema\MySqlBuilder;
+use PDOStatement;
 
 class MySqlConnection extends Connection
 {
@@ -34,7 +35,7 @@ class MySqlConnection extends Connection
     /**
      * Bind values to their parameters in the given statement.
      */
-    public function bindValues(\PDOStatement $statement, array $bindings): void
+    public function bindValues(PDOStatement $statement, array $bindings): void
     {
         foreach ($bindings as $key => $value) {
             $statement->bindValue(
@@ -46,30 +47,24 @@ class MySqlConnection extends Connection
 
     /**
      * Get the default query grammar instance.
-     *
-     * @return \Hyperf\Database\Query\Grammars\MySqlGrammar
      */
-    protected function getDefaultQueryGrammar()
+    protected function getDefaultQueryGrammar(): QueryGrammar
     {
         return $this->withTablePrefix(new QueryGrammar());
     }
 
     /**
      * Get the default schema grammar instance.
-     *
-     * @return \Hyperf\Database\Schema\Grammars\MySqlGrammar
      */
-    protected function getDefaultSchemaGrammar()
+    protected function getDefaultSchemaGrammar(): SchemaGrammar
     {
         return $this->withTablePrefix(new SchemaGrammar());
     }
 
     /**
      * Get the default post processor instance.
-     *
-     * @return \Hyperf\Database\Query\Processors\MySqlProcessor
      */
-    protected function getDefaultPostProcessor()
+    protected function getDefaultPostProcessor(): MySqlProcessor
     {
         return new MySqlProcessor();
     }

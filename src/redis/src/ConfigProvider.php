@@ -19,13 +19,6 @@ class ConfigProvider
             'dependencies' => [
                 \Redis::class => Redis::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'publish' => [
                 [
                     'id' => 'config',

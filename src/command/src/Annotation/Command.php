@@ -14,11 +14,16 @@ namespace Hyperf\Command\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Command extends AbstractAnnotation
 {
+    public function __construct(
+        public string $name = '',
+        public array $arguments = [],
+        public array $options = [],
+        public string $description = '',
+        public array $aliases = [],
+        public ?string $signature = null,
+    ) {
+    }
 }

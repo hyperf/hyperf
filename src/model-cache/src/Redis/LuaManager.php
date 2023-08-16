@@ -15,31 +15,24 @@ use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Exception\OperatorNotFoundException;
 use Hyperf\Redis\RedisProxy;
 
+use function Hyperf\Support\make;
+
 class LuaManager
 {
     /**
-     * @var array<string,OperatorInterface>
+     * @var array<string, OperatorInterface>
      */
-    protected $operators = [];
+    protected array $operators = [];
 
     /**
-     * @var array<string,string>
+     * @var array<string, string>
      */
-    protected $luaShas = [];
+    protected array $luaShas = [];
 
-    /**
-     * @var Config
-     */
-    protected $config;
+    protected RedisProxy $redis;
 
-    /**
-     * @var \Redis|RedisProxy
-     */
-    protected $redis;
-
-    public function __construct(Config $config)
+    public function __construct(protected Config $config)
     {
-        $this->config = $config;
         $this->redis = make(RedisProxy::class, ['pool' => $config->getPool()]);
         $this->operators[HashGetMultiple::class] = new HashGetMultiple();
         $this->operators[HashIncr::class] = new HashIncr();

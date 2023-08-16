@@ -162,7 +162,7 @@ class UserController
 Both `#[Controller]` and `#[AutoController]` provide two parameters, `prefix` and `server`.
 
 `prefix` represents the URI prefix for all methods under the controller, the default is the lowercase of the class name. For example, in the case of `UserController`, the `prefix` defaults to `user`, so if the controller method is `index`, then the final route is `/user/index`.
-It should be noted that the `prefix` is not always used: when the `path` of a method in a class starts with `/`, it means that the path is defined as an absolute `URI` and the value of `prefix` will be ignored .
+It should be noted that the `prefix` is not always used: when the `path` of a method in a class starts with `/`, it means that the path is defined as an absolute `URI` and the value of `prefix` will be ignored. At the same time, if the `prefix` attribute is not set, then the part after `\\Controller\\` in the controller class namespace will be used as the route prefix in SnakeCase style.
 
 `server` indicates which server the route is defined for. Since `Hyperf` supports starting multiple servers at the same time, there may be multiple HTTP servers running at the same time. Therefore defining the `server` parameter can be used to distinguish which server the route is defined for. The default is `http`.
 
@@ -210,4 +210,4 @@ If the devtool component is installed, you can use the `php bin/hyperf.php descr
 ## HTTP exceptions
 
 When the route fails to match the route, such as `route not found (404)`, `request method not allowed (405)` and other HTTP exceptions, Hyperf will uniformly throw an exception that inherits the `Hyperf\HttpMessage\Exception\HttpException` class. You need to manage these exceptions through the `ExceptionHandler` mechanism and do the corresponding response processing. By default, you can directly use the `Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler` provided by the component for exception capture and processing. Not that you need to configure this exception handler in the `config/autoload/exceptions.php` configuration file and ensure that the sequence link between multiple exception handlers is correct.
-When you need to customize the response to HTTP exceptions such as `route not found (404)` and `request method not allowed (405)`, you can directly implement your own exception handling based on the code of `HttpExceptionHandler` And configure your own exception handler. For the logic and usage instructions of the exception handler, please refer to [Exception Handling](zh-cn/exception-handler.md).
+When you need to customize the response to HTTP exceptions such as `route not found (404)` and `request method not allowed (405)`, you can directly implement your own exception handling based on the code of `HttpExceptionHandler` And configure your own exception handler. For the logic and usage instructions of the exception handler, please refer to [Exception Handling](en/exception-handler.md).

@@ -13,8 +13,8 @@ namespace HyperfTest\Amqp;
 
 use Hyperf\Amqp\ConnectionFactory;
 use Hyperf\Amqp\Message\Type;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use HyperfTest\Amqp\Stub\AMQPConnectionStub;
 use HyperfTest\Amqp\Stub\ContainerStub;
 use PHPUnit\Framework\TestCase;

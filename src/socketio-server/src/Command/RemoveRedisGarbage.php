@@ -12,29 +12,23 @@ declare(strict_types=1);
 namespace Hyperf\SocketIOServer\Command;
 
 use Hyperf\Command\Command;
-use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisFactory;
 use Symfony\Component\Console\Input\InputArgument;
 
 class RemoveRedisGarbage extends Command
 {
-    protected $redisPrefix = 'ws';
+    protected string $redisPrefix = 'ws';
 
-    protected $connection = 'default';
+    protected string $connection = 'default';
 
-    /**
-     * @var \Redis|Redis
-     */
-    private $redis;
-
-    public function __construct(RedisFactory $factory)
+    public function __construct(private RedisFactory $factory)
     {
         parent::__construct('socketio:clear');
-        $this->redis = $factory->get($this->connection);
     }
 
     public function handle()
     {
+        $redis = $this->factory->get($this->connection);
         $nsp = $this->input->getArgument('namespace');
         $prefix = join(':', [
             $this->redisPrefix,
@@ -42,12 +36,12 @@ class RemoveRedisGarbage extends Command
         ]);
         $iterator = null;
         while (true) {
-            $keys = $this->redis->scan($iterator, "{$prefix}*");
+            $keys = $redis->scan($iterator, "{$prefix}*");
             if ($keys === false) {
                 return;
             }
             if (! empty($keys)) {
-                $this->redis->del(...$keys);
+                $redis->del(...$keys);
             }
         }
     }

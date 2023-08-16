@@ -29,7 +29,11 @@ class ApplicationFactory
             'base_uri' => $baseUri,
             'username' => $config['username'] ?? null,
             'password' => $config['password'] ?? null,
+            'access_key' => $config['access_key'] ?? null,
+            'access_secret' => $config['access_secret'] ?? null,
             'guzzle_config' => $config['guzzle']['config'] ?? null,
+            'host' => $config['host'] ?? null,
+            'port' => $config['port'] ?? null,
         ]));
     }
 }

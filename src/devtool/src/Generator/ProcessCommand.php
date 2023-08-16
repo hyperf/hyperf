@@ -13,16 +13,19 @@ namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
 #[Command]
 class ProcessCommand extends GeneratorCommand
 {
     public function __construct()
     {
         parent::__construct('gen:process');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new process class');
+
+        parent::configure();
     }
 
     protected function getStub(): string

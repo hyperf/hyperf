@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Resource\Stubs\Resources;
 
-class JsonSerializableResource implements \JsonSerializable
+use JsonSerializable;
+
+class JsonSerializableResource implements JsonSerializable
 {
     public $resource;
 
@@ -20,7 +22,7 @@ class JsonSerializableResource implements \JsonSerializable
         $this->resource = $resource;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'id' => $this->resource->id,

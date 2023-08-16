@@ -27,7 +27,7 @@ php bin/hyperf.php gen:command FooCommand
 
 ### 定義命令
 
-定義該命令類所對應的命令有兩種形式，一種是通過 `$name` 屬性定義，另一種是通過構造函數傳參來定義，我們通過代碼示例來演示一下，假設我們希望定義該命令類的命令為 `foo:hello`：
+定義該命令類所對應的命令有三種形式，第一種是通過 `$name` 屬性定義，第二種是通過構造函數傳參來定義，最後一種是通過註解來定義，我們通過代碼示例來演示一下，假設我們希望定義該命令類的命令為 `foo:hello`：
 
 #### `$name` 屬性定義：
 
@@ -41,17 +41,13 @@ namespace App\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     /**
      * 執行的命令行
-     *
-     * @var string
      */
-    protected $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 }
 ```
 
@@ -67,15 +63,32 @@ namespace App\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     public function __construct()
     {
         parent::__construct('foo:hello');
     }
+}
+```
+
+#### 註解定義：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Command\Annotation\Command;
+
+#[Command(name: "foo:hello")]
+class FooCommand extends HyperfCommand
+{
+
 }
 ```
 
@@ -93,17 +106,13 @@ namespace App\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     /**
      * 執行的命令行
-     *
-     * @var string
      */
-    protected $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 
     public function handle()
     {
@@ -132,17 +141,13 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Symfony\Component\Console\Input\InputArgument;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     /**
      * 執行的命令行
-     *
-     * @var string
      */
-    protected $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 
     public function handle()
     {
@@ -387,15 +392,10 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Command
- */
+#[Command]
 class DebugCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     protected $signature = 'test:test {id : user_id} {--name= : user_name}';
 
@@ -422,7 +422,7 @@ class DebugCommand extends HyperfCommand
 
 # 運行命令
 
-!> 注意：在運行命令時，默認不會觸發事件分發，可通過添加 `--enable-event-dispatcher` 參數來開啟。
+!> 注意：在運行命令時，默認會觸發事件分發，可通過添加 `--disable-event-dispatcher` 參數來開啓。
 
 ## 命令行中運行
 
@@ -443,15 +443,10 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -487,7 +482,7 @@ $input = new ArrayInput($params);
 $output = new NullOutput();
 
 /** @var \Psr\Container\ContainerInterface $container */
-$container = \Hyperf\Utils\ApplicationContext::getContainer();
+$container = \Hyperf\Context\ApplicationContext::getContainer();
 
 /** @var \Symfony\Component\Console\Application $application */
 $application = $container->get(\Hyperf\Contract\ApplicationInterface::class);

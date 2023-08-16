@@ -11,16 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di;
 
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 
 abstract class MetadataCollector implements MetadataCollectorInterface
 {
     /**
      * Subclass MUST override this property.
-     *
-     * @var array
      */
-    protected static $container = [];
+    protected static array $container = [];
 
     /**
      * Retrieve the metadata via key.

@@ -16,12 +16,10 @@ composer require hyperf/guzzle
 <?php 
 use Hyperf\Guzzle\ClientFactory;
 
-class Foo {
-    /**
-     * @var \Hyperf\Guzzle\ClientFactory
-     */
-    private $clientFactory;
-    
+class Foo
+{
+    private ClientFactory $clientFactory;
+
     public function __construct(ClientFactory $clientFactory)
     {
         $this->clientFactory = $clientFactory;
@@ -92,7 +90,7 @@ Hyperf 除了实现了 `Hyperf\Guzzle\CoroutineHandler` 外，还基于 `Hyperf\
 ```php
 <?php
 use GuzzleHttp\Client;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use GuzzleHttp\HandlerStack;
 use Hyperf\Guzzle\PoolHandler;
 use Hyperf\Guzzle\RetryMiddleware;
@@ -155,7 +153,7 @@ namespace GuzzleHttp;
 
 use GuzzleHttp\Psr7;
 use Hyperf\Guzzle\CoroutineHandler;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 
 class Client implements ClientInterface
 {

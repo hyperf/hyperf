@@ -21,50 +21,21 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Http\Server as SwooleHttpServer;
 use Swoole\Server as SwooleServer;
+use Swoole\Server\Port as SwoolePort;
 use Swoole\WebSocket\Server as SwooleWebSocketServer;
 
 class Server implements ServerInterface
 {
-    /**
-     * @var bool
-     */
-    protected $enableHttpServer = false;
+    protected bool $enableHttpServer = false;
 
-    /**
-     * @var bool
-     */
-    protected $enableWebsocketServer = false;
+    protected bool $enableWebsocketServer = false;
 
-    /**
-     * @var SwooleServer
-     */
-    protected $server;
+    protected ?SwooleServer $server = null;
 
-    /**
-     * @var array
-     */
-    protected $onRequestCallbacks = [];
+    protected array $onRequestCallbacks = [];
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    public function __construct(ContainerInterface $container, LoggerInterface $logger, EventDispatcherInterface $dispatcher)
+    public function __construct(protected ContainerInterface $container, protected LoggerInterface $logger, protected EventDispatcherInterface $eventDispatcher)
     {
-        $this->container = $container;
-        $this->logger = $logger;
-        $this->eventDispatcher = $dispatcher;
     }
 
     public function init(ServerConfig $config): ServerInterface
@@ -74,12 +45,12 @@ class Server implements ServerInterface
         return $this;
     }
 
-    public function start()
+    public function start(): void
     {
         $this->server->start();
     }
 
-    public function getServer()
+    public function getServer(): SwooleServer
     {
         return $this->server;
     }
@@ -137,11 +108,11 @@ class Server implements ServerInterface
      * @param Port[] $servers
      * @return Port[]
      */
-    protected function sortServers(array $servers)
+    protected function sortServers(array $servers): array
     {
         $sortServers = [];
         foreach ($servers as $server) {
-            switch ($server->getType() ?? 0) {
+            switch ($server->getType()) {
                 case ServerInterface::SERVER_HTTP:
                     $this->enableHttpServer = true;
                     if (! $this->enableWebsocketServer) {
@@ -163,7 +134,7 @@ class Server implements ServerInterface
         return $sortServers;
     }
 
-    protected function makeServer(int $type, string $host, int $port, int $mode, int $sockType)
+    protected function makeServer(int $type, string $host, int $port, int $mode, int $sockType): SwooleServer
     {
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
@@ -177,10 +148,7 @@ class Server implements ServerInterface
         throw new RuntimeException('Server type is invalid.');
     }
 
-    /**
-     * @param \Swoole\Server\Port|SwooleServer $server
-     */
-    protected function registerSwooleEvents($server, array $events, string $serverName): void
+    protected function registerSwooleEvents(SwoolePort|SwooleServer $server, array $events, string $serverName): void
     {
         foreach ($events as $event => $callback) {
             if (! Event::isSwooleEvent($event)) {

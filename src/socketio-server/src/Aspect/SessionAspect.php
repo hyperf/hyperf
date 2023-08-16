@@ -18,28 +18,18 @@ use Hyperf\Session\SessionManager;
 use Hyperf\WebSocketServer\Context;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function Hyperf\Coroutine\defer;
+
 class SessionAspect extends AbstractAspect
 {
-    public $classes = [
+    public array $classes = [
         'Hyperf\SocketIOServer\SocketIO::onClose',
         'Hyperf\SocketIOServer\SocketIO::onOpen',
         'Hyperf\SocketIOServer\SocketIO::onMessage',
     ];
 
-    /**
-     * @var SessionManager
-     */
-    private $sessionManager;
-
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(SessionManager $sessionManager, ConfigInterface $config)
+    public function __construct(private SessionManager $sessionManager, private ConfigInterface $config)
     {
-        $this->sessionManager = $sessionManager;
-        $this->config = $config;
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)

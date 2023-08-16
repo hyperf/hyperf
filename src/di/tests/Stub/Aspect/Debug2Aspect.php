@@ -15,12 +15,10 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class Debug2Aspect extends AbstractAspect
 {
-    public $classes = [
+    public array $classes = [
         'Debug2AspectFoo',
     ];
 

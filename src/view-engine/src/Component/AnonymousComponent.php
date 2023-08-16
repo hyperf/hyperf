@@ -14,47 +14,27 @@ namespace Hyperf\ViewEngine\Component;
 class AnonymousComponent extends Component
 {
     /**
-     * The component view.
-     *
-     * @var string
-     */
-    protected $view;
-
-    /**
-     * The component data.
-     *
-     * @var array
-     */
-    protected $data = [];
-
-    /**
      * Create a new anonymous component instance.
      *
-     * @param string $view
-     * @param array $data
+     * @param string $view the component view
+     * @param array $data the component data
      */
-    public function __construct($view, $data)
+    public function __construct(protected string $view, protected array $data)
     {
-        $this->view = $view;
-        $this->data = $data;
     }
 
     /**
      * Get the view / view contents that represent the component.
-     *
-     * @return string
      */
-    public function render()
+    public function render(): mixed
     {
         return $this->view;
     }
 
     /**
      * Get the data that should be supplied to the view.
-     *
-     * @return array
      */
-    public function data()
+    public function data(): array
     {
         $this->attributes = $this->attributes ?: new ComponentAttributeBag();
 

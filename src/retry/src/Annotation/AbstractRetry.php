@@ -20,7 +20,7 @@ class AbstractRetry extends AbstractAnnotation
      * Array of retry policies. Think of these as stacked middlewares.
      * @var string[]
      */
-    public $policies = [];
+    public array $policies = [];
 
     public function collectMethod(string $className, ?string $target): void
     {

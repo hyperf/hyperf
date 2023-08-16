@@ -11,18 +11,21 @@ declare(strict_types=1);
  */
 namespace Hyperf\LoadBalancer;
 
+use Closure;
+use Hyperf\LoadBalancer\Exception\NoNodesAvailableException;
+
 interface LoadBalancerInterface
 {
     /**
      * Select an item via the load balancer.
+     * @throws NoNodesAvailableException
      */
     public function select(array ...$parameters): Node;
 
     /**
      * @param Node[] $nodes
-     * @return $this
      */
-    public function setNodes(array $nodes);
+    public function setNodes(array $nodes): static;
 
     /**
      * @return Node[] $nodes
@@ -34,5 +37,17 @@ interface LoadBalancerInterface
      */
     public function removeNode(Node $node): bool;
 
-    public function refresh(callable $callback, int $tickMs = 5000);
+    public function refresh(callable $callback, int $tickMs = 5000): void;
+
+    public function isAutoRefresh(): bool;
+
+    /**
+     * Register a hook which will be executed after refresh nodes.
+     */
+    public function afterRefreshed(string $key, ?Closure $callback): void;
+
+    /**
+     * Clear all hooks which will be executed after refresh nodes.
+     */
+    public function clearAfterRefreshedCallbacks(): void;
 }

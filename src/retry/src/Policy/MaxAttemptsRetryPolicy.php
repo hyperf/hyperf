@@ -15,14 +15,8 @@ use Hyperf\Retry\RetryContext;
 
 class MaxAttemptsRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
-    /**
-     * @var int
-     */
-    private $maxAttempts;
-
-    public function __construct(int $maxAttempts)
+    public function __construct(private int $maxAttempts)
     {
-        $this->maxAttempts = $maxAttempts;
     }
 
     public function canRetry(RetryContext &$retryContext): bool

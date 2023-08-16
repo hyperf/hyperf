@@ -1,34 +1,33 @@
-# 模型创建脚本
+# Model creation script
 
-Hyperf 提供了创建模型的命令，您可以很方便的根据数据表创建对应模型。命令通过 `AST` 生成模型，所以当您增加了某些方法后，也可以使用脚本方便的重置模型。
+Hyperf provides commands to create models, and you can easily create corresponding models based on data tables. The command generates the model via `AST`, so when you add certain methods, you can also easily reset the model with the script.
 
 ```bash
 php bin/hyperf.php gen:model table_name
 ```
 
-## 创建模型
+## Create a model
 
-可选参数如下：
+The optional parameters are as follows：
 
-|        参数        |  类型  |              默认值               |                       备注                        |
-| :----------------: | :----: | :-------------------------------: | :-----------------------------------------------: |
-|       --pool       | string |             `default`             |       连接池，脚本会根据当前连接池配置创建        |
-|       --path       | string |            `app/Model`            |                     模型路径                      |
-|   --force-casts    |  bool  |              `false`              |             是否强制重置 `casts` 参数             |
-|      --prefix      | string |             空字符串              |                      表前缀                       |
-|   --inheritance    | string |              `Model`              |                       父类                        |
-|       --uses       | string | `Hyperf\DbConnection\Model\Model` |              配合 `inheritance` 使用              |
-| --refresh-fillable |  bool  |              `false`              |             是否刷新 `fillable` 参数              |
-|  --table-mapping   | array  |               `[]`                | 为表名 -> 模型增加映射关系 比如 ['users:Account'] |
-|  --ignore-tables   | array  |               `[]`                |        不需要生成模型的表名 比如 ['users']        |
-|  --with-comments   |  bool  |              `false`              |                 是否增加字段注释                  |
-|  --property-case   |  int   |                `0`                |              字段类型 0 蛇形 1 驼峰               |
+|     Parameter      |  Type  |             Defaults              |                                             Remark                                             |
+|:------------------:|:------:|:---------------------------------:|:----------------------------------------------------------------------------------------------:|
+|       --pool       | string |             `default`             | Connection pool, the script will be created based on the current connection pool configuration |
+|       --path       | string |            `app/Model`            |                                           model path                                           |
+|   --force-casts    |  bool  |              `false`              |                          Whether to force reset the `casts` parameter                          |
+|      --prefix      | string |           empty string            |                                          table prefix                                          |
+|   --inheritance    | string |              `Model`              |                                        The parent class                                        |
+|       --uses       | string | `Hyperf\DbConnection\Model\Model` |                                     Use with `inheritance`                                     |
+| --refresh-fillable |  bool  |              `false`              |                          Whether to refresh the `fillable` parameter                           |
+|  --table-mapping   | array  |               `[]`                |          Add a mapping relationship for table name -> model such as ['users:Account']          |
+|  --ignore-tables   | array  |               `[]`                |            There is no need to generate the table name of the model e.g. ['users']             |
+|  --with-comments   |  bool  |              `false`              |                                 Whether to add field comments                                  |
+|  --property-case   |  int   |                `0`                |                              Field Type: 0 Snakecase, 1 CamelCase                              |
 
-当使用 `--property-case` 将字段类型转化为驼峰时，还需要手动在模型中加入 `Hyperf\Database\Model\Concerns\CamelCase`。
+When using `--property-case` to convert the field type to camel case, you also need to manually add `Hyperf\Database\Model\Concerns\CamelCase` to the model.
+The corresponding configuration can also be configured in `databases.{pool}.commands.gen:model`, as follows
 
-对应配置也可以配置到 `databases.{pool}.commands.gen:model` 中，如下
-
-> 中划线都需要转化为下划线
+> All struck-through need to be converted to underscores
 
 ```php
 <?php
@@ -39,7 +38,7 @@ use Hyperf\Database\Commands\ModelOption;
 
 return [
     'default' => [
-        // 忽略其他配置
+        // Ignore other configurations
         'commands' => [
             'gen:model' => [
                 'path' => 'app/Model',
@@ -56,7 +55,7 @@ return [
 ];
 ```
 
-创建的模型如下
+The created model is as follows
 
 ```php
 <?php
@@ -101,7 +100,7 @@ class User extends Model
 
 ## Visitors
 
-框架提供了几个 `Visitors`，方便用户对脚本能力进行扩展。使用方法很简单，只需要在 `visitors` 配置中，添加对应的 `Visitor` 即可。
+The framework provides several `Visitors` for users to extend the scripting capabilities. The usage is very simple, just add the corresponding `Visitor` in the `visitors` configuration.
 
 ```php
 <?php
@@ -110,7 +109,7 @@ declare(strict_types=1);
 
 return [
     'default' => [
-        // 忽略其他配置
+        // Ignore other configurations
         'commands' => [
             'gen:model' => [
                 'visitors' => [
@@ -122,28 +121,27 @@ return [
 ];
 ```
 
-### 可选 Visitors
+### Optional Visitors
 
 - Hyperf\Database\Commands\Ast\ModelRewriteKeyInfoVisitor
 
-此 `Visitor` 可以根据数据库中主键，生成对应的 `$incrementing` `$primaryKey` 和 `$keyType`。
+This `Visitor` can generate the corresponding `$incrementing` `$primaryKey` and `$keyType` according to the primary key in the database.
 
 - Hyperf\Database\Commands\Ast\ModelRewriteSoftDeletesVisitor
 
-此 `Visitor` 可以根据 `DELETED_AT` 常量判断该模型是否含有软删除字段，如果存在，则添加对应的 Trait `SoftDeletes`。
+This `Visitor` can judge whether the model contains soft delete fields according to the `DELETED_AT` constant, and if so, add the corresponding Trait `SoftDeletes`.
 
 - Hyperf\Database\Commands\Ast\ModelRewriteTimestampsVisitor
 
-此 `Visitor` 可以根据 `created_at` 和 `updated_at` 自动判断，是否启用默认记录 `创建和修改时间` 的功能。
+This `Visitor` can automatically determine, based on `created_at` and `updated_at`, whether to enable the default recording of `created and modified times`.
 
 - Hyperf\Database\Commands\Ast\ModelRewriteGetterSetterVisitor
 
-此 `Visitor` 可以根据数据库字段生成对应的 `getter` 和 `setter`。
+This `Visitor` can generate corresponding `getters` and `setters` based on database fields.
 
-## 覆盖 Visitor
+## Override Visitor
 
-Hyperf 框架中，当使用 `gen:model` 时，默认会将 `decimal` 转化成为 `float`。如下：
-
+In the Hyperf framework, when `gen:model` is used, `decimal` is converted to `float` by default. as follows:
 ```php
 <?php
 
@@ -186,7 +184,7 @@ class UserExt extends Model
 
 ```
 
-这时候，我们就可以通过重写 `ModelUpdateVisitor`，修改这一特性。
+At this point, we can modify this feature by overriding `ModelUpdateVisitor`.
 
 ```php
 <?php
@@ -217,7 +215,7 @@ class ModelUpdateVisitor extends Visitor
             case 'bigint':
                 return 'integer';
             case 'decimal':
-                // 设置为 decimal，并设置对应精度
+                // Set to decimal, and set the corresponding precision
                 return 'decimal:2';
             case 'float':
             case 'double':
@@ -248,7 +246,7 @@ class ModelUpdateVisitor extends Visitor
         }
 
         if (Str::startsWith($cast, 'decimal')) {
-            // 如果 cast 为 decimal，则 @property 改为 string
+            // If cast is decimal, @property is changed to string
             return 'string';
         }
 
@@ -257,7 +255,7 @@ class ModelUpdateVisitor extends Visitor
 }
 ```
 
-配置映射关系 `dependencies.php`
+Configure the mapping relationship `dependencies.php`
 
 ```php
 <?php
@@ -268,7 +266,7 @@ return [
 
 ```
 
-重新执行 `gen:model` 后，对应模型如下：
+After re-executing `gen:model`, the corresponding model is as follows:
 
 ```php
 <?php

@@ -16,14 +16,8 @@ use Hyperf\Redis\RedisFactory;
 
 class RedisTaskMutex implements TaskMutex
 {
-    /**
-     * @var RedisFactory
-     */
-    private $redisFactory;
-
-    public function __construct(RedisFactory $redisFactory)
+    public function __construct(private RedisFactory $redisFactory)
     {
-        $this->redisFactory = $redisFactory;
     }
 
     /**

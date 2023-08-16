@@ -13,19 +13,7 @@ namespace Hyperf\WebSocketServer;
 
 class SenderPipeMessage
 {
-    /**
-     * @var string
-     */
-    public $name;
-
-    /**
-     * @var array
-     */
-    public $arguments;
-
-    public function __construct(string $name, array $arguments)
+    public function __construct(public string $name, public array $arguments)
     {
-        $this->name = $name;
-        $this->arguments = $arguments;
     }
 }

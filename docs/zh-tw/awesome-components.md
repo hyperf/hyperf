@@ -1,7 +1,7 @@
 # 協程元件庫
 
 所有官方提供的元件庫均已進行協程化處理，可安全地在 Hyperf 內或其它協程框架內使用，基於 Hyperf 的開放性和可擴充套件性，社群可對此開發或適配各種各樣的元件，得益於此，Hyperf 將存在著無限的可能性。
-本頁將收錄各個適配了 Hyperf 的協程元件 和 已經經過驗證可安全地用於協程下的常用庫，以便您快速的從中選擇合適的元件完成您的需求。
+本頁將收錄各個適配了 Hyperf 的協程元件和已經經過驗證可安全地用於協程下的常用庫，以便您快速的從中選擇合適的元件完成您的需求。
 
 > 元件順序以收錄時間排序
 
@@ -18,6 +18,7 @@
 ## 路由
 
 - [nikic/fastroute](https://github.com/nikic/FastRoute) 一個常用的高速路由
+- [lazychanger/urlrewrite](https://github.com/lazychanger/urlrewrite) 一個基於PSR-7與 [nikic/fastroute](https://github.com/nikic/FastRoute) 相同路由規則的URL重寫工具
 
 ## 事件
 
@@ -42,7 +43,7 @@
 ## 依賴注入容器
 
 - [hyperf/di](https://github.com/hyperf/di) Hyperf 官方提供的支援註解及 AOP 的依賴注入容器
-- [hyperf/pimple](https://github.com/hyperf-cloud/pimple-integration) 基於 `pimple/pimple` 實現的輕量級符合 `PSR11` 規範的容器元件。可以減少其他框架使用 `Hyperf` 元件時的成本。
+- [hyperf/pimple](https://github.com/hyperf-cloud/pimple-integration) 基於 `pimple/pimple` 實現的輕量級符合 `PSR11` 規範的容器元件。可以減少其他框架使用 `Hyperf` 元件時的成本
 
 ## 服務
 
@@ -63,6 +64,8 @@
 - [hyperf/websocket-client](https://github.com/hyperf/websocket-client) Hyperf 官方提供的 WebSocket 協程客戶端
 - [hyperf/cache](https://github.com/hyperf/cache) Hyperf 官方提供的基於 PSR-16 的快取協程客戶端，支援註解的使用方式
 - [chungou/elasticsearch](https://github.com/kaychem/hyperf-elasticsearch) 一個簡單的 Elasticsearch 構造器
+- [friendsofhyperf/http-client](https://github.com/friendsofhyperf/http-client) 基於 Hyperf 的 Guzzle HTTP 協程客戶端
+- [friendsofhyperf/openai-client](https://github.com/friendsofhyperf/openai-client) 基於 Hyperf 的 OpenAI 客戶端
 
 ## 訊息佇列
 
@@ -90,6 +93,7 @@
 - [hyperf/service-governance](https://github.com/hyperf/service-governance) Hyperf 官方提供的服務治理元件
 - [hyperf/tracer](https://github.com/hyperf/tracer) Hyperf 官方提供的 OpenTracing 分散式呼叫鏈追蹤元件
 - [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) Hyperf 官方提供的服務熔斷元件
+- [pudongping/hyperf-throttle-requests](https://github.com/pudongping/hyperf-throttle-requests) 適配 Hyperf 框架的請求頻率限流器。功能類似於 Laravel 框架的 throttle 中介軟體。
 
 ## 定時任務
 
@@ -102,6 +106,7 @@
 ## 文件生成
 
 - [hyperf/swagger](https://github.com/hyperf/swagger) Hyperf 官方提供的 Swagger 文件自動生成元件 (beta)
+- [tangwei/swagger](https://github.com/tw2066/api-docs) 一個基於 PHP 型別(DTO)自動生成 swagger 文件元件，啟動自動掃描、自動生成路由(UI)、註解驗證
 
 ## Graphql
 
@@ -121,13 +126,12 @@
 
 - [hyperf/swoole-tracker](https://github.com/hyperf/swoole-tracker) Hyperf 官方提供的對接 Swoole Tracker 的元件，提供阻塞分析、效能分析、記憶體洩漏分析、執行狀態及呼叫統計等功能
 - [hyperf/task](https://github.com/hyperf/task) Hyperf 官方提供的 Task 元件，對 Swoole 的 Task 機制進行了封裝及抽象，提供便捷的註解用法
-- [hyperf/gotask](https://github.com/hyperf/gotask) GoTask 通過 Swoole 程序管理功能啟動 Go 程序作為 Swoole 主程序邊車(Sidecar)，利用程序通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker。
+- [hyperf/gotask](https://github.com/hyperf/gotask) GoTask 透過 Swoole 程序管理功能啟動 Go 程序作為 Swoole 主程序邊車(Sidecar)，利用程序通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker
 
 ## 開發除錯
 
-- [swoole/yasd](https://github.com/swoole/yasd) Swoole 偵錯程式，類似 `Xdebug`，完美支援協程，支援斷點除錯、單步追蹤、`watch` 變數
-- [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通過 `WebSocket` 實時觀測異常錯誤的開發除錯元件
-- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支援與 laravel 類似的多 env 配置檔案功能，比如通過 `APP_ENV=testing` 可以載入 `.env.testing` 配置覆蓋預設的 `.env`
+- [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 透過 `WebSocket` 實時觀測異常錯誤的開發除錯元件
+- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支援與 laravel 類似的多 env 配置檔案功能，比如透過 `APP_ENV=testing` 可以載入 `.env.testing` 配置覆蓋預設的 `.env`
 - [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) 提供一個 `dump` 函式，可以將程式內的變數或資料列印到另一個命令列視窗中，基於 Symfony 的 `Var-Dump Server` 元件
 - [leearvin/hyperf-tinker](https://github.com/Arvin-Lee/hyperf-tinker) 基於 PsySH 提供一個互動式的 Hyperf shell 容器
 
@@ -139,20 +143,28 @@
 - [hyperf-ext/auth](https://github.com/hyperf-ext/auth) 移植自 `illuminate/auth`，基本完整的實現了 Laravel Auth 的功能特性
 - [donjan-deng/hyperf-casbin](https://github.com/donjan-deng/hyperf-casbin) 適配於 Hyperf 的開源訪問控制框架 [Casbin](https://casbin.org/docs/zh-CN/overview)
 
+## 測試
+
+- [hyperf/testing](https://github.com/hyperf/testing) Hyperf 官方提供的單元測試元件
+- [friendsofhyperf/pest-plugin-hyperf](https://github.com/friendsofhyperf/pest-plugin-hyperf) 適配於 Hyperf 的 [Pest](https://pestphp.com/) 外掛，為 Pest 提供協程環境支援
+
 ## 分散式鎖
 
-- [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根據 Laravel 的 lock 元件改寫，適配於 Hyperf 框架。
+- [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根據 Laravel 的 lock 元件改寫，適配於 Hyperf 框架
 
 ## 分散式事務
 
 - [dtm-php/dtm-client](https://github.com/dtm-php/dtm-client) 支援 Hyperf 的 dtm 分散式事務客戶端元件
 
+## 註解配置
+
+- [hyperf-helper/dependency](https://github.com/lazychanger/hyperf-helper-dependency) 使用註解快速的配置依賴關係，並且支援依賴優先順序
+
 ## 第三方 SDK
 
 - [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支援 Swoole 協程的支付寶/微信支付 SDK
-- [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支援 Swoole 協程的第三方登入授權 SDK（QQ、微信、微博、Github、Gitee 等）
+- [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支援 Swoole 協程的第三方登入授權 SDK（QQ、微信、微博、GitHub、Gitee 等）
 - [w7corp/wechat](zh-tw/sdks/wechat) EasyWeChat，一個流行的非官方微信 SDK
-- [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 協程環境下的可用的 PHPMailer
-- [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支援 `支付寶/微信` 的支付元件，基於 [yansongda/pay](https://github.com/yansongda/pay) 實現，適配於 `Hyperf` 框架。
+- [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支援 `支付寶/微信` 的支付元件，基於 [yansongda/pay](https://github.com/yansongda/pay) 實現，適配於 `Hyperf` 框架
 - [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch) 為 Hyperf Scout 提供的 meilisearch 客戶端
-- [vinchan/message-notice](https://github.com/VinchanGit/message-notice) Hyperf 異常監控報警通知元件(釘釘群機器人、飛書群機器人、郵件、QQ 頻道機器人、企業微信群機器人)
+- [vinchan/message-notify](https://github.com/VinchanGit/message-notify) Hyperf 異常監控報警通知元件(釘釘群機器人、飛書群機器人、郵件、QQ 頻道機器人、企業微信群機器人)

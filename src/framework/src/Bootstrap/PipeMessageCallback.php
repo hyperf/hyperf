@@ -17,14 +17,8 @@ use Swoole\Server as SwooleServer;
 
 class PipeMessageCallback
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(protected EventDispatcherInterface $dispatcher)
     {
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -33,6 +27,6 @@ class PipeMessageCallback
      */
     public function onPipeMessage(SwooleServer $server, int $fromWorkerId, $data)
     {
-        $this->eventDispatcher->dispatch(new OnPipeMessage($server, $fromWorkerId, $data));
+        $this->dispatcher->dispatch(new OnPipeMessage($server, $fromWorkerId, $data));
     }
 }

@@ -12,13 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\Server\Listener;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Framework\Event\OnManagerStart;
 use Hyperf\Framework\Event\OnStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Server\Listener\InitProcessTitleListener;
-use Hyperf\Utils\Context;
 use HyperfTest\Server\Stub\DemoProcess;
 use HyperfTest\Server\Stub\InitProcessTitleListenerStub;
 use HyperfTest\Server\Stub\InitProcessTitleListenerStub2;

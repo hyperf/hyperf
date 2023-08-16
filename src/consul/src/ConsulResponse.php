@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Consul;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Consul\Exception\ServerException;
-use Hyperf\Utils\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -23,14 +23,8 @@ use Psr\Http\Message\StreamInterface;
  */
 class ConsulResponse
 {
-    /**
-     * @var ResponseInterface
-     */
-    private $response;
-
-    public function __construct(ResponseInterface $response)
+    public function __construct(private ResponseInterface $response)
     {
-        $this->response = $response;
     }
 
     public function __call($name, $arguments)

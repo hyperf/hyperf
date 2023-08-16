@@ -12,18 +12,15 @@ declare(strict_types=1);
 namespace Hyperf\CircuitBreaker\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 /**
- * @Annotation
- * @Target({"METHOD"})
  * @property float $timeout
  */
 #[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractAnnotation
 {
-    public function __construct($handler, $fallback, $duration, $successCounter, $failCounter, $value)
+    public function __construct(string $handler = 'Hyperf\\CircuitBreaker\\Handler\\TimeoutHandler', ?string $fallback = null, float $duration = 10.0, int $successCounter = 10, int $failCounter = 10, array $value = null)
     {
     }
 }

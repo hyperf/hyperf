@@ -17,6 +17,7 @@ use phpDocumentor\Reflection\Types\Object_;
 use phpDocumentor\Reflection\Types\Self_;
 use ReflectionClass;
 use ReflectionMethod;
+use RuntimeException;
 use TheCodingMachine\GraphQLite\MissingTypeHintException;
 use TheCodingMachine\GraphQLite\NamingStrategyInterface;
 
@@ -50,7 +51,7 @@ class InputTypeUtils
         $fqsen = ltrim((string) $this->validateReturnType($method), '\\');
         $factory = $this->annotationReader->getFactoryAnnotation($method);
         if ($factory === null) {
-            throw new \RuntimeException($method->getDeclaringClass()->getName() . '::' . $method->getName() . ' has no @Factory annotation.');
+            throw new RuntimeException($method->getDeclaringClass()->getName() . '::' . $method->getName() . ' has no @Factory annotation.');
         }
         return [$this->namingStrategy->getInputTypeName($fqsen, $factory), $fqsen];
     }

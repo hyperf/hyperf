@@ -15,21 +15,7 @@ use Rx\Notification;
 
 class IpcMessageWrapper
 {
-    /**
-     * @var Notification
-     */
-    public $data;
-
-    /**
-     * Channel ID.
-     *
-     * @var int
-     */
-    public $channelId;
-
-    public function __construct(int $channelId, Notification $data = null)
+    public function __construct(public int $channelId, public ?Notification $data = null)
     {
-        $this->channelId = $channelId;
-        $this->data = $data;
     }
 }

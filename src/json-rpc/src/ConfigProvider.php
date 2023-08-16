@@ -15,6 +15,8 @@ use Hyperf\JsonRpc\Listener\RegisterProtocolListener;
 use Hyperf\JsonRpc\Listener\RegisterServiceListener;
 use Hyperf\ServiceGovernance\ServiceManager;
 
+use function Hyperf\Support\value;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -31,13 +33,6 @@ class ConfigProvider
                     }
                     return null;
                 }),
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
             ],
         ];
     }

@@ -12,23 +12,22 @@ declare(strict_types=1);
 namespace Hyperf\DB;
 
 use Closure;
+use Hyperf\Codec\Json;
+use Hyperf\DB\Exception\QueryException;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use PDO;
 use PDOStatement;
 use Psr\Container\ContainerInterface;
+use Throwable;
+
+use function Hyperf\Support\build_sql;
 
 class PDOConnection extends AbstractConnection
 {
-    /**
-     * @var PDO
-     */
-    protected $connection;
+    protected ?PDO $connection = null;
 
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'driver' => 'pdo',
         'host' => 'localhost',
         'port' => 3306,
@@ -38,6 +37,7 @@ class PDOConnection extends AbstractConnection
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
         'fetch_mode' => PDO::FETCH_ASSOC,
+        'defer_release' => false,
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -57,9 +57,8 @@ class PDOConnection extends AbstractConnection
 
     /**
      * Current mysql database.
-     * @var null|int
      */
-    protected $database;
+    protected ?int $database = null;
 
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
@@ -82,8 +81,8 @@ class PDOConnection extends AbstractConnection
         $password = $this->config['password'];
         $dsn = $this->buildDsn($this->config);
         try {
-            $pdo = new \PDO($dsn, $username, $password, $this->config['options']);
-        } catch (\Throwable $e) {
+            $pdo = new PDO($dsn, $username, $password, $this->config['options']);
+        } catch (Throwable $e) {
             throw new ConnectionException('Connection reconnect failed.:' . $e->getMessage());
         }
 
@@ -113,10 +112,16 @@ class PDOConnection extends AbstractConnection
         // of the database result set. Each element in the array will be a single
         // row from the database table, and will either be an array or objects.
         $statement = $this->connection->prepare($query);
+        if (! $statement) {
+            throw new QueryException('PDO prepare failed ' . sprintf('(SQL: %s)', build_sql($query, $bindings)));
+        }
 
         $this->bindValues($statement, $bindings);
 
-        $statement->execute();
+        $res = $statement->execute();
+        if (! $res) {
+            throw new QueryException('PDO execute failed ' . sprintf('(ERR: [%s](%s)) (SQL: %s)', $statement->errorCode(), Json::encode($statement->errorCode()), build_sql($query, $bindings)));
+        }
 
         $fetchMode = $this->config['fetch_mode'];
 
@@ -136,7 +141,10 @@ class PDOConnection extends AbstractConnection
 
         $this->bindValues($statement, $bindings);
 
-        $statement->execute();
+        $res = $statement->execute();
+        if (! $res) {
+            throw new QueryException('PDO execute failed ' . sprintf('(ERR: [%s](%s)) (SQL: %s)', $statement->errorCode(), Json::encode($statement->errorCode()), build_sql($query, $bindings)));
+        }
 
         return $statement->rowCount();
     }
@@ -152,7 +160,10 @@ class PDOConnection extends AbstractConnection
 
         $this->bindValues($statement, $bindings);
 
-        $statement->execute();
+        $res = $statement->execute();
+        if (! $res) {
+            throw new QueryException('PDO execute failed ' . sprintf('(ERR: [%s](%s)) (SQL: %s)', $statement->errorCode(), Json::encode($statement->errorCode()), build_sql($query, $bindings)));
+        }
 
         return (int) $this->connection->lastInsertId();
     }

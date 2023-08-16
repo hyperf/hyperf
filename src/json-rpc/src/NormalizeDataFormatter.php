@@ -13,41 +13,45 @@ namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Rpc\Context;
+use Hyperf\Rpc\ErrorResponse;
+use Hyperf\Rpc\Request;
+use Hyperf\Rpc\Response;
+use Throwable;
 
 class NormalizeDataFormatter extends DataFormatter
 {
-    /**
-     * @var NormalizerInterface
-     */
-    private $normalizer;
-
-    public function __construct(NormalizerInterface $normalizer, Context $context)
+    public function __construct(private NormalizerInterface $normalizer, Context $context)
     {
-        $this->normalizer = $normalizer;
-
         parent::__construct($context);
     }
 
-    public function formatRequest($data)
+    public function formatRequest(Request $request): array
     {
-        $data[1] = $this->normalizer->normalize($data[1]);
-        return parent::formatRequest($data);
+        return parent::formatRequest(
+            $request->setParams(
+                $this->normalizer->normalize($request->getParams())
+            )
+        );
     }
 
-    public function formatResponse($data)
+    public function formatResponse(Response $response): array
     {
-        $data[1] = $this->normalizer->normalize($data[1]);
-        return parent::formatResponse($data);
+        return parent::formatResponse(
+            $response->setResult(
+                $this->normalizer->normalize($response->getResult())
+            )
+        );
     }
 
-    public function formatErrorResponse($data)
+    public function formatErrorResponse(ErrorResponse $response): array
     {
-        if (isset($data[3]) && $data[3] instanceof \Throwable) {
-            $data[3] = [
-                'class' => get_class($data[3]),
-                'attributes' => $this->normalizer->normalize($data[3]),
+        $exception = $response->getException();
+        if ($exception instanceof Throwable) {
+            $exception = [
+                'class' => get_class($exception),
+                'attributes' => $this->normalizer->normalize($exception),
             ];
         }
-        return parent::formatErrorResponse($data);
+        return parent::formatErrorResponse($response->setException($exception));
     }
 }

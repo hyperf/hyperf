@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Utils\Coordinator;
 
 use Hyperf\Utils\Coordinator\Coordinator;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\WaitGroup;
 use PHPUnit\Framework\TestCase;
 
@@ -45,6 +46,27 @@ class CoordinatorTest extends TestCase
             $wg->done();
         });
         $coord->resume();
+        $wg->wait();
+    }
+
+    public function testYieldResumeByCoordinator()
+    {
+        $id = uniqid();
+        $coord = CoordinatorManager::until($id);
+        $wg = new WaitGroup();
+        $wg->add();
+        go(function () use ($coord, $wg) {
+            $aborted = $coord->yield(10);
+            $this->assertTrue($aborted);
+            $wg->done();
+        });
+        $wg->add();
+        go(function () use ($coord, $wg) {
+            $aborted = $coord->yield(10);
+            $this->assertTrue($aborted);
+            $wg->done();
+        });
+        \Hyperf\Coordinator\CoordinatorManager::until($id)->resume();
         $wg->wait();
     }
 }

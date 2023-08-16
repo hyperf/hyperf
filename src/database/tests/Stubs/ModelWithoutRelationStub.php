@@ -15,9 +15,9 @@ use Hyperf\Database\Model\Model;
 
 class ModelWithoutRelationStub extends Model
 {
-    public $with = ['foo'];
+    public array $with = ['foo'];
 
-    protected $guarded = [];
+    protected array $guarded = [];
 
     public function getEagerLoads()
     {

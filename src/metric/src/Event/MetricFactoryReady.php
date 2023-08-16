@@ -16,13 +16,9 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 class MetricFactoryReady
 {
     /**
-     * A ready to use factory.
-     * @var MetricFactoryInterface
+     * @param MetricFactoryInterface $factory a ready to use factory
      */
-    public $factory;
-
-    public function __construct(MetricFactoryInterface $factory)
+    public function __construct(public MetricFactoryInterface $factory)
     {
-        $this->factory = $factory;
     }
 }

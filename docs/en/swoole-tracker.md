@@ -1,6 +1,6 @@
 # Swoole Tracker
 
-[Swoole Tracker](https://www.swoole-cloud.com/tracker.html) is a set of enterprise-level tools officially powered by Swoole, including PHP and Swoole analysis, debugging tools, and application performance management (APM) platform. The Swoole Tracker focus on conventional FPM and Swoole resident process business, provide comprehensive performance monitoring, analysis and debugging solutions. (former name: Swoole Enterprise)
+[Swoole Tracker](https://business.swoole.com/tracker/index) is a set of enterprise-level tools officially powered by Swoole, including PHP and Swoole analysis, debugging tools, and application performance management (APM) platform. The Swoole Tracker focus on conventional FPM and Swoole resident process business, provide comprehensive performance monitoring, analysis and debugging solutions. (former name: Swoole Enterprise)
 
 Swoole Tracker can help companies automatically analyze and summarize important system calls and locate specific PHP business codes, intelligently and accurately. It optimize business application performance, and provides a powerful debugging tool chain to escort corporate business and improve IT production efficiency.
 
@@ -54,14 +54,18 @@ php /opt/www/bin/hyperf.php start
 ```ini
 [swoole_tracker]
 extension=/opt/.build/swoole_tracker.so
-
 ;enable apm
 apm.enable=1
 ;sampling rate, for example: 100%
 apm.sampling_rate=100
-
 ;memory leak detection, default 0 (off)
 apm.enable_memcheck=1
+
+;Tracker has been modified as a Zend extension since v3.3.0
+zend_extension=swoole_tracker.so
+tracker.enable=1
+tracker.sampling_rate=100
+tracker.enable_memcheck=1
 ```
 
 Then copy the following `Dockerfile` to the project root directory.

@@ -67,14 +67,7 @@ use Hyperf\Nsq\Annotation\Consumer;
 use Hyperf\Nsq\Message;
 use Hyperf\Nsq\Result;
 
-/**
- * @Consumer(
- *     topic="hyperf", 
- *     channel="hyperf", 
- *     name ="DemoNsqConsumer", 
- *     nums=1
- * )
- */
+#[Consumer(topic: "hyperf", channel: "hyperf", name: "DemoNsqConsumer", nums: 1)]
 class DemoNsqConsumer extends AbstractConsumer
 {
     public function consume(Message $payload): string 
@@ -88,7 +81,7 @@ class DemoNsqConsumer extends AbstractConsumer
 
 ### 禁止消费进程自启
 
-默认情况下，使用了 `@Consumer` 注解定义后，框架会在启动时自动创建子进程来启动消费者，并且会在子进程异常退出后，自动重新拉起。但如果在处于开发阶段进行某些调试工作时，可能会因为消费者的自动消费导致调试的不便。
+默认情况下，使用了 `#[Consumer]` 注解定义后，框架会在启动时自动创建子进程来启动消费者，并且会在子进程异常退出后，自动重新拉起。但如果在处于开发阶段进行某些调试工作时，可能会因为消费者的自动消费导致调试的不便。
 
 在这种情况下，您可通过全局关闭和局部关闭两种形式来控制消费进程的自启。
 
@@ -113,14 +106,7 @@ use Hyperf\Nsq\Message;
 use Hyperf\Nsq\Result;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Consumer(
- *     topic="demo_topic", 
- *     channel="demo_channel", 
- *     name ="DemoConsumer", 
- *     nums=1
- * )
- */
+#[Consumer(topic: "demo_topic", channel: "demo_channel", name: "DemoConsumer", nums: 1)]
 class DemoConsumer extends AbstractConsumer
 {
     public function __construct(ContainerInterface $container)
@@ -157,9 +143,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Nsq\Nsq;
 
-/**
- * @Command
- */
+#[Command]
 class NsqCommand extends HyperfCommand
 {
     protected $name = 'nsq:pub';
@@ -192,9 +176,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Nsq\Nsq;
 
-/**
- * @Command
- */
+#[Command]
 class NsqCommand extends HyperfCommand
 {
     protected $name = 'nsq:pub';
@@ -231,9 +213,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Nsq\Nsq;
 
-/**
- * @Command
- */
+#[Command]
 class NsqCommand extends HyperfCommand
 {
     protected $name = 'nsq:pub';
@@ -262,7 +242,7 @@ class NsqCommand extends HyperfCommand
 
 ```php
 <?php
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Nsq\Nsqd\Topic;
 
 $container = ApplicationContext::getContainer();

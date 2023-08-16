@@ -11,17 +11,23 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpServer;
 
+use Hyperf\Collection\Arr;
+use Hyperf\Context\Context;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface as Psr7RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use RuntimeException;
 use SplFileInfo;
+
+use function Hyperf\Collection\data_get;
+use function Hyperf\Support\value;
 
 /**
  * @property string $pathInfo
@@ -34,7 +40,7 @@ class Request implements RequestInterface
     /**
      * @var array the keys to identify the data of request in coroutine context
      */
-    protected $contextkeys
+    protected array $contextkeys
         = [
             'parsedData' => 'http.request.parsedData',
         ];
@@ -46,15 +52,13 @@ class Request implements RequestInterface
 
     public function __set($name, $value)
     {
-        return $this->storeRequestProperty($name, $value);
+        $this->storeRequestProperty($name, $value);
     }
 
     /**
      * Retrieve the data from query parameters, if $key is null, will return all query parameters.
-     *
-     * @param mixed $default
      */
-    public function query(?string $key = null, $default = null)
+    public function query(?string $key = null, mixed $default = null): mixed
     {
         if ($key === null) {
             return $this->getQueryParams();
@@ -64,11 +68,10 @@ class Request implements RequestInterface
 
     /**
      * Retrieve the data from route parameters.
-     *
-     * @param mixed $default
      */
-    public function route(string $key, $default = null)
+    public function route(string $key, mixed $default = null): mixed
     {
+        /** @var null|Dispatched $route */
         $route = $this->getAttribute(Dispatched::class);
         if (is_null($route)) {
             return $default;
@@ -78,10 +81,8 @@ class Request implements RequestInterface
 
     /**
      * Retrieve the data from parsed body, if $key is null, will return all parsed body.
-     *
-     * @param mixed $default
      */
-    public function post(?string $key = null, $default = null)
+    public function post(?string $key = null, mixed $default = null): mixed
     {
         if ($key === null) {
             return $this->getParsedBody();
@@ -91,10 +92,8 @@ class Request implements RequestInterface
 
     /**
      * Retrieve the input data from request, include query parameters, parsed body and json body.
-     *
-     * @param mixed $default
      */
-    public function input(string $key, $default = null)
+    public function input(string $key, mixed $default = null): mixed
     {
         $data = $this->getInputData();
 
@@ -103,10 +102,8 @@ class Request implements RequestInterface
 
     /**
      * Retrieve the input data from request via multi keys, include query parameters, parsed body and json body.
-     *
-     * @param mixed $default
      */
-    public function inputs(array $keys, $default = null): array
+    public function inputs(array $keys, array $default = null): array
     {
         $data = $this->getInputData();
         $result = [];
@@ -122,12 +119,11 @@ class Request implements RequestInterface
      */
     public function all(): array
     {
-        $data = $this->getInputData();
-        return $data ?? [];
+        return $this->getInputData();
     }
 
     /**
-     * Determine if the $keys is exist in parameters.
+     * Determine if the $keys is existed in parameters.
      *
      * @return array [found, not-found]
      */
@@ -149,21 +145,17 @@ class Request implements RequestInterface
     }
 
     /**
-     * Determine if the $keys is exist in parameters.
-     *
-     * @param array|string $keys
+     * Determine if the $keys is existed in parameters.
      */
-    public function has($keys): bool
+    public function has(array|string $keys): bool
     {
         return Arr::has($this->getInputData(), $keys);
     }
 
     /**
      * Retrieve the data from request headers.
-     *
-     * @param mixed $default
      */
-    public function header(string $key, $default = null)
+    public function header(string $key, ?string $default = null): ?string
     {
         if (! $this->hasHeader($key)) {
             return $default;
@@ -173,10 +165,8 @@ class Request implements RequestInterface
 
     /**
      * Get the current path info for the request.
-     *
-     * @return string
      */
-    public function path()
+    public function path(): string
     {
         $pattern = trim($this->getPathInfo(), '/');
 
@@ -232,7 +222,7 @@ class Request implements RequestInterface
      *
      * @return string The raw URI (i.e. not URI decoded)
      */
-    public function getRequestUri()
+    public function getRequestUri(): string
     {
         if ($this->requestUri === null) {
             $this->requestUri = $this->prepareRequestUri();
@@ -297,9 +287,8 @@ class Request implements RequestInterface
 
     /**
      * Retrieve a cookie from the request.
-     * @param null|mixed $default
      */
-    public function cookie(string $key, $default = null)
+    public function cookie(string $key, mixed $default = null)
     {
         return data_get($this->getCookieParams(), $key, $default);
     }
@@ -314,11 +303,8 @@ class Request implements RequestInterface
 
     /**
      * Retrieve a server variable from the request.
-     *
-     * @param null|mixed $default
-     * @return null|array|string
      */
-    public function server(string $key, $default = null)
+    public function server(string $key, mixed $default = null): mixed
     {
         return data_get($this->getServerParams(), $key, $default);
     }
@@ -336,10 +322,9 @@ class Request implements RequestInterface
     /**
      * Retrieve a file from the request.
      *
-     * @param null|mixed $default
      * @return null|UploadedFile|UploadedFile[]
      */
-    public function file(string $key, $default = null)
+    public function file(string $key, mixed $default = null)
     {
         return Arr::get($this->getUploadedFiles(), $key, $default);
     }
@@ -355,12 +340,12 @@ class Request implements RequestInterface
         return false;
     }
 
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -370,52 +355,52 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function hasHeader($name)
+    public function hasHeader($name): bool
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getHeader($name)
+    public function getHeader($name): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getHeaderLine($name)
+    public function getHeaderLine($name): string
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withHeader($name, $value)
+    public function withHeader($name, $value): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader($name, $value): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withoutHeader($name)
+    public function withoutHeader($name): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): MessageInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getRequestTarget()
+    public function getRequestTarget(): string
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withRequestTarget($requestTarget)
+    public function withRequestTarget($requestTarget): Psr7RequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -425,7 +410,7 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withMethod($method)
+    public function withMethod($method): Psr7RequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -435,42 +420,42 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withUri(UriInterface $uri, $preserveHost = false)
+    public function withUri(UriInterface $uri, $preserveHost = false): Psr7RequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getServerParams()
+    public function getServerParams(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getCookieParams()
+    public function getCookieParams(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withCookieParams(array $cookies)
+    public function withCookieParams(array $cookies): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getQueryParams()
+    public function getQueryParams(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withQueryParams(array $query)
+    public function withQueryParams(array $query): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getUploadedFiles()
+    public function getUploadedFiles(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withUploadedFiles(array $uploadedFiles)
+    public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -480,12 +465,12 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withParsedBody($data)
+    public function withParsedBody($data): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -495,12 +480,12 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withAttribute($name, $value)
+    public function withAttribute($name, $value): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    public function withoutAttribute($name)
+    public function withoutAttribute($name): ServerRequestInterface
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
@@ -536,7 +521,7 @@ class Request implements RequestInterface
             $requestUri = '/' . $requestUri;
         }
 
-        return (string) $requestUri;
+        return $requestUri;
     }
 
     /*
@@ -546,7 +531,7 @@ class Request implements RequestInterface
      *
      * Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
      */
-    protected function prepareRequestUri()
+    protected function prepareRequestUri(): string
     {
         $requestUri = '';
 
@@ -594,21 +579,21 @@ class Request implements RequestInterface
         });
     }
 
-    protected function storeParsedData(callable $callback)
+    protected function storeParsedData(callable $callback): mixed
     {
         if (! Context::has($this->contextkeys['parsedData'])) {
-            return Context::set($this->contextkeys['parsedData'], call($callback));
+            return Context::set($this->contextkeys['parsedData'], $callback());
         }
         return Context::get($this->contextkeys['parsedData']);
     }
 
-    protected function storeRequestProperty(string $key, $value): self
+    protected function storeRequestProperty(string $key, mixed $value): static
     {
         Context::set(__CLASS__ . '.properties.' . $key, value($value));
         return $this;
     }
 
-    protected function getRequestProperty(string $key)
+    protected function getRequestProperty(string $key): mixed
     {
         return Context::get(__CLASS__ . '.properties.' . $key);
     }
@@ -617,7 +602,7 @@ class Request implements RequestInterface
     {
         $request = $this->getRequest();
         if (! method_exists($request, $name)) {
-            throw new \RuntimeException('Method not exist.');
+            throw new RuntimeException('Method not exist.');
         }
         return $request->{$name}(...$arguments);
     }

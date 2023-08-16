@@ -17,7 +17,7 @@ use Psr\Http\Message\RequestInterface;
 
 class RequestStub extends Request
 {
-    public static function normalizeParsedBody(array $data = [], ?RequestInterface $request = null)
+    public static function normalizeParsedBody(array $data = [], ?RequestInterface $request = null): array
     {
         return parent::normalizeParsedBody($data, $request);
     }

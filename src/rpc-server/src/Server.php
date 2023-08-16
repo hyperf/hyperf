@@ -11,10 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcServer;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\DispatcherInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\OnReceiveInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
@@ -22,9 +25,6 @@ use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Server\ServerManager;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -35,61 +35,22 @@ use Throwable;
 
 abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected array $middlewares = [];
 
-    /**
-     * @var DispatcherInterface
-     */
-    protected $dispatcher;
+    protected array $exceptionHandlers = [];
 
-    /**
-     * @var ExceptionHandlerDispatcher
-     */
-    protected $exceptionHandlerDispatcher;
+    protected ?CoreMiddlewareInterface $coreMiddleware = null;
 
-    /**
-     * @var array
-     */
-    protected $middlewares;
+    protected ?string $serverName = null;
 
-    /**
-     * @var CoreMiddlewareInterface
-     */
-    protected $coreMiddleware;
-
-    /**
-     * @var array
-     */
-    protected $exceptionHandlers;
-
-    /**
-     * @var string
-     */
-    protected $serverName;
-
-    /**
-     * @var Protocol
-     */
-    protected $protocol;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected ?Protocol $protocol = null;
 
     public function __construct(
-        ContainerInterface $container,
-        DispatcherInterface $dispatcher,
-        ExceptionHandlerDispatcher $exceptionDispatcher,
-        LoggerInterface $logger
+        protected ContainerInterface $container,
+        protected DispatcherInterface $dispatcher,
+        protected ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
+        protected LoggerInterface $logger
     ) {
-        $this->container = $container;
-        $this->dispatcher = $dispatcher;
-        $this->exceptionHandlerDispatcher = $exceptionDispatcher;
-        $this->logger = $logger;
     }
 
     public function initCoreMiddleware(string $serverName): void

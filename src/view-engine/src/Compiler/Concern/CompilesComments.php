@@ -16,10 +16,9 @@ trait CompilesComments
     /**
      * Compile Blade comments into an empty string.
      *
-     * @param string $value
      * @return string
      */
-    protected function compileComments($value)
+    protected function compileComments(string $value)
     {
         $pattern = sprintf('/%s--(.*?)--%s/s', $this->contentTags[0], $this->contentTags[1]);
 

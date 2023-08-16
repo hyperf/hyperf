@@ -21,7 +21,7 @@ use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\Server\Event;
 use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Server\Server;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\RpcMultiplex\Stub\ContainerStub;
 use Mockery;
 

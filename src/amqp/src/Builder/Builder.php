@@ -15,45 +15,24 @@ use PhpAmqpLib\Wire\AMQPTable;
 
 class Builder
 {
-    /**
-     * @var bool
-     */
-    protected $passive = false;
+    protected bool $passive = false;
 
-    /**
-     * @var bool
-     */
-    protected $durable = true;
+    protected bool $durable = true;
 
-    /**
-     * @var bool
-     */
-    protected $autoDelete = false;
+    protected bool $autoDelete = false;
 
-    /**
-     * @var bool
-     */
-    protected $nowait = false;
+    protected bool $nowait = false;
 
-    /**
-     * @var AMQPTable|array
-     */
-    protected $arguments = [];
+    protected AMQPTable|array $arguments = [];
 
-    /**
-     * @var null|int
-     */
-    protected $ticket;
+    protected ?int $ticket = null;
 
     public function isPassive(): bool
     {
         return $this->passive;
     }
 
-    /**
-     * @return static
-     */
-    public function setPassive(bool $passive): self
+    public function setPassive(bool $passive): static
     {
         $this->passive = $passive;
         return $this;
@@ -64,10 +43,7 @@ class Builder
         return $this->durable;
     }
 
-    /**
-     * @return static
-     */
-    public function setDurable(bool $durable): self
+    public function setDurable(bool $durable): static
     {
         $this->durable = $durable;
         return $this;
@@ -78,10 +54,7 @@ class Builder
         return $this->autoDelete;
     }
 
-    /**
-     * @return static
-     */
-    public function setAutoDelete(bool $autoDelete): self
+    public function setAutoDelete(bool $autoDelete): static
     {
         $this->autoDelete = $autoDelete;
         return $this;
@@ -92,46 +65,29 @@ class Builder
         return $this->nowait;
     }
 
-    /**
-     * @return static
-     */
-    public function setNowait(bool $nowait): self
+    public function setNowait(bool $nowait): static
     {
         $this->nowait = $nowait;
         return $this;
     }
 
-    /**
-     * @return AMQPTable|array
-     */
-    public function getArguments()
+    public function getArguments(): AMQPTable|array
     {
         return $this->arguments;
     }
 
-    /**
-     * @param AMQPTable|array $arguments
-     * @return static
-     */
-    public function setArguments($arguments): self
+    public function setArguments(AMQPTable|array $arguments): static
     {
         $this->arguments = $arguments;
         return $this;
     }
 
-    /**
-     * @return null|int
-     */
-    public function getTicket()
+    public function getTicket(): ?int
     {
         return $this->ticket;
     }
 
-    /**
-     * @param null|int $ticket
-     * @return static
-     */
-    public function setTicket($ticket): self
+    public function setTicket(?int $ticket): static
     {
         $this->ticket = $ticket;
         return $this;

@@ -14,18 +14,11 @@ namespace Hyperf\Resource\Json;
 class AnonymousResourceCollection extends ResourceCollection
 {
     /**
-     * The name of the resource being collected.
-     *
-     * @var string
-     */
-    public $collects;
-
-    /**
      * Create a new anonymous resource collection.
      *
-     * @param mixed $resource
+     * @param string $collects the name of the resource being collected
      */
-    public function __construct($resource, string $collects)
+    public function __construct(mixed $resource, string $collects)
     {
         $this->collects = $collects;
 

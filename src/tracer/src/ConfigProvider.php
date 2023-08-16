@@ -12,9 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Tracer;
 
 use GuzzleHttp\Client;
+use Hyperf\Tracer\Aspect\HttpClientAspect;
+use Hyperf\Tracer\Aspect\RedisAspect;
+use Hyperf\Tracer\Aspect\TraceAnnotationAspect;
 use Hyperf\Tracer\Listener\DbQueryExecutedListener;
 use Jaeger\ThriftUdpTransport;
 use OpenTracing\Tracer;
+use Zipkin\Propagation\Map;
 
 class ConfigProvider
 {
@@ -32,13 +36,16 @@ class ConfigProvider
             ],
             'annotations' => [
                 'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
                     'class_map' => [
+                        Map::class => __DIR__ . '/../class_map/Map.php',
                         ThriftUdpTransport::class => __DIR__ . '/../class_map/ThriftUdpTransport.php',
                     ],
                 ],
+            ],
+            'aspects' => [
+                HttpClientAspect::class,
+                RedisAspect::class,
+                TraceAnnotationAspect::class,
             ],
             'publish' => [
                 [

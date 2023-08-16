@@ -12,17 +12,15 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Concern;
 
 use Countable;
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 use stdClass;
 
 trait ManagesLoops
 {
     /**
      * The stack of in-progress loops.
-     *
-     * @var array
      */
-    protected $loopsStack = [];
+    protected array $loopsStack = [];
 
     /**
      * Add new loop to the stack.
@@ -31,7 +29,7 @@ trait ManagesLoops
      */
     public function addLoop($data)
     {
-        $length = is_array($data) || $data instanceof Countable ? count($data) : null;
+        $length = is_countable($data) ? count($data) : null;
 
         $parent = Arr::last($this->loopsStack);
 

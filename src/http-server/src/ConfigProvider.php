@@ -22,15 +22,8 @@ class ConfigProvider
         return [
             'dependencies' => [
                 RequestInterface::class => Request::class,
-                ServerRequestInterface::class => Request::class,
                 ResponseInterface::class => Response::class,
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
+                ServerRequestInterface::class => Request::class,
             ],
         ];
     }

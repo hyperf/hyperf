@@ -18,9 +18,9 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "psr/container": "^1.0|^2.0",
-        "hyperf/contract": "~2.2.0"
+        "hyperf/contract": "~3.0.0"
     },
     "suggest": {
         "hyperf/process": "Use hyperf process to run ConfigFetcherProcess.",
@@ -41,7 +41,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ConfigZookeeper\\ConfigProvider"

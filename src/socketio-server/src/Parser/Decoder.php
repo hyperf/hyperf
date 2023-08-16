@@ -22,7 +22,7 @@ class Decoder
         $query = [];
         ++$i;
 
-        //TODO: Support attachment
+        // TODO: Support attachment
 
         // namespace
         if (isset($payload[$i]) && $payload[$i] === '/') {

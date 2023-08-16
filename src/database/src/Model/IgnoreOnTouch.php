@@ -15,8 +15,6 @@ class IgnoreOnTouch
 {
     /**
      * The list of models classes that should not be affected with touch.
-     *
-     * @var array
      */
-    public static $container = [];
+    public static array $container = [];
 }

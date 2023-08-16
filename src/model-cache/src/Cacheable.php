@@ -11,19 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\ModelCache\Builder as ModelCacheBuilder;
-use Hyperf\Utils\ApplicationContext;
 
 trait Cacheable
 {
-    /**
-     * @var bool
-     */
-    protected $useCacheBuilder = false;
+    protected bool $useCacheBuilder = false;
 
     /**
      * Fetch a model from cache.
@@ -40,6 +37,7 @@ trait Cacheable
 
     /**
      * Fetch models from cache.
+     * @return Collection<int, self>
      */
     public static function findManyFromCache(array $ids): Collection
     {
@@ -61,7 +59,7 @@ trait Cacheable
     }
 
     /**
-     * Get the expire time for cache.
+     * Get the expired time for cache.
      */
     public function getCacheTTL(): ?int
     {
@@ -139,6 +137,7 @@ trait Cacheable
 
     /**
      * @param bool $cache Whether to delete the model cache when batch update
+     * @return Builder|static
      */
     public static function query(bool $cache = false): Builder
     {

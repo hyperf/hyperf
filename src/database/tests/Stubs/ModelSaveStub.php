@@ -11,19 +11,19 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database\Stubs;
 
+use Hyperf\Context\Context;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionInterface as Connection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Utils\Context;
 use Mockery;
 
 class ModelSaveStub extends Model
 {
-    protected $table = 'save_stub';
+    protected ?string $table = 'save_stub';
 
-    protected $guarded = ['id'];
+    protected array $guarded = ['id'];
 
     public function save(array $options = []): bool
     {

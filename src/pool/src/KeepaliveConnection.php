@@ -14,54 +14,31 @@ namespace Hyperf\Pool;
 use Closure;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Timer;
+use Hyperf\Engine\Channel;
 use Hyperf\Pool\Exception\InvalidArgumentException;
 use Hyperf\Pool\Exception\SocketPopException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Swoole\Coroutine;
-use Swoole\Timer;
+use Throwable;
 
 abstract class KeepaliveConnection implements ConnectionInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected Timer $timer;
 
-    /**
-     * @var Pool
-     */
-    protected $pool;
+    protected Channel $channel;
 
-    /**
-     * @var Coroutine\Channel
-     */
-    protected $channel;
+    protected float $lastUseTime = 0.0;
 
-    /**
-     * @var float
-     */
-    protected $lastUseTime = 0.0;
+    protected ?int $timerId = null;
 
-    /**
-     * @var null|int
-     */
-    protected $timerId;
+    protected bool $connected = false;
 
-    /**
-     * @var bool
-     */
-    protected $connected = false;
+    protected string $name = 'keepalive.connection';
 
-    /**
-     * @var string
-     */
-    protected $name = 'keepalive.connection';
-
-    public function __construct(ContainerInterface $container, Pool $pool)
+    public function __construct(protected ContainerInterface $container, protected Pool $pool)
     {
-        $this->container = $container;
-        $this->pool = $pool;
+        $this->timer = new Timer();
     }
 
     public function __destruct()
@@ -90,7 +67,7 @@ abstract class KeepaliveConnection implements ConnectionInterface
 
         $connection = $this->getActiveConnection();
 
-        $channel = new Coroutine\Channel(1);
+        $channel = new Channel(1);
         $channel->push($connection);
         $this->channel = $channel;
         $this->lastUseTime = microtime(true);
@@ -157,29 +134,29 @@ abstract class KeepaliveConnection implements ConnectionInterface
     public function isTimeout(): bool
     {
         return $this->lastUseTime < microtime(true) - $this->pool->getOption()->getMaxIdleTime()
-            && $this->channel->length() > 0;
+            && $this->channel->getLength() > 0;
     }
 
     protected function addHeartbeat()
     {
         $this->connected = true;
-        $this->timerId = Timer::tick($this->getHeartbeat(), function () {
+        $this->timerId = $this->timer->tick($this->getHeartbeatSeconds(), function () {
             try {
                 if (! $this->isConnected()) {
                     return;
                 }
 
                 if ($this->isTimeout()) {
-                    // The socket does not used in double of heartbeat.
+                    // The socket does not use in double of heartbeat.
                     $this->close();
                     return;
                 }
 
                 $this->heartbeat();
-            } catch (\Throwable $throwable) {
+            } catch (Throwable $throwable) {
                 $this->clear();
                 if ($logger = $this->getLogger()) {
-                    $message = sprintf('Socket of %s heartbeat failed, %s', $this->name, (string) $throwable);
+                    $message = sprintf('Socket of %s heartbeat failed, %s', $this->name, $throwable);
                     $logger->error($message);
                 }
             }
@@ -187,24 +164,33 @@ abstract class KeepaliveConnection implements ConnectionInterface
     }
 
     /**
+     * @deprecated
      * @return int ms
      */
     protected function getHeartbeat(): int
     {
+        return $this->getHeartbeatSeconds() * 1000;
+    }
+
+    /**
+     * @return int seconds
+     */
+    protected function getHeartbeatSeconds(): int
+    {
         $heartbeat = $this->pool->getOption()->getHeartbeat();
 
         if ($heartbeat > 0) {
-            return intval($heartbeat * 1000);
+            return intval($heartbeat);
         }
 
-        return 10 * 1000;
+        return 10;
     }
 
     protected function clear()
     {
         $this->connected = false;
         if ($this->timerId) {
-            Timer::clear($this->timerId);
+            $this->timer->clear($this->timerId);
             $this->timerId = null;
         }
     }

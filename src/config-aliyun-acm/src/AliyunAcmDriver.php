@@ -16,7 +16,7 @@ use Psr\Container\ContainerInterface;
 
 class AliyunAcmDriver extends AbstractDriver
 {
-    protected $driverName = 'aliyun_acm';
+    protected string $driverName = 'aliyun_acm';
 
     public function __construct(ContainerInterface $container)
     {

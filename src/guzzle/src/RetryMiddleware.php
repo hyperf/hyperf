@@ -17,14 +17,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class RetryMiddleware implements MiddlewareInterface
 {
-    protected $retries = 1;
-
-    protected $delay = 0;
-
-    public function __construct(int $retries = 1, int $delay = 0)
+    public function __construct(protected int $retries = 1, protected int $delay = 0)
     {
-        $this->retries = $retries;
-        $this->delay = $delay;
     }
 
     public function getMiddleware(): callable

@@ -13,5 +13,5 @@ namespace HyperfTest\ModelCache\Stub;
 
 class UserHiddenModel extends UserModel
 {
-    protected $hidden = ['created_at', 'updated_at'];
+    protected array $hidden = ['created_at', 'updated_at'];
 }

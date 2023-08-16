@@ -14,6 +14,9 @@ namespace Hyperf\Database\Model\Relations;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Traversable;
+
+use function Hyperf\Tappable\tap;
 
 abstract class HasOneOrMany extends Relation
 {
@@ -116,7 +119,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param array $columns
      * @param mixed $id
-     * @return \Hyperf\Database\Model\Model|\Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection|\Hyperf\Database\Model\Model
      */
     public function findOrNew($id, $columns = ['*'])
     {
@@ -188,8 +191,8 @@ abstract class HasOneOrMany extends Relation
     /**
      * Attach a collection of models to the parent instance.
      *
-     * @param array|\Traversable $models
-     * @return array|\Traversable
+     * @param array|Traversable $models
+     * @return array|Traversable
      */
     public function saveMany($models)
     {

@@ -8,12 +8,11 @@
     ],
     "description": "flysystem integration for hyperf",
     "require": {
-        "php": ">=7.2",
-        "hyperf/di": "~2.2.0",
-        "league/flysystem": "^1.0|^2.0"
+        "php": ">=8.0",
+        "hyperf/di": "~3.0.0",
+        "league/flysystem": "^1.0|^2.0|^3.0"
     },
     "suggest": {
-        "ext-swoole": "Required to use swoole AliyunOssHook.",
         "xxtime/flysystem-aliyun-oss": "Required to use aliyun oss adapter when use `league/flysystem` v1.0",
         "hyperf/flysystem-oss": "Required to use aliyun oss adapter when use `league/flysystem` v2.0",
         "league/flysystem-memory": "required to use memory adapter",
@@ -25,10 +24,7 @@
     "autoload": {
         "psr-4": {
             "Hyperf\\Filesystem\\": "src/"
-        },
-        "files": [
-            "src/Adapter/AliyunOssHook.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
@@ -45,7 +41,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Filesystem\\ConfigProvider"

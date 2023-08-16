@@ -15,13 +15,7 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class ValidatorFactoryResolved
 {
-    /**
-     * @var ValidatorFactoryInterface
-     */
-    public $validatorFactory;
-
-    public function __construct(ValidatorFactoryInterface $validatorFactory)
+    public function __construct(public ValidatorFactoryInterface $validatorFactory)
     {
-        $this->validatorFactory = $validatorFactory;
     }
 }

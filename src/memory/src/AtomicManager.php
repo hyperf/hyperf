@@ -11,35 +11,33 @@ declare(strict_types=1);
  */
 namespace Hyperf\Memory;
 
+use RuntimeException;
 use Swoole\Atomic;
 
 class AtomicManager
 {
     /**
      * A container that use to store atomic.
-     *
-     * @var array
      */
-    private static $container = [];
+    private static array $container = [];
 
     /**
-     * You should initialize a Atomic with the identifier before use it.
-     * @param mixed $value
+     * You should initialize an Atomic with the identifier before use it.
      */
-    public static function initialize(string $identifier, $value = 0): void
+    public static function initialize(string $identifier, int $value = 0): void
     {
         static::$container[$identifier] = new Atomic($value);
     }
 
     /**
-     * Get a initialized Atomic from container by the identifier.
+     * Get an initialized Atomic from container by the identifier.
      *
-     * @throws \RuntimeException when the Atomic with the identifier has not initialization
+     * @throws RuntimeException when the Atomic with the identifier has not initialization
      */
     public static function get(string $identifier): Atomic
     {
         if (! isset(static::$container[$identifier])) {
-            throw new \RuntimeException('The Atomic has not initialization yet.');
+            throw new RuntimeException('The Atomic has not initialization yet.');
         }
 
         return static::$container[$identifier];

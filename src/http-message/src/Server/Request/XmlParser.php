@@ -11,19 +11,19 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Server\Request;
 
+use Hyperf\Codec\Xml;
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Server\RequestParserInterface;
-use Hyperf\Utils\Codec\Xml;
 use InvalidArgumentException;
 
 class XmlParser implements RequestParserInterface
 {
-    public $throwException = true;
+    public bool $throwException = true;
 
     public function parse(string $rawBody, string $contentType): array
     {
         try {
-            return Xml::toArray($rawBody) ?? [];
+            return Xml::toArray($rawBody);
         } catch (InvalidArgumentException $e) {
             if ($this->throwException) {
                 throw new BadRequestHttpException('Invalid XML data in request body: ' . $e->getMessage());

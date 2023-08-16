@@ -13,5 +13,5 @@ namespace HyperfTest\Resource\Stubs\Resources;
 
 class PostResourceWithoutWrap extends PostResource
 {
-    public $wrap;
+    public ?string $wrap = null;
 }

@@ -11,23 +11,21 @@ declare(strict_types=1);
  */
 namespace Hyperf\Task;
 
+use Hyperf\Task\Aspect\TaskAspect;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
+            'aspects' => [
+                TaskAspect::class,
+            ],
             'listeners' => [
                 Listener\AfterWorkerStartListener::class,
                 Listener\InitServerListener::class,
                 Listener\OnFinishListener::class,
                 Listener\OnTaskListener::class,
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
             ],
         ];
     }

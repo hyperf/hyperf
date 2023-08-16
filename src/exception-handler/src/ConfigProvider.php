@@ -26,13 +26,6 @@ class ConfigProvider
             'listeners' => [
                 ExceptionHandlerListener::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

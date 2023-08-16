@@ -8,21 +8,11 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Command
- */
 #[Command]
 class %CLASS% extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
-
         parent::__construct('demo:command');
     }
 

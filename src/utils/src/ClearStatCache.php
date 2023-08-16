@@ -11,23 +11,22 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+/**
+ * @deprecated v3.1, use \Hyperf\Support\ClearStatCache instead.
+ */
 class ClearStatCache
 {
     /**
-     * Interval at which to clear fileystem stat cache. Values below 1 indicate
+     * Interval at which to clear filesystem stat cache. Values below 1 indicate
      * the stat cache should ALWAYS be cleared. Otherwise, the value is the number
      * of seconds between clear operations.
-     *
-     * @var int
      */
-    private static $interval = 1;
+    private static int $interval = 1;
 
     /**
      * When the filesystem stat cache was last cleared.
-     *
-     * @var int
      */
-    private static $lastCleared;
+    private static int $lastCleared = 0;
 
     public static function clear(?string $filename = null): void
     {

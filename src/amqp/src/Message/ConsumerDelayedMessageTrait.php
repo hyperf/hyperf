@@ -15,7 +15,7 @@ use Hyperf\Amqp\Builder\QueueBuilder;
 use PhpAmqpLib\Wire\AMQPTable;
 
 /**
- * @method ConsumerMessage getQueue()
+ * @method string getQueue()
  */
 trait ConsumerDelayedMessageTrait
 {
@@ -24,7 +24,7 @@ trait ConsumerDelayedMessageTrait
      */
     public function getQueueBuilder(): QueueBuilder
     {
-        return (new QueueBuilder())->setQueue((string) $this->getQueue())
+        return (new QueueBuilder())->setQueue($this->getQueue())
             ->setArguments(new AMQPTable(['x-dead-letter-exchange' => $this->getDeadLetterExchange()]));
     }
 

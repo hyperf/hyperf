@@ -16,14 +16,8 @@ use Psr\Container\ContainerInterface;
 
 class Info
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function get(string $key): ?AbstractAdapter

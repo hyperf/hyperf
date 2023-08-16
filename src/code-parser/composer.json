@@ -1,0 +1,46 @@
+{
+    "name": "hyperf/code-parser",
+    "description": "A code parser component for Hyperf.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "code-parser"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=8.0",
+        "hyperf/collection": "~3.0.0",
+        "hyperf/stringable": "~3.0.0",
+        "hyperf/support": "~3.0.0"
+    },
+    "suggest": {
+        "jean85/pretty-package-versions": "Required to use PrettyVersions. (^1.2|^2.0)",
+        "nikic/php-parser": "Required to use PhpParser. (^4.0)"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\CodeParser\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\CodeParser\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.0-dev"
+        }
+    }
+}

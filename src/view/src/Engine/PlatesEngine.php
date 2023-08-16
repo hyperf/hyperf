@@ -15,7 +15,7 @@ use League\Plates\Engine;
 
 class PlatesEngine implements EngineInterface
 {
-    public function render($template, $data, $config): string
+    public function render(string $template, array $data, array $config): string
     {
         $plates = new Engine($config['view_path'], $config['file_extension'] ?? 'php');
 

@@ -11,33 +11,24 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Cookie;
 
+use RuntimeException;
+
 /**
- * Persists cookies in the client session.
+ * Persists cookies in the client session for FPM.
  */
 class SessionCookieJar extends CookieJar
 {
-    /**
-     * @var string session key
-     */
-    private $sessionKey;
-
-    /**
-     * @var bool control whether to persist session cookies or not
-     */
-    private $storeSessionCookies;
-
     /**
      * Create a new SessionCookieJar object.
      *
      * @param string $sessionKey Session key name to store the cookie
      *                           data in session
-     * @param bool $storeSessionCookies set to true to store session cookies
+     * @param bool $storeSessionCookies Control whether to persist session cookies or not.
+     *                                  set to true to store session cookies
      *                                  in the cookie jar
      */
-    public function __construct($sessionKey, $storeSessionCookies = false)
+    public function __construct(private string $sessionKey, private bool $storeSessionCookies = false)
     {
-        $this->sessionKey = $sessionKey;
-        $this->storeSessionCookies = $storeSessionCookies;
         $this->load();
     }
 
@@ -52,7 +43,7 @@ class SessionCookieJar extends CookieJar
     /**
      * Save cookies to the client session.
      */
-    public function save()
+    public function save(): void
     {
         $json = [];
         foreach ($this as $cookie) {
@@ -68,7 +59,7 @@ class SessionCookieJar extends CookieJar
     /**
      * Load the contents of the client session into the data array.
      */
-    protected function load()
+    protected function load(): void
     {
         if (! isset($_SESSION[$this->sessionKey])) {
             return;
@@ -79,7 +70,7 @@ class SessionCookieJar extends CookieJar
                 $this->setCookie(new SetCookie($cookie));
             }
         } elseif (strlen($data)) {
-            throw new \RuntimeException('Invalid cookie data');
+            throw new RuntimeException('Invalid cookie data');
         }
     }
 }

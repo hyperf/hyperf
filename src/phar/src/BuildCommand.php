@@ -20,15 +20,9 @@ use UnexpectedValueException;
 
 class BuildCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('phar:build');
-        $this->container = $container;
     }
 
     public function configure()

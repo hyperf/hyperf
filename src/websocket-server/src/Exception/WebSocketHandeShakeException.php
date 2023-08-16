@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\WebSocketServer\Exception;
 
-use Hyperf\Server\Exception\ServerException;
+use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 
-class WebSocketHandeShakeException extends ServerException
+class WebSocketHandeShakeException extends BadRequestHttpException
 {
 }

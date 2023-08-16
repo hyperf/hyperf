@@ -13,35 +13,14 @@ namespace Hyperf\Nats\Driver;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractDriver implements DriverInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var array
-     */
-    protected $config;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(ContainerInterface $container, string $name, array $config)
+    public function __construct(protected ContainerInterface $container, protected string $name, protected array $config)
     {
-        $this->container = $container;
-        $this->name = $name;
-        $this->config = $config;
-
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 }

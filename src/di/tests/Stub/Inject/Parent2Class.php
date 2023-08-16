@@ -16,8 +16,8 @@ use Hyperf\Di\Annotation\Inject;
 class Parent2Class extends ParentClass
 {
     /**
-     * @Inject
      * @var Bar
      */
+    #[Inject]
     protected $foo;
 }

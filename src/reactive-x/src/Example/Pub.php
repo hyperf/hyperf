@@ -9,8 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use Hyperf\Engine\Channel;
 use Hyperf\ReactiveX\Observable;
-use Swoole\Coroutine\Channel;
 
 $chan = new Channel(1);
 $pub = Observable::fromChannel($chan)->publish();

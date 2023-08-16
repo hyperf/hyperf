@@ -84,7 +84,7 @@ class EventDispatcherTest extends TestCase
     public function testLoggerDump()
     {
         $logger = Mockery::mock(StdoutLoggerInterface::class);
-        $logger->shouldReceive('debug');
+        $logger->shouldReceive('debug')->once();
         $listenerProvider = new ListenerProvider();
         $listenerProvider->on(Alpha::class, [new AlphaListener(), 'process']);
         $dispatcher = new EventDispatcher($listenerProvider, $logger);

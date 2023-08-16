@@ -12,30 +12,17 @@ declare(strict_types=1);
 namespace Hyperf\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\PoolInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 abstract class Connection implements ConnectionInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected float $lastUseTime = 0.0;
 
-    /**
-     * @var Pool
-     */
-    protected $pool;
-
-    /**
-     * @var float
-     */
-    protected $lastUseTime = 0.0;
-
-    public function __construct(ContainerInterface $container, Pool $pool)
+    public function __construct(protected ContainerInterface $container, protected PoolInterface $pool)
     {
-        $this->container = $container;
-        $this->pool = $pool;
     }
 
     public function release(): void
@@ -47,9 +34,9 @@ abstract class Connection implements ConnectionInterface
     {
         try {
             return $this->getActiveConnection();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
-                $logger->warning('Get connection failed, try again. ' . (string) $exception);
+                $logger->warning('Get connection failed, try again. ' . $exception);
             }
             return $this->getActiveConnection();
         }

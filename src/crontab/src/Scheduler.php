@@ -11,27 +11,20 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab;
 
+use SplQueue;
+
 class Scheduler
 {
-    /**
-     * @var CrontabManager
-     */
-    protected $crontabManager;
+    protected SplQueue $schedules;
 
-    /**
-     * @var \SplQueue
-     */
-    protected $schedules;
-
-    public function __construct(CrontabManager $crontabManager)
+    public function __construct(protected CrontabManager $crontabManager)
     {
-        $this->schedules = new \SplQueue();
-        $this->crontabManager = $crontabManager;
+        $this->schedules = new SplQueue();
     }
 
-    public function schedule(): \SplQueue
+    public function schedule(): SplQueue
     {
-        foreach ($this->getSchedules() ?? [] as $schedule) {
+        foreach ($this->getSchedules() as $schedule) {
             $this->schedules->enqueue($schedule);
         }
         return $this->schedules;

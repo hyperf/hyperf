@@ -15,7 +15,7 @@ use Hyperf\Metric\Contract\CounterInterface;
 
 class Counter implements CounterInterface
 {
-    public function with(string ...$labelValues): CounterInterface
+    public function with(string ...$labelValues): static
     {
         return $this;
     }

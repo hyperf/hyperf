@@ -12,17 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\Tracer\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS", "METHOD"})
- */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Trace extends AbstractAnnotation
 {
-    public function __construct($name, $tag)
+    public function __construct(string $name = '', array|string $tag = 'source')
     {
     }
 }

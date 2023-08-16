@@ -15,28 +15,18 @@ use PhpParser\Node;
 
 class VisitorMetadata
 {
-    /**
-     * @var string
-     */
-    public $className;
+    public bool $hasConstructor = false;
+
+    public ?Node\Stmt\ClassMethod $constructorNode = null;
+
+    public ?bool $hasExtends = null;
 
     /**
-     * @var bool
+     * The class name of \PhpParser\Node\Stmt\ClassLike.
      */
-    public $hasConstructor;
+    public ?string $classLike = null;
 
-    /**
-     * @var null|Node\Stmt\ClassMethod
-     */
-    public $constructorNode;
-
-    /**
-     * @var bool
-     */
-    public $hasExtends;
-
-    /**
-     * @var null|string
-     */
-    public $classLike;
+    public function __construct(public string $className)
+    {
+    }
 }

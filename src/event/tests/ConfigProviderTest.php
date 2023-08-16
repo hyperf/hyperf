@@ -31,13 +31,6 @@ class ConfigProviderTest extends TestCase
                 ListenerProviderInterface::class => ListenerProviderFactory::class,
                 EventDispatcherInterface::class => EventDispatcherFactory::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        str_replace('/tests', '/src', __DIR__),
-                    ],
-                ],
-            ],
         ], (new ConfigProvider())());
     }
 }

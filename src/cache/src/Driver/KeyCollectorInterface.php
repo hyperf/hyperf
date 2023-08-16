@@ -17,5 +17,5 @@ interface KeyCollectorInterface
 
     public function keys(string $collector): array;
 
-    public function delKey(string $collector, ...$key): bool;
+    public function delKey(string $collector, string ...$key): bool;
 }

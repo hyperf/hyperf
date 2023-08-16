@@ -16,16 +16,9 @@ use Throwable;
 
 class FailToHandle extends Event
 {
-    /**
-     * @var Throwable
-     */
-    protected $throwable;
-
-    public function __construct(Command $command, Throwable $throwable)
+    public function __construct(Command $command, protected Throwable $throwable)
     {
         parent::__construct($command);
-
-        $this->throwable = $throwable;
     }
 
     public function getThrowable(): Throwable

@@ -13,14 +13,15 @@ namespace HyperfTest\Amqp\Stub;
 
 use Hyperf\Amqp\ConnectionFactory;
 use Hyperf\Amqp\Consumer;
+use Hyperf\Amqp\IO\IOFactory;
 use Hyperf\Amqp\Pool\PoolFactory;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\ExceptionHandler\Formatter\DefaultFormatter;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -56,6 +57,7 @@ class ContainerStub
             $logger = Mockery::mock(StdoutLoggerInterface::class);
             $logger->shouldReceive('debug')->andReturn(null);
             $logger->shouldReceive('log')->andReturn(null);
+            $logger->shouldReceive('error')->andReturn(null);
             return $logger;
         });
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturnUsing(function () {
@@ -68,7 +70,7 @@ class ContainerStub
             return new Consumer($container, $container->get(ConnectionFactory::class), $container->get(StdoutLoggerInterface::class));
         });
         $container->shouldReceive('get')->with(FormatterInterface::class)->andReturn(new DefaultFormatter());
-
+        $container->shouldReceive('get')->with(IOFactory::class)->andReturn(new IOFactory());
         return $container;
     }
 

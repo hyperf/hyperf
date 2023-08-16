@@ -15,8 +15,6 @@ class Booted
 {
     /**
      * The list of models classes that have bean booted.
-     *
-     * @var array
      */
-    public static $container = [];
+    public static array $container = [];
 }

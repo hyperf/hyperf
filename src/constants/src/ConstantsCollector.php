@@ -15,12 +15,9 @@ use Hyperf\Di\MetadataCollector;
 
 class ConstantsCollector extends MetadataCollector
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
-    public static function getValue($className, $code, $key)
+    public static function getValue($className, $code, $key): string
     {
         return static::$container[$className][$code][$key] ?? '';
     }

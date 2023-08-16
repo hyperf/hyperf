@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model\Concerns;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 trait CamelCase
 {
@@ -25,7 +25,7 @@ trait CamelCase
         return parent::setAttribute(Str::snake($key), $value);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $array = [];
         foreach ($this->toArray() as $key => $value) {
@@ -34,7 +34,7 @@ trait CamelCase
         return $array;
     }
 
-    public function getFillable()
+    public function getFillable(): array
     {
         $fillable = [];
         foreach (parent::getFillable() as $key) {

@@ -15,12 +15,9 @@ use Hyperf\Amqp\Message\ConsumerMessageInterface;
 
 class AfterConsume extends ConsumeEvent
 {
-    protected $result;
-
-    public function __construct(ConsumerMessageInterface $message, string $result)
+    public function __construct(ConsumerMessageInterface $message, protected string $result)
     {
         parent::__construct($message);
-        $this->result = $result;
     }
 
     public function getResult(): string

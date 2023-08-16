@@ -37,8 +37,8 @@ class Connector
      * Create a new PDO connection.
      *
      * @param string $dsn
-     * @throws \Exception
-     * @return \PDO
+     * @return PDO
+     * @throws Exception
      */
     public function createConnection($dsn, array $config, array $options)
     {
@@ -99,7 +99,7 @@ class Connector
      * @param string $username
      * @param string $password
      * @param array $options
-     * @return \PDO
+     * @return PDO
      */
     protected function createPdoConnection($dsn, $username, $password, $options)
     {
@@ -125,8 +125,8 @@ class Connector
      * @param string $username
      * @param string $password
      * @param array $options
-     * @throws \Exception
-     * @return \PDO
+     * @return PDO
+     * @throws Exception
      */
     protected function tryAgainIfCausedByLostConnection(Throwable $e, $dsn, $username, $password, $options)
     {

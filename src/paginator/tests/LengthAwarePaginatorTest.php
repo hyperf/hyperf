@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Paginator;
 
+use Hyperf\Codec\Json;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Codec\Json;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -57,5 +57,11 @@ class LengthAwarePaginatorTest extends TestCase
         $paginator = new Paginator([1, 2], 2, 2);
 
         $this->assertSame(Json::encode($paginator->toArray()), (string) $paginator);
+    }
+
+    public function testGetOptions()
+    {
+        $paginator = new LengthAwarePaginator([1, 2], 10, 2, 2, $options = ['foo' => 'bar']);
+        $this->assertSame($options, $paginator->getOptions());
     }
 }

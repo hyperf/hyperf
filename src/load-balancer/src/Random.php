@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\LoadBalancer;
 
-use Hyperf\LoadBalancer\Exception\RuntimeException;
+use Hyperf\LoadBalancer\Exception\NoNodesAvailableException;
 
 class Random extends AbstractLoadBalancer
 {
@@ -21,7 +21,7 @@ class Random extends AbstractLoadBalancer
     public function select(array ...$parameters): Node
     {
         if (empty($this->nodes)) {
-            throw new RuntimeException('Cannot select any node from load balancer.');
+            throw new NoNodesAvailableException('Cannot select any node from load balancer.');
         }
         $key = array_rand($this->nodes);
         return $this->nodes[$key];

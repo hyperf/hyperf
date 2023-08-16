@@ -13,8 +13,8 @@ namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Rpc\Context;
-use Hyperf\Utils\Serializer\Serializer;
-use Hyperf\Utils\Serializer\SymfonyNormalizer;
+use Hyperf\Serializer\Serializer;
+use Hyperf\Serializer\SymfonyNormalizer;
 use Psr\Container\ContainerInterface;
 
 class DataFormatterFactory

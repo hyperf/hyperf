@@ -12,14 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\WebSocketServer\Stub;
 
 use Hyperf\Contract\OnOpenInterface;
-use Hyperf\Utils\Coroutine;
-use Swoole\Http\Request;
+use Hyperf\Coroutine\Coroutine;
 
 class WebSocketStub implements OnOpenInterface
 {
     public static $coroutineId = 0;
 
-    public function onOpen($server, Request $request): void
+    public function onOpen($server, $request): void
     {
         static::$coroutineId = Coroutine::id();
     }

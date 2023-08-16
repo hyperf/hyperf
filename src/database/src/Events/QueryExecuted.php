@@ -11,38 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Events;
 
+use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
+use Throwable;
 
 class QueryExecuted
 {
-    /**
-     * The SQL query that was executed.
-     *
-     * @var string
-     */
-    public $sql;
-
-    /**
-     * The array of query bindings.
-     *
-     * @var array
-     */
-    public $bindings;
-
-    /**
-     * The number of milliseconds it took to execute the query.
-     *
-     * @var float
-     */
-    public $time;
-
-    /**
-     * The database connection instance.
-     *
-     * @var ConnectionInterface
-     */
-    public $connection;
-
     /**
      * The database connection name.
      *
@@ -51,23 +25,19 @@ class QueryExecuted
     public $connectionName;
 
     /**
-     * The result of query.
-     *
-     * @var null|array|int|\Throwable
+     * @param string $sql the SQL query that was executed
+     * @param array $bindings the array of query bindings
+     * @param null|float $time the number of milliseconds it took to execute the query
+     * @param Connection&ConnectionInterface $connection the database connection instance
+     * @param null|array|int|Throwable $result the result of query
      */
-    public $result;
-
-    /**
-     * Create a new event instance.
-     * @param null|array|int|\Throwable $result
-     */
-    public function __construct(string $sql, array $bindings, ?float $time, ConnectionInterface $connection, $result = null)
-    {
-        $this->sql = $sql;
-        $this->time = $time;
-        $this->bindings = $bindings;
-        $this->connection = $connection;
+    public function __construct(
+        public string $sql,
+        public array $bindings,
+        public ?float $time,
+        public ConnectionInterface $connection,
+        public mixed $result = null
+    ) {
         $this->connectionName = $connection->getName();
-        $this->result = $result;
     }
 }

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Seeders;
 
-use Hyperf\Command\ConfirmableTrait;
+use Hyperf\Command\Concerns\Confirmable as ConfirmableTrait;
 use Hyperf\Database\Seeders\Seed;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -20,34 +20,12 @@ class SeedCommand extends BaseCommand
     use ConfirmableTrait;
 
     /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $name = 'db:seed';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Seed the database with records';
-
-    /**
-     * The seed instance.
-     *
-     * @var \Hyperf\Database\Seeders\Seed
-     */
-    protected $seed;
-
-    /**
      * Create a new seed command instance.
      */
-    public function __construct(Seed $seed)
+    public function __construct(protected Seed $seed)
     {
-        parent::__construct();
-
-        $this->seed = $seed;
+        parent::__construct('db:seed');
+        $this->setDescription('Seed the database with records');
     }
 
     /**

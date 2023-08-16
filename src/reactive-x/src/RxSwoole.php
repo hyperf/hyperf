@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ReactiveX;
 
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use Rx\Disposable\CallbackDisposable;
 use Rx\Disposable\EmptyDisposable;
 use Rx\Scheduler;
@@ -19,9 +19,11 @@ use Rx\SchedulerInterface;
 use Swoole\Event;
 use Swoole\Timer;
 
+use function Hyperf\Support\make;
+
 class RxSwoole
 {
-    private static $initialized = false;
+    private static bool $initialized = false;
 
     public static function getLoop(): callable
     {
@@ -46,9 +48,7 @@ class RxSwoole
         }
 
         // You only need to set the default scheduler once
-        Scheduler::setDefaultFactory(function () {
-            return make(SchedulerInterface::class, ['timerCallableOrLoop' => self::getLoop()]);
-        });
+        Scheduler::setDefaultFactory(fn () => make(SchedulerInterface::class, ['timerCallableOrLoop' => self::getLoop()]));
 
         RxSwoole::$initialized = true;
     }

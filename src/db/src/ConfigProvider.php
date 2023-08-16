@@ -20,13 +20,6 @@ class ConfigProvider
             ],
             'commands' => [
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'publish' => [
                 [
                     'id' => 'db',

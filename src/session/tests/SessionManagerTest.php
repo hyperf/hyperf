@@ -15,7 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\Session\Session;
 use Hyperf\Session\SessionManager;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use HyperfTest\Session\Stub\MockStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;

@@ -18,7 +18,6 @@ class OriginClass extends ParentClass
     use FooTrait;
 
     /**
-     * @Inject
      * @var Tar
      */
     #[Inject]

@@ -13,7 +13,7 @@ namespace HyperfTest\RpcMultiplex\Cases;
 
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\RpcMultiplex\Transporter;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\RpcMultiplex\Stub\ContainerStub;
 use Mockery;
 
@@ -28,8 +28,9 @@ class TransporterTest extends AbstractTestCase
         $container = ContainerStub::mockContainer();
 
         $transporter = new Transporter($container);
-
-        $transporter->setLoadBalancer($balancer = Mockery::mock(LoadBalancerInterface::class));
+        $balancer = Mockery::mock(LoadBalancerInterface::class);
+        $balancer->shouldReceive('isAutoRefresh')->andReturnFalse();
+        $transporter->setLoadBalancer($balancer);
         $this->assertSame($balancer, $transporter->getLoadBalancer());
     }
 

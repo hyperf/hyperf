@@ -80,5 +80,5 @@ go(static function () use ($foo) {
 ```shell
 bool(false)
 string(3) "xxx"
-bool(true
+bool(true)
 ```

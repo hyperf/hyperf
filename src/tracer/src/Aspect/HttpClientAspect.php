@@ -12,50 +12,28 @@ declare(strict_types=1);
 namespace Hyperf\Tracer\Aspect;
 
 use GuzzleHttp\Client;
-use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Di\Aop\AroundInterface;
+use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use Hyperf\Utils\Context;
 use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
+
 use const OpenTracing\Formats\TEXT_MAP;
 
-/**
- * @Aspect
- */
-class HttpClientAspect implements AroundInterface
+class HttpClientAspect extends AbstractAspect
 {
     use SpanStarter;
 
-    public $classes = [
+    public array $classes = [
+        Client::class . '::request',
         Client::class . '::requestAsync',
     ];
 
-    public $annotations = [];
-
-    /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    /**
-     * @var SwitchManager
-     */
-    private $switchManager;
-
-    /**
-     * @var SpanTagManager
-     */
-    private $spanTagManager;
-
-    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
+    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
-        $this->tracer = $tracer;
-        $this->switchManager = $switchManager;
-        $this->spanTagManager = $spanTagManager;
     }
 
     /**
@@ -69,6 +47,10 @@ class HttpClientAspect implements AroundInterface
         $options = $proceedingJoinPoint->arguments['keys']['options'];
         if (isset($options['no_aspect']) && $options['no_aspect'] === true) {
             return $proceedingJoinPoint->process();
+        }
+        // Disable the aspect for the requestAsync method.
+        if ($proceedingJoinPoint->methodName == 'request') {
+            $options['no_aspect'] = true;
         }
         $arguments = $proceedingJoinPoint->arguments;
         $method = $arguments['keys']['method'] ?? 'Null';
@@ -97,7 +79,7 @@ class HttpClientAspect implements AroundInterface
             if ($result instanceof ResponseInterface) {
                 $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), $result->getStatusCode());
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $span->setTag('error', true);
             $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
             throw $e;

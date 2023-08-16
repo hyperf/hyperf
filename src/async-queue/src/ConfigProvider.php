@@ -11,17 +11,23 @@ declare(strict_types=1);
  */
 namespace Hyperf\AsyncQueue;
 
+use Hyperf\AsyncQueue\Aspect\AsyncQueueAspect;
+use Hyperf\AsyncQueue\Command\FlushFailedMessageCommand;
+use Hyperf\AsyncQueue\Command\InfoCommand;
+use Hyperf\AsyncQueue\Command\ReloadFailedMessageCommand;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
+            'aspects' => [
+                AsyncQueueAspect::class,
+            ],
+            'commands' => [
+                FlushFailedMessageCommand::class,
+                InfoCommand::class,
+                ReloadFailedMessageCommand::class,
             ],
             'publish' => [
                 [

@@ -17,8 +17,11 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/guzzle": "~2.2.0"
+        "php": ">=8.0",
+        "guzzlehttp/guzzle": "^6.3|^7.0"
+    },
+    "require-dev": {
+        "hyperf/guzzle": "~3.0.0"
     },
     "suggest": {
     },
@@ -37,7 +40,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Consul\\ConfigProvider"

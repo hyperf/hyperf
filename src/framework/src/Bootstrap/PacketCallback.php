@@ -17,14 +17,8 @@ use Swoole\Server;
 
 class PacketCallback
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(protected EventDispatcherInterface $dispatcher)
     {
-        $this->dispatcher = $eventDispatcher;
     }
 
     public function onPacket(Server $server, string $data, array $clientInfo)

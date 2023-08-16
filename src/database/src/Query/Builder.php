@@ -11,8 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query;
 
+use BadMethodCallException;
 use Closure;
 use DateTimeInterface;
+use Generator;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
@@ -23,14 +29,14 @@ use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use RuntimeException;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Collection\last;
+use function Hyperf\Tappable\tap;
 
 class Builder
 {
@@ -260,7 +266,7 @@ class Builder
      *
      * @param string $method
      * @param array $parameters
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public function __call($method, $parameters)
     {
@@ -290,10 +296,10 @@ class Builder
     /**
      * Add a subselect expression to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder|static
+     * @throws InvalidArgumentException
      */
     public function selectSub($query, $as)
     {
@@ -322,10 +328,10 @@ class Builder
     /**
      * Makes "from" fetch from a subquery.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder|static
+     * @throws InvalidArgumentException
      */
     public function fromSub($query, $as)
     {
@@ -405,7 +411,7 @@ class Builder
      * Add a join clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @param string $type
@@ -445,7 +451,7 @@ class Builder
      * Add a "join where" clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param string $operator
      * @param string $second
      * @param string $type
@@ -459,15 +465,15 @@ class Builder
     /**
      * Add a subquery join clause to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @param string $type
      * @param bool $where
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder|static
+     * @throws InvalidArgumentException
      */
     public function joinSub($query, $as, $first, $operator = null, $second = null, $type = 'inner', $where = false)
     {
@@ -484,7 +490,7 @@ class Builder
      * Add a left join to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -498,7 +504,7 @@ class Builder
      * Add a "join where" clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -511,9 +517,9 @@ class Builder
     /**
      * Add a subquery left join to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -527,7 +533,7 @@ class Builder
      * Add a right join to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -541,7 +547,7 @@ class Builder
      * Add a "right join where" clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -554,9 +560,9 @@ class Builder
     /**
      * Add a subquery right join to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -570,7 +576,7 @@ class Builder
      * Add a "cross join" clause to the query.
      *
      * @param string $table
-     * @param null|\Closure|string $first
+     * @param null|Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -602,7 +608,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param array|\Closure|string $column
+     * @param array|Closure|string $column
      * @param string $boolean
      * @param null|mixed $operator
      * @param null|mixed $value
@@ -650,18 +656,22 @@ class Builder
             return $this->whereNull($column, $boolean, $operator !== '=');
         }
 
+        $type = 'Basic';
+
         // If the column is making a JSON reference we'll check to see if the value
         // is a boolean. If it is, we'll add the raw boolean string as an actual
         // value to the query to ensure this is properly handled by the query.
         if (Str::contains((string) $column, '->') && is_bool($value)) {
             $value = new Expression($value ? 'true' : 'false');
+
+            if (is_string($column)) {
+                $type = 'JsonBoolean';
+            }
         }
 
         // Now that we are working with just a simple query we can put the elements
         // in our array and add the query binding to our array of bindings that
         // will be bound to each SQL statements when it is finally executed.
-        $type = 'Basic';
-
         $this->wheres[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         if (! $value instanceof Expression) {
@@ -677,8 +687,8 @@ class Builder
      * @param string $value
      * @param string $operator
      * @param bool $useDefault
-     * @throws \InvalidArgumentException
      * @return array
+     * @throws InvalidArgumentException
      */
     public function prepareValueAndOperator($value, $operator, $useDefault = false)
     {
@@ -695,7 +705,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param array|\Closure|string $column
+     * @param array|Closure|string $column
      * @param null|mixed $operator
      * @param null|mixed $value
      * @return \Hyperf\Database\Query\Builder|static
@@ -1012,7 +1022,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder|static
      */
@@ -1032,7 +1042,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function orWhereDate($column, $operator, $value = null)
@@ -1047,7 +1057,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder|static
      */
@@ -1067,7 +1077,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function orWhereTime($column, $operator, $value = null)
@@ -1082,7 +1092,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder|static
      */
@@ -1102,7 +1112,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function orWhereDay($column, $operator, $value = null)
@@ -1117,7 +1127,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder|static
      */
@@ -1137,7 +1147,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function orWhereMonth($column, $operator, $value = null)
@@ -1152,7 +1162,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|int|string $value
+     * @param DateTimeInterface|int|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder|static
      */
@@ -1172,7 +1182,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|int|string $value
+     * @param DateTimeInterface|int|string $value
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function orWhereYear($column, $operator, $value = null)
@@ -1468,6 +1478,36 @@ class Builder
             }
         }
         return $this;
+    }
+
+    /**
+     * Add a "where fulltext" clause to the query.
+     *
+     * @param string|string[] $columns
+     * @return $this
+     */
+    public function whereFullText(array|string $columns, string $value, array $options = [], string $boolean = 'and'): static
+    {
+        $type = 'FullText';
+
+        $columns = (array) $columns;
+
+        $this->wheres[] = compact('type', 'columns', 'value', 'options', 'boolean');
+
+        $this->addBinding($value);
+
+        return $this;
+    }
+
+    /**
+     * Add a "or where fulltext" clause to the query.
+     *
+     * @param string|string[] $columns
+     * @return $this
+     */
+    public function orWhereFullText(array|string $columns, string $value, array $options = []): static
+    {
+        return $this->whereFullText($columns, $value, $options, 'or');
     }
 
     /**
@@ -1768,7 +1808,7 @@ class Builder
     /**
      * Add a union statement to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder $query
+     * @param Closure|\Hyperf\Database\Query\Builder $query
      * @param bool $all
      * @return \Hyperf\Database\Query\Builder|static
      */
@@ -1788,7 +1828,7 @@ class Builder
     /**
      * Add a union all statement to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder $query
+     * @param Closure|\Hyperf\Database\Query\Builder $query
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function unionAll($query)
@@ -1943,7 +1983,7 @@ class Builder
     /**
      * Get a generator for the given query.
      *
-     * @return \Generator
+     * @return Generator
      */
     public function cursor()
     {
@@ -1992,6 +2032,10 @@ class Builder
             $lastResult = $results->last();
             $lastId = is_array($lastResult) ? $lastResult[$alias] : $lastResult->{$alias};
 
+            if ($lastId === null) {
+                throw new RuntimeException("The chunkById operation was aborted because the [{$alias}] column is not present in the query result.");
+            }
+
             unset($results);
         } while ($countResults == $count);
 
@@ -2003,7 +2047,7 @@ class Builder
      *
      * @param string $column
      * @param null|string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     public function pluck($column, $key = null)
     {
@@ -2233,7 +2277,7 @@ class Builder
     /**
      * Insert new records into the table using a subquery.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @return bool
      */
     public function insertUsing(array $columns, $query)
@@ -2289,6 +2333,49 @@ class Builder
         }
 
         return (bool) $this->take(1)->update($values);
+    }
+
+    /**
+     * Insert new records or update the existing ones.
+     *
+     * @param array|string $uniqueBy
+     * @param null|array $update
+     * @return int
+     */
+    public function upsert(array $values, $uniqueBy, $update = null)
+    {
+        if (empty($values)) {
+            return 0;
+        }
+        if ($update === []) {
+            return (int) $this->insert($values);
+        }
+
+        if (! is_array(reset($values))) {
+            $values = [$values];
+        } else {
+            foreach ($values as $key => $value) {
+                ksort($value);
+
+                $values[$key] = $value;
+            }
+        }
+
+        if (is_null($update)) {
+            $update = array_keys(reset($values));
+        }
+
+        $bindings = $this->cleanBindings(array_merge(
+            Arr::flatten($values, 1),
+            collect($update)->reject(function ($value, $key) {
+                return is_int($key);
+            })->all()
+        ));
+
+        return $this->connection->affectingStatement(
+            $this->grammar->compileUpsert($this, $values, (array) $uniqueBy, $update),
+            $bindings
+        );
     }
 
     /**
@@ -2404,8 +2491,8 @@ class Builder
      * Set the bindings on the query builder.
      *
      * @param string $type
-     * @throws \InvalidArgumentException
      * @return $this
+     * @throws InvalidArgumentException
      */
     public function setBindings(array $bindings, $type = 'where')
     {
@@ -2423,8 +2510,8 @@ class Builder
      *
      * @param string $type
      * @param mixed $value
-     * @throws \InvalidArgumentException
      * @return $this
+     * @throws InvalidArgumentException
      */
     public function addBinding($value, $type = 'where')
     {
@@ -2497,6 +2584,16 @@ class Builder
     }
 
     /**
+     * Clone the query.
+     *
+     * @return static
+     */
+    public function clone()
+    {
+        return clone $this;
+    }
+
+    /**
      * Clone the query without the given properties.
      *
      * @return static
@@ -2527,7 +2624,7 @@ class Builder
     /**
      * Creates a subquery and parse it.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @return array
      */
     protected function createSub($query)
@@ -2793,7 +2890,7 @@ class Builder
     /**
      * Throw an exception if the query doesn't have an orderBy clause.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function enforceOrderBy()
     {
@@ -2819,7 +2916,7 @@ class Builder
      * @param array $queryResult
      * @param string $column
      * @param string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     protected function pluckFromObjectColumn($queryResult, $column, $key)
     {
@@ -2844,7 +2941,7 @@ class Builder
      * @param array $queryResult
      * @param string $column
      * @param string $key
-     * @return \Hyperf\Utils\Collection
+     * @return \Hyperf\Collection\Collection
      */
     protected function pluckFromArrayColumn($queryResult, $column, $key)
     {
@@ -2934,7 +3031,7 @@ class Builder
     {
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
-            throw new \RuntimeException('The DI container does not support make() method.');
+            throw new RuntimeException('The DI container does not support make() method.');
         }
         return $container->make(LengthAwarePaginatorInterface::class, compact('items', 'total', 'perPage', 'currentPage', 'options'));
     }
@@ -2946,7 +3043,7 @@ class Builder
     {
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
-            throw new \RuntimeException('The DI container does not support make() method.');
+            throw new RuntimeException('The DI container does not support make() method.');
         }
         return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
     }

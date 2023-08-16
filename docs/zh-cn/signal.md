@@ -30,9 +30,7 @@ namespace App\Signal;
 use Hyperf\Signal\Annotation\Signal;
 use Hyperf\Signal\SignalHandlerInterface;
 
-/**
- * @Signal
- */
+#[Signal]
 class TermSignalHandler implements SignalHandlerInterface
 {
     public function listen(): array
@@ -89,15 +87,10 @@ use Psr\Container\ContainerInterface;
 
 class CoroutineServerStopHandler implements SignalHandlerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected ContainerInterface $container;
+
+    protected ConfigInterface $config;
 
     public function __construct(ContainerInterface $container)
     {

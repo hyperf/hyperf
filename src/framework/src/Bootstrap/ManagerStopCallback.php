@@ -17,14 +17,8 @@ use Swoole\Server as SwooleServer;
 
 class ManagerStopCallback
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(protected EventDispatcherInterface $dispatcher)
     {
-        $this->dispatcher = $eventDispatcher;
     }
 
     public function onManagerStop(SwooleServer $server)

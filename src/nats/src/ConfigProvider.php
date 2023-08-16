@@ -30,13 +30,6 @@ class ConfigProvider
             'listeners' => [
                 BeforeMainServerStartListener::class => 99,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'publish' => [
                 [
                     'id' => 'config',

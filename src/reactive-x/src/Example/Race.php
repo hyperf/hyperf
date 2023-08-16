@@ -9,8 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use Hyperf\Engine\Channel;
 use Hyperf\ReactiveX\Observable;
-use Swoole\Coroutine\Channel;
 
 $result = new Channel(1);
 $o = Observable::fromCoroutine([function () {
@@ -25,4 +25,4 @@ $o->take(1)->subscribe(
         $result->push($x);
     }
 );
-echo $result->pop(); //2;
+echo $result->pop(); // 2;

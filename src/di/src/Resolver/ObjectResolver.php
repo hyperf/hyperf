@@ -21,29 +21,14 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class ObjectResolver implements ResolverInterface
 {
-    /**
-     * @var ParameterResolver
-     */
-    private $parameterResolver;
-
-    /**
-     * @var ResolverInterface
-     */
-    private $definitionResolver;
-
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ParameterResolver $parameterResolver;
 
     /**
      * ObjectResolver constructor.
      */
-    public function __construct(ContainerInterface $container, ResolverInterface $definitionResolver)
+    public function __construct(private ContainerInterface $container, private ResolverInterface $definitionResolver)
     {
-        $this->container = $container;
-        $this->definitionResolver = $definitionResolver;
-        $this->parameterResolver = new ParameterResolver($definitionResolver);
+        $this->parameterResolver = new ParameterResolver($this->definitionResolver);
     }
 
     /**
@@ -51,9 +36,9 @@ class ObjectResolver implements ResolverInterface
      *
      * @param DefinitionInterface $definition object that defines how the value should be obtained
      * @param array $parameters optional parameters to use to build the entry
+     * @return mixed value obtained from the definition
      * @throws InvalidDefinitionException
      * @throws DependencyException
-     * @return mixed value obtained from the definition
      */
     public function resolve(DefinitionInterface $definition, array $parameters = [])
     {

@@ -11,30 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Serializer;
 
-use Hyperf\Contract\NormalizerInterface;
-
-class SimpleNormalizer implements NormalizerInterface
+/**
+ * @deprecated since 3.1, use Hyperf\Serializer\SimpleNormalizer instead.
+ */
+class SimpleNormalizer extends \Hyperf\Serializer\SimpleNormalizer
 {
-    public function normalize($object)
-    {
-        return $object;
-    }
-
-    public function denormalize($data, string $class)
-    {
-        switch ($class) {
-            case 'int':
-                return (int) $data;
-            case 'string':
-                return (string) $data;
-            case 'float':
-                return (float) $data;
-            case 'array':
-                return (array) $data;
-            case 'bool':
-                return (bool) $data;
-            default:
-                return $data;
-        }
-    }
 }

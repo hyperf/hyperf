@@ -13,17 +13,8 @@ namespace Hyperf\Cache\Listener;
 
 class DeleteEvent
 {
-    protected $className;
-
-    protected $method;
-
-    protected $arguments;
-
-    public function __construct(string $className, string $method, array $arguments)
+    public function __construct(protected string $className, protected string $method, protected array $arguments)
     {
-        $this->className = $className;
-        $this->method = $method;
-        $this->arguments = $arguments;
     }
 
     public function getClassName(): string

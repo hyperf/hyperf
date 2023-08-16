@@ -16,22 +16,17 @@ use Hyperf\Cache\CacheListenerCollector;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class FailCache extends AbstractAnnotation
 {
-    public $prefix;
-
-    public $value;
-
-    public $ttl;
-
-    public $listener;
-
-    public $group = 'default';
+    public function __construct(
+        public ?string $prefix = null,
+        public ?string $value = null,
+        public ?int $ttl = null,
+        public ?string $listener = null,
+        public string $group = 'default'
+    ) {
+    }
 
     public function collectMethod(string $className, ?string $target): void
     {

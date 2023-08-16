@@ -11,17 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Packer;
 
-use Hyperf\Contract\PackerInterface;
-
-class PhpSerializerPacker implements PackerInterface
+/**
+ * @deprecated since 3.1. Use Hyperf\Codec\Packer\PhpSerializerPacker instead.
+ */
+class PhpSerializerPacker extends \Hyperf\Codec\Packer\PhpSerializerPacker
 {
-    public function pack($data): string
-    {
-        return serialize($data);
-    }
-
-    public function unpack(string $data)
-    {
-        return unserialize($data);
-    }
 }

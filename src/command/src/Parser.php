@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Command;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -21,7 +21,7 @@ class Parser
     /**
      * Parse the given console command definition into an array.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function parse(string $expression): array
     {
@@ -39,7 +39,7 @@ class Parser
     /**
      * Extract the name of the command from the expression.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected static function name(string $expression): string
     {
@@ -51,7 +51,7 @@ class Parser
     }
 
     /**
-     * Extract all of the parameters from the tokens.
+     * Extract all the parameters from the tokens.
      */
     protected static function parameters(array $tokens): array
     {

@@ -15,15 +15,11 @@ interface Rule
 {
     /**
      * Determine if the validation rule passes.
-     *
-     * @param mixed $value
      */
-    public function passes(string $attribute, $value): bool;
+    public function passes(string $attribute, mixed $value): bool;
 
     /**
      * Get the validation error message.
-     *
-     * @return array|string
      */
-    public function message();
+    public function message(): array|string;
 }

@@ -87,22 +87,16 @@ class UserExtEmpty extends Model
 {
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table = \'user_ext\';
+    protected ?string $table = \'user_ext\';
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = [\'id\', \'count\', \'float_num\', \'str\', \'json\', \'created_at\', \'updated_at\'];
+    protected array $fillable = [\'id\', \'count\', \'float_num\', \'str\', \'json\', \'created_at\', \'updated_at\'];
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
-    protected $casts = [\'id\' => \'integer\', \'count\' => \'integer\', \'created_at\' => \'datetime\'];
+    protected array $casts = [\'id\' => \'integer\', \'count\' => \'integer\', \'created_at\' => \'datetime\'];
 }', $code);
     }
 

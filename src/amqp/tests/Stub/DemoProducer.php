@@ -15,9 +15,9 @@ use Hyperf\Amqp\Message\ProducerMessage;
 
 class DemoProducer extends ProducerMessage
 {
-    protected $exchange = 'hyperf';
+    protected string $exchange = 'hyperf';
 
-    protected $routingKey = 'hyperf';
+    protected array|string $routingKey = 'hyperf';
 
     public function __construct($data)
     {

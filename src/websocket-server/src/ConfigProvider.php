@@ -20,13 +20,6 @@ class ConfigProvider
                 Listener\InitSenderListener::class,
                 Listener\OnPipeMessageListener::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

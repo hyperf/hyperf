@@ -13,13 +13,7 @@ namespace Hyperf\Framework\Event;
 
 class BeforeServerStart
 {
-    /**
-     * @var string
-     */
-    public $serverName;
-
-    public function __construct(string $serverName)
+    public function __construct(public string $serverName)
     {
-        $this->serverName = $serverName;
     }
 }

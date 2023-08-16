@@ -15,7 +15,7 @@ use Hyperf\Command\Command;
 
 class SwooleFlagsCommand extends Command
 {
-    protected $hookFlags = SWOOLE_HOOK_CURL | SWOOLE_HOOK_ALL;
+    protected int $hookFlags = SWOOLE_HOOK_CURL | SWOOLE_HOOK_ALL;
 
     public function handle()
     {

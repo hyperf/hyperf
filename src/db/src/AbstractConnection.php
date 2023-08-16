@@ -14,16 +14,14 @@ namespace Hyperf\DB;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Connection;
 use Hyperf\Pool\Exception\ConnectionException;
+use Throwable;
 
 abstract class AbstractConnection extends Connection implements ConnectionInterface
 {
     use DetectsLostConnections;
     use ManagesTransactions;
 
-    /**
-     * @var array
-     */
-    protected $config = [];
+    protected array $config = [];
 
     public function getConfig(): array
     {
@@ -32,14 +30,21 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
 
     public function release(): void
     {
-        if ($this->transactionLevel() > 0) {
-            $this->rollBack(0);
-            if ($this->container->has(StdoutLoggerInterface::class)) {
-                $logger = $this->container->get(StdoutLoggerInterface::class);
-                $logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
+        try {
+            if ($this->transactionLevel() > 0) {
+                $this->rollBack(0);
+                if ($this->container->has(StdoutLoggerInterface::class)) {
+                    $logger = $this->container->get(StdoutLoggerInterface::class);
+                    $logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
+                }
             }
+            $this->pool->release($this);
+        } catch (Throwable $exception) {
+            if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
+                $logger->critical('Release connection failed, caused by ' . $exception);
+            }
+            throw $exception;
         }
-        $this->pool->release($this);
     }
 
     public function getActiveConnection()
@@ -55,7 +60,7 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
         return $this;
     }
 
-    public function retry(\Throwable $throwable, $name, $arguments)
+    public function retry(Throwable $throwable, $name, $arguments)
     {
         if ($this->transactionLevel() > 0) {
             throw $throwable;
@@ -65,7 +70,7 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
             try {
                 $this->reconnect();
                 return $this->{$name}(...$arguments);
-            } catch (\Throwable $throwable) {
+            } catch (Throwable $throwable) {
                 if ($this->container->has(StdoutLoggerInterface::class)) {
                     $logger = $this->container->get(StdoutLoggerInterface::class);
                     $logger->error('Connection execute retry failed. message = ' . $throwable->getMessage());

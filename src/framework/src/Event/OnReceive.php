@@ -11,33 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Framework\Event;
 
+use Swoole\Server;
+
 class OnReceive
 {
-    /**
-     * @var \Swoole\Server
-     */
-    public $server;
-
-    /**
-     * @var int
-     */
-    public $fd;
-
-    /**
-     * @var int
-     */
-    public $reactorId;
-
-    /**
-     * @var mixed
-     */
-    public $data;
-
-    public function __construct($server, int $fd, int $reactorId, $data)
+    public function __construct(public Server $server, public int $fd, public int $reactorId, public mixed $data)
     {
-        $this->server = $server;
-        $this->fd = $fd;
-        $this->reactorId = $reactorId;
-        $this->data = $data;
     }
 }

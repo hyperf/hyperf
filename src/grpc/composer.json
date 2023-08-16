@@ -17,6 +17,7 @@
     },
     "require": {
         "php": ">=7.2",
+        "google/common-protos": "^3.2",
         "google/protobuf": "^3.6.1"
     },
     "suggest": {
@@ -32,7 +33,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         }
     }
 }

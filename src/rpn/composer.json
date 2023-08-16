@@ -9,7 +9,7 @@
         "RPN"
     ],
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "ext-bcmath": "*"
     },
     "autoload": {
@@ -27,7 +27,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Rpn\\ConfigProvider"

@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\DbConnection;
 
+use Hyperf\Context\Context;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Model\Relations\Pivot;
-use Hyperf\Utils\Context;
 use HyperfTest\DbConnection\Stubs\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;

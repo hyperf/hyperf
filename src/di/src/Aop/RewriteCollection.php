@@ -18,48 +18,36 @@ class RewriteCollection
     public const METHOD_LEVEL = 2;
 
     /**
-     * Which methods can be rewrite.
-     * @var array
+     * Which methods can be rewritten.
      */
-    protected $methods = [];
+    protected array $methods = [];
 
     /**
      * Method pattern.
-     * @var array
      */
-    protected $pattern = [];
+    protected array $pattern = [];
 
     /**
      * Rewrite level.
-     * @var int
      */
-    protected $level = self::METHOD_LEVEL;
+    protected int $level = self::METHOD_LEVEL;
 
-    /**
-     * @var string
-     */
-    protected $class;
-
-    /**
-     * @var array
-     */
-    protected $shouldNotRewriteMethods = [
+    protected array $shouldNotRewriteMethods = [
         '__construct',
     ];
 
-    public function __construct(string $class)
+    public function __construct(protected string $class)
     {
-        $this->class = $class;
     }
 
     /**
-     * @param array|string $methods
+     * @param string|string[] $methods
      */
     public function add($methods): self
     {
         $methods = (array) $methods;
         foreach ($methods as $method) {
-            if (strpos($method, '*') === false) {
+            if (! str_contains($method, '*')) {
                 $this->methods[] = $method;
             } else {
                 $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $method);

@@ -16,7 +16,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class ValueAspect extends AbstractAspect
 {
-    public $annotations = [
+    public array $annotations = [
         Value::class,
     ];
 

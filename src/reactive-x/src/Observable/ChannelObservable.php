@@ -11,29 +11,18 @@ declare(strict_types=1);
  */
 namespace Hyperf\ReactiveX\Observable;
 
+use Hyperf\Engine\Channel;
 use Rx\DisposableInterface;
 use Rx\Observable;
 use Rx\ObserverInterface;
 use Rx\Scheduler;
 use Rx\SchedulerInterface;
-use Swoole\Coroutine\Channel;
+use Throwable;
 
 class ChannelObservable extends Observable
 {
-    /**
-     * @var Channel
-     */
-    private $channel;
-
-    /**
-     * @var null|SchedulerInterface
-     */
-    private $scheduler;
-
-    public function __construct(Channel $channel, ?SchedulerInterface $scheduler = null)
+    public function __construct(private Channel $channel, private ?SchedulerInterface $scheduler = null)
     {
-        $this->channel = $channel;
-        $this->scheduler = $scheduler;
     }
 
     protected function _subscribe(ObserverInterface $observer): DisposableInterface
@@ -46,7 +35,7 @@ class ChannelObservable extends Observable
                 }
                 $observer->onNext($result);
                 $reschedule();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $observer->onError($e);
             }
         };

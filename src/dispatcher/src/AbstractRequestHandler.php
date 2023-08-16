@@ -14,52 +14,32 @@ namespace Hyperf\Dispatcher;
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
+
 use function is_string;
-use function sprintf;
 
 abstract class AbstractRequestHandler
 {
-    /**
-     * @var array
-     */
-    protected $middlewares = [];
-
-    /**
-     * @var int
-     */
-    protected $offset = 0;
-
-    /**
-     * @var MiddlewareInterface|object
-     */
-    protected $coreHandler;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected int $offset = 0;
 
     /**
      * @param array $middlewares All middlewares to dispatch by dispatcher
      * @param MiddlewareInterface|object $coreHandler The core middleware of dispatcher
      */
-    public function __construct(array $middlewares, $coreHandler, ContainerInterface $container)
+    public function __construct(protected array $middlewares, protected $coreHandler, protected ContainerInterface $container)
     {
-        $this->middlewares = array_values($middlewares);
-        $this->coreHandler = $coreHandler;
-        $this->container = $container;
+        $this->middlewares = array_values($this->middlewares);
     }
 
     protected function handleRequest($request)
     {
-        if (! isset($this->middlewares[$this->offset]) && ! empty($this->coreHandler)) {
+        if (! isset($this->middlewares[$this->offset])) {
             $handler = $this->coreHandler;
         } else {
             $handler = $this->middlewares[$this->offset];
             is_string($handler) && $handler = $this->container->get($handler);
         }
-        if (! method_exists($handler, 'process')) {
-            throw new InvalidArgumentException(sprintf('Invalid middleware, it has to provide a process() method.'));
+        if (! $handler || ! method_exists($handler, 'process')) {
+            throw new InvalidArgumentException('Invalid middleware, it has to provide a process() method.');
         }
         return $handler->process($request, $this->next());
     }

@@ -16,7 +16,7 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\TableDiff;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 
 class RenameColumn
 {
@@ -24,9 +24,8 @@ class RenameColumn
      * Compile a rename column command.
      *
      * @param \Hyperf\Database\Schema\Grammars\Grammar $grammar
-     * @return array
      */
-    public static function compile(Grammar $grammar, Blueprint $blueprint, Fluent $command, Connection $connection)
+    public static function compile(Grammar $grammar, Blueprint $blueprint, Fluent $command, Connection $connection): array
     {
         $column = $connection->getDoctrineColumn(
             $grammar->getTablePrefix() . $blueprint->getTable(),

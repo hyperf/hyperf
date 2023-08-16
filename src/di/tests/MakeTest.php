@@ -11,14 +11,15 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
-use Hyperf\Di\Definition\ScanConfig;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Di\Stub\Bar;
 use HyperfTest\Di\Stub\Demo;
 use HyperfTest\Di\Stub\Foo;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Support\make;
 
 /**
  * @internal
@@ -28,7 +29,7 @@ class MakeTest extends TestCase
 {
     protected function setUp(): void
     {
-        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $container = new Container(new DefinitionSource([]));
         ApplicationContext::setContainer($container);
     }
 

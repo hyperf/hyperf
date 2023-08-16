@@ -17,20 +17,14 @@ use Hyperf\Event\Contract\ListenerInterface;
 
 class QueueLengthListener implements ListenerInterface
 {
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    protected $level = [
+    protected array $level = [
         'debug' => 10,
         'info' => 50,
         'warning' => 500,
     ];
 
-    public function __construct(StdoutLoggerInterface $logger)
+    public function __construct(protected StdoutLoggerInterface $logger)
     {
-        $this->logger = $logger;
     }
 
     public function listen(): array
@@ -43,19 +37,19 @@ class QueueLengthListener implements ListenerInterface
     /**
      * @param QueueLength $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $value = 0;
         foreach ($this->level as $level => $value) {
             if ($event->length < $value) {
-                $message = sprintf('Queue lengh of %s is %d.', $event->key, $event->length);
+                $message = sprintf('Queue length of %s is %d.', $event->key, $event->length);
                 $this->logger->{$level}($message);
                 break;
             }
         }
 
         if ($event->length >= $value) {
-            $this->logger->error(sprintf('Queue lengh of %s is %d.', $event->key, $event->length));
+            $this->logger->error(sprintf('Queue length of %s is %d.', $event->key, $event->length));
         }
     }
 }

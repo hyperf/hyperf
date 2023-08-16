@@ -11,9 +11,11 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Task;
 
+use Hyperf\Engine\Channel;
 use Hyperf\Task\ChannelFactory;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Channel;
+
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal

@@ -17,40 +17,15 @@ use Hyperf\HttpServer\MiddlewareManager;
 
 class RouteCollector
 {
-    /**
-     * @var string
-     */
-    protected $server;
+    protected string $currentGroupPrefix = '';
 
-    /**
-     * @var RouteParser
-     */
-    protected $routeParser;
-
-    /**
-     * @var DataGenerator
-     */
-    protected $dataGenerator;
-
-    /**
-     * @var string
-     */
-    protected $currentGroupPrefix;
-
-    /**
-     * @var array
-     */
-    protected $currentGroupOptions = [];
+    protected array $currentGroupOptions = [];
 
     /**
      * Constructs a route collector.
      */
-    public function __construct(RouteParser $routeParser, DataGenerator $dataGenerator, string $server = 'http')
+    public function __construct(protected RouteParser $routeParser, protected DataGenerator $dataGenerator, protected string $server = 'http')
     {
-        $this->routeParser = $routeParser;
-        $this->dataGenerator = $dataGenerator;
-        $this->currentGroupPrefix = '';
-        $this->server = $server;
     }
 
     /**
@@ -61,14 +36,14 @@ class RouteCollector
      * @param string|string[] $httpMethod
      * @param array|string $handler
      */
-    public function addRoute($httpMethod, string $route, $handler, array $options = [])
+    public function addRoute(array|string $httpMethod, string $route, mixed $handler, array $options = []): void
     {
         $route = $this->currentGroupPrefix . $route;
-        $routeDatas = $this->routeParser->parse($route);
+        $routeDataList = $this->routeParser->parse($route);
         $options = $this->mergeOptions($this->currentGroupOptions, $options);
         foreach ((array) $httpMethod as $method) {
             $method = strtoupper($method);
-            foreach ($routeDatas as $routeData) {
+            foreach ($routeDataList as $routeData) {
                 $this->dataGenerator->addRoute($method, $routeData, new Handler($handler, $route, $options));
             }
 
@@ -79,9 +54,9 @@ class RouteCollector
     /**
      * Create a route group with a common prefix.
      *
-     * All routes created in the passed callback will have the given group prefix prepended.
+     * All routes created by the passed callback will have the given group prefix prepended.
      */
-    public function addGroup(string $prefix, callable $callback, array $options = [])
+    public function addGroup(string $prefix, callable $callback, array $options = []): void
     {
         $previousGroupPrefix = $this->currentGroupPrefix;
         $currentGroupOptions = $this->currentGroupOptions;
@@ -100,7 +75,7 @@ class RouteCollector
      * This is simply an alias of $this->addRoute('GET', $route, $handler)
      * @param array|string $handler
      */
-    public function get(string $route, $handler, array $options = [])
+    public function get(string $route, mixed $handler, array $options = []): void
     {
         $this->addRoute('GET', $route, $handler, $options);
     }
@@ -111,7 +86,7 @@ class RouteCollector
      * This is simply an alias of $this->addRoute('POST', $route, $handler)
      * @param array|string $handler
      */
-    public function post(string $route, $handler, array $options = [])
+    public function post(string $route, mixed $handler, array $options = []): void
     {
         $this->addRoute('POST', $route, $handler, $options);
     }
@@ -122,7 +97,7 @@ class RouteCollector
      * This is simply an alias of $this->addRoute('PUT', $route, $handler)
      * @param array|string $handler
      */
-    public function put(string $route, $handler, array $options = [])
+    public function put(string $route, mixed $handler, array $options = []): void
     {
         $this->addRoute('PUT', $route, $handler, $options);
     }
@@ -133,7 +108,7 @@ class RouteCollector
      * This is simply an alias of $this->addRoute('DELETE', $route, $handler)
      * @param array|string $handler
      */
-    public function delete(string $route, $handler, array $options = [])
+    public function delete(string $route, mixed $handler, array $options = []): void
     {
         $this->addRoute('DELETE', $route, $handler, $options);
     }
@@ -144,7 +119,7 @@ class RouteCollector
      * This is simply an alias of $this->addRoute('PATCH', $route, $handler)
      * @param array|string $handler
      */
-    public function patch(string $route, $handler, array $options = [])
+    public function patch(string $route, mixed $handler, array $options = []): void
     {
         $this->addRoute('PATCH', $route, $handler, $options);
     }
@@ -155,7 +130,7 @@ class RouteCollector
      * This is simply an alias of $this->addRoute('HEAD', $route, $handler)
      * @param array|string $handler
      */
-    public function head(string $route, $handler, array $options = [])
+    public function head(string $route, mixed $handler, array $options = []): void
     {
         $this->addRoute('HEAD', $route, $handler, $options);
     }

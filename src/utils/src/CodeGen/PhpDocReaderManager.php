@@ -11,20 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\CodeGen;
 
-use PhpDocReader\PhpDocReader;
-
-class PhpDocReaderManager
+/**
+ * @deprecated since 3.1, use \Hyperf\CodeParser\PhpDocReaderManager instead.
+ */
+class PhpDocReaderManager extends \Hyperf\CodeParser\PhpDocReaderManager
 {
-    /**
-     * @var null|PhpDocReader
-     */
-    protected static $instance;
-
-    public static function getInstance(): PhpDocReader
-    {
-        if (static::$instance) {
-            return static::$instance;
-        }
-        return static::$instance = new PhpDocReader();
-    }
 }

@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
+use Hyperf\CodeParser\PhpParser;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\CodeGen\PhpParser;
 use PhpParser\Node;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\TraitUse;
@@ -20,21 +20,12 @@ use PhpParser\NodeVisitorAbstract;
 
 class PropertyHandlerVisitor extends NodeVisitorAbstract
 {
-    /**
-     * @var array
-     */
-    protected $proxyTraits = [
+    protected array $proxyTraits = [
         PropertyHandlerTrait::class,
     ];
 
-    /**
-     * @var \Hyperf\Di\Aop\VisitorMetadata
-     */
-    protected $visitorMetadata;
-
-    public function __construct(VisitorMetadata $visitorMetadata)
+    public function __construct(protected VisitorMetadata $visitorMetadata)
     {
-        $this->visitorMetadata = $visitorMetadata;
     }
 
     public function enterNode(Node $node)
@@ -92,7 +83,7 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
                 foreach ($parameters as $parameter) {
                     $constructor->params[] = PhpParser::getInstance()->getNodeFromReflectionParameter($parameter);
                 }
-            } catch (\ReflectionException $exception) {
+            } catch (\ReflectionException) {
                 // Cannot found __construct method in parent class or traits, do nothing.
             }
         }
@@ -128,7 +119,7 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
     {
         $traits = [];
         foreach ($this->proxyTraits as $proxyTrait) {
-            // Should not check the trait whether or not exist to avoid class autoload.
+            // Should not check the trait whether exist to avoid class autoload.
             if (! is_string($proxyTrait)) {
                 continue;
             }

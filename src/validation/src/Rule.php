@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Contracts\Arrayable;
 
 class Rule
 {
@@ -36,10 +36,8 @@ class Rule
 
     /**
      * Get an in constraint builder instance.
-     *
-     * @param array|Arrayable|string $values
      */
-    public static function in($values): Rules\In
+    public static function in(mixed $values): Rules\In
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -50,10 +48,8 @@ class Rule
 
     /**
      * Get a not_in constraint builder instance.
-     *
-     * @param array|Arrayable|string $values
      */
-    public static function notIn($values): Rules\NotIn
+    public static function notIn(mixed $values): Rules\NotIn
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -64,10 +60,8 @@ class Rule
 
     /**
      * Get a required_if constraint builder instance.
-     *
-     * @param bool|callable $callback
      */
-    public static function requiredIf($callback): Rules\RequiredIf
+    public static function requiredIf(bool|callable $callback): Rules\RequiredIf
     {
         return new Rules\RequiredIf($callback);
     }

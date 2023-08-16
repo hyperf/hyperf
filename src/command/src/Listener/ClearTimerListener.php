@@ -24,7 +24,7 @@ class ClearTimerListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         class_exists(Timer::class) && Timer::clearAll();
     }

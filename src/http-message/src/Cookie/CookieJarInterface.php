@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Cookie;
 
+use Countable;
+use Hyperf\Contract\Arrayable;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -24,7 +26,7 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @see http://docs.python.org/2/library/cookielib.html Inspiration
  */
-interface CookieJarInterface extends \Countable, \IteratorAggregate
+interface CookieJarInterface extends Countable, \IteratorAggregate, Arrayable
 {
     /**
      * Create a request with added cookie headers.
@@ -84,11 +86,4 @@ interface CookieJarInterface extends \Countable, \IteratorAggregate
      * to RFC 2965.
      */
     public function clearSessionCookies();
-
-    /**
-     * Converts the cookie jar to an array.
-     *
-     * @return array
-     */
-    public function toArray();
 }

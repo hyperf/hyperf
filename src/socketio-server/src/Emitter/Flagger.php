@@ -16,7 +16,7 @@ trait Flagger
     /**
      * @return bool|int flags
      */
-    protected function guessFlags(bool $compress)
+    protected function guessFlags(bool $compress): bool|int
     {
         // older swoole version
         if (! defined('SWOOLE_WEBSOCKET_FLAG_FIN')) {

@@ -14,6 +14,7 @@ namespace Hyperf\Amqp\Listener;
 use Doctrine\Instantiator\Instantiator;
 use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\Message\ProducerMessageInterface;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
@@ -21,24 +22,12 @@ use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
+use Throwable;
 
 class MainWorkerStartListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    public function __construct(ContainerInterface $container, StdoutLoggerInterface $logger)
+    public function __construct(private ContainerInterface $container, private StdoutLoggerInterface $logger)
     {
-        $this->container = $container;
-        $this->logger = $logger;
     }
 
     /**
@@ -56,8 +45,12 @@ class MainWorkerStartListener implements ListenerInterface
      * Handle the Event when the event is triggered, all listeners will
      * complete before the event is returned to the EventDispatcher.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
+        if (! $this->isEnable()) {
+            return;
+        }
+
         // Declare exchange and routingKey
         $producerMessages = AnnotationCollector::getClassesByAnnotation(Producer::class);
         if ($producerMessages) {
@@ -84,10 +77,20 @@ class MainWorkerStartListener implements ListenerInterface
                 } catch (AMQPProtocolChannelException $e) {
                     $this->logger->debug('AMQPProtocolChannelException: ' . $e->getMessage());
                     // Do nothing.
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     $this->logger->error((string) $exception);
                 }
             }
         }
+    }
+
+    protected function isEnable(): bool
+    {
+        if (! $this->container->has(ConfigInterface::class)) {
+            return true;
+        }
+
+        $config = $this->container->get(ConfigInterface::class);
+        return (bool) $config->get('amqp.enable', true);
     }
 }

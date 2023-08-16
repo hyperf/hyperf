@@ -11,9 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Testing;
 
+use Hyperf\Codec\Json;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\MethodDefinitionCollector;
@@ -24,19 +29,17 @@ use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Router;
+use Hyperf\Serializer\SimpleNormalizer;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
+use Hyperf\Server\ServerFactory;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\Testing\Client;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
-use Hyperf\Utils\Waiter;
 use HyperfTest\Testing\Stub\Exception\Handler\FooExceptionHandler;
 use HyperfTest\Testing\Stub\FooController;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -117,13 +120,26 @@ class ClientTest extends TestCase
         $this->assertSame($id, $data['params']['id']);
     }
 
+    public function testClientCallable()
+    {
+        $container = $this->getContainer();
+
+        $client = new Client($container);
+
+        $id = uniqid();
+
+        $res = $client->request('GET', '/context', callable: fn () => Context::set('request_id', $id));
+
+        $this->assertSame(['request_id' => $id], Json::decode((string) $res->getBody()));
+    }
+
     public function getContainer()
     {
         $container = Mockery::mock(Container::class);
 
         $container->shouldReceive('get')->with(HttpDispatcher::class)->andReturn(new HttpDispatcher($container));
         $container->shouldReceive('get')->with(ExceptionHandlerDispatcher::class)->andReturn(new ExceptionHandlerDispatcher($container));
-        $container->shouldReceive('get')->with(ResponseEmitter::class)->andReturn(new ResponseEmitter());
+        $container->shouldReceive('get')->with(ResponseEmitter::class)->andReturn(new ResponseEmitter(null));
         $container->shouldReceive('get')->with(DispatcherFactory::class)->andReturn($factory = new DispatcherFactory());
         $container->shouldReceive('get')->with(NormalizerInterface::class)->andReturn(new SimpleNormalizer());
         $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)->andReturn(new MethodDefinitionCollector());
@@ -159,12 +175,21 @@ class ClientTest extends TestCase
             return new CoreMiddleware(...array_values($args));
         });
         $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
+        $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+        $dispatcher->shouldReceive('dispatch')->shouldReceive('dispatch')->andReturn(true);
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturn(true);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
+        $container->shouldReceive('get')->with(ServerFactory::class)->andReturn(
+            Mockery::mock(ServerFactory::class)->shouldReceive('getConfig')->andReturn(null)->getMock()
+        );
+
         ApplicationContext::setContainer($container);
 
         Router::init($factory);
         Router::get('/', [FooController::class, 'index']);
         Router::get('/exception', [FooController::class, 'exception']);
         Router::get('/id', [FooController::class, 'id']);
+        Router::get('/context', [FooController::class, 'context']);
         Router::addRoute(['GET', 'POST'], '/request', [FooController::class, 'request']);
 
         return $container;

@@ -107,9 +107,9 @@ composer require hyperf/signal
 composer require symfony/serializer
 ```
 
-## Trait 内使用 `@Inject` 注入报错 `Error while injecting dependencies into ... No entry or class found ...`
+## Trait 内使用 `#[Inject]` 注入报错 `Error while injecting dependencies into ... No entry or class found ...`
 
-若 Trait 通过 `@Inject @var` 注入属性, 同时子类里 `use` 了不同命名空间的同名类, 会导致 Trait 里类名被覆盖，进而导致注入失效:
+若 Trait 通过 `#[Inject] @var` 注入属性, 同时子类里 `use` 了不同命名空间的同名类, 会导致 Trait 里类名被覆盖，进而导致注入失效:
 
 ```php
 use Hyperf\HttpServer\Contract\ResponseInterface;
@@ -118,9 +118,9 @@ use Hyperf\Di\Annotation\Inject;
 trait TestTrait
 {
     /**
-     * @Inject()   
      * @var ResponseInterface
      */
+    #[Inject]
     protected $response;
 }
 ```
@@ -180,44 +180,6 @@ use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coordinator\Constants;
 
 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
-```
-
-
-## ORM 不支持 bit 类型
-
-若想要使 `ORM` 支持 `bit` 类型，只需要增加以下监听器代码即可。
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Listener;
-
-use Hyperf\Database\Connection;
-use Hyperf\Database\MySqlBitConnection;
-use Hyperf\Event\Annotation\Listener;
-use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BootApplication;
-
-#[Listener]
-class SupportMySQLBitListener implements ListenerInterface
-{
-    public function listen(): array
-    {
-        return [
-            BootApplication::class,
-        ];
-    }
-
-    public function process(object $event)
-    {
-        Connection::resolverFor('mysql', static function ($connection, $database, $prefix, $config) {
-            return new MySqlBitConnection($connection, $database, $prefix, $config);
-        });
-    }
-}
-
 ```
 
 ## OSS 上传组件报 iconv 错误

@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Di\Stub\Aspect\GetNameAspect;
 use HyperfTest\Di\Stub\Aspect\IncrAspect;
 use HyperfTest\Di\Stub\Aspect\IncrAspectAnnotation;
@@ -21,6 +21,8 @@ use HyperfTest\Di\Stub\ProxyTraitObject;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\value;
 
 /**
  * @internal
@@ -46,6 +48,26 @@ class ProxyTraitTest extends TestCase
 
         $this->assertEquals(['id' => 1, 'str' => 'hy', 'num' => 1.0], $obj->get3(1, 'hy')['keys']);
         $this->assertEquals(['id', 'str', 'num'], $obj->get3(1, 'hy')['order']);
+    }
+
+    public function testGetParamsMapOnTraitAlias()
+    {
+        $obj = new ProxyTraitObject();
+
+        $this->assertEquals(['id' => null, 'str' => ''], $obj->getOnTrait(null)['keys']);
+        $this->assertEquals(['id', 'str'], $obj->getOnTrait(null)['order']);
+
+        $this->assertEquals(['id' => 1, 'str' => ''], $obj->get2OnTrait()['keys']);
+        $this->assertEquals(['id', 'str'], $obj->get2OnTrait()['order']);
+
+        $this->assertEquals(['id' => null, 'str' => ''], $obj->get2OnTrait(null)['keys']);
+        $this->assertEquals(['id', 'str'], $obj->get2OnTrait(null)['order']);
+
+        $this->assertEquals(['id' => 1, 'str' => '', 'num' => 1.0], $obj->get3OnTrait()['keys']);
+        $this->assertEquals(['id', 'str', 'num'], $obj->get3OnTrait()['order']);
+
+        $this->assertEquals(['id' => 1, 'str' => 'hy', 'num' => 1.0], $obj->get3OnTrait(1, 'hy')['keys']);
+        $this->assertEquals(['id', 'str', 'num'], $obj->get3OnTrait(1, 'hy')['order']);
     }
 
     public function testProceedingJoinPointGetInstance()

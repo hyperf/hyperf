@@ -11,24 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\WebSocketClient;
 
+use Stringable;
 use Swoole\WebSocket\Frame as SwFrame;
 
-class Frame
+class Frame implements Stringable
 {
-    /**
-     * @var bool
-     */
-    public $finish = true;
+    public bool $finish = true;
 
-    /**
-     * @var string
-     */
-    public $opcode;
+    public int $opcode;
 
-    /**
-     * @var string
-     */
-    public $data;
+    public string $data;
 
     public function __construct(SwFrame $frame)
     {
@@ -37,7 +29,7 @@ class Frame
         $this->data = $frame->data;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->data;
     }
@@ -53,7 +45,7 @@ class Frame
         return $map[$this->opcode] ?? 'WEBSOCKET_BAD_OPCODE';
     }
 
-    public function getOpcode(): string
+    public function getOpcode(): int
     {
         return $this->opcode;
     }

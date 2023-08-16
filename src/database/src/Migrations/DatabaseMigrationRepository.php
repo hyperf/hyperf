@@ -16,33 +16,19 @@ use Hyperf\Database\ConnectionResolverInterface as Resolver;
 class DatabaseMigrationRepository implements MigrationRepositoryInterface
 {
     /**
-     * The database connection resolver instance.
-     *
-     * @var \Hyperf\Database\ConnectionResolverInterface
-     */
-    protected $resolver;
-
-    /**
-     * The name of the migration table.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
      * The name of the database connection to use.
-     *
-     * @var string
      */
-    protected $connection;
+    protected ?string $connection = null;
 
     /**
      * Create a new database migration repository instance.
      */
-    public function __construct(Resolver $resolver, string $table)
+    /**
+     * @param Resolver $resolver the database connection resolver instance
+     * @param string $table the name of the migration table
+     */
+    public function __construct(protected Resolver $resolver, protected string $table)
     {
-        $this->table = $table;
-        $this->resolver = $resolver;
     }
 
     /**
@@ -192,10 +178,8 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
 
     /**
      * Set the information source to gather data.
-     *
-     * @param string $name
      */
-    public function setSource($name)
+    public function setSource(?string $name)
     {
         $this->connection = $name;
     }

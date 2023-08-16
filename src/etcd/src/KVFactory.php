@@ -16,6 +16,8 @@ use Hyperf\Etcd\Exception\ClientNotFindException;
 use Hyperf\Guzzle\HandlerStackFactory;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class KVFactory
 {
     public function __invoke(ContainerInterface $container)
@@ -45,6 +47,6 @@ class KVFactory
                 return make(V3\KV::class, $params);
         }
 
-        throw new ClientNotFindException(sprintf("KV of {$version} is not find."));
+        throw new ClientNotFindException("KV of {$version} is not find.");
     }
 }

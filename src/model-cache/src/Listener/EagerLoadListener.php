@@ -19,11 +19,8 @@ use Psr\Container\ContainerInterface;
 
 class EagerLoadListener implements ListenerInterface
 {
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
@@ -33,7 +30,7 @@ class EagerLoadListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $eagerLoader = $this->container->get(EagerLoader::class);
         Collection::macro('loadCache', function ($parameters) use ($eagerLoader) {

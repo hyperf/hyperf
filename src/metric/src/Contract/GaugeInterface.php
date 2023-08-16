@@ -17,7 +17,7 @@ namespace Hyperf\Metric\Contract;
  */
 interface GaugeInterface
 {
-    public function with(string ...$labelValues): self;
+    public function with(string ...$labelValues): static;
 
     public function set(float $value): void;
 

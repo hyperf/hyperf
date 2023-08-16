@@ -11,17 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\RateLimit;
 
+use Hyperf\RateLimit\Aspect\RateLimitAnnotationAspect;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
+            'aspects' => [
+                RateLimitAnnotationAspect::class,
             ],
             'publish' => [
                 [

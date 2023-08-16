@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\DB\Exception;
 
-class QueryException extends \PDOException
+use PDOException;
+
+class QueryException extends PDOException
 {
 }

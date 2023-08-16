@@ -12,32 +12,23 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine;
 
 use Hyperf\ViewEngine\Contract\Htmlable;
+use Stringable;
 
-class HtmlString implements Htmlable
+class HtmlString implements Htmlable, Stringable
 {
-    /**
-     * The HTML string.
-     *
-     * @var string
-     */
-    protected $html;
-
     /**
      * Create a new HTML string instance.
      *
      * @param string $html
      */
-    public function __construct($html = '')
+    public function __construct(protected $html = '')
     {
-        $this->html = $html;
     }
 
     /**
      * Get the HTML string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toHtml();
     }

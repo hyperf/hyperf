@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Nacos\Cases\Provider;
 
+use Hyperf\Codec\Json;
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Config;
-use Hyperf\Utils\Codec\Json;
 use HyperfTest\Nacos\AbstractTestCase;
 use HyperfTest\Nacos\HandlerMockery;
 

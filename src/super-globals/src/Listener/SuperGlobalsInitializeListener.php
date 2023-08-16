@@ -11,35 +11,33 @@ declare(strict_types=1);
  */
 namespace Hyperf\SuperGlobals\Listener;
 
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\SuperGlobals\Proxy;
+use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\make;
 
 class SuperGlobalsInitializeListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
     {
         return [
             AfterWorkerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
     /**
      * @param AfterWorkerStart $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $_COOKIE = make(Proxy\Cookie::class);
         $_FILES = make(Proxy\File::class);

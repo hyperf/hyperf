@@ -21,13 +21,6 @@ class ConfigProvider
             'listeners' => [
                 AddConsumerDefinitionListener::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

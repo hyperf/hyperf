@@ -18,6 +18,10 @@ class ConsumerFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        return new Consumer($container, $container->get(ConnectionFactory::class), $container->get(StdoutLoggerInterface::class));
+        return new Consumer(
+            $container,
+            $container->get(ConnectionFactory::class),
+            $container->get(StdoutLoggerInterface::class)
+        );
     }
 }

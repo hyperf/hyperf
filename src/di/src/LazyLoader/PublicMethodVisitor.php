@@ -31,22 +31,16 @@ class PublicMethodVisitor extends NodeVisitorAbstract
      *
      * @var Node[]
      */
-    public $nodes = [];
+    public array $nodes = [];
+
+    private string $originalClassName;
 
     /**
-     * @var Node\Stmt[]
+     * @param Node\Stmt[] $stmts
      */
-    private $stmts;
-
-    /**
-     * @var string
-     */
-    private $originalClassName;
-
-    public function __construct(array $stmts, string $originalClassName)
+    public function __construct(private array $stmts, string $originalClassName)
     {
-        $this->stmts = $stmts;
-        if (strpos($originalClassName, '\\') !== 0) {
+        if (! str_starts_with($originalClassName, '\\')) {
             $originalClassName = '\\' . $originalClassName;
         }
         $this->originalClassName = $originalClassName;

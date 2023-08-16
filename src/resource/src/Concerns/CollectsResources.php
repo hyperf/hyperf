@@ -11,17 +11,20 @@ declare(strict_types=1);
  */
 namespace Hyperf\Resource\Concerns;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Resource\Value\MissingValue;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Traversable;
+
+use function Hyperf\Support\class_basename;
 
 trait CollectsResources
 {
     /**
      * Get an iterator for the resource collection.
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): Traversable
     {
         return $this->collection->getIterator();
     }
@@ -65,7 +68,7 @@ trait CollectsResources
         }
 
         if (Str::endsWith(class_basename($this), 'Collection')
-            && class_exists($class = Str::replaceLast('Collection', '', get_class($this)))) {
+            && class_exists($class = Str::replaceLast('Collection', '', $this::class))) {
             return $class;
         }
 

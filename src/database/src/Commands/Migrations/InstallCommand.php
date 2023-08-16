@@ -17,34 +17,12 @@ use Symfony\Component\Console\Input\InputOption;
 class InstallCommand extends BaseCommand
 {
     /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $name = 'migrate:install';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Create the migration repository';
-
-    /**
-     * The repository instance.
-     *
-     * @var MigrationRepositoryInterface
-     */
-    protected $repository;
-
-    /**
      * Create a new migration install command instance.
      */
-    public function __construct(MigrationRepositoryInterface $repository)
+    public function __construct(protected MigrationRepositoryInterface $repository)
     {
-        parent::__construct();
-
-        $this->repository = $repository;
+        parent::__construct('migrate:install');
+        $this->setDescription('Create the migration repository');
     }
 
     /**

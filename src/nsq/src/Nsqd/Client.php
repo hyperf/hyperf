@@ -17,10 +17,7 @@ use Hyperf\Guzzle\CoroutineHandler;
 
 class Client implements ClientInterface
 {
-    /**
-     * @var array
-     */
-    protected $options = [];
+    protected array $options = [];
 
     public function __construct(ConfigInterface $config, string $pool = 'default')
     {

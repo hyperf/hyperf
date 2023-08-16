@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\ViewEngine\Compiler\CompilerInterface;
 use Psr\Container\ContainerInterface;
 
@@ -44,10 +44,7 @@ use Psr\Container\ContainerInterface;
  */
 class Blade
 {
-    /**
-     * @var null|ContainerInterface
-     */
-    protected static $container;
+    protected static ?ContainerInterface $container = null;
 
     public static function __callStatic($method, $args)
     {

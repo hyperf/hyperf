@@ -12,19 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\ConfigZookeeper;
 
 use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
 use Swoole\Zookeeper;
 
 class Client implements ClientInterface
 {
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ConfigInterface $config)
     {
-        $this->config = $container->get(ConfigInterface::class);
     }
 
     public function pull(): array

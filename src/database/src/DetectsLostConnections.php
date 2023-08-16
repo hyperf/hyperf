@@ -11,17 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Throwable;
 
 trait DetectsLostConnections
 {
     /**
      * Determine if the given exception was caused by a lost connection.
-     *
-     * @return bool
      */
-    protected function causedByLostConnection(Throwable $e)
+    protected function causedByLostConnection(Throwable $e): bool
     {
         $message = $e->getMessage();
 
@@ -45,6 +43,8 @@ trait DetectsLostConnections
             'Name or service not known',
             'ORA-03114',
             'Packets out of order. Expected',
+            'Broken pipe',
+            'Error reading result',
         ]);
     }
 }

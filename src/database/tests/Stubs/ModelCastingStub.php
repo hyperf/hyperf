@@ -15,7 +15,7 @@ use Hyperf\Database\Model\Model;
 
 class ModelCastingStub extends Model
 {
-    protected $casts = [
+    protected array $casts = [
         'intAttribute' => 'int',
         'floatAttribute' => 'float',
         'stringAttribute' => 'string',

@@ -14,24 +14,9 @@ namespace Hyperf\Task;
 class Task
 {
     /**
-     * @var array|callable
+     * @param array|callable $callback
      */
-    public $callback;
-
-    /**
-     * @var array
-     */
-    public $arguments;
-
-    /**
-     * @var int
-     */
-    public $workerId;
-
-    public function __construct($callback, array $arguments = [], int $workerId = -1)
+    public function __construct(public mixed $callback, public array $arguments = [], public int $workerId = -1)
     {
-        $this->callback = $callback;
-        $this->arguments = $arguments;
-        $this->workerId = $workerId;
     }
 }

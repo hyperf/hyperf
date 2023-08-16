@@ -17,14 +17,8 @@ use Hyperf\Nats\Event\AfterSubscribe;
 
 class AfterSubscribeListener implements ListenerInterface
 {
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(StdoutLoggerInterface $logger)
+    public function __construct(protected StdoutLoggerInterface $logger)
     {
-        $this->logger = $logger;
     }
 
     public function listen(): array
@@ -37,7 +31,7 @@ class AfterSubscribeListener implements ListenerInterface
     /**
      * @param AfterSubscribe $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $this->logger->warning(sprintf(
             'NatsConsumer[%s] subscribe timeout. Try again after 1 ms.',

@@ -13,24 +13,15 @@ namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Constants;
 use Hyperf\Amqp\Packer\Packer;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 abstract class ProducerMessage extends Message implements ProducerMessageInterface
 {
-    /**
-     * @var string
-     */
-    protected $payload = '';
+    protected mixed $payload = '';
 
-    /**
-     * @var string
-     */
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
-    /**
-     * @var array
-     */
-    protected $properties
+    protected array $properties
         = [
             'content_type' => 'text/plain',
             'delivery_mode' => Constants::DELIVERY_MODE_PERSISTENT,

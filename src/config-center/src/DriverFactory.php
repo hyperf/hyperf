@@ -14,16 +14,12 @@ namespace Hyperf\ConfigCenter;
 use Hyperf\ConfigCenter\Contract\DriverInterface;
 use Hyperf\Contract\ConfigInterface;
 
+use function Hyperf\Support\make;
+
 class DriverFactory
 {
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    public function __construct(ConfigInterface $config)
+    public function __construct(protected ConfigInterface $config)
     {
-        $this->config = $config;
     }
 
     public function create(string $driver, array $properties = []): DriverInterface

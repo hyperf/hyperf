@@ -17,6 +17,8 @@ use PhpParser\Node\Const_;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassConst;
 
+use function Hyperf\Support\class_basename;
+
 abstract class AbstractLazyProxyBuilder
 {
     /**
@@ -27,25 +29,17 @@ abstract class AbstractLazyProxyBuilder
 
     /**
      * The BuilderFactory.
-     * @var BuilderFactory
      */
-    public $factory;
+    public BuilderFactory $factory;
 
     /**
      * Class Namespace.
-     * @var string
      */
-    protected $namespace;
+    protected ?string $namespace = null;
 
-    /**
-     * @var string
-     */
-    protected $proxyClassName;
+    protected ?string $proxyClassName = null;
 
-    /**
-     * @var string
-     */
-    protected $originalClassName;
+    protected ?string $originalClassName = null;
 
     public function __construct()
     {

@@ -16,6 +16,14 @@ use Hyperf\Di\Aop\ProxyTrait;
 class ProxyTraitObject
 {
     use ProxyTrait;
+    use ProxyTraitOnTrait {
+        ProxyTraitOnTrait::get as getOnTrait;
+        ProxyTraitOnTrait::get2 as get2OnTrait;
+        ProxyTraitOnTrait::get3 as get3OnTrait;
+        ProxyTraitOnTrait::incr as incrOnTrait;
+        ProxyTraitOnTrait::getName as getNameOnTrait;
+        ProxyTraitOnTrait::getName2 as getName2OnTrait;
+    }
 
     /**
      * @var string

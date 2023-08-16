@@ -63,11 +63,11 @@ Router::addGroup(
 ### Defined by annotation
 
 When defining routes through annotations, we recommend defining middleware by means of annotations. There are two annotations for the definition of middleware, namely:
-  - `@Middleware` annotation are used when defining a single middleware. Only one annotation can be defined in one place, and cannot be defined repeatedly.
-  - `@Middlewares` annotation are used when defining multiple middleware. Only one annotation can be defined in one place, and then multiple middleware definitions can be implemented by defining multiple `@Middleware` annotations within the annotation.
+  - `#[Middleware]` annotation are used when defining a single middleware. Only one annotation can be defined in one place, and cannot be defined repeatedly.
+  - `#[Middlewares]` annotation are used when defining multiple middleware. Only one annotation can be defined in one place, and then multiple middleware definitions can be implemented by defining multiple `#[Middleware]` annotations within the annotation.
   
-> Use `@Middleware` should `use Hyperf\HttpServer\Annotation\Middleware;` namespace；   
-> Use `@Middlewares` should `use Hyperf\HttpServer\Annotation\Middlewares;` namespace；
+> Use `#[Middleware]` should `use Hyperf\HttpServer\Annotation\Middleware;` namespace；   
+> Use `#[Middlewares]` should `use Hyperf\HttpServer\Annotation\Middlewares;` namespace；
 
 Define a single middleware：
 
@@ -78,10 +78,8 @@ use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 
-/**
- * @AutoController()
- * @Middleware(FooMiddleware::class)
- */
+ #[AutoController]
+ #[Middleware(FooMiddleware::class)]
 class IndexController
 {
     public function index()
@@ -102,13 +100,8 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
-/**
- * @AutoController()
- * @Middlewares({
- *     @Middleware(FooMiddleware::class),
- *     @Middleware(BarMiddleware::class)
- * })
- */
+#[AutoController]
+#[Middlewares([FooMiddleware::class, BarMiddleware::class])]
 class IndexController
 {
     public function index()
@@ -132,21 +125,12 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
-/**
- * @AutoController()
- * @Middlewares({
- *     @Middleware(FooMiddleware::class)
- * })
- */
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
 class IndexController
 {
     
-    /**
-     * @AutoController()
-     * @Middlewares({
-     *     @Middleware(BarMiddleware::class)
-     * })
-     */
+    #[Middleware(BarMiddleware::class)]
     public function index()
     {
         return 'Hello Hyperf.';
@@ -234,6 +218,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 // $request and $response are the modified objects
-$request = \Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
-$response = \Hyperf\Utils\Context::set(ResponseInterface::class, $response);
+$request = \Hyperf\Context\Context::set(ServerRequestInterface::class, $request);
+$response = \Hyperf\Context\Context::set(ResponseInterface::class, $response);
 ```

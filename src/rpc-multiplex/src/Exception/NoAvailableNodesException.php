@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcMultiplex\Exception;
 
-class NoAvailableNodesException extends \RuntimeException
+use RuntimeException;
+
+class NoAvailableNodesException extends RuntimeException
 {
 }

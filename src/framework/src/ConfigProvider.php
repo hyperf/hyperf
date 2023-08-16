@@ -24,13 +24,6 @@ class ConfigProvider
                 ApplicationInterface::class => ApplicationFactory::class,
                 StdoutLoggerInterface::class => StdoutLogger::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

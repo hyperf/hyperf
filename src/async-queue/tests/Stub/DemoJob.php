@@ -19,7 +19,7 @@ class DemoJob extends Job
 
     public $model;
 
-    protected $maxAttempts = 1;
+    protected int $maxAttempts = 1;
 
     public function __construct($id, $model = null)
     {

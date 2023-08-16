@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
+use Hyperf\Support\Composer;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Assign;
@@ -21,9 +22,12 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\MagicConst\Class_ as MagicConstClass;
+use PhpParser\Node\Scalar\MagicConst\Dir as MagicConstDir;
+use PhpParser\Node\Scalar\MagicConst\File as MagicConstFile;
 use PhpParser\Node\Scalar\MagicConst\Function_ as MagicConstFunction;
 use PhpParser\Node\Scalar\MagicConst\Method as MagicConstMethod;
 use PhpParser\Node\Scalar\MagicConst\Trait_ as MagicConstTrait;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
@@ -32,31 +36,21 @@ use PhpParser\Node\Stmt\Trait_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\NodeVisitorAbstract;
 
+use function Hyperf\Support\value;
+
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
     /**
-     * @var \Hyperf\Di\Aop\VisitorMetadata
-     */
-    protected $visitorMetadata;
-
-    /**
      * Define the proxy handler trait here.
-     *
-     * @var array
      */
-    private $proxyTraits
-        = [
-            ProxyTrait::class,
-        ];
+    private array $proxyTraits = [
+        ProxyTrait::class,
+    ];
 
-    /**
-     * @var bool
-     */
-    private $shouldRewrite = false;
+    private bool $shouldRewrite = false;
 
-    public function __construct(VisitorMetadata $visitorMetadata)
+    public function __construct(protected VisitorMetadata $visitorMetadata)
     {
-        $this->visitorMetadata = $visitorMetadata;
     }
 
     public function beforeTraverse(array $nodes)
@@ -71,10 +65,8 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             }
 
             foreach ($namespace->stmts as $class) {
-                switch ($class) {
-                    case $class instanceof Node\Stmt\ClassLike:
-                        $this->visitorMetadata->classLike = get_class($class);
-                        break;
+                if ($class instanceof Node\Stmt\ClassLike) {
+                    $this->visitorMetadata->classLike = get_class($class);
                 }
             }
         }
@@ -86,11 +78,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     {
         switch ($node) {
             case $node instanceof ClassMethod:
-                if ($this->shouldRewrite($node)) {
-                    $this->shouldRewrite = true;
-                } else {
-                    $this->shouldRewrite = false;
-                }
+                $this->shouldRewrite = $this->shouldRewrite($node);
                 break;
         }
 
@@ -127,6 +115,18 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 // Rewrite __METHOD__ to $__method__ variable.
                 if ($this->shouldRewrite) {
                     return new Variable('__method__');
+                }
+                break;
+            case $node instanceof MagicConstDir:
+                // Rewrite __DIR__ as the real directory path
+                if ($file = Composer::getLoader()->findFile($this->visitorMetadata->className)) {
+                    return new String_(dirname(realpath($file)));
+                }
+                break;
+            case $node instanceof MagicConstFile:
+                // Rewrite __FILE__ to the real file path
+                if ($file = Composer::getLoader()->findFile($this->visitorMetadata->className)) {
+                    return new String_(realpath($file));
                 }
                 break;
         }
@@ -171,16 +171,17 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             new Arg($this->getMagicConst()),
             // __FUNCTION__
             new Arg(new MagicConstFunction()),
-            // self::getParamMap(OriginalClass::class, __FUNCTION, func_get_args())
+            // self::getParamMap(__CLASS__, __FUNCTION__, func_get_args())
+            // self::getParamMap(__TRAIT__, __FUNCTION__, func_get_args())
             new Arg(new StaticCall(new Name('self'), '__getParamsMap', [
-                new Arg(new MagicConstClass()),
+                new Arg($this->getMagicConst()),
                 new Arg(new MagicConstFunction()),
                 new Arg(new FuncCall(new Name('func_get_args'))),
             ])),
             // A closure that wrapped original method code.
             new Arg(new Closure([
                 'params' => value(function () use ($node) {
-                    // Transfer the variadic variable to normal variable at closure argument. ...$params => $parms
+                    // Transfer the variadic variable to normal variable at closure argument. ...$params => $params
                     $params = $node->getParams();
                     foreach ($params as $key => $param) {
                         if ($param instanceof Node\Param && $param->variadic) {
@@ -209,7 +210,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return $node;
     }
 
-    private function unshiftMagicMethods($stmts = [])
+    private function unshiftMagicMethods(array $stmts = [])
     {
         $magicConstFunction = new Expression(new Assign(new Variable('__function__'), new MagicConstFunction()));
         $magicConstMethod = new Expression(new Assign(new Variable('__method__'), new MagicConstMethod()));
@@ -219,18 +220,15 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     private function getMagicConst(): Node\Scalar\MagicConst
     {
-        switch ($this->visitorMetadata->classLike) {
-            case Trait_::class:
-                return new MagicConstTrait();
-            case Class_::class:
-            default:
-                return new MagicConstClass();
-        }
+        return match ($this->visitorMetadata->classLike) {
+            Trait_::class => new MagicConstTrait(),
+            default => new MagicConstClass(),
+        };
     }
 
-    private function shouldRewrite(ClassMethod $node)
+    private function shouldRewrite(ClassMethod $node): bool
     {
-        if (in_array($this->visitorMetadata->classLike, [Node\Stmt\Interface_::class])) {
+        if ($this->visitorMetadata->classLike == Node\Stmt\Interface_::class || $node->isAbstract()) {
             return false;
         }
 

@@ -13,10 +13,7 @@ namespace Hyperf\Di;
 
 class MethodDefinitionCollector extends AbstractCallableDefinitionCollector implements MethodDefinitionCollectorInterface
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
     /**
      * Get the method definition from metadata container,

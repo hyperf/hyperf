@@ -9,6 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use function Hyperf\Support\env;
+
 return [
     'default' => 'local',
     'storage' => [
@@ -75,7 +77,7 @@ return [
             'accessKey' => env('QINIU_ACCESS_KEY'),
             'secretKey' => env('QINIU_SECRET_KEY'),
             'bucket' => env('QINIU_BUCKET'),
-            'domain' => env('QINBIU_DOMAIN'),
+            'domain' => env('QINIU_DOMAIN'),
         ],
         'cos' => [
             'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,

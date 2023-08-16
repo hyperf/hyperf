@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Session;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\SessionInterface;
-use Hyperf\Utils\Context;
 
 class SessionProxy extends Session
 {
@@ -21,12 +21,12 @@ class SessionProxy extends Session
         // Do nothing
     }
 
-    public function flash(string $key, $value = true): void
+    public function flash(string $key, mixed $value = true): void
     {
         $this->getSession()->flash($key, $value);
     }
 
-    public function now(string $key, $value): void
+    public function now(string $key, mixed $value): void
     {
         $this->getSession()->now($key, $value);
     }

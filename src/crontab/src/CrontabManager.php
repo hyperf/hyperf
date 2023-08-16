@@ -14,18 +14,12 @@ namespace Hyperf\Crontab;
 class CrontabManager
 {
     /**
-     * @var Crontab[]
+     * @var array<string, Crontab>
      */
-    protected $crontabs = [];
+    protected array $crontabs = [];
 
-    /**
-     * @var Parser
-     */
-    protected $parser;
-
-    public function __construct(Parser $parser)
+    public function __construct(protected Parser $parser)
     {
-        $this->parser = $parser;
     }
 
     public function register(Crontab $crontab): bool
@@ -50,7 +44,7 @@ class CrontabManager
             $time = $this->parser->parse($crontab->getRule(), $last);
             if ($time) {
                 foreach ($time as $t) {
-                    $result[] = clone $crontab->setExecuteTime($t);
+                    $result[] = (clone $crontab)->setExecuteTime($t);
                 }
             }
         }

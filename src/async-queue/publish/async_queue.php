@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use Hyperf\AsyncQueue\Driver\RedisDriver;
+
 return [
     'default' => [
-        'driver' => \Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'driver' => RedisDriver::class,
         'redis' => [
             'pool' => 'default',
         ],

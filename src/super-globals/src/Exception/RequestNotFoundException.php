@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\SuperGlobals\Exception;
 
-class RequestNotFoundException extends \RuntimeException
+use RuntimeException;
+
+class RequestNotFoundException extends RuntimeException
 {
 }

@@ -11,15 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Coordinator;
 
-class Constants
+/**
+ * @deprecated v3.1 use Hyperf\Coordinator\Constants instead
+ */
+class Constants extends \Hyperf\Coordinator\Constants
 {
-    /**
-     * Swoole onWorkerStart event.
-     */
-    public const WORKER_START = 'workerStart';
-
-    /**
-     * Swoole onWorkerExit event.
-     */
-    public const WORKER_EXIT = 'workerExit';
 }

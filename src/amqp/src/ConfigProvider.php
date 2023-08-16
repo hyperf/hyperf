@@ -14,7 +14,7 @@ namespace Hyperf\Amqp;
 use Hyperf\Amqp\Listener\BeforeMainServerStartListener;
 use Hyperf\Amqp\Listener\MainWorkerStartListener;
 use Hyperf\Amqp\Packer\Packer;
-use Hyperf\Utils\Packer\JsonPacker;
+use Hyperf\Codec\Packer\JsonPacker;
 
 class ConfigProvider
 {
@@ -29,13 +29,6 @@ class ConfigProvider
             'listeners' => [
                 BeforeMainServerStartListener::class => 99,
                 MainWorkerStartListener::class,
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
             ],
             'publish' => [
                 [

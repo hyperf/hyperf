@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use OpenTracing\Span;
 
 class SwitchManager
@@ -24,7 +24,7 @@ class SwitchManager
             'guzzle' => false,
             'redis' => false,
             'db' => false,
-            // beta feature, please donot enable 'method' in production environment
+            // beta feature, please don't enable 'method' in production environment
             'method' => false,
             'error' => false,
         ];
@@ -38,7 +38,7 @@ class SwitchManager
     }
 
     /**
-     * Determire if the tracer is enable ?
+     * Determine if the tracer is enabled ?
      */
     public function isEnable(string $identifier): bool
     {

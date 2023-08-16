@@ -11,29 +11,19 @@ declare(strict_types=1);
  */
 namespace Hyperf\Session;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
-use Hyperf\Utils\Context;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 use SessionHandlerInterface;
 
 class SessionManager
 {
-    /**
-     * @var \Psr\Container\ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    public function __construct(ContainerInterface $container, ConfigInterface $config)
+    public function __construct(protected ContainerInterface $container, protected ConfigInterface $config)
     {
-        $this->container = $container;
-        $this->config = $config;
     }
 
     public function getSessionName(): string
@@ -47,7 +37,7 @@ class SessionManager
         // @TODO Use make() function to create Session object.
         $session = new Session($this->getSessionName(), $this->buildSessionHandler(), $sessionId);
         if (! $session->start()) {
-            throw new \RuntimeException('Start session failed.');
+            throw new RuntimeException('Start session failed.');
         }
         $this->setSession($session);
         return $session;
@@ -63,7 +53,7 @@ class SessionManager
         return Context::get(SessionInterface::class);
     }
 
-    public function setSession(SessionInterface $session): self
+    public function setSession(SessionInterface $session): static
     {
         Context::set(SessionInterface::class, $session);
         return $this;
@@ -84,7 +74,7 @@ class SessionManager
     {
         $handler = $this->config->get('session.handler');
         if (! $handler || ! class_exists($handler)) {
-            throw new \InvalidArgumentException('Invalid handler of session');
+            throw new InvalidArgumentException('Invalid handler of session');
         }
         return $this->container->get($handler);
     }

@@ -15,9 +15,7 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class FooAspect implements AroundInterface
 {
     /**

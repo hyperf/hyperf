@@ -16,9 +16,9 @@ use Hyperf\Di\Annotation\Inject;
 trait FooTrait
 {
     /**
-     * @Inject
      * @var Bar
      */
+    #[Inject]
     protected $foo;
 
     public function getValue()

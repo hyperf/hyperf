@@ -12,11 +12,12 @@ declare(strict_types=1);
 namespace HyperfTest\Validation\Cases;
 
 use Closure;
+use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Query\Builder;
 use Hyperf\Validation\DatabasePresenceVerifier;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 /**
  * @internal
@@ -33,8 +34,8 @@ class ValidationDatabasePresenceVerifierTest extends TestCase
     {
         $verifier = new DatabasePresenceVerifier($db = m::mock(ConnectionResolverInterface::class));
         $verifier->setConnection('connection');
-        $db->shouldReceive('connection')->once()->with('connection')->andReturn($conn = m::mock(stdClass::class));
-        $conn->shouldReceive('table')->once()->with('table')->andReturn($builder = m::mock(stdClass::class));
+        $db->shouldReceive('connection')->once()->with('connection')->andReturn($conn = m::mock(ConnectionInterface::class));
+        $conn->shouldReceive('table')->once()->with('table')->andReturn($builder = m::mock(Builder::class));
         $builder->shouldReceive('useWritePdo')->once()->andReturn($builder);
         $builder->shouldReceive('where')->with('column', '=', 'value')->andReturn($builder);
         $extra = ['foo' => 'NULL', 'bar' => 'NOT_NULL', 'baz' => 'taylor', 'faz' => true, 'not' => '!admin'];
@@ -52,8 +53,8 @@ class ValidationDatabasePresenceVerifierTest extends TestCase
     {
         $verifier = new DatabasePresenceVerifier($db = m::mock(ConnectionResolverInterface::class));
         $verifier->setConnection('connection');
-        $db->shouldReceive('connection')->once()->with('connection')->andReturn($conn = m::mock(stdClass::class));
-        $conn->shouldReceive('table')->once()->with('table')->andReturn($builder = m::mock(stdClass::class));
+        $db->shouldReceive('connection')->once()->with('connection')->andReturn($conn = m::mock(ConnectionInterface::class));
+        $conn->shouldReceive('table')->once()->with('table')->andReturn($builder = m::mock(Builder::class));
         $builder->shouldReceive('useWritePdo')->once()->andReturn($builder);
         $builder->shouldReceive('where')->with('column', '=', 'value')->andReturn($builder);
         $closure = function ($query) {

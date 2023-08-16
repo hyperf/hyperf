@@ -11,12 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model\Relations;
 
+use Generator;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\ModelNotFoundException;
 use Hyperf\Database\Model\SoftDeletes;
+
+use function Hyperf\Support\class_uses_recursive;
 
 class HasManyThrough extends Relation
 {
@@ -220,8 +223,8 @@ class HasManyThrough extends Relation
      * Execute the query and get the first result or throw an exception.
      *
      * @param array $columns
-     * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Model|static
+     * @throws \Hyperf\Database\Model\ModelNotFoundException
      */
     public function firstOrFail($columns = ['*'])
     {
@@ -276,8 +279,8 @@ class HasManyThrough extends Relation
      *
      * @param array $columns
      * @param mixed $id
-     * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
+     * @throws \Hyperf\Database\Model\ModelNotFoundException
      */
     public function findOrFail($id, $columns = ['*'])
     {
@@ -364,7 +367,7 @@ class HasManyThrough extends Relation
     /**
      * Get a generator for the given query.
      *
-     * @return \Generator
+     * @return Generator
      */
     public function cursor()
     {

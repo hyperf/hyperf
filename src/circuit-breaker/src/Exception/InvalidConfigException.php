@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\CircuitBreaker\Exception;
 
-class InvalidConfigException extends \RuntimeException
+use RuntimeException;
+
+class InvalidConfigException extends RuntimeException
 {
 }

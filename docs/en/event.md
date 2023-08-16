@@ -65,7 +65,7 @@ class UserRegisteredListener implements ListenerInterface
     /**
      * @param UserRegistered $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         // The code to be executed by the listener after the event is triggered is written here, such as sending a user registration success message, etc. in this example.
         // Directly access the user property of $event to get the parameter value passed when the event fires.
@@ -111,7 +111,7 @@ class UserRegisteredListener implements ListenerInterface
     /**
      * @param UserRegistered $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         // The code to be executed by the listener after the event is triggered is written here, such as sending a user registration success message, etc. in this example.
         // Directly access the user property of $event to get the parameter value passed when the event fires.
@@ -153,3 +153,11 @@ class UserService
     }
 }
 ```
+
+## Hyperf Lifecycle events
+
+![](imgs/hyperf-events.svg)
+
+## Hyperf Coroutine Style Server Lifecycle events
+
+![](https://raw.githubusercontent.com/hyperf/raw-storage/main/hyperf/svg/hyperf-coroutine-events.svg)

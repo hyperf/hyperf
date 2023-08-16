@@ -13,16 +13,19 @@ namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
 #[Command]
 class NsqConsumerCommand extends GeneratorCommand
 {
     public function __construct()
     {
         parent::__construct('gen:nsq-consumer');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new nsq consumer class');
+
+        parent::configure();
     }
 
     protected function getStub(): string

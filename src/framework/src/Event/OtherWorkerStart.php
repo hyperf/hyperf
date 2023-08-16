@@ -11,21 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Framework\Event;
 
+use Swoole\Server;
+
 class OtherWorkerStart
 {
-    /**
-     * @var \Swoole\Server
-     */
-    public $server;
-
-    /**
-     * @var int
-     */
-    public $workerId;
-
-    public function __construct($server, int $workerId)
+    public function __construct(public Server $server, public int $workerId)
     {
-        $this->server = $server;
-        $this->workerId = $workerId;
     }
 }

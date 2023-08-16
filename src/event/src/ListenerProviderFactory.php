@@ -38,7 +38,7 @@ class ListenerProviderFactory
         foreach ($config->get('listeners', []) as $listener => $priority) {
             if (is_int($listener)) {
                 $listener = $priority;
-                $priority = 1;
+                $priority = ListenerData::DEFAULT_PRIORITY;
             }
             if (is_string($listener)) {
                 $this->register($provider, $container, $listener, $priority);
@@ -51,12 +51,12 @@ class ListenerProviderFactory
         foreach (AnnotationCollector::list() as $className => $values) {
             /** @var Listener $annotation */
             if ($annotation = $values['_c'][Listener::class] ?? null) {
-                $this->register($provider, $container, $className, (int) $annotation->priority);
+                $this->register($provider, $container, $className, $annotation->priority);
             }
         }
     }
 
-    private function register(ListenerProvider $provider, ContainerInterface $container, string $listener, int $priority = 1): void
+    private function register(ListenerProvider $provider, ContainerInterface $container, string $listener, int $priority = ListenerData::DEFAULT_PRIORITY): void
     {
         $instance = $container->get($listener);
         if ($instance instanceof ListenerInterface) {

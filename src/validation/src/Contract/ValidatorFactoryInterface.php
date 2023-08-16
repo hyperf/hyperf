@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation\Contract;
 
+use Closure;
 use Hyperf\Contract\ValidatorInterface;
 
 interface ValidatorFactoryInterface
@@ -22,22 +23,16 @@ interface ValidatorFactoryInterface
 
     /**
      * Register a custom validator extension.
-     *
-     * @param \Closure|string $extension
      */
-    public function extend(string $rule, $extension, ?string $message = null);
+    public function extend(string $rule, Closure|string $extension, ?string $message = null);
 
     /**
      * Register a custom implicit validator extension.
-     *
-     * @param \Closure|string $extension
      */
-    public function extendImplicit(string $rule, $extension, ?string $message = null);
+    public function extendImplicit(string $rule, Closure|string $extension, ?string $message = null);
 
     /**
      * Register a custom implicit validator message replacer.
-     *
-     * @param \Closure|string $replacer
      */
-    public function replacer(string $rule, $replacer);
+    public function replacer(string $rule, Closure|string $replacer);
 }

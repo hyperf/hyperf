@@ -12,16 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\Database;
 
 use Exception;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 trait DetectsDeadlocks
 {
     /**
      * Determine if the given exception was caused by a deadlock.
-     *
-     * @return bool
      */
-    protected function causedByDeadlock(Exception $e)
+    protected function causedByDeadlock(Exception $e): bool
     {
         $message = $e->getMessage();
 

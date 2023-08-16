@@ -18,29 +18,12 @@ use Hyperf\Framework\Event\OnPipeMessage;
 use Hyperf\WebSocketServer\Sender;
 use Hyperf\WebSocketServer\SenderPipeMessage;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 class OnPipeMessageListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var Sender
-     */
-    private $sender;
-
-    public function __construct(ContainerInterface $container, StdoutLoggerInterface $logger, Sender $sender)
+    public function __construct(private ContainerInterface $container, private StdoutLoggerInterface $logger, private Sender $sender)
     {
-        $this->container = $container;
-        $this->logger = $logger;
-        $this->sender = $sender;
     }
 
     /**
@@ -57,7 +40,7 @@ class OnPipeMessageListener implements ListenerInterface
      * Handle the Event when the event is triggered, all listeners will
      * complete before the event is returned to the EventDispatcher.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($event instanceof OnPipeMessage && $event->data instanceof SenderPipeMessage) {
             /** @var SenderPipeMessage $message */
@@ -66,7 +49,7 @@ class OnPipeMessageListener implements ListenerInterface
             try {
                 [$fd, $method] = $this->sender->getFdAndMethodFromProxyMethod($message->name, $message->arguments);
                 $this->sender->proxy($fd, $method, $message->arguments);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $formatter = $this->container->get(FormatterInterface::class);
                 $this->logger->warning($formatter->format($exception));
             }

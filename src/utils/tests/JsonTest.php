@@ -15,6 +15,8 @@ use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Coroutine\go;
+
 /**
  * @internal
  * @coversNothing

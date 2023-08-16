@@ -11,48 +11,35 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation;
 
+use Closure;
 use Hyperf\Validation\Contract\Rule;
 use Hyperf\Validation\Contract\Rule as RuleContract;
 
 class ClosureValidationRule implements RuleContract
 {
     /**
-     * The callback that validates the attribute.
-     *
-     * @var \Closure
-     */
-    public $callback;
-
-    /**
      * Indicates if the validation callback failed.
-     *
-     * @var bool
      */
-    public $failed = false;
+    public bool $failed = false;
 
     /**
      * The validation error message.
-     *
-     * @var null|string
      */
-    public $message;
+    public ?string $message = null;
 
     /**
      * Create a new Closure based validation rule.
      *
-     * @param \Closure $callback
+     * @param Closure $callback the callback that validates the attribute
      */
-    public function __construct($callback)
+    public function __construct(public Closure $callback)
     {
-        $this->callback = $callback;
     }
 
     /**
      * Determine if the validation rule passes.
-     *
-     * @param mixed $value
      */
-    public function passes(string $attribute, $value): bool
+    public function passes(string $attribute, mixed $value): bool
     {
         $this->failed = false;
 

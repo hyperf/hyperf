@@ -26,7 +26,7 @@ class ResponseTest extends TestCase
 {
     protected function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
     }
 
     public function testStatusCode()

@@ -15,9 +15,9 @@ use Hyperf\Database\Model\Model;
 
 class ModelNonIncrementingStub extends Model
 {
-    public $incrementing = false;
+    public bool $incrementing = false;
 
-    protected $table = 'stub';
+    protected ?string $table = 'stub';
 
-    protected $guarded = [];
+    protected array $guarded = [];
 }

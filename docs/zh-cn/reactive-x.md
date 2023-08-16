@@ -68,7 +68,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\ReactiveX\Observable;
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 
@@ -282,10 +282,7 @@ use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    /**
-     * @var IpcSubject
-     */
-    private $subject;
+    private IpcSubject $subject;
 
     private $subscriber = [];
 

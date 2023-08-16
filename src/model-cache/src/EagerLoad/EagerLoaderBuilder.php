@@ -12,10 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\ModelCache\EagerLoad;
 
 use Closure;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\ModelCache\CacheableInterface;
-use Hyperf\Utils\Arr;
 
 class EagerLoaderBuilder extends Builder
 {
@@ -47,7 +48,18 @@ class EagerLoaderBuilder extends Builder
         $column = sprintf('%s.%s', $model->getTable(), $model->getKeyName());
 
         if ($model instanceof CacheableInterface && $this->couldUseEagerLoad($wheres, $column)) {
-            return $model::findManyFromCache($wheres[0]['values'] ?? []);
+            $models = $model::findManyFromCache($wheres[0]['values'] ?? []);
+            // If we actually found models we will also eager load any relationships that
+            // have been specified as needing to be eager loaded, which will solve the
+            // n+1 query issue for the developers to avoid running a lot of queries.
+            if ($models->count() > 0 && $with = $relation->getEagerLoads()) {
+                $first = $models->first();
+                $self = (new static($this->query->newQuery()));
+                $builder = $first->registerGlobalScopes($self->setModel($first))->setEagerLoads($with);
+                $models = new Collection($builder->eagerLoadRelations($models->all()));
+            }
+
+            return $models;
         }
 
         return $relation->getEager();

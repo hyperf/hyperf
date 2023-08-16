@@ -22,14 +22,8 @@ use Hyperf\RpcMultiplex\Transporter;
 
 class RegisterProtocolListener implements ListenerInterface
 {
-    /**
-     * @var ProtocolManager
-     */
-    private $protocolManager;
-
-    public function __construct(ProtocolManager $protocolManager)
+    public function __construct(private ProtocolManager $protocolManager)
     {
-        $this->protocolManager = $protocolManager;
     }
 
     public function listen(): array
@@ -43,7 +37,7 @@ class RegisterProtocolListener implements ListenerInterface
      * All official rpc protocols should register in here,
      * and the others non-official protocols should register in their own component via listener.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $this->protocolManager->register(Constant::PROTOCOL_DEFAULT, [
             'packer' => JsonPacker::class,

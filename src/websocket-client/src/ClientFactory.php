@@ -12,7 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\WebSocketClient;
 
 use Hyperf\HttpMessage\Uri\Uri;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+
+use function Hyperf\Coroutine\defer;
+use function Hyperf\Support\make;
 
 class ClientFactory
 {

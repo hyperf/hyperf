@@ -19,7 +19,7 @@ class State
 
     public const OPEN = 2;
 
-    protected $state;
+    protected int $state;
 
     public function __construct()
     {

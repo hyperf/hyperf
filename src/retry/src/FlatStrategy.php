@@ -13,14 +13,8 @@ namespace Hyperf\Retry;
 
 class FlatStrategy implements SleepStrategyInterface
 {
-    /**
-     * @var int
-     */
-    private $base;
-
-    public function __construct(int $base)
+    public function __construct(private int $base)
     {
-        $this->base = $base;
     }
 
     public function sleep(): void

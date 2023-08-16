@@ -14,21 +14,10 @@ namespace Hyperf\Config\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"PROPERTY"})
- */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Value extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $key;
-
-    public function __construct(...$value)
+    public function __construct(public string $key)
     {
-        parent::__construct(...$value);
-        $this->bindMainProperty('key', $value);
     }
 }

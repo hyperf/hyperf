@@ -11,24 +11,20 @@ declare(strict_types=1);
  */
 namespace Hyperf\Resource\Value;
 
-use Hyperf\Utils\Collection;
+use Hyperf\Collection\Collection;
 use JsonSerializable;
 
 class MergeValue
 {
     /**
      * The data to be merged.
-     *
-     * @var array
      */
-    public $data;
+    public array $data = [];
 
     /**
      * Create new merge value instance.
-     *
-     * @param array|Collection|JsonSerializable $data
      */
-    public function __construct($data)
+    public function __construct(array|Collection|JsonSerializable $data)
     {
         if ($data instanceof Collection) {
             $this->data = $data->all();

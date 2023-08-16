@@ -21,32 +21,17 @@ use ZipkinOpenTracing\Tracer;
 
 class ZipkinTracerFactory implements NamedFactoryInterface
 {
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private string $prefix = 'opentracing.tracer.';
 
-    /**
-     * @var HttpClientFactory
-     */
-    private $clientFactory;
+    private string $name = '';
 
-    /**
-     * @var string
-     */
-    private $prefix = 'opentracing.zipkin.';
-
-    public function __construct(ConfigInterface $config, HttpClientFactory $clientFactory)
+    public function __construct(private ConfigInterface $config, private HttpClientFactory $clientFactory)
     {
-        $this->config = $config;
-        $this->clientFactory = $clientFactory;
     }
 
     public function make(string $name): \OpenTracing\Tracer
     {
-        if (! empty($name)) {
-            $this->prefix = "opentracing.tracer.{$name}.";
-        }
+        $this->name = $name;
         [$app, $options, $sampler] = $this->parseConfig();
         $endpoint = Endpoint::create($app['name'], $app['ipv4'], $app['ipv6'], $app['port']);
         $reporter = new Http($options, $this->clientFactory);
@@ -77,6 +62,11 @@ class ZipkinTracerFactory implements NamedFactoryInterface
 
     private function getConfig(string $key, $default)
     {
-        return $this->config->get($this->prefix . $key, $default);
+        return $this->config->get($this->getPrefix() . $key, $default);
+    }
+
+    private function getPrefix(): string
+    {
+        return rtrim($this->prefix . $this->name, '.') . '.';
     }
 }

@@ -15,7 +15,7 @@ use Hyperf\Resource\Json\ResourceCollection;
 
 class PostCollectionResource extends ResourceCollection
 {
-    public $collects = PostResource::class;
+    public ?string $collects = PostResource::class;
 
     public function toArray(): array
     {

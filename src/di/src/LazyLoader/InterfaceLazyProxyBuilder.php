@@ -15,7 +15,7 @@ class InterfaceLazyProxyBuilder extends AbstractLazyProxyBuilder
 {
     public function addClassRelationship(): AbstractLazyProxyBuilder
     {
-        if (strpos($this->originalClassName, '\\') !== 0) {
+        if (! str_starts_with($this->originalClassName, '\\')) {
             $originalClassName = '\\' . $this->originalClassName;
         } else {
             $originalClassName = $this->originalClassName;

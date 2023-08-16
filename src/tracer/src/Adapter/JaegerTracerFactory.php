@@ -17,40 +17,22 @@ use Jaeger\Config;
 use OpenTracing\Tracer;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
+
 use const Jaeger\SAMPLER_TYPE_CONST;
 
 class JaegerTracerFactory implements NamedFactoryInterface
 {
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private string $prefix = 'opentracing.tracer.';
 
-    /**
-     * @var null|LoggerInterface
-     */
-    private $logger;
+    private string $name = '';
 
-    /**
-     * @var null|CacheItemPoolInterface
-     */
-    private $cache;
-
-    /**
-     * @var string
-     */
-    private $prefix;
-
-    public function __construct(ConfigInterface $config, ?LoggerInterface $logger = null, ?CacheItemPoolInterface $cache = null)
+    public function __construct(private ConfigInterface $config, private ?LoggerInterface $logger = null, private ?CacheItemPoolInterface $cache = null)
     {
-        $this->config = $config;
-        $this->logger = $logger;
-        $this->cache = $cache;
     }
 
     public function make(string $name): Tracer
     {
-        $this->prefix = "opentracing.tracer.{$name}.";
+        $this->name = $name;
         [$name, $options] = $this->parseConfig();
 
         $jaegerConfig = new Config(
@@ -78,6 +60,11 @@ class JaegerTracerFactory implements NamedFactoryInterface
 
     private function getConfig(string $key, $default)
     {
-        return $this->config->get($this->prefix . $key, $default);
+        return $this->config->get($this->getPrefix() . $key, $default);
+    }
+
+    private function getPrefix(): string
+    {
+        return rtrim($this->prefix . $this->name, '.') . '.';
     }
 }

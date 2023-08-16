@@ -13,14 +13,11 @@ namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\QueueBuilder;
 use Hyperf\Amqp\Packer\Packer;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 abstract class RpcMessage extends Message implements RpcMessageInterface
 {
-    /**
-     * @var string
-     */
-    protected $queue = '';
+    protected string $queue = '';
 
     /**
      * @var mixed

@@ -11,34 +11,23 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Di\Aop\AroundInterface;
+use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\Annotation\Trace;
 use Hyperf\Tracer\SpanStarter;
 use OpenTracing\Tracer;
+use Throwable;
 
-/**
- * @Aspect
- */
-class TraceAnnotationAspect implements AroundInterface
+class TraceAnnotationAspect extends AbstractAspect
 {
     use SpanStarter;
 
-    public $classes = [];
-
-    public $annotations = [
+    public array $annotations = [
         Trace::class,
     ];
 
-    /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    public function __construct(Tracer $tracer)
+    public function __construct(private Tracer $tracer)
     {
-        $this->tracer = $tracer;
     }
 
     /**
@@ -60,7 +49,7 @@ class TraceAnnotationAspect implements AroundInterface
         $span->setTag($tag, $source);
         try {
             $result = $proceedingJoinPoint->process();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $span->setTag('error', true);
             $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
             throw $e;

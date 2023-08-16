@@ -11,39 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Command;
 
-use Closure;
-
+/**
+ * @deprecated since 3.0.27, remove in 3.1.0, use \Hyperf\Command\Concerns\Confirmable instead.
+ */
 trait ConfirmableTrait
 {
-    /**
-     * Confirm before proceeding with the action.
-     *
-     * This method only asks for confirmation in production.
-     *
-     * @param string $warning
-     * @param null|bool|\Closure $callback
-     * @return bool
-     */
-    public function confirmToProceed($warning = 'Application In Production!', $callback = false)
-    {
-        $shouldConfirm = $callback instanceof Closure ? call_user_func($callback) : $callback;
-
-        if ($shouldConfirm) {
-            if ($this->input->getOption('force')) {
-                return true;
-            }
-
-            $this->alert($warning);
-
-            $confirmed = $this->confirm('Do you really wish to run this command?');
-
-            if (! $confirmed) {
-                $this->comment('Command Cancelled!');
-
-                return false;
-            }
-        }
-
-        return true;
-    }
+    use Concerns\Confirmable;
 }

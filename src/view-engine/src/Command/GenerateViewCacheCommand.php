@@ -19,15 +19,8 @@ use Symfony\Component\Finder\Finder;
 
 class GenerateViewCacheCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
-
         parent::__construct('gen:view-engine-cache');
     }
 

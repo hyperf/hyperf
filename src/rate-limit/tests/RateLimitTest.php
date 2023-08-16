@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace HyperfTest\RateLimit;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\RateLimit\Aspect\RateLimitAnnotationAspect;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

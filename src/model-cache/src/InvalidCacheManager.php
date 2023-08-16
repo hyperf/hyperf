@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache;
 
-use Hyperf\Utils\Traits\StaticInstance;
+use Hyperf\Support\Traits\StaticInstance;
 
 class InvalidCacheManager
 {
@@ -20,7 +20,7 @@ class InvalidCacheManager
     /**
      * @var CacheableInterface[]
      */
-    protected $models = [];
+    protected array $models = [];
 
     public function push(CacheableInterface $model): void
     {

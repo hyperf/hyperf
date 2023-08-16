@@ -65,6 +65,11 @@ return (new PhpCsFixer\Config())
         'constant_case' => [
             'case' => 'lower',
         ],
+        'global_namespace_import' => [
+            'import_classes' => true,
+            'import_constants' => true,
+            'import_functions' => true,
+        ],
         'class_attributes_separation' => true,
         'combine_consecutive_unsets' => true,
         'declare_strict_types' => true,

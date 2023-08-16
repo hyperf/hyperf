@@ -11,24 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Framework\Event;
 
-use Swoole\Http\Server as SwooleHttpServer;
-use Swoole\Server as SwooleServer;
+use Swoole\Server;
 
 class BeforeMainServerStart
 {
-    /**
-     * @var object|SwooleHttpServer|SwooleServer
-     */
-    public $server;
-
-    /**
-     * @var array
-     */
-    public $serverConfig;
-
-    public function __construct($server, array $serverConfig)
+    public function __construct(public Server $server, public array $serverConfig)
     {
-        $this->server = $server;
-        $this->serverConfig = $serverConfig;
     }
 }

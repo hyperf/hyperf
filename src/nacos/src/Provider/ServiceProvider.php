@@ -28,7 +28,7 @@ class ServiceProvider extends AbstractProvider
      */
     public function create(string $serviceName, array $optional = []): ResponseInterface
     {
-        return $this->request('POST', '/nacos/v1/ns/service', [
+        return $this->request('POST', 'nacos/v1/ns/service', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
             ])),
@@ -37,7 +37,7 @@ class ServiceProvider extends AbstractProvider
 
     public function delete(string $serviceName, ?string $groupName = null, ?string $namespaceId = null): ResponseInterface
     {
-        return $this->request('DELETE', '/nacos/v1/ns/service', [
+        return $this->request('DELETE', 'nacos/v1/ns/service', [
             RequestOptions::QUERY => $this->filter([
                 'serviceName' => $serviceName,
                 'groupName' => $groupName,
@@ -57,7 +57,7 @@ class ServiceProvider extends AbstractProvider
      */
     public function update(string $serviceName, array $optional = []): ResponseInterface
     {
-        return $this->request('PUT', '/nacos/v1/ns/service', [
+        return $this->request('PUT', 'nacos/v1/ns/service', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
             ])),
@@ -66,7 +66,7 @@ class ServiceProvider extends AbstractProvider
 
     public function detail(string $serviceName, ?string $groupName = null, ?string $namespaceId = null): ResponseInterface
     {
-        return $this->request('GET', '/nacos/v1/ns/service', [
+        return $this->request('GET', 'nacos/v1/ns/service', [
             RequestOptions::QUERY => $this->filter([
                 'serviceName' => $serviceName,
                 'groupName' => $groupName,
@@ -77,7 +77,7 @@ class ServiceProvider extends AbstractProvider
 
     public function list(int $pageNo, int $pageSize, ?string $groupName = null, ?string $namespaceId = null): ResponseInterface
     {
-        return $this->request('GET', '/nacos/v1/ns/service/list', [
+        return $this->request('GET', 'nacos/v1/ns/service/list', [
             RequestOptions::QUERY => $this->filter([
                 'pageNo' => $pageNo,
                 'pageSize' => $pageSize,

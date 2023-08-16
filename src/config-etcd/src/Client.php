@@ -16,20 +16,8 @@ use Hyperf\Etcd\KVInterface;
 
 class Client implements ClientInterface
 {
-    /**
-     * @var KVInterface
-     */
-    protected $client;
-
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    public function __construct(KVInterface $client, ConfigInterface $config)
+    public function __construct(protected KVInterface $client, protected ConfigInterface $config)
     {
-        $this->client = $client;
-        $this->config = $config;
     }
 
     public function pull(): array

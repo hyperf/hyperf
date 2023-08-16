@@ -22,7 +22,7 @@ class TimeoutHandler extends AbstractHandler
 
     protected function process(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreakerInterface $breaker, Annotation $annotation)
     {
-        $timeout = $annotation->value['timeout'] ?? self::DEFAULT_TIMEOUT;
+        $timeout = $annotation->options['timeout'] ?? self::DEFAULT_TIMEOUT;
         $time = microtime(true);
 
         $result = $proceedingJoinPoint->process();

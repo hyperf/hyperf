@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Validation\Cases\fixtures;
 
-use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Contract\Arrayable;
 
 class Values implements Arrayable
 {

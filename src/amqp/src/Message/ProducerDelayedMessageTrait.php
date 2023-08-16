@@ -15,9 +15,9 @@ use Hyperf\Amqp\Builder\ExchangeBuilder;
 use PhpAmqpLib\Wire\AMQPTable;
 
 /**
- * @method ProducerMessage getExchange()
- * @method ProducerMessage getType()
- * @property ProducerMessage $properties
+ * @method string getExchange()
+ * @method string getType()
+ * @property array $properties
  */
 trait ProducerDelayedMessageTrait
 {
@@ -36,7 +36,7 @@ trait ProducerDelayedMessageTrait
      */
     public function getExchangeBuilder(): ExchangeBuilder
     {
-        return (new ExchangeBuilder())->setExchange((string) $this->getExchange())
+        return (new ExchangeBuilder())->setExchange($this->getExchange())
             ->setType('x-delayed-message')
             ->setArguments(new AMQPTable(['x-delayed-type' => $this->getType()]));
     }

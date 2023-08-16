@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Redis\Stub;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
@@ -22,8 +23,9 @@ use Hyperf\Redis\Frequency;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
+
+use function Hyperf\Support\value;
 
 class ContainerStub
 {
@@ -60,6 +62,11 @@ class ContainerStub
         });
         $container->shouldReceive('has')->with(\Redis::class)->andReturn(true);
         $container->shouldReceive('get')->with(\Redis::class)->andReturnUsing(function () use ($container) {
+            $factory = new PoolFactory($container);
+            return new Redis($factory);
+        });
+        $container->shouldReceive('has')->with(Redis::class)->andReturn(true);
+        $container->shouldReceive('get')->with(Redis::class)->andReturnUsing(function () use ($container) {
             $factory = new PoolFactory($container);
             return new Redis($factory);
         });

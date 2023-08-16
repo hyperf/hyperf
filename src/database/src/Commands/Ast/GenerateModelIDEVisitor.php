@@ -11,41 +11,28 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Ast;
 
+use Hyperf\CodeParser\PhpParser;
 use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Builder;
-use Hyperf\Utils\CodeGen\PhpParser;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PhpParser\BuilderFactory;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
+use ReflectionClass;
+use ReflectionParameter;
 
 class GenerateModelIDEVisitor extends AbstractVisitor
 {
-    /**
-     * @var array
-     */
-    protected $methods = [];
+    protected array $methods = [];
 
-    /**
-     * @var null|Node\Stmt\Namespace_
-     */
-    protected $namespace;
+    protected ?Node\Stmt\Namespace_ $namespace = null;
 
-    /**
-     * @var null|Node\Stmt\Class_
-     */
-    protected $class;
+    protected ?Node\Stmt\Class_ $class = null;
 
-    /**
-     * @var BuilderFactory
-     */
-    protected $factory;
+    protected BuilderFactory $factory;
 
-    /**
-     * @var string
-     */
-    protected $nsp = '';
+    protected string $nsp = '';
 
     public function __construct(ModelOption $option, ModelData $data)
     {
@@ -115,7 +102,7 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         $scopeDoc .= ' */';
         foreach ($this->methods as $name => $call) {
             $params = [];
-            /** @var \ReflectionParameter $argument */
+            /** @var ReflectionParameter $argument */
             foreach ($call['arguments'] as $argument) {
                 $argName = new Node\Expr\Variable($argument->getName());
                 if ($argument->hasType()) {
@@ -170,7 +157,7 @@ class GenerateModelIDEVisitor extends AbstractVisitor
     protected function initPropertiesFromMethods(array $nodes)
     {
         $methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes);
-        $reflection = new \ReflectionClass($this->data->getClass());
+        $reflection = new ReflectionClass($this->data->getClass());
         sort($methods);
         foreach ($methods as $methodStmt) {
             $method = $reflection->getMethod($methodStmt->name->name);

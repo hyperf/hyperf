@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Query;
 
 use Closure;
+use InvalidArgumentException;
 
 class JoinClause extends Builder
 {
@@ -91,12 +92,12 @@ class JoinClause extends Builder
      *
      * on `contacts`.`user_id` = `users`.`id` and `contacts`.`info_id` = `info`.`id`
      *
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|\Hyperf\Database\Query\Expression|string $second
      * @param string $boolean
-     * @throws \InvalidArgumentException
      * @return $this
+     * @throws InvalidArgumentException
      */
     public function on($first, $operator = null, $second = null, $boolean = 'and')
     {
@@ -110,7 +111,7 @@ class JoinClause extends Builder
     /**
      * Add an "or on" clause to the join.
      *
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\JoinClause

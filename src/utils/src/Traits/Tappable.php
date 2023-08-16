@@ -11,15 +11,17 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Traits;
 
+/**
+ * @deprecated since 3.1, please use `\Hyperf\Tappable\Tappable` instead.
+ */
 trait Tappable
 {
     /**
      * Call the given Closure with this instance then return the instance.
      *
-     * @param null|callable $callback
      * @return mixed
      */
-    public function tap($callback = null)
+    public function tap(?callable $callback = null)
     {
         return tap($this, $callback);
     }

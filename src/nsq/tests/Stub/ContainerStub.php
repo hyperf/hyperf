@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Nsq\Stub;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Di\Container;
 use Hyperf\Nsq\MessageBuilder;
 use Hyperf\Nsq\Nsq;
 use Hyperf\Nsq\Pool\NsqPoolFactory;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Waiter;
 use Mockery;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;

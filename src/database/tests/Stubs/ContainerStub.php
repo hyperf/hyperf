@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database\Stubs;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Di\Container;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 
 class ContainerStub

@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Schema;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
-use Hyperf\Utils\ApplicationContext;
 
 /**
  * @method static bool hasTable(string $table)

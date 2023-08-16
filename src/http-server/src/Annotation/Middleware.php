@@ -14,21 +14,10 @@ namespace Hyperf\HttpServer\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractMultipleAnnotation;
 
-/**
- * @Annotation
- * @Target({"ALL"})
- */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class Middleware extends AbstractMultipleAnnotation
 {
-    /**
-     * @var string
-     */
-    public $middleware = '';
-
-    public function __construct(...$value)
+    public function __construct(public string $middleware = '')
     {
-        parent::__construct(...$value);
-        $this->bindMainProperty('middleware', $value);
     }
 }

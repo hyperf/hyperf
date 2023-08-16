@@ -18,8 +18,6 @@ use Hyperf\Redis\Pool\PoolFactory;
  */
 class RedisProxy extends Redis
 {
-    protected $poolName;
-
     public function __construct(PoolFactory $factory, string $pool)
     {
         parent::__construct($factory);
@@ -27,6 +25,11 @@ class RedisProxy extends Redis
         $this->poolName = $pool;
     }
 
+    /**
+     * @deprecated since version 3.1
+     * @param string $name
+     * @param array $arguments
+     */
     public function __call($name, $arguments)
     {
         return parent::__call($name, $arguments);

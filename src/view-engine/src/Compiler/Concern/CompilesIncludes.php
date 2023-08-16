@@ -15,22 +15,16 @@ trait CompilesIncludes
 {
     /**
      * Compile the each statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileEach($expression)
+    protected function compileEach(string $expression): string
     {
         return "<?php echo \$__env->renderEach{$expression}; ?>";
     }
 
     /**
      * Compile the include statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileInclude($expression)
+    protected function compileInclude(string $expression): string
     {
         $expression = $this->stripParentheses($expression);
 
@@ -39,11 +33,8 @@ trait CompilesIncludes
 
     /**
      * Compile the include-if statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileIncludeIf($expression)
+    protected function compileIncludeIf(string $expression): string
     {
         $expression = $this->stripParentheses($expression);
 
@@ -52,11 +43,8 @@ trait CompilesIncludes
 
     /**
      * Compile the include-when statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileIncludeWhen($expression)
+    protected function compileIncludeWhen(string $expression): string
     {
         $expression = $this->stripParentheses($expression);
 
@@ -65,24 +53,18 @@ trait CompilesIncludes
 
     /**
      * Compile the include-unless statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileIncludeUnless($expression)
+    protected function compileIncludeUnless(string $expression): string
     {
         $expression = $this->stripParentheses($expression);
 
-        return "<?php echo \$__env->renderWhen(! {$expression}, \\Hyperf\\Utils\\Arr::except(get_defined_vars(), ['__data', '__path'])); ?>";
+        return "<?php echo \$__env->renderUnless({$expression}, \\Hyperf\\Utils\\Arr::except(get_defined_vars(), ['__data', '__path'])); ?>";
     }
 
     /**
      * Compile the include-first statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileIncludeFirst($expression)
+    protected function compileIncludeFirst(string $expression): string
     {
         $expression = $this->stripParentheses($expression);
 

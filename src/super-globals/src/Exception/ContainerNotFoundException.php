@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\SuperGlobals\Exception;
 
-class ContainerNotFoundException extends \RuntimeException
+use RuntimeException;
+
+class ContainerNotFoundException extends RuntimeException
 {
 }

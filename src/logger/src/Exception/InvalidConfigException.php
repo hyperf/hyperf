@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Logger\Exception;
 
-class InvalidConfigException extends \RuntimeException
+use RuntimeException;
+
+class InvalidConfigException extends RuntimeException
 {
 }

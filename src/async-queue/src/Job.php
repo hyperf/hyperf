@@ -16,20 +16,14 @@ use Hyperf\Contract\UnCompressInterface;
 
 abstract class Job implements JobInterface, CompressInterface, UnCompressInterface
 {
-    /**
-     * @var int
-     */
-    protected $maxAttempts = 0;
+    protected int $maxAttempts = 0;
 
     public function getMaxAttempts(): int
     {
         return $this->maxAttempts;
     }
 
-    /**
-     * @return static
-     */
-    public function uncompress(): CompressInterface
+    public function uncompress(): static
     {
         foreach ($this as $key => $value) {
             if ($value instanceof UnCompressInterface) {
@@ -40,10 +34,7 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function compress(): UnCompressInterface
+    public function compress(): static
     {
         foreach ($this as $key => $value) {
             if ($value instanceof CompressInterface) {

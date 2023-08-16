@@ -15,25 +15,7 @@ use Swoole\Server;
 
 class OnPipeMessage
 {
-    /**
-     * @var \Swoole\Server
-     */
-    public $server;
-
-    /**
-     * @var int
-     */
-    public $fromWorkerId;
-
-    /**
-     * @var mixed
-     */
-    public $data;
-
-    public function __construct(Server $server, int $fromWorkerId, $data)
+    public function __construct(public Server $server, public int $fromWorkerId, public mixed $data)
     {
-        $this->server = $server;
-        $this->fromWorkerId = $fromWorkerId;
-        $this->data = $data;
     }
 }

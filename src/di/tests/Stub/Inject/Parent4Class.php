@@ -16,9 +16,9 @@ use Hyperf\Di\Annotation\Inject;
 class Parent4Class
 {
     /**
-     * @Inject
      * @var Foo
      */
+    #[Inject]
     private $foo;
 
     public function getFoo()

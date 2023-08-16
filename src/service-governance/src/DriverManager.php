@@ -16,9 +16,9 @@ class DriverManager
     /**
      * @var DriverInterface[]
      */
-    protected $drivers = [];
+    protected array $drivers = [];
 
-    public function register(string $name, DriverInterface $governance)
+    public function register(string $name, DriverInterface $governance): void
     {
         $this->drivers[$name] = $governance;
     }

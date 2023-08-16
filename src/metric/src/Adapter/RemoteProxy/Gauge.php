@@ -16,40 +16,22 @@ use Hyperf\Process\ProcessCollector;
 
 class Gauge implements GaugeInterface
 {
-    /**
-     * @var string
-     */
     protected const TARGET_PROCESS_NAME = 'metric';
-
-    /**
-     * @var string
-     */
-    public $name;
-
-    public $labelNames = [];
 
     /**
      * @var string[]
      */
-    public $labelValues = [];
+    public array $labelValues = [];
 
-    /**
-     * @var null|float
-     */
-    public $delta;
+    public ?float $delta;
 
-    /**
-     * @var null|float
-     */
-    public $value;
+    public ?float $value;
 
-    public function __construct(string $name, array $labelNames)
+    public function __construct(public string $name, public array $labelNames)
     {
-        $this->name = $name;
-        $this->labelNames = $labelNames;
     }
 
-    public function with(string ...$labelValues): GaugeInterface
+    public function with(string ...$labelValues): static
     {
         $this->labelValues = $labelValues;
         return $this;

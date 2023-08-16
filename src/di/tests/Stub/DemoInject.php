@@ -15,17 +15,11 @@ use Hyperf\Di\Annotation\Inject;
 
 class DemoInject
 {
-    /**
-     * @Inject
-     * @var Demo
-     */
-    private $demo;
+    #[Inject]
+    private Demo $demo;
 
-    /**
-     * @Inject(required=false)
-     * @var Demo1
-     */
-    private $demo1;
+    #[Inject(required: false)]
+    private ?Demo1 $demo1 = null;
 
     public function getDemo()
     {

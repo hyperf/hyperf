@@ -15,5 +15,5 @@ use Hyperf\Redis\Lua\Hash\HGetAllMultiple;
 
 class HGetAllMultipleStub extends HGetAllMultiple
 {
-    protected $sha = 'xxxx';
+    protected ?string $sha = 'xxxx';
 }

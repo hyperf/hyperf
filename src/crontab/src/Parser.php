@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
+use InvalidArgumentException;
 
 class Parser
 {
@@ -30,35 +31,34 @@ class Parser
      *                              |    +----------- min (0 - 59)
      *                              +------------- sec (0-59)
      * @param null|Carbon|int $startTime
-     * @throws \InvalidArgumentException
      * @return Carbon[]
+     * @throws InvalidArgumentException
      */
-    public function parse(string $crontabString, $startTime = null)
+    public function parse(string $crontabString, $startTime = null): array
     {
         if (! $this->isValid($crontabString)) {
-            throw new \InvalidArgumentException('Invalid cron string: ' . $crontabString);
+            throw new InvalidArgumentException('Invalid cron string: ' . $crontabString);
         }
         $startTime = $this->parseStartTime($startTime);
         $date = $this->parseDate($crontabString);
+        $result = [];
         if (in_array((int) date('i', $startTime), $date['minutes'])
             && in_array((int) date('G', $startTime), $date['hours'])
             && in_array((int) date('j', $startTime), $date['day'])
             && in_array((int) date('w', $startTime), $date['week'])
             && in_array((int) date('n', $startTime), $date['month'])
         ) {
-            $result = [];
             foreach ($date['second'] as $second) {
                 $result[] = Carbon::createFromTimestamp($startTime + $second);
             }
-            return $result;
         }
-        return [];
+        return $result;
     }
 
     public function isValid(string $crontabString): bool
     {
-        if (! preg_match('/^((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)$/i', trim($crontabString))) {
-            if (! preg_match('/^((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)$/i', trim($crontabString))) {
+        if (! preg_match('#^((\*(/[0-9]+)?)|[0-9\-,/]+)\s+((\*(/[0-9]+)?)|[0-9\-,/]+)\s+((\*(/[0-9]+)?)|[0-9\-,/]+)\s+((\*(/[0-9]+)?)|[0-9\-,/]+)\s+((\*(/[0-9]+)?)|[0-9\-,/]+)\s+((\*(/[0-9]+)?)|[0-9\-,/]+)$#i', trim($crontabString))) {
+            if (! preg_match('#^((\*(/[0-9]+)?)|[0-9\-,/]+)\s+((\*(/[0-9]+)?)|[0-9\-,/]+)\s+((\*(/[0-9]+)?)|[0-9\-,/]+)\s+((\*(/[0-9]+)?)|[0-9\-,/]+)\s+((\*(/[0-9]+)?)|[0-9\-,/]+)$#i', trim($crontabString))) {
                 return false;
             }
         }
@@ -78,22 +78,22 @@ class Parser
             for ($i = $start; $i <= $max; ++$i) {
                 $result[] = $i;
             }
-        } elseif (strpos($string, ',') !== false) {
+        } elseif (str_contains($string, ',')) {
             $exploded = explode(',', $string);
             foreach ($exploded as $value) {
-                if (strpos($value, '/') !== false || strpos($string, '-') !== false) {
+                if (str_contains($value, '/') || str_contains($string, '-')) {
                     $result = array_merge($result, $this->parseSegment($value, $min, $max, $start));
                     continue;
                 }
 
-                if (trim($value) === '' || ! $this->between((int) $value, (int) ($min > $start ? $min : $start), (int) $max)) {
+                if (trim($value) === '' || ! $this->between((int) $value, max($min, $start), $max)) {
                     continue;
                 }
                 $result[] = (int) $value;
             }
-        } elseif (strpos($string, '/') !== false) {
+        } elseif (str_contains($string, '/')) {
             $exploded = explode('/', $string);
-            if (strpos($exploded[0], '-') !== false) {
+            if (str_contains($exploded[0], '-')) {
                 [$nMin, $nMax] = explode('-', $exploded[0]);
                 $nMin > $min && $min = (int) $nMin;
                 $nMax < $max && $max = (int) $nMax;
@@ -102,18 +102,18 @@ class Parser
             $start < $min && $start = $min;
             for ($i = $start; $i <= $max;) {
                 $result[] = $i;
-                $i += $exploded[1];
+                $i += (int) $exploded[1];
             }
-        } elseif (strpos($string, '-') !== false) {
+        } elseif (str_contains($string, '-')) {
             $result = array_merge($result, $this->parseSegment($string . '/1', $min, $max, $start));
-        } elseif ($this->between((int) $string, $min > $start ? $min : $start, $max)) {
+        } elseif ($this->between((int) $string, max($min, $start), $max)) {
             $result[] = (int) $string;
         }
         return $result;
     }
 
     /**
-     * Determire if the $value is between in $min and $max ?
+     * Determine if the $value is between in $min and $max ?
      */
     private function between(int $value, int $min, int $max): bool
     {
@@ -131,33 +131,21 @@ class Parser
             $startTime = time();
         }
         if (! is_numeric($startTime)) {
-            throw new \InvalidArgumentException("\$startTime have to be a valid unix timestamp ({$startTime} given)");
+            throw new InvalidArgumentException("\$startTime have to be a valid unix timestamp ({$startTime} given)");
         }
         return (int) $startTime;
     }
 
     private function parseDate(string $crontabString): array
     {
-        $cron = preg_split('/[\\s]+/i', trim($crontabString));
-        if (count($cron) == 6) {
-            $date = [
-                'second' => $this->parseSegment($cron[0], 0, 59),
-                'minutes' => $this->parseSegment($cron[1], 0, 59),
-                'hours' => $this->parseSegment($cron[2], 0, 23),
-                'day' => $this->parseSegment($cron[3], 1, 31),
-                'month' => $this->parseSegment($cron[4], 1, 12),
-                'week' => $this->parseSegment($cron[5], 0, 6),
-            ];
-        } else {
-            $date = [
-                'second' => [1 => 0],
-                'minutes' => $this->parseSegment($cron[0], 0, 59),
-                'hours' => $this->parseSegment($cron[1], 0, 23),
-                'day' => $this->parseSegment($cron[2], 1, 31),
-                'month' => $this->parseSegment($cron[3], 1, 12),
-                'week' => $this->parseSegment($cron[4], 0, 6),
-            ];
-        }
-        return $date;
+        $cron = preg_split('/\s+/i', trim($crontabString));
+        return [
+            'week' => $this->parseSegment(array_pop($cron), 0, 6),
+            'month' => $this->parseSegment(array_pop($cron), 1, 12),
+            'day' => $this->parseSegment(array_pop($cron), 1, 31),
+            'hours' => $this->parseSegment(array_pop($cron), 0, 23),
+            'minutes' => $this->parseSegment(array_pop($cron), 0, 59),
+            'second' => $this->parseSegment(array_pop($cron) ?? '0', 0, 59),
+        ];
     }
 }

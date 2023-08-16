@@ -15,7 +15,7 @@ use Hyperf\Validation\Request\FormRequest;
 
 class FooSceneRequest extends FormRequest
 {
-    public $scenes = [
+    public array $scenes = [
         'save' => ['mobile', 'name'],
         'info' => ['mobile'],
     ];

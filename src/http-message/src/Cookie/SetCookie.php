@@ -11,13 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Cookie;
 
+use Hyperf\Contract\Arrayable;
+use Stringable;
+
 /**
  * Set-Cookie object.
  */
-class SetCookie
+class SetCookie implements Stringable, Arrayable
 {
-    /** @var array */
-    private static $defaults = [
+    private static array $defaults = [
         'Name' => null,
         'Value' => null,
         'Domain' => null,
@@ -29,8 +31,10 @@ class SetCookie
         'HttpOnly' => false,
     ];
 
-    /** @var array Cookie data */
-    private $data;
+    /**
+     * Array of cookie data provided by a Cookie parser.
+     */
+    private array $data;
 
     /**
      * @param array $data Array of cookie data provided by a Cookie parser
@@ -67,10 +71,8 @@ class SetCookie
      * Create a new SetCookie object from a string.
      *
      * @param string $cookie Set-Cookie header string
-     *
-     * @return self
      */
-    public static function fromString($cookie)
+    public static function fromString(string $cookie): self
     {
         // Create the default return array
         $data = self::$defaults;
@@ -107,17 +109,15 @@ class SetCookie
         return new self($data);
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return $this->data;
     }
 
     /**
      * Get the cookie name.
-     *
-     * @return string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->data['Name'];
     }
@@ -127,17 +127,15 @@ class SetCookie
      *
      * @param string $name Cookie name
      */
-    public function setName($name)
+    public function setName(?string $name)
     {
         $this->data['Name'] = $name;
     }
 
     /**
      * Get the cookie value.
-     *
-     * @return null|string
      */
-    public function getValue()
+    public function getValue(): ?string
     {
         return $this->data['Value'];
     }
@@ -147,17 +145,15 @@ class SetCookie
      *
      * @param null|string $value Cookie value
      */
-    public function setValue($value)
+    public function setValue(?string $value)
     {
         $this->data['Value'] = $value;
     }
 
     /**
      * Get the domain.
-     *
-     * @return null|string
      */
-    public function getDomain()
+    public function getDomain(): ?string
     {
         return $this->data['Domain'];
     }
@@ -167,17 +163,15 @@ class SetCookie
      *
      * @param string $domain
      */
-    public function setDomain($domain)
+    public function setDomain(?string $domain)
     {
         $this->data['Domain'] = $domain;
     }
 
     /**
      * Get the path.
-     *
-     * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->data['Path'];
     }
@@ -187,17 +181,15 @@ class SetCookie
      *
      * @param string $path Path of the cookie
      */
-    public function setPath($path)
+    public function setPath(string $path)
     {
         $this->data['Path'] = $path;
     }
 
     /**
      * Maximum lifetime of the cookie in seconds.
-     *
-     * @return null|int
      */
-    public function getMaxAge()
+    public function getMaxAge(): ?int
     {
         return $this->data['Max-Age'];
     }
@@ -205,9 +197,9 @@ class SetCookie
     /**
      * Set the max-age of the cookie.
      *
-     * @param int $maxAge Max age of the cookie in seconds
+     * @param null|int $maxAge Max age of the cookie in seconds
      */
-    public function setMaxAge($maxAge)
+    public function setMaxAge(?int $maxAge)
     {
         $this->data['Max-Age'] = $maxAge;
     }
@@ -225,7 +217,7 @@ class SetCookie
     /**
      * Set the unix timestamp for which the cookie will expire.
      *
-     * @param int|string $timestamp Unix timestamp
+     * @param float|int|string $timestamp Unix timestamp
      */
     public function setExpires($timestamp)
     {
@@ -235,61 +227,55 @@ class SetCookie
     }
 
     /**
-     * Get whether or not this is a secure cookie.
-     *
-     * @return null|bool
+     * Get whether this is a secure cookie.
      */
-    public function getSecure()
+    public function getSecure(): bool
     {
         return $this->data['Secure'];
     }
 
     /**
-     * Set whether or not the cookie is secure.
+     * Set whether the cookie is secure.
      *
      * @param bool $secure Set to true or false if secure
      */
-    public function setSecure($secure)
+    public function setSecure(bool $secure)
     {
         $this->data['Secure'] = $secure;
     }
 
     /**
-     * Get whether or not this is a session cookie.
-     *
-     * @return null|bool
+     * Get whether this is a session cookie.
      */
-    public function getDiscard()
+    public function getDiscard(): bool
     {
         return $this->data['Discard'];
     }
 
     /**
-     * Set whether or not this is a session cookie.
+     * Set whether this is a session cookie.
      *
      * @param bool $discard Set to true or false if this is a session cookie
      */
-    public function setDiscard($discard)
+    public function setDiscard(bool $discard)
     {
         $this->data['Discard'] = $discard;
     }
 
     /**
-     * Get whether or not this is an HTTP only cookie.
-     *
-     * @return bool
+     * Get whether this is an HTTP only cookie.
      */
-    public function getHttpOnly()
+    public function getHttpOnly(): bool
     {
         return $this->data['HttpOnly'];
     }
 
     /**
-     * Set whether or not this is an HTTP only cookie.
+     * Set whether this is an HTTP only cookie.
      *
      * @param bool $httpOnly Set to true or false if this is HTTP only
      */
-    public function setHttpOnly($httpOnly)
+    public function setHttpOnly(bool $httpOnly)
     {
         $this->data['HttpOnly'] = $httpOnly;
     }
@@ -308,10 +294,8 @@ class SetCookie
      *   path is a %x2F ("/") character.
      *
      * @param string $requestPath Path to check against
-     *
-     * @return bool
      */
-    public function matchesPath($requestPath)
+    public function matchesPath(string $requestPath): bool
     {
         $cookiePath = $this->getPath();
 
@@ -321,7 +305,7 @@ class SetCookie
         }
 
         // Ensure that the cookie-path is a prefix of the request path.
-        if (strpos($requestPath, $cookiePath) !== 0) {
+        if (! str_starts_with($requestPath, $cookiePath)) {
             return false;
         }
 
@@ -338,10 +322,8 @@ class SetCookie
      * Check if the cookie matches a domain value.
      *
      * @param string $domain Domain to check against
-     *
-     * @return bool
      */
-    public function matchesDomain($domain)
+    public function matchesDomain(string $domain): bool
     {
         // Remove the leading '.' as per spec in RFC 6265.
         // http://tools.ietf.org/html/rfc6265#section-5.2.3
@@ -363,10 +345,8 @@ class SetCookie
 
     /**
      * Check if the cookie is expired.
-     *
-     * @return bool
      */
-    public function isExpired()
+    public function isExpired(): bool
     {
         return $this->getExpires() && time() > $this->getExpires();
     }
@@ -376,7 +356,7 @@ class SetCookie
      *
      * @return bool|string Returns true if valid or an error message if invalid
      */
-    public function validate()
+    public function validate(): bool|string
     {
         // Names must not be empty, but can be 0
         $name = $this->getName();

@@ -15,20 +15,9 @@ use Hyperf\Di\MetadataCollector;
 
 class AspectCollector extends MetadataCollector
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
-    /**
-     * @var array
-     */
-    protected static $aspectRules = [];
-
-    /**
-     * @var \SplPriorityQueue[]
-     */
-    protected static $aspectQueues = [];
+    protected static array $aspectRules = [];
 
     public static function setAround(string $aspect, array $classes, array $annotations, ?int $priority = null): void
     {
@@ -38,10 +27,8 @@ class AspectCollector extends MetadataCollector
         $setter = function ($key, $value) {
             if (static::has($key)) {
                 $value = array_merge(static::get($key, []), $value);
-                static::set($key, $value);
-            } else {
-                static::set($key, $value);
             }
+            static::set($key, $value);
         };
         $setter('classes.' . $aspect, $classes);
         $setter('annotations.' . $aspect, $annotations);
