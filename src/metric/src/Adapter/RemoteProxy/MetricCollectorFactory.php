@@ -14,6 +14,8 @@ namespace Hyperf\Metric\Adapter\RemoteProxy;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Metric\Contract\MetricCollectorInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class MetricCollectorFactory
 {

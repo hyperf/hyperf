@@ -27,8 +27,6 @@ use Psr\Container\ContainerInterface;
  */
 class MetricBufferWatcher implements ListenerInterface
 {
-    protected MetricFactoryInterface $factory;
-
     private ConfigInterface $config;
 
     private MetricCollectorInterface $collector;

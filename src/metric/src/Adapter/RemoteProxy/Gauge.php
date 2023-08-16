@@ -41,8 +41,10 @@ class Gauge implements GaugeInterface
     {
         $this->value = $value;
         $this->delta = null;
-        $process = ProcessCollector::get(static::TARGET_PROCESS_NAME)[0];
-        $process->write(serialize($this));
+
+        ApplicationContext::getContainer()
+            ->get(MetricCollectorInterface::class)
+            ->add($this);
     }
 
     public function add(float $delta): void
