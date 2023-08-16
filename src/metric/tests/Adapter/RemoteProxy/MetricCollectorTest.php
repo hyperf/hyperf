@@ -26,6 +26,13 @@ use Swoole\Process;
 #[CoversNothing]
 class MetricCollectorTest extends TestCase
 {
+    protected bool $processMocked = false;
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+    }
+
     public function testAddData()
     {
         $collector = new MetricCollector(100);
@@ -39,10 +46,7 @@ class MetricCollectorTest extends TestCase
 
     public function testFlush()
     {
-        $process = Mockery::mock(Process::class);
-        $process->shouldReceive('write')
-            ->once();
-        ProcessCollector::add('metric', $process);
+        $this->mockProcessCollector();
 
         $collector = new MetricCollector(100);
         $collector->add(new stdClass());
@@ -51,16 +55,27 @@ class MetricCollectorTest extends TestCase
         $this->assertSame(0, count($collector->getBuffer()));
     }
 
-    public function testAddWithFlush()
+    public function testAddDataWithFlush()
     {
-        $process = Mockery::mock(Process::class);
-        $process->shouldReceive('write')
-            ->once();
-        ProcessCollector::add('metric', $process);
+        $this->mockProcessCollector();
 
         $collector = new MetricCollector(1);
         $collector->add(new stdClass());
 
         $this->assertSame(0, count($collector->getBuffer()));
+    }
+
+    protected function mockProcessCollector()
+    {
+        if ($this->processMocked) {
+            return;
+        }
+
+        $process = Mockery::mock(Process::class);
+        $process->shouldReceive('write');
+
+        ProcessCollector::add('metric', $process);
+
+        $this->processMocked = true;
     }
 }
