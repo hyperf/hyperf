@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\DbConnection\Listener;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Register;
 use Hyperf\Event\Contract\ListenerInterface;
@@ -32,10 +33,16 @@ class RegisterConnectionResolverListener implements ListenerInterface
 
     public function process(object $event): void
     {
-        if ($this->container->has(ConnectionResolverInterface::class)) {
-            Register::setConnectionResolver(
-                $this->container->get(ConnectionResolverInterface::class)
-            );
+        if (! $this->container->has(ConnectionResolverInterface::class)) {
+            return;
         }
+
+        $connection = $this->container
+            ->get(ConfigInterface::class)
+            ->get('databases.connection', 'default');
+        $resolver = $this->container->get(ConnectionResolverInterface::class);
+        $resolver->setDefaultConnection($connection);
+
+        Register::setConnectionResolver($resolver);
     }
 }

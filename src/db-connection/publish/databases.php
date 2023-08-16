@@ -12,6 +12,8 @@ declare(strict_types=1);
 use function Hyperf\Support\env;
 
 return [
+    'connection' => env('DB_CONNECTION', 'default'),
+
     'default' => [
         'driver' => env('DB_DRIVER', 'mysql'),
         'host' => env('DB_HOST', 'localhost'),
