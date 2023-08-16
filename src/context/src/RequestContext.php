@@ -19,7 +19,7 @@ class RequestContext
 {
     public static function get(?int $coroutineId = null): ServerRequestPlusInterface
     {
-        return Context::get(ServerRequestInterface::class, $coroutineId);
+        return Context::get(ServerRequestInterface::class, null, $coroutineId);
     }
 
     public static function set(ServerRequestInterface $request, ?int $coroutineId = null): ServerRequestPlusInterface
@@ -38,6 +38,6 @@ class RequestContext
 
     public static function getOrNull(?int $coroutineId = null): ?ServerRequestPlusInterface
     {
-        return Context::get(ServerRequestInterface::class, $coroutineId);
+        return Context::get(ServerRequestInterface::class, null, $coroutineId);
     }
 }
