@@ -78,32 +78,6 @@ php --ini
 memory_limit=-1
 ```
 
-## Dependency injection is not working correctly in `PHP` version `7.3`
-
-In versions `2.0` - `2.1`, `Hyperf` uses the `BetterReflection` package to make `AOP` work with none `DI` managed objects (such as objects instantiated using the `new` keyword). While implementing `AOP` in this way enhances the developer experience, it also brings several difficulties:
-
-* Project startup is slow without a `scan cache`
-* `Inject` and `Value` annotations have no effect
-* `BetterReflection` does not support `PHP` version `8` (as of the `2.2` release)
-
-In newer versions, we stopped using the `BetterReflection` package in favour of using a child process to scan the codebase to solve these pain points but this introduced some compatibility issues in older versions of `PHP`:
-
-In `php7.3` you may encounter an error similar to the following when starting the application:
-
-```
-PHP Fatal error:  Interface 'Hyperf\Signal\SignalHandlerInterface' not found in vendor/hyperf/process/src/Handler/ProcessStopHandler.php on line 17
-
-PHP Fatal error:  Interface 'Symfony\Component\Serializer\SerializerInterface' not found in vendor/hyperf/utils/src/Serializer/Serializer.php on line 46
-```
-
-This problem is due to how `PHP` version `7.3` handles using reflection to find an interface which does exist or has no corresponding class. The best solution is to upgrade to `PHP` version `7.4` or `8.0` but the issue can also be fixed by installing the components which contain these interfaces as follows:
-
-```
-composer require hyperf/signal
-
-composer require symfony/serializer
-```
-
 ## `Error while injecting dependencies into... No entry or class found...` error when injecting traits using `#[Inject]`
 
 This error appears when you inject a trait using namespaces via `Inject` and the class containing the `use Trait;` syntax uses a conflicting namespace. This is a complex concept but the following examples should make it simple:
