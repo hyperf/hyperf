@@ -115,6 +115,65 @@ class AsyncQueueConsumer extends ConsumerProcess
 }
 ```
 
+### 如何使用多個配置
+
+有的開發者會在特殊場景穿件多個配置，比如某些訊息要優先處理，所以會放到更加清閒的隊列當中。例如以下配置
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'redis' => [
+            'pool' => 'default'
+        ],
+        'channel' => 'queue',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 5,
+        ],
+    ],
+    'fast' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'redis' => [
+            'pool' => 'default'
+        ],
+        'channel' => '{queue:fast}',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 5,
+        ],
+    ],
+];
+
+```
+
+我們預設的 `Hyperf\AsyncQueue\Process\ConsumerProcess` 只會處理 `default` 配置，所以我們需要建立一個新的 Process
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Process;
+
+use Hyperf\AsyncQueue\Process\ConsumerProcess;
+use Hyperf\Process\Annotation\Process;
+
+#[Process(name: "async-queue")]
+class AsyncQueueConsumer extends ConsumerProcess
+{
+    protected string $queue = 'fast';
+}
+```
+
 ### 生產訊息
 
 #### 傳統方式

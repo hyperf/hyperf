@@ -23,7 +23,7 @@ use function method_exists;
 
 class DefinitionSource implements DefinitionSourceInterface
 {
-    private array $source;
+    protected array $source;
 
     public function __construct(array $source)
     {
@@ -63,7 +63,7 @@ class DefinitionSource implements DefinitionSourceInterface
     /**
      * Read the type-hinting from the parameters of the function.
      */
-    private function getParametersDefinition(ReflectionFunctionAbstract $constructor): array
+    protected function getParametersDefinition(ReflectionFunctionAbstract $constructor): array
     {
         $parameters = [];
 
@@ -85,7 +85,7 @@ class DefinitionSource implements DefinitionSourceInterface
     /**
      * Normalize the user definition source to a standard definition source.
      */
-    private function normalizeSource(array $source): array
+    protected function normalizeSource(array $source): array
     {
         $definitions = [];
         foreach ($source as $identifier => $definition) {
@@ -100,7 +100,7 @@ class DefinitionSource implements DefinitionSourceInterface
     /**
      * @param array|callable|string $definition
      */
-    private function normalizeDefinition(string $identifier, $definition): ?DefinitionInterface
+    protected function normalizeDefinition(string $identifier, $definition): ?DefinitionInterface
     {
         if ($definition instanceof PriorityDefinition) {
             $definition = $definition->getDefinition();
@@ -120,7 +120,7 @@ class DefinitionSource implements DefinitionSourceInterface
         return null;
     }
 
-    private function autowire(string $name, ObjectDefinition $definition = null): ?ObjectDefinition
+    protected function autowire(string $name, ObjectDefinition $definition = null): ?ObjectDefinition
     {
         $className = $definition ? $definition->getClassName() : $name;
         if (! class_exists($className) && ! interface_exists($className)) {

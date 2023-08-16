@@ -31,6 +31,7 @@ use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Middleware\ValidationMiddleware;
+use Hyperf\Validation\ValidationException;
 use Hyperf\Validation\ValidatorFactory;
 use HyperfTest\Validation\Cases\Stub\DemoController;
 use HyperfTest\Validation\Cases\Stub\DemoRequest;
@@ -168,5 +169,28 @@ class ValidationMiddlewareTest extends TestCase
         ApplicationContext::setContainer($container);
 
         return $container;
+    }
+
+    public function testValidationOfInvocableControllerRoutingRequests()
+    {
+        $this->expectException(ValidationException::class);
+
+        $container = $this->createContainer();
+        $factory = $container->get(DispatcherFactory::class);
+
+        $router = $factory->getRouter('http');
+        $router->addRoute('POST', '/invokable', 'HyperfTest\Validation\Cases\Stub\DemoController');
+
+        $dispatcher = $factory->getDispatcher('http');
+        $middleware = new ValidationMiddleware($container);
+        $coreMiddleware = new CoreMiddleware($container, 'http');
+        $handler = new HttpRequestHandler([$middleware], $coreMiddleware, $container);
+        Context::set(ResponseInterface::class, new Response());
+
+        $request = (new Request('POST', new Uri('/invokable')))
+            ->withParsedBody(['username' => 'Hyperf']);
+        $routes = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+        $request = Context::set(ServerRequestInterface::class, $request->withAttribute(Dispatched::class, new Dispatched($routes)));
+        $middleware->process($request, $handler);
     }
 }

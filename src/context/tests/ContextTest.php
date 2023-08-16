@@ -15,6 +15,8 @@ use Hyperf\Context\Context;
 use Hyperf\Context\RequestContext;
 use Hyperf\Context\ResponseContext;
 use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Waiter;
+use Hyperf\Engine\Channel;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -24,6 +26,7 @@ use stdClass;
 use Swow\Psr7\Message\ResponsePlusInterface;
 use Swow\Psr7\Message\ServerRequestPlusInterface;
 
+use function Hyperf\Coroutine\go;
 use function Hyperf\Coroutine\parallel;
 
 /**
@@ -160,5 +163,32 @@ class ContextTest extends TestCase
         $this->assertNotSame($response, ResponseContext::get());
         $this->assertSame($req, ResponseContext::get());
         $this->assertSame($req, Context::get(ResponseInterface::class));
+    }
+
+    public function testResponseContextWithCoroutineId()
+    {
+        $response = Mockery::mock(ResponsePlusInterface::class);
+        $chan = new Channel(1);
+        $close = new Channel(1);
+        go(function () use ($chan, $response, $close) {
+            ResponseContext::set($response);
+            $this->assertSame($response, ResponseContext::get());
+            $chan->push(Coroutine::id());
+            $close->pop(1);
+        });
+
+        $id = $chan->pop(5);
+        $this->assertSame($response, ResponseContext::get($id));
+        $close->push(true);
+    }
+
+    public function testRequestContextWithCoroutineId()
+    {
+        $request = Mockery::mock(ServerRequestPlusInterface::class);
+        RequestContext::set($request);
+        $id = Coroutine::id();
+        (new Waiter())->wait(function () use ($id, $request) {
+            $this->assertSame($request, RequestContext::get($id));
+        });
     }
 }

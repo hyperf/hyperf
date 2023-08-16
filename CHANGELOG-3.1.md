@@ -67,10 +67,12 @@
 - [#5847](https://github.com/hyperf/hyperf/pull/5847) Changed the default redis key for metric.
 - [#5943](https://github.com/hyperf/hyperf/pull/5943) Don't remove the node from load balancer of `json rpc http transporter` when the status code isn't 200.
 - [#5961](https://github.com/hyperf/hyperf/pull/5961) Using `enum` instead of `class` for `Hyperf\Amqp\Result` and `Hyperf\Amqp\Message\Type`.
+- [#6022](https://github.com/hyperf/hyperf/pull/6022) When using `Base62::decode` to decode the incorrect data, it should be thrown `InvalidArgumentException` instead of `TypeError`.
 
 ## Fixed
 
 - [#5771](https://github.com/hyperf/hyperf/pull/5771) Fixed bug that the return type of `Model::updateOrInsert` isn't boolean.
+- [#6033](https://github.com/hyperf/hyperf/pull/6033) Fixed bug that `RequestContext` and `ResponseContext` cannot get instance from another coroutines.
 
 ## Deprecated
 

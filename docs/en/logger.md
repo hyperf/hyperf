@@ -128,6 +128,8 @@ $log->alert('czl');
 
 Sometimes, you may wish to keep the habit of logging in most frameworks. Then you can create a `Log` class under `App`, and call the magic static method `__callStatic` to access to `Logger` and each Level of logging. Let’s demonstrate through code:
 
+> Remember not to make a relation with name and request, such as linking $request_id as a logger name, it can cause request level log objects to be stored in the factory, leading to serious memory leak.
+
 ```php
 namespace App;
 
