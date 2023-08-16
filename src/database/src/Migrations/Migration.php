@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Migrations;
 
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Contract\ConfigInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 
 abstract class Migration
 {
@@ -36,7 +36,7 @@ abstract class Migration
         }
 
         return ApplicationContext::getContainer()
-            ->get(ConfigInterface::class)
-            ->get('databases.connection', 'default');
+            ->get(ConnectionResolverInterface::class)
+            ->getDefaultConnection();
     }
 }

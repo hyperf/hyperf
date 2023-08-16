@@ -14,7 +14,7 @@ namespace Hyperf\Database\Model;
 use ArrayAccess;
 use Faker\Generator as Faker;
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Contract\ConfigInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 use Symfony\Component\Finder\Finder;
 
 class Factory implements ArrayAccess
@@ -324,7 +324,7 @@ class Factory implements ArrayAccess
     protected function getConnection(): string
     {
         return ApplicationContext::getContainer()
-            ->get(ConfigInterface::class)
-            ->get('databases.connection', 'default');
+            ->get(ConnectionResolverInterface::class)
+            ->getDefaultConnection();
     }
 }
