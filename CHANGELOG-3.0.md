@@ -10,6 +10,10 @@
 - [#6023](https://github.com/hyperf/hyperf/pull/6023) Allow using the tracer instance from context, append `Trace-Id` to Response Header.
 - [#6027](https://github.com/hyperf/hyperf/pull/6027) Optimized the tracing in coroutine.
 
+## Deprecated
+
+- [#6044](https://github.com/hyperf/hyperf/pull/6044) Make `Hyperf\Coroutine\Traits\Container` as deprecated, please use `Hyperf\Support\Traits\Container` instead.
+
 # v3.0.32 - 2023-08-09
 
 ## Added
