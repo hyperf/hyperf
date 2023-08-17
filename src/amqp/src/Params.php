@@ -116,43 +116,43 @@ class Params
         return $this->closeOnDestruct;
     }
 
-    public function setCloseOnDestruct(bool $closeOnDestruct)
+    public function setCloseOnDestruct(bool $closeOnDestruct): static
     {
         $this->closeOnDestruct = $closeOnDestruct;
         return $this;
     }
 
-    public function setInsist(bool $insist)
+    public function setInsist(bool $insist): void
     {
         $this->insist = $insist;
     }
 
-    public function setLoginMethod(string $loginMethod)
+    public function setLoginMethod(string $loginMethod): void
     {
         $this->loginMethod = $loginMethod;
     }
 
-    public function setLocale(string $locale)
+    public function setLocale(string $locale): void
     {
         $this->locale = $locale;
     }
 
-    public function setConnectionTimeout(int $connectionTimeout)
+    public function setConnectionTimeout(int $connectionTimeout): void
     {
         $this->connectionTimeout = $connectionTimeout;
     }
 
-    public function setReadWriteTimeout(int $readWriteTimeout)
+    public function setReadWriteTimeout(int $readWriteTimeout): void
     {
         $this->readWriteTimeout = $readWriteTimeout;
     }
 
-    public function setKeepalive(bool $keepalive)
+    public function setKeepalive(bool $keepalive): void
     {
         $this->keepalive = $keepalive;
     }
 
-    public function setHeartbeat(int $heartbeat)
+    public function setHeartbeat(int $heartbeat): void
     {
         $this->heartbeat = $heartbeat;
     }
@@ -162,7 +162,7 @@ class Params
         return $this->channelRpcTimeout;
     }
 
-    public function setChannelRpcTimeout(float $channelRpcTimeout)
+    public function setChannelRpcTimeout(float $channelRpcTimeout): void
     {
         $this->channelRpcTimeout = $channelRpcTimeout;
     }
@@ -172,7 +172,7 @@ class Params
         return $this->maxIdleChannels;
     }
 
-    public function setMaxIdleChannels(int $maxIdleChannels)
+    public function setMaxIdleChannels(int $maxIdleChannels): void
     {
         $this->maxIdleChannels = $maxIdleChannels;
     }

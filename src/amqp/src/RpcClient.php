@@ -21,13 +21,16 @@ use Throwable;
 
 class RpcClient extends Builder
 {
-    protected $poolChannels = [];
+    protected array $poolChannels = [];
 
     public function __construct(ContainerInterface $container, ConnectionFactory $factory, protected int $maxChannels = 64)
     {
         parent::__construct($container, $factory);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function call(RpcMessageInterface $rpcMessage, int $timeout = 5)
     {
         $pool = $rpcMessage->getPoolName();
@@ -75,7 +78,7 @@ class RpcClient extends Builder
         return $result;
     }
 
-    protected function initChannel(RpcChannel $channel, QueueBuilder $builder)
+    protected function initChannel(RpcChannel $channel, QueueBuilder $builder): void
     {
         [$queue] = $channel->getChannel()->queue_declare(
             $builder->getQueue(),

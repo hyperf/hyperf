@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp;
 
+use Exception;
 use Hyperf\Amqp\Exception\NotSupportedException;
 use Hyperf\Amqp\IO\IOFactory;
 use Hyperf\Amqp\IO\IOFactoryInterface;
@@ -20,7 +21,9 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coroutine\Locker;
 use InvalidArgumentException;
 use PhpAmqpLib\Wire\IO\AbstractIO;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class ConnectionFactory
 {
@@ -29,14 +32,18 @@ class ConnectionFactory
     /**
      * @var AMQPConnection[][]
      */
-    protected $connections = [];
+    protected array $connections = [];
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __construct(protected ContainerInterface $container)
     {
         $this->config = $this->container->get(ConfigInterface::class);
     }
 
-    public function refresh(string $pool)
+    public function refresh(string $pool): void
     {
         $config = $this->getConfig($pool);
         $count = $config['pool']['connections'] ?? 1;
@@ -82,6 +89,11 @@ class ConnectionFactory
         return Arr::random($this->connections[$pool]);
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws Exception
+     */
     public function make(array $config): AMQPConnection
     {
         $user = $config['user'] ?? 'guest';

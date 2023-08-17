@@ -78,11 +78,17 @@ abstract class Message implements MessageInterface
         return (new ExchangeBuilder())->setExchange($this->getExchange())->setType($this->getType());
     }
 
+    /**
+     * @throws MessageException
+     */
     public function serialize(): string
     {
         throw new MessageException('You have to overwrite serialize() method.');
     }
 
+    /**
+     * @throws MessageException
+     */
     public function unserialize(string $data)
     {
         throw new MessageException('You have to overwrite unserialize() method.');

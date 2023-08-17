@@ -12,11 +12,17 @@ declare(strict_types=1);
 namespace Hyperf\Amqp;
 
 use Hyperf\Contract\StdoutLoggerInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class ConsumerFactory
 {
-    public function __invoke(ContainerInterface $container)
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container): Consumer
     {
         return new Consumer(
             $container,

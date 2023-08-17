@@ -24,7 +24,7 @@ class Builder
     }
 
     /**
-     * @throws AMQPProtocolChannelException when the channel operation is failed
+     * @throws AMQPProtocolChannelException|Throwable when the channel operation is failed
      */
     public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
     {
