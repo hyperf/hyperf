@@ -234,7 +234,7 @@ class AMQPConnection extends AbstractConnection
         Coroutine::create(function () {
             try {
                 while (true) {
-                    $frame = $this->wait_frame();
+                    $frame = $this->wait_frame(0);
                     $this->channelManager->get($frame->getChannel())->push($frame, 0.001);
                 }
             } catch (Throwable $exception) {

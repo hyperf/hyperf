@@ -17,9 +17,7 @@ use Hyperf\Amqp\Result;
 use Hyperf\Context\ApplicationContext;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 abstract class ConsumerMessage extends Message implements ConsumerMessageInterface
 {
@@ -81,10 +79,6 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return (new QueueBuilder())->setQueue($this->getQueue());
     }
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
     public function unserialize(string $data)
     {
         $container = ApplicationContext::getContainer();
@@ -153,10 +147,6 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this->container;
     }
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
     protected function reply(mixed $data, AMQPMessage $message): void
     {
         $packer = ApplicationContext::getContainer()->get(Packer::class);

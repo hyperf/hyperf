@@ -98,12 +98,12 @@ class SwooleIO extends AbstractIO
         return 1;
     }
 
-    public function disableHeartbeat(): SwooleIO|static
+    public function disableHeartbeat(): AbstractIO
     {
         return $this;
     }
 
-    public function reenableHeartbeat(): SwooleIO|static
+    public function reenableHeartbeat(): AbstractIO
     {
         return $this;
     }

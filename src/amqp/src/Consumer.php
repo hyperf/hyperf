@@ -26,9 +26,7 @@ use Hyperf\Process\ProcessManager;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -39,10 +37,6 @@ class Consumer extends Builder
 {
     protected ?EventDispatcherInterface $eventDispatcher = null;
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
     public function __construct(
         ContainerInterface $container,
         ConnectionFactory $factory,
@@ -160,10 +154,6 @@ class Consumer extends Builder
         }
     }
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
     protected function getConcurrent(string $pool): ?Concurrent
     {
         $config = $this->container->get(ConfigInterface::class);

@@ -99,12 +99,12 @@ class SwowIO extends AbstractIO
         return 1;
     }
 
-    public function disableHeartbeat(): SwowIO|static
+    public function disableHeartbeat(): AbstractIO
     {
         return $this;
     }
 
-    public function reenableHeartbeat(): SwowIO|static
+    public function reenableHeartbeat(): AbstractIO
     {
         return $this;
     }
