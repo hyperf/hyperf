@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Coroutine\Stub;
 
-use Hyperf\Coroutine\Traits\Container;
+use Hyperf\Support\Traits\Container;
 
 class Bar
 {
