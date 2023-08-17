@@ -12,7 +12,7 @@
 
 ## Deprecated
 
-- [#6044](https://github.com/hyperf/hyperf/pull/6044) Make `Hyperf\Coroutine\Traits\Container` as deprecated, please use `Hyperf\Support\Traits\Container` instead.
+- [#6044](https://github.com/hyperf/hyperf/pull/6044) Make `Hyperf\Coroutine\Traits\Container` as deprecated.
 
 # v3.0.32 - 2023-08-09
 
