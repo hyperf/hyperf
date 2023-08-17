@@ -57,7 +57,6 @@ class ConsumerManager
     private function createProcess(ConsumerMessageInterface $consumerMessage): AbstractProcess
     {
         return new class($this->container, $consumerMessage) extends AbstractProcess {
-
             private Consumer $consumer;
 
             private ConsumerMessageInterface $consumerMessage;
