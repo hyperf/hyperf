@@ -19,7 +19,6 @@ use OpenTracing\Span;
 use OpenTracing\Tracer;
 use Throwable;
 
-use function Hyperf\Support\call;
 use function Hyperf\Support\make;
 
 class CoroutineAspect extends AbstractAspect
