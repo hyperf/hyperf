@@ -91,6 +91,7 @@ public function list(ConversationRequest $request): array
 `SA\Property` 注解中，我们可以增加 `rules` 参数，然后配合 `SwaggerRequest` 即可在中间件中，验证参数是否合法。
 
 ```php
+<?php
 namespace App\Controller;
 
 use App\Schema\SavedSchema;
