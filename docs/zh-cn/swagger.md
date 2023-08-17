@@ -85,3 +85,33 @@ public function list(ConversationRequest $request): array
 {
 }
 ```
+
+### 配合验证器
+
+`SA\Property` 注解中，我们可以增加 `rules` 参数，然后配合 `SwaggerRequest` 即可在中间件中，验证参数是否合法。
+
+```php
+namespace App\Controller;
+
+use App\Schema\SavedSchema;
+use Hyperf\Swagger\Request\SwaggerRequest;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\Swagger\Annotation as SA;
+
+#[SA\HyperfServer(name: 'http')]
+class CardController extends Controller
+{
+    #[SA\Post('/user/save', summary: '保存用户信息', tags: ['用户管理'])]
+    #[SA\RequestBody(content: new SA\JsonContent(properties: [
+        new SA\Property(property: 'nickname', description: '昵称', type: 'integer', rules: 'required|string'),
+        new SA\Property(property: 'gender', description: '性别', type: 'integer', rules: 'required|integer|in:0,1,2'),
+    ]))]
+    #[SA\Response(response: '200', content: new SA\JsonContent(ref: '#/components/schemas/SavedSchema'))]
+    public function info(SwaggerRequest $request)
+    {
+        $result = $this->service->save($request->all());
+
+        return $this->response->success($result);
+    }
+}
+```
