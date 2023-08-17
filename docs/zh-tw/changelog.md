@@ -1,5 +1,15 @@
 # 版本更新記錄
 
+# v3.0.32 - 2023-08-09
+
+## 新增
+
+- [#5996](https://github.com/hyperf/hyperf/pull/5996) 允許 `tracer` 切入 `GuzzleHttp\Client::request()` 方法，進行資料記錄。
+
+## 修復
+
+- [#6004](https://github.com/hyperf/hyperf/pull/6004) 修復在使用 `Command` 時，丟擲異常後，命令列退出碼不合規的問題。
+
 # v3.0.31 - 2023-07-27
 
 ## 修復

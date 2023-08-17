@@ -18,7 +18,7 @@
 ## 路由
 
 - [nikic/fastroute](https://github.com/nikic/FastRoute) 一个常用的高速路由
-- [lazychanger/urlrewrite](https://github.com/lazychanger/urlrewrite) 一个基于PSR-7与 [nikic/fastroute](https://github.com/nikic/FastRoute) 相同路由规则的URL重写工具
+- [lazychanger/urlrewrite](https://github.com/lazychanger/urlrewrite) 一个基于 PSR- 7 与 [nikic/fastroute](https://github.com/nikic/FastRoute) 相同路由规则的 URL 重写工具
 
 ## 事件
 
