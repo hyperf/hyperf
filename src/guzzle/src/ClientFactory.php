@@ -23,14 +23,9 @@ class ClientFactory
 {
     protected bool $runInSwoole = false;
 
-    protected int $nativeCurlHook = 0;
-
     public function __construct(private ContainerInterface $container)
     {
         $this->runInSwoole = extension_loaded('swoole');
-        if (defined('SWOOLE_HOOK_NATIVE_CURL')) {
-            $this->nativeCurlHook = SWOOLE_HOOK_NATIVE_CURL;
-        }
     }
 
     public function create(array $options = []): Client
