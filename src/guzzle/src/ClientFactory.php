@@ -40,7 +40,6 @@ class ClientFactory
         if (
             $this->runInSwoole
             && Coroutine::inCoroutine()
-            && (\Swoole\Runtime::getHookFlags() & $this->nativeCurlHook) == 0
         ) {
             $stack = HandlerStack::create(new CoroutineHandler());
         }
