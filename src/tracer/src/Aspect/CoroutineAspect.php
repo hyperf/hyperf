@@ -16,10 +16,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Engine\Coroutine as Co;
 use Hyperf\Tracer\TracerContext;
 use OpenTracing\Span;
-use OpenTracing\Tracer;
 use Throwable;
-
-use function Hyperf\Support\make;
 
 class CoroutineAspect extends AbstractAspect
 {
@@ -35,9 +32,7 @@ class CoroutineAspect extends AbstractAspect
         $proceedingJoinPoint->arguments['keys']['callable'] = function () use ($callable, $root) {
             try {
                 if ($root instanceof Span) {
-                    /** @var Tracer $tracer */
-                    $tracer = make(Tracer::class);
-                    TracerContext::setTracer($tracer);
+                    $tracer = TracerContext::getTracer();
                     $child = $tracer->startSpan('coroutine', [
                         'child_of' => $root->getContext(),
                     ]);

@@ -16,8 +16,8 @@ use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
+use Hyperf\Tracer\TracerContext;
 use OpenTracing\Span;
-use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -30,7 +30,7 @@ class TraceMiddleware implements MiddlewareInterface
 {
     use SpanStarter;
 
-    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
+    public function __construct(private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
     }
 
@@ -42,11 +42,12 @@ class TraceMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $tracer = TracerContext::getTracer();
         $span = $this->buildSpan($request);
 
-        defer(function () {
+        defer(function () use ($tracer) {
             try {
-                $this->tracer->flush();
+                $tracer->flush();
             } catch (\Throwable) {
             }
         });

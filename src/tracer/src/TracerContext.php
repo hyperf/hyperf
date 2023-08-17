@@ -15,6 +15,8 @@ use Hyperf\Context\Context;
 use OpenTracing\Span;
 use OpenTracing\Tracer;
 
+use function Hyperf\Support\make;
+
 class TracerContext
 {
     public const TRACER = 'tracer.tracer';
@@ -26,9 +28,9 @@ class TracerContext
         return Context::set(self::TRACER, $tracer);
     }
 
-    public static function getTracer(): ?Tracer
+    public static function getTracer(): Tracer
     {
-        return Context::get(self::TRACER) ?: null;
+        return Context::getOrSet(self::TRACER, make(Tracer::class));
     }
 
     public static function setRoot(Span $root): Span
