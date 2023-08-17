@@ -18,15 +18,17 @@ use Hyperf\Metric\Adapter\RemoteProxy\Gauge;
 use Hyperf\Metric\Adapter\RemoteProxy\Histogram;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Process\Event\PipeMessage;
+use Psr\Container\ContainerInterface;
 
 /**
  * Receives messages in metric process.
  */
 class OnPipeMessage implements ListenerInterface
 {
-    public function __construct(
-        protected MetricFactoryInterface $factory
-    ) {
+    protected MetricFactoryInterface $factory;
+
+    public function __construct(protected ContainerInterface $container)
+    {
     }
 
     /**
@@ -49,6 +51,7 @@ class OnPipeMessage implements ListenerInterface
             return;
         }
 
+        $this->factory = $this->container->get(MetricFactoryInterface::class);
         $inner = ! is_array($event->data) ? [$event->data] : $event->data;
         foreach ($inner as $data) {
             Coroutine::create(function () use ($data) {

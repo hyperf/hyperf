@@ -37,9 +37,9 @@ class MetricCollector implements MetricCollectorInterface
     public function flush(): void
     {
         $process = ProcessCollector::get(static::TARGET_PROCESS_NAME)[0];
-        $process->write(serialize($this->buffer));
-
+        $buffer = $this->buffer;
         $this->buffer = [];
+        $process->write(serialize($buffer));
     }
 
     public function getBuffer(): array
