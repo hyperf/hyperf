@@ -25,7 +25,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use RuntimeException;
-use SplFileInfo;
 
 use function Hyperf\Collection\data_get;
 use function Hyperf\Support\value;
