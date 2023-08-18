@@ -1,5 +1,9 @@
 # v3.0.34 - TBD
 
+## Optimized
+
+- [#6046](https://github.com/hyperf/hyperf/pull/6046) Using the tracer instance from coroutine context.
+
 # v3.0.33 - 2023-08-18
 
 ## Fixed
