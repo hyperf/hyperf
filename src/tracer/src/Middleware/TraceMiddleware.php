@@ -84,10 +84,11 @@ class TraceMiddleware implements MiddlewareInterface
     protected function buildSpan(ServerRequestInterface $request): Span
     {
         $uri = $request->getUri();
-        $span = $this->startSpan('request');
+        $span = $this->startSpan(sprintf('request: %s %s', $request->getMethod(), $uri->getPath()));
         $span->setTag($this->spanTagManager->get('coroutine', 'id'), (string) Coroutine::id());
-        $span->setTag($this->spanTagManager->get('request', 'path'), (string) $uri);
+        $span->setTag($this->spanTagManager->get('request', 'path'), (string) $uri->getPath());
         $span->setTag($this->spanTagManager->get('request', 'method'), $request->getMethod());
+        $span->setTag($this->spanTagManager->get('request', 'uri'), (string) $uri);
         foreach ($request->getHeaders() as $key => $value) {
             $span->setTag($this->spanTagManager->get('request', 'header') . '.' . $key, implode(', ', $value));
         }
