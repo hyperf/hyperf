@@ -32,7 +32,7 @@ trait SpanStarter
         string $kind = SPAN_KIND_RPC_SERVER
     ): Span {
         $root = TracerContext::getRoot();
-        $tracer = TracerContext::getTracer() ?: $this->tracer;
+        $tracer = TracerContext::getTracer();
         if (! $root instanceof Span) {
             $container = ApplicationContext::getContainer();
             /** @var ServerRequestInterface $request */
