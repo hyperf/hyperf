@@ -4,6 +4,7 @@
 
 - [#6011](https://github.com/hyperf/hyperf/pull/6011) Fixed the issue where validation for invocable controller route requests was not working.
 - [#6013](https://github.com/hyperf/hyperf/pull/6013) Fixed the bug that `no_aspect` is overridden.
+- [#6053](https://github.com/hyperf/hyperf/pull/6053) Fixed bug that `Arr::has` with integer keys cannot work as expected.
 
 ## Optimized
 
