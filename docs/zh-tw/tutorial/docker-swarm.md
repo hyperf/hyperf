@@ -167,7 +167,7 @@ $ docker swarm init
 ```
 docker network create \
 --driver overlay \
---subnet 12.0.0.0/8 \
+--subnet 10.0.0.0/8 \
 --opt encrypted \
 --attachable \
 default-network
@@ -486,7 +486,7 @@ $ yum install gitlab-runner
 ```
 docker network create \
 --driver overlay \
---subnet 12.0.0.0/8 \
+--subnet 10.0.0.0/8 \
 --opt encrypted \
 --attachable \
 default-network
