@@ -72,7 +72,7 @@ trait ProxyTrait
                 $queue->next();
             }
 
-            unset($annotationAspects, $aspects, $queue);
+            unset($aspects, $queue);
         }
 
         if (empty(AspectManager::get($className, $methodName))) {
