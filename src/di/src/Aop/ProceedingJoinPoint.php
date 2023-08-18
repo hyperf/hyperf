@@ -73,13 +73,9 @@ class ProceedingJoinPoint
 
     public function getArguments()
     {
-        return value(function () {
-            $result = [];
-            foreach ($this->arguments['order'] ?? [] as $order) {
-                $result[] = $this->arguments['keys'][$order];
-            }
-            return $result;
-        });
+        return array_map(function ($order) {
+            return $this->arguments['keys'][$order];
+        }, $this->arguments['order'] ?? []);
     }
 
     public function getReflectMethod(): ReflectionMethod

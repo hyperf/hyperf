@@ -41,8 +41,7 @@ trait ProxyTrait
             'keys' => [],
             'order' => [],
         ];
-        $reflectMethod = ReflectionManager::reflectMethod($className, $method);
-        $reflectParameters = $reflectMethod->getParameters();
+        $reflectParameters = ReflectionManager::reflectMethod($className, $method)->getParameters();
         $leftArgCount = count($args);
         foreach ($reflectParameters as $reflectionParameter) {
             $arg = $reflectionParameter->isVariadic() ? $args : array_shift($args);
