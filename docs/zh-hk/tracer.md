@@ -180,6 +180,20 @@ return [
 ];
 ```
 
+#### 配置協程追蹤開關
+
+協程的鏈路追蹤並不在統一配置當中，屬於可選版本的功能。
+
+我們只需要配置 `aspects.php`，加入以下 `Aspect` 即可開啓。
+
+```php
+<?php
+
+return [
+    Hyperf\Tracer\Aspect\CoroutineAspect::class,
+];
+```
+
 ### 配置中間件
 
 配置完驅動之後，採集信息還需要配置一下中間件才能啓用採集功能。
