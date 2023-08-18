@@ -1,5 +1,22 @@
 # 版本更新記錄
 
+# v3.0.33 - 2023-08-18
+
+## 修復
+
+- [#6011](https://github.com/hyperf/hyperf/pull/6011) 修復 `invocable` 控制器路由無法正常使用驗證器的BUG。
+- [#6013](https://github.com/hyperf/hyperf/pull/6013) 修復 `no_aspect` 會被覆蓋的問題。
+- [#6053](https://github.com/hyperf/hyperf/pull/6053) 修復方法 `Arr::has` 時，`Interger` 類型參數會導致報錯的問題。
+
+## 優化
+
+- [#6023](https://github.com/hyperf/hyperf/pull/6023) 使用 `Tracer` 實例時，優先從協程上下文中獲取。
+- [#6027](https://github.com/hyperf/hyperf/pull/6027) 優化協程下 `Tracer` 的使用邏輯。
+
+## 即將廢棄
+
+- [#6044](https://github.com/hyperf/hyperf/pull/6044) 設置 `Hyperf\Coroutine\Traits\Container` 為即將廢棄。
+
 # v3.0.32 - 2023-08-09
 
 ## 新增
