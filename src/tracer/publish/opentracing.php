@@ -82,6 +82,7 @@ return [
         ],
         'request' => [
             'path' => 'request.path',
+            'uri' => 'request.uri',
             'method' => 'request.method',
             'header' => 'request.header',
         ],
