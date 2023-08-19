@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer\Event;
 
 use Psr\Http\Message\ResponseInterface;
@@ -17,7 +18,11 @@ use Throwable;
 
 abstract class Event
 {
-    public function __construct(public ?ServerRequestInterface $request, public ?ResponseInterface $response, public ?Throwable $exception = null)
-    {
+    public function __construct(
+        public ?ServerRequestInterface $request,
+        public ?ResponseInterface $response,
+        public ?Throwable $exception = null,
+        public string $server = 'http'
+    ) {
     }
 }
