@@ -3,6 +3,7 @@
 ## Added
 
 - [#6060](https://github.com/hyperf/hyperf/pull/6060) Supplement the missing tag configuration items.
+- [#6057](https://github.com/hyperf/hyperf/pull/6057) Added `TraceListener` for `hyperf/tracer`, and added `$server` property to request events.
 
 ## Optimized
 
