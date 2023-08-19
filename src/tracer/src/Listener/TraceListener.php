@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Listener;
 
 use Hyperf\Coroutine\Coroutine;
@@ -51,19 +52,23 @@ class TraceListener implements ListenerInterface
             return;
         }
 
-        if ($event::class == RequestReceived::class) {
+        if ($event instanceof RequestReceived) {
             $this->buildSpan($event->request);
+            return;
+        }
+
+        $response = $event->response;
+
+        if (! $response) {
             return;
         }
 
         $tracer = TracerContext::getTracer();
         $span = TracerContext::getRoot();
-        $response = $event->response;
-        $exception = $event->exception;
         $span->setTag($this->spanTagManager->get('response', 'status_code'), $response->getStatusCode());
 
-        if ($exception && $this->switchManager->isEnable('exception')) {
-            $this->appendExceptionToSpan($span, $exception);
+        if ($event->exception && $this->switchManager->isEnable('exception')) {
+            $this->appendExceptionToSpan($span, $exception = $event->exception);
 
             if ($exception instanceof HttpException) {
                 $span->setTag($this->spanTagManager->get('response', 'status_code'), $exception->getStatusCode());
