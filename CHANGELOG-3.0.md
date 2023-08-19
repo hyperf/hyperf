@@ -1,5 +1,9 @@
 # v3.0.34 - TBD
 
+## Added
+
+- [#6057](https://github.com/hyperf/hyperf/pull/6057) Added `TraceListener` for `hyperf/tracer`, and added `$server` property to request events.
+
 ## Optimized
 
 - [#6046](https://github.com/hyperf/hyperf/pull/6046) Using the tracer instance from coroutine context.
