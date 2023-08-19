@@ -17,11 +17,7 @@ use Throwable;
 
 abstract class Event
 {
-    public function __construct(
-        public ?ServerRequestInterface $request,
-        public ?ResponseInterface $response,
-        public ?Throwable $exception = null,
-        public string $server = 'http'
-    ) {
+    public function __construct(public ?ServerRequestInterface $request, public ?ResponseInterface $response, public ?Throwable $exception = null)
+    {
     }
 }
