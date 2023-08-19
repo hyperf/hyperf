@@ -1,5 +1,9 @@
 # v3.0.34 - TBD
 
+## Added
+
+- [#6060](https://github.com/hyperf/hyperf/pull/6060) Supplement the missing tag configuration items.
+
 ## Optimized
 
 - [#6046](https://github.com/hyperf/hyperf/pull/6046) Using the tracer instance from coroutine context.
