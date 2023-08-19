@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server;
 
 use Hyperf\Contract\Arrayable;
@@ -37,7 +38,10 @@ class ServerConfig implements Arrayable
         }
 
         $servers = [];
-        foreach ($config['servers'] as $item) {
+        foreach ($config['servers'] as $name => $item) {
+            if (! isset($item['name']) && ! is_numeric($name)) {
+                $item['name'] = $name;
+            }
             $servers[] = Port::build($item);
         }
 
