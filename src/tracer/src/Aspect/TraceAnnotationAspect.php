@@ -15,7 +15,6 @@ use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\Annotation\Trace;
 use Hyperf\Tracer\SpanStarter;
-use OpenTracing\Tracer;
 use Throwable;
 
 class TraceAnnotationAspect extends AbstractAspect
@@ -26,7 +25,7 @@ class TraceAnnotationAspect extends AbstractAspect
         Trace::class,
     ];
 
-    public function __construct(private Tracer $tracer)
+    public function __construct()
     {
     }
 

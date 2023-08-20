@@ -1,5 +1,19 @@
 # v3.0.34 - TBD
 
+## Fixed
+
+- [#6065](https://github.com/hyperf/hyperf/pull/6065) Fixed bug that `Context::override` and `Context::getOrSet` cannot work when using `$coroutineId`.
+
+## Added
+
+- [#6060](https://github.com/hyperf/hyperf/pull/6060) Supplement the missing tag configuration items.
+- [#6063](https://github.com/hyperf/hyperf/pull/6063) Added `$server` property to request events.
+
+## Optimized
+
+- [#6046](https://github.com/hyperf/hyperf/pull/6046) Using the tracer instance from coroutine context.
+- [#6061](https://github.com/hyperf/hyperf/pull/6061) Enhance server config to support key-value mode.
+
 # v3.0.33 - 2023-08-18
 
 ## Fixed
