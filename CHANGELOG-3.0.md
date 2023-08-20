@@ -1,5 +1,9 @@
 # v3.0.34 - TBD
 
+## Fixed
+
+- [#6065](https://github.com/hyperf/hyperf/pull/6065) Fixed bug that `Context::override` and `Context::getOrSet` cannot work when using `$coroutineId`.
+
 ## Added
 
 - [#6060](https://github.com/hyperf/hyperf/pull/6060) Supplement the missing tag configuration items.
