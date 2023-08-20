@@ -3,6 +3,7 @@
 ## Added
 
 - [#6060](https://github.com/hyperf/hyperf/pull/6060) Supplement the missing tag configuration items.
+- [#6063](https://github.com/hyperf/hyperf/pull/6063) Added `$server` property to request events.
 
 ## Optimized
 
