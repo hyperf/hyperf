@@ -13,6 +13,7 @@ namespace Hyperf\Di;
 
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
+use Hyperf\Di\Exception\InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use TypeError;
@@ -22,7 +23,12 @@ use TypeError;
  */
 function di(): ContainerInterface
 {
-    return ApplicationContext::getContainer();
+    $container = ApplicationContext::getContainer();
+    if (! $container instanceof ContainerInterface) {
+        throw new InvalidArgumentException();
+    }
+
+    return $container;
 }
 
 /**
