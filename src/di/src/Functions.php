@@ -25,7 +25,7 @@ function di(): ContainerInterface
 {
     $container = ApplicationContext::getContainer();
     if (! $container instanceof ContainerInterface) {
-        throw new InvalidArgumentException();
+        throw new InvalidArgumentException('The container must be instanced of `Hyperf\Contract\ContainerInterface`');
     }
 
     return $container;
