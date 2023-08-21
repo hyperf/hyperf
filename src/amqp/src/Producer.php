@@ -20,17 +20,11 @@ use function Hyperf\Support\retry;
 
 class Producer extends Builder
 {
-    /**
-     * @throws Throwable
-     */
     public function produce(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool
     {
         return retry(1, fn () => $this->produceMessage($producerMessage, $confirm, $timeout));
     }
 
-    /**
-     * @throws Throwable
-     */
     private function produceMessage(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool
     {
         $result = false;

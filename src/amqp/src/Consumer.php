@@ -48,9 +48,6 @@ class Consumer extends Builder
         }
     }
 
-    /**
-     * @throws Throwable
-     */
     public function consume(ConsumerMessageInterface $consumerMessage): void
     {
         $connection = $this->factory->getConnection($consumerMessage->getPoolName());

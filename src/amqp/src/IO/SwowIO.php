@@ -14,7 +14,6 @@ namespace Hyperf\Amqp\IO;
 use Hyperf\Engine\Socket;
 use InvalidArgumentException;
 use PhpAmqpLib\Exception\AMQPConnectionClosedException;
-use PhpAmqpLib\Exception\AMQPIOException;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
 use PhpAmqpLib\Wire\IO\AbstractIO;
@@ -126,9 +125,6 @@ class SwowIO extends AbstractIO
         return $sock;
     }
 
-    /**
-     * @throws AMQPIOException
-     */
     protected function write_heartbeat(): void
     {
         $pkt = new AMQPWriter();

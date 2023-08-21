@@ -122,39 +122,46 @@ class Params
         return $this;
     }
 
-    public function setInsist(bool $insist): void
+    public function setInsist(bool $insist): static
     {
         $this->insist = $insist;
+        return $this;
     }
 
-    public function setLoginMethod(string $loginMethod): void
+    public function setLoginMethod(string $loginMethod): static
     {
         $this->loginMethod = $loginMethod;
+        return $this;
     }
 
-    public function setLocale(string $locale): void
+    public function setLocale(string $locale): static
     {
         $this->locale = $locale;
+        return $this;
     }
 
-    public function setConnectionTimeout(int $connectionTimeout): void
+    public function setConnectionTimeout(int $connectionTimeout): static
     {
         $this->connectionTimeout = $connectionTimeout;
+        return $this;
     }
 
-    public function setReadWriteTimeout(int $readWriteTimeout): void
+    public function setReadWriteTimeout(int $readWriteTimeout): static
     {
         $this->readWriteTimeout = $readWriteTimeout;
+        return $this;
     }
 
-    public function setKeepalive(bool $keepalive): void
+    public function setKeepalive(bool $keepalive): static
     {
         $this->keepalive = $keepalive;
+        return $this;
     }
 
-    public function setHeartbeat(int $heartbeat): void
+    public function setHeartbeat(int $heartbeat): static
     {
         $this->heartbeat = $heartbeat;
+        return $this;
     }
 
     public function getChannelRpcTimeout(): float
@@ -162,9 +169,10 @@ class Params
         return $this->channelRpcTimeout;
     }
 
-    public function setChannelRpcTimeout(float $channelRpcTimeout): void
+    public function setChannelRpcTimeout(float $channelRpcTimeout): static
     {
         $this->channelRpcTimeout = $channelRpcTimeout;
+        return $this;
     }
 
     public function getMaxIdleChannels(): int
@@ -172,8 +180,9 @@ class Params
         return $this->maxIdleChannels;
     }
 
-    public function setMaxIdleChannels(int $maxIdleChannels): void
+    public function setMaxIdleChannels(int $maxIdleChannels): static
     {
         $this->maxIdleChannels = $maxIdleChannels;
+        return $this;
     }
 }

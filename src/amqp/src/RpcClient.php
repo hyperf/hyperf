@@ -28,9 +28,6 @@ class RpcClient extends Builder
         parent::__construct($container, $factory);
     }
 
-    /**
-     * @throws Throwable
-     */
     public function call(RpcMessageInterface $rpcMessage, int $timeout = 5)
     {
         $pool = $rpcMessage->getPoolName();
