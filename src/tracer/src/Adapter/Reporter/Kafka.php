@@ -25,30 +25,38 @@ use function sprintf;
 
 class Kafka implements Reporter
 {
+    private const DEFAULT_OPTIONS = [
+        'broker_list' => '',
+        'topic_name' => 'zipkin',
+    ];
+
     private Producer $producer;
 
-    /**
-     * logger is only meant to be used for development purposes. Enabling
-     * an actual logger in production could cause a massive amount of data
-     * that will flood the logs on failure.
-     */
+    private array $options;
+
     private LoggerInterface $logger;
 
     private SpanSerializer $serializer;
 
     public function __construct(
-        private array $options = [],
+        Producer $producer = null,
+        array $options = [],
         LoggerInterface $logger = null,
         SpanSerializer $serializer = null
     ) {
-        $this->logger = $logger ?? new NullLogger();
+        $this->options = array_replace(self::DEFAULT_OPTIONS, $options);
         $this->serializer = $serializer ?? new JsonV2Serializer();
+        $this->logger = $logger ?? new NullLogger();
 
-        $config = new ProducerConfig();
-        $config->setBootstrapServer($options['broker_list'] ?? '127.0.0.1:9092');
-        $config->setUpdateBrokers(true);
-        $config->setAcks(-1);
-        $this->producer = new Producer($config);
+        if (! $producer) {
+            $config = new ProducerConfig();
+            $config->setBootstrapServer($options['broker_list'] ?? '127.0.0.1:9092');
+            $config->setUpdateBrokers(true);
+            $config->setAcks(-1);
+            $producer = new Producer($config);
+        }
+
+        $this->producer = $producer;
     }
 
     /**
@@ -65,7 +73,8 @@ class Kafka implements Reporter
         try {
             $this->producer->send(
                 $this->options['topic_name'] ?? 'zipkin',
-                $this->serializer->serialize($spans)
+                $this->serializer->serialize($spans),
+                uniqid('', true)
             );
         } catch (Throwable $e) {
             $this->logger->error(sprintf('failed to report spans: %s', $e->getMessage()));

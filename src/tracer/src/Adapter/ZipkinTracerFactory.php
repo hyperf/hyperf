@@ -50,7 +50,7 @@ class ZipkinTracerFactory implements NamedFactoryInterface
     private function getReporter(array $options): Reporter
     {
         return match ($options['reporter'] ?? 'http') {
-            'kafka' => new Kafka($options),
+            'kafka' => new Kafka(options: $options),
             'http' => new Http($options, $this->clientFactory),
             'noop' => new Noop(),
             default => throw new RuntimeException('Unsupported reporter.'),
