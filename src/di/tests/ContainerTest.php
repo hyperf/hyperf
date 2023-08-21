@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
 use HyperfTest\Di\Stub\Bar;
@@ -20,6 +21,9 @@ use HyperfTest\Di\Stub\FooInterface;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Di\di;
+use function Hyperf\Di\get;
 
 /**
  * @internal
@@ -49,6 +53,15 @@ class ContainerTest extends TestCase
         $container->set(FooInterface::class, $subject);
         $this->assertTrue($container->has(FooInterface::class));
         $this->assertSame($subject, $container->get(FooInterface::class));
+    }
+
+    public function testFunctionGet()
+    {
+        $container = new Container(new DefinitionSource([]));
+        ApplicationContext::setContainer($container);
+
+        $this->assertSame($container, di());
+        $this->assertInstanceOf(Foo::class, get(Foo::class));
     }
 
     public function testDefine()

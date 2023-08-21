@@ -12,16 +12,15 @@ declare(strict_types=1);
 namespace Hyperf\Di;
 
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use TypeError;
 
 /**
- * @return ContainerInterface
  * @throws TypeError
  */
-function di()
+function di(): ContainerInterface
 {
     return ApplicationContext::getContainer();
 }
@@ -33,7 +32,7 @@ function di()
  * @throws NotFoundExceptionInterface
  * @throws ContainerExceptionInterface
  */
-function get(string $id)
+function get(string $id): mixed
 {
     return di()->get($id);
 }
