@@ -92,7 +92,7 @@ class Context
         $value = null;
 
         if (self::has($id, $coroutineId)) {
-            $value = self::get($id, $coroutineId);
+            $value = self::get($id, null, $coroutineId);
         }
 
         $value = $closure($value);
@@ -111,7 +111,7 @@ class Context
             return self::set($id, value($value), $coroutineId);
         }
 
-        return self::get($id, $coroutineId);
+        return self::get($id, null, $coroutineId);
     }
 
     public static function getContainer(?int $coroutineId = null)
