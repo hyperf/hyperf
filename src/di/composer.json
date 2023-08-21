@@ -30,9 +30,13 @@
     },
     "suggest": {
         "hyperf/config": "Require this component for annotation scan progress to retrieve the scan path.",
+        "hyperf/context": "Require this component for helper functions.",
         "ext-pcntl": "Required to scan annotations."
     },
     "autoload": {
+        "files": [
+            "src/Functions.php"
+        ],
         "psr-4": {
             "Hyperf\\Di\\": "src/"
         }
