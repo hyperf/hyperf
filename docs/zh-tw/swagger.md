@@ -85,3 +85,34 @@ public function list(ConversationRequest $request): array
 {
 }
 ```
+
+### 配合驗證器
+
+`SA\Property` 註解中，我們可以增加 `rules` 引數，然後配合 `SwaggerRequest` 即可在中介軟體中，驗證引數是否合法。
+
+```php
+<?php
+namespace App\Controller;
+
+use App\Schema\SavedSchema;
+use Hyperf\Swagger\Request\SwaggerRequest;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\Swagger\Annotation as SA;
+
+#[SA\HyperfServer(name: 'http')]
+class CardController extends Controller
+{
+    #[SA\Post('/user/save', summary: '儲存使用者資訊', tags: ['使用者管理'])]
+    #[SA\RequestBody(content: new SA\JsonContent(properties: [
+        new SA\Property(property: 'nickname', description: '暱稱', type: 'integer', rules: 'required|string'),
+        new SA\Property(property: 'gender', description: '性別', type: 'integer', rules: 'required|integer|in:0,1,2'),
+    ]))]
+    #[SA\Response(response: '200', content: new SA\JsonContent(ref: '#/components/schemas/SavedSchema'))]
+    public function info(SwaggerRequest $request)
+    {
+        $result = $this->service->save($request->all());
+
+        return $this->response->success($result);
+    }
+}
+```

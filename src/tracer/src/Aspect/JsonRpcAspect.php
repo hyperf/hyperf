@@ -20,8 +20,8 @@ use Hyperf\RpcClient\Client;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
+use Hyperf\Tracer\TracerContext;
 use OpenTracing\Span;
-use OpenTracing\Tracer;
 use Psr\Container\ContainerInterface;
 use Throwable;
 
@@ -36,8 +36,6 @@ class JsonRpcAspect extends AbstractAspect
         Client::class . '::send',
     ];
 
-    private Tracer $tracer;
-
     private SwitchManager $switchManager;
 
     private SpanTagManager $spanTagManager;
@@ -46,7 +44,6 @@ class JsonRpcAspect extends AbstractAspect
 
     public function __construct(private ContainerInterface $container)
     {
-        $this->tracer = $container->get(Tracer::class);
         $this->switchManager = $container->get(SwitchManager::class);
         $this->spanTagManager = $container->get(SpanTagManager::class);
         $this->context = $container->get(Context::class);
@@ -63,7 +60,7 @@ class JsonRpcAspect extends AbstractAspect
             }
             $carrier = [];
             // Injects the context into the wire
-            $this->tracer->inject(
+            TracerContext::getTracer()->inject(
                 $span->getContext(),
                 TEXT_MAP,
                 $carrier

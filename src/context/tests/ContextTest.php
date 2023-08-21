@@ -191,4 +191,34 @@ class ContextTest extends TestCase
             $this->assertSame($request, RequestContext::get($id));
         });
     }
+
+    public function testContextOverrideWithCoroutineId()
+    {
+        $id = Coroutine::id();
+        $value = uniqid();
+        Context::override('override.id.coroutine_id', fn () => $value);
+        (new Waiter())->wait(function () use ($id, $value) {
+            Context::override(
+                'override.id.coroutine_id',
+                function ($v) use ($value) {
+                    $this->assertSame($v, $value);
+                    return '123';
+                },
+                $id
+            );
+        });
+
+        $this->assertSame('123', Context::get('override.id.coroutine_id'));
+    }
+
+    public function testContextGetOrSetWithCoroutineId()
+    {
+        $id = Coroutine::id();
+        $value = uniqid();
+        Context::getOrSet('get_or_set.id.coroutine_id', fn () => $value);
+        (new Waiter())->wait(function () use ($id, $value) {
+            $res = Context::getOrSet('get_or_set.id.coroutine_id', fn () => '123', $id);
+            $this->assertSame($res, $value);
+        });
+    }
 }
