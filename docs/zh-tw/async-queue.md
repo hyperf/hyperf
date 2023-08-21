@@ -397,6 +397,32 @@ class QueueController extends AbstractController
 }
 ```
 
+### 預設指令碼
+
+Arguments:
+  - queue_name: 佇列配置名，預設為 default
+
+Options:
+  - channel_name: 佇列名，例如失敗佇列 failed, 超時佇列 timeout
+
+#### 展示當前佇列的訊息狀態
+
+```shell
+$ php bin/hyperf.php queue:info {queue_name}
+```
+
+#### 過載所有失敗/超時的訊息到待執行佇列
+
+```shell
+php bin/hyperf.php queue:reload {queue_name} -Q {channel_name}
+```
+
+#### 銷燬所有失敗/超時的訊息
+
+```shell
+php bin/hyperf.php queue:flush {queue_name} -Q {channel_name}
+```
+
 ## 事件
 
 |   事件名稱   |        觸發時機         |                         備註                         |
@@ -556,7 +582,6 @@ return [
 ];
 
 ```
-
 
 ## 非同步驅動之間的區別
 
