@@ -12,9 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Tracer\Adapter;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Tracer\Adapter\Reporter\Kafka;
 use Hyperf\Tracer\Contract\NamedFactoryInterface;
+use RuntimeException;
 use Zipkin\Endpoint;
+use Zipkin\Reporter;
 use Zipkin\Reporters\Http;
+use Zipkin\Reporters\Noop;
 use Zipkin\Samplers\BinarySampler;
 use Zipkin\TracingBuilder;
 use ZipkinOpenTracing\Tracer;
@@ -34,13 +38,23 @@ class ZipkinTracerFactory implements NamedFactoryInterface
         $this->name = $name;
         [$app, $options, $sampler] = $this->parseConfig();
         $endpoint = Endpoint::create($app['name'], $app['ipv4'], $app['ipv6'], $app['port']);
-        $reporter = new Http($options, $this->clientFactory);
+        $reporter = $this->getReporter($options);
         $tracing = TracingBuilder::create()
             ->havingLocalEndpoint($endpoint)
             ->havingSampler($sampler)
             ->havingReporter($reporter)
             ->build();
         return new Tracer($tracing);
+    }
+
+    private function getReporter(array $options): Reporter
+    {
+        return match ($options['reporter'] ?? 'http') {
+            'kafka' => new Kafka($options),
+            'http' => new Http($options, $this->clientFactory),
+            'noop' => new Noop(),
+            default => throw new RuntimeException('Unsupported reporter.'),
+        };
     }
 
     private function parseConfig(): array

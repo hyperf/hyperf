@@ -33,8 +33,11 @@ return [
                 'port' => 9501,
             ],
             'options' => [
+                'reporter' => env('ZIPKIN_REPORTER', 'http'),
                 'endpoint_url' => env('ZIPKIN_ENDPOINT_URL', 'http://localhost:9411/api/v2/spans'),
                 'timeout' => env('ZIPKIN_TIMEOUT', 1),
+                'topic_name' => 'zipkin',
+                'broker_list' => '127.0.0.1:9092',
             ],
             'sampler' => BinarySampler::createAsAlwaysSample(),
         ],
