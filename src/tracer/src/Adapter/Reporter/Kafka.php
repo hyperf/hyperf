@@ -39,8 +39,8 @@ class Kafka implements Reporter
     private SpanSerializer $serializer;
 
     public function __construct(
-        Producer $producer = null,
         array $options = [],
+        Producer $producer = null,
         LoggerInterface $logger = null,
         SpanSerializer $serializer = null
     ) {

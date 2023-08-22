@@ -26,7 +26,7 @@ class ReporterFactory
     public function create(array $options): Reporter
     {
         return match ($options['reporter'] ?? 'http') {
-            'kafka' => new Kafka(options: $options),
+            'kafka' => new Kafka($options),
             'http' => new Http($options, $this->clientFactory),
             'noop' => new Noop(),
             default => throw new RuntimeException('Unsupported reporter.'),
