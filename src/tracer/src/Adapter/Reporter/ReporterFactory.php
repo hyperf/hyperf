@@ -14,8 +14,8 @@ namespace Hyperf\Tracer\Adapter\Reporter;
 use Hyperf\Tracer\Adapter\HttpClientFactory;
 use RuntimeException;
 use Zipkin\Reporter;
-use Zipkin\Reporters\Http;
-use Zipkin\Reporters\Noop;
+
+use function Hyperf\Support\make;
 
 class ReporterFactory
 {
@@ -23,13 +23,19 @@ class ReporterFactory
     {
     }
 
-    public function create(array $options): Reporter
+    public function make(array $option = []): Reporter
     {
-        return match ($options['reporter'] ?? 'http') {
-            'kafka' => new Kafka($options),
-            'http' => new Http($options, $this->clientFactory),
-            'noop' => new Noop(),
-            default => throw new RuntimeException('Unsupported reporter.'),
-        };
+        $class = $option['class'] ?? '';
+        $constructor = $option['constructor'] ?? [];
+
+        if (! class_exists($class)) {
+            throw new RuntimeException(sprintf('Class %s is not exists.', $class));
+        }
+
+        if (! is_a($class, Reporter::class, true)) {
+            throw new RuntimeException('Unsupported reporter.');
+        }
+
+        return make($class, $constructor);
     }
 }

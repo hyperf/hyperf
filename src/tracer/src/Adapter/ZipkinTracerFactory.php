@@ -32,9 +32,9 @@ class ZipkinTracerFactory implements NamedFactoryInterface
     public function make(string $name): \OpenTracing\Tracer
     {
         $this->name = $name;
-        [$app, $options, $sampler] = $this->parseConfig();
+        [$app, $sampler, $reporterOption] = $this->parseConfig();
         $endpoint = Endpoint::create($app['name'], $app['ipv4'], $app['ipv6'], $app['port']);
-        $reporter = $this->reportFactory->create($options);
+        $reporter = $this->reportFactory->make($reporterOption);
         $tracing = TracingBuilder::create()
             ->havingLocalEndpoint($endpoint)
             ->havingSampler($sampler)
@@ -46,6 +46,7 @@ class ZipkinTracerFactory implements NamedFactoryInterface
     private function parseConfig(): array
     {
         // @TODO Detect the ipv4, ipv6, port from server object or system info automatically.
+        $reporter = (string) $this->getConfig('reporter', 'http');
         return [
             $this->getConfig('app', [
                 'name' => 'skeleton',
@@ -53,10 +54,13 @@ class ZipkinTracerFactory implements NamedFactoryInterface
                 'ipv6' => null,
                 'port' => 9501,
             ]),
-            $this->getConfig('options', [
-                'timeout' => 1,
-            ]),
             $this->getConfig('sampler', BinarySampler::createAsAlwaysSample()),
+            $this->getConfig('reporters.' . $reporter, [
+                'class' => \Zipkin\Reporters\Http::class,
+                'constructor' => [
+                    'options' => $this->getConfig('options', []),
+                ],
+            ]),
         ];
     }
 

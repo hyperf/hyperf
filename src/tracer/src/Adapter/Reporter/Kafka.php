@@ -25,14 +25,9 @@ use function sprintf;
 
 class Kafka implements Reporter
 {
-    private const DEFAULT_OPTIONS = [
-        'broker_list' => '',
-        'topic_name' => 'zipkin',
-    ];
-
     private Producer $producer;
 
-    private array $options;
+    private string $topic;
 
     private LoggerInterface $logger;
 
@@ -44,19 +39,10 @@ class Kafka implements Reporter
         LoggerInterface $logger = null,
         SpanSerializer $serializer = null
     ) {
-        $this->options = array_replace(self::DEFAULT_OPTIONS, $options);
+        $this->topic = $options['topic'] ?? 'zipkin';
         $this->serializer = $serializer ?? new JsonV2Serializer();
         $this->logger = $logger ?? new NullLogger();
-
-        if (! $producer) {
-            $config = new ProducerConfig();
-            $config->setBootstrapServer($options['broker_list'] ?? '127.0.0.1:9092');
-            $config->setUpdateBrokers(true);
-            $config->setAcks(-1);
-            $producer = new Producer($config);
-        }
-
-        $this->producer = $producer;
+        $this->producer = $producer ?? $this->createProducer($options);
     }
 
     /**
@@ -68,16 +54,39 @@ class Kafka implements Reporter
             return;
         }
 
-        $this->serializer->serialize($spans);
-
         try {
             $this->producer->send(
-                $this->options['topic_name'] ?? 'zipkin',
+                $this->topic,
                 $this->serializer->serialize($spans),
                 uniqid('', true)
             );
         } catch (Throwable $e) {
             $this->logger->error(sprintf('failed to report spans: %s', $e->getMessage()));
         }
+    }
+
+    private function createProducer(array $options): Producer
+    {
+        $options = array_replace([
+            'bootstrap_servers' => '127.0.0.1:9092',
+            'acks' => -1,
+            'connect_timeout' => 1,
+            'send_timeout' => 1,
+        ], $options);
+        $config = new ProducerConfig();
+
+        $config->setBootstrapServer($options['bootstrap_servers']);
+        $config->setUpdateBrokers(true);
+        if (is_int($options['acks'])) {
+            $config->setAcks($options['acks']);
+        }
+        if (is_float($options['connect_timeout'])) {
+            $config->setConnectTimeout($options['connect_timeout']);
+        }
+        if (is_float($options['send_timeout'])) {
+            $config->setSendTimeout($options['send_timeout']);
+        }
+
+        return new Producer($config);
     }
 }
