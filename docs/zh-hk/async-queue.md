@@ -397,6 +397,32 @@ class QueueController extends AbstractController
 }
 ```
 
+### 默認腳本
+
+Arguments:
+  - queue_name: 隊列配置名，默認為 default
+
+Options:
+  - channel_name: 隊列名，例如失敗隊列 failed, 超時隊列 timeout
+
+#### 展示當前隊列的消息狀態
+
+```shell
+$ php bin/hyperf.php queue:info {queue_name}
+```
+
+#### 重載所有失敗/超時的消息到待執行隊列
+
+```shell
+php bin/hyperf.php queue:reload {queue_name} -Q {channel_name}
+```
+
+#### 銷燬所有失敗/超時的消息
+
+```shell
+php bin/hyperf.php queue:flush {queue_name} -Q {channel_name}
+```
+
 ## 事件
 
 |   事件名稱   |        觸發時機         |                         備註                         |
@@ -556,7 +582,6 @@ return [
 ];
 
 ```
-
 
 ## 異步驅動之間的區別
 

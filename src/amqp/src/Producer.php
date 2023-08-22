@@ -25,7 +25,7 @@ class Producer extends Builder
         return retry(1, fn () => $this->produceMessage($producerMessage, $confirm, $timeout));
     }
 
-    private function produceMessage(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5)
+    private function produceMessage(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool
     {
         $result = false;
 
@@ -61,7 +61,7 @@ class Producer extends Builder
         return $result;
     }
 
-    private function injectMessageProperty(ProducerMessageInterface $producerMessage)
+    private function injectMessageProperty(ProducerMessageInterface $producerMessage): void
     {
         if (class_exists(AnnotationCollector::class)) {
             /** @var null|\Hyperf\Amqp\Annotation\Producer $annotation */

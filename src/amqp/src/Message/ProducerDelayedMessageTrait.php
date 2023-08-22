@@ -25,7 +25,7 @@ trait ProducerDelayedMessageTrait
      * Set the delay time.
      * @return $this
      */
-    public function setDelayMs(int $millisecond, string $name = 'x-delay'): self
+    public function setDelayMs(int $millisecond, string $name = 'x-delay'): static
     {
         $this->properties['application_headers'] = new AMQPTable([$name => $millisecond]);
         return $this;

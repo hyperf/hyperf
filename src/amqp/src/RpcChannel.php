@@ -61,17 +61,14 @@ class RpcChannel
         return $this;
     }
 
-    /**
-     * @return AMQPMessage|false
-     */
-    public function wait(int $timeout)
+    public function wait(int $timeout): bool|AMQPMessage
     {
         $this->channel->wait(null, false, $timeout);
 
         return $this->chan->pop(0.001);
     }
 
-    public function close()
+    public function close(): void
     {
         $this->chan?->close();
         $this->channel->close();

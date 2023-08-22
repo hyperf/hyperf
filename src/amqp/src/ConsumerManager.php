@@ -26,7 +26,7 @@ class ConsumerManager
     {
     }
 
-    public function run()
+    public function run(): void
     {
         $classes = AnnotationCollector::getClassesByAnnotation(ConsumerAnnotation::class);
         /**
@@ -57,15 +57,9 @@ class ConsumerManager
     private function createProcess(ConsumerMessageInterface $consumerMessage): AbstractProcess
     {
         return new class($this->container, $consumerMessage) extends AbstractProcess {
-            /**
-             * @var \Hyperf\Amqp\Consumer
-             */
-            private $consumer;
+            private Consumer $consumer;
 
-            /**
-             * @var ConsumerMessageInterface
-             */
-            private $consumerMessage;
+            private ConsumerMessageInterface $consumerMessage;
 
             public function __construct(ContainerInterface $container, ConsumerMessageInterface $consumerMessage)
             {

@@ -79,7 +79,7 @@ class AMQPConnection extends AbstractConnection
         $this->confirmPool = new Channel(static::CONFIRM_CHANNEL_POOL_LENGTH);
     }
 
-    public function write($data)
+    public function write($data): void
     {
         $this->loop();
 
@@ -105,7 +105,7 @@ class AMQPConnection extends AbstractConnection
         return $this;
     }
 
-    public function getIO()
+    public function getIO(): AbstractIO
     {
         return $this->io;
     }
@@ -124,7 +124,7 @@ class AMQPConnection extends AbstractConnection
         return $this->channel($id);
     }
 
-    public function channel($channel_id = null)
+    public function channel($channel_id = null): AMQPChannel
     {
         $this->channelManager->close($channel_id);
         $this->channelManager->get($channel_id, true);
