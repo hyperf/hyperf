@@ -1,5 +1,9 @@
 # v3.0.34 - TBD
 
+## Added
+
+- [#6070](https://github.com/hyperf/hyperf/pull/6070) Added `php_serialize` protocol for `hyperf/rpc-multilex`.
+
 ## Fixed
 
 - [#6065](https://github.com/hyperf/hyperf/pull/6065) Fixed bug that `Context::override` and `Context::getOrSet` cannot work when using `$coroutineId`.
