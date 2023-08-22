@@ -19,11 +19,7 @@ class RequestContext
 {
     public static function get(?int $coroutineId = null): ServerRequestPlusInterface
     {
-        $request = Context::get(ServerRequestInterface::class, null, $coroutineId);
-        if (! $request instanceof ServerRequestPlusInterface) {
-            throw new RuntimeException('The request not instanceof ServerRequestPlusInterface');
-        }
-        return $request;
+        return Context::get(ServerRequestInterface::class, null, $coroutineId);
     }
 
     public static function set(ServerRequestInterface $request, ?int $coroutineId = null): ServerRequestPlusInterface
