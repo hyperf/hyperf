@@ -134,10 +134,13 @@ class TracerFactoryTest extends TestCase
     {
         $container = Mockery::mock(Container::class);
         $client = Mockery::mock(\Hyperf\Tracer\Adapter\HttpClientFactory::class);
+        $reporter = Mockery::mock(\Hyperf\Tracer\Adapter\Reporter\ReporterFactory::class);
+        $reporter->shouldReceive('make')
+            ->andReturn(new \Zipkin\Reporters\Http([], $client));
 
         $container->shouldReceive('get')
             ->with(\Hyperf\Tracer\Adapter\ZipkinTracerFactory::class)
-            ->andReturn(new \Hyperf\Tracer\Adapter\ZipkinTracerFactory($config, $client));
+            ->andReturn(new \Hyperf\Tracer\Adapter\ZipkinTracerFactory($config, $reporter));
         $container->shouldReceive('get')
             ->with(\Hyperf\Tracer\Adapter\JaegerTracerFactory::class)
             ->andReturn(new \Hyperf\Tracer\Adapter\JaegerTracerFactory($config));

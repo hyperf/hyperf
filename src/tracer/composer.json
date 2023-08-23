@@ -28,6 +28,7 @@
     },
     "suggest": {
         "hyperf/event": "Required to use DbQueryExecutedListener.",
+        "longlang/phpkafka": "Required (^1.2) to use Kafka Producer.",
         "jonahgeorge/jaeger-client-php": "Required (^0.6) to use jaeger tracing."
     },
     "autoload": {
