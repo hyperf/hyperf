@@ -13,7 +13,7 @@ namespace Hyperf\Tracer\Adapter\Reporter;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use RuntimeException;
+use Throwable;
 use Zipkin\Recording\Span;
 use Zipkin\Reporter;
 use Zipkin\Reporters\JsonV2Serializer;
@@ -61,7 +61,7 @@ class Kafka implements Reporter
 
         try {
             $client($payload);
-        } catch (RuntimeException $e) {
+        } catch (Throwable $e) {
             $this->logger->error(sprintf('failed to report spans: %s', $e->getMessage()));
         }
     }
