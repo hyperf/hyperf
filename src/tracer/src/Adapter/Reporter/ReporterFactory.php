@@ -18,10 +18,19 @@ use function Hyperf\Support\make;
 
 class ReporterFactory
 {
+    public function __construct(
+        private HttpClientFactory $httpClientFactory,
+    ) {
+    }
+
     public function make(array $option = []): Reporter
     {
         $class = $option['class'] ?? '';
         $constructor = $option['constructor'] ?? [];
+
+        if ($class === \Zipkin\Reporters\Http::class) {
+            $option['constructor']['requesterFactory'] = $this->httpClientFactory;
+        }
 
         if (! class_exists($class)) {
             throw new RuntimeException(sprintf('Class %s is not exists.', $class));

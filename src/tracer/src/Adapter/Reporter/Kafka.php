@@ -11,38 +11,38 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Adapter\Reporter;
 
-use longlang\phpkafka\Producer\Producer;
-use longlang\phpkafka\Producer\ProducerConfig;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Throwable;
+use RuntimeException;
 use Zipkin\Recording\Span;
 use Zipkin\Reporter;
 use Zipkin\Reporters\JsonV2Serializer;
 use Zipkin\Reporters\SpanSerializer;
 
+use function count;
+use function json_last_error;
 use function sprintf;
 
 class Kafka implements Reporter
 {
-    private Producer $producer;
+    private array $options;
 
-    private string $topic;
+    private KafkaClientFactory $producerFactory;
 
     private LoggerInterface $logger;
 
     private SpanSerializer $serializer;
 
     public function __construct(
-        array $options = [],
-        Producer $producer = null,
+        array $options,
+        KafkaClientFactory $producerFactory,
         LoggerInterface $logger = null,
         SpanSerializer $serializer = null
     ) {
-        $this->topic = $options['topic'] ?? 'zipkin';
+        $this->options = $options;
         $this->serializer = $serializer ?? new JsonV2Serializer();
         $this->logger = $logger ?? new NullLogger();
-        $this->producer = $producer ?? $this->createProducer($options);
+        $this->producerFactory = $producerFactory;
     }
 
     /**
@@ -50,43 +50,25 @@ class Kafka implements Reporter
      */
     public function report(array $spans): void
     {
-        if (empty($spans)) {
+        if (count($spans) === 0) {
             return;
         }
 
-        try {
-            $this->producer->send(
-                $this->topic,
-                $this->serializer->serialize($spans),
-                uniqid('', true)
+        $payload = $this->serializer->serialize($spans);
+
+        if (! $payload) {
+            $this->logger->error(
+                sprintf('failed to encode spans with code %d', json_last_error())
             );
-        } catch (Throwable $e) {
+            return;
+        }
+
+        $client = $this->producerFactory->build($this->options);
+
+        try {
+            $client($payload);
+        } catch (RuntimeException $e) {
             $this->logger->error(sprintf('failed to report spans: %s', $e->getMessage()));
         }
-    }
-
-    private function createProducer(array $options): Producer
-    {
-        $options = array_replace([
-            'bootstrap_servers' => '127.0.0.1:9092',
-            'acks' => -1,
-            'connect_timeout' => 1,
-            'send_timeout' => 1,
-        ], $options);
-        $config = new ProducerConfig();
-
-        $config->setBootstrapServer($options['bootstrap_servers']);
-        $config->setUpdateBrokers(true);
-        if (is_int($options['acks'])) {
-            $config->setAcks($options['acks']);
-        }
-        if (is_float($options['connect_timeout'])) {
-            $config->setConnectTimeout($options['connect_timeout']);
-        }
-        if (is_float($options['send_timeout'])) {
-            $config->setSendTimeout($options['send_timeout']);
-        }
-
-        return new Producer($config);
     }
 }

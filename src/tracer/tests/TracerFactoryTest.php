@@ -133,7 +133,7 @@ class TracerFactoryTest extends TestCase
     protected function getContainer($config)
     {
         $container = Mockery::mock(Container::class);
-        $client = Mockery::mock(\Hyperf\Tracer\Adapter\HttpClientFactory::class);
+        $client = Mockery::mock(\Hyperf\Tracer\Adapter\Reporter\HttpClientFactory::class);
         $reporter = Mockery::mock(\Hyperf\Tracer\Adapter\Reporter\ReporterFactory::class);
         $reporter->shouldReceive('make')
             ->andReturn(new \Zipkin\Reporters\Http([], $client));
