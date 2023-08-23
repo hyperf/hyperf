@@ -18,6 +18,7 @@
 
 - [#6046](https://github.com/hyperf/hyperf/pull/6046) Using the tracer instance from coroutine context.
 - [#6061](https://github.com/hyperf/hyperf/pull/6061) Enhance server config to support key-value mode.
+- [#6077](https://github.com/hyperf/hyperf/pull/6077) Don't show deprecated notice when using `#[Hyperf\Constants\Annotation\Constants]`.
 
 # v3.0.33 - 2023-08-18
 
