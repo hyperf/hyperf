@@ -32,9 +32,34 @@ return [
                 'ipv6' => null,
                 'port' => 9501,
             ],
-            'options' => [
-                'endpoint_url' => env('ZIPKIN_ENDPOINT_URL', 'http://localhost:9411/api/v2/spans'),
-                'timeout' => env('ZIPKIN_TIMEOUT', 1),
+            'reporter' => env('ZIPKIN_REPORTER', 'http'), // kafka, http
+            'reporters' => [
+                // options for http reporter
+                'http' => [
+                    'class' => \Zipkin\Reporters\Http::class,
+                    'constructor' => [
+                        'options' => [
+                            'endpoint_url' => env('ZIPKIN_ENDPOINT_URL', 'http://localhost:9411/api/v2/spans'),
+                            'timeout' => env('ZIPKIN_TIMEOUT', 1),
+                        ],
+                    ],
+                ],
+                // options for kafka reporter
+                'kafka' => [
+                    'class' => \Hyperf\Tracer\Adapter\Reporter\Kafka::class,
+                    'constructor' => [
+                        'options' => [
+                            'topic' => env('ZIPKIN_KAFKA_TOPIC', 'zipkin'),
+                            'bootstrap_servers' => env('ZIPKIN_KAFKA_BOOTSTRAP_SERVERS', '127.0.0.1:9092'),
+                            'acks' => (int) env('ZIPKIN_KAFKA_ACKS', -1),
+                            'connect_timeout' => (int) env('ZIPKIN_KAFKA_CONNECT_TIMEOUT', 1),
+                            'send_timeout' => (int) env('ZIPKIN_KAFKA_SEND_TIMEOUT', 1),
+                        ],
+                    ],
+                ],
+                'noop' => [
+                    'class' => \Zipkin\Reporters\Noop::class,
+                ],
             ],
             'sampler' => BinarySampler::createAsAlwaysSample(),
         ],
