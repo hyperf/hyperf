@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Adapter\Reporter;
 
-use Hyperf\Tracer\Adapter\HttpClientFactory;
 use RuntimeException;
 use Zipkin\Reporter;
 
@@ -19,10 +18,6 @@ use function Hyperf\Support\make;
 
 class ReporterFactory
 {
-    public function __construct(private HttpClientFactory $clientFactory)
-    {
-    }
-
     public function make(array $option = []): Reporter
     {
         $class = $option['class'] ?? '';
