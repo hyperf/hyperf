@@ -25,24 +25,18 @@ use function sprintf;
 
 class Kafka implements Reporter
 {
-    private array $options;
-
-    private KafkaClientFactory $producerFactory;
-
     private LoggerInterface $logger;
 
     private SpanSerializer $serializer;
 
     public function __construct(
-        array $options,
-        KafkaClientFactory $producerFactory,
+        private array $options,
+        private KafkaClientFactory $clientFactory,
         LoggerInterface $logger = null,
         SpanSerializer $serializer = null
     ) {
-        $this->options = $options;
         $this->serializer = $serializer ?? new JsonV2Serializer();
         $this->logger = $logger ?? new NullLogger();
-        $this->producerFactory = $producerFactory;
     }
 
     /**
@@ -63,7 +57,7 @@ class Kafka implements Reporter
             return;
         }
 
-        $client = $this->producerFactory->build($this->options);
+        $client = $this->clientFactory->build($this->options);
 
         try {
             $client($payload);
