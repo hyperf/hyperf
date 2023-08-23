@@ -98,6 +98,62 @@ class FooAspect extends AbstractAspect
 }
 ```
 
+## 改變或加強原方法
+
+另外您還可以通過獲取原實例、方法反射、提交參數、獲取註解等方式實現業務需求：
+
+```php
+<?php
+namespace App\Aspect;
+
+use App\Service\SomeClass;
+use App\Annotation\SomeAnnotation;
+use Hyperf\Di\Annotation\Aspect;
+use Hyperf\Di\Aop\AbstractAspect;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
+
+#[Aspect]
+class FooAspect extends AbstractAspect
+{
+    public array $classes = [
+        SomeClass::class,
+        'App\Service\SomeClass::someMethod',
+        'App\Service\SomeClass::*Method',
+    ];
+
+    public array $annotations = [
+        SomeAnnotation::class,
+    ];
+
+    public function process(ProceedingJoinPoint $proceedingJoinPoint)
+    {
+        // 獲取當前方法反射原型
+        /** @var \ReflectionMethod **/
+        $reflect = $proceedingJoinPoint->getReflectMethod();
+
+        // 獲取調用方法時提交的參數
+        $arguments = $proceedingJoinPoint->getArguments(); // array
+
+        // 獲取原類的實例並調用原類的其他方法
+        $originalInstance = $proceedingJoinPoint->getInstance();
+        $originalInstance->yourFunction();
+
+        // 獲取註解元數據
+        /** @var \Hyperf\Di\Aop\AnnotationMetadata **/
+        $metadata = $proceedingJoinPoint->getAnnotationMetadata();
+
+        // 調用不受代理類影響的原方法
+        $proceedingJoinPoint->processOriginalMethod();
+
+        // 不執行原方法，做其他操作
+        $result = date('YmdHis', time() - 86400);
+        return $result;
+    }
+}
+```
+
+> 注意：`getInstance`獲取到的類為代理類，裏面的方法仍會被其他切面影響，相互嵌套調用會死循環耗盡內存。
+
 ## 代理類緩存
 
 所有被 AOP 影響的類，都會在 `./runtime/container/proxy/` 文件夾內生成對應的 `代理類緩存`，是否在啓動時自動生成取決於 `config/config.php` 配置文件中 `scan_cacheable` 配置項的值，默認值為 `false`，如果該配置項為 `true` 則 Hyperf 不會掃描和生成代理類緩存，而是直接以現有的緩存文件作為最終的代理類。如果該配置項為 `false`，則 Hyperf 會在每次啓動應用時掃描註解掃描域並自動的生成對應的代理類緩存，當代碼發生變化時，代理類緩存也會自動的重新生成。

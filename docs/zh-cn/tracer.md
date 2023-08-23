@@ -180,6 +180,20 @@ return [
 ];
 ```
 
+#### 配置协程追踪开关
+
+协程的链路追踪并不在统一配置当中，属于可选版本的功能。
+
+我们只需要配置 `aspects.php`，加入以下 `Aspect` 即可开启。
+
+```php
+<?php
+
+return [
+    Hyperf\Tracer\Aspect\CoroutineAspect::class,
+];
+```
+
 ### 配置中间件
 
 配置完驱动之后，采集信息还需要配置一下中间件才能启用采集功能。

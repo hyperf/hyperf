@@ -1,5 +1,32 @@
 # 版本更新记录
 
+# v3.0.33 - 2023-08-18
+
+## 修复
+
+- [#6011](https://github.com/hyperf/hyperf/pull/6011) 修复 `invocable` 控制器路由无法正常使用验证器的BUG。
+- [#6013](https://github.com/hyperf/hyperf/pull/6013) 修复 `no_aspect` 会被覆盖的问题。
+- [#6053](https://github.com/hyperf/hyperf/pull/6053) 修复方法 `Arr::has` 时，`Interger` 类型参数会导致报错的问题。
+
+## 优化
+
+- [#6023](https://github.com/hyperf/hyperf/pull/6023) 使用 `Tracer` 实例时，优先从协程上下文中获取。
+- [#6027](https://github.com/hyperf/hyperf/pull/6027) 优化协程下 `Tracer` 的使用逻辑。
+
+## 即将废弃
+
+- [#6044](https://github.com/hyperf/hyperf/pull/6044) 设置 `Hyperf\Coroutine\Traits\Container` 为即将废弃。
+
+# v3.0.32 - 2023-08-09
+
+## 新增
+
+- [#5996](https://github.com/hyperf/hyperf/pull/5996) 允许 `tracer` 切入 `GuzzleHttp\Client::request()` 方法，进行数据记录。
+
+## 修复
+
+- [#6004](https://github.com/hyperf/hyperf/pull/6004) 修复在使用 `Command` 时，抛出异常后，命令行退出码不合规的问题。
+
 # v3.0.31 - 2023-07-27
 
 ## 修复

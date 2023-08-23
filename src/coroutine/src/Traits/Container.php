@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Coroutine\Traits;
 
+/**
+ * @deprecated v3.1 please use `Hyperf\Support\Traits\Container` instead.
+ */
 trait Container
 {
     protected static array $container = [];

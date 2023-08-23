@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcMultiplex\Listener;
 
+use Hyperf\Codec\Packer\PhpSerializerPacker;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\Rpc\ProtocolManager;
@@ -41,6 +42,13 @@ class RegisterProtocolListener implements ListenerInterface
     {
         $this->protocolManager->register(Constant::PROTOCOL_DEFAULT, [
             'packer' => JsonPacker::class,
+            'transporter' => Transporter::class,
+            'path-generator' => PathGenerator::class,
+            'data-formatter' => DataFormatter::class,
+        ]);
+
+        $this->protocolManager->register(Constant::PROTOCOL_PHP_SERIALIZE, [
+            'packer' => PhpSerializerPacker::class,
             'transporter' => Transporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,

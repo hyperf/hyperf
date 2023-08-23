@@ -180,6 +180,20 @@ return [
 ];
 ```
 
+#### Configure coroutine tracking enabling
+
+Coroutine link tracking is not included in the unified configuration, it is an optional version of the function.
+
+We only need to configure `aspects.php` and add the following `Aspect` to enable it.
+
+```php
+<?php
+
+return [
+    Hyperf\Tracer\Aspect\CoroutineAspect::class,
+];
+```
+
 ### Configure middleware
 
 After configuring the driver, you need to configure the middleware to enable the collection function to collect information.
