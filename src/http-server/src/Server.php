@@ -102,6 +102,9 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
                 $middlewares = array_merge($middlewares, $registeredMiddlewares);
             }
 
+            // Middleware priority.
+            $middlewares = MiddlewareData::getPriorityMiddlewares($middlewares);
+
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
