@@ -13,11 +13,15 @@ namespace Hyperf\HttpServer\Annotation;
 
 use Attribute;
 use Hyperf\Di\Annotation\AbstractMultipleAnnotation;
+use Hyperf\HttpServer\MiddlewareData;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class Middleware extends AbstractMultipleAnnotation
 {
-    public function __construct(public string $middleware = '')
+    public MiddlewareData $middlewareData;
+
+    public function __construct(string $middleware = '', public int $priority = MiddlewareData::DEFAULT_PRIORITY)
     {
+        $this->middlewareData = new MiddlewareData($middleware, $priority);
     }
 }

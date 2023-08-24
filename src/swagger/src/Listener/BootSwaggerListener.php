@@ -122,7 +122,7 @@ class BootSwaggerListener implements ListenerInterface
                                     $result = [];
                                     /** @var Middleware $annotation */
                                     foreach ($middlewareAnnotations as $annotation) {
-                                        $result[] = $annotation->middleware;
+                                        $result[] = $annotation->middlewareData;
                                     }
 
                                     return $result;
