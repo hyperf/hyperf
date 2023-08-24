@@ -17,9 +17,9 @@ class SplPriorityQueue extends \SplPriorityQueue
 {
     protected $serial = PHP_INT_MAX;
 
-    public function insert($value, $priority): void
+    public function insert($value, $priority)
     {
         $priority = [$priority, $this->serial--];
-        parent::insert($value, $priority);
+        return parent::insert($value, $priority);
     }
 }
