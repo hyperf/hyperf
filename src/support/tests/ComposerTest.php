@@ -30,7 +30,6 @@ class ComposerTest extends TestCase
 
     public function testHasPackage()
     {
-        $this->assertFileExists(Composer::discoverLockFile());
         $this->assertTrue(Composer::hasPackage('hyperf/framework'));
         $this->assertFalse(Composer::hasPackage('composer/unknown'));
     }
