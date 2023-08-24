@@ -242,6 +242,15 @@ class ArrTest extends TestCase
         );
     }
 
+    public function testHasMethod()
+    {
+        $array = ['name' => 'Taylor', 'age' => '', 'city' => null];
+        $this->assertTrue(Arr::has($array, 'name'));
+        $this->assertTrue(Arr::has($array, ['name', 'age']));
+        $this->assertFalse(Arr::has($array, ['name', 'age', 'gender']));
+        $this->assertFalse(Arr::has($array, 1));
+    }
+
     public function testHasAnyMethod()
     {
         $array = ['name' => 'Taylor', 'age' => '', 'city' => null];

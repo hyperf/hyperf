@@ -17,7 +17,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use OpenTracing\Tracer;
+use Hyperf\Tracer\TracerContext;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
@@ -32,7 +32,7 @@ class HttpClientAspect extends AbstractAspect
         Client::class . '::requestAsync',
     ];
 
-    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
+    public function __construct(private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
     }
 
@@ -66,7 +66,7 @@ class HttpClientAspect extends AbstractAspect
         }
         $appendHeaders = [];
         // Injects the context into the wire
-        $this->tracer->inject(
+        TracerContext::getTracer()->inject(
             $span->getContext(),
             TEXT_MAP,
             $appendHeaders

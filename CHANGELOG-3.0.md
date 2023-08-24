@@ -1,9 +1,33 @@
-# v3.0.33 - TBD
+# v3.0.34 - TBD
+
+## Added
+
+- [#6070](https://github.com/hyperf/hyperf/pull/6070) Added `php_serialize` protocol for `hyperf/rpc-multilex`.
+- [#6069](https://github.com/hyperf/hyperf/pull/6069) [#6075](https://github.com/hyperf/hyperf/pull/6075) Added kafka reporter for `hyperf/tracer`.
+- [#6078](https://github.com/hyperf/hyperf/pull/6078) Added `Hyperf\Support\Composer::hasPackage()` method.
+
+## Fixed
+
+- [#6065](https://github.com/hyperf/hyperf/pull/6065) Fixed bug that `Context::override` and `Context::getOrSet` cannot work when using `$coroutineId`.
+
+## Added
+
+- [#6060](https://github.com/hyperf/hyperf/pull/6060) Supplement the missing tag configuration items.
+- [#6063](https://github.com/hyperf/hyperf/pull/6063) Added `$server` property to request events.
+
+## Optimized
+
+- [#6046](https://github.com/hyperf/hyperf/pull/6046) Using the tracer instance from coroutine context.
+- [#6061](https://github.com/hyperf/hyperf/pull/6061) Enhance server config to support key-value mode.
+- [#6077](https://github.com/hyperf/hyperf/pull/6077) Don't show deprecated notice when using `#[Hyperf\Constants\Annotation\Constants]`.
+
+# v3.0.33 - 2023-08-18
 
 ## Fixed
 
 - [#6011](https://github.com/hyperf/hyperf/pull/6011) Fixed the issue where validation for invocable controller route requests was not working.
 - [#6013](https://github.com/hyperf/hyperf/pull/6013) Fixed the bug that `no_aspect` is overridden.
+- [#6053](https://github.com/hyperf/hyperf/pull/6053) Fixed bug that `Arr::has` with integer keys cannot work as expected.
 
 ## Optimized
 

@@ -40,6 +40,13 @@ composer require "league/flysystem-aws-s3-v3:^2.0"
 composer require hyperf/guzzle
 ```
 
+`Flysystem v3.0` version
+
+```shell
+composer require "league/flysystem-aws-s3-v3:^3.0"
+composer require hyperf/guzzle
+```
+
 - Qiniu Adapter
 
 `Flysystem v1.0` version

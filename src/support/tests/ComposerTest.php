@@ -27,4 +27,10 @@ class ComposerTest extends TestCase
 
         $this->assertInstanceOf(ClassLoader::class, $loader);
     }
+
+    public function testHasPackage()
+    {
+        $this->assertTrue(Composer::hasPackage('hyperf/framework'));
+        $this->assertFalse(Composer::hasPackage('composer/unknown'));
+    }
 }

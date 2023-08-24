@@ -184,7 +184,7 @@ return [
 
 協程的鏈路追蹤並不在統一配置當中，屬於可選版本的功能。
 
-我們只需要配置 `aspects.php`，加入以下 `Aspect` 即可開啟。
+我們只需要配置 `aspects.php`，加入以下 `Aspect` 即可開啓。
 
 ```php
 <?php

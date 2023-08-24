@@ -138,6 +138,23 @@ class Composer
         return self::$versions;
     }
 
+    public static function hasPackage(string $packageName): bool
+    {
+        if (! self::$json) {
+            self::getJsonContent();
+        }
+
+        if (self::$json['require'][$packageName] ?? self::$json['require-dev'][$packageName] ?? self::$json['replace'][$packageName] ?? '') {
+            return true;
+        }
+
+        if (! self::$versions) {
+            self::getLockContent();
+        }
+
+        return isset(self::$versions[$packageName]);
+    }
+
     private static function findLoader(): ClassLoader
     {
         $loaders = spl_autoload_functions();
