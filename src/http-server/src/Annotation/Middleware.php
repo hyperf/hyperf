@@ -20,7 +20,7 @@ class Middleware extends AbstractMultipleAnnotation
 {
     public MiddlewareData $middlewareData;
 
-    public function __construct(string $middleware = '', public int $priority = MiddlewareData::DEFAULT_PRIORITY)
+    public function __construct(public string $middleware = '', public int $priority = MiddlewareData::DEFAULT_PRIORITY)
     {
         $this->middlewareData = new MiddlewareData($middleware, $priority);
     }
