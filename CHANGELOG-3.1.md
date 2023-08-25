@@ -34,8 +34,9 @@
 - [#5950](https://github.com/hyperf/hyperf/pull/5950) Added `Job::setMaxAttempts` method and `dispatch` helper function for `hyperf/async-queue`.
 - [#5967](https://github.com/hyperf/hyperf/pull/5967) Added component `hyperf/migration-generator` which used to generate migrations from databases.
 - [#5983](https://github.com/hyperf/hyperf/pull/5983) [#5985](https://github.com/hyperf/hyperf/pull/5985) Added `skipCacheResults` to annotations of `hyperf/cache`.
-- [#5994](https://github.com/hyperf/hyperf/pull/5994) Adds `events` of `crontab` lifecycle.
+- [#5994](https://github.com/hyperf/hyperf/pull/5994) Added `events` of `crontab` lifecycle.
 - [#6039](https://github.com/hyperf/hyperf/pull/6039) Support semantic crontab rules.
+- [#6082](https://github.com/hyperf/hyperf/pull/6082) Added `hyperf/stdlib` component.
 
 ## Optimized
 
