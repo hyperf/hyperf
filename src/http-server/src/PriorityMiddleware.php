@@ -40,11 +40,6 @@ class PriorityMiddleware
             $queue->insert($middleware, $priority);
         }
 
-        $middlewares = [];
-        foreach ($queue as $item) {
-            $middlewares[] = $item;
-        }
-
-        return array_unique($middlewares);
+        return array_unique($queue->toArray());
     }
 }
