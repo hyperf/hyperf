@@ -13,13 +13,52 @@ namespace Hyperf\Stdlib;
 
 use const PHP_INT_MAX;
 
+/**
+ * Serializable version of SplPriorityQueue.
+ *
+ * Also, provides predictable heap order for datums added with the same priority
+ * (i.e., they will be emitted in the same order they are enqueued).
+ *
+ * @template TValue
+ * @template TPriority of int
+ * @extends \SplPriorityQueue<TPriority, TValue>
+ */
 class SplPriorityQueue extends \SplPriorityQueue
 {
+    /**
+     * @var int Seed used to ensure queue order for items of the same priority
+     */
     protected $serial = PHP_INT_MAX;
 
+    /**
+     * Insert a value with a given priority.
+     *
+     * Utilizes {@var to $serial} ensure that values of equal priority are
+     * emitted in the same order in which they are inserted.
+     *
+     * @param TValue $datum
+     * @param TPriority $priority
+     * @param mixed $value
+     */
     public function insert($value, $priority)
     {
         $priority = [$priority, $this->serial--];
         return parent::insert($value, $priority);
+    }
+
+    /**
+     * Serialize to an array.
+     *
+     * Array will be priority => data pairs
+     *
+     * @return list<TValue>
+     */
+    public function toArray()
+    {
+        $array = [];
+        foreach (clone $this as $item) {
+            $array[] = $item;
+        }
+        return $array;
     }
 }
