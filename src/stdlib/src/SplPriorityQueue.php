@@ -20,15 +20,15 @@ use const PHP_INT_MAX;
  * (i.e., they will be emitted in the same order they are enqueued).
  *
  * @template TValue
- * @template TPriority of int
+ * @template TPriority
  * @extends \SplPriorityQueue<TPriority, TValue>
  */
 class SplPriorityQueue extends \SplPriorityQueue
 {
     /**
-     * @var int Seed used to ensure queue order for items of the same priority
+     * Seed used to ensure queue order for items of the same priority.
      */
-    protected $serial = PHP_INT_MAX;
+    protected int $serial = PHP_INT_MAX;
 
     /**
      * Insert a value with a given priority.
