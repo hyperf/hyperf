@@ -147,6 +147,11 @@ class Connection implements ConnectionInterface
     protected static array $beforeExecutingCallbacks = [];
 
     /**
+     * Error count for executing SQL.
+     */
+    protected int $errorCount = 0;
+
+    /**
      * Create a new database connection instance.
      *
      * @param Closure|PDO $pdo
