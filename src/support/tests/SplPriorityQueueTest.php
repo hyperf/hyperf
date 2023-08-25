@@ -72,4 +72,22 @@ class SplPriorityQueueTest extends TestCase
         }
         $this->assertSame('a,b,c,d', join(',', $result));
     }
+
+    public function testQueueWithArrayPriority()
+    {
+        $items = [
+            'a' => [1, 2],
+            'b' => [2, 1],
+            'c' => [0, 3],
+        ];
+        $queue = new SplPriorityQueue();
+        foreach ($items as $value => $priority) {
+            $queue->insert($value, $priority);
+        }
+        $result = [];
+        foreach ($queue as $value) {
+            $result[] = $value;
+        }
+        $this->assertSame('b,a,c', join(',', $result));
+    }
 }
