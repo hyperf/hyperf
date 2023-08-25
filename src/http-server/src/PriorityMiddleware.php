@@ -28,12 +28,12 @@ class PriorityMiddleware
     {
         $queue = new SplPriorityQueue();
         foreach ($middlewares as $middleware => $priority) {
-            if ($priority instanceof PriorityMiddleware) {// - Hyperf\HttpServer\MiddlewareData Object
+            if ($priority instanceof PriorityMiddleware) {// int => Hyperf\HttpServer\MiddlewareData Object
                 [$middleware, $priority] = [$priority->middleware, $priority->priority];
-            } elseif (is_int($middleware)) {// - Middleware::class
+            } elseif (is_int($middleware)) {// int => Middleware::class
                 [$middleware, $priority] = [$priority, PriorityMiddleware::DEFAULT_PRIORITY];
             }
-            // - Default Middleware::class => priority
+            // Default Middleware::class => priority
 
             $queue->insert($middleware, $priority);
         }
