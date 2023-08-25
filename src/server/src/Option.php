@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Server;
 
 use Hyperf\HttpServer\PriorityMiddleware;
+
 use function Hyperf\Tappable\tap;
 
 class Option
