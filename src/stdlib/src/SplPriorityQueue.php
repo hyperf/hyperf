@@ -36,9 +36,8 @@ class SplPriorityQueue extends \SplPriorityQueue
      * Utilizes {@var to $serial} ensure that values of equal priority are
      * emitted in the same order in which they are inserted.
      *
-     * @param TValue $datum
+     * @param TValue $value
      * @param TPriority $priority
-     * @param mixed $value
      */
     public function insert($value, $priority)
     {
