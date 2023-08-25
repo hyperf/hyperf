@@ -151,7 +151,7 @@ class MiddlewareTest extends TestCase
         $offset = 0;
         foreach ($middlewares as $middlewareKey => $middleware) {
             if ($middleware instanceof PriorityMiddleware) {
-                $this->assertSame($middleware->middlewareClass, $expectMiddlewares[$offset] ?? '');
+                $this->assertSame($middleware->middleware, $expectMiddlewares[$offset] ?? '');
             } elseif (is_int($middleware)) {
                 $middleware = $middlewareKey;
                 $this->assertSame($middleware, $expectMiddlewares[$offset] ?? '');

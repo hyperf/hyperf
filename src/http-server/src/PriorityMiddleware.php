@@ -17,7 +17,7 @@ class PriorityMiddleware
 {
     public const DEFAULT_PRIORITY = 0;
 
-    public function __construct(public string $middlewareClass, public int $priority = self::DEFAULT_PRIORITY)
+    public function __construct(public string $middleware, public int $priority = self::DEFAULT_PRIORITY)
     {
     }
 
@@ -33,7 +33,7 @@ class PriorityMiddleware
             // - Middleware::class
             // - Middleware::class => priority
             if ($priority instanceof PriorityMiddleware) {
-                [$middleware, $priority] = [$priority->middlewareClass, $priority->priority];
+                [$middleware, $priority] = [$priority->middleware, $priority->priority];
             } elseif (is_int($middleware)) {
                 [$middleware, $priority] = [$priority, PriorityMiddleware::DEFAULT_PRIORITY];
             }

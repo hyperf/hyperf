@@ -97,13 +97,15 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
             $middlewares = $this->middlewares;
 
+            $registeredMiddlewares = [];
             if ($dispatched->isFound()) {
                 $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
                 $middlewares = array_merge($middlewares, $registeredMiddlewares);
             }
 
-            // Middleware priority.
-            $middlewares = PriorityMiddleware::getPriorityMiddlewares($middlewares);
+            if ($this->option?->isMustSortMiddlewares() || $registeredMiddlewares) {
+                $middlewares = PriorityMiddleware::getPriorityMiddlewares($middlewares);
+            }
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
@@ -166,9 +168,11 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         foreach ($ports as $port) {
             if ($port->getName() === $this->serverName) {
                 $this->option = $port->getOptions();
-                return;
             }
         }
+
+        $this->option ??= Option::make([]);
+        $this->option->setMustSortMiddlewaresByMiddlewares($this->middlewares);
     }
 
     protected function createDispatcher(string $serverName): Dispatcher
