@@ -972,6 +972,11 @@ class Connection implements ConnectionInterface
         return static::$resolvers[$driver] ?? null;
     }
 
+    public function getErrorCount(): int
+    {
+        return $this->errorCount;
+    }
+
     /**
      * Escape a string value for safe SQL embedding.
      */
@@ -1137,11 +1142,15 @@ class Connection implements ConnectionInterface
         // message to include the bindings with SQL, which will make this exception a
         // lot more helpful to the developer instead of just the database's errors.
         catch (Exception $e) {
+            ++$this->errorCount;
             throw new QueryException(
                 $query,
                 $this->prepareBindings($bindings),
                 $e
             );
+        } catch (Throwable $throwable) {
+            ++$this->errorCount;
+            throw $throwable;
         }
 
         return $result;
@@ -1158,13 +1167,9 @@ class Connection implements ConnectionInterface
     /**
      * Handle a query exception.
      *
-     * @param Exception $e
-     * @param string $query
-     * @param array $bindings
-     *
      * @throws Exception
      */
-    protected function handleQueryException($e, $query, $bindings, Closure $callback)
+    protected function handleQueryException(QueryException $e, string $query, array $bindings, Closure $callback)
     {
         if ($this->transactions >= 1) {
             throw $e;
