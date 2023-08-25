@@ -37,9 +37,7 @@ class Composer
     public static function getLockContent(): Collection
     {
         if (! self::$content) {
-            $path = self::discoverLockFile();
-
-            if (! $path) {
+            if (! $path = self::discoverLockFile()) {
                 throw new RuntimeException('composer.lock not found.');
             }
 
