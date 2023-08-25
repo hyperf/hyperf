@@ -104,7 +104,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             }
 
             if ($this->option?->isMustSortMiddlewares() || $registeredMiddlewares) {
-                $middlewares = PriorityMiddleware::getPriorityMiddlewares($middlewares);
+                $middlewares = MiddlewareManager::sortMiddlewares($middlewares);
             }
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);

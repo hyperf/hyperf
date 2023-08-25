@@ -112,6 +112,12 @@ class MiddlewareTest extends TestCase
         $router = $factory->getRouter('http');
 
         [$routers] = $router->getData();
+
+        $globalMiddleware = [
+            'GlobalMiddlewareA',
+            'GlobalMiddlewareB' => 1,
+        ];
+
         foreach ($routers as $method => $items) {
             /**
              * @var string $key
@@ -128,13 +134,16 @@ class MiddlewareTest extends TestCase
                 }
 
                 foreach ([
-                    $value->options['middleware'],
-                    MiddlewareManager::get('http', $value->route, $method),
+                    // Keep same with Server.php `$middlewares = array_merge($middlewares, $registeredMiddlewares);`
+                    array_merge($globalMiddleware, $value->options['middleware']),
+                    array_merge($globalMiddleware, MiddlewareManager::get('http', $value->route, $method)),
                 ] as $dataSource) {
                     $this->assertMiddlewares([
-                        FooMiddleware::class,
-                        SetHeaderMiddleware::class,
-                        BarMiddleware::class,
+                        FooMiddleware::class, // method middleware => 3
+                        'GlobalMiddlewareB', // global middleware => 1
+                        SetHeaderMiddleware::class, // class middleware => 1
+                        BarMiddleware::class, // method middleware => 1
+                        'GlobalMiddlewareA', // global middleware => 0
                     ], $dataSource);
                 }
             }
@@ -146,7 +155,7 @@ class MiddlewareTest extends TestCase
      */
     protected function assertMiddlewares(array $expectMiddlewares, array $middlewares)
     {
-        $middlewares = PriorityMiddleware::getPriorityMiddlewares($middlewares);
+        $middlewares = MiddlewareManager::sortMiddlewares($middlewares);
 
         $offset = 0;
         foreach ($middlewares as $middlewareKey => $middleware) {
