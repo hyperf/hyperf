@@ -155,7 +155,7 @@ class MiddlewareTest extends TestCase
      */
     protected function assertMiddlewares(array $expectMiddlewares, array $middlewares)
     {
-        $middlewares = MiddlewareManager::toPriorityMiddlewares($middlewares);
+        $middlewares = MiddlewareManager::sortMiddlewares($middlewares);
 
         $offset = 0;
         foreach ($middlewares as $middlewareKey => $middleware) {

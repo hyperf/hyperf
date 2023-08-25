@@ -51,7 +51,7 @@ class MiddlewareManager
     /**
      * @return string[]
      */
-    public static function toPriorityMiddlewares(array $middlewares): array
+    public static function sortMiddlewares(array $middlewares): array
     {
         $queue = new SplPriorityQueue();
         foreach ($middlewares as $middleware => $priority) {
