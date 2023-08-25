@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpServer;
 
-use SplPriorityQueue;
+use Laminas\Stdlib\SplPriorityQueue;
 
 class PriorityMiddleware
 {
@@ -27,7 +27,6 @@ class PriorityMiddleware
     public static function getPriorityMiddlewares(array $middlewares): array
     {
         $queue = new SplPriorityQueue();
-        $serial = PHP_INT_MAX;
         foreach ($middlewares as $middleware => $priority) {
             // - Hyperf\HttpServer\MiddlewareData Object
             // - Middleware::class
@@ -38,7 +37,7 @@ class PriorityMiddleware
                 [$middleware, $priority] = [$priority, PriorityMiddleware::DEFAULT_PRIORITY];
             }
 
-            $queue->insert($middleware, [$priority, $serial--]);
+            $queue->insert($middleware, $priority);
         }
 
         $middlewares = [];

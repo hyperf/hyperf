@@ -24,7 +24,18 @@ class MiddlewareManager
     public static function addMiddlewares(string $server, string $path, string $method, array $middlewares): void
     {
         $method = strtoupper($method);
-        foreach ($middlewares as $middleware) {
+        foreach ($middlewares as $middleware => $priority) {
+            if ($priority instanceof PriorityMiddleware) {
+                static::$container[$server][$path][$method][] = $priority;
+                continue;
+            }
+
+            if (is_int($priority)) {
+                static::$container[$server][$path][$method][] = new PriorityMiddleware($middleware, $priority);
+                continue;
+            }
+
+            $middleware = $priority;
             static::$container[$server][$path][$method][] = $middleware;
         }
     }
