@@ -1,5 +1,26 @@
 # 版本更新記錄
 
+# v3.0.34 - 2023-08-25
+
+## 新增
+
+- [#6060](https://github.com/hyperf/hyperf/pull/6060) 為 `tracer` 組件增加 `request.uri` 標籤。
+- [#6063](https://github.com/hyperf/hyperf/pull/6063) 為 `Request` 相關事件，增加服務名參數 `$server`。
+- [#6070](https://github.com/hyperf/hyperf/pull/6070) 為組件 `hyperf/rpc-multilex` 增加 `php_serialize` 協議。
+- [#6069](https://github.com/hyperf/hyperf/pull/6069) [#6075](https://github.com/hyperf/hyperf/pull/6075) 為組件 `hyperf/tracer` 增加 `kafka` 上報器。
+- [#6078](https://github.com/hyperf/hyperf/pull/6078) 新增方法 `Hyperf\Support\Composer::hasPackage()`。
+- [#6083](https://github.com/hyperf/hyperf/pull/6083) [#6084](https://github.com/hyperf/hyperf/pull/6084) 支持中間件排序功能。
+
+## 修復
+
+- [#6065](https://github.com/hyperf/hyperf/pull/6065) 修復方法 `Context::override` 和 `Context::getOrSet` 沒法對指定協程 ID 使用的問題。
+
+## 優化
+
+- [#6046](https://github.com/hyperf/hyperf/pull/6046) 從協程上線文中讀取 `tracer` 實例。
+- [#6061](https://github.com/hyperf/hyperf/pull/6061) 為 `server` 配置，增加 `key-value` 模式的支持。
+- [#6077](https://github.com/hyperf/hyperf/pull/6077) 當使用 `#[Hyperf\Constants\Annotation\Constants]` 時，避免 `IDE` 觸發 `deprecated` 警告。
+
 # v3.0.33 - 2023-08-18
 
 ## 修復
