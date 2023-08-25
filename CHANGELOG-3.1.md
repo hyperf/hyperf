@@ -37,6 +37,7 @@
 - [#5994](https://github.com/hyperf/hyperf/pull/5994) Added `events` of `crontab` lifecycle.
 - [#6039](https://github.com/hyperf/hyperf/pull/6039) Support semantic crontab rules.
 - [#6082](https://github.com/hyperf/hyperf/pull/6082) Added `hyperf/stdlib` component.
+- [#6085](https://github.com/hyperf/hyperf/pull/6085) Added an error count to the database connection to ensure that the connection can be reset when occur too many exceptions.
 
 ## Optimized
 
