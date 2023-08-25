@@ -31,7 +31,7 @@ use Hyperf\HttpServer\Annotation\PatchMapping;
 use Hyperf\HttpServer\Annotation\PostMapping;
 use Hyperf\HttpServer\Annotation\PutMapping;
 use Hyperf\HttpServer\Annotation\RequestMapping;
-use Hyperf\HttpServer\MiddlewareData;
+use Hyperf\HttpServer\PriorityMiddleware;
 use Hyperf\Stringable\Str;
 use ReflectionMethod;
 
@@ -106,7 +106,7 @@ class DispatcherFactory
 
     /**
      * Register route according to AutoController annotation.
-     * @param MiddlewareData[] $middlewares
+     * @param PriorityMiddleware[] $middlewares
      * @throws ConflictAnnotationException
      */
     protected function handleAutoController(string $className, AutoController $annotation, array $middlewares = [], array $methodMetadata = []): void
@@ -148,7 +148,7 @@ class DispatcherFactory
      * Register route according to Controller and XxxMapping annotations.
      * Including RequestMapping, GetMapping, PostMapping, PutMapping, PatchMapping, DeleteMapping.
      *
-     * @param MiddlewareData[] $middlewares
+     * @param PriorityMiddleware[] $middlewares
      * @throws ConflictAnnotationException
      */
     protected function handleController(string $className, Controller $annotation, array $methodMetadata, array $middlewares = []): void
@@ -231,7 +231,7 @@ class DispatcherFactory
     }
 
     /**
-     * @return MiddlewareData[]
+     * @return PriorityMiddleware[]
      * @throws ConflictAnnotationException
      */
     protected function handleMiddleware(array $metadata): array
@@ -255,7 +255,7 @@ class DispatcherFactory
         $middlewares = $middlewares ? $middlewares->middlewares : $middleware;
         /** @var Middleware $middleware */
         foreach ($middlewares as $middleware) {
-            $result[] = $middleware->middlewareData;
+            $result[] = $middleware->priorityMiddleware;
         }
         return $result;
     }

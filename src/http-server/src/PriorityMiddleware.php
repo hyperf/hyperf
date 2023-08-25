@@ -13,7 +13,7 @@ namespace Hyperf\HttpServer;
 
 use SplPriorityQueue;
 
-class MiddlewareData
+class PriorityMiddleware
 {
     public const DEFAULT_PRIORITY = 0;
 
@@ -27,17 +27,18 @@ class MiddlewareData
     public static function getPriorityMiddlewares(array $middlewares): array
     {
         $queue = new SplPriorityQueue();
+        $serial = PHP_INT_MAX;
         foreach ($middlewares as $middleware => $priority) {
             // - Hyperf\HttpServer\MiddlewareData Object
             // - Middleware::class
             // - Middleware::class => priority
-            if ($priority instanceof MiddlewareData) {
-                [$middleware,$priority] = [$priority->middlewareClass, $priority->priority];
+            if ($priority instanceof PriorityMiddleware) {
+                [$middleware, $priority] = [$priority->middlewareClass, $priority->priority];
             } elseif (is_int($middleware)) {
-                [$middleware,$priority] = [$priority, MiddlewareData::DEFAULT_PRIORITY];
+                [$middleware, $priority] = [$priority, PriorityMiddleware::DEFAULT_PRIORITY];
             }
 
-            $queue->insert($middleware, $priority);
+            $queue->insert($middleware, [$priority, $serial--]);
         }
 
         $middlewares = [];

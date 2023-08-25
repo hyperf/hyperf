@@ -13,7 +13,7 @@ namespace Hyperf\HttpServer\Annotation;
 
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
-use Hyperf\HttpServer\MiddlewareData;
+use Hyperf\HttpServer\PriorityMiddleware;
 
 #[Attribute]
 class Middlewares extends AbstractAnnotation
@@ -27,7 +27,7 @@ class Middlewares extends AbstractAnnotation
     {
         foreach ($middlewares as $middleware => $priority) {
             if (is_int($middleware)) {
-                [$middleware, $priority] = [$priority, MiddlewareData::DEFAULT_PRIORITY];
+                [$middleware, $priority] = [$priority, PriorityMiddleware::DEFAULT_PRIORITY];
             }
 
             $this->middlewares[] = $middleware instanceof Middlewares ? $middleware->middlewares : new Middleware((string) $middleware, (int) $priority);

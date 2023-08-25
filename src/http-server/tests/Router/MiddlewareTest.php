@@ -17,8 +17,8 @@ use Hyperf\HttpServer\Annotation\GetMapping;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\PostMapping;
-use Hyperf\HttpServer\MiddlewareData;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\HttpServer\PriorityMiddleware;
 use Hyperf\HttpServer\Router\Handler;
 use HyperfTest\HttpServer\Stub\BarMiddleware;
 use HyperfTest\HttpServer\Stub\DemoController;
@@ -55,7 +55,7 @@ class MiddlewareTest extends TestCase
                 PostMapping::class => new PostMapping('/index', ['name' => 'index.post']),
                 Middleware::class => new MultipleAnnotation(new Middleware(FooMiddleware::class)),
             ]],
-            [new MiddlewareData(SetHeaderMiddleware::class)]
+            [new PriorityMiddleware(SetHeaderMiddleware::class)]
         );
         $router = $factory->getRouter('http');
 
@@ -105,8 +105,8 @@ class MiddlewareTest extends TestCase
                 ]),
             ]],
             [
-                new MiddlewareData(SetHeaderMiddleware::class, 1),
-                new MiddlewareData(FooMiddleware::class),
+                new PriorityMiddleware(SetHeaderMiddleware::class, 1),
+                new PriorityMiddleware(FooMiddleware::class),
             ]
         );
         $router = $factory->getRouter('http');
@@ -146,11 +146,11 @@ class MiddlewareTest extends TestCase
      */
     protected function assertMiddlewares(array $expectMiddlewares, array $middlewares)
     {
-        $middlewares = MiddlewareData::getPriorityMiddlewares($middlewares);
+        $middlewares = PriorityMiddleware::getPriorityMiddlewares($middlewares);
 
         $offset = 0;
         foreach ($middlewares as $middlewareKey => $middleware) {
-            if ($middleware instanceof MiddlewareData) {
+            if ($middleware instanceof PriorityMiddleware) {
                 $this->assertSame($middleware->middlewareClass, $expectMiddlewares[$offset] ?? '');
             } elseif (is_int($middleware)) {
                 $middleware = $middlewareKey;
