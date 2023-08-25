@@ -2,18 +2,16 @@
 
 ## Added
 
+- [#6060](https://github.com/hyperf/hyperf/pull/6060) Supplement the missing tag configuration items.
+- [#6063](https://github.com/hyperf/hyperf/pull/6063) Added `$server` property to request events.
 - [#6070](https://github.com/hyperf/hyperf/pull/6070) Added `php_serialize` protocol for `hyperf/rpc-multilex`.
 - [#6069](https://github.com/hyperf/hyperf/pull/6069) [#6075](https://github.com/hyperf/hyperf/pull/6075) Added kafka reporter for `hyperf/tracer`.
 - [#6078](https://github.com/hyperf/hyperf/pull/6078) Added `Hyperf\Support\Composer::hasPackage()` method.
+- [#6083](https://github.com/hyperf/hyperf/pull/6083) Added middleware priority.
 
 ## Fixed
 
 - [#6065](https://github.com/hyperf/hyperf/pull/6065) Fixed bug that `Context::override` and `Context::getOrSet` cannot work when using `$coroutineId`.
-
-## Added
-
-- [#6060](https://github.com/hyperf/hyperf/pull/6060) Supplement the missing tag configuration items.
-- [#6063](https://github.com/hyperf/hyperf/pull/6063) Added `$server` property to request events.
 
 ## Optimized
 

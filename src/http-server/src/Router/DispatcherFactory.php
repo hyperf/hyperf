@@ -31,6 +31,7 @@ use Hyperf\HttpServer\Annotation\PatchMapping;
 use Hyperf\HttpServer\Annotation\PostMapping;
 use Hyperf\HttpServer\Annotation\PutMapping;
 use Hyperf\HttpServer\Annotation\RequestMapping;
+use Hyperf\HttpServer\PriorityMiddleware;
 use Hyperf\Stringable\Str;
 use ReflectionMethod;
 
@@ -105,6 +106,8 @@ class DispatcherFactory
 
     /**
      * Register route according to AutoController annotation.
+     * @param PriorityMiddleware[] $middlewares
+     * @throws ConflictAnnotationException
      */
     protected function handleAutoController(string $className, AutoController $annotation, array $middlewares = [], array $methodMetadata = []): void
     {
@@ -130,7 +133,7 @@ class DispatcherFactory
             }
 
             // Rewrite by annotation @Middleware for Controller.
-            $options['middleware'] = array_unique($methodMiddlewares);
+            $options['middleware'] = $methodMiddlewares;
 
             $router->addRoute($autoMethods, $path, [$className, $methodName], $options);
 
@@ -144,6 +147,9 @@ class DispatcherFactory
     /**
      * Register route according to Controller and XxxMapping annotations.
      * Including RequestMapping, GetMapping, PostMapping, PutMapping, PatchMapping, DeleteMapping.
+     *
+     * @param PriorityMiddleware[] $middlewares
+     * @throws ConflictAnnotationException
      */
     protected function handleController(string $className, Controller $annotation, array $methodMetadata, array $middlewares = []): void
     {
@@ -171,7 +177,7 @@ class DispatcherFactory
             }
 
             // Rewrite by annotation @Middleware for Controller.
-            $options['middleware'] = array_unique($methodMiddlewares);
+            $options['middleware'] = $methodMiddlewares;
 
             foreach ($mappingAnnotations as $mappingAnnotation) {
                 /** @var Mapping $mapping */
@@ -193,6 +199,7 @@ class DispatcherFactory
                         $path = $mapping->path;
                     }
 
+                    // $methodOptions['middleware'] : MiddlewareData[]
                     $router->addRoute($mapping->methods, $path, [$className, $methodName], $methodOptions);
                 }
             }
@@ -223,6 +230,10 @@ class DispatcherFactory
         return isset($item[Controller::class]);
     }
 
+    /**
+     * @return PriorityMiddleware[]
+     * @throws ConflictAnnotationException
+     */
     protected function handleMiddleware(array $metadata): array
     {
         /** @var null|Middlewares $middlewares */
@@ -244,7 +255,7 @@ class DispatcherFactory
         $middlewares = $middlewares ? $middlewares->middlewares : $middleware;
         /** @var Middleware $middleware */
         foreach ($middlewares as $middleware) {
-            $result[] = $middleware->middleware;
+            $result[] = $middleware->priorityMiddleware;
         }
         return $result;
     }
