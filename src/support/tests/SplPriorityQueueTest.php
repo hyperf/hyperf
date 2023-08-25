@@ -79,6 +79,7 @@ class SplPriorityQueueTest extends TestCase
             'a' => [1, 2],
             'b' => [2, 1],
             'c' => [0, 3],
+            'd' => [1, 2],
         ];
         $queue = new SplPriorityQueue();
         foreach ($items as $value => $priority) {
@@ -88,6 +89,6 @@ class SplPriorityQueueTest extends TestCase
         foreach ($queue as $value) {
             $result[] = $value;
         }
-        $this->assertSame('b,a,c', join(',', $result));
+        $this->assertSame('b,a,d,c', join(',', $result));
     }
 }
