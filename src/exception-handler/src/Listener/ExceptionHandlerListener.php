@@ -16,7 +16,7 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\ExceptionHandler\Annotation\ExceptionHandler;
 use Hyperf\Framework\Event\BootApplication;
-use SplPriorityQueue;
+use Hyperf\Stdlib\SplPriorityQueue;
 
 class ExceptionHandlerListener implements ListenerInterface
 {
