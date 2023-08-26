@@ -25,7 +25,7 @@ class Reference implements DefinitionInterface, SelfResolvingDefinitionInterface
     /**
      * @param string $targetEntryName name of the target entry
      */
-    public function __construct(private string $targetEntryName)
+    public function __construct(private string $targetEntryName, private $sourceEntryName)
     {
     }
 
@@ -58,14 +58,22 @@ class Reference implements DefinitionInterface, SelfResolvingDefinitionInterface
         return $this->targetEntryName;
     }
 
+    public function getFullTargetEntryName(): string
+    {
+        return $this->targetEntryName . '@' . $this->sourceEntryName;
+    }
+
     public function resolve(ContainerInterface $container)
     {
+        if ($container->has($this->getFullTargetEntryName())) {
+            return $container->get($this->getFullTargetEntryName());
+        }
         return $container->get($this->getTargetEntryName());
     }
 
     public function isResolvable(ContainerInterface $container): bool
     {
-        return $container->has($this->getTargetEntryName());
+        return $container->has($this->getFullTargetEntryName()) || $container->has($this->getTargetEntryName());
     }
 
     /**
