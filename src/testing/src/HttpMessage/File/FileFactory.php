@@ -19,16 +19,18 @@ class FileFactory
 {
     /**
      * Create a new fake file.
+     * @param null|mixed $clientFilename
+     * @param null|mixed $clientMediaType
      */
-    public function create(string $name, int|string $kilobytes = 0, string $mimeType = null): File
+    public function create(string $name, int|string $kilobytes = 0, int $error = 0, $clientFilename = null, $clientMediaType = null): File
     {
         if (is_string($kilobytes)) {
             return $this->createWithContent($name, $kilobytes);
         }
 
-        return tap(new File($name, tmpfile()), function ($file) use ($kilobytes, $mimeType) {
+        return tap(new File($name, tmpfile(), $error, $clientMediaType), function ($file) use ($kilobytes, $clientMediaType) {
             $file->sizeToReport = $kilobytes * 1024;
-            $file->mimeTypeToReport = $mimeType;
+            $file->mimeTypeToReport = $clientMediaType;
         });
     }
 

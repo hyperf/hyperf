@@ -18,7 +18,7 @@ class MimeType
     /**
      * The mime types instance.
      */
-    private static ?MimeTypeExtensionGuesser $mime;
+    private static ?MimeTypeExtensionGuesser $mime = null;
 
     /**
      * Get the mime types instance.

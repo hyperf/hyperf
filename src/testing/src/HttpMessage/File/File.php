@@ -16,11 +16,6 @@ use Hyperf\Testing\HttpMessage\Upload\UploadedFile;
 class File extends UploadedFile
 {
     /**
-     * The name of the file.
-     */
-    public string $name;
-
-    /**
      * The temporary file resource.
      *
      * @var resource
@@ -30,36 +25,39 @@ class File extends UploadedFile
     /**
      * The "size" to report.
      */
-    public int $sizeToReport;
-
-    /**
-     * The MIME type to report.
-     */
-    public ?string $mimeTypeToReport;
+    public int $sizeToReport = 0;
 
     /**
      * Create a new file instance.
      *
      * @param resource $tempFile
      */
-    public function __construct(string $name, $tempFile)
-    {
-        $this->name = $name;
+    public function __construct(
+        public string $name,
+        $tempFile,
+        private int $error = 0,
+        private ?string $mimeType = null
+    ) {
         $this->tempFile = $tempFile;
 
         parent::__construct(
             $this->tempFilePath(),
-            $this->getSize(),
-            $this->getError()
+            $this->sizeToReport,
+            $this->error,
+            $this->name,
+            $this->mimeType
         );
     }
 
     /**
      * Create a new fake file.
+     * @param mixed $error
+     * @param null|mixed $clientFilename
+     * @param null|mixed $clientMediaType
      */
-    public static function create(string $name, int|string $kilobytes = 0): File
+    public static function create(string $name, int|string $kilobytes = 0, int $error = 0, $clientFilename = null, $clientMediaType = null): File
     {
-        return (new FileFactory())->create($name, $kilobytes);
+        return (new FileFactory())->create($name, $kilobytes, $error, $clientFilename, $clientMediaType);
     }
 
     /**
@@ -105,7 +103,7 @@ class File extends UploadedFile
      */
     public function mimeType(string $mimeType): static
     {
-        $this->mimeTypeToReport = $mimeType;
+        $this->mimeType = $mimeType;
 
         return $this;
     }
@@ -115,7 +113,7 @@ class File extends UploadedFile
      */
     public function getMimeType(): string
     {
-        return $this->mimeTypeToReport ?: MimeType::from($this->name);
+        return $this->mimeType ?: MimeType::from($this->name);
     }
 
     /**
