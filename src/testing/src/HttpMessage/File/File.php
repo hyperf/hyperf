@@ -51,7 +51,6 @@ class File extends UploadedFile
 
     /**
      * Create a new fake file.
-     * @param mixed $error
      * @param null|mixed $clientFilename
      * @param null|mixed $clientMediaType
      */
