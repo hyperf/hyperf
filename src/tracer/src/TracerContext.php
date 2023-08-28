@@ -23,6 +23,8 @@ class TracerContext
 
     public const ROOT = 'tracer.root';
 
+    public const TRACE_ID = 'tracer.trace_id';
+
     public static function setTracer(Tracer $tracer): Tracer
     {
         return Context::set(self::TRACER, $tracer);
@@ -41,5 +43,15 @@ class TracerContext
     public static function getRoot(): ?Span
     {
         return Context::get(self::ROOT) ?: null;
+    }
+
+    public static function setTraceId(string $traceId): string
+    {
+        return Context::set(self::TRACE_ID, $traceId);
+    }
+
+    public static function getTraceId(): ?string
+    {
+        return Context::get(self::TRACE_ID) ?: null;
     }
 }
