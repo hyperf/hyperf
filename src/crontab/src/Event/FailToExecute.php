@@ -16,19 +16,14 @@ use Throwable;
 
 class FailToExecute
 {
-    /**
-     * @var Crontab
-     */
-    public $crontab;
-
-    /**
-     * @var Throwable
-     */
-    public $throwable;
-
-    public function __construct(Crontab $crontab, Throwable $throwable)
+    public function __construct(public Crontab $crontab, public Throwable $throwable)
     {
         $this->crontab = $crontab;
         $this->throwable = $throwable;
+    }
+
+    public function getThrowable(): Throwable
+    {
+        return $this->throwable;
     }
 }

@@ -24,4 +24,9 @@ abstract class Event
         public string $server = 'http'
     ) {
     }
+
+    public function getThrowable(): ?Throwable
+    {
+        return $this->exception;
+    }
 }
