@@ -69,7 +69,9 @@ class KafkaClientFactory
     public function close(): void
     {
         $this->chan?->close();
+        $this->chan = null;
         $this->producer?->close();
+        $this->producer = null;
     }
 
     protected function loop(): void
@@ -91,13 +93,13 @@ class KafkaClientFactory
                     } catch (Throwable) {
                         $this->producer->close();
                         break;
+                    } finally {
+                        $closure = null;
                     }
                 }
             }
 
-            $this->chan?->close();
-            $this->chan = null;
-            $this->producer->close();
+            $this->close();
         });
 
         Coroutine::create(function () {
