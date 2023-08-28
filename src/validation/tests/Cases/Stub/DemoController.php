@@ -13,6 +13,11 @@ namespace HyperfTest\Validation\Cases\Stub;
 
 class DemoController
 {
+    public function __invoke(DemoRequest $request)
+    {
+        return $request->all();
+    }
+
     public function signUp(DemoRequest $request)
     {
         return $request->all();

@@ -17,6 +17,9 @@ use ReflectionProperty;
 
 abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
 {
+    /**
+     * @deprecated will be removed in v3.1
+     */
     public function __construct(...$value)
     {
         $formattedValue = $this->formatParams($value);
@@ -52,6 +55,10 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
         AnnotationCollector::collectProperty($className, $target, static::class, $this);
     }
 
+    /**
+     * @deprecated will be removed in v3.1
+     * @param mixed $value
+     */
     protected function formatParams($value): array
     {
         if (isset($value[0])) {
@@ -63,6 +70,9 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
         return $value;
     }
 
+    /**
+     * @deprecated will be removed in v3.1
+     */
     protected function bindMainProperty(string $key, array $value)
     {
         $formattedValue = $this->formatParams($value);

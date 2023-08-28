@@ -169,6 +169,9 @@ class StrTest extends TestCase
         $this->assertFalse(Str::startsWith('hyperf.wiki', ['http://', 'https://']));
         $this->assertTrue(Str::startsWith('http://www.hyperf.io', 'http://'));
         $this->assertTrue(Str::startsWith('https://www.hyperf.io', ['http://', 'https://']));
+        $this->assertFalse(Str::startsWith('Hyperf', ['']));
+        $this->assertFalse(Str::startsWith('Hyperf', [null]));
+        $this->assertFalse(Str::startsWith('Hyperf', null));
     }
 
     public function testStripTags()
@@ -244,5 +247,28 @@ class StrTest extends TestCase
         $this->assertTrue(Str::isMatch(['/^laravel!/i', '/^.*$(.*)/'], 'Hello, Laravel!'));
         $this->assertTrue(Str::isMatch(['/laravel/i', '/laravel!(.*)/'], 'Hello, Laravel!'));
         $this->assertTrue(Str::isMatch(['/^[a-zA-Z,!]+$/', '/^(.*(.*(.*)))/'], 'Hello, Laravel!'));
+    }
+
+    public function testContains()
+    {
+        $this->assertTrue(Str::contains('Hyperf', ['h'], true));
+        $this->assertTrue(Str::contains('Hyperf', ['H']));
+        $this->assertFalse(Str::contains('Hyperf', ['']));
+        $this->assertFalse(Str::contains('Hyperf', [null]));
+        $this->assertFalse(Str::contains('Hyperf', null));
+    }
+
+    public function testEndsWith()
+    {
+        $this->assertTrue(Str::endsWith('Hyperf', ['f']));
+        $this->assertFalse(Str::endsWith('Hyperf', ['']));
+        $this->assertFalse(Str::endsWith('Hyperf', [null]));
+        $this->assertFalse(Str::endsWith('Hyperf', null));
+    }
+
+    public function testContainsAll()
+    {
+        $this->assertTrue(Str::containsAll('Hyperf', ['h'], true));
+        $this->assertFalse(Str::containsAll('Hyperf', ['h']));
     }
 }

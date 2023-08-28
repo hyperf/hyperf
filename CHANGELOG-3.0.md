@@ -1,4 +1,65 @@
-# v3.0.30 - TBD
+# v3.0.35 - TBD
+
+# v3.0.34 - 2023-08-25
+
+## Added
+
+- [#6060](https://github.com/hyperf/hyperf/pull/6060) Supplement the missing tag configuration items.
+- [#6063](https://github.com/hyperf/hyperf/pull/6063) Added `$server` property to request events.
+- [#6070](https://github.com/hyperf/hyperf/pull/6070) Added `php_serialize` protocol for `hyperf/rpc-multilex`.
+- [#6069](https://github.com/hyperf/hyperf/pull/6069) [#6075](https://github.com/hyperf/hyperf/pull/6075) Added kafka reporter for `hyperf/tracer`.
+- [#6078](https://github.com/hyperf/hyperf/pull/6078) Added `Hyperf\Support\Composer::hasPackage()` method.
+- [#6083](https://github.com/hyperf/hyperf/pull/6083) [#6084](https://github.com/hyperf/hyperf/pull/6084) Added middleware priority.
+
+## Fixed
+
+- [#6065](https://github.com/hyperf/hyperf/pull/6065) Fixed bug that `Context::override` and `Context::getOrSet` cannot work when using `$coroutineId`.
+
+## Optimized
+
+- [#6046](https://github.com/hyperf/hyperf/pull/6046) Using the tracer instance from coroutine context.
+- [#6061](https://github.com/hyperf/hyperf/pull/6061) Enhance server config to support key-value mode.
+- [#6077](https://github.com/hyperf/hyperf/pull/6077) Don't show deprecated notice when using `#[Hyperf\Constants\Annotation\Constants]`.
+
+# v3.0.33 - 2023-08-18
+
+## Fixed
+
+- [#6011](https://github.com/hyperf/hyperf/pull/6011) Fixed the issue where validation for invocable controller route requests was not working.
+- [#6013](https://github.com/hyperf/hyperf/pull/6013) Fixed the bug that `no_aspect` is overridden.
+- [#6053](https://github.com/hyperf/hyperf/pull/6053) Fixed bug that `Arr::has` with integer keys cannot work as expected.
+
+## Optimized
+
+- [#6023](https://github.com/hyperf/hyperf/pull/6023) Allow using the tracer instance from context, append `Trace-Id` to Response Header.
+- [#6027](https://github.com/hyperf/hyperf/pull/6027) Optimized the tracing in coroutine.
+
+## Deprecated
+
+- [#6044](https://github.com/hyperf/hyperf/pull/6044) Make `Hyperf\Coroutine\Traits\Container` as deprecated.
+
+# v3.0.32 - 2023-08-09
+
+## Added
+
+- [#5996](https://github.com/hyperf/hyperf/pull/5996) Support aspect to `GuzzleHttp\Client::request()`.
+
+## Fixed
+
+- [#6004](https://github.com/hyperf/hyperf/pull/6004) Fixed bug that the exit code is invalid when using command to throw exceptions.
+
+# v3.0.31 - 2023-07-27
+
+## Fixed
+
+- [#5969](https://github.com/hyperf/hyperf/pull/5969) Fixed bug that `Str::contains` will cause the error result when the `$needles` is `[null]`.
+- [#5970](https://github.com/hyperf/hyperf/pull/5970) Fixed bug that `Str::startsWith` and `Str::endsWith` will cause the error result when the `$needles` is `[null]`.
+
+## Added
+
+- [#5971](https://github.com/hyperf/hyperf/pull/5971) Added `Str::containsIgnoreCase()` which determine if a given string contains a given substring regardless of case sensitivity.
+
+# v3.0.30 - 2023-07-21
 
 ## Fixed
 
@@ -12,6 +73,8 @@
 
 - [#5951](https://github.com/hyperf/hyperf/pull/5951) Added `SameSite` support to session cookies.
 - [#5955](https://github.com/hyperf/hyperf/pull/5955) Support `access_key` and `access_secret` for nacos service governance.
+- [#5957](https://github.com/hyperf/hyperf/pull/5957) Added `Hyperf\Codec\Packer\IgbinarySerializerPacker`.
+- [#5962](https://github.com/hyperf/hyperf/pull/5962) Support modify the context of sub coroutine when using test components.
 
 # v3.0.29 - 2023-07-14
 

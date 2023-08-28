@@ -85,7 +85,7 @@ abstract class Command extends SymfonyCommand
     /**
      * The exit code of the command.
      */
-    protected int $exitCode = 0;
+    protected int $exitCode = self::SUCCESS;
 
     public function __construct(string $name = null)
     {
@@ -425,7 +425,10 @@ abstract class Command extends SymfonyCommand
         $callback = function () {
             try {
                 $this->eventDispatcher?->dispatch(new Event\BeforeHandle($this));
-                $this->handle();
+                $statusCode = $this->handle();
+                if (is_int($statusCode)) {
+                    $this->exitCode = $statusCode;
+                }
                 $this->eventDispatcher?->dispatch(new Event\AfterHandle($this));
             } catch (Throwable $exception) {
                 if (class_exists(ExitException::class) && $exception instanceof ExitException) {
@@ -438,20 +441,22 @@ abstract class Command extends SymfonyCommand
 
                 $this->output && $this->error($exception->getMessage());
 
+                $this->exitCode = self::FAILURE;
+
                 $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
-                return $this->exitCode = (int) $exception->getCode();
             } finally {
                 $this->eventDispatcher?->dispatch(new Event\AfterExecute($this));
             }
 
-            return 0;
+            return $this->exitCode;
         };
 
         if ($this->coroutine && ! Coroutine::inCoroutine()) {
             run($callback, $this->hookFlags);
-            return $this->exitCode;
+        } else {
+            $callback();
         }
 
-        return $callback();
+        return $this->exitCode >= 0 && $this->exitCode <= 255 ? $this->exitCode : self::INVALID;
     }
 }

@@ -1,5 +1,81 @@
 # 版本更新记录
 
+# v3.0.34 - 2023-08-25
+
+## 新增
+
+- [#6060](https://github.com/hyperf/hyperf/pull/6060) 为 `tracer` 组件增加 `request.uri` 标签。
+- [#6063](https://github.com/hyperf/hyperf/pull/6063) 为 `Request` 相关事件，增加服务名参数 `$server`。
+- [#6070](https://github.com/hyperf/hyperf/pull/6070) 为组件 `hyperf/rpc-multilex` 增加 `php_serialize` 协议。
+- [#6069](https://github.com/hyperf/hyperf/pull/6069) [#6075](https://github.com/hyperf/hyperf/pull/6075) 为组件 `hyperf/tracer` 增加 `kafka` 上报器。
+- [#6078](https://github.com/hyperf/hyperf/pull/6078) 新增方法 `Hyperf\Support\Composer::hasPackage()`。
+- [#6083](https://github.com/hyperf/hyperf/pull/6083) [#6084](https://github.com/hyperf/hyperf/pull/6084) 支持中间件排序功能。
+
+## 修复
+
+- [#6065](https://github.com/hyperf/hyperf/pull/6065) 修复方法 `Context::override` 和 `Context::getOrSet` 没法对指定协程 ID 使用的问题。
+
+## 优化
+
+- [#6046](https://github.com/hyperf/hyperf/pull/6046) 从协程上线文中读取 `tracer` 实例。
+- [#6061](https://github.com/hyperf/hyperf/pull/6061) 为 `server` 配置，增加 `key-value` 模式的支持。
+- [#6077](https://github.com/hyperf/hyperf/pull/6077) 当使用 `#[Hyperf\Constants\Annotation\Constants]` 时，避免 `IDE` 触发 `deprecated` 警告。
+
+# v3.0.33 - 2023-08-18
+
+## 修复
+
+- [#6011](https://github.com/hyperf/hyperf/pull/6011) 修复 `invocable` 控制器路由无法正常使用验证器的BUG。
+- [#6013](https://github.com/hyperf/hyperf/pull/6013) 修复 `no_aspect` 会被覆盖的问题。
+- [#6053](https://github.com/hyperf/hyperf/pull/6053) 修复方法 `Arr::has` 时，`Interger` 类型参数会导致报错的问题。
+
+## 优化
+
+- [#6023](https://github.com/hyperf/hyperf/pull/6023) 使用 `Tracer` 实例时，优先从协程上下文中获取。
+- [#6027](https://github.com/hyperf/hyperf/pull/6027) 优化协程下 `Tracer` 的使用逻辑。
+
+## 即将废弃
+
+- [#6044](https://github.com/hyperf/hyperf/pull/6044) 设置 `Hyperf\Coroutine\Traits\Container` 为即将废弃。
+
+# v3.0.32 - 2023-08-09
+
+## 新增
+
+- [#5996](https://github.com/hyperf/hyperf/pull/5996) 允许 `tracer` 切入 `GuzzleHttp\Client::request()` 方法，进行数据记录。
+
+## 修复
+
+- [#6004](https://github.com/hyperf/hyperf/pull/6004) 修复在使用 `Command` 时，抛出异常后，命令行退出码不合规的问题。
+
+# v3.0.31 - 2023-07-27
+
+## 修复
+
+- [#5969](https://github.com/hyperf/hyperf/pull/5969) 修复使用 `Str::contains` 时，如果 `$needles` 为 `[null]` 则会导致判断错误的问题。
+- [#5970](https://github.com/hyperf/hyperf/pull/5970) 修复使用 `Str::startsWith` 和 `Str::endsWith` 时，如果 `$needles` 为 `[null]` 则会导致判断错误的问题。
+
+## 新增
+
+- [#5971](https://github.com/hyperf/hyperf/pull/5971) 新增方法 `Str::containsIgnoreCase()` 可以在不区分大小写的情况下，用来判断是否是包含关系。
+
+# v3.0.30 - 2023-07-21
+
+## 修复
+
+- [#5947](https://github.com/hyperf/hyperf/pull/5947) 修复使用 `amqp` 时，存在多个配置时，协程锁失效的问题。
+
+## 优化
+
+- [#5954](https://github.com/hyperf/hyperf/pull/5954) 优化模型生成器，使其生成正确的参数注释。
+
+## 新增
+
+- [#5951](https://github.com/hyperf/hyperf/pull/5951) 为 `Session` 的 `Cookies` 功能增加 `SameSite` 支持。
+- [#5955](https://github.com/hyperf/hyperf/pull/5955) 为 `Nacos` 服务注册与发现，增加 `access_key` 和 `access_secret` 的支持。
+- [#5957](https://github.com/hyperf/hyperf/pull/5957) 新增 `Hyperf\Codec\Packer\IgbinarySerializerPacker`。
+- [#5962](https://github.com/hyperf/hyperf/pull/5962) 当使用测试组件时，增加支持修改子协程上下文的能力。
+
 # v3.0.29 - 2023-07-14
 
 ## 修复

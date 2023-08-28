@@ -145,16 +145,18 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function request(string $method, string $path, array $options = [])
+    public function request(string $method, string $path, array $options = [], ?callable $callable = null)
     {
-        return wait(function () use ($method, $path, $options) {
+        return wait(function () use ($method, $path, $options, $callable) {
+            $callable && $callable();
             return $this->execute($this->initRequest($method, $path, $options));
         }, $this->waitTimeout);
     }
 
-    public function sendRequest(ServerRequestInterface $psr7Request): ResponseInterface
+    public function sendRequest(ServerRequestInterface $psr7Request, ?callable $callable = null): ResponseInterface
     {
-        return wait(function () use ($psr7Request) {
+        return wait(function () use ($psr7Request, $callable) {
+            $callable && $callable();
             return $this->execute($psr7Request);
         }, $this->waitTimeout);
     }
