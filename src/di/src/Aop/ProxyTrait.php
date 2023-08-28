@@ -16,7 +16,7 @@ use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\ReflectionManager;
-use SplPriorityQueue;
+use Hyperf\Stdlib\SplPriorityQueue;
 
 trait ProxyTrait
 {
