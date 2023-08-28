@@ -16,7 +16,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\TracerContext;
 use Zipkin\Propagation\TraceContext;
 
-class CreateTraceContextIdAspect extends AbstractAspect
+class CreateTraceContextAspect extends AbstractAspect
 {
     public array $classes = [
         TraceContext::class . '::create',
