@@ -43,7 +43,7 @@ class SplPriorityQueue extends \SplPriorityQueue
     {
         $priority = [$priority, $this->serial--];
 
-        parent::insert($value, $priority);
+        return parent::insert($value, $priority);
     }
 
     /**
