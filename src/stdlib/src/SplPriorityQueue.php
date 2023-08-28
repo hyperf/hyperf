@@ -41,9 +41,7 @@ class SplPriorityQueue extends \SplPriorityQueue
      */
     public function insert(mixed $value, mixed $priority)
     {
-        if (! is_array($priority)) {
-            $priority = [$priority, $this->serial--];
-        }
+        $priority = [$priority, $this->serial--];
 
         parent::insert($value, $priority);
     }
