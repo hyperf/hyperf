@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Testing;
+namespace HyperfTest\Validation;
 
 use PHPUnit\Framework\TestCase;
 
@@ -21,12 +21,12 @@ class FileTest extends TestCase
 {
     public function testFile()
     {
-        $file = \Hyperf\Testing\HttpMessage\File\File::create('foo.txt', 1024);
+        $file = \HyperfTest\Validation\File\File::create('foo.txt', 1024);
         $this->assertSame('text/plain', $file->getMimeType());
         $this->assertSame(1024 * 1024, $file->getSize());
         $this->assertSame(0, $file->getError());
 
-        $file = \Hyperf\Testing\HttpMessage\File\File::createWithContent('foo.txt', 'bar');
+        $file = \HyperfTest\Validation\File\File::createWithContent('foo.txt', 'bar');
         $this->assertSame('text/plain', $file->getMimeType());
         $this->assertSame(3, $file->getSize());
         $this->assertSame(0, $file->getError());
@@ -34,7 +34,7 @@ class FileTest extends TestCase
 
     public function testImage()
     {
-        $file = \Hyperf\Testing\HttpMessage\File\File::image('foo.png', 1024, 1024);
+        $file = \HyperfTest\Validation\File\File::image('foo.png', 1024, 1024);
         $this->assertSame('image/png', $file->getMimeType());
         //  读取图片尺寸
         $imageSize = getimagesize($file->getPathname());
@@ -42,7 +42,7 @@ class FileTest extends TestCase
         $this->assertSame(0, $file->getError());
         $this->assertSame('png', $file->getExtension());
 
-        $file = \Hyperf\Testing\HttpMessage\File\File::image('foo.jpg', 1024, 1024);
+        $file = \HyperfTest\Validation\File\File::image('foo.jpg', 1024, 1024);
         $this->assertSame('image/jpeg', $file->getMimeType());
         //  读取图片尺寸
         $imageSize = getimagesize($file->getPathname());
@@ -50,7 +50,7 @@ class FileTest extends TestCase
         $this->assertSame(0, $file->getError());
         $this->assertSame('jpg', $file->getExtension());
 
-        $file = \Hyperf\Testing\HttpMessage\File\File::image('foo.gif', 1024, 1024);
+        $file = \HyperfTest\Validation\File\File::image('foo.gif', 1024, 1024);
         $this->assertSame('image/gif', $file->getMimeType());
         //  读取图片尺寸
         $imageSize = getimagesize($file->getPathname());
