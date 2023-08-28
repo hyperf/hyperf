@@ -39,10 +39,13 @@ class SplPriorityQueue extends \SplPriorityQueue
      * @param TValue $value
      * @param TPriority $priority
      */
-    public function insert($value, $priority)
+    public function insert(mixed $value, mixed $priority)
     {
-        $priority = [$priority, $this->serial--];
-        return parent::insert($value, $priority);
+        if (! is_array($priority)) {
+            $priority = [$priority, $this->serial--];
+        }
+
+        parent::insert($value, $priority);
     }
 
     /**
@@ -52,7 +55,7 @@ class SplPriorityQueue extends \SplPriorityQueue
      *
      * @return list<TValue>
      */
-    public function toArray()
+    public function toArray(): array
     {
         $array = [];
         foreach (clone $this as $item) {
