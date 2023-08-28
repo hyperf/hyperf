@@ -45,6 +45,7 @@ class KafkaClientFactory
             $ack = new Channel(1);
             $chan = $this->chan;
             $timeout = (int) ($options['timeout'] ?? $this->timeout);
+
             $chan->push(function () use ($topic, $key, $payload, $headers, $partitionIndex, $ack) {
                 try {
                     $this->producer->send($topic, $payload, $key, $headers, $partitionIndex);
@@ -54,12 +55,15 @@ class KafkaClientFactory
                     throw $e;
                 }
             });
+
             if ($chan->isClosing()) {
                 throw new ConnectionClosedException('Connection closed.');
             }
+
             if ($e = $ack->pop($timeout)) {
                 throw $e;
             }
+
             if ($ack->isTimeout()) {
                 throw new TimeoutException('Kafka send timeout.');
             }
@@ -79,7 +83,9 @@ class KafkaClientFactory
         if ($this->chan != null) {
             return;
         }
+
         $this->chan = new Channel(1);
+
         Coroutine::create(function () {
             while (true) {
                 $this->producer = $this->makeProducer();
@@ -89,7 +95,7 @@ class KafkaClientFactory
                         break 2;
                     }
                     try {
-                        $closure->call($this);
+                        $closure();
                     } catch (Throwable) {
                         $this->producer->close();
                         break;
