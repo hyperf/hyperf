@@ -37,6 +37,10 @@ trait SpanStarter
             $container = ApplicationContext::getContainer();
             /** @var ServerRequestInterface $request */
             $request = Context::get(ServerRequestInterface::class);
+            if (! $request->hasHeader('X-B3-TraceId')) {
+                $request = $request->withAddedHeader('X-B3-TraceId', generateNextId());
+            }
+            TracerContext::setTraceId($request->getHeader('X-B3-TraceId')[0]);
             if (! $request instanceof ServerRequestInterface) {
                 // If the request object is absent, we are probably in a commandLine context.
                 // Throwing an exception is unnecessary.
@@ -45,9 +49,7 @@ trait SpanStarter
                 TracerContext::setRoot($root);
                 return $root;
             }
-            $carrier = array_map(function ($header) {
-                return $header[0];
-            }, $request->getHeaders());
+            $carrier = array_map(fn ($headers) => $headers[0], $request->getHeaders());
             if ($container->has(Rpc\Context::class) && $rpcContext = $container->get(Rpc\Context::class)) {
                 $rpcCarrier = $rpcContext->get('tracer.carrier');
                 if (! empty($rpcCarrier)) {

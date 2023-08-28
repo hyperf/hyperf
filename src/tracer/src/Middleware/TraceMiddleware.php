@@ -53,12 +53,8 @@ class TraceMiddleware implements MiddlewareInterface
         });
         try {
             $response = $handler->handle($request);
-            if($span instanceof \ZipkinOpenTracing\Span) {
-                /** @var \ZipkinOpenTracing\SpanContext $spanContent */
-                $spanContent = $span->getContext();
-                /** @var \Zipkin\Propagation\TraceContext $traceContext */
-                $traceContext = $spanContent->getContext();
-                $response = $response->withHeader('Trace-Id', $traceContext->getTraceId());
+            if ($traceId = TracerContext::getTraceId()) {
+                $response = $response->withHeader('Trace-Id', $traceId);
             }
             $span->setTag($this->spanTagManager->get('response', 'status_code'), $response->getStatusCode());
         } catch (Throwable $exception) {
