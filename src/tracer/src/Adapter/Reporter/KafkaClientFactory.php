@@ -42,9 +42,9 @@ class KafkaClientFactory
             $key = $options['key'] ?? uniqid('', true);
             $headers = $options['headers'] ?? [];
             $partitionIndex = $options['partition_index'] ?? null;
-            $payload = $payload;
             $ack = new Channel(1);
             $chan = $this->chan;
+            $timeout = (int) ($options['timeout'] ?? $this->timeout);
             $chan->push(function () use ($topic, $key, $payload, $headers, $partitionIndex, $ack) {
                 try {
                     $this->producer->send($topic, $payload, $key, $headers, $partitionIndex);
@@ -57,7 +57,7 @@ class KafkaClientFactory
             if ($chan->isClosing()) {
                 throw new ConnectionClosedException('Connection closed.');
             }
-            if ($e = $ack->pop($this->timeout)) {
+            if ($e = $ack->pop($timeout)) {
                 throw $e;
             }
             if ($ack->isTimeout()) {
@@ -102,7 +102,7 @@ class KafkaClientFactory
 
         Coroutine::create(function () {
             if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
-                $this->chan?->close();
+                $this->close();
             }
         });
     }
