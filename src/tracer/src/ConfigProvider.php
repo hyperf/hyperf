@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Tracer;
 
 use GuzzleHttp\Client;
+use Hyperf\Tracer\Aspect\CreateTraceContextIdAspect;
 use Hyperf\Tracer\Aspect\HttpClientAspect;
 use Hyperf\Tracer\Aspect\RedisAspect;
 use Hyperf\Tracer\Aspect\TraceAnnotationAspect;
@@ -45,6 +46,7 @@ class ConfigProvider
                 ],
             ],
             'aspects' => [
+                CreateTraceContextIdAspect::class,
                 HttpClientAspect::class,
                 RedisAspect::class,
                 TraceAnnotationAspect::class,
