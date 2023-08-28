@@ -22,8 +22,6 @@ class ExceptionHandlerListener implements ListenerInterface
 {
     public const HANDLER_KEY = 'exceptions.handler';
 
-    private int $serial = PHP_INT_MAX;
-
     public function __construct(private ConfigInterface $config)
     {
     }
@@ -45,7 +43,7 @@ class ExceptionHandlerListener implements ListenerInterface
                     $handler = $priority;
                     $priority = 0;
                 }
-                $queue->insert([$server, $handler], [$priority, $this->serial--]);
+                $queue->insert([$server, $handler], $priority);
             }
         }
 
@@ -55,7 +53,7 @@ class ExceptionHandlerListener implements ListenerInterface
          * @var ExceptionHandler $annotation
          */
         foreach ($annotations as $handler => $annotation) {
-            $queue->insert([$annotation->server, $handler], [$annotation->priority, $this->serial--]);
+            $queue->insert([$annotation->server, $handler], $annotation->priority);
         }
 
         $this->config->set(self::HANDLER_KEY, $this->formatExceptionHandlers($queue));
