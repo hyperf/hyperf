@@ -25,9 +25,10 @@ class CreateTraceContextAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        /** @var TraceContext $traceContext */
         $traceContext = $proceedingJoinPoint->process();
-        TracerContext::setTraceId($traceContext->getTraceId());
+        if ($traceContext instanceof TraceContext) {
+            TracerContext::setTraceId($traceContext->getTraceId());
+        }
         return $traceContext;
     }
 }
