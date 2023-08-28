@@ -17,13 +17,20 @@ use Stringable;
 
 class ExcludeIf implements Stringable
 {
+    public Closure|bool $condition;
+
     /**
      * Create a new exclude validation rule based on a condition.
      * @param bool|Closure $condition the condition that validates the attribute
      * @throws InvalidArgumentException
      */
-    public function __construct(public Closure|bool $condition)
+    public function __construct($condition)
     {
+        if ($condition instanceof Closure || is_bool($condition)) {
+            $this->condition = $condition;
+        } else {
+            throw new InvalidArgumentException('The provided condition must be a callable or boolean.');
+        }
     }
 
     /**
