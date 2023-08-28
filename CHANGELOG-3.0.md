@@ -4,6 +4,10 @@
 
 - [#6097](https://github.com/hyperf/hyperf/pull/6097) Fixed error that using non-zipkin driver of tracer.
 
+## Added
+
+- [#6096](https://github.com/hyperf/hyperf/pull/6096) Added `getThrowable` method to request events and crontab event.
+
 # v3.0.34 - 2023-08-25
 
 ## Added
