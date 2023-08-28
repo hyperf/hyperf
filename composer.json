@@ -207,6 +207,7 @@
             "src/stringable/src/Functions.php",
             "src/support/src/Functions.php",
             "src/tappable/src/Functions.php",
+            "src/tracer/src/Functions.php",
             "src/translation/src/Functions.php",
             "src/utils/src/Functions.php",
             "src/view-engine/src/Functions.php",

@@ -32,6 +32,9 @@
         "jonahgeorge/jaeger-client-php": "Required (^0.6) to use jaeger tracing."
     },
     "autoload": {
+        "files": [
+            "src/Functions.php"
+        ],
         "psr-4": {
             "Hyperf\\Tracer\\": "src/"
         }
