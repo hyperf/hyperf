@@ -7,7 +7,7 @@
 ## Added
 
 - [#6096](https://github.com/hyperf/hyperf/pull/6096) Added `getThrowable` method to request events and crontab event.
-
+- [#6094](https://github.com/hyperf/hyperf/pull/6094) Added Validation rules.
 # v3.0.34 - 2023-08-25
 
 ## Added
