@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- [#6097](https://github.com/hyperf/hyperf/pull/6097) Fix error that using non-zipkin driver of tracer.
+- [#6097](https://github.com/hyperf/hyperf/pull/6097) Fixed error that using non-zipkin driver of tracer.
 
 # v3.0.34 - 2023-08-25
 
