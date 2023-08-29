@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#6097](https://github.com/hyperf/hyperf/pull/6097) Fixed error that using non-zipkin driver of tracer.
+- [#6099](https://github.com/hyperf/hyperf/pull/6099) Fixed bug that `ConstantFrequency` cannot work when using `redis`.
 
 ## Added
 
