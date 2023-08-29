@@ -73,10 +73,13 @@ class KafkaClientFactory
 
     public function close(): void
     {
-        $this->chan?->close();
+        $chan = $this->chan;
+        $producer = $this->producer;
         $this->chan = null;
-        $this->producer?->close();
         $this->producer = null;
+
+        $chan?->close();
+        $producer?->close();
     }
 
     protected function loop(): void
