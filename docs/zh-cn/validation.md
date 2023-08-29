@@ -604,17 +604,72 @@ class FooController extends Controller
 
 验证的整数必须具有至少_value_位数。
 
+##### exclude
+
+`validate` 和 `validated` 方法中会排除掉当前验证的字段。
+
+##### exclude_if:anotherfield,value
+如果 `anotherfield` 等于 `value` ，`validate` 和 `validated` 方法中会排除掉当前验证的字段。
+
+在一些复杂的场景，也可以使用 `Rule::excludeIf` 方法，这个方法需要返回一个布尔值或者一个匿名函数。如果返回的是匿名函数，那么这个函数应该返回 `true` 或 `false` 去决定被验证的字段是否应该被排除掉：
+
+```php
+use Hyperf\Validation\Rule;
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::excludeIf($request->user()->is_admin),
+]);
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::excludeIf(fn () => $request->user()->is_admin),
+]);
+```
+
+##### prohibited
+
+需要验证的字段必须不存在或为空。如果符合以下条件之一，字段将被认为是 “空”：
+
+1. 值为 `null`。
+2. 值为空字符串。
+3. 值为空数组或空的可计数对象。
+4. 值为上传文件，但文件路径为空。
+
+##### prohibited_if:anotherfield,value,…
+
+如果 `anotherfield` 字段等于任何 `value`，则需要验证的字段必须不存在或为空。如果符合以下条件之一，字段将被认为是 “空”：
+
+1. 值为 `null`。
+2. 值为空字符串。
+3. 值为空数组或空的可计数对象。
+4. 值为上传文件，但文件路径为空。
+
+如果需要复杂的条件禁止逻辑，则可以使用 `Rule::prohibitedIf` 方法。该方法接受一个布尔值或一个闭包。当给定一个闭包时，闭包应返回 `true` 或 `false`，以指示是否应禁止验证字段：
+
+
+```php
+use Hyperf\Validation\Rule;
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::prohibitedIf($request->user()->is_admin),
+]);
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::prohibitedIf(fn () => $request->user()->is_admin),
+]);
+```
+
+
 ##### missing
 
 验证的字段在输入数据中必须不存在。
 
 ##### missing_if:anotherfield,value,…
 
-如果_anotherfield_字段等于任何_value_，则验证的字段必须不存在。
+如果`_anotherfield_`字段等于任何`_value_`，则验证的字段必须不存在。
 
 ##### missing_unless:anotherfield,value
 
-验证的字段必须不存在，除非_anotherfield_字段等于任何_value_。
+验证的字段必须不存在，除非`_anotherfield_`字段等于任何`_value_`。
 
 ##### missing_with:foo,bar,…
 
@@ -626,7 +681,7 @@ class FooController extends Controller
 
 ##### multiple_of:value
 
-验证的字段必须是_value_的倍数。
+验证的字段必须是`_value_`的倍数。
 
 ##### doesnt_start_with:foo,bar,…
 
@@ -642,7 +697,7 @@ class FooController extends Controller
 
 ##### digits:value
 
-验证字段必须是数字且长度为 value 指定的值。
+验证字段必须是数字且长度为 `value` 指定的值。
 
 ##### digits_between:min,max
 
