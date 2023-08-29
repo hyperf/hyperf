@@ -18,7 +18,6 @@ use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
 use Hyperf\Engine\Coroutine;
 use Hyperf\Guzzle\ClientFactory;
-use longlang\phpkafka\Producer\Producer;
 use RuntimeException;
 use Throwable;
 use Zipkin\Reporters\Http\ClientFactory as ClientFactoryInterface;
@@ -26,8 +25,6 @@ use Zipkin\Reporters\Http\ClientFactory as ClientFactoryInterface;
 class HttpClientFactory implements ClientFactoryInterface
 {
     protected ?Channel $chan = null;
-
-    protected ?Producer $producer = null;
 
     protected int $channelSize = 65535;
 
