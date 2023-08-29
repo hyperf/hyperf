@@ -324,6 +324,11 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
         return Str::isUuid($this->value);
     }
 
+    public function isUrl(): bool
+    {
+        return Str::isUrl($this->value);
+    }
+
     /**
      * Convert a string to kebab case.
      *
