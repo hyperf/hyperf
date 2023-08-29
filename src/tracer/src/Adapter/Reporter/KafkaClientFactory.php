@@ -84,7 +84,7 @@ class KafkaClientFactory
             while (true) {
                 $this->producer = $this->makeProducer();
                 while (true) {
-                    /** @var Closure $closure */
+                    /** @var null|Closure $closure */
                     $closure = $this->chan?->pop();
                     if (! $closure) {
                         break 2;
