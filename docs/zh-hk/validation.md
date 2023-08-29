@@ -467,6 +467,15 @@ class FooController extends Controller
 
 驗證字段的值必須是 `yes`、`on`、`1` 或 `true`，這在「同意服務協議」時很有用。
 
+##### accepted_if:anotherfield,value,…
+如果另一個正在驗證的字段等於指定的值，則驗證中的字段必須為 `yes`、`on`、`1` 或 `true`，這對於驗證「服務條款」接受或類似字段很有用。
+
+##### declined
+正在驗證的字段必須是 `no`、`off`、`0` 或者 `false`。
+
+##### declined_if:anotherfield,value,…
+如果另一個驗證字段的值等於指定值，則驗證字段的值必須為 `no`、`off`、`0` 或 `false`。
+
 ##### active_url
 
 驗證字段必須是基於 `PHP` 函數 `dns_get_record` 的，有 `A` 或 `AAAA` 記錄的值。
@@ -491,19 +500,39 @@ class FooController extends Controller
 
 ##### alpha
 
-驗證字段必須是字母(包含中文)。
+驗證字段必須是字母(包含中文)。 為了將此驗證規則限制在 ASCII 範圍內的字符（a-z 和 A-Z），你可以為驗證規則提供 ascii 選項：
+
+```php
+'username' => 'alpha:ascii',
+```
 
 ##### alpha_dash
 
-驗證字段可以包含字母(包含中文)和數字，以及破折號和下劃線。
+驗證字段可以包含字母(包含中文)和數字，以及破折號和下劃線。為了將此驗證規則限制在 ASCII 範圍內的字符（a-z 和 A-Z），你可以為驗證規則提供 ascii 選項：
+
+```php
+'username' => 'alpha_dash:ascii',
+```
 
 ##### alpha_num
 
-驗證字段必須是字母(包含中文)或數字。
+驗證字段必須是字母(包含中文)或數字。為了將此驗證規則限制在 ASCII 範圍內的字符（a-z 和 A-Z），你可以為驗證規則提供 ascii 選項：
+
+```php
+'username' => 'alpha_num:ascii',
+```
+
+#### ascii
+
+正在驗證的字段必須完全是 7 位的 ASCII 字符。
 
 ##### array
 
 驗證字段必須是 PHP 數組。
+
+##### required_array_keys:foo,bar,…
+
+驗證的字段必須是一個數組，並且必須至少包含指定的鍵。
 
 ##### bail
 
@@ -542,6 +571,70 @@ class FooController extends Controller
 ##### date_format:format
 
 驗證字段必須匹配指定格式，可以使用 PHP 函數 date 或 date_format 驗證該字段。
+
+##### decimal:min,max
+
+驗證字段必須是數值類型，並且必須包含指定的小數位數：
+
+```php
+// 必須正好有兩位小數（例如 9.99）...
+'price' => 'decimal:2'
+
+// 必須有 2 到 4 位小數...
+'price' => 'decimal:2,4'
+```
+
+##### lowercase
+
+驗證的字段必須是小寫的。
+
+##### uppercase
+
+驗證字段必須為大寫。
+
+##### mac_address
+
+驗證的字段必須是一個 MAC 地址。
+
+##### max_digits:value
+
+驗證的整數必須具有最大長度 value。
+
+##### min_digits:value
+
+驗證的整數必須具有至少_value_位數。
+
+##### missing
+
+驗證的字段在輸入數據中必須不存在。
+
+##### missing_if:anotherfield,value,…
+
+如果_anotherfield_字段等於任何_value_，則驗證的字段必須不存在。
+
+##### missing_unless:anotherfield,value
+
+驗證的字段必須不存在，除非_anotherfield_字段等於任何_value_。
+
+##### missing_with:foo,bar,…
+
+如果任何其他指定的字段存在，則驗證的字段必須不存在。
+
+##### missing_with_all:foo,bar,…
+
+如果所有其他指定的字段都存在，則驗證的字段必須不存在。
+
+##### multiple_of:value
+
+驗證的字段必須是_value_的倍數。
+
+##### doesnt_start_with:foo,bar,…
+
+驗證的字段不能以給定值之一開頭。
+
+##### doesnt_end_with:foo,bar,…
+
+驗證的字段不能以給定值之一結尾。
 
 ##### different:field
 
@@ -856,14 +949,14 @@ $validator = $this->validationFactory->make($request->all(), [
 ```
 
 2. 自定義數據庫連接：
-有時候，你可能需要自定義驗證器生成的數據庫連接，正如上面所看到的，設置 `unique:users` 作為驗證規則將會使用默認數據庫連接來查詢數據庫。要覆蓋默認連接，在數據表名後使用“.”指定連接：
+   有時候，你可能需要自定義驗證器生成的數據庫連接，正如上面所看到的，設置 `unique:users` 作為驗證規則將會使用默認數據庫連接來查詢數據庫。要覆蓋默認連接，在數據表名後使用“.”指定連接：
 
 ```php
 'email' => 'unique:connection.users,email_address'
 ```
 
 3. 強制一個忽略給定 `ID` 的唯一規則：
-有時候，你可能希望在唯一檢查時忽略給定 `ID`，例如，考慮一個包含用户名、郵箱地址和位置的”更新屬性“界面，你將要驗證郵箱地址是唯一的，然而，如果用户只改變用户名字段而並沒有改變郵箱字段，你不想要因為用户已經擁有該郵箱地址而拋出驗證錯誤，你只想要在用户提供的郵箱已經被別人使用的情況下才拋出驗證錯誤。
+   有時候，你可能希望在唯一檢查時忽略給定 `ID`，例如，考慮一個包含用户名、郵箱地址和位置的”更新屬性“界面，你將要驗證郵箱地址是唯一的，然而，如果用户只改變用户名字段而並沒有改變郵箱字段，你不想要因為用户已經擁有該郵箱地址而拋出驗證錯誤，你只想要在用户提供的郵箱已經被別人使用的情況下才拋出驗證錯誤。
 
 要告訴驗證器忽略用户 `ID`，可以使用 `Rule` 類來定義這個規則，我們還要以數組方式指定驗證規則，而不是使用 `|` 來界定規則：
 
