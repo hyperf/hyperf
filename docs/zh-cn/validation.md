@@ -467,6 +467,15 @@ class FooController extends Controller
 
 验证字段的值必须是 `yes`、`on`、`1` 或 `true`，这在「同意服务协议」时很有用。
 
+##### accepted_if:anotherfield,value,…
+如果另一个正在验证的字段等于指定的值，则验证中的字段必须为 `yes`、`on`、`1` 或 `true`，这对于验证「服务条款」接受或类似字段很有用。
+
+##### declined
+正在验证的字段必须是 `no`、`off`、`0` 或者 `false`。
+
+##### declined_if:anotherfield,value,…
+如果另一个验证字段的值等于指定值，则验证字段的值必须为 `no`、`off`、`0` 或 `false`。
+
 ##### active_url
 
 验证字段必须是基于 `PHP` 函数 `dns_get_record` 的，有 `A` 或 `AAAA` 记录的值。
@@ -491,19 +500,39 @@ class FooController extends Controller
 
 ##### alpha
 
-验证字段必须是字母(包含中文)。
+验证字段必须是字母(包含中文)。 为了将此验证规则限制在 ASCII 范围内的字符（a-z 和 A-Z），你可以为验证规则提供 ascii 选项：
+
+```php
+'username' => 'alpha:ascii',
+```
 
 ##### alpha_dash
 
-验证字段可以包含字母(包含中文)和数字，以及破折号和下划线。
+验证字段可以包含字母(包含中文)和数字，以及破折号和下划线。为了将此验证规则限制在 ASCII 范围内的字符（a-z 和 A-Z），你可以为验证规则提供 ascii 选项：
+
+```php
+'username' => 'alpha_dash:ascii',
+```
 
 ##### alpha_num
 
-验证字段必须是字母(包含中文)或数字。
+验证字段必须是字母(包含中文)或数字。为了将此验证规则限制在 ASCII 范围内的字符（a-z 和 A-Z），你可以为验证规则提供 ascii 选项：
+
+```php
+'username' => 'alpha_num:ascii',
+```
+
+#### ascii
+
+正在验证的字段必须完全是 7 位的 ASCII 字符。
 
 ##### array
 
 验证字段必须是 PHP 数组。
+
+##### required_array_keys:foo,bar,…
+
+验证的字段必须是一个数组，并且必须至少包含指定的键。
 
 ##### bail
 
@@ -542,6 +571,70 @@ class FooController extends Controller
 ##### date_format:format
 
 验证字段必须匹配指定格式，可以使用 PHP 函数 date 或 date_format 验证该字段。
+
+##### decimal:min,max
+
+验证字段必须是数值类型，并且必须包含指定的小数位数：
+
+```php
+// 必须正好有两位小数（例如 9.99）...
+'price' => 'decimal:2'
+
+// 必须有 2 到 4 位小数...
+'price' => 'decimal:2,4'
+```
+
+##### lowercase
+
+验证的字段必须是小写的。
+
+##### uppercase
+
+验证字段必须为大写。
+
+##### mac_address
+
+验证的字段必须是一个 MAC 地址。
+
+##### max_digits:value
+
+验证的整数必须具有最大长度 value。
+
+##### min_digits:value
+
+验证的整数必须具有至少_value_位数。
+
+##### missing
+
+验证的字段在输入数据中必须不存在。
+
+##### missing_if:anotherfield,value,…
+
+如果_anotherfield_字段等于任何_value_，则验证的字段必须不存在。
+
+##### missing_unless:anotherfield,value
+
+验证的字段必须不存在，除非_anotherfield_字段等于任何_value_。
+
+##### missing_with:foo,bar,…
+
+如果任何其他指定的字段存在，则验证的字段必须不存在。
+
+##### missing_with_all:foo,bar,…
+
+如果所有其他指定的字段都存在，则验证的字段必须不存在。
+
+##### multiple_of:value
+
+验证的字段必须是_value_的倍数。
+
+##### doesnt_start_with:foo,bar,…
+
+验证的字段不能以给定值之一开头。
+
+##### doesnt_end_with:foo,bar,…
+
+验证的字段不能以给定值之一结尾。
 
 ##### different:field
 
@@ -856,14 +949,14 @@ $validator = $this->validationFactory->make($request->all(), [
 ```
 
 2. 自定义数据库连接：
-有时候，你可能需要自定义验证器生成的数据库连接，正如上面所看到的，设置 `unique:users` 作为验证规则将会使用默认数据库连接来查询数据库。要覆盖默认连接，在数据表名后使用“.”指定连接：
+   有时候，你可能需要自定义验证器生成的数据库连接，正如上面所看到的，设置 `unique:users` 作为验证规则将会使用默认数据库连接来查询数据库。要覆盖默认连接，在数据表名后使用“.”指定连接：
 
 ```php
 'email' => 'unique:connection.users,email_address'
 ```
 
 3. 强制一个忽略给定 `ID` 的唯一规则：
-有时候，你可能希望在唯一检查时忽略给定 `ID`，例如，考虑一个包含用户名、邮箱地址和位置的”更新属性“界面，你将要验证邮箱地址是唯一的，然而，如果用户只改变用户名字段而并没有改变邮箱字段，你不想要因为用户已经拥有该邮箱地址而抛出验证错误，你只想要在用户提供的邮箱已经被别人使用的情况下才抛出验证错误。
+   有时候，你可能希望在唯一检查时忽略给定 `ID`，例如，考虑一个包含用户名、邮箱地址和位置的”更新属性“界面，你将要验证邮箱地址是唯一的，然而，如果用户只改变用户名字段而并没有改变邮箱字段，你不想要因为用户已经拥有该邮箱地址而抛出验证错误，你只想要在用户提供的邮箱已经被别人使用的情况下才抛出验证错误。
 
 要告诉验证器忽略用户 `ID`，可以使用 `Rule` 类来定义这个规则，我们还要以数组方式指定验证规则，而不是使用 `|` 来界定规则：
 
