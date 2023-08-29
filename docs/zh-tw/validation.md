@@ -604,17 +604,72 @@ class FooController extends Controller
 
 驗證的整數必須具有至少_value_位數。
 
+##### exclude
+
+`validate` 和 `validated` 方法中會排除掉當前驗證的欄位。
+
+##### exclude_if:anotherfield,value
+如果 `anotherfield` 等於 `value` ，`validate` 和 `validated` 方法中會排除掉當前驗證的欄位。
+
+在一些複雜的場景，也可以使用 `Rule::excludeIf` 方法，這個方法需要返回一個布林值或者一個匿名函式。如果返回的是匿名函式，那麼這個函式應該返回 `true` 或 `false` 去決定被驗證的欄位是否應該被排除掉：
+
+```php
+use Hyperf\Validation\Rule;
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::excludeIf($request->user()->is_admin),
+]);
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::excludeIf(fn () => $request->user()->is_admin),
+]);
+```
+
+##### prohibited
+
+需要驗證的欄位必須不存在或為空。如果符合以下條件之一，欄位將被認為是 “空”：
+
+1. 值為 `null`。
+2. 值為空字串。
+3. 值為空陣列或空的可計數物件。
+4. 值為上傳檔案，但檔案路徑為空。
+
+##### prohibited_if:anotherfield,value,…
+
+如果 `anotherfield` 欄位等於任何 `value`，則需要驗證的欄位必須不存在或為空。如果符合以下條件之一，欄位將被認為是 “空”：
+
+1. 值為 `null`。
+2. 值為空字串。
+3. 值為空陣列或空的可計數物件。
+4. 值為上傳檔案，但檔案路徑為空。
+
+如果需要複雜的條件禁止邏輯，則可以使用 `Rule::prohibitedIf` 方法。該方法接受一個布林值或一個閉包。當給定一個閉包時，閉包應返回 `true` 或 `false`，以指示是否應禁止驗證欄位：
+
+
+```php
+use Hyperf\Validation\Rule;
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::prohibitedIf($request->user()->is_admin),
+]);
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::prohibitedIf(fn () => $request->user()->is_admin),
+]);
+```
+
+
 ##### missing
 
 驗證的欄位在輸入資料中必須不存在。
 
 ##### missing_if:anotherfield,value,…
 
-如果_anotherfield_欄位等於任何_value_，則驗證的欄位必須不存在。
+如果`_anotherfield_`欄位等於任何`_value_`，則驗證的欄位必須不存在。
 
 ##### missing_unless:anotherfield,value
 
-驗證的欄位必須不存在，除非_anotherfield_欄位等於任何_value_。
+驗證的欄位必須不存在，除非`_anotherfield_`欄位等於任何`_value_`。
 
 ##### missing_with:foo,bar,…
 
@@ -626,7 +681,7 @@ class FooController extends Controller
 
 ##### multiple_of:value
 
-驗證的欄位必須是_value_的倍數。
+驗證的欄位必須是`_value_`的倍數。
 
 ##### doesnt_start_with:foo,bar,…
 
@@ -642,7 +697,7 @@ class FooController extends Controller
 
 ##### digits:value
 
-驗證欄位必須是數字且長度為 value 指定的值。
+驗證欄位必須是數字且長度為 `value` 指定的值。
 
 ##### digits_between:min,max
 
