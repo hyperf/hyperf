@@ -38,7 +38,7 @@ class KafkaClientFactory
 
         $this->loop();
 
-        return function (string $payload) use ($options): void {
+        return static function (string $payload) use ($options): void {
             $topic = $options['topic'] ?? 'zipkin';
             $key = $options['key'] ?? uniqid('', true);
             $headers = $options['headers'] ?? [];
@@ -47,7 +47,7 @@ class KafkaClientFactory
             $chan = $this->chan;
             $timeout = (int) ($options['timeout'] ?? $this->timeout);
 
-            $chan->push(function () use ($topic, $key, $payload, $headers, $partitionIndex, $ack) {
+            $chan->push(static function () use ($topic, $key, $payload, $headers, $partitionIndex, $ack) {
                 try {
                     $this->producer->send($topic, $payload, $key, $headers, $partitionIndex);
                     $ack->close();
