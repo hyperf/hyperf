@@ -9,6 +9,10 @@
 
 - [#6096](https://github.com/hyperf/hyperf/pull/6096) Added `getThrowable` method to request events and crontab event.
 
+## Optimized
+
+- [#6098](https://github.com/hyperf/hyperf/pull/6098) Optimize kafka reporter for `hyperf/tracer`.
+
 # v3.0.34 - 2023-08-25
 
 ## Added
