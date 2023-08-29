@@ -17,7 +17,6 @@ use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
 use Hyperf\Engine\Coroutine;
 use Hyperf\Tracer\Exception\ConnectionClosedException;
-use Hyperf\Tracer\Exception\TimeoutException;
 use longlang\phpkafka\Producer\Producer;
 use longlang\phpkafka\Producer\ProducerConfig;
 use Throwable;
@@ -30,11 +29,14 @@ class KafkaClientFactory
 
     protected array $options = [];
 
-    protected int $timeout = 10;
+    protected int $channelSize = 65535;
 
     public function build(array $options): callable
     {
         $this->options = $options;
+        if (isset($options['channel_size'])) {
+            $this->channelSize = (int) $options['channel_size'];
+        }
 
         $this->loop();
 
@@ -43,30 +45,18 @@ class KafkaClientFactory
             $key = $options['key'] ?? uniqid('', true);
             $headers = $options['headers'] ?? [];
             $partitionIndex = $options['partition_index'] ?? null;
-            $ack = new Channel(1);
             $chan = $this->chan;
-            $timeout = (int) ($options['timeout'] ?? $this->timeout);
 
-            $chan->push(function () use ($topic, $key, $payload, $headers, $partitionIndex, $ack) {
+            $chan->push(function () use ($topic, $key, $payload, $headers, $partitionIndex) {
                 try {
                     $this->producer->send($topic, $payload, $key, $headers, $partitionIndex);
-                    $ack->close();
                 } catch (Throwable $e) {
-                    $ack->push($e);
                     throw $e;
                 }
             });
 
             if ($chan->isClosing()) {
                 throw new ConnectionClosedException('Connection closed.');
-            }
-
-            if ($e = $ack->pop($timeout)) {
-                throw $e;
-            }
-
-            if ($ack->isTimeout()) {
-                throw new TimeoutException('Kafka send timeout.');
             }
         };
     }
@@ -88,7 +78,7 @@ class KafkaClientFactory
             return;
         }
 
-        $this->chan = new Channel(1);
+        $this->chan = new Channel($this->channelSize);
 
         Coroutine::create(function () {
             while (true) {
