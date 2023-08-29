@@ -37,7 +37,7 @@ class RedisPool extends Pool
         $this->config = $config->get($key);
         $options = Arr::get($this->config, 'pool', []);
 
-        $this->frequency = make(Frequency::class);
+        $this->frequency = make(Frequency::class, [$this]);
 
         parent::__construct($container, $options);
     }
