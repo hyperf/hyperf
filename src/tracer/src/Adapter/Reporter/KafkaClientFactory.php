@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Adapter\Reporter;
 
+use Closure;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
@@ -90,12 +91,13 @@ class KafkaClientFactory
             while (true) {
                 $this->producer = $this->makeProducer();
                 while (true) {
+                    /** @var Closure $closure */
                     $closure = $this->chan?->pop();
                     if (! $closure) {
                         break 2;
                     }
                     try {
-                        $closure();
+                        $closure->call($this);
                     } catch (Throwable) {
                         $this->producer->close();
                         break;
