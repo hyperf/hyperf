@@ -42,6 +42,7 @@ return [
                             'endpoint_url' => env('ZIPKIN_ENDPOINT_URL', 'http://localhost:9411/api/v2/spans'),
                             'timeout' => env('ZIPKIN_TIMEOUT', 1),
                         ],
+                        'logger' => \Hyperf\Contract\StdoutLoggerInterface::class,
                     ],
                 ],
                 // options for kafka reporter
@@ -55,6 +56,7 @@ return [
                             'connect_timeout' => (int) env('ZIPKIN_KAFKA_CONNECT_TIMEOUT', 1),
                             'send_timeout' => (int) env('ZIPKIN_KAFKA_SEND_TIMEOUT', 1),
                         ],
+                        'logger' => \Hyperf\Contract\StdoutLoggerInterface::class,
                     ],
                 ],
                 'noop' => [
