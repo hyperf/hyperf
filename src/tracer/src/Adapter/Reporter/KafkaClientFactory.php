@@ -20,8 +20,9 @@ use Hyperf\Tracer\Exception\ConnectionClosedException;
 use longlang\phpkafka\Producer\Producer;
 use longlang\phpkafka\Producer\ProducerConfig;
 use Throwable;
+use Zipkin\Reporters\Http\ClientFactory;
 
-class KafkaClientFactory
+class KafkaClientFactory implements ClientFactory
 {
     protected ?Channel $chan = null;
 
