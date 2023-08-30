@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Adapter\Reporter;
 
+use Hyperf\Contract\StdoutLoggerInterface;
 use RuntimeException;
 use Zipkin\Reporter;
 
@@ -20,6 +21,7 @@ class ReporterFactory
 {
     public function __construct(
         private HttpClientFactory $httpClientFactory,
+        private StdoutLoggerInterface $logger
     ) {
     }
 
@@ -29,6 +31,7 @@ class ReporterFactory
 
         if ($class === \Zipkin\Reporters\Http::class) {
             $option['constructor']['requesterFactory'] = $this->httpClientFactory;
+            $option['constructor']['logger'] = $this->logger;
         }
         $constructor = $option['constructor'] ?? [];
 
