@@ -617,4 +617,10 @@ class StrTest extends TestCase
         $this->assertTrue(Str::containsAll('Hyperf', ['h'], true));
         $this->assertFalse(Str::containsAll('Hyperf', ['h']));
     }
+
+    public function testIsUrl()
+    {
+        $this->assertTrue(Str::isUrl('https://baidu.com'));
+        $this->assertFalse(Str::isUrl('invalid url'));
+    }
 }
