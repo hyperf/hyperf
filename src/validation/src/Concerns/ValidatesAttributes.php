@@ -186,6 +186,7 @@ trait ValidatesAttributes
 
     /**
      * Validate that an attribute contains only alphabetic characters.
+     * @param mixed $parameters
      */
     public function validateAlpha(string $attribute, mixed $value, $parameters): bool
     {
@@ -198,6 +199,8 @@ trait ValidatesAttributes
 
     /**
      * Validate that an attribute contains only alpha-numeric characters, dashes, and underscores.
+     * @param mixed $attribute
+     * @param mixed $parameters
      */
     public function validateAlphaDash($attribute, mixed $value, $parameters): bool
     {
@@ -525,12 +528,12 @@ trait ValidatesAttributes
         $expected = is_array($value) ? count(array_unique($value)) : 1;
 
         return $this->getExistCount(
-                $connection,
-                $table,
-                $column,
-                $value,
-                $parameters
-            ) >= $expected;
+            $connection,
+            $table,
+            $column,
+            $value,
+            $parameters
+        ) >= $expected;
     }
 
     /**
@@ -573,13 +576,13 @@ trait ValidatesAttributes
         }
 
         return $verifier->getCount(
-                $table,
-                $column,
-                $value,
-                $id,
-                $idColumn,
-                $extra
-            ) == 0;
+            $table,
+            $column,
+            $value,
+            $id,
+            $idColumn,
+            $extra
+        ) == 0;
     }
 
     /**
@@ -1589,8 +1592,8 @@ trait ValidatesAttributes
     protected function isTestingRelativeDateTime($value): bool
     {
         return Carbon::hasTestNow() && is_string($value) && (
-                $value === 'now' || Carbon::hasRelativeKeywords($value)
-            );
+            $value === 'now' || Carbon::hasRelativeKeywords($value)
+        );
     }
 
     /**

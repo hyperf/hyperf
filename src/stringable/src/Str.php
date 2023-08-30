@@ -812,7 +812,7 @@ class Str
 
     public static function isUrl($value, array $protocols = []): bool
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return false;
         }
 
