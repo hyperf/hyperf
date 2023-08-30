@@ -199,7 +199,7 @@ trait ValidatesAttributes
     /**
      * Validate that an attribute contains only alpha-numeric characters, dashes, and underscores.
      */
-    public function validateAlphaDash(string $attribute, mixed $value, $parameters): bool
+    public function validateAlphaDash($attribute, mixed $value, $parameters): bool
     {
         if (! is_string($value) && ! is_numeric($value)) {
             return false;
@@ -212,7 +212,12 @@ trait ValidatesAttributes
         return preg_match('/\A[\pL\pM\pN_-]+\z/u', $value) > 0;
     }
 
-
+    /**
+     * Validate that an attribute contains only alpha-numeric characters.
+     * If the 'ascii' option is passed, validate that an attribute contains only ascii alpha-numeric characters.
+     *
+     * @param mixed $parameters
+     */
     public function validateAlphaNum(string $attribute, mixed $value, $parameters): bool
     {
         if (! is_string($value) && ! is_numeric($value)) {
