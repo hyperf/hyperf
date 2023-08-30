@@ -14,6 +14,7 @@
 
 - [#6098](https://github.com/hyperf/hyperf/pull/6098) Optimize `kafka` reporter for `hyperf/tracer`.
 - [#6100](https://github.com/hyperf/hyperf/pull/6100) Optimize `HttpClientFactory` for `hyperf/tracer`.
+- [#6108](https://github.com/hyperf/hyperf/pull/6108) Optimize `describe:routes` command, sort middleware by MiddlewareManager
 
 # v3.0.34 - 2023-08-25
 
