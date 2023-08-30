@@ -127,6 +127,10 @@ class MetricFactory implements MetricFactoryInterface
             }
         }
 
+        if (CoordinatorManager::until(Coord::WORKER_EXIT)->isClosing()) {
+            return;
+        }
+
         $server = $this->factory->make($host, (int) $port);
 
         Coroutine::create(static function () use ($server) {

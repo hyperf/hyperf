@@ -1,5 +1,19 @@
 # v3.0.35 - TBD
 
+## Fixed
+
+- [#6097](https://github.com/hyperf/hyperf/pull/6097) Fixed error that using non-zipkin driver of tracer.
+- [#6099](https://github.com/hyperf/hyperf/pull/6099) Fixed bug that `ConstantFrequency` cannot work when using `redis`.
+
+## Added
+
+- [#6096](https://github.com/hyperf/hyperf/pull/6096) Added `getThrowable` method to request events and crontab event.
+- [#6094](https://github.com/hyperf/hyperf/pull/6094) Added some validation rules such as `ExcludeIf` `File` `ImageFile` and `ProhibitedIf`.
+
+## Optimized
+
+- [#6098](https://github.com/hyperf/hyperf/pull/6098) Optimize kafka reporter for `hyperf/tracer`.
+
 # v3.0.34 - 2023-08-25
 
 ## Added
@@ -14,12 +28,14 @@
 ## Fixed
 
 - [#6065](https://github.com/hyperf/hyperf/pull/6065) Fixed bug that `Context::override` and `Context::getOrSet` cannot work when using `$coroutineId`.
+- [#6090](https://github.com/hyperf/hyperf/pull/6090) Fix the bug that cannot stop the command from terminating gracefully.
 
 ## Optimized
 
 - [#6046](https://github.com/hyperf/hyperf/pull/6046) Using the tracer instance from coroutine context.
 - [#6061](https://github.com/hyperf/hyperf/pull/6061) Enhance server config to support key-value mode.
 - [#6077](https://github.com/hyperf/hyperf/pull/6077) Don't show deprecated notice when using `#[Hyperf\Constants\Annotation\Constants]`.
+- [#6088](https://github.com/hyperf/hyperf/pull/6088) Optimize `Hyperf\Support\Composer`.
 
 # v3.0.33 - 2023-08-18
 
