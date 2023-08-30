@@ -188,7 +188,7 @@ trait ValidatesAttributes
      * Validate that an attribute contains only alphabetic characters.
      * @param mixed $parameters
      */
-    public function validateAlpha(string $attribute, mixed $value, $parameters): bool
+    public function validateAlpha(string $attribute, mixed $value, array $parameters): bool
     {
         if (isset($parameters[0]) && $parameters[0] === 'ascii') {
             return is_string($value) && preg_match('/\A[a-zA-Z]+\z/u', $value);
@@ -202,7 +202,7 @@ trait ValidatesAttributes
      * @param mixed $attribute
      * @param mixed $parameters
      */
-    public function validateAlphaDash($attribute, mixed $value, $parameters): bool
+    public function validateAlphaDash(string $attribute, mixed $value, array $parameters): bool
     {
         if (! is_string($value) && ! is_numeric($value)) {
             return false;
@@ -221,7 +221,7 @@ trait ValidatesAttributes
      *
      * @param mixed $parameters
      */
-    public function validateAlphaNum(string $attribute, mixed $value, $parameters): bool
+    public function validateAlphaNum(string $attribute, mixed $value, array $parameters): bool
     {
         if (! is_string($value) && ! is_numeric($value)) {
             return false;
@@ -456,18 +456,28 @@ trait ValidatesAttributes
 
     /**
      * Validate the dimensions of an image matches the given values.
-     *
-     * @param mixed $value
      */
-    public function validateDimensions(string $attribute, $value, array $parameters): bool
+    public function validateDimensions(string $attribute, mixed $value, array $parameters): bool
     {
-        if (! $this->isValidFileInstance($value) || ! $sizeDetails = @getimagesize($value->getRealPath())) {
+        if ($this->isValidFileInstance($value) && in_array($value->getMimeType(), ['image/svg+xml', 'image/svg'])) {
+            return true;
+        }
+
+        if (! $this->isValidFileInstance($value)) {
+            return false;
+        }
+
+        $dimensions = method_exists($value, 'dimensions')
+            ? $value->dimensions()
+            : @getimagesize($value->getRealPath());
+
+        if (! $dimensions) {
             return false;
         }
 
         $this->requireParameterCount(1, $parameters, 'dimensions');
 
-        [$width, $height] = $sizeDetails;
+        [$width, $height] = $dimensions;
 
         $parameters = $this->parseNamedParameters($parameters);
 
