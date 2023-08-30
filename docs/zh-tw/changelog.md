@@ -25,7 +25,7 @@
 
 ## 修復
 
-- [#6011](https://github.com/hyperf/hyperf/pull/6011) 修復 `invocable` 控制器路由無法正常使用驗證器的BUG。
+- [#6011](https://github.com/hyperf/hyperf/pull/6011) 修復 `invocable` 控制器路由無法正常使用驗證器的 BUG。
 - [#6013](https://github.com/hyperf/hyperf/pull/6013) 修復 `no_aspect` 會被覆蓋的問題。
 - [#6053](https://github.com/hyperf/hyperf/pull/6053) 修復方法 `Arr::has` 時，`Interger` 型別引數會導致報錯的問題。
 
