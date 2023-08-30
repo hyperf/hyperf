@@ -41,7 +41,7 @@ class HttpClientFactory implements ClientFactory
                 'no_aspect' => true,
             ]);
             $statusCode = $response->getStatusCode();
-            if ($statusCode !== 202) {
+            if (! in_array($statusCode, [200, 202], true)) {
                 throw new RuntimeException(
                     sprintf('Reporting of spans failed, status code %d', $statusCode)
                 );
