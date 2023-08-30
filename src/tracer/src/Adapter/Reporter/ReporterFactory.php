@@ -26,11 +26,11 @@ class ReporterFactory
     public function make(array $option = []): Reporter
     {
         $class = $option['class'] ?? '';
-        $constructor = $option['constructor'] ?? [];
 
         if ($class === \Zipkin\Reporters\Http::class) {
             $option['constructor']['requesterFactory'] = $this->httpClientFactory;
         }
+        $constructor = $option['constructor'] ?? [];
 
         if (! class_exists($class)) {
             throw new RuntimeException(sprintf('Class %s is not exists.', $class));
