@@ -74,6 +74,11 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this->qos;
     }
 
+    public function setQos(array $qos): void
+    {
+        $this->qos = $qos;
+    }
+
     public function getQueueBuilder(): QueueBuilder
     {
         return (new QueueBuilder())->setQueue($this->getQueue());

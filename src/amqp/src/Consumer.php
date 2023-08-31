@@ -55,8 +55,9 @@ class Consumer extends Builder
         try {
             $channel = $connection->getConfirmChannel();
 
-            $this->declare($consumerMessage, $channel);
             $concurrent = $this->getConcurrent($consumerMessage->getPoolName());
+            $consumerMessage->setQos(array_merge($consumerMessage->getQos(), ['prefetch_count' => $concurrent->getLimit()]));
+            $this->declare($consumerMessage, $channel);
 
             $maxConsumption = $consumerMessage->getMaxConsumption();
             $currentConsumption = 0;

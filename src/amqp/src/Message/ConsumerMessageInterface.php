@@ -27,6 +27,8 @@ interface ConsumerMessageInterface extends MessageInterface
 
     public function getQos(): ?array;
 
+    public function setQos(array $qos): void;
+
     public function getQueueBuilder(): QueueBuilder;
 
     public function getConsumerTag(): string;
