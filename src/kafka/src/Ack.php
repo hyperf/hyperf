@@ -27,6 +27,14 @@ class Ack
         $this->chan = new Channel(1);
     }
 
+    public function __destruct()
+    {
+        try {
+            $this->chan->close();
+        } catch (Throwable) {
+        }
+    }
+
     public function __call($name, $arguments)
     {
         return $this->chan->{$name}(...$arguments);
