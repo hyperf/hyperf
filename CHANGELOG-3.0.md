@@ -4,6 +4,7 @@
 
 - [#6097](https://github.com/hyperf/hyperf/pull/6097) Fixed error that using non-zipkin driver of tracer.
 - [#6099](https://github.com/hyperf/hyperf/pull/6099) Fixed bug that `ConstantFrequency` cannot work when using `redis`.
+- [#6110](https://github.com/hyperf/hyperf/pull/6110) Fixed bug that configuration of other processes were not updated when using `nacos grpc client`.
 
 ## Added
 
