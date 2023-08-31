@@ -41,10 +41,10 @@ class Producer
         $this->sendAsync($topic, $value, $key, $headers, $partitionIndex)->wait();
     }
 
-    public function sendAsync(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): Ack
+    public function sendAsync(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): Promise
     {
         $this->loop();
-        $ack = new Ack($this->timeout);
+        $ack = new Promise($this->timeout);
         $chan = $this->chan;
         $chan->push(function () use ($topic, $key, $value, $headers, $partitionIndex, $ack) {
             try {
@@ -69,10 +69,10 @@ class Producer
     /**
      * @param ProduceMessage[] $messages
      */
-    public function sendBatchAsync(array $messages): Ack
+    public function sendBatchAsync(array $messages): Promise
     {
         $this->loop();
-        $ack = new Ack($this->timeout);
+        $ack = new Promise($this->timeout);
         $chan = $this->chan;
         $chan->push(function () use ($messages, $ack) {
             try {

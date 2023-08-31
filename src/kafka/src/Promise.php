@@ -18,7 +18,7 @@ use Throwable;
 /**
  * @mixin Channel
  */
-class Ack
+class Promise
 {
     private Channel $chan;
 
