@@ -123,7 +123,7 @@ trait ValidatesAttributes
         if ($value === '') {
             return true;
         }
-        return ! \preg_match('/[^\x09\x10\x13\x0A\x0D\x20-\x7E]/', $value);
+        return ! \preg_match('/[^\x00-\x7F]/', (string) $value);
     }
 
     /**
@@ -209,10 +209,10 @@ trait ValidatesAttributes
         }
 
         if (isset($parameters[0]) && $parameters[0] === 'ascii') {
-            return preg_match('/\A[a-zA-Z0-9_-]+\z/u', $value) > 0;
+            return preg_match('/\A[a-zA-Z0-9_-]+\z/u', (string) $value) > 0;
         }
 
-        return preg_match('/\A[\pL\pM\pN_-]+\z/u', $value) > 0;
+        return preg_match('/\A[\pL\pM\pN_-]+\z/u', (string) $value) > 0;
     }
 
     /**
@@ -228,10 +228,10 @@ trait ValidatesAttributes
         }
 
         if (isset($parameters[0]) && $parameters[0] === 'ascii') {
-            return preg_match('/\A[a-zA-Z0-9]+\z/u', $value) > 0;
+            return preg_match('/\A[a-zA-Z0-9]+\z/u', (string) $value) > 0;
         }
 
-        return preg_match('/\A[\pL\pM\pN]+\z/u', $value) > 0;
+        return preg_match('/\A[\pL\pM\pN]+\z/u', (string) $value) > 0;
     }
 
     /**
