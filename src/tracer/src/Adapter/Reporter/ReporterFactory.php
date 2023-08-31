@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Adapter\Reporter;
 
+use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Zipkin\Reporter;
 
@@ -21,8 +21,7 @@ use function Hyperf\Support\make;
 class ReporterFactory
 {
     public function __construct(
-        private ContainerInterface $container,
-        private HttpClientFactory $httpClientFactory
+        private ContainerInterface $container
     ) {
     }
 
@@ -32,18 +31,10 @@ class ReporterFactory
         $constructor = $option['constructor'] ?? [];
 
         if ($class === \Zipkin\Reporters\Http::class) {
-            $constructor['requesterFactory'] = $this->httpClientFactory;
+            $constructor['requesterFactory'] = $this->container->get(HttpClientFactory::class);
         }
 
-        if (isset($constructor['logger'])) {
-            $loggerClass = (string) $constructor['logger'];
-            if (
-                ! $this->container->has($loggerClass)
-                || ! ($constructor['logger'] = $this->container->get($loggerClass)) instanceof LoggerInterface
-            ) {
-                unset($constructor['logger']);
-            }
-        }
+        $constructor['logger'] = $this->container->get(StdoutLoggerInterface::class);
 
         if (! class_exists($class)) {
             throw new RuntimeException(sprintf('Class %s is not exists.', $class));

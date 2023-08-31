@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Tracer\Adapter\Reporter;
 
 use Closure;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
@@ -28,7 +27,7 @@ class HttpClientFactory implements ClientFactoryInterface
 
     protected int $channelSize = 65535;
 
-    public function __construct(private ClientFactory $clientFactory, protected StdoutLoggerInterface $logger)
+    public function __construct(private ClientFactory $clientFactory)
     {
     }
 
