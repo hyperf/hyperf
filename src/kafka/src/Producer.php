@@ -17,7 +17,6 @@ use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
 use Hyperf\Kafka\Exception\ConnectionClosedException;
-use Hyperf\Kafka\Exception\TimeoutException;
 use longlang\phpkafka\Broker;
 use longlang\phpkafka\Producer\ProduceMessage;
 use longlang\phpkafka\Producer\Producer as LongLangProducer;
@@ -31,61 +30,63 @@ class Producer
 
     protected ?LongLangProducer $producer = null;
 
+    protected $channelSize = 65535;
+
     public function __construct(protected ConfigInterface $config, protected string $name = 'default', protected int $timeout = 10)
     {
     }
 
     public function send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): void
     {
+        $this->sendAsync($topic, $value, $key, $headers, $partitionIndex)->wait();
+    }
+
+    public function sendAsync(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): Promise
+    {
         $this->loop();
-        $ack = new Channel(1);
+        $promise = new Promise($this->timeout);
         $chan = $this->chan;
-        $chan->push(function () use ($topic, $key, $value, $headers, $partitionIndex, $ack) {
+        $chan->push(function () use ($topic, $key, $value, $headers, $partitionIndex, $promise) {
             try {
                 $this->producer->send($topic, $value, $key, $headers, $partitionIndex);
-                $ack->close();
+                $promise->close();
             } catch (Throwable $e) {
-                $ack->push($e);
+                $promise->push($e);
                 throw $e;
             }
         });
         if ($chan->isClosing()) {
             throw new ConnectionClosedException('Connection closed.');
         }
-        if ($e = $ack->pop($this->timeout)) {
-            throw $e;
-        }
-        if ($ack->isTimeout()) {
-            throw new TimeoutException('Kafka send timeout.');
-        }
+        return $promise;
+    }
+
+    public function sendBatch(array $messages): void
+    {
+        $this->sendBatchAsync($messages)->wait();
     }
 
     /**
      * @param ProduceMessage[] $messages
      */
-    public function sendBatch(array $messages): void
+    public function sendBatchAsync(array $messages): Promise
     {
         $this->loop();
-        $ack = new Channel(1);
+        $promise = new Promise($this->timeout);
         $chan = $this->chan;
-        $chan->push(function () use ($messages, $ack) {
+        $chan->push(function () use ($messages, $promise) {
             try {
                 $this->producer->sendBatch($messages);
-                $ack->close();
+                $promise->close();
             } catch (Throwable $e) {
-                $ack->push($e);
+                $promise->push($e);
                 throw $e;
             }
         });
         if ($chan->isClosing()) {
             throw new ConnectionClosedException('Connection closed.');
         }
-        if ($e = $ack->pop()) {
-            throw $e;
-        }
-        if ($ack->isTimeout()) {
-            throw new TimeoutException('Kafka send timeout.');
-        }
+        return $promise;
     }
 
     public function close(): void
@@ -109,7 +110,7 @@ class Producer
         if ($this->chan != null) {
             return;
         }
-        $this->chan = new Channel(1);
+        $this->chan = new Channel($this->channelSize);
         Coroutine::create(function () {
             while (true) {
                 $this->producer = $this->makeProducer();

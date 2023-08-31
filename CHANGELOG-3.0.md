@@ -10,6 +10,7 @@
 
 - [#6096](https://github.com/hyperf/hyperf/pull/6096) Added `getThrowable` method to request events and crontab event.
 - [#6094](https://github.com/hyperf/hyperf/pull/6094) Added some validation rules such as `ExcludeIf` `File` `ImageFile` and `ProhibitedIf`.
+- [#6112](https://github.com/hyperf/hyperf/pull/6112) Added `sendSync` and `sendBatchAsync` methods for `Hyperf\Kafka\Producer`.
 
 ## Optimized
 
