@@ -36,7 +36,12 @@ class Producer
     {
     }
 
-    public function send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): Ack
+    public function send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): void
+    {
+        $this->sendAsync($topic, $value, $key, $headers, $partitionIndex)->wait();
+    }
+
+    public function sendAsync(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): Ack
     {
         $this->loop();
         $ack = new Ack($this->timeout);
@@ -56,10 +61,15 @@ class Producer
         return $ack;
     }
 
+    public function sendBatch(array $messages): void
+    {
+        $this->sendBatchAsync($messages)->wait();
+    }
+
     /**
      * @param ProduceMessage[] $messages
      */
-    public function sendBatch(array $messages): Ack
+    public function sendBatchAsync(array $messages): Ack
     {
         $this->loop();
         $ack = new Ack($this->timeout);
