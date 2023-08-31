@@ -809,7 +809,6 @@ class Str
         return new Ulid(Ulid::generate($time));
     }
 
-
     public static function isUrl($value, array $protocols = []): bool
     {
         if (! is_string($value)) {
