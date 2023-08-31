@@ -34,7 +34,9 @@ class ReporterFactory
             $constructor['requesterFactory'] = $this->container->get(HttpClientFactory::class);
         }
 
-        $constructor['logger'] = $this->container->get(StdoutLoggerInterface::class);
+        if ($this->container->has(StdoutLoggerInterface::class)) {
+            $constructor['logger'] = $this->container->get(StdoutLoggerInterface::class);
+        }
 
         if (! class_exists($class)) {
             throw new RuntimeException(sprintf('Class %s is not exists.', $class));
