@@ -44,21 +44,21 @@ class Producer
     public function sendAsync(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): Promise
     {
         $this->loop();
-        $ack = new Promise($this->timeout);
+        $promise = new Promise($this->timeout);
         $chan = $this->chan;
-        $chan->push(function () use ($topic, $key, $value, $headers, $partitionIndex, $ack) {
+        $chan->push(function () use ($topic, $key, $value, $headers, $partitionIndex, $promise) {
             try {
                 $this->producer->send($topic, $value, $key, $headers, $partitionIndex);
-                $ack->close();
+                $promise->close();
             } catch (Throwable $e) {
-                $ack->push($e);
+                $promise->push($e);
                 throw $e;
             }
         });
         if ($chan->isClosing()) {
             throw new ConnectionClosedException('Connection closed.');
         }
-        return $ack;
+        return $promise;
     }
 
     public function sendBatch(array $messages): void
@@ -72,21 +72,21 @@ class Producer
     public function sendBatchAsync(array $messages): Promise
     {
         $this->loop();
-        $ack = new Promise($this->timeout);
+        $promise = new Promise($this->timeout);
         $chan = $this->chan;
-        $chan->push(function () use ($messages, $ack) {
+        $chan->push(function () use ($messages, $promise) {
             try {
                 $this->producer->sendBatch($messages);
-                $ack->close();
+                $promise->close();
             } catch (Throwable $e) {
-                $ack->push($e);
+                $promise->push($e);
                 throw $e;
             }
         });
         if ($chan->isClosing()) {
             throw new ConnectionClosedException('Connection closed.');
         }
-        return $ack;
+        return $promise;
     }
 
     public function close(): void
