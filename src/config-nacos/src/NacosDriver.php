@@ -50,9 +50,15 @@ class NacosDriver extends AbstractDriver
 
             $client = $application->grpc->get($tenant, 'config');
             $client->listenConfig($group, $dataId, new ConfigChangeNotifyRequestHandler(function (ConfigQueryResponse $response) use ($key, $type) {
-                $this->updateConfig([
-                    $key => $this->client->decode($response->getContent(), $type),
-                ]);
+                $config = $this->client->decode($response->getContent(), $type);
+                $prevConfig = $this->config->get($key, []);
+
+                if ($config !== $prevConfig) {
+                    $this->syncConfig(
+                        [$key => $config],
+                        [$key => $prevConfig],
+                    );
+                }
             }));
         }
 

@@ -174,10 +174,11 @@ class IndexController extends AbstractController
 
 ```
 
+`Hyperf\Kafka\Producer::send()` 方法会等待 ACK，如果您不需要等待 ACK，可以使用 `Hyperf\Kafka\Producer::sendAsync()` 方法来投递消息。
+
 ### 一次性投递多条消息
 
 `Hyperf\Kafka\Producer::sendBatch(array $messages)` 方法来向 `kafka` 批量的投递消息, 下面是在 `Controller` 进行消息投递的一个示例：
-
 
 ```php
 <?php

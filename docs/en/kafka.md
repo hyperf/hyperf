@@ -165,10 +165,11 @@ class IndexController extends AbstractController
 }
 ```
 
+The `Hyperf\Kafka\Producer::send()` method will wait for ACK. If you do not need to wait for ACK, you can use the `Hyperf\Kafka\Producer::sendAsync()` method to deliver the message.
+
 ### Send multiple messages at once
 
 The `Hyperf\Kafka\Producer::sendBatch(array $messages)` method is used to deliver messages in batches to `kafka`, the following is an example of message delivery in `Controller`:
-
 
 ```php
 <?php
