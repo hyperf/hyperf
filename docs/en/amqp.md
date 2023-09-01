@@ -118,3 +118,11 @@ class DemoConsumer extends ConsumerMessage
 ```
 
 The framework automatically creates the process according to Consumer annotations, and the process will be pulled up again after unexpected exit.
+
+### Set concurrency consumption
+
+There are three parameters that affect the rate of consumption
+
+- you can modify the `#[Consumer]` annotation `nums` to open multiple consumers
+- The `ConsumerMessage` base class has an attribute `$qos` that controls the number of messages pulled from the server at a time by overriding `prefetch_size` or `prefetch_count` in `$qos`
+- `concurrent.limit` in the configuration file, which controls the maximum number of consumer coroutines
