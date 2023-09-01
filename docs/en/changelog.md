@@ -1,5 +1,26 @@
 # Changelogs
 
+# v3.0.35 - 2023-09-01
+
+## Fixed
+
+- [#6097](https://github.com/hyperf/hyperf/pull/6097) Fixed error that using non-zipkin driver of tracer.
+- [#6099](https://github.com/hyperf/hyperf/pull/6099) Fixed bug that `ConstantFrequency` cannot work when using `redis`.
+- [#6110](https://github.com/hyperf/hyperf/pull/6110) Fixed bug that configuration of other processes were not updated when using `nacos grpc client`.
+
+## Added
+
+- [#6096](https://github.com/hyperf/hyperf/pull/6096) Added `getThrowable` method to request events and crontab event.
+- [#6094](https://github.com/hyperf/hyperf/pull/6094) Added some validation rules such as `ExcludeIf` `File` `ImageFile` and `ProhibitedIf`.
+- [#6112](https://github.com/hyperf/hyperf/pull/6112) Added `sendSync` and `sendBatchAsync` methods for `Hyperf\Kafka\Producer`.
+
+## Optimized
+
+- [#6098](https://github.com/hyperf/hyperf/pull/6098) Optimize `kafka` reporter for `hyperf/tracer`.
+- [#6100](https://github.com/hyperf/hyperf/pull/6100) Optimize `HttpClientFactory` for `hyperf/tracer`.
+- [#6108](https://github.com/hyperf/hyperf/pull/6108) Optimize `describe:routes` command, sort middleware by MiddlewareManager
+- [#6111](https://github.com/hyperf/hyperf/pull/6111) Allowed output log when an exception occurs.
+
 # v3.0.34 - 2023-08-25
 
 ## Added
