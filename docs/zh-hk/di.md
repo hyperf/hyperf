@@ -405,7 +405,7 @@ class IndexController
 ```   
 
 在某些更極端動態的情況下，或者非 `容器(Container)` 的管理作用之下時，想要獲取到 `容器(Container)`
-對象還可以通過 `\Hyperf\Context\ApplicationContext::getContaienr()` 方法來獲得 `容器(Container)` 對象。
+對象還可以通過 `\Hyperf\Context\ApplicationContext::getContainer()` 方法來獲得 `容器(Container)` 對象。
 
 ```php
 $container = \Hyperf\Context\ApplicationContext::getContainer();
