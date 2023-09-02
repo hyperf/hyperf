@@ -305,7 +305,7 @@ class GrpcClient
                     $channel->push($response);
                     if (! $response->pipeline) {
                         unset($this->recvChannelMap[$streamId]);
-                        if(! $channel->isEmpty()) {
+                        if (! $channel->isEmpty()) {
                             $channel->pop();
                         }
                         $this->channelPool->push($channel);
