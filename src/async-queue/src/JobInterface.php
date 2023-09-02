@@ -11,8 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\AsyncQueue;
 
+use Throwable;
+
 interface JobInterface
 {
+    public function fail(Throwable $e): void;
+
     /**
      * Handle the job.
      */
