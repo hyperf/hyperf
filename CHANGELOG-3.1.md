@@ -40,6 +40,7 @@
 - [#6085](https://github.com/hyperf/hyperf/pull/6085) Added an error count to the database connection to ensure that the connection can be reset when occur too many exceptions.
 - [#6106](https://github.com/hyperf/hyperf/pull/6106) Support some validation rules.
 - [#6124](https://github.com/hyperf/hyperf/pull/6124) Added `Hyperf\AsyncQueue\Job::fail()`.
+- [#6129](https://github.com/hyperf/hyperf/pull/6129) Throws an exception when `$required` is `true` and environment variable `$key` is missing.
 
 ## Optimized
 
