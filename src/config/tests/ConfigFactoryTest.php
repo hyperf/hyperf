@@ -31,26 +31,26 @@ class ConfigFactoryTest extends TestCase
         $config = new Config(array_merge_recursive(...$autoloadConfig));
 
         $this->assertSame([
-            'name' => 'apple at root',
+            'name' => 'apple@root',
         ], $config->get('apple'));
 
         $this->assertSame([
-            'name' => 'apple at a',
+            'name' => 'apple@a',
         ], $config->get('a.apple'));
 
         $this->assertSame([
-            'name' => 'apple at b',
+            'name' => 'apple@b',
             'weight' => '1.5kg',
         ], $config->get('b.apple'));
 
         $this->assertSame([
             'pear' => [
-                'name' => 'pear at root',
+                'name' => 'pear@root',
             ],
         ], $config->get('fruit'));
 
         $this->assertSame([
-            'name' => 'pear at root',
+            'name' => 'pear@root',
         ], $config->get('fruit.pear'));
     }
 }

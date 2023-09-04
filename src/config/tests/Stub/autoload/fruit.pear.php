@@ -10,5 +10,5 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 return [
-    'name' => 'pear at root',
+    'name' => 'pear@root',
 ];

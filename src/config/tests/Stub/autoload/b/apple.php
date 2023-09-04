@@ -10,6 +10,6 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 return [
-    'name' => 'apple at b',
+    'name' => 'apple@b',
     'weight' => '1.5kg',
 ];
