@@ -44,7 +44,6 @@ namespace Hyperf\\Config;
 use Hyperf\\Collection\\Arr;
 use Psr\\Container\\ContainerInterface;
 use Symfony\\Component\\Finder\\Finder;
-
 class ConfigFactory
 {
     public function __invoke(ContainerInterface \$container)
@@ -69,13 +68,7 @@ class ConfigFactory
         \$finder = new Finder();
         \$finder->files()->in(\$paths)->name('*.php');
         foreach (\$finder as \$file) {
-            \$config = [];
-            \$key = implode('.', array_filter([
-                str_replace('/', '.', \$file->getRelativePath()),
-                \$file->getBasename('.php'),
-            ]));
-            Arr::set(\$config, \$key, require \$file->getRealPath());
-            \$configs[] = \$config;
+            \$configs[] = [\$file->getBasename('.php') => require \$file->getPathname()];
         }
         return \$configs;
     }
