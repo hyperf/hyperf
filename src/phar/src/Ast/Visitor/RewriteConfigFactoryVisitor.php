@@ -30,7 +30,7 @@ class ConfigFactory{
                 str_replace('/', '.', \$file->getRelativePath()),
                 \$file->getBasename('.php'),
             ]));
-            \\Hyperf\\Collection\\Arr::set(\$config, \$key, require \$file->getRealPath());
+            \\Hyperf\\Collection\\Arr::set(\$config, \$key, require \$file->getPathname());
             \$configs[] = \$config;
         }
         return \$configs;
