@@ -15,6 +15,7 @@ use HyperfTest\Support\Exception\RetryException;
 use HyperfTest\Support\Stub\FooClosure;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 use function Hyperf\Support\call;
 use function Hyperf\Support\env;
@@ -129,5 +130,13 @@ class FunctionTest extends TestCase
         putenv("{$id}=(null)");
 
         $this->assertNull(env($id));
+    }
+
+    public function testEnvRequired()
+    {
+        $id = 'NULL_' . uniqid();
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Environment variable [{$id}] is missing.");
+        env($id, required: true);
     }
 }

@@ -15,6 +15,7 @@ use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Stringable\StrCache;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -31,10 +32,13 @@ function value(mixed $value, ...$args)
  * @param string $key
  * @param null|mixed $default
  */
-function env($key, $default = null)
+function env($key, $default = null, bool $required = false)
 {
     $value = getenv($key);
     if ($value === false) {
+        if ($required) {
+            throw new RuntimeException(sprintf('Environment variable [%s] is missing.', $key));
+        }
         return value($default);
     }
     switch (strtolower($value)) {
