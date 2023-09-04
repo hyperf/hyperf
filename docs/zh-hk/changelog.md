@@ -1,5 +1,26 @@
 # 版本更新記錄
 
+# v3.0.35 - 2023-09-01
+
+## 修復
+
+- [#6097](https://github.com/hyperf/hyperf/pull/6097) 修復使用非 `zipkin` 的 `tracer` 組件時，會出現報錯的問題。
+- [#6099](https://github.com/hyperf/hyperf/pull/6099) 修復使用 `Redis` 時，恆定頻率釋放鏈接模式無法正常使用的問題。
+- [#6110](https://github.com/hyperf/hyperf/pull/6110) 修復使用 `Nacos GRPC` 的配置中心時，多進程模式無法正常工作的問題。
+
+## 新增
+
+- [#6096](https://github.com/hyperf/hyperf/pull/6096) 為 `Crontab` 組件中的事件增加 `getThrowable` 方法。
+- [#6094](https://github.com/hyperf/hyperf/pull/6094) 新增驗證器規則 `ExcludeIf` `File` `ImageFile` 和 `ProhibitedIf`。
+- [#6112](https://github.com/hyperf/hyperf/pull/6112) 為 `Hyperf\Kafka\Producer` 增加 `sendAsync` 和 `sendBatchAsync` 兩個新方法。
+
+## 優化
+
+- [#6098](https://github.com/hyperf/hyperf/pull/6098) 優化 `hyperf/tracer` `kafka` 上報器，增加其穩定性。
+- [#6100](https://github.com/hyperf/hyperf/pull/6100) 優化 `hyperf/tracer` `HTTP` 上報器，增加其性能和穩定性。
+- [#6108](https://github.com/hyperf/hyperf/pull/6108) 優化命令 `describe:routes`，展示排序後的中間件。
+- [#6111](https://github.com/hyperf/hyperf/pull/6111) 為 `tracer` 上報器，增加日誌輸出能力。
+
 # v3.0.34 - 2023-08-25
 
 ## 新增

@@ -1,4 +1,10 @@
-# v3.0.35 - TBD
+# v3.0.36 - TBD
+
+## Fixed
+
+- [#6117](https://github.com/hyperf/hyperf/pull/6117) Fixed bug that grpc client cannot able to be reused.
+
+# v3.0.35 - 2023-09-01
 
 ## Fixed
 
@@ -17,7 +23,7 @@
 - [#6098](https://github.com/hyperf/hyperf/pull/6098) Optimize `kafka` reporter for `hyperf/tracer`.
 - [#6100](https://github.com/hyperf/hyperf/pull/6100) Optimize `HttpClientFactory` for `hyperf/tracer`.
 - [#6108](https://github.com/hyperf/hyperf/pull/6108) Optimize `describe:routes` command, sort middleware by MiddlewareManager
-- [#6111](https://github.com/hyperf/hyperf/pull/6111) Allowed output log when an exception occurs .
+- [#6111](https://github.com/hyperf/hyperf/pull/6111) Allowed output log when an exception occurs.
 
 # v3.0.34 - 2023-08-25
 
