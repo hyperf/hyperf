@@ -121,7 +121,7 @@ jobs:
         run: |
           git clone https://github.com/limingxinleo/hyperf-phar-tester.git
           cd hyperf-phar-tester
-          git checkout 3.0
+          git checkout 3.1
           composer update -o ${{ matrix.no-dev }}
           rm -rf vendor/hyperf/phar
           cp -rf ../src/phar vendor/hyperf/phar
