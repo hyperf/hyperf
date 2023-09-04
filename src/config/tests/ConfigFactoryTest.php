@@ -58,5 +58,12 @@ class ConfigFactoryTest extends TestCase
         ], $config->get('a.c.banana'));
 
         $this->assertSame('banana', $config->get('a.c.banana.name'));
+
+        $this->assertSame([
+            'id' => 'c',
+            'banana' => [
+                'name' => 'banana',
+            ],
+        ], $config->get('a.c'));
     }
 }
