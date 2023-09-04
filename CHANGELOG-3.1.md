@@ -59,7 +59,6 @@
 - [#5973](https://github.com/hyperf/hyperf/pull/5973) Simplified the handlers definition of logger.
 - [#6010](https://github.com/hyperf/hyperf/pull/6010) Throw exception when cast class is not existed.
 - [#6030](https://github.com/hyperf/hyperf/pull/6030) Support buffer mechanism in standalone process of metric.
-- [#6128](https://github.com/hyperf/hyperf/pull/6128) Optimized multi-level config dir.
 
 ## Removed
 
@@ -77,6 +76,7 @@
 - [#5943](https://github.com/hyperf/hyperf/pull/5943) Don't remove the node from load balancer of `json rpc http transporter` when the status code isn't 200.
 - [#5961](https://github.com/hyperf/hyperf/pull/5961) Using `enum` instead of `class` for `Hyperf\Amqp\Result` and `Hyperf\Amqp\Message\Type`.
 - [#6022](https://github.com/hyperf/hyperf/pull/6022) When using `Base62::decode` to decode the incorrect data, it should be thrown `InvalidArgumentException` instead of `TypeError`.
+- [#6128](https://github.com/hyperf/hyperf/pull/6128) Changed configuration get method in multi-level directories.
 
 ## Fixed
 
