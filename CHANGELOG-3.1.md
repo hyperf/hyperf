@@ -59,6 +59,7 @@
 - [#5973](https://github.com/hyperf/hyperf/pull/5973) Simplified the handlers definition of logger.
 - [#6010](https://github.com/hyperf/hyperf/pull/6010) Throw exception when cast class is not existed.
 - [#6030](https://github.com/hyperf/hyperf/pull/6030) Support buffer mechanism in standalone process of metric.
+- [#6128](https://github.com/hyperf/hyperf/pull/6128) Optimized multi-level config dir.
 
 ## Removed
 
