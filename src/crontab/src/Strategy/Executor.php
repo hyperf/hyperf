@@ -183,12 +183,15 @@ class Executor
         return $runnable;
     }
 
-    protected function catchToExecute(Crontab $crontab, Closure $runnable): Closure
+    protected function catchToExecute(Crontab $crontab, ?Closure $runnable): Closure
     {
         return function () use ($crontab, $runnable) {
             $this->dispatcher?->dispatch(new BeforeExecute($crontab));
             try {
                 $result = true;
+                if (! $runnable) {
+                    throw new InvalidArgumentException('The crontab task is invalid.');
+                }
                 $runnable();
                 $this->dispatcher?->dispatch(new AfterExecute($crontab));
             } catch (Throwable $throwable) {
