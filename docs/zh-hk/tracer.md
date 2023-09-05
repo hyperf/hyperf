@@ -194,10 +194,13 @@ return [
 ];
 ```
 
-### 配置中間件
+### 配置中間件或監聽器
 
-配置完驅動之後，採集信息還需要配置一下中間件才能啓用採集功能。
-打開 `config/autoload/middlewares.php` 文件，在 `http` 節點啓用中間件。
+配置完驅動之後，採集信息還需要配置一下中間件或請求週期事件監聽器才能啟用採集功能。
+
+- 添加中間件
+
+打開 `config/autoload/middlewares.php` 文件，在 `http` 節點啟用中間件。
 
 ```php
 <?php
@@ -208,6 +211,20 @@ return [
     'http' => [
         \Hyperf\Tracer\Middleware\TraceMiddleware::class,
     ],
+];
+```
+
+- 或者添加監聽器
+
+打開 `config/autoload/listeners.php` 文件，添加監聽器。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    \Hyperf\Tracer\Listener\RequestTraceListener::class,
 ];
 ```
 

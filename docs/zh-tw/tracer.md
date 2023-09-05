@@ -194,9 +194,12 @@ return [
 ];
 ```
 
-### 配置中介軟體
+### 配置中介軟體或監聽器
 
-配置完驅動之後，採集資訊還需要配置一下中介軟體才能啟用採集功能。
+配置完驅動之後，採集資訊還需要配置一下中介軟體或請求週期事件監聽器才能啟用採集功能。
+
+- 新增中介軟體
+
 開啟 `config/autoload/middlewares.php` 檔案，在 `http` 節點啟用中介軟體。
 
 ```php
@@ -208,6 +211,20 @@ return [
     'http' => [
         \Hyperf\Tracer\Middleware\TraceMiddleware::class,
     ],
+];
+```
+
+- 或者新增監聽器
+
+開啟 `config/autoload/listeners.php` 檔案，新增監聽器。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    \Hyperf\Tracer\Listener\RequestTraceListener::class,
 ];
 ```
 

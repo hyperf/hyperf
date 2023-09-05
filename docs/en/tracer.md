@@ -194,9 +194,12 @@ return [
 ];
 ```
 
-### Configure middleware
+### Configure middleware or listener
 
-After configuring the driver, you need to configure the middleware to enable the collection function to collect information.
+After configuring the driver, you need to configure the middleware or request cycle event listener to collect information to enable the collection function.
+
+- Add middleware
+
 Open the `config/autoload/middlewares.php` file and enable the middleware on the `http` node.
 
 ```php
@@ -205,9 +208,23 @@ Open the `config/autoload/middlewares.php` file and enable the middleware on the
 declare(strict_types=1);
 
 return [
-    'http' => [
-        \Hyperf\Tracer\Middleware\TraceMiddleware::class,
-    ],
+     'http' => [
+         \Hyperf\Tracer\Middleware\TraceMiddleware::class,
+     ],
+];
+```
+
+- or add a listener
+
+Open the `config/autoload/listeners.php` file and add the listener.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+     \Hyperf\Tracer\Listener\RequestTraceListener::class,
 ];
 ```
 
