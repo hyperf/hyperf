@@ -14,6 +14,7 @@ namespace Hyperf\Tracer\Listener;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\HttpMessage\Exception\HttpException;
+use Hyperf\HttpServer\Event\RequestHandled;
 use Hyperf\HttpServer\Event\RequestReceived;
 use Hyperf\HttpServer\Event\RequestTerminated;
 use Hyperf\Tracer\SpanStarter;
@@ -22,6 +23,7 @@ use Hyperf\Tracer\SwitchManager;
 use Hyperf\Tracer\TracerContext;
 use OpenTracing\Span;
 use Psr\Http\Message\ServerRequestInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 use Throwable;
 
 class RequestTraceListener implements ListenerInterface
@@ -36,6 +38,7 @@ class RequestTraceListener implements ListenerInterface
     {
         return [
             RequestReceived::class,
+            RequestHandled::class,
             RequestTerminated::class,
         ];
     }
@@ -47,6 +50,13 @@ class RequestTraceListener implements ListenerInterface
     {
         if ($event instanceof RequestReceived) {
             $this->buildSpan($event->request);
+            return;
+        }
+
+        if ($event instanceof RequestHandled) {
+            if ($event->response instanceof ResponsePlusInterface && $traceId = TracerContext::getTraceId()) {
+                $event->response->addHeader('Trace-Id', $traceId);
+            }
             return;
         }
 
