@@ -44,22 +44,31 @@ class RequestTraceListener implements ListenerInterface
     }
 
     /**
-     * @param RequestReceived|RequestTerminated $event
+     * @param RequestHandled|RequestReceived|RequestTerminated $event
      */
     public function process(object $event): void
     {
-        if ($event instanceof RequestReceived) {
-            $this->buildSpan($event->request);
-            return;
-        }
+        match ($event::class) {
+            RequestReceived::class => $this->handleRequestReceived($event),
+            RequestHandled::class => $this->handleRequestHandled($event),
+            RequestTerminated::class => $this->handleRequestTerminated($event),
+        };
+    }
 
-        if ($event instanceof RequestHandled) {
-            if ($event->response instanceof ResponsePlusInterface && $traceId = TracerContext::getTraceId()) {
-                $event->response->addHeader('Trace-Id', $traceId);
-            }
-            return;
-        }
+    protected function handleRequestReceived(RequestReceived $event): void
+    {
+        $this->buildSpan($event->request);
+    }
 
+    protected function handleRequestHandled(RequestHandled $event): void
+    {
+        if ($event->response instanceof ResponsePlusInterface && $traceId = TracerContext::getTraceId()) {
+            $event->response->addHeader('Trace-Id', $traceId);
+        }
+    }
+
+    protected function handleRequestTerminated(RequestTerminated $event): void
+    {
         $response = $event->response;
 
         if (! $response) {
