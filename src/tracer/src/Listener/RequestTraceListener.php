@@ -43,15 +43,13 @@ class RequestTraceListener implements ListenerInterface
         ];
     }
 
-    /**
-     * @param RequestHandled|RequestReceived|RequestTerminated $event
-     */
     public function process(object $event): void
     {
         match ($event::class) {
             RequestReceived::class => $this->handleRequestReceived($event),
             RequestHandled::class => $this->handleRequestHandled($event),
             RequestTerminated::class => $this->handleRequestTerminated($event),
+            default => '', // fix phpstan error
         };
     }
 
