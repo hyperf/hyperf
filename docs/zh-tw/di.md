@@ -362,6 +362,36 @@ isset($proxy->someProperty);
 unset($proxy->someProperty);
 ```
 
+### 繫結權重
+
+自 v3.0.17 版本開始，增加了權重功能。可以按照權重，注入權重最大的物件。例如下述兩份 `ConfigProvider` 配置
+
+```php
+<?php
+use FooInterface;
+use Foo;
+
+return [
+    'dependencies' => [
+        FooInterface::class => new PriorityDefinition(Foo::class, 1),
+    ]
+];
+```
+
+```php
+<?php
+use FooInterface;
+use Foo2;
+
+return [
+    'dependencies' => [
+        FooInterface::class => Foo2::class,
+    ]
+];
+```
+
+當不使用 `PriorityDefinition` 時，權重為 0。所以被繫結到 `FooInterface` 是 `Foo`。
+
 ## 短生命週期物件
 
 透過 `new` 關鍵詞建立的物件毫無疑問的短生命週期的，那麼如果希望建立一個短生命週期的物件但又希望使用 `建構函式依賴自動注入功能`
