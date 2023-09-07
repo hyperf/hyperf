@@ -362,6 +362,36 @@ isset($proxy->someProperty);
 unset($proxy->someProperty);
 ```
 
+### 绑定权重
+
+自 v3.0.17 版本开始，增加了权重功能。可以按照权重，注入权重最大的对象。例如下述两份 `ConfigProvider` 配置
+
+```php
+<?php
+use FooInterface;
+use Foo;
+
+return [
+    'dependencies' => [
+        FooInterface::class => new PriorityDefinition(Foo::class, 1),
+    ]
+];
+```
+
+```php
+<?php
+use FooInterface;
+use Foo2;
+
+return [
+    'dependencies' => [
+        FooInterface::class => Foo2::class,
+    ]
+];
+```
+
+当不使用 `PriorityDefinition` 时，权重为 0。所以被绑定到 `FooInterface` 是 `Foo`。
+
 ## 短生命周期对象
 
 通过 `new` 关键词创建的对象毫无疑问的短生命周期的，那么如果希望创建一个短生命周期的对象但又希望使用 `构造函数依赖自动注入功能`
