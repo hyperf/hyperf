@@ -1,5 +1,13 @@
 # v3.0.36 - TBD
 
+# Added
+
+- [#6062](https://github.com/hyperf/hyperf/pull/6057) Added `RequestTraceListener` for `hyperf/tracer`.
+
+## Fixed
+
+- [#6117](https://github.com/hyperf/hyperf/pull/6117) Fixed bug that grpc client cannot able to be reused.
+
 # v3.0.35 - 2023-09-01
 
 ## Fixed

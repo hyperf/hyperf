@@ -106,6 +106,14 @@ class ConsulDriver implements DriverInterface
                 'Interval' => $interval,
             ];
         }
+        if ($protocol === 'grpc') {
+            $requestBody['Check'] = [
+                'DeregisterCriticalServiceAfter' => $deregisterCriticalServiceAfter,
+                'GRPC' => "{$host}:{$port}",
+                'GRPCUseTLS' => false,
+                'Interval' => $interval,
+            ];
+        }
         $response = $this->client()->registerService($requestBody);
         if ($response->getStatusCode() === 200) {
             $this->registeredServices[$name][$protocol][$host][$port] = true;

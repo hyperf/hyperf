@@ -209,6 +209,41 @@ The order of execution of the middleware is `FooMiddleware -> BarMiddleware`.
 
 We can see from the above that there are a total of 3 levels of middleware, namely `global middleware`, `class level middleware`, `method level middleware`. If these middlewares are defined, the order of execution is :`Global Middleware -> Method Level Middleware -> Class Level Middleware`.
 
+In version `>=3.0.34`, a new priority configuration has been added, which allows you to change the execution order of the middleware when configuring methods and routing middleware, the higher the priority, the higher the execution order.
+
+```php
+// middleware.php
+return [
+    'http' => [
+        YourMiddleware::class,
+        YourMiddlewareB::class => 3,
+    ],
+];
+```
+```php
+Router::addGroup(
+    '/v2', function () {
+        Router::get('/index', [\App\Controller\IndexController::class, 'index']);
+    },
+    [
+        'middleware' => [
+            FooMiddleware::class,
+            FooMiddlewareB::class => 3,
+        ]
+    ]
+);
+```
+```php
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
+#[Middleware(FooMiddlewareB::class, 3)]
+#[Middlewares([FooMiddlewareC::class => 1, BarMiddlewareD::class => 4])]
+class IndexController
+{
+    
+}
+```
+
 ## Change request and response objects globally
 
 First, there is a storage of the most primitive PSR-7 `request object` and `response object` within the context of the coroutine, and the `immutable` required by the PSR-7 for the related object means The `$response` we called by calling `$response = $response->with***()` is not a rewrite of the original object, but a new object from `Clone`, which means the `request object` and `response object` which stored in the context of the coroutine will not change, then when we have some logic in the middleware changed the `request object` or `response object`, and we hope for the follow-up * Non-transitive * code to get the changed `request object` or `response object`, then we can set the new object to the context after changing the object, as shown in the code:

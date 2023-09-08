@@ -10,17 +10,17 @@ composer require hyperf/amqp
 
 ## 默认配置
 
-|       配置       |  类型  |  默认值   |      备注      |
-|:----------------:|:------:|:---------:|:--------------:|
-|       host       | string | localhost |      Host      |
-|       port       |  int   |   5672    |     端口号     |
-|       user       | string |   guest   |     用户名     |
-|     password     | string |   guest   |      密码      |
-|      vhost       | string |     /     |     vhost      |
-| concurrent.limit |  int   |     0     | 同时消费的数量 |
+|       配置       |  类型  |  默认值   |    备注     |
+|:----------------:|:------:|:---------:|:---------:|
+|       host       | string | localhost |   Host    |
+|       port       |  int   |   5672    |    端口号    |
+|       user       | string |   guest   |    用户名    |
+|     password     | string |   guest   |    密码     |
+|      vhost       | string |     /     |   vhost   |
+| concurrent.limit |  int   |     0     | 同时消费的最大数量 |
 |       pool       | object |           |   连接池配置   |
 | pool.connections |  int   |     1     | 进程内保持的连接数 |
-|      params      | object |           |    基本配置    |
+|      params      | object |           |   基本配置    |
 
 ```php
 <?php
@@ -191,6 +191,15 @@ class DemoConsumer extends ConsumerMessage
 ### 设置最大消费数
 
 可以修改 `#[Consumer]` 注解中的 `maxConsumption` 属性，设置此消费者最大处理的消息数，达到指定消费数后，消费者进程会重启。
+
+### 设置并发消费
+ 
+影响消费速率的参数有三个地方
+
+- 可以修改 `#[Consumer]` 注解 `nums` 开启多个消费者
+- `ConsumerMessage` 基类下有一个属性 `$qos`，可以通过重写`$qos`中的`prefetch_size`或者`prefetch_count`的值控制每次从服务端拉取的消息数量
+- 配置文件中的 `concurrent.limit` 参数，控制消费协程的最大数量
+
 
 ### 消费结果
 
