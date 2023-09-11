@@ -556,6 +556,10 @@ class FooController extends Controller
 
 驗證欄位必須可以被轉化為布林值，接收 true, false, 1, 0, "1" 和 "0" 等輸入。
 
+##### boolean:strict
+
+驗證欄位必須可以被轉化為布林值，僅接收 true 和 false。
+
 ##### confirmed
 
 驗證欄位必須有一個匹配欄位 foo_confirmation，例如，如果驗證欄位是 password，必須輸入一個與之匹配的 password_confirmation 欄位。
@@ -826,7 +830,11 @@ $validator = $this->validationFactory->make($data, [
 
 ##### integer
 
-驗證欄位必須是整型。
+驗證欄位必須是整型（String 和 Integer 型別都可以透過驗證）。
+
+##### integer:strict
+
+驗證欄位必須是整型（只有 Integer 型別都可以透過驗證）。
 
 ##### ip
 
