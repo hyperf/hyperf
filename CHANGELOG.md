@@ -1,9 +1,5 @@
 # v1.1.33 - TBD
 
-## Added 
-
-- [#6143](https://github.com/hyperf/hyperf/pull/6143) Added `ignore_exceptions` for tracer
-
 ## Fixed
 
 - [#1917](https://github.com/hyperf/hyperf/pull/1917) Fixed bug that `Request::isXmlHttpRequest` does not work.
