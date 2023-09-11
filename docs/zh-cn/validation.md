@@ -556,6 +556,10 @@ class FooController extends Controller
 
 验证字段必须可以被转化为布尔值，接收 true, false, 1, 0, "1" 和 "0" 等输入。
 
+##### boolean:strict
+
+验证字段必须可以被转化为布尔值，仅接收 true 和 false。
+
 ##### confirmed
 
 验证字段必须有一个匹配字段 foo_confirmation，例如，如果验证字段是 password，必须输入一个与之匹配的 password_confirmation 字段。
@@ -826,7 +830,11 @@ $validator = $this->validationFactory->make($data, [
 
 ##### integer
 
-验证字段必须是整型。
+验证字段必须是整型（String 和 Integer 类型都可以通过验证）。
+
+##### integer:strict
+
+验证字段必须是整型（只有 Integer 类型都可以通过验证）。
 
 ##### ip
 
