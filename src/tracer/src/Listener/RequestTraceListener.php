@@ -77,7 +77,7 @@ class RequestTraceListener implements ListenerInterface
         $span = TracerContext::getRoot();
         $span->setTag($this->spanTagManager->get('response', 'status_code'), $response->getStatusCode());
 
-        if ($event->exception && $this->switchManager->isEnable('exception')) {
+        if ($event->exception && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($event->exception::class)) {
             $this->appendExceptionToSpan($span, $exception = $event->exception);
 
             if ($exception instanceof HttpException) {
