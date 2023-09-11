@@ -2,7 +2,7 @@
 
 ## Added 
 
-- [6143](https://github.com/hyperf/hyperf/pull/6143) Added `ignore_exceptions` into tracer
+- [#6143](https://github.com/hyperf/hyperf/pull/6143) Added `ignore_exceptions` for tracer
 
 ## Fixed
 
