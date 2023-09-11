@@ -21,6 +21,7 @@ return [
         'db' => env('TRACER_ENABLE_DB', false),
         'method' => env('TRACER_ENABLE_METHOD', false),
         'exception' => env('TRACER_ENABLE_EXCEPTION', false),
+        'ignore_exceptions' => [],
     ],
     'tracer' => [
         'zipkin' => [
