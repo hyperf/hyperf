@@ -743,8 +743,7 @@ trait ValidatesAttributes
      */
     public function validateJson(string $attribute, $value): bool
     {
-
-        if (is_array($value) || (! is_scalar($value) && ! is_null($value) && ! method_exists($value, '__toString'))) {
+        if (! is_string($value) && ! $value instanceof \Stringable) {
             return false;
         }
 
