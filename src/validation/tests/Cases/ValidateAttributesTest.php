@@ -68,4 +68,11 @@ class ValidateAttributesTest extends TestCase
 
         $this->assertFalse($validator->validateDate('', 123));
     }
+
+    public function testValidateJson()
+    {
+        $validator = new ValidatesAttributesStub();
+        $this->assertFalse($validator->validateJson('', []));
+        $this->assertFalse($validator->validateJson('', null));
+    }
 }
