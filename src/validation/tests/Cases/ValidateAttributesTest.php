@@ -72,7 +72,22 @@ class ValidateAttributesTest extends TestCase
     public function testValidateJson()
     {
         $validator = new ValidatesAttributesStub();
-        $this->assertFalse($validator->validateJson('', []));
+        // null
         $this->assertFalse($validator->validateJson('', null));
+        $this->assertTrue($validator->validateJson('', 'null'));
+        // int
+        $this->assertTrue($validator->validateJson('', '3'));
+        $this->assertFalse($validator->validateJson('', 3));
+        // float
+        $this->assertTrue($validator->validateJson('', '3.14'));
+        $this->assertFalse($validator->validateJson('', 3.14));
+        // string
+        $this->assertFalse($validator->validateJson('', 'plain_text'));
+        $this->assertTrue($validator->validateJson('', '{"foo": "bar"}'));
+        $this->assertFalse($validator->validateJson('', '{"foo": "bar",a}'));
+        // array
+        $this->assertTrue($validator->validateJson('', '[3.14]'));
+        $this->assertFalse($validator->validateJson('', [3.14]));
+        $this->assertTrue($validator->validateJson('', '["a"]'));
     }
 }
