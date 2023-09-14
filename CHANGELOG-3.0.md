@@ -11,7 +11,7 @@
 
 ## Optimized
 
-- [#6117](https://github.com/hyperf/hyperf/pull/6117) Optimize coroutine environment detection for `context`.
+- [#6149](https://github.com/hyperf/hyperf/pull/6149) Optimize coroutine environment detection for `context`.
 
 # v3.0.35 - 2023-09-01
 
