@@ -9,6 +9,10 @@
 
 - [#6117](https://github.com/hyperf/hyperf/pull/6117) Fixed bug that grpc client cannot able to be reused.
 
+## Optimized
+
+- [#6117](https://github.com/hyperf/hyperf/pull/6117) Optimize coroutine environment detection for `context`.
+
 # v3.0.35 - 2023-09-01
 
 ## Fixed

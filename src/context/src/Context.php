@@ -33,7 +33,7 @@ class Context
 
     public static function get(string $id, mixed $default = null, ?int $coroutineId = null): mixed
     {
-        if (Coroutine::id() > 0) {
+        if (Coroutine::isCoroutineAvailable() && Coroutine::id() > 0) {
             return Coroutine::getContextFor($coroutineId)[$id] ?? $default;
         }
 
