@@ -20,6 +20,7 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
 use Hyperf\Kafka\Event\BeforeConsume;
+use Hyperf\Kafka\Event\FailConsume;
 use Hyperf\Kafka\Event\FailToConsume;
 use Hyperf\Kafka\Exception\InvalidConsumeResultException;
 use Hyperf\Process\AbstractProcess;
@@ -114,7 +115,12 @@ class ConsumerManager
                         wait(function () use ($consumer, $consumerConfig, $message) {
                             $this->dispatcher?->dispatch(new BeforeConsume($consumer, $message));
 
-                            $result = $consumer->consume($message);
+                            try {
+                                $result = $consumer->consume($message);
+                            } catch (Throwable $exception) {
+                                $this->dispatcher?->dispatch(new FailConsume($consumer, $message, $exception));
+                                throw $exception;
+                            }
 
                             if (! $consumerConfig->getAutoCommit()) {
                                 if (! is_string($result)) {
