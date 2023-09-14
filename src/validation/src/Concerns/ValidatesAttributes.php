@@ -27,7 +27,6 @@ use Hyperf\Validation\Rules\Unique;
 use Hyperf\Validation\ValidationData;
 use InvalidArgumentException;
 use SplFileInfo;
-use Stringable;
 use Throwable;
 
 use function Hyperf\Collection\last;
@@ -744,13 +743,13 @@ trait ValidatesAttributes
      */
     public function validateJson(string $attribute, $value): bool
     {
-        if (! is_string($value) && ! $value instanceof Stringable) {
+        try {
+            json_decode($value, flags: JSON_THROW_ON_ERROR);
+        } catch (Throwable) {
             return false;
         }
 
-        json_decode((string) $value);
-
-        return json_last_error() === JSON_ERROR_NONE;
+        return true;
     }
 
     /**
