@@ -186,7 +186,7 @@ class RedisProxyTest extends TestCase
             usleep(1000);
             $redis->lRange('pipeline:list', 0, 1);
             $redis->lTrim('pipeline:list', 2, -1);
-            usleep(10000);
+            usleep(20000);
             $chan2->push($redis->exec());
         });
 
