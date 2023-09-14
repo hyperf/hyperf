@@ -98,5 +98,12 @@ class ValidateAttributesTest extends TestCase
                 return json_encode(['foo' => 'bar'], JSON_UNESCAPED_UNICODE);
             }
         }));
+
+        $this->assertTrue($validator->validateJson('', new class() {
+            public function __toString(): string
+            {
+                return json_encode(['foo' => 'bar'], JSON_UNESCAPED_UNICODE);
+            }
+        }));
     }
 }
