@@ -14,6 +14,7 @@ namespace HyperfTest\Validation\Cases;
 use HyperfTest\Validation\Cases\Stub\ValidatesAttributesStub;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Stringable;
 
 /**
  * @internal
@@ -92,5 +93,42 @@ class ValidateAttributesTest extends TestCase
         $this->assertFalse($validator->validateAscii('', '你好'));
         $this->assertFalse($validator->validateAscii('', 'ユニコードを基盤技術と-_123'));
         $this->assertFalse($validator->validateAscii('', 'नमस्कार-_'));
+    }
+
+    public function testValidateJson()
+    {
+        $validator = new ValidatesAttributesStub();
+        // null
+        $this->assertFalse($validator->validateJson('', null));
+        $this->assertTrue($validator->validateJson('', 'null'));
+        // int
+        $this->assertTrue($validator->validateJson('', '3'));
+        $this->assertFalse($validator->validateJson('', 3));
+        // float
+        $this->assertTrue($validator->validateJson('', '3.14'));
+        $this->assertFalse($validator->validateJson('', 3.14));
+        // string
+        $this->assertFalse($validator->validateJson('', 'plain_text'));
+        $this->assertTrue($validator->validateJson('', '{"foo": "bar"}'));
+        $this->assertFalse($validator->validateJson('', '{"foo": "bar",a}'));
+        // array
+        $this->assertTrue($validator->validateJson('', '[3.14]'));
+        $this->assertFalse($validator->validateJson('', [3.14]));
+        $this->assertTrue($validator->validateJson('', '["a"]'));
+        // object
+        $this->assertFalse($validator->validateJson('', new class() {}));
+        $this->assertTrue($validator->validateJson('', new class() implements Stringable {
+            public function __toString(): string
+            {
+                return json_encode(['foo' => 'bar'], JSON_UNESCAPED_UNICODE);
+            }
+        }));
+
+        $this->assertTrue($validator->validateJson('', new class() {
+            public function __toString(): string
+            {
+                return json_encode(['foo' => 'bar'], JSON_UNESCAPED_UNICODE);
+            }
+        }));
     }
 }
