@@ -349,6 +349,7 @@ jobs:
       - name: Setup Services
         run: |
           docker run --name redis -p 6379:6379 -d redis
+          sleep 20
       - name: Run Test Cases
         run: |
           composer test src/redis
