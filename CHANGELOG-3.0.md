@@ -8,6 +8,7 @@
 ## Fixed
 
 - [#6117](https://github.com/hyperf/hyperf/pull/6117) Fixed bug that grpc client cannot able to be reused.
+- [#6146](https://github.com/hyperf/hyperf/pull/6146) Fixed bug that `validateJson` cannot work when using php 8.0.
 
 # v3.0.35 - 2023-09-01
 
