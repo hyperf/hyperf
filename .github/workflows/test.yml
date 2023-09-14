@@ -27,19 +27,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Update Core
+        run: |
+          sudo apt-get clean
+          sudo apt-get update
+          sudo apt-get upgrade -f
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis-phpredis/phpredis@5.3.7, pdo, pdo_mysql, bcmath
+          extensions: redis-5.3.7, pdo, pdo_mysql, bcmath
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
         run: |
-          sudo apt-get clean
-          sudo apt-get update
-          sudo apt-get upgrade -f
           sudo apt-get install libcurl4-openssl-dev libc-ares-dev libpq-dev
           wget https://github.com/swoole/swoole-src/archive/${SW_VERSION}.tar.gz -O swoole.tar.gz
           mkdir -p swoole
