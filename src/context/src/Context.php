@@ -13,6 +13,7 @@ namespace Hyperf\Context;
 
 use Closure;
 use Hyperf\Engine\Coroutine;
+use Hyperf\Engine\Extension;
 
 use function Hyperf\Support\value;
 
@@ -22,7 +23,7 @@ class Context
 
     public static function set(string $id, mixed $value, ?int $coroutineId = null): mixed
     {
-        if (Coroutine::id() > 0) {
+        if (Extension::isLoaded() && Coroutine::id() > 0) {
             Coroutine::getContextFor($coroutineId)[$id] = $value;
         } else {
             static::$nonCoContext[$id] = $value;
@@ -33,7 +34,7 @@ class Context
 
     public static function get(string $id, mixed $default = null, ?int $coroutineId = null): mixed
     {
-        if (Coroutine::isCoroutineAvailable() && Coroutine::id() > 0) {
+        if (Extension::isLoaded() && Coroutine::id() > 0) {
             return Coroutine::getContextFor($coroutineId)[$id] ?? $default;
         }
 
@@ -42,7 +43,7 @@ class Context
 
     public static function has(string $id, ?int $coroutineId = null): bool
     {
-        if (Coroutine::id() > 0) {
+        if (Extension::isLoaded() && Coroutine::id() > 0) {
             return isset(Coroutine::getContextFor($coroutineId)[$id]);
         }
 
@@ -54,7 +55,7 @@ class Context
      */
     public static function destroy(string $id, ?int $coroutineId = null): void
     {
-        if (Coroutine::id() > 0) {
+        if (Extension::isLoaded() && Coroutine::id() > 0) {
             unset(Coroutine::getContextFor($coroutineId)[$id]);
         }
 
@@ -116,7 +117,7 @@ class Context
 
     public static function getContainer(?int $coroutineId = null)
     {
-        if (Coroutine::id() > 0) {
+        if (Extension::isLoaded() && Coroutine::id() > 0) {
             return Coroutine::getContextFor($coroutineId);
         }
 
