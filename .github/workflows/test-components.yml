@@ -319,3 +319,37 @@ jobs:
           composer analyse src/model-cache
           composer test src/model-cache
           composer info | grep psr/simple-cache
+
+  ext-redis:
+    name: Test for Redis Module
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '8.1', '8.2' ]
+        redis: [ 'redis', 'redis-5.3.7' ]
+      max-parallel: 2
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          extensions: ${{ matrix.redis }}, swoole
+          ini-values: opcache.enable_cli=1
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Setup Packages
+        run: ./.travis/requirement.install.sh
+      - name: Setup Services
+        run: |
+          docker run --name redis -p 6379:6379 -d redis
+          sleep 20
+      - name: Run Test Cases
+        run: |
+          composer test src/redis
