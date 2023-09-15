@@ -21,7 +21,6 @@ use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
 use Hyperf\Kafka\Event\BeforeConsume;
 use Hyperf\Kafka\Event\FailToConsume;
-use Hyperf\Kafka\Exception\ConsumeException;
 use Hyperf\Kafka\Exception\InvalidConsumeResultException;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
@@ -118,7 +117,8 @@ class ConsumerManager
                             try {
                                 $result = $consumer->consume($message);
                             } catch (Throwable $exception) {
-                                throw new ConsumeException($message, previous: $exception);
+                                $this->dispatcher?->dispatch(new FailToConsume($consumer, $message, $exception));
+                                throw $exception;
                             }
 
                             if (! $consumerConfig->getAutoCommit()) {
@@ -151,8 +151,6 @@ class ConsumerManager
                         $longLangConsumer->start();
                     } catch (Throwable $exception) {
                         $this->stdoutLogger->warning((string) $exception);
-                        $message = $exception instanceof ConsumeException ? $exception->getConsumeMessage() : [];
-                        $this->dispatcher?->dispatch(new FailToConsume($this->consumer, $message, $exception));
                     }
 
                     if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(10)) {

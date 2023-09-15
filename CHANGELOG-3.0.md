@@ -4,7 +4,10 @@
 
 - [#6062](https://github.com/hyperf/hyperf/pull/6057) Added `RequestTraceListener` for `hyperf/tracer`.
 - [#6143](https://github.com/hyperf/hyperf/pull/6143) Added `ignore_exceptions` for `hyperf/tracer`.
-- [#6151](https://github.com/hyperf/hyperf/pull/6151) Added `ConsumeException` for `hyperf/kafka`.
+
+## Optimized
+
+- [#6151](https://github.com/hyperf/hyperf/pull/6151) Optimized `FailToConsume` event for `hyperf/kafka`.
 
 ## Fixed
 
