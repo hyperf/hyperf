@@ -14,7 +14,7 @@ namespace Hyperf\Kafka\Exception;
 use longlang\phpkafka\Consumer\ConsumeMessage;
 use Throwable;
 
-class FailToConsumeException extends KafkaException
+class ConsumeException extends KafkaException
 {
     public function __construct(
         protected ConsumeMessage $consumeMessage,
