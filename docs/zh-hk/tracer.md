@@ -196,11 +196,11 @@ return [
 
 ### 配置中間件或監聽器
 
-配置完驅動之後，採集信息還需要配置一下中間件或請求週期事件監聽器才能啟用採集功能。
+配置完驅動之後，採集信息還需要配置一下中間件或請求週期事件監聽器才能啓用採集功能。
 
 - 添加中間件
 
-打開 `config/autoload/middlewares.php` 文件，在 `http` 節點啟用中間件。
+打開 `config/autoload/middlewares.php` 文件，在 `http` 節點啓用中間件。
 
 ```php
 <?php

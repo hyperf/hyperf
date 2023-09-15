@@ -1,5 +1,21 @@
 # 版本更新記錄
 
+# v3.0.36 - 2023-09-15
+
+# 新增
+
+- [#6062](https://github.com/hyperf/hyperf/pull/6057) 為 `hyperf/tracer` 新增 `RequestTraceListener` 監聽器。
+- [#6143](https://github.com/hyperf/hyperf/pull/6143) 為 `hyperf/tracer` 增加 `ignore_exceptions` 配置。
+
+## 最佳化
+
+- [#6151](https://github.com/hyperf/hyperf/pull/6151) 最佳化 `hyperf/kafka` 元件中 `FailToConsume` 的觸發時機。
+
+## 修復
+
+- [#6117](https://github.com/hyperf/hyperf/pull/6117) 修復 `GRPC` 客戶端無法被複用的問題。
+- [#6146](https://github.com/hyperf/hyperf/pull/6146) 修復 `validateJson` 驗證規則在高於 PHP 8.0 版本後，無法正常使用的問題。
+
 # v3.0.35 - 2023-09-01
 
 ## 修復
