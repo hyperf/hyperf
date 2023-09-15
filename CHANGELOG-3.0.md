@@ -5,11 +5,14 @@
 - [#6062](https://github.com/hyperf/hyperf/pull/6057) Added `RequestTraceListener` for `hyperf/tracer`.
 - [#6143](https://github.com/hyperf/hyperf/pull/6143) Added `ignore_exceptions` for `hyperf/tracer`.
 
+## Optimized
+
+- [#6151](https://github.com/hyperf/hyperf/pull/6151) Optimized `FailToConsume` event for `hyperf/kafka`.
+
 ## Fixed
 
 - [#6117](https://github.com/hyperf/hyperf/pull/6117) Fixed bug that grpc client cannot able to be reused.
 - [#6146](https://github.com/hyperf/hyperf/pull/6146) Fixed bug that `validateJson` cannot work when using php 8.0.
-- [#6151](https://github.com/hyperf/hyperf/pull/6151) Optimized `FailToConsume` event for `hyperf/kafka`.
 
 # v3.0.35 - 2023-09-01
 
