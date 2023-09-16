@@ -1,13 +1,16 @@
 # v3.0.37 - TBD
 
+## Added
+
+- [#6156](https://github.com/hyperf/hyperf/pull/6156) Enhance stringable, such as `replaceStart` `isJson`.
+
 ## Optimized
 
 - [#6154](https://github.com/hyperf/hyperf/pull/6154) Use PHP native `json_validate` to validate is json if function is available.
-- [#6156](https://github.com/hyperf/hyperf/pull/6156) Enhance stringable.
 
 # v3.0.36 - 2023-09-15
 
-# Added
+## Added
 
 - [#6062](https://github.com/hyperf/hyperf/pull/6057) Added `RequestTraceListener` for `hyperf/tracer`.
 - [#6143](https://github.com/hyperf/hyperf/pull/6143) Added `ignore_exceptions` for `hyperf/tracer`.
