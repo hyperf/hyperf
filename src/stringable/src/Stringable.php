@@ -972,11 +972,6 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
         return $this->when($this->is($pattern), $callback, $default);
     }
 
-    public function whenIsAscii($callback, $default = null)
-    {
-        return $this->when($this->isAscii(), $callback, $default);
-    }
-
     public function whenIsUlid($callback, $default = null)
     {
         return $this->when($this->isUlid(), $callback, $default);
