@@ -926,6 +926,10 @@ class Str
             return false;
         }
 
+        if (function_exists('json_validate')) {
+            return json_validate($value);
+        }
+
         try {
             json_decode($value, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
