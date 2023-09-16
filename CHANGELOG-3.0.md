@@ -3,6 +3,7 @@
 ## Optimized
 
 - [#6154](https://github.com/hyperf/hyperf/pull/6154) Use PHP native `json_validate` to validate is json if function is available.
+- [#6156](https://github.com/hyperf/hyperf/pull/6156) Enhance stringable.
 
 # v3.0.36 - 2023-09-15
 
