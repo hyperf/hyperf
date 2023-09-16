@@ -869,7 +869,7 @@ class Str
         return Uuid::uuid7($time);
     }
 
-    public function betweenFirst($subject, $from, $to)
+    public static function betweenFirst($subject, $from, $to)
     {
         if ($from === '' || $to === '') {
             return $subject;
@@ -878,7 +878,7 @@ class Str
         return Str::before(Str::after($subject, $from), $to);
     }
 
-    public function classNamespace($value): string
+    public static function classNamespace($value): string
     {
         if ($pos = strrpos($value, '\\')) {
             return substr($value, 0, $pos);
@@ -892,7 +892,7 @@ class Str
         return mb_convert_case($string, $mode, $encoding);
     }
 
-    public function excerpt($text, $phrase = '', $options = [])
+    public static function excerpt($text, $phrase = '', $options = [])
     {
         $radius = $options['radius'] ?? 100;
         $omission = $options['omission'] ?? '...';
@@ -920,7 +920,7 @@ class Str
         return $start->append($matches[2], $end)->__toString();
     }
 
-    public function isJson($value): bool
+    public static function isJson($value): bool
     {
         if (! is_string($value)) {
             return false;
@@ -935,12 +935,12 @@ class Str
         return true;
     }
 
-    public function lcfirst($string): string
+    public static function lcfirst($string): string
     {
         return Str::lower(Str::substr($string, 0, 1)) . Str::substr($string, 1);
     }
 
-    public function password($length = 32, $letters = true, $numbers = true, $symbols = true, $spaces = false)
+    public static function password($length = 32, $letters = true, $numbers = true, $symbols = true, $spaces = false)
     {
         return (new Collection())
             ->when($letters, fn ($c) => $c->merge([
@@ -993,17 +993,17 @@ class Str
         return $subject;
     }
 
-    public function reverse($value): string
+    public static function reverse($value): string
     {
         return implode(array_reverse(mb_str_split($value)));
     }
 
-    public function squish($value): array|string|null
+    public static function squish($value): array|string|null
     {
         return preg_replace('~(\s|\x{3164}|\x{1160})+~u', ' ', preg_replace('~^[\s\x{FEFF}]+|[\s\x{FEFF}]+$~u', '', $value));
     }
 
-    public function substrReplace($string, $replace, $offset = 0, $length = null): array|string
+    public static function substrReplace($string, $replace, $offset = 0, $length = null): array|string
     {
         if ($length === null) {
             $length = strlen($string);
@@ -1012,22 +1012,22 @@ class Str
         return substr_replace($string, $replace, $offset, $length);
     }
 
-    public function swap(array $map, $subject): array|string
+    public static function swap(array $map, $subject): array|string
     {
         return str_replace(array_keys($map), array_values($map), $subject);
     }
 
-    public function ucsplit($string): array|bool
+    public static function ucsplit($string): array|bool
     {
         return preg_split('/(?=\p{Lu})/u', $string, -1, PREG_SPLIT_NO_EMPTY);
     }
 
-    public function wordCount($string): array|int
+    public static function wordCount($string): array|int
     {
         return str_word_count($string);
     }
 
-    public function wrap($value, $before, $after = null): string
+    public static function wrap($value, $before, $after = null): string
     {
         return $before . $value . ($after ??= $before);
     }
