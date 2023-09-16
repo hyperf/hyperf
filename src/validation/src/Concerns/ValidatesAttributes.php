@@ -748,6 +748,14 @@ trait ValidatesAttributes
             $value = (string) $value;
         }
 
+        if (! is_string($value)) {
+            return false;
+        }
+
+        if (function_exists('json_validate')) {
+            return json_validate($value);
+        }
+
         try {
             json_decode($value, flags: JSON_THROW_ON_ERROR);
         } catch (Throwable) {
