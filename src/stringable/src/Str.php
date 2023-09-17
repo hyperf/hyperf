@@ -927,7 +927,7 @@ class Str
         }
 
         if (function_exists('json_validate')) {
-            return json_validate($value);
+            return json_validate($value, 512);
         }
 
         try {
