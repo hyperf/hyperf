@@ -13,6 +13,7 @@ namespace Hyperf\Stringable;
 
 use ArrayAccess;
 use Closure;
+use Hyperf\Collection\Collection;
 use Hyperf\Conditionable\Conditionable;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Tappable\Tappable;
@@ -246,7 +247,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      *
      * @param string $delimiter
      * @param int $limit
-     * @return \Hyperf\Collection\Collection
+     * @return Collection
      */
     public function explode($delimiter, $limit = PHP_INT_MAX)
     {
@@ -259,7 +260,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      * @param int|string $pattern
      * @param int $limit
      * @param int $flags
-     * @return \Hyperf\Collection\Collection
+     * @return Collection
      */
     public function split($pattern, $limit = -1, $flags = 0)
     {
@@ -399,7 +400,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      * Get the string matching the given pattern.
      *
      * @param string $pattern
-     * @return \Hyperf\Collection\Collection
+     * @return Collection
      */
     public function matchAll($pattern)
     {
@@ -859,5 +860,157 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     public function offsetUnset(mixed $offset): void
     {
         unset($this->value[$offset]);
+    }
+
+    public function betweenFirst($from, $to): static
+    {
+        return new static(Str::betweenFirst($this->value, $from, $to));
+    }
+
+    public function classNamespace(): static
+    {
+        return new static(Str::classNamespace($this->value));
+    }
+
+    public function convertCase($mode = MB_CASE_FOLD, $encoding = 'UTF-8'): static
+    {
+        return new static(Str::convertCase($this->value, $mode, $encoding));
+    }
+
+    public function excerpt($phrase = '', $options = []): ?string
+    {
+        return Str::excerpt($this->value, $phrase, $options);
+    }
+
+    public function isJson(): bool
+    {
+        return Str::isJson($this->value);
+    }
+
+    public function lcfirst(): static
+    {
+        return new static(Str::lcfirst($this->value));
+    }
+
+    public function newLine($count = 1): static
+    {
+        return $this->append(str_repeat(PHP_EOL, $count));
+    }
+
+    public function replaceStart($search, $replace): static
+    {
+        return new static(Str::replaceStart($search, $replace, $this->value));
+    }
+
+    public function replaceEnd($search, $replace): static
+    {
+        return new static(Str::replaceEnd($search, $replace, $this->value));
+    }
+
+    public function reverse(): static
+    {
+        return new static(Str::reverse($this->value));
+    }
+
+    public function scan($format): Collection
+    {
+        return collect(sscanf($this->value, $format));
+    }
+
+    public function squish(): static
+    {
+        return new static(Str::squish($this->value));
+    }
+
+    public function substrReplace($replace, $offset = 0, $length = null): static
+    {
+        return new static(Str::substrReplace($this->value, $replace, $offset, $length));
+    }
+
+    public function swap(array $map)
+    {
+        return new static(strtr($this->value, $map));
+    }
+
+    public function toString(): string
+    {
+        return $this->value;
+    }
+
+    public function ucsplit(): Collection
+    {
+        return collect(Str::ucsplit($this->value));
+    }
+
+    public function value(): string
+    {
+        return $this->toString();
+    }
+
+    public function whenContains($needles, $callback, $default = null)
+    {
+        return $this->when($this->contains($needles), $callback, $default);
+    }
+
+    public function whenContainsAll(array $needles, $callback, $default = null)
+    {
+        return $this->when($this->containsAll($needles), $callback, $default);
+    }
+
+    public function whenEndsWith($needles, $callback, $default = null)
+    {
+        return $this->when($this->endsWith($needles), $callback, $default);
+    }
+
+    public function whenExactly($needles, $callback, $default = null)
+    {
+        return $this->when($this->exactly($needles), $callback, $default);
+    }
+
+    public function whenIs($pattern, $callback, $default = null)
+    {
+        return $this->when($this->is($pattern), $callback, $default);
+    }
+
+    public function whenIsUlid($callback, $default = null)
+    {
+        return $this->when($this->isUlid(), $callback, $default);
+    }
+
+    public function whenIsUuid($callback, $default = null)
+    {
+        return $this->when($this->isUuid(), $callback, $default);
+    }
+
+    public function whenNotExactly($needles, $callback, $default = null)
+    {
+        return $this->when(! $this->exactly($needles), $callback, $default);
+    }
+
+    public function whenStartsWith($needles, $callback, $default = null)
+    {
+        return $this->when($this->startsWith($needles), $callback, $default);
+    }
+
+    public function whenTest($pattern, $callback, $default = null)
+    {
+        return $this->when($this->test($pattern), $callback, $default);
+    }
+
+    public function wrap($before, $after = null)
+    {
+        return new static(Str::wrap($this->value, $before, $after));
+    }
+
+    /**
+     * Wrap a string to a given number of characters.
+     *
+     * @param mixed $characters
+     * @param mixed $break
+     * @param mixed $cutLongWords
+     */
+    public function wordWrap($characters = 75, $break = "\n", $cutLongWords = false): static
+    {
+        return new static(Str::wordWrap($this->value, $characters, $break, $cutLongWords));
     }
 }

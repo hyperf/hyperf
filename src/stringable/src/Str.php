@@ -16,6 +16,7 @@ use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
 use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
+use JsonException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use RuntimeException;
@@ -866,6 +867,178 @@ class Str
         }
 
         return Uuid::uuid7($time);
+    }
+
+    public static function betweenFirst($subject, $from, $to)
+    {
+        if ($from === '' || $to === '') {
+            return $subject;
+        }
+
+        return Str::before(Str::after($subject, $from), $to);
+    }
+
+    public static function classNamespace($value): string
+    {
+        if ($pos = strrpos($value, '\\')) {
+            return substr($value, 0, $pos);
+        }
+
+        return '';
+    }
+
+    public static function convertCase(string $string, int $mode = MB_CASE_FOLD, ?string $encoding = 'UTF-8'): string
+    {
+        return mb_convert_case($string, $mode, $encoding);
+    }
+
+    public static function excerpt($text, $phrase = '', $options = [])
+    {
+        $radius = $options['radius'] ?? 100;
+        $omission = $options['omission'] ?? '...';
+
+        preg_match('/^(.*?)(' . preg_quote((string) $phrase) . ')(.*)$/iu', (string) $text, $matches);
+
+        if (empty($matches)) {
+            return null;
+        }
+
+        $startStr = ltrim($matches[1]);
+        $start = Str::of(mb_substr($matches[1], max(mb_strlen($startStr, 'UTF-8') - $radius, 0), $radius, 'UTF-8'))->ltrim();
+        $start = $start->unless(
+            (fn ($startWithRadius) => $startWithRadius->exactly($startStr))($start),
+            fn ($startWithRadius) => $startWithRadius->prepend($omission),
+        );
+
+        $endStr = rtrim($matches[3]);
+        $end = Str::of(mb_substr($endStr, 0, $radius, 'UTF-8'))->rtrim();
+        $end = $end->unless(
+            (fn ($endWithRadius) => $endWithRadius->exactly($endStr))($end),
+            fn ($endWithRadius) => $endWithRadius->append($omission),
+        );
+
+        return $start->append($matches[2], $end)->__toString();
+    }
+
+    public static function isJson($value): bool
+    {
+        if (! is_string($value)) {
+            return false;
+        }
+
+        if (function_exists('json_validate')) {
+            return json_validate($value, 512);
+        }
+
+        try {
+            json_decode($value, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static function lcfirst($string): string
+    {
+        return Str::lower(Str::substr($string, 0, 1)) . Str::substr($string, 1);
+    }
+
+    public static function password($length = 32, $letters = true, $numbers = true, $symbols = true, $spaces = false)
+    {
+        return (new Collection())
+            ->when($letters, fn ($c) => $c->merge([
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+                'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+                'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
+                'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+            ]))
+            ->when($numbers, fn ($c) => $c->merge([
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+            ]))
+            ->when($symbols, fn ($c) => $c->merge([
+                '~', '!', '#', '$', '%', '^', '&', '*', '(', ')', '-',
+                '_', '.', ',', '<', '>', '?', '/', '\\', '{', '}', '[',
+                ']', '|', ':', ';',
+            ]))
+            ->when($spaces, fn ($c) => $c->merge([' ']))
+            ->pipe(fn ($c) => Collection::times($length, fn () => $c[random_int(0, $c->count() - 1)]))
+            ->implode('');
+    }
+
+    public static function replaceStart($search, $replace, $subject)
+    {
+        $search = (string) $search;
+
+        if ($search === '') {
+            return $subject;
+        }
+
+        if (static::startsWith($subject, $search)) {
+            return static::replaceFirst($search, $replace, $subject);
+        }
+
+        return $subject;
+    }
+
+    public static function replaceEnd($search, $replace, $subject)
+    {
+        $search = (string) $search;
+
+        if ($search === '') {
+            return $subject;
+        }
+
+        if (static::endsWith($subject, $search)) {
+            return static::replaceLast($search, $replace, $subject);
+        }
+
+        return $subject;
+    }
+
+    public static function reverse($value): string
+    {
+        return implode(array_reverse(mb_str_split($value)));
+    }
+
+    public static function squish($value): array|string|null
+    {
+        return preg_replace('~(\s|\x{3164}|\x{1160})+~u', ' ', preg_replace('~^[\s\x{FEFF}]+|[\s\x{FEFF}]+$~u', '', $value));
+    }
+
+    public static function substrReplace($string, $replace, $offset = 0, $length = null): array|string
+    {
+        if ($length === null) {
+            $length = strlen($string);
+        }
+
+        return substr_replace($string, $replace, $offset, $length);
+    }
+
+    public static function swap(array $map, $subject): array|string
+    {
+        return str_replace(array_keys($map), array_values($map), $subject);
+    }
+
+    public static function ucsplit($string): array|bool
+    {
+        return preg_split('/(?=\p{Lu})/u', $string, -1, PREG_SPLIT_NO_EMPTY);
+    }
+
+    public static function wordCount($string): array|int
+    {
+        return str_word_count($string);
+    }
+
+    public static function wrap($value, $before, $after = null): string
+    {
+        return $before . $value . ($after ??= $before);
+    }
+
+    public static function wordWrap($string, $characters = 75, $break = "\n", $cutLongWords = false): string
+    {
+        return wordwrap($string, $characters, $break, $cutLongWords);
     }
 
     /**

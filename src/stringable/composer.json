@@ -17,6 +17,7 @@
     },
     "require": {
         "php": ">=8.0",
+        "ext-mbstring": "*",
         "hyperf/collection": "~3.0.0",
         "hyperf/conditionable": "~3.0.0",
         "hyperf/macroable": "~3.0.0",
