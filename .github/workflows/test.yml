@@ -26,7 +26,7 @@ jobs:
       PGSQL_VERSION: '14'
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Update Core
         run: |
           sudo apt-get clean
