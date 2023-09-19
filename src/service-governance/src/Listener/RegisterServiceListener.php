@@ -123,7 +123,6 @@ class RegisterServiceListener implements ListenerInterface
 
     protected function getEnableRegister(): bool
     {
-        $enable = $this->config->get('services.enable', []);
-        return $enable['register'] ?? true;
+        return $this->config->get('services.enable.register', true);
     }
 }
