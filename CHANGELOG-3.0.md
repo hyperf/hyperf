@@ -11,7 +11,7 @@
 
 ## Fixed
 
-- [#6160](https://github.com/hyperf/hyperf/pull/6160) Fixed bug that service governance always register services although the `services.enable.register` is `false`.
+- [#6160](https://github.com/hyperf/hyperf/pull/6160) Fixed bug that service governance still registers services even when `services.enable.register` is `false`.
 
 # v3.0.36 - 2023-09-15
 
