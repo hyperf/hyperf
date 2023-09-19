@@ -29,6 +29,9 @@ return [
         'aspect' => [
             'namespace' => 'App\\Aspect',
         ],
+        'class' => [
+            'namespace' => 'App',
+        ],
         'command' => [
             'namespace' => 'App\\Command',
         ],
