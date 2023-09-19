@@ -59,37 +59,38 @@ class RegisterServiceListener implements ListenerInterface
     public function process(object $event): void
     {
         $register = $this->getEnableRegister();
-        if($register){
-            $attempts = 10;
-            while ($attempts > 0) {
-                try {
-                    $services = $this->serviceManager->all();
-                    $servers = $this->getServers();
-                    foreach ($services as $serviceName => $serviceProtocols) {
-                        foreach ($serviceProtocols as $paths) {
-                            foreach ($paths as $service) {
-                                if (! isset($service['publishTo'], $service['server'])) {
-                                    continue;
-                                }
-                                [$address, $port] = $servers[$service['server']];
-                                if ($governance = $this->governanceManager->get($service['publishTo'])) {
-                                    if (! $governance->isRegistered($serviceName, $address, (int) $port, $service)) {
-                                        $governance->register($serviceName, $address, (int) $port, $service);
-                                    }
+        if (! $register) {
+            return;
+        }
+
+        $attempts = 10;
+        while ($attempts > 0) {
+            try {
+                $services = $this->serviceManager->all();
+                $servers = $this->getServers();
+                foreach ($services as $serviceName => $serviceProtocols) {
+                    foreach ($serviceProtocols as $paths) {
+                        foreach ($paths as $service) {
+                            if (! isset($service['publishTo'], $service['server'])) {
+                                continue;
+                            }
+                            [$address, $port] = $servers[$service['server']];
+                            if ($governance = $this->governanceManager->get($service['publishTo'])) {
+                                if (! $governance->isRegistered($serviceName, $address, (int) $port, $service)) {
+                                    $governance->register($serviceName, $address, (int) $port, $service);
                                 }
                             }
                         }
                     }
-                    break;
-                } catch (Exception $exception) {
-                    $this->logger->error('Cannot register service, connect service center failed, re-register after 1 seconds.');
-                    $this->logger->error((string) $exception);
-                    sleep(1);
-                    --$attempts;
                 }
+                break;
+            } catch (Exception $exception) {
+                $this->logger->error('Cannot register service, connect service center failed, re-register after 1 seconds.');
+                $this->logger->error((string) $exception);
+                sleep(1);
+                --$attempts;
             }
         }
-        
     }
 
     protected function getServers(): array
@@ -123,6 +124,6 @@ class RegisterServiceListener implements ListenerInterface
     protected function getEnableRegister(): bool
     {
         $enable = $this->config->get('services.enable', []);
-        return $enable['register']??true;
+        return $enable['register'] ?? true;
     }
 }
