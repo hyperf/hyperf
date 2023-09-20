@@ -12,7 +12,7 @@
 ## Fixed
 
 - [#6160](https://github.com/hyperf/hyperf/pull/6160) Fixed bug that service governance still registers services even when `services.enable.register` is `false`.
-- [#6162](https://github.com/hyperf/hyperf/pull/6162) Fixed bug that the mutex lock of `crontab` cannot not work well when the crontab executed more than one hour (the default expired time).
+- [#6162](https://github.com/hyperf/hyperf/pull/6162) [#6163](https://github.com/hyperf/hyperf/pull/6163) Fixed bug that the mutex lock of `crontab` cannot not work well when the crontab executed more than one hour (the default expired time).
 
 # v3.0.36 - 2023-09-15
 

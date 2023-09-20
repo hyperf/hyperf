@@ -46,13 +46,14 @@ class RedisServerMutex implements ServerMutex
         $result = $redis->set($mutexName, $this->macAddress, ['NX', 'EX' => $crontab->getMutexExpires()]);
 
         if ($result) {
-            $this->timer->tick(1, fn () => $redis->expire($mutexName, $redis->ttl($mutexName) + 1));
+            $this->timer->tick(1, function () use ($mutexName, $redis) {
+                $redis->exists($mutexName) && $redis->expire($mutexName, $redis->ttl($mutexName) + 1);
+            });
 
             Coroutine::create(function () use ($redis, $mutexName) {
                 CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
                 $redis->del($mutexName);
             });
-
             return true;
         }
 
