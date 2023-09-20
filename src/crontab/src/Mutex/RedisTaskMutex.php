@@ -33,7 +33,10 @@ class RedisTaskMutex implements TaskMutex
         $redis = $this->redisFactory->get($crontab->getMutexPool());
         $mutexName = $this->getMutexName($crontab);
         $attempted = (bool) $redis->set($mutexName, $crontab->getName(), ['NX', 'EX' => $crontab->getMutexExpires()]);
-        $attempted && $this->timer->tick(1, fn () => $redis->expire($mutexName, $redis->ttl($mutexName) + 1), $mutexName);
+        $attempted && $this->timer->tick(1, function () use ($mutexName, $redis) {
+            var_dump($mutexName, $redis->ttl($mutexName));
+            $redis->exists($mutexName) && $redis->expire($mutexName, $redis->ttl($mutexName) + 1);
+        }, $mutexName);
         return $attempted;
     }
 
@@ -52,7 +55,8 @@ class RedisTaskMutex implements TaskMutex
      */
     public function remove(Crontab $crontab)
     {
-        CoordinatorManager::until($this->getMutexName($crontab))->resume();
+        CoordinatorManager::until($mutexName = $this->getMutexName($crontab))->resume();
+        CoordinatorManager::clear($mutexName);
         $this->redisFactory->get($crontab->getMutexPool())->del(
             $this->getMutexName($crontab)
         );
