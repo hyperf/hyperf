@@ -25,6 +25,8 @@ class RedisServerMutex implements ServerMutex
 
     private Timer $timer;
 
+    private ?int $timerId = null;
+
     public function __construct(private RedisFactory $redisFactory)
     {
         $this->macAddress = $this->getMacAddress();
@@ -46,14 +48,16 @@ class RedisServerMutex implements ServerMutex
         $result = $redis->set($mutexName, $this->macAddress, ['NX', 'EX' => $crontab->getMutexExpires()]);
 
         if ($result) {
-            $this->timer->tick(1, fn () => $redis->expire($mutexName, $redis->ttl($mutexName) + 1), $mutexName);
+            $this->timerId ??= $this->timer->tick(1, fn () => $redis->expire($mutexName, $redis->ttl($mutexName) + 1));
+
             Coroutine::create(function () use ($crontab, $redis, $mutexName) {
                 $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($crontab->getMutexExpires());
                 if ($exited) {
                     $redis->del($mutexName);
-                    CoordinatorManager::until($mutexName)->resume();
+                    $this->timer->clear($this->timerId);
                 }
             });
+
             return true;
         }
 
