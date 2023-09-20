@@ -8,11 +8,11 @@
 
 - [#6154](https://github.com/hyperf/hyperf/pull/6154) Use PHP native `json_validate` to validate is json if function is available.
 - [#6157](https://github.com/hyperf/hyperf/pull/6157) Record the exception message only by opening the exception switch and closing the ignore switch when using `trace`.
-- [#6162](https://github.com/hyperf/hyperf/pull/6162) Optimized crontab mutex.
 
 ## Fixed
 
 - [#6160](https://github.com/hyperf/hyperf/pull/6160) Fixed bug that service governance still registers services even when `services.enable.register` is `false`.
+- [#6162](https://github.com/hyperf/hyperf/pull/6162) Fixed bug that the mutex lock of `crontab` cannot not work well when the crontab executed more than one hour (the default expired time).
 
 # v3.0.36 - 2023-09-15
 
