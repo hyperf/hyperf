@@ -27,6 +27,11 @@ class ResponsePlusProxy implements ResponsePlusInterface, Stringable
         return $this->toString();
     }
 
+    public function __call($name, $arguments)
+    {
+        return $this->response->{$name}(...$arguments);
+    }
+
     public function getProtocolVersion(): string
     {
         return $this->response->getProtocolVersion();
@@ -184,10 +189,5 @@ class ResponsePlusProxy implements ResponsePlusInterface, Stringable
     public function withStatus($code, $reasonPhrase = ''): static
     {
         return new static($this->response->withStatus($code, $reasonPhrase));
-    }
-
-    public function __call($name, $arguments)
-    {
-        return $this->response->{$name}(...$arguments);
     }
 }
