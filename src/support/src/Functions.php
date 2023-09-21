@@ -250,3 +250,11 @@ function build_sql(string $sql, array $bindings = []): string
 
     return $sql;
 }
+
+/**
+ * Sleep milliseconds.
+ */
+function msleep(int $milliSeconds): void
+{
+    usleep($milliSeconds * 1000);
+}
