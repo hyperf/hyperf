@@ -93,7 +93,10 @@ class KafkaClientFactory implements ClientFactory
                     try {
                         $closure->call($this);
                     } catch (Throwable) {
-                        $this->producer?->close();
+                        try {
+                            $this->producer->close();
+                        } catch (Throwable) {
+                        }
                         break;
                     } finally {
                         $closure = null;
