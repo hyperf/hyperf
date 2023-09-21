@@ -185,4 +185,9 @@ class ResponsePlusProxy implements ResponsePlusInterface, Stringable
     {
         return new static($this->response->withStatus($code, $reasonPhrase));
     }
+
+    public function __call($name, $arguments)
+    {
+        return $this->response->{$name}(...$arguments);
+    }
 }
