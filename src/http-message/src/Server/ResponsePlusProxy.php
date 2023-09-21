@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Server;
 
+use Hyperf\Coroutine\Exception\InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Stringable;
@@ -27,9 +28,22 @@ class ResponsePlusProxy implements ResponsePlusInterface, Stringable
         return $this->toString();
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
-        return $this->response->{$name}(...$arguments);
+        if (str_starts_with($name, 'with')) {
+            return new static($this->response->{$name}(...$arguments));
+        }
+
+        if (str_starts_with($name, 'get')) {
+            return $this->response->{$name}(...$arguments);
+        }
+
+        if (str_starts_with($name, 'set')) {
+            $this->response->{$name}(...$arguments);
+            return $this;
+        }
+
+        throw new InvalidArgumentException(sprintf('The method %s is not supported.', $name));
     }
 
     public function getProtocolVersion(): string
