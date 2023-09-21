@@ -2,7 +2,7 @@
 
 ## 概念
 
-Hyperf 是運行於 `Swoole 4` 的協程和 `Swow` 協程之上的，這也是 Hyperf 能提供高效能的其中一個很大的因素。
+Hyperf 是運行於 `Swoole 5` 的協程和 `Swow` 協程之上的，這也是 Hyperf 能提供高效能的其中一個很大的因素。
 
 ### PHP-FPM 的運作模式
 

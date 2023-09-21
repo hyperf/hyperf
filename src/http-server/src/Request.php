@@ -25,7 +25,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use RuntimeException;
-use SplFileInfo;
 
 use function Hyperf\Collection\data_get;
 use function Hyperf\Support\value;
@@ -335,8 +334,8 @@ class Request implements RequestInterface
      */
     public function hasFile(string $key): bool
     {
-        if ($file = $this->file($key)) {
-            return $this->isValidFile($file);
+        if ($this->file($key)) {
+            return true;
         }
         return false;
     }
@@ -496,15 +495,6 @@ class Request implements RequestInterface
         if (Context::has($this->contextkeys['parsedData'])) {
             Context::set($this->contextkeys['parsedData'], null);
         }
-    }
-
-    /**
-     * Check that the given file is a valid SplFileInfo instance.
-     * @param mixed $file
-     */
-    protected function isValidFile($file): bool
-    {
-        return $file instanceof SplFileInfo && $file->getPath() !== '';
     }
 
     /**

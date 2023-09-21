@@ -143,8 +143,6 @@ $message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, 'user_id');
 
 ### 國際化
 
-> 該功能僅在 v1.1.13 及往後的版本上可用
-
 要使 [hyperf/constants](https://github.com/hyperf/constants) 組件支持國際化，就必須要安裝 [hyperf/translation](https://github.com/hyperf/translation) 組件並配置好語言文件，如下：
 
 ```

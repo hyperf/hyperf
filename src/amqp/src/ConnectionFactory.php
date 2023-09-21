@@ -29,14 +29,14 @@ class ConnectionFactory
     /**
      * @var AMQPConnection[][]
      */
-    protected $connections = [];
+    protected array $connections = [];
 
     public function __construct(protected ContainerInterface $container)
     {
         $this->config = $this->container->get(ConfigInterface::class);
     }
 
-    public function refresh(string $pool)
+    public function refresh(string $pool): void
     {
         $config = $this->getConfig($pool);
         $count = $config['pool']['connections'] ?? 1;

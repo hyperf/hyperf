@@ -2,7 +2,7 @@
 
 ## 概念
 
-Hyperf 是运行于 `Swoole 4` 的协程和 `Swow` 协程之上的，这也是 Hyperf 能提供高性能的其中一个很大的因素。
+Hyperf 是运行于 `Swoole 5` 的协程和 `Swow` 协程之上的，这也是 Hyperf 能提供高性能的其中一个很大的因素。
 
 ### PHP-FPM 的运作模式
 

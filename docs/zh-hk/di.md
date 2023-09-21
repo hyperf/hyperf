@@ -65,8 +65,7 @@ class IndexController
 
 > 注意使用構造函數注入時，調用方也就是 `IndexController` 必須是由 DI 創建的對象才能完成自動注入，而 Controller 默認是由 DI 創建的，所以可以直接使用構造函數注入
 
-當您希望定義一個可選的依賴項時，可以通過給參數定義為 `nullable` 或將參數的默認值定義為 `null`，即表示該參數如果在 DI 容器中沒有找到或無法創建對應的對象時，不拋出異常而是直接使用 `null` 來注入。*(該功能僅在
-1.1.0 或更高版本可用)*
+當您希望定義一個可選的依賴項時，可以通過給參數定義為 `nullable` 或將參數的默認值定義為 `null`，即表示該參數如果在 DI 容器中沒有找到或無法創建對應的對象時，不拋出異常而是直接使用 `null` 來注入。
 
 ```php
 <?php
@@ -141,11 +140,9 @@ class IndexController
     /**
      * 通過 `#[Inject]` 註解注入由註解聲明的屬性類型對象
      * 當 UserService 不存在於 DI 容器內或不可創建時，則注入 null
-     * 
-     * @var UserService
      */
     #[Inject(required: false)]
-    private $userService;
+    private ?UserService $userService;
     
     public function index()
     {
@@ -212,11 +209,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
-    /**
-     * @var UserServiceInterface
-     */
     #[Inject]
-    private $userService;
+    private UserServiceInterface $userService;
     
     public function index()
     {
@@ -368,6 +362,36 @@ isset($proxy->someProperty);
 unset($proxy->someProperty);
 ```
 
+### 綁定權重
+
+自 v3.0.17 版本開始，增加了權重功能。可以按照權重，注入權重最大的對象。例如下述兩份 `ConfigProvider` 配置
+
+```php
+<?php
+use FooInterface;
+use Foo;
+
+return [
+    'dependencies' => [
+        FooInterface::class => new PriorityDefinition(Foo::class, 1),
+    ]
+];
+```
+
+```php
+<?php
+use FooInterface;
+use Foo2;
+
+return [
+    'dependencies' => [
+        FooInterface::class => Foo2::class,
+    ]
+];
+```
+
+當不使用 `PriorityDefinition` 時，權重為 0。所以被綁定到 `FooInterface` 是 `Foo`。
+
 ## 短生命週期對象
 
 通過 `new` 關鍵詞創建的對象毫無疑問的短生命週期的，那麼如果希望創建一個短生命週期的對象但又希望使用 `構造函數依賴自動注入功能`
@@ -405,7 +429,7 @@ class IndexController
 ```   
 
 在某些更極端動態的情況下，或者非 `容器(Container)` 的管理作用之下時，想要獲取到 `容器(Container)`
-對象還可以通過 `\Hyperf\Context\ApplicationContext::getContaienr()` 方法來獲得 `容器(Container)` 對象。
+對象還可以通過 `\Hyperf\Context\ApplicationContext::getContainer()` 方法來獲得 `容器(Container)` 對象。
 
 ```php
 $container = \Hyperf\Context\ApplicationContext::getContainer();

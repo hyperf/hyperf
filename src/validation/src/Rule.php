@@ -13,6 +13,8 @@ namespace Hyperf\Validation;
 
 use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
+use Hyperf\Validation\Rules\ExcludeIf;
+use Hyperf\Validation\Rules\ProhibitedIf;
 
 class Rule
 {
@@ -72,5 +74,15 @@ class Rule
     public static function unique(string $table, string $column = 'NULL'): Rules\Unique
     {
         return new Rules\Unique($table, $column);
+    }
+
+    public static function prohibitedIf($callback): ProhibitedIf
+    {
+        return new ProhibitedIf($callback);
+    }
+
+    public static function excludeIf($callback): ExcludeIf
+    {
+        return new ExcludeIf($callback);
     }
 }

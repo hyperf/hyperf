@@ -16,8 +16,12 @@ use Throwable;
 
 class FailToExecute extends Event
 {
-    public function __construct(Crontab $crontab, public Throwable $throwable)
+    public function __construct(public Crontab $crontab, public Throwable $throwable)
     {
-        parent::__construct($crontab);
+    }
+
+    public function getThrowable(): Throwable
+    {
+        return $this->throwable;
     }
 }

@@ -422,7 +422,7 @@ class DebugCommand extends HyperfCommand
 
 # 執行命令
 
-!> 注意：在執行命令時，預設會觸發事件分發，可透過新增 `--disable-event-dispatcher` 引數來開啟。
+!> 注意：在執行命令時，預設會觸發事件分發，可透過新增 `--disable-event-dispatcher` 引數來關閉。
 
 ## 命令列中執行
 

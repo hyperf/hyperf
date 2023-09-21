@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Server;
 
+use Hyperf\HttpServer\PriorityMiddleware;
+
 use function Hyperf\Tappable\tap;
 
 class Option
@@ -24,6 +26,11 @@ class Option
      * Whether to enable request lifecycle event.
      */
     protected bool $enableRequestLifecycle = false;
+
+    /**
+     * Whether to sort middlewares by priority.
+     */
+    protected bool $mustSortMiddlewares = false;
 
     public static function make(array|Option $options): Option
     {
@@ -56,6 +63,27 @@ class Option
     public function setEnableRequestLifecycle(bool $enableRequestLifecycle): static
     {
         $this->enableRequestLifecycle = $enableRequestLifecycle;
+        return $this;
+    }
+
+    public function isMustSortMiddlewares(): bool
+    {
+        return $this->mustSortMiddlewares;
+    }
+
+    public function setMustSortMiddlewares(bool $mustSortMiddlewares): static
+    {
+        $this->mustSortMiddlewares = $mustSortMiddlewares;
+        return $this;
+    }
+
+    public function setMustSortMiddlewaresByMiddlewares(array $middlewares): static
+    {
+        foreach ($middlewares as $middleware) {
+            if (is_int($middleware) || $middleware instanceof PriorityMiddleware) {
+                return $this->setMustSortMiddlewares(true);
+            }
+        }
         return $this;
     }
 }

@@ -305,6 +305,9 @@ class GrpcClient
                     $channel->push($response);
                     if (! $response->pipeline) {
                         unset($this->recvChannelMap[$streamId]);
+                        if (! $channel->isEmpty()) {
+                            $channel->pop();
+                        }
                         $this->channelPool->push($channel);
                     }
                     // If wait status is equal to WAIT_CLOSE, and no coroutine is waiting, then break the recv loop.

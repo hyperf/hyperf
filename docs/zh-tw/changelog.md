@@ -1,5 +1,64 @@
 # 版本更新記錄
 
+# v3.0.35 - 2023-09-01
+
+## 修復
+
+- [#6097](https://github.com/hyperf/hyperf/pull/6097) 修復使用非 `zipkin` 的 `tracer` 元件時，會出現報錯的問題。
+- [#6099](https://github.com/hyperf/hyperf/pull/6099) 修復使用 `Redis` 時，恆定頻率釋放連結模式無法正常使用的問題。
+- [#6110](https://github.com/hyperf/hyperf/pull/6110) 修復使用 `Nacos GRPC` 的配置中心時，多程序模式無法正常工作的問題。
+
+## 新增
+
+- [#6096](https://github.com/hyperf/hyperf/pull/6096) 為 `Crontab` 元件中的事件增加 `getThrowable` 方法。
+- [#6094](https://github.com/hyperf/hyperf/pull/6094) 新增驗證器規則 `ExcludeIf` `File` `ImageFile` 和 `ProhibitedIf`。
+- [#6112](https://github.com/hyperf/hyperf/pull/6112) 為 `Hyperf\Kafka\Producer` 增加 `sendAsync` 和 `sendBatchAsync` 兩個新方法。
+
+## 最佳化
+
+- [#6098](https://github.com/hyperf/hyperf/pull/6098) 最佳化 `hyperf/tracer` `kafka` 上報器，增加其穩定性。
+- [#6100](https://github.com/hyperf/hyperf/pull/6100) 最佳化 `hyperf/tracer` `HTTP` 上報器，增加其效能和穩定性。
+- [#6108](https://github.com/hyperf/hyperf/pull/6108) 最佳化命令 `describe:routes`，展示排序後的中介軟體。
+- [#6111](https://github.com/hyperf/hyperf/pull/6111) 為 `tracer` 上報器，增加日誌輸出能力。
+
+# v3.0.34 - 2023-08-25
+
+## 新增
+
+- [#6060](https://github.com/hyperf/hyperf/pull/6060) 為 `tracer` 元件增加 `request.uri` 標籤。
+- [#6063](https://github.com/hyperf/hyperf/pull/6063) 為 `Request` 相關事件，增加服務名引數 `$server`。
+- [#6070](https://github.com/hyperf/hyperf/pull/6070) 為元件 `hyperf/rpc-multilex` 增加 `php_serialize` 協議。
+- [#6069](https://github.com/hyperf/hyperf/pull/6069) [#6075](https://github.com/hyperf/hyperf/pull/6075) 為元件 `hyperf/tracer` 增加 `kafka` 上報器。
+- [#6078](https://github.com/hyperf/hyperf/pull/6078) 新增方法 `Hyperf\Support\Composer::hasPackage()`。
+- [#6083](https://github.com/hyperf/hyperf/pull/6083) [#6084](https://github.com/hyperf/hyperf/pull/6084) 支援中介軟體排序功能。
+
+## 修復
+
+- [#6065](https://github.com/hyperf/hyperf/pull/6065) 修復方法 `Context::override` 和 `Context::getOrSet` 沒法對指定協程 ID 使用的問題。
+
+## 最佳化
+
+- [#6046](https://github.com/hyperf/hyperf/pull/6046) 從協程上線文中讀取 `tracer` 例項。
+- [#6061](https://github.com/hyperf/hyperf/pull/6061) 為 `server` 配置，增加 `key-value` 模式的支援。
+- [#6077](https://github.com/hyperf/hyperf/pull/6077) 當使用 `#[Hyperf\Constants\Annotation\Constants]` 時，避免 `IDE` 觸發 `deprecated` 警告。
+
+# v3.0.33 - 2023-08-18
+
+## 修復
+
+- [#6011](https://github.com/hyperf/hyperf/pull/6011) 修復 `invocable` 控制器路由無法正常使用驗證器的 BUG。
+- [#6013](https://github.com/hyperf/hyperf/pull/6013) 修復 `no_aspect` 會被覆蓋的問題。
+- [#6053](https://github.com/hyperf/hyperf/pull/6053) 修復方法 `Arr::has` 時，`Interger` 型別引數會導致報錯的問題。
+
+## 最佳化
+
+- [#6023](https://github.com/hyperf/hyperf/pull/6023) 使用 `Tracer` 例項時，優先從協程上下文中獲取。
+- [#6027](https://github.com/hyperf/hyperf/pull/6027) 最佳化協程下 `Tracer` 的使用邏輯。
+
+## 即將廢棄
+
+- [#6044](https://github.com/hyperf/hyperf/pull/6044) 設定 `Hyperf\Coroutine\Traits\Container` 為即將廢棄。
+
 # v3.0.32 - 2023-08-09
 
 ## 新增

@@ -147,7 +147,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this->container;
     }
 
-    protected function reply($data, AMQPMessage $message)
+    protected function reply(mixed $data, AMQPMessage $message): void
     {
         $packer = ApplicationContext::getContainer()->get(Packer::class);
 

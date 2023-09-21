@@ -34,7 +34,12 @@
 - [#5950](https://github.com/hyperf/hyperf/pull/5950) Added `Job::setMaxAttempts` method and `dispatch` helper function for `hyperf/async-queue`.
 - [#5967](https://github.com/hyperf/hyperf/pull/5967) Added component `hyperf/migration-generator` which used to generate migrations from databases.
 - [#5983](https://github.com/hyperf/hyperf/pull/5983) [#5985](https://github.com/hyperf/hyperf/pull/5985) Added `skipCacheResults` to annotations of `hyperf/cache`.
-- [#5994](https://github.com/hyperf/hyperf/pull/5994) Adds `events` of `crontab` lifecycle.
+- [#5994](https://github.com/hyperf/hyperf/pull/5994) Added `events` of `crontab` lifecycle.
+- [#6039](https://github.com/hyperf/hyperf/pull/6039) Support semantic crontab rules.
+- [#6082](https://github.com/hyperf/hyperf/pull/6082) Added `hyperf/stdlib` component.
+- [#6085](https://github.com/hyperf/hyperf/pull/6085) Added an error count to the database connection to ensure that the connection can be reset when occur too many exceptions.
+- [#6106](https://github.com/hyperf/hyperf/pull/6106) Support some validation rules.
+- [#6124](https://github.com/hyperf/hyperf/pull/6124) Added `Hyperf\AsyncQueue\Job::fail()`.
 
 ## Optimized
 
@@ -53,6 +58,8 @@
 - [#5972](https://github.com/hyperf/hyperf/pull/5972) `Collection::except()` with null returns all.
 - [#5973](https://github.com/hyperf/hyperf/pull/5973) Simplified the handlers definition of logger.
 - [#6010](https://github.com/hyperf/hyperf/pull/6010) Throw exception when cast class is not existed.
+- [#6030](https://github.com/hyperf/hyperf/pull/6030) Support buffer mechanism in standalone process of metric.
+- [#6131](https://github.com/hyperf/hyperf/pull/6131) Throw invalid argument exception when the crontab task is `null`.
 
 ## Removed
 
@@ -61,16 +68,22 @@
 - [x] Remove deprecated codes.
 - [#5813](https://github.com/hyperf/hyperf/pull/5813) Removed support for swoole 4.x
 - [#5859](https://github.com/hyperf/hyperf/pull/5859) Removed string cache from `Hyperf\Stringable\Str`
+- [#6040](https://github.com/hyperf/hyperf/pull/6040) Removed some deprecated methods from `Hyperf\Di\Annotation\AbstractAnnotation`.
+- [#6043](https://github.com/hyperf/hyperf/pull/6043) Removed deprecated `Hyperf\Coroutine\Traits\Container`.
 
 ## Changed
 
 - [#5847](https://github.com/hyperf/hyperf/pull/5847) Changed the default redis key for metric.
 - [#5943](https://github.com/hyperf/hyperf/pull/5943) Don't remove the node from load balancer of `json rpc http transporter` when the status code isn't 200.
 - [#5961](https://github.com/hyperf/hyperf/pull/5961) Using `enum` instead of `class` for `Hyperf\Amqp\Result` and `Hyperf\Amqp\Message\Type`.
+- [#6022](https://github.com/hyperf/hyperf/pull/6022) When using `Base62::decode` to decode the incorrect data, it should be thrown `InvalidArgumentException` instead of `TypeError`.
+- [#6128](https://github.com/hyperf/hyperf/pull/6128) When using multi-level directories for `hyperf/config`, you can use `config('a.c')` to get the configurations from `autoload/a/c.php`.
 
 ## Fixed
 
 - [#5771](https://github.com/hyperf/hyperf/pull/5771) Fixed bug that the return type of `Model::updateOrInsert` isn't boolean.
+- [#6033](https://github.com/hyperf/hyperf/pull/6033) Fixed bug that `RequestContext` and `ResponseContext` cannot get instance from another coroutines.
+- [#6056](https://github.com/hyperf/hyperf/pull/6056) Fixed bug that `Hyperf\HttpServer\Request::hasFile()` don't support `Swow`.
 
 ## Deprecated
 

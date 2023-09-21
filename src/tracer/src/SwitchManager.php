@@ -27,6 +27,7 @@ class SwitchManager
             // beta feature, please don't enable 'method' in production environment
             'method' => false,
             'error' => false,
+            'ignore_exceptions' => [],
         ];
 
     /**
@@ -47,5 +48,16 @@ class SwitchManager
         }
 
         return $this->config[$identifier] && Context::get('tracer.root') instanceof Span;
+    }
+
+    public function isIgnoreException(string $className): bool
+    {
+        $ignoreExceptions = $this->config['ignore_exceptions'] ?? [];
+        foreach ($ignoreExceptions as $ignoreException) {
+            if (is_a($className, $ignoreException, true)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

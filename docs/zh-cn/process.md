@@ -167,3 +167,32 @@ class DemoProcess extends AbstractProcess
     }
 }
 ```
+
+如果使用了异步 IO，没办法将逻辑写到循环里时，可以尝试以下写法
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\Process;
+
+use Hyperf\Process\AbstractProcess;
+use Hyperf\Process\Annotation\Process;
+use Swoole\Timer;
+
+#[Process(name: "demo_process")]
+class DemoProcess extends AbstractProcess
+{
+    public function handle(): void
+    {
+        Timer::tick(1000, function(){
+            var_dump(1);
+            // Do something...
+        });
+
+        while (true) {
+            sleep(1);
+        }
+    }
+}
+```

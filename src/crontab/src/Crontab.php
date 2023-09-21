@@ -16,6 +16,8 @@ use Hyperf\Engine\Channel;
 
 class Crontab
 {
+    use ManagesFrequencies;
+
     protected ?string $name = null;
 
     protected string $type = 'callback';

@@ -180,9 +180,26 @@ return [
 ];
 ```
 
-### 配置中间件
+#### 配置协程追踪开关
 
-配置完驱动之后，采集信息还需要配置一下中间件才能启用采集功能。
+协程的链路追踪并不在统一配置当中，属于可选版本的功能。
+
+我们只需要配置 `aspects.php`，加入以下 `Aspect` 即可开启。
+
+```php
+<?php
+
+return [
+    Hyperf\Tracer\Aspect\CoroutineAspect::class,
+];
+```
+
+### 配置中间件或监听器
+
+配置完驱动之后，采集信息还需要配置一下中间件或请求周期事件监听器才能启用采集功能。
+
+- 添加中间件
+
 打开 `config/autoload/middlewares.php` 文件，在 `http` 节点启用中间件。
 
 ```php
@@ -194,6 +211,20 @@ return [
     'http' => [
         \Hyperf\Tracer\Middleware\TraceMiddleware::class,
     ],
+];
+```
+
+- 或者添加监听器
+
+打开 `config/autoload/listeners.php` 文件，添加监听器。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    \Hyperf\Tracer\Listener\RequestTraceListener::class,
 ];
 ```
 

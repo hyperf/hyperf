@@ -10,17 +10,17 @@ composer require hyperf/amqp
 
 ## 默认配置
 
-|       配置       |  类型  |  默认值   |      备注      |
-|:----------------:|:------:|:---------:|:--------------:|
-|       host       | string | localhost |      Host      |
-|       port       |  int   |   5672    |     端口号     |
-|       user       | string |   guest   |     用户名     |
-|     password     | string |   guest   |      密码      |
-|      vhost       | string |     /     |     vhost      |
-| concurrent.limit |  int   |     0     | 同时消费的数量 |
+|       配置       |  类型  |  默认值   |    备注     |
+|:----------------:|:------:|:---------:|:---------:|
+|       host       | string | localhost |   Host    |
+|       port       |  int   |   5672    |    端口号    |
+|       user       | string |   guest   |    用户名    |
+|     password     | string |   guest   |    密码     |
+|      vhost       | string |     /     |   vhost   |
+| concurrent.limit |  int   |     0     | 同时消费的最大数量 |
 |       pool       | object |           |   连接池配置   |
 | pool.connections |  int   |     1     | 进程内保持的连接数 |
-|      params      | object |           |    基本配置    |
+|      params      | object |           |   基本配置    |
 
 ```php
 <?php
@@ -192,6 +192,15 @@ class DemoConsumer extends ConsumerMessage
 
 可以修改 `#[Consumer]` 注解中的 `maxConsumption` 属性，设置此消费者最大处理的消息数，达到指定消费数后，消费者进程会重启。
 
+### 设置并发消费
+ 
+影响消费速率的参数有三个地方
+
+- 可以修改 `#[Consumer]` 注解 `nums` 开启多个消费者
+- `ConsumerMessage` 基类下有一个属性 `$qos`，可以通过重写`$qos`中的`prefetch_size`或者`prefetch_count`的值控制每次从服务端拉取的消息数量
+- 配置文件中的 `concurrent.limit` 参数，控制消费协程的最大数量
+
+
 ### 消费结果
 
 框架会根据 `Consumer` 内的 `consume` 方法所返回的结果来决定该消息的响应行为，共有 4 中响应结果，分别为 `\Hyperf\Amqp\Result::ACK`、`\Hyperf\Amqp\Result::NACK`、`\Hyperf\Amqp\Result::REQUEUE`、`\Hyperf\Amqp\Result::DROP`，每个返回值分别代表如下行为：
@@ -202,6 +211,41 @@ class DemoConsumer extends ConsumerMessage
 | \Hyperf\Amqp\Result::NACK    | 消息没有被正确消费掉，以 `basic_nack` 方法来响应                     |
 | \Hyperf\Amqp\Result::REQUEUE | 消息没有被正确消费掉，以 `basic_reject` 方法来响应，并使消息重新入列 |
 | \Hyperf\Amqp\Result::DROP    | 消息没有被正确消费掉，以 `basic_reject` 方法来响应                   |
+
+### QOS 配置
+
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Consumers;
+
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
+
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
+class DemoConsumer extends ConsumerMessage
+{
+    protected ?array $qos = [
+        // AMQP 默认并没有实现此配置。
+        'prefetch_size' => 0,
+        // 同一个消费者，最高同时可以处理的消息数。
+        'prefetch_count' => 30,
+        // 因为 Hyperf 默认一个 Channel 只消费一个 队列，所以 global 设置为 true/false 效果是一样的。
+        'global' => false,
+    ];
+    
+    public function consumeMessage($data, AMQPMessage $message): string
+    {
+        print_r($data);
+        return Result::ACK;
+    }
+}
+```
 
 ## 延时队列
 

@@ -1,5 +1,74 @@
 # Changelogs
 
+# v3.0.35 - 2023-09-01
+
+## Fixed
+
+- [#6097](https://github.com/hyperf/hyperf/pull/6097) Fixed error that using non-zipkin driver of tracer.
+- [#6099](https://github.com/hyperf/hyperf/pull/6099) Fixed bug that `ConstantFrequency` cannot work when using `redis`.
+- [#6110](https://github.com/hyperf/hyperf/pull/6110) Fixed bug that configuration of other processes were not updated when using `nacos grpc client`.
+
+## Added
+
+- [#6096](https://github.com/hyperf/hyperf/pull/6096) Added `getThrowable` method to request events and crontab event.
+- [#6094](https://github.com/hyperf/hyperf/pull/6094) Added some validation rules such as `ExcludeIf` `File` `ImageFile` and `ProhibitedIf`.
+- [#6112](https://github.com/hyperf/hyperf/pull/6112) Added `sendSync` and `sendBatchAsync` methods for `Hyperf\Kafka\Producer`.
+
+## Optimized
+
+- [#6098](https://github.com/hyperf/hyperf/pull/6098) Optimize `kafka` reporter for `hyperf/tracer`.
+- [#6100](https://github.com/hyperf/hyperf/pull/6100) Optimize `HttpClientFactory` for `hyperf/tracer`.
+- [#6108](https://github.com/hyperf/hyperf/pull/6108) Optimize `describe:routes` command, sort middleware by MiddlewareManager
+- [#6111](https://github.com/hyperf/hyperf/pull/6111) Allowed output log when an exception occurs.
+
+# v3.0.34 - 2023-08-25
+
+## Added
+
+- [#6060](https://github.com/hyperf/hyperf/pull/6060) Supplement the missing tag configuration items.
+- [#6063](https://github.com/hyperf/hyperf/pull/6063) Added `$server` property to request events.
+- [#6070](https://github.com/hyperf/hyperf/pull/6070) Added `php_serialize` protocol for `hyperf/rpc-multilex`.
+- [#6069](https://github.com/hyperf/hyperf/pull/6069) [#6075](https://github.com/hyperf/hyperf/pull/6075) Added kafka reporter for `hyperf/tracer`.
+- [#6078](https://github.com/hyperf/hyperf/pull/6078) Added `Hyperf\Support\Composer::hasPackage()` method.
+- [#6083](https://github.com/hyperf/hyperf/pull/6083) [#6084](https://github.com/hyperf/hyperf/pull/6084) Added middleware priority.
+
+## Fixed
+
+- [#6065](https://github.com/hyperf/hyperf/pull/6065) Fixed bug that `Context::override` and `Context::getOrSet` cannot work when using `$coroutineId`.
+
+## Optimized
+
+- [#6046](https://github.com/hyperf/hyperf/pull/6046) Using the tracer instance from coroutine context.
+- [#6061](https://github.com/hyperf/hyperf/pull/6061) Enhance server config to support key-value mode.
+- [#6077](https://github.com/hyperf/hyperf/pull/6077) Don't show deprecated notice when using `#[Hyperf\Constants\Annotation\Constants]`.
+
+# v3.0.33 - 2023-08-18
+
+## Fixed
+
+- [#6011](https://github.com/hyperf/hyperf/pull/6011) Fixed the issue where validation for invocable controller route requests was not working.
+- [#6013](https://github.com/hyperf/hyperf/pull/6013) Fixed the bug that `no_aspect` is overridden.
+- [#6053](https://github.com/hyperf/hyperf/pull/6053) Fixed bug that `Arr::has` with integer keys cannot work as expected.
+
+## Optimized
+
+- [#6023](https://github.com/hyperf/hyperf/pull/6023) Allow using the tracer instance from context, append `Trace-Id` to Response Header.
+- [#6027](https://github.com/hyperf/hyperf/pull/6027) Optimized the tracing in coroutine.
+
+## Deprecated
+
+- [#6044](https://github.com/hyperf/hyperf/pull/6044) Make `Hyperf\Coroutine\Traits\Container` as deprecated.
+
+# v3.0.32 - 2023-08-09
+
+## Added
+
+- [#5996](https://github.com/hyperf/hyperf/pull/5996) Support aspect to `GuzzleHttp\Client::request()`.
+
+## Fixed
+
+- [#6004](https://github.com/hyperf/hyperf/pull/6004) Fixed bug that the exit code is invalid when using command to throw exceptions.
+
 # v3.0.31 - 2023-07-27
 
 ## Fixed

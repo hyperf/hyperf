@@ -10,17 +10,17 @@ composer require hyperf/amqp
 
 ## 預設配置
 
-|       配置       |  型別  |  預設值   |      備註      |
-|:----------------:|:------:|:---------:|:--------------:|
-|       host       | string | localhost |      Host      |
-|       port       |  int   |   5672    |     埠號     |
-|       user       | string |   guest   |     使用者名稱     |
-|     password     | string |   guest   |      密碼      |
-|      vhost       | string |     /     |     vhost      |
-| concurrent.limit |  int   |     0     | 同時消費的數量 |
+|       配置       |  型別  |  預設值   |    備註     |
+|:----------------:|:------:|:---------:|:---------:|
+|       host       | string | localhost |   Host    |
+|       port       |  int   |   5672    |    埠號    |
+|       user       | string |   guest   |    使用者名稱    |
+|     password     | string |   guest   |    密碼     |
+|      vhost       | string |     /     |   vhost   |
+| concurrent.limit |  int   |     0     | 同時消費的最大數量 |
 |       pool       | object |           |   連線池配置   |
 | pool.connections |  int   |     1     | 程序內保持的連線數 |
-|      params      | object |           |    基本配置    |
+|      params      | object |           |   基本配置    |
 
 ```php
 <?php
@@ -192,6 +192,15 @@ class DemoConsumer extends ConsumerMessage
 
 可以修改 `#[Consumer]` 註解中的 `maxConsumption` 屬性，設定此消費者最大處理的訊息數，達到指定消費數後，消費者程序會重啟。
 
+### 設定併發消費
+ 
+影響消費速率的引數有三個地方
+
+- 可以修改 `#[Consumer]` 註解 `nums` 開啟多個消費者
+- `ConsumerMessage` 基類下有一個屬性 `$qos`，可以透過重寫`$qos`中的`prefetch_size`或者`prefetch_count`的值控制每次從服務端拉取的訊息數量
+- 配置檔案中的 `concurrent.limit` 引數，控制消費協程的最大數量
+
+
 ### 消費結果
 
 框架會根據 `Consumer` 內的 `consume` 方法所返回的結果來決定該訊息的響應行為，共有 4 中響應結果，分別為 `\Hyperf\Amqp\Result::ACK`、`\Hyperf\Amqp\Result::NACK`、`\Hyperf\Amqp\Result::REQUEUE`、`\Hyperf\Amqp\Result::DROP`，每個返回值分別代表如下行為：
@@ -202,6 +211,41 @@ class DemoConsumer extends ConsumerMessage
 | \Hyperf\Amqp\Result::NACK    | 訊息沒有被正確消費掉，以 `basic_nack` 方法來響應                     |
 | \Hyperf\Amqp\Result::REQUEUE | 訊息沒有被正確消費掉，以 `basic_reject` 方法來響應，並使訊息重新入列 |
 | \Hyperf\Amqp\Result::DROP    | 訊息沒有被正確消費掉，以 `basic_reject` 方法來響應                   |
+
+### QOS 配置
+
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Consumers;
+
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
+
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
+class DemoConsumer extends ConsumerMessage
+{
+    protected ?array $qos = [
+        // AMQP 預設並沒有實現此配置。
+        'prefetch_size' => 0,
+        // 同一個消費者，最高同時可以處理的訊息數。
+        'prefetch_count' => 30,
+        // 因為 Hyperf 預設一個 Channel 只消費一個 佇列，所以 global 設定為 true/false 效果是一樣的。
+        'global' => false,
+    ];
+    
+    public function consumeMessage($data, AMQPMessage $message): string
+    {
+        print_r($data);
+        return Result::ACK;
+    }
+}
+```
 
 ## 延時佇列
 
@@ -241,11 +285,11 @@ class DelayDirectProducer extends ProducerMessage
 {
     use ProducerDelayedMessageTrait;
 
-    protected $exchange = 'ext.hyperf.delay';
+    protected string $exchange = 'ext.hyperf.delay';
 
-    protected $type = Type::DIRECT;
+    protected Type|string $type = Type::DIRECT;
 
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
     public function __construct($data)
     {
@@ -253,6 +297,7 @@ class DelayDirectProducer extends ProducerMessage
     }
 }
 ```
+
 ### 消費者
 
 使用 `gen:amqp-consumer` 命令建立一個 `consumer`。
@@ -284,13 +329,13 @@ class DelayDirectConsumer extends ConsumerMessage
     use ProducerDelayedMessageTrait;
     use ConsumerDelayedMessageTrait;
 
-    protected $exchange = 'ext.hyperf.delay';
+    protected string $exchange = 'ext.hyperf.delay';
     
-    protected $queue = 'queue.hyperf.delay';
+    protected string $queue = 'queue.hyperf.delay';
     
-    protected $type = Type::DIRECT; //Type::FANOUT;
+    protected Type|string $type = Type::DIRECT; //Type::FANOUT;
     
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
     public function consumeMessage($data, AMQPMessage $message): string
     {
@@ -356,11 +401,12 @@ class DelayCommand extends HyperfCommand
 }
 
 ```
+
 執行命令列生產訊息
+
 ```
 php bin/hyperf.php demo:command
 ```
-
 
 ## RPC 遠端過程呼叫
 
@@ -430,9 +476,9 @@ use Hyperf\Amqp\Message\RpcMessage;
 class FooRpcMessage extends RpcMessage
 {
 
-    protected $exchange = 'hyperf';
+    protected string $exchange = 'hyperf';
 
-    protected $routingKey = 'hyperf';
+    protected array|string $routingKey = 'hyperf';
     
     public function __construct($data)
     {

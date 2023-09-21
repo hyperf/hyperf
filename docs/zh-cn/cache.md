@@ -44,8 +44,6 @@ $cache = $container->get(\Psr\SimpleCache\CacheInterface::class);
 组件提供 `Hyperf\Cache\Annotation\Cacheable` 注解，作用于类方法，可以配置对应的缓存前缀、失效时间、监听器和缓存组。
 例如，UserService 提供一个 user 方法，可以查询对应 id 的用户信息。当加上 `Hyperf\Cache\Annotation\Cacheable` 注解后，会自动生成对应的 Redis 缓存，key 值为 `user:id` ，超时时间为 `9000` 秒。首次查询时，会从数据库中查，后面查询时，会从缓存中查。
 
-> 缓存注解基于 [aop](zh-cn/aop.md) 和 [di](zh-cn/di.md)，所以只有在 `Container` 中获取到的对象实例才有效，比如通过 `$container->get` 和 `make` 方法所获得的对象，直接 `new` 出来的对象无法使用。
-
 ```php
 <?php
 
@@ -72,7 +70,11 @@ class UserService
 
 ### 清理 `#[Cacheable]` 生成的缓存
 
-当然，如果我们数据库中的数据改变了，如何删除缓存呢？这里就需要用到后面的监听器。下面新建一个 Service 提供一方法，来帮我们处理缓存。
+我们提供了 `CachePut` 和 `CacheEvict` 两个注解，来实现更新缓存和清除缓存操作。
+
+当然，我们也可以通过事件来删除缓存。下面新建一个 Service 提供一方法，来帮我们处理缓存。
+
+> 不过我们更加推荐用户使用注解处理，而非监听器
 
 ```php
 <?php
@@ -353,4 +355,3 @@ return [
     ],
 ];
 ```
-

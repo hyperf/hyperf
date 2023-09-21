@@ -24,19 +24,19 @@ class Container implements HyperfContainerInterface
     /**
      * Map of entries that are already resolved.
      */
-    private array $resolvedEntries;
+    protected array $resolvedEntries;
 
     /**
      * Map of definitions that are already fetched (local cache).
      */
-    private array $fetchedDefinitions = [];
+    protected array $fetchedDefinitions = [];
 
-    private Resolver\ResolverInterface $definitionResolver;
+    protected Resolver\ResolverInterface $definitionResolver;
 
     /**
      * Container constructor.
      */
-    public function __construct(private Definition\DefinitionSourceInterface $definitionSource)
+    public function __construct(protected Definition\DefinitionSourceInterface $definitionSource)
     {
         $this->definitionResolver = new ResolverDispatcher($this);
         // Auto-register the container.
@@ -149,7 +149,7 @@ class Container implements HyperfContainerInterface
     /**
      * @param array|callable|string $definition
      */
-    private function setDefinition(string $name, $definition): void
+    protected function setDefinition(string $name, $definition): void
     {
         // Clear existing entry if it exists
         if (array_key_exists($name, $this->resolvedEntries)) {
@@ -160,7 +160,7 @@ class Container implements HyperfContainerInterface
         $this->definitionSource->addDefinition($name, $definition);
     }
 
-    private function getDefinition(string $name): ?DefinitionInterface
+    protected function getDefinition(string $name): ?DefinitionInterface
     {
         // Local cache that avoids fetching the same definition twice
         if (! array_key_exists($name, $this->fetchedDefinitions)) {
@@ -173,7 +173,7 @@ class Container implements HyperfContainerInterface
     /**
      * Resolves a definition.
      */
-    private function resolveDefinition(DefinitionInterface $definition, array $parameters = [])
+    protected function resolveDefinition(DefinitionInterface $definition, array $parameters = [])
     {
         return $this->definitionResolver->resolve($definition, $parameters);
     }

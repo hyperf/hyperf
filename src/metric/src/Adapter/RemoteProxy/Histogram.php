@@ -11,13 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Metric\Adapter\RemoteProxy;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Metric\Contract\HistogramInterface;
-use Hyperf\Process\ProcessCollector;
+use Hyperf\Metric\Contract\MetricCollectorInterface;
 
 class Histogram implements HistogramInterface
 {
-    protected const TARGET_PROCESS_NAME = 'metric';
-
     /**
      * @var string[]
      */
@@ -38,7 +37,9 @@ class Histogram implements HistogramInterface
     public function put(float $sample): void
     {
         $this->sample = $sample;
-        $process = ProcessCollector::get(static::TARGET_PROCESS_NAME)[0];
-        $process->write(serialize($this));
+
+        ApplicationContext::getContainer()
+            ->get(MetricCollectorInterface::class)
+            ->add($this);
     }
 }

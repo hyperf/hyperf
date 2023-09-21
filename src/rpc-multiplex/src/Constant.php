@@ -15,6 +15,8 @@ class Constant
 {
     public const PROTOCOL_DEFAULT = 'multiplex.default';
 
+    public const PROTOCOL_PHP_SERIALIZE = 'multiplex.php_serialize';
+
     public const REQUEST_ID = 'request_id';
 
     public const ID = 'id';

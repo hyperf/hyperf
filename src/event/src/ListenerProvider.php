@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Event;
 
+use Hyperf\Stdlib\SplPriorityQueue;
 use Psr\EventDispatcher\ListenerProviderInterface;
-use SplPriorityQueue;
 
 class ListenerProvider implements ListenerProviderInterface
 {

@@ -115,6 +115,65 @@ class AsyncQueueConsumer extends ConsumerProcess
 }
 ```
 
+### 如何使用多个配置
+
+有的开发者会在特殊场景创建多个配置，比如某些消息要优先处理，所以会放到更加清闲的队列当中。例如以下配置
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'redis' => [
+            'pool' => 'default'
+        ],
+        'channel' => 'queue',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 5,
+        ],
+    ],
+    'fast' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'redis' => [
+            'pool' => 'default'
+        ],
+        'channel' => '{queue:fast}',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 5,
+        ],
+    ],
+];
+
+```
+
+但是，我们默认的 `Hyperf\AsyncQueue\Process\ConsumerProcess` 只会处理 `default` 配置，所以我们需要创建一个新的 `Process`
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Process;
+
+use Hyperf\AsyncQueue\Process\ConsumerProcess;
+use Hyperf\Process\Annotation\Process;
+
+#[Process(name: "async-queue")]
+class AsyncQueueConsumer extends ConsumerProcess
+{
+    protected string $queue = 'fast';
+}
+```
+
 ### 生产消息
 
 #### 传统方式
@@ -338,6 +397,32 @@ class QueueController extends AbstractController
 }
 ```
 
+### 默认脚本
+
+Arguments:
+  - queue_name: 队列配置名，默认为 default
+
+Options:
+  - channel_name: 队列名，例如失败队列 failed, 超时队列 timeout
+
+#### 展示当前队列的消息状态
+
+```shell
+$ php bin/hyperf.php queue:info {queue_name}
+```
+
+#### 重载所有失败/超时的消息到待执行队列
+
+```shell
+php bin/hyperf.php queue:reload {queue_name} -Q {channel_name}
+```
+
+#### 销毁所有失败/超时的消息
+
+```shell
+php bin/hyperf.php queue:flush {queue_name} -Q {channel_name}
+```
+
 ## 事件
 
 |   事件名称   |        触发时机         |                         备注                         |
@@ -497,7 +582,6 @@ return [
 ];
 
 ```
-
 
 ## 异步驱动之间的区别
 

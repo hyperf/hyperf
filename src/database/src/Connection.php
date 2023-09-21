@@ -147,6 +147,11 @@ class Connection implements ConnectionInterface
     protected static array $beforeExecutingCallbacks = [];
 
     /**
+     * Error count for executing SQL.
+     */
+    protected int $errorCount = 0;
+
+    /**
      * Create a new database connection instance.
      *
      * @param Closure|PDO $pdo
@@ -967,6 +972,11 @@ class Connection implements ConnectionInterface
         return static::$resolvers[$driver] ?? null;
     }
 
+    public function getErrorCount(): int
+    {
+        return $this->errorCount;
+    }
+
     /**
      * Escape a string value for safe SQL embedding.
      */
@@ -1115,11 +1125,9 @@ class Connection implements ConnectionInterface
     /**
      * Run a SQL statement.
      *
-     * @param string $query
-     * @param array $bindings
      * @throws QueryException
      */
-    protected function runQueryCallback($query, $bindings, Closure $callback)
+    protected function runQueryCallback(string $query, array $bindings, Closure $callback)
     {
         // To execute the statement, we'll simply call the callback, which will actually
         // run the SQL against the PDO connection. Then we can calculate the time it
@@ -1132,11 +1140,15 @@ class Connection implements ConnectionInterface
         // message to include the bindings with SQL, which will make this exception a
         // lot more helpful to the developer instead of just the database's errors.
         catch (Exception $e) {
+            ++$this->errorCount;
             throw new QueryException(
                 $query,
                 $this->prepareBindings($bindings),
                 $e
             );
+        } catch (Throwable $throwable) {
+            ++$this->errorCount;
+            throw $throwable;
         }
 
         return $result;
@@ -1153,13 +1165,9 @@ class Connection implements ConnectionInterface
     /**
      * Handle a query exception.
      *
-     * @param Exception $e
-     * @param string $query
-     * @param array $bindings
-     *
      * @throws Exception
      */
-    protected function handleQueryException($e, $query, $bindings, Closure $callback)
+    protected function handleQueryException(QueryException $e, string $query, array $bindings, Closure $callback)
     {
         if ($this->transactions >= 1) {
             throw $e;
@@ -1176,11 +1184,9 @@ class Connection implements ConnectionInterface
     /**
      * Handle a query exception that occurred during query execution.
      *
-     * @param string $query
-     * @param array $bindings
      * @throws QueryException
      */
-    protected function tryAgainIfCausedByLostConnection(QueryException $e, $query, $bindings, Closure $callback)
+    protected function tryAgainIfCausedByLostConnection(QueryException $e, string $query, array $bindings, Closure $callback)
     {
         if ($this->causedByLostConnection($e->getPrevious())) {
             $this->reconnect();

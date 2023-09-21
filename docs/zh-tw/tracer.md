@@ -180,9 +180,26 @@ return [
 ];
 ```
 
-### 配置中介軟體
+#### 配置協程追蹤開關
 
-配置完驅動之後，採集資訊還需要配置一下中介軟體才能啟用採集功能。
+協程的鏈路追蹤並不在統一配置當中，屬於可選版本的功能。
+
+我們只需要配置 `aspects.php`，加入以下 `Aspect` 即可開啟。
+
+```php
+<?php
+
+return [
+    Hyperf\Tracer\Aspect\CoroutineAspect::class,
+];
+```
+
+### 配置中介軟體或監聽器
+
+配置完驅動之後，採集資訊還需要配置一下中介軟體或請求週期事件監聽器才能啟用採集功能。
+
+- 新增中介軟體
+
 開啟 `config/autoload/middlewares.php` 檔案，在 `http` 節點啟用中介軟體。
 
 ```php
@@ -194,6 +211,20 @@ return [
     'http' => [
         \Hyperf\Tracer\Middleware\TraceMiddleware::class,
     ],
+];
+```
+
+- 或者新增監聽器
+
+開啟 `config/autoload/listeners.php` 檔案，新增監聽器。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    \Hyperf\Tracer\Listener\RequestTraceListener::class,
 ];
 ```
 
