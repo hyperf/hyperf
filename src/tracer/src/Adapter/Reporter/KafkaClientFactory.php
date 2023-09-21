@@ -93,7 +93,7 @@ class KafkaClientFactory implements ClientFactory
                     try {
                         $closure->call($this);
                     } catch (Throwable) {
-                        $this->producer->close();
+                        $this->producer?->close();
                         break;
                     } finally {
                         $closure = null;
@@ -106,6 +106,9 @@ class KafkaClientFactory implements ClientFactory
 
         Coroutine::create(function () {
             if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
+                while (! $this->chan->isEmpty()) {
+                    usleep(100 * 1000);
+                }
                 $this->close();
             }
         });
