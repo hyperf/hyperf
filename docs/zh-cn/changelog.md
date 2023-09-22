@@ -8,7 +8,7 @@
 
 ## 优化
 
-- [#6154](https://github.com/hyperf/hyperf/pull/6154) 再使用验证器组件时，如果原生方法 `json_validate` 存在，则使用其进行 `Json` 格式验证。
+- [#6154](https://github.com/hyperf/hyperf/pull/6154) 在使用验证器组件时，如果原生方法 `json_validate` 存在，则使用其进行 `Json` 格式验证。
 - [#6157](https://github.com/hyperf/hyperf/pull/6157) 在使用 `trace` 组件时，只记录打开记录异常开关，并且不在忽略列表中的信息。
 
 ## 修复
