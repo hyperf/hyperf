@@ -1,5 +1,21 @@
 # 版本更新記錄
 
+# v3.0.37 - 2023-09-22
+
+## 新增
+
+- [#6156](https://github.com/hyperf/hyperf/pull/6156) 為 `stringable` 組件增加了 `Str::replaceStart()` 等方法。
+
+## 優化
+
+- [#6154](https://github.com/hyperf/hyperf/pull/6154) 在使用驗證器組件時，如果原生方法 `json_validate` 存在，則使用其進行 `Json` 格式驗證。
+- [#6157](https://github.com/hyperf/hyperf/pull/6157) 在使用 `trace` 組件時，只記錄打開記錄異常開關，並且不在忽略列表中的信息。
+
+## 修復
+
+- [#6160](https://github.com/hyperf/hyperf/pull/6160) 修復當設置配置 `services.enable.register` 為 `false` 時，仍然會發布服務到服務中心的問題。
+- [#6162](https://github.com/hyperf/hyperf/pull/6162) 修復使用 `Crontab` 的時，當執行任務超過默認超時時間後，則不能很好的進行控制任務運行時機的問題。
+
 # v3.0.36 - 2023-09-15
 
 # 新增
