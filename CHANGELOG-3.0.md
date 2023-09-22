@@ -1,9 +1,32 @@
-# v3.0.36 - TBD
+# v3.0.38 - TBD
 
-# Added
+# v3.0.37 - 2023-09-22
+
+## Added
+
+- [#6156](https://github.com/hyperf/hyperf/pull/6156) Enhance stringable, such as `replaceStart` `isJson`.
+
+## Optimized
+
+- [#6154](https://github.com/hyperf/hyperf/pull/6154) Use PHP native `json_validate` to validate is json if function is available.
+- [#6157](https://github.com/hyperf/hyperf/pull/6157) Record the exception message only by opening the exception switch and closing the ignore switch when using `trace`.
+- [#6167](https://github.com/hyperf/hyperf/pull/6167) Optimized KafkaClientFactory of `hyperf/tracer`.
+
+## Fixed
+
+- [#6160](https://github.com/hyperf/hyperf/pull/6160) Fixed bug that service governance still registers services even when `services.enable.register` is `false`.
+- [#6162](https://github.com/hyperf/hyperf/pull/6162) [#6163](https://github.com/hyperf/hyperf/pull/6163) Fixed bug that the mutex lock of `crontab` cannot not work well when the crontab executed more than one hour (the default expired time).
+
+# v3.0.36 - 2023-09-15
+
+## Added
 
 - [#6062](https://github.com/hyperf/hyperf/pull/6057) Added `RequestTraceListener` for `hyperf/tracer`.
-- [#6143](https://github.com/hyperf/hyperf/pull/6143) Added `ignore_exceptions` for tracer
+- [#6143](https://github.com/hyperf/hyperf/pull/6143) Added `ignore_exceptions` for `hyperf/tracer`.
+
+## Optimized
+
+- [#6151](https://github.com/hyperf/hyperf/pull/6151) Optimized `FailToConsume` event for `hyperf/kafka`.
 
 ## Fixed
 

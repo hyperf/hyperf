@@ -114,7 +114,12 @@ class ConsumerManager
                         wait(function () use ($consumer, $consumerConfig, $message) {
                             $this->dispatcher?->dispatch(new BeforeConsume($consumer, $message));
 
-                            $result = $consumer->consume($message);
+                            try {
+                                $result = $consumer->consume($message);
+                            } catch (Throwable $exception) {
+                                $this->dispatcher?->dispatch(new FailToConsume($consumer, $message, $exception));
+                                throw $exception;
+                            }
 
                             if (! $consumerConfig->getAutoCommit()) {
                                 if (! is_string($result)) {
@@ -146,7 +151,6 @@ class ConsumerManager
                         $longLangConsumer->start();
                     } catch (Throwable $exception) {
                         $this->stdoutLogger->warning((string) $exception);
-                        $this->dispatcher?->dispatch(new FailToConsume($this->consumer, [], $exception));
                     }
 
                     if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(10)) {

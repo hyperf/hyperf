@@ -1,5 +1,37 @@
 # 版本更新记录
 
+# v3.0.37 - 2023-09-22
+
+## 新增
+
+- [#6156](https://github.com/hyperf/hyperf/pull/6156) 为 `stringable` 组件增加了 `Str::replaceStart()` 等方法。
+
+## 优化
+
+- [#6154](https://github.com/hyperf/hyperf/pull/6154) 在使用验证器组件时，如果原生方法 `json_validate` 存在，则使用其进行 `Json` 格式验证。
+- [#6157](https://github.com/hyperf/hyperf/pull/6157) 在使用 `trace` 组件时，只记录打开记录异常开关，并且不在忽略列表中的信息。
+
+## 修复
+
+- [#6160](https://github.com/hyperf/hyperf/pull/6160) 修复当设置配置 `services.enable.register` 为 `false` 时，仍然会发布服务到服务中心的问题。
+- [#6162](https://github.com/hyperf/hyperf/pull/6162) 修复使用 `Crontab` 的时，当执行任务超过默认超时时间后，则不能很好的进行控制任务运行时机的问题。
+
+# v3.0.36 - 2023-09-15
+
+# 新增
+
+- [#6062](https://github.com/hyperf/hyperf/pull/6057) 为 `hyperf/tracer` 新增 `RequestTraceListener` 监听器。
+- [#6143](https://github.com/hyperf/hyperf/pull/6143) 为 `hyperf/tracer` 增加 `ignore_exceptions` 配置。
+
+## 优化
+
+- [#6151](https://github.com/hyperf/hyperf/pull/6151) 优化 `hyperf/kafka` 组件中 `FailToConsume` 的触发时机。
+
+## 修复
+
+- [#6117](https://github.com/hyperf/hyperf/pull/6117) 修复 `GRPC` 客户端无法被复用的问题。
+- [#6146](https://github.com/hyperf/hyperf/pull/6146) 修复 `validateJson` 验证规则在高于 PHP 8.0 版本后，无法正常使用的问题。
+
 # v3.0.35 - 2023-09-01
 
 ## 修复
