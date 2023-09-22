@@ -65,7 +65,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     public function response(): ResponseInterface
     {
-        return ResponseContext::get()->setStatus(422);
+        return ResponseContext::get()->withStatus(422);
     }
 
     /**
