@@ -22,6 +22,8 @@ use longlang\phpkafka\Producer\ProducerConfig;
 use Throwable;
 use Zipkin\Reporters\Http\ClientFactory;
 
+use function Hyperf\Support\msleep;
+
 class KafkaClientFactory implements ClientFactory
 {
     protected ?Channel $chan = null;
@@ -93,7 +95,10 @@ class KafkaClientFactory implements ClientFactory
                     try {
                         $closure->call($this);
                     } catch (Throwable) {
-                        $this->producer->close();
+                        try {
+                            $this->producer->close();
+                        } catch (Throwable) {
+                        }
                         break;
                     } finally {
                         $closure = null;
@@ -106,6 +111,9 @@ class KafkaClientFactory implements ClientFactory
 
         Coroutine::create(function () {
             if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
+                while (! $this->chan->isEmpty()) {
+                    msleep(100);
+                }
                 $this->close();
             }
         });

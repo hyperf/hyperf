@@ -14,6 +14,7 @@ namespace Hyperf\Tracer\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Engine\Coroutine as Co;
+use Hyperf\Tracer\SwitchManager;
 use Hyperf\Tracer\TracerContext;
 use OpenTracing\Span;
 use Throwable;
@@ -23,6 +24,10 @@ class CoroutineAspect extends AbstractAspect
     public array $classes = [
         'Hyperf\Coroutine\Coroutine::create',
     ];
+
+    public function __construct(private SwitchManager $switchManager)
+    {
+    }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
@@ -46,7 +51,7 @@ class CoroutineAspect extends AbstractAspect
 
                 $callable();
             } catch (Throwable $e) {
-                if (isset($child)) {
+                if (isset($child) && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e::class)) {
                     $child->setTag('error', true);
                     $child->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
                 }

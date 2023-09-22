@@ -86,6 +86,7 @@ class Executor
                 case 'command':
                     $input = make(ArrayInput::class, [$crontab->getCallback()]);
                     $output = make(NullOutput::class);
+                    /** @var \Symfony\Component\Console\Application */
                     $application = $this->container->get(ApplicationInterface::class);
                     $application->setAutoExit(false);
                     $runnable = function () use ($application, $input, $output) {
