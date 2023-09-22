@@ -71,6 +71,8 @@ class BootProcessListener implements ListenerInterface
                 $instance->isEnable($server) && $instance->bind($server);
             }
         }
+
+        ProcessManager::setRunning(true);
     }
 
     private function getAnnotationProcesses()
