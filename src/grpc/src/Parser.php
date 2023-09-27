@@ -52,7 +52,7 @@ class Parser
     /**
      * @param null|Http2Response $response
      * @param mixed $deserialize
-     * @return \Grpc\StringifyAble[]|Message[]|Http2Response[]
+     * @return \Grpc\StringifyAble[]|Http2Response[]|Message[]
      */
     public static function parseResponse($response, $deserialize): array
     {
@@ -76,7 +76,6 @@ class Parser
 
     /**
      * @param Response $response
-     * @return Status|null
      */
     public static function statusFromResponse($response): ?Status
     {
