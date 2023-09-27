@@ -14,8 +14,7 @@ namespace Hyperf\Grpc;
 use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Internal\Message;
 use Google\Rpc\Status;
-use Swoole\Http\Response;
-use swoole_http2_response;
+use Swoole\Http2\Response;
 
 class Parser
 {
@@ -50,9 +49,9 @@ class Parser
     }
 
     /**
-     * @param null|swoole_http2_response $response
+     * @param null|Response $response
      * @param mixed $deserialize
-     * @return \Grpc\StringifyAble[]|Message[]|swoole_http2_response[]
+     * @return \Grpc\StringifyAble[]|Message[]|Response[]
      */
     public static function parseResponse($response, $deserialize): array
     {
@@ -75,10 +74,10 @@ class Parser
     }
 
     /**
-     * @param Response
      * @param mixed $response
+     * @return Status|null
      */
-    public static function statusFromResponse($response): ?Status
+    public static function statusFromResponse(Response $response): ?Status
     {
         $detailsEncoded = $response->headers['grpc-status-details-bin'] ?? '';
 
