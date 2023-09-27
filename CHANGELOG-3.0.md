@@ -11,6 +11,7 @@
 - [#6154](https://github.com/hyperf/hyperf/pull/6154) Use PHP native `json_validate` to validate is json if function is available.
 - [#6157](https://github.com/hyperf/hyperf/pull/6157) Record the exception message only by opening the exception switch and closing the ignore switch when using `trace`.
 - [#6167](https://github.com/hyperf/hyperf/pull/6167) Optimized KafkaClientFactory of `hyperf/tracer`.
+- [#6177](https://github.com/hyperf/hyperf/pull/6177) Optimized Base62 of `hyperf/codec` to support subclass rewriting.
 
 ## Fixed
 
