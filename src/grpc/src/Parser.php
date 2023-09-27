@@ -75,7 +75,6 @@ class Parser
 
     /**
      * @param mixed $response
-     * @return Status|null
      */
     public static function statusFromResponse(Response $response): ?Status
     {
