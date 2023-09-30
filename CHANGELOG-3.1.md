@@ -61,6 +61,7 @@
 - [#6030](https://github.com/hyperf/hyperf/pull/6030) Support buffer mechanism in standalone process of metric.
 - [#6131](https://github.com/hyperf/hyperf/pull/6131) Throw invalid argument exception when the crontab task is `null`.
 - [#6172](https://github.com/hyperf/hyperf/pull/6172) Optimized `ProcessManager` to make the `running` status more clear.
+- [#6184](https://github.com/hyperf/hyperf/pull/6184) Set logger when using safe socket in coroutine style tcp server.
 
 ## Removed
 
