@@ -171,7 +171,7 @@ class CoroutineServer implements ServerInterface
                             $fd = $socket->fd;
                             $options = $port->getOptions();
                             if ($options && $options->getSendChannelCapacity() > 0) {
-                                $socket = new SafeSocket($socket, $options->getSendChannelCapacity(), false);
+                                $socket = new SafeSocket($socket, $options->getSendChannelCapacity(), false, $this->logger);
                                 $connection = new Connection($socket);
                             }
 
