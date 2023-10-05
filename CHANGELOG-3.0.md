@@ -1,5 +1,9 @@
 # v3.0.38 - TBD
 
+## Fixed
+
+- [#6185](https://github.com/hyperf/hyperf/pull/6185) Fixed bug that `cleanUpExpiredOnce` failed when sids is empty when using `socketio-server`.
+
 # v3.0.37 - 2023-09-22
 
 ## Added
