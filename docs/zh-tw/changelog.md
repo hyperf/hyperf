@@ -1,5 +1,16 @@
 # 版本更新記錄
 
+# v3.0.38 - 2023-10-05
+
+## 修復
+
+- [#6183](https://github.com/hyperf/hyperf/pull/6183) 修復使用單測元件時，中介軟體權重無法正常使用的問題。
+- [#6185](https://github.com/hyperf/hyperf/pull/6185) 修復使用 `socketio-server` 時，`cleanUpExpiredOnce` 當 `sids` 為空時，無法正常使用的問題。
+
+## 最佳化
+
+- [#6177](https://github.com/hyperf/hyperf/pull/6177) 使 `hyperf/codec` 元件 `Base62` 工具類，可以更加便捷的被繼承重寫。
+
 # v3.0.37 - 2023-09-22
 
 ## 新增
