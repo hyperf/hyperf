@@ -195,9 +195,9 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
             foreach ($sids as $sid) {
                 $this->del($sid);
             }
-        }
 
-        $this->redis->zRem($this->getExpireKey(), ...$sids);
+            $this->redis->zRem($this->getExpireKey(), ...$sids);
+        }
     }
 
     public function setTtl(int $ms): EphemeralInterface
