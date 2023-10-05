@@ -2,7 +2,12 @@
 
 ## Fixed
 
+- [#6183](https://github.com/hyperf/hyperf/pull/6183) Fixed PriorityMiddleware for testing.
 - [#6185](https://github.com/hyperf/hyperf/pull/6185) Fixed bug that `cleanUpExpiredOnce` failed when sids is empty when using `socketio-server`.
+
+## Optimized
+
+- [#6177](https://github.com/hyperf/hyperf/pull/6177) Optimized Base62 of `hyperf/codec` to support subclass rewriting.
 
 # v3.0.37 - 2023-09-22
 
@@ -15,13 +20,11 @@
 - [#6154](https://github.com/hyperf/hyperf/pull/6154) Use PHP native `json_validate` to validate is json if function is available.
 - [#6157](https://github.com/hyperf/hyperf/pull/6157) Record the exception message only by opening the exception switch and closing the ignore switch when using `trace`.
 - [#6167](https://github.com/hyperf/hyperf/pull/6167) Optimized KafkaClientFactory of `hyperf/tracer`.
-- [#6177](https://github.com/hyperf/hyperf/pull/6177) Optimized Base62 of `hyperf/codec` to support subclass rewriting.
 
 ## Fixed
 
 - [#6160](https://github.com/hyperf/hyperf/pull/6160) Fixed bug that service governance still registers services even when `services.enable.register` is `false`.
 - [#6162](https://github.com/hyperf/hyperf/pull/6162) [#6163](https://github.com/hyperf/hyperf/pull/6163) Fixed bug that the mutex lock of `crontab` cannot not work well when the crontab executed more than one hour (the default expired time).
-- [#6183](https://github.com/hyperf/hyperf/pull/6183) Fixed PriorityMiddleware for testing.
 
 # v3.0.36 - 2023-09-15
 
