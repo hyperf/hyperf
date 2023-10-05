@@ -23,9 +23,9 @@ class Base62
     {
         $chars = [];
         while ($number > 0) {
-            $remain = $number % self::BASE;
-            $chars[] = self::CHARS[$remain];
-            $number = ($number - $remain) / self::BASE;
+            $remain = $number % static::BASE;
+            $chars[] = static::CHARS[$remain];
+            $number = ($number - $remain) / static::BASE;
         }
         return implode('', array_reverse($chars));
     }
@@ -36,9 +36,9 @@ class Base62
             throw new InvalidArgumentException('The decode data contains content outside of CHARS.');
         }
         return array_reduce(array_map(function ($character) {
-            return strpos(self::CHARS, $character);
+            return strpos(static::CHARS, $character);
         }, str_split($data)), function ($result, $remain) {
-            return $result * self::BASE + $remain;
+            return $result * static::BASE + $remain;
         });
     }
 }

@@ -210,6 +210,8 @@ class Client extends Server
             $middlewares = array_merge($middlewares, $registeredMiddlewares);
         }
 
+        $middlewares = MiddlewareManager::sortMiddlewares($middlewares);
+
         try {
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {

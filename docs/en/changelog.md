@@ -1,5 +1,16 @@
 # Changelogs
 
+# v3.0.38 - 2023-10-05
+
+## Fixed
+
+- [#6183](https://github.com/hyperf/hyperf/pull/6183) Fixed PriorityMiddleware for testing.
+- [#6185](https://github.com/hyperf/hyperf/pull/6185) Fixed bug that `cleanUpExpiredOnce` failed when sids is empty when using `socketio-server`.
+
+## Optimized
+
+- [#6177](https://github.com/hyperf/hyperf/pull/6177) Optimized Base62 of `hyperf/codec` to support subclass rewriting.
+
 # v3.0.37 - 2023-09-22
 
 ## Added
