@@ -17,7 +17,6 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
-use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LogLevel;
 use Redis;
@@ -132,7 +131,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
                     'compression' => Redis::OPT_COMPRESSION, // 7
                     'reply_literal' => Redis::OPT_REPLY_LITERAL, // 8
                     'compression_level' => Redis::OPT_COMPRESSION_LEVEL, // 9
-                    default => throw new InvalidArgumentException(sprintf('Invalid redis option %s', $name)),
+                    default => $name,
                 };
             }
             $redis->setOption($name, $value);
