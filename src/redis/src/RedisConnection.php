@@ -17,6 +17,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LogLevel;
 use Redis;
@@ -121,20 +122,19 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
         foreach ($options as $name => $value) {
             if (is_string($name)) {
-                $name = strtolower($name);
+                $name = match (strtolower($name)) {
+                    'serializer' => Redis::OPT_SERIALIZER, // 1
+                    'prefix' => Redis::OPT_PREFIX, // 2
+                    'read_timeout' => Redis::OPT_READ_TIMEOUT, // 3
+                    'scan' => Redis::OPT_SCAN, // 4
+                    'failover' => defined(Redis::class . '::OPT_SLAVE_FAILOVER') ? Redis::OPT_SLAVE_FAILOVER : 5, // 5
+                    'keepalive' => Redis::OPT_TCP_KEEPALIVE, // 6
+                    'compression' => Redis::OPT_COMPRESSION, // 7
+                    'reply_literal' => Redis::OPT_REPLY_LITERAL, // 8
+                    'compression_level' => Redis::OPT_COMPRESSION_LEVEL, // 9
+                    default => throw new InvalidArgumentException(sprintf('Invalid redis option %s', $name)),
+                };
             }
-            $name = match ($name) {
-                'serializer' => Redis::OPT_SERIALIZER, // 1
-                'prefix' => Redis::OPT_PREFIX, // 2
-                'read_timeout' => Redis::OPT_READ_TIMEOUT, // 3
-                'scan' => Redis::OPT_SCAN, // 4
-                'failover' => defined(Redis::class . '::OPT_SLAVE_FAILOVER') ? Redis::OPT_SLAVE_FAILOVER : 5, // 5
-                'keepalive' => Redis::OPT_TCP_KEEPALIVE, // 6
-                'compression' => Redis::OPT_COMPRESSION, // 7
-                'reply_literal' => Redis::OPT_REPLY_LITERAL, // 8
-                'compression_level' => Redis::OPT_COMPRESSION_LEVEL, // 9
-                default => $name
-            };
             $redis->setOption($name, $value);
         }
 
