@@ -1,5 +1,9 @@
 # v3.0.39 - TBD
 
+## Added
+
+- [#6188](https://github.com/hyperf/hyperf/pull/6188) Added Redis options name to support string type.
+
 # v3.0.38 - 2023-10-05
 
 ## Fixed
