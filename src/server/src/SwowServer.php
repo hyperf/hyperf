@@ -29,6 +29,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swow\Buffer;
 use Swow\Coroutine;
+use Swow\Psr7\Psr7;
 use Swow\Socket;
 
 use function Swow\Sync\waitAll;
@@ -145,13 +146,29 @@ class SwowServer implements ServerInterface
                 }
                 return;
             case ServerInterface::SERVER_WEBSOCKET:
+                $httpHandler = null;
+                $httpMethod = null;
+                if (isset($callbacks[Event::ON_REQUEST])) {
+                    [$httpHandler, $httpMethod] = $this->getCallbackMethod(Event::ON_REQUEST, $callbacks);
+                    if ($httpHandler instanceof MiddlewareInitializerInterface) {
+                        $httpHandler->initCoreMiddleware($name);
+                    }
+                }
+
                 if (isset($callbacks[Event::ON_HAND_SHAKE])) {
                     [$handler, $method] = $this->getCallbackMethod(Event::ON_HAND_SHAKE, $callbacks);
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
                     if ($server instanceof HttpServer) {
-                        $server->handle(function ($request, $session) use ($handler, $method) {
+                        $server->handle(function ($request, $session) use ($handler, $method, $httpHandler, $httpMethod) {
+                            $upgradeType = Psr7::detectUpgradeType($request);
+                            if (! $upgradeType && $httpHandler && $httpMethod) {
+                                $this->waiter->wait(static function () use ($request, $session, $httpHandler, $httpMethod) {
+                                    $httpHandler->{$httpMethod}($request, $session);
+                                });
+                                return;
+                            }
                             $this->waiter->wait(static function () use ($request, $session, $handler, $method) {
                                 $handler->{$method}($request, $session);
                             });
