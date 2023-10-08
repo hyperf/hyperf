@@ -132,7 +132,7 @@ If the placeholder is all capital letters, or the first letter is capitalized. T
 
 ```php
 'welcome' => 'Welcome, :NAME', // Welcome, HYPERF
-'goodbye' => 'Goodbye, :Name', // Goodbye, HYPERF
+'goodbye' => 'Goodbye, :Name', // Goodbye, Hyperf
 ```
 
 # Handle complex numbers
