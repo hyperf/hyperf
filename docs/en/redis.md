@@ -2,7 +2,7 @@
 
 ## Installation
 
-```
+```shell
 composer require hyperf/redis
 ```
 
@@ -40,6 +40,10 @@ return [
             'wait_timeout' => 3.0,
             'heartbeat' => -1,
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
+        ],
+        'options' => [ // Options of Redis Client, see https://github.com/phpredis/phpredis#setoption
+            \Redis::OPT_PREFIX => env('REDIS_PREFIX', ''),
+            // or 'prefix' => env('REDIS_PREFIX', ''), v3.0.38 or later
         ],
     ],
 ];
