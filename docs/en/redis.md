@@ -159,7 +159,7 @@ To enable sentinel mode, you can modify the `.env` or `redis.php` configuration 
 
 Use `;` to split multiple sentinel nodes
 
-```
+```env
 REDIS_HOST=
 REDIS_AUTH="Redis instance password"
 REDIS_PORT=
@@ -168,7 +168,10 @@ REDIS_SENTINEL_ENABLE=true
 REDIS_SENTINEL_PASSWORD="Redis sentinel password"
 REDIS_SENTINEL_NODE=192.168.89.129:26381;192.168.89.129:26380;
 ```
-```
+
+```php
+<?php
+
 return [
     'default' => [
         'host' => env('REDIS_HOST', 'localhost'),
@@ -201,10 +204,10 @@ return [
 ## Cluster mode
 
 ### Use `name`
- 
+
 Configure `cluster`, modify `redis.ini`, or modify `Dockerfile`, as follows:
 
-```
+```shell
     # - config PHP
     && { \
         echo "upload_max_filesize=100M"; \
@@ -281,7 +284,8 @@ return [
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
         ],
         'options' => [
-            Redis::OPT_SERIALIZER => Redis::SERIALIZER_PHP,
+            \Redis::OPT_SERIALIZER => \Redis::SERIALIZER_PHP,
+            // or 'serializer' => \Redis::SERIALIZER_PHP, v3.0.38 or later
         ],
     ],
 ];
@@ -309,11 +313,11 @@ return [
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
         ],
         'options' => [
-            Redis::OPT_READ_TIMEOUT => -1,
+            \Redis::OPT_READ_TIMEOUT => -1,
+            // or 'read_timeout' => -1, v3.0.38 or later
         ],
     ],
 ];
 ```
 
 > Notice that, in some versions of `phpredis` extension, the value type of `options` has to `string`.
-
