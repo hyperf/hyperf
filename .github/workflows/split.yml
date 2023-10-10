@@ -1,12 +1,6 @@
 name: Split Repos
 
-on:
-  workflow_dispatch:
-    inputs:
-      event:
-        description: 'Input your event'
-        required: false
-        default: ''
+on: [ workflow_dispatch ]
 
 jobs:
   split:
