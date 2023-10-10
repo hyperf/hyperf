@@ -15,6 +15,7 @@ use GuzzleHttp\Client;
 use Hyperf\Tracer\Aspect\CreateTraceContextAspect;
 use Hyperf\Tracer\Aspect\HttpClientAspect;
 use Hyperf\Tracer\Aspect\RedisAspect;
+use Hyperf\Tracer\Aspect\RpcAspect;
 use Hyperf\Tracer\Aspect\TraceAnnotationAspect;
 use Hyperf\Tracer\Listener\DbQueryExecutedListener;
 use Jaeger\ThriftUdpTransport;
@@ -49,6 +50,7 @@ class ConfigProvider
                 CreateTraceContextAspect::class,
                 HttpClientAspect::class,
                 RedisAspect::class,
+                RpcAspect::class,
                 TraceAnnotationAspect::class,
             ],
             'publish' => [
