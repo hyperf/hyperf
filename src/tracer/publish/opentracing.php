@@ -16,11 +16,12 @@ use function Hyperf\Support\env;
 return [
     'default' => env('TRACER_DRIVER', 'zipkin'),
     'enable' => [
-        'guzzle' => env('TRACER_ENABLE_GUZZLE', false),
-        'redis' => env('TRACER_ENABLE_REDIS', false),
         'db' => env('TRACER_ENABLE_DB', false),
-        'method' => env('TRACER_ENABLE_METHOD', false),
         'exception' => env('TRACER_ENABLE_EXCEPTION', false),
+        'guzzle' => env('TRACER_ENABLE_GUZZLE', false),
+        'method' => env('TRACER_ENABLE_METHOD', false),
+        'redis' => env('TRACER_ENABLE_REDIS', false),
+        'rpc' => env('TRACER_ENABLE_RPC', false),
         'ignore_exceptions' => [],
     ],
     'tracer' => [
@@ -117,6 +118,10 @@ return [
         ],
         'response' => [
             'status_code' => 'response.status_code',
+        ],
+        'rpc' => [
+            'path' => 'rpc.path',
+            'status' => 'rpc.status',
         ],
     ],
 ];
