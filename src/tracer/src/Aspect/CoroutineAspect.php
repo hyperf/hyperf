@@ -37,7 +37,6 @@ class CoroutineAspect extends AbstractAspect
         }
 
         $callable = $proceedingJoinPoint->arguments['keys']['callable'];
-        $root = TracerContext::getRoot();
 
         $proceedingJoinPoint->arguments['keys']['callable'] = function () use ($callable, $root) {
             try {

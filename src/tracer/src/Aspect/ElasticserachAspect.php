@@ -48,6 +48,10 @@ class ElasticserachAspect extends AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
+        if ($this->switchManager->isEnable('es') === false) {
+            return $proceedingJoinPoint->process();
+        }
+
         $key = $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName;
         $span = $this->startSpan($key);
         try {
