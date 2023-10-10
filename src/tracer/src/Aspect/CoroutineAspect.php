@@ -31,6 +31,10 @@ class CoroutineAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
+        if (! $this->switchManager->isEnable('coroutine')) {
+            return $proceedingJoinPoint->process();
+        }
+
         $callable = $proceedingJoinPoint->arguments['keys']['callable'];
         $root = TracerContext::getRoot();
 

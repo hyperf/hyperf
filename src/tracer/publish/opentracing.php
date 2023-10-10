@@ -16,6 +16,7 @@ use function Hyperf\Support\env;
 return [
     'default' => env('TRACER_DRIVER', 'zipkin'),
     'enable' => [
+        'coroutine' => env('TRACER_ENABLE_COROUTINE', false),
         'db' => env('TRACER_ENABLE_DB', false),
         'exception' => env('TRACER_ENABLE_EXCEPTION', false),
         'guzzle' => env('TRACER_ENABLE_GUZZLE', false),
