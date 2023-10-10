@@ -1,5 +1,11 @@
 # v3.0.39 - TBD
 
+## Added
+
+- [#6188](https://github.com/hyperf/hyperf/pull/6188) Added Redis options name to support string type.
+- [#6193](https://github.com/hyperf/hyperf/pull/6193) Support http and websocket protocols at the same port for swow server.
+- [#6198](https://github.com/hyperf/hyperf/pull/6198) Added `RpcAspect` and use it instead of `JsonRpcAspect`.
+
 # v3.0.38 - 2023-10-05
 
 ## Fixed
