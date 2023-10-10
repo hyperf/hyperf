@@ -18,7 +18,7 @@ return [
     'enable' => [
         'coroutine' => env('TRACER_ENABLE_COROUTINE', false),
         'db' => env('TRACER_ENABLE_DB', false),
-        'es' => env('TRACER_ENABLE_ES', false),
+        'elasticserach' => env('TRACER_ENABLE_ELASTICSERACH', false),
         'exception' => env('TRACER_ENABLE_EXCEPTION', false),
         'guzzle' => env('TRACER_ENABLE_GUZZLE', false),
         'method' => env('TRACER_ENABLE_METHOD', false),

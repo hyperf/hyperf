@@ -48,7 +48,7 @@ class ElasticserachAspect extends AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        if ($this->switchManager->isEnable('es') === false) {
+        if ($this->switchManager->isEnable('elasticserach') === false) {
             return $proceedingJoinPoint->process();
         }
 
