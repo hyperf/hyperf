@@ -48,6 +48,15 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
     }
 
     /**
+     * Returns an instance with specified cookies.
+     */
+    public function setCookie(Cookie $cookie): static
+    {
+        $this->cookies[$cookie->getDomain()][$cookie->getPath()][$cookie->getName()] = $cookie;
+        return $this;
+    }
+
+    /**
      * Retrieves all cookies.
      */
     public function getCookies(): array
