@@ -62,7 +62,6 @@ class GrpcClientAspect extends AbstractAspect
             //request start
             $arguments = $proceedingJoinPoint->getArguments();
             $request = $arguments[0] ?? '';
-            $key = 'GRPCClient';
             /* @var Request $request */
             $key = "GRPCClient send [{$request->path}]";
             $span = $this->startSpan($key);
