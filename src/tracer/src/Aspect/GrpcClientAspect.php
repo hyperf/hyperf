@@ -68,7 +68,7 @@ class GrpcClientAspect extends AbstractAspect
             );
             // merge tracer info
             $request->headers = array_merge($request->headers, $carrier);
-``            if ($this->spanTagManager->has('grpc', 'request.header')) {
+            if ($this->spanTagManager->has('grpc', 'request.header')) {
                 foreach ($request->headers as $headerKey => $headerValue) {
                     $span->setTag($this->spanTagManager->get('grpc', 'request.header') . '.' . $headerKey, $headerValue);
                 }
