@@ -19,7 +19,7 @@ class TcpServer implements OnReceiveInterface
 {
     public function onReceive($server, int $fd, int $reactorId, string $data): void
     {
-        $server->send($fd, 'recv:' . $data);
+        $server->send('recv:' . $data);
     }
 }
 
