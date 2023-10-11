@@ -47,7 +47,7 @@ class RedisAspect extends AbstractAspect
             $result = $proceedingJoinPoint->process();
             $span->setTag($this->spanTagManager->get('redis', 'result'), json_encode($result));
         } catch (Throwable $e) {
-            if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e::class)) {
+            if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {
                 $span->setTag('error', true);
                 $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
             }
