@@ -73,13 +73,6 @@ class GrpcClientAspect extends AbstractAspect
                     $span->setTag($this->spanTagManager->get('grpc_client', 'request.header') . '.' . $headerKey, $headerValue);
                 }
             }
-            // child tracer info  has  host and path
-            //            $httpClient=$proceedingJoinPoint->getInstance()->getHttpClient();
-            //            /** @var \Swoole\Coroutine\Http2\Client $httpClient */
-            //            if($httpClient instanceof  \Swoole\Coroutine\Http2\Client){
-            //                $span->setTag("request.host",$httpClient->host);
-            //                $span->setTag("request.port",$httpClient->port);
-            //            }
 
             $this->context->set('tracer.carrier', $carrier);
             CT::set('tracer.span.' . static::class, $span);
