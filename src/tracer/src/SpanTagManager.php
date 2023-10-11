@@ -19,7 +19,7 @@ class SpanTagManager
             'http.method' => 'http.method',
             'http.status_code' => 'http.status_code',
         ],
-        'grpc_client' => [
+        'grpc' => [
             'request.header' => 'grpc.request.header',
             'response.header' => 'grpc.response.header',
         ],

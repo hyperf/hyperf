@@ -68,9 +68,9 @@ class GrpcClientAspect extends AbstractAspect
             );
             // merge tracer info
             $request->headers = array_merge($request->headers, $carrier);
-            if ($this->spanTagManager->has('grpc_client', 'request.header')) {
+``            if ($this->spanTagManager->has('grpc', 'request.header')) {
                 foreach ($request->headers as $headerKey => $headerValue) {
-                    $span->setTag($this->spanTagManager->get('grpc_client', 'request.header') . '.' . $headerKey, $headerValue);
+                    $span->setTag($this->spanTagManager->get('grpc', 'request.header') . '.' . $headerKey, $headerValue);
                 }
             }
 
@@ -103,10 +103,10 @@ class GrpcClientAspect extends AbstractAspect
                 /** @var Span $span */
                 if ($span = CT::get('tracer.span.' . static::class)) {
                     if ($result instanceof Response) {
-                        if ($this->spanTagManager->has('grpc_client', 'response.header')) {
+                        if ($this->spanTagManager->has('grpc', 'response.header')) {
                             /* @var \Swoole\Http2\Response $result */
                             foreach ($result->headers as $headerKey => $headerValue) {
-                                $span->setTag($this->spanTagManager->get('grpc_client', 'response.header') . '.' . $headerKey, $headerValue);
+                                $span->setTag($this->spanTagManager->get('grpc', 'response.header') . '.' . $headerKey, $headerValue);
                             }
                         }
                     }
