@@ -9,19 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Tracer\Aspect;
 
 use Hyperf\Context\Context as CT;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\GrpcClient\BaseClient;
 use Hyperf\GrpcClient\GrpcClient;
 use Hyperf\GrpcClient\Request;
 use Hyperf\Rpc\Context;
-use Hyperf\RpcClient\AbstractServiceClient;
-use Hyperf\RpcClient\Client;
-use Hyperf\RpcClient\ServiceClient;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
@@ -57,9 +52,8 @@ class GrpcClientAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-
         if ($proceedingJoinPoint->methodName === 'send') {
-            //request start
+            // request start
             $arguments = $proceedingJoinPoint->getArguments();
             $request = $arguments[0] ?? '';
             /* @var Request $request */
@@ -72,21 +66,20 @@ class GrpcClientAspect extends AbstractAspect
                 TEXT_MAP,
                 $carrier
             );
-            //merge tracer info
+            // merge tracer info
             $request->headers = array_merge($request->headers, $carrier);
             if ($this->spanTagManager->has('grpc_client', 'request.header')) {
                 foreach ($request->headers as $headerKey => $headerValue) {
-                    $span->setTag($this->spanTagManager->get('grpc_client', 'request.header') . "." . $headerKey, $headerValue);
+                    $span->setTag($this->spanTagManager->get('grpc_client', 'request.header') . '.' . $headerKey, $headerValue);
                 }
             }
-// child tracer info  has  host and path
-//            $httpClient=$proceedingJoinPoint->getInstance()->getHttpClient();
-//            /** @var \Swoole\Coroutine\Http2\Client $httpClient */
-//            if($httpClient instanceof  \Swoole\Coroutine\Http2\Client){
-//                $span->setTag("request.host",$httpClient->host);
-//                $span->setTag("request.port",$httpClient->port);
-//            }
-
+            // child tracer info  has  host and path
+            //            $httpClient=$proceedingJoinPoint->getInstance()->getHttpClient();
+            //            /** @var \Swoole\Coroutine\Http2\Client $httpClient */
+            //            if($httpClient instanceof  \Swoole\Coroutine\Http2\Client){
+            //                $span->setTag("request.host",$httpClient->host);
+            //                $span->setTag("request.port",$httpClient->port);
+            //            }
 
             $this->context->set('tracer.carrier', $carrier);
             CT::set('tracer.span.' . static::class, $span);
@@ -94,22 +87,20 @@ class GrpcClientAspect extends AbstractAspect
             try {
                 return $proceedingJoinPoint->process();
             } catch (Throwable $e) {
-                if (($span = CT::get('tracer.span.' . static::class)) && $this->switchManager->isEnable('exception') && !$this->switchManager->isIgnoreException($e::class)) {
+                if (($span = CT::get('tracer.span.' . static::class)) && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e::class)) {
                     $span->setTag('error', true);
                     $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
                     CT::set('tracer.span.' . static::class, $span);
                 }
                 throw $e;
             }
-
-
         }
         if ($proceedingJoinPoint->methodName === 'recv') {
-            //request end
+            // request end
             try {
                 $result = $proceedingJoinPoint->process();
             } catch (Throwable $e) {
-                if (($span = CT::get('tracer.span.' . static::class)) && $this->switchManager->isEnable('exception') && !$this->switchManager->isIgnoreException($e::class)) {
+                if (($span = CT::get('tracer.span.' . static::class)) && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e::class)) {
                     $span->setTag('error', true);
                     $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
                     CT::set('tracer.span.' . static::class, $span);
@@ -122,7 +113,7 @@ class GrpcClientAspect extends AbstractAspect
                         if ($this->spanTagManager->has('grpc_client', 'response.header')) {
                             /* @var \Swoole\Http2\Response $result */
                             foreach ($result->headers as $headerKey => $headerValue) {
-                                $span->setTag($this->spanTagManager->get('grpc_client', 'response.header') . "." . $headerKey, $headerValue);
+                                $span->setTag($this->spanTagManager->get('grpc_client', 'response.header') . '.' . $headerKey, $headerValue);
                             }
                         }
                     }
@@ -132,7 +123,6 @@ class GrpcClientAspect extends AbstractAspect
 
             return $result;
         }
-
 
         return $proceedingJoinPoint->process();
     }
