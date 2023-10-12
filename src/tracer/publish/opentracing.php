@@ -20,6 +20,7 @@ return [
         'db' => env('TRACER_ENABLE_DB', false),
         'elasticserach' => env('TRACER_ENABLE_ELASTICSERACH', false),
         'exception' => env('TRACER_ENABLE_EXCEPTION', false),
+        'grpc' => env('TRACER_ENABLE_GRPC', false),
         'guzzle' => env('TRACER_ENABLE_GUZZLE', false),
         'method' => env('TRACER_ENABLE_METHOD', false),
         'redis' => env('TRACER_ENABLE_REDIS', false),

@@ -15,6 +15,7 @@ use GuzzleHttp\Client;
 use Hyperf\Tracer\Aspect\CoroutineAspect;
 use Hyperf\Tracer\Aspect\CreateTraceContextAspect;
 use Hyperf\Tracer\Aspect\ElasticserachAspect;
+use Hyperf\Tracer\Aspect\GrpcAspect;
 use Hyperf\Tracer\Aspect\HttpClientAspect;
 use Hyperf\Tracer\Aspect\RedisAspect;
 use Hyperf\Tracer\Aspect\RpcAspect;
@@ -52,6 +53,7 @@ class ConfigProvider
                 CoroutineAspect::class,
                 CreateTraceContextAspect::class,
                 ElasticserachAspect::class,
+                GrpcAspect::class,
                 HttpClientAspect::class,
                 RedisAspect::class,
                 RpcAspect::class,

@@ -58,7 +58,7 @@ class CoroutineAspect extends AbstractAspect
 
                 $callable();
             } catch (Throwable $e) {
-                if (isset($child) && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e::class)) {
+                if (isset($child) && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {
                     $child->setTag('error', true);
                     $child->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
                 }
