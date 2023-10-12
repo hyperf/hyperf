@@ -28,7 +28,7 @@ use Throwable;
 
 use const OpenTracing\Formats\TEXT_MAP;
 
-class GrpcClientAspect extends AbstractAspect
+class GrpcAspect extends AbstractAspect
 {
     use SpanStarter;
 
