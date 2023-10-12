@@ -158,7 +158,7 @@ class Producer
         $producerConfig->setAutoCreateTopic($config['auto_create_topic']);
         ! empty($config['sasl']) && $producerConfig->setSasl($config['sasl']);
         ! empty($config['ssl']) && $producerConfig->setSsl($config['ssl']);
-        ! empty($config['exception_callback']) && $producerConfig->setExceptionCallback($config['exception_callback']);
+        is_callable($config['exception_callback']) && $producerConfig->setExceptionCallback($config['exception_callback']);
         return new LongLangProducer($producerConfig);
     }
 }
