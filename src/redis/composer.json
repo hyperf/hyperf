@@ -17,7 +17,7 @@
     },
     "require": {
         "php": ">=8.0",
-        "ext-redis": "<6.0",
+        "ext-redis": "^5.0|^6.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/pool": "~3.0.0",
         "hyperf/support": "~3.0.0",
