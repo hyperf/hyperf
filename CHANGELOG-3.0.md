@@ -7,6 +7,7 @@
 - [#6198](https://github.com/hyperf/hyperf/pull/6198) Added `RpcAspect` and use it instead of `JsonRpcAspect`.
 - [#6200](https://github.com/hyperf/hyperf/pull/6200) Added switch for `ElasticserachAspect` and `CoroutineAspect`.
 - [#6203](https://github.com/hyperf/hyperf/pull/6203) Added `Hyperf\Tracer\Aspect\GrpcAspect`.
+- [#6207](https://github.com/hyperf/hyperf/pull/6207) Added `exception_callback` option for `hyperf/kafka`.
 
 # v3.0.38 - 2023-10-05
 
