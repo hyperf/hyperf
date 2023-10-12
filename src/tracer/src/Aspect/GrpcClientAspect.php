@@ -52,71 +52,79 @@ class GrpcClientAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        if ($proceedingJoinPoint->methodName === 'send') {
-            // request start
-            $arguments = $proceedingJoinPoint->getArguments();
-            $request = $arguments[0] ?? '';
-            /* @var Request $request */
-            $key = "GRPCClient send [{$request->path}]";
-            $span = $this->startSpan($key);
-            $carrier = [];
-            // Injects the context into the wire
-            TracerContext::getTracer()->inject(
-                $span->getContext(),
-                TEXT_MAP,
-                $carrier
-            );
-            // merge tracer info
-            $request->headers = array_merge($request->headers, $carrier);
-            if ($this->spanTagManager->has('grpc', 'request.header')) {
-                foreach ($request->headers as $headerKey => $headerValue) {
-                    $span->setTag($this->spanTagManager->get('grpc', 'request.header') . '.' . $headerKey, $headerValue);
-                }
-            }
+        if (! $this->switchManager->isEnable('grpc')) {
+            return $proceedingJoinPoint->process();
+        }
 
-            $this->context->set('tracer.carrier', $carrier);
-            CT::set('tracer.span.' . static::class, $span);
+        return match ($proceedingJoinPoint->methodName) {
+            'send' => $this->processSend($proceedingJoinPoint),
+            'recv' => $this->processRecv($proceedingJoinPoint),
+            default => $proceedingJoinPoint->process(),
+        };
+    }
 
-            try {
-                return $proceedingJoinPoint->process();
-            } catch (Throwable $e) {
-                if (($span = CT::get('tracer.span.' . static::class)) && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e::class)) {
-                    $span->setTag('error', true);
-                    $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
-                    CT::set('tracer.span.' . static::class, $span);
-                }
-                throw $e;
+    private function processSend(ProceedingJoinPoint $proceedingJoinPoint)
+    {
+        $arguments = $proceedingJoinPoint->getArguments();
+        /** @var Request $request */
+        $request = $arguments[0];
+        $key = "GRPC send [{$request->path}]";
+        $span = $this->startSpan($key);
+        $carrier = [];
+        // Injects the context into the wire
+        TracerContext::getTracer()->inject(
+            $span->getContext(),
+            TEXT_MAP,
+            $carrier
+        );
+
+        // Merge tracer info
+        $request->headers = array_merge($request->headers, $carrier);
+        if ($this->spanTagManager->has('grpc', 'request.header')) {
+            foreach ($request->headers as $key => $value) {
+                $span->setTag($this->spanTagManager->get('grpc', 'request.header') . '.' . $key, $value);
             }
         }
-        if ($proceedingJoinPoint->methodName === 'recv') {
-            // request end
-            try {
-                $result = $proceedingJoinPoint->process();
-            } catch (Throwable $e) {
-                if (($span = CT::get('tracer.span.' . static::class)) && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e::class)) {
-                    $span->setTag('error', true);
-                    $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
-                    CT::set('tracer.span.' . static::class, $span);
-                }
-                throw $e;
-            } finally {
-                /** @var Span $span */
-                if ($span = CT::get('tracer.span.' . static::class)) {
-                    if ($result instanceof Response) {
-                        if ($this->spanTagManager->has('grpc', 'response.header')) {
-                            /* @var \Swoole\Http2\Response $result */
-                            foreach ($result->headers as $headerKey => $headerValue) {
-                                $span->setTag($this->spanTagManager->get('grpc', 'response.header') . '.' . $headerKey, $headerValue);
-                            }
-                        }
+
+        $this->context->set('tracer.carrier', $carrier);
+        CT::set('tracer.span.' . static::class, $span);
+
+        try {
+            return $proceedingJoinPoint->process();
+        } catch (Throwable $e) {
+            if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {
+                $span->setTag('error', true);
+                $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            }
+            throw $e;
+        }
+    }
+
+    private function processRecv(ProceedingJoinPoint $proceedingJoinPoint)
+    {
+        /** @var null|Span $span */
+        $span = CT::get('tracer.span.' . static::class);
+
+        try {
+            /** @var bool|Response $result */
+            $result = $proceedingJoinPoint->process();
+            if ($result instanceof Response) {
+                if ($this->spanTagManager->has('grpc', 'response.header')) {
+                    foreach ($result->headers as $key => $value) {
+                        $span?->setTag($this->spanTagManager->get('grpc', 'response.header') . '.' . $key, $value);
                     }
-                    $span->finish();
                 }
             }
-
-            return $result;
+        } catch (Throwable $e) {
+            if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e::class)) {
+                $span?->setTag('error', true);
+                $span?->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            }
+            throw $e;
+        } finally {
+            $span?->finish();
         }
 
-        return $proceedingJoinPoint->process();
+        return $result;
     }
 }
