@@ -6,6 +6,7 @@
 - [#6193](https://github.com/hyperf/hyperf/pull/6193) Support http and websocket protocols at the same port for swow server.
 - [#6198](https://github.com/hyperf/hyperf/pull/6198) Added `RpcAspect` and use it instead of `JsonRpcAspect`.
 - [#6200](https://github.com/hyperf/hyperf/pull/6200) Added switch for `ElasticserachAspect` and `CoroutineAspect`.
+- [#6203](https://github.com/hyperf/hyperf/pull/6203) Added `Hyperf\Tracer\Aspect\GrpcAspect`.
 
 # v3.0.38 - 2023-10-05
 
