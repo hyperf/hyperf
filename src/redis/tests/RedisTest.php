@@ -45,11 +45,11 @@ use function Hyperf\Coroutine\parallel;
  */
 class RedisTest extends TestCase
 {
-    protected bool $isRedisOldThan6 = false;
+    protected bool $isOlderThan6 = false;
 
     protected function setUp(): void
     {
-        $this->isRedisOldThan6 = version_compare(phpversion('redis'), '6.0.0', '<');
+        $this->isOlderThan6 = version_compare(phpversion('redis'), '6.0.0', '<');
     }
 
     protected function tearDown(): void
@@ -67,7 +67,7 @@ class RedisTest extends TestCase
         $this->assertSame('host', $host->getName());
         $this->assertSame('port', $port->getName());
         $this->assertSame('timeout', $timeout->getName());
-        if ($this->isRedisOldThan6) {
+        if ($this->isOlderThan6) {
             $this->assertSame('retry_interval', $retryInterval->getName());
         } else {
             $this->assertSame('persistent_id', $retryInterval->getName());
@@ -173,7 +173,7 @@ class RedisTest extends TestCase
             if ($parameter->getName() === 'seeds') {
                 $this->assertSame('array', $parameter->getType()->getName());
             } else {
-                if ($this->isRedisOldThan6) {
+                if ($this->isOlderThan6) {
                     $this->assertNull($parameter->getType());
                 }
             }
@@ -211,7 +211,7 @@ class RedisTest extends TestCase
         $rel = new ReflectionClass(RedisSentinel::class);
         $method = $rel->getMethod('__construct');
         $count = count($method->getParameters());
-        if ($this->isRedisOldThan6) {
+        if ($this->isOlderThan6) {
             if ($count === 6) {
                 $this->markTestIncomplete('RedisSentinel don\'t support auth.');
             }
