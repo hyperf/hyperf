@@ -197,6 +197,7 @@ class ConsumerManager
                 $consumerConfig->setPartitionAssignmentStrategy($config['partition_assignment_strategy']);
                 ! empty($config['sasl']) && $consumerConfig->setSasl($config['sasl']);
                 ! empty($config['ssl']) && $consumerConfig->setSsl($config['ssl']);
+                is_callable($config['exception_callback'] ?? null) && $consumerConfig->setExceptionCallback($config['exception_callback']);
                 return $consumerConfig;
             }
         };
