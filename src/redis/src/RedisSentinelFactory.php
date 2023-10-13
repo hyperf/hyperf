@@ -15,16 +15,16 @@ use RedisSentinel;
 
 class RedisSentinelFactory
 {
-    protected bool $isRedisOldThan6 = false;
+    protected bool $isOlderThan6 = false;
 
     public function __construct()
     {
-        $this->isRedisOldThan6 = version_compare(phpversion('redis'), '6.0.0', '<');
+        $this->isOlderThan6 = version_compare(phpversion('redis'), '6.0.0', '<');
     }
 
     public function create(array $options = []): RedisSentinel
     {
-        if ($this->isRedisOldThan6) {
+        if ($this->isOlderThan6) {
             return new RedisSentinel(
                 $options['host'],
                 (int) $options['port'],
