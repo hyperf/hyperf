@@ -13,6 +13,7 @@ namespace Hyperf\Tracer;
 
 use Hyperf\Context\Context;
 use OpenTracing\Span;
+use Throwable;
 
 class SwitchManager
 {
@@ -50,11 +51,11 @@ class SwitchManager
         return $this->config[$identifier] && Context::get('tracer.root') instanceof Span;
     }
 
-    public function isIgnoreException(string $className): bool
+    public function isIgnoreException(Throwable|string $exception): bool
     {
         $ignoreExceptions = $this->config['ignore_exceptions'] ?? [];
         foreach ($ignoreExceptions as $ignoreException) {
-            if (is_a($className, $ignoreException, true)) {
+            if (is_a($exception, $ignoreException, true)) {
                 return true;
             }
         }

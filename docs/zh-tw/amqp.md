@@ -197,7 +197,7 @@ class DemoConsumer extends ConsumerMessage
 影響消費速率的引數有三個地方
 
 - 可以修改 `#[Consumer]` 註解 `nums` 開啟多個消費者
-- `ConsumerMessage` 基類下有一個屬性 `$qos`，可以透過重寫`$qos`中的`prefetch_size`或者`prefetch_count`的值控制每次從服務端拉取的訊息數量
+- `ConsumerMessage` 基類下有一個屬性 `$qos`，可以透過重寫`$qos`中的 `prefetch_size` 或者 `prefetch_count` 的值控制每次從服務端拉取的訊息數量
 - 配置檔案中的 `concurrent.limit` 引數，控制消費協程的最大數量
 
 

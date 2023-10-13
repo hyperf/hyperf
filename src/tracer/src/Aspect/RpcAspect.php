@@ -78,7 +78,7 @@ class RpcAspect extends AbstractAspect
             try {
                 $result = $proceedingJoinPoint->process();
             } catch (Throwable $e) {
-                if (($span = CT::get('tracer.span.' . static::class)) && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e::class)) {
+                if (($span = CT::get('tracer.span.' . static::class)) && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {
                     $span->setTag('error', true);
                     $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
                     CT::set('tracer.span.' . static::class, $span);

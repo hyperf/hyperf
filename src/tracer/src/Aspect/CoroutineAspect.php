@@ -14,6 +14,7 @@ namespace Hyperf\Tracer\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Engine\Coroutine as Co;
+use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Tracer\TracerContext;
 use OpenTracing\Span;
@@ -25,12 +26,16 @@ class CoroutineAspect extends AbstractAspect
         'Hyperf\Coroutine\Coroutine::create',
     ];
 
-    public function __construct(private SwitchManager $switchManager)
+    public function __construct(protected SwitchManager $switchManager, protected SpanTagManager $spanTagManager)
     {
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
+        if (! $this->switchManager->isEnable('coroutine')) {
+            return $proceedingJoinPoint->process();
+        }
+
         $callable = $proceedingJoinPoint->arguments['keys']['callable'];
         $root = TracerContext::getRoot();
 
@@ -41,7 +46,9 @@ class CoroutineAspect extends AbstractAspect
                     $child = $tracer->startSpan('coroutine', [
                         'child_of' => $root->getContext(),
                     ]);
-                    $child->setTag('coroutine.id', Co::id());
+                    if ($this->spanTagManager->has('coroutine', 'id')) {
+                        $child->setTag($this->spanTagManager->get('coroutine', 'id'), Co::id());
+                    }
                     TracerContext::setRoot($child);
                     Co::defer(function () use ($child, $tracer) {
                         $child->finish();
@@ -51,7 +58,7 @@ class CoroutineAspect extends AbstractAspect
 
                 $callable();
             } catch (Throwable $e) {
-                if (isset($child) && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e::class)) {
+                if (isset($child) && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {
                     $child->setTag('error', true);
                     $child->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
                 }

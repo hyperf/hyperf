@@ -80,7 +80,7 @@ class HttpClientAspect extends AbstractAspect
                 $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), $result->getStatusCode());
             }
         } catch (Throwable $e) {
-            if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e::class)) {
+            if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {
                 $span->setTag('error', true);
                 $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
             }

@@ -10,7 +10,7 @@
 
   * [版本計劃](zh-hk/release-planning.md)
   * [版本説明](zh-hk/versions.md)
-  * [版本更新記錄](zh-hk/changelog.md)
+  * [版本更新記錄](zh-hk/changelog/3.0.md)
 
 * 快速入門
 
@@ -149,6 +149,14 @@
   * [指南前言](zh-hk/component-guide/intro.md)
   * [創建新的組件](zh-hk/component-guide/create.md)
   * [ConfigProvider 機制](zh-hk/component-guide/configprovider.md)
+
+* 歷史版本更新記錄
+
+  * [2.2 更新記錄](zh-hk/changelog/2.2.md)
+  * [2.1 更新記錄](zh-hk/changelog/2.1.md)
+  * [2.0 更新記錄](zh-hk/changelog/2.0.md)
+  * [1.1 更新記錄](zh-hk/changelog/1.1.md)
+  * [1.0 更新記錄](zh-hk/changelog/1.0.md)
 
 * 版本升級指南
 

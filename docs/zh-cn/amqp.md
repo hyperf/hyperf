@@ -197,7 +197,7 @@ class DemoConsumer extends ConsumerMessage
 影响消费速率的参数有三个地方
 
 - 可以修改 `#[Consumer]` 注解 `nums` 开启多个消费者
-- `ConsumerMessage` 基类下有一个属性 `$qos`，可以通过重写`$qos`中的`prefetch_size`或者`prefetch_count`的值控制每次从服务端拉取的消息数量
+- `ConsumerMessage` 基类下有一个属性 `$qos`，可以通过重写`$qos`中的 `prefetch_size` 或者 `prefetch_count` 的值控制每次从服务端拉取的消息数量
 - 配置文件中的 `concurrent.limit` 参数，控制消费协程的最大数量
 
 

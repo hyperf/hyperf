@@ -43,5 +43,6 @@ return [
         'socket' => \longlang\phpkafka\Socket\SwooleSocket::class,
         'timer' => \longlang\phpkafka\Timer\SwooleTimer::class,
         'consume_timeout' => 600,
+        'exception_callback' => null,
     ],
 ];

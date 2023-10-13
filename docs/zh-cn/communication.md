@@ -13,7 +13,7 @@ Hyperf 交流 4 群: `571053131`
 
 由于微信群无法直接加入，故可先加下方二维码好友，并声明目的，再拉您入群。
 
-![wechat](imgs/wechat.jpg ':size=375')
+![wechat](https://foruda.gitee.com/images/1697082615411352318/859339ce_775029.jpeg ':size=375')
 
 ## Community 钉钉群
 
