@@ -1,5 +1,16 @@
 # Changelogs
 
+# v3.0.39 - 2023-10-13
+
+## Added
+
+- [#6188](https://github.com/hyperf/hyperf/pull/6188) Added Redis options name to support string type.
+- [#6193](https://github.com/hyperf/hyperf/pull/6193) Support http and websocket protocols at the same port for swow server.
+- [#6198](https://github.com/hyperf/hyperf/pull/6198) Added `RpcAspect` and use it instead of `JsonRpcAspect`.
+- [#6200](https://github.com/hyperf/hyperf/pull/6200) Added switch for `ElasticserachAspect` and `CoroutineAspect`.
+- [#6203](https://github.com/hyperf/hyperf/pull/6203) Added `Hyperf\Tracer\Aspect\GrpcAspect`.
+- [#6207](https://github.com/hyperf/hyperf/pull/6207) Added `exception_callback` option for `hyperf/kafka`.
+
 # v3.0.38 - 2023-10-05
 
 ## Fixed
