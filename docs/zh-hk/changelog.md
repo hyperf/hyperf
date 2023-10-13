@@ -1,5 +1,16 @@
 # 版本更新記錄
 
+# v3.0.39 - 2023-10-13
+
+## 新增
+
+- [#6188](https://github.com/hyperf/hyperf/pull/6188) 為 `Redis` 的 options 配置增加 string 類型 key 支持。
+- [#6193](https://github.com/hyperf/hyperf/pull/6193) 為 `Swow` 服務增加 HTTP 和 WebSocket 雙協議端口支持。
+- [#6198](https://github.com/hyperf/hyperf/pull/6198) 為 `hyperf/tracer` 組件增加 `RpcAspect` 用以替代 `JsonRpcAspect`。
+- [#6200](https://github.com/hyperf/hyperf/pull/6200) 為 `hyperf/tracer` 組件增加 `ElasticserachAspect` 和 `CoroutineAspect` 的開關。
+- [#6203](https://github.com/hyperf/hyperf/pull/6203) 為 `hyperf/tracer` 組件增加 `Hyperf\Tracer\Aspect\GrpcAspect`。
+- [#6207](https://github.com/hyperf/hyperf/pull/6207) 為 `kafka` 組件增加 `exception_callback` 配置。
+
 # v3.0.38 - 2023-10-05
 
 ## 修復
