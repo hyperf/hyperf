@@ -236,17 +236,14 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $port = null;
             foreach ($nodes as $node) {
                 try {
-                    $nodeUrlArray = parse_url($node);
-                    $sentinelHost = $nodeUrlArray['host'] ?? null;
-                    $sentinelPort = $nodeUrlArray['port'] ?? null;
-                    if (! $sentinelHost || ! $sentinelPort) {
+                    $resolved = parse_url($node);
+                    if (! isset($resolved['host'], $resolved['port'])) {
                         $this->log(sprintf('The redis sentinel node [%s] is invalid.', $node), LogLevel::ERROR);
                         continue;
                     }
-
                     $options = [
-                        'host' => $sentinelHost,
-                        'port' => (int) $sentinelPort,
+                        'host' => $resolved['host'],
+                        'port' => (int) $resolved['port'],
                         'connectTimeout' => $timeout,
                         'persistent' => $persistent,
                         'retryInterval' => $retryInterval,
