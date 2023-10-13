@@ -4,7 +4,7 @@
 
 ## 新增
 
-- [#565](https://github.com/hyperf/hyperf/pull/565) 增加對 Redis 客户端的 `options` 配置參數支持；
+- [#565](https://github.com/hyperf/hyperf/pull/565) 增加對  Redis 客户端的 `options` 配置參數支持；
 - [#580](https://github.com/hyperf/hyperf/pull/580) 增加協程併發控制特性，通過 `Hyperf\Utils\Coroutine\Concurrent` 可以實現一個代碼塊內限制同時最多運行的協程數量；
 
 ## 變更
