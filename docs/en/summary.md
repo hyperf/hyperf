@@ -9,15 +9,7 @@
 
   * [Release Planning](en/release-planning.md)
   * [Versions](en/versions.md)
-
-* Changelogs
-
-  * [v3.0](en/changelog/changelog-v3.0.md)
-  * [v2.2](en/changelog/changelog-v2.2.md)
-  * [v2.1](en/changelog/changelog-v2.1.md)
-  * [v2.0](en/changelog/changelog-v2.0.md)
-  * [v1.1](en/changelog/changelog-v1.1.md)
-  * [v1.0](en/changelog/changelog-v1.0.md)
+  * [Changelogs](en/changelog/3.0.md)
 
 * Quick Start
 
@@ -155,6 +147,14 @@
   * [Introduction](en/component-guide/intro.md)
   * [Create a new component](en/component-guide/create.md)
   * [ConfigProvider](en/component-guide/configprovider.md)
+
+* Old Changelogs
+
+  * [v2.2](en/changelog/2.2.md)
+  * [v2.1](en/changelog/2.1.md)
+  * [v2.0](en/changelog/2.0.md)
+  * [v1.1](en/changelog/1.1.md)
+  * [v1.0](en/changelog/1.0.md)
 
 * Upgrade Guide
   
