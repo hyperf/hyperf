@@ -100,7 +100,7 @@
 
 ## 修复
 
-- [#6011](https://github.com/hyperf/hyperf/pull/6011) 修复 `invocable` 控制器路由无法正常使用验证器的BUG。
+- [#6011](https://github.com/hyperf/hyperf/pull/6011) 修复 `invocable` 控制器路由无法正常使用验证器的 BUG。
 - [#6013](https://github.com/hyperf/hyperf/pull/6013) 修复 `no_aspect` 会被覆盖的问题。
 - [#6053](https://github.com/hyperf/hyperf/pull/6053) 修复方法 `Arr::has` 时，`Interger` 类型参数会导致报错的问题。
 
