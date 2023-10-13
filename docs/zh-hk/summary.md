@@ -10,7 +10,15 @@
 
   * [版本計劃](zh-hk/release-planning.md)
   * [版本説明](zh-hk/versions.md)
-  * [版本更新記錄](zh-hk/changelog.md)
+
+* 版本更新記錄
+
+  * [v3.0](zh-hk/changelog/changelog-v3.0.md)
+  * [v2.2](zh-hk/changelog/changelog-v2.2.md)
+  * [v2.1](zh-hk/changelog/changelog-v2.1.md)
+  * [v2.0](zh-hk/changelog/changelog-v2.0.md)
+  * [v1.1](zh-hk/changelog/changelog-v1.1.md)
+  * [v1.0](zh-hk/changelog/changelog-v1.0.md)
 
 * 快速入門
 
