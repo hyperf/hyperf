@@ -1,5 +1,9 @@
 # v3.0.40 - TBD
 
+## Optimized
+
+- [#6209](https://github.com/hyperf/hyperf/pull/6209) Support for phpredis 6.x [sentinel](https://github.com/phpredis/phpredis/blob/develop/sentinel.md#examples-for-version-60-or-later)
+
 # v3.0.39 - 2023-10-13
 
 ## Added
