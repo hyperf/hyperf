@@ -22,7 +22,6 @@ use Psr\Log\LogLevel;
 use Redis;
 use RedisCluster;
 use RedisException;
-use RedisSentinel;
 use Throwable;
 
 /**
@@ -230,12 +229,6 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $readTimeout = $this->config['sentinel']['read_timeout'] ?? 0;
             $masterName = $this->config['sentinel']['master_name'] ?? '';
             $auth = $this->config['sentinel']['auth'] ?? null;
-            // fixes bug for phpredis
-            // https://github.com/phpredis/phpredis/issues/2098
-            $extendConfig = [];
-            if (! empty($auth)) {
-                $extendConfig[] = $auth;
-            }
 
             shuffle($nodes);
 
@@ -243,23 +236,21 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $port = null;
             foreach ($nodes as $node) {
                 try {
-                    $nodeUrlArray = parse_url($node);
-                    $sentinelHost = $nodeUrlArray['host'] ?? null;
-                    $sentinelPort = $nodeUrlArray['port'] ?? null;
-                    if (! $sentinelHost || ! $sentinelPort) {
+                    $resolved = parse_url($node);
+                    if (! isset($resolved['host'], $resolved['port'])) {
                         $this->log(sprintf('The redis sentinel node [%s] is invalid.', $node), LogLevel::ERROR);
                         continue;
                     }
-
-                    $sentinel = new RedisSentinel(
-                        $sentinelHost,
-                        intval($sentinelPort),
-                        $timeout,
-                        $persistent,
-                        $retryInterval,
-                        $readTimeout,
-                        ...$extendConfig
-                    );
+                    $options = [
+                        'host' => $resolved['host'],
+                        'port' => (int) $resolved['port'],
+                        'connectTimeout' => $timeout,
+                        'persistent' => $persistent,
+                        'retryInterval' => $retryInterval,
+                        'readTimeout' => $readTimeout,
+                        ...($auth ? ['auth' => $auth] : []),
+                    ];
+                    $sentinel = $this->container->get(RedisSentinelFactory::class)->create($options);
                     $masterInfo = $sentinel->getMasterAddrByName($masterName);
                     if (is_array($masterInfo) && count($masterInfo) >= 2) {
                         [$host, $port] = $masterInfo;
