@@ -30,7 +30,7 @@ class RedisSentinelFactory
                 (int) $options['port'],
                 (float) $options['connectTimeout'],
                 $options['persistent'],
-                (int) $options['retryTnterval'],
+                (int) $options['retryInterval'],
                 (float) $options['readTimeout'],
                 ...(isset($options['auth']) ? [$options['auth']] : []),
             );
