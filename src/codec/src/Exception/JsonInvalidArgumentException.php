@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Codec\Exception;
 
 use Throwable;
+use InvalidArgumentException;
 
 class JsonInvalidArgumentException extends InvalidArgumentException
 {
