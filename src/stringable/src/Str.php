@@ -601,6 +601,10 @@ class Str
      */
     public static function replaceLast(string $search, string $replace, string $subject): string
     {
+        if ($search == '') {
+            return $subject;
+        }
+
         $position = strrpos($subject, $search);
 
         if ($position !== false) {
