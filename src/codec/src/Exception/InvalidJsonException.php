@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Codec\Exception;
 
-use Throwable;
 use InvalidArgumentException;
+use Throwable;
 
-class JsonInvalidArgumentException extends InvalidArgumentException
+class InvalidJsonException extends InvalidArgumentException
 {
-    // The origin data that caused the exception.
+    /**
+     * The origin data that caused the exception.
+     */
     private mixed $originData = null;
 
     public function __construct(string $message = '', int $code = 0, Throwable $previous = null, mixed $originData = null)
@@ -28,7 +30,6 @@ class JsonInvalidArgumentException extends InvalidArgumentException
 
     /**
      * Get the origin data that caused the exception.
-     * @return mixed 
      */
     public function getOriginData(): mixed
     {
