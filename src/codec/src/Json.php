@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Codec;
 
-use Hyperf\Codec\Exception\InvalidArgumentException;
 use Hyperf\Codec\Exception\JsonInvalidArgumentException;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
