@@ -13,7 +13,7 @@ namespace Hyperf\Codec\Exception;
 
 use Throwable;
 
-class JsonInvalidArgumentException extends \InvalidArgumentException
+class JsonInvalidArgumentException extends InvalidArgumentException
 {
     // The origin data that caused the exception.
     private mixed $originData = null;
