@@ -44,7 +44,12 @@ class Xml
                 }
             }
         }
-        return trim($xml->asXML());
+
+        $result = $xml->asXML();
+        if ($result === false) {
+            throw new InvalidArgumentException('Syntax error.', originData: $data);
+        }
+        return trim($result);
     }
 
     public static function toArray($xml): array
@@ -52,7 +57,7 @@ class Xml
         $respObject = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOERROR);
 
         if ($respObject === false) {
-            throw new InvalidArgumentException('Syntax error.');
+            throw new InvalidArgumentException('Syntax error.', originData: $xml);
         }
 
         return json_decode(json_encode($respObject), true);
