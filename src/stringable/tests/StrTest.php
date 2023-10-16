@@ -561,7 +561,7 @@ class StrTest extends TestCase
 
     public function testReplaceLast()
     {
-        $this->assertSame('Hello earth', Str::replaceLast('world','earth','Hello world'));
-        $this->assertSame('Hello world', Str::replaceLast('','earth','Hello world'));
+        $this->assertSame('Hello earth', Str::replaceLast('world', 'earth', 'Hello world'));
+        $this->assertSame('Hello world', Str::replaceLast('', 'earth', 'Hello world'));
     }
 }
