@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Codec;
 
 use Hyperf\Codec\Exception\InvalidArgumentException;
+use Hyperf\Codec\Exception\JsonInvalidArgumentException;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Throwable;
@@ -19,7 +20,7 @@ use Throwable;
 class Json
 {
     /**
-     * @throws InvalidArgumentException
+     * @throws JsonInvalidArgumentException
      */
     public static function encode(mixed $data, int $flags = JSON_UNESCAPED_UNICODE, int $depth = 512): string
     {
@@ -34,21 +35,21 @@ class Json
         try {
             $json = json_encode($data, $flags | JSON_THROW_ON_ERROR, $depth);
         } catch (Throwable $exception) {
-            throw new InvalidArgumentException($exception->getMessage(), (int) $exception->getCode(), $exception);
+            throw new JsonInvalidArgumentException($exception->getMessage(), (int) $exception->getCode(), $exception, $data);
         }
 
         return $json;
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @throws JsonInvalidArgumentException
      */
     public static function decode(string $json, bool $assoc = true, int $depth = 512, int $flags = 0): mixed
     {
         try {
             $decode = json_decode($json, $assoc, $depth, $flags | JSON_THROW_ON_ERROR);
         } catch (Throwable $exception) {
-            throw new InvalidArgumentException($exception->getMessage(), (int) $exception->getCode(), $exception);
+            throw new JsonInvalidArgumentException($exception->getMessage(), (int) $exception->getCode(), $exception, $json);
         }
 
         return $decode;
