@@ -1,5 +1,9 @@
 # v3.0.40 - TBD
 
+## Fixed
+
+- [#6217](https://github.com/hyperf/hyperf/pull/6217) Fixed bug that `Str::replaceLast` with empty search cannot work as expected.
+
 ## Optimized
 
 - [#6209](https://github.com/hyperf/hyperf/pull/6209) Support for phpredis 6.x [sentinel](https://github.com/phpredis/phpredis/blob/develop/sentinel.md#examples-for-version-60-or-later)
