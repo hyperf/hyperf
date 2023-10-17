@@ -141,7 +141,10 @@ This `Visitor` can generate corresponding `getters` and `setters` based on datab
 
 ## Override Visitor
 
-In the Hyperf framework, when `gen:model` is used, `decimal` is converted to `float` by default. as follows:
+In the Hyperf framework, when `gen:model` is used. By default, only `tinyint, smallint, mediumint, int, bigint` is declared as type int, `bool, boolean` is declared as type boolean, and other data types are defaulted to `string`. You can override adjustments. 
+
+as follows:
+
 ```php
 <?php
 
@@ -152,7 +155,7 @@ namespace App\Model;
 /**
  * @property int $id
  * @property int $count
- * @property float $float_num // decimal
+ * @property string $float_num // decimal
  * @property string $str
  * @property string $json
  * @property \Carbon\Carbon $created_at
@@ -179,7 +182,7 @@ class UserExt extends Model
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'float', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+    protected $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'string', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
 }
 
 ```
