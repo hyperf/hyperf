@@ -297,6 +297,18 @@ namespace App\Model;
 class UserExt extends Model
 {
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'user_ext';
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['id', 'count', 'float_num', 'str', 'json', 'created_at', 'updated_at'];
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array
