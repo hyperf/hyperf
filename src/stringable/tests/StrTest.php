@@ -564,4 +564,10 @@ class StrTest extends TestCase
         $this->assertSame('Hello earth', Str::replaceLast('world', 'earth', 'Hello world'));
         $this->assertSame('Hello world', Str::replaceLast('', 'earth', 'Hello world'));
     }
+
+    public function testReplaceMatches()
+    {
+        $this->assertSame('http://hyperf.io', Str::replaceMatches('/^https:\/\//', 'http://', 'https://hyperf.io'));
+        $this->assertSame('http://hyperf.io', Str::replaceMatches('/^https:\/\//', fn ($matches) => 'http://', 'https://hyperf.io'));
+    }
 }
