@@ -1,5 +1,9 @@
 # v3.0.40 - TBD
 
+## Added
+
+- [#6220](https://github.com/hyperf/hyperf/pull/6220) Added `Hyperf\Stringable\Str::replaceMatches()`.
+
 ## Fixed
 
 - [#6217](https://github.com/hyperf/hyperf/pull/6217) Fixed bug that `Str::replaceLast` with empty search cannot work as expected.
