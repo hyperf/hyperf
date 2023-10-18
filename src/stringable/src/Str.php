@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Stringable;
 
+use Closure;
 use DateTimeInterface;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
@@ -999,6 +1000,24 @@ class Str
         }
 
         return $subject;
+    }
+
+    /**
+     * Replace the patterns matching the given regular expression.
+     *
+     * @param string $pattern
+     * @param Closure|string $replace
+     * @param array|string $subject
+     * @param int $limit
+     * @return null|string|string[]
+     */
+    public static function replaceMatches($pattern, $replace, $subject, $limit = -1)
+    {
+        if ($replace instanceof Closure) {
+            return preg_replace_callback($pattern, $replace, $subject, $limit);
+        }
+
+        return preg_replace($pattern, $replace, $subject, $limit);
     }
 
     public static function reverse($value): string
