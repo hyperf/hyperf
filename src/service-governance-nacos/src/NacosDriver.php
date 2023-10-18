@@ -22,10 +22,9 @@ use Hyperf\ServiceGovernance\DriverInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use function Hyperf\Support\make;
-
 use Throwable;
 
+use function Hyperf\Support\make;
 use function Hyperf\Support\retry;
 
 class NacosDriver implements DriverInterface
@@ -50,38 +49,7 @@ class NacosDriver implements DriverInterface
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->config = $container->get(ConfigInterface::class);
     }
-    protected function getConsumersClient(string $name): Client{
-        static  $client;
-        if(empty($client[$name])){
-            $consumerConfigs=$this->config->get("services.consumers");
-            foreach ($consumerConfigs as $consumerConfig){
-                if($consumerConfig['name']==$name){
-                    $config=$consumerConfig['registry']['config']??[];
-                    $address=$consumerConfig['registry']['address']??'';
-                    //If there is no dedicated configuration and address not empty
-                    if(empty($config)&&$address!=''){
-                        //merge and replace config from services.drivers.nacos
-                        $config=array_merge(
-                            $this->container->get(ConfigInterface::class)->get('services.drivers.nacos', []),
-                            [
-                                'uri'=>$address
-                            ]
-                        );
-                    }
-                    if(!empty($config)){
-                        $client[$name]=make(Client::class,[
-                            'config'=>$config
-                        ]);
-                    }
-                    break;
-                }
-            }
-            if(empty($client[$name])){
-                $client[$name]=$this->client;
-            }
-        }
-        return $client[$name];
-    }
+
     public function getNodes(string $uri, string $name, array $metadata): array
     {
         $response = $this->getConsumersClient($name)->instance->list($name, [
@@ -188,6 +156,40 @@ class NacosDriver implements DriverInterface
         }
 
         return true;
+    }
+
+    protected function getConsumersClient(string $name): Client
+    {
+        static $client;
+        if (empty($client[$name])) {
+            $consumerConfigs = $this->config->get('services.consumers');
+            foreach ($consumerConfigs as $consumerConfig) {
+                if ($consumerConfig['name'] == $name) {
+                    $config = $consumerConfig['registry']['config'] ?? [];
+                    $address = $consumerConfig['registry']['address'] ?? '';
+                    // If there is no dedicated configuration and address not empty
+                    if (empty($config) && $address != '') {
+                        // merge and replace config from services.drivers.nacos
+                        $config = array_merge(
+                            $this->container->get(ConfigInterface::class)->get('services.drivers.nacos', []),
+                            [
+                                'uri' => $address,
+                            ]
+                        );
+                    }
+                    if (! empty($config)) {
+                        $client[$name] = make(Client::class, [
+                            'config' => $config,
+                        ]);
+                    }
+                    break;
+                }
+            }
+            if (empty($client[$name])) {
+                $client[$name] = $this->client;
+            }
+        }
+        return $client[$name];
     }
 
     protected function isNoIpsFound(ResponseInterface $response): bool

@@ -17,13 +17,11 @@ use Psr\Container\ContainerInterface;
 
 class ClientFactory
 {
-    public function __invoke(ContainerInterface $container,array $parameters = []): Client
+    public function __invoke(ContainerInterface $container, array $parameters = []): Client
     {
-
-        if(empty($parameters['config'])){
+        if (empty($parameters['config'])) {
             $config = $container->get(ConfigInterface::class)->get('services.drivers.nacos', []);
-
-        }else{
+        } else {
             $config = $parameters['config'];
         }
         if (! empty($config['uri'])) {
