@@ -593,11 +593,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      */
     public function replaceMatches($pattern, $replace, $limit = -1)
     {
-        if ($replace instanceof Closure) {
-            return new static(preg_replace_callback($pattern, $replace, $this->value, $limit));
-        }
-
-        return new static(preg_replace($pattern, $replace, $this->value, $limit));
+        return new static(Str::replaceMatches($pattern, $replace, $this->value, $limit));
     }
 
     /**
