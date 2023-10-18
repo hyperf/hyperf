@@ -386,3 +386,47 @@ location / {
     }
 }
 ```
+
+### 後置中介軟體
+
+通常情況下，我們都是最後執行
+
+```
+return $handler->handle($request);
+```
+
+所以，相當於是前置中介軟體，如果想要讓中介軟體邏輯後置，其實只需要更換一下執行順序即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+class OpenApiMiddleware implements MiddlewareInterface
+{
+    public function __construct(protected ContainerInterface $container)
+    {
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        // TODO: 前置操作
+        try{
+            $result = $handler->handle($request);
+        } finally {
+            // TODO: 後置操作
+        }
+        return $result;
+    }
+}
+
+```
