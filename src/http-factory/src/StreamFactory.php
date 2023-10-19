@@ -1,12 +1,21 @@
 <?php
-declare(strict_types=1);
-namespace Hyperf\HttpMessage\Factory;
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace Hyperf\HttpMessage\Factory;
 
 use Hyperf\HttpMessage\Stream\StandardStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
+
 use function fopen;
 
 class StreamFactory implements StreamFactoryInterface
