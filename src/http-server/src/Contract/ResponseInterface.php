@@ -25,7 +25,7 @@ interface ResponseInterface
      *
      * @param array|Arrayable|Jsonable $data
      */
-    public function json($data, string $charset = 'utf-8'): PsrResponseInterface;
+    public function json($data): PsrResponseInterface;
 
     /**
      * Format data to XML and return data with Content-Type:application/xml header.

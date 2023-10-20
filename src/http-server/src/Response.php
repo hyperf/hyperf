@@ -77,11 +77,11 @@ class Response implements PsrResponseInterface, ResponseInterface
      *
      * @param array|Arrayable|Jsonable $data
      */
-    public function json($data, string $charset = 'utf-8'): PsrResponseInterface
+    public function json($data): PsrResponseInterface
     {
         $data = $this->toJson($data);
         return $this->getResponse()
-            ->withAddedHeader('content-type', 'application/json; charset=' . $charset)
+            ->withAddedHeader('content-type', 'application/json; charset=utf-8')
             ->withBody(new SwooleStream($data));
     }
 
