@@ -51,6 +51,13 @@ use function Hyperf\Coroutine\parallel;
  */
 class RedisTest extends TestCase
 {
+    protected bool $isOlderThan6 = false;
+
+    protected function setUp(): void
+    {
+        $this->isOlderThan6 = version_compare(phpversion('redis'), '6.0.0', '<');
+    }
+
     protected function tearDown(): void
     {
         Mockery::close();
@@ -66,10 +73,10 @@ class RedisTest extends TestCase
         $this->assertSame('host', $host->getName());
         $this->assertSame('port', $port->getName());
         $this->assertSame('timeout', $timeout->getName());
-        if (version_compare(phpversion('redis'), '6.0', '>=')) {
-            $this->assertSame('persistent_id', $retryInterval->getName());
-        } else {
+        if ($this->isOlderThan6) {
             $this->assertSame('retry_interval', $retryInterval->getName());
+        } else {
+            $this->assertSame('persistent_id', $retryInterval->getName());
         }
 
         $this->assertTrue($redis->connect('127.0.0.1', 6379, 0.0, null, 0, 0));
@@ -177,7 +184,7 @@ class RedisTest extends TestCase
             if ($parameter->getName() === 'seeds') {
                 $this->assertSame('array', $parameter->getType()->getName());
             } else {
-                if (version_compare(phpversion('redis'), '6.0', '>=')) {
+                if (! $this->isOlderThan6) {
                     if (is_array($type)) {
                         foreach ($parameter->getType()->getTypes() as $namedType) {
                             $this->assertTrue(in_array($namedType->getName(), $type));
@@ -224,7 +231,7 @@ class RedisTest extends TestCase
         $method = $rel->getMethod('__construct');
         $count = count($method->getParameters());
 
-        if (version_compare(phpversion('redis'), '6.0', '>=')) {
+        if (! $this->isOlderThan6) {
             $this->assertSame(1, $count);
             $this->assertSame('options', $method->getParameters()[0]->getName());
         } else {

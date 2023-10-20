@@ -452,6 +452,12 @@ class StringableTest extends TestCase
         $this->assertSame('foo', $this->stringable('foo')->toString());
     }
 
+    public function testReplaceMatches()
+    {
+        $this->assertSame('http://hyperf.io', (string) $this->stringable('https://hyperf.io')->replaceMatches('/^https:\/\//', 'http://'));
+        $this->assertSame('http://hyperf.io', (string) $this->stringable('https://hyperf.io')->replaceMatches('/^https:\/\//', fn ($matches) => 'http://'));
+    }
+
     /**
      * @param string $string
      * @return Stringable

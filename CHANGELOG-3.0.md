@@ -1,4 +1,18 @@
-# v3.0.40 - TBD
+# v3.0.41 - TBD
+
+# v3.0.40 - 2023-10-20
+
+## Added
+
+- [#6220](https://github.com/hyperf/hyperf/pull/6220) Added `Hyperf\Stringable\Str::replaceMatches()`.
+
+## Fixed
+
+- [#6217](https://github.com/hyperf/hyperf/pull/6217) Fixed bug that `Str::replaceLast` with empty search cannot work as expected.
+
+## Optimized
+
+- [#6209](https://github.com/hyperf/hyperf/pull/6209) Support for phpredis 6.x [sentinel](https://github.com/phpredis/phpredis/blob/develop/sentinel.md#examples-for-version-60-or-later)
 
 # v3.0.39 - 2023-10-13
 

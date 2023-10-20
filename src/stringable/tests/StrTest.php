@@ -912,4 +912,16 @@ class StrTest extends TestCase
             $this->assertSame($item[0], Str::convertCase(...$item[1]));
         }
     }
+
+    public function testReplaceLast()
+    {
+        $this->assertSame('Hello earth', Str::replaceLast('world', 'earth', 'Hello world'));
+        $this->assertSame('Hello world', Str::replaceLast('', 'earth', 'Hello world'));
+    }
+
+    public function testReplaceMatches()
+    {
+        $this->assertSame('http://hyperf.io', Str::replaceMatches('/^https:\/\//', 'http://', 'https://hyperf.io'));
+        $this->assertSame('http://hyperf.io', Str::replaceMatches('/^https:\/\//', fn ($matches) => 'http://', 'https://hyperf.io'));
+    }
 }

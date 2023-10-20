@@ -334,6 +334,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         return [$name, $type, $comment];
     }
 
+    /**
+     * Used by `casts` attribute.
+     */
     protected function formatDatabaseType(string $type): ?string
     {
         return match ($type) {
@@ -343,6 +346,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         };
     }
 
+    /**
+     * Used by `@property` docs.
+     */
     protected function formatPropertyType(string $type, ?string $cast): ?string
     {
         if (! isset($cast)) {
