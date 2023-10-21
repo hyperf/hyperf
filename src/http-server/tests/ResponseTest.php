@@ -179,6 +179,23 @@ class ResponseTest extends TestCase
         $this->assertSame('{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true,"karray":{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true}}', (string) $json->getBody());
     }
 
+    public function testHtml()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+
+        $psrResponse = new \Hyperf\HttpMessage\Base\Response();
+        Context::set(PsrResponseInterface::class, $psrResponse);
+
+        $response = new Response();
+        $html = $response->html('<h1>hello world</h1>');
+        $this->assertSame('<h1>hello world</h1>', (string) $html->getBody());
+
+        $html = $response->html('<h1>hello world</h1>', 'GBK');
+        $this->assertSame('<h1>hello world</h1>', (string) $html->getBody());
+        $this->assertSame('text/html; charset=GBK', $html->getHeaderLine('content-type'));
+    }
+
     public function testObjectToJson()
     {
         $container = Mockery::mock(ContainerInterface::class);
