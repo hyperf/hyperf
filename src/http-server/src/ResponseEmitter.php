@@ -33,9 +33,6 @@ class ResponseEmitter implements ResponseEmitterInterface
             if (strtolower($connection->header['Upgrade'] ?? '') === 'websocket') {
                 return;
             }
-            if (strtolower($response->getHeaderLine('Content-Type')) === 'application/grpc' && method_exists($connection, 'isWritable') && ! $connection->isWritable()) {
-                return;
-            }
             $this->buildSwooleResponse($connection, $response);
             $content = $response->getBody();
             if ($content instanceof FileInterface) {
