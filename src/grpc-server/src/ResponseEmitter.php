@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcServer;
 
-use Hyperf\HttpMessage\Stream\FileInterface;
 use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\Response;
 use Throwable;
@@ -27,18 +26,7 @@ class ResponseEmitter extends \Hyperf\HttpServer\ResponseEmitter
             if (method_exists($connection, 'isWritable') && ! $connection->isWritable()) {
                 return;
             }
-            $this->buildSwooleResponse($connection, $response);
-            $content = $response->getBody();
-            if ($content instanceof FileInterface) {
-                $connection->sendfile($content->getFilename());
-                return;
-            }
-
-            if ($withContent) {
-                $connection->end((string) $content);
-            } else {
-                $connection->end();
-            }
+            parent::emit($response, $connection, $withContent);
         } catch (Throwable $exception) {
             $this->logger?->critical((string) $exception);
         }
