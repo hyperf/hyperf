@@ -1,5 +1,9 @@
 # v3.0.41 - TBD
 
+## Optimized
+
+- [#6226](https://github.com/hyperf/hyperf/pull/6226) Don't send response when the connection of grpc server has been closed.
+
 # v3.0.40 - 2023-10-20
 
 ## Added
