@@ -5,6 +5,7 @@
 ## Added
 
 - [#6220](https://github.com/hyperf/hyperf/pull/6220) Added `Hyperf\Stringable\Str::replaceMatches()`.
+- [#6224](https://github.com/hyperf/hyperf/pull/6224) Adds charset param and html method for Response.
 
 ## Fixed
 
