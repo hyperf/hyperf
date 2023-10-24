@@ -104,11 +104,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
         return $this;
     }
 
-    public function rules(): array
-    {
-        return [];
-    }
-
     /**
      * Get the validator instance for the request.
      */
@@ -203,7 +198,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected function getRules(): array
     {
-        $rules = $this->rules();
+        $rules = method_exists($this, 'rules') ? call_user_func_array([$this, 'rules'], []) : [];
         $scene = $this->getScene();
         if ($scene && isset($this->scenes[$scene]) && is_array($this->scenes[$scene])) {
             return Arr::only($rules, $this->scenes[$scene]);
