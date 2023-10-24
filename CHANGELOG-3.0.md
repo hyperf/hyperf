@@ -7,6 +7,7 @@
 ## Optimized
 
 - [#6226](https://github.com/hyperf/hyperf/pull/6226) Don't send response when the connection of grpc server has been closed.
+- [#6228](https://github.com/hyperf/hyperf/pull/6228) [#6229](https://github.com/hyperf/hyperf/pull/6229)  Make rules method in FormRequest optional.
 
 # v3.0.40 - 2023-10-20
 
