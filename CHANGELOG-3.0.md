@@ -4,8 +4,8 @@
 
 ## Added
 
-- [#6224](https://github.com/hyperf/hyperf/pull/6224) Adds charset param and html method for Response.
-- [#6232](https://github.com/hyperf/hyperf/pull/6232) Adds `isNotFound` method for Dispatched.
+- [#6224](https://github.com/hyperf/hyperf/pull/6224) Added charset param and html method for Response.
+- [#6232](https://github.com/hyperf/hyperf/pull/6232) Added `isNotFound` method for Dispatched.
 - [#6233](https://github.com/hyperf/hyperf/pull/6233) Improved `AfterExecute` event of `hyperf/command`.
 
 ## Optimized
