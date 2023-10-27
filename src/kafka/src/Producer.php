@@ -121,8 +121,13 @@ class Producer
                     }
                     try {
                         $closure->call($this);
-                    } catch (\Throwable) {
+                    } catch (Throwable $e) {
                         $this->producer->close();
+
+                        $callback = $this->getConfig()->getExceptionCallback();
+                        if ($callback) {
+                            $callback($e);
+                        }
                         break;
                     }
                 }

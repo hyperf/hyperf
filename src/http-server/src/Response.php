@@ -88,12 +88,22 @@ class Response implements PsrResponseInterface, ResponseInterface
      *
      * @param array|Arrayable|Xmlable $data
      */
-    public function xml($data, string $root = 'root'): PsrResponseInterface
+    public function xml($data, string $root = 'root', string $charset = 'utf-8'): PsrResponseInterface
     {
         $data = $this->toXml($data, null, $root);
         return $this->getResponse()
-            ->addHeader('content-type', 'application/xml; charset=utf-8')
+            ->addHeader('content-type', 'application/xml; charset=' . $charset)
             ->setBody(new SwooleStream($data));
+    }
+
+    /**
+     * return data with content-type:text/html header.
+     */
+    public function html(string $html, string $charset = 'utf-8'): PsrResponseInterface
+    {
+        return $this->getResponse()
+            ->withAddedHeader('content-type', 'text/html; charset=' . $charset)
+            ->withBody(new SwooleStream($html));
     }
 
     /**
@@ -101,10 +111,10 @@ class Response implements PsrResponseInterface, ResponseInterface
      *
      * @param mixed|Stringable $data will transfer to a string value
      */
-    public function raw($data): PsrResponseInterface
+    public function raw($data, string $charset = 'utf-8'): PsrResponseInterface
     {
         return $this->getResponse()
-            ->addHeader('content-type', 'text/plain; charset=utf-8')
+            ->addHeader('content-type', 'text/plain; charset=' . $charset)
             ->setBody(new SwooleStream((string) $data));
     }
 
