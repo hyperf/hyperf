@@ -165,17 +165,16 @@ class Consumer extends Builder
     protected function getCallback(ConsumerMessageInterface $consumerMessage, AMQPMessage $message): callable
     {
         return function () use ($consumerMessage, $message) {
-            $data = $consumerMessage->unserialize($message->getBody());
-            /** @var AMQPChannel $channel */
-            $channel = $message->delivery_info['channel'];
-            $deliveryTag = $message->delivery_info['delivery_tag'];
-
             try {
+                $data = $consumerMessage->unserialize($message->getBody());
+                $channel = $message->getChannel();
+                $deliveryTag = $message->getDeliveryTag();
+
                 $this->eventDispatcher?->dispatch(new BeforeConsume($consumerMessage));
                 $result = $consumerMessage->consumeMessage($data, $message);
                 $this->eventDispatcher?->dispatch(new AfterConsume($consumerMessage, $result));
             } catch (Throwable $exception) {
-                $this->eventDispatcher?->dispatch(new FailToConsume($consumerMessage, $exception));
+                $this->eventDispatcher?->dispatch(new FailToConsume($consumerMessage, $exception, $message));
                 if ($this->container->has(FormatterInterface::class)) {
                     $formatter = $this->container->get(FormatterInterface::class);
                     $this->logger->error($formatter->format($exception));
