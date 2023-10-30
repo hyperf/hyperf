@@ -21,8 +21,6 @@ use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
 
-use function Hyperf\Support\make;
-
 /**
  * @internal
  * @coversNothing
@@ -54,7 +52,7 @@ class ModelGenerateTest extends TestCase
 
         $stmts = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
-        $traverser->addVisitor(make(GenerateModelIDEVisitor::class, [$option, $data]));
+        $traverser->addVisitor(new GenerateModelIDEVisitor($option, $data));
         $stmts = $traverser->traverse($stmts);
         $code = $this->printer->prettyPrintFile($stmts);
 
