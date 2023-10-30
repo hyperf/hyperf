@@ -57,7 +57,6 @@ class ModelGenerateTest extends TestCase
         $code = $this->printer->prettyPrintFile($stmts);
 
         $this->assertEquals(
-            $code,
             <<<'result'
 <?php
 
@@ -119,7 +118,8 @@ namespace {
         }
     }
 }
-result
+result,
+            $code
         );
     }
 }
