@@ -108,18 +108,17 @@ class GenerateModelIDEVisitor extends AbstractVisitor
             foreach ($call['arguments'] as $argument) {
                 $argName = new Node\Expr\Variable($argument->getName());
                 if ($argument->hasType()) {
-                    if ($argument->getType()->allowsNull()) {
-                        $argType = new Node\NullableType($argument->getType()->getName());
+                    $argumentType = $argument->getType();
+                    if ($argumentType instanceof ReflectionUnionType) {
+                        $unionTypeIdentifier = [];
+                        foreach ($argumentType->getTypes() as $type) {
+                            $unionTypeIdentifier[] = new Identifier($type->getName());
+                        }
+                        $argType = new Node\UnionType($unionTypeIdentifier);
                     } else {
-                        $argumentType = $argument->getType();
-                        if ($argumentType instanceof ReflectionUnionType) {
-                            $unionTypeIdentifier = [];
-                            foreach ($argumentType->getTypes() as $type) {
-                                $unionTypeIdentifier[] = new Identifier($type->getName());
-                            }
-                            $argType = new Node\UnionType($unionTypeIdentifier);
-                        } else {
-                            $argType = $argumentType->getName();
+                        $argType = $argumentType->getName();
+                        if ($argumentType->allowsNull()) {
+                            $argType .= '|null';
                         }
                     }
                 }
