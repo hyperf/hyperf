@@ -27,7 +27,7 @@ class FailToConsume extends ConsumeEvent
         return $this->throwable;
     }
 
-    public function getAmqpMessage(): AMQPMessage
+    public function getAMQPMessage(): AMQPMessage
     {
         return $this->amqpMessage;
     }
