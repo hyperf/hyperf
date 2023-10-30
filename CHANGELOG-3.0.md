@@ -1,5 +1,9 @@
 # v3.0.42 - TBD
 
+## Added
+
+- [#6236](https://github.com/hyperf/hyperf/pull/6236) Support unionType param for GenerateModelIDEVisitor.
+
 # v3.0.41 - 2023-10-27
 
 ## Added
@@ -7,7 +11,6 @@
 - [#6224](https://github.com/hyperf/hyperf/pull/6224) Added charset param and html method for Response.
 - [#6232](https://github.com/hyperf/hyperf/pull/6232) Added `isNotFound` method for Dispatched.
 - [#6233](https://github.com/hyperf/hyperf/pull/6233) Improved `AfterExecute` event of `hyperf/command`.
-- [#6236](https://github.com/hyperf/hyperf/pull/6236) Support unionType param for GenerateModelIDEVisitor.
 
 ## Optimized
 
