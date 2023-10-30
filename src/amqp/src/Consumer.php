@@ -165,10 +165,11 @@ class Consumer extends Builder
     protected function getCallback(ConsumerMessageInterface $consumerMessage, AMQPMessage $message): callable
     {
         return function () use ($consumerMessage, $message) {
+            $channel = $message->getChannel();
+            $deliveryTag = $message->getDeliveryTag();
+
             try {
                 $data = $consumerMessage->unserialize($message->getBody());
-                $channel = $message->getChannel();
-                $deliveryTag = $message->getDeliveryTag();
 
                 $this->eventDispatcher?->dispatch(new BeforeConsume($consumerMessage));
                 $result = $consumerMessage->consumeMessage($data, $message);
