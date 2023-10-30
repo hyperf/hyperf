@@ -47,10 +47,10 @@ class ModelGenerateTest extends TestCase
         $code = file_get_contents(__DIR__ . '/Stubs/Model/TestGenerateIdeModel.php');
 
         $option = new ModelOption();
-        $data = make(ModelData::class, ['class' => TestGenerateIdeModel::class, 'columns' => [
+        $data = new ModelData(TestGenerateIdeModel::class, [
             ['column_name' => 'name'],
             ['column_name' => 'age'],
-        ]]);
+        ]);
 
         $stmts = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
