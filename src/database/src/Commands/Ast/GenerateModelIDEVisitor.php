@@ -118,7 +118,7 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                     } else {
                         $argType = $argumentType->getName();
                         if ($argumentType->allowsNull()) {
-                            $argType = new Node\NullableType($argument->getType()->getName());
+                            $argType = new Node\NullableType($argumentType->getName());
                         }
                     }
                 }
