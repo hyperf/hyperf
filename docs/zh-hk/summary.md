@@ -126,7 +126,6 @@
   * [ReactiveX](zh-hk/reactive-x.md)
   * [Watcher](zh-hk/watcher.md)
   * [開發者工具](zh-hk/devtool.md)
-  * [Swoole Tracker](zh-hk/swoole-tracker.md)
   * [Phar 打包器](zh-hk/phar.md)
   * [DAG](zh-hk/dag.md)
   * [RPN - 逆波蘭表示法](zh-hk/rpn.md)

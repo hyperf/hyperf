@@ -124,7 +124,6 @@
   * [ReactiveX](en/reactive-x.md)
   * [Watcher](en/watcher.md)
   * [Dev Tool](en/devtool.md)
-  * [Swoole Tracker](en/swoole-tracker.md)
   * [Phar](en/phar.md)
   * [DAG](en/dag.md)
   * [RPN](en/rpn.md)
