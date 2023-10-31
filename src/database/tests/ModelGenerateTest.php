@@ -56,10 +56,10 @@ class ModelGenerateTest extends TestCase
         $stmts = $traverser->traverse($stmts);
         $code = $this->printer->prettyPrintFile($stmts);
 
-        $this->assertNotFalse(strpos($code, 'public static function optionNull(string|null $test)'));
+        $this->assertNotFalse(strpos($code, 'public static function optionNull(?string $test)'));
         $this->assertNotFalse(strpos($code, 'public static function string(string $test)'));
         $this->assertNotFalse(strpos($code, 'public static function union(int $appId, string|int $uid)'));
         $this->assertNotFalse(strpos($code, 'public static function unionOrNull(int $appId, string|int|null $uid)'));
-        $this->assertNotFalse(strpos($code, 'public static function singleOrNull(string|null $test)'));
+        $this->assertNotFalse(strpos($code, 'public static function singleOrNull(?string $test)'));
     }
 }
