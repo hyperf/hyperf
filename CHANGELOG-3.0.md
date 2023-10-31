@@ -1,5 +1,9 @@
 # v3.0.42 - TBD
 
+## Added
+
+- [#6236](https://github.com/hyperf/hyperf/pull/6236) Support unionType param for GenerateModelIDEVisitor.
+
 ## Optimized
 
 - [#6239](https://github.com/hyperf/hyperf/pull/6239) Improve amqp, use methods instead of `$delivery_info` and optimize `BeforeConsume` event.
