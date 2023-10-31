@@ -15,7 +15,6 @@ use Hyperf\Amqp\Builder\QueueBuilder;
 use Hyperf\Amqp\Packer\Packer;
 use Hyperf\Amqp\Result;
 use Hyperf\Context\ApplicationContext;
-use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
 
@@ -151,8 +150,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
     {
         $packer = ApplicationContext::getContainer()->get(Packer::class);
 
-        /** @var AMQPChannel $channel */
-        $channel = $message->delivery_info['channel'];
+        $channel = $message->getChannel();
         $channel->basic_publish(
             new AMQPMessage($packer->pack($data), [
                 'correlation_id' => $message->get('correlation_id'),
