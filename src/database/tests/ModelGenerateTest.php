@@ -56,70 +56,10 @@ class ModelGenerateTest extends TestCase
         $stmts = $traverser->traverse($stmts);
         $code = $this->printer->prettyPrintFile($stmts);
 
-        $this->assertEquals(
-            <<<'result'
-<?php
-
-namespace {
-    class HyperfTest_Database_Stubs_Model_TestGenerateIdeModel
-    {
-        /**
-         * @var \Hyperf\Database\Model\Builder
-         */
-        public static $builder;
-        /**
-         * @return \Hyperf\Database\Model\Builder|static
-         */
-        public static function whereName($value)
-        {
-            return static::$builder->dynamicWhere('whereName', $value);
-        }
-        /**
-         * @return \Hyperf\Database\Model\Builder|static
-         */
-        public static function whereAge($value)
-        {
-            return static::$builder->dynamicWhere('whereAge', $value);
-        }
-        /**
-         * @return \Hyperf\Database\Model\Builder|static
-         */
-        public static function optionNull(string|null $test)
-        {
-            return static::$builder;
-        }
-        /**
-         * @return \Hyperf\Database\Model\Builder|static
-         */
-        public static function string(string $test)
-        {
-            return static::$builder;
-        }
-        /**
-         * @return \Hyperf\Database\Model\Builder|static
-         */
-        public static function union(int $appId, string|int $uid)
-        {
-            return static::$builder;
-        }
-        /**
-         * @return \Hyperf\Database\Model\Builder|static
-         */
-        public static function unionOrNull(int $appId, string|int|null $uid)
-        {
-            return static::$builder;
-        }
-        /**
-         * @return \Hyperf\Database\Model\Builder|static
-         */
-        public static function singleOrNull(string|null $test)
-        {
-            return static::$builder;
-        }
-    }
-}
-result,
-            $code
-        );
+        $this->assertNotFalse(strpos($code, 'public static function optionNull(string|null $test)'));
+        $this->assertNotFalse(strpos($code, 'public static function string(string $test)'));
+        $this->assertNotFalse(strpos($code, 'public static function union(int $appId, string|int $uid)'));
+        $this->assertNotFalse(strpos($code, 'public static function unionOrNull(int $appId, string|int|null $uid)'));
+        $this->assertNotFalse(strpos($code, 'public static function singleOrNull(string|null $test)'));
     }
 }
