@@ -72,6 +72,7 @@
 - [#5859](https://github.com/hyperf/hyperf/pull/5859) Removed string cache from `Hyperf\Stringable\Str`
 - [#6040](https://github.com/hyperf/hyperf/pull/6040) Removed some deprecated methods from `Hyperf\Di\Annotation\AbstractAnnotation`.
 - [#6043](https://github.com/hyperf/hyperf/pull/6043) Removed deprecated `Hyperf\Coroutine\Traits\Container`.
+- [#6244](https://github.com/hyperf/hyperf/pull/6244) Removed deprecated component `swoole-tracker`.
 
 ## Changed
 
