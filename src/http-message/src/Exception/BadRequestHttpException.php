@@ -26,4 +26,9 @@ class BadRequestHttpException extends HttpException
         $this->request = $request;
         return $this;
     }
+
+    public function getRequest(): ?ServerRequestInterface
+    {
+        return $this->request;
+    }
 }
