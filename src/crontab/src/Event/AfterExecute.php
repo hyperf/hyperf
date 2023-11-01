@@ -11,6 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Event;
 
-class FailToExecute extends Event
+class AfterExecute extends Event
 {
 }
