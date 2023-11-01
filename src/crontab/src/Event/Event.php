@@ -12,10 +12,16 @@ declare(strict_types=1);
 namespace Hyperf\Crontab\Event;
 
 use Hyperf\Crontab\Crontab;
+use Throwable;
 
 abstract class Event
 {
-    public function __construct(public Crontab $crontab)
+    public function __construct(public Crontab $crontab, public ?Throwable $throwable = null)
     {
+    }
+
+    public function getThrowable(): ?Throwable
+    {
+        return $this->throwable;
     }
 }
