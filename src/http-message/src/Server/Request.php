@@ -18,7 +18,6 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
 use InvalidArgumentException;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
@@ -464,7 +463,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         return $this;
     }
 
-    protected static function normalizeParsedBody(array $data = [], ?RequestInterface $request = null): array
+    protected static function normalizeParsedBody(array $data = [], ?ServerRequestInterface $request = null): array
     {
         if (! $request) {
             return $data;
@@ -484,7 +483,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
                 $data = $parser->parse($content, $contentType);
             }
         } catch (InvalidArgumentException $exception) {
-            throw new BadRequestHttpException($exception->getMessage());
+            throw new BadRequestHttpException($exception->getMessage(), request: $request);
+        } catch (BadRequestHttpException $exception) {
+            throw $exception->setRequest($request);
         }
 
         return $data;
