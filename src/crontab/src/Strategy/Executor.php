@@ -69,6 +69,9 @@ class Executor
             $runnable = null;
 
             switch ($crontab->getType()) {
+                case 'closure':
+                    $runnable = $crontab->getCallback();
+                    break;
                 case 'callback':
                     [$class, $method] = $crontab->getCallback();
                     $parameters = $crontab->getCallback()[2] ?? null;

@@ -4,6 +4,7 @@
 
 - [#6236](https://github.com/hyperf/hyperf/pull/6236) Support unionType param for GenerateModelIDEVisitor.
 - [#6246](https://github.com/hyperf/hyperf/pull/6246) Added crontab lifecycle events.
+- [#6246](https://github.com/hyperf/hyperf/pull/6246) Support crontab closure type.
 
 ## Optimized
 
