@@ -62,6 +62,7 @@
 - [#6131](https://github.com/hyperf/hyperf/pull/6131) Throw invalid argument exception when the crontab task is `null`.
 - [#6172](https://github.com/hyperf/hyperf/pull/6172) Optimized `ProcessManager` to make the `running` status more clear.
 - [#6184](https://github.com/hyperf/hyperf/pull/6184) Set logger when using safe socket in coroutine style tcp server.
+- [#6247](https://github.com/hyperf/hyperf/pull/6247) Optimized code that you can get request from `BadRequestHttpException`.
 
 ## Removed
 
