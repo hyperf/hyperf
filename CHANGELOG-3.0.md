@@ -1,5 +1,14 @@
 # v3.0.42 - TBD
 
+## Added
+
+- [#6236](https://github.com/hyperf/hyperf/pull/6236) Support unionType param for GenerateModelIDEVisitor.
+- [#6246](https://github.com/hyperf/hyperf/pull/6246) Added crontab lifecycle events.
+
+## Optimized
+
+- [#6239](https://github.com/hyperf/hyperf/pull/6239) Improve amqp, use methods instead of `$delivery_info` and optimize `BeforeConsume` event.
+
 # v3.0.41 - 2023-10-27
 
 ## Added

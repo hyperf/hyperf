@@ -194,11 +194,11 @@ class Executor
                     throw new InvalidArgumentException('The crontab task is invalid.');
                 }
                 $runnable();
-                $this->dispatcher?->dispatch(new AfterExecute($crontab));
             } catch (Throwable $throwable) {
                 $result = false;
                 $this->dispatcher?->dispatch(new FailToExecute($crontab, $throwable));
             } finally {
+                $this->dispatcher?->dispatch(new AfterExecute($crontab, $throwable ?? null));
                 $this->logResult($crontab, $result, $throwable ?? null);
             }
         };
