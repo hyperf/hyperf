@@ -190,15 +190,15 @@ class Executor
     protected function catchToExecute(Crontab $crontab, Closure $runnable): Closure
     {
         return function () use ($crontab, $runnable) {
-            $this->dispatcher?->dispatch(new BeforeExecute($crontab));
             try {
+                $this->dispatcher?->dispatch(new BeforeExecute($crontab));
                 $result = true;
                 $runnable();
+                $this->dispatcher?->dispatch(new AfterExecute($crontab));
             } catch (Throwable $throwable) {
                 $result = false;
                 $this->dispatcher?->dispatch(new FailToExecute($crontab, $throwable));
             } finally {
-                $this->dispatcher?->dispatch(new AfterExecute($crontab, $throwable ?? null));
                 $this->logResult($crontab, $result, $throwable ?? null);
             }
         };
