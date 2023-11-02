@@ -26,31 +26,23 @@ class Translator implements TranslatorInterface
 
     /**
      * The fallback locale used by the translator.
-     *
-     * @var string
      */
-    protected $fallback;
+    protected string $fallback = '';
 
     /**
      * The array of loaded translation groups.
-     *
-     * @var array
      */
-    protected $loaded = [];
+    protected array $loaded = [];
 
     /**
      * The message selector.
-     *
-     * @var null|\Hyperf\Translation\MessageSelector
      */
-    protected $selector;
+    protected ?MessageSelector $selector = null;
 
     /**
      * A cache of the parsed items.
-     *
-     * @var array
      */
-    protected $parsed = [];
+    protected array $parsed = [];
 
     /**
      * @param TranslatorLoaderInterface $loader the loader implementation
