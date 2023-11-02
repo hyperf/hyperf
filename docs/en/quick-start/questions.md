@@ -208,7 +208,7 @@ When an exception occurs during the DI collection phase (for example, a namespac
 - Third party components, feedback to the component author.
 
 ```bash
-[ERROR] DI Reflection Manager collect failed. 
+[ERROR] DI Reflection Manager collecting class reflections failed. 
 File: xxxx.
 Exception: xxxx
 ```

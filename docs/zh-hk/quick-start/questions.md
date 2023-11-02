@@ -214,7 +214,7 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 - 第三方組件，反饋給組件作者。
 
 ```bash
-[ERROR] DI Reflection Manager collect failed. 
+[ERROR] DI Reflection Manager collecting class reflections failed. 
 File: xxxx.
 Exception: xxxx
 ```

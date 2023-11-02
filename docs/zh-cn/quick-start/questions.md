@@ -168,7 +168,7 @@ http2 => enabled
 
 如果没有，需要重新编译 Swoole 并增加 `--enable-http2` 参数。
 
-2. 检查 [server.php](/zh-cn/config?id=serverphp-配置说明) 文件中 `open_http2_protocol` 选项是否为 `true`。
+2. 检查 server.php 文件中 `open_http2_protocol` 选项是否为 `true`。
 
 ## Command 无法正常关闭
 
@@ -209,11 +209,11 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 在 DI 收集阶段发生异常（如命名空间错误等原因），可能产生以下格式日志的输出。
 
 - 业务代码，排查日志中路径相关的文件和类。
-- 框架代码，提交PR反馈。
+- 框架代码，提交 PR 反馈。
 - 第三方组件，反馈给组件作者。
 
 ```bash
-[ERROR] DI Reflection Manager collect failed. 
+[ERROR] DI Reflection Manager collecting class reflections failed. 
 File: xxxx.
 Exception: xxxx
 ```
