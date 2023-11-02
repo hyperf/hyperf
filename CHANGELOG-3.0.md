@@ -10,7 +10,7 @@
 
 - [#6239](https://github.com/hyperf/hyperf/pull/6239) Improve amqp, use methods instead of `$delivery_info` and optimize `BeforeConsume` event.
 - [#6250](https://github.com/hyperf/hyperf/pull/6250) Enhance scopeDoc for generateModelIdeVisitor.
-- [#6253](https://github.com/hyperf/hyperf/pull/6253) Enhance log when di reflection manager faild.
+- [#6253](https://github.com/hyperf/hyperf/pull/6253) Print error logs when collecting class reflections failed.
 
 # v3.0.41 - 2023-10-27
 
