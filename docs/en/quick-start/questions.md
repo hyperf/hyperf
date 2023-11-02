@@ -198,3 +198,17 @@ When using `hyperf/hyperf:8.0-alpine-v3.13-swoole` image
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/gnu-libiconv=1.15-r3
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 ```
+
+## DI Reflection Manager collect failed
+
+When an exception occurs during the DI collection phase (for example, a namespace error), the output of a log in the following format may be generated.
+
+- Service code, check the files and classes related to the path in the log.
+- Framework code, submit PR feedback.
+- Third party components, feedback to the component author.
+
+```bash
+[ERROR] DI Reflection Manager collecting class reflections failed. 
+File: xxxx.
+Exception: xxxx
+```

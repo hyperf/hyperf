@@ -203,3 +203,17 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/ gnu-libiconv=1.15-r3
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 ```
+
+## DI 收集失敗
+
+在 DI 收集階段發生異常（如名稱空間錯誤等原因），可能產生以下格式日誌的輸出。
+
+- 業務程式碼，排查日誌中路徑相關的檔案和類。
+- 框架程式碼，提交PR反饋。
+- 第三方元件，反饋給元件作者。
+
+```bash
+[ERROR] DI Reflection Manager collecting class reflections failed.
+File: xxxx.
+Exception: xxxx
+```
