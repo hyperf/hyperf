@@ -21,17 +21,13 @@ class FileLoader implements TranslatorLoaderInterface
 {
     /**
      * All of the registered paths to JSON translation files.
-     *
-     * @var array
      */
-    protected $jsonPaths = [];
+    protected array $jsonPaths = [];
 
     /**
      * All of the namespace hints.
-     *
-     * @var array
      */
-    protected $hints = [];
+    protected array $hints = [];
 
     /**
      * Create a new file loader instance.
@@ -126,6 +122,7 @@ class FileLoader implements TranslatorLoaderInterface
     /**
      * Load a locale from the given JSON file path.
      *
+     * @return array
      * @throws RuntimeException
      */
     protected function loadJsonPaths(string $locale): iterable
