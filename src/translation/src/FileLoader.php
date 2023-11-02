@@ -122,8 +122,8 @@ class FileLoader implements TranslatorLoaderInterface
     /**
      * Load a locale from the given JSON file path.
      *
-     * @throws RuntimeException
      * @return array
+     * @throws RuntimeException
      */
     protected function loadJsonPaths(string $locale): iterable
     {
