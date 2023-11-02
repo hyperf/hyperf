@@ -233,31 +233,6 @@ class UserService
 }
 ```
 
-當設定 `value` 後，框架會根據設定的規則，進行快取 `KEY` 鍵命名。如下例項，當 `$user->id = 1` 時，快取 `KEY` 為 `c:userBook:_1`
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Service;
-
-use App\Models\User;
-use Hyperf\Cache\Annotation\Cacheable;
-
-class UserBookService
-{
-    #[Cacheable(prefix: "userBook", ttl: 6666, value: "_#{user.id}")]
-    public function userBook(User $user): array
-    {
-        return [
-            'book' => $user->book->toArray(),
-            'uuid' => $this->unique(),
-        ];
-    }
-}
-```
-
 ### CachePut
 
 `CachePut` 不同於 `Cacheable`，它每次呼叫都會執行函式體，然後再對快取進行重寫。所以當我們想更新快取時，可以呼叫相關方法。
