@@ -42,6 +42,7 @@ use Hyperf\Paginator\Paginator;
 use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\IntegerStatus;
+use HyperfTest\Database\Stubs\Model\Book;
 use HyperfTest\Database\Stubs\Model\Gender;
 use HyperfTest\Database\Stubs\Model\TestModel;
 use HyperfTest\Database\Stubs\Model\TestVersionModel;
@@ -780,6 +781,23 @@ class ModelRealBuilderTest extends TestCase
 
         $res = $invoker->cleanBindings([StringStatus::Active, IntegerStatus::Active, new Expression('1')]);
         $this->assertSame(['active', 1], $res);
+    }
+
+    public function testAddSelectObjects()
+    {
+        $this->getContainer();
+        $models = User::query()->addSelect([
+            'book_id' => Book::query()
+                ->select('id')
+                ->whereColumn('book.user_id', 'user.id')
+                ->limit(1),
+        ])->get();
+        $this->assertTrue($models->isNotEmpty());
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, 'select `user`.*, (select `id` from `book` where `book`.`user_id` = `user`.`id` limit 1) as `book_id` from `user`');
+            }
+        }
     }
 
     protected function getContainer()

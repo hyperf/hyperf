@@ -26,6 +26,7 @@ use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Model\Builder as ModelBuilder;
+use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Macroable\Macroable;
@@ -366,9 +367,23 @@ class Builder
      */
     public function addSelect($column)
     {
-        $column = is_array($column) ? $column : func_get_args();
+        $columns = is_array($column) ? $column : func_get_args();
 
-        $this->columns = array_merge((array) $this->columns, $column);
+        foreach ($columns as $as => $column) {
+            if (is_string($as) && $this->isQueryable($column)) {
+                if (is_null($this->columns)) {
+                    $this->select($this->from . '.*');
+                }
+
+                $this->selectSub($column, $as);
+            } else {
+                if (is_array($this->columns) && in_array($column, $this->columns, true)) {
+                    continue;
+                }
+
+                $this->columns[] = $column;
+            }
+        }
 
         return $this;
     }
@@ -2661,6 +2676,20 @@ class Builder
                 $clone->bindings[$type] = [];
             }
         });
+    }
+
+    /**
+     * Determine if the value is a query builder instance or a Closure.
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    protected function isQueryable($value)
+    {
+        return $value instanceof static
+            || $value instanceof ModelBuilder
+            || $value instanceof Relation
+            || $value instanceof Closure;
     }
 
     /**
