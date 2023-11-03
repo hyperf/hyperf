@@ -69,6 +69,9 @@ class Executor
             $runnable = null;
 
             switch ($crontab->getType()) {
+                case 'closure':
+                    $runnable = $crontab->getCallback();
+                    break;
                 case 'callback':
                     [$class, $method] = $crontab->getCallback();
                     $parameters = $crontab->getCallback()[2] ?? null;
@@ -187,18 +190,18 @@ class Executor
     protected function catchToExecute(Crontab $crontab, ?Closure $runnable): Closure
     {
         return function () use ($crontab, $runnable) {
-            $this->dispatcher?->dispatch(new BeforeExecute($crontab));
             try {
+                $this->dispatcher?->dispatch(new BeforeExecute($crontab));
                 $result = true;
                 if (! $runnable) {
                     throw new InvalidArgumentException('The crontab task is invalid.');
                 }
                 $runnable();
+                $this->dispatcher?->dispatch(new AfterExecute($crontab));
             } catch (Throwable $throwable) {
                 $result = false;
                 $this->dispatcher?->dispatch(new FailToExecute($crontab, $throwable));
             } finally {
-                $this->dispatcher?->dispatch(new AfterExecute($crontab, $throwable ?? null));
                 $this->logResult($crontab, $result, $throwable ?? null);
             }
         };

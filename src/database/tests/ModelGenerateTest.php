@@ -56,10 +56,64 @@ class ModelGenerateTest extends TestCase
         $stmts = $traverser->traverse($stmts);
         $code = $this->printer->prettyPrintFile($stmts);
 
-        $this->assertNotFalse(strpos($code, 'public static function optionNull(?string $test)'));
-        $this->assertNotFalse(strpos($code, 'public static function string(string $test)'));
-        $this->assertNotFalse(strpos($code, 'public static function union(int $appId, string|int $uid)'));
-        $this->assertNotFalse(strpos($code, 'public static function unionOrNull(int $appId, string|int|null $uid)'));
-        $this->assertNotFalse(strpos($code, 'public static function singleOrNull(?string $test)'));
+        $this->assertNotFalse(strpos($code, '
+        /**
+         * @return \Hyperf\Database\Model\Builder|static
+         * @see HyperfTest\Database\Stubs\Model\TestGenerateIdeModel::scopeOptionNull
+         */
+        public static function optionNull(?string $test)
+        {
+            return static::$builder;
+        }'));
+
+        $this->assertNotFalse(strpos($code, '
+        /**
+         * @return \Hyperf\Database\Model\Builder|static
+         * @see HyperfTest\Database\Stubs\Model\TestGenerateIdeModel::scopeOptionNull
+         */
+        public static function optionNull(?string $test)
+        {
+            return static::$builder;
+        }'));
+
+        $this->assertNotFalse(strpos($code, '
+        /**
+         * @return \Hyperf\Database\Model\Builder|static
+         * @see HyperfTest\Database\Stubs\Model\TestGenerateIdeModel::scopeString
+         */
+        public static function string(string $test)
+        {
+            return static::$builder;
+        }'));
+
+        $this->assertNotFalse(strpos($code, '
+        /**
+         * @return \Hyperf\Database\Model\Builder|static
+         * @see HyperfTest\Database\Stubs\Model\TestGenerateIdeModel::scopeUnion
+         */
+        public static function union(int $appId, string|int $uid)
+        {
+            return static::$builder;
+        }'));
+
+        $this->assertNotFalse(strpos($code, '
+        /**
+         * @return \Hyperf\Database\Model\Builder|static
+         * @see HyperfTest\Database\Stubs\Model\TestGenerateIdeModel::scopeUnionOrNull
+         */
+        public static function unionOrNull(int $appId, string|int|null $uid)
+        {
+            return static::$builder;
+        }'));
+
+        $this->assertNotFalse(strpos($code, '
+        /**
+         * @return \Hyperf\Database\Model\Builder|static
+         * @see HyperfTest\Database\Stubs\Model\TestGenerateIdeModel::scopeSingleOrNull
+         */
+        public static function singleOrNull(?string $test)
+        {
+            return static::$builder;
+        }'));
     }
 }

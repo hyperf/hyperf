@@ -183,6 +183,8 @@ class UserService
 
 當設定 `value` 後，框架會根據設定的規則，進行快取 `KEY` 鍵命名。如下例項，當 `$user->id = 1` 時，快取 `KEY` 為 `c:userBook:_1`
 
+> 此配置也同樣支援下述其他型別快取註解
+
 ```php
 <?php
 
@@ -229,31 +231,6 @@ class UserService
 
         return [
             'user' => $user->toArray(),
-            'uuid' => $this->unique(),
-        ];
-    }
-}
-```
-
-當設定 `value` 後，框架會根據設定的規則，進行快取 `KEY` 鍵命名。如下例項，當 `$user->id = 1` 時，快取 `KEY` 為 `c:userBook:_1`
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Service;
-
-use App\Models\User;
-use Hyperf\Cache\Annotation\Cacheable;
-
-class UserBookService
-{
-    #[Cacheable(prefix: "userBook", ttl: 6666, value: "_#{user.id}")]
-    public function userBook(User $user): array
-    {
-        return [
-            'book' => $user->book->toArray(),
             'uuid' => $this->unique(),
         ];
     }

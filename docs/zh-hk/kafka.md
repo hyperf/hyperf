@@ -53,8 +53,6 @@ composer require hyperf/kafka
 | partition_assignment_strategy | string     | KafkaStrategy::RANGE_ASSIGNOR | 消費者分區分配策略, 可選：範圍分配(`KafkaStrategy::RANGE_ASSIGNOR`) 輪詢分配(`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`)) |
 | sasl                          | array      | []                            | SASL 身份認證信息。為空則不發送身份認證信息 phpkafka 版本需 >= 1.2                                                    |
 | ssl                           | array      | []                            | SSL 鏈接相關信息, 為空則不使用 SSL phpkafka 版本需 >= 1.2                                                               |
-| pool                          | object     | []                            | 連接池配置                                                                                                           |
-
 
 
 ```php
@@ -94,14 +92,6 @@ return [
         'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
         'sasl' => [],
         'ssl' => [],
-        'pool' => [
-            'min_connections' => 1,
-            'max_connections' => 10,
-            'connect_timeout' => 10.0,
-            'wait_timeout' => 3.0,
-            'heartbeat' => -1,
-            'max_idle_time' => 60.0,
-        ],
     ],
 ];
 ```

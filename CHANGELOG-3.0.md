@@ -1,13 +1,19 @@
-# v3.0.42 - TBD
+# v3.0.43 - TBD
+
+# v3.0.42 - 2023-11-03
 
 ## Added
 
 - [#6236](https://github.com/hyperf/hyperf/pull/6236) Support unionType param for GenerateModelIDEVisitor.
-- [#6246](https://github.com/hyperf/hyperf/pull/6246) Added crontab lifecycle events.
+- [#6246](https://github.com/hyperf/hyperf/pull/6246) [#6252](https://github.com/hyperf/hyperf/pull/6252) Added crontab lifecycle events.
+- [#6249](https://github.com/hyperf/hyperf/pull/6249) Support crontab closure type.
 
 ## Optimized
 
 - [#6239](https://github.com/hyperf/hyperf/pull/6239) Improve amqp, use methods instead of `$delivery_info` and optimize `BeforeConsume` event.
+- [#6250](https://github.com/hyperf/hyperf/pull/6250) Enhance scopeDoc for generateModelIdeVisitor.
+- [#6253](https://github.com/hyperf/hyperf/pull/6253) Print error logs when collecting class reflections failed.
+- [#6256](https://github.com/hyperf/hyperf/pull/6256) Refactor `hyperf/translation` classes to use typed properties.
 
 # v3.0.41 - 2023-10-27
 
