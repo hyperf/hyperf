@@ -54,6 +54,7 @@ composer require hyperf/kafka
 | sasl                          | array      | []                            | SASL 身份認證資訊。為空則不傳送身份認證資訊 phpkafka 版本需 >= 1.2                                                    |
 | ssl                           | array      | []                            | SSL 連結相關資訊, 為空則不使用 SSL phpkafka 版本需 >= 1.2                                                               |
 
+
 ```php
 <?php
 

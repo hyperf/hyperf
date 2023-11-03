@@ -181,6 +181,8 @@ class UserService
 
 當設置 `value` 後，框架會根據設置的規則，進行緩存 `KEY` 鍵命名。如下實例，當 `$user->id = 1` 時，緩存 `KEY` 為 `c:userBook:_1`
 
+> 此配置也同樣支持下述其他類型緩存註解
+
 ```php
 <?php
 

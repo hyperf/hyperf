@@ -181,6 +181,8 @@ class UserService
 
 當設定 `value` 後，框架會根據設定的規則，進行快取 `KEY` 鍵命名。如下例項，當 `$user->id = 1` 時，快取 `KEY` 為 `c:userBook:_1`
 
+> 此配置也同樣支援下述其他型別快取註解
+
 ```php
 <?php
 
