@@ -40,6 +40,7 @@
 - [#6085](https://github.com/hyperf/hyperf/pull/6085) Added an error count to the database connection to ensure that the connection can be reset when occur too many exceptions.
 - [#6106](https://github.com/hyperf/hyperf/pull/6106) Support some validation rules.
 - [#6124](https://github.com/hyperf/hyperf/pull/6124) Added `Hyperf\AsyncQueue\Job::fail()`.
+- [#6259](https://github.com/hyperf/hyperf/pull/6259) Support to use model builder as the column in `Hyperf\Database\Query\Builder\addSelect`.
 
 ## Optimized
 
