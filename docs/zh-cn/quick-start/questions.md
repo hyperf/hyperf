@@ -209,7 +209,7 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 在 DI 收集阶段发生异常（如命名空间错误等原因），可能产生以下格式日志的输出。
 
 - 业务代码，排查日志中路径相关的文件和类。
-- 框架代码，提交 PR 反馈。
+- 框架代码，提交 PR 或 Issue 反馈。
 - 第三方组件，反馈给组件作者。
 
 ```bash

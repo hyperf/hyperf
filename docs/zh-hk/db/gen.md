@@ -142,7 +142,7 @@ return [
 
 ## 覆蓋 Visitor
 
-Hyperf 框架中，當使用 `gen:model` 時，默認只會將 `tinyint, smallint, mediumint, int, bigint` 聲明為 `int` 類型，`bool, boolean` 聲明為 `boolean` 類型，其他數據類型默認為`string`，可以通過重寫覆蓋調整。
+Hyperf 框架中，當使用 `gen:model` 時，默認只會將 `tinyint, smallint, mediumint, int, bigint` 聲明為 `int` 類型，`bool, boolean` 聲明為 `boolean` 類型，其他數據類型默認為 `string` ，可以通過重寫覆蓋調整。
 
 如下：
 
