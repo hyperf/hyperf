@@ -90,6 +90,7 @@
 - [#5771](https://github.com/hyperf/hyperf/pull/5771) Fixed bug that the return type of `Model::updateOrInsert` isn't boolean.
 - [#6033](https://github.com/hyperf/hyperf/pull/6033) Fixed bug that `RequestContext` and `ResponseContext` cannot get instance from another coroutines.
 - [#6056](https://github.com/hyperf/hyperf/pull/6056) Fixed bug that `Hyperf\HttpServer\Request::hasFile()` don't support `Swow`.
+- [#6260](https://github.com/hyperf/hyperf/pull/6260) Fixed bug that logger cannot work in `LoadBalancerInterface::refresh()`.
 
 ## Deprecated
 
