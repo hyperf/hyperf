@@ -181,6 +181,8 @@ class UserService
 
 当设置 `value` 后，框架会根据设置的规则，进行缓存 `KEY` 键命名。如下实例，当 `$user->id = 1` 时，缓存 `KEY` 为 `c:userBook:_1`
 
+> 此配置也同样支持下述其他类型缓存注解
+
 ```php
 <?php
 
@@ -227,31 +229,6 @@ class UserService
 
         return [
             'user' => $user->toArray(),
-            'uuid' => $this->unique(),
-        ];
-    }
-}
-```
-
-当设置 `value` 后，框架会根据设置的规则，进行缓存 `KEY` 键命名。如下实例，当 `$user->id = 1` 时，缓存 `KEY` 为 `c:userBook:_1`
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Service;
-
-use App\Models\User;
-use Hyperf\Cache\Annotation\Cacheable;
-
-class UserBookService
-{
-    #[Cacheable(prefix: "userBook", ttl: 6666, value: "_#{user.id}")]
-    public function userBook(User $user): array
-    {
-        return [
-            'book' => $user->book->toArray(),
             'uuid' => $this->unique(),
         ];
     }
