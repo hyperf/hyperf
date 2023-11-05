@@ -11,11 +11,16 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Support;
 
+use HyperfTest\Support\Stub\Bar;
+use HyperfTest\Support\Stub\Foo;
+use HyperfTest\Support\Stub\Traits\BarTrait;
+use HyperfTest\Support\Stub\Traits\FooTrait;
 use HyperfTest\Utils\Exception\RetryException;
 use HyperfTest\Utils\Stub\FooClosure;
 use PHPUnit\Framework\TestCase;
 
 use function Hyperf\Support\call;
+use function Hyperf\Support\class_uses_recursive;
 use function Hyperf\Support\env;
 use function Hyperf\Support\retry;
 use function Hyperf\Support\swoole_hook_flags;
@@ -123,5 +128,22 @@ class FunctionTest extends TestCase
         putenv("{$id}=(null)");
 
         $this->assertNull(env($id));
+    }
+
+    public function testClassUsesRecursive()
+    {
+        $this->assertSame(
+            [
+                FooTrait::class => FooTrait::class,
+            ],
+            class_uses_recursive(Foo::class)
+        );
+        $this->assertSame(
+            [
+                FooTrait::class => FooTrait::class,
+                BarTrait::class => BarTrait::class,
+            ],
+            class_uses_recursive(Bar::class)
+        );
     }
 }
