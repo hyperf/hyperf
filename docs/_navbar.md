@@ -3,7 +3,8 @@
   * [繁體中文(臺)](zh-tw/)
   * [繁體中文(港)](zh-hk/)
   * [English](en/)
-* 版本/Version
+
+* 版本/Versions
   * [1.1](https://hyperf.wiki/1.1/#/)
   * [2.0](https://hyperf.wiki/2.0/#/)
   * [2.2](https://hyperf.wiki/2.2/#/)
