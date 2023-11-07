@@ -103,6 +103,13 @@
                 window.location.hash = '/' + fullMatches[i] + '/';
               }
             }
+
+            let hash = window.location.hash.split(/\/(en|zh-cn|zh-tw|zh-hk)\//)[2];
+            hash = hash ? hash : '';
+            const translations = document.querySelectorAll('nav > ul > li:nth-child(1) a');
+            translations.forEach(function(a) {
+              a.href = a.href + hash;
+            });
           })
         }
       ],
