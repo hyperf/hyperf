@@ -84,7 +84,7 @@
       plugins: [
         EditOnGithubPlugin.create('https://github.com/hyperf/hyperf/blob/master/docs/'),
         function(hook, vm) {
-          hook.doneEach(function(content) {
+          hook.beforeEach(function(content) {
             var shortMatches = ['en'],
                     // zh-cn is the default so is not present
                     fullMatches = ['zh-tw', 'zh-hk'],
@@ -104,11 +104,18 @@
               }
             }
 
-            let hash = window.location.hash.split(/\/(en|zh-cn|zh-tw|zh-hk)\//)[1];
-            hash = hash ? hash : '';
-            const translations = document.querySelectorAll('nav > ul > li:nth-child(2) a');
+            let hash = window.location.hash.split(/\/(en|zh-cn|zh-tw|zh-hk)\//);
+            let lang = hash[1] ? '#/' + hash[1] + '/' : '';
+            let path = hash[2] ?? '';
+
+            const translations = document.querySelectorAll('nav > ul > li:nth-child(1) a');
             translations.forEach(function(a) {
-              a.href = a.href + hash;
+              a.href = a.href + path;
+            });
+
+            const versions = document.querySelectorAll('nav > ul > li:nth-child(2) a');
+            versions.forEach(function(a) {
+              a.href = a.href + lang;
             });
           })
         }
