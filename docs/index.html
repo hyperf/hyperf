@@ -110,13 +110,6 @@
             translations.forEach(function(a) {
               a.href = a.href + hash;
             });
-
-            const versions = document.querySelectorAll('nav > ul > li:nth-child(2) a');
-            versions.forEach(function(a) {
-              if (!a.href.includes(window.location.origin)) {
-                a.href = window.location.origin + '/' + a.href;
-              }
-            });
           })
         }
       ],
