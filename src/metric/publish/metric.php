@@ -18,6 +18,7 @@ return [
     'default' => env('METRIC_DRIVER', 'prometheus'),
     'use_standalone_process' => env('METRIC_USE_STANDALONE_PROCESS', true),
     'enable_default_metric' => env('METRIC_ENABLE_DEFAULT_METRIC', true),
+    'enable_command_metric' => env('METRIC_ENABLE_COMMAND_METRIC', true),
     'default_metric_interval' => env('DEFAULT_METRIC_INTERVAL', 5),
     'metric' => [
         'prometheus' => [
