@@ -1,5 +1,9 @@
 # v3.0.43 - TBD
 
+## Added
+
+- [#6272](https://github.com/hyperf/hyperf/pull/6272) Added `metric.enable_command_metric` switch.
+
 ## Optimized
 
 - [#6261](https://github.com/hyperf/hyperf/pull/6261) Handle `class_parents` returning `false` in `class_uses_recursive。`
