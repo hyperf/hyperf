@@ -59,7 +59,7 @@ return [
             // Remember to add it, otherwise it will cause the main process to exit
             '--disable-event-dispatcher' => true,
         ]),
-        // Closure type timed task
+        // Closure type timed task (Only supported in Coroutine style server)
         (new Crontab())->setType('closure')->setName('Closure')->setRule('* * * * *')->setCallback(function () {
             var_dump(date('Y-m-d H:i:s'));
         }),
