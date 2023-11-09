@@ -59,7 +59,7 @@ return [
             // 记住要加上，否则会导致主进程退出
             '--disable-event-dispatcher' => true,
         ]),
-        // Closure 类型定时任务
+        // Closure 类型定时任务 (仅在 Coroutine style server 中支持)
         (new Crontab())->setType('closure')->setName('Closure')->setRule('* * * * *')->setCallback(function () {
             var_dump(date('Y-m-d H:i:s'));
         }),

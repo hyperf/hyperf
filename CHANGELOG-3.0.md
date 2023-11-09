@@ -4,6 +4,10 @@
 
 - [#6261](https://github.com/hyperf/hyperf/pull/6261) Handle `class_parents` returning `false` in `class_uses_recursive。`
 
+## Fixed
+
+- [#6260]() Limit closure type crontab dispatch in WorkerStrategy.
+
 # v3.0.42 - 2023-11-03
 
 ## Added
