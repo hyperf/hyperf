@@ -6,7 +6,7 @@
 
 ## Fixed
 
-- [#6260]() Limit closure type crontab dispatch in WorkerStrategy.
+- [#6271](https://github.com/hyperf/hyperf/pull/6271) Limit closure type crontab dispatch in WorkerStrategy.
 
 # v3.0.42 - 2023-11-03
 
