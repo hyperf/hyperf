@@ -59,6 +59,10 @@ return [
             // 記住要加上，否則會導致主程序退出
             '--disable-event-dispatcher' => true,
         ]),
+        // Closure 型別定時任務 (僅在 Coroutine style server 中支援)
+        (new Crontab())->setType('closure')->setName('Closure')->setRule('* * * * *')->setCallback(function () {
+            var_dump(date('Y-m-d H:i:s'));
+        }),
     ],
 ];
 ```

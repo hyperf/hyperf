@@ -1,4 +1,16 @@
-# v3.0.43 - TBD
+# v3.0.44 - TBD
+
+# v3.0.43 - 2023-11-10
+
+## Added
+
+- [#6272](https://github.com/hyperf/hyperf/pull/6272) Added `metric.enable_command_metric` switch.
+- [#6273](https://github.com/hyperf/hyperf/pull/6273) Added `serverName` parameter to `Hyperf\HttpServer\Router\Dispatched`.
+
+## Optimized
+
+- [#6261](https://github.com/hyperf/hyperf/pull/6261) Handle `class_parents` returning `false` in `class_uses_recursive`.
+- [#6271](https://github.com/hyperf/hyperf/pull/6271) Limit closure type crontab dispatch in WorkerStrategy.
 
 # v3.0.42 - 2023-11-03
 

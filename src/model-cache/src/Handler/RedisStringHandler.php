@@ -104,7 +104,7 @@ class RedisStringHandler implements HandlerInterface
 
     public function deleteMultiple($keys): bool
     {
-        return $this->redis->del(...$keys) > 0;
+        return (bool) $this->redis->del(...$keys);
     }
 
     public function has($key): bool

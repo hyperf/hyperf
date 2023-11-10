@@ -159,7 +159,7 @@ function class_uses_recursive($class)
     $results = [];
 
     /* @phpstan-ignore-next-line */
-    foreach (array_reverse(class_parents($class)) + [$class => $class] as $class) {
+    foreach (array_reverse(class_parents($class) ?: []) + [$class => $class] as $class) {
         $results += trait_uses_recursive($class);
     }
 
