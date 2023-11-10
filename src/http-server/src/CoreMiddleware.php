@@ -52,7 +52,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
 
     private NormalizerInterface $normalizer;
 
-    public function __construct(protected ContainerInterface $container, string $serverName)
+    public function __construct(protected ContainerInterface $container, private string $serverName)
     {
         $this->dispatcher = $this->createDispatcher($serverName);
         $this->normalizer = $this->container->get(NormalizerInterface::class);
@@ -66,7 +66,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
     {
         $routes = $this->dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
 
-        $dispatched = new Dispatched($routes);
+        $dispatched = new Dispatched($routes, $this->serverName);
 
         return Context::set(ServerRequestInterface::class, $request->withAttribute(Dispatched::class, $dispatched));
     }

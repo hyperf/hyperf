@@ -3,6 +3,7 @@
 ## Added
 
 - [#6272](https://github.com/hyperf/hyperf/pull/6272) Added `metric.enable_command_metric` switch.
+- [#6273](https://github.com/hyperf/hyperf/pull/6273) Add `serverName` parameter to `Hyperf\HttpServer\Router\Dispatched`.
 
 ## Optimized
 
