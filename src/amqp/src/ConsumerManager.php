@@ -17,6 +17,7 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
+use Hyperf\Amqp\Event\BeforeConsumeHandle;
 
 use function Hyperf\Support\make;
 
@@ -75,6 +76,7 @@ class ConsumerManager
 
             public function handle(): void
             {
+                $this->event?->dispatch(new BeforeConsumeHandle($this->consumerMessage));
                 $this->consumer->consume($this->consumerMessage);
             }
 
