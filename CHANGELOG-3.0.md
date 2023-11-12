@@ -1,4 +1,5 @@
 # v3.0.41 - TBD
+- [#6281](https://github.com/hyperf/hyperf/pull/6281) Support grpc request lifecycle events.
 
 # v3.0.40 - 2023-10-20
 
