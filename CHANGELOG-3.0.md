@@ -1,5 +1,9 @@
 # v3.0.44 - TBD
 
+## Added
+
+- [#6283](https://github.com/hyperf/hyperf/pull/6283) Added grpc request lifecycle support.
+
 # v3.0.43 - 2023-11-10
 
 ## Added
