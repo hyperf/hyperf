@@ -4,6 +4,10 @@
 
 - [#6283](https://github.com/hyperf/hyperf/pull/6283) Added `grpc` request lifecycle support.
 
+## Fixed
+
+- [#6284](https://github.com/hyperf/hyperf/pull/6284) Fixed bug that the crontab cannot be closed when throw exceptions.
+
 # v3.0.43 - 2023-11-10
 
 ## Added
