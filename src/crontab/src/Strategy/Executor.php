@@ -111,9 +111,12 @@ class Executor
                     $this->logResult($crontab, false);
                     return;
                 }
-                $runnable = $this->catchToExecute($crontab, $runnable);
-                $this->decorateRunnable($crontab, $runnable)();
-                $crontab->complete();
+                try {
+                    $runnable = $this->catchToExecute($crontab, $runnable);
+                    $this->decorateRunnable($crontab, $runnable)();
+                } finally {
+                    $crontab->complete();
+                }
             };
             $this->timer->after(max($diff, 0), $runnable);
         } catch (Throwable $exception) {
