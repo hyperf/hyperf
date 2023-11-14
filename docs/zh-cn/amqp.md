@@ -212,6 +212,30 @@ class DemoConsumer extends ConsumerMessage
 | \Hyperf\Amqp\Result::REQUEUE | 消息没有被正确消费掉，以 `basic_reject` 方法来响应，并使消息重新入列 |
 | \Hyperf\Amqp\Result::DROP    | 消息没有被正确消费掉，以 `basic_reject` 方法来响应                   |
 
+### 根据环境自定义消费进程数量
+
+在 `#[Consumer]` 注解中，可以通过 `nums` 属性来设置消费进程数量，如果需要根据不同环境来设置不同的消费进程数量，可以通过重写 `getNums` 方法来实现，示例如下：
+
+```php
+#[Consumer(
+    exchange: 'hyperf',
+    routingKey: 'hyperf',
+    queue: 'hyperf',
+    name: 'hyperf',
+    nums: 1
+)]
+final class DemoConsumer extends ConsumerMessage
+{
+    public function getNums(): int
+    {
+        if (is_debug()) {
+            return 10;
+        }
+        return parent::getNums();
+    }
+}
+```
+
 ## 延时队列
 
 AMQP 的延时队列，并不会根据延时时间进行排序，所以，一旦你投递了一个延时 10s 的任务，又往这个队列中投递了一个延时 5s 的任务，那么也一定会在第一个 10s 任务完成后，才会消费第二个 5s 的任务。
