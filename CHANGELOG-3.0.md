@@ -3,6 +3,7 @@
 ## Added
 
 - [#6283](https://github.com/hyperf/hyperf/pull/6283) Added `grpc` request lifecycle support.
+- [#6292](https://github.com/hyperf/hyperf/pull/6292) Adds `Validator::setValue` and make `Validator::getValue` public.
 
 ## Fixed
 
