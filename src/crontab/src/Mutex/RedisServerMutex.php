@@ -47,7 +47,9 @@ class RedisServerMutex implements ServerMutex
 
         if ($result) {
             $this->timer->tick(1, function () use ($mutexName, $redis) {
-                $redis->exists($mutexName) && $redis->expire($mutexName, $redis->ttl($mutexName) + 1);
+                if ($redis->expire($mutexName, $redis->ttl($mutexName) + 1) === false) {
+                    return Timer::STOP;
+                }
             });
 
             Coroutine::create(function () use ($redis, $mutexName) {
