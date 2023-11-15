@@ -34,7 +34,10 @@ class RedisTaskMutex implements TaskMutex
         $mutexName = $this->getMutexName($crontab);
         $attempted = (bool) $redis->set($mutexName, $crontab->getName(), ['NX', 'EX' => $crontab->getMutexExpires()]);
         $attempted && $this->timer->tick(1, function () use ($mutexName, $redis) {
-            $redis->exists($mutexName) && $redis->expire($mutexName, $redis->ttl($mutexName) + 1);
+            if ($redis->exists($mutexName)) {
+                return $redis->expire($mutexName, $redis->ttl($mutexName) + 1);
+            }
+            return Timer::STOP;
         }, $mutexName);
         return $attempted;
     }
