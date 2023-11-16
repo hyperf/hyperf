@@ -55,7 +55,7 @@ docker run --name hyperf \
 -p 9501:9501 -it \
 --privileged -u root \
 --entrypoint /bin/sh \
-hyperf/hyperf:8.0-alpine-v3.15-swoole
+hyperf/hyperf:8.1-alpine-v3.18-swoole
 ```
 
 - 創建項目
