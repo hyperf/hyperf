@@ -10,6 +10,10 @@
 - [#6284](https://github.com/hyperf/hyperf/pull/6284) Fixed bug that the crontab cannot be closed when throw exceptions.
 - [#6291](https://github.com/hyperf/hyperf/pull/6291) Fixed that the crontab timer cannot be stopped sometimes.
 
+## Optimized
+
+- [#6293](https://github.com/hyperf/hyperf/pull/6293) Optimized the code about `Arr::flatten`, which is faster than before.
+
 # v3.0.43 - 2023-11-10
 
 ## Added
