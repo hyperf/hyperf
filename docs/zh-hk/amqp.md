@@ -247,6 +247,30 @@ class DemoConsumer extends ConsumerMessage
 }
 ```
 
+### 根據環境自定義消費進程數量
+
+在 `#[Consumer]` 註解中，可以通過 `nums` 屬性來設置消費進程數量，如果需要根據不同環境來設置不同的消費進程數量，可以通過重寫 `getNums` 方法來實現，示例如下：
+
+```php
+#[Consumer(
+    exchange: 'hyperf',
+    routingKey: 'hyperf',
+    queue: 'hyperf',
+    name: 'hyperf',
+    nums: 1
+)]
+final class DemoConsumer extends ConsumerMessage
+{
+    public function getNums(): int
+    {
+        if (is_debug()) {
+            return 10;
+        }
+        return parent::getNums();
+    }
+}
+```
+
 ## 延時隊列
 
 AMQP 的延時隊列，並不會根據延時時間進行排序，所以，一旦你投遞了一個延時 10s 的任務，又往這個隊列中投遞了一個延時 5s 的任務，那麼也一定會在第一個 10s 任務完成後，才會消費第二個 5s 的任務。

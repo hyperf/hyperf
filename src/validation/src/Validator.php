@@ -700,6 +700,25 @@ class Validator implements ValidatorContract
     }
 
     /**
+     * Get the value of a given attribute.
+     */
+    public function getValue(string $attribute)
+    {
+        return Arr::get($this->data, $attribute);
+    }
+
+    /**
+     * Set the value of a given attribute.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     */
+    public function setValue($attribute, $value)
+    {
+        Arr::set($this->data, $attribute, $value);
+    }
+
+    /**
      * Validate a given attribute against a rule.
      *
      * @param object|string $rule
@@ -966,14 +985,6 @@ class Validator implements ValidatorContract
             }
         }
         return null;
-    }
-
-    /**
-     * Get the value of a given attribute.
-     */
-    protected function getValue(string $attribute)
-    {
-        return Arr::get($this->data, $attribute);
     }
 
     /**

@@ -247,6 +247,30 @@ class DemoConsumer extends ConsumerMessage
 }
 ```
 
+### 根據環境自定義消費程序數量
+
+在 `#[Consumer]` 註解中，可以透過 `nums` 屬性來設定消費程序數量，如果需要根據不同環境來設定不同的消費程序數量，可以透過重寫 `getNums` 方法來實現，示例如下：
+
+```php
+#[Consumer(
+    exchange: 'hyperf',
+    routingKey: 'hyperf',
+    queue: 'hyperf',
+    name: 'hyperf',
+    nums: 1
+)]
+final class DemoConsumer extends ConsumerMessage
+{
+    public function getNums(): int
+    {
+        if (is_debug()) {
+            return 10;
+        }
+        return parent::getNums();
+    }
+}
+```
+
 ## 延時佇列
 
 AMQP 的延時佇列，並不會根據延時時間進行排序，所以，一旦你投遞了一個延時 10s 的任務，又往這個佇列中投遞了一個延時 5s 的任務，那麼也一定會在第一個 10s 任務完成後，才會消費第二個 5s 的任務。
