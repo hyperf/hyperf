@@ -36,21 +36,21 @@ class CacheEvictAspect extends AbstractAspect
 
         [$key, $all, $group, $annotation] = $this->annotationManager->getCacheEvictValue($className, $method, $arguments);
 
-        $driver = $this->manager->getDriver($group);
+        $cache = $this->manager->get($group);
 
         if ($all) {
-            if ($driver instanceof KeyCollectorInterface && $annotation instanceof CacheEvict && $annotation->collect) {
+            if ($cache instanceof KeyCollectorInterface && $annotation instanceof CacheEvict && $annotation->collect) {
                 $collector = $annotation->prefix . 'MEMBERS';
-                $keys = $driver->keys($collector);
+                $keys = $cache->keys($collector);
                 if ($keys) {
-                    $driver->deleteMultiple($keys);
-                    $driver->delete($collector);
+                    $cache->deleteMultiple($keys);
+                    $cache->delete($collector);
                 }
             } else {
-                $driver->clearPrefix($key);
+                $cache->clearPrefix($key);
             }
         } else {
-            $driver->delete($key);
+            $cache->delete($key);
         }
 
         return $proceedingJoinPoint->process();

@@ -11,15 +11,18 @@ declare(strict_types=1);
  */
 namespace Hyperf\Cache;
 
+use Hyperf\Cache\Driver\DriverInterface;
 use Psr\SimpleCache\CacheInterface;
 
+/**
+ * @method array{bool, mixed} fetch($key = null, $default = null)
+ * @method mixed getConnection()
+ * @method bool clearPrefix(string $prefix)
+ */
 class Cache implements CacheInterface
 {
-    protected $driver;
-
-    public function __construct(CacheManager $manager)
+    public function __construct(protected DriverInterface $driver)
     {
-        $this->driver = $manager->getDriver();
     }
 
     public function __call($name, $arguments)

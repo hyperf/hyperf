@@ -39,13 +39,13 @@ class FailCacheAspect extends AbstractAspect
 
         [$key, $ttl, $group] = $this->annotationManager->getFailCacheValue($className, $method, $arguments);
 
-        $driver = $this->manager->getDriver($group);
+        $cache = $this->manager->get($group);
 
         try {
             $result = $proceedingJoinPoint->process();
-            $driver->set($key, $result, $ttl);
+            $cache->set($key, $result, $ttl);
         } catch (Throwable $throwable) {
-            [$has, $result] = $driver->fetch($key);
+            [$has, $result] = $cache->fetch($key);
             if (! $has) {
                 throw $throwable;
             }

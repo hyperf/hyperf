@@ -26,6 +26,11 @@ class CacheManager
      */
     protected array $drivers = [];
 
+    /**
+     * @var Cache[]
+     */
+    protected array $caches = [];
+
     public function __construct(protected ConfigInterface $config, protected StdoutLoggerInterface $logger)
     {
     }
@@ -46,6 +51,15 @@ class CacheManager
         $driver = make($driverClass, ['config' => $config]);
 
         return $this->drivers[$name] = $driver;
+    }
+
+    public function get(string $name = 'default'): Cache
+    {
+        if (isset($this->caches[$name]) && $this->caches[$name] instanceof Cache) {
+            return $this->caches[$name];
+        }
+
+        return $this->caches[$name] = make(Cache::class, ['driver' => $this->getDriver($name)]);
     }
 
     public function call(callable $callback, string $key, int $ttl = 3600, $config = 'default')

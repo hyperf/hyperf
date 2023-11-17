@@ -39,22 +39,22 @@ class CacheAheadAspect extends AbstractAspect
 
         [$key, $ttl, $group, $annotation] = $this->annotationManager->getCacheAheadValue($className, $method, $arguments);
 
-        $driver = $this->manager->getDriver($group);
+        $cache = $this->manager->get($group);
 
-        [$has, $result] = $driver->fetch($key);
+        [$has, $result] = $cache->fetch($key);
         if ($has && isset($result['expired_time'], $result['data'])) {
             if ($now < $result['expired_time']) {
                 return $result['data'];
             }
 
-            if (! $driver->getConnection()->set($key . ':lock', '1', ['NX', 'EX' => $annotation->lockSeconds])) {
+            if (! $cache->getConnection()->set($key . ':lock', '1', ['NX', 'EX' => $annotation->lockSeconds])) {
                 return $result['data'];
             }
         }
 
         $result = $proceedingJoinPoint->process();
 
-        $driver->set(
+        $cache->set(
             $key,
             [
                 'expired_time' => $now + $annotation->ttl - $annotation->aheadSeconds,
@@ -63,8 +63,8 @@ class CacheAheadAspect extends AbstractAspect
             $ttl
         );
 
-        if ($driver instanceof KeyCollectorInterface && $annotation instanceof CacheAhead && $annotation->collect) {
-            $driver->addKey($annotation->prefix . 'MEMBERS', $key);
+        if ($cache instanceof KeyCollectorInterface && $annotation instanceof CacheAhead && $annotation->collect) {
+            $cache->addKey($annotation->prefix . 'MEMBERS', $key);
         }
 
         return $result;

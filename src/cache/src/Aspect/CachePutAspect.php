@@ -35,11 +35,11 @@ class CachePutAspect extends AbstractAspect
 
         [$key, $ttl, $group] = $this->annotationManager->getCachePutValue($className, $method, $arguments);
 
-        $driver = $this->manager->getDriver($group);
+        $cache = $this->manager->get($group);
 
         $result = $proceedingJoinPoint->process();
 
-        $driver->set($key, $result, $ttl);
+        $cache->set($key, $result, $ttl);
 
         return $result;
     }

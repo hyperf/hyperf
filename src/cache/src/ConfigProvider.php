@@ -25,7 +25,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                CacheInterface::class => Cache::class,
+                CacheInterface::class => CacheFactory::class,
             ],
             'listeners' => [
                 DeleteListener::class,

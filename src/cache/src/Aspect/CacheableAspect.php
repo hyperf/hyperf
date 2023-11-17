@@ -38,18 +38,18 @@ class CacheableAspect extends AbstractAspect
 
         [$key, $ttl, $group, $annotation] = $this->annotationManager->getCacheableValue($className, $method, $arguments);
 
-        $driver = $this->manager->getDriver($group);
+        $cache = $this->manager->get($group);
 
-        [$has, $result] = $driver->fetch($key);
+        [$has, $result] = $cache->fetch($key);
         if ($has) {
             return $result;
         }
 
         $result = $proceedingJoinPoint->process();
 
-        $driver->set($key, $result, $ttl);
-        if ($driver instanceof KeyCollectorInterface && $annotation instanceof Cacheable && $annotation->collect) {
-            $driver->addKey($annotation->prefix . 'MEMBERS', $key);
+        $cache->set($key, $result, $ttl);
+        if ($cache instanceof KeyCollectorInterface && $annotation instanceof Cacheable && $annotation->collect) {
+            $cache->addKey($annotation->prefix . 'MEMBERS', $key);
         }
 
         return $result;
