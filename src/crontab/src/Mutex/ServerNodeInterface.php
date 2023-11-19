@@ -13,5 +13,8 @@ namespace Hyperf\Crontab\Mutex;
 
 interface ServerNodeInterface
 {
+    /**
+     * Return the unique name for the server node.
+     */
     public function getName(): string;
 }
