@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Crontab\Mutex;
 
 use Hyperf\Collection\Arr;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
@@ -21,6 +22,9 @@ use Hyperf\Redis\RedisFactory;
 
 class RedisServerMutex implements ServerMutex
 {
+    /**
+     * The unique name for node, like mac address.
+     */
     private null|string $macAddress;
 
     private Timer $timer;
@@ -79,12 +83,25 @@ class RedisServerMutex implements ServerMutex
 
     protected function getMacAddress(): ?string
     {
+        if ($node = $this->getServerNode()) {
+            return $node->getName();
+        }
+
         $macAddresses = swoole_get_local_mac();
 
         foreach (Arr::wrap($macAddresses) as $name => $address) {
             if ($address && $address !== '00:00:00:00:00:00') {
                 return $name . ':' . str_replace(':', '', $address);
             }
+        }
+
+        return null;
+    }
+
+    protected function getServerNode(): ?ServerNodeInterface
+    {
+        if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(ServerNodeInterface::class)) {
+            return ApplicationContext::getContainer()->get(ServerNodeInterface::class);
         }
 
         return null;
