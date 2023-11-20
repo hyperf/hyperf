@@ -15,4 +15,9 @@ return [
     'capacity' => 2,
     'limitCallback' => [],
     'waitTimeout' => 1,
+    'storage' => [
+        'options' => [
+            'pool' => 'default',
+        ],
+    ],
 ];
