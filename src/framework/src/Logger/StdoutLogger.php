@@ -97,7 +97,6 @@ class StdoutLogger implements StdoutLoggerInterface
         }
         foreach ($context as $key => $value) {
             if (is_object($value) && ! $value instanceof Stringable) {
-                dump($value);
                 $context[$key] = '<OBJECT> ' . $value::class;
             }
         }

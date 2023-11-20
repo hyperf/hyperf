@@ -34,35 +34,22 @@ class StdoutLoggerTest extends TestCase
 
     public function testLog()
     {
-        $output = Mockery::mock(ConsoleOutput::class);
-        $output->shouldReceive('writeln')->with(Mockery::any())->once()->andReturnUsing(function ($message) {
-            $this->assertSame('<info>[INFO]</> Hello Hyperf.', $message);
-        });
-        $logger = new StdoutLogger(new Config([
-            StdoutLoggerInterface::class => [
-                'log_level' => [
-                    LogLevel::INFO,
-                ],
-            ],
-        ]), $output);
-
+        $logger = $this->getLogger('<info>[INFO]</> Hello Hyperf.');
         $logger->info('Hello {name}.', ['name' => 'Hyperf']);
+    }
+
+    public function testFixedErrorContextCount()
+    {
+        $logger = $this->getLogger('<info>[INFO]</> [test tag] Hello Hyperf.');
+        $logger->info('Hello {name}.', [
+            'component' => 'test tag',
+            'name' => 'Hyperf',
+        ]);
     }
 
     public function testLogComplexityContext()
     {
-        $output = Mockery::mock(ConsoleOutput::class);
-        $output->shouldReceive('writeln')->with(Mockery::any())->once()->andReturnUsing(function ($message) {
-            $this->assertSame('<info>[INFO]</> [test tag] Hello Hyperf <OBJECT> HyperfTest\Framework\Stub\TestObject.', $message);
-        });
-        $logger = new StdoutLogger(new Config([
-            StdoutLoggerInterface::class => [
-                'log_level' => [
-                    LogLevel::INFO,
-                ],
-            ],
-        ]), $output);
-
+        $logger = $this->getLogger('<info>[INFO]</> [test tag] Hello Hyperf <OBJECT> HyperfTest\Framework\Stub\TestObject.');
         $logger->info('Hello {name} {object}.', [
             'name' => 'Hyperf',
             // tags
@@ -87,5 +74,20 @@ class StdoutLoggerTest extends TestCase
         ]), $output);
 
         $logger->error(new RuntimeException('Invalid Arguments.'));
+    }
+
+    protected function getLogger($expected): StdoutLogger
+    {
+        $output = Mockery::mock(ConsoleOutput::class);
+        $output->shouldReceive('writeln')->with(Mockery::any())->once()->andReturnUsing(function ($message) use ($expected) {
+            $this->assertSame($expected, $message);
+        });
+        return new StdoutLogger(new Config([
+            StdoutLoggerInterface::class => [
+                'log_level' => [
+                    LogLevel::INFO,
+                ],
+            ],
+        ]), $output);
     }
 }
