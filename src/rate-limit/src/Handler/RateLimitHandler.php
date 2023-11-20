@@ -12,10 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\RateLimit\Handler;
 
 use bandwidthThrottle\tokenBucket\Rate;
+use bandwidthThrottle\tokenBucket\storage\StorageException;
 use bandwidthThrottle\tokenBucket\TokenBucket;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\RateLimit\Storage\RedisStorage;
-use Hyperf\Redis\Redis;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 use function Hyperf\Support\make;
 
@@ -23,19 +26,23 @@ class RateLimitHandler
 {
     public const RATE_LIMIT_BUCKETS = 'rateLimit:buckets';
 
-    private Redis $redis;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->redis = $container->get(Redis::class);
     }
 
     /**
-     * @throws \bandwidthThrottle\tokenBucket\storage\StorageException
+     * @throws StorageException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function build(string $key, int $limit, int $capacity, int $timeout): TokenBucket
     {
-        $storage = make(RedisStorage::class, ['key' => $key, 'redis' => $this->redis, 'timeout' => $timeout]);
+        $config = $this->container->get(ConfigInterface::class);
+
+        $storage = make(
+            $config->get('rate_limit.storage', RedisStorage::class),
+            ['key' => $key, 'timeout' => $timeout, 'constructor' => $config->get('rate_limit.constructor', [])]
+        );
         $rate = make(Rate::class, ['tokens' => $limit, 'unit' => Rate::SECOND]);
         $bucket = make(TokenBucket::class, ['capacity' => $capacity, 'rate' => $rate, 'storage' => $storage]);
         $bucket->bootstrap($capacity);

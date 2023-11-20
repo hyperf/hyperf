@@ -18,6 +18,7 @@ use bandwidthThrottle\tokenBucket\util\DoublePacker;
 use Hyperf\Redis\Redis;
 use malkusch\lock\mutex\Mutex;
 use malkusch\lock\mutex\PHPRedisMutex;
+use Psr\Container\ContainerInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
 use function Hyperf\Support\make;
@@ -33,23 +34,25 @@ class RedisStorage implements Storage, GlobalScope
      */
     private $key;
 
-    public function __construct(string $key, private Redis $redis, $timeout = 0)
+    private Redis $redis;
+
+    public function __construct(protected ContainerInterface $container, string $key, $timeout = 0, array $constructor = [])
     {
-        $key = self::KEY_PREFIX . $key;
-        $this->key = $key;
+        $this->redis = $container->get($constructor['redis'] ?? Redis::class);
+        $this->key = self::KEY_PREFIX . $key;
         $this->mutex = make(PHPRedisMutex::class, [
-            'redisAPIs' => [$redis],
-            'name' => $key,
+            'redisAPIs' => [$this->redis],
+            'name' => $this->key,
             'timeout' => $timeout,
         ]);
     }
 
-    public function bootstrap($microtime)
+    public function bootstrap($microtime): void
     {
         $this->setMicrotime($microtime);
     }
 
-    public function isBootstrapped()
+    public function isBootstrapped(): bool
     {
         try {
             return (bool) $this->redis->exists($this->key);
@@ -58,7 +61,7 @@ class RedisStorage implements Storage, GlobalScope
         }
     }
 
-    public function remove()
+    public function remove(): void
     {
         try {
             if (! $this->redis->del($this->key)) {
@@ -74,7 +77,7 @@ class RedisStorage implements Storage, GlobalScope
      * @param float $microtime
      * @throws StorageException
      */
-    public function setMicrotime($microtime)
+    public function setMicrotime($microtime): void
     {
         try {
             $data = DoublePacker::pack($microtime);
@@ -89,10 +92,9 @@ class RedisStorage implements Storage, GlobalScope
 
     /**
      * @SuppressWarnings(PHPMD)
-     * @return float
      * @throws StorageException
      */
-    public function getMicrotime()
+    public function getMicrotime(): float
     {
         try {
             $data = $this->redis->get($this->key);
@@ -105,7 +107,7 @@ class RedisStorage implements Storage, GlobalScope
         }
     }
 
-    public function getMutex()
+    public function getMutex(): Mutex
     {
         return $this->mutex;
     }
