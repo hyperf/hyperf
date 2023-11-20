@@ -3,6 +3,7 @@
 ## Added
 
 - [#6297](https://github.com/hyperf/hyperf/pull/6297) Added `Hyperf\Crontab\Mutex\ServerNodeInterface` to get unique name for server node.
+- [#6300](https://github.com/hyperf/hyperf/pull/6300) Added `rate_limit.storage.options.pool` which can be used to select the pool of redis when using `rate-limit`.
 
 ## Fixed
 
