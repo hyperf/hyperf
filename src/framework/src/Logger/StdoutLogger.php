@@ -14,6 +14,7 @@ namespace Hyperf\Framework\Logger;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
+use Stringable;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -86,12 +87,20 @@ class StdoutLogger implements StdoutLoggerInterface
         }
         $keys = array_keys($context);
         $tags = [];
+
         foreach ($keys as $k => $key) {
             if (in_array($key, $this->tags, true)) {
                 $tags[$key] = $context[$key];
-                unset($keys[$k]);
+                // context count need keep same.
+                unset($keys[$k], $context[$key]);
             }
         }
+        foreach ($context as $key => $value) {
+            if (is_object($value) && ! $value instanceof Stringable) {
+                $context[$key] = '<OBJECT> ' . $value::class;
+            }
+        }
+
         $search = array_map(function ($key) {
             return sprintf('{%s}', $key);
         }, $keys);

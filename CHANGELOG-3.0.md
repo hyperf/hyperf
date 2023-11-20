@@ -4,6 +4,10 @@
 
 - [#6297](https://github.com/hyperf/hyperf/pull/6297) Added `Hyperf\Crontab\Mutex\ServerNodeInterface` to get unique name for server node.
 
+## Fixed
+
+- [#6298](https://github.com/hyperf/hyperf/pull/6298) Fixed complexity context for stdout logger.
+
 # v3.0.44 - 2023-11-17
 
 ## Added
