@@ -40,8 +40,8 @@ class RateLimitHandler
         $config = $this->container->get(ConfigInterface::class);
 
         $storage = make(
-            $config->get('rate_limit.storage', RedisStorage::class),
-            ['key' => $key, 'timeout' => $timeout, 'constructor' => $config->get('rate_limit.constructor', [])]
+            $config->get('rate_limit.storage.class', RedisStorage::class),
+            ['key' => $key, 'timeout' => $timeout, 'constructor' => $config->get('rate_limit.storage.constructor', [])]
         );
         $rate = make(Rate::class, ['tokens' => $limit, 'unit' => Rate::SECOND]);
         $bucket = make(TokenBucket::class, ['capacity' => $capacity, 'rate' => $rate, 'storage' => $storage]);
