@@ -8,6 +8,10 @@
 
 - [#6298](https://github.com/hyperf/hyperf/pull/6298) Fixed complexity context for stdout logger.
 
+## Optimized
+
+- [#6302](https://github.com/hyperf/hyperf/pull/6302) Set catch exceptions to false in `Executor` class.
+
 # v3.0.44 - 2023-11-17
 
 ## Added
