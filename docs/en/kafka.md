@@ -4,8 +4,6 @@
 
 [longlang/phpkafka](https://github.com/longyan/phpkafka) component is provided by [Longzhiyan](http://longlang.org/) and supports `PHP-FPM` and `Swoole`. Thank you `Swoole Team` and `ZenTao Team` for their contributions to the community.
 
-> This component is a Beta version, please use it with caution.
-
 ## Installation
 
 ```bash
