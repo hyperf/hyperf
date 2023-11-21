@@ -4,8 +4,6 @@
 
 [longlang/phpkafka](https://github.com/longyan/phpkafka) 組件由 [龍之言](http://longlang.org/) 提供，支持 `PHP-FPM` 和 `Swoole`。感謝 `Swoole 團隊` 和 `禪道團隊` 對社區做出的貢獻。
 
-> 本組件為 Beta 版本，謹慎使用
-
 ## 安裝
 
 ```bash
