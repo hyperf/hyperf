@@ -8,6 +8,7 @@
 ## Fixed
 
 - [#6298](https://github.com/hyperf/hyperf/pull/6298) Fixed complexity context for stdout logger.
+- [#6303](https://github.com/hyperf/hyperf/pull/6303) Fixed bug that the PDO connection was broken when timed out.
 
 ## Optimized
 
