@@ -9,15 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-return [
-    'create' => 1,
-    'consume' => 1,
-    'capacity' => 2,
-    'limitCallback' => [],
-    'waitTimeout' => 1,
-    'storage' => [
-        'options' => [
-            'pool' => 'default',
-        ],
-    ],
-];
+namespace Hyperf\Crontab\Mutex;
+
+interface ServerNodeInterface
+{
+    /**
+     * Return the unique name for the server node.
+     */
+    public function getName(): string;
+}

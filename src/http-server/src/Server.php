@@ -86,6 +86,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             CoordinatorManager::until(Constants::WORKER_START)->yield();
 
             [$psr7Request, $psr7Response] = $this->initRequestAndResponse($request, $response);
+            $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
 
             $this->option?->isEnableRequestLifecycle() && $this->event?->dispatch(new RequestReceived(
                 request: $psr7Request,
@@ -93,7 +94,6 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
                 server: $this->serverName
             ));
 
-            $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
             /** @var Dispatched $dispatched */
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
             $middlewares = $this->middlewares;

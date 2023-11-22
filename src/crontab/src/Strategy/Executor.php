@@ -92,6 +92,7 @@ class Executor
                     /** @var \Symfony\Component\Console\Application */
                     $application = $this->container->get(ApplicationInterface::class);
                     $application->setAutoExit(false);
+                    $application->setCatchExceptions(false);
                     $runnable = function () use ($application, $input, $output) {
                         if ($application->run($input, $output) !== 0) {
                             throw new RuntimeException('Crontab task failed to execute.');

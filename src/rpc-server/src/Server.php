@@ -25,8 +25,14 @@ use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
+use Hyperf\RpcServer\Event\RequestHandled;
+use Hyperf\RpcServer\Event\RequestReceived;
+use Hyperf\RpcServer\Event\RequestTerminated;
+use Hyperf\Server\Option;
+use Hyperf\Server\ServerFactory;
 use Hyperf\Server\ServerManager;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine\Server\Connection;
@@ -34,6 +40,8 @@ use Swoole\Server as SwooleServer;
 use Swow\Psr7\Message\ResponsePlusInterface;
 use Swow\Psr7\Message\ServerRequestPlusInterface;
 use Throwable;
+
+use function Hyperf\Coroutine\defer;
 
 abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterface
 {
@@ -47,12 +55,19 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
     protected ?Protocol $protocol = null;
 
+    protected ?EventDispatcherInterface $event = null;
+
+    protected ?Option $option = null;
+
     public function __construct(
         protected ContainerInterface $container,
         protected DispatcherInterface $dispatcher,
         protected ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
         protected LoggerInterface $logger
     ) {
+        if ($this->container->has(EventDispatcherInterface::class)) {
+            $this->event = $this->container->get(EventDispatcherInterface::class);
+        }
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -63,6 +78,8 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
         $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
+
+        $this->initOption();
     }
 
     public function onReceive($server, int $fd, int $reactorId, string $data): void
@@ -73,11 +90,16 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
             // Initialize PSR-7 Request and Response objects.
             RequestContext::set($request = $this->buildRequest($fd, $reactorId, $data));
-            ResponseContext::set($this->buildResponse($fd, $server));
-
-            $middlewares = $this->middlewares;
+            ResponseContext::set($response = $this->buildResponse($fd, $server));
 
             $request = $this->coreMiddleware->dispatch($request);
+            $middlewares = $this->middlewares;
+
+            $this->option?->isEnableRequestLifecycle() && $this->event?->dispatch(new RequestReceived(
+                request: $request,
+                response: $response,
+                serverName: $this->serverName
+            ));
 
             $response = $this->dispatcher->dispatch($request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
@@ -85,9 +107,26 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
             $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
             $response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
+            if (isset($request) && $this->option?->isEnableRequestLifecycle()) {
+                defer(fn () => $this->event?->dispatch(new RequestTerminated(
+                    request: $request,
+                    response: $response ?? null,
+                    exception: $throwable ?? null,
+                    serverName: $this->serverName
+                )));
+
+                $this->event?->dispatch(new RequestHandled(
+                    request: $request,
+                    response: $response ?? null,
+                    exception: $throwable ?? null,
+                    serverName: $this->serverName
+                ));
+            }
+
             if (! $response instanceof ResponseInterface) {
                 $response = $this->transferToResponse($response);
             }
+
             if ($response) {
                 $this->send($server, $fd, $response);
             }
@@ -135,5 +174,22 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     protected function getContext()
     {
         return $this->container->get(RpcContext::class);
+    }
+
+    protected function initOption(): void
+    {
+        $ports = $this->container->get(ServerFactory::class)->getConfig()?->getServers();
+        if (! $ports) {
+            return;
+        }
+
+        foreach ($ports as $port) {
+            if ($port->getName() === $this->serverName) {
+                $this->option = $port->getOptions();
+            }
+        }
+
+        $this->option ??= Option::make([]);
+        $this->option->setMustSortMiddlewaresByMiddlewares($this->middlewares);
     }
 }
