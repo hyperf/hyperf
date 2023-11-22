@@ -28,6 +28,7 @@ use Hyperf\RpcServer\Event\RequestHandled;
 use Hyperf\RpcServer\Event\RequestReceived;
 use Hyperf\RpcServer\Event\RequestTerminated;
 use Hyperf\Server\Option;
+use Hyperf\Server\ServerFactory;
 use Hyperf\Server\ServerManager;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
