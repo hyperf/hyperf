@@ -36,6 +36,7 @@ use Hyperf\RpcServer\Router\DispatcherFactory;
 use Hyperf\Serializer\SimpleNormalizer;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
+use Hyperf\Server\ServerFactory;
 use Hyperf\Server\ServerManager;
 use Hyperf\Stringable\Str;
 use Mockery;
@@ -168,6 +169,16 @@ class TcpServerTest extends TestCase
             return Mockery::mock(MethodDefinitionCollectorInterface::class);
         });
         $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)->andReturn(null);
+
+        $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+        $dispatcher->shouldReceive('dispatch')->andReturn(true);
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturn(true);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
+
+        $serverFactory = Mockery::mock(ServerFactory::class);
+        $serverFactory->shouldReceive('getConfig')->andReturn(null);
+        $container->shouldReceive('get')->with(ServerFactory::class)->andReturn($serverFactory);
+
         return $container;
     }
 }
