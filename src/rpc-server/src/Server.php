@@ -122,9 +122,10 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
                 ));
             }
 
-            if (! $response || ! $response instanceof ResponseInterface) {
+            if (! $response instanceof ResponseInterface) {
                 $response = $this->transferToResponse($response);
             }
+
             if ($response) {
                 $this->send($server, $fd, $response);
             }
