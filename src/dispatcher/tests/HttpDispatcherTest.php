@@ -21,7 +21,6 @@ use HyperfTest\Dispatcher\Middlewares\TestMiddleware;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -38,8 +37,6 @@ use Psr\Http\Message\ServerRequestInterface;
 #[CoversNothing]
 class HttpDispatcherTest extends TestCase
 {
-    use ProphecyTrait;
-
     protected function tearDown(): void
     {
         Mockery::close();
