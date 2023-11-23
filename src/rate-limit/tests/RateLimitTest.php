@@ -20,7 +20,8 @@ use Hyperf\Contract\ContainerInterface;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\RateLimit\Aspect\RateLimitAnnotationAspect;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
-use HyperfTest\RateLimit\Stub\Storage\EmptyStorage;
+use Hyperf\RateLimit\Storage\StorageInterface;
+use HyperfTest\RateLimit\Stub\Storage\EmptyStorageInterface;
 use HyperfTest\RateLimit\Stub\Storage\InvalidStorage;
 use InvalidArgumentException;
 use Mockery;
@@ -62,11 +63,11 @@ class RateLimitTest extends TestCase
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'rate_limit' => [
                 'storage' => [
-                    'class' => EmptyStorage::class,
+                    'class' => EmptyStorageInterface::class,
                 ],
             ],
         ]));
-        $container->shouldReceive('make')->with(EmptyStorage::class, Mockery::any())->andReturn(new EmptyStorage(
+        $container->shouldReceive('make')->with(EmptyStorageInterface::class, Mockery::any())->andReturn(new EmptyStorageInterface(
             $container,
             'empty storage',
             1,
@@ -98,7 +99,7 @@ class RateLimitTest extends TestCase
         $container->shouldReceive('make')->with('InvalidStorage', Mockery::any())->andReturn(new InvalidStorage());
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The storage of rate limit must be an instance of Hyperf\RateLimit\Storage\AbstractStorage');
+        $this->expectExceptionMessage('The storage of rate limit must be an instance of ' . StorageInterface::class);
 
         $rateLimitHandler = new RateLimitHandler($container);
         $rateLimitHandler->build('test', 1, 1, 1);

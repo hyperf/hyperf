@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-use Hyperf\RateLimit\Storage\RedisStorage;
+use Hyperf\RateLimit\Storage\RedisStorageInterface;
 
 return [
     'create' => 1,
@@ -18,7 +18,7 @@ return [
     'limitCallback' => [],
     'waitTimeout' => 1,
     'storage' => [
-        'class' => RedisStorage::class,
+        'class' => RedisStorageInterface::class,
         'options' => [
             'pool' => 'default',
         ],

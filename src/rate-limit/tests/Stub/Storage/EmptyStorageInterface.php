@@ -11,10 +11,12 @@ declare(strict_types=1);
  */
 namespace HyperfTest\RateLimit\Stub\Storage;
 
-use Hyperf\RateLimit\Storage\AbstractStorage;
+use bandwidthThrottle\tokenBucket\storage\scope\GlobalScope;
+use bandwidthThrottle\tokenBucket\storage\Storage;
+use Hyperf\RateLimit\Storage\StorageInterface;
 use Psr\Container\ContainerInterface;
 
-class EmptyStorage extends AbstractStorage
+class EmptyStorageInterface implements StorageInterface, Storage, GlobalScope
 {
     public function __construct(ContainerInterface $container, string $key, int $timeout, array $options = [])
     {

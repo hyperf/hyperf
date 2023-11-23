@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\RateLimit\Storage;
 
+use bandwidthThrottle\tokenBucket\storage\scope\GlobalScope;
+use bandwidthThrottle\tokenBucket\storage\Storage;
 use bandwidthThrottle\tokenBucket\storage\StorageException;
 use bandwidthThrottle\tokenBucket\util\DoublePacker;
 use Hyperf\Redis\Redis;
@@ -22,7 +24,7 @@ use Psr\SimpleCache\InvalidArgumentException;
 
 use function Hyperf\Support\make;
 
-class RedisStorage extends AbstractStorage
+class RedisStorageInterface implements Storage, GlobalScope, StorageInterface
 {
     public const KEY_PREFIX = 'rateLimiter:storage:';
 

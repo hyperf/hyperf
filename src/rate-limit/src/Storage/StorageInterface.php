@@ -11,13 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\RateLimit\Storage;
 
-use bandwidthThrottle\tokenBucket\storage\scope\GlobalScope;
-use bandwidthThrottle\tokenBucket\storage\Storage;
 use Psr\Container\ContainerInterface;
 
-abstract class AbstractStorage implements Storage, GlobalScope
+interface StorageInterface
 {
-    abstract public function __construct(
+    public function __construct(
         ContainerInterface $container,
         string $key,
         int $timeout,
