@@ -219,12 +219,12 @@ Exception: xxxx
 ```
 ## 環境版本不一致導致服務無法啟動
 
-當專案啟動時，丟擲類似於以下錯誤時
+當專案啟動時，丟擲類似如下錯誤時：
 
-```
+```bash
 Hyperf\Engine\Channel::push(mixed $data, float $timeout = -1): bool must be compatible with Swoole\Coroutine\Channel::push($data, $timeout = -1)
 ```
 
-此問題通常是由於安裝框架/元件時使用的 Swoole 版本與實際執行時使用的 Swoole 版本不一致導致。
+此問題通常是由於實際執行時使用的 Swoole 版本和安裝框架/元件時使用的 Swoole 版本不一致導致。
 
-需保持安裝與使用時候的 Swoole、PHP 版本一致。
+使用和安裝時相同的 Swoole、PHP 版本即可解決。
