@@ -222,3 +222,5 @@ Hyperf\Engine\Channel::push(mixed $data, float $timeout = -1): bool must be comp
 ```
 
 This problem is usually caused by inconsistencies between the Swoole version used when installing frameworks/components and the actual Swoole version used at runtime.
+
+Should keep the version of Swoole and PHP consistent when installing and using.
