@@ -24,7 +24,7 @@ use Psr\SimpleCache\InvalidArgumentException;
 
 use function Hyperf\Support\make;
 
-class RedisStorageInterface implements Storage, GlobalScope, StorageInterface
+class RedisStorage implements Storage, GlobalScope, StorageInterface
 {
     public const KEY_PREFIX = 'rateLimiter:storage:';
 

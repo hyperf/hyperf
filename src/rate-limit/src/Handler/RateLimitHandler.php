@@ -14,7 +14,7 @@ namespace Hyperf\RateLimit\Handler;
 use bandwidthThrottle\tokenBucket\Rate;
 use bandwidthThrottle\tokenBucket\TokenBucket;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\RateLimit\Storage\RedisStorageInterface;
+use Hyperf\RateLimit\Storage\RedisStorage;
 use Hyperf\RateLimit\Storage\StorageInterface;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
@@ -36,7 +36,7 @@ class RateLimitHandler
     {
         $config = $this->container->get(ConfigInterface::class);
 
-        $storageClass = $config->get('rate_limit.storage.class', RedisStorageInterface::class);
+        $storageClass = $config->get('rate_limit.storage.class', RedisStorage::class);
 
         $storage = match (gettype($storageClass)) {
             'string' => make($storageClass, ['key' => $key, 'timeout' => $timeout, 'options' => $config->get('rate_limit.storage.options', [])]),
