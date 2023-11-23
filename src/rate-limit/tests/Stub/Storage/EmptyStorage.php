@@ -16,7 +16,7 @@ use bandwidthThrottle\tokenBucket\storage\Storage;
 use Hyperf\RateLimit\Storage\StorageInterface;
 use Psr\Container\ContainerInterface;
 
-class EmptyStorageInterface implements StorageInterface, Storage, GlobalScope
+class EmptyStorage implements StorageInterface, Storage, GlobalScope
 {
     public function __construct(ContainerInterface $container, string $key, int $timeout, array $options = [])
     {

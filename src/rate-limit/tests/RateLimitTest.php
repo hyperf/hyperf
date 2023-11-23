@@ -21,7 +21,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\RateLimit\Aspect\RateLimitAnnotationAspect;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
 use Hyperf\RateLimit\Storage\StorageInterface;
-use HyperfTest\RateLimit\Stub\Storage\EmptyStorageInterface;
+use HyperfTest\RateLimit\Stub\Storage\EmptyStorage;
 use HyperfTest\RateLimit\Stub\Storage\InvalidStorage;
 use InvalidArgumentException;
 use Mockery;
@@ -63,11 +63,11 @@ class RateLimitTest extends TestCase
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'rate_limit' => [
                 'storage' => [
-                    'class' => EmptyStorageInterface::class,
+                    'class' => EmptyStorage::class,
                 ],
             ],
         ]));
-        $container->shouldReceive('make')->with(EmptyStorageInterface::class, Mockery::any())->andReturn(new EmptyStorageInterface(
+        $container->shouldReceive('make')->with(EmptyStorage::class, Mockery::any())->andReturn(new EmptyStorage(
             $container,
             'empty storage',
             1,
