@@ -192,7 +192,11 @@ function make(string $name, array $parameters = [])
     if (ApplicationContext::hasContainer()) {
         /** @var \Hyperf\Di\Container $container */
         $container = ApplicationContext::getContainer();
-        if (method_exists($container, 'make')) {
+        if (
+            method_exists($container, 'make')
+            // Mockery Container
+            || $container::class == 'Mockery_2_Psr_Container_ContainerInterface'
+        ) {
             return $container->make($name, $parameters);
         }
     }
