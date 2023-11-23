@@ -212,3 +212,15 @@ When an exception occurs during the DI collection phase (for example, a namespac
 File: xxxx.
 Exception: xxxx
 ```
+
+## The service can not start because the environment version is inconsistent
+
+When the project starts, an error similar to the following is thrown
+
+```
+Hyperf\Engine\Channel::push(mixed $data, float $timeout = -1): bool must be compatible with Swoole\Coroutine\Channel::push($data, $timeout = -1)
+```
+
+This problem is usually caused by inconsistencies between the Swoole version used when installing frameworks/components and the actual Swoole version used at runtime.
+
+Should keep the version of Swoole and PHP consistent when installing and using.
