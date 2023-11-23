@@ -216,6 +216,7 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 [ERROR] DI Reflection Manager collecting class reflections failed. 
 File: xxxx.
 Exception: xxxx
+
 ```
 ## 环境版本不一致导致服务无法启动
 
