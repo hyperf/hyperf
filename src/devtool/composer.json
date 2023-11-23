@@ -3,6 +3,7 @@
     "description": "A Devtool for Hyperf.",
     "license": "MIT",
     "keywords": [
+        "dev",
         "php",
         "swoole",
         "hyperf",
