@@ -16,6 +16,7 @@ use bandwidthThrottle\tokenBucket\TokenBucket;
 use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\RateLimit\Aspect\RateLimitAnnotationAspect;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
@@ -25,7 +26,6 @@ use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 
 /**
  * @internal
