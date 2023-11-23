@@ -217,6 +217,7 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 File: xxxx.
 Exception: xxxx
 ```
+
 ## 環境版本不一致導致服務無法啓動
 
 當項目啓動時，拋出類似如下錯誤時：
