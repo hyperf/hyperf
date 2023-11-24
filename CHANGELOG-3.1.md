@@ -14,7 +14,6 @@
 
 ## Added
 
-- [ ] Support v2 and v3 for socketio-server.
 - [x] Support [Psr7Plus](https://github.com/swow/psr7-plus).
     - [#5828](https://github.com/hyperf/hyperf/pull/5828) Support swow psr7-plus interface for `http-message`.
     - [#5839](https://github.com/hyperf/hyperf/pull/5839) Support swow psr7-plus interface for all components.
