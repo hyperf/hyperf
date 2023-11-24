@@ -1,4 +1,6 @@
-# v3.0.45 - TBD
+# v3.0.46 - TBD
+
+# v3.0.45 - 2023-11-24
 
 ## Added
 
@@ -14,6 +16,7 @@
 ## Optimized
 
 - [#6302](https://github.com/hyperf/hyperf/pull/6302) Set catch exceptions to false in `Executor` class.
+- [#6315](https://github.com/hyperf/hyperf/pull/6315) Optimized the tracer component by replacing the direct instantiation with a closure at Context::getOrSet.
 
 # v3.0.44 - 2023-11-17
 

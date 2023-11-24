@@ -181,3 +181,15 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 File: xxxx.
 Exception: xxxx
 ```
+
+## 环境版本不一致导致服务无法启动
+
+当项目启动时，抛出类似如下错误时：
+
+```bash
+Hyperf\Engine\Channel::push(mixed $data, float $timeout = -1): bool must be compatible with Swoole\Coroutine\Channel::push($data, $timeout = -1)
+```
+
+此问题通常是由于实际运行时使用的 Swoole 版本和安装框架/组件时使用的 Swoole 版本不一致导致。
+
+使用和安装时相同的 Swoole、PHP 版本即可解决。

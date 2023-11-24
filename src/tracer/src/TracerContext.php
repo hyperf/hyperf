@@ -32,7 +32,7 @@ class TracerContext
 
     public static function getTracer(): Tracer
     {
-        return Context::getOrSet(self::TRACER, make(Tracer::class));
+        return Context::getOrSet(self::TRACER, fn () => make(Tracer::class));
     }
 
     public static function setRoot(Span $root): Span
