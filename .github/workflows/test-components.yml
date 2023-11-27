@@ -265,6 +265,7 @@ jobs:
           ./.travis/requirement.install.sh
           if [ ${{ matrix.log-version }} == '^1.0' ]
             composer require "monolog/monolog:^2.0"
+          else
           fi
           composer require "psr/log:${{ matrix.log-version }}" -W
           if [ ${{ matrix.log-version }} == '^3.0' ]
