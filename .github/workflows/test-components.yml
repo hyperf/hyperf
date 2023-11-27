@@ -168,7 +168,9 @@ jobs:
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
-        run: ./.travis/swoole.install.sh
+        run: |
+          php -m
+          ./.travis/swoole.install.sh
       - name: Setup Packages
         run: |
           cp .travis/.env.example .env
