@@ -271,7 +271,9 @@ jobs:
       - name: Run Test Cases
         run: |
           ./.travis/requirement.install.sh
-          composer require "monolog/monolog:^2.0"
+          if [ ${{ matrix.log-version }} == '^1.0' ]
+            composer require "monolog/monolog:^2.0"
+          fi
           composer require "psr/log:${{ matrix.log-version }}" -W
           if [ ${{ matrix.log-version }} == '^3.0' ]
           then
