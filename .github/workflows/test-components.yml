@@ -170,6 +170,7 @@ jobs:
       - name: Setup Swoole
         run: |
           php -m
+          php --ri swoole
           ./.travis/swoole.install.sh
       - name: Setup Packages
         run: |
