@@ -168,11 +168,7 @@ jobs:
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
-        run: |
-          php -m
-          php -v
-          php --ri swoole
-          ./.travis/swoole.install.sh
+        run: ./.travis/swoole.install.sh
       - name: Setup Packages
         run: |
           cp .travis/.env.example .env
@@ -256,11 +252,7 @@ jobs:
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
-        run: |
-          php -v
-          php -m
-          php --ri swoole
-          ./.travis/swoole.install.sh
+        run: ./.travis/swoole.install.sh
       - name: Removed conflict Packages
         run: |
           composer remove elasticsearch/elasticsearch --dev -W
