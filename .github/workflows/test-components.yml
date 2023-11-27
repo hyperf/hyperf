@@ -27,7 +27,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis, pdo, pdo_mysql, bcmath, swoole-${{ env.SW_VERSION }}
+          extensions: redis, pdo, pdo_mysql, bcmath, swoole
           ini-values: opcache.enable_cli=1
           coverage: none
       - name: Setup Swoole
@@ -63,7 +63,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: swoole-${{ env.SW_VERSION }}
+          extensions: swoole
           ini-values: opcache.enable_cli=1
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh
@@ -112,7 +112,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis, swoole-${{ env.SW_VERSION }}
+          extensions: redis, swoole
           ini-values: opcache.enable_cli=0, phar.readonly='Off'
           coverage: none
       - name: Setup Swoole
@@ -164,7 +164,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: swoole-${{ env.SW_VERSION }}
+          extensions: swoole
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
@@ -200,7 +200,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: swoole-${{ env.SW_VERSION }}
+          extensions: swoole
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
@@ -248,7 +248,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: swoole-${{ env.SW_VERSION }}
+          extensions: swoole
           ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
@@ -298,7 +298,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: phpize
           ini-values: opcache.enable_cli=0
-          extensions: redis, pdo, pdo_mysql, bcmath, swoole-${{ env.SW_VERSION }}
+          extensions: redis, pdo, pdo_mysql, bcmath, swoole
           coverage: none
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh
