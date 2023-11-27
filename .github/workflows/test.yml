@@ -53,7 +53,7 @@ jobs:
           rm swoole.tar.gz
           cd swoole
           phpize
-          if [ _${{ matrix.sw-version }} = '_v5.0.3' ] || [ _${{ matrix.sw-version }} = '_v5.1.0' ] || [ _${{ matrix.sw-version }} = '_master' ]
+          if [ _${{ matrix.sw-version }} = '_v5.0.3' ] || [ _${{ matrix.sw-version }} = '_v5.1.1' ] || [ _${{ matrix.sw-version }} = '_master' ]
           then
             ./configure --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql --enable-brotli
           else
