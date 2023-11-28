@@ -11,8 +11,10 @@ curl -sSL https://get.daocloud.io/docker | sh
 
 修改檔案 `/lib/systemd/system/docker.service`，允許使用 `TCP` 連線 `Docker`
 
+> 只需要追加後面的 -H tcp://0.0.0.0:2375 即可
+
 ```
-ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
+ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock -H tcp://0.0.0.0:2375
 ```
 
 如果不是使用的 `root` 賬戶，可以透過以下命令，讓每次執行 `docker` 時，不需要增加 `sudo`
@@ -164,10 +166,21 @@ $ docker swarm init
 
 建立自定義 Overlay 網路
 
-```
+```shell
 docker network create \
 --driver overlay \
---subnet 10.0.0.0/8 \
+--subnet 10.0.0.1/8 \
+--opt encrypted \
+--attachable \
+default-network
+```
+
+> 有時可能因為網段衝突，導致 stack 啟動失敗，可以嘗試修改 --subnet
+
+```shell
+docker network create \
+--driver overlay \
+--subnet 10.1.0.1/16 \
 --opt encrypted \
 --attachable \
 default-network
