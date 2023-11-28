@@ -158,13 +158,17 @@ gitlab_rails['smtp_domain'] = "exmail.qq.com"
 
 ## 初始化 Swarm 集羣
 
-登錄另外一台機器，初始化集羣
+### 登錄另外一台機器，初始化集羣
 
 ```
 $ docker swarm init
 ```
 
-創建自定義 Overlay 網絡
+### 創建自定義 Overlay 網絡
+
+以下提供三種方式創建網段，只需要執行其一即可
+
+1. 直接創建自定義 Overlay 網絡
 
 ```shell
 docker network create \
@@ -175,7 +179,7 @@ docker network create \
 default-network
 ```
 
-> 有時可能因為網段衝突，導致 stack 啓動失敗，可以嘗試修改 --subnet
+2. 有時可能因為網段衝突，導致 stack 啓動失敗，可以嘗試修改 `--subnet`，不過這種方式，當前網段就只支持 65535 個 ip
 
 ```shell
 docker network create \
@@ -186,7 +190,25 @@ docker network create \
 default-network
 ```
 
-加入集羣
+3. 當然，因為大多數是 ingress 網絡默認的網段與我們新建的網段衝突，所以我們可以刪掉 ingress 網絡，然後重新創建一個
+
+```shell
+docker network rm ingress
+docker network create --ingress --subnet 192.168.0.1/16 --driver overlay ingress
+```
+
+然後再創建 `--subnet` 為 `10.0.0.1/8` 的 `network`
+
+```shell
+docker network create \
+--driver overlay \
+--subnet 10.0.0.1/8 \
+--opt encrypted \
+--attachable \
+default-network
+```
+
+### 加入集羣
 
 ```
 # 顯示manager節點的TOKEN
@@ -200,7 +222,7 @@ $ docker swarm join-token worker
 $ docker swarm join --token <token> ip:2377
 ```
 
-然後配置發佈用的 gitlab-runner
+### 配置發佈用的 gitlab-runner
 
 > 其他與 builder 一致，但是 tag 卻不能一樣。線上環境可以設置為 tags，測試環境設置為 test
 
