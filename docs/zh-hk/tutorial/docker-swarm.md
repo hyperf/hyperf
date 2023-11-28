@@ -166,12 +166,21 @@ $ docker swarm init
 
 創建自定義 Overlay 網絡
 
-> 有時可能因為網段衝突，導致 stack 啓動失敗，可以嘗試修改 --subnet
-
-```
+```shell
 docker network create \
 --driver overlay \
---subnet 10.0.0.0/8 \
+--subnet 10.0.0.1/8 \
+--opt encrypted \
+--attachable \
+default-network
+```
+
+> 有時可能因為網段衝突，導致 stack 啓動失敗，可以嘗試修改 --subnet
+
+```shell
+docker network create \
+--driver overlay \
+--subnet 10.1.0.1/16 \
 --opt encrypted \
 --attachable \
 default-network
