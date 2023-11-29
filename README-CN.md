@@ -42,8 +42,8 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 # 运行环境
 
 - Linux, OS X or Cygwin, WSL, Windows
-- PHP 8.0+
-- Swoole 4.5+ or Swow
+- PHP 8.1+
+- Swoole 5.0+ or Swow 1.3+
 
 # 安全漏洞
 
