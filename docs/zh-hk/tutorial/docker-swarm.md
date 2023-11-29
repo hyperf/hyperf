@@ -5,8 +5,7 @@
 ## 安裝 Docker
 
 ```
-curl -sSL https://get.daocloud.io/docker | sh
-# curl -sSL https://get.docker.com/ | sh
+curl -sSL https://get.docker.com/ | sh
 ```
 
 修改文件 `/lib/systemd/system/docker.service`，允許使用 `TCP` 連接 `Docker`
@@ -274,7 +273,6 @@ tar xf data.tar -C /
 ## 創建一個 Demo 項目
 
 登錄 Gitlab 創建一個 Demo 項目。並導入我們的項目 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton)
-
 
 ## 配置鏡像倉庫
 
@@ -549,4 +547,191 @@ docker service update --network-rm old-network service_name
 
 ```
 docker service update --with-registry-auth service_name
+```
+
+
+## 附錄
+
+### 只安裝 Docker Swarm
+
+如果你只需要安裝並使用 Docker Swarm，可以根據以下文檔進行操作。
+
+假設我們有三台機器 A B C，我們默認將 A 作為 Leader
+
+#### 安裝 Docker
+
+三台機器都按照以下方式安裝 Docker
+
+```
+curl -sSL https://get.docker.com/ | sh
+```
+
+修改文件 `/lib/systemd/system/docker.service`，允許使用 `TCP` 連接 `Docker`
+
+> 只需要追加後面的 -H tcp://0.0.0.0:2375 即可
+
+```
+ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock -H tcp://0.0.0.0:2375
+```
+
+如果不是使用的 `root` 賬户，可以通過以下命令，讓每次執行 `docker` 時，不需要增加 `sudo`
+
+```
+usermod -aG docker $USER
+```
+
+#### 初始化 Docker Swarm
+
+進入 A 機器，執行初始化命令
+
+```
+$ docker swarm init
+```
+
+因為大多數 ingress 網絡默認的網段與我們新建的網段衝突，所以我們刪掉 ingress 網絡，然後重新創建一個
+
+```shell
+docker network rm ingress
+docker network create --ingress --subnet 192.168.0.1/16 --driver overlay ingress
+```
+
+然後再創建 `--subnet` 為 `10.0.0.1/8` 的 `network`
+
+```shell
+docker network create \
+--driver overlay \
+--subnet 10.0.0.1/8 \
+--opt encrypted \
+--attachable \
+default-network
+```
+
+執行展示加入集羣的命令
+
+> 因為我們只有三台機器，所以儘量都聲明為 manager
+
+```
+$ docker swarm join-token manager
+```
+
+若後期需要加入新的 worker 節點，則執行以下命令得到對應的腳本
+
+```
+$ docker swarm join-token worker
+```
+
+#### 將另外兩台節點加入到集羣
+
+到 B C 兩台機器中執行剛剛升成的命令
+
+```shell
+docker swarm join --token xxxx <ip>:2377
+```
+
+回到 A 機器，執行命令查看是否已經成功加入
+
+```shell
+docker node ls
+```
+
+如果能看到 B 和 C 的節點，則代表加入成功
+
+#### 使用雲服務的鏡像服務
+
+這裏不詳細説明如何使用了，請自己去對應雲服務進行操作
+
+本文檔默認開發者已經成功開通了對應的鏡像服務，之後的文檔全部默認使用阿里雲的上海節點來講述
+
+[阿里雲](https://cr.console.aliyun.com/cn-shanghai/instances)
+
+#### 登錄鏡像
+
+三台機器 A B C 全部執行登錄操作
+
+```shell
+docker login --username=xxxx registry.cn-shanghai.aliyuncs.com
+```
+
+#### 打包鏡像
+
+這裏可以在任何一台機器進行打包，也可以在開發環境打包（非上述三台機器的環境下，需要執行 docker login 進行登錄）
+
+```shell
+docker build . -t registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+docker push registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+```
+
+#### 製作 stack yml 文件
+
+回到 A 機器上，到 /opt/www/your_project 目錄下，編輯 deploy.yml 文件
+
+```shell
+version: '3.7'
+services:
+  your_project:
+    image: registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+    ports:
+      - "9501:9501"
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      update_config:
+        parallelism: 2
+        delay: 5s
+        order: start-first
+    networks:
+      - default-network
+    configs:
+      - source: your_project_v1.1
+        target: /opt/www/.env
+configs:
+  your_project_v1.1:
+    file: /opt/www/your_project/.env
+networks:
+  default-network:
+    external: true
+```
+
+編輯 .env 文件，完成配置，注意，不要使用 127.0.0.1 鏈接 MySQL 等服務
+
+#### 啓動服務
+
+```shell
+docker pull registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+docker stack deploy -c /opt/www/your_project/deploy.yml --with-registry-auth your_project
+```
+
+查看是否正常啓動，執行下述三個指令，都應該存在對應的數據
+
+```shell
+docker stack ls
+docker service ls
+docker ps
+```
+
+#### 測試服務是否可用
+
+到三台機器上，全部進行 curl 測試，如果都能返回對應數據，代表服務啓動成功
+
+```shell
+curl http://127.0.0.1:9501/
+```
+
+#### 更新服務
+
+開發機打包，並推送到鏡像倉庫中
+
+```shell
+docker build . -t registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+docker push registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+```
+
+會到 A 機器，進行重啓
+
+```shell
+docker pull registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+docker stack deploy -c /opt/www/your_project/deploy.yml --with-registry-auth your_project
 ```
