@@ -622,7 +622,7 @@ $ docker swarm join-token worker
 
 #### 将另外两台节点加入到集群
 
-到 B C 两台机器中执行刚刚升成的命令
+到 B C 两台机器中执行刚刚生成的命令
 
 ```shell
 docker swarm join --token xxxx <ip>:2377
