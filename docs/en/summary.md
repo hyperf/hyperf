@@ -9,7 +9,7 @@
 
   * [Release Planning](en/release-planning.md)
   * [Versions](en/versions.md)
-  * [Changelogs](en/changelog/3.0.md)
+  * [Changelogs](en/changelog/3.1.md)
 
 * Quick Start
 
@@ -149,6 +149,7 @@
 
 * Old Changelogs
 
+  * [v3.0](en/changelog/3.0.md)
   * [v2.2](en/changelog/2.2.md)
   * [v2.1](en/changelog/2.1.md)
   * [v2.0](en/changelog/2.0.md)

@@ -10,7 +10,7 @@
 
   * [版本计划](zh-cn/release-planning.md)
   * [版本说明](zh-cn/versions.md)
-  * [版本更新记录](zh-cn/changelog/3.0.md)
+  * [版本更新记录](zh-cn/changelog/3.1.md)
 
 * 快速入门
 
@@ -151,6 +151,7 @@
 
 * 历史版本更新记录
 
+  * [3.0 更新记录](zh-cn/changelog/3.0.md)
   * [2.2 更新记录](zh-cn/changelog/2.2.md)
   * [2.1 更新记录](zh-cn/changelog/2.1.md)
   * [2.0 更新记录](zh-cn/changelog/2.0.md)

@@ -8,10 +8,10 @@ Various Dockerfiles have been prepared for in the [hyperf/hyperf-docker](https:/
 
 If you don't use Docker as the basis for your system environment, you can also consider using [Box](en/eco/box.md) as the basic environment for running. If you wish to set up the environment yourself, you need to make sure that your native environment meets the following requirements:
 
- - PHP >= 8.0
+ - PHP >= 8.1
  - Any of the following network engines
-   - [Swoole PHP extension](https://github.com/swoole/swoole-src) >= 4.5，with `swoole.use_shortname` set to `Off` in your `php.ini`
-   - [Swow PHP extension](https://github.com/swow/swow)
+   - [Swoole PHP extension](https://github.com/swoole/swoole-src) >= 5.0，with `swoole.use_shortname` set to `Off` in your `php.ini`
+   - [Swow PHP extension](https://github.com/swow/swow) >= 1.3
  - JSON PHP extension
  - Pcntl PHP extension (Only on Swoole engine)
  - OpenSSL PHP extension （If you need to use the HTTPS）

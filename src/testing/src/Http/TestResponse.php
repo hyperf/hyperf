@@ -549,9 +549,10 @@ class TestResponse implements ArrayAccess
         $decodedResponse = $testJson->json();
 
         if (is_null($decodedResponse) || $decodedResponse === false) {
-            if ($this->exception ?? null) {
-                throw $this->exception;
-            }
+            $exception = $this->exception ?? null;
+
+            $exception && throw $exception;
+
             PHPUnit::fail('Invalid JSON was returned from the route.');
         }
 
