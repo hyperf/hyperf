@@ -1,4 +1,10 @@
-# v3.0.46 - TBD
+# v3.0.47 - TBD
+
+# v3.0.46 - 2023-11-30
+
+## Fixed
+
+- [#6321](https://github.com/hyperf/hyperf/pull/6321) Fixed bug that the jaeger cannot show the http code when using `tracer`.
 
 # v3.0.45 - 2023-11-24
 
