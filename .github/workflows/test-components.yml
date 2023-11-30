@@ -259,6 +259,7 @@ jobs:
           composer remove jonahgeorge/jaeger-client-php --dev -W
           composer remove bandwidth-throttle/token-bucket --dev -W
           composer remove friendsofphp/php-cs-fixer --dev -W
+          composer remove zircote/swagger-php --dev -W
           composer remove "symfony/*" --dev -W
       - name: Run Test Cases
         run: |
