@@ -1,4 +1,6 @@
-# v3.1.0 - TBD
+# v3.1.1 - TBD
+
+# v3.1.0 - 2023-12-01
 
 ## Dependencies Upgrade
 
