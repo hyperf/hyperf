@@ -41,7 +41,7 @@
 - [#6124](https://github.com/hyperf/hyperf/pull/6124) Added `Hyperf\AsyncQueue\Job::fail()`.
 - [#6259](https://github.com/hyperf/hyperf/pull/6259) Support to use model builder as the column in `Hyperf\Database\Query\Builder\addSelect`.
 - [#6301](https://github.com/hyperf/hyperf/pull/6301) Improve storage switcher for rate-limit.
-- [#xxx]() Adds config `processors` for swagger.
+- [#6338](https://github.com/hyperf/hyperf/pull/6338) Adds config `processors` for swagger.
 
 ## Optimized
 
