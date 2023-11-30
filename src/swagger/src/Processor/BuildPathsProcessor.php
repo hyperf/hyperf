@@ -26,7 +26,6 @@ class BuildPathsProcessor implements ProcessorInterface
         $paths = [];
         // Merge @OA\PathItems with the same path.
         if (! Generator::isDefault($analysis->openapi->paths)) {
-            var_dump(123123);
             foreach ($analysis->openapi->paths as $annotation) {
                 if (empty($annotation->path)) {
                     $annotation->_context->logger->warning($annotation->identity() . ' is missing required property "path" in ' . $annotation->_context);

@@ -14,6 +14,7 @@ namespace Hyperf\Swagger;
 use Hyperf\Codec\Json;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Swagger\Processor\BuildPathsProcessor;
+use InvalidArgumentException;
 use OpenApi\Processors;
 
 class Generator
@@ -27,6 +28,11 @@ class Generator
         $paths = $this->config->get('swagger.scan.paths', null);
         if ($paths === null) {
             $paths = $this->config->get('annotations.scan.paths', []);
+        }
+
+        $userProcessors = $this->config->get('swagger.processors', []);
+        if (! is_array($userProcessors)) {
+            throw new InvalidArgumentException('The processors of swagger must be array.');
         }
 
         $generator = new \OpenApi\Generator();
@@ -49,6 +55,7 @@ class Generator
                 new Processors\MergeXmlContent(),
                 new Processors\OperationId(),
                 new Processors\CleanUnmerged(),
+                ...$userProcessors,
             ])
             ->generate($paths, validate: false);
 
