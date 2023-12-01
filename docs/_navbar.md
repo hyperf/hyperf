@@ -5,6 +5,7 @@
   * [English](en/)
 
 * 历史版本/Versions
+  * [3.1](https://hyperf.wiki/3.1/)
   * [2.2](https://hyperf.wiki/2.2/)
   * [2.0](https://hyperf.wiki/2.0/)
   * [1.1](https://hyperf.wiki/1.1/)
