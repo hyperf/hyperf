@@ -1,5 +1,9 @@
 # v3.1.1 - TBD
 
+## Added
+
+- [#6342](https://github.com/hyperf/hyperf/pull/6342) Added `Coroutine::fork()` method and `Coroutine::pid()` method.
+
 # v3.1.0 - 2023-12-01
 
 ## Dependencies Upgrade
