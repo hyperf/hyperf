@@ -238,6 +238,14 @@ class GrpcClient
             if ($response === false && $channel->errCode === SWOOLE_CHANNEL_TIMEOUT) {
                 unset($this->recvChannelMap[$streamId]);
             }
+            // Unset recvChannelMap arfter recv
+            if (! $response->pipeline) {
+                unset($this->recvChannelMap[$streamId]);
+                if (! $channel->isEmpty()) {
+                    $channel->pop();
+                }
+                $this->channelPool->push($channel);
+            }
 
             return $response;
         }
@@ -303,13 +311,6 @@ class GrpcClient
                     }
                     $channel = $this->recvChannelMap[$streamId];
                     $channel->push($response);
-                    if (! $response->pipeline) {
-                        unset($this->recvChannelMap[$streamId]);
-                        if (! $channel->isEmpty()) {
-                            $channel->pop();
-                        }
-                        $this->channelPool->push($channel);
-                    }
                     // If wait status is equal to WAIT_CLOSE, and no coroutine is waiting, then break the recv loop.
                     if ($this->waitStatus === Status::WAIT_CLOSE && empty($this->recvChannelMap)) {
                         break;
