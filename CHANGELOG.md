@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#1917](https://github.com/hyperf/hyperf/pull/1917) Fixed bug that `Request::isXmlHttpRequest` does not work.
+- [#6347](https://github.com/hyperf/hyperf/pull/6347) Fixed that the view function may add redundant content-type to header.
 
 ## Optimized
 
