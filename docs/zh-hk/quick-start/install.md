@@ -11,7 +11,7 @@ Hyperf 對系統環境有一些要求，當您使用 Swoole 網絡引擎驅動�
  - PHP >= 8.1
  - 以下任一網絡引擎
    - [Swoole PHP 擴展](https://github.com/swoole/swoole-src) >= 5.0，並關閉了 `Short Name`
-   - [Swow PHP 擴展](https://github.com/swow/swow) >= 1.3
+   - [Swow PHP 擴展](https://github.com/swow/swow) >= 1.4
  - JSON PHP 擴展
  - Pcntl PHP 擴展（僅在 Swoole 引擎時）
  - OpenSSL PHP 擴展（如需要使用到 HTTPS）
