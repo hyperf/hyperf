@@ -11,7 +11,7 @@ If you don't use Docker as the basis for your system environment, you can also c
  - PHP >= 8.1
  - Any of the following network engines
    - [Swoole PHP extension](https://github.com/swoole/swoole-src) >= 5.0，with `swoole.use_shortname` set to `Off` in your `php.ini`
-   - [Swow PHP extension](https://github.com/swow/swow) >= 1.3
+   - [Swow PHP extension](https://github.com/swow/swow) >= 1.4
  - JSON PHP extension
  - Pcntl PHP extension (Only on Swoole engine)
  - OpenSSL PHP extension （If you need to use the HTTPS）
