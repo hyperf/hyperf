@@ -1,5 +1,9 @@
 # v3.1.1 - TBD
 
+## Fixed
+
+- [#6347](https://github.com/hyperf/hyperf/pull/6347) Fixed bug that the view function may add redundant content-type to header.
+
 ## Added
 
 - [#6342](https://github.com/hyperf/hyperf/pull/6342) Added `Coroutine::fork()` method and `Coroutine::pid()` method.
