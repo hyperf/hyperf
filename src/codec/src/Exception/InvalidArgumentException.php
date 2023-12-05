@@ -24,13 +24,8 @@ class InvalidArgumentException extends \InvalidArgumentException
     {
         $exception = $exception instanceof Throwable ? $exception : new \InvalidArgumentException($exception);
         $e = new static($exception->getMessage(), (int) $exception->getCode(), $exception);
-        $e->setOriginal($original);
+        $e->original = $original;
         return $e;
-    }
-
-    public function setOriginal(mixed $original): void
-    {
-        $this->original = $original;
     }
 
     /**
