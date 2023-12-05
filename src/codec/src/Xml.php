@@ -59,9 +59,7 @@ class Xml
         $respObject = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOERROR);
 
         if ($respObject === false) {
-            $e = new InvalidArgumentException('Syntax error.');
-            $e->setOriginal($xml);
-            throw $e;
+            throw InvalidArgumentException::fromPrevious('Syntax error.', $xml);
         }
 
         return json_decode(json_encode($respObject), true);
