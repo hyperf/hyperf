@@ -4,7 +4,7 @@
 
 - [#6347](https://github.com/hyperf/hyperf/pull/6347) Fixed bug that the view function may add redundant content-type to header.
 - [#6352](https://github.com/hyperf/hyperf/pull/6352) Fixed bug that nacos config center cannot work when using grpc protocol.
-- [#6350](https://github.com/hyperf/hyperf/pull/6350) Fixed bug when runReceiveCoroutine unset streamId before recv method.
+- [#6350](https://github.com/hyperf/hyperf/pull/6350) Fixed bug that the recv channel cannot be found, because `runReceiveCoroutine` will unset streamId before recv method.
 
 ## Added
 
