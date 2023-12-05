@@ -34,7 +34,9 @@ class Json
         try {
             $json = json_encode($data, $flags | JSON_THROW_ON_ERROR, $depth);
         } catch (Throwable $exception) {
-            throw new InvalidArgumentException($exception->getMessage(), (int) $exception->getCode(), $exception, $data);
+            $e = new InvalidArgumentException($exception->getMessage(), (int) $exception->getCode(), $exception);
+            $e->setOriginal($data);
+            throw $e;
         }
 
         return $json;
@@ -48,7 +50,9 @@ class Json
         try {
             $decode = json_decode($json, $assoc, $depth, $flags | JSON_THROW_ON_ERROR);
         } catch (Throwable $exception) {
-            throw new InvalidArgumentException($exception->getMessage(), (int) $exception->getCode(), $exception, $json);
+            $e = new InvalidArgumentException($exception->getMessage(), (int) $exception->getCode(), $exception, $json);
+            $e->setOriginal($json);
+            throw $e;
         }
 
         return $decode;

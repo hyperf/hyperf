@@ -47,7 +47,9 @@ class Xml
 
         $result = $xml->asXML();
         if ($result === false) {
-            throw new InvalidArgumentException('Syntax error.', originData: $data);
+            $e = new InvalidArgumentException('Syntax error.');
+            $e->setOriginal($data);
+            throw $e;
         }
         return trim($result);
     }
@@ -57,7 +59,9 @@ class Xml
         $respObject = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOERROR);
 
         if ($respObject === false) {
-            throw new InvalidArgumentException('Syntax error.', originData: $xml);
+            $e = new InvalidArgumentException('Syntax error.');
+            $e->setOriginal($xml);
+            throw $e;
         }
 
         return json_decode(json_encode($respObject), true);

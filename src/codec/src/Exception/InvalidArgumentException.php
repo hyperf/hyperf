@@ -11,27 +11,23 @@ declare(strict_types=1);
  */
 namespace Hyperf\Codec\Exception;
 
-use Throwable;
-
 class InvalidArgumentException extends \InvalidArgumentException
 {
     /**
      * The origin data that caused the exception.
      */
-    private mixed $originData;
+    private mixed $original;
 
-    public function __construct(string $message = '', int $code = 0, Throwable $previous = null, mixed $originData = null)
+    public function setOriginal(mixed $original): void
     {
-        $this->originData = $originData;
-
-        parent::__construct($message, $code, $previous);
+        $this->original = $original;
     }
 
     /**
      * Get the origin data that caused the exception.
      */
-    public function getOriginData(): mixed
+    public function getOriginal(): mixed
     {
-        return $this->originData;
+        return $this->original;
     }
 }
