@@ -669,11 +669,11 @@ $this->validationFactory->make($request->all(), [
 
 ##### missing_if:anotherfield,value,…
 
-如果`_anotherfield_`字段等於任何`_value_`，則驗證的字段必須不存在。
+如果 `_anotherfield_` 字段等於任何 `_value_` ，則驗證的字段必須不存在。
 
 ##### missing_unless:anotherfield,value
 
-驗證的字段必須不存在，除非`_anotherfield_`字段等於任何`_value_`。
+驗證的字段必須不存在，除非 `_anotherfield_` 字段等於任何 `_value_` 。
 
 ##### missing_with:foo,bar,…
 
@@ -685,7 +685,7 @@ $this->validationFactory->make($request->all(), [
 
 ##### multiple_of:value
 
-驗證的字段必須是`_value_`的倍數。
+驗證的字段必須是 `_value_` 的倍數。
 
 ##### doesnt_start_with:foo,bar,…
 

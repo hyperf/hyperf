@@ -10,9 +10,11 @@
 composer require hyperf/metric
 ```
 
-[hyperf/metric](https://github.com/hyperf/metric) 元件預設安裝了 [Prometheus](https://prometheus.io/) 相關依賴。如果要使用 [StatsD](https://github.com/statsd/statsd) 或 [InfluxDB](http://influxdb.com)，還需要執行下面的命令安裝對應的依賴：
+Metric 支援 [Prometheus](https://prometheus.io/)、[StatsD](https://github.com/statsd/statsd) 和 [InfluxDB](http://influxdb.com)，可以執行下面的命令安裝對應的依賴：
 
 ```bash
+# Prometheus
+composer require promphp/prometheus_client_php
 # StatsD 所需依賴
 composer require domnikl/statsd
 # InfluxDB 所需依賴 
