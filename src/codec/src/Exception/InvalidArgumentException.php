@@ -20,12 +20,12 @@ class InvalidArgumentException extends \InvalidArgumentException
      */
     private mixed $original;
 
-    public static function create(Throwable|string $exception, mixed $original): self
+    public static function throw(Throwable|string $exception, mixed $original): void
     {
         [$message, $code,  $previous] = $exception instanceof Throwable ? [$exception->getMessage(), $exception->getCode(), $exception] : [$exception, 0, null];
         $e = new static($message, $code, $previous);
         $e->original = $original;
-        return $e;
+        throw $e;
     }
 
     /**
