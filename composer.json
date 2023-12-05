@@ -38,7 +38,7 @@
         "fakerphp/faker": "^1.23",
         "fig/http-message-util": "^1.1.2",
         "filp/whoops": "^2.7",
-        "friendsofphp/php-cs-fixer": "^3.16.0",
+        "friendsofphp/php-cs-fixer": "^3.40.0",
         "google/common-protos": "^3.2",
         "google/protobuf": "^3.6.1",
         "grpc/grpc": "^1.15",

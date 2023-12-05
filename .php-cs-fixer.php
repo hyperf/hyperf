@@ -67,6 +67,15 @@ return (new PhpCsFixer\Config())
         ],
         'phpdoc_align' => [
             'align' => 'left',
+            'tags' => [
+                'method',
+                'param',
+                'property',
+                'return',
+                'throws',
+                'type',
+                'var',
+            ],
         ],
         'multiline_whitespace_before_semicolons' => [
             'strategy' => 'no_multi_line',
@@ -95,6 +104,12 @@ return (new PhpCsFixer\Config())
         'standardize_not_equals' => true,
         'multiline_comment_opening_closing' => true,
         'no_blank_lines_before_namespace' => true,
+        'blank_lines_before_namespace' => false,
+        'single_line_empty_body' => false,
+        'ordered_types' => [
+            'sort_algorithm' => 'none',
+            'null_adjustment' => 'none',
+        ],
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()
