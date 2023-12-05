@@ -203,6 +203,34 @@ We can define required route parameters using `{}`. For example, `/user/{id}` de
 
 Sometimes you may want a route parameter to be optional. In this case, you can use `[]` to declare the parameter inside the brackets as an optional parameter, such as `/user/[{id}]`.
 
+#### Validate parameters
+
+You can also use regular expression to validate parameters. Here are some examples
+```php
+use Hyperf\HttpServer\Router\Router;
+
+// Matches /user/42, but not /user/xyz
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
+
+// Matches /user/foobar, but not /user/foo/bar
+Router::addRoute('GET', '/user/{name}', 'handler');
+
+// Matches /user/foo/bar as well
+Router::addRoute('GET', '/user/{name:.+}', 'handler');
+
+// This route
+Router::addRoute('GET', '/user/{id:\d+}[/{name}]', 'handler');
+// Is equivalent to these two routes
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
+Router::addRoute('GET', '/user/{id:\d+}/{name}', 'handler');
+
+// Multiple nested optional parts are possible as well
+Router::addRoute('GET', '/user[/{id:\d+}[/{name}]]', 'handler');
+
+// This route is NOT valid, because optional parts can only occur at the end
+Router::addRoute('GET', '/user[/{id:\d+}]/{name}', 'handler');
+```
+
 #### Get routing information
 
 If the devtool component is installed, you can use the `php bin/hyperf.php describe:routes` command to get the routing list information.  You can also provide the path option, which is convenient for obtaining the information of a single route, for example: `php bin/hyperf.php describe:routes --path=/foo/bar`.
