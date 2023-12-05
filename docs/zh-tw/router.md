@@ -202,6 +202,34 @@ public function index(RequestInterface $request)
 
 有時候您可能會希望這個引數是可選的，您可以透過 `[]` 來宣告中括號內的引數為一個可選引數，如 `/user/[{id}]`。
 
+#### 校驗引數
+
+您也可以使用正則表示式對引數進行校驗，以下是一些例子
+```php
+use Hyperf\HttpServer\Router\Router;
+
+// 可以匹配 /user/42, 但不能匹配 /user/xyz
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
+
+// 可以匹配 /user/foobar, 但不能匹配 /user/foo/bar
+Router::addRoute('GET', '/user/{name}', 'handler');
+
+// 也可以匹配 /user/foo/bar as well
+Router::addRoute('GET', '/user/{name:.+}', 'handler');
+
+// 這個路由
+Router::addRoute('GET', '/user/{id:\d+}[/{name}]', 'handler');
+// 等同於以下的兩個路由
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
+Router::addRoute('GET', '/user/{id:\d+}/{name}', 'handler');
+
+// 多個可選的巢狀也是允許的
+Router::addRoute('GET', '/user[/{id:\d+}[/{name}]]', 'handler');
+
+// 這是一條無效的路由, 因為可選部分只能出現在最後
+Router::addRoute('GET', '/user[/{id:\d+}]/{name}', 'handler');
+```
+
 #### 獲取路由資訊
 
 如果安裝了 devtool 元件，可使用 `php bin/hyperf.php describe:routes` 命令獲取路由列表資訊，
