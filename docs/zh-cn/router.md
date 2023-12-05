@@ -202,6 +202,34 @@ public function index(RequestInterface $request)
 
 有时候您可能会希望这个参数是可选的，您可以通过 `[]` 来声明中括号内的参数为一个可选参数，如 `/user/[{id}]`。
 
+#### 校验参数
+
+您也可以使用正则表达式对参数进行校验，以下是一些例子
+```php
+use Hyperf\HttpServer\Router\Router;
+
+// 可以匹配 /user/42, 但不能匹配 /user/xyz
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
+
+// 可以匹配 /user/foobar, 但不能匹配 /user/foo/bar
+Router::addRoute('GET', '/user/{name}', 'handler');
+
+// 也可以匹配 /user/foo/bar as well
+Router::addRoute('GET', '/user/{name:.+}', 'handler');
+
+// 这个路由
+Router::addRoute('GET', '/user/{id:\d+}[/{name}]', 'handler');
+// 等同于以下的两个路由
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
+Router::addRoute('GET', '/user/{id:\d+}/{name}', 'handler');
+
+// 多个可选的嵌套也是允许的
+Router::addRoute('GET', '/user[/{id:\d+}[/{name}]]', 'handler');
+
+// 这是一条无效的路由, 因为可选部分只能出现在最后
+Router::addRoute('GET', '/user[/{id:\d+}]/{name}', 'handler');
+```
+
 #### 获取路由信息
 
 如果安装了 devtool 组件，可使用 `php bin/hyperf.php describe:routes` 命令获取路由列表信息，
