@@ -206,26 +206,28 @@ public function index(RequestInterface $request)
 
 您也可以使用正则表达式对参数进行校验，以下是一些例子
 ```php
+use Hyperf\HttpServer\Router\Router;
+
 // 可以匹配 /user/42, 但不能匹配 /user/xyz
-$r->addRoute('GET', '/user/{id:\d+}', 'handler');
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
 
 // 可以匹配 /user/foobar, 但不能匹配 /user/foo/bar
-$r->addRoute('GET', '/user/{name}', 'handler');
+Router::addRoute('GET', '/user/{name}', 'handler');
 
 // 也可以匹配 /user/foo/bar as well
-$r->addRoute('GET', '/user/{name:.+}', 'handler');
+Router::addRoute('GET', '/user/{name:.+}', 'handler');
 
 // 这个路由
-$r->addRoute('GET', '/user/{id:\d+}[/{name}]', 'handler');
+Router::addRoute('GET', '/user/{id:\d+}[/{name}]', 'handler');
 // 等同于以下的两个路由
-$r->addRoute('GET', '/user/{id:\d+}', 'handler');
-$r->addRoute('GET', '/user/{id:\d+}/{name}', 'handler');
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
+Router::addRoute('GET', '/user/{id:\d+}/{name}', 'handler');
 
 // 多个可选的嵌套也是允许的
-$r->addRoute('GET', '/user[/{id:\d+}[/{name}]]', 'handler');
+Router::addRoute('GET', '/user[/{id:\d+}[/{name}]]', 'handler');
 
 // 这是一条无效的路由, 因为可选部分只能出现在最后
-$r->addRoute('GET', '/user[/{id:\d+}]/{name}', 'handler');
+Router::addRoute('GET', '/user[/{id:\d+}]/{name}', 'handler');
 ```
 
 #### 获取路由信息

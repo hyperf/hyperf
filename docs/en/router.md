@@ -207,26 +207,28 @@ Sometimes you may want a route parameter to be optional. In this case, you can u
 
 You can also use regular expression to validate parameters. Here are some examples
 ```php
+use Hyperf\HttpServer\Router\Router;
+
 // Matches /user/42, but not /user/xyz
-$r->addRoute('GET', '/user/{id:\d+}', 'handler');
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
 
 // Matches /user/foobar, but not /user/foo/bar
-$r->addRoute('GET', '/user/{name}', 'handler');
+Router::addRoute('GET', '/user/{name}', 'handler');
 
 // Matches /user/foo/bar as well
-$r->addRoute('GET', '/user/{name:.+}', 'handler');
+Router::addRoute('GET', '/user/{name:.+}', 'handler');
 
 // This route
-$r->addRoute('GET', '/user/{id:\d+}[/{name}]', 'handler');
+Router::addRoute('GET', '/user/{id:\d+}[/{name}]', 'handler');
 // Is equivalent to these two routes
-$r->addRoute('GET', '/user/{id:\d+}', 'handler');
-$r->addRoute('GET', '/user/{id:\d+}/{name}', 'handler');
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
+Router::addRoute('GET', '/user/{id:\d+}/{name}', 'handler');
 
 // Multiple nested optional parts are possible as well
-$r->addRoute('GET', '/user[/{id:\d+}[/{name}]]', 'handler');
+Router::addRoute('GET', '/user[/{id:\d+}[/{name}]]', 'handler');
 
 // This route is NOT valid, because optional parts can only occur at the end
-$r->addRoute('GET', '/user[/{id:\d+}]/{name}', 'handler');
+Router::addRoute('GET', '/user[/{id:\d+}]/{name}', 'handler');
 ```
 
 #### Get routing information
