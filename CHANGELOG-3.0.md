@@ -1,5 +1,9 @@
 # v3.0.47 - TBD
 
+## Optimized
+
+- [#6218](https://github.com/hyperf/hyperf/pull/6218) Optimized code for `Hyperf\Codec\Exception\InvalidArgumentException` which you can be used to get the origin data.
+
 # v3.0.46 - 2023-11-30
 
 ## Fixed
@@ -93,7 +97,6 @@
 ## Optimized
 
 - [#6209](https://github.com/hyperf/hyperf/pull/6209) Support for phpredis 6.x [sentinel](https://github.com/phpredis/phpredis/blob/develop/sentinel.md#examples-for-version-60-or-later)
-- [#6218](https://github.com/hyperf/hyperf/pull/6218) Optimized code for `Hyperf\Codec\Exception\InvalidArgumentException` which you can be used to get the origin data.
 
 # v3.0.39 - 2023-10-13
 
