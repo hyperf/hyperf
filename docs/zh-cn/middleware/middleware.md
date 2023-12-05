@@ -69,7 +69,7 @@ Router::addGroup(
 > 使用 `#[Middleware]` 注解时需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空间；   
 > 使用 `#[Middlewares]` 注解时需 `use Hyperf\HttpServer\Annotation\Middlewares;` 命名空间；
 
-注意：使用`#[Middleware]`和`#[Middlewares]`来定义中间件，必须配合`#[AutoController]`或者`#[Controller]`使用
+***注意：必须配合`#[AutoController]`或者`#[Controller]`使用***
 
 定义单个中间件：
 

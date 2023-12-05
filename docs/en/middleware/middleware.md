@@ -69,7 +69,7 @@ When defining routes through annotations, we recommend defining middleware by me
 > Use `#[Middleware]` should `use Hyperf\HttpServer\Annotation\Middleware;` namespace；   
 > Use `#[Middlewares]` should `use Hyperf\HttpServer\Annotation\Middlewares;` namespace；
 
-Notice: Use `#[Middleware]` and `#[Middlewares]` to define middleware, it must be used in conjunction with `#[AutoController]` or `#[Controller]`.
+***Notice: It must be used with `#[AutoController]` or `#[Controller]`.***
 
 Define a single middleware：
 
