@@ -22,8 +22,8 @@ class InvalidArgumentException extends \InvalidArgumentException
 
     public static function fromPrevious(Throwable|string $exception, mixed $original): self
     {
-        $exception = $exception instanceof Throwable ? $exception : new \InvalidArgumentException($exception);
-        $e = new static($exception->getMessage(), (int) $exception->getCode(), $exception);
+        [$message, $code,  $previous] = $exception instanceof Throwable ? [$exception->getMessage(), $exception->getCode(), $exception] : [$exception, 0, null];
+        $e = new static($message, $code, $previous);
         $e->original = $original;
         return $e;
     }
