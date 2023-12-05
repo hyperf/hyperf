@@ -50,7 +50,7 @@ class Json
         try {
             $decode = json_decode($json, $assoc, $depth, $flags | JSON_THROW_ON_ERROR);
         } catch (Throwable $exception) {
-            $e = new InvalidArgumentException($exception->getMessage(), (int) $exception->getCode(), $exception, $json);
+            $e = new InvalidArgumentException($exception->getMessage(), (int) $exception->getCode(), $exception);
             $e->setOriginal($json);
             throw $e;
         }
