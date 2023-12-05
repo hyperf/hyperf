@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#6347](https://github.com/hyperf/hyperf/pull/6347) Fixed bug that the view function may add redundant content-type to header.
+- [#6352](https://github.com/hyperf/hyperf/pull/6352) Fixed bug that nacos config center cannot work when using grpc protocol.
 
 ## Added
 

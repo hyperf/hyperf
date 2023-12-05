@@ -14,6 +14,7 @@ namespace Hyperf\ConfigNacos;
 use Hyperf\Collection\Arr;
 use Hyperf\ConfigCenter\AbstractDriver;
 use Hyperf\ConfigCenter\Contract\ClientInterface as ConfigClientInterface;
+use Hyperf\Nacos\Module;
 use Hyperf\Nacos\Protobuf\ListenHandler\ConfigChangeNotifyRequestHandler;
 use Hyperf\Nacos\Protobuf\Response\ConfigQueryResponse;
 use Psr\Container\ContainerInterface;
@@ -48,7 +49,7 @@ class NacosDriver extends AbstractDriver
             $tenant = $item['tenant'] ?? '';
             $type = $item['type'] ?? null;
 
-            $client = $application->grpc->get($tenant, 'config');
+            $client = $application->grpc->get($tenant, Module::CONFIG);
             $client->listenConfig($group, $dataId, new ConfigChangeNotifyRequestHandler(function (ConfigQueryResponse $response) use ($key, $type) {
                 $config = $this->client->decode($response->getContent(), $type);
                 $prevConfig = $this->config->get($key, []);
@@ -62,7 +63,7 @@ class NacosDriver extends AbstractDriver
             }));
         }
 
-        foreach ($application->grpc->getClients() as $client) {
+        foreach ($application->grpc->moduleClients(Module::CONFIG) as $client) {
             $client->listen();
         }
     }
