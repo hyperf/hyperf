@@ -161,7 +161,7 @@ abstract class Command extends SymfonyCommand
         parent::configure();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->disableDispatcher($input);
         $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
