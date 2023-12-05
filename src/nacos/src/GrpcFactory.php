@@ -18,7 +18,7 @@ use Psr\Container\ContainerInterface;
 class GrpcFactory
 {
     /**
-     * @var array<string, GrpcClient>
+     * @var array<string, array<string, GrpcClient>>
      */
     protected array $clients = [];
 
@@ -29,8 +29,10 @@ class GrpcFactory
         }
     }
 
-    public function get(string $namespaceId, string $module = 'config'): GrpcClient
+    public function get(string $namespaceId, string|Module $module = 'config'): GrpcClient
     {
+        $module instanceof Module && $module = $module->value;
+
         if (isset($this->clients[$namespaceId][$module])) {
             return $this->clients[$namespaceId][$module];
         }
@@ -39,11 +41,31 @@ class GrpcFactory
     }
 
     /**
-     * @return GrpcClient[]
+     * @return array<string, array<string, GrpcClient>> array<namespaceId, <module, GrpcClient>>
      */
     public function getClients(): array
     {
         return $this->clients;
+    }
+
+    /**
+     * @param string $module config or naming
+     * @return array<string, GrpcClient> array<namespaceId, GrpcClient>
+     */
+    public function moduleClients(string|Module $module): array
+    {
+        $module instanceof Module && $module = $module->value;
+
+        $result = [];
+        foreach ($this->clients as $namespaceId => $clients) {
+            foreach ($clients as $key => $client) {
+                if ($key === $module) {
+                    $result[$namespaceId] = $client;
+                }
+            }
+        }
+
+        return $result;
     }
 
     private function container(): ContainerInterface

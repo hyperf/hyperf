@@ -20,6 +20,7 @@ use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Nacos\Exception\RequestException;
+use Hyperf\Nacos\Module;
 use Hyperf\Nacos\Protobuf\ListenHandler\NamingPushRequestHandler;
 use Hyperf\Nacos\Protobuf\Message\Instance;
 use Hyperf\Nacos\Protobuf\Request\InstanceRequest;
@@ -80,7 +81,7 @@ class NacosGrpcDriver implements DriverInterface
             $groupName = $this->config->get('services.drivers.nacos.group_name');
             $cluster = $this->config->get('services.drivers.nacos.cluster', 'DEFAULT');
 
-            $client = $this->client->grpc->get($namespaceId, 'naming');
+            $client = $this->client->grpc->get($namespaceId, Module::NAMING);
             $client->listenNaming($cluster, $groupName, $name, new NamingPushRequestHandler(function (NotifySubscriberRequest $request) {
                 $nodes = [];
                 foreach ($request->serviceInfo->hosts as $host) {
@@ -125,7 +126,7 @@ class NacosGrpcDriver implements DriverInterface
             throw new InvalidArgumentException('nacos grpc driver only support ephemeral.');
         }
 
-        $client = $this->client->grpc->get($namespaceId, 'naming');
+        $client = $this->client->grpc->get($namespaceId, Module::NAMING);
 
         $res = $client->request(new InstanceRequest(
             new NamingRequest($name, $groupName, $namespaceId),
@@ -160,7 +161,7 @@ class NacosGrpcDriver implements DriverInterface
         $cluster = $this->config->get('services.drivers.nacos.cluster', 'DEFAULT');
         $this->setMetadata($name, $metadata);
 
-        $client = $this->client->grpc->get($namespaceId, 'naming');
+        $client = $this->client->grpc->get($namespaceId, Module::NAMING);
         /** @var SubscribeServiceResponse $response */
         $response = $client->request(new SubscribeServiceRequest(
             new NamingRequest(
