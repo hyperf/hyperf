@@ -34,7 +34,7 @@ class Json
         try {
             $json = json_encode($data, $flags | JSON_THROW_ON_ERROR, $depth);
         } catch (Throwable $exception) {
-            throw InvalidArgumentException::fromPrevious($exception, $data);
+            throw InvalidArgumentException::fromException($exception, $data);
         }
 
         return $json;
@@ -48,7 +48,7 @@ class Json
         try {
             $decode = json_decode($json, $assoc, $depth, $flags | JSON_THROW_ON_ERROR);
         } catch (Throwable $exception) {
-            throw InvalidArgumentException::fromPrevious($exception, $json);
+            throw InvalidArgumentException::fromException($exception, $json);
         }
 
         return $decode;
