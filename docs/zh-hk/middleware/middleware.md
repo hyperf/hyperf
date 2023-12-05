@@ -69,6 +69,8 @@ Router::addGroup(
 > 使用 `#[Middleware]` 註解時需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空間；   
 > 使用 `#[Middlewares]` 註解時需 `use Hyperf\HttpServer\Annotation\Middlewares;` 命名空間；
 
+***注意：必須配合 `#[AutoController]` 或者 `#[Controller]` 使用***
+
 定義單箇中間件：
 
 ```php
