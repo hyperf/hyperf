@@ -9,7 +9,7 @@
 ## Added
 
 - [#6342](https://github.com/hyperf/hyperf/pull/6342) Added `Coroutine::fork()` method and `Coroutine::pid()` method.
-- []() Added response `content-type` header for swagger server.
+- [#6360](https://github.com/hyperf/hyperf/pull/6360/files) Added response `content-type` header for swagger server.
 
 # v3.1.0 - 2023-12-01
 
