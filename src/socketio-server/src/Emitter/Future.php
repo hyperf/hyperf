@@ -29,6 +29,9 @@ class Future
 
     private bool $sent;
 
+    /**
+     * @param int $flag deprecated it will be removed in v3.2 or v4.0
+     */
     public function __construct(
         private SocketIO $socketIO,
         private Sender $sender,
