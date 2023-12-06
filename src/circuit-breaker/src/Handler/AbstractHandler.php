@@ -185,7 +185,7 @@ abstract class AbstractHandler implements HandlerInterface
 
     protected function prepareHandler(string|array $fallback): array
     {
-        if (is_callable($fallback)) {
+        if (is_array($fallback) && is_callable($fallback)) {
             return $fallback;
         }
 
