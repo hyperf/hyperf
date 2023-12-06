@@ -35,8 +35,6 @@ class Future
         private string $event,
         private array $data,
         callable $encode,
-        private int $opcode,
-        private int $flag,
         private ?FrameInterface $frame = null
     ) {
         $this->id = '';
@@ -72,10 +70,6 @@ class Future
         }
         $message = ($this->encode)($this->id, $this->event, $this->data);
         $this->sent = true;
-        if ($this->frame) {
-            $this->sender->pushFrame($this->fd, $this->frame->setPayloadData($message));
-        } else {
-            $this->sender->pushFrame($this->fd, new Frame(opcode: $this->opcode, payloadData: $message));
-        }
+        $this->sender->pushFrame($this->fd, $this->frame->setPayloadData($message));
     }
 }
