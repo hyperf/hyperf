@@ -15,6 +15,7 @@ use Hyperf\CircuitBreaker\Annotation\CircuitBreaker as Annotation;
 use Hyperf\CircuitBreaker\CircuitBreaker;
 use Hyperf\CircuitBreaker\CircuitBreakerFactory;
 use Hyperf\CircuitBreaker\CircuitBreakerInterface;
+use Hyperf\CircuitBreaker\Exception\BadFallbackException;
 use Hyperf\CircuitBreaker\Exception\CircuitBreakerException;
 use Hyperf\CircuitBreaker\FallbackInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -185,14 +186,15 @@ abstract class AbstractHandler implements HandlerInterface
 
     protected function prepareHandler(string|array $fallback): array
     {
+        if (is_string($fallback)) {
+            $fallback = explode('::', $fallback);
+            $fallback[1] ??= 'fallback';
+        }
+
         if (is_array($fallback) && is_callable($fallback)) {
             return $fallback;
         }
 
-        $result = explode('::', $fallback);
-        return [
-            $result[0],
-            $result[1] ?? 'fallback',
-        ];
+        throw new BadFallbackException('The fallback is invalid.');
     }
 }
