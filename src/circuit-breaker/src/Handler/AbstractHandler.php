@@ -183,10 +183,13 @@ abstract class AbstractHandler implements HandlerInterface
 
     abstract protected function process(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreakerInterface $breaker, Annotation $annotation);
 
-    protected function prepareHandler(string $fallback): array
+    protected function prepareHandler(string|array $fallback): array
     {
-        $result = explode('::', $fallback);
+        if (is_callable($fallback)) {
+            return $fallback;
+        }
 
+        $result = explode('::', $fallback);
         return [
             $result[0],
             $result[1] ?? 'fallback',
