@@ -59,7 +59,7 @@ class HttpServer implements OnRequestInterface
             $contentType = 'application/json;charset=utf-8';
         }
 
-        $psrResponse = (new Response())->withBody($stream)->withHeader('content-type', $contentType);
+        $psrResponse = (new Response())->setBody($stream)->setHeader('content-type', $contentType);
 
         $this->emitter->emit($psrResponse, $response);
     }
