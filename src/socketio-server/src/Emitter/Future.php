@@ -14,6 +14,7 @@ namespace Hyperf\SocketIOServer\Emitter;
 use Hyperf\Engine\Channel;
 use Hyperf\Engine\Contract\WebSocket\FrameInterface;
 use Hyperf\Engine\WebSocket\Frame;
+use Hyperf\Engine\WebSocket\Opcode;
 use Hyperf\SocketIOServer\SocketIO;
 use Hyperf\WebSocketServer\Sender;
 
@@ -35,6 +36,8 @@ class Future
         private string $event,
         private array $data,
         callable $encode,
+        private int $opcode = Opcode::TEXT,
+        private int $flag = 0,
         private ?FrameInterface $frame = null
     ) {
         $this->id = '';
@@ -70,6 +73,10 @@ class Future
         }
         $message = ($this->encode)($this->id, $this->event, $this->data);
         $this->sent = true;
-        $this->sender->pushFrame($this->fd, $this->frame->setPayloadData($message));
+        if ($this->frame) {
+            $this->sender->pushFrame($this->fd, $this->frame->setPayloadData($message));
+        } else {
+            $this->sender->pushFrame($this->fd, new Frame(opcode: $this->opcode, payloadData: $message));
+        }
     }
 }
