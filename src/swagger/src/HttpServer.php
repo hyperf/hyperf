@@ -53,11 +53,13 @@ class HttpServer implements OnRequestInterface
         $path = $psr7Request->getUri()->getPath();
         if ($path === $this->config['url']) {
             $stream = new Stream($this->getHtml());
+            $contentType = 'text/html;charset=utf-8';
         } else {
             $stream = new Stream($this->getMetadata($path));
+            $contentType = 'application/json;charset=utf-8';
         }
 
-        $psrResponse = (new Response())->withBody($stream);
+        $psrResponse = (new Response())->withBody($stream)->withHeader('content-type', $contentType);
 
         $this->emitter->emit($psrResponse, $response);
     }
