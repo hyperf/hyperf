@@ -170,24 +170,27 @@ abstract class AbstractHandler implements HandlerInterface
 
     protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreakerInterface $breaker, Annotation $annotation)
     {
-        [$className, $methodName] = $this->prepareHandler($annotation->fallback);
+        [$class, $method] = $this->prepareHandler($annotation->fallback, $proceedingJoinPoint);
 
-        $class = $this->container->get($className);
-        if ($class instanceof FallbackInterface) {
-            return $class->fallback($proceedingJoinPoint);
+        $instance = $this->container->get($class);
+        if ($instance instanceof FallbackInterface) {
+            return $instance->fallback($proceedingJoinPoint);
         }
 
-        $argument = $proceedingJoinPoint->getArguments();
+        $arguments = $proceedingJoinPoint->getArguments();
 
-        return $class->{$methodName}(...$argument);
+        return $instance->{$method}(...$arguments);
     }
 
     abstract protected function process(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreakerInterface $breaker, Annotation $annotation);
 
-    protected function prepareHandler(string|array $fallback): array
+    protected function prepareHandler(string|array $fallback, ProceedingJoinPoint $proceedingJoinPoint): array
     {
         if (is_string($fallback)) {
             $fallback = explode('::', $fallback);
+            if (! isset($fallback[1]) && is_callable([$proceedingJoinPoint->className, $fallback[0]])) {
+                return [$proceedingJoinPoint->className, $fallback[0]];
+            }
             $fallback[1] ??= 'fallback';
         }
 
