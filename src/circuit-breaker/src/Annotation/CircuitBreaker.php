@@ -15,9 +15,6 @@ use Attribute;
 use Hyperf\CircuitBreaker\Handler\TimeoutHandler;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @property float $timeout
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractAnnotation
 {
