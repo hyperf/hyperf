@@ -30,8 +30,12 @@ class BreakerAnnotationAspect extends AbstractAspect
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
-        /** @var null|CircuitBreaker $annotation */
-        $annotation = $metadata->method[CircuitBreaker::class] ?? null;
+        /** @var CircuitBreaker $annotation */
+        $annotation = $metadata->method[CircuitBreaker::class];
+
+        if (! $annotation->fallback) {
+            return $proceedingJoinPoint->process();
+        }
 
         $handlerClass = $annotation->handler;
 
