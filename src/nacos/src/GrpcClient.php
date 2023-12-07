@@ -21,8 +21,10 @@ use Hyperf\Engine\Http\V2\Request;
 use Hyperf\Grpc\Parser;
 use Hyperf\Http2Client\Client;
 use Hyperf\Nacos\Exception\ConnectToServerFailedException;
+use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Nacos\Protobuf\Any;
 use Hyperf\Nacos\Protobuf\ListenContext;
+use Hyperf\Nacos\Protobuf\ListenHandler\NamingPushRequestHandler;
 use Hyperf\Nacos\Protobuf\ListenHandlerInterface;
 use Hyperf\Nacos\Protobuf\Metadata;
 use Hyperf\Nacos\Protobuf\Payload;
@@ -35,9 +37,13 @@ use Hyperf\Nacos\Protobuf\Request\ServerCheckRequest;
 use Hyperf\Nacos\Protobuf\Response\ConfigChangeBatchListenResponse;
 use Hyperf\Nacos\Protobuf\Response\ConfigChangeNotifyRequest;
 use Hyperf\Nacos\Protobuf\Response\ConfigQueryResponse;
+use Hyperf\Nacos\Protobuf\Response\NotifySubscriberRequest;
 use Hyperf\Nacos\Protobuf\Response\Response;
+use Hyperf\Nacos\Protobuf\ServiceInfo;
+use Hyperf\Nacos\Provider\AccessToken;
 use Hyperf\Support\Network;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -45,6 +51,8 @@ use function Hyperf\Coroutine\go;
 
 class GrpcClient
 {
+    use AccessToken;
+
     protected array $listeners = [];
 
     protected ?Client $client = null;
@@ -61,13 +69,24 @@ class GrpcClient
      */
     protected array $configListenHandlers = [];
 
+    /**
+     * @var array<string, ServiceInfo>
+     */
+    protected array $namingListenContexts = [];
+
+    /**
+     * @var array<string, ?ListenHandlerInterface>
+     */
+    protected array $namingListenHandlers = [];
+
     protected int $streamId;
 
     public function __construct(
         protected Application $app,
         protected Config $config,
         protected ContainerInterface $container,
-        protected string $namespaceId = ''
+        protected string $namespaceId = '',
+        protected string $module = 'config',
     ) {
         if ($this->container->has(StdoutLoggerInterface::class)) {
             $this->logger = $this->container->get(StdoutLoggerInterface::class);
@@ -79,10 +98,7 @@ class GrpcClient
     public function request(RequestInterface $request, ?Client $client = null): Response
     {
         $payload = new Payload([
-            'metadata' => new Metadata([
-                'type' => $request->getType(),
-                'clientIp' => $this->ip(),
-            ]),
+            'metadata' => new Metadata($this->getMetadata($request)),
             'body' => new Any([
                 'value' => Json::encode($request->getValue()),
             ]),
@@ -100,10 +116,7 @@ class GrpcClient
     public function write(int $streamId, RequestInterface $request, ?Client $client = null): bool
     {
         $payload = new Payload([
-            'metadata' => new Metadata([
-                'type' => $request->getType(),
-                'clientIp' => $this->ip(),
-            ]),
+            'metadata' => new Metadata($this->getMetadata($request)),
             'body' => new Any([
                 'value' => Json::encode($request->getValue()),
             ]),
@@ -114,11 +127,24 @@ class GrpcClient
         return $client->write($streamId, Parser::serializeMessage($payload));
     }
 
-    public function listenConfig(string $group, string $dataId, ListenHandlerInterface $callback, string $md5 = '')
+    public function listenConfig(string $group, string $dataId, ListenHandlerInterface $callback, string $md5 = ''): void
     {
         $listenContext = new ListenContext($this->namespaceId, $group, $dataId, $md5);
         $this->configListenContexts[$listenContext->toKeyString()] = $listenContext;
         $this->configListenHandlers[$listenContext->toKeyString()] = $callback;
+    }
+
+    public function listenNaming(string $clusters, string $group, string $service, ListenHandlerInterface $callback): void
+    {
+        $serviceInfo = new ServiceInfo($service, $group, $clusters);
+        if ($context = $this->namingListenContexts[$serviceInfo->toKeyString()] ?? null) {
+            $callback->handle(new NotifySubscriberRequest(['requestId' => '', 'module' => 'naming', 'serviceInfo' => $context]));
+            $this->namingListenHandlers[$serviceInfo->toKeyString()] = $callback;
+            return;
+        }
+
+        $this->namingListenContexts[$serviceInfo->toKeyString()] = $serviceInfo;
+        $this->namingListenHandlers[$serviceInfo->toKeyString()] = $callback;
     }
 
     public function listen(): void
@@ -156,7 +182,7 @@ class GrpcClient
         go(function () {
             $client = $this->client;
             $heartbeat = $this->config->getGrpc()['heartbeat'];
-            while ($heartbeat > 0) {
+            while ($heartbeat > 0 && $client->inLoop()) {
                 if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
                     break;
                 }
@@ -180,11 +206,13 @@ class GrpcClient
     protected function bindStreamCall(): int
     {
         $id = $this->client->send(new Request('/BiRequestStream/requestBiStream', 'POST', '', $this->grpcDefaultHeaders(), true));
-
         go(function () use ($id) {
             $client = $this->client;
             while (true) {
                 try {
+                    if (! $client->inLoop()) {
+                        break;
+                    }
                     $response = $client->recv($id, -1);
                     $response = Response::jsonDeSerialize($response->getBody());
                     match (true) {
@@ -193,24 +221,30 @@ class GrpcClient
                             $response->group,
                             $response->dataId,
                             $response
-                        )
+                        ),
+                        $response instanceof NotifySubscriberRequest => $this->hanldeNaming($response),
                     };
 
                     $this->listen();
                 } catch (Throwable $e) {
-                    $this->logger->error((string) $e);
+                    ! $this->isWorkerExit() && $this->logger->error((string) $e);
                 }
+            }
+
+            if (! $this->isWorkerExit()) {
+                $this->reconnect();
+                $this->listen();
             }
         });
 
-        $request = new ConnectionSetupRequest($this->namespaceId);
+        $request = new ConnectionSetupRequest($this->namespaceId, $this->module);
         $this->write($id, $request);
         sleep(1);
 
         return $id;
     }
 
-    protected function handleConfig(string $tenant, string $group, string $dataId, ?ConfigChangeNotifyRequest $request = null)
+    protected function handleConfig(string $tenant, string $group, string $dataId, ?ConfigChangeNotifyRequest $request = null): void
     {
         $response = $this->request(new ConfigQueryRequest($tenant, $group, $dataId));
         $key = ListenContext::getKeyString($tenant, $group, $dataId);
@@ -226,16 +260,36 @@ class GrpcClient
         }
     }
 
+    protected function hanldeNaming(NotifySubscriberRequest $response): void
+    {
+        $serviceInfo = $response->serviceInfo;
+        $key = $serviceInfo->toKeyString();
+        if (! isset($this->namingListenContexts[$key])) {
+            $this->namingListenContexts[$key] = $serviceInfo;
+        }
+
+        if ($serviceInfo->lastRefTime > $this->namingListenContexts[$key]->lastRefTime) {
+            $this->namingListenContexts[$key] = $serviceInfo;
+        }
+
+        if ($handler = $this->namingListenHandlers[$key] ?? null) {
+            $handler->handle($response);
+            $this->write($this->streamId, $handler->ack($response));
+        } else {
+            $this->write($this->streamId, (new NamingPushRequestHandler(fn () => null))->ack($response));
+        }
+    }
+
     protected function serverCheck(): bool
     {
         $request = new ServerCheckRequest();
 
-        for ($i = 0; $i < 30; ++$i) {
+        while (true) {
             try {
                 $response = $this->request($request);
                 if ($response->errorCode !== 0) {
                     $this->logger?->error('Nacos check server failed.');
-                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(1)) {
+                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(5)) {
                         break;
                     }
                     continue;
@@ -244,10 +298,36 @@ class GrpcClient
                 return true;
             } catch (Exception $exception) {
                 $this->logger?->error((string) $exception);
+                if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(5)) {
+                    break;
+                }
             }
         }
 
         throw new ConnectToServerFailedException('the nacos server is not ready to work in 30 seconds, connect to server failed');
+    }
+
+    private function isWorkerExit(): bool
+    {
+        return CoordinatorManager::until(Constants::WORKER_EXIT)->isClosing();
+    }
+
+    private function getMetadata(RequestInterface $request): array
+    {
+        if ($token = $this->getAccessToken()) {
+            return [
+                'type' => $request->getType(),
+                'clientIp' => $this->ip(),
+                'headers' => [
+                    'accessToken' => $token,
+                ],
+            ];
+        }
+
+        return [
+            'type' => $request->getType(),
+            'clientIp' => $this->ip(),
+        ];
     }
 
     private function grpcDefaultHeaders(): array
@@ -255,7 +335,19 @@ class GrpcClient
         return [
             'content-type' => 'application/grpc+proto',
             'te' => 'trailers',
-            'user-agent' => 'Nacos-Hyperf-Client:v3.0',
+            'user-agent' => 'Nacos-Hyperf-Client:v3.1',
         ];
+    }
+
+    private function handleResponse(ResponseInterface $response): array
+    {
+        $statusCode = $response->getStatusCode();
+        $contents = (string) $response->getBody();
+
+        if ($statusCode !== 200) {
+            throw new RequestException($contents, $statusCode);
+        }
+
+        return Json::decode($contents);
     }
 }

@@ -42,15 +42,6 @@ class BaseClient
         $this->grpcClient?->close(false);
     }
 
-    /**
-     * @deprecated
-     * @param string $name
-     */
-    public function __get($name)
-    {
-        return $this->_getGrpcClient()->{$name};
-    }
-
     public function __call($name, $arguments)
     {
         return $this->_getGrpcClient()->{$name}(...$arguments);
@@ -61,6 +52,7 @@ class BaseClient
         if (! $this->initialized) {
             $this->init();
         }
+        $this->start();
         return $this->grpcClient;
     }
 
@@ -168,7 +160,15 @@ class BaseClient
     private function start()
     {
         $client = $this->grpcClient;
-        return $client->isRunning() || $client->start();
+        if (! ($client->isRunning() || $client->start())) {
+            $message = sprintf(
+                'Grpc client start failed with error code %d when connect to %s',
+                $client->getErrCode(),
+                $this->hostname
+            );
+            throw new GrpcClientException($message, StatusCode::INTERNAL);
+        }
+        return true;
     }
 
     private function init()
@@ -181,14 +181,6 @@ class BaseClient
         } else {
             $this->grpcClient = new GrpcClient(ApplicationContext::getContainer()->get(ChannelPool::class));
             $this->grpcClient->set($this->hostname, $this->options);
-        }
-        if (! $this->start()) {
-            $message = sprintf(
-                'Grpc client start failed with error code %d when connect to %s',
-                $this->grpcClient->getErrCode(),
-                $this->hostname
-            );
-            throw new GrpcClientException($message, StatusCode::INTERNAL);
         }
 
         $this->initialized = true;

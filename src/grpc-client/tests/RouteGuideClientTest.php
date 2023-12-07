@@ -18,6 +18,7 @@ use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\GrpcClient\StreamingCall;
 use HyperfTest\GrpcClient\Stub\RouteGuideClient;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Routeguide\Point;
 use Routeguide\Rectangle;
@@ -28,6 +29,7 @@ use Routeguide\RouteSummary;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RouteGuideClientTest extends TestCase
 {
     protected function setUp(): void

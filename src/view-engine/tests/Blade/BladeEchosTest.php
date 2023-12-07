@@ -11,10 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ViewEngine\Blade;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
+
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class BladeEchosTest extends AbstractBladeTestCase
 {
     public function testEchosAreCompiled()

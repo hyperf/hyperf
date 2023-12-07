@@ -17,8 +17,8 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Engine\Signal as EngineSignal;
 use Hyperf\Signal\Annotation\Signal;
 use Hyperf\Signal\SignalHandlerInterface as SignalHandler;
+use Hyperf\Stdlib\SplPriorityQueue;
 use Psr\Container\ContainerInterface;
-use SplPriorityQueue;
 
 class SignalManager
 {

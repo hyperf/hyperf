@@ -12,12 +12,15 @@ declare(strict_types=1);
 namespace HyperfTest\Cache\Cases;
 
 use Hyperf\Cache\Helper\StringHelper;
+use HyperfTest\Database\Stubs\ModelStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class StringHelperTest extends TestCase
 {
     public function testFormat()
@@ -30,5 +33,9 @@ class StringHelperTest extends TestCase
 
         $string = StringHelper::format('test', ['id' => 1, 'name' => 'Hyperf']);
         $this->assertSame('test:1:Hyperf', $string);
+
+        $model = new ModelStub(['id' => 1]);
+        $string = StringHelper::format('test', ['model' => $model], '_#{model.id}');
+        $this->assertSame('test:_1', $string);
     }
 }

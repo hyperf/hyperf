@@ -1,12 +1,6 @@
 name: Split Repos
 
-on:
-  workflow_dispatch:
-    inputs:
-      event:
-        description: 'Input your event'
-        required: false
-        default: ''
+on: [ workflow_dispatch ]
 
 jobs:
   split:
@@ -16,7 +10,7 @@ jobs:
       SSH_PRIVATE_KEY: ${{ secrets.SPLIT_PRIVATE_KEY }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Setup Private Key

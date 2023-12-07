@@ -316,7 +316,7 @@ In other words, although this approach works, it is not recommended from the per
 Another solution is to use the lazy proxy mode which commonly used in PHP, inject a proxy object, and then instantiate the target object when it is used. 
 The Hyperf DI component is designed with lazy loading injection function.
 
-Add the `config/autoload/lazy_loader.php` file and bind the lazy loading relationship:
+Add the `config/lazy_loader.php` file and bind the lazy loading relationship:
 
 ```php
 <?php
@@ -413,7 +413,7 @@ class IndexController
 }
 ```   
 
-In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Context\ApplicationContext::getContaienr()` method to obtain the `Container` object.
+In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Context\ApplicationContext::getContainer()` method to obtain the `Container` object.
 
 ```php
 $container = \Hyperf\Context\ApplicationContext::getContainer();

@@ -53,7 +53,7 @@ class LoadBalancerManager
             return $this->instances[$key];
         }
         $class = $this->get($algorithm);
-        if (function_exists('make')) {
+        if (function_exists('Hyperf\Support\make')) {
             $instance = make($class);
         } else {
             $instance = new $class();

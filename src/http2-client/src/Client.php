@@ -31,6 +31,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
+use function Hyperf\Coroutine\go;
+
 class Client implements ClientInterface
 {
     protected ?HTTP2ClientInterface $client = null;
@@ -79,6 +81,9 @@ class Client implements ClientInterface
             }
         }
 
+        if (! $this->client) {
+            throw new ClientClosedException('http2 client send request failed caused by closed connection.');
+        }
         $streamId = $this->client->send($request);
 
         $this->channels[$streamId] = new Channel(1);
@@ -120,12 +125,12 @@ class Client implements ClientInterface
 
     public function request(HTTP2RequestInterface $request): HTTP2ResponseInterface
     {
-        $streamId = $this->send($request);
-
         try {
+            $streamId = $this->send($request);
+
             return $this->recv($streamId);
         } finally {
-            $this->closeChannel($streamId);
+            isset($streamId) && $this->closeChannel($streamId);
         }
     }
 
@@ -166,6 +171,11 @@ class Client implements ClientInterface
         }
     }
 
+    public function inLoop(): bool
+    {
+        return $this->loop;
+    }
+
     public function loop(): void
     {
         if ($this->loop) {
@@ -181,18 +191,20 @@ class Client implements ClientInterface
         Coroutine::create(function () {
             try {
                 $client = $this->client;
-                while (true) {
-                    $response = $client->recv(-1);
-                    if (! $client->isConnected()) {
-                        throw new ClientClosedException('Read failed, because the http2 client is closed.');
-                    }
+                if ($client) {
+                    while (true) {
+                        $response = $client->recv(-1);
+                        if (! $client->isConnected()) {
+                            throw new ClientClosedException('Read failed, because the http2 client is closed.');
+                        }
 
-                    $this->channels[$response->getStreamId()]?->push($response);
+                        $this->channels[$response->getStreamId()]?->push($response);
+                    }
                 }
-            } catch (Throwable $throwable) {
-                $this->logger?->error((string) $throwable);
+            } catch (Throwable $e) {
+                isset($this->client) && throw $e;
             } finally {
-                $this->close();
+                isset($this->client) && $this->close();
             }
         });
 
@@ -219,19 +231,19 @@ class Client implements ClientInterface
     protected function heartbeat(): void
     {
         $heartbeat = $this->getHeartbeat();
-        if (! $this->heartbeat && is_numeric($heartbeat)) {
+        if (! $this->heartbeat) {
             $this->heartbeat = true;
 
             go(function () use ($heartbeat) {
                 try {
                     while (true) {
-                        if (CoordinatorManager::until($this->identifier)->yield($heartbeat)) {
+                        if (CoordinatorManager::until($this->identifier)->yield($heartbeat ?: 5)) {
                             break;
                         }
 
                         try {
                             // PING
-                            if (! $this->client?->ping()) {
+                            if (is_numeric($heartbeat) && ! $this->client?->ping()) {
                                 $this->logger?->error('HTTP2 Client heartbeat failed.');
                                 break;
                             }

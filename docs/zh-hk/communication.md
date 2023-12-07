@@ -13,7 +13,7 @@ Hyperf 交流 4 羣: `571053131`
 
 由於微信羣無法直接加入，故可先加下方二維碼好友，並聲明目的，再拉您入羣。
 
-![wechat](imgs/wechat.jpg ':size=375')
+![wechat](https://foruda.gitee.com/images/1697082615411352318/859339ce_775029.jpeg ':size=375')
 
 ## Community 釘釘羣
 

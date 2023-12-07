@@ -59,12 +59,12 @@ class SwowIO extends AbstractIO
      *
      * @throws AMQPRuntimeException
      */
-    public function connect()
+    public function connect(): void
     {
         $this->sock = $this->makeClient();
     }
 
-    public function read($len)
+    public function read($len): string
     {
         $data = $this->sock->recvAll($len, $this->readWriteTimeout);
         if ($data === false || strlen($data) !== $len) {
@@ -74,7 +74,7 @@ class SwowIO extends AbstractIO
         return $data;
     }
 
-    public function write($data)
+    public function write($data): void
     {
         $len = $this->sock->sendAll($data, $this->readWriteTimeout);
 
@@ -88,27 +88,27 @@ class SwowIO extends AbstractIO
     {
     }
 
-    public function close()
+    public function close(): void
     {
         $this->sock && $this->sock->close();
     }
 
-    public function select(?int $sec, int $usec = 0)
+    public function select(?int $sec, int $usec = 0): int
     {
         return 1;
     }
 
-    public function disableHeartbeat()
+    public function disableHeartbeat(): AbstractIO
     {
         return $this;
     }
 
-    public function reenableHeartbeat()
+    public function reenableHeartbeat(): AbstractIO
     {
         return $this;
     }
 
-    protected function makeClient()
+    protected function makeClient(): Socket
     {
         $sock = new Socket(Socket::TYPE_TCP);
 
@@ -125,7 +125,7 @@ class SwowIO extends AbstractIO
         return $sock;
     }
 
-    protected function write_heartbeat()
+    protected function write_heartbeat(): void
     {
         $pkt = new AMQPWriter();
         $pkt->write_octet(8);
@@ -135,7 +135,7 @@ class SwowIO extends AbstractIO
         $this->write($pkt->getvalue());
     }
 
-    protected function do_select($sec, $usec)
+    protected function do_select($sec, $usec): int
     {
         return 1;
     }

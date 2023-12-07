@@ -142,7 +142,9 @@ return [
 
 ## 覆蓋 Visitor
 
-Hyperf 框架中，當使用 `gen:model` 時，默認會將 `decimal` 轉化成為 `float`。如下：
+Hyperf 框架中，當使用 `gen:model` 時，默認只會將 `tinyint, smallint, mediumint, int, bigint` 聲明為 `int` 類型，`bool, boolean` 聲明為 `boolean` 類型，其他數據類型默認為 `string` ，可以通過重寫覆蓋調整。
+
+如下：
 
 ```php
 <?php
@@ -154,7 +156,7 @@ namespace App\Model;
 /**
  * @property int $id
  * @property int $count
- * @property float $float_num // decimal
+ * @property string $float_num // decimal
  * @property string $str
  * @property string $json
  * @property \Carbon\Carbon $created_at
@@ -181,7 +183,7 @@ class UserExt extends Model
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'float', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+    protected $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'string', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
 }
 
 ```
@@ -207,6 +209,9 @@ use Hyperf\Utils\Str;
 
 class ModelUpdateVisitor extends Visitor
 {
+    /**
+     * Used by `casts` attribute.
+     */
     protected function formatDatabaseType(string $type): ?string
     {
         switch ($type) {
@@ -231,6 +236,9 @@ class ModelUpdateVisitor extends Visitor
         }
     }
 
+    /**
+     * Used by `@property` docs.
+     */
     protected function formatPropertyType(string $type, ?string $cast): ?string
     {
         if (! isset($cast)) {

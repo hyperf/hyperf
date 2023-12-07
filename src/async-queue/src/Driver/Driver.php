@@ -57,6 +57,7 @@ abstract class Driver implements DriverInterface
 
         while (ProcessManager::isRunning()) {
             try {
+                /** @var MessageInterface $message */
                 [$data, $message] = $this->pop();
 
                 if ($data === false) {
@@ -95,6 +96,10 @@ abstract class Driver implements DriverInterface
         }
     }
 
+    /**
+     * @param mixed $data
+     * @param MessageInterface $message
+     */
     protected function getCallback($data, $message): callable
     {
         return function () use ($data, $message) {
@@ -114,6 +119,7 @@ abstract class Driver implements DriverInterface
                     } else {
                         $this->event?->dispatch(new FailedHandle($message, $ex));
                         $this->fail($data);
+                        $message->job()->fail($ex);
                     }
                 }
             }

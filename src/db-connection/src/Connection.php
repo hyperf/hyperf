@@ -109,6 +109,11 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
             if ($this->connection instanceof \Hyperf\Database\Connection) {
                 // Reset $recordsModified property of connection to false before the connection release into the pool.
                 $this->connection->resetRecordsModified();
+                if ($this->connection->getErrorCount() > 100) {
+                    // If the error count of connection is more than 100, we think it is a bad connection,
+                    // So we'll reset it at the next time
+                    $this->lastUseTime = 0.0;
+                }
             }
 
             if ($this->transactionLevel() > 0) {

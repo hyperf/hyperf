@@ -19,10 +19,11 @@ use Hyperf\Collection\Collection;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Stringable\Str;
 use Hyperf\Support\Traits\ForwardsCalls;
+use Stringable;
 
 use function Hyperf\Collection\collect;
 
-abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess
+abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Stringable
 {
     use ForwardsCalls;
 

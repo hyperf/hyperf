@@ -11,14 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcMultiplex\Contract;
 
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 interface HttpMessageBuilderInterface
 {
-    public function buildRequest(array $data): ServerRequestInterface;
+    public function buildRequest(array $data): ServerRequestPlusInterface;
 
-    public function buildResponse(ServerRequestInterface $request, array $data): ResponseInterface;
+    public function buildResponse(ServerRequestInterface $request, array $data): ResponsePlusInterface;
 
-    public function persistToContext(ResponseInterface $response): ResponseInterface;
+    public function persistToContext(ResponsePlusInterface $response): ResponsePlusInterface;
 }

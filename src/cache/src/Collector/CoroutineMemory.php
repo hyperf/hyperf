@@ -27,7 +27,7 @@ class CoroutineMemory extends Collection
     public function clearPrefix(string $prefix)
     {
         foreach ($this->items as $key => $item) {
-            if (Str::startsWith($prefix, $key)) {
+            if (Str::startsWith($key, $prefix)) {
                 unset($this->items[$key]);
             }
         }

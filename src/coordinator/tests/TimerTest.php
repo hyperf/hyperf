@@ -15,12 +15,14 @@ use Closure;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
 use Hyperf\Coroutine\Waiter;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TimerTest extends TestCase
 {
     public function testAfter()

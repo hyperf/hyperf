@@ -20,6 +20,8 @@ use Hyperf\Stringable\Str;
 use Hyperf\Testing\Assert as PHPUnit;
 use JsonSerializable;
 
+use function Hyperf\Collection\data_get;
+
 class AssertableJsonString implements ArrayAccess, Countable
 {
     /**

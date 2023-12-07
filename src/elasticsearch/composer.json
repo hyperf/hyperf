@@ -19,16 +19,16 @@
         }
     },
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "elasticsearch/elasticsearch": "^7.0",
-        "hyperf/guzzle": "~3.0.0"
+        "hyperf/guzzle": "~3.1.0"
     },
     "config": {
         "sort-packages": true
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.1-dev"
         }
     }
 }

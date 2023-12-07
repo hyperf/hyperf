@@ -17,10 +17,16 @@ use Hyperf\Process\Annotation\Process;
 use Hyperf\Process\Listener\BootProcessListener;
 use HyperfTest\Process\Stub\FooProcess;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -40,7 +46,6 @@ class BootProcessListenerTest extends TestCase
         $listener = new BootProcessListener(Mockery::mock(ContainerInterface::class), Mockery::mock(ConfigInterface::class));
         $ref = new ReflectionClass($listener);
         $method = $ref->getMethod('getAnnotationProcesses');
-        $method->setAccessible(true);
         $res = $method->invoke($listener);
         foreach ($res as $class => $annotation) {
             $this->assertSame(FooProcess::class, $class);

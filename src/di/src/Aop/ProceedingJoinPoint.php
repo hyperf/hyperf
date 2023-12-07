@@ -18,14 +18,9 @@ use Hyperf\Di\ReflectionManager;
 use ReflectionFunction;
 use ReflectionMethod;
 
-use function Hyperf\Support\value;
-
 class ProceedingJoinPoint
 {
-    /**
-     * @var mixed
-     */
-    public $result;
+    public mixed $result;
 
     public ?Closure $pipe = null;
 
@@ -71,15 +66,13 @@ class ProceedingJoinPoint
         return new AnnotationMetadata($metadata['_c'] ?? [], $metadata['_m'][$this->methodName] ?? []);
     }
 
-    public function getArguments()
+    public function getArguments(): array
     {
-        return value(function () {
-            $result = [];
-            foreach ($this->arguments['order'] ?? [] as $order) {
-                $result[] = $this->arguments['keys'][$order];
-            }
-            return $result;
-        });
+        $result = [];
+        foreach ($this->arguments['order'] ?? [] as $order) {
+            $result[] = $this->arguments['keys'][$order];
+        }
+        return $result;
     }
 
     public function getReflectMethod(): ReflectionMethod

@@ -23,20 +23,20 @@ use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabasePostgresBuilderTest extends TestCase
 {
     protected function tearDown(): void
     {
-        if (SWOOLE_MAJOR_VERSION >= 5) {
-            ContainerStub::getContainer();
-            Schema::dropIfExists('test_full_text_index');
-        }
+        ContainerStub::getContainer();
+        Schema::dropIfExists('test_full_text_index');
         m::close();
     }
 
@@ -109,10 +109,6 @@ class DatabasePostgresBuilderTest extends TestCase
 
     public function testWhereFullTextForReal()
     {
-        if (SWOOLE_MAJOR_VERSION < 5) {
-            $this->markTestSkipped('PostgreSql requires Swoole version >= 5.0.0');
-        }
-
         $container = ContainerStub::getContainer();
         $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
 

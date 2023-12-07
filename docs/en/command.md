@@ -27,7 +27,7 @@ After executing the above command, a configured `FooCommand` class will be gener
 
 ### Definition of Command
 
-There are two forms of commands that define the command class. One is defined by the `$name` property, and the other is defined by the constructor argument. We demonstrate this through code examples, assuming we want to define the command. The class command is `foo:hello`:
+There are three forms of commands that define the command class. The first is defined by the `$name` property, the second is defined by the constructor argument, and the last is defined by annotations. We demonstrate this through code examples, assuming we want to define the command. The class command is `foo:hello`:
 
 #### Define the command by `$name` property：
 
@@ -72,6 +72,25 @@ class FooCommand extends HyperfCommand
     {
         parent::__construct('foo:hello');    
     }
+}
+```
+
+#### Define the command by annotations：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Command\Annotation\Command;
+
+#[Command(name: "foo:hello")]
+class FooCommand extends HyperfCommand
+{
+
 }
 ```
 

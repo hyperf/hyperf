@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Validation\Rules\RequiredIf;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationRequiredIfTest extends TestCase
 {
     public function testItClousureReturnsFormatsAStringVersionOfTheRule()

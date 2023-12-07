@@ -12,15 +12,16 @@ declare(strict_types=1);
 namespace Hyperf\Amqp\Event;
 
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
+use Hyperf\Amqp\Result;
 
 class AfterConsume extends ConsumeEvent
 {
-    public function __construct(ConsumerMessageInterface $message, protected string $result)
+    public function __construct(ConsumerMessageInterface $message, protected Result $result)
     {
         parent::__construct($message);
     }
 
-    public function getResult(): string
+    public function getResult(): Result
     {
         return $this->result;
     }

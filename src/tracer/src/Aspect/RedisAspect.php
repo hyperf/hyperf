@@ -17,7 +17,6 @@ use Hyperf\Redis\Redis;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use OpenTracing\Tracer;
 use Throwable;
 
 class RedisAspect extends AbstractAspect
@@ -28,7 +27,7 @@ class RedisAspect extends AbstractAspect
         Redis::class . '::__call',
     ];
 
-    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
+    public function __construct(private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
     }
 
@@ -48,8 +47,10 @@ class RedisAspect extends AbstractAspect
             $result = $proceedingJoinPoint->process();
             $span->setTag($this->spanTagManager->get('redis', 'result'), json_encode($result));
         } catch (Throwable $e) {
-            $span->setTag('error', true);
-            $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {
+                $span->setTag('error', true);
+                $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            }
             throw $e;
         } finally {
             $span->finish();

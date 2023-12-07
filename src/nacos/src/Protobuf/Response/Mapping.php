@@ -19,5 +19,7 @@ class Mapping
         'ConfigChangeBatchListenResponse' => ConfigChangeBatchListenResponse::class,
         'ConfigQueryResponse' => ConfigQueryResponse::class,
         'ConfigChangeNotifyRequest' => ConfigChangeNotifyRequest::class,
+        'SubscribeServiceResponse' => SubscribeServiceResponse::class,
+        'NotifySubscriberRequest' => NotifySubscriberRequest::class,
     ];
 }

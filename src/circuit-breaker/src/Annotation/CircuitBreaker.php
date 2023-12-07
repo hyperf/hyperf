@@ -15,9 +15,6 @@ use Attribute;
 use Hyperf\CircuitBreaker\Handler\TimeoutHandler;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @property float $timeout
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractAnnotation
 {
@@ -29,7 +26,7 @@ class CircuitBreaker extends AbstractAnnotation
      */
     public function __construct(
         public string $handler = TimeoutHandler::class,
-        public ?string $fallback = null,
+        public string|array $fallback = [],
         public float $duration = 10.0,
         public int $successCounter = 10,
         public int $failCounter = 10,

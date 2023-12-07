@@ -15,8 +15,8 @@ use Closure;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Rpc\Protocol;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 use Throwable;
 
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
@@ -70,7 +70,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         return $this->handleNotFound($request);
     }
 
-    protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
+    protected function transferToResponse($response, ServerRequestInterface $request): ResponsePlusInterface
     {
         return $this->responseBuilder->buildResponse($request, $response);
     }

@@ -1,4 +1,309 @@
-# v3.0.25 - TBD
+# v3.0.47 - TBD
+
+# v3.0.46 - 2023-11-30
+
+## Fixed
+
+- [#6321](https://github.com/hyperf/hyperf/pull/6321) Fixed bug that the jaeger cannot show the http code when using `tracer`.
+
+# v3.0.45 - 2023-11-24
+
+## Added
+
+- [#6297](https://github.com/hyperf/hyperf/pull/6297) Added `Hyperf\Crontab\Mutex\ServerNodeInterface` to get unique name for server node.
+- [#6300](https://github.com/hyperf/hyperf/pull/6300) Added `rate_limit.storage.options.pool` which can be used to select the pool of redis when using `rate-limit`.
+- [#6306](https://github.com/hyperf/hyperf/pull/6306) Support rpc-server request lifecycle events.
+
+## Fixed
+
+- [#6298](https://github.com/hyperf/hyperf/pull/6298) Fixed complexity context for stdout logger.
+- [#6303](https://github.com/hyperf/hyperf/pull/6303) Fixed bug that the PDO connection was broken when timed out.
+
+## Optimized
+
+- [#6302](https://github.com/hyperf/hyperf/pull/6302) Set catch exceptions to false in `Executor` class.
+- [#6315](https://github.com/hyperf/hyperf/pull/6315) Optimized the tracer component by replacing the direct instantiation with a closure at Context::getOrSet.
+
+# v3.0.44 - 2023-11-17
+
+## Added
+
+- [#6283](https://github.com/hyperf/hyperf/pull/6283) Added `grpc` request lifecycle support.
+- [#6292](https://github.com/hyperf/hyperf/pull/6292) Added `Validator::setValue` and make `Validator::getValue` public.
+
+## Fixed
+
+- [#6284](https://github.com/hyperf/hyperf/pull/6284) Fixed bug that the crontab cannot be closed when throw exceptions.
+- [#6291](https://github.com/hyperf/hyperf/pull/6291) Fixed that the crontab timer cannot be stopped sometimes.
+
+## Optimized
+
+- [#6293](https://github.com/hyperf/hyperf/pull/6293) Optimized the code about `Arr::flatten`, which is faster than before.
+
+# v3.0.43 - 2023-11-10
+
+## Added
+
+- [#6272](https://github.com/hyperf/hyperf/pull/6272) Added `metric.enable_command_metric` switch.
+- [#6273](https://github.com/hyperf/hyperf/pull/6273) Added `serverName` parameter to `Hyperf\HttpServer\Router\Dispatched`.
+
+## Optimized
+
+- [#6261](https://github.com/hyperf/hyperf/pull/6261) Handle `class_parents` returning `false` in `class_uses_recursive`.
+- [#6271](https://github.com/hyperf/hyperf/pull/6271) Limit closure type crontab dispatch in WorkerStrategy.
+
+# v3.0.42 - 2023-11-03
+
+## Added
+
+- [#6236](https://github.com/hyperf/hyperf/pull/6236) Support unionType param for GenerateModelIDEVisitor.
+- [#6246](https://github.com/hyperf/hyperf/pull/6246) [#6252](https://github.com/hyperf/hyperf/pull/6252) Added crontab lifecycle events.
+- [#6249](https://github.com/hyperf/hyperf/pull/6249) Support crontab closure type.
+
+## Optimized
+
+- [#6239](https://github.com/hyperf/hyperf/pull/6239) Improve amqp, use methods instead of `$delivery_info` and optimize `BeforeConsume` event.
+- [#6250](https://github.com/hyperf/hyperf/pull/6250) Enhance scopeDoc for generateModelIdeVisitor.
+- [#6253](https://github.com/hyperf/hyperf/pull/6253) Print error logs when collecting class reflections failed.
+- [#6256](https://github.com/hyperf/hyperf/pull/6256) Refactor `hyperf/translation` classes to use typed properties.
+
+# v3.0.41 - 2023-10-27
+
+## Added
+
+- [#6224](https://github.com/hyperf/hyperf/pull/6224) Added charset param and html method for Response.
+- [#6232](https://github.com/hyperf/hyperf/pull/6232) Added `isNotFound` method for Dispatched.
+- [#6233](https://github.com/hyperf/hyperf/pull/6233) Improved `AfterExecute` event of `hyperf/command`.
+
+## Optimized
+
+- [#6226](https://github.com/hyperf/hyperf/pull/6226) Don't send response when the connection of grpc server has been closed.
+- [#6228](https://github.com/hyperf/hyperf/pull/6228) [#6229](https://github.com/hyperf/hyperf/pull/6229)  Make rules method in FormRequest optional.
+
+# v3.0.40 - 2023-10-20
+
+## Added
+
+- [#6220](https://github.com/hyperf/hyperf/pull/6220) Added `Hyperf\Stringable\Str::replaceMatches()`.
+
+## Fixed
+
+- [#6217](https://github.com/hyperf/hyperf/pull/6217) Fixed bug that `Str::replaceLast` with empty search cannot work as expected.
+
+## Optimized
+
+- [#6209](https://github.com/hyperf/hyperf/pull/6209) Support for phpredis 6.x [sentinel](https://github.com/phpredis/phpredis/blob/develop/sentinel.md#examples-for-version-60-or-later)
+
+# v3.0.39 - 2023-10-13
+
+## Added
+
+- [#6188](https://github.com/hyperf/hyperf/pull/6188) Added Redis options name to support string type.
+- [#6193](https://github.com/hyperf/hyperf/pull/6193) Support http and websocket protocols at the same port for swow server.
+- [#6198](https://github.com/hyperf/hyperf/pull/6198) Added `RpcAspect` and use it instead of `JsonRpcAspect`.
+- [#6200](https://github.com/hyperf/hyperf/pull/6200) Added switch for `ElasticserachAspect` and `CoroutineAspect`.
+- [#6203](https://github.com/hyperf/hyperf/pull/6203) Added `Hyperf\Tracer\Aspect\GrpcAspect`.
+- [#6207](https://github.com/hyperf/hyperf/pull/6207) Added `exception_callback` option for `hyperf/kafka`.
+
+# v3.0.38 - 2023-10-05
+
+## Fixed
+
+- [#6183](https://github.com/hyperf/hyperf/pull/6183) Fixed PriorityMiddleware for testing.
+- [#6185](https://github.com/hyperf/hyperf/pull/6185) Fixed bug that `cleanUpExpiredOnce` failed when sids is empty when using `socketio-server`.
+
+## Optimized
+
+- [#6177](https://github.com/hyperf/hyperf/pull/6177) Optimized Base62 of `hyperf/codec` to support subclass rewriting.
+
+# v3.0.37 - 2023-09-22
+
+## Added
+
+- [#6156](https://github.com/hyperf/hyperf/pull/6156) Enhance stringable, such as `replaceStart` `isJson`.
+
+## Optimized
+
+- [#6154](https://github.com/hyperf/hyperf/pull/6154) Use PHP native `json_validate` to validate is json if function is available.
+- [#6157](https://github.com/hyperf/hyperf/pull/6157) Record the exception message only by opening the exception switch and closing the ignore switch when using `trace`.
+- [#6167](https://github.com/hyperf/hyperf/pull/6167) Optimized KafkaClientFactory of `hyperf/tracer`.
+
+## Fixed
+
+- [#6160](https://github.com/hyperf/hyperf/pull/6160) Fixed bug that service governance still registers services even when `services.enable.register` is `false`.
+- [#6162](https://github.com/hyperf/hyperf/pull/6162) [#6163](https://github.com/hyperf/hyperf/pull/6163) Fixed bug that the mutex lock of `crontab` cannot not work well when the crontab executed more than one hour (the default expired time).
+
+# v3.0.36 - 2023-09-15
+
+## Added
+
+- [#6062](https://github.com/hyperf/hyperf/pull/6057) Added `RequestTraceListener` for `hyperf/tracer`.
+- [#6143](https://github.com/hyperf/hyperf/pull/6143) Added `ignore_exceptions` for `hyperf/tracer`.
+
+## Optimized
+
+- [#6151](https://github.com/hyperf/hyperf/pull/6151) Optimized `FailToConsume` event for `hyperf/kafka`.
+
+## Fixed
+
+- [#6117](https://github.com/hyperf/hyperf/pull/6117) Fixed bug that grpc client cannot able to be reused.
+- [#6146](https://github.com/hyperf/hyperf/pull/6146) Fixed bug that `validateJson` cannot work when using php 8.0.
+
+# v3.0.35 - 2023-09-01
+
+## Fixed
+
+- [#6097](https://github.com/hyperf/hyperf/pull/6097) Fixed error that using non-zipkin driver of tracer.
+- [#6099](https://github.com/hyperf/hyperf/pull/6099) Fixed bug that `ConstantFrequency` cannot work when using `redis`.
+- [#6110](https://github.com/hyperf/hyperf/pull/6110) Fixed bug that configuration of other processes were not updated when using `nacos grpc client`.
+
+## Added
+
+- [#6096](https://github.com/hyperf/hyperf/pull/6096) Added `getThrowable` method to request events and crontab event.
+- [#6094](https://github.com/hyperf/hyperf/pull/6094) Added some validation rules such as `ExcludeIf` `File` `ImageFile` and `ProhibitedIf`.
+- [#6112](https://github.com/hyperf/hyperf/pull/6112) Added `sendSync` and `sendBatchAsync` methods for `Hyperf\Kafka\Producer`.
+
+## Optimized
+
+- [#6098](https://github.com/hyperf/hyperf/pull/6098) Optimize `kafka` reporter for `hyperf/tracer`.
+- [#6100](https://github.com/hyperf/hyperf/pull/6100) Optimize `HttpClientFactory` for `hyperf/tracer`.
+- [#6108](https://github.com/hyperf/hyperf/pull/6108) Optimize `describe:routes` command, sort middleware by MiddlewareManager
+- [#6111](https://github.com/hyperf/hyperf/pull/6111) Allowed output log when an exception occurs.
+
+# v3.0.34 - 2023-08-25
+
+## Added
+
+- [#6060](https://github.com/hyperf/hyperf/pull/6060) Supplement the missing tag configuration items.
+- [#6063](https://github.com/hyperf/hyperf/pull/6063) Added `$server` property to request events.
+- [#6070](https://github.com/hyperf/hyperf/pull/6070) Added `php_serialize` protocol for `hyperf/rpc-multilex`.
+- [#6069](https://github.com/hyperf/hyperf/pull/6069) [#6075](https://github.com/hyperf/hyperf/pull/6075) Added kafka reporter for `hyperf/tracer`.
+- [#6078](https://github.com/hyperf/hyperf/pull/6078) Added `Hyperf\Support\Composer::hasPackage()` method.
+- [#6083](https://github.com/hyperf/hyperf/pull/6083) [#6084](https://github.com/hyperf/hyperf/pull/6084) Added middleware priority.
+
+## Fixed
+
+- [#6065](https://github.com/hyperf/hyperf/pull/6065) Fixed bug that `Context::override` and `Context::getOrSet` cannot work when using `$coroutineId`.
+- [#6090](https://github.com/hyperf/hyperf/pull/6090) Fix the bug that cannot stop the command from terminating gracefully.
+
+## Optimized
+
+- [#6046](https://github.com/hyperf/hyperf/pull/6046) Using the tracer instance from coroutine context.
+- [#6061](https://github.com/hyperf/hyperf/pull/6061) Enhance server config to support key-value mode.
+- [#6077](https://github.com/hyperf/hyperf/pull/6077) Don't show deprecated notice when using `#[Hyperf\Constants\Annotation\Constants]`.
+- [#6088](https://github.com/hyperf/hyperf/pull/6088) Optimize `Hyperf\Support\Composer`.
+
+# v3.0.33 - 2023-08-18
+
+## Fixed
+
+- [#6011](https://github.com/hyperf/hyperf/pull/6011) Fixed the issue where validation for invocable controller route requests was not working.
+- [#6013](https://github.com/hyperf/hyperf/pull/6013) Fixed the bug that `no_aspect` is overridden.
+- [#6053](https://github.com/hyperf/hyperf/pull/6053) Fixed bug that `Arr::has` with integer keys cannot work as expected.
+
+## Optimized
+
+- [#6023](https://github.com/hyperf/hyperf/pull/6023) Allow using the tracer instance from context, append `Trace-Id` to Response Header.
+- [#6027](https://github.com/hyperf/hyperf/pull/6027) Optimized the tracing in coroutine.
+
+## Deprecated
+
+- [#6044](https://github.com/hyperf/hyperf/pull/6044) Make `Hyperf\Coroutine\Traits\Container` as deprecated.
+
+# v3.0.32 - 2023-08-09
+
+## Added
+
+- [#5996](https://github.com/hyperf/hyperf/pull/5996) Support aspect to `GuzzleHttp\Client::request()`.
+
+## Fixed
+
+- [#6004](https://github.com/hyperf/hyperf/pull/6004) Fixed bug that the exit code is invalid when using command to throw exceptions.
+
+# v3.0.31 - 2023-07-27
+
+## Fixed
+
+- [#5969](https://github.com/hyperf/hyperf/pull/5969) Fixed bug that `Str::contains` will cause the error result when the `$needles` is `[null]`.
+- [#5970](https://github.com/hyperf/hyperf/pull/5970) Fixed bug that `Str::startsWith` and `Str::endsWith` will cause the error result when the `$needles` is `[null]`.
+
+## Added
+
+- [#5971](https://github.com/hyperf/hyperf/pull/5971) Added `Str::containsIgnoreCase()` which determine if a given string contains a given substring regardless of case sensitivity.
+
+# v3.0.30 - 2023-07-21
+
+## Fixed
+
+- [#5947](https://github.com/hyperf/hyperf/pull/5947) Fixed bug that lock failed when using more than one pool for amqp.
+
+## Optimized
+
+- [#5954](https://github.com/hyperf/hyperf/pull/5954) Optimized the model generator to generate correct property comments.
+
+## Added
+
+- [#5951](https://github.com/hyperf/hyperf/pull/5951) Added `SameSite` support to session cookies.
+- [#5955](https://github.com/hyperf/hyperf/pull/5955) Support `access_key` and `access_secret` for nacos service governance.
+- [#5957](https://github.com/hyperf/hyperf/pull/5957) Added `Hyperf\Codec\Packer\IgbinarySerializerPacker`.
+- [#5962](https://github.com/hyperf/hyperf/pull/5962) Support modify the context of sub coroutine when using test components.
+
+# v3.0.29 - 2023-07-14
+
+## Fixed
+
+- [#5921](https://github.com/hyperf/hyperf/pull/5921) Fixed bug that `http2-client` cannot be closed when didn't open heartbeat.
+- [#5923](https://github.com/hyperf/hyperf/pull/5923) Fixed bug that `nacos grpc client` cannot be closed friendly when worker exit.
+- [#5922](https://github.com/hyperf/hyperf/pull/5922) Fixed bug that `ApplicationContext` cannot be found when using `grpc-client`.
+
+## Optimized
+
+- [#5924](https://github.com/hyperf/hyperf/pull/5924) Hide the abnormal output when the worker exited.
+
+# v3.0.28 - 2023-07-08
+
+## Fixed
+
+- [#5909](https://github.com/hyperf/hyperf/pull/5909) Fixed bug that acm `client::$servers` must be accessed before initialization.
+- [#5911](https://github.com/hyperf/hyperf/pull/5911) Fixed bug that nacos grpc client auth failed.
+- [#5912](https://github.com/hyperf/hyperf/pull/5912) Fixed bug that nacos grpc client cannot reconnect when the client closed.
+
+## Added
+
+- [#5895](https://github.com/hyperf/hyperf/pull/5895) Added strict mode support for `Integer` and `Boolean`.
+
+## Optimized
+
+- [#5910](https://github.com/hyperf/hyperf/pull/5910) Optimized code about `NacosClientFactory` which will create nacos client instead of nacos application.
+
+# v3.0.27 - 2023-06-30
+
+## Fixed
+
+- [#5880](https://github.com/hyperf/hyperf/pull/5880) Fixed bug that start server failed caused by swagger server name isn't string.
+- [#5890](https://github.com/hyperf/hyperf/pull/5890) Added some exception messages which used to reconnect PDO connection.
+
+## Optimized
+
+- [#5886](https://github.com/hyperf/hyperf/pull/5886) Throw exception (executing sql failed) when used `clickhouse` for `hyperf/db`.
+
+# v3.0.26 - 2023-06-24
+
+## Fixed
+
+- [#5861](https://github.com/hyperf/hyperf/pull/5861) Fixed bug that `CoroutineMemory::clearPrefix()` cannot work as expected.
+
+## Optimized
+
+- [#5858](https://github.com/hyperf/hyperf/pull/5858) Throw exception when using `chunkById` but the column is not existed.
+- [#5882](https://github.com/hyperf/hyperf/pull/5882) Move `ConfirmableTrait`/`DisableEventDispatcher`/`NullDisableEventDispatcher` to Concerns.
+
+# v3.0.25 - 2023-06-19
+
+## Fixed
+
+- [#5829](https://github.com/hyperf/hyperf/pull/5829) Fixed bug that the method `Hyperf\Database\Model\Builder::value()` cannot work when using column like `table.column`.
+- [#5831](https://github.com/hyperf/hyperf/pull/5831) Fixed an endless loop when socket.io parses namespace.
 
 ## Fixed
 

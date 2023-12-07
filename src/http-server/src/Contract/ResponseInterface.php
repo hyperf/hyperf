@@ -33,13 +33,18 @@ interface ResponseInterface
      * @param array|Arrayable|Xmlable $data
      * @param string $root the name of the root node
      */
-    public function xml($data, string $root = 'root'): PsrResponseInterface;
+    public function xml($data, string $root = 'root', string $charset = 'utf-8'): PsrResponseInterface;
 
     /**
      * Format data to a string and return data with Content-Type:text/plain header.
      * @param mixed|Stringable $data
      */
-    public function raw($data): PsrResponseInterface;
+    public function raw($data, string $charset = 'utf-8'): PsrResponseInterface;
+
+    /**
+     * return data with content-type:text/html header.
+     */
+    public function html(string $html, string $charset = 'utf-8'): PsrResponseInterface;
 
     /**
      * Redirect to a URL.

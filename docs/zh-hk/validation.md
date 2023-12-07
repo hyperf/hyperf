@@ -467,6 +467,15 @@ class FooController extends Controller
 
 驗證字段的值必須是 `yes`、`on`、`1` 或 `true`，這在「同意服務協議」時很有用。
 
+##### accepted_if:anotherfield,value,…
+如果另一個正在驗證的字段等於指定的值，則驗證中的字段必須為 `yes`、`on`、`1` 或 `true`，這對於驗證「服務條款」接受或類似字段很有用。
+
+##### declined
+正在驗證的字段必須是 `no`、`off`、`0` 或者 `false`。
+
+##### declined_if:anotherfield,value,…
+如果另一個驗證字段的值等於指定值，則驗證字段的值必須為 `no`、`off`、`0` 或 `false`。
+
 ##### active_url
 
 驗證字段必須是基於 `PHP` 函數 `dns_get_record` 的，有 `A` 或 `AAAA` 記錄的值。
@@ -491,19 +500,39 @@ class FooController extends Controller
 
 ##### alpha
 
-驗證字段必須是字母(包含中文)。
+驗證字段必須是字母(包含中文)。 為了將此驗證規則限制在 ASCII 範圍內的字符（a-z 和 A-Z），你可以為驗證規則提供 ascii 選項：
+
+```php
+'username' => 'alpha:ascii',
+```
 
 ##### alpha_dash
 
-驗證字段可以包含字母(包含中文)和數字，以及破折號和下劃線。
+驗證字段可以包含字母(包含中文)和數字，以及破折號和下劃線。為了將此驗證規則限制在 ASCII 範圍內的字符（a-z 和 A-Z），你可以為驗證規則提供 ascii 選項：
+
+```php
+'username' => 'alpha_dash:ascii',
+```
 
 ##### alpha_num
 
-驗證字段必須是字母(包含中文)或數字。
+驗證字段必須是字母(包含中文)或數字。為了將此驗證規則限制在 ASCII 範圍內的字符（a-z 和 A-Z），你可以為驗證規則提供 ascii 選項：
+
+```php
+'username' => 'alpha_num:ascii',
+```
+
+#### ascii
+
+正在驗證的字段必須完全是 7 位的 ASCII 字符。
 
 ##### array
 
 驗證字段必須是 PHP 數組。
+
+##### required_array_keys:foo,bar,…
+
+驗證的字段必須是一個數組，並且必須至少包含指定的鍵。
 
 ##### bail
 
@@ -527,6 +556,10 @@ class FooController extends Controller
 
 驗證字段必須可以被轉化為布爾值，接收 true, false, 1, 0, "1" 和 "0" 等輸入。
 
+##### boolean:strict
+
+驗證字段必須可以被轉化為布爾值，僅接收 true 和 false。
+
 ##### confirmed
 
 驗證字段必須有一個匹配字段 foo_confirmation，例如，如果驗證字段是 password，必須輸入一個與之匹配的 password_confirmation 字段。
@@ -543,13 +576,132 @@ class FooController extends Controller
 
 驗證字段必須匹配指定格式，可以使用 PHP 函數 date 或 date_format 驗證該字段。
 
+##### decimal:min,max
+
+驗證字段必須是數值類型，並且必須包含指定的小數位數：
+
+```php
+// 必須正好有兩位小數（例如 9.99）...
+'price' => 'decimal:2'
+
+// 必須有 2 到 4 位小數...
+'price' => 'decimal:2,4'
+```
+
+##### lowercase
+
+驗證的字段必須是小寫的。
+
+##### uppercase
+
+驗證字段必須為大寫。
+
+##### mac_address
+
+驗證的字段必須是一個 MAC 地址。
+
+##### max_digits:value
+
+驗證的整數必須具有最大長度 value。
+
+##### min_digits:value
+
+驗證的整數必須具有至少_value_位數。
+
+##### exclude
+
+`validate` 和 `validated` 方法中會排除掉當前驗證的字段。
+
+##### exclude_if:anotherfield,value
+如果 `anotherfield` 等於 `value` ，`validate` 和 `validated` 方法中會排除掉當前驗證的字段。
+
+在一些複雜的場景，也可以使用 `Rule::excludeIf` 方法，這個方法需要返回一個布爾值或者一個匿名函數。如果返回的是匿名函數，那麼這個函數應該返回 `true` 或 `false` 去決定被驗證的字段是否應該被排除掉：
+
+```php
+use Hyperf\Validation\Rule;
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::excludeIf($request->user()->is_admin),
+]);
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::excludeIf(fn () => $request->user()->is_admin),
+]);
+```
+
+##### prohibited
+
+需要驗證的字段必須不存在或為空。如果符合以下條件之一，字段將被認為是 “空”：
+
+1. 值為 `null`。
+2. 值為空字符串。
+3. 值為空數組或空的可計數對象。
+4. 值為上傳文件，但文件路徑為空。
+
+##### prohibited_if:anotherfield,value,…
+
+如果 `anotherfield` 字段等於任何 `value`，則需要驗證的字段必須不存在或為空。如果符合以下條件之一，字段將被認為是 “空”：
+
+1. 值為 `null`。
+2. 值為空字符串。
+3. 值為空數組或空的可計數對象。
+4. 值為上傳文件，但文件路徑為空。
+
+如果需要複雜的條件禁止邏輯，則可以使用 `Rule::prohibitedIf` 方法。該方法接受一個布爾值或一個閉包。當給定一個閉包時，閉包應返回 `true` 或 `false`，以指示是否應禁止驗證字段：
+
+
+```php
+use Hyperf\Validation\Rule;
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::prohibitedIf($request->user()->is_admin),
+]);
+
+$this->validationFactory->make($request->all(), [
+    'role_id' => Rule::prohibitedIf(fn () => $request->user()->is_admin),
+]);
+```
+
+
+##### missing
+
+驗證的字段在輸入數據中必須不存在。
+
+##### missing_if:anotherfield,value,…
+
+如果 `_anotherfield_` 字段等於任何 `_value_` ，則驗證的字段必須不存在。
+
+##### missing_unless:anotherfield,value
+
+驗證的字段必須不存在，除非 `_anotherfield_` 字段等於任何 `_value_` 。
+
+##### missing_with:foo,bar,…
+
+如果任何其他指定的字段存在，則驗證的字段必須不存在。
+
+##### missing_with_all:foo,bar,…
+
+如果所有其他指定的字段都存在，則驗證的字段必須不存在。
+
+##### multiple_of:value
+
+驗證的字段必須是 `_value_` 的倍數。
+
+##### doesnt_start_with:foo,bar,…
+
+驗證的字段不能以給定值之一開頭。
+
+##### doesnt_end_with:foo,bar,…
+
+驗證的字段不能以給定值之一結尾。
+
 ##### different:field
 
 驗證字段必須是一個和指定字段不同的值。
 
 ##### digits:value
 
-驗證字段必須是數字且長度為 value 指定的值。
+驗證字段必須是數字且長度為 `value` 指定的值。
 
 ##### digits_between:min,max
 
@@ -678,7 +830,11 @@ $validator = $this->validationFactory->make($data, [
 
 ##### integer
 
-驗證字段必須是整型。
+驗證字段必須是整型（String 和 Integer 類型都可以通過驗證）。
+
+##### integer:strict
+
+驗證字段必須是整型（只有 Integer 類型都可以通過驗證）。
 
 ##### ip
 
@@ -856,14 +1012,14 @@ $validator = $this->validationFactory->make($request->all(), [
 ```
 
 2. 自定義數據庫連接：
-有時候，你可能需要自定義驗證器生成的數據庫連接，正如上面所看到的，設置 `unique:users` 作為驗證規則將會使用默認數據庫連接來查詢數據庫。要覆蓋默認連接，在數據表名後使用“.”指定連接：
+   有時候，你可能需要自定義驗證器生成的數據庫連接，正如上面所看到的，設置 `unique:users` 作為驗證規則將會使用默認數據庫連接來查詢數據庫。要覆蓋默認連接，在數據表名後使用“.”指定連接：
 
 ```php
 'email' => 'unique:connection.users,email_address'
 ```
 
 3. 強制一個忽略給定 `ID` 的唯一規則：
-有時候，你可能希望在唯一檢查時忽略給定 `ID`，例如，考慮一個包含用户名、郵箱地址和位置的”更新屬性“界面，你將要驗證郵箱地址是唯一的，然而，如果用户只改變用户名字段而並沒有改變郵箱字段，你不想要因為用户已經擁有該郵箱地址而拋出驗證錯誤，你只想要在用户提供的郵箱已經被別人使用的情況下才拋出驗證錯誤。
+   有時候，你可能希望在唯一檢查時忽略給定 `ID`，例如，考慮一個包含用户名、郵箱地址和位置的”更新屬性“界面，你將要驗證郵箱地址是唯一的，然而，如果用户只改變用户名字段而並沒有改變郵箱字段，你不想要因為用户已經擁有該郵箱地址而拋出驗證錯誤，你只想要在用户提供的郵箱已經被別人使用的情況下才拋出驗證錯誤。
 
 要告訴驗證器忽略用户 `ID`，可以使用 `Rule` 類來定義這個規則，我們還要以數組方式指定驗證規則，而不是使用 `|` 來界定規則：
 

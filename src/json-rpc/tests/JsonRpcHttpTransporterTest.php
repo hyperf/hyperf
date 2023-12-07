@@ -15,12 +15,14 @@ use GuzzleHttp\Client;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\JsonRpc\JsonRpcHttpTransporter;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class JsonRpcHttpTransporterTest extends TestCase
 {
     protected function tearDown(): void

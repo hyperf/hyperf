@@ -13,12 +13,14 @@ namespace HyperfTest\Phar;
 
 use Hyperf\Phar\Ast\Ast;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigVisitor;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class VisitorTest extends TestCase
 {
     public function testRewriteConfig()

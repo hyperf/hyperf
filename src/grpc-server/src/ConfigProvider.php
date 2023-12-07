@@ -31,6 +31,14 @@ class ConfigProvider
                     return null;
                 }),
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The configuration file for grpc rpc server',
+                    'source' => __DIR__ . '/../publish/grpc_server.php',
+                    'destination' => BASE_PATH . '/config/autoload/grpc_server.php',
+                ],
+            ],
         ];
     }
 }

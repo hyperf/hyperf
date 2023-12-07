@@ -36,52 +36,84 @@ php bin/hyperf.php gen:swagger
 
 ## 使用
 
-> 以下出现的 OA 命名空间都为 `use Hyperf\Swagger\Annotation as OA`
+> 以下出现的 SA 命名空间都为 `use Hyperf\Swagger\Annotation as SA`
 
-框架可以启动多个 Server，每个 Server 的路由可以根据 `OA\Hyperferver` 注解来区分，并生成不同的 swagger 文件（以该配置作为文件名）
+框架可以启动多个 Server，每个 Server 的路由可以根据 `SA\Hyperferver` 注解来区分，并生成不同的 swagger 文件（以该配置作为文件名）
 
 可以配置在控制器类或者方法上
 ```php
-#[OA\HyperfServer('http')]
+#[SA\HyperfServer('http')]
 ```
 
 ```php
-#[OA\Post(path: '/test', summary: 'POST 表单示例', tags: ['Api/Test'])]
-#[OA\RequestBody(
+#[SA\Post(path: '/test', summary: 'POST 表单示例', tags: ['Api/Test'])]
+#[SA\RequestBody(
     description: '请求参数',
     content: [
-        new OA\MediaType(
+        new SA\MediaType(
             mediaType: 'application/x-www-form-urlencoded',
-            schema: new OA\Schema(
+            schema: new SA\Schema(
                 required: ['username', 'age'],
                 properties: [
-                    new OA\Property(property: 'username', description: '用户名字段描述', type: 'string'),
-                    new OA\Property(property: 'age', description: '年龄字段描述', type: 'string'),
-                    new OA\Property(property: 'city', description: '城市字段描述', type: 'string'),
+                    new SA\Property(property: 'username', description: '用户名字段描述', type: 'string'),
+                    new SA\Property(property: 'age', description: '年龄字段描述', type: 'string'),
+                    new SA\Property(property: 'city', description: '城市字段描述', type: 'string'),
                 ]
             ),
         ),
     ],
 )]
-#[OA\Response(response: 200, description: '返回值的描述')]
+#[SA\Response(response: 200, description: '返回值的描述')]
 public function test()
 {
 }
 ```
 
 ```php
-#[OA\Get(path: '/test', summary: 'GET 示例', tags: ['Api/Test'])]
-#[OA\Parameter(name: 'username', description: '用户名字段描述', in : 'query', required: true, schema: new OA\Schema(type: 'string'))]
-#[OA\Parameter(name: 'age', description: '年龄字段描述', in : 'query', required: true, schema: new OA\Schema(type: 'string'))]
-#[OA\Parameter(name: 'city', description: '城市字段描述', in : 'query', required: false, schema: new OA\Schema(type: 'string'))]
-#[OA\Response(
+#[SA\Get(path: '/test', summary: 'GET 示例', tags: ['Api/Test'])]
+#[SA\QueryParameter(name: 'username', description: '用户名字段描述', required: true, schema: new SA\Schema(type: 'string'))]
+#[SA\QueryParameter(name: 'age', description: '年龄字段描述', required: true, schema: new SA\Schema(type: 'string'))]
+#[SA\QueryParameter(name: 'city', description: '城市字段描述', required: false, schema: new SA\Schema(type: 'string'))]
+#[SA\Response(
     response: 200,
     description: '返回值的描述',
-    content: new OA\JsonContent(
+    content: new SA\JsonContent(
         example: '{"code":200,"data":[]}'
     ),
 )]
 public function list(ConversationRequest $request): array
 {
+}
+```
+
+### 配合验证器
+
+`SA\Property` 和 `SA\QueryParameter` 注解中，我们可以增加 `rules` 参数，然后配合 `SwaggerRequest` 即可在中间件中，验证参数是否合法。
+
+```php
+<?php
+namespace App\Controller;
+
+use App\Schema\SavedSchema;
+use Hyperf\Swagger\Request\SwaggerRequest;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\Swagger\Annotation as SA;
+
+#[SA\HyperfServer(name: 'http')]
+class CardController extends Controller
+{
+    #[SA\Post('/user/save', summary: '保存用户信息', tags: ['用户管理'])]
+    #[SA\QueryParameter(name: 'token', description: '鉴权 token', type: 'string', rules: 'required|string')]
+    #[SA\RequestBody(content: new SA\JsonContent(properties: [
+        new SA\Property(property: 'nickname', description: '昵称', type: 'integer', rules: 'required|string'),
+        new SA\Property(property: 'gender', description: '性别', type: 'integer', rules: 'required|integer|in:0,1,2'),
+    ]))]
+    #[SA\Response(response: '200', content: new SA\JsonContent(ref: '#/components/schemas/SavedSchema'))]
+    public function info(SwaggerRequest $request)
+    {
+        $result = $this->service->save($request->all());
+
+        return $this->response->success($result);
+    }
 }
 ```

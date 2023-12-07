@@ -16,20 +16,14 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/contract": "~3.0.0",
-        "hyperf/pool": "~3.0.0",
-        "hyperf/support": "~3.0.0",
-        "hyperf/utils": "~3.0.0",
+        "php": ">=8.1",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/pool": "~3.1.0",
+        "hyperf/support": "~3.1.0",
+        "hyperf/utils": "~3.1.0",
         "ircmaxell/random-lib": "^1.2",
         "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0"
-    },
-    "require-dev": {
-        "malukenho/docheader": "^0.1.6",
-        "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^9.5",
-        "friendsofphp/php-cs-fixer": "^2.9"
     },
     "autoload": {
         "psr-4": {
@@ -49,7 +43,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Nats\\ConfigProvider"

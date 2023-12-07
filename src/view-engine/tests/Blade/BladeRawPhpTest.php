@@ -11,6 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ViewEngine\Blade;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
+
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -98,8 +105,8 @@ class BladeRawPhpTest extends AbstractBladeTestCase
         $this->assertEquals($expected, $this->compiler->compileString($string));
 
         $this->assertSame('<?php echo $__env->renderEach(\'foo\', \'b)a)r\'); ?>', $this->compiler->compileString('@each(\'foo\', \'b)a)r\')'));
-        $this->assertSame('<?php echo $__env->make(\'test_for\', [\'issue))\' => \'(issue#45424))\'], \Hyperf\Utils\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>', $this->compiler->compileString('@include(\'test_for\', [\'issue))\' => \'(issue#45424))\'])'));
-        $this->assertSame('( <?php echo $__env->make(\'test_for\', [\'not_too_much))\' => \'(issue#45424))\'], \Hyperf\Utils\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>))', $this->compiler->compileString('( @include(\'test_for\', [\'not_too_much))\' => \'(issue#45424))\'])))'));
+        $this->assertSame('<?php echo $__env->make(\'test_for\', [\'issue))\' => \'(issue#45424))\'], \Hyperf\Collection\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>', $this->compiler->compileString('@include(\'test_for\', [\'issue))\' => \'(issue#45424))\'])'));
+        $this->assertSame('( <?php echo $__env->make(\'test_for\', [\'not_too_much))\' => \'(issue#45424))\'], \Hyperf\Collection\Arr::except(get_defined_vars(), [\'__data\', \'__path\']))->render(); ?>))', $this->compiler->compileString('( @include(\'test_for\', [\'not_too_much))\' => \'(issue#45424))\'])))'));
     }
 
     public function testStringWithEmptyStringDataValue()

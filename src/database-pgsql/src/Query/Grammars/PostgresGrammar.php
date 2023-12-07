@@ -153,6 +153,28 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Substitute the given bindings into the given raw SQL query.
+     *
+     * @param string $sql
+     * @param array $bindings
+     * @return string
+     */
+    public function substituteBindingsIntoRawSql($sql, $bindings)
+    {
+        $query = parent::substituteBindingsIntoRawSql($sql, $bindings);
+
+        foreach ($this->operators as $operator) {
+            if (! str_contains($operator, '?')) {
+                continue;
+            }
+
+            $query = str_replace(str_replace('?', '??', $operator), $operator, $query);
+        }
+
+        return $query;
+    }
+
+    /**
      * Compile an update from statement into SQL.
      *
      * @return string

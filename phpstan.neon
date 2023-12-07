@@ -9,6 +9,7 @@ parameters:
   treatPhpDocTypesAsCertain: true
   reportUnmatchedIgnoredErrors: false
   excludePaths:
+    - %currentWorkingDirectory%/src/helper/*
     - %currentWorkingDirectory%/src/*/tests/*
     - %currentWorkingDirectory%/src/*/publish/*
     - %currentWorkingDirectory%/src/*/class_map/*
@@ -48,8 +49,6 @@ parameters:
     - '#Function get_debug_type invoked with 1 parameter, 0 required#'
     - '#Call to an undefined method Hyperf\\Utils\\HigherOrderCollectionProxy::.*#'
     - '#InfluxDB\\Point constructor expects float\|null, string given#'
-    - '#getSwooleTracker.* not found#'
-    - '#trackerHookMalloc not found#'
     - '#separator of function explode expects non-empty-string, string given#'
     - '#While loop condition is always true#'
     - '#Unsafe access to private property .* through static::#'

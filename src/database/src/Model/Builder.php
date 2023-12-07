@@ -26,6 +26,7 @@ use Hyperf\Support\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionMethod;
+use RuntimeException;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Tappable\tap;
@@ -87,9 +88,9 @@ class Builder
      * @var array
      */
     protected $passthru = [
-        'insert', 'insertGetId', 'getBindings', 'toSql', 'insertOrIgnore',
+        'insert', 'insertGetId', 'getBindings', 'toSql', 'toRawSql', 'insertOrIgnore',
         'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'average', 'sum', 'getConnection',
-        'upsert',
+        'upsert', 'updateOrInsert',
     ];
 
     /**
@@ -581,7 +582,7 @@ class Builder
     public function value($column)
     {
         if ($result = $this->first([$column])) {
-            return $result->{$column};
+            return $result->{Str::afterLast($column, '.')};
         }
     }
 
@@ -718,6 +719,10 @@ class Builder
             }
 
             $lastId = $results->last()->{$alias};
+
+            if ($lastId === null) {
+                throw new RuntimeException("The chunkById operation was aborted because the [{$alias}] column is not present in the query result.");
+            }
 
             unset($results);
         } while ($countResults == $count);
@@ -1160,8 +1165,6 @@ class Builder
 
         foreach ($methods as $method) {
             if ($replace || ! static::hasGlobalMacro($method->name)) {
-                $method->setAccessible(true);
-
                 static::macro($method->name, $method->invoke($mixin));
             }
         }

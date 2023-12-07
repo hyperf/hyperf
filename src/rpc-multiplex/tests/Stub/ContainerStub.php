@@ -18,6 +18,7 @@ use Hyperf\Di\Container;
 use Hyperf\Framework\Logger\StdoutLogger;
 use Hyperf\RpcMultiplex\Socket;
 use Hyperf\RpcMultiplex\SocketFactory;
+use Hyperf\Server\ServerFactory;
 use Mockery;
 use Multiplex\Contract\IdGeneratorInterface;
 use Multiplex\Contract\PackerInterface;
@@ -25,6 +26,7 @@ use Multiplex\Contract\SerializerInterface;
 use Multiplex\IdGenerator;
 use Multiplex\Packer;
 use Multiplex\Serializer\StringSerializer;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class ContainerStub
 {
@@ -44,6 +46,16 @@ class ContainerStub
         $container->shouldReceive('make')->with(SocketFactory::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
             return new SocketFactory($container, ...array_values($args));
         });
+
+        $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+        $dispatcher->shouldReceive('dispatch')->andReturn(true);
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturn(true);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
+
+        $serverFactory = Mockery::mock(ServerFactory::class);
+        $serverFactory->shouldReceive('getConfig')->andReturn(null);
+        $container->shouldReceive('get')->with(ServerFactory::class)->andReturn($serverFactory);
+
         return $container;
     }
 }

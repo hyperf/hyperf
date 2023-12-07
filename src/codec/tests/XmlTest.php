@@ -13,12 +13,14 @@ namespace HyperfTest\Codec;
 
 use Hyperf\Codec\Exception\InvalidArgumentException;
 use Hyperf\Codec\Xml;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class XmlTest extends TestCase
 {
     public function testToArray()

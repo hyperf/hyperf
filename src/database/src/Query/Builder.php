@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query;
 
+use BackedEnum;
 use BadMethodCallException;
 use Closure;
 use DateTimeInterface;
@@ -25,11 +26,13 @@ use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Model\Builder as ModelBuilder;
+use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use Hyperf\Support\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use RuntimeException;
@@ -364,9 +367,23 @@ class Builder
      */
     public function addSelect($column)
     {
-        $column = is_array($column) ? $column : func_get_args();
+        $columns = is_array($column) ? $column : func_get_args();
 
-        $this->columns = array_merge((array) $this->columns, $column);
+        foreach ($columns as $as => $column) {
+            if (is_string($as) && $this->isQueryable($column)) {
+                if (is_null($this->columns)) {
+                    $this->select($this->from . '.*');
+                }
+
+                $this->selectSub($column, $as);
+            } else {
+                if (is_array($this->columns) && in_array($column, $this->columns, true)) {
+                    continue;
+                }
+
+                $this->columns[] = $column;
+            }
+        }
 
         return $this;
     }
@@ -1513,7 +1530,7 @@ class Builder
     /**
      * Add a "group by" clause to the query.
      *
-     * @param array ...$groups
+     * @param array|string ...$groups
      * @return $this
      */
     public function groupBy(...$groups)
@@ -1881,6 +1898,21 @@ class Builder
     public function toSql()
     {
         return $this->grammar->compileSelect($this);
+    }
+
+    /**
+     * Get the raw SQL representation of the query with embedded bindings.
+     *
+     * @return string
+     */
+    public function toRawSql()
+    {
+        $bindings = array_map(fn ($value) => $this->connection->escape($value), $this->connection->prepareBindings($this->getBindings()));
+
+        return $this->grammar->substituteBindingsIntoRawSql(
+            $this->toSql(),
+            $bindings
+        );
     }
 
     /**
@@ -2520,12 +2552,37 @@ class Builder
         }
 
         if (is_array($value)) {
-            $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $value));
+            $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $this->castBindings($value)));
         } else {
-            $this->bindings[$type][] = $value;
+            $this->bindings[$type][] = $this->castBinding($value);
         }
 
         return $this;
+    }
+
+    /**
+     * Cast the given binding value.
+     */
+    public function castBinding(mixed $value)
+    {
+        if ($value instanceof BackedEnum) {
+            return $value->value;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Cast the given binding value.
+     */
+    public function castBindings(array $values)
+    {
+        $result = [];
+        foreach ($values as $value) {
+            $result[] = $this->castBinding($value);
+        }
+
+        return $result;
     }
 
     /**
@@ -2619,6 +2676,20 @@ class Builder
                 $clone->bindings[$type] = [];
             }
         });
+    }
+
+    /**
+     * Determine if the value is a query builder instance or a Closure.
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    protected function isQueryable($value)
+    {
+        return $value instanceof static
+            || $value instanceof ModelBuilder
+            || $value instanceof Relation
+            || $value instanceof Closure;
     }
 
     /**
@@ -2807,7 +2878,7 @@ class Builder
         // clause on the query. Then we'll increment the parameter index values.
         $bool = strtolower($connector);
 
-        $this->where(Str::snake($segment), '=', $parameters[$index], $bool);
+        $this->where(StrCache::snake($segment), '=', $parameters[$index], $bool);
     }
 
     /**
@@ -3014,14 +3085,19 @@ class Builder
 
     /**
      * Remove all of the expressions from a list of bindings.
-     *
-     * @return array
      */
-    protected function cleanBindings(array $bindings)
+    protected function cleanBindings(array $bindings): array
     {
-        return array_values(array_filter($bindings, function ($binding) {
-            return ! $binding instanceof Expression;
-        }));
+        $result = [];
+        foreach ($bindings as $binding) {
+            if ($binding instanceof Expression) {
+                continue;
+            }
+
+            $result[] = $this->castBinding($binding);
+        }
+
+        return $result;
     }
 
     /**

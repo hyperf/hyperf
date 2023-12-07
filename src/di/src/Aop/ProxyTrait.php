@@ -16,7 +16,7 @@ use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\ReflectionManager;
-use SplPriorityQueue;
+use Hyperf\Stdlib\SplPriorityQueue;
 
 trait ProxyTrait
 {
@@ -41,8 +41,7 @@ trait ProxyTrait
             'keys' => [],
             'order' => [],
         ];
-        $reflectMethod = ReflectionManager::reflectMethod($className, $method);
-        $reflectParameters = $reflectMethod->getParameters();
+        $reflectParameters = ReflectionManager::reflectMethod($className, $method)->getParameters();
         $leftArgCount = count($args);
         foreach ($reflectParameters as $reflectionParameter) {
             $arg = $reflectionParameter->isVariadic() ? $args : array_shift($args);
@@ -72,7 +71,7 @@ trait ProxyTrait
                 $queue->next();
             }
 
-            unset($annotationAspects, $aspects, $queue);
+            unset($aspects, $queue);
         }
 
         if (empty(AspectManager::get($className, $methodName))) {

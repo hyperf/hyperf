@@ -11,11 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Stringable;
 
+use Closure;
 use DateTimeInterface;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
 use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
+use JsonException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use RuntimeException;
@@ -30,27 +32,6 @@ use function Hyperf\Collection\collect;
 class Str
 {
     use Macroable;
-
-    /**
-     * The cache of snake-cased words.
-     *
-     * @var array
-     */
-    protected static $snakeCache = [];
-
-    /**
-     * The cache of camel-cased words.
-     *
-     * @var array
-     */
-    protected static $camelCache = [];
-
-    /**
-     * The cache of studly-cased words.
-     *
-     * @var array
-     */
-    protected static $studlyCache = [];
 
     /**
      * Get a new stringable object from the given string.
@@ -178,11 +159,7 @@ class Str
      */
     public static function camel($value)
     {
-        if (isset(static::$camelCache[$value])) {
-            return static::$camelCache[$value];
-        }
-
-        return static::$camelCache[$value] = lcfirst(static::studly($value));
+        return lcfirst(static::studly($value));
     }
 
     /**
@@ -208,10 +185,32 @@ class Str
      *
      * @param array|string $needles
      */
-    public static function contains(string $haystack, $needles): bool
+    public static function contains(string $haystack, mixed $needles, bool $ignoreCase = false): bool
+    {
+        if ($ignoreCase) {
+            return static::containsIgnoreCase($haystack, $needles);
+        }
+
+        foreach ((array) $needles as $needle) {
+            $needle = (string) $needle;
+            if ($needle !== '' && str_contains($haystack, $needle)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine if a given string contains a given substring regardless of case sensitivity.
+     *
+     * @param array|string $needles
+     */
+    public static function containsIgnoreCase(string $haystack, $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && str_contains($haystack, (string) $needle)) {
+            $needle = (string) $needle;
+            if ($needle !== '' && stripos($haystack, $needle) !== false) {
                 return true;
             }
         }
@@ -222,14 +221,13 @@ class Str
     /**
      * Determine if a given string contains all array values.
      *
-     * @param string $haystack
      * @param string[] $needles
      * @return bool
      */
-    public static function containsAll($haystack, array $needles)
+    public static function containsAll(string $haystack, array $needles, bool $ignoreCase = false)
     {
         foreach ($needles as $needle) {
-            if (! static::contains($haystack, $needle)) {
+            if (! static::contains($haystack, $needle, $ignoreCase)) {
                 return false;
             }
         }
@@ -246,7 +244,8 @@ class Str
     public static function endsWith(string $haystack, $needles)
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && str_ends_with($haystack, (string) $needle)) {
+            $needle = (string) $needle;
+            if ($needle !== '' && str_ends_with($haystack, $needle)) {
                 return true;
             }
         }
@@ -578,6 +577,10 @@ class Str
      */
     public static function replaceLast(string $search, string $replace, string $subject): string
     {
+        if ($search == '') {
+            return $subject;
+        }
+
         $position = strrpos($subject, $search);
 
         if ($position !== false) {
@@ -680,19 +683,13 @@ class Str
      */
     public static function snake(string $value, string $delimiter = '_'): string
     {
-        $key = $value;
-
-        if (isset(static::$snakeCache[$key][$delimiter])) {
-            return static::$snakeCache[$key][$delimiter];
-        }
-
         if (! ctype_lower($value)) {
             $value = preg_replace('/\s+/u', '', ucwords($value));
 
             $value = static::lower(preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $value));
         }
 
-        return static::$snakeCache[$key][$delimiter] = $value;
+        return $value;
     }
 
     /**
@@ -703,7 +700,8 @@ class Str
     public static function startsWith(string $haystack, $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && str_starts_with($haystack, (string) $needle)) {
+            $needle = (string) $needle;
+            if ($needle !== '' && str_starts_with($haystack, $needle)) {
                 return true;
             }
         }
@@ -716,15 +714,9 @@ class Str
      */
     public static function studly(string $value, string $gap = ''): string
     {
-        $key = $value;
-
-        if (isset(static::$studlyCache[$key])) {
-            return static::$studlyCache[$key];
-        }
-
         $value = ucwords(str_replace(['-', '_'], ' ', $value));
 
-        return static::$studlyCache[$key] = str_replace(' ', $gap, $value);
+        return str_replace(' ', $gap, $value);
     }
 
     /**
@@ -792,6 +784,11 @@ class Str
         return mb_substr($string, 0, max($stringLength - $hiddenLength - $absOffset, 0)) . str_repeat($replacement, $hiddenLength) . mb_substr($string, $offset);
     }
 
+    /**
+     * Determine if a given value is a valid ULID.
+     *
+     * @param mixed $value
+     */
     public static function isUlid($value): bool
     {
         if (! is_string($value)) {
@@ -818,6 +815,47 @@ class Str
         return new Ulid(Ulid::generate($time));
     }
 
+    public static function isUrl($value, array $protocols = []): bool
+    {
+        if (! is_string($value)) {
+            return false;
+        }
+
+        $protocolList = empty($protocols)
+            ? 'aaa|aaas|about|acap|acct|acd|acr|adiumxtra|adt|afp|afs|aim|amss|android|appdata|apt|ark|attachment|aw|barion|beshare|bitcoin|bitcoincash|blob|bolo|browserext|calculator|callto|cap|cast|casts|chrome|chrome-extension|cid|coap|coap\+tcp|coap\+ws|coaps|coaps\+tcp|coaps\+ws|com-eventbrite-attendee|content|conti|crid|cvs|dab|data|dav|diaspora|dict|did|dis|dlna-playcontainer|dlna-playsingle|dns|dntp|dpp|drm|drop|dtn|dvb|ed2k|elsi|example|facetime|fax|feed|feedready|file|filesystem|finger|first-run-pen-experience|fish|fm|ftp|fuchsia-pkg|geo|gg|git|gizmoproject|go|gopher|graph|gtalk|h323|ham|hcap|hcp|http|https|hxxp|hxxps|hydrazone|iax|icap|icon|im|imap|info|iotdisco|ipn|ipp|ipps|irc|irc6|ircs|iris|iris\.beep|iris\.lwz|iris\.xpc|iris\.xpcs|isostore|itms|jabber|jar|jms|keyparc|lastfm|ldap|ldaps|leaptofrogans|lorawan|lvlt|magnet|mailserver|mailto|maps|market|message|mid|mms|modem|mongodb|moz|ms-access|ms-browser-extension|ms-calculator|ms-drive-to|ms-enrollment|ms-excel|ms-eyecontrolspeech|ms-gamebarservices|ms-gamingoverlay|ms-getoffice|ms-help|ms-infopath|ms-inputapp|ms-lockscreencomponent-config|ms-media-stream-id|ms-mixedrealitycapture|ms-mobileplans|ms-officeapp|ms-people|ms-project|ms-powerpoint|ms-publisher|ms-restoretabcompanion|ms-screenclip|ms-screensketch|ms-search|ms-search-repair|ms-secondary-screen-controller|ms-secondary-screen-setup|ms-settings|ms-settings-airplanemode|ms-settings-bluetooth|ms-settings-camera|ms-settings-cellular|ms-settings-cloudstorage|ms-settings-connectabledevices|ms-settings-displays-topology|ms-settings-emailandaccounts|ms-settings-language|ms-settings-location|ms-settings-lock|ms-settings-nfctransactions|ms-settings-notifications|ms-settings-power|ms-settings-privacy|ms-settings-proximity|ms-settings-screenrotation|ms-settings-wifi|ms-settings-workplace|ms-spd|ms-sttoverlay|ms-transit-to|ms-useractivityset|ms-virtualtouchpad|ms-visio|ms-walk-to|ms-whiteboard|ms-whiteboard-cmd|ms-word|msnim|msrp|msrps|mss|mtqp|mumble|mupdate|mvn|news|nfs|ni|nih|nntp|notes|ocf|oid|onenote|onenote-cmd|opaquelocktoken|openpgp4fpr|pack|palm|paparazzi|payto|pkcs11|platform|pop|pres|prospero|proxy|pwid|psyc|pttp|qb|query|redis|rediss|reload|res|resource|rmi|rsync|rtmfp|rtmp|rtsp|rtsps|rtspu|s3|secondlife|service|session|sftp|sgn|shttp|sieve|simpleledger|sip|sips|skype|smb|sms|smtp|snews|snmp|soap\.beep|soap\.beeps|soldat|spiffe|spotify|ssh|steam|stun|stuns|submit|svn|tag|teamspeak|tel|teliaeid|telnet|tftp|tg|things|thismessage|tip|tn3270|tool|ts3server|turn|turns|tv|udp|unreal|urn|ut2004|v-event|vemmi|ventrilo|videotex|vnc|view-source|wais|webcal|wpid|ws|wss|wtai|wyciwyg|xcon|xcon-userid|xfire|xmlrpc\.beep|xmlrpc\.beeps|xmpp|xri|ymsgr|z39\.50|z39\.50r|z39\.50s'
+            : implode('|', $protocols);
+
+        /*
+         * This pattern is derived from Symfony\Component\Validator\Constraints\UrlValidator (5.0.7).
+         *
+         * (c) Fabien Potencier <fabien@symfony.com> http://symfony.com
+         */
+        $pattern = '~^
+            (DEFAULT_PROTOCOLS)://                                 # protocol
+            (((?:[\_\.\pL\pN-]|%[0-9A-Fa-f]{2})+:)?((?:[\_\.\pL\pN-]|%[0-9A-Fa-f]{2})+)@)?  # basic auth
+            (
+                ([\pL\pN\pS\-\_\.])+(\.?([\pL\pN]|xn\-\-[\pL\pN-]+)+\.?) # a domain name
+                    |                                                 # or
+                \d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}                    # an IP address
+                    |                                                 # or
+                \[
+                    (?:(?:(?:(?:(?:(?:(?:[0-9a-f]{1,4})):){6})(?:(?:(?:(?:(?:[0-9a-f]{1,4})):(?:(?:[0-9a-f]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:::(?:(?:(?:[0-9a-f]{1,4})):){5})(?:(?:(?:(?:(?:[0-9a-f]{1,4})):(?:(?:[0-9a-f]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:[0-9a-f]{1,4})))?::(?:(?:(?:[0-9a-f]{1,4})):){4})(?:(?:(?:(?:(?:[0-9a-f]{1,4})):(?:(?:[0-9a-f]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-f]{1,4})):){0,1}(?:(?:[0-9a-f]{1,4})))?::(?:(?:(?:[0-9a-f]{1,4})):){3})(?:(?:(?:(?:(?:[0-9a-f]{1,4})):(?:(?:[0-9a-f]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-f]{1,4})):){0,2}(?:(?:[0-9a-f]{1,4})))?::(?:(?:(?:[0-9a-f]{1,4})):){2})(?:(?:(?:(?:(?:[0-9a-f]{1,4})):(?:(?:[0-9a-f]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-f]{1,4})):){0,3}(?:(?:[0-9a-f]{1,4})))?::(?:(?:[0-9a-f]{1,4})):)(?:(?:(?:(?:(?:[0-9a-f]{1,4})):(?:(?:[0-9a-f]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-f]{1,4})):){0,4}(?:(?:[0-9a-f]{1,4})))?::)(?:(?:(?:(?:(?:[0-9a-f]{1,4})):(?:(?:[0-9a-f]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-f]{1,4})):){0,5}(?:(?:[0-9a-f]{1,4})))?::)(?:(?:[0-9a-f]{1,4})))|(?:(?:(?:(?:(?:(?:[0-9a-f]{1,4})):){0,6}(?:(?:[0-9a-f]{1,4})))?::))))
+                \]  # an IPv6 address
+            )
+            (:[0-9]+)?                              # a port (optional)
+            (?:/ (?:[\pL\pN\-._\~!$&\'()*+,;=:@]|%[0-9A-Fa-f]{2})* )*          # a path
+            (?:\? (?:[\pL\pN\-._\~!$&\'\[\]()*+,;=:@/?]|%[0-9A-Fa-f]{2})* )?   # a query (optional)
+            (?:\# (?:[\pL\pN\-._\~!$&\'()*+,;=:@/?]|%[0-9A-Fa-f]{2})* )?       # a fragment (optional)
+        $~ixu';
+
+        return preg_match(str_replace('DEFAULT_PROTOCOLS', $protocolList, $pattern), $value) > 0;
+    }
+
+    /**
+     * Determine if a given value is a valid UUID.
+     *
+     * @param mixed $value
+     */
     public static function isUuid($value): bool
     {
         if (! is_string($value)) {
@@ -843,6 +881,196 @@ class Str
         }
 
         return Uuid::uuid7($time);
+    }
+
+    public static function betweenFirst($subject, $from, $to)
+    {
+        if ($from === '' || $to === '') {
+            return $subject;
+        }
+
+        return Str::before(Str::after($subject, $from), $to);
+    }
+
+    public static function classNamespace($value): string
+    {
+        if ($pos = strrpos($value, '\\')) {
+            return substr($value, 0, $pos);
+        }
+
+        return '';
+    }
+
+    public static function convertCase(string $string, int $mode = MB_CASE_FOLD, ?string $encoding = 'UTF-8'): string
+    {
+        return mb_convert_case($string, $mode, $encoding);
+    }
+
+    public static function excerpt($text, $phrase = '', $options = [])
+    {
+        $radius = $options['radius'] ?? 100;
+        $omission = $options['omission'] ?? '...';
+
+        preg_match('/^(.*?)(' . preg_quote((string) $phrase) . ')(.*)$/iu', (string) $text, $matches);
+
+        if (empty($matches)) {
+            return null;
+        }
+
+        $startStr = ltrim($matches[1]);
+        $start = Str::of(mb_substr($matches[1], max(mb_strlen($startStr, 'UTF-8') - $radius, 0), $radius, 'UTF-8'))->ltrim();
+        $start = $start->unless(
+            (fn ($startWithRadius) => $startWithRadius->exactly($startStr))($start),
+            fn ($startWithRadius) => $startWithRadius->prepend($omission),
+        );
+
+        $endStr = rtrim($matches[3]);
+        $end = Str::of(mb_substr($endStr, 0, $radius, 'UTF-8'))->rtrim();
+        $end = $end->unless(
+            (fn ($endWithRadius) => $endWithRadius->exactly($endStr))($end),
+            fn ($endWithRadius) => $endWithRadius->append($omission),
+        );
+
+        return $start->append($matches[2], $end)->__toString();
+    }
+
+    public static function isJson($value): bool
+    {
+        if (! is_string($value)) {
+            return false;
+        }
+
+        if (function_exists('json_validate')) {
+            return json_validate($value, 512);
+        }
+
+        try {
+            json_decode($value, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static function lcfirst($string): string
+    {
+        return Str::lower(Str::substr($string, 0, 1)) . Str::substr($string, 1);
+    }
+
+    public static function password($length = 32, $letters = true, $numbers = true, $symbols = true, $spaces = false)
+    {
+        return (new Collection())
+            ->when($letters, fn ($c) => $c->merge([
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+                'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+                'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
+                'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+            ]))
+            ->when($numbers, fn ($c) => $c->merge([
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+            ]))
+            ->when($symbols, fn ($c) => $c->merge([
+                '~', '!', '#', '$', '%', '^', '&', '*', '(', ')', '-',
+                '_', '.', ',', '<', '>', '?', '/', '\\', '{', '}', '[',
+                ']', '|', ':', ';',
+            ]))
+            ->when($spaces, fn ($c) => $c->merge([' ']))
+            ->pipe(fn ($c) => Collection::times($length, fn () => $c[random_int(0, $c->count() - 1)]))
+            ->implode('');
+    }
+
+    public static function replaceStart($search, $replace, $subject)
+    {
+        $search = (string) $search;
+
+        if ($search === '') {
+            return $subject;
+        }
+
+        if (static::startsWith($subject, $search)) {
+            return static::replaceFirst($search, $replace, $subject);
+        }
+
+        return $subject;
+    }
+
+    public static function replaceEnd($search, $replace, $subject)
+    {
+        $search = (string) $search;
+
+        if ($search === '') {
+            return $subject;
+        }
+
+        if (static::endsWith($subject, $search)) {
+            return static::replaceLast($search, $replace, $subject);
+        }
+
+        return $subject;
+    }
+
+    /**
+     * Replace the patterns matching the given regular expression.
+     *
+     * @param string $pattern
+     * @param Closure|string $replace
+     * @param array|string $subject
+     * @param int $limit
+     * @return null|string|string[]
+     */
+    public static function replaceMatches($pattern, $replace, $subject, $limit = -1)
+    {
+        if ($replace instanceof Closure) {
+            return preg_replace_callback($pattern, $replace, $subject, $limit);
+        }
+
+        return preg_replace($pattern, $replace, $subject, $limit);
+    }
+
+    public static function reverse($value): string
+    {
+        return implode(array_reverse(mb_str_split($value)));
+    }
+
+    public static function squish($value): array|string|null
+    {
+        return preg_replace('~(\s|\x{3164}|\x{1160})+~u', ' ', preg_replace('~^[\s\x{FEFF}]+|[\s\x{FEFF}]+$~u', '', $value));
+    }
+
+    public static function substrReplace($string, $replace, $offset = 0, $length = null): array|string
+    {
+        if ($length === null) {
+            $length = strlen($string);
+        }
+
+        return substr_replace($string, $replace, $offset, $length);
+    }
+
+    public static function swap(array $map, $subject): array|string
+    {
+        return str_replace(array_keys($map), array_values($map), $subject);
+    }
+
+    public static function ucsplit($string): array|bool
+    {
+        return preg_split('/(?=\p{Lu})/u', $string, -1, PREG_SPLIT_NO_EMPTY);
+    }
+
+    public static function wordCount($string): array|int
+    {
+        return str_word_count($string);
+    }
+
+    public static function wrap($value, $before, $after = null): string
+    {
+        return $before . $value . ($after ??= $before);
+    }
+
+    public static function wordWrap($string, $characters = 75, $break = "\n", $cutLongWords = false): string
+    {
+        return wordwrap($string, $characters, $break, $cutLongWords);
     }
 
     /**

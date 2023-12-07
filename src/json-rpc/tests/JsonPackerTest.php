@@ -15,12 +15,14 @@ use Hyperf\JsonRpc\Packer\JsonEofPacker;
 use Hyperf\JsonRpc\Packer\JsonLengthPacker;
 use Hyperf\Stringable\Str;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class JsonPackerTest extends TestCase
 {
     protected function tearDown(): void

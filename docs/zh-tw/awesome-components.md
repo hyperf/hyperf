@@ -18,7 +18,7 @@
 ## 路由
 
 - [nikic/fastroute](https://github.com/nikic/FastRoute) 一個常用的高速路由
-- [lazychanger/urlrewrite](https://github.com/lazychanger/urlrewrite) 一個基於PSR-7與 [nikic/fastroute](https://github.com/nikic/FastRoute) 相同路由規則的URL重寫工具
+- [lazychanger/urlrewrite](https://github.com/lazychanger/urlrewrite) 一個基於 PSR- 7 與 [nikic/fastroute](https://github.com/nikic/FastRoute) 相同路由規則的 URL 重寫工具
 
 ## 事件
 
@@ -93,6 +93,7 @@
 - [hyperf/service-governance](https://github.com/hyperf/service-governance) Hyperf 官方提供的服務治理元件
 - [hyperf/tracer](https://github.com/hyperf/tracer) Hyperf 官方提供的 OpenTracing 分散式呼叫鏈追蹤元件
 - [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) Hyperf 官方提供的服務熔斷元件
+- [pudongping/hyperf-throttle-requests](https://github.com/pudongping/hyperf-throttle-requests) 適配 Hyperf 框架的請求頻率限流器。功能類似於 Laravel 框架的 throttle 中介軟體。
 
 ## 定時任務
 
@@ -123,7 +124,6 @@
 
 ## Swoole
 
-- [hyperf/swoole-tracker](https://github.com/hyperf/swoole-tracker) Hyperf 官方提供的對接 Swoole Tracker 的元件，提供阻塞分析、效能分析、記憶體洩漏分析、執行狀態及呼叫統計等功能
 - [hyperf/task](https://github.com/hyperf/task) Hyperf 官方提供的 Task 元件，對 Swoole 的 Task 機制進行了封裝及抽象，提供便捷的註解用法
 - [hyperf/gotask](https://github.com/hyperf/gotask) GoTask 透過 Swoole 程序管理功能啟動 Go 程序作為 Swoole 主程序邊車(Sidecar)，利用程序通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker
 
@@ -141,6 +141,11 @@
 - [hyperf-ext/jwt](https://github.com/hyperf-ext/jwt) JWT 元件，實現了完整用於 JWT 認證的能力
 - [hyperf-ext/auth](https://github.com/hyperf-ext/auth) 移植自 `illuminate/auth`，基本完整的實現了 Laravel Auth 的功能特性
 - [donjan-deng/hyperf-casbin](https://github.com/donjan-deng/hyperf-casbin) 適配於 Hyperf 的開源訪問控制框架 [Casbin](https://casbin.org/docs/zh-CN/overview)
+
+## 測試
+
+- [hyperf/testing](https://github.com/hyperf/testing) Hyperf 官方提供的單元測試元件
+- [friendsofhyperf/pest-plugin-hyperf](https://github.com/friendsofhyperf/pest-plugin-hyperf) 適配於 Hyperf 的 [Pest](https://pestphp.com/) 外掛，為 Pest 提供協程環境支援
 
 ## 分散式鎖
 
