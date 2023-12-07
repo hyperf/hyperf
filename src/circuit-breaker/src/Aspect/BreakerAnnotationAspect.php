@@ -33,10 +33,6 @@ class BreakerAnnotationAspect extends AbstractAspect
         /** @var CircuitBreaker $annotation */
         $annotation = $metadata->method[CircuitBreaker::class];
 
-        if (! $annotation->fallback) {
-            return $proceedingJoinPoint->process();
-        }
-
         $handlerClass = $annotation->handler;
 
         if (! $this->container->has($handlerClass)) {
