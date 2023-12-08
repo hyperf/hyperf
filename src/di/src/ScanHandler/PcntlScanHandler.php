@@ -38,7 +38,7 @@ class PcntlScanHandler implements ScanHandlerInterface
         if ($pid) {
             pcntl_wait($status);
             if ($status !== 0) {
-                throw new Exception('Fork process execution failed');
+                exit(-1);
             }
 
             return new Scanned(true);
