@@ -1,4 +1,6 @@
-# v3.1.1 - TBD
+# v3.1.2 - TBD
+
+# v3.1.1 - 2023-12-08
 
 ## Fixed
 
@@ -10,7 +12,7 @@
 ## Added
 
 - [#6342](https://github.com/hyperf/hyperf/pull/6342) Added `Coroutine::fork()` method and `Coroutine::pid()` method.
-- [#6360](https://github.com/hyperf/hyperf/pull/6360/files) Added response `content-type` header for swagger server.
+- [#6360](https://github.com/hyperf/hyperf/pull/6360) Added response `content-type` header for swagger server.
 - [#6363](https://github.com/hyperf/hyperf/pull/6363) Added callable type support to the fallback property of CircuitBreaker Attribute.
 
 # v3.1.0 - 2023-12-01
