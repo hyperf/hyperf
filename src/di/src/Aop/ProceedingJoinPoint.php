@@ -72,6 +72,12 @@ class ProceedingJoinPoint
         foreach ($this->arguments['order'] ?? [] as $order) {
             $result[] = $this->arguments['keys'][$order];
         }
+
+        // Variable arguments are always placed at the end.
+        if (isset($this->arguments['variadic']) && isset($order) && $order === $this->arguments['variadic']) {
+            $variadic = array_pop($result);
+            $result = array_merge($result, $variadic);
+        }
         return $result;
     }
 
