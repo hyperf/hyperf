@@ -359,7 +359,7 @@ jobs:
         run: |
           composer test src/redis
 
-  ext-symfony:
+  symfony:
     name: Test for Symfony
     runs-on: 'ubuntu-latest'
     env:
@@ -393,12 +393,14 @@ jobs:
           ./.travis/requirement.install.sh
       - name: Run Test Cases
         run: |
+          cp .travis/.env.example .env
+          
           composer analyse src/command
           composer test src/command
           composer analyse src/config
           composer test src/config
           composer analyse src/di
-          # composer test src/di
+          vendor/bin/phpunit src/di
           composer analyse src/framework
           composer test src/framework
           composer analyse src/server

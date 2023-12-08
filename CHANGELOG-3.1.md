@@ -1,5 +1,9 @@
 # v3.1.2 - TBD
 
+## Added
+
+- [#6357](https://github.com/hyperf/hyperf/pull/6357) Support symfony 7.x for some components such as `command` `config` `devtool` `di` and `server`.
+
 # v3.1.1 - 2023-12-08
 
 ## Fixed
