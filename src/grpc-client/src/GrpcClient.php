@@ -239,7 +239,7 @@ class GrpcClient
                 unset($this->recvChannelMap[$streamId]);
             }
             // Unset recvChannelMap arfter recv
-            if (! $response->pipeline) {
+            if ($response !== false && ! $response->pipeline) {
                 unset($this->recvChannelMap[$streamId]);
                 if (! $channel->isEmpty()) {
                     $channel->pop();
@@ -256,6 +256,11 @@ class GrpcClient
     public function getErrCode(): int
     {
         return $this->httpClient ? $this->httpClient->errCode : 0;
+    }
+
+    public function ping(): bool
+    {
+        return $this->getHttpClient()->ping();
     }
 
     /**
@@ -316,6 +321,9 @@ class GrpcClient
                         break;
                     }
                 } else {
+                    if ($this->ping()) {
+                        continue;
+                    }
                     // If no response, then close all the connection.
                     if ($this->closeRecv()) {
                         break;
