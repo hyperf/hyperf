@@ -38,8 +38,6 @@ use PhpParser\Node\Stmt\Trait_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\NodeVisitorAbstract;
 
-use function Hyperf\Support\value;
-
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
     /**
@@ -210,7 +208,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         }
         // ['param1', 'param2', ...]
         $methodParamsList = new Array_(
-            array_map(fn(Node\Param $param) => new ArrayItem(new String_($param->var->name)), $params),
+            array_map(fn (Node\Param $param) => new ArrayItem(new String_($param->var->name)), $params),
             ['kind' => Array_::KIND_SHORT]
         );
         return new Array_([
