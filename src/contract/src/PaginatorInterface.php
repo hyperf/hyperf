@@ -22,14 +22,14 @@ interface PaginatorInterface
      * Add a set of query string values to the paginator.
      *
      * @param array|string $key
-     * @return $this
+     * @return static
      */
     public function appends($key, ?string $value = null);
 
     /**
      * Get / set the URL fragment to be appended to URLs.
      *
-     * @return $this|string
+     * @return static|string
      */
     public function fragment(?string $fragment = null);
 
