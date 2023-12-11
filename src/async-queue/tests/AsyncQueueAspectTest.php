@@ -26,9 +26,9 @@ use Hyperf\Di\ReflectionManager;
 use HyperfTest\AsyncQueue\Stub\FooProxy;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use PHPUnit\Framework\Attributes\Group;
 
 /**
  * @internal
