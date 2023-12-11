@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\CircuitBreaker\Handler;
 
+use Closure;
 use Hyperf\CircuitBreaker\Annotation\CircuitBreaker as Annotation;
 use Hyperf\CircuitBreaker\CircuitBreaker;
 use Hyperf\CircuitBreaker\CircuitBreakerFactory;
@@ -170,6 +171,9 @@ abstract class AbstractHandler implements HandlerInterface
 
     protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreakerInterface $breaker, Annotation $annotation)
     {
+        if ($annotation->fallback instanceof Closure) {
+            return ($annotation->fallback)($proceedingJoinPoint);
+        }
         [$class, $method] = $this->prepareHandler($annotation->fallback, $proceedingJoinPoint);
 
         $instance = $this->container->get($class);

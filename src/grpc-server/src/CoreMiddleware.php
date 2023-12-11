@@ -146,7 +146,7 @@ class CoreMiddleware extends HttpCoreMiddleware
         $injections = [];
         $definitions = MethodDefinitionCollector::getOrParse($controller, $action);
 
-        foreach ($definitions ?? [] as $definition) {
+        foreach ($definitions as $definition) {
             if (! is_array($definition)) {
                 throw new RuntimeException('Invalid method definition.');
             }
