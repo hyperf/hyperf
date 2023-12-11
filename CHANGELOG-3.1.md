@@ -1,5 +1,9 @@
 # v3.1.2 - TBD
 
+## Fixed
+
+- [#6372](https://github.com/hyperf/hyperf/pull/6372) Fixed bug that AOP not working when using variadic parameters.
+
 ## Added
 
 - [#6357](https://github.com/hyperf/hyperf/pull/6357) Support symfony 7.x for some components such as `command` `config` `devtool` `di` and `server`.
