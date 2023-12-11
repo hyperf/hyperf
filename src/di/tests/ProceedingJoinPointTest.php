@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Di;
 
 use Hyperf\Di\Aop\ProceedingJoinPoint;
@@ -27,7 +26,7 @@ class ProceedingJoinPointTest extends TestCase
     public function testProcessOriginalMethod()
     {
         $obj = new ProceedingJoinPoint(
-            fn() => 1,
+            fn () => 1,
             ProxyTraitObject::class,
             'incr',
             ['keys' => []]
@@ -39,7 +38,7 @@ class ProceedingJoinPointTest extends TestCase
     public function testGetArguments()
     {
         $obj = new ProceedingJoinPoint(
-            fn() => 1,
+            fn () => 1,
             ProxyTraitObject::class,
             'incr',
             ['keys' => []]
@@ -47,7 +46,7 @@ class ProceedingJoinPointTest extends TestCase
         $this->assertSame([], $obj->getArguments());
 
         $obj = new ProceedingJoinPoint(
-            fn() => 1,
+            fn () => 1,
             ProxyTraitObject::class,
             'get4',
             ['order' => ['id', 'variadic'], 'keys' => ['id' => 1, 'variadic' => []], 'variadic' => 'variadic']
@@ -55,7 +54,7 @@ class ProceedingJoinPointTest extends TestCase
         $this->assertSame([1], $obj->getArguments());
 
         $obj = new ProceedingJoinPoint(
-            fn() => 1,
+            fn () => 1,
             ProxyTraitObject::class,
             'get4',
             ['order' => ['id', 'variadic'], 'keys' => ['id' => 1, 'variadic' => [2, 'foo' => 3]], 'variadic' => 'variadic']
@@ -63,7 +62,7 @@ class ProceedingJoinPointTest extends TestCase
         $this->assertSame([1, 2, 'foo' => 3], $obj->getArguments());
 
         $obj = new ProceedingJoinPoint(
-            fn() => 1,
+            fn () => 1,
             ProxyTraitObject::class,
             'get4',
             ['order' => ['id', 'variadic'], 'keys' => ['id' => 1, 'variadic' => [2, 'foo' => 3]], 'variadic' => '']
