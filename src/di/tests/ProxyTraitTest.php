@@ -115,7 +115,7 @@ class ProxyTraitTest extends TestCase
         $this->assertSame('Hyperf', $obj->getName());
     }
 
-    public function testProceedingJoinPointGetParams()
+    public function testProceedingJoinPointGetArguments()
     {
         $aspect = [];
         ApplicationContext::setContainer(value(function () use (&$aspect) {
