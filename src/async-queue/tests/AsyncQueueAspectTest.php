@@ -26,6 +26,7 @@ use Hyperf\Di\ReflectionManager;
 use HyperfTest\AsyncQueue\Stub\FooProxy;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -43,7 +44,7 @@ class AsyncQueueAspectTest extends TestCase
         ReflectionManager::clear();
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
+    #[Group('NonCoroutine')]
     public function testNotAsyncMessage()
     {
         $container = $this->getContainer();
@@ -56,7 +57,7 @@ class AsyncQueueAspectTest extends TestCase
         $this->assertSame([$id, $uuid, $data], Context::get(FooProxy::class));
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
+    #[Group('NonCoroutine')]
     public function testAsyncMessage()
     {
         $container = $this->getContainer();
@@ -69,7 +70,7 @@ class AsyncQueueAspectTest extends TestCase
         $this->assertSame($data, Context::get(FooProxy::class));
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
+    #[Group('NonCoroutine')]
     public function testAsyncMessageVariadic()
     {
         $container = $this->getContainer();

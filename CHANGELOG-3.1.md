@@ -1,4 +1,14 @@
-# v3.1.1 - TBD
+# v3.1.2 - TBD
+
+## Fixed
+
+- [#6372](https://github.com/hyperf/hyperf/pull/6372) Fixed bug that AOP not working when using variadic parameters.
+
+## Added
+
+- [#6357](https://github.com/hyperf/hyperf/pull/6357) Support symfony 7.x for some components such as `command` `config` `devtool` `di` and `server`.
+
+# v3.1.1 - 2023-12-08
 
 ## Fixed
 
@@ -6,11 +16,13 @@
 - [#6352](https://github.com/hyperf/hyperf/pull/6352) Fixed bug that nacos config center cannot work when using grpc protocol.
 - [#6350](https://github.com/hyperf/hyperf/pull/6350) Fixed bug that the recv channel cannot be found, because `GrpcClient::runReceiveCoroutine` will unset streamId before recv method.
 - [#6361](https://github.com/hyperf/hyperf/pull/6361) Fixed bug that `Hyperf\SocketIOServer\Emitter\Future` cannot be resolved.
+- [#6369](https://github.com/hyperf/hyperf/pull/6369) Fixed bug that the main process did not handle the abnormal exit of the fork process.
 - [#6375](https://github.com/hyperf/hyperf/pull/6375) Fixed bug that castAttribute method converts Expression.
+
 ## Added
 
 - [#6342](https://github.com/hyperf/hyperf/pull/6342) Added `Coroutine::fork()` method and `Coroutine::pid()` method.
-- [#6360](https://github.com/hyperf/hyperf/pull/6360/files) Added response `content-type` header for swagger server.
+- [#6360](https://github.com/hyperf/hyperf/pull/6360) Added response `content-type` header for swagger server.
 - [#6363](https://github.com/hyperf/hyperf/pull/6363) Added callable type support to the fallback property of CircuitBreaker Attribute.
 
 # v3.1.0 - 2023-12-01

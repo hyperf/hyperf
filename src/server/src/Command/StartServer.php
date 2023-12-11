@@ -32,7 +32,7 @@ class StartServer extends Command
         $this->setDescription('Start hyperf servers.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->checkEnvironment($output);
 
