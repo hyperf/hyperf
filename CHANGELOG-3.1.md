@@ -1,7 +1,8 @@
 # v3.1.2 - TBD
 
 ## Fixed
-- [#6372](https://github.com/hyperf/hyperf/pull/6372) Fixed AOP not working on variadic parameters.
+
+- [#6372](https://github.com/hyperf/hyperf/pull/6372) Fixed bug that AOP not working when using variadic parameters.
 
 ## Added
 
