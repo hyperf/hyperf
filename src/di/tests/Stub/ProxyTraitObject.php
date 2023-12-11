@@ -70,4 +70,18 @@ class ProxyTraitObject
             return 'HyperfCloud';
         });
     }
+
+    public function getParams(?int $id = 1, string ...$variadic)
+    {
+        return self::__proxyCall(ProxyTraitObject::class, __FUNCTION__, ['order' => ['id', 'variadic'], 'keys' => compact(['id', 'variadic']), 'variadic' => 'variadic'], function (?int $id = 1, string ...$variadic) {
+            return compact('id', 'variadic') + ['func_get_args' => func_get_args()];
+        });
+    }
+
+    public function getParams2(?int $id = 1, string ...$variadic)
+    {
+        return self::__proxyCall(ProxyTraitObject::class, __FUNCTION__, ['order' => ['id', 'variadic'], 'keys' => compact(['id', 'variadic']), 'variadic' => 'variadic'], function (?int $id = 1, string ...$variadic) {
+            return compact('id', 'variadic') + ['func_get_args' => func_get_args()];
+        });
+    }
 }

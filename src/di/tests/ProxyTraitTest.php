@@ -15,6 +15,7 @@ use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use HyperfTest\Di\Stub\Aspect\GetNameAspect;
+use HyperfTest\Di\Stub\Aspect\GetParamsAspect;
 use HyperfTest\Di\Stub\Aspect\IncrAspect;
 use HyperfTest\Di\Stub\Aspect\IncrAspectAnnotation;
 use HyperfTest\Di\Stub\ProxyTraitObject;
@@ -112,6 +113,30 @@ class ProxyTraitTest extends TestCase
 
         $obj = new ProxyTraitObject();
         $this->assertSame('Hyperf', $obj->getName());
+    }
+
+    public function testProceedingJoinPointGetParams()
+    {
+        $aspect = [];
+        ApplicationContext::setContainer(value(function () use (&$aspect) {
+            $container = Mockery::mock(ContainerInterface::class);
+            $container->shouldReceive('get')->with(Mockery::any())->andReturnUsing(function ($class) use (&$aspect) {
+                $aspect[] = $class;
+                return new $class();
+            });
+            return $container;
+        }));
+        AspectCollector::clear();
+
+        $obj = new ProxyTraitObject();
+        $this->assertEquals(['id' => 1, 'variadic' =>['2', 'foo' => '3'], 'func_get_args' => [1, '2']], $obj->getParams(1, '2', foo:'3'));
+
+        AspectCollector::set('classes', [
+            GetParamsAspect::class => [ProxyTraitObject::class],
+        ]);
+
+        $obj = new ProxyTraitObject();
+        $this->assertEquals([1, '2', 'foo' => '3'], $obj->getParams2(1, '2', foo:'3'));
     }
 
     public function testHandleAround()
