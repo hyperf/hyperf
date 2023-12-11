@@ -129,14 +129,14 @@ class ProxyTraitTest extends TestCase
         AspectCollector::clear();
 
         $obj = new ProxyTraitObject();
-        $this->assertEquals(['id' => 1, 'variadic' =>['2', 'foo' => '3'], 'func_get_args' => [1, '2']], $obj->getParams(1, '2', foo:'3'));
+        $this->assertEquals(['id' => 1, 'variadic' => ['2', 'foo' => '3'], 'func_get_args' => [1, '2']], $obj->getParams(1, '2', foo: '3'));
 
         AspectCollector::set('classes', [
             GetParamsAspect::class => [ProxyTraitObject::class],
         ]);
 
         $obj = new ProxyTraitObject();
-        $this->assertEquals([1, '2', 'foo' => '3'], $obj->getParams2(1, '2', foo:'3'));
+        $this->assertEquals([1, '2', 'foo' => '3'], $obj->getParams2(1, '2', foo: '3'));
     }
 
     public function testHandleAround()
