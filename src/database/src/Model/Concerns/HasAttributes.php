@@ -26,6 +26,7 @@ use Hyperf\Database\Exception\InvalidCastException;
 use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Database\Query\Expression;
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
 use LogicException;
@@ -887,6 +888,10 @@ trait HasAttributes
      */
     protected function castAttribute(string $key, mixed $value): mixed
     {
+        if ($value instanceof Expression) {
+            return $value;
+        }
+
         $castType = $this->getCastType($key);
 
         if (is_null($value) && in_array($castType, static::$primitiveCastTypes)) {
