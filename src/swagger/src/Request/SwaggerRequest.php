@@ -56,9 +56,11 @@ class SwaggerRequest extends FormRequest
         }
 
         $callback = $dispatched->handler?->callback;
-        if (! $callback || ! is_array($callback)) {
+        if (! $callback) {
             throw new RuntimeException('The SwaggerRequest is only used by swagger annotations.');
         }
+
+        $callback = $this->prepareHandler($callback);
 
         return AttributeCollector::get($callback[0], $callback[1]);
     }
