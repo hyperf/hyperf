@@ -44,4 +44,20 @@ class SwaggerRequest extends FormRequest
 
         return RuleCollector::get($callback[0], $callback[1]);
     }
+
+    public function attributes(): array
+    {
+        /** @var Dispatched $dispatched */
+        $dispatched = RequestContext::getOrNull()?->getAttribute(Dispatched::class);
+        if (! $dispatched) {
+            throw new RuntimeException('The request is invalid.');
+        }
+
+        $callback = $dispatched->handler?->callback;
+        if (! $callback || ! is_array($callback)) {
+            throw new RuntimeException('The SwaggerRequest is only used by swagger annotations.');
+        }
+
+        return AttributeCollector::get($callback[0], $callback[1]);
+    }
 }
