@@ -800,6 +800,15 @@ class ModelRealBuilderTest extends TestCase
         }
     }
 
+    public function testUpdateExpression()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        $oldCount = UserExt::query()->where('id', 1)->value('count');
+        $userExt = UserExt::updateOrCreate(['id' => 1], ['count' => Db::raw('count + 1')]);
+        $this->assertEquals($oldCount + 1, $userExt->count);
+    }
+
     protected function getContainer()
     {
         $dispatcher = Mockery::mock(EventDispatcherInterface::class);
