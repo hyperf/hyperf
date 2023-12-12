@@ -1038,7 +1038,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * getContextValidatorKey.
+     * Get a validatorKey for context.
      */
     protected function getContextValidatorKey(string $key): string
     {
