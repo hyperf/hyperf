@@ -725,6 +725,24 @@ class Validator implements ValidatorContract
     }
 
     /**
+     * Set scene array | The Current SceneConfig collected from FormRequest::getSceneConfig.
+     * @return $this
+     */
+    public function scene(array $scene): static
+    {
+        Context::set($this->getContextValidatorKey('scene'), $scene);
+        return $this;
+    }
+
+    /**
+     * Get scene array.
+     */
+    public function getScene(): ?array
+    {
+        return Context::get($this->getContextValidatorKey('scene'));
+    }
+
+    /**
      * Validate a given attribute against a rule.
      *
      * @param object|string $rule
@@ -1020,29 +1038,7 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * Set scene array | The Current SceneConfig collected from FormRequest::getSceneConfig
-     * @param array $scene
-     * @return $this
-     */
-    public function scene(array $scene): static
-    {
-        Context::set($this->getContextValidatorKey('scene'), $scene);
-        return $this;
-    }
-
-    /**
-     * Get scene array
-     * @return array|null
-     */
-    public function getScene(): ?array
-    {
-        return Context::get($this->getContextValidatorKey('scene'));
-    }
-
-    /**
-     * getContextValidatorKey
-     * @param string $key
-     * @return string
+     * getContextValidatorKey.
      */
     protected function getContextValidatorKey(string $key): string
     {

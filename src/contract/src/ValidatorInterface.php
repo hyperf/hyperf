@@ -56,8 +56,7 @@ interface ValidatorInterface extends MessageProvider
     public function errors(): MessageBag;
 
     /**
-     * Set scene of the validation
-     * @param array $scene
+     * Set scene of the validation.
      * @return $this
      */
     public function scene(array $scene): static;
