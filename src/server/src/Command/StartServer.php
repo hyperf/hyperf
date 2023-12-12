@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Coroutine;
 use Hyperf\Server\ServerFactory;
+use Hyperf\Support\Composer;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -56,7 +57,7 @@ class StartServer extends Command
 
     private function checkEnvironment(OutputInterface $output)
     {
-        if (! extension_loaded('swoole')) {
+        if (! extension_loaded('swoole') || ! Composer::hasPackage('hyperf/polyfill-coroutine')) {
             return;
         }
         /**

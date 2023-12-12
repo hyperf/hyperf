@@ -45,6 +45,7 @@ class QueryParameter extends \OpenApi\Attributes\QueryParameter implements Annot
         ?array $x = null,
         ?array $attachables = null,
         public mixed $rules = null,
+        public mixed $attribute = null,
     ) {
         parent::__construct(
             $parameter,
