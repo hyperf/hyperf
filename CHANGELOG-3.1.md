@@ -10,6 +10,10 @@
 - [#6357](https://github.com/hyperf/hyperf/pull/6357) Support symfony 7.x for some components such as `command` `config` `devtool` `di` and `server`.
 - [#6373](https://github.com/hyperf/hyperf/pull/6373) Support `ping` method for `grpc client`.
 
+## Optimized
+
+- [#6376](https://github.com/hyperf/hyperf/pull/6376) Don't need to close swoole short name when don't use swoole or don't require `hyperf/polyfill-coroutine` component.
+
 # v3.1.1 - 2023-12-08
 
 ## Fixed
