@@ -86,9 +86,13 @@ class RateLimitAnnotationAspect implements AroundInterface
      */
     public function getWeightingAnnotation(array $annotations): RateLimit
     {
-        $property = array_merge($this->annotationProperty, array_filter($this->config, function ($key) {
-            return in_array($key, array_keys($this->annotationProperty));
-        }, ARRAY_FILTER_USE_KEY));
+        $property = $this->annotationProperty;
+        foreach ($this->annotationProperty as $key => $value) {
+            if (! empty($this->config[$key])) {
+                $property[$key] = $this->config[$key];
+            }
+        }
+
         /** @var null|RateLimit $annotation */
         foreach ($annotations as $annotation) {
             if (! $annotation) {
