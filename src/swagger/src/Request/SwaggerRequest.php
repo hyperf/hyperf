@@ -38,9 +38,11 @@ class SwaggerRequest extends FormRequest
         }
 
         $callback = $dispatched->handler?->callback;
-        if (! $callback || ! is_array($callback)) {
+        if (! $callback) {
             throw new RuntimeException('The SwaggerRequest is only used by swagger annotations.');
         }
+
+        $callback = $this->prepareHandler($callback);
 
         return RuleCollector::get($callback[0], $callback[1]);
     }
@@ -59,5 +61,26 @@ class SwaggerRequest extends FormRequest
         }
 
         return AttributeCollector::get($callback[0], $callback[1]);
+    }
+
+    /**
+     * @see \Hyperf\HttpServer\CoreMiddleware::prepareHandler()
+     */
+    protected function prepareHandler(array|string $handler): array
+    {
+        if (is_string($handler)) {
+            if (str_contains($handler, '@')) {
+                return explode('@', $handler);
+            }
+            $array = explode('::', $handler);
+            if (! isset($array[1]) && class_exists($handler) && method_exists($handler, '__invoke')) {
+                $array[1] = '__invoke';
+            }
+            return [$array[0], $array[1] ?? null];
+        }
+        if (is_array($handler) && isset($handler[0], $handler[1])) {
+            return $handler;
+        }
+        throw new RuntimeException('Handler not exist.');
     }
 }
