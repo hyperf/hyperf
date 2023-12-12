@@ -12,7 +12,7 @@
 
 ## Optimized
 
-- [#6376](https://github.com/hyperf/hyperf/pull/6376) Don't need to close swoole short name when don't use swoole or don't required `hyperf/polyfill-coroutine`.
+- [#6376](https://github.com/hyperf/hyperf/pull/6376) Don't need to close swoole short name when don't use swoole or don't require `hyperf/polyfill-coroutine` component.
 
 # v3.1.1 - 2023-12-08
 
