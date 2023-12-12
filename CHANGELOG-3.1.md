@@ -3,10 +3,12 @@
 ## Fixed
 
 - [#6372](https://github.com/hyperf/hyperf/pull/6372) Fixed bug that AOP not working when using variadic parameters.
+- [#6374](https://github.com/hyperf/hyperf/pull/6374) Fixed bug that `RateLimitAnnotationAspect::getWeightingAnnotation()` cannot work when using config `rate_limit.storage`.
 
 ## Added
 
 - [#6357](https://github.com/hyperf/hyperf/pull/6357) Support symfony 7.x for some components such as `command` `config` `devtool` `di` and `server`.
+- [#6373](https://github.com/hyperf/hyperf/pull/6373) Support `ping` method for `grpc client`.
 
 ## Optimized
 
