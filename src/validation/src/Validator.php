@@ -14,6 +14,7 @@ namespace Hyperf\Validation;
 use BadMethodCallException;
 use Closure;
 use Hyperf\Collection\Arr;
+use Hyperf\Context\Context;
 use Hyperf\Contract\MessageBag as MessageBagContract;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface as ValidatorContract;
@@ -237,7 +238,7 @@ class Validator implements ValidatorContract
         // We'll spin through each rule, validating the attributes attached to that
         // rule. Any error messages will be added to the containers with each of
         // the other error messages, returning true if we don't have messages.
-        foreach ($this->rules as $attribute => $rules) {
+        foreach ($this->getRules() as $attribute => $rules) {
             $attribute = str_replace('\.', '->', $attribute);
 
             foreach ($rules as $rule) {
@@ -437,7 +438,12 @@ class Validator implements ValidatorContract
      */
     public function getRules(): array
     {
-        return $this->rules;
+        $rules = $this->rules;
+        $scene = $this->getScene();
+        if ($scene) {
+            return Arr::only($rules, $this->getScene());
+        }
+        return $rules;
     }
 
     /**
@@ -971,13 +977,14 @@ class Validator implements ValidatorContract
      */
     protected function getRule(string $attribute, mixed $rules): ?array
     {
-        if (! array_key_exists($attribute, $this->rules)) {
+        $rulesValue = $this->getRules();
+        if (! array_key_exists($attribute, $rulesValue)) {
             return null;
         }
 
         $rules = (array) $rules;
 
-        foreach ($this->rules[$attribute] as $rule) {
+        foreach ($rulesValue[$attribute] as $rule) {
             [$rule, $parameters] = ValidationRuleParser::parse($rule);
 
             if (in_array($rule, $rules)) {
@@ -1010,5 +1017,35 @@ class Validator implements ValidatorContract
         [$class, $method] = Str::parseCallback($callback, 'validate');
 
         return call_user_func_array([make($class), $method], $parameters);
+    }
+
+    /**
+     * Set scene array | The Current SceneConfig collected from FormRequest::getSceneConfig
+     * @param array $scene
+     * @return $this
+     */
+    public function scene(array $scene): static
+    {
+        Context::set($this->getContextValidatorKey('scene'), $scene);
+        return $this;
+    }
+
+    /**
+     * Get scene array
+     * @return array|null
+     */
+    public function getScene(): ?array
+    {
+        return Context::get($this->getContextValidatorKey('scene'));
+    }
+
+    /**
+     * getContextValidatorKey
+     * @param string $key
+     * @return string
+     */
+    protected function getContextValidatorKey(string $key): string
+    {
+        return sprintf('%s:%s', spl_object_hash($this), $key);
     }
 }

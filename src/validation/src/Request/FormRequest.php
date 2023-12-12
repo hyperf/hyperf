@@ -61,6 +61,15 @@ class FormRequest extends Request implements ValidatesWhenResolved
     }
 
     /**
+     * get the scene config from the request config
+     * @return array
+     */
+    public function getSceneConfig(): array
+    {
+        return $this->scenes;
+    }
+
+    /**
      * Get the proper failed validation response for the request.
      */
     public function response(): ResponseInterface
