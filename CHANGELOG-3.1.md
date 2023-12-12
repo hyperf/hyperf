@@ -7,6 +7,7 @@
 ## Added
 
 - [#6357](https://github.com/hyperf/hyperf/pull/6357) Support symfony 7.x for some components such as `command` `config` `devtool` `di` and `server`.
+- [#6373](https://github.com/hyperf/hyperf/pull/6373) Support `ping` method for `grpc client`.
 
 # v3.1.1 - 2023-12-08
 
