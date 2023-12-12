@@ -12,7 +12,7 @@
 
 ## Optimized
 
-- [#6376](https://github.com/hyperf/hyperf/pull/6376) Optimized the check for `swoole` extension loaded and `hyperf/polyfill-coroutine` package required.
+- [#6376](https://github.com/hyperf/hyperf/pull/6376) Don't need to close swoole short name when don't use swoole or don't required `hyperf/polyfill-coroutine`.
 
 # v3.1.1 - 2023-12-08
 
