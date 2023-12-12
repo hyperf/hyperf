@@ -62,11 +62,15 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * get the scene config from the request config
+     * @param string|null $config
      * @return array
      */
-    public function getSceneConfig(): array
+    public function getSceneConfig(string $config = null): array
     {
-        return $this->scenes;
+        if (empty($config)) {
+            return $this->scenes;
+        }
+        return $this->scenes[$config];
     }
 
     /**
