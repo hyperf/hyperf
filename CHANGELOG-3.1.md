@@ -8,6 +8,10 @@
 
 - [#6357](https://github.com/hyperf/hyperf/pull/6357) Support symfony 7.x for some components such as `command` `config` `devtool` `di` and `server`.
 
+## Optimized
+
+- [#6376](https://github.com/hyperf/hyperf/pull/6376) Optimized the check for `swoole` extension loaded and `hyperf/polyfill-coroutine` package required.
+
 # v3.1.1 - 2023-12-08
 
 ## Fixed
