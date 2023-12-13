@@ -23,7 +23,7 @@ namespace HyperfTest\Swagger;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Swagger\Request\ValidationCollector;
-use HyperfTest\Swagger\stub\ExampleController;
+use HyperfTest\Swagger\Stub\ExampleController;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
