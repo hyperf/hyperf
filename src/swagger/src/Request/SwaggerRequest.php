@@ -31,23 +31,19 @@ class SwaggerRequest extends FormRequest
      */
     public function rules(): array
     {
-        /** @var Dispatched $dispatched */
-        $dispatched = RequestContext::getOrNull()?->getAttribute(Dispatched::class);
-        if (! $dispatched) {
-            throw new RuntimeException('The request is invalid.');
-        }
+        $callback = $this->getCallbackByContext();
 
-        $callback = $dispatched->handler?->callback;
-        if (! $callback) {
-            throw new RuntimeException('The SwaggerRequest is only used by swagger annotations.');
-        }
-
-        $callback = $this->prepareHandler($callback);
-
-        return RuleCollector::get($callback[0], $callback[1]);
+        return ValidationCollector::get($callback[0], $callback[1], 'rules');
     }
 
     public function attributes(): array
+    {
+        $callback = $this->getCallbackByContext();
+
+        return ValidationCollector::get($callback[0], $callback[1], 'attribute');
+    }
+
+    protected function getCallbackByContext(): array
     {
         /** @var Dispatched $dispatched */
         $dispatched = RequestContext::getOrNull()?->getAttribute(Dispatched::class);
@@ -60,9 +56,7 @@ class SwaggerRequest extends FormRequest
             throw new RuntimeException('The SwaggerRequest is only used by swagger annotations.');
         }
 
-        $callback = $this->prepareHandler($callback);
-
-        return AttributeCollector::get($callback[0], $callback[1]);
+        return $this->prepareHandler($callback);
     }
 
     /**
