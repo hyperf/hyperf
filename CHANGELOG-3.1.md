@@ -10,6 +10,7 @@
 - [#6357](https://github.com/hyperf/hyperf/pull/6357) Support symfony 7.x for some components such as `command` `config` `devtool` `di` and `server`.
 - [#6373](https://github.com/hyperf/hyperf/pull/6373) Support `ping` method for `grpc client`.
 - [#6379](https://github.com/hyperf/hyperf/pull/6379) Support to read custom attribute for validation when using swagger.
+- [#6380](https://github.com/hyperf/hyperf/pull/6380) Support collect swagger validation rules and attribute for mediaType request body.
 
 ## Optimized
 
