@@ -70,7 +70,7 @@ class ValidationCollector
 
         foreach ($body->_content->properties as $property) {
             if ($property instanceof Property) {
-                if ($property->{$field}) {
+                if (isset($property->{$field}) && $property->{$field}) {
                     $data[$property->property] = $property->{$field};
                 }
             }
@@ -98,7 +98,7 @@ class ValidationCollector
                 if (! $property instanceof Property) {
                     continue;
                 }
-                if ($property->{$field}) {
+                if (isset($property->{$field}) && $property->{$field}) {
                     $data[$property->property] = $property->{$field};
                 }
             }
