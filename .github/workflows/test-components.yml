@@ -358,3 +358,55 @@ jobs:
       - name: Run Test Cases
         run: |
           composer test src/redis
+
+  symfony:
+    name: Test for Symfony
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '8.3', '8.2', '8.1' ]
+        symfony-version: [ '^6.0', '^7.0' ]
+        exclude:
+          - php-version: '8.1'
+            symfony-version: '^7.0'
+      max-parallel: 2
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          extensions: ${{ matrix.redis }}, swoole
+          ini-values: opcache.enable_cli=1
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Setup Packages
+        run: |
+          composer remove friendsofphp/php-cs-fixer --dev --no-update
+          for package in `cat composer.json|grep "symfony/"| awk -F '"' '{print $2}'`; do composer require "${package}:${{ matrix.symfony-version }}" --dev --no-update; done
+          ./.travis/requirement.install.sh
+      - name: Run Test Cases
+        run: |
+          cp .travis/.env.example .env
+          
+          composer analyse src/command
+          composer test src/command
+          composer analyse src/config
+          composer test src/config
+          composer analyse src/di
+          vendor/bin/phpunit src/di
+          composer analyse src/framework
+          composer test src/framework
+          composer analyse src/server
+          composer test src/server
+          # composer analyse src/serializer
+          # composer test src/serializer
+          # composer analyse src/task
+          # composer test src/task
+

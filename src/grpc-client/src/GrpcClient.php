@@ -19,6 +19,7 @@ use Hyperf\GrpcClient\Exception\GrpcClientException;
 use InvalidArgumentException;
 use RuntimeException;
 use Swoole\Coroutine\Http2\Client as SwooleHttp2Client;
+use Swoole\Http2\Response;
 
 class GrpcClient
 {
@@ -136,7 +137,7 @@ class GrpcClient
                 // If this channel has pending pop, we should push 'false' to negate the pop.
                 // Otherwise we should release it directly.
                 while ($channel->stats()['consumer_num'] !== 0) {
-                    $channel->push(false);
+                    $channel->push(-1);
                 }
                 $this->channelPool->release($channel);
             }
@@ -234,12 +235,12 @@ class GrpcClient
         $channel = $this->recvChannelMap[$streamId] ?? null;
         if ($channel instanceof Channel) {
             $response = $channel->pop($timeout === null ? $this->timeout : $timeout);
-            // Pop timeout
-            if ($response === false && $channel->errCode === SWOOLE_CHANNEL_TIMEOUT) {
+            if ($response === -1) {
                 unset($this->recvChannelMap[$streamId]);
+                return false;
             }
             // Unset recvChannelMap arfter recv
-            if (! $response->pipeline) {
+            if (($response === false && $channel->errCode === SWOOLE_CHANNEL_TIMEOUT) || ($response instanceof Response && ! $response->pipeline)) {
                 unset($this->recvChannelMap[$streamId]);
                 if (! $channel->isEmpty()) {
                     $channel->pop();
@@ -256,6 +257,11 @@ class GrpcClient
     public function getErrCode(): int
     {
         return $this->httpClient ? $this->httpClient->errCode : 0;
+    }
+
+    public function ping(): bool
+    {
+        return $this->getHttpClient()->ping();
     }
 
     /**
@@ -316,6 +322,9 @@ class GrpcClient
                         break;
                     }
                 } else {
+                    if ($this->ping()) {
+                        continue;
+                    }
                     // If no response, then close all the connection.
                     if ($this->closeRecv()) {
                         break;

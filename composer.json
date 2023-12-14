@@ -409,6 +409,7 @@
             "HyperfTest\\Stringable\\": "src/stringable/tests/",
             "HyperfTest\\SuperGlobals\\": "src/super-globals/tests/",
             "HyperfTest\\Support\\": "src/support/tests/",
+            "HyperfTest\\Swagger\\": "src/swagger/tests/",
             "HyperfTest\\Tappable\\": "src/tappable/tests/",
             "HyperfTest\\Task\\": "src/task/tests/",
             "HyperfTest\\Testing\\": "src/testing/tests/",

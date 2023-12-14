@@ -34,6 +34,7 @@ trait ProxyTrait
 
     /**
      * @TODO This method will be called everytime, should optimize it later.
+     * @deprecated v3.2
      */
     protected static function __getParamsMap(string $className, string $method, array $args): array
     {

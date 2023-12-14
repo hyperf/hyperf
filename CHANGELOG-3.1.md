@@ -1,4 +1,23 @@
-# v3.1.1 - TBD
+# v3.1.2 - TBD
+
+## Fixed
+
+- [#6372](https://github.com/hyperf/hyperf/pull/6372) Fixed bug that AOP not working when using variadic parameters.
+- [#6374](https://github.com/hyperf/hyperf/pull/6374) Fixed bug that `RateLimitAnnotationAspect::getWeightingAnnotation()` cannot work when using config `rate_limit.storage`.
+- [#6384](https://github.com/hyperf/hyperf/pull/6384) Fixed bug that `scout` cannot work when using elasticsearch(which version is less than 7) without index.
+
+## Added
+
+- [#6357](https://github.com/hyperf/hyperf/pull/6357) Support symfony 7.x for some components such as `command` `config` `devtool` `di` and `server`.
+- [#6373](https://github.com/hyperf/hyperf/pull/6373) Support `ping` method for `grpc client`.
+- [#6379](https://github.com/hyperf/hyperf/pull/6379) Support to read custom attribute for validation when using swagger.
+- [#6380](https://github.com/hyperf/hyperf/pull/6380) Support collect swagger validation rules and attribute for mediaType request body.
+
+## Optimized
+
+- [#6376](https://github.com/hyperf/hyperf/pull/6376) Don't need to close swoole short name when don't use swoole or don't require `hyperf/polyfill-coroutine` component.
+
+# v3.1.1 - 2023-12-08
 
 ## Fixed
 
@@ -6,11 +25,12 @@
 - [#6352](https://github.com/hyperf/hyperf/pull/6352) Fixed bug that nacos config center cannot work when using grpc protocol.
 - [#6350](https://github.com/hyperf/hyperf/pull/6350) Fixed bug that the recv channel cannot be found, because `GrpcClient::runReceiveCoroutine` will unset streamId before recv method.
 - [#6361](https://github.com/hyperf/hyperf/pull/6361) Fixed bug that `Hyperf\SocketIOServer\Emitter\Future` cannot be resolved.
+- [#6369](https://github.com/hyperf/hyperf/pull/6369) Fixed bug that the main process did not handle the abnormal exit of the fork process.
 
 ## Added
 
 - [#6342](https://github.com/hyperf/hyperf/pull/6342) Added `Coroutine::fork()` method and `Coroutine::pid()` method.
-- [#6360](https://github.com/hyperf/hyperf/pull/6360/files) Added response `content-type` header for swagger server.
+- [#6360](https://github.com/hyperf/hyperf/pull/6360) Added response `content-type` header for swagger server.
 - [#6363](https://github.com/hyperf/hyperf/pull/6363) Added callable type support to the fallback property of CircuitBreaker Attribute.
 
 # v3.1.0 - 2023-12-01
