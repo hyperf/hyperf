@@ -23,6 +23,9 @@ class ValidationCollector
 {
     protected static array $data = [];
 
+    /**
+     * @param string $field rules or attribute
+     */
     public static function get(string $class, string $method, string $field): array
     {
         if (! empty(static::$data[$class][$method][$field])) {
