@@ -494,3 +494,15 @@ $exitCode = $application->run($input, $output);
 // 第二种方式: 会暴露异常, 需要自己捕捉和处理运行中的异常, 否则会阻止程序的返回
 $exitCode = $application->find($command)->run($input, $output);
 ```
+
+## 在闭包中运行命令
+
+您可以在`config\console.php`中快速定义命令
+
+```php
+use Hyperf\Command\Console;
+
+Console::command('hello', function () {
+    $this->comment('Hello, Hyperf!');
+})->describe('This is a demo closure command.');
+```
