@@ -66,7 +66,7 @@ class ElasticsearchEngine extends Engine
                 $update = [
                     '_id' => $model->getKey(),
                     '_index' => $model->searchableAs(),
-                    ...$this->appendType()
+                    ...$this->appendType(),
                 ];
             }
             $params['body'][] = ['update' => $update];
@@ -98,7 +98,7 @@ class ElasticsearchEngine extends Engine
                 $delete = [
                     '_id' => $model->getKey(),
                     '_index' => $model->searchableAs(),
-                    ...$this->appendType()
+                    ...$this->appendType(),
                 ];
             }
             $params['body'][] = ['delete' => $delete];
