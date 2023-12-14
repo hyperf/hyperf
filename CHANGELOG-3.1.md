@@ -4,7 +4,7 @@
 
 - [#6372](https://github.com/hyperf/hyperf/pull/6372) Fixed bug that AOP not working when using variadic parameters.
 - [#6374](https://github.com/hyperf/hyperf/pull/6374) Fixed bug that `RateLimitAnnotationAspect::getWeightingAnnotation()` cannot work when using config `rate_limit.storage`.
-- [#6384](https://github.com/hyperf/hyperf/pull/6384) Fixed bug that scout cannot work when using elasticsearch(less than 7) without index.
+- [#6384](https://github.com/hyperf/hyperf/pull/6384) Fixed bug that `scout` cannot work when using elasticsearch(which version is less than 7) without index.
 
 ## Added
 
