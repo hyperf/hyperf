@@ -32,15 +32,19 @@ class Decoder
                 ++$i;
             }
             if ($payload[$i] === '?') {
-                ++$i;
-                $query = '';
-                while ($payload[$i] !== ',') {
-                    $query .= $payload[$i];
-                    ++$i;
+
+                // Check if the SocketIO query data format is correct
+                if (str_contains(substr($payload, $i + 1, -1), ',') === true) {
+                    $queryStr = '';
+                    while ($payload[$i] !== ',') {
+                        $queryStr .= $payload[$i];
+                        ++$i;
+                    }
+                    $result = [];
+                    parse_str($queryStr, $result);
+                    $query = $result;
                 }
-                $result = [];
-                parse_str($query, $result);
-                $query = $result;
+                ++$i;
             }
             ++$i;
         }
