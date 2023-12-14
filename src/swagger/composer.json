@@ -25,6 +25,11 @@
             "Hyperf\\Swagger\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Swagger\\": "tests/"
+        }
+    },
     "suggest": {
         "hyperf/validation": "Required to use SwaggerRequest."
     },
