@@ -41,9 +41,7 @@ class ElasticsearchEngine extends Engine
      */
     public function __construct(protected Client $elastic, ?string $index = null)
     {
-        if ($index) {
-            $this->index = $this->initIndex($elastic, $index);
-        }
+        $this->index = $this->initIndex($elastic, $index);
     }
 
     /**
