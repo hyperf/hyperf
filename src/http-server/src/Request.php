@@ -28,6 +28,7 @@ use SplFileInfo;
 
 use function Hyperf\Collection\data_get;
 use function Hyperf\Support\value;
+use function Hyperf\Support\with;
 
 /**
  * @property string $pathInfo
@@ -427,7 +428,9 @@ class Request implements RequestInterface
 
     public function getServerParams(): array
     {
-        return $this->call(__FUNCTION__, func_get_args());
+        return with($this->call(__FUNCTION__, func_get_args()), function ($serverParams) {
+            return array_merge($serverParams, array_change_key_case($serverParams, CASE_UPPER));
+        });
     }
 
     public function getCookieParams(): array
