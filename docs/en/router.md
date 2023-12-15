@@ -151,14 +151,6 @@ class UserController
 
 We also provide a variety of quick and convenient `mapping` annotations, such as `#[GetMapping]`, `#[PostMapping]`, `#[PutMapping]`, `#[PatchMapping]` and `#[DeleteMapping]`, each corresponding with a matching request method.
 
-- When using `#[Controller]` annotation, `use Hyperf\HttpServer\Annotation\Controller` namespace is required.
-- When using `#[RequestMapping]` annotation, `use Hyperf\HttpServer\Annotation\RequestMapping` namespace is required.
-- When using `#[GetMapping]` annotation, `use Hyperf\HttpServer\Annotation\GetMapping` namespace is required.
-- When using `#[PostMapping]` annotation, `use Hyperf\HttpServer\Annotation\PostMapping` namespace is required.
-- When using `#[PutMapping]` annotation, `use Hyperf\HttpServer\Annotation\PutMapping` namespace is required.
-- When using `#[PatchMapping]` annotation, `use Hyperf\HttpServer\Annotation\PatchMapping` namespace is required.
-- When using `#[DeleteMapping]` annotation, `use Hyperf\HttpServer\Annotation\DeleteMapping` namespace is required.
-
 ```php
 <?php
 declare(strict_types=1);
