@@ -41,9 +41,7 @@ class ElasticsearchEngine extends Engine
      */
     public function __construct(protected Client $elastic, ?string $index = null)
     {
-        if ($index) {
-            $this->index = $this->initIndex($elastic, $index);
-        }
+        $this->index = $this->initIndex($elastic, $index);
     }
 
     /**
@@ -193,7 +191,7 @@ class ElasticsearchEngine extends Engine
             ->unsearchable();
     }
 
-    protected function initIndex(Client $client, string $index): ?string
+    protected function initIndex(Client $client, ?string $index): ?string
     {
         if (! static::$version) {
             try {

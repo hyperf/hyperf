@@ -1,5 +1,9 @@
 # v3.1.3 - TBD
 
+## Fixed
+
+- [#6389](https://github.com/hyperf/hyperf/pull/6389) Fixed bug that es version cannot be found when the index is null.
+
 # v3.1.2 - 2023-12-15
 
 ## Fixed
