@@ -191,7 +191,7 @@ class ElasticsearchEngine extends Engine
             ->unsearchable();
     }
 
-    protected function initIndex(Client $client, string $index): ?string
+    protected function initIndex(Client $client, ?string $index): ?string
     {
         if (! static::$version) {
             try {
