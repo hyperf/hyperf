@@ -27,6 +27,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     use Concerns\InteractsWithModelFactory;
     use Concerns\MakesHttpRequests;
     use Concerns\RunTestsInCoroutine;
+    use Concerns\InteractsWithDatabase;
 
     /**
      * The callbacks that should be run after the application is created.
