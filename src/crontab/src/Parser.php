@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
+use DateTimeZone;
 use InvalidArgumentException;
 
 class Parser
@@ -34,7 +35,7 @@ class Parser
      * @return Carbon[]
      * @throws InvalidArgumentException
      */
-    public function parse(string $crontabString, $startTime = null, string|\DateTimeZone $timezone = null): array
+    public function parse(string $crontabString, $startTime = null, null|string|DateTimeZone $timezone = null): array
     {
         if (! $this->isValid($crontabString)) {
             throw new InvalidArgumentException('Invalid cron string: ' . $crontabString);

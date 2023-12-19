@@ -41,6 +41,8 @@ class Crontab
 
     protected bool $enable = true;
 
+    protected null|string|DateTimeZone $timezone = null;
+
     protected ?Channel $running = null;
 
     public function __clone()
@@ -202,7 +204,7 @@ class Crontab
         return $this;
     }
 
-    public function getTimezone(): DateTimeZone|string
+    public function getTimezone(): null|DateTimeZone|string
     {
         return $this->timezone;
     }

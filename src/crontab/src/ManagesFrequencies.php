@@ -17,8 +17,6 @@ use DateTimeZone;
 
 trait ManagesFrequencies
 {
-    protected string|\DateTimeZone $timezone;
-
     /**
      * The Cron expression representing the event's frequency.
      *
