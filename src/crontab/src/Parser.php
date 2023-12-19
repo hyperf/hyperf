@@ -34,7 +34,7 @@ class Parser
      * @return Carbon[]
      * @throws InvalidArgumentException
      */
-    public function parse(string $crontabString, $startTime = null): array
+    public function parse(string $crontabString, $startTime = null, string|\DateTimeZone $timezone = null): array
     {
         if (! $this->isValid($crontabString)) {
             throw new InvalidArgumentException('Invalid cron string: ' . $crontabString);
@@ -49,7 +49,7 @@ class Parser
             && in_array((int) date('n', $startTime), $date['month'])
         ) {
             foreach ($date['second'] as $second) {
-                $result[] = Carbon::createFromTimestamp($startTime + $second);
+                $result[] = Carbon::createFromTimestamp($startTime + $second, $timezone);
             }
         }
         return $result;

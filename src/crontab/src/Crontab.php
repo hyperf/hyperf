@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
+use DateTimeZone;
 use Hyperf\Engine\Channel;
 
 class Crontab
@@ -198,6 +199,17 @@ class Crontab
     public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
+        return $this;
+    }
+
+    public function getTimezone(): DateTimeZone|string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(string|DateTimeZone $timezone): static
+    {
+        $this->timezone = $timezone;
         return $this;
     }
 

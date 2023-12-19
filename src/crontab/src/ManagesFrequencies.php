@@ -17,6 +17,8 @@ use DateTimeZone;
 
 trait ManagesFrequencies
 {
+    protected string|\DateTimeZone $timezone;
+
     /**
      * The Cron expression representing the event's frequency.
      *
@@ -27,26 +29,6 @@ trait ManagesFrequencies
         $this->setRule($expression);
 
         return $this;
-    }
-
-    /**
-     * Schedule the event to run between start and end time.
-     *
-     * @return $this
-     */
-    public function between(string $startTime, string $endTime): static
-    {
-        return $this->when($this->inTimeInterval($startTime, $endTime));
-    }
-
-    /**
-     * Schedule the event to not run between start and end time.
-     *
-     * @return $this
-     */
-    public function unlessBetween(string $startTime, string $endTime): static
-    {
-        return $this->skip($this->inTimeInterval($startTime, $endTime));
     }
 
     /**
