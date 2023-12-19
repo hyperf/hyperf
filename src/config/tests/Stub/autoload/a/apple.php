@@ -11,4 +11,6 @@ declare(strict_types=1);
  */
 return [
     'name' => 'apple@a',
+    'weight.number' => '1',
+    'weight.unit' => 'kg',
 ];

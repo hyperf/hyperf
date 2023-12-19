@@ -36,7 +36,16 @@ class ConfigFactoryTest extends TestCase
 
         $this->assertSame([
             'name' => 'apple@a',
+            'weight' => [
+                'number' => '1',
+                'unit' => 'kg',
+            ],
         ], $config->get('a.apple'));
+
+        $this->assertSame([
+            'number' => '1',
+            'unit' => 'kg',
+        ], $config->get('a.apple.weight'));
 
         $this->assertSame([
             'name' => 'apple@b',

@@ -46,7 +46,12 @@ class ConfigFactory
                 str_replace('/', '.', $file->getRelativePath()),
                 $file->getBasename('.php'),
             ]));
-            Arr::set($config, $key, require $file->getRealPath());
+
+            $data = require $file->getRealPath();
+            foreach ($data as $k => $v) {
+                Arr::set($config, $key . '.' . $k, $v);
+            }
+
             $configs[] = $config;
         }
         return $configs;
