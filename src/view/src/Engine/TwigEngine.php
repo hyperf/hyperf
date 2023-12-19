@@ -21,6 +21,10 @@ class TwigEngine implements EngineInterface
         $loader = new FilesystemLoader($config['view_path']);
         $twig = new Environment($loader, ['cache' => $config['cache_path']]);
 
+        if($suffix = $config['template_suffix'] ?? '') {
+            $template .= $suffix;
+        }
+
         return $twig->render($template, $data);
     }
 }
