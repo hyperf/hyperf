@@ -3,6 +3,7 @@
 #
 
 parameters:
+  level: 5
   bootstrapFiles:
     - "bootstrap.php"
   inferPrivatePropertyTypeFromConstructor: true
