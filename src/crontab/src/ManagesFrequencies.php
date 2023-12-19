@@ -30,26 +30,6 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run between start and end time.
-     *
-     * @return $this
-     */
-    public function between(string $startTime, string $endTime): static
-    {
-        return $this->when($this->inTimeInterval($startTime, $endTime));
-    }
-
-    /**
-     * Schedule the event to not run between start and end time.
-     *
-     * @return $this
-     */
-    public function unlessBetween(string $startTime, string $endTime): static
-    {
-        return $this->skip($this->inTimeInterval($startTime, $endTime));
-    }
-
-    /**
      * Schedule the event to run every second.
      *
      * @return $this
