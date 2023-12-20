@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#6389](https://github.com/hyperf/hyperf/pull/6389) Fixed bug that es version cannot be found when the index is null.
+- [#6406](https://github.com/hyperf/hyperf/pull/6406) Fixed bug that `Hyperf\Scout\Searchable` don't import namespace of function `config`.
 
 ## Added
 
