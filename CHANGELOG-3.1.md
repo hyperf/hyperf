@@ -7,6 +7,7 @@
 ## Added
 
 - [#6398](https://github.com/hyperf/hyperf/pull/6398) Added `timezone` parameter to `hyperf/crontab` component.
+- [#6402](https://github.com/hyperf/hyperf/pull/6402) Add `template_suffix` configuration to `twig` engine.
 
 # v3.1.2 - 2023-12-15
 
