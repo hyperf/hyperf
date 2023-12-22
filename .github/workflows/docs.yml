@@ -1,10 +1,8 @@
 name: Translate docs
 
 on:
-  push:
-    branches:
-      - release-*
-      - docs-*
+  workflow_dispatch:
+  pull_request:
 
 jobs:
   translate:
