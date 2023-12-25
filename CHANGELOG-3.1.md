@@ -1,8 +1,8 @@
 # v3.1.4 - TBD
 
-## Fixed
+## Optimized
 
-- [#6415](https://github.com/hyperf/hyperf/pull/6415) When using Base62::decode to decode an empty string, it will be throw InvalidArgumentException instead of TypeError.
+- [#6415](https://github.com/hyperf/hyperf/pull/6415) Throw `InvalidArgumentException` instead of `TypeError` for decoding an empty string when using `Base62::decode`.
 
 # v3.1.3 - 2023-12-21
 
