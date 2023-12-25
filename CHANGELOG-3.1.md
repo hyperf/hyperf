@@ -1,5 +1,9 @@
 # v3.1.4 - TBD
 
+## Optimized
+
+- [#6415](https://github.com/hyperf/hyperf/pull/6415) Throw `InvalidArgumentException` instead of `TypeError` for decoding an empty string when using `Base62::decode`.
+
 # v3.1.3 - 2023-12-21
 
 ## Fixed
