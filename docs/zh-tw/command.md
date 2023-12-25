@@ -497,7 +497,7 @@ $exitCode = $application->find($command)->run($input, $output);
 
 ## 在閉包中執行命令
 
-您可以在`config\console.php`中快速定義命令
+您可以在 `config\console.php` 中快速定義命令
 
 ```php
 use Hyperf\Command\Console;

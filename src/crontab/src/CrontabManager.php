@@ -36,12 +36,12 @@ class CrontabManager
         $result = [];
         $crontabs = $this->getCrontabs();
         $last = time();
-        foreach ($crontabs ?? [] as $key => $crontab) {
+        foreach ($crontabs as $key => $crontab) {
             if (! $crontab instanceof Crontab) {
                 unset($this->crontabs[$key]);
                 continue;
             }
-            $time = $this->parser->parse($crontab->getRule(), $last);
+            $time = $this->parser->parse($crontab->getRule(), $last, $crontab->getTimezone());
             if ($time) {
                 foreach ($time as $t) {
                     $result[] = (clone $crontab)->setExecuteTime($t);
