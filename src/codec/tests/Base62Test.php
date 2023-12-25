@@ -33,5 +33,10 @@ class Base62Test extends TestCase
         } catch (Throwable $exception) {
             $this->assertInstanceOf(InvalidArgumentException::class, $exception);
         }
+        try {
+            Base62::decode('');
+        } catch (Throwable $exception) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $exception);
+        }
     }
 }
