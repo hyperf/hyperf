@@ -40,14 +40,17 @@ class Parser
         if (! $this->isValid($crontabString)) {
             throw new InvalidArgumentException('Invalid cron string: ' . $crontabString);
         }
-        $startTime = $this->parseStartTime($startTime);
         $date = $this->parseDate($crontabString);
         $result = [];
-        if (in_array((int) date('i', $startTime), $date['minutes'])
-            && in_array((int) date('G', $startTime), $date['hours'])
-            && in_array((int) date('j', $startTime), $date['day'])
-            && in_array((int) date('w', $startTime), $date['week'])
-            && in_array((int) date('n', $startTime), $date['month'])
+        $currentDateTime = new \DateTime();
+
+        isset($timezone) && $currentDateTime->setTimezone(is_string($timezone) ? new DateTimeZone($timezone) : $timezone);
+
+        if (in_array((int) $currentDateTime->format('i'), $date['minutes'])
+            && in_array((int) $currentDateTime->format('G'), $date['hours'])
+            && in_array((int) $currentDateTime->format('j'), $date['day'])
+            && in_array((int) $currentDateTime->format('w'), $date['week'])
+            && in_array((int) $currentDateTime->format('n'), $date['month'])
         ) {
             foreach ($date['second'] as $second) {
                 $result[] = Carbon::createFromTimestamp($startTime + $second, $timezone);
