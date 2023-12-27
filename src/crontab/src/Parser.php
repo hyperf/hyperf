@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
+use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;
 
@@ -42,7 +43,7 @@ class Parser
         }
         $date = $this->parseDate($crontabString);
         $result = [];
-        $currentDateTime = new \DateTime();
+        $currentDateTime = new DateTime();
 
         isset($timezone) && $currentDateTime->setTimezone(is_string($timezone) ? new DateTimeZone($timezone) : $timezone);
 
