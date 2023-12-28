@@ -14,6 +14,7 @@ namespace HyperfTest\ExceptionHandler;
 use ErrorException;
 use Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -23,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversNothing]
 class ErrorExceptionHandlerTest extends TestCase
 {
+    #[WithoutErrorHandler]
     public function testHandleError()
     {
         $listener = new ErrorExceptionHandler();
