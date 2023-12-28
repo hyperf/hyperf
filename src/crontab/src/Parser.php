@@ -45,7 +45,13 @@ class Parser
         $result = [];
         $currentDateTime = new DateTime();
 
-        isset($timezone) && $currentDateTime->setTimezone(is_string($timezone) ? new DateTimeZone($timezone) : $timezone);
+        if (! isset($timezone)) {
+            $timezone = new DateTimeZone(ini_get('date.timezone'));
+        } else {
+            $timezone = is_string($timezone) ? new DateTimeZone($timezone) : $timezone;
+        }
+
+        $currentDateTime->setTimezone($timezone);
 
         if (in_array((int) $currentDateTime->format('i'), $date['minutes'])
             && in_array((int) $currentDateTime->format('G'), $date['hours'])
