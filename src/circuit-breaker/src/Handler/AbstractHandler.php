@@ -192,13 +192,13 @@ abstract class AbstractHandler implements HandlerInterface
     {
         if (is_string($fallback)) {
             $fallback = explode('::', $fallback);
-            if (! isset($fallback[1]) && is_callable([$proceedingJoinPoint->className, $fallback[0]])) {
+            if (! isset($fallback[1]) && method_exists($proceedingJoinPoint->className, $fallback[0])) {
                 return [$proceedingJoinPoint->className, $fallback[0]];
             }
             $fallback[1] ??= 'fallback';
         }
 
-        if (is_array($fallback) && is_callable($fallback)) {
+        if (is_array($fallback) && count($fallback) === 2) {
             return $fallback;
         }
 
