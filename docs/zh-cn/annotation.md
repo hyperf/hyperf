@@ -158,7 +158,7 @@ return [
 
 为了避免命名冲突，约定使用 `class_map` 做为文件夹名，后跟要替换的命名空间的文件夹及文件。
 
-如： `class_map/Hyperf/Utils/Coroutine.php`
+如： `class_map/Hyperf/Coroutine/Coroutine.php`
 
 [Coroutine.php](https://github.com/hyperf/biz-skeleton/blob/master/app/Kernel/Context/Coroutine.php)
 
@@ -338,7 +338,7 @@ return [
         ],
         'class_map' => [
             // 需要映射的类名 => 类所在的文件地址
-            Coroutine::class => BASE_PATH . '/class_map/Hyperf/Utils/Coroutine.php',
+            Coroutine::class => BASE_PATH . '/class_map/Hyperf/Coroutine/Coroutine.php',
         ],
     ],
 ];
