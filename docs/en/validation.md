@@ -293,7 +293,7 @@ class IndexController
 
 ## Handling error messages
 
-Calling the `errors` method through the `Validator` instance returns a `Hyperf\Utils\MessageBag` instance, which has various convenient methods for handling error messages.
+Calling the `errors` method through the `Validator` instance returns a `Hyperf\Support\MessageBag` instance, which has various convenient methods for handling error messages.
 
 ### View the first error message of a specific field
 

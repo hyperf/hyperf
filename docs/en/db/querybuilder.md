@@ -19,7 +19,7 @@ $users = Db::table('user')->get();
 $users = Db::table('user')->select('name', 'gender as user_gender')->get();
 ```
 
-The `Db::select()` method returns an array, and the `get` method returns `Hyperf\Utils\Collection`. The element is `stdClass`, so the data of each element can be returned by the following code
+The `Db::select()` method returns an array, and the `get` method returns `Hyperf\Collection\Collection`. The element is `stdClass`, so the data of each element can be returned by the following code
 
 ```php
 <?php
