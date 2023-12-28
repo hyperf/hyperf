@@ -81,6 +81,11 @@ class PhpDocReader
         return $this->readReturnClass($method, false, $withoutNamespace);
     }
 
+    public function isPrimitiveType(string $type): bool
+    {
+        return array_key_exists($type, self::PRIMITIVE_TYPES);
+    }
+
     protected function readReturnClass(ReflectionMethod $method, bool $allowPrimitiveTypes, bool $withoutNamespace = false): array
     {
         // Use reflection
