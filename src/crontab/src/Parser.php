@@ -41,9 +41,11 @@ class Parser
         if (! $this->isValid($crontabString)) {
             throw new InvalidArgumentException('Invalid cron string: ' . $crontabString);
         }
+        $startTime = $this->parseStartTime($startTime);
         $date = $this->parseDate($crontabString);
         $result = [];
         $currentDateTime = new DateTime();
+        $currentDateTime->setTimestamp($startTime);
 
         if (! isset($timezone)) {
             $timezone = new DateTimeZone(ini_get('date.timezone'));
