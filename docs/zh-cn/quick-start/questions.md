@@ -140,8 +140,8 @@ http2 => enabled
 
 ```php
 <?php
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Constants;
 
 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
 ```

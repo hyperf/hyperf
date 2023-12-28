@@ -115,7 +115,7 @@ $result = $client->json('/user/0',[
 <?php
 
 use Hyperf\Testing\Client;
-use Hyperf\Utils\Codec\Json;
+use Hyperf\Codec\Json;
 
 $client = make(Client::class);
 

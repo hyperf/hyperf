@@ -328,7 +328,7 @@ class Demo
 return [
     'co' => [
         'driver' => Hyperf\Cache\Driver\CoroutineMemoryDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+        'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
     ],
 ];
 ```
