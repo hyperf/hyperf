@@ -394,8 +394,8 @@ return [
 當框架導入 `symfony/serializer (^5.0)` 和 `symfony/property-access (^5.0)` 後，並在 `dependencies.php` 中配置一下映射關係
 
 ```php
-use Hyperf\Utils\Serializer\SerializerFactory;
-use Hyperf\Utils\Serializer\Serializer;
+use Hyperf\Serializer\SerializerFactory;
+use Hyperf\Serializer\Serializer;
 
 return [
     Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
