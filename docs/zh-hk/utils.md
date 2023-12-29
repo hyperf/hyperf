@@ -4,7 +4,7 @@ Hyperf 提供了大量便捷的輔助類，這裏會列出一些常用的好用�
 
 ## 協程輔助類
 
-### Hyperf\Utils\Coroutine
+### Hyperf\Coroutine\Coroutine
 
 該輔助類用於協助進行協程相關的判斷或操作。
 
@@ -24,7 +24,7 @@ Hyperf 提供了大量便捷的輔助類，這裏會列出一些常用的好用�
 
 用於處理協程上下文，本質上是對 `Swoole\Coroutine::getContext()` 方法的一個封裝，但區別在於這裏兼容了非協程環境下的運行。
 
-### Hyperf\Utils\Coordinator\CoordinatorManager
+### Hyperf\Coordinator\CoordinatorManager
 
 該輔助類用於指揮協程等待事件發生。
 

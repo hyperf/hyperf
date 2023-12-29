@@ -293,7 +293,7 @@ class IndexController
 
 ## 處理錯誤訊息
 
-透過 `Validator` 例項呼叫 `errors` 方法，會返回 `Hyperf\Utils\MessageBag` 例項，它擁有各種方便的方法處理錯誤資訊。
+透過 `Validator` 例項呼叫 `errors` 方法，會返回 `Hyperf\Support\MessageBag` 例項，它擁有各種方便的方法處理錯誤資訊。
 
 ### 檢視特定欄位的第一個錯誤資訊
 
