@@ -113,6 +113,13 @@ class BootSwaggerListener implements ListenerInterface
                 foreach ($annotation->toAnnotations() as $opera) {
                     /** @var SA\HyperfServer $serverAnnotation */
                     foreach ($serverAnnotations as $serverAnnotation) {
+
+                        // Check if the route is registered, and if so, skip it.
+                        $routerMetadata = $factory->getDispatcher($serverAnnotation->name)->dispatch(strtoupper($opera->method), $opera->path);
+                        if ($routerMetadata[0] !== 0) {
+                            continue;
+                        }
+
                         $factory->getRouter($serverAnnotation->name)->addRoute(
                             [$opera->method],
                             $opera->path,
