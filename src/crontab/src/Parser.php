@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
+use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;
 
@@ -43,11 +44,19 @@ class Parser
         $startTime = $this->parseStartTime($startTime);
         $date = $this->parseDate($crontabString);
         $result = [];
-        if (in_array((int) date('i', $startTime), $date['minutes'])
-            && in_array((int) date('G', $startTime), $date['hours'])
-            && in_array((int) date('j', $startTime), $date['day'])
-            && in_array((int) date('w', $startTime), $date['week'])
-            && in_array((int) date('n', $startTime), $date['month'])
+        $currentDateTime = new DateTime();
+        $currentDateTime->setTimestamp($startTime);
+
+        if (isset($timezone)) {
+            $timezone = is_string($timezone) ? new DateTimeZone($timezone) : $timezone;
+            $currentDateTime->setTimezone($timezone);
+        }
+
+        if (in_array((int) $currentDateTime->format('i'), $date['minutes'])
+            && in_array((int) $currentDateTime->format('G'), $date['hours'])
+            && in_array((int) $currentDateTime->format('j'), $date['day'])
+            && in_array((int) $currentDateTime->format('w'), $date['week'])
+            && in_array((int) $currentDateTime->format('n'), $date['month'])
         ) {
             foreach ($date['second'] as $second) {
                 $result[] = Carbon::createFromTimestamp($startTime + $second, $timezone);

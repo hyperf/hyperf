@@ -1,5 +1,9 @@
 # v3.1.5 - TBD
 
+## Fixed
+
+- [#6423](https://github.com/hyperf/hyperf/pull/6423) Fixed bug that the timezone of crontab task cannot work.
+
 # v3.1.4 - 2023-12-29
 
 ## Fixed

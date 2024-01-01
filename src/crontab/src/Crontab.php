@@ -64,6 +64,7 @@ class Crontab
             "\x00*\x00memo" => $this->memo,
             "\x00*\x00executeTime" => $this->executeTime,
             "\x00*\x00enable" => $this->enable,
+            "\x00*\x00timezone" => $this->timezone,
         ];
     }
 
@@ -81,6 +82,7 @@ class Crontab
         $this->executeTime = $data["\x00*\x00executeTime"] ?? $this->executeTime;
         $this->enable = $data["\x00*\x00enable"] ?? $this->enable;
         $this->running = new Channel(1);
+        $this->timezone = $data["\x00*\x00timezone"] ?? $this->timezone;
     }
 
     public function getName(): ?string
