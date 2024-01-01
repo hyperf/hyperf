@@ -20,7 +20,7 @@ syntax = "proto3";
 package grpc;
 
 service hi {
-    rpc sayHello (HiUser) returns (HiReply) {
+    rpc SayHello (HiUser) returns (HiReply) {
     }
 }
 
