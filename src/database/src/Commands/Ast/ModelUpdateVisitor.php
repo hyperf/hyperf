@@ -16,6 +16,7 @@ use Hyperf\CodeParser\PhpParser;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
+use Hyperf\Database\Commands\Annotations\RewriteReturnType;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
@@ -280,9 +281,21 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             if (is_subclass_of($caster, CastsAttributes::class)) {
                 $ref = new ReflectionClass($caster);
                 $method = $ref->getMethod('get');
+                $annotations = $method->getAttributes(RewriteReturnType::class);
+                /** @var RewriteReturnType $annotation */
+                if (isset($annotations[0]) && $annotation = $annotations[0]->newInstance()) {
+                    $this->setProperty($key, [$annotation->type], true, true, '', false);
+                    continue;
+                }
+
                 if ($type = $method->getReturnType()) {
+                    $typeName = '\\' . ltrim($type->getName(), '\\');
+                    // TODO: Support after some days.
+                    // if (PhpDocReader::getInstance()->isPrimitiveType($typeName)) {
+                    //     $typeName = $type->getName();
+                    // }
                     // Get return type which defined in `CastsAttributes::get()`.
-                    $this->setProperty($key, ['\\' . ltrim($type->getName(), '\\')], true, true, '', true);
+                    $this->setProperty($key, [$typeName], true, true, '', true);
                 }
             }
         }

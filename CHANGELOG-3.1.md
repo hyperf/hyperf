@@ -1,4 +1,14 @@
-# v3.1.4 - TBD
+# v3.1.5 - TBD
+
+# v3.1.4 - 2023-12-29
+
+## Fixed
+
+- [#6419](https://github.com/hyperf/hyperf/pull/6419) Fixed bug that `prepareHandler` cannot work sometimes for `circuit-breaker`.
+
+## Added
+
+- [#6426](https://github.com/hyperf/hyperf/pull/6426) Added Annotation `RewriteReturnType` which used to rewrite the return type when generating models.
 
 ## Optimized
 

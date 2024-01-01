@@ -12,7 +12,7 @@ composer require hyperf/paginator
 
 # Basic Usage
 
-As long as there are data sets and paging requirements, you can instantiate a `Hyperf\Paginator\Paginator` class for paging processing. The constructor of this class receives `__construct($items, int $perPage, ?int $currentPage = null, array $options = [])` parameters. Just pass the data set to the `$items` parameter in the form of `Array (Array)` or `Hyperf\Utils\Colletion` collection class, and set the amount of data per page `$perPage` and the current page number `$currentPage `. The `$options` parameter can define all the attributes of the paginator instance in the form of `Key-Value`, and you can refer to the internal attributes of the paginator class for more details.
+As long as there are data sets and paging requirements, you can instantiate a `Hyperf\Paginator\Paginator` class for paging processing. The constructor of this class receives `__construct($items, int $perPage, ?int $currentPage = null, array $options = [])` parameters. Just pass the data set to the `$items` parameter in the form of `Array (Array)` or `Hyperf\Collection\Colletion` collection class, and set the amount of data per page `$perPage` and the current page number `$currentPage `. The `$options` parameter can define all the attributes of the paginator instance in the form of `Key-Value`, and you can refer to the internal attributes of the paginator class for more details.
 
 ```php
 <?php
@@ -22,7 +22,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Collection;
+use Hyperf\Collection\Collection;
 
 #[AutoController]
 class UserController

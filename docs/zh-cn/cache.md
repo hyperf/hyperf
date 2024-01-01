@@ -12,7 +12,7 @@ composer require hyperf/cache
 |  配置  |                  默认值                  |         备注          |
 |:------:|:----------------------------------------:|:---------------------:|
 | driver |  Hyperf\Cache\Driver\RedisDriver  | 缓存驱动，默认为 Redis |
-| packer | Hyperf\Utils\Packer\PhpSerializer |        打包器         |
+| packer | Hyperf\Codec\Packer\PhpSerializerPacker |        打包器         |
 | prefix |                   c:                   |       缓存前缀        |
 
 ```php
@@ -21,7 +21,7 @@ composer require hyperf/cache
 return [
     'default' => [
         'driver' => Hyperf\Cache\Driver\RedisDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+        'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
         'prefix' => 'c:',
     ],
 ];
@@ -328,7 +328,7 @@ class Demo
 return [
     'co' => [
         'driver' => Hyperf\Cache\Driver\CoroutineMemoryDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+        'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
     ],
 ];
 ```

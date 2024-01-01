@@ -158,7 +158,7 @@ return [
             // 严格模式，当为 false 时，拉取的配置值均为 string 类型，当为 true 时，拉取的配置值会转化为原配置值的数据类型
             'strict_mode' => false,
             // 客户端IP
-            'client_ip' => \Hyperf\Utils\Network::ip(),
+            'client_ip' => \Hyperf\Support\Network::ip(),
             // 拉取配置超时时间
             'pullTimeout' => 10,
             // 拉取配置间隔
@@ -217,7 +217,7 @@ return [
         ],
         'etcd' => [
             'driver' => Hyperf\ConfigEtcd\EtcdDriver::class,
-            'packer' => Hyperf\Utils\Packer\JsonPacker::class,
+            'packer' => Hyperf\Codec\Packer\JsonPacker::class,
             // 需要同步的数据前缀
             'namespaces' => [
                 '/application',

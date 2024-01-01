@@ -125,7 +125,7 @@ We demonstrate this feature with a piece of code:
 
 ```php
 <?php
-$wg = new \Hyperf\Utils\WaitGroup();
+$wg = new \Hyperf\Coroutine\WaitGroup();
 // Counter increase 2
 $wg->add(2);
 // Create coroutine A

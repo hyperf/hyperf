@@ -4,7 +4,7 @@ Hyperf provides a large number of convenient utils. Some commonly used and usefu
 
 ## Coroutine Util
 
-### Hyperf\Utils\Coroutine
+### Hyperf\Coroutine\Coroutine
 
 This util is used to assist in the judgment or operation of the coroutine.
 
@@ -24,7 +24,7 @@ The static method `create(callable $callable)` can be used to create a coroutine
 
 The `Context` is used to handle coroutine context. It is basically an encapsulation of `Swoole\Coroutine::getContext()`. However, the `Hyperf\Context\Context` is compatible with running in a non-coroutine environment.
 
-### Hyperf\Utils\Coordinator\CoordinatorManager
+### Hyperf\Coordinator\CoordinatorManager
 
 The `CoordinatorManager` is used to schedule the coroutine when events occurred.
 
