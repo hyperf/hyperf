@@ -1,6 +1,6 @@
 # 輔助類
 
-Hyperf 提供了大量便捷的輔助類，這裡會列出一些常用的好用的，不會列舉所有，可自行檢視 [hyperf/utils](https://github.com/hyperf/utils) 元件的程式碼獲得更多資訊。
+Hyperf 提供了大量便捷的輔助類，這裡會列出一些常用的好用的，不會列舉所有，可自行檢視 [hyperf/support](https://github.com/hyperf/support) 元件的程式碼獲得更多資訊。
 
 ## 協程輔助類
 

@@ -114,7 +114,7 @@ class IndexController
 
 #### Get Configuration by config() function
 
-The corresponding configuration can be obtained from the `config(string $key, $default)` function anywhere, but this way of using it means [hyperf/config](https://github.com/hyperf/config) and [hyperf/utils](https://github.com/hyperf/utils) components are strongly dependent for your application.
+The corresponding configuration can be obtained from the `config(string $key, $default)` function anywhere, but this way of using it means [hyperf/config](https://github.com/hyperf/config) and [hyperf/support](https://github.com/hyperf/support) components are strongly dependent for your application.
 
 ### Determine if the configuration exists
 

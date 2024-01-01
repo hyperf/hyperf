@@ -167,7 +167,7 @@ class IndexController
 
 #### 透過 config 函式獲取
 
-在任意地方可以透過 `config(string $key, $default)` 函式獲取對應的配置，但這樣的使用方式也就意味著您對 [hyperf/config](https://github.com/hyperf/config) 和 [hyperf/utils](https://github.com/hyperf/utils) 元件是強依賴的。
+在任意地方可以透過 `config(string $key, $default)` 函式獲取對應的配置，但這樣的使用方式也就意味著您對 [hyperf/config](https://github.com/hyperf/config) 和 [hyperf/support](https://github.com/hyperf/support) 元件是強依賴的。
 
 ### 判斷配置是否存在
 
