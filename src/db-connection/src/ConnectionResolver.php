@@ -44,7 +44,7 @@ class ConnectionResolver implements ConnectionResolverInterface
         }
 
         $connection = null;
-        $id = $this->getContextKey($name);
+        $id = static::getContextKey($name);
         if (Context::has($id)) {
             $connection = Context::get($id);
         }
@@ -88,9 +88,8 @@ class ConnectionResolver implements ConnectionResolverInterface
 
     /**
      * The key to identify the connection object in coroutine context.
-     * @param mixed $name
      */
-    private function getContextKey($name): string
+    public static function getContextKey(string $name): string
     {
         return sprintf('database.connection.%s', $name);
     }

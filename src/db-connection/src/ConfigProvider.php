@@ -17,7 +17,10 @@ use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Migrations\MigrationRepositoryInterface;
 use Hyperf\DbConnection\Aspect\TransactionAspect;
 use Hyperf\DbConnection\Listener\RegisterConnectionResolverListener;
+use Hyperf\DbConnection\Listener\UnsetContextListener;
 use Hyperf\DbConnection\Pool\PoolFactory;
+
+use const PHP_INT_MAX;
 
 class ConfigProvider
 {
@@ -33,6 +36,7 @@ class ConfigProvider
             ],
             'listeners' => [
                 RegisterConnectionResolverListener::class,
+                UnsetContextListener::class => PHP_INT_MAX,
             ],
             'aspects' => [
                 TransactionAspect::class,
