@@ -16,14 +16,17 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
+use Psr\Container\ContainerInterface;
 
 /**
  * @method string getContextKey(string $name)
  */
 class UnsetContextListener implements ListenerInterface
 {
-    public function __construct(private readonly ConfigInterface $config)
-    {
+    public function __construct(
+        private ContainerInterface $container,
+        private ConfigInterface $config
+    ) {
     }
 
     public function listen(): array
@@ -42,7 +45,7 @@ class UnsetContextListener implements ListenerInterface
             return;
         }
 
-        $connectionResolver = $this->config->get(ConnectionResolverInterface::class);
+        $connectionResolver = $this->container->get(ConnectionResolverInterface::class);
         $databases = (array) $this->config->get('databases', []);
 
         foreach ($databases as $name => $_) {
