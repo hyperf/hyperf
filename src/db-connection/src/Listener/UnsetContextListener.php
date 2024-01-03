@@ -13,13 +13,13 @@ namespace Hyperf\DbConnection\Listener;
 
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\DbConnection\ConnectionResolver;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 
-use function array_keys;
-use function array_walk;
-
+/**
+ * @method string getContextKey(string $name)
+ */
 class UnsetContextListener implements ListenerInterface
 {
     public function __construct(private readonly ConfigInterface $config)
@@ -33,13 +33,21 @@ class UnsetContextListener implements ListenerInterface
         ];
     }
 
+    /**
+     * @param BeforeWorkerStart $event
+     */
     public function process(object $event): void
     {
-        /** @var BeforeWorkerStart $event */
-        if (! $event->server->taskworker) {
+        if (! $event instanceof BeforeWorkerStart || ! $event->server->taskworker) {
             return;
         }
-        $databases = array_keys($this->config->get('databases', []));
-        array_walk($databases, fn (string $name) => Context::destroy(ConnectionResolver::getContextKey($name)));
+
+        $connectionResolver = $this->config->get(ConnectionResolverInterface::class);
+        $databases = (array) $this->config->get('databases', []);
+
+        foreach ($databases as $name => $_) {
+            $contextKey = (fn () => $this->getContextKey($name))->call($connectionResolver);
+            Context::destroy($contextKey);
+        }
     }
 }
