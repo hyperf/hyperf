@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#6423](https://github.com/hyperf/hyperf/pull/6423) Fixed bug that the timezone of crontab task cannot work.
+- [#6436](https://github.com/hyperf/hyperf/pull/6436) Fixed bug that the generator which be used to generate amqp consumer cannot work.
 
 ## Added
 
