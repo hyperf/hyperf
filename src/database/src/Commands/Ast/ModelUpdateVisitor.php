@@ -199,7 +199,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             $type = $property['type'];
             $sorted = [];
             foreach ($type as $item) {
-                if($item === 'null'){
+                if ($item === 'null') {
                     array_unshift($sorted, $item);
                     continue;
                 }
