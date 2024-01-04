@@ -11,7 +11,7 @@
 
 ## Optimized
 
-- [#6435](https://github.com/hyperf/hyperf/pull/6435) Optimized model generator which can generate property comments with `use`.
+- [#6435](https://github.com/hyperf/hyperf/pull/6435) [#6437](https://github.com/hyperf/hyperf/pull/6437) Optimized model generator which can generate property comments with `use`.
 
 # v3.1.4 - 2023-12-29
 

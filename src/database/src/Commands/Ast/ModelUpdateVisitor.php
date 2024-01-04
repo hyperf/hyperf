@@ -197,12 +197,17 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         }
         foreach ($this->properties as $name => $property) {
             $type = $property['type'];
-            foreach ($type as $i => $item) {
-                $type[$i] = $this->parsePropertyType($item);
+            $sorted = [];
+            foreach ($type as $item) {
+                if ($item === 'null') {
+                    array_unshift($sorted, $item);
+                    continue;
+                }
+                $sorted[] = $this->parsePropertyType($item);
             }
 
             $comment = $property['comment'] ?? '';
-            $type = implode('|', $type);
+            $type = implode('|', $sorted);
             if ($property['read'] && $property['write']) {
                 $doc .= sprintf(' * @property %s $%s %s', $type, $name, $comment) . PHP_EOL;
                 continue;
@@ -221,6 +226,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
     protected function parsePropertyType(string $type): string
     {
+        $origin = $type;
         $isArray = false;
         if (str_ends_with($type, '[]')) {
             $isArray = true;
@@ -233,9 +239,11 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             if ($isArray) {
                 $type .= '[]';
             }
+
+            return $type;
         }
 
-        return $type;
+        return $origin;
     }
 
     protected function initPropertiesFromMethods()
