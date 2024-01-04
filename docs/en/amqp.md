@@ -109,7 +109,7 @@ use Hyperf\Amqp\Result;
 #[Consumer(exchange: 'hyperf', routingKey: 'hyperf', queue: 'hyperf', nums: 1)]
 class DemoConsumer extends ConsumerMessage
 {
-    public function consume($data): string
+    public function consume($data): Result
     {
         print_r($data);
         return Result::ACK;
