@@ -11,10 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Rpn;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
+
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ExampleTest extends AbstractTestCase
 {
     public function testExample()

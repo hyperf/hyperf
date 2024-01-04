@@ -10,7 +10,7 @@
 
   * [版本計劃](zh-hk/release-planning.md)
   * [版本説明](zh-hk/versions.md)
-  * [版本更新記錄](zh-hk/changelog/3.0.md)
+  * [版本更新記錄](zh-hk/changelog/3.1.md)
 
 * 快速入門
 
@@ -118,7 +118,7 @@
 
   * [連接池](zh-hk/pool.md)
   * [自定義進程](zh-hk/process.md)
-  * [輔助類](zh-hk/utils.md)
+  * [輔助類](zh-hk/support.md)
   * [定時任務](zh-hk/crontab.md)
   * [Task 機制](zh-hk/task.md)
   * [枚舉類](zh-hk/constants.md)
@@ -151,6 +151,7 @@
 
 * 歷史版本更新記錄
 
+  * [3.0 更新記錄](zh-hk/changelog/3.0.md)
   * [2.2 更新記錄](zh-hk/changelog/2.2.md)
   * [2.1 更新記錄](zh-hk/changelog/2.1.md)
   * [2.0 更新記錄](zh-hk/changelog/2.0.md)
@@ -164,3 +165,4 @@
   * [2.1 升級指南](zh-hk/upgrade/2.1.md)
   * [2.2 升級指南](zh-hk/upgrade/2.2.md)
   * [3.0 升級指南](zh-hk/upgrade/3.0.md)
+  * [3.1 升級指南](zh-hk/upgrade/3.1.md)

@@ -10,7 +10,7 @@
 
   * [版本计划](zh-cn/release-planning.md)
   * [版本说明](zh-cn/versions.md)
-  * [版本更新记录](zh-cn/changelog/3.0.md)
+  * [版本更新记录](zh-cn/changelog/3.1.md)
 
 * 快速入门
 
@@ -118,7 +118,7 @@
 
   * [连接池](zh-cn/pool.md)
   * [自定义进程](zh-cn/process.md)
-  * [辅助类](zh-cn/utils.md)
+  * [辅助类](zh-cn/support.md)
   * [定时任务](zh-cn/crontab.md)
   * [Task 机制](zh-cn/task.md)
   * [枚举类](zh-cn/constants.md)
@@ -151,6 +151,7 @@
 
 * 历史版本更新记录
 
+  * [3.0 更新记录](zh-cn/changelog/3.0.md)
   * [2.2 更新记录](zh-cn/changelog/2.2.md)
   * [2.1 更新记录](zh-cn/changelog/2.1.md)
   * [2.0 更新记录](zh-cn/changelog/2.0.md)
@@ -164,3 +165,4 @@
   * [2.1 升级指南](zh-cn/upgrade/2.1.md)
   * [2.2 升级指南](zh-cn/upgrade/2.2.md)
   * [3.0 升级指南](zh-cn/upgrade/3.0.md)
+  * [3.1 升级指南](zh-cn/upgrade/3.1.md)

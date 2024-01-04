@@ -15,8 +15,14 @@ use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSourceInterface;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -27,10 +33,6 @@ class ApplicationContextTest extends TestCase
     {
         $container = new Container(Mockery::mock(DefinitionSourceInterface::class));
         ApplicationContext::setContainer($container);
-        $this->assertSame($container, \Hyperf\Utils\ApplicationContext::getContainer());
-
-        $container = new Container(Mockery::mock(DefinitionSourceInterface::class));
-        \Hyperf\Utils\ApplicationContext::setContainer($container);
         $this->assertSame($container, ApplicationContext::getContainer());
     }
 }

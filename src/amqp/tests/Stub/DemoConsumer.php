@@ -25,7 +25,7 @@ class DemoConsumer extends ConsumerMessage
 
     protected ?string $queue = 'hyperf';
 
-    public function consume($data): string
+    public function consume($data): Result
     {
         return Result::ACK;
     }

@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Mutex;
 
-use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Redis\RedisFactory;
@@ -34,8 +33,10 @@ class RedisTaskMutex implements TaskMutex
         $mutexName = $this->getMutexName($crontab);
         $attempted = (bool) $redis->set($mutexName, $crontab->getName(), ['NX', 'EX' => $crontab->getMutexExpires()]);
         $attempted && $this->timer->tick(1, function () use ($mutexName, $redis) {
-            $redis->exists($mutexName) && $redis->expire($mutexName, $redis->ttl($mutexName) + 1);
-        }, $mutexName);
+            if ($redis->expire($mutexName, $redis->ttl($mutexName) + 1) === false) {
+                return Timer::STOP;
+            }
+        });
         return $attempted;
     }
 
@@ -54,8 +55,6 @@ class RedisTaskMutex implements TaskMutex
      */
     public function remove(Crontab $crontab)
     {
-        CoordinatorManager::until($mutexName = $this->getMutexName($crontab))->resume();
-        CoordinatorManager::clear($mutexName);
         $this->redisFactory->get($crontab->getMutexPool())->del(
             $this->getMutexName($crontab)
         );

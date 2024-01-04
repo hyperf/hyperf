@@ -2,7 +2,7 @@
 
 ## Concept
 
-Hyperf is built on the coroutine of `Swoole 4`, which is one of the big factors that Hyperf can provide for high performance.
+Hyperf is built on the coroutine of `Swoole 5`, which is one of the big factors that Hyperf can provide for high performance.
 
 ### Running Mode of PHP-FPM
 
@@ -125,7 +125,7 @@ We demonstrate this feature with a piece of code:
 
 ```php
 <?php
-$wg = new \Hyperf\Utils\WaitGroup();
+$wg = new \Hyperf\Coroutine\WaitGroup();
 // Counter increase 2
 $wg->add(2);
 // Create coroutine A

@@ -11,10 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\CircuitBreaker\Handler;
 
+use Closure;
 use Hyperf\CircuitBreaker\Annotation\CircuitBreaker as Annotation;
 use Hyperf\CircuitBreaker\CircuitBreaker;
 use Hyperf\CircuitBreaker\CircuitBreakerFactory;
 use Hyperf\CircuitBreaker\CircuitBreakerInterface;
+use Hyperf\CircuitBreaker\Exception\BadFallbackException;
 use Hyperf\CircuitBreaker\Exception\CircuitBreakerException;
 use Hyperf\CircuitBreaker\FallbackInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -169,27 +171,37 @@ abstract class AbstractHandler implements HandlerInterface
 
     protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreakerInterface $breaker, Annotation $annotation)
     {
-        [$className, $methodName] = $this->prepareHandler($annotation->fallback);
+        if ($annotation->fallback instanceof Closure) {
+            return ($annotation->fallback)($proceedingJoinPoint);
+        }
+        [$class, $method] = $this->prepareHandler($annotation->fallback, $proceedingJoinPoint);
 
-        $class = $this->container->get($className);
-        if ($class instanceof FallbackInterface) {
-            return $class->fallback($proceedingJoinPoint);
+        $instance = $this->container->get($class);
+        if ($instance instanceof FallbackInterface) {
+            return $instance->fallback($proceedingJoinPoint);
         }
 
-        $argument = $proceedingJoinPoint->getArguments();
+        $arguments = $proceedingJoinPoint->getArguments();
 
-        return $class->{$methodName}(...$argument);
+        return $instance->{$method}(...$arguments);
     }
 
     abstract protected function process(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreakerInterface $breaker, Annotation $annotation);
 
-    protected function prepareHandler(string $fallback): array
+    protected function prepareHandler(string|array $fallback, ProceedingJoinPoint $proceedingJoinPoint): array
     {
-        $result = explode('::', $fallback);
+        if (is_string($fallback)) {
+            $fallback = explode('::', $fallback);
+            if (! isset($fallback[1]) && method_exists($proceedingJoinPoint->className, $fallback[0])) {
+                return [$proceedingJoinPoint->className, $fallback[0]];
+            }
+            $fallback[1] ??= 'fallback';
+        }
 
-        return [
-            $result[0],
-            $result[1] ?? 'fallback',
-        ];
+        if (is_array($fallback) && count($fallback) === 2) {
+            return $fallback;
+        }
+
+        throw new BadFallbackException('The fallback is invalid.');
     }
 }

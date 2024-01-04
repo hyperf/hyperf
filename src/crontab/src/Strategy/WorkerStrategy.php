@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Strategy;
 
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\PipeMessage;
 use Hyperf\Server\ServerFactory;
@@ -30,17 +31,26 @@ class WorkerStrategy extends AbstractStrategy
         parent::__construct($container);
     }
 
-    public function dispatch(Crontab $crontab)
+    public function dispatch(Crontab $crontab): void
     {
+        $logger = $this->container->get(StdoutLoggerInterface::class);
         $server = $this->serverFactory->getServer()->getServer();
-        if ($server instanceof Server) {
-            $workerId = $this->getNextWorkerId($server);
-            $server->sendMessage(new PipeMessage(
-                'callback',
-                [Executor::class, 'execute'],
-                $crontab
-            ), $workerId);
+
+        if (! $server instanceof Server) {
+            $logger->warning('Cannot dispatch crontab, use CoroutineStrategy if run in coroutine style server.');
+            return;
         }
+        if ($crontab->getType() === 'closure') {
+            $logger->warning('Closure type crontab is only supported in CoroutineStrategy.');
+            return;
+        }
+
+        $workerId = $this->getNextWorkerId($server);
+        $server->sendMessage(new PipeMessage(
+            'callback',
+            [Executor::class, 'execute'],
+            $crontab
+        ), $workerId);
     }
 
     protected function getNextWorkerId(Server $server): int

@@ -84,7 +84,7 @@ class Consumer extends Builder
                     if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
                         break;
                     }
-                } catch (AMQPTimeoutException $exception) {
+                } catch (AMQPTimeoutException) {
                     $this->eventDispatcher?->dispatch(new WaitTimeout($consumerMessage));
                 } catch (Throwable $exception) {
                     $this->logger->error((string) $exception);
@@ -192,7 +192,7 @@ class Consumer extends Builder
                 return;
             }
             if ($result === Result::NACK) {
-                $this->logger->debug($deliveryTag . ' uacked.');
+                $this->logger->debug($deliveryTag . ' nacked.');
                 $channel->basic_nack($deliveryTag, false, $consumerMessage->isRequeue());
                 return;
             }

@@ -12,10 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Phar;
 
 use Phar;
+use Stringable;
 use Symfony\Component\Finder\Finder;
 use Traversable;
 
-class TargetPhar
+class TargetPhar implements Stringable
 {
     public function __construct(private Phar $phar, private PharBuilder $pharBuilder)
     {

@@ -63,6 +63,10 @@ class OnBeforeHandle implements ListenerInterface
             return;
         }
 
+        if (! $this->config->get('metric.enable_command_metric', true)) {
+            return;
+        }
+
         MetricFactoryPicker::$isCommand = true;
 
         if ($this->config->get('metric.use_standalone_process', true)) {

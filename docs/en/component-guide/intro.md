@@ -87,7 +87,7 @@ process -> ../../../hyperf/src/process
 redis -> ../../../hyperf/src/redis
 server -> ../../../hyperf/src/server
 testing -> ../../../hyperf/src/testing
-utils -> ../../../hyperf/src/utils
+support -> ../../../hyperf/src/support
 ```
 
 At this point, we can directly modify the files in `vendor/hyperf` in the IDE, but what we modify is the code in `hyperf`, so that we can directly modify the `hyperf` project in the end. `commit`, and then submit a `Pull Request (PR)` to the trunk.

@@ -42,15 +42,6 @@ class BaseClient
         $this->grpcClient?->close(false);
     }
 
-    /**
-     * @deprecated
-     * @param string $name
-     */
-    public function __get($name)
-    {
-        return $this->_getGrpcClient()->{$name};
-    }
-
     public function __call($name, $arguments)
     {
         return $this->_getGrpcClient()->{$name}(...$arguments);

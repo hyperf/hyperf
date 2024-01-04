@@ -422,7 +422,7 @@ class DebugCommand extends HyperfCommand
 
 # 執行命令
 
-!> 注意：在執行命令時，預設會觸發事件分發，可透過新增 `--disable-event-dispatcher` 引數來開啟。
+!> 注意：在執行命令時，預設會觸發事件分發，可透過新增 `--disable-event-dispatcher` 引數來關閉。
 
 ## 命令列中執行
 
@@ -493,4 +493,16 @@ $exitCode = $application->run($input, $output);
 
 // 第二種方式: 會暴露異常, 需要自己捕捉和處理執行中的異常, 否則會阻止程式的返回
 $exitCode = $application->find($command)->run($input, $output);
+```
+
+## 在閉包中執行命令
+
+您可以在 `config\console.php` 中快速定義命令
+
+```php
+use Hyperf\Command\Console;
+
+Console::command('hello', function () {
+    $this->comment('Hello, Hyperf!');
+})->describe('This is a demo closure command.');
 ```

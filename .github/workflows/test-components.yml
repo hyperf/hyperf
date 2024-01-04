@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v5.0.3'
+  SW_VERSION: 'v5.1.1'
 jobs:
   database:
     name: Test for Database
@@ -15,7 +15,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.3', '8.2', '8.1' ]
         mysql-version: [ '5.7', '8.0' ]
       max-parallel: 2
       fail-fast: false
@@ -52,7 +52,7 @@ jobs:
     strategy:
       matrix:
         version: [ '^1.0', '^2.0', '^3.0' ]
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.3', '8.2', '8.1' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -72,23 +72,23 @@ jobs:
       - name: Setup Flysystem(v1.0) Adapters
         if: ${{ matrix.version == '^1.0' }}
         run: |
-          composer require xxtime/flysystem-aliyun-oss
-          composer require "overtrue/flysystem-cos:^3.0"
-          composer require "overtrue/flysystem-qiniu:^1.0"
+          composer require xxtime/flysystem-aliyun-oss -W
+          composer require "overtrue/flysystem-cos:^3.0" -W
+          composer require "overtrue/flysystem-qiniu:^1.0" -W
       - name: Setup Flysystem(v2.0) Adapters
         if: ${{ matrix.version == '^2.0' }}
         run: |
-          composer require hyperf/flysystem-oss
-          composer require "league/flysystem-ftp:^3.0"
-          composer require "overtrue/flysystem-cos:^4.0"
-          composer require "overtrue/flysystem-qiniu:^2.0"
+          composer require hyperf/flysystem-oss -W
+          composer require "league/flysystem-ftp:^3.0" -W
+          composer require "overtrue/flysystem-cos:^4.0" -W
+          composer require "overtrue/flysystem-qiniu:^2.0" -W
       - name: Setup Flysystem(v3.0) Adapters
         if: ${{ matrix.version == '^3.0' }}
         run: |
-          composer require hyperf/flysystem-oss
-          composer require league/flysystem-ftp
-          composer require "overtrue/flysystem-cos:^5.0"
-          composer require "overtrue/flysystem-qiniu:^3.0"
+          composer require hyperf/flysystem-oss -W
+          composer require league/flysystem-ftp -W
+          composer require "overtrue/flysystem-cos:^5.0" -W
+          composer require "overtrue/flysystem-qiniu:^3.0" -W
       - name: Run Test Cases
         run: |
           ./.travis/requirement.install.sh
@@ -121,7 +121,7 @@ jobs:
         run: |
           git clone https://github.com/limingxinleo/hyperf-phar-tester.git
           cd hyperf-phar-tester
-          git checkout 3.0
+          git checkout 3.1
           composer update -o ${{ matrix.no-dev }}
           rm -rf vendor/hyperf/phar
           cp -rf ../src/phar vendor/hyperf/phar
@@ -152,7 +152,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.3', '8.2', '8.1' ]
         version: [ '^1.0', '^2.0' ]
       max-parallel: 6
       fail-fast: false
@@ -188,7 +188,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.3', '8.2', '8.1' ]
         version: [ '^1.0', '^2.0' ]
       max-parallel: 6
       fail-fast: false
@@ -231,7 +231,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.3', '8.2', '8.1' ]
         log-version: [ '^1.0', '^2.0', '^3.0' ]
         exclude:
           - php-version: '8.1'
@@ -259,10 +259,15 @@ jobs:
           composer remove jonahgeorge/jaeger-client-php --dev -W
           composer remove bandwidth-throttle/token-bucket --dev -W
           composer remove friendsofphp/php-cs-fixer --dev -W
+          composer remove zircote/swagger-php --dev -W
           composer remove "symfony/*" --dev -W
       - name: Run Test Cases
         run: |
           ./.travis/requirement.install.sh
+          if [ ${{ matrix.log-version }} == '^1.0' ]
+          then
+            composer require "monolog/monolog:^2.0"
+          fi
           composer require "psr/log:${{ matrix.log-version }}"
           if [ ${{ matrix.log-version }} == '^3.0' ]
           then
@@ -285,7 +290,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1', '8.2' ]
+        php-version: [ '8.3', '8.2', '8.1' ]
         psr-version: [ '^1.0', '^2.0', '^3.0' ]
       max-parallel: 3
       fail-fast: false
@@ -319,3 +324,89 @@ jobs:
           composer analyse src/model-cache
           composer test src/model-cache
           composer info | grep psr/simple-cache
+
+  ext-redis:
+    name: Test for Redis Module
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '8.3', '8.2', '8.1' ]
+        redis: [ 'redis', 'redis-5.3.7' ]
+      max-parallel: 2
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          extensions: ${{ matrix.redis }}, swoole
+          ini-values: opcache.enable_cli=1
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Setup Packages
+        run: ./.travis/requirement.install.sh
+      - name: Setup Services
+        run: |
+          docker run --name redis -p 6379:6379 -d redis
+          sleep 20
+      - name: Run Test Cases
+        run: |
+          composer test src/redis
+
+  symfony:
+    name: Test for Symfony
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '8.3', '8.2', '8.1' ]
+        symfony-version: [ '^6.0', '^7.0' ]
+        exclude:
+          - php-version: '8.1'
+            symfony-version: '^7.0'
+      max-parallel: 2
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          extensions: ${{ matrix.redis }}, swoole
+          ini-values: opcache.enable_cli=1
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Setup Packages
+        run: |
+          composer remove friendsofphp/php-cs-fixer --dev --no-update
+          for package in `cat composer.json|grep "symfony/"| awk -F '"' '{print $2}'`; do composer require "${package}:${{ matrix.symfony-version }}" --dev --no-update; done
+          ./.travis/requirement.install.sh
+      - name: Run Test Cases
+        run: |
+          cp .travis/.env.example .env
+          
+          composer analyse src/command
+          composer test src/command
+          composer analyse src/config
+          composer test src/config
+          composer analyse src/di
+          vendor/bin/phpunit src/di
+          composer analyse src/framework
+          composer test src/framework
+          composer analyse src/server
+          composer test src/server
+          # composer analyse src/serializer
+          # composer test src/serializer
+          # composer analyse src/task
+          # composer test src/task
+

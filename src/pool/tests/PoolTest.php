@@ -18,6 +18,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Pool;
 use HyperfTest\Pool\Stub\FooPool;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -28,6 +29,7 @@ use function Hyperf\Support\value;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PoolTest extends TestCase
 {
     protected function tearDown(): void

@@ -212,6 +212,65 @@ class DemoConsumer extends ConsumerMessage
 | \Hyperf\Amqp\Result::REQUEUE | 消息没有被正确消费掉，以 `basic_reject` 方法来响应，并使消息重新入列 |
 | \Hyperf\Amqp\Result::DROP    | 消息没有被正确消费掉，以 `basic_reject` 方法来响应                   |
 
+### QOS 配置
+
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Consumers;
+
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
+
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
+class DemoConsumer extends ConsumerMessage
+{
+    protected ?array $qos = [
+        // AMQP 默认并没有实现此配置。
+        'prefetch_size' => 0,
+        // 同一个消费者，最高同时可以处理的消息数。
+        'prefetch_count' => 30,
+        // 因为 Hyperf 默认一个 Channel 只消费一个 队列，所以 global 设置为 true/false 效果是一样的。
+        'global' => false,
+    ];
+    
+    public function consumeMessage($data, AMQPMessage $message): string
+    {
+        print_r($data);
+        return Result::ACK;
+    }
+}
+```
+
+### 根据环境自定义消费进程数量
+
+在 `#[Consumer]` 注解中，可以通过 `nums` 属性来设置消费进程数量，如果需要根据不同环境来设置不同的消费进程数量，可以通过重写 `getNums` 方法来实现，示例如下：
+
+```php
+#[Consumer(
+    exchange: 'hyperf',
+    routingKey: 'hyperf',
+    queue: 'hyperf',
+    name: 'hyperf',
+    nums: 1
+)]
+final class DemoConsumer extends ConsumerMessage
+{
+    public function getNums(): int
+    {
+        if (is_debug()) {
+            return 10;
+        }
+        return parent::getNums();
+    }
+}
+```
+
 ## 延时队列
 
 AMQP 的延时队列，并不会根据延时时间进行排序，所以，一旦你投递了一个延时 10s 的任务，又往这个队列中投递了一个延时 5s 的任务，那么也一定会在第一个 10s 任务完成后，才会消费第二个 5s 的任务。
@@ -250,11 +309,11 @@ class DelayDirectProducer extends ProducerMessage
 {
     use ProducerDelayedMessageTrait;
 
-    protected $exchange = 'ext.hyperf.delay';
+    protected string $exchange = 'ext.hyperf.delay';
 
-    protected $type = Type::DIRECT;
+    protected Type|string $type = Type::DIRECT;
 
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
     public function __construct($data)
     {
@@ -262,6 +321,7 @@ class DelayDirectProducer extends ProducerMessage
     }
 }
 ```
+
 ### 消费者
 
 使用 `gen:amqp-consumer` 命令创建一个 `consumer`。
@@ -293,13 +353,13 @@ class DelayDirectConsumer extends ConsumerMessage
     use ProducerDelayedMessageTrait;
     use ConsumerDelayedMessageTrait;
 
-    protected $exchange = 'ext.hyperf.delay';
+    protected string $exchange = 'ext.hyperf.delay';
     
-    protected $queue = 'queue.hyperf.delay';
+    protected string $queue = 'queue.hyperf.delay';
     
-    protected $type = Type::DIRECT; //Type::FANOUT;
+    protected Type|string $type = Type::DIRECT; //Type::FANOUT;
     
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
     public function consumeMessage($data, AMQPMessage $message): string
     {
@@ -365,11 +425,12 @@ class DelayCommand extends HyperfCommand
 }
 
 ```
+
 执行命令行生产消息
+
 ```
 php bin/hyperf.php demo:command
 ```
-
 
 ## RPC 远程过程调用
 
@@ -439,9 +500,9 @@ use Hyperf\Amqp\Message\RpcMessage;
 class FooRpcMessage extends RpcMessage
 {
 
-    protected $exchange = 'hyperf';
+    protected string $exchange = 'hyperf';
 
-    protected $routingKey = 'hyperf';
+    protected array|string $routingKey = 'hyperf';
     
     public function __construct($data)
     {

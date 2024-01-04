@@ -31,6 +31,7 @@ use LogicException;
 use PDO;
 use PDOStatement;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use RuntimeException;
 use Throwable;
 
 class Connection implements ConnectionInterface
@@ -144,6 +145,11 @@ class Connection implements ConnectionInterface
      * @var Closure[]
      */
     protected static array $beforeExecutingCallbacks = [];
+
+    /**
+     * Error count for executing SQL.
+     */
+    protected int $errorCount = 0;
 
     /**
      * Create a new database connection instance.
@@ -517,6 +523,36 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Escape a value for safe SQL embedding.
+     *
+     * @param null|bool|float|int|string $value
+     */
+    public function escape(mixed $value, bool $binary = false): string
+    {
+        if ($value === null) {
+            return 'null';
+        }
+        if ($binary) {
+            return $this->escapeBinary($value);
+        }
+        if (is_int($value) || is_float($value)) {
+            return (string) $value;
+        }
+        if (is_bool($value)) {
+            return $this->escapeBool($value);
+        }
+        if (str_contains($value, "\00")) {
+            throw new RuntimeException('Strings with null bytes cannot be escaped. Use the binary escape option.');
+        }
+
+        if (preg_match('//u', $value) === false) {
+            throw new RuntimeException('Strings with invalid UTF-8 byte sequences cannot be escaped.');
+        }
+
+        return $this->escapeString($value);
+    }
+
+    /**
      * Indicate if any records have been modified.
      */
     public function recordsHaveBeenModified(bool $value = true)
@@ -818,6 +854,22 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Get the connection query log with embedded bindings.
+     *
+     * @return array
+     */
+    public function getRawQueryLog()
+    {
+        return array_map(fn (array $log) => [
+            'raw_query' => $this->queryGrammar->substituteBindingsIntoRawSql(
+                $log['query'],
+                array_map(fn ($value) => $this->escape($value), $this->prepareBindings($log['bindings']))
+            ),
+            'time' => $log['time'],
+        ], $this->getQueryLog());
+    }
+
+    /**
      * Clear the query log.
      */
     public function flushQueryLog()
@@ -918,6 +970,35 @@ class Connection implements ConnectionInterface
     public static function getResolver(string $driver): ?Closure
     {
         return static::$resolvers[$driver] ?? null;
+    }
+
+    public function getErrorCount(): int
+    {
+        return $this->errorCount;
+    }
+
+    /**
+     * Escape a string value for safe SQL embedding.
+     */
+    protected function escapeString(string $value): string
+    {
+        return $this->getPdo()->quote($value);
+    }
+
+    /**
+     * Escape a boolean value for safe SQL embedding.
+     */
+    protected function escapeBool(bool $value): string
+    {
+        return $value ? '1' : '0';
+    }
+
+    /**
+     * Escape a binary value for safe SQL embedding.
+     */
+    protected function escapeBinary(mixed $value): string
+    {
+        throw new RuntimeException('The database connection does not support escaping binary values.');
     }
 
     /**
@@ -1044,11 +1125,9 @@ class Connection implements ConnectionInterface
     /**
      * Run a SQL statement.
      *
-     * @param string $query
-     * @param array $bindings
      * @throws QueryException
      */
-    protected function runQueryCallback($query, $bindings, Closure $callback)
+    protected function runQueryCallback(string $query, array $bindings, Closure $callback)
     {
         // To execute the statement, we'll simply call the callback, which will actually
         // run the SQL against the PDO connection. Then we can calculate the time it
@@ -1061,11 +1140,15 @@ class Connection implements ConnectionInterface
         // message to include the bindings with SQL, which will make this exception a
         // lot more helpful to the developer instead of just the database's errors.
         catch (Exception $e) {
+            ++$this->errorCount;
             throw new QueryException(
                 $query,
                 $this->prepareBindings($bindings),
                 $e
             );
+        } catch (Throwable $throwable) {
+            ++$this->errorCount;
+            throw $throwable;
         }
 
         return $result;
@@ -1082,13 +1165,9 @@ class Connection implements ConnectionInterface
     /**
      * Handle a query exception.
      *
-     * @param Exception $e
-     * @param string $query
-     * @param array $bindings
-     *
      * @throws Exception
      */
-    protected function handleQueryException($e, $query, $bindings, Closure $callback)
+    protected function handleQueryException(QueryException $e, string $query, array $bindings, Closure $callback)
     {
         if ($this->transactions >= 1) {
             throw $e;
@@ -1105,11 +1184,9 @@ class Connection implements ConnectionInterface
     /**
      * Handle a query exception that occurred during query execution.
      *
-     * @param string $query
-     * @param array $bindings
      * @throws QueryException
      */
-    protected function tryAgainIfCausedByLostConnection(QueryException $e, $query, $bindings, Closure $callback)
+    protected function tryAgainIfCausedByLostConnection(QueryException $e, string $query, array $bindings, Closure $callback)
     {
         if ($this->causedByLostConnection($e->getPrevious())) {
             $this->reconnect();

@@ -9,10 +9,10 @@
     ],
     "description": "Etcd Client for Hyperf.",
     "require": {
-        "php": ">=8.0",
-        "hyperf/guzzle": "~3.0.0",
-        "hyperf/support": "~3.0.0",
-        "hyperf/utils": "~3.0.0"
+        "php": ">=8.1",
+        "hyperf/guzzle": "~3.1.0",
+        "hyperf/support": "~3.1.0",
+        "hyperf/utils": "~3.1.0"
     },
     "autoload": {
         "psr-4": {
@@ -29,7 +29,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Etcd\\ConfigProvider"

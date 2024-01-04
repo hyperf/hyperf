@@ -12,16 +12,28 @@ declare(strict_types=1);
 namespace HyperfTest\Context;
 
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Waiter;
+use Hyperf\Engine\Channel;
+use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use stdClass;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
+use function Hyperf\Coroutine\go;
 use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ContextTest extends TestCase
 {
     public function testOverride()
@@ -127,5 +139,86 @@ class ContextTest extends TestCase
         $this->assertSame($value, Context::get($id));
         Context::destroy($id);
         $this->assertNull(Context::get($id));
+    }
+
+    public function testRequestContext()
+    {
+        $request = Mockery::mock(ServerRequestPlusInterface::class);
+        RequestContext::set($request);
+        $this->assertSame($request, RequestContext::get());
+
+        Context::set(ServerRequestInterface::class, $req = Mockery::mock(ServerRequestPlusInterface::class));
+        $this->assertNotSame($request, RequestContext::get());
+        $this->assertSame($req, RequestContext::get());
+        $this->assertSame($req, Context::get(ServerRequestInterface::class));
+    }
+
+    public function testResponseContext()
+    {
+        $response = Mockery::mock(ResponsePlusInterface::class);
+        ResponseContext::set($response);
+        $this->assertSame($response, ResponseContext::get());
+
+        Context::set(ResponseInterface::class, $req = Mockery::mock(ResponsePlusInterface::class));
+        $this->assertNotSame($response, ResponseContext::get());
+        $this->assertSame($req, ResponseContext::get());
+        $this->assertSame($req, Context::get(ResponseInterface::class));
+    }
+
+    public function testResponseContextWithCoroutineId()
+    {
+        $response = Mockery::mock(ResponsePlusInterface::class);
+        $chan = new Channel(1);
+        $close = new Channel(1);
+        go(function () use ($chan, $response, $close) {
+            ResponseContext::set($response);
+            $this->assertSame($response, ResponseContext::get());
+            $chan->push(Coroutine::id());
+            $close->pop(1);
+        });
+
+        $id = $chan->pop(5);
+        $this->assertSame($response, ResponseContext::get($id));
+        $close->push(true);
+    }
+
+    public function testRequestContextWithCoroutineId()
+    {
+        $request = Mockery::mock(ServerRequestPlusInterface::class);
+        RequestContext::set($request);
+        $id = Coroutine::id();
+        (new Waiter())->wait(function () use ($id, $request) {
+            $this->assertSame($request, RequestContext::get($id));
+        });
+    }
+
+    public function testContextOverrideWithCoroutineId()
+    {
+        $id = Coroutine::id();
+        $value = uniqid();
+        Context::override('override.id.coroutine_id', fn () => $value);
+        (new Waiter())->wait(function () use ($id, $value) {
+            Context::override(
+                'override.id.coroutine_id',
+                function ($v) use ($value) {
+                    $this->assertSame($v, $value);
+                    return '123';
+                },
+                $id
+            );
+        });
+
+        $this->assertSame('123', Context::get('override.id.coroutine_id'));
+    }
+
+    public function testContextGetOrSetWithCoroutineId()
+    {
+        $id = Coroutine::id();
+        $value = uniqid();
+        Context::getOrSet('get_or_set.id.coroutine_id', fn () => $value);
+        (new Waiter())->wait(function () use ($id, $value) {
+            $res = Context::getOrSet('get_or_set.id.coroutine_id', fn () => '123', $id);
+            $this->assertSame($res, $value);
+        });
     }
 }

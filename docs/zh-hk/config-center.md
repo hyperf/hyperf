@@ -59,8 +59,8 @@ Nacos 傳統的配置中心，是基於短輪詢進行配置同步的，就會�
 - 首先，我們安裝必要的組件
 
 ```shell
-composer require "hyperf/http2-client:~3.0.0"
-composer require "hyperf/grpc:~3.0.0"
+composer require "hyperf/http2-client:3.1.*"
+composer require "hyperf/grpc:3.1.*"
 ```
 
 - 修改配置項
@@ -158,7 +158,7 @@ return [
             // 嚴格模式，當為 false 時，拉取的配置值均為 string 類型，當為 true 時，拉取的配置值會轉化為原配置值的數據類型
             'strict_mode' => false,
             // 客户端IP
-            'client_ip' => \Hyperf\Utils\Network::ip(),
+            'client_ip' => \Hyperf\Support\Network::ip(),
             // 拉取配置超時時間
             'pullTimeout' => 10,
             // 拉取配置間隔
@@ -217,7 +217,7 @@ return [
         ],
         'etcd' => [
             'driver' => Hyperf\ConfigEtcd\EtcdDriver::class,
-            'packer' => Hyperf\Utils\Packer\JsonPacker::class,
+            'packer' => Hyperf\Codec\Packer\JsonPacker::class,
             // 需要同步的數據前綴
             'namespaces' => [
                 '/application',

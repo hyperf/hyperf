@@ -12,10 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
+use DateTimeZone;
 use Hyperf\Engine\Channel;
 
 class Crontab
 {
+    use ManagesFrequencies;
+
     protected ?string $name = null;
 
     protected string $type = 'callback';
@@ -38,6 +41,8 @@ class Crontab
 
     protected bool $enable = true;
 
+    protected null|string|DateTimeZone $timezone = null;
+
     protected ?Channel $running = null;
 
     public function __clone()
@@ -59,6 +64,7 @@ class Crontab
             "\x00*\x00memo" => $this->memo,
             "\x00*\x00executeTime" => $this->executeTime,
             "\x00*\x00enable" => $this->enable,
+            "\x00*\x00timezone" => $this->timezone,
         ];
     }
 
@@ -76,6 +82,7 @@ class Crontab
         $this->executeTime = $data["\x00*\x00executeTime"] ?? $this->executeTime;
         $this->enable = $data["\x00*\x00enable"] ?? $this->enable;
         $this->running = new Channel(1);
+        $this->timezone = $data["\x00*\x00timezone"] ?? $this->timezone;
     }
 
     public function getName(): ?string
@@ -196,6 +203,17 @@ class Crontab
     public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
+        return $this;
+    }
+
+    public function getTimezone(): null|DateTimeZone|string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(string|DateTimeZone $timezone): static
+    {
+        $this->timezone = $timezone;
         return $this;
     }
 

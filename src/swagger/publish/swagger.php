@@ -19,4 +19,7 @@ return [
     'scan' => [
         'paths' => null,
     ],
+    'processors' => [
+        // users can append their own processors here
+    ],
 ];

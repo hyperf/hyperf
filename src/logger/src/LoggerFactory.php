@@ -112,6 +112,15 @@ class LoggerFactory
         $defaultHandlerConfig = $this->getDefaultHandlerConfig($config);
         $defaultFormatterConfig = $this->getDefaultFormatterConfig($config);
         foreach ($handlerConfigs as $value) {
+            if (is_string($value)) {
+                if (! $this->config->has($group = 'logger.' . $value)) {
+                    continue;
+                }
+                $value = $this->config->get($group . '.handler', []);
+                if ($this->config->has($group . '.formatter')) {
+                    $value['formatter'] = $this->config->get($group . '.formatter', []);
+                }
+            }
             $class = $value['class'] ?? $defaultHandlerConfig['class'];
             $constructor = $value['constructor'] ?? $defaultHandlerConfig['constructor'];
             if (isset($value['formatter'])) {

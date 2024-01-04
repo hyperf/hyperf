@@ -52,6 +52,8 @@ class BootProcessListener implements ListenerInterface
         $processes = $this->config->get('processes', []);
         $annotationProcesses = $this->getAnnotationProcesses();
 
+        ProcessManager::setRunning(true);
+
         // Retrieve the processes have been registered.
         $processes = array_merge($serverProcesses, $processes, ProcessManager::all(), array_keys($annotationProcesses));
         foreach ($processes as $process) {

@@ -40,7 +40,6 @@ class RegisterPropertyHandlerListener implements ListenerInterface
         PropertyHandlerManager::register(Value::class, function ($object, $currentClassName, $targetClassName, $property, $annotation) {
             if ($annotation instanceof Value && ApplicationContext::hasContainer()) {
                 $reflectionProperty = ReflectionManager::reflectProperty($currentClassName, $property);
-                $reflectionProperty->setAccessible(true);
                 $key = $annotation->key;
                 $config = ApplicationContext::getContainer()->get(ConfigInterface::class);
                 $reflectionProperty->setValue($object, $config->get($key, null));

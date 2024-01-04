@@ -7,17 +7,39 @@ on:
     - cron: '0 2 * * *'
 
 jobs:
-  ci:
+  cs-fix:
+    name: PHP CS Fix on PHP${{ matrix.php }} ${{ matrix.swoole }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        php: [ '8.1' ]
+        swoole: [ 'swoole']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: php-cs-fixer
+          extensions: redis, pdo, pdo_mysql, bcmath, ${{ matrix.swoole }}
+      - name: Setup Packages
+        run: composer update -oW
+      - name: Run CS Fix
+        run: vendor/bin/php-cs-fixer fix src --dry-run --diff
+  tests:
+    needs: cs-fix
     name: Test on PHP${{ matrix.php-version }} Swoole-${{ matrix.sw-version }}
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php-version: [ '8.0', '8.1', '8.2' ]
-        sw-version: [ 'v4.8.13', 'v5.0.3', 'v5.1.0', 'master' ]
+        php-version: [ '8.3', '8.2', '8.1' ]
+        sw-version: [ 'v5.0.3', 'v5.1.1', 'master' ]
         exclude:
-          - php-version: '8.2'
-            sw-version: 'v4.8.13'
+          - php-version: '8.3'
+            sw-version: 'v5.0.3'
       max-parallel: 20
       fail-fast: false
     env:
@@ -27,7 +49,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Update Core
+      - name: Upgrade
         run: |
           sudo apt-get clean
           sudo apt-get update
@@ -49,12 +71,7 @@ jobs:
           rm swoole.tar.gz
           cd swoole
           phpize
-          if [ _${{ matrix.sw-version }} = '_v5.0.3' ] || [ _${{ matrix.sw-version }} = '_v5.1.0' ] || [ _${{ matrix.sw-version }} = '_master' ]
-          then
-            ./configure --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql --enable-brotli
-          else
-            ./configure --enable-openssl --enable-http2 --enable-swoole-curl --enable-swoole-json
-          fi
+          ./configure --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql --enable-brotli
           make -j$(nproc)
           sudo make install
           sudo sh -c "echo extension=swoole > /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
@@ -62,7 +79,7 @@ jobs:
           php --ri swoole
       - name: Setup Packages
         run: ./.travis/requirement.install.sh
-      - name: Run Check
+      - name: Run PHPStan
         run: ./.travis/run.check.sh
       - name: Setup Services
         run: ./.travis/setup.services.sh
@@ -76,5 +93,6 @@ jobs:
         run: |
           sudo rm -rf /etc/php/${{ matrix.php-version }}/cli/conf.d/20-xdebug.ini
           php -i
+          php -m
       - name: Run Test Cases
         run: ./.travis/run.test.sh

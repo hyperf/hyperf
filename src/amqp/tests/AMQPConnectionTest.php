@@ -17,12 +17,14 @@ use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use HyperfTest\Amqp\Stub\AMQPConnectionStub;
 use HyperfTest\Amqp\Stub\ContainerStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class AMQPConnectionTest extends TestCase
 {
     public function testMakeChannelId()
@@ -45,7 +47,7 @@ class AMQPConnectionTest extends TestCase
         $container = ContainerStub::getContainer();
         $connection = (new ConnectionFactory($container))->make([]);
         $channel = $connection->getChannel();
-        $channel->exchange_declare('test', Type::TOPIC);
+        $channel->exchange_declare('test', Type::TOPIC->value);
         $this->assertNull($connection->close());
     }
 
@@ -58,7 +60,7 @@ class AMQPConnectionTest extends TestCase
             ],
         ]);
         $channel = $connection->getChannel();
-        $channel->exchange_declare('test', Type::TOPIC);
+        $channel->exchange_declare('test', Type::TOPIC->value);
 
         CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
         CoordinatorManager::clear(Constants::WORKER_EXIT);

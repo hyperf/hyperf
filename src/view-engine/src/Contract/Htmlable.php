@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Contract;
 
-interface Htmlable
+use Stringable;
+
+interface Htmlable extends Stringable
 {
     /**
      * Get content as a string of HTML.

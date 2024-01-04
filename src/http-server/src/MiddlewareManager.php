@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpServer;
 
-use Laminas\Stdlib\SplPriorityQueue;
+use Hyperf\Stdlib\SplPriorityQueue;
 
 class MiddlewareManager
 {
@@ -55,13 +55,15 @@ class MiddlewareManager
     {
         $queue = new SplPriorityQueue();
         foreach ($middlewares as $middleware => $priority) {
-            if ($priority instanceof PriorityMiddleware) {// int => Hyperf\HttpServer\MiddlewareData Object
+            if ($priority instanceof PriorityMiddleware) {
+                // int => Hyperf\HttpServer\MiddlewareData Object
                 [$middleware, $priority] = [$priority->middleware, $priority->priority];
-            } elseif (is_int($middleware)) {// int => Middleware::class
+            } elseif (is_int($middleware)) {
+                // int => Middleware::class
                 [$middleware, $priority] = [$priority, PriorityMiddleware::DEFAULT_PRIORITY];
             }
-            // Default Middleware::class => priority
 
+            // Default Middleware::class => priority
             $queue->insert($middleware, $priority);
         }
 

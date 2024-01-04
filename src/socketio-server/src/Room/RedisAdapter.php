@@ -16,10 +16,10 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coroutine\Coroutine;
+use Hyperf\Engine\WebSocket\Frame;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Server\Exception\RuntimeException;
-use Hyperf\SocketIOServer\Emitter\Flagger;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\WebSocketServer\Sender;
@@ -33,8 +33,6 @@ use function Hyperf\Support\retry;
 
 class RedisAdapter implements AdapterInterface, EphemeralInterface
 {
-    use Flagger;
-
     protected string $redisPrefix = 'ws';
 
     protected int $retryInterval = 1000;
@@ -296,20 +294,13 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
 
     private function tryPush(string $sid, string $packet, array &$pushed, array $opts): void
     {
-        $compress = data_get($opts, 'flag.compress', false);
-        $wsFlag = $this->guessFlags((bool) $compress);
         $except = data_get($opts, 'except', []);
         $fd = $this->getFd($sid);
         if (in_array($sid, $except)) {
             return;
         }
         if ($this->isLocal($sid) && ! isset($pushed[$fd])) {
-            $this->sender->push(
-                $fd,
-                $packet,
-                SWOOLE_WEBSOCKET_OPCODE_TEXT,
-                $wsFlag
-            );
+            $this->sender->pushFrame($fd, new Frame(payloadData: $packet));
             $pushed[$fd] = true;
             $this->shouldClose($opts) && $this->close($fd);
         }

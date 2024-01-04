@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Contract;
 
-interface Jsonable
+use Stringable;
+
+interface Jsonable extends Stringable
 {
     public function __toString(): string;
 }

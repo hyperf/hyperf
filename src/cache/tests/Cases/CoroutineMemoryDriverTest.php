@@ -15,6 +15,7 @@ use Hyperf\Cache\Collector\CoroutineMemory;
 use Hyperf\Cache\Driver\CoroutineMemoryDriver;
 use Hyperf\Codec\Packer\PhpSerializerPacker;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -24,6 +25,7 @@ use function Hyperf\Coroutine\parallel;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CoroutineMemoryDriverTest extends TestCase
 {
     protected function tearDown(): void

@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
+use Hyperf\Stdlib\SplPriorityQueue;
 use InvalidArgumentException;
-use SplPriorityQueue;
 
 /**
  * @mixin SplPriorityQueue

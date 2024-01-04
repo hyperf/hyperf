@@ -56,13 +56,13 @@ class TraceMiddleware implements MiddlewareInterface
             if ($traceId = TracerContext::getTraceId()) {
                 $response = $response->withHeader('Trace-Id', $traceId);
             }
-            $span->setTag($this->spanTagManager->get('response', 'status_code'), $response->getStatusCode());
+            $span->setTag($this->spanTagManager->get('response', 'status_code'), (string) $response->getStatusCode());
         } catch (Throwable $exception) {
             if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($exception)) {
                 $this->appendExceptionToSpan($span, $exception);
             }
             if ($exception instanceof HttpException) {
-                $span->setTag($this->spanTagManager->get('response', 'status_code'), $exception->getStatusCode());
+                $span->setTag($this->spanTagManager->get('response', 'status_code'), (string) $exception->getStatusCode());
             }
             throw $exception;
         } finally {
@@ -76,7 +76,7 @@ class TraceMiddleware implements MiddlewareInterface
     {
         $span->setTag('error', true);
         $span->setTag($this->spanTagManager->get('exception', 'class'), get_class($exception));
-        $span->setTag($this->spanTagManager->get('exception', 'code'), $exception->getCode());
+        $span->setTag($this->spanTagManager->get('exception', 'code'), (string) $exception->getCode());
         $span->setTag($this->spanTagManager->get('exception', 'message'), $exception->getMessage());
         $span->setTag($this->spanTagManager->get('exception', 'stack_trace'), (string) $exception);
     }

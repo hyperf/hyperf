@@ -13,12 +13,14 @@ namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Database\Model\Model;
 use Hyperf\Validation\Rules\Unique;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationUniqueRuleTest extends TestCase
 {
     public function testItCorrectlyFormatsAStringVersionOfTheRule()

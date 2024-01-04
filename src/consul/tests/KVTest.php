@@ -26,8 +26,9 @@ use Psr\Log\NullLogger;
 
 /**
  * @internal
- * @covers \Hyperf\Consul\KV
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Consul\KV::class)]
 class KVTest extends TestCase
 {
     private $kv;

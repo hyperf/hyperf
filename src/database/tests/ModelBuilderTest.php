@@ -32,6 +32,7 @@ use HyperfTest\Database\Stubs\ModelStub;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PDO;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -41,6 +42,7 @@ use function Hyperf\Collection\collect;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelBuilderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
@@ -1197,6 +1199,17 @@ class ModelBuilderTest extends TestCase
         $this->assertNotEquals($builder->toSql(), $clone->toSql());
         $this->assertSame('select * from "stub"', $builder->toSql());
         $this->assertSame('select "id" from "stub"', $clone->toSql());
+    }
+
+    public function testToRawSql()
+    {
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('toRawSql')
+            ->andReturn('select * from "users" where "email" = \'foo\'');
+
+        $builder = new Builder($query);
+
+        $this->assertSame('select * from "users" where "email" = \'foo\'', $builder->toRawSql());
     }
 
     public function testWithAggregateAndSelfRelationConstrain()

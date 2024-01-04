@@ -87,7 +87,7 @@ process -> ../../../hyperf/src/process
 redis -> ../../../hyperf/src/redis
 server -> ../../../hyperf/src/server
 testing -> ../../../hyperf/src/testing
-utils -> ../../../hyperf/src/utils
+support -> ../../../hyperf/src/support
 ```
 
 此時，我們便可達到在 IDE 內直接對 `vendor/hyperf` 內的文件進行修改，而修改的卻是 `hyperf` 內的代碼的目的，這樣最終我們便可直接對 `hyperf` 項目內進行 `commit`，然後向主幹提交 `Pull Request(PR)` 了。

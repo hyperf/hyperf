@@ -18,12 +18,14 @@ use HyperfTest\Di\Stub\Container\ContainerProxy;
 use HyperfTest\Di\Stub\Foo;
 use HyperfTest\Di\Stub\FooInterface;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ContainerTest extends TestCase
 {
     protected function tearDown(): void

@@ -83,6 +83,37 @@ Router::addGroup('/user/', function (){
 
 `Hyperf` provides a very convenient [annotation](en/annotation.md) routing function. You can directly define a route by defining `#[Controller]` or `#[AutoController]` annotations on any class.
 
+! > The annotation classes that appear below are classes under the `use Hyperf\HttpServer\Annotation\` namespace, such as `Hyperf\HttpServer\Annotation\AutoController`.
+
+#### Annotation parameters
+
+Both `#[Controller]` and `#[AutoController]` provide two parameters, `prefix` and `server`.
+
+`prefix` indicates the prefix of all the method routes under the controller, by default, the part after \Controller\` in the controller class namespace will be used as the prefix of the route with SnakeCase nomenclature, e.g. \App\Controller\Demo\UserController` then prefix will be \demo/user` by default.
+
+For example, if `App\Controller\Demo\UserController`, the prefix will be `demo/user` by default, and if the path of a method in the class is `index`, the final route will be `/demo/user/index`.
+
+! > Note that `prefix` is not always valid, when the path of a method within a class starts with `/`, the path is defined from the `URI` header, which means that the prefix value is ignored.
+
+`server` indicates which `HTTP Server` the route is defined on. Since Hyperf supports multiple `HTTP Servers` at the same time, this parameter can be used to distinguish which `Server` the route is defined for, the default is `http`.
+
+|              Controller              |           Annotation            |      Route URI      |
+|:------------------------------------:|:-------------------------------:|:-------------------:|
+|   App\Controller\MyDataController    |        @AutoController()        |   /my_data/index    |
+|   App\Controller\MydataController    |        @AutoController()        |    /mydata/index    |
+|   App\Controller\MyDataController    | @AutoController(prefix="/data") |     /data/index     |
+| App\Controller\Demo\MyDataController |        @AutoController()        | /demo/my_data/index |
+| App\Controller\Demo\MyDataController | @AutoController(prefix="/data") |     /data/index     |
+
+
+
+|              Controller              |                                    Annotation                                     |      Route URI      |
+|:------------------------------------:|:---------------------------------------------------------------------------------:|:-------------------:|
+|   App\Controller\MyDataController    |        @Controller() + @RequestMapping(path: "index", methods: "get,post")        |   /my_data/index    |
+| App\Controller\Demo\MyDataController |        @Controller() + @RequestMapping(path: "index", methods: "get,post")        | /demo/my_data/index |
+| App\Controller\Demo\MyDataController | @Controller(prefix="/data") + @RequestMapping(path: "index", methods: "get,post") |     /data/index     |
+|   App\Controller\MyDataController    |       @Controller() + @RequestMapping(path: "/index", methods: "get,post")        |       /index        |
+
 #### AutoController annotation
 
 `#[AutoController]` provides routing binding support for most simple access scenarios. When using `#[AutoController]`, `Hyperf` will automatically parse all the `public` methods of the class it is in and provide both `GET` and `POST` Request method.
@@ -91,11 +122,6 @@ Router::addGroup('/user/', function (){
 
 Pascal case controller names will be converted to snake_case automatically. The following is an example of the correspondence between the controller, annotation and the resulting route:
 
-|    Controller    |             Annotation             |    Route URI   |
-|:----------------:|:----------------------------------:|:--------------:|
-| MyDataController |         #[AutoController]          | /my_data/index |
-| MydataController |         #[AutoController]          | /mydata/index  |
-| MyDataController | #[AutoController(prefix: "/data")] | /data/index    |
 
 ```php
 <?php
@@ -125,14 +151,6 @@ class UserController
 
 We also provide a variety of quick and convenient `mapping` annotations, such as `#[GetMapping]`, `#[PostMapping]`, `#[PutMapping]`, `#[PatchMapping]` and `#[DeleteMapping]`, each corresponding with a matching request method.
 
-- When using `#[Controller]` annotation, `use Hyperf\HttpServer\Annotation\Controller` namespace is required.
-- When using `#[RequestMapping]` annotation, `use Hyperf\HttpServer\Annotation\RequestMapping` namespace is required.
-- When using `#[GetMapping]` annotation, `use Hyperf\HttpServer\Annotation\GetMapping` namespace is required.
-- When using `#[PostMapping]` annotation, `use Hyperf\HttpServer\Annotation\PostMapping` namespace is required.
-- When using `#[PutMapping]` annotation, `use Hyperf\HttpServer\Annotation\PutMapping` namespace is required.
-- When using `#[PatchMapping]` annotation, `use Hyperf\HttpServer\Annotation\PatchMapping` namespace is required.
-- When using `#[DeleteMapping]` annotation, `use Hyperf\HttpServer\Annotation\DeleteMapping` namespace is required.
-
 ```php
 <?php
 declare(strict_types=1);
@@ -156,15 +174,6 @@ class UserController
     }
 }
 ```
-
-#### Annotation parameters
-
-Both `#[Controller]` and `#[AutoController]` provide two parameters, `prefix` and `server`.
-
-`prefix` represents the URI prefix for all methods under the controller, the default is the lowercase of the class name. For example, in the case of `UserController`, the `prefix` defaults to `user`, so if the controller method is `index`, then the final route is `/user/index`.
-It should be noted that the `prefix` is not always used: when the `path` of a method in a class starts with `/`, it means that the path is defined as an absolute `URI` and the value of `prefix` will be ignored. At the same time, if the `prefix` attribute is not set, then the part after `\\Controller\\` in the controller class namespace will be used as the route prefix in SnakeCase style.
-
-`server` indicates which server the route is defined for. Since `Hyperf` supports starting multiple servers at the same time, there may be multiple HTTP servers running at the same time. Therefore defining the `server` parameter can be used to distinguish which server the route is defined for. The default is `http`.
 
 ### Route parameters
 
@@ -202,6 +211,34 @@ We can define required route parameters using `{}`. For example, `/user/{id}` de
 #### Optional parameters
 
 Sometimes you may want a route parameter to be optional. In this case, you can use `[]` to declare the parameter inside the brackets as an optional parameter, such as `/user/[{id}]`.
+
+#### Validate parameters
+
+You can also use regular expression to validate parameters. Here are some examples
+```php
+use Hyperf\HttpServer\Router\Router;
+
+// Matches /user/42, but not /user/xyz
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
+
+// Matches /user/foobar, but not /user/foo/bar
+Router::addRoute('GET', '/user/{name}', 'handler');
+
+// Matches /user/foo/bar as well
+Router::addRoute('GET', '/user/{name:.+}', 'handler');
+
+// This route
+Router::addRoute('GET', '/user/{id:\d+}[/{name}]', 'handler');
+// Is equivalent to these two routes
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
+Router::addRoute('GET', '/user/{id:\d+}/{name}', 'handler');
+
+// Multiple nested optional parts are possible as well
+Router::addRoute('GET', '/user[/{id:\d+}[/{name}]]', 'handler');
+
+// This route is NOT valid, because optional parts can only occur at the end
+Router::addRoute('GET', '/user[/{id:\d+}]/{name}', 'handler');
+```
 
 #### Get routing information
 

@@ -12,7 +12,7 @@ composer require hyperf/cache
 |  配置  |                  預設值                  |         備註          |
 |:------:|:----------------------------------------:|:---------------------:|
 | driver |  Hyperf\Cache\Driver\RedisDriver  | 快取驅動，預設為 Redis |
-| packer | Hyperf\Utils\Packer\PhpSerializer |        打包器         |
+| packer | Hyperf\Codec\Packer\PhpSerializerPacker |        打包器         |
 | prefix |                   c:                   |       快取字首        |
 
 ```php
@@ -21,7 +21,7 @@ composer require hyperf/cache
 return [
     'default' => [
         'driver' => Hyperf\Cache\Driver\RedisDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+        'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
         'prefix' => 'c:',
     ],
 ];
@@ -43,8 +43,6 @@ $cache = $container->get(\Psr\SimpleCache\CacheInterface::class);
 
 元件提供 `Hyperf\Cache\Annotation\Cacheable` 註解，作用於類方法，可以配置對應的快取字首、失效時間、監聽器和快取組。
 例如，UserService 提供一個 user 方法，可以查詢對應 id 的使用者資訊。當加上 `Hyperf\Cache\Annotation\Cacheable` 註解後，會自動生成對應的 Redis 快取，key 值為 `user:id` ，超時時間為 `9000` 秒。首次查詢時，會從資料庫中查，後面查詢時，會從快取中查。
-
-> 快取註解基於 [aop](zh-tw/aop.md) 和 [di](zh-tw/di.md)，所以只有在 `Container` 中獲取到的物件例項才有效，比如透過 `$container->get` 和 `make` 方法所獲得的物件，直接 `new` 出來的物件無法使用。
 
 ```php
 <?php
@@ -72,7 +70,11 @@ class UserService
 
 ### 清理 `#[Cacheable]` 生成的快取
 
-當然，如果我們資料庫中的資料改變了，如何刪除快取呢？這裡就需要用到後面的監聽器。下面新建一個 Service 提供一方法，來幫我們處理快取。
+我們提供了 `CachePut` 和 `CacheEvict` 兩個註解，來實現更新快取和清除快取操作。
+
+當然，我們也可以透過事件來刪除快取。下面新建一個 Service 提供一方法，來幫我們處理快取。
+
+> 不過我們更加推薦使用者使用註解處理，而非監聽器
 
 ```php
 <?php
@@ -326,8 +328,7 @@ class Demo
 return [
     'co' => [
         'driver' => Hyperf\Cache\Driver\CoroutineMemoryDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+        'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
     ],
 ];
 ```
-

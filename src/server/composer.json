@@ -16,16 +16,16 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=8.0",
-        "hyperf/contract": "~3.0.0",
-        "hyperf/engine": "^1.10|^2.8",
-        "hyperf/support": "~3.0.0",
-        "hyperf/tappable": "~3.0.0",
-        "hyperf/utils": "~3.0.0",
+        "php": ">=8.1",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/coordinator": "~3.1.0",
+        "hyperf/engine": "^2.8",
+        "hyperf/support": "~3.1.0",
+        "hyperf/tappable": "~3.1.0",
         "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0",
         "psr/log": "^1.0|^2.0|^3.0",
-        "symfony/console": "^5.0|^6.0"
+        "symfony/console": "^5.0|^6.0|^7.0"
     },
     "suggest": {
         "hyperf/framework": "Dump the info after server start.",
@@ -46,7 +46,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Server\\ConfigProvider"

@@ -18,24 +18,26 @@ use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerData;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\Event\ListenerProviderFactory;
+use Hyperf\Stdlib\SplPriorityQueue;
 use HyperfTest\Event\Event\Alpha;
 use HyperfTest\Event\Event\Beta;
 use HyperfTest\Event\Listener\AlphaListener;
 use HyperfTest\Event\Listener\BetaListener;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
-use SplPriorityQueue;
 
 /**
  * @internal
- * @covers \Hyperf\Event\Annotation\Listener
- * @covers \Hyperf\Event\EventDispatcher
- * @covers \Hyperf\Event\ListenerProvider
- * @covers \Hyperf\Event\ListenerProviderFactory
+ * @coversNothing
  */
+#[CoversClass(ListenerAnnotation::class)]
+#[CoversClass(EventDispatcher::class)]
+#[CoversClass(ListenerProvider::class)]
+#[CoversClass(ListenerProviderFactory::class)]
 class ListenerTest extends TestCase
 {
     use MockeryPHPUnitIntegration;

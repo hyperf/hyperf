@@ -23,6 +23,8 @@ use Hyperf\Validation\Validator;
 use Hyperf\Validation\ValidatorFactory;
 use InvalidArgumentException;
 
+use function Hyperf\Collection\collect;
+
 class File implements Rule, DataAwareRule, ValidatorAwareRule
 {
     use Conditionable;

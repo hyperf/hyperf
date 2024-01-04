@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Definition;
 
-interface DefinitionInterface
+use Stringable;
+
+interface DefinitionInterface extends Stringable
 {
     /**
      * Definitions can be cast to string for debugging information.

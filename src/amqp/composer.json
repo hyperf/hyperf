@@ -15,15 +15,15 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "doctrine/instantiator": "^1.2.0",
-        "hyperf/codec": "~3.0.0",
-        "hyperf/contract": "~3.0.0",
-        "hyperf/coroutine": "~3.0.0",
-        "hyperf/process": "~3.0.0",
-        "hyperf/pool": "~3.0.0",
-        "hyperf/support": "~3.0.0",
-        "hyperf/utils": "~3.0.0",
+        "hyperf/codec": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/coroutine": "~3.1.0",
+        "hyperf/process": "~3.1.0",
+        "hyperf/pool": "~3.1.0",
+        "hyperf/support": "~3.1.0",
+        "hyperf/utils": "~3.1.0",
         "php-amqplib/php-amqplib": "^3.5",
         "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0",
@@ -48,7 +48,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Amqp\\ConfigProvider"

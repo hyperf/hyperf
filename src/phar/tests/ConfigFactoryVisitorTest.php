@@ -13,12 +13,14 @@ namespace HyperfTest\Phar;
 
 use Hyperf\Phar\Ast\Ast;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigFactoryVisitor;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConfigFactoryVisitorTest extends TestCase
 {
     public function testRewriteConfig()
@@ -39,6 +41,7 @@ declare (strict_types=1);
  */
 namespace Hyperf\\Config;
 
+use Hyperf\\Collection\\Arr;
 use Psr\\Container\\ContainerInterface;
 use Symfony\\Component\\Finder\\Finder;
 class ConfigFactory
@@ -65,7 +68,10 @@ class ConfigFactory
         \$finder = new Finder();
         \$finder->files()->in(\$paths)->name('*.php');
         foreach (\$finder as \$file) {
-            \$configs[] = [\$file->getBasename('.php') => require \$file->getPathname()];
+            \$config = [];
+            \$key = implode('.', array_filter([str_replace('/', '.', \$file->getRelativePath()), \$file->getBasename('.php')]));
+            \\Hyperf\\Collection\\Arr::set(\$config, \$key, require \$file->getPathname());
+            \$configs[] = \$config;
         }
         return \$configs;
     }

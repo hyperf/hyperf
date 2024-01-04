@@ -16,12 +16,14 @@ use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\LoadBalancer\Random;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RandomTest extends TestCase
 {
     public function testRandom()
@@ -66,5 +68,11 @@ class RandomTest extends TestCase
         CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
         CoordinatorManager::clear(Constants::WORKER_EXIT);
         $random->clearAfterRefreshedCallbacks();
+    }
+
+    public function testFunctionMakeExists()
+    {
+        $this->assertFalse(function_exists('make'));
+        $this->assertTrue(function_exists('Hyperf\Support\make'));
     }
 }

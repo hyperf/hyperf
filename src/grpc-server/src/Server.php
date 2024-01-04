@@ -39,5 +39,7 @@ class Server extends HttpServer
         $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, [
             GrpcExceptionHandler::class,
         ]);
+
+        $this->initOption();
     }
 }

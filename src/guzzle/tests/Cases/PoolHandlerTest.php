@@ -21,12 +21,14 @@ use Hyperf\Pool\SimplePool\Pool;
 use Hyperf\Pool\SimplePool\PoolFactory;
 use HyperfTest\Guzzle\Stub\PoolHandlerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PoolHandlerTest extends TestCase
 {
     protected $id = 0;

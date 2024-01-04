@@ -23,6 +23,7 @@ use Hyperf\Database\Schema\Schema;
 use Hyperf\Support\Filesystem\Filesystem;
 use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Style\OutputStyle;
 
@@ -30,16 +31,13 @@ use Symfony\Component\Console\Style\OutputStyle;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PostgreSqlSwooleExtConnectionTest extends TestCase
 {
     protected Migrator $migrator;
 
     public function setUp(): void
     {
-        if (SWOOLE_MAJOR_VERSION < 5) {
-            $this->markTestSkipped('PostgreSql requires Swoole version >= 5.0.0');
-        }
-
         $resolver = ContainerStub::getContainer()->get(ConnectionResolverInterface::class);
 
         $this->migrator = new Migrator(
