@@ -4,6 +4,10 @@
 
 - [#6423](https://github.com/hyperf/hyperf/pull/6423) Fixed bug that the timezone of crontab task cannot work.
 
+## Added
+
+- [#6431](https://github.com/hyperf/hyperf/pull/6431) Added `UnsetContextInTaskWorkerListener` which can be used to unset connection context when using non-coroutine task worker.
+
 # v3.1.4 - 2023-12-29
 
 ## Fixed
