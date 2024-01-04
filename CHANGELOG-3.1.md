@@ -8,6 +8,10 @@
 
 - [#6431](https://github.com/hyperf/hyperf/pull/6431) Added `UnsetContextInTaskWorkerListener` which can be used to unset connection context when using non-coroutine task worker.
 
+## Optimized
+
+- [#6435](https://github.com/hyperf/hyperf/pull/6435) Optimized model generator which can generate property comments with `use`.
+
 # v3.1.4 - 2023-12-29
 
 ## Fixed
