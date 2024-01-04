@@ -18,9 +18,6 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Psr\Container\ContainerInterface;
 
-/**
- * @method string getContextKey(string $name)
- */
 class UnsetContextInTaskWorkerListener implements ListenerInterface
 {
     public function __construct(
