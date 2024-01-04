@@ -57,6 +57,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      */
     public static function loadFromSwooleRequest(Swoole\Http\Request $swooleRequest)
     {
+        $queryString = $swooleRequest->server['query_string'] ?? '';
+        parse_str(urldecode($queryString), $queryParams);
         $server = $swooleRequest->server;
         $method = $server['request_method'] ?? 'GET';
         $headers = $swooleRequest->header ?? [];
@@ -65,7 +67,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         $protocol = isset($server['server_protocol']) ? str_replace('HTTP/', '', $server['server_protocol']) : '1.1';
         $request = new Request($method, $uri, $headers, $body, $protocol);
         $request->cookieParams = ($swooleRequest->cookie ?? []);
-        $request->queryParams = ($swooleRequest->get ?? []);
+        $request->queryParams = ($queryParams ?? []);
         $request->serverParams = ($server ?? []);
         $request->parsedBody = self::normalizeParsedBody($swooleRequest->post ?? [], $request);
         $request->uploadedFiles = self::normalizeFiles($swooleRequest->files ?? []);
