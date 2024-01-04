@@ -58,6 +58,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
     public static function loadFromSwooleRequest(Swoole\Http\Request $swooleRequest)
     {
         $queryString = $swooleRequest->server['query_string'] ?? '';
+        $queryParams = [];
         parse_str(urldecode($queryString), $queryParams);
         $server = $swooleRequest->server;
         $method = $server['request_method'] ?? 'GET';
