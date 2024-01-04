@@ -21,7 +21,7 @@ use Psr\Container\ContainerInterface;
 /**
  * @method string getContextKey(string $name)
  */
-class UnsetContextListener implements ListenerInterface
+class UnsetContextInTaskWorkerListener implements ListenerInterface
 {
     public function __construct(
         private ContainerInterface $container,
