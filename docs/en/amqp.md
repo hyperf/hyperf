@@ -109,7 +109,7 @@ use Hyperf\Amqp\Result;
 #[Consumer(exchange: 'hyperf', routingKey: 'hyperf', queue: 'hyperf', nums: 1)]
 class DemoConsumer extends ConsumerMessage
 {
-    public function consume($data): string
+    public function consume($data): Result
     {
         print_r($data);
         return Result::ACK;
@@ -253,7 +253,7 @@ class DelayDirectConsumer extends ConsumerMessage
     
     protected $routingKey = '';
 
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         var_dump($data, 'delay+direct consumeTime:' . (microtime(true)));
         return Result::ACK;
@@ -346,7 +346,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 #[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "rpc.reply", name: "ReplyConsumer", nums: 1, enable: true)]
 class ReplyConsumer extends ConsumerMessage
 {
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         $data['message'] .= 'Reply:' . $data['message'];
 
