@@ -10,6 +10,7 @@
 ## Added
 
 - [#6431](https://github.com/hyperf/hyperf/pull/6431) Added `UnsetContextInTaskWorkerListener` which can be used to unset connection context when using non-coroutine task worker.
+- [#6449](https://github.com/hyperf/hyperf/pull/6449) Added method `ReflectionManager::getAllClassesByFinder`.
 
 ## Optimized
 
