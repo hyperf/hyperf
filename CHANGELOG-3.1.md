@@ -1,5 +1,9 @@
 # v3.1.6 - TBD
 
+## Added
+
+- [#6449](https://github.com/hyperf/hyperf/pull/6449) Added method `ReflectionManager::getAllClassesByFinder`.
+
 # v3.1.5 - 2024-01-04
 
 ## Fixed
