@@ -94,10 +94,10 @@ class ReflectionManager extends MetadataCollector
             : $property->getDeclaringClass()->getDefaultProperties()[$property->getName()] ?? null;
     }
 
-    public static function getAllClasses(array $paths): array
+    public static function getAllClasses(array $paths, string|array $exclude = []): array
     {
         $finder = new Finder();
-        $finder->files()->in($paths)->name('*.php');
+        $finder->files()->in($paths)->exclude($exclude)->name('*.php');
         $parser = new Ast();
 
         $reflectionClasses = [];
