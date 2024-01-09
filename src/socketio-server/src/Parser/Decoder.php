@@ -104,4 +104,82 @@ class Decoder
             'query' => $query,
         ]);
     }
+
+    public function makePacket(string $type, string $nsp = '/', array $query = [], string $id = '', array $data = [])
+    {
+        return Packet::create([
+            'type' => $type,
+            'nsp' => $nsp,
+            'id' => $id,
+            'data' => $data,
+            'query' => $query,
+        ]);
+    }
+
+    /**
+     * @param string $payload such as `2/ws?foo=xxx,2["event","hellohyperf"]`
+     */
+    public function decodePacket(string $payload): Packet
+    {
+        if (! $payload) {
+            throw new \InvalidArgumentException('Empty packet');
+        }
+
+        $length = strlen($payload);
+        $type = $payload[0];
+        if (! in_array($type, [Packet::OPEN, Packet::CLOSE, Packet::EVENT, Packet::ACK], true)) {
+            throw new \InvalidArgumentException('Unknown packet type ' . $type);
+        }
+
+        if ($length === 1) {
+            return $this->makePacket($type);
+        }
+
+        $nsp = '/';
+        $query = [];
+        $data = [];
+
+        $payload = substr($payload, 1);
+        if ($payload[0] === '/') {
+            // parse url
+            $exploded = explode(',', $payload, 2);
+            $parsedUrl = parse_url($exploded[0]);
+            $nsp = $parsedUrl['path'];
+            if (! empty($parsedUrl['query'])) {
+                parse_str($parsedUrl['query'], $query);
+            }
+
+            $payload = $exploded[1];
+        }
+
+        if (! $payload) {
+            return $this->makePacket($type, $nsp, $query);
+        }
+
+        $offset = 0;
+        while (true) {
+            $char = $payload[$offset] ?? null;
+            if ($char === null) {
+                break;
+            }
+
+            if (is_numeric($char)) {
+                ++$offset;
+            } else {
+                break;
+            }
+        }
+
+        $id = substr($payload, 0, $offset);
+        $payload = substr($payload, $offset);
+        if ($payload) {
+            try {
+                $data = json_decode($payload, flags: JSON_THROW_ON_ERROR);
+            } catch (Throwable $exception) {
+                throw new InvalidArgumentException('Invalid data', (int) $exception->getCode(), $exception);
+            }
+        }
+
+        return $this->makePacket($type, $nsp, $query, $id, $data);
+    }
 }
