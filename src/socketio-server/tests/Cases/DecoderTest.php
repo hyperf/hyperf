@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\SocketIOServer\Cases;
 
 use Hyperf\SocketIOServer\Parser\Decoder;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
@@ -59,5 +60,38 @@ class DecoderTest extends AbstractTestCase
         $this->assertEquals('1', $packet['type']);
         $this->assertEquals('/ws', $packet['nsp']);
         $this->assertEquals(['foo' => 'bar', 'baz' => '1'], $packet['query']);
+        $result = $decoder->decode('2/1');
+        $this->assertEquals(2, $result->type);
+        $this->assertEquals('/1', $result->nsp);
+        $result = $decoder->decode('2/1,2["event","hellohyperf"]');
+        $this->assertEquals(2, $result->type);
+        $this->assertEquals('/1', $result->nsp);
+        $this->assertEquals('2', $result->id);
+        $this->assertEquals([
+        ], $result->query);
+        $result = $decoder->decode('2/1?foo=xxx,2["event","hellohyperf"]');
+        $this->assertEquals(2, $result->type);
+        $this->assertEquals('/1', $result->nsp);
+        $this->assertEquals('2', $result->id);
+        $this->assertEquals([
+            'foo' => 'xxx',
+        ], $result->query);
+        $this->assertEquals(json_decode('["event","hellohyperf"]', true), $result->data);
+
+        $result = $decoder->decode('2/1?foo=xxx,2{"event": "JOIN"}');
+        $this->assertEquals(2, $result->type);
+        $this->assertEquals('/1', $result->nsp);
+        $this->assertEquals('2', $result->id);
+        $this->assertEquals([
+            'foo' => 'xxx',
+        ], $result->query);
+        $this->assertEquals(['event' => 'JOIN'], $result->data);
+
+        try {
+            $decoder->decode('2/1?2["event","hellohyperf"]');
+            $this->assertTrue(false);
+        } catch (InvalidArgumentException $e) {
+            $this->assertEquals('Invalid data', $e->getMessage());
+        }
     }
 }
