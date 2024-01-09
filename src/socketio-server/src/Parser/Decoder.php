@@ -74,7 +74,7 @@ class Decoder
         $data = [];
         if ($payload) {
             try {
-                $data = json_decode($payload, associative: true, flags: JSON_THROW_ON_ERROR);
+                $data = json_decode($payload, true, flags: JSON_THROW_ON_ERROR);
             } catch (Throwable $exception) {
                 throw new InvalidArgumentException('Invalid data', (int) $exception->getCode(), $exception);
             }
