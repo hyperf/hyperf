@@ -80,27 +80,9 @@ class DecoderTest extends AbstractTestCase
 
         try {
             $decoder->decode('2/1?2["event","hellohyperf"]');
+            $this->assertTrue(false);
         } catch (InvalidArgumentException $e) {
             $this->assertEquals('Invalid data', $e->getMessage());
         }
-    }
-
-    public function testDecodeEfficiency()
-    {
-        $max = 10000;
-        $decode = new Decoder();
-        $t = microtime(true);
-        for ($i = 0; $i < $max; ++$i) {
-            $decode->decode('2/1?foo=xxx,2["event","hellohyperf"]');
-        }
-        var_dump(microtime(true) - $t);
-
-        $t = microtime(true);
-        for ($i = 0; $i < $max; ++$i) {
-            $decode->decodePacket('2/1?foo=xxx,2["event","hellohyperf"]');
-        }
-        var_dump(microtime(true) - $t);
-
-        $this->assertTrue(true);
     }
 }

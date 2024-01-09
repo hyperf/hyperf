@@ -16,7 +16,7 @@ use Throwable;
 
 class Decoder
 {
-    public function decode($payload): Packet
+    public function decodeBackup($payload): Packet
     {
         $payloadLength = strlen($payload);
         $currentIndex = 0;
@@ -105,21 +105,10 @@ class Decoder
         ]);
     }
 
-    public function makePacket(string $type, string $nsp = '/', array $query = [], string $id = '', array $data = [])
-    {
-        return Packet::create([
-            'type' => $type,
-            'nsp' => $nsp,
-            'id' => $id,
-            'data' => $data,
-            'query' => $query,
-        ]);
-    }
-
     /**
      * @param string $payload such as `2/ws?foo=xxx,2["event","hellohyperf"]`
      */
-    public function decodePacket(string $payload): Packet
+    public function decode(string $payload): Packet
     {
         if (! $payload) {
             throw new \InvalidArgumentException('Empty packet');
@@ -148,7 +137,7 @@ class Decoder
                 parse_str($parsedUrl['query'], $query);
             }
 
-            $payload = $exploded[1];
+            $payload = $exploded[1] ?? null;
         }
 
         if (! $payload) {
@@ -181,5 +170,16 @@ class Decoder
         }
 
         return $this->makePacket($type, $nsp, $query, $id, $data);
+    }
+
+    public function makePacket(string $type, string $nsp = '/', array $query = [], string $id = '', array $data = [])
+    {
+        return Packet::create([
+            'type' => $type,
+            'nsp' => $nsp,
+            'id' => $id,
+            'data' => $data,
+            'query' => $query,
+        ]);
     }
 }
