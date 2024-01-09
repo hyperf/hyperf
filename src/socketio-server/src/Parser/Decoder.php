@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Parser;
 
-use Hyperf\Codec\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use Throwable;
 
 class Decoder
@@ -22,13 +22,13 @@ class Decoder
     public function decode(string $payload): Packet
     {
         if (! $payload) {
-            throw new \InvalidArgumentException('Empty packet');
+            throw new InvalidArgumentException('Empty packet');
         }
 
         $length = strlen($payload);
         $type = $payload[0];
         if (! in_array($type, [Packet::OPEN, Packet::CLOSE, Packet::EVENT, Packet::ACK], true)) {
-            throw new \InvalidArgumentException('Unknown packet type ' . $type);
+            throw new InvalidArgumentException('Unknown packet type ' . $type);
         }
 
         if ($length === 1) {
@@ -76,7 +76,7 @@ class Decoder
             try {
                 $data = json_decode($payload, associative: true, flags: JSON_THROW_ON_ERROR);
             } catch (Throwable $exception) {
-                throw new \InvalidArgumentException('Invalid data', (int) $exception->getCode(), $exception);
+                throw new InvalidArgumentException('Invalid data', (int) $exception->getCode(), $exception);
             }
         }
 

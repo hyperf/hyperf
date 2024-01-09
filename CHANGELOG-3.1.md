@@ -4,6 +4,10 @@
 
 - [#6449](https://github.com/hyperf/hyperf/pull/6449) Added method `ReflectionManager::getAllClassesByFinder`.
 
+## Optimized
+
+- [#6440](https://github.com/hyperf/hyperf/pull/6440) Optimized code of `Hyperf\SocketIOServer\Parser\Decoder::decode()`.
+
 # v3.1.5 - 2024-01-04
 
 ## Fixed
