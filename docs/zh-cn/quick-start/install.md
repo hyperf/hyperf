@@ -52,6 +52,7 @@ composer create-project hyperf/swow-skeleton
 ```shell
 docker run --name hyperf \
 -v /workspace/skeleton:/data/project \
+-w /data/project \
 -p 9501:9501 -it \
 --privileged -u root \
 --entrypoint /bin/sh \
