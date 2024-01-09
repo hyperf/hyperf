@@ -89,7 +89,7 @@ class Decoder
         // look up json data
         if ($currentIndex < $payloadLength - 1) {
             try {
-                $data = json_decode(substr($payload, $currentIndex + 1), flags: JSON_THROW_ON_ERROR);
+                $data = json_decode(substr($payload, $currentIndex + 1), associative: true, flags: JSON_THROW_ON_ERROR);
             } catch (Throwable $exception) {
                 throw new InvalidArgumentException('Invalid data', (int) $exception->getCode(), $exception);
             }
@@ -163,16 +163,16 @@ class Decoder
         $data = [];
         if ($payload) {
             try {
-                $data = json_decode($payload, flags: JSON_THROW_ON_ERROR);
+                $data = json_decode($payload, associative: true, flags: JSON_THROW_ON_ERROR);
             } catch (Throwable $exception) {
-                throw new InvalidArgumentException('Invalid data', (int) $exception->getCode(), $exception);
+                throw new \InvalidArgumentException('Invalid data', (int) $exception->getCode(), $exception);
             }
         }
 
         return $this->makePacket($type, $nsp, $query, $id, $data);
     }
 
-    public function makePacket(string $type, string $nsp = '/', array $query = [], string $id = '', array $data = [])
+    public function makePacket(string $type, string $nsp = '/', array $query = [], string $id = '', array $data = []): Packet
     {
         return Packet::create([
             'type' => $type,

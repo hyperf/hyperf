@@ -78,6 +78,15 @@ class DecoderTest extends AbstractTestCase
         ], $result->query);
         $this->assertEquals(json_decode('["event","hellohyperf"]', true), $result->data);
 
+        $result = $decoder->decode('2/1?foo=xxx,2{"event": "JOIN"}');
+        $this->assertEquals(2, $result->type);
+        $this->assertEquals('/1', $result->nsp);
+        $this->assertEquals('2', $result->id);
+        $this->assertEquals([
+            'foo' => 'xxx',
+        ], $result->query);
+        $this->assertEquals(['event' => 'JOIN'], $result->data);
+
         try {
             $decoder->decode('2/1?2["event","hellohyperf"]');
             $this->assertTrue(false);
