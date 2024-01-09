@@ -98,6 +98,12 @@ class ReflectionManager extends MetadataCollector
     {
         $finder = new Finder();
         $finder->files()->in($paths)->name('*.php');
+
+        return static::getAllClassesByFinder($finder);
+    }
+
+    public static function getAllClassesByFinder(Finder $finder): array
+    {
         $parser = new Ast();
 
         $reflectionClasses = [];
