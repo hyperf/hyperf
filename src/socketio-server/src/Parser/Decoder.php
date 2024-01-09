@@ -137,7 +137,6 @@ class Decoder
 
         $nsp = '/';
         $query = [];
-        $data = [];
 
         $payload = substr($payload, 1);
         if ($payload[0] === '/') {
@@ -172,6 +171,7 @@ class Decoder
 
         $id = substr($payload, 0, $offset);
         $payload = substr($payload, $offset);
+        $data = [];
         if ($payload) {
             try {
                 $data = json_decode($payload, flags: JSON_THROW_ON_ERROR);
