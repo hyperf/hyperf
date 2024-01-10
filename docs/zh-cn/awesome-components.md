@@ -48,7 +48,7 @@
 ## 服务
 
 - [hyperf/http-server](https://github.com/hyperf/http-server) Hyperf 官方提供的 HTTP 服务端
-- [hyperf/grpc-server](https://github.com/hyperf/grpc-server) Hyperf 官方提供的 GRPC 服务端
+- [hyperf/grpc-server](https://github.com/hyperf/grpc-server) Hyperf 官方提供的 gRPC 服务端
 - [hyperf/websocket-server](https://github.com/hyperf/websocket-server) Hyperf 官方提供的 WebSocket 服务端
 - [hyperf/rpc-server](https://github.com/hyperf/rpc-server) Hyperf 官方提供的通用 RPC 抽象服务端
 
@@ -56,7 +56,7 @@
 
 - [hyperf/consul](https://github.com/hyperf/consul) Hyperf 官方提供的 Consul 协程客户端
 - [hyperf/elasticsearch](https://github.com/hyperf/elasticsearch) Hyperf 官方提供的 Elasticsearch 协程客户端
-- [hyperf/grpc-client](https://github.com/hyperf/grpc-client) Hyperf 官方提供的 GRPC 协程客户端
+- [hyperf/grpc-client](https://github.com/hyperf/grpc-client) Hyperf 官方提供的 gRPC 协程客户端
 - [hyperf/etcd](https://github.com/hyperf/etcd) Hyperf 官方提供的 ETCD 协程客户端
 - [hyperf/rpc-client](https://github.com/hyperf/rpc-client) Hyperf 官方提供的通用 RPC 抽象协程客户端
 - [hyperf/guzzle](https://github.com/hyperf/guzzle) Hyperf 官方提供的 Guzzle HTTP 协程客户端
