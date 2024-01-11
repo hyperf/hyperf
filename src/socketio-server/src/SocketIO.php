@@ -130,7 +130,9 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
             $this->stdoutLogger->error("The data format is incorrect: {$frame->data}");
             return;
         }
-        $packet = $this->decoder->decode(substr($frame->data, 1));
+
+
+        $packet = $this->decoder->decode($frame->data);
         switch ($packet->type) {
             case Packet::OPEN: // client open
                 $responsePacket = Packet::create([
