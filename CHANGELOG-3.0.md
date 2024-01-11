@@ -1,4 +1,10 @@
-# v3.0.47 - TBD
+# v3.0.48 - TBD
+
+# v3.0.47 - 2024-01-11
+
+## Optimized
+
+- [#6455](https://github.com/hyperf/hyperf/pull/6455) Optimized code of Hyperf\SocketIOServer\Parser\Decoder::decode().
 
 # v3.0.46 - 2023-11-30
 
