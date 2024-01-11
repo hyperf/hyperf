@@ -30,14 +30,14 @@ class Decoder
         $payloadLength = strlen($payload);
         $currentIndex = 1;
 
-        $type = $payload[1] ?? throw new \InvalidArgumentException('Empty packet');
+        $type = $payload[1] ?? throw new InvalidArgumentException('Empty packet');
         $nsp = '/';
         $query = [];
         $id = '';
         $data = [];
 
         if (! in_array($type, [Packet::OPEN, Packet::CLOSE, Packet::EVENT, Packet::ACK], true)) {
-            throw new \InvalidArgumentException('Unknown packet type ' . $type);
+            throw new InvalidArgumentException('Unknown packet type ' . $type);
         }
 
         // TODO: look up attachments if type binary
