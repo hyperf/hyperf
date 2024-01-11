@@ -25,6 +25,7 @@ class DecoderTest extends AbstractTestCase
     public function testDecode()
     {
         $decoder = new Decoder();
+
         $packet = $decoder->decode('42["foo","bar"]');
         $this->assertEquals('', $packet['id']);
         $this->assertEquals('2', $packet['type']);
@@ -94,11 +95,24 @@ class DecoderTest extends AbstractTestCase
             $this->assertEquals('Invalid data', $e->getMessage());
         }
 
+        $packet = $decoder->decode('42/x');
+        $this->assertEquals('', $packet['id']);
+        $this->assertEquals('2', $packet['type']);
+        $this->assertEquals('/x', $packet['nsp']);
+        $this->assertEquals([], $packet['data']);
+        $this->assertEquals([], $packet['query']);
+
         try {
             $decoder->decode('2/1?2["event","hellohyperf"]');
             $this->assertTrue(false);
         } catch (InvalidArgumentException $e) {
             $this->assertEquals('Invalid engine 2', $e->getMessage());
+        }
+
+        try {
+            $decoder->decode('4');
+        } catch (InvalidArgumentException $e) {
+            $this->assertEquals('Empty packet', $e->getMessage());
         }
     }
 }
