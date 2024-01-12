@@ -52,7 +52,6 @@ class Decoder
         }
 
         if ($payload[$currentIndex + 1] === '/') {
-
             $nspStart = $currentIndex + 1;
             $nspEnd = strpos($payload, ',');
             $queryStart = strpos($payload, '?');
@@ -73,7 +72,6 @@ class Decoder
             goto _out;
         }
 
-
         // Parser packet id
         $start = $currentIndex + 1;
         while (++$currentIndex) {
@@ -88,7 +86,6 @@ class Decoder
             }
         }
         $id = substr($payload, $start, $currentIndex - $start + 1);
-
 
         // look up json data
         if ($currentIndex < $payloadLength - 1) {

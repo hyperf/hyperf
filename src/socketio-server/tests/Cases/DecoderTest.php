@@ -92,7 +92,7 @@ class DecoderTest extends AbstractTestCase
         $this->assertEquals('', $result->id);
         $this->assertEquals([
             'foo' => 'xxx',
-            'bar' => 'yyy'
+            'bar' => 'yyy',
         ], $result->query);
 
         try {
