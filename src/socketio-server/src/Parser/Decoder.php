@@ -13,7 +13,6 @@ namespace Hyperf\SocketIOServer\Parser;
 
 use InvalidArgumentException;
 use Throwable;
-use function Hyperf\AsyncQueue\dispatch;
 
 class Decoder
 {
