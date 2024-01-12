@@ -17,74 +17,94 @@ use Throwable;
 class Decoder
 {
     /**
-     * @param string $payload such as `2/ws?foo=xxx,2["event","hellohyperf"]`
+     * @param string $payload such as `42/ws?foo=xxx,2["event","hellohyperf"]`
      */
     public function decode(string $payload): Packet
     {
-        if (! $payload) {
-            throw new InvalidArgumentException('Empty packet');
+        $engine = $payload[0];
+
+        if ($engine !== Engine::MESSAGE) {
+            throw new InvalidArgumentException('Invalid engine ' . $engine);
         }
 
-        $length = strlen($payload);
-        $type = $payload[0];
+        $payloadLength = strlen($payload);
+        $currentIndex = 1;
+
+        $type = $payload[1] ?? throw new InvalidArgumentException('Empty packet');
+        $nsp = '/';
+        $query = [];
+        $id = '';
+        $data = [];
+
         if (! in_array($type, [Packet::OPEN, Packet::CLOSE, Packet::EVENT, Packet::ACK], true)) {
             throw new InvalidArgumentException('Unknown packet type ' . $type);
         }
 
-        if ($length === 1) {
-            return $this->makePacket($type);
+        // TODO: look up attachments if type binary
+
+        // look up namespace (if any)
+        if ($currentIndex + 1 === $payloadLength) {
+            goto _out;
         }
-
-        $nsp = '/';
-        $query = [];
-
-        $payload = substr($payload, 1);
-        if ($payload[0] === '/') {
-            // parse url
-            $exploded = explode(',', $payload, 2);
-            $parsedUrl = parse_url($exploded[0]);
-            $nsp = $parsedUrl['path'];
-            if (! empty($parsedUrl['query'])) {
-                parse_str($parsedUrl['query'], $query);
+        if ($payload[$currentIndex + 1] === '/') {
+            $start = $currentIndex + 1;
+            while (++$currentIndex) {
+                if ($currentIndex === $payloadLength) {
+                    break;
+                }
+                $char = $payload[$currentIndex];
+                if ($char === ',') {
+                    break;
+                }
             }
-
-            $payload = $exploded[1] ?? null;
+            $nspStart = $start;
+            $nspEnd = $currentIndex;
+            $queryStart = $nspStart;
+            // look up query in namespace (e.g. "1/ws?foo=bar&baz=1,")
+            while (++$queryStart) {
+                if ($queryStart === $currentIndex) {
+                    break;
+                }
+                $char = $payload[$queryStart];
+                if ($char === '?') {
+                    $queryLength = $nspEnd - $queryStart;
+                    $queryStr = substr($payload, $queryStart + 1, $queryLength - 1);
+                    parse_str($queryStr, $query);
+                    $nspEnd = $queryStart;
+                    break;
+                }
+            }
+            $nsp = substr($payload, $nspStart, $nspEnd - $nspStart);
         }
 
-        if (! $payload) {
-            return $this->makePacket($type, $nsp, $query);
+        // look up id
+        if ($currentIndex === $payloadLength) {
+            goto _out;
         }
-
-        $offset = 0;
-        while (true) {
-            $char = $payload[$offset] ?? null;
-            if ($char === null) {
+        $start = $currentIndex + 1;
+        while (++$currentIndex) {
+            if ($currentIndex === $payloadLength) {
+                $id = substr($payload, $start);
+                goto _out;
+            }
+            $char = $payload[$currentIndex];
+            if (! is_numeric($char)) {
+                --$currentIndex;
                 break;
             }
-
-            if (is_numeric($char)) {
-                ++$offset;
-            } else {
-                break;
-            }
         }
+        $id = substr($payload, $start, $currentIndex - $start + 1);
 
-        $id = substr($payload, 0, $offset);
-        $payload = substr($payload, $offset);
-        $data = [];
-        if ($payload) {
+        // look up json data
+        if ($currentIndex < $payloadLength - 1) {
             try {
-                $data = json_decode($payload, true, flags: JSON_THROW_ON_ERROR);
+                $data = json_decode(substr($payload, $currentIndex + 1), associative: true, flags: JSON_THROW_ON_ERROR);
             } catch (Throwable $exception) {
                 throw new InvalidArgumentException('Invalid data', (int) $exception->getCode(), $exception);
             }
         }
 
-        return $this->makePacket($type, $nsp, $query, $id, $data);
-    }
-
-    public function makePacket(string $type, string $nsp = '/', array $query = [], string $id = '', array $data = []): Packet
-    {
+        _out:
         return Packet::create([
             'type' => $type,
             'nsp' => $nsp,
