@@ -42,7 +42,7 @@ use Hyperf\Database\Commands\ModelOption;
 
 return [
     'default' => [
-        // 忽略其他配置
+        // Ignore other configurations.
         'commands' => [
             'gen:model' => [
                 'path' => 'app/Model',
