@@ -10,7 +10,7 @@ composer require hyperf/async-queue
 
 ## 配置
 
-配置文件位於 `config/autoload/async_queue.php`，如該檔案不存在，可透過 `php bin/hyperf.php vendor:publish hyperf/async-queue` 指令來將發佈對應的設定檔。
+配置文件位於 `config/autoload/async_queue.php`，如該文件不存在，可通過 `php bin/hyperf.php vendor:publish hyperf/async-queue` 命令來將發佈對應的配置文件。
 
 > 暫時只支持 `Redis Driver` 驅動。
 
