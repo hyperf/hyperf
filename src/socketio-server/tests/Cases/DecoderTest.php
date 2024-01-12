@@ -115,4 +115,36 @@ class DecoderTest extends AbstractTestCase
             $this->assertEquals('Empty packet', $e->getMessage());
         }
     }
+
+    public function testC()
+    {
+        $decoder = new Decoder();
+
+        // 生成 10M 的字符串
+        $s = str_repeat('x', 10 * 1024 * 1024);
+        $str1 = '42/1' . $s . '?foo=xxx,2["event", "JOIN"]';
+        $str2 = '2/1' . $s . '?foo=xxx,2["event","JOIN"]';
+        echo '开始执行' .PHP_EOL;
+        $startMemoryUsage = memory_get_usage();
+        $startTime = microtime(true);
+        for ($i = 0; $i < 1000; ++$i) {
+            $decoder->decode($str1);
+        }
+        $endTime = microtime(true);
+        $endMemoryUsage = memory_get_usage();
+        echo '新的:' . $endTime - $startTime . PHP_EOL;
+        echo '内存:' . $endMemoryUsage - $startMemoryUsage . PHP_EOL;
+        // 6616
+
+        $startMemoryUsage = memory_get_usage();
+        $startTime = microtime(true);
+        for ($i = 0; $i < 1000; ++$i) {
+            $decoder->backupDecode($str2);
+        }
+        $endTime = microtime(true);
+        $endMemoryUsage = memory_get_usage();
+        echo '旧的:' . $endTime - $startTime . PHP_EOL;
+        echo '内存:' . $endMemoryUsage - $startMemoryUsage . PHP_EOL;
+        // 6616
+    }
 }
