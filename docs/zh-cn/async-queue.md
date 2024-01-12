@@ -10,7 +10,7 @@ composer require hyperf/async-queue
 
 ## 配置
 
-配置文件位于 `config/autoload/async_queue.php`，如文件不存在可自行创建。
+配置文件位于 `config/autoload/async_queue.php`，如该文件不存在，可通过 `php bin/hyperf.php vendor:publish hyperf/async-queue` 命令来将发布对应的配置文件。
 
 > 暂时只支持 `Redis Driver` 驱动。
 
@@ -23,7 +23,7 @@ composer require hyperf/async-queue
 |  retry_seconds   | int,array |                      5                      |           失败后重新尝试间隔            |
 |  handle_timeout  |    int    |                     10                      |            消息处理超时时间             |
 |    processes     |    int    |                      1                      |               消费进程数                |
-| concurrent.limit |    int    |                      1                      |             同时处理消息数              |
+| concurrent.limit |    int    |                     10                      |             同时处理消息数              |
 |   max_messages   |    int    |                      0                      | 进程重启所需最大处理的消息数 默认不重启 |
 
 ```php
@@ -41,8 +41,9 @@ return [
         'handle_timeout' => 10,
         'processes' => 1,
         'concurrent' => [
-            'limit' => 5,
+            'limit' => 10,
         ],
+        'max_messages' => 0,
     ],
 ];
 

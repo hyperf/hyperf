@@ -26,6 +26,7 @@ composer require hyperf/amqp
 <?php
 
 return [
+    'enable' => true,
     'default' => [
         'host' => 'localhost',
         'port' => 5672,
