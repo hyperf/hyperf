@@ -46,41 +46,30 @@ class Decoder
         if ($currentIndex + 1 === $payloadLength) {
             goto _out;
         }
+
         if ($payload[$currentIndex + 1] === '/') {
-            $start = $currentIndex + 1;
-            while (++$currentIndex) {
-                if ($currentIndex === $payloadLength) {
-                    break;
-                }
-                $char = $payload[$currentIndex];
-                if ($char === ',') {
-                    break;
-                }
+            $nspStart = $currentIndex + 1;
+            $nspEnd = strpos($payload, ',');
+            $queryStart = strpos($payload, '?');
+
+            $currentIndex = $nspEnd !== false ? $nspEnd : $payloadLength;
+
+            if ($queryStart !== false) {
+                $queryLength = $nspEnd === false ? $currentIndex - $queryStart : $currentIndex - $queryStart - 1;
+                $queryStr = substr($payload, $queryStart + 1, $queryLength);
+
+                $nsp = substr($payload, $nspStart, $queryStart - $nspStart);
+                parse_str($queryStr, $query);
+            } else {
+                $nsp = substr($payload, $nspStart, $currentIndex - $nspStart);
             }
-            $nspStart = $start;
-            $nspEnd = $currentIndex;
-            $queryStart = $nspStart;
-            // look up query in namespace (e.g. "1/ws?foo=bar&baz=1,")
-            while (++$queryStart) {
-                if ($queryStart === $currentIndex) {
-                    break;
-                }
-                $char = $payload[$queryStart];
-                if ($char === '?') {
-                    $queryLength = $nspEnd - $queryStart;
-                    $queryStr = substr($payload, $queryStart + 1, $queryLength - 1);
-                    parse_str($queryStr, $query);
-                    $nspEnd = $queryStart;
-                    break;
-                }
-            }
-            $nsp = substr($payload, $nspStart, $nspEnd - $nspStart);
         }
 
-        // look up id
-        if ($currentIndex === $payloadLength) {
+        if ($currentIndex >= $payloadLength) {
             goto _out;
         }
+
+        // Parser packet id
         $start = $currentIndex + 1;
         while (++$currentIndex) {
             if ($currentIndex === $payloadLength) {
