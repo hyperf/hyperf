@@ -74,6 +74,11 @@ class CrontabRegisterListener implements ListenerInterface
                 continue;
             }
 
+            if (! $this->crontabManager->isValidCrontab($crontab)) {
+                $this->logger->debug(sprintf('Crontab %s is invalid.', $crontab->getName()));
+                continue;
+            }
+
             if ($this->crontabManager->register($crontab)) {
                 $this->logger->debug(sprintf('Crontab %s have been registered.', $crontab->getName()));
             }
