@@ -14,6 +14,7 @@ namespace Hyperf\Crontab\Strategy;
 use Carbon\Carbon;
 use Closure;
 use Hyperf\Contract\ApplicationInterface;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Timer;
 use Hyperf\Crontab\Crontab;
@@ -168,6 +169,20 @@ class Executor
         };
     }
 
+    protected function runInEnvironment(Crontab $crontab, Closure $runnable): Closure
+    {
+        return function () use ($crontab, $runnable) {
+            $environment = $this->container->get(ConfigInterface::class)->get('app_env', '');
+
+            if (! $crontab->runsInEnvironment($environment)) {
+                $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                return;
+            }
+
+            $runnable();
+        };
+    }
+
     protected function getServerMutex(): ServerMutex
     {
         if (! $this->serverMutex) {
@@ -180,6 +195,10 @@ class Executor
 
     protected function decorateRunnable(Crontab $crontab, Closure $runnable): Closure
     {
+        if ($crontab->getEnvironments()) {
+            $runnable = $this->runInEnvironment($crontab, $runnable);
+        }
+
         if ($crontab->isSingleton()) {
             $runnable = $this->runInSingleton($crontab, $runnable);
         }
