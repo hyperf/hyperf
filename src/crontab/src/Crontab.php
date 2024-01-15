@@ -241,7 +241,7 @@ class Crontab
 
     public function runsInEnvironment(string $environment): bool
     {
-        return empty($this->environments) || in_array($environment, $this->environments);
+        return empty($this->environments) || in_array($environment, $this->environments, true);
     }
 
     public function complete(): void
