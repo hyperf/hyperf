@@ -172,7 +172,7 @@ class Executor
     protected function runInEnvironment(Crontab $crontab, Closure $runnable): Closure
     {
         return function () use ($crontab, $runnable) {
-            $environment = $this->container->get(ConfigInterface::class)->get('app_env', '');
+            $environment = (string) $this->container->get(ConfigInterface::class)->get('app_env', '');
 
             if (! $crontab->runsInEnvironment($environment)) {
                 $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
