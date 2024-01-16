@@ -19,9 +19,13 @@ trait CompilesHelpers
 * @param string $arguments
 * @return string
 */
-protected function compiled($arguments)
+protected function compileD($arguments)
 {
-return "<?php echo d{$arguments}; ?>";
+if(function_exists('d')){
+    return "<?php echo d{$arguments}; ?>";
+}else{
+    return "<pre> <?php echo var_dump{$arguments}; ?> </pre>";
+}
 }
 
 }
