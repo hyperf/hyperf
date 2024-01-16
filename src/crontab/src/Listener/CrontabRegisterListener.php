@@ -57,8 +57,29 @@ class CrontabRegisterListener implements ListenerInterface
         $this->config = $this->container->get(ConfigInterface::class);
 
         $crontabs = $this->parseCrontabs();
+        $environment = (string) $this->config->get('app_env', '');
+
         foreach ($crontabs as $crontab) {
-            if ($crontab instanceof Crontab && $this->crontabManager->register($crontab)) {
+            if (! $crontab instanceof Crontab) {
+                continue;
+            }
+
+            if (! $crontab->isEnable()) {
+                $this->logger->debug(sprintf('Crontab %s is disabled.', $crontab->getName()));
+                continue;
+            }
+
+            if (! $crontab->runsInEnvironment($environment)) {
+                $this->logger->debug(sprintf('Crontab %s is disabled in %s environment.', $crontab->getName(), $environment));
+                continue;
+            }
+
+            if (! $this->crontabManager->isValidCrontab($crontab)) {
+                $this->logger->debug(sprintf('Crontab %s is invalid.', $crontab->getName()));
+                continue;
+            }
+
+            if ($this->crontabManager->register($crontab)) {
                 $this->logger->debug(sprintf('Crontab %s have been registered.', $crontab->getName()));
             }
         }
@@ -105,6 +126,7 @@ class CrontabRegisterListener implements ListenerInterface
         isset($annotation->memo) && $crontab->setMemo($annotation->memo);
         isset($annotation->enable) && $crontab->setEnable($this->resolveCrontabEnableMethod($annotation->enable));
         isset($annotation->timezone) && $crontab->setTimezone($annotation->timezone);
+        isset($annotation->environments) && $crontab->setEnvironments($annotation->environments);
 
         return $crontab;
     }
