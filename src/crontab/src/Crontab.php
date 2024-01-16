@@ -45,6 +45,8 @@ class Crontab
 
     protected ?Channel $running = null;
 
+    protected array $environments = [];
+
     public function __clone()
     {
         $this->running = new Channel(1);
@@ -65,6 +67,7 @@ class Crontab
             "\x00*\x00executeTime" => $this->executeTime,
             "\x00*\x00enable" => $this->enable,
             "\x00*\x00timezone" => $this->timezone,
+            "\x00*\x00environments" => $this->environments,
         ];
     }
 
@@ -83,6 +86,7 @@ class Crontab
         $this->enable = $data["\x00*\x00enable"] ?? $this->enable;
         $this->running = new Channel(1);
         $this->timezone = $data["\x00*\x00timezone"] ?? $this->timezone;
+        $this->environments = $data["\x00*\x00environments"] ?? $this->environments;
     }
 
     public function getName(): ?string
@@ -215,6 +219,29 @@ class Crontab
     {
         $this->timezone = $timezone;
         return $this;
+    }
+
+    /**
+     * Limit the environments the command should run in.
+     *
+     * @param array|mixed $environments
+     * @return $this
+     */
+    public function setEnvironments($environments): static
+    {
+        $this->environments = is_array($environments) ? $environments : func_get_args();
+
+        return $this;
+    }
+
+    public function getEnvironments(): array
+    {
+        return $this->environments;
+    }
+
+    public function runsInEnvironment(string $environment): bool
+    {
+        return empty($this->environments) || in_array($environment, $this->environments, true);
     }
 
     public function complete(): void
