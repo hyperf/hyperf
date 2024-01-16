@@ -65,17 +65,17 @@ class CrontabRegisterListener implements ListenerInterface
             }
 
             if (! $crontab->isEnable()) {
-                $this->logger->debug(sprintf('Crontab %s is disabled.', $crontab->getName()));
+                $this->logger->warning(sprintf('Crontab %s is disabled.', $crontab->getName()));
                 continue;
             }
 
             if (! $crontab->runsInEnvironment($environment)) {
-                $this->logger->debug(sprintf('Crontab %s is disabled in %s environment.', $crontab->getName(), $environment));
+                $this->logger->warning(sprintf('Crontab %s is disabled in %s environment.', $crontab->getName(), $environment));
                 continue;
             }
 
             if (! $this->crontabManager->isValidCrontab($crontab)) {
-                $this->logger->debug(sprintf('Crontab %s is invalid.', $crontab->getName()));
+                $this->logger->warning(sprintf('Crontab %s is invalid.', $crontab->getName()));
                 continue;
             }
 
