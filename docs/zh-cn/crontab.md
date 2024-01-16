@@ -58,11 +58,11 @@ return [
             '--message-limit' => 1,
             // 记住要加上，否则会导致主进程退出
             '--disable-event-dispatcher' => true,
-        ]),
+        ])->setEnvironments(['develop', 'production']),
         // Closure 类型定时任务 (仅在 Coroutine style server 中支持)
         (new Crontab())->setType('closure')->setName('Closure')->setRule('* * * * *')->setCallback(function () {
             var_dump(date('Y-m-d H:i:s'));
-        }),
+        })->setEnvironments('production'),
     ],
 ];
 ```
@@ -202,6 +202,10 @@ class EchoCrontab
 }
 
 ```
+
+#### environments
+
+设置定时任务的环境，如果不设置，则会全部环境都生效。支持传入 array 和 string。
 
 ### 调度分发策略
 
