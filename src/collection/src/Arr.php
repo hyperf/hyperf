@@ -600,13 +600,11 @@ class Arr
     /**
      * Removes one or more elements from an array, keeping the original keys.
      */
-    public static function removeKeepKey(array $array, mixed ...$values): array
+    public static function removeKeepKey(array $array, mixed ...$value): array
     {
-        $flipped = array_flip($array);
-
-        foreach ($values as $value) {
-            if (isset($flipped[$value])) {
-                unset($array[$flipped[$value]]);
+        foreach ($value as $item) {
+            while (false !== ($index = array_search($item, $array))) {
+                unset($array[$index]);
             }
         }
 
