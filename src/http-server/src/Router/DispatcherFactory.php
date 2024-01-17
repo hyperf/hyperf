@@ -70,7 +70,7 @@ class DispatcherFactory
         Router::init($this);
         foreach ($this->routes as $route) {
             if (file_exists($route)) {
-                require_once $route;
+                require $route;
             }
         }
     }
