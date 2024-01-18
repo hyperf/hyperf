@@ -14,6 +14,10 @@ namespace Hyperf\Crontab;
 use Hyperf\Crontab\Command\RunCommand;
 use Hyperf\Crontab\Listener\CrontabRegisterListener;
 use Hyperf\Crontab\Listener\OnPipeMessageListener;
+use Hyperf\Crontab\Mutex\RedisServerMutex;
+use Hyperf\Crontab\Mutex\RedisTaskMutex;
+use Hyperf\Crontab\Mutex\ServerMutex;
+use Hyperf\Crontab\Mutex\TaskMutex;
 use Hyperf\Crontab\Strategy\StrategyInterface;
 use Hyperf\Crontab\Strategy\WorkerStrategy;
 
@@ -27,6 +31,8 @@ class ConfigProvider
             ],
             'dependencies' => [
                 StrategyInterface::class => WorkerStrategy::class,
+                ServerMutex::class => RedisServerMutex::class,
+                TaskMutex::class => RedisTaskMutex::class,
             ],
             'listeners' => [
                 CrontabRegisterListener::class,

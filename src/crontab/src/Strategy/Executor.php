@@ -22,8 +22,6 @@ use Hyperf\Crontab\Event\BeforeExecute;
 use Hyperf\Crontab\Event\FailToExecute;
 use Hyperf\Crontab\Exception\InvalidArgumentException;
 use Hyperf\Crontab\LoggerInterface;
-use Hyperf\Crontab\Mutex\RedisServerMutex;
-use Hyperf\Crontab\Mutex\RedisTaskMutex;
 use Hyperf\Crontab\Mutex\ServerMutex;
 use Hyperf\Crontab\Mutex\TaskMutex;
 use Psr\Container\ContainerInterface;
@@ -58,6 +56,8 @@ class Executor
         if ($container->has(EventDispatcherInterface::class)) {
             $this->dispatcher = $container->get(EventDispatcherInterface::class);
         }
+        $this->taskMutex = $container->get(TaskMutex::class);
+        $this->serverMutex = $container->get(ServerMutex::class);
 
         $this->timer = new Timer($this->logger);
     }
@@ -146,11 +146,6 @@ class Executor
 
     protected function getTaskMutex(): TaskMutex
     {
-        if (! $this->taskMutex) {
-            $this->taskMutex = $this->container->has(TaskMutex::class)
-                ? $this->container->get(TaskMutex::class)
-                : $this->container->get(RedisTaskMutex::class);
-        }
         return $this->taskMutex;
     }
 
@@ -170,11 +165,6 @@ class Executor
 
     protected function getServerMutex(): ServerMutex
     {
-        if (! $this->serverMutex) {
-            $this->serverMutex = $this->container->has(ServerMutex::class)
-                ? $this->container->get(ServerMutex::class)
-                : $this->container->get(RedisServerMutex::class);
-        }
         return $this->serverMutex;
     }
 
