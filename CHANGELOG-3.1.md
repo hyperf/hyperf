@@ -1,4 +1,10 @@
-# v3.1.6 - TBD
+# v3.1.7 - TBD
+
+## Optimized
+
+- [#6480](https://github.com/hyperf/hyperf/pull/6480) Optimize log for crontab task skipped.
+
+# v3.1.6 - 2024-01-18
 
 ## Added
 
