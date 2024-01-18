@@ -8,6 +8,7 @@
 ## Optimized
 
 - [#6440](https://github.com/hyperf/hyperf/pull/6440) Optimized code of `Hyperf\SocketIOServer\Parser\Decoder::decode()`.
+- [#6473](https://github.com/hyperf/hyperf/pull/6473) Auto mkdir folder when using command `gen:swagger-schema`.
 
 # v3.1.5 - 2024-01-04
 
