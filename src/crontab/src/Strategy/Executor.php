@@ -22,8 +22,6 @@ use Hyperf\Crontab\Event\BeforeExecute;
 use Hyperf\Crontab\Event\FailToExecute;
 use Hyperf\Crontab\Exception\InvalidArgumentException;
 use Hyperf\Crontab\LoggerInterface;
-use Hyperf\Crontab\Mutex\RedisServerMutex;
-use Hyperf\Crontab\Mutex\RedisTaskMutex;
 use Hyperf\Crontab\Mutex\ServerMutex;
 use Hyperf\Crontab\Mutex\TaskMutex;
 use Psr\Container\ContainerInterface;
@@ -146,12 +144,7 @@ class Executor
 
     protected function getTaskMutex(): TaskMutex
     {
-        if (! $this->taskMutex) {
-            $this->taskMutex = $this->container->has(TaskMutex::class)
-                ? $this->container->get(TaskMutex::class)
-                : $this->container->get(RedisTaskMutex::class);
-        }
-        return $this->taskMutex;
+        return $this->taskMutex ??= $this->container->get(TaskMutex::class);
     }
 
     protected function runOnOneServer(Crontab $crontab, Closure $runnable): Closure
@@ -170,12 +163,7 @@ class Executor
 
     protected function getServerMutex(): ServerMutex
     {
-        if (! $this->serverMutex) {
-            $this->serverMutex = $this->container->has(ServerMutex::class)
-                ? $this->container->get(ServerMutex::class)
-                : $this->container->get(RedisServerMutex::class);
-        }
-        return $this->serverMutex;
+        return $this->serverMutex ??= $this->container->get(ServerMutex::class);
     }
 
     protected function decorateRunnable(Crontab $crontab, Closure $runnable): Closure
