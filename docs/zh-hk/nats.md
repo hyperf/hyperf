@@ -16,7 +16,7 @@ composer require hyperf/nats
 php bin/hyperf.php gen:nats-consumer DemoConsumer
 ```
 
-如果設置了 `queue`，則相同的 `subject` 只會被一個 `queue` 消費。若不設置 `queue`，則每個消費者都會受到消息。
+如果設置了 `queue`，則相同的 `subject` 只會被一個 `queue` 消費。若不設置 `queue`，則每個消費者都會收到消息。
 
 ```php
 <?php

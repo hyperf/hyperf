@@ -309,4 +309,40 @@ class ArrTest extends TestCase
         $this->assertFalse(Arr::isList([0 => 'foo', 2 => 'bar']));
         $this->assertFalse(Arr::isList(['foo' => 'bar', 'baz' => 'qux']));
     }
+
+    public function testArrayRemove()
+    {
+        $data = [1 => 'a', 2 => 'b', 3 => 'c'];
+        $this->assertSame(['b'], Arr::remove($data, 'a', 'c'));
+
+        $data = [1, 2, 3, 4];
+        $this->assertSame([3, 4], Arr::remove($data, 1, 2));
+
+        $data = [1, 2, 3, 4];
+        $this->assertSame($data, Arr::remove($data, 5));
+
+        $data = [3, 4, 3, 3];
+        $this->assertSame([4], Arr::remove($data, 3));
+
+        $data = [1 => 'a', 2 => 'b', 3 => 'a'];
+        $this->assertSame(['b'], Arr::remove($data, 'a'));
+    }
+
+    public function testArrayRemoveKeepKey()
+    {
+        $data = [1 => 'a', 2 => 'b', 3 => 'c'];
+        $this->assertSame([2 => 'b'], Arr::removeKeepKey($data, 'a', 'c'));
+
+        $data = [1, 2, 3, 4];
+        $this->assertSame([2 => 3, 3 => 4], Arr::removeKeepKey($data, 1, 2));
+
+        $data = [1, 2, 3, 4];
+        $this->assertSame($data, Arr::removeKeepKey($data, 5));
+
+        $data = [3, 4, 3, 3];
+        $this->assertSame([1 => 4], Arr::removeKeepKey($data, 3));
+
+        $data = [1 => 'a', 2 => 'b', 3 => 'a'];
+        $this->assertSame([2 => 'b'], Arr::removeKeepKey($data, 'a'));
+    }
 }
