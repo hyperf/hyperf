@@ -589,6 +589,29 @@ class Arr
     }
 
     /**
+     * Remove one or more elements from an array.
+     */
+    public static function remove(array $array, mixed ...$value): array
+    {
+        $array = array_diff($array, $value);
+        return array_values($array);
+    }
+
+    /**
+     * Removes one or more elements from an array, keeping the original keys.
+     */
+    public static function removeKeepKey(array $array, mixed ...$value): array
+    {
+        foreach ($value as $item) {
+            while (false !== ($index = array_search($item, $array))) {
+                unset($array[$index]);
+            }
+        }
+
+        return $array;
+    }
+
+    /**
      * Explode the "value" and "key" arguments passed to "pluck".
      */
     protected static function explodePluckParameters(array|string $value, null|array|string $key): array
