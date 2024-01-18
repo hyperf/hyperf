@@ -24,7 +24,15 @@ class CrontabTest extends TestCase
 {
     public function testCrontab()
     {
-        $crontab = clone (new Crontab())->setName('test')->setRule('* * * * *')->setMemo('test')->setSingleton(true)->setMutexPool('default')->setOnOneServer(true)->setEnable(false);
+        $crontab = clone (new Crontab())
+            ->setName('test')
+            ->setRule('* * * * *')
+            ->setMemo('test')
+            ->setSingleton(true)
+            ->setMutexPool('default')
+            ->setMutexExpires(60)
+            ->setOnOneServer(true)
+            ->setEnable(false);
 
         // file_put_contents(__DIR__ . '/Stub/test.cron', serialize($crontab));
         $serialized = file_get_contents(__DIR__ . '/Stub/test.cron');
