@@ -1,4 +1,6 @@
-# v3.1.6 - TBD
+# v3.1.7 - TBD
+
+# v3.1.6 - 2024-01-18
 
 ## Added
 
@@ -12,7 +14,7 @@
 - [#6440](https://github.com/hyperf/hyperf/pull/6440) Optimized code of `Hyperf\SocketIOServer\Parser\Decoder::decode()`.
 - [#6472](https://github.com/hyperf/hyperf/pull/6472) Optimized code of `DispatcherFactory` which use `require` instead of `require_once` for loading `routes`.
 - [#6473](https://github.com/hyperf/hyperf/pull/6473) Auto mkdir folder when using command `gen:swagger-schema`.
-- [#6477](https://github.com/hyperf/hyperf/pull/6477) Optimized `serverMutex` and `taskMutex` binding method.
+- [#6477](https://github.com/hyperf/hyperf/pull/6477) Optimized code about binding `serverMutex` and `taskMutex` for `Crontab`.
 
 # v3.1.5 - 2024-01-04
 
