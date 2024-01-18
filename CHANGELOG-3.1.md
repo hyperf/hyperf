@@ -8,7 +8,7 @@
 ## Optimized
 
 - [#6440](https://github.com/hyperf/hyperf/pull/6440) Optimized code of `Hyperf\SocketIOServer\Parser\Decoder::decode()`.
-- [#6472](https://github.com/hyperf/hyperf/pull/6472) Optimized code about `DispatcherFactory` which use `require` instead of `require_once` for loading `routes`.
+- [#6472](https://github.com/hyperf/hyperf/pull/6472) Optimized code of `DispatcherFactory` which use `require` instead of `require_once` for loading `routes`.
 - [#6473](https://github.com/hyperf/hyperf/pull/6473) Auto mkdir folder when using command `gen:swagger-schema`.
 
 # v3.1.5 - 2024-01-04
