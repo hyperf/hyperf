@@ -14,6 +14,7 @@ composer require hyperf/cache
 | driver |  Hyperf\Cache\Driver\RedisDriver  | 缓存驱动，默认为 Redis |
 | packer | Hyperf\Codec\Packer\PhpSerializerPacker |        打包器         |
 | prefix |                   c:                   |       缓存前缀        |
+| skip_cache_results |       []                   |       指定的结果不被缓存   |
 
 ```php
 <?php
@@ -23,6 +24,7 @@ return [
         'driver' => Hyperf\Cache\Driver\RedisDriver::class,
         'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
         'prefix' => 'c:',
+        'skip_cache_results' => [],
     ],
 ];
 ```
