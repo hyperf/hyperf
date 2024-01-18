@@ -56,8 +56,6 @@ class Executor
         if ($container->has(EventDispatcherInterface::class)) {
             $this->dispatcher = $container->get(EventDispatcherInterface::class);
         }
-        $this->taskMutex = $container->get(TaskMutex::class);
-        $this->serverMutex = $container->get(ServerMutex::class);
 
         $this->timer = new Timer($this->logger);
     }
@@ -146,7 +144,7 @@ class Executor
 
     protected function getTaskMutex(): TaskMutex
     {
-        return $this->taskMutex;
+        return $this->taskMutex ??= $this->container->get(TaskMutex::class);
     }
 
     protected function runOnOneServer(Crontab $crontab, Closure $runnable): Closure
@@ -165,7 +163,7 @@ class Executor
 
     protected function getServerMutex(): ServerMutex
     {
-        return $this->serverMutex;
+        return $this->serverMutex ??= $this->container->get(ServerMutex::class);
     }
 
     protected function decorateRunnable(Crontab $crontab, Closure $runnable): Closure
