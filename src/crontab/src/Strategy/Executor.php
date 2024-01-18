@@ -132,7 +132,7 @@ class Executor
             $taskMutex = $this->getTaskMutex();
 
             if ($taskMutex->exists($crontab) || ! $taskMutex->create($crontab)) {
-                $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                $this->logger?->info(sprintf('Crontab task [%s] task mutex, skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
                 return;
             }
 
@@ -160,7 +160,7 @@ class Executor
             $taskMutex = $this->getServerMutex();
 
             if (! $taskMutex->attempt($crontab)) {
-                $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                $this->logger?->info(sprintf('Crontab task [%s] server mutex, skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
                 return;
             }
 
