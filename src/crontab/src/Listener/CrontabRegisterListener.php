@@ -127,6 +127,7 @@ class CrontabRegisterListener implements ListenerInterface
         isset($annotation->enable) && $crontab->setEnable($this->resolveCrontabEnableMethod($annotation->enable));
         isset($annotation->timezone) && $crontab->setTimezone($annotation->timezone);
         isset($annotation->environments) && $crontab->setEnvironments($annotation->environments);
+        isset($annotation->options) && $crontab->setOptions($annotation->options);
 
         return $crontab;
     }

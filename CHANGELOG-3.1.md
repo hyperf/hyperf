@@ -4,6 +4,7 @@
 
 - [#6449](https://github.com/hyperf/hyperf/pull/6449) Added method `ReflectionManager::getAllClassesByFinder`.
 - [#6468](https://github.com/hyperf/hyperf/pull/6468) Added support for Crontab specified operating environments.
+- [#6474](https://github.com/hyperf/hyperf/pull/6474) Added `Crontab::setOptions()` and `Crontab::getOptions()`.
 
 ## Optimized
 
