@@ -11,12 +11,21 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab;
 
+use InvalidArgumentException;
+
 class CrontabManager
 {
+    public const ROUTE = BASE_PATH . '/config/crontab.php';
+
     /**
      * @var array<string, Crontab>
      */
     protected array $crontabs = [];
+
+    /**
+     * @var array<Crontab>
+     */
+    protected static array $pendingCrontabs = [];
 
     public function __construct(protected Parser $parser)
     {
@@ -31,6 +40,10 @@ class CrontabManager
         return true;
     }
 
+    /**
+     * @return array<Crontab>
+     * @throws InvalidArgumentException
+     */
     public function parse(): array
     {
         $result = [];
@@ -51,6 +64,9 @@ class CrontabManager
         return $result;
     }
 
+    /**
+     * @return array<string, Crontab>
+     */
     public function getCrontabs(): array
     {
         return $this->crontabs;
@@ -59,5 +75,25 @@ class CrontabManager
     public function isValidCrontab(Crontab $crontab): bool
     {
         return $crontab->getName() && $crontab->getRule() && $crontab->getCallback() && $this->parser->isValid($crontab->getRule());
+    }
+
+    public static function loadPendingCrontabs(): void
+    {
+        if (is_file(self::ROUTE)) {
+            require_once self::ROUTE;
+        }
+    }
+
+    public static function addPendingCrontab(Crontab $crontab): void
+    {
+        static::$pendingCrontabs[] = $crontab;
+    }
+
+    /**
+     * @return array<Crontab>
+     */
+    public static function getPendingCrontabs(): array
+    {
+        return static::$pendingCrontabs;
     }
 }

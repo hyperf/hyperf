@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
+use Closure;
 use DateTimeZone;
 use Hyperf\Engine\Channel;
 
@@ -91,6 +92,26 @@ class Crontab
         $this->timezone = $data["\x00*\x00timezone"] ?? $this->timezone;
         $this->environments = $data["\x00*\x00environments"] ?? $this->environments;
         $this->options = $data["\x00*\x00options"] ?? $this->options;
+    }
+
+    public static function command(string $command, array $arguments = [], bool $disableEventDispatcher = true): static
+    {
+        $arguments = array_merge(['command' => $command], $arguments);
+
+        if ($disableEventDispatcher) {
+            $arguments['--disable-event-dispatcher'] = true;
+        }
+
+        return tap(new static(), fn ($crontab) => CrontabManager::addPendingCrontab($crontab))->setType('command')->setCallback($arguments);
+    }
+
+    public static function call(Closure|callable $callable): static
+    {
+        if ($callable instanceof Closure) {
+            return (new static())->setType('closure')->setCallback($callable);
+        }
+
+        return tap(new static(), fn ($crontab) => CrontabManager::addPendingCrontab($crontab))->setType('callback')->setCallback($callable);
     }
 
     public function getName(): ?string
