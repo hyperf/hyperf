@@ -107,11 +107,9 @@ class Crontab
 
     public static function call(Closure|callable $callable): static
     {
-        if ($callable instanceof Closure) {
-            return tap(new static(), fn ($crontab) => CrontabManager::addPendingCrontab($crontab))->setType('closure')->setCallback($callable);
-        }
+        $type = $callable instanceof Closure ? 'closure' : 'callback';
 
-        return tap(new static(), fn ($crontab) => CrontabManager::addPendingCrontab($crontab))->setType('callback')->setCallback($callable);
+        return tap(new static(), fn ($crontab) => CrontabManager::addPendingCrontab($crontab))->setType($type)->setCallback($callable);
     }
 
     public function getName(): ?string
