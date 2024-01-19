@@ -15,7 +15,7 @@ use InvalidArgumentException;
 
 class CrontabManager
 {
-    public const ROUTE = BASE_PATH . '/config/crontab.php';
+    public const ROUTE = BASE_PATH . '/config/crontabs.php';
 
     /**
      * @var array<string, Crontab>
