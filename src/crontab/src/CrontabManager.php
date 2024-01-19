@@ -32,7 +32,7 @@ class CrontabManager
     }
 
     /**
-     * @return array<Crontab>
+     * @return Crontab[]
      */
     public function parse(): array
     {
