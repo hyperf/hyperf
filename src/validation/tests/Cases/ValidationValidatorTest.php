@@ -1455,6 +1455,186 @@ class ValidationValidatorTest extends TestCase
         $this->assertTrue($v->passes());
     }
 
+    public function testValidateDecimal()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'asdad'], ['foo' => 'Decimal:2,3']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.2345'], ['foo' => 'Decimal:2,3']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.234'], ['foo' => 'Decimal:2,3']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '-1.234'], ['foo' => 'Decimal:2,3']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.23'], ['foo' => 'Decimal:2,3']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '+1.23'], ['foo' => 'Decimal:2,3']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.2'], ['foo' => 'Decimal:2,3']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.23'], ['foo' => 'Decimal:2']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '-1.23'], ['foo' => 'Decimal:2']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.233'], ['foo' => 'Decimal:2']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.2'], ['foo' => 'Decimal:2']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1'], ['foo' => 'Decimal:0,1']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.2'], ['foo' => 'Decimal:0,1']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '-1.2'], ['foo' => 'Decimal:0,1']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.23'], ['foo' => 'Decimal:0,1']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.8888888888'], ['foo' => 'Decimal:10']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888'], ['foo' => 'Decimal:20']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Min:1.88888888888888888889']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Min:1.88888888888888888888']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Max:1.88888888888888888888']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Max:1.88888888888888888887']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Max:1.88888888888888888887']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Size:1.88888888888888888889']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Size:1.88888888888888888888']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888889'], ['foo' => 'Decimal:20|Between:1.88888888888888888886,1.88888888888888888888']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888887'], ['foo' => 'Decimal:20|Between:1.88888888888888888886,1.88888888888888888888']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Gt:1.88888888888888888888']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888889'], ['foo' => 'Decimal:20|Gt:1.88888888888888888888']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888', 'bar' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Gt:bar']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888889', 'bar' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Gt:bar']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Lt:1.88888888888888888888']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888887'], ['foo' => 'Decimal:20|Lt:1.88888888888888888888']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888', 'bar' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Lt:bar']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888887', 'bar' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Lt:bar']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888887'], ['foo' => 'Decimal:20|Gte:1.88888888888888888888']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Gte:1.88888888888888888888']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888887', 'bar' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Gte:bar']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888', 'bar' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Gte:bar']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888889'], ['foo' => 'Decimal:20|Lte:1.88888888888888888888']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Lte:1.88888888888888888888']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888889', 'bar' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Lte:bar']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888', 'bar' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Lte:bar']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888889'], ['foo' => 'Decimal:20|Max:1.88888888888888888888']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '1.88888888888888888888'], ['foo' => 'Decimal:20|Max:1.88888888888888888888']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, [
+            // these are the same number
+            'decimal' => '0.555',
+            'scientific' => '5.55e-1',
+        ], [
+            'decimal' => 'Decimal:0,2',
+            'scientific' => 'Decimal:0,2',
+        ]);
+        $this->assertSame(['decimal', 'scientific'], $v->errors()->keys());
+
+        $v = new Validator($trans, [
+            // these are the same number
+            'decimal' => '0.555',
+            'scientific' => '5.55e-1',
+        ], [
+            'decimal' => 'Decimal:0,3',
+            'scientific' => 'Decimal:0,3',
+        ]);
+        $this->assertSame(['scientific'], $v->errors()->keys());
+
+        $v = new Validator($trans, ['foo' => '+'], ['foo' => 'Decimal:0,2']);
+        $this->assertTrue($v->fails());
+        $v = new Validator($trans, ['foo' => '-'], ['foo' => 'Decimal:0,2']);
+        $this->assertTrue($v->fails());
+        $v = new Validator($trans, ['foo' => '10@12'], ['foo' => 'Decimal:0,2']);
+        $this->assertTrue($v->fails());
+
+        $v = new Validator($trans, ['foo' => '+123'], ['foo' => 'Decimal:0,2']);
+        $this->assertTrue($v->passes());
+        $v = new Validator($trans, ['foo' => '-123'], ['foo' => 'Decimal:0,2']);
+        $this->assertTrue($v->passes());
+        $v = new Validator($trans, ['foo' => '+123.'], ['foo' => 'Decimal:0,2']);
+        $this->assertTrue($v->passes());
+        $v = new Validator($trans, ['foo' => '-123.'], ['foo' => 'Decimal:0,2']);
+        $this->assertTrue($v->passes());
+        $v = new Validator($trans, ['foo' => '123.'], ['foo' => 'Decimal:0,2']);
+        $this->assertTrue($v->passes());
+        $v = new Validator($trans, ['foo' => '123.'], ['foo' => 'Decimal:0,2']);
+        $this->assertTrue($v->passes());
+        $v = new Validator($trans, ['foo' => '123.34'], ['foo' => 'Decimal:0,2']);
+        $this->assertTrue($v->passes());
+        $v = new Validator($trans, ['foo' => '123.34'], ['foo' => 'Decimal:0,2']);
+        $this->assertTrue($v->passes());
+    }
+
     public function testValidateInt()
     {
         $trans = $this->getIlluminateArrayTranslator();
