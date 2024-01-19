@@ -41,6 +41,7 @@ return [
     'confirmed' => ':attribute 二次确认不匹配',
     'date' => ':attribute 必须是一个合法的日期',
     'date_format' => ':attribute 与给定的格式 :format 不符合',
+    'decimal' => ':attribute 必须有 :decimal 位小数',
     'different' => ':attribute 必须不同于 :other',
     'digits' => ':attribute 必须是 :digits 位',
     'digits_between' => ':attribute 必须在 :min 和 :max 位之间',
