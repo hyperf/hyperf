@@ -34,12 +34,12 @@ trait ReplacesAttributes
     /**
      * Replace all place-holders for the decimal rule.
      */
-    protected function replaceDecimal($message, $attribute, $rule, $parameters)
+    protected function replaceDecimal(string $message, string $attribute, string $rule, array $parameters): string
     {
         return str_replace(
             ':decimal',
             isset($parameters[1])
-                ? $parameters[0].'-'.$parameters[1]
+                ? $parameters[0] . '-' . $parameters[1]
                 : $parameters[0],
             $message
         );
