@@ -11,8 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab;
 
-use InvalidArgumentException;
-
 class CrontabManager
 {
     public const ROUTE = BASE_PATH . '/config/crontabs.php';
@@ -42,7 +40,6 @@ class CrontabManager
 
     /**
      * @return array<Crontab>
-     * @throws InvalidArgumentException
      */
     public function parse(): array
     {
