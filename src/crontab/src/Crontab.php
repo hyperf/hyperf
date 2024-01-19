@@ -94,11 +94,11 @@ class Crontab
         $this->options = $data["\x00*\x00options"] ?? $this->options;
     }
 
-    public static function command(string $command, array $arguments = [], bool $disableEventDispatcher = true): static
+    public static function command(string $command, array $arguments = []): static
     {
         $arguments = array_merge(['command' => $command], $arguments);
 
-        if ($disableEventDispatcher) {
+        if (! isset($arguments['--disable-event-dispatcher'])) {
             $arguments['--disable-event-dispatcher'] = true;
         }
 
