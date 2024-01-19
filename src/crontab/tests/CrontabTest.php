@@ -24,10 +24,39 @@ class CrontabTest extends TestCase
 {
     public function testCrontab()
     {
-        $crontab = clone (new Crontab())->setName('test')->setRule('* * * * *')->setMemo('test')->setSingleton(true)->setMutexPool('default')->setOnOneServer(true)->setEnable(false);
+        $crontab = clone (new Crontab())
+            ->setName('test')
+            ->setRule('* * * * *')
+            ->setMemo('test')
+            ->setSingleton(true)
+            ->setMutexPool('default')
+            ->setMutexExpires(60)
+            ->setOnOneServer(true)
+            ->setEnable(false);
 
-        // file_put_contents(__DIR__ . '/Stub/test.cron', serialize($crontab));
-        $serialized = file_get_contents(__DIR__ . '/Stub/test.cron');
+        $this->assertEquals('test', $crontab->getName());
+        $this->assertEquals('* * * * *', $crontab->getRule());
+        $this->assertEquals('test', $crontab->getMemo());
+        $this->assertTrue($crontab->isSingleton());
+        $this->assertEquals('default', $crontab->getMutexPool());
+        $this->assertEquals(60, $crontab->getMutexExpires());
+        $this->assertTrue($crontab->isOnOneServer());
+        $this->assertFalse($crontab->isEnable());
+    }
+
+    public function testSerializeAndUnserialize()
+    {
+        $crontab = clone (new Crontab())
+            ->setName('test')
+            ->setRule('* * * * *')
+            ->setMemo('test')
+            ->setSingleton(true)
+            ->setMutexPool('default')
+            ->setMutexExpires(60)
+            ->setOnOneServer(true)
+            ->setEnable(true);
+
+        $serialized = serialize($crontab);
 
         $this->assertEquals($serialized, serialize($crontab));
 
