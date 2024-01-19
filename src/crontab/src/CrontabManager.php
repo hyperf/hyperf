@@ -13,8 +13,6 @@ namespace Hyperf\Crontab;
 
 class CrontabManager
 {
-    public const ROUTE = BASE_PATH . '/config/crontabs.php';
-
     /**
      * @var array<string, Crontab>
      */
@@ -72,25 +70,5 @@ class CrontabManager
     public function isValidCrontab(Crontab $crontab): bool
     {
         return $crontab->getName() && $crontab->getRule() && $crontab->getCallback() && $this->parser->isValid($crontab->getRule());
-    }
-
-    public static function loadPendingCrontabs(): void
-    {
-        if (is_file(self::ROUTE)) {
-            require_once self::ROUTE;
-        }
-    }
-
-    public static function addPendingCrontab(Crontab $crontab): void
-    {
-        static::$pendingCrontabs[] = $crontab;
-    }
-
-    /**
-     * @return array<Crontab>
-     */
-    public static function getPendingCrontabs(): array
-    {
-        return static::$pendingCrontabs;
     }
 }
