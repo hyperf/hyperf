@@ -18,11 +18,6 @@ class CrontabManager
      */
     protected array $crontabs = [];
 
-    /**
-     * @var array<Crontab>
-     */
-    protected static array $pendingCrontabs = [];
-
     public function __construct(protected Parser $parser)
     {
     }
