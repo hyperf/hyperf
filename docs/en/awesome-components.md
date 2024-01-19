@@ -98,6 +98,7 @@ We have provided you with a [Hyperf component development guide](en/component-gu
 - [hyperf/service-governance](https://github.com/hyperf/service-governance) Service governance component provided by Hyperf officially
 - [hyperf/tracer](https://github.com/hyperf/tracer) OpenTracing component provided by Hyperf officially
 - [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) service circuit breaker component provided by Hyperf officially
+- [friendsofhyperf/sentry](https://github.com/friendsofhyperf/sentry) [Sentry](https://sentry.io) component based on Hyperf
 
 ## Annotation Configuration
 
