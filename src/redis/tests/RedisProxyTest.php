@@ -163,35 +163,32 @@ class RedisProxyTest extends TestCase
     public function testRedisPipeline()
     {
         $redis = $this->getRedis();
-
-        $redis->rPush('pipeline:list', 'A');
-        $redis->rPush('pipeline:list', 'B');
-        $redis->rPush('pipeline:list', 'C');
-        $redis->rPush('pipeline:list', 'D');
-        $redis->rPush('pipeline:list', 'E');
+        // clear redis list
+        $redis->del('pipeline:list');
+        $redis->rPush('pipeline:list', 'A', 'B', 'C', 'D', 'E');
 
         $chan = new Chan(1);
-        $chan2 = new Chan(1);
-        go(static function () use ($redis, $chan) {
+        $syncChan = new Chan(1);
+        go(static function () use ($redis, $chan, $syncChan) {
             $redis->pipeline();
-            usleep(2000);
             $redis->lRange('pipeline:list', 0, 1);
             $redis->lTrim('pipeline:list', 2, -1);
-            usleep(1000);
+            $chan->push($redis->exec());
+            // send signal
+            $syncChan->push(true);
+        });
+
+        go(static function () use ($redis, $chan, $syncChan) {
+            // wait first channel completed
+            $syncChan->pop();
+            $redis->pipeline();
+            $redis->lRange('pipeline:list', 0, 1);
+            $redis->lTrim('pipeline:list', 2, -1);
             $chan->push($redis->exec());
         });
 
-        go(static function () use ($redis, $chan2) {
-            $redis->pipeline();
-            usleep(1000);
-            $redis->lRange('pipeline:list', 0, 1);
-            $redis->lTrim('pipeline:list', 2, -1);
-            usleep(20000);
-            $chan2->push($redis->exec());
-        });
-
         $this->assertSame([['A', 'B'], true], $chan->pop());
-        $this->assertSame([['C', 'D'], true], $chan2->pop());
+        $this->assertSame([['C', 'D'], true], $chan->pop());
     }
 
     /**
