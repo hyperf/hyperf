@@ -25,7 +25,6 @@ use Hyperf\Crontab\Mutex\ServerMutex;
 use Hyperf\Crontab\Mutex\TaskMutex;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use RuntimeException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
@@ -35,7 +34,7 @@ use function Hyperf\Support\make;
 
 class Executor
 {
-    protected ?PsrLoggerInterface $logger = null;
+    protected ?StdoutLoggerInterface $logger = null;
 
     protected ?TaskMutex $taskMutex = null;
 
