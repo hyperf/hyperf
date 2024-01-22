@@ -17,7 +17,6 @@ parameters:
     - %currentWorkingDirectory%/src/di/src/Resolver/FactoryResolver.php
     - %currentWorkingDirectory%/src/config-zookeeper/src/Client.php
     - %currentWorkingDirectory%/src/contract/*
-    - %currentWorkingDirectory%/src/crontab/*
     - %currentWorkingDirectory%/src/database/*
     - %currentWorkingDirectory%/src/database-pgsql/*
     - %currentWorkingDirectory%/src/db/src/PgSQL/*
