@@ -17,6 +17,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab as CrontabAnnotation;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\CrontabManager;
+use Hyperf\Crontab\Schedule;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Event\Contract\ListenerInterface;
@@ -90,8 +91,13 @@ class CrontabRegisterListener implements ListenerInterface
         $configCrontabs = $this->config->get('crontab.crontab', []);
         $annotationCrontabs = AnnotationCollector::getClassesByAnnotation(CrontabAnnotation::class);
         $methodCrontabs = $this->getCrontabsFromMethod();
+
+        Schedule::load();
+        $pendingCrontabs = Schedule::getCrontabs();
+
         $crontabs = [];
-        foreach (array_merge($configCrontabs, $annotationCrontabs, $methodCrontabs) as $crontab) {
+
+        foreach (array_merge($configCrontabs, $annotationCrontabs, $methodCrontabs, $pendingCrontabs) as $crontab) {
             if ($crontab instanceof CrontabAnnotation) {
                 $crontab = $this->buildCrontabByAnnotation($crontab);
             }
@@ -99,6 +105,7 @@ class CrontabRegisterListener implements ListenerInterface
                 $crontabs[$crontab->getName()] = $crontab;
             }
         }
+
         return array_values($crontabs);
     }
 
