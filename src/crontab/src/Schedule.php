@@ -13,6 +13,8 @@ namespace Hyperf\Crontab;
 
 use Closure;
 
+use function Hyperf\Tappable\tap;
+
 class Schedule
 {
     public const ROUTE = BASE_PATH . '/config/crontabs.php';
@@ -37,14 +39,18 @@ class Schedule
             $arguments['--disable-event-dispatcher'] = true;
         }
 
-        return tap(new Crontab(), fn ($crontab) => self::$crontabs[] = $crontab)->setType('command')->setCallback($arguments);
+        return tap(new Crontab(), fn ($crontab) => self::$crontabs[] = $crontab)
+            ->setType('command')
+            ->setCallback($arguments);
     }
 
     public static function call(Closure|callable $callable): Crontab
     {
         $type = $callable instanceof Closure ? 'closure' : 'callback';
 
-        return tap(new Crontab(), fn ($crontab) => self::$crontabs[] = $crontab)->setType($type)->setCallback($callable);
+        return tap(new Crontab(), fn ($crontab) => self::$crontabs[] = $crontab)
+            ->setType($type)
+            ->setCallback($callable);
     }
 
     /**

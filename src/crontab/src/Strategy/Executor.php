@@ -21,12 +21,10 @@ use Hyperf\Crontab\Event\AfterExecute;
 use Hyperf\Crontab\Event\BeforeExecute;
 use Hyperf\Crontab\Event\FailToExecute;
 use Hyperf\Crontab\Exception\InvalidArgumentException;
-use Hyperf\Crontab\LoggerInterface;
 use Hyperf\Crontab\Mutex\ServerMutex;
 use Hyperf\Crontab\Mutex\TaskMutex;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use RuntimeException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
@@ -36,7 +34,7 @@ use function Hyperf\Support\make;
 
 class Executor
 {
-    protected ?PsrLoggerInterface $logger = null;
+    protected ?StdoutLoggerInterface $logger = null;
 
     protected ?TaskMutex $taskMutex = null;
 
@@ -48,9 +46,7 @@ class Executor
 
     public function __construct(protected ContainerInterface $container)
     {
-        if ($container->has(LoggerInterface::class)) {
-            $this->logger = $container->get(LoggerInterface::class);
-        } elseif ($container->has(StdoutLoggerInterface::class)) {
+        if ($container->has(StdoutLoggerInterface::class)) {
             $this->logger = $container->get(StdoutLoggerInterface::class);
         }
         if ($container->has(EventDispatcherInterface::class)) {
