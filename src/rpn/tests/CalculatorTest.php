@@ -32,11 +32,8 @@ class CalculatorTest extends AbstractTestCase
         $result = $calculator->calculate('10 1 -', [], 2);
         $this->assertSame('9.00', $result);
 
-        // TODO: Inaccurate accuracy in 7.2
-        if (version_compare(PHP_VERSION, '7.3', '>=')) {
-            $result = $calculator->calculate('10 1.5 *', [], 2);
-            $this->assertSame('15.00', $result);
-        }
+        $result = $calculator->calculate('10 1.5 *', [], 2);
+        $this->assertSame('15.00', $result);
 
         $result = $calculator->calculate('10 3 /', [], 3);
         $this->assertSame('3.333', $result);

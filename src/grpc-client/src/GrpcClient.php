@@ -187,10 +187,6 @@ class GrpcClient
         $request->headers = $request->headers + $metadata;
         $request->pipeline = true;
         if ($usePipelineRead) {
-            // @phpstan-ignore-next-line
-            if (SWOOLE_VERSION_ID < 40503) {
-                throw new InvalidArgumentException('Require Swoole version >= 4.5.3');
-            }
             $request->usePipelineRead = true;
         }
 
