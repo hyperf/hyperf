@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Coordinator;
 
-use Hyperf\Contract\StdoutLoggerInterface;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 use function Hyperf\Coroutine\go;
@@ -28,7 +28,7 @@ class Timer
 
     private static int $round = 0;
 
-    public function __construct(private ?StdoutLoggerInterface $logger = null)
+    public function __construct(private ?LoggerInterface $logger = null)
     {
     }
 
