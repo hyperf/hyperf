@@ -35,7 +35,7 @@ git clone git@github.com:hyperf/hyperf.git
     └── vendor
 ```
 
-這樣做的目的是為了讓 `hyperf-skeleton` 項目可以直接通過 `path` 來源的形式，讓 Composer 直接通過 `hyperf` 文件夾內的項目作為依賴項被加載到 `hyperf-skelton`  項目的 `vendor` 目錄中，我們對 `hyperf-skelton` 內的 `composer.json` 文件增加一個 `repositories` 項，如下：
+這樣做的目的是為了讓 `hyperf-skeleton` 項目可以直接通過 `path` 來源的形式，讓 Composer 直接通過 `hyperf` 文件夾內的項目作為依賴項被加載到 `hyperf-skeleton`  項目的 `vendor` 目錄中，我們對 `hyperf-skeleton` 內的 `composer.json` 文件增加一個 `repositories` 項，如下：
 
 ```json
 {
