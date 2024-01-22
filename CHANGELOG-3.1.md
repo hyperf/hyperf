@@ -3,6 +3,7 @@
 ## Added
 
 - [#6483](https://github.com/hyperf/hyperf/pull/6483) [#6487] (https://github.com/hyperf/hyperf/pull/6487) Added new ways to register crontab.
+- [#6488](https://github.com/hyperf/hyperf/pull/6488) Added the default implement for `Psr\Log\LoggerInterface`.
 
 ## Optimized
 
