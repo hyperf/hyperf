@@ -58,7 +58,7 @@ We have provided you with a [Hyperf component development guide](en/component-gu
 ## Server
 
 - [hyperf/http-server](https://github.com/hyperf/http-server) The HTTP server provided by Hyperf officially
-- [hyperf/grpc-server](https://github.com/hyperf/grpc-server) The GRPC server provided by Hyperf officially
+- [hyperf/grpc-server](https://github.com/hyperf/grpc-server) The gRPC server provided by Hyperf officially
 - [hyperf/websocket-server](https://github.com/hyperf/websocket-server) The WebSocket server provided by Hyperf officially
 - [hyperf/rpc-server](https://github.com/hyperf/rpc-server) The abstract RPC server provided by Hyperf officially
 
@@ -66,7 +66,7 @@ We have provided you with a [Hyperf component development guide](en/component-gu
 
 - [hyperf/consul](https://github.com/hyperf/consul) The Consul coroutine client provided by Hyperf officially
 - [hyperf/elasticsearch](https://github.com/hyperf/elasticsearch) The Elasticsearch coroutine client provided by Hyperf officially
-- [hyperf/grpc-client](https://github.com/hyperf/grpc-client) The GRPC coroutine client provided by Hyperf officially
+- [hyperf/grpc-client](https://github.com/hyperf/grpc-client) The gRPC coroutine client provided by Hyperf officially
 - [hyperf/rpc-client](https://github.com/hyperf/rpc-client) The abstract RPC coroutine client provided by Hyperf officially
 - [hyperf/guzzle](https://github.com/hyperf/guzzle) The Guzzle HTTP coroutine client provided by Hyperf officially
 - [hyperf/redis](https://github.com/hyperf/redis) The Redis coroutine client provided by Hyperf officially
