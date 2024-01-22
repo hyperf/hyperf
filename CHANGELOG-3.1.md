@@ -8,6 +8,7 @@
 ## Optimized
 
 - [#6480](https://github.com/hyperf/hyperf/pull/6480) Optimize log for crontab task skipped.
+- [#6489](https://github.com/hyperf/hyperf/pull/6489) Removed the low version conditions of `php` and `swoole`.
 
 # v3.1.6 - 2024-01-18
 
