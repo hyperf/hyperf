@@ -29,7 +29,7 @@ class Crontab
 
     protected string $mutexPool = 'default';
 
-    protected int $mutexExpires = 3600;
+    protected int $mutexExpires = 60;
 
     protected bool $onOneServer = false;
 

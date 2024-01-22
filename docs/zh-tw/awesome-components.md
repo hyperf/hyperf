@@ -94,6 +94,7 @@
 - [hyperf/tracer](https://github.com/hyperf/tracer) Hyperf 官方提供的 OpenTracing 分散式呼叫鏈追蹤元件
 - [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) Hyperf 官方提供的服務熔斷元件
 - [pudongping/hyperf-throttle-requests](https://github.com/pudongping/hyperf-throttle-requests) 適配 Hyperf 框架的請求頻率限流器。功能類似於 Laravel 框架的 throttle 中介軟體。
+- [friendsofhyperf/sentry](https://github.com/friendsofhyperf/sentry) 適配 Hyperf 框架的 [Sentry](https://sentry.io) 元件，用於異常監控與性能監控。
 
 ## 定時任務
 

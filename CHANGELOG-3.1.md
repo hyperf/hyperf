@@ -19,6 +19,7 @@
 - [#6472](https://github.com/hyperf/hyperf/pull/6472) Optimized code of `DispatcherFactory` which use `require` instead of `require_once` for loading `routes`.
 - [#6473](https://github.com/hyperf/hyperf/pull/6473) Auto mkdir folder when using command `gen:swagger-schema`.
 - [#6477](https://github.com/hyperf/hyperf/pull/6477) Optimized code about binding `serverMutex` and `taskMutex` for `Crontab`.
+- [#6479](https://github.com/hyperf/hyperf/pull/6479) Updated the default mutex expiration time to 60 seconds.
 
 # v3.1.5 - 2024-01-04
 
