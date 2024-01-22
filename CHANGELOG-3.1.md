@@ -3,14 +3,6 @@
 ## Added
 
 - [#6483](https://github.com/hyperf/hyperf/pull/6483) Added new ways to register crontab.
-```php
-// config/crontabs.php
-use Hyperf\Crontab\Schedule;
-
-Schedule::command('foo:bar')->setName('foo-bar')->setRule('* * * * *');
-Schedule::call([Foo::class, 'bar'])->setName('foo-bar')->setRule('* * * * *');
-Schedule::call(fn() => (new Foo)->bar())->setName('foo-bar')->setRule('* * * * *');
-```
 
 ## Optimized
 
