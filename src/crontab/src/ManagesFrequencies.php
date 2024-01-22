@@ -610,9 +610,9 @@ trait ManagesFrequencies
 
         if ($endTime->lessThan($startTime)) {
             if ($startTime->greaterThan($now)) {
-                $startTime->subDay(1);
+                $startTime->subDay();
             } else {
-                $endTime->addDay(1);
+                $endTime->addDay();
             }
         }
 
