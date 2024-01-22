@@ -71,10 +71,6 @@ class ClientTest extends TestCase
 
     public function testHTTP2Pipeline()
     {
-        if (SWOOLE_VERSION_ID < 50000) {
-            $this->markTestSkipped('');
-        }
-
         $this->markTestSkipped();
 
         $client = $this->getClient('127.0.0.1:50051');

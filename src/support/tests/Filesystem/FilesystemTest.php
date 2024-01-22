@@ -74,17 +74,11 @@ class FilesystemTest extends TestCase
     public function testMakeDirection()
     {
         $system = new Filesystem();
-        if (SWOOLE_VERSION_ID > 40701) {
-            try {
-                $system->makeDirectory(BASE_PATH . '/runtime/test');
-                $system->makeDirectory(BASE_PATH . '/runtime/test');
-            } catch (Throwable $exception) {
-                $this->assertSame('mkdir(): File exists', $exception->getMessage());
-            }
-        } else {
+        try {
             $system->makeDirectory(BASE_PATH . '/runtime/test');
             $system->makeDirectory(BASE_PATH . '/runtime/test');
-            $this->assertTrue(true);
+        } catch (Throwable $exception) {
+            $this->assertSame('mkdir(): File exists', $exception->getMessage());
         }
     }
 
