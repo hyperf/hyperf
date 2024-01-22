@@ -13,6 +13,8 @@ namespace Hyperf\Crontab;
 
 use Closure;
 
+use function Hyperf\Tappable\tap;
+
 class Schedule
 {
     public const ROUTE = BASE_PATH . '/config/crontabs.php';
