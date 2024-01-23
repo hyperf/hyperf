@@ -1,5 +1,9 @@
 # v3.1.7 - TBD
 
+## Fixed
+
+- [#6491](https://github.com/hyperf/hyperf/pull/6491) Fixed bug that swagger validation collector cannot collect query parameters.
+
 ## Added
 
 - [#6483](https://github.com/hyperf/hyperf/pull/6483) [#6487] (https://github.com/hyperf/hyperf/pull/6487) Added new ways to register crontab.
