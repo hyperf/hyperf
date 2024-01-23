@@ -48,7 +48,6 @@ class ValidationCollector
         $queryParameters = Util::findAnnotations($methodAnnotations, QueryParameter::class);
 
         foreach ($queryParameters as $property) {
-
             if (isset($property->{$field}) && $property->{$field}) {
                 $data[$property->name] = $property->{$field};
             }
