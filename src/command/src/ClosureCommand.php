@@ -51,10 +51,10 @@ final class ClosureCommand extends Command
     /**
      * @param callable(Crontab $crontab):Crontab|null $callback
      */
-    public function cron(string $rule, ?callable $callback = null): self
+    public function cron(string $rule, array $arguments = [], ?callable $callback = null): self
     {
         tap(
-            Schedule::command($this->getName())
+            Schedule::command($this->getName(), $arguments)
                 ->setName($this->getName())
                 ->setRule($rule)
                 ->setMemo($this->getDescription()),
