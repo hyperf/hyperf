@@ -16,6 +16,8 @@ use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\Schedule;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Tappable\tap;
+
 final class ClosureCommand extends Command
 {
     private ParameterParser $parameterParser;
