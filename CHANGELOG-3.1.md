@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#6491](https://github.com/hyperf/hyperf/pull/6491) Fixed bug that swagger validation collector cannot collect query parameters.
+- [#6500](https://github.com/hyperf/hyperf/pull/6500) Fixed bug that inconsistent parsing response in Rpc-Multiplex client.
 
 ## Added
 
