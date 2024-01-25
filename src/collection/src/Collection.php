@@ -1239,6 +1239,28 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * Replace the collection items with the given items.
+     *
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
+     * @return static
+     */
+    public function replace($items)
+    {
+        return new static(array_replace($this->items, $this->getArrayableItems($items)));
+    }
+
+    /**
+     * Recursively replace the collection items with the given items.
+     *
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
+     * @return static
+     */
+    public function replaceRecursive($items)
+    {
+        return new static(array_replace_recursive($this->items, $this->getArrayableItems($items)));
+    }
+
+    /**
      * Reverse items order.
      *
      * @return static<TKey, TValue>
@@ -1813,24 +1835,14 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      */
     protected function getArrayableItems($items): array
     {
-        if (is_array($items)) {
-            return $items;
-        }
-        if ($items instanceof self) {
-            return $items->all();
-        }
-        if ($items instanceof Arrayable) {
-            return $items->toArray();
-        }
-        if ($items instanceof Jsonable) {
-            return json_decode($items->__toString(), true);
-        }
-        if ($items instanceof JsonSerializable) {
-            return $items->jsonSerialize();
-        }
-        if ($items instanceof Traversable) {
-            return iterator_to_array($items);
-        }
-        return (array) $items;
+        return match (true) {
+            is_array($items) => $items,
+            $items instanceof self => $items->all(),
+            $items instanceof Arrayable => $items->toArray(),
+            $items instanceof Jsonable => json_decode($items->__toString(), true),
+            $items instanceof JsonSerializable => $items->jsonSerialize(),
+            $items instanceof Traversable => iterator_to_array($items),
+            default => (array) $items,
+        };
     }
 }
