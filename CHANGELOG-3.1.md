@@ -10,7 +10,7 @@
 - [#6483](https://github.com/hyperf/hyperf/pull/6483) [#6487] (https://github.com/hyperf/hyperf/pull/6487) Added new ways to register crontab.
 - [#6488](https://github.com/hyperf/hyperf/pull/6488) Added the default implement for `Psr\Log\LoggerInterface`.
 - [#6495](https://github.com/hyperf/hyperf/pull/6495) Added cron support for closure-command.
-- [#6501](https://github.com/hyperf/hyperf/pull/6501) Added `Collection::replace()` and `Collection:: replaceRecursive()`.
+- [#6501](https://github.com/hyperf/hyperf/pull/6501) Added `Collection::replace()` and `Collection::replaceRecursive()`.
 
 ## Optimized
 
