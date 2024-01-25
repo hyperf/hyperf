@@ -285,7 +285,7 @@ class GrpcClient
      */
     protected function hanldeNaming(NotifySubscriberRequest $response)
     {
-        return $this->handleNaming($response);
+        $this->handleNaming($response);
     }
 
     protected function serverCheck(): bool
