@@ -222,7 +222,7 @@ class GrpcClient
                             $response->dataId,
                             $response
                         ),
-                        $response instanceof NotifySubscriberRequest => $this->hanldeNaming($response),
+                        $response instanceof NotifySubscriberRequest => $this->handleNaming($response),
                     };
 
                     $this->listen();
@@ -260,7 +260,7 @@ class GrpcClient
         }
     }
 
-    protected function hanldeNaming(NotifySubscriberRequest $response): void
+    protected function handleNaming(NotifySubscriberRequest $response): void
     {
         $serviceInfo = $response->serviceInfo;
         $key = $serviceInfo->toKeyString();
@@ -278,6 +278,14 @@ class GrpcClient
         } else {
             $this->write($this->streamId, (new NamingPushRequestHandler(fn () => null))->ack($response));
         }
+    }
+
+    /**
+     * @deprecated since 3.1, use handleNaming instead.
+     */
+    protected function hanldeNaming(NotifySubscriberRequest $response)
+    {
+        $this->handleNaming($response);
     }
 
     protected function serverCheck(): bool
