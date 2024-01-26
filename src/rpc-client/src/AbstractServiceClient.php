@@ -63,6 +63,7 @@ abstract class AbstractServiceClient
 
     public function __construct(protected ContainerInterface $container)
     {
+        $this->config = $this->container->get(ConfigInterface::class);
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
         $protocol = new Protocol($container, $container->get(ProtocolManager::class), $this->protocol, $this->getOptions());
         $loadBalancer = $this->createLoadBalancer(...$this->createNodes());
@@ -74,7 +75,6 @@ abstract class AbstractServiceClient
         $this->idGenerator = $this->getIdGenerator();
         $this->pathGenerator = $protocol->getPathGenerator();
         $this->dataFormatter = $protocol->getDataFormatter();
-        $this->config = $this->container->get(ConfigInterface::class);
     }
 
     protected function __request(string $method, array $params, ?string $id = null)
