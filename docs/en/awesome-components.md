@@ -99,8 +99,15 @@ We have provided you with a [Hyperf component development guide](en/component-gu
 - [hyperf/tracer](https://github.com/hyperf/tracer) OpenTracing component provided by Hyperf officially
 - [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) service circuit breaker component provided by Hyperf officially
 - [friendsofhyperf/sentry](https://github.com/friendsofhyperf/sentry) [Sentry](https://sentry.io) component based on Hyperf
-- [friendsofhyperf/telescope](https://github.com/friendsofhyperf/telescope) Debugging tools adapted to the Hyperf
 
 ## Annotation Configuration
 
 - [hyperf-helper/dependency](https://github.com/lazychanger/hyperf-helper-dependency) Use annotations to quickly configure dependencies and support dependency priority.
+
+## Development and debugging
+
+- [firstphp/wsdebug](https://github.com/lamplife/wsdebug) Development and debugging component for real-time observation of abnormal errors through `WebSocket`
+- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) supports multi-env configuration file function similar to laravel, such as `APP_ENV=testing` can load `.env .testing` configuration overrides the default `.env`
+- [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) provides a `dump` function that can print variables or data in the program to another command line window , based on Symfony's `Var-Dump Server` component
+- [learvin/hyperf-tinker](https://github.com/Arvin-Lee/hyperf-tinker) Provides an interactive Hyperf shell container based on PsySH
+- [friendsofhyperf/telescope](https://github.com/friendsofhyperf/telescope) Debugging tools adapted to the Hyperf
