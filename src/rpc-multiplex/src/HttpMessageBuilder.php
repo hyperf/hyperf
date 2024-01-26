@@ -37,8 +37,8 @@ class HttpMessageBuilder implements HttpMessageBuilderInterface
         $extra = $data[Constant::EXTRA] ?? [];
         $uri = $this->buildUri(
             $data[Constant::PATH] ?? '/',
-            $extra[Constant::HOST] ?? $this->hostReader->read(),
-            $extra[Constant::PORT] ?? $config['port'] ?? 80
+            $data[Constant::HOST] ?? $this->hostReader->read(),
+            $data[Constant::PORT] ?? $config['port'] ?? 80
         );
 
         $parsedData = $data[Constant::DATA] ?? [];
