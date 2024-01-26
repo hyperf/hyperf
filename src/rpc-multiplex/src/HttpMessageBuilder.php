@@ -19,6 +19,7 @@ use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\Rpc\Context as RpcContext;
+use Hyperf\RpcMultiplex\Contract\HostReaderInterface;
 use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -27,23 +28,24 @@ use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 class HttpMessageBuilder implements HttpMessageBuilderInterface
 {
-    public function __construct(protected PackerInterface $packer, protected RpcContext $context)
+    public function __construct(protected PackerInterface $packer, protected RpcContext $context, protected HostReaderInterface $hostReader)
     {
     }
 
-    public function buildRequest(array $data): ServerRequestPlusInterface
+    public function buildRequest(array $data, array $config = []): ServerRequestPlusInterface
     {
+        $extra = $data[Constant::EXTRA] ?? [];
         $uri = $this->buildUri(
             $data[Constant::PATH] ?? '/',
-            $data[Constant::HOST] ?? 'unknown',
-            $data[Constant::PORT] ?? 80
+            $data[Constant::HOST] ?? $this->hostReader->read(),
+            $data[Constant::PORT] ?? $config['port'] ?? 80
         );
 
         $parsedData = $data[Constant::DATA] ?? [];
 
         $this->context->setData($data[Constant::CONTEXT] ?? []);
 
-        $request = new Request('POST', $uri, ['Content-Type' => 'application/json'], new SwooleStream(Json::encode($parsedData)));
+        $request = new Request('POST', $uri, ['Content-Type' => 'application/json', ...$extra], new SwooleStream(Json::encode($parsedData)));
 
         return $request->setParsedBody($parsedData);
     }
