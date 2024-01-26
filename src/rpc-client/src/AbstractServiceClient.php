@@ -60,6 +60,8 @@ abstract class AbstractServiceClient
 
     protected DataFormatterInterface $dataFormatter;
 
+    protected ?ConfigInterface $config = null;
+
     public function __construct(protected ContainerInterface $container)
     {
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
@@ -73,6 +75,9 @@ abstract class AbstractServiceClient
         $this->idGenerator = $this->getIdGenerator();
         $this->pathGenerator = $protocol->getPathGenerator();
         $this->dataFormatter = $protocol->getDataFormatter();
+        if ($this->container->has(ConfigInterface::class)) {
+            $this->config = $this->container->get(ConfigInterface::class);
+        }
     }
 
     protected function __request(string $method, array $params, ?string $id = null)
@@ -104,7 +109,14 @@ abstract class AbstractServiceClient
 
     protected function __generateData(string $methodName, array $params, null|int|string $id)
     {
-        return $this->dataFormatter->formatRequest(new Request($this->__generateRpcPath($methodName), $params, $id));
+        return $this->dataFormatter->formatRequest(new Request(
+            $this->__generateRpcPath($methodName),
+            $params,
+            $id,
+            [
+                'from' => $this->config?->get('app_name'),
+            ]
+        ));
     }
 
     public function getServiceName(): string

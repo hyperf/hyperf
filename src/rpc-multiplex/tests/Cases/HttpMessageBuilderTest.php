@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\RpcMultiplex\Cases;
 
 use Hyperf\Rpc\Context;
+use Hyperf\RpcMultiplex\HttpMessage\HostReader\NullHostReader;
 use Hyperf\RpcMultiplex\HttpMessageBuilder;
 use Hyperf\RpcMultiplex\Packer\JsonPacker;
 use Hyperf\Support\Reflection\ClassInvoker;
@@ -27,7 +28,7 @@ class HttpMessageBuilderTest extends AbstractTestCase
 {
     public function testBuildUri()
     {
-        $invoker = new ClassInvoker(new HttpMessageBuilder(new JsonPacker(), new Context()));
+        $invoker = new ClassInvoker(new HttpMessageBuilder(new JsonPacker(), new Context(), new NullHostReader()));
         /** @var UriInterface $uri */
         $uri = $invoker->buildUri('/', $host = uniqid(), 8806);
         $this->assertSame('http', $uri->getScheme());
@@ -38,7 +39,7 @@ class HttpMessageBuilderTest extends AbstractTestCase
 
     public function testStoreContext()
     {
-        $builder = new HttpMessageBuilder(new JsonPacker(), $context = new Context());
+        $builder = new HttpMessageBuilder(new JsonPacker(), $context = new Context(), new NullHostReader());
 
         $request = $builder->buildRequest([
             'path' => '/',
