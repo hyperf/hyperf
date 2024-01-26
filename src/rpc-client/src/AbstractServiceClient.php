@@ -27,7 +27,6 @@ use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\DriverManager;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
-use RuntimeException;
 
 use function Hyperf\Support\make;
 
@@ -60,8 +59,11 @@ abstract class AbstractServiceClient
 
     protected DataFormatterInterface $dataFormatter;
 
+    protected ConfigInterface $config;
+
     public function __construct(protected ContainerInterface $container)
     {
+        $this->config = $this->container->get(ConfigInterface::class);
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
         $protocol = new Protocol($container, $container->get(ProtocolManager::class), $this->protocol, $this->getOptions());
         $loadBalancer = $this->createLoadBalancer(...$this->createNodes());
@@ -104,7 +106,14 @@ abstract class AbstractServiceClient
 
     protected function __generateData(string $methodName, array $params, null|int|string $id)
     {
-        return $this->dataFormatter->formatRequest(new Request($this->__generateRpcPath($methodName), $params, $id));
+        return $this->dataFormatter->formatRequest(new Request(
+            $this->__generateRpcPath($methodName),
+            $params,
+            $id,
+            [
+                'from' => $this->config->get('app_name'),
+            ]
+        ));
     }
 
     public function getServiceName(): string
@@ -141,14 +150,8 @@ abstract class AbstractServiceClient
 
     protected function getConsumerConfig(): array
     {
-        if (! $this->container->has(ConfigInterface::class)) {
-            throw new RuntimeException(sprintf('The object implementation of %s missing.', ConfigInterface::class));
-        }
-
-        $config = $this->container->get(ConfigInterface::class);
-
         // According to the registry config of the consumer, retrieve the nodes.
-        $consumers = $config->get('services.consumers', []);
+        $consumers = $this->config->get('services.consumers', []);
         $config = [];
         foreach ($consumers as $consumer) {
             if (isset($consumer['name']) && $consumer['name'] === $this->serviceName) {

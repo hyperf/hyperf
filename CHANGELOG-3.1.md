@@ -1,4 +1,10 @@
-# v3.1.7 - TBD
+# v3.1.8 - TBD
+
+## Added
+
+- [#6504](https://github.com/hyperf/hyperf/pull/6504) Added `HostReaderInterface` for `rpc-multiplex`.
+
+# v3.1.7 - 2024-01-26
 
 ## Fixed
 
@@ -10,6 +16,7 @@
 - [#6483](https://github.com/hyperf/hyperf/pull/6483) [#6487] (https://github.com/hyperf/hyperf/pull/6487) Added new ways to register crontab.
 - [#6488](https://github.com/hyperf/hyperf/pull/6488) Added the default implement for `Psr\Log\LoggerInterface`.
 - [#6495](https://github.com/hyperf/hyperf/pull/6495) Added cron support for closure-command.
+- [#6501](https://github.com/hyperf/hyperf/pull/6501) Added `Collection::replace()` and `Collection::replaceRecursive()`.
 
 ## Optimized
 

@@ -32,7 +32,7 @@ return [
 
 ### Add exception handler
 
-The exception handler mainly deals with `Hyperf\Validation\ValidationException` exceptions. We provide a `Hyperf\Validation\ValidationExceptionHandler` for processing. You need to manually configure this exception handler to your project’s `config/autoload/ Within the exceptions.php` file, of course, you can also customize your exception handler.
+The exception handler mainly deals with `Hyperf\Validation\ValidationException` exceptions. We provide a `Hyperf\Validation\ValidationExceptionHandler` for processing. You need to manually configure this exception handler to your project’s by adding it to the `config/autoload/exceptions.php` file, of course, you can also customize your exception handler.
 
 ```php
 <?php
