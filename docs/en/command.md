@@ -501,7 +501,7 @@ $exitCode = $application->run($input, $output);
 $exitCode = $application->find($command)->run($input, $output);
 ```
 
-## Run commands in a closure.
+## Closure command
 
 You can quickly define commands in `config\console.php`.
 
@@ -511,4 +511,18 @@ use Hyperf\Command\Console;
 Console::command('hello', function () {
     $this->comment('Hello, Hyperf!');
 })->describe('This is a demo closure command.');
+```
+
+You can also set crontab for closure command.
+
+```php
+use Hyperf\Command\Console;
+
+Console::command('foo', function () {
+    $this->comment('Hello, Foo!');
+})->describe('This is a demo closure command.')->cron('* * * * *');
+
+Console::command('bar', function () {
+    $this->comment('Hello, Bar!');
+})->describe('This is another demo closure command.')->cron('* * * * *', callback: fn($cron) => $cron->setSingleton(true));
 ```

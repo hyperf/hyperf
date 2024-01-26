@@ -56,7 +56,7 @@
 
 - [hyperf/consul](https://github.com/hyperf/consul) Hyperf 官方提供的 Consul 協程客戶端
 - [hyperf/elasticsearch](https://github.com/hyperf/elasticsearch) Hyperf 官方提供的 Elasticsearch 協程客戶端
-- [hyperf/grpc-client](https://github.com/hyperf/grpc-client) Hyperf 官方提供的 GRPC 協程客戶端
+- [hyperf/grpc-client](https://github.com/hyperf/grpc-client) Hyperf 官方提供的 gRPC 協程客戶端
 - [hyperf/etcd](https://github.com/hyperf/etcd) Hyperf 官方提供的 ETCD 協程客戶端
 - [hyperf/rpc-client](https://github.com/hyperf/rpc-client) Hyperf 官方提供的通用 RPC 抽象協程客戶端
 - [hyperf/guzzle](https://github.com/hyperf/guzzle) Hyperf 官方提供的 Guzzle HTTP 協程客戶端
@@ -94,7 +94,7 @@
 - [hyperf/tracer](https://github.com/hyperf/tracer) Hyperf 官方提供的 OpenTracing 分散式呼叫鏈追蹤元件
 - [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) Hyperf 官方提供的服務熔斷元件
 - [pudongping/hyperf-throttle-requests](https://github.com/pudongping/hyperf-throttle-requests) 適配 Hyperf 框架的請求頻率限流器。功能類似於 Laravel 框架的 throttle 中介軟體。
-- [friendsofhyperf/sentry](https://github.com/friendsofhyperf/sentry) 適配 Hyperf 框架的 [Sentry](https://sentry.io) 元件，用於異常監控與性能監控。
+- [friendsofhyperf/sentry](https://github.com/friendsofhyperf/sentry) 適配 [Sentry](https://sentry.io) 框架的 Sentry 元件，用於異常監控與效能監控。
 
 ## 定時任務
 
