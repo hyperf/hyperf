@@ -48,7 +48,7 @@
 ## 服務
 
 - [hyperf/http-server](https://github.com/hyperf/http-server) Hyperf 官方提供的 HTTP 服務端
-- [hyperf/grpc-server](https://github.com/hyperf/grpc-server) Hyperf 官方提供的 gRPC 服務端
+- [hyperf/grpc-server](https://github.com/hyperf/grpc-server) Hyperf 官方提供的 GRPC 服務端
 - [hyperf/websocket-server](https://github.com/hyperf/websocket-server) Hyperf 官方提供的 WebSocket 服務端
 - [hyperf/rpc-server](https://github.com/hyperf/rpc-server) Hyperf 官方提供的通用 RPC 抽象服務端
 
