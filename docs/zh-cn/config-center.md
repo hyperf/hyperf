@@ -50,11 +50,11 @@ composer require hyperf/config-etcd
 composer require hyperf/config-nacos
 ```
 
-#### GRPC 双向流
+#### gRPC 双向流
 
-Nacos 传统的配置中心，是基于短轮询进行配置同步的，就会导致轮询间隔内，服务无法拿到最新的配置。`Nacos V2` 版本增加了 GRPC 双向流的支持，如果你想让 Nacos 在发现配置变更后，及时推送给相关服务。
+Nacos 传统的配置中心，是基于短轮询进行配置同步的，就会导致轮询间隔内，服务无法拿到最新的配置。`Nacos V2` 版本增加了 gRPC 双向流的支持，如果你想让 Nacos 在发现配置变更后，及时推送给相关服务。
 
-可以按照以下步骤，开启 GRPC 双向流功能。
+可以按照以下步骤，开启 gRPC 双向流功能。
 
 - 首先，我们安装必要的组件
 
