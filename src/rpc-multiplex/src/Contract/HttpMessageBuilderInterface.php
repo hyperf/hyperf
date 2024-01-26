@@ -17,7 +17,7 @@ use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 interface HttpMessageBuilderInterface
 {
-    public function buildRequest(array $data): ServerRequestPlusInterface;
+    public function buildRequest(array $data, array $config = []): ServerRequestPlusInterface;
 
     public function buildResponse(ServerRequestInterface $request, array $data): ResponsePlusInterface;
 

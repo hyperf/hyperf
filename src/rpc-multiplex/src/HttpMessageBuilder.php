@@ -32,13 +32,13 @@ class HttpMessageBuilder implements HttpMessageBuilderInterface
     {
     }
 
-    public function buildRequest(array $data): ServerRequestPlusInterface
+    public function buildRequest(array $data, array $config = []): ServerRequestPlusInterface
     {
         $extra = $data[Constant::EXTRA] ?? [];
         $uri = $this->buildUri(
             $data[Constant::PATH] ?? '/',
             $extra[Constant::HOST] ?? $this->hostReader->read(),
-            $extra[Constant::PORT] ?? 80
+            $extra[Constant::PORT] ?? $config['port'] ?? 80
         );
 
         $parsedData = $data[Constant::DATA] ?? [];

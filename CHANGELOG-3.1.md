@@ -1,5 +1,9 @@
 # v3.1.8 - TBD
 
+## Added
+
+- [#6504](https://github.com/hyperf/hyperf/pull/6504) Added `HostReaderInterface` for `rpc-multiplex`.
+
 # v3.1.7 - 2024-01-26
 
 ## Fixed
