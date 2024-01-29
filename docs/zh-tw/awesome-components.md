@@ -134,6 +134,7 @@
 - [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支援與 laravel 類似的多 env 配置檔案功能，比如透過 `APP_ENV=testing` 可以載入 `.env.testing` 配置覆蓋預設的 `.env`
 - [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) 提供一個 `dump` 函式，可以將程式內的變數或資料列印到另一個命令列視窗中，基於 Symfony 的 `Var-Dump Server` 元件
 - [leearvin/hyperf-tinker](https://github.com/Arvin-Lee/hyperf-tinker) 基於 PsySH 提供一個互動式的 Hyperf shell 容器
+- [friendsofhyperf/telescope](https://github.com/friendsofhyperf/telescope) 適配 Hyperf 框架的除錯工具。
 
 ## 許可權認證
 
