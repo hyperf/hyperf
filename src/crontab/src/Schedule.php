@@ -44,7 +44,7 @@ class Schedule
             ->setCallback($arguments);
     }
 
-    public static function call(Closure|callable $callable): Crontab
+    public static function call(mixed $callable): Crontab
     {
         $type = $callable instanceof Closure ? 'closure' : 'callback';
 
