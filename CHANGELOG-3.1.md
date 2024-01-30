@@ -4,6 +4,10 @@
 
 - [#6509](https://github.com/hyperf/hyperf/pull/6509) Fix the bug that cannot give array type.
 
+## Optimized
+
+- [#6511](https://github.com/hyperf/hyperf/pull/6511) Optimized the serialization of `Hyperf\AsyncQueue\JobMessage`.
+
 ## Added
 
 - [#6504](https://github.com/hyperf/hyperf/pull/6504) Added `HostReaderInterface` for `rpc-multiplex`.
