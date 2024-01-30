@@ -52,7 +52,10 @@ class JobMessageTest extends TestCase
 
         $serialized = $message->__serialize();
 
-        $serialized['attempts'] = 3;
+        $serialized = [
+            'job' => $serialized['job'],
+            'attempts' => 3,
+        ];
         $message->__unserialize($serialized);
 
         $this->assertInstanceOf(MessageInterface::class, $message);
