@@ -37,7 +37,7 @@ class JobMessage implements MessageInterface
 
     public function __unserialize(array $data): void
     {
-        if (array_is_list($data)) {
+        if (array_is_list($data)) { // Compatible with old version, will be removed at v3.2
             $data = [
                 'job' => $data[0],
                 'attempts' => $data[1],
