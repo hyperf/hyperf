@@ -381,7 +381,7 @@ You can also update multiple models that match the query criteria. In this examp
 ```php
 use App\Model\User;
 
-User::query()->where('gender', 1)->update(['gender_show' => '男性']);
+User::query()->where('gender', 1)->update(['gender_show' => 'male']);
 ```
 
 > During batch update, the updated model will not trigger the `saved` and `updated` events. Because during batch update, the model is not instantiated. At the same time, the corresponding `casts` will not be executed. For example, in the `json` format in the database, the `casts` field in the Model class is marked as `array`. If batch update is used, the `array` will not be automatically converted during insertion. In `json` string format.
