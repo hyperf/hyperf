@@ -348,7 +348,7 @@ if ($errors->has('foo')) {
 The validator adds a scenario function, so we can easily modify the validation rules on demand.
 
 > This feature requires a version of this component greater than or equal to 2.2.7
-Create a `SceneRequest` as follows：
+Create a `SceneRequest` as follows:
 
 ```php
 <?php

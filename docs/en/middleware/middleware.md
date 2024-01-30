@@ -66,12 +66,12 @@ When defining routes through annotations, we recommend defining middleware by me
   - `#[Middleware]` annotation are used when defining a single middleware. Only one annotation can be defined in one place, and cannot be defined repeatedly.
   - `#[Middlewares]` annotation are used when defining multiple middleware. Only one annotation can be defined in one place, and then multiple middleware definitions can be implemented by defining multiple `#[Middleware]` annotations within the annotation.
   
-> Use `#[Middleware]` should `use Hyperf\HttpServer\Annotation\Middleware;` namespace；   
-> Use `#[Middlewares]` should `use Hyperf\HttpServer\Annotation\Middlewares;` namespace；
+> Use `#[Middleware]` should `use Hyperf\HttpServer\Annotation\Middleware;` namespace;   
+> Use `#[Middlewares]` should `use Hyperf\HttpServer\Annotation\Middlewares;` namespace;
 
 ***Notice: It must be used with `#[AutoController]` or `#[Controller]`.***
 
-Define a single middleware：
+Define a single middleware:
 
 ```php
 <?php
@@ -91,7 +91,7 @@ class IndexController
 }
 ```
 
-Define multiple middlewares：
+Define multiple middlewares:
 
 ```php
 <?php

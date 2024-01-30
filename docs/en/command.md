@@ -1,6 +1,6 @@
 # Command
 
-The default command component of Hyperf provided by [hyperf/command](https://github.com/hyperf/command) component，And this component is a abstraction of [symfony/console](https://github.com/symfony/console).
+The default command component of Hyperf provided by [hyperf/command](https://github.com/hyperf/command) component,And this component is a abstraction of [symfony/console](https://github.com/symfony/console).
 
 # Installation
 
@@ -29,7 +29,7 @@ After executing the above command, a configured `FooCommand` class will be gener
 
 There are three forms of commands that define the command class. The first is defined by the `$name` property, the second is defined by the constructor argument, and the last is defined by annotations. We demonstrate this through code examples, assuming we want to define the command. The class command is `foo:hello`:
 
-#### Define the command by `$name` property：
+#### Define the command by `$name` property:
 
 ```php
 <?php
@@ -53,7 +53,7 @@ class FooCommand extends HyperfCommand
 }
 ```
 
-#### Define the command by constructor：
+#### Define the command by constructor:
 
 ```php
 <?php
@@ -75,7 +75,7 @@ class FooCommand extends HyperfCommand
 }
 ```
 
-#### Define the command by annotations：
+#### Define the command by annotations:
 
 ```php
 <?php
