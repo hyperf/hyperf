@@ -6,6 +6,7 @@
 
 ## Optimized
 
+- [#6511](https://github.com/hyperf/hyperf/pull/6511) Optimized the serialization of `Hyperf\AsyncQueue\JobMessage`.
 - [#6513](https://github.com/hyperf/hyperf/pull/6513) Use `Hyperf\Coroutine\Coroutine` instead of `Hyperf\Engine\Coroutine`.
 
 ## Added
