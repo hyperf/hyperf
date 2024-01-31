@@ -1,6 +1,6 @@
 # Command
 
-The default command component of Hyperf provided by [hyperf/command](https://github.com/hyperf/command) component,And this component is a abstraction of [symfony/console](https://github.com/symfony/console).
+The default command component of Hyperf provided by [hyperf/command](https://github.com/hyperf/command) component, And this component is a abstraction of [symfony/console](https://github.com/symfony/console).
 
 # Installation
 
