@@ -19,7 +19,7 @@ return [
 ];
 ```
 
-## Use
+## Usage
 
 ```php
 <?php
