@@ -8,7 +8,8 @@
 
 ## Optimized
 
-- [#6511](https://github.com/hyperf/hyperf/pull/6511) [#6516](https://github.com/hyperf/hyperf/pull/6516) Optimized the serialization of `Hyperf\AsyncQueue\JobMessage`.
+- [#6511](https://github.com/hyperf/hyperf/pull/6511) Optimized the serialization of `Hyperf\AsyncQueue\JobMessage`.
+- [#6516](https://github.com/hyperf/hyperf/pull/6516) Fixed bug that message will be lost when unpack failed.
 
 ## Added
 
