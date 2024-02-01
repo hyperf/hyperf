@@ -52,6 +52,9 @@ class JobMessageTest extends TestCase
 
         $serialized = $message->__serialize();
 
+        $this->assertEquals($serialized[0], $serialized['job']);
+        $this->assertEquals($serialized[1], $serialized['attempts']);
+
         $serialized = [
             'job' => $serialized['job'] ?? $serialized[0],
             'attempts' => 3,
