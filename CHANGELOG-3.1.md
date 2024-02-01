@@ -1,8 +1,10 @@
-# v3.1.8 - TBD
+# v3.1.9 - TBD
+
+# v3.1.8 - 2024-02-01
 
 ## Fixed
 
-- [#6509](https://github.com/hyperf/hyperf/pull/6509) Fix the bug that cannot give array type.
+- [#6509](https://github.com/hyperf/hyperf/pull/6509) Fixed bug that `Schedule::call()` cannot support `array` when using `crontab`.
 
 ## Optimized
 
