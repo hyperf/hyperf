@@ -87,7 +87,7 @@ class UdpServer implements OnPacketInterface
     public function onPacket($server, $data, $clientInfo): void
     {
         var_dump($clientInfo);
-        $server->sendto($clientInfo['address'], $clientInfo['port'], 'Server：' . $data);
+        $server->sendto($clientInfo['address'], $clientInfo['port'], 'Server:' . $data);
     }
 }
 

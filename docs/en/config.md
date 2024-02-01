@@ -86,7 +86,7 @@ This way requires you already have an instance of the `Config` object. The defau
  * @var \Hyperf\Contract\ConfigInterface
  */
 // Get the configuration corresponding to $key by get(string $key, $default): mixed method, the $key value can be positioned to the subordinate array by the . connector, and $default is the default value returned when the corresponding value does not exist.
-$config->get($key，$default);
+$config->get($key, $default);
 ```
 
 #### Get Configuration by `#[Value]` Annotation

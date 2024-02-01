@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Aspect;
 
-use Hyperf\Coroutine\Coroutine as Co;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Engine\Coroutine as Co;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Tracer\TracerContext;

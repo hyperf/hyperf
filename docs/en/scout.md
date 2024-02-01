@@ -183,7 +183,7 @@ To update a searchable model, simply update the properties of the model instance
 ```php
     $order = App\Order::find(1);
 
-    // 更新 order...
+    // Update order...
 
     $order->save();
 ```

@@ -13,7 +13,7 @@ Popular speaking, it is in Hyperf that you can intervene in the execution of any
 Compared to the AOP feature implemented by other frameworks, we have further simplified the usage of this function without a more division, there is only a universal form of "Around":
 
 - `Aspect` is a definition class that weaves into the code flow, including the definition of target to be involved, and the modification of the original method of the target.
-- `ProxyClass` ，Each of the involved target classes will eventually generate a proxy class to achieve the purpose of executing the `Aspect` method, rather than passing the original class.
+- `ProxyClass`, Each of the involved target classes will eventually generate a proxy class to achieve the purpose of executing the `Aspect` method, rather than passing the original class.
 
 ## Define Aspect
 

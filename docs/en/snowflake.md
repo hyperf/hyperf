@@ -2,7 +2,7 @@
 
 ## Algorithm Introduction
 
-`Snowflake` is a distributed global unique ID generation algorithm proposed by twitter. The result of the algorithm generating `ID` is a long integer with the size of `64bit` . Under the standard algorithm, its structure is shown in the figure below：
+`Snowflake` is a distributed global unique ID generation algorithm proposed by twitter. The result of the algorithm generating `ID` is a long integer with the size of `64bit` . Under the standard algorithm, its structure is shown in the figure below:
 
 ![snowflake](imgs/snowflake.jpeg)
 
@@ -11,7 +11,7 @@
   
 - `41 bits` to record the timestamp (MS).
   - `41 bits` can represent `2^41 - 1` numbers.
-  - In other words, `41 bits` can represent the value of `2^41 - 1` milliseconds, and the unit year is `(2^41 - 1) / (1000 * 60 * 60 * 24 * 365)` about `69` years。
+  - In other words, `41 bits` can represent the value of `2^41 - 1` milliseconds, and the unit year is `(2^41 - 1) / (1000 * 60 * 60 * 24 * 365)` about `69` years.
   
 - `10 bits`, used to record the `ID` of the working machine.
   - It can be deployed in `2^10` nodes, including `5` bits `DatacenterId` and `5` bits `WorkerId`.
