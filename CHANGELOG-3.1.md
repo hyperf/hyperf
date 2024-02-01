@@ -1,5 +1,9 @@
 # v3.1.9 - TBD
 
+## Added
+
+- [#6518](https://github.com/hyperf/hyperf/pull/6518) Added amqpMessage property to events for amqp.
+
 ## Optimized
 
  [#6517](https://github.com/hyperf/hyperf/pull/6517) Fixed bug that the older versions of parsers cannot parse new messages for `async-queue`.
