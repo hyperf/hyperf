@@ -29,7 +29,12 @@ class JobMessage implements MessageInterface
             $this->job = $this->job->compress();
         }
 
-        return [$this->job, $this->attempts];
+        return [
+            $this->job,  // Compatible with old version, will be removed at v3.2
+            $this->attempts,  // Compatible with old version, will be removed at v3.2
+            'job' => $this->job,
+            'attempts' => $this->attempts,
+        ];
     }
 
     public function __unserialize(array $data): void

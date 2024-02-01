@@ -33,6 +33,9 @@ class JobMessageTest extends TestCase
         );
 
         $serialized = $message->__serialize();
+
+        $this->assertEquals($serialized[0], $serialized['job']);
+        $this->assertEquals($serialized[1], $serialized['attempts']);
         $this->assertArrayHasKey('job', $serialized);
         $this->assertArrayHasKey('attempts', $serialized);
 
@@ -51,6 +54,17 @@ class JobMessageTest extends TestCase
         );
 
         $serialized = $message->__serialize();
+
+        $this->assertEquals($serialized[0], $serialized['job']);
+        $this->assertEquals($serialized[1], $serialized['attempts']);
+
+        $message = unserialize(serialize($message));
+        $this->assertInstanceOf(MessageInterface::class, $message);
+        $this->assertInstanceOf(JobInterface::class, $message->job());
+        $this->assertInstanceOf(JobInterface::class, $message->job());
+        $this->assertInstanceOf(DemoJob::class, $message->job());
+        $this->assertSame($id, $message->job()->id);
+        $this->assertSame(0, $message->getAttempts());
 
         $serialized = [
             'job' => $serialized['job'] ?? $serialized[0],
@@ -74,5 +88,28 @@ class JobMessageTest extends TestCase
         $this->assertInstanceOf(DemoJob::class, $message->job());
         $this->assertSame($id, $message->job()->id);
         $this->assertSame(5, $message->getAttempts());
+    }
+
+    public function testUnserializeAsOldJobMessage()
+    {
+        $id = rand(0, 9999);
+        $message = new JobMessage(
+            new DemoJob($id)
+        );
+
+        $serialized = serialize($message);
+        $serialized = str_replace(
+            sprintf('O:%d:"%s', strlen(\Hyperf\AsyncQueue\JobMessage::class), \Hyperf\AsyncQueue\JobMessage::class),
+            sprintf('O:%d:"%s', strlen(\HyperfTest\AsyncQueue\Stub\OldJobMessage::class), \HyperfTest\AsyncQueue\Stub\OldJobMessage::class),
+            $serialized
+        );
+        $message = unserialize($serialized);
+
+        $this->assertInstanceOf(MessageInterface::class, $message);
+        $this->assertInstanceOf(JobInterface::class, $message->job());
+        $this->assertInstanceOf(JobInterface::class, $message->job());
+        $this->assertInstanceOf(DemoJob::class, $message->job());
+        $this->assertSame($id, $message->job()->id);
+        $this->assertSame(0, $message->getAttempts());
     }
 }
