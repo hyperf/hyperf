@@ -171,9 +171,9 @@ class Consumer extends Builder
             try {
                 $data = $consumerMessage->unserialize($message->getBody());
 
-                $this->eventDispatcher?->dispatch(new BeforeConsume($consumerMessage));
+                $this->eventDispatcher?->dispatch(new BeforeConsume($consumerMessage, $message));
                 $result = $consumerMessage->consumeMessage($data, $message);
-                $this->eventDispatcher?->dispatch(new AfterConsume($consumerMessage, $result));
+                $this->eventDispatcher?->dispatch(new AfterConsume($consumerMessage, $result, $message));
             } catch (Throwable $exception) {
                 $this->eventDispatcher?->dispatch(new FailToConsume($consumerMessage, $exception, $message));
                 if ($this->container->has(FormatterInterface::class)) {
