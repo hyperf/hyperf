@@ -10,14 +10,6 @@
 
 - [#6511](https://github.com/hyperf/hyperf/pull/6511) [#6516](https://github.com/hyperf/hyperf/pull/6516) Optimized the serialization of `Hyperf\AsyncQueue\JobMessage`.
 
-> 本次更新可能会在项目上线时，导致异步任务出现大批量失败。不过都会被移动到超时队列中，开发者可以将超时队列的消息进行重载，重新执行
-
-> This update may cause a large number of asynchronous tasks to fail when the project updating. However, they will all be moved to the timeout queue, and developers can overload the messages in the timeout queue and execute them again
-
-```shell
-php bin/hyperf.php queue:reload -Q timeout
-```
-
 ## Added
 
 - [#6504](https://github.com/hyperf/hyperf/pull/6504) Added `HostReaderInterface` for `rpc-multiplex`.
