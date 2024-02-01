@@ -85,12 +85,13 @@ class RedisDriver extends Driver
         }
 
         $data = $res[1];
+
+        $this->redis->zadd($this->channel->getReserved(), time() + $this->handleTimeout, $data);
+
         $message = $this->packer->unpack($data);
         if (! $message) {
             return [false, null];
         }
-
-        $this->redis->zadd($this->channel->getReserved(), time() + $this->handleTimeout, $data);
 
         return [$data, $message];
     }

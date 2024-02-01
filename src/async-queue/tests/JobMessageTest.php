@@ -53,7 +53,7 @@ class JobMessageTest extends TestCase
         $serialized = $message->__serialize();
 
         $serialized = [
-            'job' => $serialized['job'],
+            'job' => $serialized['job'] ?? $serialized[0],
             'attempts' => 3,
         ];
         $message->__unserialize($serialized);
