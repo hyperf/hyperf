@@ -1,5 +1,9 @@
 # v3.1.9 - TBD
 
+## Optimized
+
+ [#6517](https://github.com/hyperf/hyperf/pull/6517) Fixed bug that message will be lost when unpack failed.
+
 # v3.1.8 - 2024-02-01
 
 ## Fixed
@@ -9,7 +13,7 @@
 ## Optimized
 
 - [#6511](https://github.com/hyperf/hyperf/pull/6511) Optimized the serialization of `Hyperf\AsyncQueue\JobMessage`.
-- [#6516](https://github.com/hyperf/hyperf/pull/6516) [#6517](https://github.com/hyperf/hyperf/pull/6517) Fixed bug that message will be lost when unpack failed.
+- [#6516](https://github.com/hyperf/hyperf/pull/6516) Fixed bug that message will be lost when unpack failed.
 
 ## Added
 
