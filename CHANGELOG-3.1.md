@@ -11,7 +11,7 @@
 ## Optimized
 
 - [#6517](https://github.com/hyperf/hyperf/pull/6517) Fixed bug that the older versions of parsers cannot parse new messages for `async-queue`.
-- [#6520](https://github.com/hyperf/hyperf/pull/6520) Automatic close socket when coroutine ends.
+- [#6520](https://github.com/hyperf/hyperf/pull/6520) Refactor UdpSocketAspect to improve coroutine handling.
 
 # v3.1.8 - 2024-02-01
 
