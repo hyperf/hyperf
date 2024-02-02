@@ -16,6 +16,7 @@ use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Monolog\Handler\SyslogUdp\UdpSocket;
 use Socket;
+use WeakMap;
 
 /**
  * @property null|Socket $socket
@@ -26,10 +27,12 @@ class UdpSocketAspect extends AbstractAspect
         UdpSocket::class . '::getSocket',
     ];
 
-    /**
-     * @var Socket[]
-     */
-    public static array $coSockets = [];
+    public static WeakMap $coSockets;
+
+    public function __construct()
+    {
+        self::$coSockets = new WeakMap();
+    }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
@@ -38,13 +41,12 @@ class UdpSocketAspect extends AbstractAspect
         }
 
         $instance = $proceedingJoinPoint->getInstance();
-        $hash = spl_object_hash($instance);
 
-        if (isset(self::$coSockets[$hash]) && self::$coSockets[$hash] instanceof Socket) {
-            return self::$coSockets[$hash];
+        if (isset(self::$coSockets[$instance]) && self::$coSockets[$instance] instanceof Socket) {
+            return self::$coSockets[$instance];
         }
 
-        return self::$coSockets[$hash] = (function () use ($proceedingJoinPoint) {
+        return self::$coSockets[$instance] = (function () use ($proceedingJoinPoint) {
             $nonCoSocket = $this->socket; // Save the socket of non-coroutine.
             $this->socket = null; // Unset the socket of non-coroutine.
             $coSocket = $proceedingJoinPoint->process(); // ReCreate the socket in coroutine.
