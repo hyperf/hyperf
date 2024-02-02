@@ -16,7 +16,14 @@ use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Monolog\Handler\SyslogUdp\UdpSocket;
+use Socket;
 
+use function Hyperf\Coroutine\defer;
+
+/**
+ * @property string $ip
+ * @property int $port
+ */
 class UdpSocketAspect extends AbstractAspect
 {
     public array $classes = [
@@ -25,23 +32,25 @@ class UdpSocketAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        if (Coroutine::inCoroutine()) {
-            [$ip, $port] = (fn () => [$this->ip, $this->port])->call($proceedingJoinPoint->getInstance());
-
-            $key = sprintf('%s_%s_%s_%s', $proceedingJoinPoint->className, 'Socket', $ip, $port);
-            return Context::getOrSet($key, function () use ($port) {
-                $domain = AF_INET;
-                $protocol = SOL_UDP;
-                // Check if we are using unix sockets.
-                if ($port === 0) {
-                    $domain = AF_UNIX;
-                    $protocol = IPPROTO_IP;
-                }
-
-                return socket_create($domain, SOCK_DGRAM, $protocol);
-            });
+        if (! Coroutine::inCoroutine()) {
+            return $proceedingJoinPoint->process();
         }
 
-        return $proceedingJoinPoint->process();
+        $instance = $proceedingJoinPoint->getInstance();
+
+        return Context::getOrSet(
+            spl_object_hash($instance),
+            function () use ($instance) {
+                $port = (fn () => $this->port)->call($instance);
+                [$domain, $protocol] = $port === 0 ? [AF_UNIX, IPPROTO_IP] : [AF_INET, SOL_UDP];
+                $socket = socket_create($domain, SOCK_DGRAM, $protocol);
+                defer(function () use ($socket) {
+                    if ($socket instanceof Socket) {
+                        socket_close($socket);
+                    }
+                });
+                return $socket;
+            }
+        );
     }
 }
