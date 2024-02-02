@@ -21,7 +21,6 @@ use Socket;
 use function Hyperf\Coroutine\defer;
 
 /**
- * @property string $ip
  * @property int $port
  */
 class UdpSocketAspect extends AbstractAspect
