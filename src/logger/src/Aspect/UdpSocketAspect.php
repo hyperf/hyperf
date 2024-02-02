@@ -44,11 +44,12 @@ class UdpSocketAspect extends AbstractAspect
             return self::$coSockets[$hash];
         }
 
-        $nonCoSocket = (fn () => $this->socket)->call($instance); // Save the socket of non-coroutine.
-        (fn () => $this->socket = null)->call($instance); // Unset the socket of non-coroutine.
-        self::$coSockets[$hash] = $proceedingJoinPoint->process(); // ReCreate the socket in coroutine.
-        (fn () => $this->socket = $nonCoSocket)->call($instance); // Restore the socket of non-coroutine.
-
-        return self::$coSockets[$hash];
+        return self::$coSockets[$hash] = (function () use ($proceedingJoinPoint) {
+            $nonCoSocket = $this->socket; // Save the socket of non-coroutine.
+            $this->socket = null; // Unset the socket of non-coroutine.
+            $coSocket = $proceedingJoinPoint->process(); // ReCreate the socket in coroutine.
+            $this->socket = $nonCoSocket; // Restore the socket of non-coroutine.
+            return $coSocket;
+        })->call($instance);
     }
 }
