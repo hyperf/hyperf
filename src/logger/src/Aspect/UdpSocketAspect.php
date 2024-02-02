@@ -11,17 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Logger\Aspect;
 
-use Hyperf\Context\Context;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Monolog\Handler\SyslogUdp\UdpSocket;
 use Socket;
 
-use function Hyperf\Coroutine\defer;
-
 /**
- * @property int $port
+ * @property null|Socket $socket
  */
 class UdpSocketAspect extends AbstractAspect
 {
@@ -29,27 +26,25 @@ class UdpSocketAspect extends AbstractAspect
         UdpSocket::class . '::getSocket',
     ];
 
+    public static ?Socket $coSocket = null;
+
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         if (! Coroutine::inCoroutine()) {
             return $proceedingJoinPoint->process();
         }
 
-        $instance = $proceedingJoinPoint->getInstance();
+        if (self::$coSocket instanceof Socket) {
+            return self::$coSocket;
+        }
 
-        return Context::getOrSet(
-            spl_object_hash($instance),
-            function () use ($instance) {
-                $port = (fn () => $this->port)->call($instance);
-                [$domain, $protocol] = $port === 0 ? [AF_UNIX, IPPROTO_IP] : [AF_INET, SOL_UDP];
-                $socket = socket_create($domain, SOCK_DGRAM, $protocol);
-                defer(function () use ($socket) {
-                    if ($socket instanceof Socket) {
-                        socket_close($socket);
-                    }
-                });
-                return $socket;
-            }
-        );
+        $instance = $proceedingJoinPoint->getInstance();
+        $nonCoSocket = (fn () => $this->socket)->call($instance); // Save the socket of non-coroutine.
+        (fn () => $this->socket = null)->call($instance); // Unset the socket of non-coroutine.
+
+        self::$coSocket = $proceedingJoinPoint->process(); // ReCreate the socket in coroutine.
+        (fn () => $this->socket = $nonCoSocket)->call($instance); // Restore the socket of non-coroutine.
+
+        return self::$coSocket;
     }
 }
