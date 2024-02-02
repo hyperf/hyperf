@@ -146,6 +146,12 @@ abstract class AbstractHandler implements HandlerInterface
             $this->switch($breaker, $annotation, true);
         } catch (Throwable $exception) {
             if (! $exception instanceof CircuitBreakerException) {
+                foreach ($annotation->breakerExceptions as $breakerException) {
+                    if ($exception instanceof $breakerException) {
+                        return $this->fallback($proceedingJoinPoint, $breaker, $annotation);
+                    }
+                }
+
                 throw $exception;
             }
 

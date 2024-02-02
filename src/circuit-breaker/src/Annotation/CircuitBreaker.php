@@ -31,7 +31,8 @@ class CircuitBreaker extends AbstractAnnotation
         public float $duration = 10.0,
         public int $successCounter = 10,
         public int $failCounter = 10,
-        public array $options = []
+        public array $options = [],
+        public array $breakerExceptions = []
     ) {
     }
 }
