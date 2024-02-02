@@ -26,7 +26,10 @@ class UdpSocketAspect extends AbstractAspect
         UdpSocket::class . '::getSocket',
     ];
 
-    public static ?Socket $coSocket = null;
+    /**
+     * @var Socket[]
+     */
+    public static array $coSockets = [];
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
@@ -34,17 +37,18 @@ class UdpSocketAspect extends AbstractAspect
             return $proceedingJoinPoint->process();
         }
 
-        if (self::$coSocket instanceof Socket) {
-            return self::$coSocket;
+        $instance = $proceedingJoinPoint->getInstance();
+        $hash = spl_object_hash($instance);
+
+        if (isset(self::$coSockets[$hash]) && self::$coSockets[$hash] instanceof Socket) {
+            return self::$coSockets[$hash];
         }
 
-        $instance = $proceedingJoinPoint->getInstance();
         $nonCoSocket = (fn () => $this->socket)->call($instance); // Save the socket of non-coroutine.
         (fn () => $this->socket = null)->call($instance); // Unset the socket of non-coroutine.
-
-        self::$coSocket = $proceedingJoinPoint->process(); // ReCreate the socket in coroutine.
+        self::$coSockets[$hash] = $proceedingJoinPoint->process(); // ReCreate the socket in coroutine.
         (fn () => $this->socket = $nonCoSocket)->call($instance); // Restore the socket of non-coroutine.
 
-        return self::$coSocket;
+        return self::$coSockets[$hash];
     }
 }
