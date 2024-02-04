@@ -27,6 +27,7 @@ class ErrorExceptionHandler implements ListenerInterface
             $this->logger = $container->get(StdoutLoggerInterface::class);
         }
     }
+
     public function listen(): array
     {
         return [
