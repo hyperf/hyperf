@@ -128,23 +128,18 @@ class CoroutineServer implements ServerInterface
         }
     }
 
-    protected function bindServerCallbacks(int $type, string $name, array $callbacks, Port $port)
+    protected function bindServerCallbacks(int $type, string $name, array $callbacks, Port $port): void
     {
+        $serverCallback = [
+            ServerInterface::SERVER_HTTP => Event::ON_REQUEST,
+            ServerInterface::SERVER_WEBSOCKET => Event::ON_HAND_SHAKE,
+            ServerInterface::SERVER_BASE => Event::ON_RECEIVE,
+        ];
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
-                if (isset($callbacks[Event::ON_REQUEST])) {
-                    [$handler, $method] = $this->getCallbackMethod(Event::ON_REQUEST, $callbacks);
-                    if ($handler instanceof MiddlewareInitializerInterface) {
-                        $handler->initCoreMiddleware($name);
-                    }
-                    if ($this->server instanceof HttpServer) {
-                        $this->server->handle('/', [$handler, $method]);
-                    }
-                }
-                return;
             case ServerInterface::SERVER_WEBSOCKET:
-                if (isset($callbacks[Event::ON_HAND_SHAKE])) {
-                    [$handler, $method] = $this->getCallbackMethod(Event::ON_HAND_SHAKE, $callbacks);
+                if (isset($callbacks[$serverCallback[$type]])) {
+                    [$handler, $method] = $this->getCallbackMethod($serverCallback[$type], $callbacks);
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
