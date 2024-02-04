@@ -138,11 +138,7 @@ class CoroutineServer implements ServerInterface
                         $handler->initCoreMiddleware($name);
                     }
                     if ($this->server instanceof HttpServer) {
-                        $this->server->handle('/', static function ($request, $response) use ($handler, $method) {
-                            Coroutine::create(static function () use ($request, $response, $handler, $method) {
-                                $handler->{$method}($request, $response);
-                            });
-                        });
+                        $this->server->handle('/', [$handler, $method]);
                     }
                 }
                 return;
