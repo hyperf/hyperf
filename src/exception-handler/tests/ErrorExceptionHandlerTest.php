@@ -25,6 +25,11 @@ use PHPUnit\Framework\TestCase;
 #[CoversNothing]
 class ErrorExceptionHandlerTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Mockery::close();
+    }
+
     #[WithoutErrorHandler]
     public function testHandleError()
     {
