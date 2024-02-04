@@ -15,7 +15,6 @@ use ErrorException;
 use Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,7 +29,6 @@ class ErrorExceptionHandlerTest extends TestCase
         Mockery::close();
     }
 
-    #[WithoutErrorHandler]
     public function testHandleError()
     {
         $container = Mockery::mock(\Psr\Container\ContainerInterface::class);
