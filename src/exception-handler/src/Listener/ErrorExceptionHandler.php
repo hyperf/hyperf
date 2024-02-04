@@ -39,7 +39,7 @@ class ErrorExceptionHandler implements ListenerInterface
         $logger = $this->logger;
         set_error_handler(static function ($level, $message, $file = '', $line = 0) use ($logger): bool {
 
-            if ($line === 0 ) {
+            if ($line === 0) {
                 if ($logger) {
                     $logger->error(sprintf('Error: %s', $message));
                 } else {
