@@ -1,5 +1,9 @@
 # v3.1.10 - TBD
 
+## Fixed
+
+- [#6525](https://github.com/hyperf/hyperf/pull/6525) Fixed the bug that `CoroutineServer` process exit when input variables exceeded.
+
 # v3.1.9 - 2024-02-18
 
 ## Fixed
