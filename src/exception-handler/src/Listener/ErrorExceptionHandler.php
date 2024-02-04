@@ -39,17 +39,16 @@ class ErrorExceptionHandler implements ListenerInterface
     {
         $logger = $this->logger;
         set_error_handler(static function ($level, $message, $file = '', $line = 0) use ($logger): bool {
-
-            if ($line === 0) {
-                if ($logger) {
-                    $logger->error(sprintf('Error: %s', $message));
-                } else {
-                    echo sprintf('Error: %s', $message);
-                }
-                return true;
-            }
-
             if (error_reporting() & $level) {
+                if ($line === 0) {
+                    if ($logger) {
+                        $logger->error($message);
+                    } else {
+                        echo $message . PHP_EOL;
+                    }
+                    return true;
+                }
+
                 throw new ErrorException($message, 0, $level, $file, $line);
             }
 
