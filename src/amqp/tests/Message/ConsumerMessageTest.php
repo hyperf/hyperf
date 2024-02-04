@@ -20,6 +20,7 @@ use HyperfTest\Amqp\Stub\QosConsumer;
 use Mockery;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -34,6 +35,7 @@ class ConsumerMessageTest extends TestCase
         Mockery::close();
     }
 
+    #[WithoutErrorHandler]
     public function testQosConfig()
     {
         $container = ContainerStub::getContainer();
