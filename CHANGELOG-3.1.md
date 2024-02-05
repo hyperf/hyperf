@@ -7,6 +7,7 @@
 ## Added
 
 - [#6518](https://github.com/hyperf/hyperf/pull/6518) Added amqpMessage property to events for amqp.
+- [#6526](https://github.com/hyperf/hyperf/pull/6526) Added `Conditionable` trait to Crontab.
 
 ## Optimized
 
