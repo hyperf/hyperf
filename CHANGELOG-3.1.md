@@ -7,6 +7,7 @@
 ## Optimized
 
  [#6517](https://github.com/hyperf/hyperf/pull/6517) Fixed bug that the older versions of parsers cannot parse new messages for `async-queue`.
+ [#6530](https://github.com/hyperf/hyperf/pull/6530) Optimized default grafana.json.
 
 # v3.1.8 - 2024-02-01
 
