@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ExceptionHandler;
 
-use Psr\Http\Message\ResponseInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 use Throwable;
 
 abstract class ExceptionHandler
@@ -19,7 +19,7 @@ abstract class ExceptionHandler
     /**
      * Handle the exception, and return the specified result.
      */
-    abstract public function handle(Throwable $throwable, ResponseInterface $response);
+    abstract public function handle(Throwable $throwable, ResponsePlusInterface $response);
 
     /**
      * Determine if the current exception handler should handle the exception.

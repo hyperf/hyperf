@@ -18,6 +18,7 @@ use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\DriverManager;
 use HyperfTest\RpcClient\Stub\FooServiceClient;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -25,6 +26,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class AbstractServiceClientTest extends TestCase
 {
     protected function tearDown(): void
@@ -54,6 +56,7 @@ class AbstractServiceClientTest extends TestCase
         $container->shouldReceive('get')->with(DriverManager::class)->andReturn($manager = Mockery::mock(DriverManager::class));
         $manager->shouldReceive('get')->with('test')->andReturnUsing(function () {
             $driver = Mockery::mock(DriverInterface::class);
+            $driver->shouldReceive('isLongPolling')->andReturnFalse();
             $driver->shouldReceive('getNodes')->andReturn([
                 ['host' => '192.168.1.1', 'port' => 9501],
                 ['host' => '192.168.1.2', 'port' => 9501],

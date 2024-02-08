@@ -16,11 +16,17 @@ use Hyperf\Process\Event\AfterProcessHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use HyperfTest\Process\Stub\FooProcess;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -35,9 +41,7 @@ class ProcessTest extends TestCase
         self::$dispatched = [];
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testEventWhenThrowExceptionInProcess()
     {
         $container = $this->getContainer();
@@ -71,7 +75,6 @@ class ProcessTest extends TestCase
         $server->shouldReceive('addProcess')->withAnyArgs()->andReturnUsing(function ($process) {
             $ref = new ReflectionClass($process);
             $property = $ref->getProperty('callback');
-            $property->setAccessible(true);
             $callback = $property->getValue($process);
             $callback($process);
             return 1;

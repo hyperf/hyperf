@@ -25,9 +25,13 @@ class ConfigFactory{
         \$finder = new Finder();
         \$finder->files()->in(\$paths)->name('*.php');
         foreach (\$finder as \$file) {
-            \$configs[] = [
-                \$file->getBasename('.php') => require \$file->getPathname(),
-            ];
+            \$config = [];
+            \$key = implode('.', array_filter([
+                str_replace('/', '.', \$file->getRelativePath()),
+                \$file->getBasename('.php'),
+            ]));
+            \\Hyperf\\Collection\\Arr::set(\$config, \$key, require \$file->getPathname());
+            \$configs[] = \$config;
         }
         return \$configs;
      }

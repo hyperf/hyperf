@@ -18,7 +18,7 @@
 ## 路由
 
 - [nikic/fastroute](https://github.com/nikic/FastRoute) 一个常用的高速路由
-- [lazychanger/urlrewrite](https://github.com/lazychanger/urlrewrite) 一个基于PSR-7与 [nikic/fastroute](https://github.com/nikic/FastRoute) 相同路由规则的URL重写工具
+- [lazychanger/urlrewrite](https://github.com/lazychanger/urlrewrite) 一个基于 PSR- 7 与 [nikic/fastroute](https://github.com/nikic/FastRoute) 相同路由规则的 URL 重写工具
 
 ## 事件
 
@@ -56,7 +56,7 @@
 
 - [hyperf/consul](https://github.com/hyperf/consul) Hyperf 官方提供的 Consul 协程客户端
 - [hyperf/elasticsearch](https://github.com/hyperf/elasticsearch) Hyperf 官方提供的 Elasticsearch 协程客户端
-- [hyperf/grpc-client](https://github.com/hyperf/grpc-client) Hyperf 官方提供的 GRPC 协程客户端
+- [hyperf/grpc-client](https://github.com/hyperf/grpc-client) Hyperf 官方提供的 gRPC 协程客户端
 - [hyperf/etcd](https://github.com/hyperf/etcd) Hyperf 官方提供的 ETCD 协程客户端
 - [hyperf/rpc-client](https://github.com/hyperf/rpc-client) Hyperf 官方提供的通用 RPC 抽象协程客户端
 - [hyperf/guzzle](https://github.com/hyperf/guzzle) Hyperf 官方提供的 Guzzle HTTP 协程客户端
@@ -94,6 +94,7 @@
 - [hyperf/tracer](https://github.com/hyperf/tracer) Hyperf 官方提供的 OpenTracing 分布式调用链追踪组件
 - [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) Hyperf 官方提供的服务熔断组件
 - [pudongping/hyperf-throttle-requests](https://github.com/pudongping/hyperf-throttle-requests) 适配 Hyperf 框架的请求频率限流器。功能类似于 Laravel 框架的 throttle 中间件。
+- [friendsofhyperf/sentry](https://github.com/friendsofhyperf/sentry) 适配 Hyperf 框架的 [Sentry](https://sentry.io) 组件，用于异常监控与性能监控。
 
 ## 定时任务
 
@@ -124,7 +125,6 @@
 
 ## Swoole
 
-- [hyperf/swoole-tracker](https://github.com/hyperf/swoole-tracker) Hyperf 官方提供的对接 Swoole Tracker 的组件，提供阻塞分析、性能分析、内存泄漏分析、运行状态及调用统计等功能
 - [hyperf/task](https://github.com/hyperf/task) Hyperf 官方提供的 Task 组件，对 Swoole 的 Task 机制进行了封装及抽象，提供便捷的注解用法
 - [hyperf/gotask](https://github.com/hyperf/gotask) GoTask 通过 Swoole 进程管理功能启动 Go 进程作为 Swoole 主进程边车(Sidecar)，利用进程通讯将任务投递给边车处理并接收返回值。可以理解为 Go 版的 Swoole TaskWorker
 
@@ -134,6 +134,7 @@
 - [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支持与 laravel 类似的多 env 配置文件功能，比如通过 `APP_ENV=testing` 可以加载 `.env.testing` 配置覆盖默认的 `.env`
 - [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) 提供一个 `dump` 函数，可以将程序内的变量或数据打印到另一个命令行窗口中，基于 Symfony 的 `Var-Dump Server` 组件
 - [leearvin/hyperf-tinker](https://github.com/Arvin-Lee/hyperf-tinker) 基于 PsySH 提供一个交互式的 Hyperf shell 容器
+- [friendsofhyperf/telescope](https://github.com/friendsofhyperf/telescope) 适配 Hyperf 框架的调试工具。
 
 ## 权限认证
 

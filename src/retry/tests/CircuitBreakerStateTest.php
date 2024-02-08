@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Retry;
 
 use Hyperf\Retry\CircuitBreakerState;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CircuitBreakerStateTest extends TestCase
 {
     public function testCircuitBreakerState()

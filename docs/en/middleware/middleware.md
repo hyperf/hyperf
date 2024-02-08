@@ -66,10 +66,12 @@ When defining routes through annotations, we recommend defining middleware by me
   - `#[Middleware]` annotation are used when defining a single middleware. Only one annotation can be defined in one place, and cannot be defined repeatedly.
   - `#[Middlewares]` annotation are used when defining multiple middleware. Only one annotation can be defined in one place, and then multiple middleware definitions can be implemented by defining multiple `#[Middleware]` annotations within the annotation.
   
-> Use `#[Middleware]` should `use Hyperf\HttpServer\Annotation\Middleware;` namespace；   
-> Use `#[Middlewares]` should `use Hyperf\HttpServer\Annotation\Middlewares;` namespace；
+> Use `#[Middleware]` should `use Hyperf\HttpServer\Annotation\Middleware;` namespace;   
+> Use `#[Middlewares]` should `use Hyperf\HttpServer\Annotation\Middlewares;` namespace;
 
-Define a single middleware：
+***Notice: It must be used with `#[AutoController]` or `#[Controller]`.***
+
+Define a single middleware:
 
 ```php
 <?php
@@ -89,7 +91,7 @@ class IndexController
 }
 ```
 
-Define multiple middlewares：
+Define multiple middlewares:
 
 ```php
 <?php
@@ -208,6 +210,41 @@ The order of execution of the middleware is `FooMiddleware -> BarMiddleware`.
 ## The order of Middleware execution
 
 We can see from the above that there are a total of 3 levels of middleware, namely `global middleware`, `class level middleware`, `method level middleware`. If these middlewares are defined, the order of execution is :`Global Middleware -> Method Level Middleware -> Class Level Middleware`.
+
+In version `>=3.0.34`, a new priority configuration has been added, which allows you to change the execution order of the middleware when configuring methods and routing middleware, the higher the priority, the higher the execution order.
+
+```php
+// middleware.php
+return [
+    'http' => [
+        YourMiddleware::class,
+        YourMiddlewareB::class => 3,
+    ],
+];
+```
+```php
+Router::addGroup(
+    '/v2', function () {
+        Router::get('/index', [\App\Controller\IndexController::class, 'index']);
+    },
+    [
+        'middleware' => [
+            FooMiddleware::class,
+            FooMiddlewareB::class => 3,
+        ]
+    ]
+);
+```
+```php
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
+#[Middleware(FooMiddlewareB::class, 3)]
+#[Middlewares([FooMiddlewareC::class => 1, BarMiddlewareD::class => 4])]
+class IndexController
+{
+    
+}
+```
 
 ## Change request and response objects globally
 

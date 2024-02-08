@@ -2,7 +2,7 @@
 
 ## Concept
 
-Hyperf is built on the coroutine of `Swoole 4`, which is one of the big factors that Hyperf can provide for high performance.
+Hyperf is built on the coroutine of `Swoole 5`, which is one of the big factors that Hyperf can provide for high performance.
 
 ### Running Mode of PHP-FPM
 
@@ -59,7 +59,7 @@ As we said that coroutine is a lightweight thread. Coroutines and threads are su
 
 Blocking code in the coroutine will cause the coroutine scheduler cannot switch to another coroutine to continue executing code, so we must prevent the blocking code exist in the coroutine. Assuming we have started `4 Worker` to handle `HTTP` Request (usually the number of `Worker` started is the same as the number of `CPU` cores or `2` times of `CPU` cores). If there is blocking code in the coroutine, theoretically, if each request will block `1` seconds, then the application `QPS ` will also degenerate to `4/s`, which is undoubtedly degenerate into a similar situation to `PHP-FPM`, so we must not allows blocking code exist in the coroutine.
 
-So which ones are blocking code? We can simply think that most of the asynchronous functions provided by non-Swoole are `MySQL`, `Redis`, `Memcache`, `MongoDB`, `HTTP`, `Socket`, file operations. , `sleep/usleep`, etc. are blocking code, which covers almost all daily operations, so how to solve it? `Swoole` provides the MySQL client, `PostgreSQL`, `Redis`, `HTTP`, `Socket` for the coroutine client，in addition to, after `Swoole 4.1`, Swoole provide `\Swoole\Runtime::enableCoroutine()` function to make most of blocking code to coroutined，just execute `\Swoole\Runtime::enableCoroutine()` before create coroutine，`Swoole` will turn all sockets that use php_stream for coroutine scheduling, which can be understood as the most common operations become coroutined, except `curl`. More detailed information can be found in this section of the [Swoole Documentation](https://wiki.swoole.com/#/runtime).
+So which ones are blocking code? We can simply think that most of the asynchronous functions provided by non-Swoole are `MySQL`, `Redis`, `Memcache`, `MongoDB`, `HTTP`, `Socket`, file operations. , `sleep/usleep`, etc. are blocking code, which covers almost all daily operations, so how to solve it? `Swoole` provides the MySQL client, `PostgreSQL`, `Redis`, `HTTP`, `Socket` for the coroutine client, in addition to, after `Swoole 4.1`, Swoole provide `\Swoole\Runtime::enableCoroutine()` function to make most of blocking code to coroutined, just execute `\Swoole\Runtime::enableCoroutine()` before create coroutine, `Swoole` will turn all sockets that use php_stream for coroutine scheduling, which can be understood as the most common operations become coroutined, except `curl`. More detailed information can be found in this section of the [Swoole Documentation](https://wiki.swoole.com/#/runtime).
 
 In `Hyperf`, we have handled this for you, you only need to pay attention to the blocking code that  `\Swoole\Runtime::enableCoroutine()` still cannot be coroutined automatically.
 
@@ -125,7 +125,7 @@ We demonstrate this feature with a piece of code:
 
 ```php
 <?php
-$wg = new \Hyperf\Utils\WaitGroup();
+$wg = new \Hyperf\Coroutine\WaitGroup();
 // Counter increase 2
 $wg->add(2);
 // Create coroutine A

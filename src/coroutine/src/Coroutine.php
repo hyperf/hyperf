@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Coroutine;
 
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Context\Context;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Coroutine as Co;
 use Hyperf\Engine\Exception\CoroutineDestroyedException;
@@ -58,6 +59,16 @@ class Coroutine
     }
 
     /**
+     * The alias of Coroutine::parentId().
+     * @throws CoroutineDestroyedException when running in non-coroutine context
+     * @throws RunningInNonCoroutineException when the coroutine has been destroyed
+     */
+    public static function pid(?int $coroutineId = null): int
+    {
+        return Co::pid($coroutineId);
+    }
+
+    /**
      * @return int Returns the coroutine ID of the coroutine just created.
      *             Returns -1 when coroutine create failed.
      */
@@ -76,6 +87,20 @@ class Coroutine
         } catch (\Throwable) {
             return -1;
         }
+    }
+
+    /**
+     * Create a coroutine with a copy of the parent coroutine context.
+     */
+    public static function fork(callable $callable, array $keys = []): int
+    {
+        $cid = static::id();
+        $callable = static function () use ($callable, $cid, $keys) {
+            Context::copy($cid, $keys);
+            $callable();
+        };
+
+        return static::create($callable);
     }
 
     public static function inCoroutine(): bool

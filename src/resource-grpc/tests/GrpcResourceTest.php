@@ -19,6 +19,7 @@ use HyperfTest\ResourceGrpc\Stubs\Models\User;
 use HyperfTest\ResourceGrpc\Stubs\Resources\AllReplyResource;
 use HyperfTest\ResourceGrpc\Stubs\Resources\HiReplyResource;
 use HyperfTest\ResourceGrpc\Stubs\Resources\HiUserResource;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 use function Hyperf\Collection\collect;
 
@@ -26,6 +27,7 @@ use function Hyperf\Collection\collect;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class GrpcResourceTest extends \PHPUnit\Framework\TestCase
 {
     public function testResourceToMessage()

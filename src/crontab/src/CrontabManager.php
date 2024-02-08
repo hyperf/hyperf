@@ -31,17 +31,20 @@ class CrontabManager
         return true;
     }
 
+    /**
+     * @return Crontab[]
+     */
     public function parse(): array
     {
         $result = [];
         $crontabs = $this->getCrontabs();
         $last = time();
-        foreach ($crontabs ?? [] as $key => $crontab) {
+        foreach ($crontabs as $key => $crontab) {
             if (! $crontab instanceof Crontab) {
                 unset($this->crontabs[$key]);
                 continue;
             }
-            $time = $this->parser->parse($crontab->getRule(), $last);
+            $time = $this->parser->parse($crontab->getRule(), $last, $crontab->getTimezone());
             if ($time) {
                 foreach ($time as $t) {
                     $result[] = (clone $crontab)->setExecuteTime($t);
@@ -51,12 +54,15 @@ class CrontabManager
         return $result;
     }
 
+    /**
+     * @return array<string, Crontab>
+     */
     public function getCrontabs(): array
     {
         return $this->crontabs;
     }
 
-    private function isValidCrontab(Crontab $crontab): bool
+    public function isValidCrontab(Crontab $crontab): bool
     {
         return $crontab->getName() && $crontab->getRule() && $crontab->getCallback() && $this->parser->isValid($crontab->getRule());
     }

@@ -50,17 +50,17 @@ composer require hyperf/config-etcd
 composer require hyperf/config-nacos
 ```
 
-#### GRPC 双向流
+#### gRPC 双向流
 
-Nacos 传统的配置中心，是基于短轮询进行配置同步的，就会导致轮训间隔内，服务无法拿到最新的配置。`Nacos V2` 版本增加了 GRPC 双向流的支持，如果你想让 Nacos 在发现配置变更后，及时推送给相关服务。
+Nacos 传统的配置中心，是基于短轮询进行配置同步的，就会导致轮询间隔内，服务无法拿到最新的配置。`Nacos V2` 版本增加了 gRPC 双向流的支持，如果你想让 Nacos 在发现配置变更后，及时推送给相关服务。
 
-可以按照以下步骤，开启 GRPC 双向流功能。
+可以按照以下步骤，开启 gRPC 双向流功能。
 
 - 首先，我们安装必要的组件
 
 ```shell
-composer require "hyperf/http2-client:~3.0.0"
-composer require "hyperf/grpc:~3.0.0"
+composer require "hyperf/http2-client:3.1.*"
+composer require "hyperf/grpc:3.1.*"
 ```
 
 - 修改配置项
@@ -158,7 +158,7 @@ return [
             // 严格模式，当为 false 时，拉取的配置值均为 string 类型，当为 true 时，拉取的配置值会转化为原配置值的数据类型
             'strict_mode' => false,
             // 客户端IP
-            'client_ip' => \Hyperf\Utils\Network::ip(),
+            'client_ip' => \Hyperf\Support\Network::ip(),
             // 拉取配置超时时间
             'pullTimeout' => 10,
             // 拉取配置间隔
@@ -217,7 +217,7 @@ return [
         ],
         'etcd' => [
             'driver' => Hyperf\ConfigEtcd\EtcdDriver::class,
-            'packer' => Hyperf\Utils\Packer\JsonPacker::class,
+            'packer' => Hyperf\Codec\Packer\JsonPacker::class,
             // 需要同步的数据前缀
             'namespaces' => [
                 '/application',

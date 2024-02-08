@@ -11,15 +11,19 @@ declare(strict_types=1);
  */
 namespace HyperfTest\DbConnection;
 
+use Exception;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Exception\QueryException;
 use Hyperf\DbConnection\Connection;
 use Hyperf\DbConnection\Pool\PoolFactory;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\DbConnection\Stubs\ConnectionStub;
 use HyperfTest\DbConnection\Stubs\ContainerStub;
 use HyperfTest\DbConnection\Stubs\PDOStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 use function Hyperf\Coroutine\defer;
@@ -29,6 +33,7 @@ use function Hyperf\Coroutine\parallel;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConnectionTest extends TestCase
 {
     protected function tearDown(): void
@@ -115,17 +120,21 @@ class ConnectionTest extends TestCase
         $pool = $container->get(PoolFactory::class)->getPool('default');
         $config = $container->get(ConfigInterface::class)->get('databases.default');
 
-        $callables = [function ($connection) {
-            $connection->selectOne('SELECT 1;');
-        }, function ($connection) {
-            $connection->table('user')->leftJoin('user_ext', 'user.id', '=', 'user_ext.id')->get();
-        }];
+        $callables = [
+            function ($connection) {
+                $connection->selectOne('SELECT 1;');
+            }, function ($connection) {
+                $connection->table('user')->leftJoin('user_ext', 'user.id', '=', 'user_ext.id')->get();
+            },
+        ];
 
-        $closes = [function ($connection) {
-            $connection->close();
-        }, function ($connection) {
-            $connection->reconnect();
-        }];
+        $closes = [
+            function ($connection) {
+                $connection->close();
+            }, function ($connection) {
+                $connection->reconnect();
+            },
+        ];
 
         foreach ($callables as $callable) {
             foreach ($closes as $closure) {
@@ -145,45 +154,83 @@ class ConnectionTest extends TestCase
     {
         $container = ContainerStub::mockReadWriteContainer();
 
-        parallel([function () use ($container) {
-            $resolver = $container->get(ConnectionResolverInterface::class);
+        parallel([
+            function () use ($container) {
+                $resolver = $container->get(ConnectionResolverInterface::class);
 
-            /** @var \Hyperf\Database\Connection $connection */
-            $connection = $resolver->connection();
-            $connection->statement('UPDATE hyperf.test SET name = 1 WHERE id = 1;');
+                /** @var \Hyperf\Database\Connection $connection */
+                $connection = $resolver->connection();
+                $connection->statement('UPDATE hyperf.test SET name = 1 WHERE id = 1;');
 
-            /** @var PDOStub $pdo */
-            $pdo = $connection->getPdo();
-            $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
-            $pdo = $connection->getReadPdo();
-            $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
-        }]);
+                /** @var PDOStub $pdo */
+                $pdo = $connection->getPdo();
+                $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
+                $pdo = $connection->getReadPdo();
+                $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
+            },
+        ]);
 
-        parallel([function () use ($container) {
-            $resolver = $container->get(ConnectionResolverInterface::class);
+        parallel([
+            function () use ($container) {
+                $resolver = $container->get(ConnectionResolverInterface::class);
 
-            /** @var \Hyperf\Database\Connection $connection */
-            $connection = $resolver->connection();
+                /** @var \Hyperf\Database\Connection $connection */
+                $connection = $resolver->connection();
 
-            /** @var PDOStub $pdo */
-            $pdo = $connection->getPdo();
-            $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
-            $pdo = $connection->getReadPdo();
-            $this->assertSame('mysql:host=192.168.1.1;dbname=hyperf', $pdo->dsn);
-        }]);
+                /** @var PDOStub $pdo */
+                $pdo = $connection->getPdo();
+                $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
+                $pdo = $connection->getReadPdo();
+                $this->assertSame('mysql:host=192.168.1.1;dbname=hyperf', $pdo->dsn);
+            },
+        ]);
     }
 
     public function testDbConnectionUseInDefer()
     {
         $container = ContainerStub::mockReadWriteContainer();
 
-        parallel([function () use ($container) {
-            $resolver = $container->get(ConnectionResolverInterface::class);
+        parallel([
+            function () use ($container) {
+                $resolver = $container->get(ConnectionResolverInterface::class);
 
-            defer(function () {
-                $this->assertFalse(Context::has('database.connection.default'));
-            });
-            $resolver->connection();
-        }]);
+                defer(function () {
+                    $this->assertFalse(Context::has('database.connection.default'));
+                });
+                $resolver->connection();
+            },
+        ]);
+    }
+
+    public function testDbConnectionResetWhenThrowTooManyExceptions()
+    {
+        $container = ContainerStub::mockContainer();
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+        $dbConnection = $pool->get();
+        $connection = $dbConnection->getConnection();
+        $this->assertSame(0, $connection->getErrorCount());
+        $id = spl_object_hash((new ClassInvoker($connection))->connection);
+
+        $dbConnection->release();
+        $dbConnection = $pool->get();
+        $connection = $dbConnection->getConnection();
+        $id2 = spl_object_hash((new ClassInvoker($connection))->connection);
+
+        $this->assertSame($id, $id2);
+
+        $invoker = new ClassInvoker($connection);
+        for ($i = 0; $i < 101; ++$i) {
+            try {
+                (new ClassInvoker($invoker->connection))->runQueryCallback('', [], fn () => throw new Exception('xxx'));
+            } catch (QueryException) {
+            }
+        }
+        $this->assertSame(101, $connection->getErrorCount());
+
+        $dbConnection->release();
+        $dbConnection = $pool->get();
+        $connection = $dbConnection->getConnection();
+        $id3 = spl_object_hash((new ClassInvoker($connection))->connection);
+        $this->assertNotSame($id, $id3);
     }
 }

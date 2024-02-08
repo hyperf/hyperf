@@ -19,7 +19,8 @@ class Producer extends AbstractAnnotation
 {
     public function __construct(
         public string $exchange = '',
-        public string $routingKey = ''
+        public string $routingKey = '',
+        public ?string $pool = null
     ) {
     }
 }

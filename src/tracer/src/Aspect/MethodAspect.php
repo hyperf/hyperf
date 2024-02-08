@@ -15,7 +15,6 @@ use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SwitchManager;
-use OpenTracing\Tracer;
 use Throwable;
 
 class MethodAspect extends AbstractAspect
@@ -26,7 +25,7 @@ class MethodAspect extends AbstractAspect
         'App*',
     ];
 
-    public function __construct(private Tracer $tracer, private SwitchManager $switchManager)
+    public function __construct(private SwitchManager $switchManager)
     {
     }
 
@@ -44,8 +43,10 @@ class MethodAspect extends AbstractAspect
         try {
             $result = $proceedingJoinPoint->process();
         } catch (Throwable $e) {
-            $span->setTag('error', true);
-            $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {
+                $span->setTag('error', true);
+                $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            }
             throw $e;
         } finally {
             $span->finish();

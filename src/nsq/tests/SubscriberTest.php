@@ -15,12 +15,14 @@ use Hyperf\Codec\Json;
 use Hyperf\Engine\Contract\SocketInterface;
 use Hyperf\Nsq\Subscriber;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class SubscriberTest extends TestCase
 {
     protected function tearDown(): void

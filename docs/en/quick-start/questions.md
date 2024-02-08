@@ -78,32 +78,6 @@ php --ini
 memory_limit=-1
 ```
 
-## Dependency injection is not working correctly in `PHP` version `7.3`
-
-In versions `2.0` - `2.1`, `Hyperf` uses the `BetterReflection` package to make `AOP` work with none `DI` managed objects (such as objects instantiated using the `new` keyword). While implementing `AOP` in this way enhances the developer experience, it also brings several difficulties:
-
-* Project startup is slow without a `scan cache`
-* `Inject` and `Value` annotations have no effect
-* `BetterReflection` does not support `PHP` version `8` (as of the `2.2` release)
-
-In newer versions, we stopped using the `BetterReflection` package in favour of using a child process to scan the codebase to solve these pain points but this introduced some compatibility issues in older versions of `PHP`:
-
-In `php7.3` you may encounter an error similar to the following when starting the application:
-
-```
-PHP Fatal error:  Interface 'Hyperf\Signal\SignalHandlerInterface' not found in vendor/hyperf/process/src/Handler/ProcessStopHandler.php on line 17
-
-PHP Fatal error:  Interface 'Symfony\Component\Serializer\SerializerInterface' not found in vendor/hyperf/utils/src/Serializer/Serializer.php on line 46
-```
-
-This problem is due to how `PHP` version `7.3` handles using reflection to find an interface which does exist or has no corresponding class. The best solution is to upgrade to `PHP` version `7.4` or `8.0` but the issue can also be fixed by installing the components which contain these interfaces as follows:
-
-```
-composer require hyperf/signal
-
-composer require symfony/serializer
-```
-
 ## `Error while injecting dependencies into... No entry or class found...` error when injecting traits using `#[Inject]`
 
 This error appears when you inject a trait using namespaces via `Inject` and the class containing the `use Trait;` syntax uses a conflicting namespace. This is a complex concept but the following examples should make it simple:
@@ -171,8 +145,8 @@ After using multiplex technologies such as AMQP in Command, it will not be able 
 
 ```php
 <?php
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Constants;
 
 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
 ```
@@ -198,3 +172,29 @@ When using `hyperf/hyperf:8.0-alpine-v3.13-swoole` image
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/gnu-libiconv=1.15-r3
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 ```
+
+## DI Reflection Manager collect failed
+
+When an exception occurs during the DI collection phase (for example, a namespace error), the output of a log in the following format may be generated.
+
+- Service code, check the files and classes related to the path in the log.
+- Framework code, submit PR feedback.
+- Third party components, feedback to the component author.
+
+```bash
+[ERROR] DI Reflection Manager collecting class reflections failed. 
+File: xxxx.
+Exception: xxxx
+```
+
+## The service can not start because the environment version is inconsistent
+
+When the project starts, an error similar to the following is thrown
+
+```
+Hyperf\Engine\Channel::push(mixed $data, float $timeout = -1): bool must be compatible with Swoole\Coroutine\Channel::push($data, $timeout = -1)
+```
+
+This problem is usually caused by inconsistencies between the Swoole version used when installing frameworks/components and the actual Swoole version used at runtime.
+
+Should keep the version of Swoole and PHP consistent when installing and using.

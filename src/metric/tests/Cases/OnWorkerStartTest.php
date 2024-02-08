@@ -18,6 +18,7 @@ use Hyperf\Metric\Adapter\Prometheus\MetricFactory as PrometheusFactory;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Listener\OnWorkerStart;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -25,6 +26,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class OnWorkerStartTest extends TestCase
 {
     protected function tearDown(): void

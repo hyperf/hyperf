@@ -41,9 +41,7 @@ class ElasticsearchEngine extends Engine
      */
     public function __construct(protected Client $elastic, ?string $index = null)
     {
-        if ($index) {
-            $this->index = $this->initIndex($elastic, $index);
-        }
+        $this->index = $this->initIndex($elastic, $index);
     }
 
     /**
@@ -66,6 +64,7 @@ class ElasticsearchEngine extends Engine
                 $update = [
                     '_id' => $model->getKey(),
                     '_index' => $model->searchableAs(),
+                    ...$this->appendType(),
                 ];
             }
             $params['body'][] = ['update' => $update];
@@ -97,6 +96,7 @@ class ElasticsearchEngine extends Engine
                 $delete = [
                     '_id' => $model->getKey(),
                     '_index' => $model->searchableAs(),
+                    ...$this->appendType(),
                 ];
             }
             $params['body'][] = ['delete' => $delete];
@@ -191,7 +191,7 @@ class ElasticsearchEngine extends Engine
             ->unsearchable();
     }
 
-    protected function initIndex(Client $client, string $index): ?string
+    protected function initIndex(Client $client, ?string $index): ?string
     {
         if (! static::$version) {
             try {
@@ -286,5 +286,16 @@ class ElasticsearchEngine extends Engine
         return collect($builder->orders)->map(function ($order) {
             return [$order['column'] => $order['direction']];
         })->toArray();
+    }
+
+    protected function appendType(): array
+    {
+        if (version_compare(static::$version, '7.0.0', '<')) {
+            return [
+                '_type' => 'doc',
+            ];
+        }
+
+        return [];
     }
 }

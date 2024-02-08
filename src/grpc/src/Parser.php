@@ -15,7 +15,7 @@ use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Internal\Message;
 use Google\Rpc\Status;
 use Swoole\Http\Response;
-use swoole_http2_response;
+use Swoole\Http2\Response as Http2Response;
 
 class Parser
 {
@@ -50,9 +50,9 @@ class Parser
     }
 
     /**
-     * @param null|swoole_http2_response $response
+     * @param null|Http2Response $response
      * @param mixed $deserialize
-     * @return \Grpc\StringifyAble[]|Message[]|swoole_http2_response[]
+     * @return \Grpc\StringifyAble[]|Http2Response[]|Message[]
      */
     public static function parseResponse($response, $deserialize): array
     {
@@ -75,8 +75,7 @@ class Parser
     }
 
     /**
-     * @param Response
-     * @param mixed $response
+     * @param Response $response
      */
     public static function statusFromResponse($response): ?Status
     {

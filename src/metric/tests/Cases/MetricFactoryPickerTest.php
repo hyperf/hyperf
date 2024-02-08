@@ -21,12 +21,14 @@ use Hyperf\Metric\Adapter\StatsD\MetricFactory as StatsDFactory;
 use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Process\ProcessCollector;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MetricFactoryPickerTest extends TestCase
 {
     protected function tearDown(): void

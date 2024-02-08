@@ -23,8 +23,13 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
+use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\MySqlBitConnection;
+use Hyperf\Database\Query\Builder as QueryBuilder;
+use Hyperf\Database\Query\Expression;
+use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
+use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Column;
 use Hyperf\Database\Schema\MySqlBuilder;
@@ -34,17 +39,24 @@ use Hyperf\Di\Container;
 use Hyperf\Engine\Channel;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Database\Stubs\ContainerStub;
+use HyperfTest\Database\Stubs\IntegerStatus;
+use HyperfTest\Database\Stubs\Model\Book;
+use HyperfTest\Database\Stubs\Model\Gender;
 use HyperfTest\Database\Stubs\Model\TestModel;
 use HyperfTest\Database\Stubs\Model\TestVersionModel;
 use HyperfTest\Database\Stubs\Model\User;
 use HyperfTest\Database\Stubs\Model\UserBit;
+use HyperfTest\Database\Stubs\Model\UserEnum;
 use HyperfTest\Database\Stubs\Model\UserExt;
 use HyperfTest\Database\Stubs\Model\UserExtCamel;
 use HyperfTest\Database\Stubs\Model\UserRole;
 use HyperfTest\Database\Stubs\Model\UserRoleMorphPivot;
 use HyperfTest\Database\Stubs\Model\UserRolePivot;
+use HyperfTest\Database\Stubs\StringStatus;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
@@ -53,6 +65,7 @@ use RuntimeException;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelRealBuilderTest extends TestCase
 {
     /**
@@ -72,6 +85,7 @@ class ModelRealBuilderTest extends TestCase
         $conn = $container->get(ConnectionResolverInterface::class)->connection();
         $conn->statement('DROP TABLE IF EXISTS `test`;');
         $conn->statement('DROP TABLE IF EXISTS `test_full_text_index`;');
+        $conn->statement('DROP TABLE IF EXISTS `test_enum_cast`;');
         Mockery::close();
     }
 
@@ -102,6 +116,35 @@ class ModelRealBuilderTest extends TestCase
         }
 
         $this->assertTrue($hit);
+    }
+
+    public function testModelEnum()
+    {
+        $this->getContainer();
+
+        /** @var UserEnum $user */
+        $user = UserEnum::find(1);
+        $this->assertTrue($user->gender instanceof Gender);
+        $this->assertSame(Gender::MALE, $user->gender);
+
+        $user->gender = Gender::FEMALE;
+        $user->save();
+
+        $sqls = [
+            ['select * from `user` where `user`.`id` = ? limit 1', [1]],
+            ['update `user` set `gender` = ?, `user`.`updated_at` = ? where `id` = ?', [Gender::FEMALE->value, Carbon::now()->toDateTimeString(), 1]],
+        ];
+
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
+            }
+        }
+
+        $user->gender = Gender::MALE;
+        $user->save();
+
+        $this->assertTrue(EnumCollector::has(Gender::class));
     }
 
     public function testForPageBeforeId()
@@ -351,6 +394,41 @@ class ModelRealBuilderTest extends TestCase
 
         $model = TestModel::query()->find(1);
         $this->assertSame(2, $model->uid);
+    }
+
+    public function testToRawSql()
+    {
+        $container = $this->getContainer();
+
+        $sql = TestModel::query()->toRawSql();
+        $this->assertSame('select * from `test`', $sql);
+
+        $sql = TestModel::query()->where('user_id', 1)->toRawSql();
+        $this->assertSame('select * from `test` where `user_id` = 1', $sql);
+    }
+
+    public function testGetRawQueryLog()
+    {
+        $container = $this->getContainer();
+        /** @var \Hyperf\Database\Connection $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->statement('CREATE TABLE `test` (
+            `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            `user_id` bigint(20) unsigned NOT NULL,
+            `uid` bigint(20) unsigned NOT NULL,
+            `version` bigint(20) unsigned NOT NULL,
+            `created_at` datetime DEFAULT NULL,
+            `updated_at` datetime DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY (`user_id`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
+        $conn->enableQueryLog();
+        $conn->select('select * from `test` where `user_id` = ?', [1]);
+        $logs = $conn->getRawQueryLog();
+        $this->assertIsArray($logs);
+        $this->assertCount(1, $logs);
+        $this->assertSame('select * from `test` where `user_id` = 1', $logs[0]['raw_query']);
     }
 
     public function testRewriteSetKeysForSaveQuery()
@@ -644,6 +722,82 @@ class ModelRealBuilderTest extends TestCase
         // expanded query
         $result = Db::table('test_full_text_index')->whereFullText(['title', 'body'], 'database', ['expanded' => true])->get();
         $this->assertCount(6, $result);
+    }
+
+    public function testEnumCast()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        Schema::create('test_enum_cast', function (Blueprint $table) {
+            $table->id();
+            $table->string('string_status', 64);
+            $table->integer('integer_status');
+        });
+
+        // test insert with enum
+        DB::table('test_enum_cast')->insert([
+            'string_status' => StringStatus::Active,
+            'integer_status' => IntegerStatus::Active,
+        ]);
+
+        // test select with enum
+        $record = DB::table('test_enum_cast')->where('string_status', StringStatus::Active)->first();
+
+        $this->assertNotNull($record);
+        $this->assertEquals('active', $record->string_status);
+        $this->assertEquals(1, $record->integer_status);
+
+        // test update with enum
+        DB::table('test_enum_cast')->where('id', $record->id)->update([
+            'string_status' => StringStatus::Inactive,
+            'integer_status' => IntegerStatus::Inactive,
+        ]);
+
+        $record2 = DB::table('test_enum_cast')->where('id', $record->id)->first();
+
+        $this->assertNotNull($record2);
+        $this->assertEquals('inactive', $record2->string_status);
+        $this->assertEquals(2, $record2->integer_status);
+    }
+
+    public function testCleanBindings()
+    {
+        $query = new QueryBuilder(
+            Mockery::mock(ConnectionInterface::class),
+            Mockery::mock(QueryGrammar::class),
+            Mockery::mock(Processor::class)
+        );
+
+        $invoker = new ClassInvoker($query);
+        $res = $invoker->cleanBindings([0, 2, '2', '']);
+        $this->assertSame([0, 2, '2', ''], $res);
+
+        $res = $invoker->cleanBindings([0, 2, new Expression('1'), '2', '']);
+        $this->assertSame([0, 2, '2', ''], $res);
+
+        $res = $invoker->cleanBindings([new Expression('1')]);
+        $this->assertSame([], $res);
+
+        $res = $invoker->cleanBindings([StringStatus::Active, IntegerStatus::Active, new Expression('1')]);
+        $this->assertSame(['active', 1], $res);
+    }
+
+    public function testAddSelectObjects()
+    {
+        $this->getContainer();
+        $models = User::query()->addSelect([
+            'book_id' => Book::query()
+                ->select('id')
+                ->whereColumn('book.user_id', 'user.id')
+                ->limit(1),
+        ])->get();
+        $this->assertTrue($models->isNotEmpty());
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, 'select `user`.*, (select `id` from `book` where `book`.`user_id` = `user`.`id` limit 1) as `book_id` from `user`');
+            }
+        }
     }
 
     protected function getContainer()

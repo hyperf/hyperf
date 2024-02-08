@@ -17,6 +17,7 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 use Symfony\Component\Finder\Finder;
+use Throwable;
 
 use function Hyperf\Support\value;
 
@@ -97,6 +98,12 @@ class ReflectionManager extends MetadataCollector
     {
         $finder = new Finder();
         $finder->files()->in($paths)->name('*.php');
+
+        return static::getAllClassesByFinder($finder);
+    }
+
+    public static function getAllClassesByFinder(Finder $finder): array
+    {
         $parser = new Ast();
 
         $reflectionClasses = [];
@@ -107,7 +114,13 @@ class ReflectionManager extends MetadataCollector
                     continue;
                 }
                 $reflectionClasses[$className] = static::reflectClass($className);
-            } catch (\Throwable) {
+            } catch (Throwable $e) {
+                echo sprintf(
+                    "\033[31m%s\033[0m",
+                    '[ERROR] DI Reflection Manager collecting class reflections failed. ' . PHP_EOL .
+                        "File: {$file->getRealPath()}." . PHP_EOL .
+                        'Exception: ' . $e->getMessage()
+                ) . PHP_EOL;
             }
         }
         return $reflectionClasses;

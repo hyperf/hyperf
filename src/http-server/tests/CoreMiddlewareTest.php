@@ -36,13 +36,20 @@ use HyperfTest\HttpServer\Stub\FooController;
 use HyperfTest\HttpServer\Stub\SetHeaderMiddleware;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 use ReflectionMethod;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -63,7 +70,6 @@ class CoreMiddlewareTest extends TestCase
     {
         $middleware = new CoreMiddlewareStub($container = $this->getContainer(), 'http');
         $reflectionMethod = new ReflectionMethod(CoreMiddleware::class, 'transferToResponse');
-        $reflectionMethod->setAccessible(true);
         $request = Mockery::mock(ServerRequestInterface::class);
         /** @var ResponseInterface $response */
 
@@ -170,9 +176,9 @@ class CoreMiddlewareTest extends TestCase
             return Context::get(ServerRequestInterface::class)->getHeaders();
         });
 
-        $response = Mockery::mock(ResponseInterface::class);
-        $response->shouldReceive('withAddedHeader')->andReturn($response);
-        $response->shouldReceive('withBody')->with(Mockery::any())->andReturnUsing(function ($stream) use ($response, $id) {
+        $response = Mockery::mock(ResponsePlusInterface::class);
+        $response->shouldReceive('addHeader')->andReturn($response);
+        $response->shouldReceive('setBody')->with(Mockery::any())->andReturnUsing(function ($stream) use ($response, $id) {
             $this->assertInstanceOf(SwooleStream::class, $stream);
             /* @var SwooleStream $stream */
             $this->assertSame(json_encode(['DEBUG' => [$id]]), (string) $stream);
@@ -195,7 +201,6 @@ class CoreMiddlewareTest extends TestCase
         $middleware = new CoreMiddleware($container, 'http');
         $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('handleFound');
-        $method->setAccessible(true);
 
         $handler = new Handler([DemoController::class, 'demo'], '/');
         $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
@@ -210,7 +215,6 @@ class CoreMiddlewareTest extends TestCase
         $middleware = new CoreMiddleware($container, 'http');
         $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('handleFound');
-        $method->setAccessible(true);
 
         $handler = new Handler(DemoController::class, '/');
         $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
@@ -225,7 +229,6 @@ class CoreMiddlewareTest extends TestCase
         $middleware = new CoreMiddleware($container, 'http');
         $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('handleFound');
-        $method->setAccessible(true);
 
         $this->expectException(ServerErrorHttpException::class);
         $this->expectExceptionMessage('Method of class does not exist.');

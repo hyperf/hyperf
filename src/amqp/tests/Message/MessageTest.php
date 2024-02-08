@@ -13,12 +13,14 @@ namespace HyperfTest\Amqp\Message;
 
 use HyperfTest\Amqp\Stub\DemoConsumer;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MessageTest extends TestCase
 {
     protected function tearDown(): void

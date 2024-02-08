@@ -25,6 +25,7 @@ use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RedisCluster;
 
@@ -34,6 +35,7 @@ use function Hyperf\Coroutine\go;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RedisProxyTest extends TestCase
 {
     protected function tearDown(): void
@@ -184,7 +186,7 @@ class RedisProxyTest extends TestCase
             usleep(1000);
             $redis->lRange('pipeline:list', 0, 1);
             $redis->lTrim('pipeline:list', 2, -1);
-            usleep(10000);
+            usleep(20000);
             $chan2->push($redis->exec());
         });
 

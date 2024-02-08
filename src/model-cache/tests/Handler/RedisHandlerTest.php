@@ -20,12 +20,14 @@ use Hyperf\ModelCache\Handler\RedisHandler;
 use Hyperf\Redis\RedisProxy;
 use HyperfTest\ModelCache\Stub\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RedisHandlerTest extends TestCase
 {
     protected $handler = RedisHandler::class;

@@ -4,7 +4,7 @@
 
 ## 安裝
 
-```
+```shell
 composer require hyperf/logger
 ```
 
@@ -128,6 +128,8 @@ $log->alert('czl');
 ### 封裝 `Log` 類
 
 可能有些時候您更想保持大多數框架使用日誌的習慣，那麼您可以在 `App` 下建立一個 `Log` 類，並透過 `__callStatic` 魔術方法靜態方法呼叫實現對 `Logger` 的取用以及各個等級的日誌記錄，我們透過程式碼來演示一下：
+
+> 切記在使用時，不要讓 $name 跟 請求 掛鉤，比如把 $request_id 當 logger name 來使用，就會導致 Factory 中儲存請求級別的日誌物件，會導致嚴重的記憶體洩漏。
 
 ```php
 namespace App;
@@ -305,13 +307,119 @@ return [
 ];
 ```
 
-結果如下
+或
+
+```php
+
+declare(strict_types=1);
+
+use Monolog\Handler;
+use Monolog\Formatter;
+use Monolog\Logger;
+
+return [
+    'default' => [
+        'handlers' => ['single', 'daily'],
+    ],
+
+    'single' => [
+        'handler' => [
+            'class' => Handler\StreamHandler::class,
+            'constructor' => [
+                'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                'level' => Logger::INFO,
+            ],
+        ],
+        'formatter' => [
+            'class' => Formatter\LineFormatter::class,
+            'constructor' => [
+                'format' => null,
+                'dateFormat' => null,
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
+
+    'daily' => [
+        'handler' => [
+            'class' => Handler\StreamHandler::class,
+            'constructor' => [
+                'stream' => BASE_PATH . '/runtime/logs/hyperf-debug.log',
+                'level' => Logger::DEBUG,
+            ],
+        ],
+        'formatter' => [
+            'class' => Formatter\JsonFormatter::class,
+            'constructor' => [
+                'batchMode' => Formatter\JsonFormatter::BATCH_MODE_JSON,
+                'appendNewline' => true,
+            ],
+        ],
+    ],
+];
 
 ```
+
+結果如下
+
+```shell
 ==> runtime/logs/hyperf.log <==
 [2019-11-08 11:11:35] hyperf.INFO: 5dc4dce791690 [] []
 
 ==> runtime/logs/hyperf-debug.log <==
 {"message":"5dc4dce791690","context":[],"level":200,"level_name":"INFO","channel":"hyperf","datetime":{"date":"2019-11-08 11:11:35.597153","timezone_type":3,"timezone":"Asia/Shanghai"},"extra":[]}
 {"message":"xxxx","context":[],"level":100,"level_name":"DEBUG","channel":"hyperf","datetime":{"date":"2019-11-08 11:11:35.597635","timezone_type":3,"timezone":"Asia/Shanghai"},"extra":[]}
+```
+
+
+### 統一請求級別日誌
+
+有時候，我們需要將同一個請求的日誌關聯起來，所以我們可以實現一個 Processor
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Kernel\Log;
+
+use Hyperf\Context\Context;
+use Hyperf\Coroutine\Coroutine;
+use Monolog\LogRecord;
+use Monolog\Processor\ProcessorInterface;
+
+class AppendRequestIdProcessor implements ProcessorInterface
+{
+    public const REQUEST_ID = 'log.request.id';
+
+    public function __invoke(array|LogRecord $record)
+    {
+        $record['extra']['request_id'] = Context::getOrSet(self::REQUEST_ID, uniqid());
+        $record['extra']['coroutine_id'] = Coroutine::id();
+        return $record;
+    }
+}
+
+```
+
+然後配置到我們的 `logger.php` 配置中
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use App\Kernel\Log;
+
+return [
+    'default' => [
+        // 刪除其他配置
+        'processors' => [
+            [
+                'class' => Log\AppendRequestIdProcessor::class,
+            ],
+        ],
+    ],
+];
+
 ```

@@ -22,6 +22,7 @@ use HyperfTest\Nsq\Stub\ContainerStub;
 use HyperfTest\Nsq\Stub\DemoConsumer;
 use HyperfTest\Nsq\Stub\DisabledDemoConsumer;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -29,6 +30,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ConsumerManagerTest extends TestCase
 {
     protected function tearDown(): void
@@ -83,13 +85,8 @@ class ConsumerManagerTest extends TestCase
             $nums = rand(1, 10),
         ));
 
-        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
-            'nsq' => [
-                'default' => [
-                    'enable' => false,
-                ],
-            ],
-        ]));
+        $config = $container->get(ConfigInterface::class);
+        $config->set('nsq.default.enable', false);
 
         $manager = new ConsumerManager($container);
         $manager->run();

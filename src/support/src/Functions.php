@@ -14,7 +14,7 @@ namespace Hyperf\Support;
 use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use Throwable;
 
 /**
@@ -159,7 +159,7 @@ function class_uses_recursive($class)
     $results = [];
 
     /* @phpstan-ignore-next-line */
-    foreach (array_reverse(class_parents($class)) + [$class => $class] as $class) {
+    foreach (array_reverse(class_parents($class) ?: []) + [$class => $class] as $class) {
         $results += trait_uses_recursive($class);
     }
 
@@ -171,7 +171,7 @@ function class_uses_recursive($class)
  */
 function setter(string $property): string
 {
-    return 'set' . Str::studly($property);
+    return 'set' . StrCache::studly($property);
 }
 
 /**
@@ -179,7 +179,7 @@ function setter(string $property): string
  */
 function getter(string $property): string
 {
-    return 'get' . Str::studly($property);
+    return 'get' . StrCache::studly($property);
 }
 
 /**
@@ -249,4 +249,12 @@ function build_sql(string $sql, array $bindings = []): string
     }
 
     return $sql;
+}
+
+/**
+ * Sleep milliseconds.
+ */
+function msleep(int $milliSeconds): void
+{
+    usleep($milliSeconds * 1000);
 }

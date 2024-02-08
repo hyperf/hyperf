@@ -40,6 +40,11 @@ class ConsulDriver implements DriverInterface
         $this->config = $container->get(ConfigInterface::class);
     }
 
+    public function isLongPolling(): bool
+    {
+        return false;
+    }
+
     public function getNodes(string $uri, string $name, array $metadata): array
     {
         $health = $this->createConsulHealth($uri);
@@ -98,6 +103,14 @@ class ConsulDriver implements DriverInterface
             $requestBody['Check'] = [
                 'DeregisterCriticalServiceAfter' => $deregisterCriticalServiceAfter,
                 'TCP' => "{$host}:{$port}",
+                'Interval' => $interval,
+            ];
+        }
+        if ($protocol === 'grpc') {
+            $requestBody['Check'] = [
+                'DeregisterCriticalServiceAfter' => $deregisterCriticalServiceAfter,
+                'GRPC' => "{$host}:{$port}",
+                'GRPCUseTLS' => false,
                 'Interval' => $interval,
             ];
         }

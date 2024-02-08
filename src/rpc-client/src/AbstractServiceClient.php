@@ -27,7 +27,6 @@ use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\DriverManager;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
-use RuntimeException;
 
 use function Hyperf\Support\make;
 
@@ -60,8 +59,11 @@ abstract class AbstractServiceClient
 
     protected DataFormatterInterface $dataFormatter;
 
+    protected ConfigInterface $config;
+
     public function __construct(protected ContainerInterface $container)
     {
+        $this->config = $this->container->get(ConfigInterface::class);
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
         $protocol = new Protocol($container, $container->get(ProtocolManager::class), $this->protocol, $this->getOptions());
         $loadBalancer = $this->createLoadBalancer(...$this->createNodes());
@@ -102,9 +104,16 @@ abstract class AbstractServiceClient
         return $this->pathGenerator->generate($this->serviceName, $methodName);
     }
 
-    protected function __generateData(string $methodName, array $params, ?string $id)
+    protected function __generateData(string $methodName, array $params, null|int|string $id)
     {
-        return $this->dataFormatter->formatRequest(new Request($this->__generateRpcPath($methodName), $params, $id));
+        return $this->dataFormatter->formatRequest(new Request(
+            $this->__generateRpcPath($methodName),
+            $params,
+            $id,
+            [
+                'from' => $this->config->get('app_name'),
+            ]
+        ));
     }
 
     public function getServiceName(): string
@@ -125,10 +134,10 @@ abstract class AbstractServiceClient
         return $this->container->get(IdGenerator\UniqidIdGenerator::class);
     }
 
-    protected function createLoadBalancer(array $nodes, callable $refresh = null): LoadBalancerInterface
+    protected function createLoadBalancer(array $nodes, callable $refresh = null, bool $isLongPolling = false): LoadBalancerInterface
     {
         $loadBalancer = $this->loadBalancerManager->getInstance($this->serviceName, $this->loadBalancer)->setNodes($nodes);
-        $refresh && $loadBalancer->refresh($refresh);
+        $refresh && $loadBalancer->refresh($refresh, $isLongPolling ? 1 : 5000);
         return $loadBalancer;
     }
 
@@ -141,14 +150,8 @@ abstract class AbstractServiceClient
 
     protected function getConsumerConfig(): array
     {
-        if (! $this->container->has(ConfigInterface::class)) {
-            throw new RuntimeException(sprintf('The object implementation of %s missing.', ConfigInterface::class));
-        }
-
-        $config = $this->container->get(ConfigInterface::class);
-
         // According to the registry config of the consumer, retrieve the nodes.
-        $consumers = $config->get('services.consumers', []);
+        $consumers = $this->config->get('services.consumers', []);
         $config = [];
         foreach ($consumers as $consumer) {
             if (isset($consumer['name']) && $consumer['name'] === $this->serviceName) {
@@ -167,7 +170,6 @@ abstract class AbstractServiceClient
      */
     protected function createNodes(): array
     {
-        $refreshCallback = null;
         $consumer = $this->getConsumerConfig();
 
         $registryProtocol = $consumer['registry']['protocol'] ?? null;
@@ -178,12 +180,12 @@ abstract class AbstractServiceClient
             if (! $governance) {
                 throw new InvalidArgumentException(sprintf('Invalid protocol of registry %s', $registryProtocol));
             }
-            $nodes = $this->getNodes($governance, $registryAddress);
-            $refreshCallback = function () use ($governance, $registryAddress) {
-                return $this->getNodes($governance, $registryAddress);
+            $nodes = $this->getNodes($governance, $registryAddress, []);
+            $refreshCallback = function (array $beforeNodes = []) use ($governance, $registryAddress) {
+                return $this->getNodes($governance, $registryAddress, $beforeNodes);
             };
 
-            return [$nodes, $refreshCallback];
+            return [$nodes, $refreshCallback, $governance->isLongPolling()];
         }
 
         // Not exists the registry config, then looking for the 'nodes' property.
@@ -197,17 +199,19 @@ abstract class AbstractServiceClient
                     $nodes[] = new Node($item['host'], $item['port'], $item['weight'] ?? 0, $item['path_prefix'] ?? '');
                 }
             }
-            return [$nodes, $refreshCallback];
+            return [$nodes, null, false];
         }
 
         throw new InvalidArgumentException('Config of registry or nodes missing.');
     }
 
-    protected function getNodes(DriverInterface $governance, string $address): array
+    protected function getNodes(DriverInterface $governance, string $address, array $nodes = []): array
     {
         $nodeArray = $governance->getNodes($address, $this->serviceName, [
             'protocol' => $this->protocol,
+            'nodes' => $nodes,
         ]);
+
         $nodes = [];
         foreach ($nodeArray as $node) {
             $nodes[] = new Node($node['host'], $node['port'], $node['weight'] ?? 0, $node['path_prefix'] ?? '');

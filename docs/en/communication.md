@@ -13,4 +13,4 @@ Group 4 Number: `571053131`
 
 Since you can't directly join the WeChat group, you can scan the QR code below and add us as a WeChat friend. Please declare the purpose when sending the friend request, after receiving the request we will add you to our group.
 
-![wechat](imgs/wechat.jpg ':size=375')
+![wechat](https://foruda.gitee.com/images/1697082615411352318/859339ce_775029.jpeg ':size=375')

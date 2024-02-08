@@ -32,12 +32,6 @@ php -d swoole.use_shortname=Off bin/hyperf.php start
 
 可以在 `config/autoload/amqp.php` 配置文件中将 `params.close_on_destruct` 改为 `false` 即可。
 
-## 使用 Swoole 4.5 版本和 view 组件时访问接口出现 404
-
-使用 Swoole 4.5 版本和 view 组件如果出现接口 404 的问题，可以尝试删除 `config/autoload/server.php` 文件中的 `static_handler_locations` 配置项。
-
-此配置下的路径都会被认为是静态文件路由，所以如果配置了`/`，就会导致所有接口都会被认为是文件路径，导致接口 404。
-
 ## 代码不生效
 
 当碰到修改后的代码不生效的问题，请执行以下命令
@@ -65,7 +59,7 @@ Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line
 
 ## 内存限制太小导致项目无法运行
 
-PHP 默认的 `memory_limit` 只有 `128M`，因为 `Hyperf` 使用了 `BetterReflection`，不使用扫描缓存时，会消耗大量内存，所以可能会出现内存不够的情况。
+PHP 默认的 `memory_limit` 只有 `128M`。
 
 我们可以使用 `php -d memory_limit=-1 bin/hyperf.php start` 运行, 或者修改 `php.ini` 配置文件
 
@@ -75,36 +69,6 @@ php --ini
 
 # 修改 memory_limit 配置
 memory_limit=-1
-```
-
-## PHP 7.3 版本对 DI 的兼容性有所下降
-
-在 `2.0` - `2.1` 版本时，为了实现 `AOP` 作用于非 `DI` 管理的对象（如 `new` 关键词实例化的对象时），底层实现采用了 `BetterReflection` 组件来实现相关功能，带来新的编程体验的同时，也带来了一些很难攻克的问题，如下:
-
-- 无扫描缓存时项目启动很慢
-- 特殊场景下 `Inject` 和 `Value` 不生效
-- `BetterReflection` 尚未支持 PHP 8 (截止 2.2 发版时)
-
-在新的版本里，弃用了 `BetterReflection` 的应用，采用了 `子进程扫描` 的方式来解决以上这些痛点，但在低版本的 `PHP` 中也有一些不兼容的情况：
-
-使用 `PHP 7.3` 启动应用后遇到类似如下错误：
-
-```bash
-PHP Fatal error:  Interface 'Hyperf\Signal\SignalHandlerInterface' not found in vendor/hyperf/process/src/Handler/ProcessStopHandler.php on line 17
-
-PHP Fatal error:  Interface 'Symfony\Component\Serializer\SerializerInterface' not found in vendor/hyperf/utils/src/Serializer/Serializer.php on line 46
-```
-
-此问题是由于在 `PHP 7.3` 中通过 `子进程扫描` 的方式去获取反射，在某个类中实现了一个不存在的 `Interface` ，就会导致抛出 `Interface not found` 的异常，而高版本的 `PHP` 则不会。
-
-解决方法为创建对应的 `Interface` 并正常引入。上文中的报错解决方法为安装对应所依赖的组件即可。
-
-> 当然，最好还是可以升级到 7.4 或者 8.0 版本
-
-```bash
-composer require hyperf/signal
-
-composer require symfony/serializer
 ```
 
 ## Trait 内使用 `#[Inject]` 注入报错 `Error while injecting dependencies into ... No entry or class found ...`
@@ -168,7 +132,7 @@ http2 => enabled
 
 如果没有，需要重新编译 Swoole 并增加 `--enable-http2` 参数。
 
-2. 检查 [server.php](/zh-cn/config?id=serverphp-配置说明) 文件中 `open_http2_protocol` 选项是否为 `true`。
+2. 检查 server.php 文件中 `open_http2_protocol` 选项是否为 `true`。
 
 ## Command 无法正常关闭
 
@@ -176,8 +140,8 @@ http2 => enabled
 
 ```php
 <?php
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Constants;
 
 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
 ```
@@ -203,3 +167,29 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/ gnu-libiconv=1.15-r3
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 ```
+
+## DI 收集失败
+
+在 DI 收集阶段发生异常（如命名空间错误等原因），可能产生以下格式日志的输出。
+
+- 业务代码，排查日志中路径相关的文件和类。
+- 框架代码，提交 PR 或 Issue 反馈。
+- 第三方组件，反馈给组件作者。
+
+```bash
+[ERROR] DI Reflection Manager collecting class reflections failed. 
+File: xxxx.
+Exception: xxxx
+```
+
+## 环境版本不一致导致服务无法启动
+
+当项目启动时，抛出类似如下错误时：
+
+```bash
+Hyperf\Engine\Channel::push(mixed $data, float $timeout = -1): bool must be compatible with Swoole\Coroutine\Channel::push($data, $timeout = -1)
+```
+
+此问题通常是由于实际运行时使用的 Swoole 版本和安装框架/组件时使用的 Swoole 版本不一致导致。
+
+使用和安装时相同的 Swoole、PHP 版本即可解决。

@@ -13,10 +13,22 @@ namespace Hyperf\AsyncQueue;
 
 use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\UnCompressInterface;
+use Throwable;
 
 abstract class Job implements JobInterface, CompressInterface, UnCompressInterface
 {
     protected int $maxAttempts = 0;
+
+    public function fail(Throwable $e): void
+    {
+    }
+
+    public function setMaxAttempts(int $maxAttempts): static
+    {
+        $this->maxAttempts = $maxAttempts;
+
+        return $this;
+    }
 
     public function getMaxAttempts(): int
     {

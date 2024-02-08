@@ -15,13 +15,22 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=8.0",
-        "hyperf/contract": "~3.0.0",
-        "hyperf/dispatcher": "~3.0.0",
-        "hyperf/support": "~3.0.0",
-        "hyperf/utils": "~3.0.0",
+        "php": ">=8.1",
+        "hyperf/context": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/dispatcher": "~3.1.0",
+        "hyperf/http-message": "~3.1.0",
+        "hyperf/stdlib": "~3.1.0",
+        "hyperf/support": "~3.1.0",
         "psr/container": "^1.0|^2.0",
-        "psr/http-message": "^1.0|^2.0"
+        "psr/http-message": "^1.0|^2.0",
+        "swow/psr7-plus": "^1.0"
+    },
+    "suggest": {
+        "hyperf/di": "Required to use #[ExceptionHandler]",
+        "hyperf/event": "Required to use listeners",
+        "hyperf/framework": "Required to use listeners",
+        "hyperf/stringable": "Required to use WhoopsExceptionHandler"
     },
     "autoload": {
         "psr-4": {
@@ -38,7 +47,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ExceptionHandler\\ConfigProvider"

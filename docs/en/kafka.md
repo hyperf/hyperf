@@ -2,9 +2,7 @@
 
 `Kafka` is an open source stream processing platform developed by `Apache Software Foundation`, written by `Scala` and `Java`. The goal of this project is to provide a unified, high-throughput, low-latency platform for processing real-time data. Its persistence layer is essentially a "large-scale publish/subscribe message queue based on the distributed transaction log architecture"
 
-[longlang/phpkafka](https://github.com/longyan/phpkafka) component is provided by [Longzhiyan](http://longlang.org/) and supports `PHP-FPM` and `Swoole`. Thank you `Swoole Team` and `ZenTao Team` for their contributions to the community.
-
-> This component is a Beta version, please use it with caution.
+[longlang/phpkafka](https://github.com/swoole/phpkafka) component is provided by [Longzhiyan](http://longlang.org/) and supports `PHP-FPM` and `Swoole`. Thank you `Swoole Team` and `ZenTao Team` for their contributions to the community.
 
 ## Installation
 
@@ -50,7 +48,6 @@ The default configuration file is as follows:
 |         offset_retry          |    int     |               5               |                                                           Offset operation, the number of automatic retries when matching the preset error code                                                           |
 |       auto_create_topic       |    bool    |             true              |                                                                                   Whether to automatically create topic                                                                                   |
 | partition_assignment_strategy |   string   | KafkaStrategy::RANGE_ASSIGNOR |                     Consumer partition allocation strategy, optional: range allocation (`KafkaStrategy::RANGE_ASSIGNOR`) polling allocation (`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`))                      |
-|             pool              |   object   |                               |                                                                                       Connection pool configuration                                                                                       |
 
 ```php
 <?php
@@ -87,14 +84,8 @@ return [
         'offset_retry' => 5,
         'auto_create_topic' => true,
         'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
-        'pool' => [
-            'min_connections' => 1,
-            'max_connections' => 10,
-            'connect_timeout' => 10.0,
-            'wait_timeout' => 3.0,
-            'heartbeat' => -1,
-            'max_idle_time' => 60.0,
-        ],
+        'sasl' => [],
+        'ssl' => [],
     ],
 ];
 ```
@@ -108,7 +99,6 @@ php bin/hyperf.php gen:kafka-consumer KafkaConsumer
 ```
 
 You can also use the `Hyperf\Kafka\Annotation\Consumer` annotation to declare a subclass of the `Hyperf/Kafka/AbstractConsumer` abstract class to complete the definition of a `Consumer`, where `Hyperf\ Both Kafka\Annotation\Consumer` annotations and abstract classes contain the following attributes:
-
 
 | Configuration |        Type        |    Default    |                                           Description                                            |
 | :-----------: | :----------------: | :-----------: | :----------------------------------------------------------------------------------------------: |
@@ -165,10 +155,11 @@ class IndexController extends AbstractController
 }
 ```
 
+The `Hyperf\Kafka\Producer::send()` method will wait for ACK. If you do not need to wait for ACK, you can use the `Hyperf\Kafka\Producer::sendAsync()` method to deliver the message.
+
 ### Send multiple messages at once
 
 The `Hyperf\Kafka\Producer::sendBatch(array $messages)` method is used to deliver messages in batches to `kafka`, the following is an example of message delivery in `Controller`:
-
 
 ```php
 <?php

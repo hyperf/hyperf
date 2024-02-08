@@ -13,6 +13,7 @@ namespace HyperfTest\Metric\Adapter\Prometheus;
 
 use Hyperf\Metric\Adapter\Prometheus\Redis;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Prometheus\Counter;
 use Prometheus\Histogram;
@@ -23,6 +24,7 @@ use ReflectionProperty;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RedisTest extends TestCase
 {
     protected string $prePrefix;
@@ -34,10 +36,7 @@ class RedisTest extends TestCase
         parent::setUp();
 
         $prefixProperty = new ReflectionProperty(Redis::class, 'prefix');
-        $prefixProperty->setAccessible(true);
-
         $metricGatherKeySuffix = new ReflectionProperty(Redis::class, 'metricGatherKeySuffix');
-        $metricGatherKeySuffix->setAccessible(true);
 
         $this->prePrefix = $prefixProperty->getDefaultValue();
         $this->preMetricGatherKeySuffix = $metricGatherKeySuffix->getDefaultValue();
@@ -62,22 +61,14 @@ class RedisTest extends TestCase
 
         Redis::setPrefix('prometheus:');
         $method = new ReflectionMethod(Redis::class, 'toMetricKey');
-        $method->setAccessible(true);
         self::assertEquals('prometheus:counter:hyperf_metric{counter}', $method->invoke(new Redis(new \Redis()), $data));
-
-        // 兼容 < v3.1
-        Redis::setPrefix('PROMETHEUS_');
-        $method = new ReflectionMethod(Redis::class, 'toMetricKey');
-        $method->setAccessible(true);
-        self::assertEquals('PROMETHEUS_:counter:hyperf_metric{counter}', $method->invoke(new Redis(new \Redis()), $data));
     }
 
     public function testGetMetricGatherKey()
     {
         $method = new ReflectionMethod(Redis::class, 'getMetricGatherKey');
-        $method->setAccessible(true);
 
-        self::assertEquals('PROMETHEUS_counter_METRIC_KEYS{counter}', $method->invoke(new Redis(new \Redis()), Counter::TYPE));
+        self::assertEquals('prometheus:counter:metric_keys{counter}', $method->invoke(new Redis(new \Redis()), Counter::TYPE));
     }
 
     public function testCollectSamples()
@@ -105,7 +96,6 @@ class RedisTest extends TestCase
         );
 
         $method = new ReflectionMethod(Redis::class, 'collectSamples');
-        $method->setAccessible(true);
         $result = $method->invoke(new Redis($redis), Counter::TYPE);
 
         self::assertEquals([
@@ -158,7 +148,6 @@ class RedisTest extends TestCase
         );
 
         $method = new ReflectionMethod(Redis::class, 'collectSamples');
-        $method->setAccessible(true);
         $result = $method->invoke(new Redis($redis), Counter::TYPE);
 
         self::assertEquals([
@@ -202,7 +191,6 @@ class RedisTest extends TestCase
         );
 
         $method = new ReflectionMethod(Redis::class, 'collectHistograms');
-        $method->setAccessible(true);
         $result = $method->invoke(new Redis($redis), Histogram::TYPE);
 
         self::assertEquals([
@@ -307,7 +295,6 @@ class RedisTest extends TestCase
         );
 
         $method = new ReflectionMethod(Redis::class, 'collectHistograms');
-        $method->setAccessible(true);
         $result = $method->invoke(new Redis($redis), Histogram::TYPE);
 
         self::assertEquals([

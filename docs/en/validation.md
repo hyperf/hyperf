@@ -32,7 +32,7 @@ return [
 
 ### Add exception handler
 
-The exception handler mainly deals with `Hyperf\Validation\ValidationException` exceptions. We provide a `Hyperf\Validation\ValidationExceptionHandler` for processing. You need to manually configure this exception handler to your project’s `config/autoload/ Within the exceptions.php` file, of course, you can also customize your exception handler.
+The exception handler mainly deals with `Hyperf\Validation\ValidationException` exceptions. We provide a `Hyperf\Validation\ValidationExceptionHandler` for processing. You need to manually configure this exception handler to your project’s by adding it to the `config/autoload/exceptions.php` file, of course, you can also customize your exception handler.
 
 ```php
 <?php
@@ -293,7 +293,7 @@ class IndexController
 
 ## Handling error messages
 
-Calling the `errors` method through the `Validator` instance returns a `Hyperf\Utils\MessageBag` instance, which has various convenient methods for handling error messages.
+Calling the `errors` method through the `Validator` instance returns a `Hyperf\Support\MessageBag` instance, which has various convenient methods for handling error messages.
 
 ### View the first error message of a specific field
 
@@ -348,7 +348,7 @@ if ($errors->has('foo')) {
 The validator adds a scenario function, so we can easily modify the validation rules on demand.
 
 > This feature requires a version of this component greater than or equal to 2.2.7
-Create a `SceneRequest` as follows：
+Create a `SceneRequest` as follows:
 
 ```php
 <?php

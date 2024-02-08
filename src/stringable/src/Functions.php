@@ -20,13 +20,13 @@ namespace Hyperf\Stringable;
 function str($string = null)
 {
     if (func_num_args() === 0) {
-        return new class() {
+        return new class() implements \Stringable {
             public function __call($method, $parameters)
             {
                 return Str::$method(...$parameters);
             }
 
-            public function __toString()
+            public function __toString(): string
             {
                 return '';
             }

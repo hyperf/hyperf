@@ -69,6 +69,8 @@ Router::addGroup(
 > 使用 `#[Middleware]` 注解时需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空间；   
 > 使用 `#[Middlewares]` 注解时需 `use Hyperf\HttpServer\Annotation\Middlewares;` 命名空间；
 
+***注意：必须配合 `#[AutoController]` 或者 `#[Controller]` 使用***
+
 定义单个中间件：
 
 ```php
@@ -227,6 +229,44 @@ class FooMiddleware implements MiddlewareInterface
 
 我们从上面可以了解到总共有 `3` 种级别的中间件，分别为 `全局中间件`、`类级别中间件`、`方法级别中间件`，如果都定义了这些中间件，执行顺序为：`全局中间件 -> 类级别中间件 -> 方法级别中间件`。
 
+
+在`>=3.0.34`的版本中，新增了优先级的配置，可以在配置方法、路由中间件的时候改变中间件的执行顺序，优先级越高，执行顺序越靠前。
+
+```php
+// 全局中间件配置文件 middleware.php
+return [
+    'http' => [
+        YourMiddleware::class,
+        YourMiddlewareB::class => 3,
+    ],
+];
+```
+```php
+// 路由中间件配置
+Router::addGroup(
+    '/v2', function () {
+        Router::get('/index', [\App\Controller\IndexController::class, 'index']);
+    },
+    [
+        'middleware' => [
+            FooMiddleware::class,
+            FooMiddlewareB::class => 3,
+        ]
+    ]
+);
+```
+```php
+// 注解中间件配置
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
+#[Middleware(FooMiddlewareB::class, 3)]
+#[Middlewares([FooMiddlewareC::class => 1, BarMiddlewareD::class => 4])]
+class IndexController
+{
+    
+}
+```
+
 ## 全局更改请求和响应对象
 
 首先，在协程上下文内是有存储最原始的 PSR-7 `请求对象` 和 `响应对象` 的，且根据 PSR-7 对相关对象所要求的 `不可变性(immutable)`，也就意味着我们在调用 `$response = $response->with***()` 所调用得到的 `$response`，并非为改写原对象，而是一个 `Clone` 出来的新对象，也就意味着我们储存在协程上下文内的 `请求对象` 和 `响应对象` 是不会改变的，那么当我们在中间件内的某些逻辑改变了 `请求对象` 或 `响应对象`，而且我们希望对后续的 *非传递性的* 代码再获取改变后的 `请求对象` 或 `响应对象`，那么我们便可以在改变对象后，将新的对象设置到上下文中，如代码所示：
@@ -347,4 +387,48 @@ location / {
         return 204;
     }
 }
+```
+
+### 后置中间件
+
+通常情况下，我们都是最后执行
+
+```
+return $handler->handle($request);
+```
+
+所以，相当于是前置中间件，如果想要让中间件逻辑后置，其实只需要更换一下执行顺序即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+class OpenApiMiddleware implements MiddlewareInterface
+{
+    public function __construct(protected ContainerInterface $container)
+    {
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        // TODO: 前置操作
+        try{
+            $result = $handler->handle($request);
+        } finally {
+            // TODO: 后置操作
+        }
+        return $result;
+    }
+}
+
 ```

@@ -11,6 +11,18 @@ declare(strict_types=1);
  */
 namespace Hyperf\Command\Event;
 
+use Hyperf\Command\Command;
+use Throwable;
+
 class AfterExecute extends Event
 {
+    public function __construct(Command $command, protected ?Throwable $throwable = null)
+    {
+        parent::__construct($command);
+    }
+
+    public function getThrowable(): ?Throwable
+    {
+        return $this->throwable;
+    }
 }

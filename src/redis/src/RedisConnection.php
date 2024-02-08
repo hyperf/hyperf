@@ -17,12 +17,12 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
+use Hyperf\Redis\Exception\InvalidRedisOptionException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LogLevel;
 use Redis;
 use RedisCluster;
 use RedisException;
-use RedisSentinel;
 use Throwable;
 
 /**
@@ -120,7 +120,20 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $options = $this->config['options'] ?? [];
 
         foreach ($options as $name => $value) {
-            // The name is int, value is string.
+            if (is_string($name)) {
+                $name = match (strtolower($name)) {
+                    'serializer' => Redis::OPT_SERIALIZER, // 1
+                    'prefix' => Redis::OPT_PREFIX, // 2
+                    'read_timeout' => Redis::OPT_READ_TIMEOUT, // 3
+                    'scan' => Redis::OPT_SCAN, // 4
+                    'failover' => defined(Redis::class . '::OPT_SLAVE_FAILOVER') ? Redis::OPT_SLAVE_FAILOVER : 5, // 5
+                    'keepalive' => Redis::OPT_TCP_KEEPALIVE, // 6
+                    'compression' => Redis::OPT_COMPRESSION, // 7
+                    'reply_literal' => Redis::OPT_REPLY_LITERAL, // 8
+                    'compression_level' => Redis::OPT_COMPRESSION_LEVEL, // 9
+                    default => throw new InvalidRedisOptionException(sprintf('The redis option key `%s` is invalid.', $name)),
+                };
+            }
             $redis->setOption($name, $value);
         }
 
@@ -217,12 +230,6 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $readTimeout = $this->config['sentinel']['read_timeout'] ?? 0;
             $masterName = $this->config['sentinel']['master_name'] ?? '';
             $auth = $this->config['sentinel']['auth'] ?? null;
-            // fixes bug for phpredis
-            // https://github.com/phpredis/phpredis/issues/2098
-            $extendConfig = [];
-            if (! empty($auth)) {
-                $extendConfig[] = $auth;
-            }
 
             shuffle($nodes);
 
@@ -230,23 +237,21 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $port = null;
             foreach ($nodes as $node) {
                 try {
-                    $nodeUrlArray = parse_url($node);
-                    $sentinelHost = $nodeUrlArray['host'] ?? null;
-                    $sentinelPort = $nodeUrlArray['port'] ?? null;
-                    if (! $sentinelHost || ! $sentinelPort) {
+                    $resolved = parse_url($node);
+                    if (! isset($resolved['host'], $resolved['port'])) {
                         $this->log(sprintf('The redis sentinel node [%s] is invalid.', $node), LogLevel::ERROR);
                         continue;
                     }
-
-                    $sentinel = new RedisSentinel(
-                        $sentinelHost,
-                        intval($sentinelPort),
-                        $timeout,
-                        $persistent,
-                        $retryInterval,
-                        $readTimeout,
-                        ...$extendConfig
-                    );
+                    $options = [
+                        'host' => $resolved['host'],
+                        'port' => (int) $resolved['port'],
+                        'connectTimeout' => $timeout,
+                        'persistent' => $persistent,
+                        'retryInterval' => $retryInterval,
+                        'readTimeout' => $readTimeout,
+                        ...($auth ? ['auth' => $auth] : []),
+                    ];
+                    $sentinel = $this->container->get(RedisSentinelFactory::class)->create($options);
                     $masterInfo = $sentinel->getMasterAddrByName($masterName);
                     if (is_array($masterInfo) && count($masterInfo) >= 2) {
                         [$host, $port] = $masterInfo;

@@ -19,12 +19,12 @@
         }
     },
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "guzzlehttp/guzzle": "^6.5|^7.0",
-        "hyperf/codec": "~3.0.0",
-        "hyperf/contract": "~3.0.0",
-        "hyperf/support": "~3.0.0",
-        "hyperf/utils": "~3.0.0"
+        "hyperf/codec": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/support": "~3.1.0",
+        "hyperf/utils": "~3.1.0"
     },
     "suggests": {
         "google/protobuf": "Required to use nacos v2 grpc apis.",
@@ -36,7 +36,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Nacos\\ConfigProvider"

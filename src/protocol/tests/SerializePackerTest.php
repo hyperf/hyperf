@@ -13,12 +13,14 @@ namespace HyperfTest\Protocol;
 
 use Hyperf\Protocol\Packer\SerializePacker;
 use HyperfTest\Protocol\Stub\DemoStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class SerializePackerTest extends TestCase
 {
     public function testPack()

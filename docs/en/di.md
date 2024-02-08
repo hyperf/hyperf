@@ -183,7 +183,7 @@ interface UserServiceInterface
 }
 ```
 
-`UserService` implements the interface：
+`UserService` implements the interface:
 
 ```php
 <?php
@@ -322,7 +322,7 @@ Add the `config/lazy_loader.php` file and bind the lazy loading relationship:
 <?php
 return [
     /**
-     * Format：proxy class name => original class name
+     * Format: proxy class name => original class name
      * The proxy class does not exist at this time, and Hyperf will automatically generate this class in the runtime folder.
      * The proxy class name and namespace can be defined by yourself.
      */
@@ -413,7 +413,7 @@ class IndexController
 }
 ```   
 
-In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Context\ApplicationContext::getContaienr()` method to obtain the `Container` object.
+In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Context\ApplicationContext::getContainer()` method to obtain the `Container` object.
 
 ```php
 $container = \Hyperf\Context\ApplicationContext::getContainer();

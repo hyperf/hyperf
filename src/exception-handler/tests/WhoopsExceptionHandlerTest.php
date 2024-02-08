@@ -11,11 +11,12 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ExceptionHandler;
 
-use GuzzleHttp\Psr7\Response;
 use Hyperf\Context\Context;
 use Hyperf\ExceptionHandler\Handler\WhoopsExceptionHandler;
+use Hyperf\HttpMessage\Base\Response;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\Nats\Exception;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,6 +27,7 @@ use function json_decode;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class WhoopsExceptionHandlerTest extends TestCase
 {
     public function testPlainTextWhoops()

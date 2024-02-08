@@ -1,6 +1,13 @@
 #!/usr/bin/env php
 <?php
-
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 use Symfony\Component\Finder\Finder;
 
 foreach ([__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', __DIR__ . '/vendor/autoload.php'] as $file) {
@@ -12,6 +19,7 @@ foreach ([__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', 
 
 $files = Finder::create()
     ->in(__DIR__ . '/../src')
+    ->exclude(['helper', 'polyfill-coroutine'])
     ->name('composer.json')
     ->files();
 
@@ -24,7 +32,7 @@ $replaces = [];
 foreach ($files as $file) {
     $component = basename(dirname($file));
     $composerJson = json_decode(file_get_contents($file), true);
-    if(isset($composerJson['name']) && str_starts_with($composerJson['name'], 'hyperf')){
+    if (isset($composerJson['name']) && str_starts_with($composerJson['name'], 'hyperf')) {
         $replaces[$composerJson['name']] = '*';
     }
 
@@ -41,14 +49,14 @@ foreach ($files as $file) {
     }
     foreach ($composerJson['autoload-dev']['psr-4'] ?? [] as $ns => $dir) {
         $value = "src/{$component}/" . trim($dir, '/') . '/';
-        if(isset($autoloadDev[$ns])){
+        if (isset($autoloadDev[$ns])) {
             $autoloadDev[$ns] = [$value, ...(array) $autoloadDev[$ns]];
-        }else{
+        } else {
             $autoloadDev[$ns] = $value;
         }
     }
     if (isset($composerJson['extra']['hyperf']['config'])) {
-        $configProviders = array_merge($configProviders, (array)$composerJson['extra']['hyperf']['config']);
+        $configProviders = array_merge($configProviders, (array) $composerJson['extra']['hyperf']['config']);
     }
 }
 

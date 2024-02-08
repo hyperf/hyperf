@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Context\Context;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
 use Hyperf\Rpc\ErrorResponse;
 use Hyperf\Rpc\Response;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 use Throwable;
 
 class ResponseBuilder
@@ -39,23 +40,23 @@ class ResponseBuilder
     {
     }
 
-    public function buildErrorResponse(ServerRequestInterface $request, int $code, Throwable $error = null): ResponseInterface
+    public function buildErrorResponse(ServerRequestInterface $request, int $code, Throwable $error = null): ResponsePlusInterface
     {
         $body = new SwooleStream($this->formatErrorResponse($request, $code, $error));
-        return $this->response()->withHeader('content-type', 'application/json')->withBody($body);
+        return $this->response()->addHeader('content-type', 'application/json')->setBody($body);
     }
 
-    public function buildResponse(ServerRequestInterface $request, $response): ResponseInterface
+    public function buildResponse(ServerRequestInterface $request, $response): ResponsePlusInterface
     {
         $body = new SwooleStream($this->formatResponse($response, $request));
         return $this->response()
-            ->withHeader('content-type', 'application/json')
-            ->withBody($body);
+            ->addHeader('content-type', 'application/json')
+            ->setBody($body);
     }
 
-    public function persistToContext(ResponseInterface $response): ResponseInterface
+    public function persistToContext(ResponsePlusInterface $response): ResponsePlusInterface
     {
-        return Context::set(ResponseInterface::class, $response);
+        return ResponseContext::set($response);
     }
 
     protected function formatResponse($response, ServerRequestInterface $request): string
@@ -93,8 +94,8 @@ class ResponseBuilder
     /**
      * Get response instance from context.
      */
-    protected function response(): ResponseInterface
+    protected function response(): ResponsePlusInterface
     {
-        return Context::get(ResponseInterface::class);
+        return ResponseContext::get();
     }
 }

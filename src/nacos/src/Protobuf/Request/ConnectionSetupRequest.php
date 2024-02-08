@@ -13,7 +13,7 @@ namespace Hyperf\Nacos\Protobuf\Request;
 
 class ConnectionSetupRequest extends Request
 {
-    public function __construct(public string $tenant)
+    public function __construct(public string $tenant, public string $module = 'config')
     {
     }
 
@@ -21,12 +21,12 @@ class ConnectionSetupRequest extends Request
     {
         return [
             'tenant' => $this->tenant,
-            'clientVersion' => 'Nacos-Hyperf-Client:v3.0',
+            'clientVersion' => 'Nacos-Hyperf-Client:v3.1',
             'labels' => [
                 'source' => 'sdk',
                 'AppName' => '',
                 'taskId' => '0',
-                'module' => 'config',
+                'module' => $this->module,
             ],
             'module' => 'internal',
         ];

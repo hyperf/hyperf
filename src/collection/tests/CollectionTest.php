@@ -12,12 +12,16 @@ declare(strict_types=1);
 namespace HyperfTest\Collections;
 
 use Hyperf\Collection\Collection;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Collection\collect;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CollectionTest extends TestCase
 {
     public function testOperatorForWhere()
@@ -132,6 +136,125 @@ class CollectionTest extends TestCase
         $this->assertSame(
             [3, 5, 4],
             $data->keys()->all()
+        );
+    }
+
+    public function testForgetSingleKey()
+    {
+        $c = new Collection(['foo', 'bar']);
+        $c = $c->forget(0)->all();
+        $this->assertFalse(isset($c['foo']));
+        $this->assertFalse(isset($c[0]));
+        $this->assertTrue(isset($c[1]));
+        $c = new Collection(['foo' => 'bar', 'baz' => 'qux']);
+        $c = $c->forget('foo')->all();
+        $this->assertFalse(isset($c['foo']));
+        $this->assertTrue(isset($c['baz']));
+    }
+
+    public function testForgetArrayOfKeys()
+    {
+        $c = new Collection(['foo', 'bar', 'baz']);
+        $c = $c->forget([0, 2])->all();
+        $this->assertFalse(isset($c[0]));
+        $this->assertFalse(isset($c[2]));
+        $this->assertTrue(isset($c[1]));
+        $c = new Collection(['name' => 'taylor', 'foo' => 'bar', 'baz' => 'qux']);
+        $c = $c->forget(['foo', 'baz'])->all();
+        $this->assertFalse(isset($c['foo']));
+        $this->assertFalse(isset($c['baz']));
+        $this->assertTrue(isset($c['name']));
+    }
+
+    public function testForgetCollectionOfKeys()
+    {
+        $c = new Collection(['foo', 'bar', 'baz']);
+        $c = $c->forget(collect([0, 2]))->all();
+        $this->assertFalse(isset($c[0]));
+        $this->assertFalse(isset($c[2]));
+        $this->assertTrue(isset($c[1]));
+
+        $c = new Collection(['name' => 'taylor', 'foo' => 'bar', 'baz' => 'qux']);
+        $c = $c->forget(collect(['foo', 'baz']))->all();
+        $this->assertFalse(isset($c['foo']));
+        $this->assertFalse(isset($c['baz']));
+        $this->assertTrue(isset($c['name']));
+    }
+
+    public function testExcept()
+    {
+        $data = new Collection(['first' => 'Swoole', 'last' => 'Hyperf', 'email' => 'hyperf@gmail.com']);
+
+        $this->assertEquals($data->all(), $data->except(null)->all());
+        $this->assertEquals(['first' => 'Swoole'], $data->except(['last', 'email', 'missing'])->all());
+        $this->assertEquals(['first' => 'Swoole'], $data->except('last', 'email', 'missing')->all());
+        $this->assertEquals(['first' => 'Swoole'], $data->except(collect(['last', 'email', 'missing']))->all());
+
+        $this->assertEquals(['first' => 'Swoole', 'email' => 'hyperf@gmail.com'], $data->except(['last'])->all());
+        $this->assertEquals(['first' => 'Swoole', 'email' => 'hyperf@gmail.com'], $data->except('last')->all());
+        $this->assertEquals(['first' => 'Swoole', 'email' => 'hyperf@gmail.com'], $data->except(collect(['last']))->all());
+    }
+
+    public function testReplaceNull()
+    {
+        $c = new Collection(['a', 'b', 'c']);
+        $this->assertEquals(['a', 'b', 'c'], $c->replace(null)->all());
+    }
+
+    public function testReplaceArray()
+    {
+        $c = new Collection(['a', 'b', 'c']);
+        $this->assertEquals(['a', 'd', 'e'], $c->replace([1 => 'd', 2 => 'e'])->all());
+
+        $c = new Collection(['a', 'b', 'c']);
+        $this->assertEquals(['a', 'd', 'e', 'f', 'g'], $c->replace([1 => 'd', 2 => 'e', 3 => 'f', 4 => 'g'])->all());
+
+        $c = new Collection(['name' => 'amir', 'family' => 'otwell']);
+        $this->assertEquals(['name' => 'taylor', 'family' => 'otwell', 'age' => 26], $c->replace(['name' => 'taylor', 'age' => 26])->all());
+    }
+
+    public function testReplaceCollection()
+    {
+        $c = new Collection(['a', 'b', 'c']);
+        $this->assertEquals(
+            ['a', 'd', 'e'],
+            $c->replace(new Collection([1 => 'd', 2 => 'e']))->all()
+        );
+
+        $c = new Collection(['a', 'b', 'c']);
+        $this->assertEquals(
+            ['a', 'd', 'e', 'f', 'g'],
+            $c->replace(new Collection([1 => 'd', 2 => 'e', 3 => 'f', 4 => 'g']))->all()
+        );
+
+        $c = new Collection(['name' => 'amir', 'family' => 'otwell']);
+        $this->assertEquals(
+            ['name' => 'taylor', 'family' => 'otwell', 'age' => 26],
+            $c->replace(new Collection(['name' => 'taylor', 'age' => 26]))->all()
+        );
+    }
+
+    public function testReplaceRecursiveNull()
+    {
+        $c = new Collection(['a', 'b', ['c', 'd']]);
+        $this->assertEquals(['a', 'b', ['c', 'd']], $c->replaceRecursive(null)->all());
+    }
+
+    public function testReplaceRecursiveArray()
+    {
+        $c = new Collection(['a', 'b', ['c', 'd']]);
+        $this->assertEquals(['z', 'b', ['c', 'e']], $c->replaceRecursive(['z', 2 => [1 => 'e']])->all());
+
+        $c = new Collection(['a', 'b', ['c', 'd']]);
+        $this->assertEquals(['z', 'b', ['c', 'e'], 'f'], $c->replaceRecursive(['z', 2 => [1 => 'e'], 'f'])->all());
+    }
+
+    public function testReplaceRecursiveCollection()
+    {
+        $c = new Collection(['a', 'b', ['c', 'd']]);
+        $this->assertEquals(
+            ['z', 'b', ['c', 'e']],
+            $c->replaceRecursive(new Collection(['z', 2 => [1 => 'e']]))->all()
         );
     }
 }

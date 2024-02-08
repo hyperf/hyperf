@@ -8,10 +8,10 @@ Hyperf 对系统环境有一些要求，当您使用 Swoole 网络引擎驱动�
 
 当您不想采用 Docker 来作为运行的环境基础时，也可以考虑使用 [Box](zh-cn/eco/box.md) 来作为运行的基础环境，如果您希望自行完成环境搭建，则您需要确保您的运行环境达到了以下的要求：   
 
- - PHP >= 8.0
+ - PHP >= 8.1
  - 以下任一网络引擎
-   - [Swoole PHP 扩展](https://github.com/swoole/swoole-src) >= 4.5，并关闭了 `Short Name`
-   - [Swow PHP 扩展](https://github.com/swow/swow)
+   - [Swoole PHP 扩展](https://github.com/swoole/swoole-src) >= 5.0，并关闭了 `Short Name`
+   - [Swow PHP 扩展](https://github.com/swow/swow) >= 1.4
  - JSON PHP 扩展
  - Pcntl PHP 扩展（仅在 Swoole 引擎时）
  - OpenSSL PHP 扩展（如需要使用到 HTTPS）
@@ -52,16 +52,16 @@ composer create-project hyperf/swow-skeleton
 ```shell
 docker run --name hyperf \
 -v /workspace/skeleton:/data/project \
+-w /data/project \
 -p 9501:9501 -it \
 --privileged -u root \
 --entrypoint /bin/sh \
-hyperf/hyperf:8.0-alpine-v3.15-swoole
+hyperf/hyperf:8.1-alpine-v3.18-swoole
 ```
 
 - 创建项目
 
 ```shell
-cd /data/project
 composer create-project hyperf/hyperf-skeleton
 ```
 

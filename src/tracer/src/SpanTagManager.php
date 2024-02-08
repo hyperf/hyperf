@@ -19,6 +19,10 @@ class SpanTagManager
             'http.method' => 'http.method',
             'http.status_code' => 'http.status_code',
         ],
+        'grpc' => [
+            'request.header' => 'grpc.request.header',
+            'response.header' => 'grpc.response.header',
+        ],
         'redis' => [
             'arguments' => 'redis.arguments',
             'result' => 'redis.result',
@@ -40,6 +44,7 @@ class SpanTagManager
         ],
         'request' => [
             'path' => 'request.path',
+            'uri' => 'request.uri',
             'method' => 'request.method',
             'header' => 'request.header',
         ],

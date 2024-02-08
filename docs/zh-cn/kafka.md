@@ -2,9 +2,7 @@
 
 `Kafka` 是由 `Apache 软件基金会` 开发的一个开源流处理平台，由 `Scala` 和 `Java` 编写。该项目的目标是为处理实时数据提供一个统一、高吞吐、低延迟的平台。其持久化层本质上是一个 "按照分布式事务日志架构的大规模发布/订阅消息队列"
 
-[longlang/phpkafka](https://github.com/longyan/phpkafka) 组件由 [龙之言](http://longlang.org/) 提供，支持 `PHP-FPM` 和 `Swoole`。感谢 `Swoole 团队` 和 `禅道团队` 对社区做出的贡献。
-
-> 本组件为 Beta 版本，谨慎使用
+[longlang/phpkafka](https://github.com/swoole/phpkafka) 组件由 [龙之言](http://longlang.org/) 提供，支持 `PHP-FPM` 和 `Swoole`。感谢 `Swoole 团队` 和 `禅道团队` 对社区做出的贡献。
 
 ## 安装
 
@@ -53,8 +51,6 @@ composer require hyperf/kafka
 | partition_assignment_strategy | string     | KafkaStrategy::RANGE_ASSIGNOR | 消费者分区分配策略, 可选：范围分配(`KafkaStrategy::RANGE_ASSIGNOR`) 轮询分配(`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`)) |
 | sasl                          | array      | []                            | SASL 身份认证信息。为空则不发送身份认证信息 phpkafka 版本需 >= 1.2                                                    |
 | ssl                           | array      | []                            | SSL 链接相关信息, 为空则不使用 SSL phpkafka 版本需 >= 1.2                                                               |
-| pool                          | object     | []                            | 连接池配置                                                                                                           |
-
 
 
 ```php
@@ -94,14 +90,6 @@ return [
         'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
         'sasl' => [],
         'ssl' => [],
-        'pool' => [
-            'min_connections' => 1,
-            'max_connections' => 10,
-            'connect_timeout' => 10.0,
-            'wait_timeout' => 3.0,
-            'heartbeat' => -1,
-            'max_idle_time' => 60.0,
-        ],
     ],
 ];
 ```
@@ -174,10 +162,11 @@ class IndexController extends AbstractController
 
 ```
 
+`Hyperf\Kafka\Producer::send()` 方法会等待 ACK，如果您不需要等待 ACK，可以使用 `Hyperf\Kafka\Producer::sendAsync()` 方法来投递消息。
+
 ### 一次性投递多条消息
 
 `Hyperf\Kafka\Producer::sendBatch(array $messages)` 方法来向 `kafka` 批量的投递消息, 下面是在 `Controller` 进行消息投递的一个示例：
-
 
 ```php
 <?php

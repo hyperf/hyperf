@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Collections;
 
 use Hyperf\Collection\Arr;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -19,6 +20,7 @@ use stdClass;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ArrTest extends TestCase
 {
     public function testArrGet()
@@ -242,6 +244,15 @@ class ArrTest extends TestCase
         );
     }
 
+    public function testHasMethod()
+    {
+        $array = ['name' => 'Taylor', 'age' => '', 'city' => null];
+        $this->assertTrue(Arr::has($array, 'name'));
+        $this->assertTrue(Arr::has($array, ['name', 'age']));
+        $this->assertFalse(Arr::has($array, ['name', 'age', 'gender']));
+        $this->assertFalse(Arr::has($array, 1));
+    }
+
     public function testHasAnyMethod()
     {
         $array = ['name' => 'Taylor', 'age' => '', 'city' => null];
@@ -262,5 +273,76 @@ class ArrTest extends TestCase
         $this->assertTrue(Arr::hasAny($array, 'foo.baz'));
         $this->assertFalse(Arr::hasAny($array, 'foo.bax'));
         $this->assertTrue(Arr::hasAny($array, ['foo.bax', 'foo.baz']));
+    }
+
+    public function testIsAssoc()
+    {
+        $this->assertTrue(Arr::isAssoc(['a' => 'a', 0 => 'b']));
+        $this->assertTrue(Arr::isAssoc([1 => 'a', 0 => 'b']));
+        $this->assertTrue(Arr::isAssoc([1 => 'a', 2 => 'b']));
+        $this->assertFalse(Arr::isAssoc([0 => 'a', 1 => 'b']));
+        $this->assertFalse(Arr::isAssoc(['a', 'b']));
+
+        $this->assertFalse(Arr::isAssoc([]));
+        $this->assertFalse(Arr::isAssoc([1, 2, 3]));
+        $this->assertFalse(Arr::isAssoc(['foo', 2, 3]));
+        $this->assertFalse(Arr::isAssoc([0 => 'foo', 'bar']));
+
+        $this->assertTrue(Arr::isAssoc([1 => 'foo', 'bar']));
+        $this->assertTrue(Arr::isAssoc([0 => 'foo', 'bar' => 'baz']));
+        $this->assertTrue(Arr::isAssoc([0 => 'foo', 2 => 'bar']));
+        $this->assertTrue(Arr::isAssoc(['foo' => 'bar', 'baz' => 'qux']));
+    }
+
+    public function testIsList()
+    {
+        $this->assertTrue(Arr::isList([]));
+        $this->assertTrue(Arr::isList([1, 2, 3]));
+        $this->assertTrue(Arr::isList(['foo', 2, 3]));
+        $this->assertTrue(Arr::isList(['foo', 'bar']));
+        $this->assertTrue(Arr::isList([0 => 'foo', 'bar']));
+        $this->assertTrue(Arr::isList([0 => 'foo', 1 => 'bar']));
+
+        $this->assertFalse(Arr::isList([1 => 'foo', 'bar']));
+        $this->assertFalse(Arr::isList([1 => 'foo', 0 => 'bar']));
+        $this->assertFalse(Arr::isList([0 => 'foo', 'bar' => 'baz']));
+        $this->assertFalse(Arr::isList([0 => 'foo', 2 => 'bar']));
+        $this->assertFalse(Arr::isList(['foo' => 'bar', 'baz' => 'qux']));
+    }
+
+    public function testArrayRemove()
+    {
+        $data = [1 => 'a', 2 => 'b', 3 => 'c'];
+        $this->assertSame(['b'], Arr::remove($data, 'a', 'c'));
+
+        $data = [1, 2, 3, 4];
+        $this->assertSame([3, 4], Arr::remove($data, 1, 2));
+
+        $data = [1, 2, 3, 4];
+        $this->assertSame($data, Arr::remove($data, 5));
+
+        $data = [3, 4, 3, 3];
+        $this->assertSame([4], Arr::remove($data, 3));
+
+        $data = [1 => 'a', 2 => 'b', 3 => 'a'];
+        $this->assertSame(['b'], Arr::remove($data, 'a'));
+    }
+
+    public function testArrayRemoveKeepKey()
+    {
+        $data = [1 => 'a', 2 => 'b', 3 => 'c'];
+        $this->assertSame([2 => 'b'], Arr::removeKeepKey($data, 'a', 'c'));
+
+        $data = [1, 2, 3, 4];
+        $this->assertSame([2 => 3, 3 => 4], Arr::removeKeepKey($data, 1, 2));
+
+        $data = [1, 2, 3, 4];
+        $this->assertSame($data, Arr::removeKeepKey($data, 5));
+
+        $data = [3, 4, 3, 3];
+        $this->assertSame([1 => 4], Arr::removeKeepKey($data, 3));
+
+        $data = [1 => 'a', 2 => 'b', 3 => 'a'];
+        $this->assertSame([2 => 'b'], Arr::removeKeepKey($data, 'a'));
     }
 }

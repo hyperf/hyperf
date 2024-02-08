@@ -180,9 +180,26 @@ return [
 ];
 ```
 
-### 配置中間件
+#### 配置協程追蹤開關
 
-配置完驅動之後，採集信息還需要配置一下中間件才能啓用採集功能。
+協程的鏈路追蹤並不在統一配置當中，屬於可選版本的功能。
+
+我們只需要配置 `aspects.php`，加入以下 `Aspect` 即可開啓。
+
+```php
+<?php
+
+return [
+    Hyperf\Tracer\Aspect\CoroutineAspect::class,
+];
+```
+
+### 配置中間件或監聽器
+
+配置完驅動之後，採集信息還需要配置一下中間件或請求週期事件監聽器才能啓用採集功能。
+
+- 添加中間件
+
 打開 `config/autoload/middlewares.php` 文件，在 `http` 節點啓用中間件。
 
 ```php
@@ -194,6 +211,20 @@ return [
     'http' => [
         \Hyperf\Tracer\Middleware\TraceMiddleware::class,
     ],
+];
+```
+
+- 或者添加監聽器
+
+打開 `config/autoload/listeners.php` 文件，添加監聽器。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    \Hyperf\Tracer\Listener\RequestTraceListener::class,
 ];
 ```
 

@@ -13,12 +13,14 @@ namespace HyperfTest\Di\Definition;
 
 use Hyperf\Di\Definition\PriorityDefinition;
 use HyperfTest\Config\Stub\ProviderConfig;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PriorityDefinitionTest extends TestCase
 {
     public function testProviderConfigLoad()

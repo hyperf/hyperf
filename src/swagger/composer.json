@@ -16,13 +16,18 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/command": "~3.0.0",
+        "php": ">=8.1",
+        "hyperf/command": "~3.1.0",
         "zircote/swagger-php": "^4.6"
     },
     "autoload": {
         "psr-4": {
             "Hyperf\\Swagger\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Swagger\\": "tests/"
         }
     },
     "suggest": {
@@ -33,7 +38,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Swagger\\ConfigProvider"

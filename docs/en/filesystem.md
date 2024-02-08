@@ -40,6 +40,13 @@ composer require "league/flysystem-aws-s3-v3:^2.0"
 composer require hyperf/guzzle
 ```
 
+`Flysystem v3.0` version
+
+```shell
+composer require "league/flysystem-aws-s3-v3:^3.0"
+composer require hyperf/guzzle
+```
+
 - Qiniu Adapter
 
 `Flysystem v1.0` version
@@ -324,17 +331,17 @@ return [
         'cos' => [
             'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,
             'region' => env('COS_REGION'),
-            // overtrue/flysystem-cos ^2.0 配置如下
+            // overtrue/flysystem-cos ^2.0 The configuration is as follows
             'credentials' => [
                 'appId' => env('COS_APPID'),
                 'secretId' => env('COS_SECRET_ID'),
                 'secretKey' => env('COS_SECRET_KEY'),
             ],
-            // overtrue/flysystem-cos ^3.0 配置如下
+            // overtrue/flysystem-cos ^3.0 The configuration is as follows
             'app_id' => env('COS_APPID'),
             'secret_id' => env('COS_SECRET_ID'),
             'secret_key' => env('COS_SECRET_KEY'),
-            // 可选，如果 bucket 为私有访问请打开此项
+            // Optional, please turn this on if the bucket has private access
             // 'signed_url' => false,
             'bucket' => env('COS_BUCKET'),
             'read_from_cdn' => false,

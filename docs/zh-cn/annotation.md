@@ -86,24 +86,32 @@ class Foo
 
 ### 创建一个注解类
 
-在任意地方创建注解类，如下代码示例：
-
 ```php
 <?php
 namespace App\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
-class Bar extends AbstractAnnotation
-{
-    // some code
-}
-
-#[Attribute(Attribute::TARGET_CLASS)]
 class Foo extends AbstractAnnotation
 {
-    // some code
+    public function __construct(public array $bar, public int $baz = 0)
+    {
+    }
+}
+```
+
+使用注解类：
+
+```php
+<?php
+use App\Annotation\Foo;
+
+#[Foo(bar: [1, 2], baz: 3)]
+class IndexController extends AbstractController
+{
+    // 利用注解数据
 }
 ```
 
@@ -111,7 +119,7 @@ class Foo extends AbstractAnnotation
 
 ### 自定义注解收集器
 
-注解的收集时具体的执行流程也是在注解类内实现的，相关的方法由 `Hyperf\Di\Annotation\AnnotationInterface` 约束着，该接口类要求了下面 3 个方法的实现，您可以根据自己的需求实现对应的逻辑：
+收集注解的具体执行流程也是在注解类内实现，相关的方法由 `Hyperf\Di\Annotation\AnnotationInterface` 约束着，该接口类要求了下面 3 个方法的实现，您可以根据自己的需求实现对应的逻辑：
 
 - `public function collectClass(string $className): void;` 当注解定义在类时被扫描时会触发该方法
 - `public function collectMethod(string $className, ?string $target): void;` 当注解定义在类方法时被扫描时会触发该方法
@@ -150,7 +158,9 @@ return [
 
 为了避免命名冲突，约定使用 `class_map` 做为文件夹名，后跟要替换的命名空间的文件夹及文件。
 
-如： `class_map/Hyperf/Utils/Coroutine.php`
+如： `class_map/Hyperf/Coroutine/Coroutine.php`
+
+[Coroutine.php](https://github.com/hyperf/biz-skeleton/blob/master/app/Kernel/Context/Coroutine.php)
 
 ```php
 <?php
@@ -160,33 +170,29 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace App\Kernel\Context;
 
+use App\Kernel\Log\AppendRequestIdProcessor;
 use Hyperf\Context\Context;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
-use Hyperf\Utils;
+use Hyperf\Engine\Coroutine as Co;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Coroutine as SwooleCoroutine;
+use Psr\Log\LoggerInterface;
+use Throwable;
 
 class Coroutine
 {
-    protected StdoutLoggerInterface $logger;
-    
-    protected ?FormatterInterface $formatter = null;
+    protected LoggerInterface $logger;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
-        if ($container->has(FormatterInterface::class)) {
-            $this->formatter = $container->get(FormatterInterface::class);
-        }
     }
 
     /**
@@ -195,29 +201,34 @@ class Coroutine
      */
     public function create(callable $callable): int
     {
-        $id = Utils\Coroutine::id();
-        $result = SwooleCoroutine::create(function () use ($callable, $id) {
+        $id = Co::id();
+        $coroutine = Co::create(function () use ($callable, $id) {
             try {
-                // 按需复制，禁止复制 Socket，不然会导致 Socket 跨协程调用从而报错。
+                // Shouldn't copy all contexts to avoid socket already been bound to another coroutine.
                 Context::copy($id, [
+                    AppendRequestIdProcessor::REQUEST_ID,
                     ServerRequestInterface::class,
                 ]);
-                call($callable);
+                $callable();
             } catch (Throwable $throwable) {
-                if ($this->formatter) {
-                    $this->logger->warning($this->formatter->format($throwable));
-                } else {
-                    $this->logger->warning((string) $throwable);
-                }
+                $this->logger->warning((string) $throwable);
             }
         });
-        return is_int($result) ? $result : -1;
+
+        try {
+            return $coroutine->getId();
+        } catch (Throwable $throwable) {
+            $this->logger->warning((string) $throwable);
+            return -1;
+        }
     }
 }
 
 ```
 
 然后，我们实现一个跟 `Hyperf\Coroutine\Coroutine` 一模一样的对象。其中 `create()` 方法替换成我们上述实现的方法。
+
+[Coroutine.php](https://github.com/hyperf/biz-skeleton/blob/master/app/Kernel/ClassMap/Coroutine.php)
 
 `class_map/Hyperf/Coroutine/Coroutine.php`
 
@@ -229,57 +240,56 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Coroutine;
 
-use App\Kernel\Context\Coroutine as Co;
-use Swoole\Coroutine as SwooleCoroutine;
-use Hyperf\Context\ApplicationContext;
+use App\Kernel\Context\Coroutine as Go;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Coroutine as Co;
+use Hyperf\Engine\Exception\CoroutineDestroyedException;
+use Hyperf\Engine\Exception\RunningInNonCoroutineException;
+use Throwable;
 
-/**
- * @method static void defer(callable $callable)
- */
 class Coroutine
 {
-    public static function __callStatic($name, $arguments)
-    {
-        if (! method_exists(SwooleCoroutine::class, $name)) {
-            throw new \BadMethodCallException(sprintf('Call to undefined method %s.', $name));
-        }
-        return SwooleCoroutine::$name(...$arguments);
-    }
-
     /**
      * Returns the current coroutine ID.
      * Returns -1 when running in non-coroutine context.
      */
     public static function id(): int
     {
-        return SwooleCoroutine::getCid();
+        return Co::id();
+    }
+
+    public static function defer(callable $callable): void
+    {
+        Co::defer(static function () use ($callable) {
+            try {
+                $callable();
+            } catch (Throwable $exception) {
+                di()->get(StdoutLoggerInterface::class)->error((string) $exception);
+            }
+        });
+    }
+
+    public static function sleep(float $seconds): void
+    {
+        usleep(intval($seconds * 1000 * 1000));
     }
 
     /**
      * Returns the parent coroutine ID.
-     * Returns -1 when running in the top level coroutine.
-     * Returns null when running in non-coroutine context.
-     *
-     * @see https://github.com/swoole/swoole-src/pull/2669/files#diff-3bdf726b0ac53be7e274b60d59e6ec80R940
+     * Returns 0 when running in the top level coroutine.
+     * @throws RunningInNonCoroutineException when running in non-coroutine context
+     * @throws CoroutineDestroyedException when the coroutine has been destroyed
      */
-    public static function parentId(?int $coroutineId = null): ?int
+    public static function parentId(?int $coroutineId = null): int
     {
-        if ($coroutineId) {
-            $cid = SwooleCoroutine::getPcid($coroutineId);
-        } else {
-            $cid = SwooleCoroutine::getPcid();
-        }
-        if ($cid === false) {
-            return null;
-        }
-
-        return $cid;
+        return Co::pid($coroutineId);
     }
 
     /**
@@ -288,12 +298,22 @@ class Coroutine
      */
     public static function create(callable $callable): int
     {
-        return ApplicationContext::getContainer()->get(Co::class)->create($callable);
+        return di()->get(Go::class)->create($callable);
     }
 
     public static function inCoroutine(): bool
     {
-        return Coroutine::id() > 0;
+        return Co::id() > 0;
+    }
+
+    public static function stats(): array
+    {
+        return Co::stats();
+    }
+
+    public static function exists(int $id): bool
+    {
+        return Co::exists($id);
     }
 }
 
@@ -318,7 +338,7 @@ return [
         ],
         'class_map' => [
             // 需要映射的类名 => 类所在的文件地址
-            Coroutine::class => BASE_PATH . '/class_map/Hyperf/Utils/Coroutine.php',
+            Coroutine::class => BASE_PATH . '/class_map/Hyperf/Coroutine/Coroutine.php',
         ],
     ],
 ];

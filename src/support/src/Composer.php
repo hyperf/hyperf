@@ -37,13 +37,14 @@ class Composer
     public static function getLockContent(): Collection
     {
         if (! self::$content) {
-            $path = self::discoverLockFile();
-            if (! $path) {
+            if (! $path = self::discoverLockFile()) {
                 throw new RuntimeException('composer.lock not found.');
             }
+
             self::$content = collect(json_decode(file_get_contents($path), true));
             $packages = self::$content->offsetGet('packages') ?? [];
             $packagesDev = self::$content->offsetGet('packages-dev') ?? [];
+
             foreach (array_merge($packages, $packagesDev) as $package) {
                 $packageName = '';
                 foreach ($package ?? [] as $key => $value) {
@@ -51,42 +52,40 @@ class Composer
                         $packageName = $value;
                         continue;
                     }
-                    switch ($key) {
-                        case 'extra':
-                            $packageName && self::$extra[$packageName] = $value;
-                            break;
-                        case 'scripts':
-                            $packageName && self::$scripts[$packageName] = $value;
-                            break;
-                        case 'version':
-                            $packageName && self::$versions[$packageName] = $value;
-                            break;
-                    }
+
+                    $packageName && match ($key) {
+                        'extra' => self::$extra[$packageName] = $value,
+                        'scripts' => self::$scripts[$packageName] = $value,
+                        'version' => self::$versions[$packageName] = $value,
+                        default => null,
+                    };
                 }
             }
         }
+
         return self::$content;
     }
 
     public static function getJsonContent(): Collection
     {
-        if (! self::$json) {
-            $path = BASE_PATH . '/composer.json';
-            if (! is_readable($path)) {
-                throw new RuntimeException('composer.json is not readable.');
-            }
-            self::$json = collect(json_decode(file_get_contents($path), true));
+        if (self::$json) {
+            return self::$json;
         }
-        return self::$json;
+
+        if (! is_readable($path = BASE_PATH . '/composer.json')) {
+            throw new RuntimeException('composer.json is not readable.');
+        }
+
+        return self::$json = collect(json_decode(file_get_contents($path), true));
     }
 
     public static function discoverLockFile(): string
     {
-        $path = '';
-        if (is_readable(BASE_PATH . '/composer.lock')) {
-            $path = BASE_PATH . '/composer.lock';
+        if (is_readable($path = BASE_PATH . '/composer.lock')) {
+            return $path;
         }
-        return $path;
+
+        return '';
     }
 
     public static function getMergedExtra(string $key = null)
@@ -94,10 +93,13 @@ class Composer
         if (! self::$extra) {
             self::getLockContent();
         }
+
         if ($key === null) {
             return self::$extra;
         }
+
         $extra = [];
+
         foreach (self::$extra as $project => $config) {
             foreach ($config ?? [] as $configKey => $item) {
                 if ($key === $configKey && $item) {
@@ -111,36 +113,59 @@ class Composer
                 }
             }
         }
+
         return $extra;
     }
 
     public static function getLoader(): ClassLoader
     {
-        if (! self::$classLoader) {
-            self::$classLoader = self::findLoader();
-        }
-        return self::$classLoader;
+        return self::$classLoader ??= self::findLoader();
     }
 
     public static function setLoader(ClassLoader $classLoader): ClassLoader
     {
-        self::$classLoader = $classLoader;
-        return $classLoader;
+        return self::$classLoader = $classLoader;
     }
 
     public static function getScripts(): array
     {
+        if (! self::$scripts) {
+            self::getLockContent();
+        }
+
         return self::$scripts;
     }
 
     public static function getVersions(): array
     {
+        if (! self::$versions) {
+            self::getLockContent();
+        }
+
         return self::$versions;
+    }
+
+    public static function hasPackage(string $packageName): bool
+    {
+        if (! self::$json) {
+            self::getJsonContent();
+        }
+
+        if (self::$json['require'][$packageName] ?? self::$json['require-dev'][$packageName] ?? self::$json['replace'][$packageName] ?? '') {
+            return true;
+        }
+
+        if (! self::$versions) {
+            self::getLockContent();
+        }
+
+        return isset(self::$versions[$packageName]);
     }
 
     private static function findLoader(): ClassLoader
     {
         $loaders = spl_autoload_functions();
+
         foreach ($loaders as $loader) {
             if (is_array($loader) && $loader[0] instanceof ClassLoader) {
                 return $loader[0];

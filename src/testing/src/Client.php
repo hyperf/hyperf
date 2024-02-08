@@ -197,14 +197,6 @@ class Client extends Server
             ->withUploadedFiles($this->normalizeFiles($multipart));
     }
 
-    /**
-     * @deprecated It will be removed in v3.0
-     */
-    protected function init(string $method, string $path, array $options = []): ServerRequestInterface
-    {
-        return $this->initRequest($method, $path, $options);
-    }
-
     protected function execute(ServerRequestInterface $psr7Request): ResponseInterface
     {
         $this->persistToContext($psr7Request, new Psr7Response());
@@ -217,6 +209,8 @@ class Client extends Server
             $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
             $middlewares = array_merge($middlewares, $registeredMiddlewares);
         }
+
+        $middlewares = MiddlewareManager::sortMiddlewares($middlewares);
 
         try {
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);

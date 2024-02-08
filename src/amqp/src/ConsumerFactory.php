@@ -16,7 +16,7 @@ use Psr\Container\ContainerInterface;
 
 class ConsumerFactory
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): Consumer
     {
         return new Consumer(
             $container,

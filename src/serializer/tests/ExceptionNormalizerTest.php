@@ -15,12 +15,14 @@ use Hyperf\Serializer\ExceptionNormalizer;
 use HyperfTest\Serializer\Stub\FooException;
 use HyperfTest\Serializer\Stub\SerializableException;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ExceptionNormalizerTest extends TestCase
 {
     public function testInvalidArgumentException()

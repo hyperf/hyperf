@@ -14,7 +14,7 @@ namespace Hyperf\Validation;
 use Closure;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface;
-use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Psr\Container\ContainerInterface;
@@ -128,7 +128,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
         $this->extensions[$rule] = $extension;
 
         if ($message) {
-            $this->fallbackMessages[Str::snake($rule)] = $message;
+            $this->fallbackMessages[StrCache::snake($rule)] = $message;
         }
     }
 
@@ -140,7 +140,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
         $this->implicitExtensions[$rule] = $extension;
 
         if ($message) {
-            $this->fallbackMessages[Str::snake($rule)] = $message;
+            $this->fallbackMessages[StrCache::snake($rule)] = $message;
         }
     }
 
@@ -152,7 +152,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
         $this->dependentExtensions[$rule] = $extension;
 
         if ($message) {
-            $this->fallbackMessages[Str::snake($rule)] = $message;
+            $this->fallbackMessages[StrCache::snake($rule)] = $message;
         }
     }
 

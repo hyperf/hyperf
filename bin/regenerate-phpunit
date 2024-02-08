@@ -31,8 +31,9 @@ class RunInCoroutineVisitor extends NodeVisitorAbstract
 
     public function afterTraverse(array $nodes)
     {
-        /** @var Node\Stmt\Expression $main */
         $main = array_pop($nodes);
+        /** @var Node\Stmt\Expression $main */
+        $main = $main->expr;
         $main = $main->expr;
 
         $require = array_pop($nodes);
@@ -46,8 +47,6 @@ class RunInCoroutineVisitor extends NodeVisitorAbstract
         ));
 
         $nodes[] = $this->getCoroutineSetter()[0];
-
-        $main->args[] = new Node\Arg(new Node\Expr\ConstFetch(new Node\Name('false')));
 
         $nodes[] = new Node\Stmt\Expression(
             new Node\Expr\FuncCall(
@@ -75,28 +74,31 @@ class RunInCoroutineVisitor extends NodeVisitorAbstract
 
     protected function getPrependSetter(): array
     {
-        return $this->parser->parse("<?php
-if (!isset(getopt('', ['prepend:'])['prepend'])) {
-    (function () {
-        \$prepend = null;
-        foreach (\$_SERVER['argv'] as \$index => \$argv) {
-            // --prepend /path/to/file
-            if (\$argv === '--prepend') {
-                \$prepend = \$_SERVER['argv'][\$index + 1] ?? null;
-                break;
+        return $this->parser->parse('<?php
+(function () {
+    $prepend = null;
+    foreach ($_SERVER["argv"] as $index => $argv) {
+        // --prepend /path/to/file
+        if ($argv === "--prepend") {
+            unset($_SERVER["argv"][$index]);
+            if (isset($_SERVER["argv"][$index + 1])) {
+                $prepend = $_SERVER["argv"][$index + 1];
+                unset($_SERVER["argv"][$index + 1]);
             }
-            // --prepend=/path/to/file
-            if (strpos(\$argv, '--prepend=') === 0) {
-                \$prepend = substr(\$argv, 10);
-                break;
-            }
+            break;
         }
-        if (\$prepend !== null && file_exists(\$prepend)) {
-            require \$prepend;
+        // --prepend=/path/to/file
+        if (strpos($argv, "--prepend=") === 0) {
+            $prepend = substr($argv, 10);
+            unset($_SERVER["argv"][$index]);
+            break;
         }
-    })();
-}
-");
+    }
+    if ($prepend !== null && file_exists($prepend)) {
+        require $prepend;
+    }
+})();
+');
     }
 
     protected function getCoroutineSetter(): array

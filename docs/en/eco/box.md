@@ -47,7 +47,7 @@ curl -o box.exe https://github.com/hyperf/box/releases/download/v0.5.5/box_x64_w
 
 Box needs a Github Access Token to request github api, to retrieve the versions of the package.
 
-1. [Create Github Access Token](https://github.com/settings/tokens/new)， the `workflow` scope have to be selected.
+1. [Create Github Access Token](https://github.com/settings/tokens/new), the `workflow` scope have to be selected.
 2. Run `box config set github.access-token <Your Token>` to init the token.
 3. Have fun ~
 

@@ -73,6 +73,7 @@
         '/zh-tw/.*/summary.md': '/zh-tw/summary.md',
         '/zh-hk/.*/summary.md': '/zh-hk/summary.md',
         '/en/.*/summary.md': '/en/summary.md',
+        '/(.*)/utils': '/$1/support',
       },
       nameLink: {
         '/zh-cn/': '#/zh-cn/',
@@ -102,6 +103,27 @@
               if (locale === fullMatches[i] && vm.route.path === '/') {
                 window.location.hash = '/' + fullMatches[i] + '/';
               }
+            }
+
+            let hash = window.location.hash.split(/\/(en|zh-cn|zh-tw|zh-hk)\//);
+            let lang = hash[1] ?? '';
+            let path = hash[2] ?? '';
+
+            if (lang) {
+                // Set html "lang" attribute based on URL
+                document.documentElement.setAttribute('lang', lang);
+
+                const versions = document.querySelectorAll('nav > ul > li:nth-child(2) a');
+                versions.forEach(function(a) {
+                  a.href = a.href + '#/' + lang + '/';
+                });
+            }
+
+            if (path) {
+              const translations = document.querySelectorAll('nav > ul > li:nth-child(1) a');
+              translations.forEach(function(a) {
+                a.href = a.href + path;
+              });
             }
           })
         }

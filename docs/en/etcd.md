@@ -1,12 +1,12 @@
 # ETCD
 
-## 安装
+## Install
 
 ```
 composer require hyperf/etcd
 ```
 
-## 添加配置文件 `etcd.php`
+## Add configuration file `etcd.php`
 
 ```php
 <?php
@@ -19,7 +19,7 @@ return [
 ];
 ```
 
-## 使用
+## Usage
 
 ```php
 <?php

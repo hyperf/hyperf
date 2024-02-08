@@ -16,11 +16,16 @@ use function Hyperf\Support\env;
 return [
     'default' => env('TRACER_DRIVER', 'zipkin'),
     'enable' => [
-        'guzzle' => env('TRACER_ENABLE_GUZZLE', false),
-        'redis' => env('TRACER_ENABLE_REDIS', false),
+        'coroutine' => env('TRACER_ENABLE_COROUTINE', false),
         'db' => env('TRACER_ENABLE_DB', false),
-        'method' => env('TRACER_ENABLE_METHOD', false),
+        'elasticserach' => env('TRACER_ENABLE_ELASTICSERACH', false),
         'exception' => env('TRACER_ENABLE_EXCEPTION', false),
+        'grpc' => env('TRACER_ENABLE_GRPC', false),
+        'guzzle' => env('TRACER_ENABLE_GUZZLE', false),
+        'method' => env('TRACER_ENABLE_METHOD', false),
+        'redis' => env('TRACER_ENABLE_REDIS', false),
+        'rpc' => env('TRACER_ENABLE_RPC', false),
+        'ignore_exceptions' => [],
     ],
     'tracer' => [
         'zipkin' => [
@@ -32,9 +37,34 @@ return [
                 'ipv6' => null,
                 'port' => 9501,
             ],
-            'options' => [
-                'endpoint_url' => env('ZIPKIN_ENDPOINT_URL', 'http://localhost:9411/api/v2/spans'),
-                'timeout' => env('ZIPKIN_TIMEOUT', 1),
+            'reporter' => env('ZIPKIN_REPORTER', 'http'), // kafka, http
+            'reporters' => [
+                // options for http reporter
+                'http' => [
+                    'class' => \Zipkin\Reporters\Http::class,
+                    'constructor' => [
+                        'options' => [
+                            'endpoint_url' => env('ZIPKIN_ENDPOINT_URL', 'http://localhost:9411/api/v2/spans'),
+                            'timeout' => env('ZIPKIN_TIMEOUT', 1),
+                        ],
+                    ],
+                ],
+                // options for kafka reporter
+                'kafka' => [
+                    'class' => \Hyperf\Tracer\Adapter\Reporter\Kafka::class,
+                    'constructor' => [
+                        'options' => [
+                            'topic' => env('ZIPKIN_KAFKA_TOPIC', 'zipkin'),
+                            'bootstrap_servers' => env('ZIPKIN_KAFKA_BOOTSTRAP_SERVERS', '127.0.0.1:9092'),
+                            'acks' => (int) env('ZIPKIN_KAFKA_ACKS', -1),
+                            'connect_timeout' => (int) env('ZIPKIN_KAFKA_CONNECT_TIMEOUT', 1),
+                            'send_timeout' => (int) env('ZIPKIN_KAFKA_SEND_TIMEOUT', 1),
+                        ],
+                    ],
+                ],
+                'noop' => [
+                    'class' => \Zipkin\Reporters\Noop::class,
+                ],
             ],
             'sampler' => BinarySampler::createAsAlwaysSample(),
         ],
@@ -82,6 +112,7 @@ return [
         ],
         'request' => [
             'path' => 'request.path',
+            'uri' => 'request.uri',
             'method' => 'request.method',
             'header' => 'request.header',
         ],
@@ -90,6 +121,10 @@ return [
         ],
         'response' => [
             'status_code' => 'response.status_code',
+        ],
+        'rpc' => [
+            'path' => 'rpc.path',
+            'status' => 'rpc.status',
         ],
     ],
 ];

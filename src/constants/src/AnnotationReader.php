@@ -15,8 +15,6 @@ use BackedEnum;
 use Hyperf\Stringable\Str;
 use ReflectionClassConstant;
 
-use const PHP_VERSION_ID;
-
 class AnnotationReader
 {
     /**
@@ -27,12 +25,10 @@ class AnnotationReader
         $result = [];
         foreach ($classConstants as $classConstant) {
             $code = $classConstant->getValue();
-            if (PHP_VERSION_ID >= 80100) {
-                /* @phpstan-ignore-next-line */
-                if ($classConstant->isEnumCase()) {
-                    $code = $code instanceof BackedEnum ? $code->value : $code->name;
-                }
+            if ($classConstant->isEnumCase()) {
+                $code = $code instanceof BackedEnum ? $code->value : $code->name;
             }
+
             $docComment = $classConstant->getDocComment();
             // Not support float and bool, because it will be convert to int.
             if ($docComment && (is_int($code) || is_string($code))) {

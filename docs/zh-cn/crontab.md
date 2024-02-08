@@ -58,9 +58,25 @@ return [
             '--message-limit' => 1,
             // 记住要加上，否则会导致主进程退出
             '--disable-event-dispatcher' => true,
-        ]),
+        ])->setEnvironments(['develop', 'production']),
+        // Closure 类型定时任务 (仅在 Coroutine style server 中支持)
+        (new Crontab())->setType('closure')->setName('Closure')->setRule('* * * * *')->setCallback(function () {
+            var_dump(date('Y-m-d H:i:s'));
+        })->setEnvironments('production'),
     ],
 ];
+```
+
+3.1 之后新增了新的配置方式，你可以通过 `config/crontabs.php` 来定义定时任务，如配置文件不存在可自行创建：
+
+```php
+<?php
+// config/crontabs.php
+use Hyperf\Crontab\Schedule;
+
+Schedule::command('foo:bar')->setName('foo-bar')->setRule('* * * * *');
+Schedule::call([Foo::class, 'bar'])->setName('foo-bar')->setRule('* * * * *');
+Schedule::call(fn() => (new Foo)->bar())->setName('foo-bar')->setRule('* * * * *');
 ```
 
 ### 通过注解定义
@@ -198,6 +214,10 @@ class EchoCrontab
 }
 
 ```
+
+#### environments
+
+设置定时任务的环境，如果不设置，则会全部环境都生效。支持传入 array 和 string。
 
 ### 调度分发策略
 

@@ -492,11 +492,14 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get all items except for those with the specified keys.
      *
-     * @param array<array-key, TKey>|static<array-key, TKey> $keys
+     * @param null|array<array-key, TKey>|static<array-key, TKey> $keys
      * @return static<TKey, TValue>
      */
     public function except($keys): self
     {
+        if (is_null($keys)) {
+            return new static($this->items);
+        }
         if ($keys instanceof self) {
             $keys = $keys->all();
         } elseif (! is_array($keys)) {
@@ -685,12 +688,12 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Remove an item from the collection by key.
      *
-     * @param array<array-key, TKey>|TKey $keys
+     * @param \Hyperf\Contract\Arrayable<array-key, TValue>|iterable<array-key, TKey>|TKey $keys
      * @return $this
      */
     public function forget($keys): self
     {
-        foreach ((array) $keys as $key) {
+        foreach ($this->getArrayableItems($keys) as $key) {
             $this->offsetUnset($key);
         }
         return $this;
@@ -1233,6 +1236,28 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         return $this->filter(function ($item) use ($callback) {
             return $item != $callback;
         });
+    }
+
+    /**
+     * Replace the collection items with the given items.
+     *
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
+     * @return static
+     */
+    public function replace($items)
+    {
+        return new static(array_replace($this->items, $this->getArrayableItems($items)));
+    }
+
+    /**
+     * Recursively replace the collection items with the given items.
+     *
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
+     * @return static
+     */
+    public function replaceRecursive($items)
+    {
+        return new static(array_replace_recursive($this->items, $this->getArrayableItems($items)));
     }
 
     /**
@@ -1810,24 +1835,14 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      */
     protected function getArrayableItems($items): array
     {
-        if (is_array($items)) {
-            return $items;
-        }
-        if ($items instanceof self) {
-            return $items->all();
-        }
-        if ($items instanceof Arrayable) {
-            return $items->toArray();
-        }
-        if ($items instanceof Jsonable) {
-            return json_decode($items->__toString(), true);
-        }
-        if ($items instanceof JsonSerializable) {
-            return $items->jsonSerialize();
-        }
-        if ($items instanceof Traversable) {
-            return iterator_to_array($items);
-        }
-        return (array) $items;
+        return match (true) {
+            is_array($items) => $items,
+            $items instanceof self => $items->all(),
+            $items instanceof Arrayable => $items->toArray(),
+            $items instanceof Jsonable => json_decode($items->__toString(), true),
+            $items instanceof JsonSerializable => $items->jsonSerialize(),
+            $items instanceof Traversable => iterator_to_array($items),
+            default => (array) $items,
+        };
     }
 }

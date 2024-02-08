@@ -18,12 +18,14 @@ use Hyperf\Database\Model\Register;
 use Hyperf\Database\Model\Relations\HasMany;
 use Hyperf\Database\Model\Relations\HasOne;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelDynamicRelationsTest extends TestCase
 {
     public function setUp(): void
