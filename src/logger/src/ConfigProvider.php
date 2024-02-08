@@ -11,11 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\Logger;
 
+use Psr\Log\LoggerInterface;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
+            'dependencies' => [
+                LoggerInterface::class => fn ($container) => $container->get(LoggerFactory::class)->make(),
+            ],
             'publish' => [
                 [
                     'id' => 'config',

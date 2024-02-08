@@ -119,7 +119,7 @@ class TcpServer extends Server
     {
         $parsed = $this->packer->unpack($data);
 
-        $request = $this->messageBuilder->buildRequest($parsed);
+        $request = $this->messageBuilder->buildRequest($parsed, $this->serverConfig);
 
         return $request->withAttribute('fd', $fd)->withAttribute('request_id', $parsed['id'] ?? null);
     }

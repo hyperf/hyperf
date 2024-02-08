@@ -36,6 +36,7 @@ class DataFormatter implements DataFormatterInterface, DataFetcherInterface
             Constant::ID => $request->getId(),
             Constant::PATH => $request->getPath(),
             Constant::DATA => $request->getParams(),
+            Constant::EXTRA => $request->getExtra(),
             Constant::CONTEXT => $this->context->getData(),
         ];
     }
@@ -72,10 +73,10 @@ class DataFormatter implements DataFormatterInterface, DataFetcherInterface
 
     public function fetch(array $data): mixed
     {
-        if (array_key_exists(Constant::DATA, $data)) {
+        if (array_key_exists(Constant::RESULT, $data)) {
             $this->context->setData($data[Constant::CONTEXT] ?? []);
 
-            return $data[Constant::DATA];
+            return $data[Constant::RESULT];
         }
 
         if (array_key_exists(Constant::ERROR, $data)) {

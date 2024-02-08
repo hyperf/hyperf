@@ -495,9 +495,9 @@ $exitCode = $application->run($input, $output);
 $exitCode = $application->find($command)->run($input, $output);
 ```
 
-## 在闭包中运行命令
+## 闭包命令
 
-您可以在 `config\console.php` 中快速定义命令
+您可以在 `config\console.php` 中快速定义命令。
 
 ```php
 use Hyperf\Command\Console;
@@ -505,4 +505,18 @@ use Hyperf\Command\Console;
 Console::command('hello', function () {
     $this->comment('Hello, Hyperf!');
 })->describe('This is a demo closure command.');
+```
+
+为闭包命令定义计划任务。
+
+```php
+use Hyperf\Command\Console;
+
+Console::command('foo', function () {
+    $this->comment('Hello, Foo!');
+})->describe('This is a demo closure command.')->cron('* * * * *');
+
+Console::command('bar', function () {
+    $this->comment('Hello, Bar!');
+})->describe('This is another demo closure command.')->cron('* * * * *', callback: fn($cron) => $cron->setSingleton(true));
 ```

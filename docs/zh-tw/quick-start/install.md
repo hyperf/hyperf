@@ -62,7 +62,6 @@ hyperf/hyperf:8.1-alpine-v3.18-swoole
 - 建立專案
 
 ```shell
-cd /data/project
 composer create-project hyperf/hyperf-skeleton
 ```
 

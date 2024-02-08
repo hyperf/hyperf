@@ -31,6 +31,9 @@ class CrontabManager
         return true;
     }
 
+    /**
+     * @return Crontab[]
+     */
     public function parse(): array
     {
         $result = [];
@@ -51,6 +54,9 @@ class CrontabManager
         return $result;
     }
 
+    /**
+     * @return array<string, Crontab>
+     */
     public function getCrontabs(): array
     {
         return $this->crontabs;

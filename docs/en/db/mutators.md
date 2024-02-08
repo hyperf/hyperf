@@ -75,7 +75,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * 设置用户的姓名.
+     * Set the user's name.
      *
      * @param  string  $value
      * @return void

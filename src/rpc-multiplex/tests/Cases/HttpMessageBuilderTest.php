@@ -12,11 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\RpcMultiplex\Cases;
 
 use Hyperf\Rpc\Context;
+use Hyperf\RpcMultiplex\Contract\HostReaderInterface;
+use Hyperf\RpcMultiplex\HttpMessage\HostReader\NullHostReader;
 use Hyperf\RpcMultiplex\HttpMessageBuilder;
 use Hyperf\RpcMultiplex\Packer\JsonPacker;
 use Hyperf\Support\Reflection\ClassInvoker;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Psr\Http\Message\UriInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 /**
  * @internal
@@ -27,7 +30,7 @@ class HttpMessageBuilderTest extends AbstractTestCase
 {
     public function testBuildUri()
     {
-        $invoker = new ClassInvoker(new HttpMessageBuilder(new JsonPacker(), new Context()));
+        $invoker = new ClassInvoker(new HttpMessageBuilder(new JsonPacker(), new Context(), new NullHostReader()));
         /** @var UriInterface $uri */
         $uri = $invoker->buildUri('/', $host = uniqid(), 8806);
         $this->assertSame('http', $uri->getScheme());
@@ -36,9 +39,29 @@ class HttpMessageBuilderTest extends AbstractTestCase
         $this->assertSame(8806, $uri->getPort());
     }
 
+    public function testBuildRequestWithHostReader()
+    {
+        $invoker = new ClassInvoker(new HttpMessageBuilder(new JsonPacker(), new Context(), new class() implements HostReaderInterface {
+            public function read(): string
+            {
+                return 'test_case';
+            }
+        }));
+        /** @var ServerRequestPlusInterface $request */
+        $request = $invoker->buildRequest(['path' => '/hi', 'extra' => ['from' => 'test']], ['port' => 9502]);
+        $uri = $request->getUri();
+
+        $this->assertSame('http', $uri->getScheme());
+        $this->assertSame('/hi', $uri->getPath());
+        $this->assertSame('test_case', $uri->getHost());
+        $this->assertSame(9502, $uri->getPort());
+
+        $this->assertSame('test', $request->getHeaderLine('from'));
+    }
+
     public function testStoreContext()
     {
-        $builder = new HttpMessageBuilder(new JsonPacker(), $context = new Context());
+        $builder = new HttpMessageBuilder(new JsonPacker(), $context = new Context(), new NullHostReader());
 
         $request = $builder->buildRequest([
             'path' => '/',

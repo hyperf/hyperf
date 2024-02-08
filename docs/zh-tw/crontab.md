@@ -67,6 +67,18 @@ return [
 ];
 ```
 
+3.1 之後新增了新的配置方式，你可以透過 `config/crontabs.php` 來定義定時任務，如配置檔案不存在可自行建立：
+
+```php
+<?php
+// config/crontabs.php
+use Hyperf\Crontab\Schedule;
+
+Schedule::command('foo:bar')->setName('foo-bar')->setRule('* * * * *');
+Schedule::call([Foo::class, 'bar'])->setName('foo-bar')->setRule('* * * * *');
+Schedule::call(fn() => (new Foo)->bar())->setName('foo-bar')->setRule('* * * * *');
+```
+
 ### 透過註解定義
 
 透過 `#[Crontab]` 註解可以快速完成對一個任務的定義，以下的定義示例與配置檔案定義所達到的目的都是一樣的。定義一個名為 `Foo` 每分鐘執行一次 `App\Task\FooTask::execute()` 的定時任務。

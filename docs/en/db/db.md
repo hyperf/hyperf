@@ -41,7 +41,7 @@ The default configuration `config/autoload/db.php` is as follows, the database s
 
 ## Component supported methods
 
-The specific interface can be viewed `Hyperf\DB\ConnectionInterface`。
+The specific interface can be viewed `Hyperf\DB\ConnectionInterface`.
 
 |    method name   |  return value  |                                       remark                                        |
 |:----------------:|:--------------:|:-----------------------------------------------------------------------------------:|

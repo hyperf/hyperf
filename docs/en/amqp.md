@@ -131,7 +131,7 @@ There are three parameters that affect the rate of consumption
 
 The framework will determine the response behavior of the message based on the result returned by the `consume` method in `Consumer`. There are 4 response results, namely `\Hyperf\Amqp\Result::ACK`, `\Hyperf\Amqp\ Result::NACK`, `\Hyperf\Amqp\Result::REQUEUE`, `\Hyperf\Amqp\Result::DROP`, each return value represents the following behavior:
 
-| 返回值                       | 行为                                                                 |
+| Return                       | Behavior                                                                 |
 |------------------------------|----------------------------------------------------------------------|
 | \Hyperf\Amqp\Result::ACK     | Confirm that the message has been consumed correctly                                               |
 | \Hyperf\Amqp\Result::NACK    | The message was not consumed correctly, respond with the `basic_nack` method                     |
@@ -368,7 +368,7 @@ use Hyperf\Amqp\RpcClient;
 use Hyperf\Context\ApplicationContext;
 
 $rpcClient = ApplicationContext::getContainer()->get(RpcClient::class);
-// 在 DynamicRpcMessage 上设置与 Consumer 一致的 Exchange 和 RoutingKey
+//Set Exchange and RoutingKey consistent with Consumer on DynamicRpcMessage
 $result = $rpcClient->call(new DynamicRpcMessage('hyperf', 'hyperf', ['message' => 'Hello Hyperf'])); 
 
 // $result:
@@ -397,7 +397,7 @@ class FooRpcMessage extends RpcMessage
     
     public function __construct($data)
     {
-        // 要传递数据
+        //To pass data
         $this->payload = $data;
     }
 

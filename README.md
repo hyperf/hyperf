@@ -4,8 +4,8 @@ English | [中文](./README-CN.md)
 
 <p align="center">
   <a href="https://github.com/hyperf/hyperf/releases"><img src="https://poser.pugx.org/hyperf/hyperf/v/stable" alt="Stable Version"></a>
-  <a href="https://www.php.net"><img src="https://img.shields.io/badge/php-%3E=8.0-brightgreen.svg?maxAge=2592000" alt="Php Version"></a>
-  <a href="https://github.com/swoole/swoole-src"><img src="https://img.shields.io/badge/swoole-%3E=4.5-brightgreen.svg?maxAge=2592000" alt="Swoole Version"></a>
+  <a href="https://www.php.net"><img src="https://img.shields.io/badge/php-%3E=8.1-brightgreen.svg?maxAge=2592000" alt="Php Version"></a>
+  <a href="https://github.com/swoole/swoole-src"><img src="https://img.shields.io/badge/swoole-%3E=5.0-brightgreen.svg?maxAge=2592000" alt="Swoole Version"></a>
   <a href="https://github.com/hyperf/hyperf/blob/master/LICENSE"><img src="https://img.shields.io/github/license/hyperf/hyperf.svg?maxAge=2592000" alt="Hyperf License"></a>
 </p>
 <p align="center">
@@ -36,13 +36,20 @@ Flexibility: We believe our Dependency Injection component is best in class. Wit
 
 Via these traits, Hyperf has discovered the untapped potential in many fields: implementing Web servers, gateway servers, distributed middleware software, microservices architecture, game servers, and Internet-of-Things (IoT).
 
+# Operating environment
+
+- Linux, OS X or Cygwin, WSL, Windows
+- PHP 8.1+
+- Swoole 5.0+ or Swow 1.4+
+
 # Production ready
 
 Alongside our well-maintained, multilingual documentation, a large number of unit tests for each component ensure logical correctness. Before `Hyperf` was released to the public (2019-06-20), it had been privately used by some medium and large Internet companies for multiple services, which have been running without incident for years in harsh production environments.
 
-# Documentation
+# Official website and Documentation
 
-[https://hyperf.wiki](https://hyperf.wiki)
+Official website [https://hyperf.io](https://hyperf.io)   
+Documentation [https://hyperf.wiki](https://hyperf.wiki)
 
 # Security Vulnerabilities
 

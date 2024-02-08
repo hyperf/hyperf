@@ -9,18 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Kafka;
+namespace Hyperf\RpcMultiplex\HttpMessage\HostReader;
 
-use PHPUnit\Framework\Attributes\CoversNothing;
+use Hyperf\RpcMultiplex\Contract\HostReaderInterface;
 
-/**
- * @internal
- * @coversNothing
- */
-#[CoversNothing]
-class TestCase extends \PHPUnit\Framework\TestCase
+class NullHostReader implements HostReaderInterface
 {
-    public function setUp(): void
+    public function read(): string
     {
+        return 'unknown';
     }
 }

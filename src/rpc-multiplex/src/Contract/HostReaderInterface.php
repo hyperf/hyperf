@@ -9,18 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Kafka;
+namespace Hyperf\RpcMultiplex\Contract;
 
-use PHPUnit\Framework\Attributes\CoversNothing;
+use Hyperf\Contract\IPReaderInterface;
 
-/**
- * @internal
- * @coversNothing
- */
-#[CoversNothing]
-class TestCase extends \PHPUnit\Framework\TestCase
+interface HostReaderInterface extends IPReaderInterface
 {
-    public function setUp(): void
-    {
-    }
 }

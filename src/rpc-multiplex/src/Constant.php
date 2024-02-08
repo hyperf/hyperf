@@ -29,6 +29,8 @@ class Constant
 
     public const CONTEXT = 'context';
 
+    public const EXTRA = 'extra';
+
     public const ERROR = 'error';
 
     public const CODE = 'code';

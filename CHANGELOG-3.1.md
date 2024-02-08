@@ -1,4 +1,46 @@
-# v3.1.7 - TBD
+# v3.1.9 - TBD
+
+## Added
+
+- [#6518](https://github.com/hyperf/hyperf/pull/6518) Added amqpMessage property to events for amqp.
+
+## Optimized
+
+ [#6517](https://github.com/hyperf/hyperf/pull/6517) Fixed bug that the older versions of parsers cannot parse new messages for `async-queue`.
+
+# v3.1.8 - 2024-02-01
+
+## Fixed
+
+- [#6509](https://github.com/hyperf/hyperf/pull/6509) Fixed bug that `Schedule::call()` cannot support `array` when using `crontab`.
+
+## Optimized
+
+- [#6511](https://github.com/hyperf/hyperf/pull/6511) Optimized the serialization of `Hyperf\AsyncQueue\JobMessage`.
+- [#6516](https://github.com/hyperf/hyperf/pull/6516) Fixed bug that message will be lost when unpack failed.
+
+## Added
+
+- [#6504](https://github.com/hyperf/hyperf/pull/6504) Added `HostReaderInterface` for `rpc-multiplex`.
+
+# v3.1.7 - 2024-01-26
+
+## Fixed
+
+- [#6491](https://github.com/hyperf/hyperf/pull/6491) Fixed bug that swagger validation collector cannot collect query parameters.
+- [#6500](https://github.com/hyperf/hyperf/pull/6500) Fixed bug that inconsistent parsing response in Rpc-Multiplex client.
+
+## Added
+
+- [#6483](https://github.com/hyperf/hyperf/pull/6483) [#6487] (https://github.com/hyperf/hyperf/pull/6487) Added new ways to register crontab.
+- [#6488](https://github.com/hyperf/hyperf/pull/6488) Added the default implement for `Psr\Log\LoggerInterface`.
+- [#6495](https://github.com/hyperf/hyperf/pull/6495) Added cron support for closure-command.
+- [#6501](https://github.com/hyperf/hyperf/pull/6501) Added `Collection::replace()` and `Collection::replaceRecursive()`.
+
+## Optimized
+
+- [#6480](https://github.com/hyperf/hyperf/pull/6480) Optimize log for crontab task skipped.
+- [#6489](https://github.com/hyperf/hyperf/pull/6489) Removed the low version conditions of `php` and `swoole`.
 
 # v3.1.6 - 2024-01-18
 
