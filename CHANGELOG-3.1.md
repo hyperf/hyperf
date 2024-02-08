@@ -1,5 +1,9 @@
 # v3.1.9 - TBD
 
+## Fixed
+
+- [#6482](https://github.com/hyperf/hyperf/pull/6482) Fixed bug that the rule `decimal` cannot work well with `size` for `validation`.
+
 ## Added
 
 - [#6518](https://github.com/hyperf/hyperf/pull/6518) Added amqpMessage property to events for amqp.
