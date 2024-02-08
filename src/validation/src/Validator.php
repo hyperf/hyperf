@@ -146,7 +146,7 @@ class Validator implements ValidatorContract
     /**
      * The numeric related validation rules.
      */
-    protected array $numericRules = ['Numeric', 'Integer'];
+    protected array $numericRules = ['Numeric', 'Integer', 'Decimal'];
 
     /**
      * @param TranslatorInterface $translator the Translator implementation
