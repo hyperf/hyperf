@@ -24,9 +24,6 @@
         "hyperf/support": "~3.1.0",
         "hyperf/stringable": "~3.1.0"
     },
-    "suggest": {
-        "doctrine/dbal": "Required to rename SQLite indexs (^3.5.1)."
-    },
     "autoload": {
         "psr-4": {
             "Hyperf\\Database\\SQLite\\": "src/"
