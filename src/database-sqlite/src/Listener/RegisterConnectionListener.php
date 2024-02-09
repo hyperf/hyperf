@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\SQLite\Listener;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Connection;
 use Hyperf\Database\SQLite\SQLiteConnection;
 use Hyperf\Event\Contract\ListenerInterface;
@@ -39,7 +40,25 @@ class RegisterConnectionListener implements ListenerInterface
     public function process(object $event): void
     {
         Connection::resolverFor('sqlite', function ($connection, $database, $prefix, $config) {
+            if ($config['database'] === ':memory:') {
+                $connection = $this->createPersistentPdoResolver($connection, $config);
+            }
+
             return new SQLiteConnection($connection, $database, $prefix, $config);
         });
+    }
+
+    protected function createPersistentPdoResolver($connection, $config)
+    {
+        return function () use ($config, $connection) {
+            $container = ApplicationContext::getContainer();
+            $key = "sqlite.presistent.pdo.{$config['name']}";
+
+            if (! $container->has($key)) {
+                $container->set($key, call_user_func($connection));
+            }
+
+            return $container->get($key);
+        };
     }
 }
