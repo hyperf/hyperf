@@ -43,6 +43,23 @@ class SQLiteBuilder extends Builder
     }
 
     /**
+     * Get the column type listing for a given table.
+     *
+     * @param string $table
+     * @return array
+     */
+    public function getColumnTypeListing($table): array
+    {
+        $table = $this->connection->getTablePrefix() . $table;
+
+        return $this->connection->getPostProcessor()->processColumnListing(
+            $this->connection->select(
+                $this->grammar->compileColumnListing($table)
+            )
+        );
+    }
+
+    /**
      * Get the indexes for a given table.
      */
     public function getIndexes(string $table): array
