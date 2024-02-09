@@ -46,7 +46,6 @@ class SQLiteBuilder extends Builder
      * Get the column type listing for a given table.
      *
      * @param string $table
-     * @return array
      */
     public function getColumnTypeListing($table): array
     {
