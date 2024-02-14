@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database\SQLite;
 
-use Hyperf\Database\SQLite\Query\Processors\SQLiteProcessor;
 use Hyperf\Database\Schema\Column;
+use Hyperf\Database\SQLite\Query\Processors\SQLiteProcessor;
 use PHPUnit\Framework\TestCase;
 
 /**
