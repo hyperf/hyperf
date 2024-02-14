@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\SQLite\Schema\Grammars;
 
 use Hyperf\Collection\Arr;
+use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Grammars\Grammar;
 use Hyperf\Stringable\Str;
@@ -258,7 +259,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a drop column command.
      */
-    public function compileDropColumn(Blueprint $blueprint, Fluent $command, Connection $connection): array
+    public function compileDropColumn(Blueprint $blueprint, Fluent $command): array
     {
         $table = $this->wrapTable($blueprint);
 
