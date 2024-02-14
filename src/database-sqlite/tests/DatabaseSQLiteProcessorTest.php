@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database\SQLite;
 
 use Hyperf\Database\SQLite\Query\Processors\SQLiteProcessor;
+use Hyperf\Database\Schema\Column;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -45,9 +46,7 @@ class DatabaseSQLiteProcessorTest extends TestCase
         ];
 
         $this->assertSame(3, count($columns = $processor->processColumns($listing)));
-
-        $column = $columns[0];
-
+        $this->assertInstanceOf(Column::class, $column = $columns[0]);
         $this->assertSame('foo', $column->getTable());
         $this->assertSame('id', $column->getName());
         $this->assertSame(1, $column->getPosition());
