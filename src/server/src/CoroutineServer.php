@@ -128,7 +128,7 @@ class CoroutineServer implements ServerInterface
         }
     }
 
-    protected function bindServerCallbacks(int $type, string $name, array $callbacks, Port $port)
+    protected function bindServerCallbacks(int $type, string $name, array $callbacks, Port $port): void
     {
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
@@ -139,9 +139,7 @@ class CoroutineServer implements ServerInterface
                     }
                     if ($this->server instanceof HttpServer) {
                         $this->server->handle('/', static function ($request, $response) use ($handler, $method) {
-                            Coroutine::create(static function () use ($request, $response, $handler, $method) {
-                                $handler->{$method}($request, $response);
-                            });
+                            Coroutine::create(static fn () => $handler->{$method}($request, $response));
                         });
                     }
                 }
@@ -215,17 +213,14 @@ class CoroutineServer implements ServerInterface
         return [$handler, $method];
     }
 
-    protected function makeServer($type, $host, $port)
+    protected function makeServer($type, $host, $port): HttpServer|Server
     {
-        switch ($type) {
-            case ServerInterface::SERVER_HTTP:
-            case ServerInterface::SERVER_WEBSOCKET:
-                return new HttpServer($host, $port, false, true);
-            case ServerInterface::SERVER_BASE:
-                return new Server($host, $port, false, true);
-        }
-
-        throw new RuntimeException('Server type is invalid.');
+        return match ($type) {
+            ServerInterface::SERVER_HTTP,
+            ServerInterface::SERVER_WEBSOCKET => new HttpServer($host, $port, false, true),
+            ServerInterface::SERVER_BASE => new Server($host, $port, false, true),
+            default => throw new RuntimeException('Server type is invalid.'),
+        };
     }
 
     private function writePid(): void
