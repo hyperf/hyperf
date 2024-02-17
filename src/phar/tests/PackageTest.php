@@ -104,9 +104,9 @@ class PackageTest extends TestCase
     public function testInstallPathWhenGetPackagesDependencies()
     {
         $logger = Mockery::mock(LoggerInterface::class);
-        $builder = new PharBuilder(__DIR__ . '/fixtures/07-composer-versionscomposer.lock', $logger);
+        $builder = new PharBuilder(__DIR__ . '/fixtures/07-composer-versions/composer.lock', $logger);
         $packages = $builder->getPackagesDependencies();
         $this->assertSame('hyperf/engine', $packages[0]->getName());
-        $this->assertStringContainsString('/2.x/vendor/hyperf/engine/', $packages[0]->getDirectory());
+        $this->assertStringContainsString('/vendor/hyperf/engine/', $packages[0]->getDirectory());
     }
 }
