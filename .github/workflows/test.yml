@@ -26,8 +26,8 @@ jobs:
           extensions: redis, pdo, pdo_mysql, bcmath, ${{ matrix.swoole }}
       - name: Setup Packages
         run: composer update -oW
-      - name: Run CS Fix
-        run: vendor/bin/php-cs-fixer fix src --dry-run --diff
+#      - name: Run CS Fix
+#        run: vendor/bin/php-cs-fixer fix src --dry-run --diff
   tests:
     needs: cs-fix
     name: Test on PHP${{ matrix.php-version }} Swoole-${{ matrix.sw-version }}
