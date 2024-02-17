@@ -387,9 +387,6 @@ EOD;
      */
     private function loadJson(string $path): array
     {
-        var_dump($path);
-        var_dump(file_exists($path));
-        var_dump(file_get_contents($path));
         $result = json_decode(file_get_contents($path), true);
         if ($result === null) {
             throw new InvalidArgumentException(sprintf('Unable to parse given path %s', $path), json_last_error());
