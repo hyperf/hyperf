@@ -195,7 +195,12 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         $reflection = new ReflectionClass($this->data->getClass());
         sort($methods); // 8.0 与 8.1 8.2 排序结果不一致
         foreach ($methods as $methodStmt) {
-            $method = $reflection->getMethod($methodStmt->name->name);
+            try {
+                $method = $reflection->getMethod($methodStmt->name->name);
+            } catch (\ReflectionException) {
+                continue;
+            }
+
             if (Str::startsWith($method->getName(), 'scope') && $method->getName() !== 'scopeQuery') {
                 $name = Str::camel(substr($method->getName(), 5));
                 if (! empty($name)) {

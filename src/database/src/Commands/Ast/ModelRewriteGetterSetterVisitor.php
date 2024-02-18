@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Ast;
 
-use Hyperf\CodeParser\PhpParser;
 use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Stringable\Str;
 use PhpParser\Node;
+use ReflectionClass;
 
 use function Hyperf\Support\getter;
 use function Hyperf\Support\setter;
@@ -35,13 +35,8 @@ class ModelRewriteGetterSetterVisitor extends AbstractVisitor
     public function __construct(ModelOption $option, ModelData $data)
     {
         parent::__construct($option, $data);
-    }
 
-    public function beforeTraverse(array $nodes)
-    {
-        $methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes);
-
-        $this->collectMethods($methods);
+        $this->collectMethods($data->getClass());
     }
 
     public function afterTraverse(array $nodes)
@@ -120,15 +115,16 @@ class ModelRewriteGetterSetterVisitor extends AbstractVisitor
         return $node;
     }
 
-    protected function collectMethods(array $methods)
+    protected function collectMethods(string $class)
     {
-        /** @var Node\Stmt\ClassMethod $method */
-        foreach ($methods as $method) {
-            $methodName = $method->name->name;
-            if (Str::startsWith($methodName, 'get')) {
-                $this->getters[] = $methodName;
-            } elseif (Str::startsWith($methodName, 'set')) {
-                $this->setters[] = $methodName;
+        $reflectionClass = new ReflectionClass($class);
+        foreach ($reflectionClass->getMethods() as $reflectionMethod) {
+            $name = $reflectionMethod->getName();
+
+            if (Str::startsWith($name, 'get')) {
+                $this->getters[] = $name;
+            } elseif (Str::startsWith($name, 'set')) {
+                $this->setters[] = $name;
             }
         }
     }
