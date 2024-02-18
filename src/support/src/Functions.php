@@ -70,6 +70,7 @@ function retry($times, callable $callback, int $sleep = 0)
     $attempts = 0;
     if (is_array($times)) {
         $backoff = new CustomBackoff($times);
+        $times = count($times);
     } else {
         $backoff = new Backoff($sleep);
     }
