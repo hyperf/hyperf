@@ -60,14 +60,20 @@ function env($key, $default = null)
 /**
  * Retry an operation a given number of times.
  *
- * @param float|int $times
+ * @param array<float|int>|float|int $times
  * @param int $sleep millisecond
  * @throws Throwable
  */
 function retry($times, callable $callback, int $sleep = 0)
 {
     $attempts = 0;
-    $backoff = new Backoff($sleep);
+    if (is_array($times)) {
+        $sleeps = $times;
+        $times = count($times);
+    } else {
+        $sleeps = array_fill(0, $times, $sleep);
+    }
+    $backoff = array_map(fn ($sleep) => new Backoff($sleep), $sleeps);
 
     beginning:
     try {
@@ -77,7 +83,7 @@ function retry($times, callable $callback, int $sleep = 0)
             throw $e;
         }
 
-        $backoff->sleep();
+        $backoff[$attempts - 1]->sleep();
         goto beginning;
     }
 }
