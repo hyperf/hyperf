@@ -15,7 +15,7 @@ use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Stringable\StrCache;
-use Hyperf\Support\Backoff\ScatterBackoff;
+use Hyperf\Support\Backoff\ArrayBackoff;
 use Throwable;
 
 /**
@@ -69,7 +69,7 @@ function retry($times, callable $callback, int $sleep = 0)
 {
     $attempts = 0;
     if (is_array($times)) {
-        $backoff = new ScatterBackoff($times);
+        $backoff = new ArrayBackoff($times);
         $times = count($times);
     } else {
         $backoff = new Backoff($sleep);

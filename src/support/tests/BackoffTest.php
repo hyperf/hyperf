@@ -36,11 +36,11 @@ class BackoffTest extends TestCase
 
     public function testCustomBackoff()
     {
-        $backoff = new Backoff\ScatterBackoff([1, 200]);
+        $backoff = new Backoff\ArrayBackoff([1, 200]);
         $backoff->sleep();
         $this->assertSame(200, $backoff->nextBackoff());
 
-        $backoff = new Backoff\ScatterBackoff([1, 2.2]);
+        $backoff = new Backoff\ArrayBackoff([1, 2.2]);
         $backoff->sleep();
         $this->assertSame(2, $backoff->nextBackoff());
     }

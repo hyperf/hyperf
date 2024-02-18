@@ -14,7 +14,7 @@ namespace Hyperf\Support\Backoff;
 use Hyperf\Collection\Arr;
 use InvalidArgumentException;
 
-class ScatterBackoff
+class ArrayBackoff
 {
     private int $lastMilliseconds;
 
