@@ -60,7 +60,7 @@ function env($key, $default = null)
 /**
  * Retry an operation a given number of times.
  *
- * @param array<float|int>|float|int $times
+ * @param int|int[] $times
  * @param int $sleep millisecond
  * @throws Throwable
  */
