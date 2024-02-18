@@ -19,7 +19,7 @@ class CustomBackoff
     private int $lastMilliseconds;
 
     /**
-     * @param int $milliseconds backoff interval
+     * @param array $milliseconds backoff interval
      */
     public function __construct(private array $milliseconds)
     {
