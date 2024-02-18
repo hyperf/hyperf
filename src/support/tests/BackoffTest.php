@@ -33,4 +33,15 @@ class BackoffTest extends TestCase
         $this->assertGreaterThanOrEqual(1, $secondTick);
         $this->assertLessThanOrEqual(3 * $firstTick, $secondTick);
     }
+
+    public function testCustomBackoff()
+    {
+        $backoff = new Backoff\CustomBackoff([1, 200]);
+        $backoff->sleep();
+        $this->assertSame(200, $backoff->nextBackoff());
+
+        $backoff = new Backoff\CustomBackoff([1, 2.2]);
+        $backoff->sleep();
+        $this->assertSame(2, $backoff->nextBackoff());
+    }
 }

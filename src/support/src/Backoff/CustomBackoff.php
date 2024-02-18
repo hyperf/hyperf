@@ -29,7 +29,7 @@ class CustomBackoff
             );
         }
 
-        $this->lastMilliseconds = array_pop($this->milliseconds);
+        $this->lastMilliseconds = (int) array_pop($this->milliseconds);
     }
 
     /**
@@ -37,7 +37,7 @@ class CustomBackoff
      */
     public function sleep(): void
     {
-        $ms = array_shift($this->milliseconds) ?? $this->lastMilliseconds;
+        $ms = (int) (array_shift($this->milliseconds) ?? $this->lastMilliseconds);
 
         if ($ms === 0) {
             return;
@@ -52,6 +52,6 @@ class CustomBackoff
      */
     public function nextBackoff(): int
     {
-        return Arr::first($this->milliseconds);
+        return (int) Arr::first($this->milliseconds, default: $this->lastMilliseconds);
     }
 }
