@@ -16,7 +16,7 @@ use InvalidArgumentException;
 
 class ArrayBackoff
 {
-    private int $lastMilliseconds;
+    private int $lastMillisecond;
 
     /**
      * @param array $milliseconds backoff interval
@@ -29,7 +29,7 @@ class ArrayBackoff
             );
         }
 
-        $this->lastMilliseconds = (int) array_pop($this->milliseconds);
+        $this->lastMillisecond = (int) array_pop($this->milliseconds);
     }
 
     /**
@@ -37,7 +37,7 @@ class ArrayBackoff
      */
     public function sleep(): void
     {
-        $ms = (int) (array_shift($this->milliseconds) ?? $this->lastMilliseconds);
+        $ms = (int) (array_shift($this->milliseconds) ?? $this->lastMillisecond);
 
         if ($ms === 0) {
             return;
@@ -52,6 +52,6 @@ class ArrayBackoff
      */
     public function nextBackoff(): int
     {
-        return (int) Arr::first($this->milliseconds, default: $this->lastMilliseconds);
+        return (int) Arr::first($this->milliseconds, default: $this->lastMillisecond);
     }
 }
