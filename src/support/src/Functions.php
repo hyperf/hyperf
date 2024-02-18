@@ -68,9 +68,8 @@ function retry($times, callable $callback, int $sleep = 0)
 {
     $attempts = 0;
     if (is_array($times)) {
-        $sleeps = $times;
+        $backoff = array_map(fn ($sleep) => new Backoff($sleep), $times);
         $times = count($times);
-        $backoff = array_map(fn ($sleep) => new Backoff($sleep), $sleeps);
     } else {
         $backoff = [new Backoff($sleep)];
     }
