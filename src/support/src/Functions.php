@@ -70,10 +70,10 @@ function retry($times, callable $callback, int $sleep = 0)
     if (is_array($times)) {
         $sleeps = $times;
         $times = count($times);
+        $backoff = array_map(fn ($sleep) => new Backoff($sleep), $sleeps);
     } else {
-        $sleeps = array_fill(0, $times, $sleep);
+        $backoff = [new Backoff($sleep)];
     }
-    $backoff = array_map(fn ($sleep) => new Backoff($sleep), $sleeps);
 
     beginning:
     try {
@@ -83,7 +83,7 @@ function retry($times, callable $callback, int $sleep = 0)
             throw $e;
         }
 
-        $backoff[$attempts - 1]->sleep();
+        ($backoff[$attempts - 1] ?? $backoff[0])->sleep();
         goto beginning;
     }
 }
