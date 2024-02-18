@@ -15,6 +15,7 @@ use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Stringable\StrCache;
+use Hyperf\Support\Backoff\CustomBackoff;
 use Throwable;
 
 /**
@@ -68,10 +69,9 @@ function retry($times, callable $callback, int $sleep = 0)
 {
     $attempts = 0;
     if (is_array($times)) {
-        $backoff = array_map(fn ($sleep) => new Backoff($sleep), $times);
-        $times = count($times);
+        $backoff = new CustomBackoff($times);
     } else {
-        $backoff = [new Backoff($sleep)];
+        $backoff = new Backoff($sleep);
     }
 
     beginning:
@@ -82,7 +82,7 @@ function retry($times, callable $callback, int $sleep = 0)
             throw $e;
         }
 
-        ($backoff[$attempts - 1] ?? $backoff[0])->sleep();
+        $backoff->sleep();
         goto beginning;
     }
 }
