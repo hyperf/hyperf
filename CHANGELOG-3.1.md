@@ -1,5 +1,9 @@
 # v3.1.10 - TBD
 
+## Optimized
+
+- [#6539](https://github.com/hyperf/hyperf/pull/6539) Optimized `retry` helper function can accept array as first parameter.
+
 # v3.1.9 - 2024-02-18
 
 ## Fixed

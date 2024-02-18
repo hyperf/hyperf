@@ -15,6 +15,7 @@ use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Stringable\StrCache;
+use Hyperf\Support\Backoff\ArrayBackoff;
 use Throwable;
 
 /**
@@ -60,14 +61,19 @@ function env($key, $default = null)
 /**
  * Retry an operation a given number of times.
  *
- * @param float|int $times
+ * @param float|int|int[] $times
  * @param int $sleep millisecond
  * @throws Throwable
  */
 function retry($times, callable $callback, int $sleep = 0)
 {
     $attempts = 0;
-    $backoff = new Backoff($sleep);
+    if (is_array($times)) {
+        $backoff = new ArrayBackoff($times);
+        $times = count($times);
+    } else {
+        $backoff = new Backoff($sleep);
+    }
 
     beginning:
     try {
