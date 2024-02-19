@@ -21,12 +21,17 @@ class MemoryDriver extends Driver implements DriverInterface
 {
     protected ?int $size = null;
 
+    protected bool $throwWhenSizeExceeded = false;
+
     public function __construct(ContainerInterface $container, array $config)
     {
         parent::__construct($container, $config);
 
-        if (isset($config['size']) && is_int($config['size']) && $config['size'] > 0) {
-            $this->size = $config['size'];
+        if (isset($config['size'])) {
+            $this->size = (int) $config['size'];
+        }
+        if (isset($config['throw_when_size_exceeded'])) {
+            $this->throwWhenSizeExceeded = (bool) $config['throw_when_size_exceeded'];
         }
     }
 
@@ -53,7 +58,11 @@ class MemoryDriver extends Driver implements DriverInterface
 
     public function set($key, $value, $ttl = null): bool
     {
-        if ($this->size > 0 && $this->getCollector()->size() >= $this->size) {
+        if (
+            $this->size > 0
+            && $this->getCollector()->size() >= $this->size
+            && $this->throwWhenSizeExceeded
+        ) {
             throw new OverflowException('The memory cache is full!');
         }
 

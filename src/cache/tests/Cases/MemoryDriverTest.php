@@ -13,9 +13,9 @@ namespace HyperfTest\Cache\Cases;
 
 use Hyperf\Cache\Collector\Memory;
 use Hyperf\Cache\Driver\MemoryDriver;
+use Hyperf\Cache\Exception\OverflowException;
 use Hyperf\Codec\Packer\PhpSerializerPacker;
 use Mockery;
-use OverflowException;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -52,7 +52,7 @@ class MemoryDriverTest extends \PHPUnit\Framework\TestCase
 
     public function testSetWithSize()
     {
-        $driver = new MemoryDriver($this->getContainer(), ['size' => 1]);
+        $driver = new MemoryDriver($this->getContainer(), ['size' => 1, 'throw_when_size_exceeded' => true]);
 
         $driver->set('test1', 'xxx');
         $this->assertSame('xxx', $driver->get('test1'));
