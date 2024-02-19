@@ -61,6 +61,24 @@ class FunctionTest extends TestCase
         }
     }
 
+    public function testRetryTimesAsArray()
+    {
+        $this->expectException(RetryException::class);
+        $result = 0;
+        $milliSeconds[] = microtime(true);
+        try {
+            retry([100, 200], function () use (&$result, &$milliSeconds) {
+                ++$result;
+                $milliSeconds[] = microtime(true);
+                throw new RetryException('Retry Test');
+            });
+        } finally {
+            $this->assertSame(3, $result);
+            $this->assertGreaterThanOrEqual(0.1, $milliSeconds[2] - $milliSeconds[1]);
+            $this->assertGreaterThanOrEqual(0.2, $milliSeconds[3] - $milliSeconds[2]);
+        }
+    }
+
     public function testOneTimesRetry()
     {
         $this->expectException(RetryException::class);

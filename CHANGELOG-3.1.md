@@ -1,12 +1,24 @@
-# v3.1.9 - TBD
+# v3.1.10 - TBD
+
+## Optimized
+
+- [#6539](https://github.com/hyperf/hyperf/pull/6539) Optimized `retry` helper function can accept array as first parameter.
+
+# v3.1.9 - 2024-02-18
+
+## Fixed
+
+- [#6482](https://github.com/hyperf/hyperf/pull/6482) Fixed bug that the rule `decimal` cannot work well with `size` for `validation`.
 
 ## Added
 
 - [#6518](https://github.com/hyperf/hyperf/pull/6518) Added amqpMessage property to events for amqp.
+- [#6526](https://github.com/hyperf/hyperf/pull/6526) Added `Conditionable` trait to Crontab.
 
 ## Optimized
 
- [#6517](https://github.com/hyperf/hyperf/pull/6517) Fixed bug that the older versions of parsers cannot parse new messages for `async-queue`.
+- [#6517](https://github.com/hyperf/hyperf/pull/6517) Fixed bug that the older versions of parsers cannot parse new messages for `async-queue`.
+- [#6520](https://github.com/hyperf/hyperf/pull/6520) Refactor UdpSocketAspect to improve coroutine handling.
 
 # v3.1.8 - 2024-02-01
 

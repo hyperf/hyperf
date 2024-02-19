@@ -17,6 +17,7 @@
     },
     "require": {
         "php": ">=8.1",
+        "hyperf/conditionable": "~3.1.0",
         "hyperf/framework": "~3.1.0",
         "hyperf/utils": "~3.1.0",
         "hyperf/support": "~3.1.0",
