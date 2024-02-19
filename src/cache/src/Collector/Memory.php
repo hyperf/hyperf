@@ -99,6 +99,7 @@ final class Memory
                 sleep(1);
             }
             $this->loopCid = null;
+            $this->stopped = false;
         });
 
         $this->waitCloseCid ??= Coroutine::create(function () {
