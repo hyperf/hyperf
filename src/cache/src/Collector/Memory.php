@@ -87,11 +87,6 @@ final class Memory
         return true;
     }
 
-    public function stop(): void
-    {
-        $this->stopped = true;
-    }
-
     private function loop(): void
     {
         $this->loopCid ??= Coroutine::create(function () {
