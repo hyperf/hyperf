@@ -44,12 +44,12 @@ final class Memory
 
     public function size(): int
     {
-        return count($this->values);
+        return count($this->keys);
     }
 
     public function has(string $key): bool
     {
-        return isset($this->values[$key]);
+        return isset($this->keys[$key]);
     }
 
     public function get(string $key, mixed $default = null): mixed
