@@ -95,13 +95,16 @@ final class Memory
     private function loop(): void
     {
         $this->loopCid ??= Coroutine::create(function () {
-            while (! $this->stopped && $this->size() > 0) {
+            while (true) {
                 foreach ($this->keys as $key => $ttl) {
                     if ($ttl instanceof Carbon && Carbon::now()->gt($ttl)) {
                         $this->delete($key);
                     }
                 }
                 sleep(1);
+                if ($this->stopped || $this->size() === 0) {
+                    break;
+                }
             }
             $this->loopCid = null;
             $this->stopped = false;
