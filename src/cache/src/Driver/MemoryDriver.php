@@ -24,9 +24,6 @@ class MemoryDriver extends Driver implements DriverInterface
         parent::__construct($container, $config);
     }
 
-    /**
-     * @return array<bool, mixed>
-     */
     public function fetch(string $key, mixed $default = null): array
     {
         return [
@@ -54,7 +51,7 @@ class MemoryDriver extends Driver implements DriverInterface
         return $this->getCollector()->set(
             $this->getCacheKey($key),
             $value,
-            $ttl <= 0 ? null : Carbon::now()->addSeconds($seconds)
+            $seconds <= 0 ? null : Carbon::now()->addSeconds($seconds)
         );
     }
 
