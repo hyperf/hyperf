@@ -33,7 +33,7 @@ final class Memory
 
     private ?int $waitCloseCid = null;
 
-    private bool $workerExit = false;
+    private bool $stopped = false;
 
     public static function instance(): static
     {
@@ -87,10 +87,15 @@ final class Memory
         return true;
     }
 
+    public function stop(): void
+    {
+        $this->stopped = true;
+    }
+
     private function loop(): void
     {
         $this->loopCid ??= Coroutine::create(function () {
-            while (! $this->workerExit) {
+            while (! $this->stopped) {
                 foreach ($this->keys as $key => $ttl) {
                     if ($ttl instanceof Carbon && Carbon::now()->gt($ttl)) {
                         $this->delete($key);
@@ -103,7 +108,7 @@ final class Memory
 
         $this->waitCloseCid ??= Coroutine::create(function () {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            $this->workerExit = true;
+            $this->stop();
             $this->clear();
             $this->waitCloseCid = null;
         });
