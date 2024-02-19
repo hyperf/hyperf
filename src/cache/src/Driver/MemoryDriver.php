@@ -19,14 +19,14 @@ use Psr\Container\ContainerInterface;
 
 class MemoryDriver extends Driver implements DriverInterface
 {
-    protected ?int $limit = null;
+    protected ?int $size = null;
 
     public function __construct(ContainerInterface $container, array $config)
     {
         parent::__construct($container, $config);
 
-        if (isset($config['limit']) && is_int($config['limit'])) {
-            $this->limit = $config['limit'];
+        if (isset($config['size']) && is_int($config['size']) && $config['size'] > 0) {
+            $this->size = $config['size'];
         }
     }
 
@@ -53,7 +53,7 @@ class MemoryDriver extends Driver implements DriverInterface
 
     public function set($key, $value, $ttl = null): bool
     {
-        if ($this->limit > 0 && $this->getCollector()->size() >= $this->limit) {
+        if ($this->size > 0 && $this->getCollector()->size() >= $this->size) {
             throw new OverflowException('The memory cache is full!');
         }
 

@@ -50,9 +50,9 @@ class MemoryDriverTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($driver->get('test'));
     }
 
-    public function testSetWithLimit()
+    public function testSetWithSize()
     {
-        $driver = new MemoryDriver($this->getContainer(), ['limit' => 1]);
+        $driver = new MemoryDriver($this->getContainer(), ['size' => 1]);
 
         $driver->set('test1', 'xxx');
         $this->assertSame('xxx', $driver->get('test1'));
