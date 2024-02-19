@@ -13,7 +13,7 @@ namespace Hyperf\Cache\Driver;
 
 use Carbon\Carbon;
 use DateInterval;
-use Hyperf\Cache\Collector\MemoryStorage;
+use Hyperf\Cache\Collector\Memory;
 use Hyperf\Cache\Exception\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
@@ -37,12 +37,12 @@ class MemoryDriver extends Driver implements DriverInterface
 
     public function has(string $key): bool
     {
-        return $this->getStorage()->has($this->getCacheKey($key));
+        return $this->getStore()->has($this->getCacheKey($key));
     }
 
     public function get(string $key, mixed $default = null): mixed
     {
-        return $this->getStorage()->get(
+        return $this->getStore()->get(
             $this->getCacheKey($key),
             $default
         );
@@ -51,7 +51,7 @@ class MemoryDriver extends Driver implements DriverInterface
     public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
         $seconds = $this->secondsUntil($ttl);
-        return $this->getStorage()->set(
+        return $this->getStore()->set(
             $this->getCacheKey($key),
             $value,
             $ttl <= 0 ? null : Carbon::now()->addSeconds($seconds)
@@ -60,12 +60,12 @@ class MemoryDriver extends Driver implements DriverInterface
 
     public function delete(string $key): bool
     {
-        return $this->getStorage()->delete($this->getCacheKey($key));
+        return $this->getStore()->delete($this->getCacheKey($key));
     }
 
     public function clear(): bool
     {
-        return $this->getStorage()->clear();
+        return $this->getStore()->clear();
     }
 
     public function getMultiple(iterable $keys, mixed $default = null): iterable
@@ -103,7 +103,7 @@ class MemoryDriver extends Driver implements DriverInterface
 
     public function clearPrefix(string $prefix): bool
     {
-        return $this->getStorage()->clearPrefix($this->getCacheKey($prefix));
+        return $this->getStore()->clearPrefix($this->getCacheKey($prefix));
     }
 
     public function getConnection(): mixed
@@ -111,8 +111,8 @@ class MemoryDriver extends Driver implements DriverInterface
         return $this;
     }
 
-    protected function getStorage(): MemoryStorage
+    protected function getStore(): Memory
     {
-        return MemoryStorage::instance();
+        return Memory::instance();
     }
 }

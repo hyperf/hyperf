@@ -17,7 +17,7 @@ use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Stringable\Str;
 
-final class MemoryStorage
+final class Memory
 {
     /**
      * @var array<string, null|Carbon>
