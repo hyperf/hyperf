@@ -103,7 +103,7 @@ final class Memory
 
         $this->waitCloseCid ??= Coroutine::create(function () {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            $this->stop();
+            $this->stopped = true;
             $this->clear();
             $this->waitCloseCid = null;
         });
