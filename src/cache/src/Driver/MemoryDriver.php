@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Cache\Driver;
 
 use Carbon\Carbon;
-use DateInterval;
 use Hyperf\Cache\Collector\Memory;
 use Hyperf\Cache\Exception\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
@@ -45,7 +44,7 @@ class MemoryDriver extends Driver implements DriverInterface
         );
     }
 
-    public function set($key, $value, DateInterval|int|null $ttl = null): bool
+    public function set($key, $value, $ttl = null): bool
     {
         $seconds = $this->secondsUntil($ttl);
         return $this->getCollector()->set(
@@ -76,7 +75,7 @@ class MemoryDriver extends Driver implements DriverInterface
         return $result;
     }
 
-    public function setMultiple($values, DateInterval|int|null $ttl = null): bool
+    public function setMultiple($values, $ttl = null): bool
     {
         if (! is_array($values)) {
             throw new InvalidArgumentException('The values is invalid!');
