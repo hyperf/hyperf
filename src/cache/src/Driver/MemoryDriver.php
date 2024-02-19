@@ -65,7 +65,7 @@ class MemoryDriver extends Driver implements DriverInterface
         return $this->getCollector()->clear();
     }
 
-    public function getMultiple(iterable $keys, $default = null): iterable
+    public function getMultiple($keys, $default = null): iterable
     {
         $result = [];
 
@@ -76,7 +76,7 @@ class MemoryDriver extends Driver implements DriverInterface
         return $result;
     }
 
-    public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool
+    public function setMultiple($values, DateInterval|int|null $ttl = null): bool
     {
         if (! is_array($values)) {
             throw new InvalidArgumentException('The values is invalid!');
