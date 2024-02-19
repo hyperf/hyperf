@@ -14,7 +14,7 @@ namespace Hyperf\Cache\Driver;
 use Carbon\Carbon;
 use Hyperf\Cache\Collector\Memory;
 use Hyperf\Cache\Exception\InvalidArgumentException;
-use OverflowException;
+use Hyperf\Cache\Exception\OverflowException;
 use Psr\Container\ContainerInterface;
 
 class MemoryDriver extends Driver implements DriverInterface
