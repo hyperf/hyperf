@@ -42,6 +42,11 @@ final class Memory
         return $instance ??= new self();
     }
 
+    public function size(): int
+    {
+        return count($this->values);
+    }
+
     public function has(string $key): bool
     {
         return isset($this->values[$key]);
@@ -90,7 +95,7 @@ final class Memory
     private function loop(): void
     {
         $this->loopCid ??= Coroutine::create(function () {
-            while (! $this->stopped) {
+            while (! $this->stopped || $this->size() === 0) {
                 foreach ($this->keys as $key => $ttl) {
                     if ($ttl instanceof Carbon && Carbon::now()->gt($ttl)) {
                         $this->delete($key);
