@@ -14,13 +14,20 @@ namespace Hyperf\Cache\Driver;
 use Carbon\Carbon;
 use Hyperf\Cache\Collector\Memory;
 use Hyperf\Cache\Exception\InvalidArgumentException;
+use OverflowException;
 use Psr\Container\ContainerInterface;
 
 class MemoryDriver extends Driver implements DriverInterface
 {
+    protected ?int $limit = null;
+
     public function __construct(ContainerInterface $container, array $config)
     {
         parent::__construct($container, $config);
+
+        if (isset($config['limit']) && is_int($config['limit'])) {
+            $this->limit = $config['limit'];
+        }
     }
 
     public function fetch($key, $default = null): array
@@ -46,6 +53,10 @@ class MemoryDriver extends Driver implements DriverInterface
 
     public function set($key, $value, $ttl = null): bool
     {
+        if ($this->limit > 0 && $this->getCollector()->size() >= $this->limit) {
+            throw new OverflowException('The memory cache is full!');
+        }
+
         $seconds = $this->secondsUntil($ttl);
         return $this->getCollector()->set(
             $this->getCacheKey($key),

@@ -15,6 +15,7 @@ use Hyperf\Cache\Collector\Memory;
 use Hyperf\Cache\Driver\MemoryDriver;
 use Hyperf\Codec\Packer\PhpSerializerPacker;
 use Mockery;
+use OverflowException;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -47,6 +48,18 @@ class MemoryDriverTest extends \PHPUnit\Framework\TestCase
         sleep(3);
 
         $this->assertNull($driver->get('test'));
+    }
+
+    public function testSetWithLimit()
+    {
+        $driver = new MemoryDriver($this->getContainer(), ['limit' => 1]);
+
+        $driver->set('test1', 'xxx');
+        $this->assertSame('xxx', $driver->get('test1'));
+
+        $this->expectException(OverflowException::class);
+        $this->expectExceptionMessage('The memory cache is full!');
+        $driver->set('test2', 'xxx');
     }
 
     private function getContainer(): ContainerInterface
