@@ -1,5 +1,9 @@
 # v3.1.10 - TBD
 
+## Added
+
+- [#6542](https://github.com/hyperf/hyperf/pull/6542) Added `MemoryDriver` for `hyperf/cache`.
+
 ## Optimized
 
 - [#6539](https://github.com/hyperf/hyperf/pull/6539) Optimized `retry` helper function can accept array as first parameter.
