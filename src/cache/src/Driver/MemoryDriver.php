@@ -24,7 +24,7 @@ class MemoryDriver extends Driver implements DriverInterface
         parent::__construct($container, $config);
     }
 
-    public function fetch(string $key, mixed $default = null): array
+    public function fetch($key, $default = null): array
     {
         return [
             $this->has($key),
@@ -32,12 +32,12 @@ class MemoryDriver extends Driver implements DriverInterface
         ];
     }
 
-    public function has(string $key): bool
+    public function has($key): bool
     {
         return $this->getCollector()->has($this->getCacheKey($key));
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    public function get($key, $default = null): mixed
     {
         return $this->getCollector()->get(
             $this->getCacheKey($key),
@@ -45,7 +45,7 @@ class MemoryDriver extends Driver implements DriverInterface
         );
     }
 
-    public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
+    public function set($key, $value, DateInterval|int|null $ttl = null): bool
     {
         $seconds = $this->secondsUntil($ttl);
         return $this->getCollector()->set(
@@ -55,7 +55,7 @@ class MemoryDriver extends Driver implements DriverInterface
         );
     }
 
-    public function delete(string $key): bool
+    public function delete($key): bool
     {
         return $this->getCollector()->delete($this->getCacheKey($key));
     }
@@ -65,7 +65,7 @@ class MemoryDriver extends Driver implements DriverInterface
         return $this->getCollector()->clear();
     }
 
-    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    public function getMultiple(iterable $keys, $default = null): iterable
     {
         $result = [];
 
