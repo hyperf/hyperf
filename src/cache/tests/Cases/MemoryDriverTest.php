@@ -62,6 +62,16 @@ class MemoryDriverTest extends \PHPUnit\Framework\TestCase
         $driver->set('test2', 'xxx');
     }
 
+    public function testSetWithSizeAndThrowWhenSizeExceededIsFalse()
+    {
+        $driver = new MemoryDriver($this->getContainer(), ['size' => 1, 'throw_when_size_exceeded' => false]);
+
+        $driver->set('test1', 'xxx');
+        $this->assertSame('xxx', $driver->get('test1'));
+
+        $this->assertFalse($driver->set('test2', 'xxx'));
+    }
+
     private function getContainer(): ContainerInterface
     {
         $container = Mockery::mock(ContainerInterface::class);

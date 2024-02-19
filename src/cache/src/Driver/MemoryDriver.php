@@ -61,9 +61,11 @@ class MemoryDriver extends Driver implements DriverInterface
         if (
             $this->size > 0
             && $this->getCollector()->size() >= $this->size
-            && $this->throwWhenSizeExceeded
         ) {
-            throw new OverflowException('The memory cache is full!');
+            if ($this->throwWhenSizeExceeded) {
+                throw new OverflowException('The memory cache is full!');
+            }
+            return false;
         }
 
         $seconds = $this->secondsUntil($ttl);
