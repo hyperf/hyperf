@@ -1,0 +1,58 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace HyperfTest\Cache\Cases;
+
+use Hyperf\Cache\Collector\Memory;
+use Hyperf\Cache\Driver\MemoryDriver;
+use Hyperf\Codec\Packer\PhpSerializerPacker;
+use Mockery;
+use Psr\Container\ContainerInterface;
+
+/**
+ * @internal
+ * @coversNothing
+ */
+class MemoryDriverTest extends \PHPUnit\Framework\TestCase
+{
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        Memory::instance()->clear();
+    }
+
+    public function testSetAndGet()
+    {
+        $driver = new MemoryDriver($this->getContainer(), []);
+
+        $driver->set('test', 'xxx');
+        $this->assertSame('xxx', $driver->get('test'));
+    }
+
+    public function testSetWithTtl()
+    {
+        $driver = new MemoryDriver($this->getContainer(), []);
+
+        $driver->set('test', 'xxx', 1);
+        $this->assertSame('xxx', $driver->get('test'));
+
+        sleep(3);
+
+        $this->assertNull($driver->get('test'));
+    }
+
+    private function getContainer(): ContainerInterface
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn(new PhpSerializerPacker());
+        return $container;
+    }
+}
