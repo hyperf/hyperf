@@ -37,12 +37,12 @@ class MemoryDriver extends Driver implements DriverInterface
 
     public function has(string $key): bool
     {
-        return $this->getStore()->has($this->getCacheKey($key));
+        return $this->getStorage()->has($this->getCacheKey($key));
     }
 
     public function get(string $key, mixed $default = null): mixed
     {
-        return $this->getStore()->get(
+        return $this->getStorage()->get(
             $this->getCacheKey($key),
             $default
         );
@@ -51,7 +51,7 @@ class MemoryDriver extends Driver implements DriverInterface
     public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
         $seconds = $this->secondsUntil($ttl);
-        return $this->getStore()->set(
+        return $this->getStorage()->set(
             $this->getCacheKey($key),
             $value,
             $ttl <= 0 ? null : Carbon::now()->addSeconds($seconds)
@@ -60,12 +60,12 @@ class MemoryDriver extends Driver implements DriverInterface
 
     public function delete(string $key): bool
     {
-        return $this->getStore()->delete($this->getCacheKey($key));
+        return $this->getStorage()->delete($this->getCacheKey($key));
     }
 
     public function clear(): bool
     {
-        return $this->getStore()->clear();
+        return $this->getStorage()->clear();
     }
 
     public function getMultiple(iterable $keys, mixed $default = null): iterable
@@ -103,7 +103,7 @@ class MemoryDriver extends Driver implements DriverInterface
 
     public function clearPrefix(string $prefix): bool
     {
-        return $this->getStore()->clearPrefix($this->getCacheKey($prefix));
+        return $this->getStorage()->clearPrefix($this->getCacheKey($prefix));
     }
 
     public function getConnection(): mixed
@@ -111,7 +111,7 @@ class MemoryDriver extends Driver implements DriverInterface
         return $this;
     }
 
-    protected function getStore(): MemoryStorage
+    protected function getStorage(): MemoryStorage
     {
         return MemoryStorage::instance();
     }
