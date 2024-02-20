@@ -30,5 +30,7 @@ class ContainerStub
     {
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('get')->with(ModelObserver::class)->andReturn(new ModelObserver());
+
+        ApplicationContext::setContainer($container);
     }
 }
