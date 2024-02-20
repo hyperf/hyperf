@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Scout\Cases;
 
+use HyperfTest\Scout\Stub\ContainerStub;
 use HyperfTest\Scout\Stub\ModelStubForMakeAllSearchable;
 use HyperfTest\Scout\Stub\SearchableModel;
 use Mockery as m;
@@ -24,10 +25,16 @@ use PHPUnit\Framework\TestCase;
 #[CoversNothing]
 class SearchableTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        ContainerStub::mockContainer();
+    }
+
     protected function tearDown(): void
     {
         m::close();
         $this->assertTrue(true);
+        ContainerStub::unsetContainer();
     }
 
     public function testSearchableUsingUpdateIsCalledOnCollection()

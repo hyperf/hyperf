@@ -80,5 +80,7 @@ class ModelRewriteInheritanceVisitor extends AbstractVisitor
                 }
                 return $node;
         }
+
+        return null;
     }
 }

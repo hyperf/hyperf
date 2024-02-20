@@ -85,6 +85,8 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
                 }
             }
         }
+
+        return null;
     }
 
     protected function rewrite(string $property, ?Node\Stmt\Property $node = null): ?Node\Stmt\Property
@@ -124,7 +126,6 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
 
     /**
      * @param bool|string $value
-     * @return Node\Scalar
      */
     protected function getExpr(string $property, $value): Node\Expr
     {

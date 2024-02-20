@@ -15,6 +15,7 @@ use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
 use Hyperf\Scout\Engine\ElasticsearchEngine;
+use HyperfTest\Scout\Stub\ContainerStub;
 use HyperfTest\Scout\Stub\ElasticsearchEngineTestModel;
 use HyperfTest\Scout\Stub\SearchableModel;
 use Mockery;
@@ -28,10 +29,16 @@ use PHPUnit\Framework\TestCase;
 #[CoversNothing]
 class ElasticsearchEngineTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        ContainerStub::mockContainer();
+    }
+
     protected function tearDown(): void
     {
         Mockery::close();
         $this->assertTrue(true);
+        ContainerStub::unsetContainer();
     }
 
     public function testUpdateAddsObjectsToIndex()

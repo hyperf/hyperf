@@ -18,6 +18,7 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Migrations\DatabaseMigrationRepository;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Schema\Builder as SchemaBuilder;
+use HyperfTest\Database\Stubs\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -30,6 +31,11 @@ use PHPUnit\Framework\TestCase;
 class DatabaseMigrationRepositoryTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+
+    protected function setUp(): void
+    {
+        ContainerStub::unsetContainer();
+    }
 
     protected function tearDown(): void
     {
