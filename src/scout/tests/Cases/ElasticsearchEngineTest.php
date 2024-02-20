@@ -31,13 +31,14 @@ class ElasticsearchEngineTest extends TestCase
 {
     protected function setUp(): void
     {
-        ContainerStub::unsetContainer();
+        ContainerStub::mockContainer();
     }
 
     protected function tearDown(): void
     {
         Mockery::close();
         $this->assertTrue(true);
+        ContainerStub::unsetContainer();
     }
 
     public function testUpdateAddsObjectsToIndex()

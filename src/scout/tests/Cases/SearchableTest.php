@@ -27,13 +27,14 @@ class SearchableTest extends TestCase
 {
     protected function setUp(): void
     {
-        ContainerStub::unsetContainer();
+        ContainerStub::mockContainer();
     }
 
     protected function tearDown(): void
     {
         m::close();
         $this->assertTrue(true);
+        ContainerStub::unsetContainer();
     }
 
     public function testSearchableUsingUpdateIsCalledOnCollection()

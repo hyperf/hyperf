@@ -12,6 +12,9 @@ declare(strict_types=1);
 namespace HyperfTest\Scout\Stub;
 
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Scout\ModelObserver;
+use Mockery;
+use Psr\Container\ContainerInterface;
 use ReflectionClass;
 
 class ContainerStub
@@ -21,5 +24,11 @@ class ContainerStub
         $ref = new ReflectionClass(ApplicationContext::class);
         $c = $ref->getProperty('container');
         $c->setValue(null);
+    }
+
+    public static function mockContainer()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(ModelObserver::class)->andReturn(new ModelObserver());
     }
 }
