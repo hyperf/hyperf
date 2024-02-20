@@ -33,3 +33,5 @@ AstVisitorRegistry::insert(ProxyCallVisitor::class);
 RegisterInjectPropertyHandler::register();
 
 (new RegisterPropertyHandlerListener())->process(new \stdClass());
+
+require_once 'xxx.php';
