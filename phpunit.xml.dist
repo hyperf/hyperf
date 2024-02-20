@@ -4,7 +4,7 @@
   <testsuites>
     <testsuite name="Tests">
       <directory suffix="Test.php">./src/*/tests</directory>
-      <exclude>./src/helper</exclude>
+      <exclude>./src/reactive-x/tests</exclude>
     </testsuite>
   </testsuites>
   <source>
