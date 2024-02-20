@@ -56,6 +56,8 @@ jobs:
           sudo apt-get clean
           sudo apt-get update
           sudo apt-get upgrade -f
+          ulimit -n 819200
+          ulimit -a
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
