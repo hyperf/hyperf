@@ -298,6 +298,20 @@ class UserBookService
 
 `Hyperf\Cache\Driver\RedisDriver` will store cache data in `Redis`, and users need to configure the corresponding `Redis configuration`. This mode is the default mode.
 
+### Process memory driver
+
+If you need to cache data into memory, you can try this driver. The configuration is as follows:
+
+```php
+<?php
+
+return [
+    'memory' => [
+        'driver' => Hyperf\Cache\Driver\MemoryDriver::class,
+    ],
+];
+```
+
 ### Coroutine memory driver
 
 If you need to cache data into `Context`, you can try this driver. For example, in the following application scenario, `Demo::get` will be called multiple times in multiple places, but you do not want to query `Redis` every time.

@@ -299,6 +299,22 @@ class UserBookService
 
 `Hyperf\Cache\Driver\RedisDriver` 會把緩存數據存放到 `Redis` 中，需要用户配置相應的 `Redis 配置`。此方式為默認方式。
 
+### 進程內存驅動
+
+如果您需要將數據緩存到內存中，可以嘗試此驅動。
+
+配置如下：
+
+```php
+<?php
+
+return [
+    'memory' => [
+        'driver' => Hyperf\Cache\Driver\MemoryDriver::class,
+    ],
+];
+```
+
 ### 協程內存驅動
 
 如果您需要將數據緩存到 `Context` 中，可以嘗試此驅動。例如以下應用場景 `Demo::get` 會在多個地方調用多次，但是又不想每次都到 `Redis` 中進行查詢。
