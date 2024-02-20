@@ -4,6 +4,7 @@
   <testsuites>
     <testsuite name="Tests">
       <directory suffix="Test.php">./src/*/tests</directory>
+      <exclude>./src/helper</exclude>
     </testsuite>
   </testsuites>
   <source>
