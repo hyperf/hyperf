@@ -51,6 +51,7 @@ class RegisterConnectionListener implements ListenerInterface
     protected function createPersistentPdoResolver($connection, $config)
     {
         return function () use ($config, $connection) {
+            /** @var \Hyperf\Contract\ContainerInterface $container */
             $container = ApplicationContext::getContainer();
             $key = "sqlite.presistent.pdo.{$config['name']}";
 

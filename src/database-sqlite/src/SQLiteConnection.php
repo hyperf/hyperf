@@ -69,6 +69,7 @@ class SQLiteConnection extends Connection
      */
     protected function getDefaultQueryGrammar(): HyperfQueryGrammar
     {
+        /* @phpstan-ignore-next-line */
         return $this->withTablePrefix(new QueryGrammar());
     }
 
@@ -79,6 +80,7 @@ class SQLiteConnection extends Connection
      */
     protected function getDefaultSchemaGrammar(): HyperfSchemaGrammar
     {
+        /* @phpstan-ignore-next-line */
         return $this->withTablePrefix(new SchemaGrammar());
     }
 

@@ -458,8 +458,6 @@ SQL;
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @see http://ezcomponents.org/docs/api/trunk/DatabaseSchema/ezcDbSchemaPgsqlReader.html
      */
     protected function getTableIndexesList(Connection $connection, array $tableIndexes, string $tableName = null): array
@@ -490,13 +488,16 @@ SQL;
                 'primary' => true,
                 'non_unique' => false,
                 'column_name' => $indexColumnRow->name,
+                'where' => null,
+                'flags' => null,
+                'length' => null,
             ];
         }
 
         // fetch regular indexes
         foreach ($tableIndexes as $tableIndex) {
             // Ignore indexes with reserved names, e.g. autoindexes
-            if (strpos($tableIndex->name, 'sqlite_') === 0) {
+            if (str_starts_with($tableIndex->name, 'sqlite_')) {
                 continue;
             }
 
