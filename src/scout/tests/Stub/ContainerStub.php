@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Scout\Stub;
 
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Database\Model\Register;
 use Hyperf\Scout\ModelObserver;
 use Mockery;
 use Psr\Container\ContainerInterface;
@@ -32,5 +33,7 @@ class ContainerStub
         $container->shouldReceive('get')->with(ModelObserver::class)->andReturn(new ModelObserver());
 
         ApplicationContext::setContainer($container);
+
+        Register::unsetEventDispatcher();
     }
 }
