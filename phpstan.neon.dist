@@ -68,3 +68,6 @@ parameters:
     - '#\(Hyperf\\Utils\\Collection\) does not accept Hyperf\\Collection\\Collection#'
     - '#should return Hyperf\\Utils\\Collection but returns Hyperf\\Collection\\Collectio#'
     - '#Call to an undefined method Hyperf\\Collection\\HigherOrderCollectionProxy::\w+\(\)#'
+    - '#Access to an undefined property Hyperf\\Support\\Fluent#'
+    - '#Call to an undefined method Hyperf\\Database\\.*\\Grammar::#'
+    - '#Call to an undefined method Hyperf\\Database\\.*\\Processor::#'

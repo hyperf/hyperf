@@ -3,6 +3,7 @@
 ## Added
 
 - [#6542](https://github.com/hyperf/hyperf/pull/6542) Added `MemoryDriver` for `hyperf/cache`.
+- [#6533](https://github.com/hyperf/hyperf/pull/6533) Added `database-sqlite` component.
 
 ## Optimized
 
