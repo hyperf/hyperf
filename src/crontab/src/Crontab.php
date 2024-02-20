@@ -13,10 +13,12 @@ namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
 use DateTimeZone;
+use Hyperf\Conditionable\Conditionable;
 use Hyperf\Engine\Channel;
 
 class Crontab
 {
+    use Conditionable;
     use ManagesFrequencies;
 
     protected ?string $name = null;

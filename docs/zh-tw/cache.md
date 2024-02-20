@@ -299,6 +299,22 @@ class UserBookService
 
 `Hyperf\Cache\Driver\RedisDriver` 會把快取資料存放到 `Redis` 中，需要使用者配置相應的 `Redis 配置`。此方式為預設方式。
 
+### 程序記憶體驅動
+
+如果您需要將資料快取到記憶體中，可以嘗試此驅動。
+
+配置如下：
+
+```php
+<?php
+
+return [
+    'memory' => [
+        'driver' => Hyperf\Cache\Driver\MemoryDriver::class,
+    ],
+];
+```
+
 ### 協程記憶體驅動
 
 如果您需要將資料快取到 `Context` 中，可以嘗試此驅動。例如以下應用場景 `Demo::get` 會在多個地方呼叫多次，但是又不想每次都到 `Redis` 中進行查詢。

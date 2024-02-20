@@ -71,7 +71,9 @@
       <directory suffix="Test.php">./src/socket/tests</directory>
       <directory suffix="Test.php">./src/socketio-server/tests</directory>
       <directory suffix="Test.php">./src/stdlib/tests</directory>
+      <directory suffix="Test.php">./src/stringable/tests</directory>
       <directory suffix="Test.php">./src/super-globals/tests</directory>
+      <directory suffix="Test.php">./src/support/tests</directory>
       <directory suffix="Test.php">./src/task/tests</directory>
       <directory suffix="Test.php">./src/testing/tests</directory>
       <directory suffix="Test.php">./src/tracer/tests</directory>
