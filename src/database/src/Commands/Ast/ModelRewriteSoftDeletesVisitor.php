@@ -73,6 +73,8 @@ class ModelRewriteSoftDeletesVisitor extends AbstractVisitor
                 }
             }
         }
+
+        return null;
     }
 
     protected function rewriteSoftDeletesUse(?Node\Stmt\Use_ $node = null): ?Node\Stmt\Use_

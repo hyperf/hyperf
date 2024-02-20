@@ -42,6 +42,8 @@ class ModelRewriteGetterSetterVisitor extends AbstractVisitor
         $methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes);
 
         $this->collectMethods($methods);
+
+        return null;
     }
 
     public function afterTraverse(array $nodes)

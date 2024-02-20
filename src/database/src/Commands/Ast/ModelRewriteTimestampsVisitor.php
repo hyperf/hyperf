@@ -76,6 +76,8 @@ class ModelRewriteTimestampsVisitor extends AbstractVisitor
                 }
             }
         }
+
+        return null;
     }
 
     protected function rewriteTimestamps(?Node\Stmt\Property $node = null): ?Node\Stmt\Property

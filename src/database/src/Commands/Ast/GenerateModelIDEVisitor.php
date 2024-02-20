@@ -64,6 +64,8 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                 new Node\Identifier(self::toIDEClass($this->nsp . '\\' . $this->originClassName))
             );
         }
+
+        return null;
     }
 
     public function afterTraverse(array $nodes)
