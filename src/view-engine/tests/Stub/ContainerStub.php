@@ -20,11 +20,14 @@ use Hyperf\Di\Definition\DefinitionSource;
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\View\Mode;
+use Hyperf\View\Render;
+use Hyperf\View\RenderInterface;
 use Hyperf\ViewEngine\Component\DynamicComponent;
 use Hyperf\ViewEngine\ConfigProvider;
 use Hyperf\ViewEngine\HyperfViewEngine;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
+use ReflectionClass;
 
 class ContainerStub
 {
@@ -59,6 +62,15 @@ class ContainerStub
             ],
         ]));
 
+        $container->set(RenderInterface::class, new Render($container, $container->get(ConfigInterface::class)));
+
         return $container;
+    }
+
+    public static function unsetContainer()
+    {
+        $ref = new ReflectionClass(ApplicationContext::class);
+        $c = $ref->getProperty('container');
+        $c->setValue(null);
     }
 }

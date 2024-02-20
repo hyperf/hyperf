@@ -18,6 +18,7 @@ use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Exception\InvalidCastException;
 use Hyperf\Database\Model\CastsValue;
 use Hyperf\Database\Model\Model;
+use HyperfTest\Database\Stubs\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -29,12 +30,13 @@ use stdClass;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class DatabaseModelCustomCastingTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        ContainerStub::unsetContainer();
+    }
+
     protected function tearDown(): void
     {
         Mockery::close();

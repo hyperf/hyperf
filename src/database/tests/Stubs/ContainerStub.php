@@ -19,6 +19,7 @@ use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Di\Container;
 use Mockery;
+use ReflectionClass;
 
 class ContainerStub
 {
@@ -66,5 +67,12 @@ class ContainerStub
             ->setPrefix('')
             ->setWithIde(false);
         return $option;
+    }
+
+    public static function unsetContainer()
+    {
+        $ref = new ReflectionClass(ApplicationContext::class);
+        $c = $ref->getProperty('container');
+        $c->setValue(null);
     }
 }

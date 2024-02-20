@@ -13,6 +13,7 @@ namespace HyperfTest\Database;
 
 use Hyperf\Database\Migrations\MigrationCreator;
 use Hyperf\Support\Filesystem\Filesystem;
+use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\MigrationCreatorFakeMigration;
 use InvalidArgumentException;
 use Mockery;
@@ -27,6 +28,11 @@ use PHPUnit\Framework\TestCase;
 class DatabaseMigrationCreatorTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+
+    protected function setUp(): void
+    {
+        ContainerStub::unsetContainer();
+    }
 
     protected function tearDown(): void
     {
