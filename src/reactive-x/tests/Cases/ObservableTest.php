@@ -66,7 +66,6 @@ class ObservableTest extends TestCase
     protected function setUp(): void
     {
         // TODO: 处理无法结束的问题
-        echo '处理无法结束的问题';
         $this->markTestSkipped('处理无法结束的问题');
 
         $container = new Container(new DefinitionSource([]));
