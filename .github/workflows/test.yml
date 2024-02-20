@@ -27,9 +27,7 @@ jobs:
       - name: Setup Packages
         run: composer update -oW
       - name: Run CS Fix
-        run: |
-          ulimit -a
-          vendor/bin/php-cs-fixer fix src --dry-run --diff
+        run: vendor/bin/php-cs-fixer fix src --dry-run --diff
   tests:
     needs: cs-fix
     name: Test on PHP${{ matrix.php-version }} Swoole-${{ matrix.sw-version }}
@@ -56,8 +54,6 @@ jobs:
           sudo apt-get clean
           sudo apt-get update
           sudo apt-get upgrade -f
-          sudo ulimit -n 819200
-          ulimit -a
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
