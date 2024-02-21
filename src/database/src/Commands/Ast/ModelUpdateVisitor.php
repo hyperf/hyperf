@@ -396,6 +396,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         return match ($type) {
             'tinyint', 'smallint', 'mediumint', 'int', 'bigint' => 'integer',
             'bool', 'boolean' => 'boolean',
+            'json' => 'json',
             default => null,
         };
     }
