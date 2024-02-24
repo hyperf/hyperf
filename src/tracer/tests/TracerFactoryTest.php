@@ -165,6 +165,9 @@ class TracerFactoryTest extends TestCase
                         'options' => [
                         ],
                     ],
+                    'noop' => [
+                        'driver' => \Hyperf\Tracer\Adapter\NoOpTracerFactory::class,
+                    ],
                 ],
             ],
         ]);
