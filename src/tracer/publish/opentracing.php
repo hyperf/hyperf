@@ -14,6 +14,7 @@ use Zipkin\Samplers\BinarySampler;
 use function Hyperf\Support\env;
 
 return [
+    // To disable hyperf/opentracing temporarily, set default driver to noop.
     'default' => env('TRACER_DRIVER', 'zipkin'),
     'enable' => [
         'coroutine' => env('TRACER_ENABLE_COROUTINE', false),
@@ -87,6 +88,9 @@ return [
                     'reporting_port' => env('JAEGER_REPORTING_PORT', 5775),
                 ],
             ],
+        ],
+        'noop' => [
+            'driver' => Hyperf\Tracer\Adapter\NoOpTracerFactory::class,
         ],
     ],
     'tags' => [
