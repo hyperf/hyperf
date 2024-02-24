@@ -192,6 +192,9 @@ class TracerFactoryTest extends TestCase
             ->with(\Hyperf\Tracer\Adapter\JaegerTracerFactory::class)
             ->andReturn(new \Hyperf\Tracer\Adapter\JaegerTracerFactory($config));
         $container->shouldReceive('get')
+            ->with(\Hyperf\Tracer\Adapter\NoOpTracerFactory::class)
+            ->andReturn(new \Hyperf\Tracer\Adapter\NoOpTracerFactory());
+        $container->shouldReceive('get')
             ->with(\Hyperf\Contract\ConfigInterface::class)
             ->andReturn($config);
 
