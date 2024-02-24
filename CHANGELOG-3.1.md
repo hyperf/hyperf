@@ -1,5 +1,9 @@
 # v3.1.11 - TBD
 
+## Added
+
+- [#6550](https://github.com/hyperf/hyperf/pull/6550) Added default config of noop driver for `hyperf/opentracing`.
+
 # v3.1.10 - 2024-02-23
 
 ## Added
