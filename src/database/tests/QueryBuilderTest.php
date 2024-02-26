@@ -3050,4 +3050,17 @@ class QueryBuilderTest extends TestCase
             Mockery::mock(Processor::class),
         ])->makePartial();
     }
+
+    public function testQueryBuilderInvalidOperator()
+    {
+        $class = new \ReflectionClass(Builder::class);
+        $method = $class->getMethod('invalidOperator');
+        $call = $method->getClosure($this->getMySqlBuilderWithProcessor());
+
+        $this->assertTrue(call_user_func($call, 1));
+        $this->assertTrue(call_user_func($call, '1'));
+        $this->assertFalse(call_user_func($call, '<>'));
+        $this->assertFalse(call_user_func($call, '='));
+        $this->assertTrue(call_user_func($call, '!'));
+    }
 }

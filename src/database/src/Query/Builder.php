@@ -2771,7 +2771,7 @@ class Builder
      */
     protected function invalidOperator($operator)
     {
-        return ! in_array(strtolower($operator), $this->operators, true) && ! in_array(strtolower($operator), $this->grammar->getOperators(), true);
+        return !is_string($operator) || (! in_array(strtolower($operator), $this->operators, true) && ! in_array(strtolower($operator), $this->grammar->getOperators(), true));
     }
 
     /**
