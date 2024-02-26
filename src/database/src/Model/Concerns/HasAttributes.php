@@ -26,6 +26,7 @@ use Hyperf\Database\Exception\InvalidCastException;
 use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Database\Query\Expression;
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
 use LogicException;
@@ -635,6 +636,12 @@ trait HasAttributes
         }
 
         if ($this->hasCast($key, static::$primitiveCastTypes)) {
+            if ($current instanceof Expression) {
+                $current = $current->getValue();
+                if ($current != $this->castAttribute($key, $current)) {
+                    return false;
+                }
+            }
             return $this->castAttribute($key, $current) ===
                 $this->castAttribute($key, $original);
         }
