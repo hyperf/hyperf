@@ -1,5 +1,9 @@
 # v3.1.11 - TBD
 
+## Fixed
+
+- [#6555](https://github.com/hyperf/hyperf/pull/6555) Fixed bug that `invalidOperator` cannot work well when using non-string operators.
+
 ## Added
 
 - [#6550](https://github.com/hyperf/hyperf/pull/6550) Added default config of noop driver for `hyperf/opentracing`.
