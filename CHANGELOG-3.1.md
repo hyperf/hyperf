@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- [#6555](https://github.com/hyperf/hyperf/pull/6555) Fixed bug that `whereColumn` cannot work well when using invalid operators.
+- [#6555](https://github.com/hyperf/hyperf/pull/6555) Fixed bug that `invalidOperator` cannot work well when using invalid operators.
 
 ## Added
 

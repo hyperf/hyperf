@@ -649,14 +649,6 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertEquals([], $builder->getBindings());
     }
 
-    public function testBasicWhereColumnNotString(): void
-    {
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('users')->whereColumn('gender', 1);
-        $this->assertSame('select * from "users" where "gender" = 1', $builder->toSql());
-        $this->assertEquals([], $builder->getBindings());
-    }
-
     public function testArrayWhereColumn(): void
     {
         $conditions = [

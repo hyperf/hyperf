@@ -2767,11 +2767,10 @@ class Builder
      * Determine if the given operator is supported.
      *
      * @param string $operator
-     * @return bool
      */
     protected function invalidOperator($operator): bool
     {
-        if(! is_string($operator)){
+        if (! is_string($operator)) {
             return true;
         }
 
