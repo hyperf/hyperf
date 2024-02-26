@@ -1,5 +1,9 @@
 # v3.1.11 - TBD
 
+## Fixed
+
+- [#6555](https://github.com/hyperf/hyperf/pull/6555) Fixed bug that `whereColumn` cannot work well when using invalid operators.
+
 ## Added
 
 - [#6550](https://github.com/hyperf/hyperf/pull/6550) Added default config of noop driver for `hyperf/opentracing`.
