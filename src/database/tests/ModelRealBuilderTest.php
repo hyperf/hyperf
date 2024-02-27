@@ -637,7 +637,8 @@ class ModelRealBuilderTest extends TestCase
 
     public function testSaveExpression()
     {
-        $this->getContainer();
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
 
         /** @var UserExt $ext */
         $ext = UserExt::query()->find(1);
