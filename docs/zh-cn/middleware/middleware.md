@@ -69,6 +69,8 @@ Router::addGroup(
 > 使用 `#[Middleware]` 注解时需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空间；   
 > 使用 `#[Middlewares]` 注解时需 `use Hyperf\HttpServer\Annotation\Middlewares;` 命名空间；
 
+***注意：必须配合 `#[AutoController]` 或者 `#[Controller]` 使用***
+
 定义单个中间件：
 
 ```php
@@ -385,4 +387,48 @@ location / {
         return 204;
     }
 }
+```
+
+### 后置中间件
+
+通常情况下，我们都是最后执行
+
+```
+return $handler->handle($request);
+```
+
+所以，相当于是前置中间件，如果想要让中间件逻辑后置，其实只需要更换一下执行顺序即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+class OpenApiMiddleware implements MiddlewareInterface
+{
+    public function __construct(protected ContainerInterface $container)
+    {
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        // TODO: 前置操作
+        try{
+            $result = $handler->handle($request);
+        } finally {
+            // TODO: 后置操作
+        }
+        return $result;
+    }
+}
+
 ```

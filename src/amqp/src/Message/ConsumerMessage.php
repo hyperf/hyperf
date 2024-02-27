@@ -42,12 +42,12 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
 
     protected int $nums = 1;
 
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         return $this->consume($data);
     }
 
-    public function consume($data): string
+    public function consume($data): Result
     {
         return Result::ACK;
     }
@@ -146,7 +146,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this->container;
     }
 
-    protected function reply($data, AMQPMessage $message)
+    protected function reply(mixed $data, AMQPMessage $message): void
     {
         $packer = ApplicationContext::getContainer()->get(Packer::class);
 

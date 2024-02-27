@@ -15,13 +15,13 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=8.0",
-        "hyperf/collection": "~3.0.0",
-        "hyperf/code-parser": "~3.0.0",
-        "hyperf/macroable": "~3.0.0",
-        "hyperf/support": "~3.0.24",
-        "hyperf/tappable": "~3.0.0",
-        "hyperf/utils": "~3.0.0",
+        "php": ">=8.1",
+        "hyperf/collection": "~3.1.0",
+        "hyperf/code-parser": "~3.1.0",
+        "hyperf/macroable": "~3.1.0",
+        "hyperf/support": "~3.1.0",
+        "hyperf/tappable": "~3.1.0",
+        "hyperf/utils": "~3.1.0",
         "nesbot/carbon": "^2.0",
         "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0"
@@ -46,7 +46,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.1-dev"
         }
     }
 }

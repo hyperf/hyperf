@@ -16,11 +16,13 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=8.0",
-        "hyperf/contract": "~3.0.0",
-        "hyperf/support": "~3.0.0",
-        "hyperf/utils": "~3.0.0",
-        "psr/container": "^1.0|^2.0"
+        "php": ">=8.1",
+        "hyperf/context": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/support": "~3.1.0",
+        "hyperf/utils": "~3.1.0",
+        "psr/container": "^1.0|^2.0",
+        "swow/psr7-plus": "^1.0"
     },
     "suggest": {
         "hyperf/task": "Required to use task as a view render mode.",
@@ -44,7 +46,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\View\\ConfigProvider"

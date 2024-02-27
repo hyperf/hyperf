@@ -12,11 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\ModelCache\Handler;
 
 use Hyperf\ModelCache\Handler\RedisStringHandler;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RedisStringHandlerTest extends RedisHandlerTest
 {
     protected $handler = RedisStringHandler::class;

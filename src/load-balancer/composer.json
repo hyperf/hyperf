@@ -16,9 +16,9 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=8.0",
-        "hyperf/coordinator": "~3.0.0",
-        "hyperf/coroutine": "~3.0.0",
+        "php": ">=8.1",
+        "hyperf/coordinator": "~3.1.0",
+        "hyperf/coroutine": "~3.1.0",
         "markrogoyski/math-php": "^2.0",
         "psr/log": "^1.0|^2.0|^3.0"
     },
@@ -37,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\LoadBalancer\\ConfigProvider"

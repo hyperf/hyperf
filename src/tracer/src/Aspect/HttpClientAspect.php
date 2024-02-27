@@ -77,7 +77,7 @@ class HttpClientAspect extends AbstractAspect
         try {
             $result = $proceedingJoinPoint->process();
             if ($result instanceof ResponseInterface) {
-                $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), $result->getStatusCode());
+                $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), (string) $result->getStatusCode());
             }
         } catch (Throwable $e) {
             if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {

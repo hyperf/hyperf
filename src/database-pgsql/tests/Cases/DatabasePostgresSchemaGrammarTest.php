@@ -15,12 +15,14 @@ use Hyperf\Database\Connection;
 use Hyperf\Database\PgSQL\Schema\Grammars\PostgresGrammar;
 use Hyperf\Database\Schema\Blueprint;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabasePostgresSchemaGrammarTest extends TestCase
 {
     protected function tearDown(): void

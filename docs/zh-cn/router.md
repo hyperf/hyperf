@@ -84,19 +84,40 @@ Router::addGroup('/user/',function (){
 
 `Hyperf` 提供了非常便利的 [注解](zh-cn/annotation.md) 路由功能，您可以直接在任意类上通过定义 `#[Controller]` 或 `#[AutoController]` 注解来完成一个路由的定义。
 
+!> 以下出现的注解类都为 `use Hyperf\HttpServer\Annotation\` 命名空间下的类，如 `Hyperf\HttpServer\Annotation\AutoController`
+
+#### 注解参数
+
+`#[Controller]` 和 `#[AutoController]` 都提供了 `prefix` 和 `server` 两个参数。
+
+`prefix` 表示该控制器下的所有方法路由的前缀，默认为控制器类命名空间中 `\Controller\` 之后的部分会以蛇形命名法(SnakeCase)被用作路由的前缀，
+
+如 `App\Controller\Demo\UserController` 则 prefix 默认为 `demo/user`，如类内某一方法的 path 为 `index`，则最终路由为 `/demo/user/index`。
+
+!> 需要注意的是 `prefix` 并非一直有效，当类内的方法的 path 以 `/` 开头时，则表明路径从 `URI` 头部开始定义，也就意味着会忽略 prefix 的值
+
+`server` 表示该路由是定义在哪个 `HTTP Server` 之上的，由于 Hyperf 支持同时启动多个 `HTTP Server`，则在定义路由是可以通过该参数来进行区分这个路由是为了哪个 `Server` 定义的，默认为 `http`。
+
+|                 控制器                  |               注解                |        访问路由        |
+|:------------------------------------:|:-------------------------------:|:------------------:|
+|   App\Controller\MyDataController    |        @AutoController()        |   /my_data/index   |
+|   App\Controller\MydataController    |        @AutoController()        |   /mydata/index    |
+|   App\Controller\MyDataController    | @AutoController(prefix="/data") |    /data/index     |
+| App\Controller\Demo\MydataController |        @AutoController()        | /demo/mydata/index |
+| App\Controller\Demo\MyDataController | @AutoController(prefix="/data") |    /data/index     |
+
+
+
+|                 控制器                  |                                        注解                                         |        访问路由         |
+|:------------------------------------:|:---------------------------------------------------------------------------------:|:-------------------:|
+|   App\Controller\MyDataController    |        @Controller() + @RequestMapping(path: "index", methods: "get,post")        |   /my_data/index    |
+| App\Controller\Demo\MyDataController |        @Controller() + @RequestMapping(path: "index", methods: "get,post")        | /demo/my_data/index |
+| App\Controller\Demo\MyDataController | @Controller(prefix="/data") + @RequestMapping(path: "index", methods: "get,post") |     /data/index     |
+|   App\Controller\MyDataController    |       @Controller() + @RequestMapping(path: "/index", methods: "get,post")        |       /index        |
+
 #### `#[AutoController]` 注解
 
 `#[AutoController]` 为绝大多数简单的访问场景提供路由绑定支持，使用 `#[AutoController]` 时则 `Hyperf` 会自动解析所在类的所有 `public` 方法并提供 `GET` 和 `POST` 两种请求方式。
-
-> 使用 `#[AutoController]` 注解时需 `use Hyperf\HttpServer\Annotation\AutoController;` 命名空间；
-
-驼峰命名的控制器，会自动转化为蛇形路由，以下为控制器与实际路由的对应关系示例：
-
-|      控制器      |              注解               |    访问路由    |
-| :--------------: | :-----------------------------: | :------------: |
-| MyDataController |        @AutoController()        | /my_data/index |
-| MydataController |        @AutoController()        | /mydata/index  |
-| MyDataController | @AutoController(prefix="/data") |  /data/index   |
 
 ```php
 <?php
@@ -125,14 +146,6 @@ class UserController
 `#[Controller]` 为满足更细致的路由定义需求而存在，使用 `#[Controller]` 注解用于表明当前类为一个 `Controller` 类，同时需配合 `#[RequestMapping]` 注解来对请求方法和请求路径进行更详细的定义。   
 我们也提供了多种快速便捷的 `Mapping` 注解，如 `#[GetMapping]`、`#[PostMapping]`、`#[PutMapping]`、`#[PatchMapping]`、`#[DeleteMapping]` 5 种便捷的注解用于表明允许不同的请求方法。
 
-> 使用 `#[Controller]` 注解时需 `use Hyperf\HttpServer\Annotation\Controller;` 命名空间；   
-> 使用 `#[RequestMapping]` 注解时需 `use Hyperf\HttpServer\Annotation\RequestMapping;` 命名空间；   
-> 使用 `#[GetMapping]` 注解时需 `use Hyperf\HttpServer\Annotation\GetMapping;` 命名空间；   
-> 使用 `#[PostMapping]` 注解时需 `use Hyperf\HttpServer\Annotation\PostMapping;` 命名空间；   
-> 使用 `#[PutMapping]` 注解时需 `use Hyperf\HttpServer\Annotation\PutMapping;` 命名空间；   
-> 使用 `#[PatchMapping]` 注解时需 `use Hyperf\HttpServer\Annotation\PatchMapping;` 命名空间；   
-> 使用 `#[DeleteMapping]` 注解时需 `use Hyperf\HttpServer\Annotation\DeleteMapping;` 命名空间；  
-
 ```php
 <?php
 declare(strict_types=1);
@@ -157,18 +170,9 @@ class UserController
 }
 ```
 
-#### 注解参数
-
-`#[Controller]` 和 `#[AutoController]` 都提供了 `prefix` 和 `server` 两个参数。   
-
-`prefix` 表示该 `Controller` 下的所有方法路由的前缀，默认为类名的小写，如 `UserController` 则 `prefix` 默认为 `user`，如类内某一方法的 `path` 为 `index`，则最终路由为 `/user/index`。   
-需要注意的是 `prefix` 并非一直有效，当类内的方法的 `path` 以 `/` 开头时，则表明路径从 `URI` 头部开始定义，也就意味着会忽略 `prefix` 的值，同时如果没有设置 `prefix` 属性，那么控制器类命名空间中 `\\Controller\\` 之后的部分会以蛇形命名法(SnakeCase)被用作路由的前缀。
-
-`server` 表示该路由是定义在哪个 `Server` 之上的，由于 `Hyperf` 支持同时启动多个 `Server`，也就意味着有可能会同时存在多个 `HTTP Server`，则在定义路由是可以通过 `server` 参数来进行区分这个路由是为了哪个 `Server` 定义的，默认为 `http`。
-
 ### 路由参数
 
-> 本框架定义的路由参数必须和控制器参数键名、类型保持一致，否则控制器无法接受到相关参数
+> 本框架定义的路由参数必须和控制器参数键名、类型保持一致，否则控制器无法接收到相关参数
 
 ```php
 Router::get('/user/{id}', 'App\Controller\UserController::info');
@@ -201,6 +205,34 @@ public function index(RequestInterface $request)
 #### 可选参数
 
 有时候您可能会希望这个参数是可选的，您可以通过 `[]` 来声明中括号内的参数为一个可选参数，如 `/user/[{id}]`。
+
+#### 校验参数
+
+您也可以使用正则表达式对参数进行校验，以下是一些例子
+```php
+use Hyperf\HttpServer\Router\Router;
+
+// 可以匹配 /user/42, 但不能匹配 /user/xyz
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
+
+// 可以匹配 /user/foobar, 但不能匹配 /user/foo/bar
+Router::addRoute('GET', '/user/{name}', 'handler');
+
+// 也可以匹配 /user/foo/bar as well
+Router::addRoute('GET', '/user/{name:.+}', 'handler');
+
+// 这个路由
+Router::addRoute('GET', '/user/{id:\d+}[/{name}]', 'handler');
+// 等同于以下的两个路由
+Router::addRoute('GET', '/user/{id:\d+}', 'handler');
+Router::addRoute('GET', '/user/{id:\d+}/{name}', 'handler');
+
+// 多个可选的嵌套也是允许的
+Router::addRoute('GET', '/user[/{id:\d+}[/{name}]]', 'handler');
+
+// 这是一条无效的路由, 因为可选部分只能出现在最后
+Router::addRoute('GET', '/user[/{id:\d+}]/{name}', 'handler');
+```
 
 #### 获取路由信息
 

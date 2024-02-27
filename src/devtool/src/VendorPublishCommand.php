@@ -42,7 +42,7 @@ class VendorPublishCommand extends SymfonyCommand
             ->addOption('force', 'f', InputOption::VALUE_OPTIONAL, 'Overwrite any existing files', false);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
         $this->force = $input->getOption('force') !== false;

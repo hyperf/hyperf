@@ -18,8 +18,8 @@
     "require": {
         "ext-json": "*",
         "ext-xml": "*",
-        "php": ">=8.0",
-        "hyperf/contract": "~3.0.0"
+        "php": ">=8.1",
+        "hyperf/contract": "~3.1.0"
     },
     "suggest": {
         "ext-igbinary": "Required to use IgbinarySerializerPacker."
@@ -39,7 +39,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-master": "3.1-dev"
         }
     }
 }

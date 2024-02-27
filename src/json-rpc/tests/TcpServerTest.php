@@ -36,14 +36,21 @@ use Hyperf\RpcServer\Router\DispatcherFactory;
 use Hyperf\Serializer\SimpleNormalizer;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
+use Hyperf\Server\ServerFactory;
 use Hyperf\Server\ServerManager;
 use Hyperf\Stringable\Str;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionClass;
 use stdClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -63,7 +70,6 @@ class TcpServerTest extends TestCase
 
         $ref = new ReflectionClass($server);
         $method = $ref->getMethod('getDefaultExceptionHandler');
-        $method->setAccessible(true);
         $res = $method->invoke($server);
 
         $this->assertSame([TcpExceptionHandler::class], $res);
@@ -88,7 +94,6 @@ class TcpServerTest extends TestCase
 
         $ref = new ReflectionClass($server);
         $method = $ref->getMethod('buildRequest');
-        $method->setAccessible(true);
         /** @var Request $request */
         $request = $method->invoke($server, 1, 1, Json::encode([
             'jsonrpc' => '2.0',
@@ -168,6 +173,16 @@ class TcpServerTest extends TestCase
             return Mockery::mock(MethodDefinitionCollectorInterface::class);
         });
         $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)->andReturn(null);
+
+        $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+        $dispatcher->shouldReceive('dispatch')->andReturn(true);
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturn(true);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
+
+        $serverFactory = Mockery::mock(ServerFactory::class);
+        $serverFactory->shouldReceive('getConfig')->andReturn(null);
+        $container->shouldReceive('get')->with(ServerFactory::class)->andReturn($serverFactory);
+
         return $container;
     }
 }

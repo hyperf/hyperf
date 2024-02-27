@@ -20,10 +20,6 @@ use ReflectionClass;
 #[Attribute(Attribute::TARGET_CLASS)]
 class Constants extends AbstractAnnotation
 {
-    public function __construct()
-    {
-    }
-
     public function collectClass(string $className): void
     {
         $reader = new AnnotationReader();

@@ -41,7 +41,7 @@ use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\Annotation\SocketIONamespace;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
-use Hyperf\Utils\Codec\Json;
+use Hyperf\Codec\Json;
 
 #[SocketIONamespace("/")]
 class WebSocketController extends BaseNamespace

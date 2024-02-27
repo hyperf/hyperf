@@ -23,7 +23,12 @@ use function Hyperf\Support\make;
 
 /**
  * @internal
- * @covers \Hyperf\Di\Container
+ * @coversNothing
+ */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Di\Container::class)]
+/**
+ * @internal
+ * @coversNothing
  */
 class MakeTest extends TestCase
 {
@@ -35,7 +40,6 @@ class MakeTest extends TestCase
 
     public function testMakeFunction()
     {
-        $this->assertTrue(function_exists('make'));
         $this->assertInstanceOf(Foo::class, $foo = make(Foo::class, [
             'string' => '123',
             'int' => 234,
@@ -50,7 +54,6 @@ class MakeTest extends TestCase
 
     public function testMakeIndexedParameters()
     {
-        $this->assertTrue(function_exists('make'));
         $this->assertInstanceOf(Foo::class, $foo = make(Foo::class, ['123', 'int' => 234]));
         $this->assertSame('123', $foo->string);
         $this->assertSame(234, $foo->int);

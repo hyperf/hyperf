@@ -146,9 +146,9 @@ if ($request->isMethod('post')) {
 
 ## 输入预处理 & 规范化
 
-## 获取输入
+### 获取输入
 
-### 获取所有输入
+#### 获取所有输入
 
 您可以使用 `all()` 方法以 `数组` 形式获取到所有输入数据:
 
@@ -156,7 +156,7 @@ if ($request->isMethod('post')) {
 $all = $request->all();
 ```
 
-### 获取指定输入值
+#### 获取指定输入值
 
 通过 `input(string $key, $default = null)` 和 `inputs(array $keys, $default = null): array` 获取 `一个` 或 `多个` 任意形式的输入值：
 
@@ -174,7 +174,7 @@ $name = $request->input('products.0.name');
 
 $names = $request->input('products.*.name');
 ```
-### 从查询字符串获取输入
+#### 从查询字符串获取输入
 
 使用 `input`, `inputs` 方法可以从整个请求中获取输入数据（包括 `Query 参数`），而 `query(?string $key = null, $default = null)` 方法可以只从查询字符串中获取输入数据：
 
@@ -187,7 +187,7 @@ $name = $request->query('name', 'Hyperf');
 $name = $request->query();
 ```
 
-### 获取 `JSON` 输入信息
+#### 获取 `JSON` 输入信息
 
 如果请求的 `Body` 数据格式是 `JSON`，则只要 `请求对象(Request)` 的 `Content-Type` `Header 值` 正确设置为 `application/json`，就可以通过  `input(string $key, $default = null)` 方法访问 `JSON` 数据，你甚至可以使用 「点」语法来读取 `JSON` 数组：
 
@@ -200,7 +200,7 @@ $name = $request->input('user.name', 'Hyperf');
 $name = $request->all();
 ```
 
-### 确定是否存在输入值
+#### 确定是否存在输入值
 
 要判断请求是否存在某个值，可以使用 `has($keys)` 方法。如果请求中存在该值则返回 `true`，不存在则返回 `false`，`$keys` 可以传递一个字符串，或传递一个数组包含多个字符串，只有全部存在才会返回 `true`：
 
@@ -215,9 +215,9 @@ if ($request->has(['name', 'email'])) {
 }
 ```
 
-## Cookies
+### Cookies
 
-### 从请求中获取 Cookies
+#### 从请求中获取 Cookies
 
 使用 `getCookieParams()` 方法从请求中获取所有的 `Cookies`，结果会返回一个关联数组。
 
@@ -234,9 +234,9 @@ $name = $request->cookie('name');
 $name = $request->cookie('name', 'Hyperf');
  ```
 
-## 文件
+### 文件
 
-### 获取上传文件
+#### 获取上传文件
 
 你可以使用 `file(string $key, $default): ?Hyperf\HttpMessage\Upload\UploadedFile` 方法从请求中获取上传的文件对象。如果上传的文件存在则该方法返回一个 `Hyperf\HttpMessage\Upload\UploadedFile` 类的实例，该类继承了 `PHP` 的 `SplFileInfo` 类的同时也提供了各种与文件交互的方法：
 
@@ -245,7 +245,7 @@ $name = $request->cookie('name', 'Hyperf');
 $file = $request->file('photo');
 ```
 
-### 检查文件是否存在
+#### 检查文件是否存在
 
 您可以使用 `hasFile(string $key): bool` 方法确认请求中是否存在文件：
 
@@ -255,7 +255,7 @@ if ($request->hasFile('photo')) {
 }
 ```
 
-### 验证成功上传
+#### 验证成功上传
 
 除了检查上传的文件是否存在外，您也可以通过 `isValid(): bool` 方法验证上传的文件是否有效：
 
@@ -265,7 +265,7 @@ if ($request->file('photo')->isValid()) {
 }
 ```
 
-### 文件路径 & 扩展名
+#### 文件路径 & 扩展名
 
 `UploadedFile` 类还包含访问文件的完整路径及其扩展名方法。`getExtension()` 方法会根据文件内容判断文件的扩展名。该扩展名可能会和客户端提供的扩展名不同：
 
@@ -277,7 +277,7 @@ $path = $request->file('photo')->getPath();
 $extension = $request->file('photo')->getExtension();
 ```
 
-### 存储上传文件
+#### 存储上传文件
 
 上传的文件在未手动储存之前，都是存在一个临时位置上的，如果您没有对该文件进行储存处理，则在请求结束后会从临时位置上移除，所以我们可能需要对文件进行持久化储存处理，通过 `moveTo(string $targetPath): void` 将临时文件移动到 `$targetPath` 位置持久化储存，代码示例如下：
 
@@ -290,3 +290,56 @@ if ($file->isMoved()) {
     // ...
 }
 ```
+
+
+## 相关事件
+
+当我们在服务配置中，打开 `enable_request_lifecycle`，则每次请求进来，都可以触发以下三个事件分别是
+
+### 配置实例
+
+> 以下删除其他不相干代码
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\Server\Event;
+use Hyperf\Server\Server;
+use Hyperf\Server\ServerInterface;
+
+return [
+    'servers' => [
+        [
+            'name' => 'http',
+            'type' => ServerInterface::SERVER_HTTP,
+            'host' => '0.0.0.0',
+            'port' => 9501,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
+            ],
+            'options' => [
+                // Whether to enable request lifecycle event
+                'enable_request_lifecycle' => false,
+            ],
+        ],
+    ],
+];
+
+```
+
+### 事件列表
+
+- Hyperf\HttpServer\Event\RequestReceived
+
+接收到请求时，会触发此事件
+
+- Hyperf\HttpServer\Event\RequestHandled
+
+请求处理完毕时，会触发此事件
+
+- Hyperf\HttpServer\Event\RequestTerminated
+
+当前请求的承载协程销毁时，会触发此事件

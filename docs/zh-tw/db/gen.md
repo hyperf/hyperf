@@ -205,7 +205,7 @@ declare(strict_types=1);
 namespace App\Kernel\Visitor;
 
 use Hyperf\Database\Commands\Ast\ModelUpdateVisitor as Visitor;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 class ModelUpdateVisitor extends Visitor
 {

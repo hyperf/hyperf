@@ -14,5 +14,6 @@ return [
         'driver' => Hyperf\Cache\Driver\RedisDriver::class,
         'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
         'prefix' => 'c:',
+        'skip_cache_results' => [],
     ],
 ];

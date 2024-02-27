@@ -32,19 +32,21 @@ use Hyperf\SocketIOServer\SidProvider\LocalSidProvider;
 use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscriber\Subscriber;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Throwable;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RoomAdapterTest extends AbstractTestCase
 {
     public function testMemoryAdapter()
     {
         $sidProvider = new LocalSidProvider();
         $server = Mockery::Mock(Sender::class);
-        $server->shouldReceive('push')->twice();
+        $server->shouldReceive('pushFrame')->twice();
         $room = new MemoryAdapter($server, $sidProvider);
         $room->add('42', 'universe', '42');
         $room->add('43', 'universe', '43');
@@ -90,7 +92,7 @@ class RoomAdapterTest extends AbstractTestCase
         $nsp->shouldReceive('getNamespace')->andReturn('test');
         $redis = $this->getRedis();
         $server = Mockery::Mock(Sender::class);
-        $server->shouldReceive('push')->twice();
+        $server->shouldReceive('pushFrame')->twice();
         $sidProvider = new LocalSidProvider();
         $room = new RedisAdapter($redis, $server, $nsp, $sidProvider);
         $room->add('42', 'universe', '42');

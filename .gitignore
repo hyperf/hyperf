@@ -16,3 +16,5 @@ vendor/
 node_modules/*
 *.cache
 .bashrc
+/phpstan.neon
+/phpunit.xml

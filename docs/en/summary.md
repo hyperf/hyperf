@@ -9,7 +9,7 @@
 
   * [Release Planning](en/release-planning.md)
   * [Versions](en/versions.md)
-  * [Changelogs](en/changelog/3.0.md)
+  * [Changelogs](en/changelog/3.1.md)
 
 * Quick Start
 
@@ -116,7 +116,7 @@
 
   * [Connection Pool](en/pool.md)
   * [Custom Process](en/process.md)
-  * [Utils](en/utils.md)
+  * [Support](en/support.md)
   * [Crontab](en/crontab.md)
   * [Task](en/task.md)
   * [Enum](en/constants.md)
@@ -149,6 +149,7 @@
 
 * Old Changelogs
 
+  * [v3.0](en/changelog/3.0.md)
   * [v2.2](en/changelog/2.2.md)
   * [v2.1](en/changelog/2.1.md)
   * [v2.0](en/changelog/2.0.md)

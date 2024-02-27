@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\ModelListener;
 
 use Hyperf\ModelListener\Collector\ListenerCollector;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ListenerCollectorTest extends TestCase
 {
     protected function tearDown(): void

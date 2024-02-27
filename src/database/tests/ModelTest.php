@@ -67,6 +67,7 @@ use HyperfTest\Database\Stubs\NoConnectionModelStub;
 use HyperfTest\Database\Stubs\User;
 use LogicException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface as Dispatcher;
@@ -80,6 +81,7 @@ use function Hyperf\Coroutine\go;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelTest extends TestCase
 {
     use InteractsWithTime;
@@ -859,7 +861,6 @@ class ModelTest extends TestCase
 
         $class = new ReflectionClass($model);
         $method = $class->getMethod('getArrayableRelations');
-        $method->setAccessible(true);
 
         $model->setRelation('foo', ['bar']);
         $model->setRelation('bam', ['boom']);

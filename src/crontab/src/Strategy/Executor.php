@@ -22,8 +22,6 @@ use Hyperf\Crontab\Event\BeforeExecute;
 use Hyperf\Crontab\Event\FailToExecute;
 use Hyperf\Crontab\Exception\InvalidArgumentException;
 use Hyperf\Crontab\LoggerInterface;
-use Hyperf\Crontab\Mutex\RedisServerMutex;
-use Hyperf\Crontab\Mutex\RedisTaskMutex;
 use Hyperf\Crontab\Mutex\ServerMutex;
 use Hyperf\Crontab\Mutex\TaskMutex;
 use Psr\Container\ContainerInterface;
@@ -92,6 +90,7 @@ class Executor
                     /** @var \Symfony\Component\Console\Application */
                     $application = $this->container->get(ApplicationInterface::class);
                     $application->setAutoExit(false);
+                    $application->setCatchExceptions(false);
                     $runnable = function () use ($application, $input, $output) {
                         if ($application->run($input, $output) !== 0) {
                             throw new RuntimeException('Crontab task failed to execute.');
@@ -131,7 +130,7 @@ class Executor
             $taskMutex = $this->getTaskMutex();
 
             if ($taskMutex->exists($crontab) || ! $taskMutex->create($crontab)) {
-                $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s caused by task mutex.', $crontab->getName(), date('Y-m-d H:i:s')));
                 return;
             }
 
@@ -145,12 +144,7 @@ class Executor
 
     protected function getTaskMutex(): TaskMutex
     {
-        if (! $this->taskMutex) {
-            $this->taskMutex = $this->container->has(TaskMutex::class)
-                ? $this->container->get(TaskMutex::class)
-                : $this->container->get(RedisTaskMutex::class);
-        }
-        return $this->taskMutex;
+        return $this->taskMutex ??= $this->container->get(TaskMutex::class);
     }
 
     protected function runOnOneServer(Crontab $crontab, Closure $runnable): Closure
@@ -159,7 +153,7 @@ class Executor
             $taskMutex = $this->getServerMutex();
 
             if (! $taskMutex->attempt($crontab)) {
-                $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s caused by server mutex.', $crontab->getName(), date('Y-m-d H:i:s')));
                 return;
             }
 
@@ -169,12 +163,7 @@ class Executor
 
     protected function getServerMutex(): ServerMutex
     {
-        if (! $this->serverMutex) {
-            $this->serverMutex = $this->container->has(ServerMutex::class)
-                ? $this->container->get(ServerMutex::class)
-                : $this->container->get(RedisServerMutex::class);
-        }
-        return $this->serverMutex;
+        return $this->serverMutex ??= $this->container->get(ServerMutex::class);
     }
 
     protected function decorateRunnable(Crontab $crontab, Closure $runnable): Closure
@@ -190,12 +179,15 @@ class Executor
         return $runnable;
     }
 
-    protected function catchToExecute(Crontab $crontab, Closure $runnable): Closure
+    protected function catchToExecute(Crontab $crontab, ?Closure $runnable): Closure
     {
         return function () use ($crontab, $runnable) {
             try {
                 $this->dispatcher?->dispatch(new BeforeExecute($crontab));
                 $result = true;
+                if (! $runnable) {
+                    throw new InvalidArgumentException('The crontab task is invalid.');
+                }
                 $runnable();
                 $this->dispatcher?->dispatch(new AfterExecute($crontab));
             } catch (Throwable $throwable) {

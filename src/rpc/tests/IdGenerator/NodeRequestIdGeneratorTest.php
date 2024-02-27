@@ -13,12 +13,14 @@ namespace HyperfTest\Rpc\IdGenerator;
 
 use DateTime;
 use Hyperf\Rpc\IdGenerator\NodeRequestIdGenerator;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class NodeRequestIdGeneratorTest extends TestCase
 {
     public function testGenerate()

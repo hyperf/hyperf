@@ -19,13 +19,12 @@ use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\HtmlString;
 use IteratorAggregate;
-use Stringable;
 use Traversable;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Support\value;
 
-class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate, Stringable
+class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
 {
     use Macroable;
 

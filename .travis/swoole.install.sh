@@ -17,8 +17,8 @@ if [ $? -eq 1 ]; then
     ./configure --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql --enable-brotli
     make -j$(nproc)
     sudo make install
+    sudo sh -c "echo extension=swoole > /etc/php/${PHP_VERSION}/cli/conf.d/swoole.ini"
 
 fi
 
-sudo sh -c "echo extension=swoole > /etc/php/${PHP_VERSION}/cli/conf.d/swoole.ini"
 sudo sh -c "echo swoole.use_shortname='Off' >> /etc/php/${PHP_VERSION}/cli/conf.d/swoole.ini"

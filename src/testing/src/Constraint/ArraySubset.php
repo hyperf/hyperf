@@ -13,6 +13,7 @@ namespace Hyperf\Testing\Constraint;
 
 use ArrayObject;
 use PHPUnit\Framework\Constraint\Constraint;
+use PHPUnit\Framework\ExpectationFailedException;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use Traversable;
 
@@ -52,8 +53,7 @@ final class ArraySubset extends Constraint
      *
      * @param mixed $other
      *
-     * @throws \PHPUnit\Framework\ExpectationFailedException
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws ExpectationFailedException
      */
     public function evaluate($other, string $description = '', bool $returnResult = false): ?bool
     {
@@ -90,8 +90,6 @@ final class ArraySubset extends Constraint
 
     /**
      * Returns a string representation of the constraint.
-     *
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     public function toString(): string
     {
@@ -105,8 +103,6 @@ final class ArraySubset extends Constraint
      * cases. This method should return the second part of that sentence.
      *
      * @param mixed $other
-     *
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     protected function failureDescription($other): string
     {

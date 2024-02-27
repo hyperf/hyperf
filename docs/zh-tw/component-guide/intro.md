@@ -35,7 +35,7 @@ git clone git@github.com:hyperf/hyperf.git
     └── vendor
 ```
 
-這樣做的目的是為了讓 `hyperf-skeleton` 專案可以直接透過 `path` 來源的形式，讓 Composer 直接透過 `hyperf` 資料夾內的專案作為依賴項被載入到 `hyperf-skelton`  專案的 `vendor` 目錄中，我們對 `hyperf-skelton` 內的 `composer.json` 檔案增加一個 `repositories` 項，如下：
+這樣做的目的是為了讓 `hyperf-skeleton` 專案可以直接透過 `path` 來源的形式，讓 Composer 直接透過 `hyperf` 資料夾內的專案作為依賴項被載入到 `hyperf-skeleton`  專案的 `vendor` 目錄中，我們對 `hyperf-skeleton` 內的 `composer.json` 檔案增加一個 `repositories` 項，如下：
 
 ```json
 {
@@ -87,7 +87,7 @@ process -> ../../../hyperf/src/process
 redis -> ../../../hyperf/src/redis
 server -> ../../../hyperf/src/server
 testing -> ../../../hyperf/src/testing
-utils -> ../../../hyperf/src/utils
+support -> ../../../hyperf/src/support
 ```
 
 此時，我們便可達到在 IDE 內直接對 `vendor/hyperf` 內的檔案進行修改，而修改的卻是 `hyperf` 內的程式碼的目的，這樣最終我們便可直接對 `hyperf` 專案內進行 `commit`，然後向主幹提交 `Pull Request(PR)` 了。

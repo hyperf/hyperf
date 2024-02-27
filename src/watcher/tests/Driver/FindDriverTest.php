@@ -18,12 +18,14 @@ use Hyperf\Watcher\Option;
 use HyperfTest\Watcher\Stub\ContainerStub;
 use HyperfTest\Watcher\Stub\FindDriverStub;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FindDriverTest extends TestCase
 {
     public function testWatch()

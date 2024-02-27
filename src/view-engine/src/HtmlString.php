@@ -12,9 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine;
 
 use Hyperf\ViewEngine\Contract\Htmlable;
-use Stringable;
 
-class HtmlString implements Htmlable, Stringable
+class HtmlString implements Htmlable
 {
     /**
      * Create a new HTML string instance.

@@ -13,7 +13,7 @@ namespace HyperfTest\Resource\Stubs\Resources;
 
 class ResourceWithPreservedKeys extends PostResource
 {
-    public $preserveKeys = true;
+    public bool $preserveKeys = true;
 
     public function toArray(): array
     {

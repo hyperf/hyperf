@@ -11,16 +11,16 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Kafka;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
+
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     public function setUp(): void
     {
-        if (version_compare(PHP_VERSION, '7.4.0', '<')) {
-            $this->markTestSkipped('Kafka Client only support php 7.4');
-        }
     }
 }

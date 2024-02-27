@@ -14,6 +14,7 @@ namespace HyperfTest\Support\Filesystem;
 use Hyperf\Coroutine\Parallel;
 use Hyperf\Engine\Channel;
 use Hyperf\Support\Filesystem\Filesystem;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Runtime;
 use Throwable;
@@ -25,6 +26,7 @@ use function Hyperf\Coroutine\run;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FilesystemTest extends TestCase
 {
     public function testLock()
@@ -48,9 +50,7 @@ class FilesystemTest extends TestCase
         unlink('./test.txt');
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testFopenInCoroutine()
     {
         run(function () {
@@ -74,23 +74,15 @@ class FilesystemTest extends TestCase
     public function testMakeDirection()
     {
         $system = new Filesystem();
-        if (SWOOLE_VERSION_ID > 40701) {
-            try {
-                $system->makeDirectory(BASE_PATH . '/runtime/test');
-                $system->makeDirectory(BASE_PATH . '/runtime/test');
-            } catch (Throwable $exception) {
-                $this->assertSame('mkdir(): File exists', $exception->getMessage());
-            }
-        } else {
+        try {
             $system->makeDirectory(BASE_PATH . '/runtime/test');
             $system->makeDirectory(BASE_PATH . '/runtime/test');
-            $this->assertTrue(true);
+        } catch (Throwable $exception) {
+            $this->assertSame('mkdir(): File exists', $exception->getMessage());
         }
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
     public function testPutLockInCoroutine()
     {
         run(function () {

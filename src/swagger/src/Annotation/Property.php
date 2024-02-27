@@ -62,7 +62,8 @@ class Property extends \OpenApi\Attributes\Property
         AdditionalProperties|bool|null $additionalProperties = null,
         ?array $x = null,
         ?array $attachables = null,
-        public mixed $rules = null
+        public mixed $rules = null,
+        public mixed $attribute = null
     ) {
         parent::__construct(
             $property,

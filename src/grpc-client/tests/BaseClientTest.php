@@ -22,6 +22,7 @@ use Hyperf\GrpcClient\BaseClient;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use HyperfTest\GrpcClient\Stub\HiClient;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Http\Server;
 use TypeError;
@@ -30,6 +31,7 @@ use TypeError;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class BaseClientTest extends TestCase
 {
     public static $server;

@@ -18,9 +18,6 @@ class PgSQLPool extends Pool
 {
     protected function createConnection(): ConnectionInterface
     {
-        if (SWOOLE_MAJOR_VERSION < 5) {
-            return new Swoole4PgSQLConnection($this->container, $this, $this->config);
-        }
         return new PgSQLConnection($this->container, $this, $this->config);
     }
 }

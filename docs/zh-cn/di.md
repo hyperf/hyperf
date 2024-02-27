@@ -65,8 +65,7 @@ class IndexController
 
 > 注意使用构造函数注入时，调用方也就是 `IndexController` 必须是由 DI 创建的对象才能完成自动注入，而 Controller 默认是由 DI 创建的，所以可以直接使用构造函数注入
 
-当您希望定义一个可选的依赖项时，可以通过给参数定义为 `nullable` 或将参数的默认值定义为 `null`，即表示该参数如果在 DI 容器中没有找到或无法创建对应的对象时，不抛出异常而是直接使用 `null` 来注入。*(该功能仅在
-1.1.0 或更高版本可用)*
+当您希望定义一个可选的依赖项时，可以通过给参数定义为 `nullable` 或将参数的默认值定义为 `null`，即表示该参数如果在 DI 容器中没有找到或无法创建对应的对象时，不抛出异常而是直接使用 `null` 来注入。
 
 ```php
 <?php
@@ -141,11 +140,9 @@ class IndexController
     /**
      * 通过 `#[Inject]` 注解注入由注解声明的属性类型对象
      * 当 UserService 不存在于 DI 容器内或不可创建时，则注入 null
-     * 
-     * @var UserService
      */
     #[Inject(required: false)]
-    private $userService;
+    private ?UserService $userService;
     
     public function index()
     {
@@ -212,11 +209,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
-    /**
-     * @var UserServiceInterface
-     */
     #[Inject]
-    private $userService;
+    private UserServiceInterface $userService;
     
     public function index()
     {
@@ -367,6 +361,36 @@ isset($proxy->someProperty);
 // 删除属性
 unset($proxy->someProperty);
 ```
+
+### 绑定权重
+
+自 v3.0.17 版本开始，增加了权重功能。可以按照权重，注入权重最大的对象。例如下述两份 `ConfigProvider` 配置
+
+```php
+<?php
+use FooInterface;
+use Foo;
+
+return [
+    'dependencies' => [
+        FooInterface::class => new PriorityDefinition(Foo::class, 1),
+    ]
+];
+```
+
+```php
+<?php
+use FooInterface;
+use Foo2;
+
+return [
+    'dependencies' => [
+        FooInterface::class => Foo2::class,
+    ]
+];
+```
+
+当不使用 `PriorityDefinition` 时，权重为 0。所以被绑定到 `FooInterface` 是 `Foo`。
 
 ## 短生命周期对象
 

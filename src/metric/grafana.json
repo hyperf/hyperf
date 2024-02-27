@@ -397,7 +397,7 @@
         {
           "expr": "sum([[app_name]]_event_num{instance=~'$instance'})",
           "format": "time_series",
-          "instant": true,
+          "instant": false,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -484,7 +484,7 @@
         {
           "expr": "sum([[app_name]]_coroutine_num{instance=~'$instance'})",
           "format": "time_series",
-          "instant": true,
+          "instant": false,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -567,7 +567,7 @@
         {
           "expr": "sum([[app_name]]_connection_num{instance=~'$instance'})",
           "format": "time_series",
-          "instant": true,
+          "instant": false,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -729,7 +729,7 @@
         {
           "expr": "sum([[app_name]]_tasking_num{instance=~'$instance'})",
           "format": "time_series",
-          "instant": true,
+          "instant": false,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -895,7 +895,7 @@
         {
           "expr": "sum([[app_name]]_timer_num{instance=~'$instance'})",
           "format": "time_series",
-          "instant": true,
+          "instant": false,
           "intervalFactor": 1,
           "refId": "A"
         }

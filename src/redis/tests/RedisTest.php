@@ -29,6 +29,7 @@ use Hyperf\Redis\RedisProxy;
 use HyperfTest\Redis\Stub\RedisPoolFailedStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RedisCluster;
 use RedisSentinel;
@@ -39,6 +40,11 @@ use function Hyperf\Coroutine\defer;
 use function Hyperf\Coroutine\go;
 use function Hyperf\Coroutine\parallel;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -104,7 +110,6 @@ class RedisTest extends TestCase
         $redis = $this->getRedis();
         $ref = new ReflectionClass($redis);
         $method = $ref->getMethod('getConnection');
-        $method->setAccessible(true);
 
         go(function () use ($chan, $redis, $method) {
             $id = null;
@@ -137,7 +142,6 @@ class RedisTest extends TestCase
 
         $chan->pop();
         $factory = $ref->getProperty('factory');
-        $factory->setAccessible(true);
         $factory = $factory->getValue($redis);
         $pool = $factory->getPool('default');
         $pool->flushAll();
@@ -166,14 +170,29 @@ class RedisTest extends TestCase
         $ref = new ReflectionClass(RedisCluster::class);
         $method = $ref->getMethod('__construct');
         $names = [
-            'name', 'seeds', 'timeout', 'read_timeout', 'persistent', 'auth', 'context',
+            ['name', 'string'],
+            ['seeds', 'array'],
+            ['timeout', ['int', 'float']],
+            ['read_timeout', ['int', 'float']],
+            ['persistent', 'bool'],
+            ['auth', 'mixed'],
+            ['context', 'array'],
         ];
         foreach ($method->getParameters() as $parameter) {
-            $this->assertSame(array_shift($names), $parameter->getName());
+            [$name, $type] = array_shift($names);
+            $this->assertSame($name, $parameter->getName());
             if ($parameter->getName() === 'seeds') {
                 $this->assertSame('array', $parameter->getType()->getName());
             } else {
-                if ($this->isOlderThan6) {
+                if (! $this->isOlderThan6) {
+                    if (is_array($type)) {
+                        foreach ($parameter->getType()->getTypes() as $namedType) {
+                            $this->assertTrue(in_array($namedType->getName(), $type));
+                        }
+                    } else {
+                        $this->assertSame($type, $parameter->getType()->getName());
+                    }
+                } else {
                     $this->assertNull($parameter->getType());
                 }
             }
@@ -211,14 +230,15 @@ class RedisTest extends TestCase
         $rel = new ReflectionClass(RedisSentinel::class);
         $method = $rel->getMethod('__construct');
         $count = count($method->getParameters());
-        if ($this->isOlderThan6) {
+
+        if (! $this->isOlderThan6) {
+            $this->assertSame(1, $count);
+            $this->assertSame('options', $method->getParameters()[0]->getName());
+        } else {
             if ($count === 6) {
                 $this->markTestIncomplete('RedisSentinel don\'t support auth.');
             }
-
             $this->assertSame(7, $count);
-        } else {
-            $this->assertSame(1, $count);
         }
     }
 

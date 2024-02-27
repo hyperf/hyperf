@@ -66,7 +66,7 @@ $dag->run();
 
 ```
 
-输出：
+Output:
 
 ```php
 // 1s afterwards

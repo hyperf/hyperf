@@ -18,13 +18,13 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
 use InvalidArgumentException;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 use Swoole;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
-class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestInterface
+class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestInterface, ServerRequestPlusInterface
 {
     protected ?Swoole\Http\Request $swooleRequest = null;
 
@@ -221,7 +221,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * @return null|array|object The deserialized body parameters, if any.
      *                           These will typically be an array or object.
      */
-    public function getParsedBody()
+    public function getParsedBody(): array|object|null
     {
         return $this->parsedBody;
     }
@@ -315,10 +315,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @param string $name the attribute name
      * @param mixed $default default value to return if the attribute does not exist
-     * @return mixed
      * @see getAttributes()
      */
-    public function getAttribute($name, $default = null)
+    public function getAttribute(mixed $name, mixed $default = null): mixed
     {
         return array_key_exists($name, $this->attributes) ? $this->attributes[$name] : $default;
     }
@@ -335,7 +334,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * @param mixed $value the value of the attribute
      * @see getAttributes()
      */
-    public function withAttribute($name, $value): static
+    public function withAttribute(mixed $name, mixed $value): static
     {
         $clone = clone $this;
         $clone->attributes[$name] = $value;
@@ -417,7 +416,54 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         return $this;
     }
 
-    protected static function normalizeParsedBody(array $data = [], ?RequestInterface $request = null): array
+    public function setServerParams(array $serverParams): static
+    {
+        $this->serverParams = $serverParams;
+        return $this;
+    }
+
+    public function setQueryParams(array $query): static
+    {
+        $this->queryParams = $query;
+        return $this;
+    }
+
+    public function setCookieParams(array $cookies): static
+    {
+        $this->cookieParams = $cookies;
+        return $this;
+    }
+
+    public function setParsedBody(object|array|null $data): static
+    {
+        $this->parsedBody = $data;
+        return $this;
+    }
+
+    public function setUploadedFiles(array $uploadedFiles): static
+    {
+        $this->uploadedFiles = $uploadedFiles;
+        return $this;
+    }
+
+    public function setAttribute(string $name, mixed $value): static
+    {
+        $this->attributes[$name] = $value;
+        return $this;
+    }
+
+    public function unsetAttribute(string $name): static
+    {
+        if (array_key_exists($name, $this->attributes) === false) {
+            return $this;
+        }
+
+        unset($this->attributes[$name]);
+
+        return $this;
+    }
+
+    protected static function normalizeParsedBody(array $data = [], ?ServerRequestInterface $request = null): array
     {
         if (! $request) {
             return $data;
@@ -437,7 +483,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
                 $data = $parser->parse($content, $contentType);
             }
         } catch (InvalidArgumentException $exception) {
-            throw new BadRequestHttpException($exception->getMessage());
+            throw new BadRequestHttpException($exception->getMessage(), request: $request);
+        } catch (BadRequestHttpException $exception) {
+            throw $exception->setRequest($request);
         }
 
         return $data;

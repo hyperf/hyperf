@@ -56,7 +56,7 @@
 
 - [hyperf/consul](https://github.com/hyperf/consul) Hyperf 官方提供的 Consul 協程客户端
 - [hyperf/elasticsearch](https://github.com/hyperf/elasticsearch) Hyperf 官方提供的 Elasticsearch 協程客户端
-- [hyperf/grpc-client](https://github.com/hyperf/grpc-client) Hyperf 官方提供的 GRPC 協程客户端
+- [hyperf/grpc-client](https://github.com/hyperf/grpc-client) Hyperf 官方提供的 gRPC 協程客户端
 - [hyperf/etcd](https://github.com/hyperf/etcd) Hyperf 官方提供的 ETCD 協程客户端
 - [hyperf/rpc-client](https://github.com/hyperf/rpc-client) Hyperf 官方提供的通用 RPC 抽象協程客户端
 - [hyperf/guzzle](https://github.com/hyperf/guzzle) Hyperf 官方提供的 Guzzle HTTP 協程客户端
@@ -94,6 +94,7 @@
 - [hyperf/tracer](https://github.com/hyperf/tracer) Hyperf 官方提供的 OpenTracing 分佈式調用鏈追蹤組件
 - [hyperf/circuit-breaker](https://github.com/hyperf/circuit-breaker) Hyperf 官方提供的服務熔斷組件
 - [pudongping/hyperf-throttle-requests](https://github.com/pudongping/hyperf-throttle-requests) 適配 Hyperf 框架的請求頻率限流器。功能類似於 Laravel 框架的 throttle 中間件。
+- [friendsofhyperf/sentry](https://github.com/friendsofhyperf/sentry) 適配 Hyperf 框架的 [Sentry](https://sentry.io) 組件，用於異常監控與性能監控。
 
 ## 定時任務
 
@@ -133,6 +134,7 @@
 - [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支持與 laravel 類似的多 env 配置文件功能，比如通過 `APP_ENV=testing` 可以加載 `.env.testing` 配置覆蓋默認的 `.env`
 - [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) 提供一個 `dump` 函數，可以將程序內的變量或數據打印到另一個命令行窗口中，基於 Symfony 的 `Var-Dump Server` 組件
 - [leearvin/hyperf-tinker](https://github.com/Arvin-Lee/hyperf-tinker) 基於 PsySH 提供一個交互式的 Hyperf shell 容器
+- [friendsofhyperf/telescope](https://github.com/friendsofhyperf/telescope) 適配 Hyperf 框架的調試工具。
 
 ## 權限認證
 

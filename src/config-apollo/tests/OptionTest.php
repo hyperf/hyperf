@@ -16,8 +16,9 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- * @covers \Hyperf\ConfigApollo\Option
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\ConfigApollo\Option::class)]
 class OptionTest extends TestCase
 {
     public function testBuildUrl()

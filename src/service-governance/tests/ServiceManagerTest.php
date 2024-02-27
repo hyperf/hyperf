@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\ServiceGovernance;
 
 use Hyperf\ServiceGovernance\ServiceManager;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ServiceManagerTest extends TestCase
 {
     public function testRegister()

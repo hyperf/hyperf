@@ -20,6 +20,7 @@ use Hyperf\Redis\RedisFactory;
 use HyperfTest\AsyncQueue\Stub\Redis;
 use HyperfTest\AsyncQueue\Stub\RedisDriverStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -27,6 +28,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DriverTest extends TestCase
 {
     protected function tearDown(): void

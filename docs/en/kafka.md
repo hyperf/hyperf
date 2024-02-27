@@ -2,9 +2,7 @@
 
 `Kafka` is an open source stream processing platform developed by `Apache Software Foundation`, written by `Scala` and `Java`. The goal of this project is to provide a unified, high-throughput, low-latency platform for processing real-time data. Its persistence layer is essentially a "large-scale publish/subscribe message queue based on the distributed transaction log architecture"
 
-[longlang/phpkafka](https://github.com/longyan/phpkafka) component is provided by [Longzhiyan](http://longlang.org/) and supports `PHP-FPM` and `Swoole`. Thank you `Swoole Team` and `ZenTao Team` for their contributions to the community.
-
-> This component is a Beta version, please use it with caution.
+[longlang/phpkafka](https://github.com/swoole/phpkafka) component is provided by [Longzhiyan](http://longlang.org/) and supports `PHP-FPM` and `Swoole`. Thank you `Swoole Team` and `ZenTao Team` for their contributions to the community.
 
 ## Installation
 

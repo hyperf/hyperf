@@ -84,7 +84,7 @@ class Consumer extends Builder
                     if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
                         break;
                     }
-                } catch (AMQPTimeoutException $exception) {
+                } catch (AMQPTimeoutException) {
                     $this->eventDispatcher?->dispatch(new WaitTimeout($consumerMessage));
                 } catch (Throwable $exception) {
                     $this->logger->error((string) $exception);
@@ -171,9 +171,9 @@ class Consumer extends Builder
             try {
                 $data = $consumerMessage->unserialize($message->getBody());
 
-                $this->eventDispatcher?->dispatch(new BeforeConsume($consumerMessage));
+                $this->eventDispatcher?->dispatch(new BeforeConsume($consumerMessage, $message));
                 $result = $consumerMessage->consumeMessage($data, $message);
-                $this->eventDispatcher?->dispatch(new AfterConsume($consumerMessage, $result));
+                $this->eventDispatcher?->dispatch(new AfterConsume($consumerMessage, $result, $message));
             } catch (Throwable $exception) {
                 $this->eventDispatcher?->dispatch(new FailToConsume($consumerMessage, $exception, $message));
                 if ($this->container->has(FormatterInterface::class)) {
@@ -192,7 +192,7 @@ class Consumer extends Builder
                 return;
             }
             if ($result === Result::NACK) {
-                $this->logger->debug($deliveryTag . ' uacked.');
+                $this->logger->debug($deliveryTag . ' nacked.');
                 $channel->basic_nack($deliveryTag, false, $consumerMessage->isRequeue());
                 return;
             }

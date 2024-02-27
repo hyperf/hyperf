@@ -2,7 +2,7 @@
 
 ## 概念
 
-Hyperf 是運行於 `Swoole 4` 的協程和 `Swow` 協程之上的，這也是 Hyperf 能提供高性能的其中一個很大的因素。
+Hyperf 是運行於 `Swoole 5` 的協程和 `Swow` 協程之上的，這也是 Hyperf 能提供高性能的其中一個很大的因素。
 
 ### PHP-FPM 的運作模式
 
@@ -128,7 +128,7 @@ co(function () {
 
 ```php
 <?php
-$wg = new \Hyperf\Utils\WaitGroup();
+$wg = new \Hyperf\Coroutine\WaitGroup();
 // 計數器加二
 $wg->add(2);
 // 創建協程 A
@@ -177,7 +177,7 @@ try{
     // $e->getThrowables() 獲取協程中出現的異常。
 }
 ```
-> 注意 `Hyperf\Utils\Exception\ParallelExecutionException` 異常僅在 1.1.6 版本和更新的版本下會拋出
+> 注意 `Hyperf\Coroutine\Exception\ParallelExecutionException` 異常僅在 1.1.6 版本和更新的版本下會拋出
 
 通過上面的代碼我們可以看到僅花了 `1` 秒就得到了兩個不同的協程的 `ID`，在調用 `add(callable $callable)` 的時候 `Parallel` 類會為之自動創建一個協程，並加入到 `WaitGroup` 的調度去。    
 不僅如此，我們還可以通過 `parallel(array $callables)` 函數進行更進一步的簡化上面的代碼，達到同樣的目的，下面為簡化後的代碼。

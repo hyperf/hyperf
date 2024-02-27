@@ -23,8 +23,9 @@ use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
- * @covers \Hyperf\Coroutine\Parallel
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Coroutine\Parallel::class)]
 class ParallelTest extends TestCase
 {
     public function testParallel()

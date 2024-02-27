@@ -126,4 +126,58 @@ return [
 ];
 ```
 
+## 使用
 
+- 定義介面
+
+比如我們需要設計一個傳送簡訊的 RPC 服務
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace RPC\Push;
+
+interface PushInterface
+{
+    public function sendSmsCode(string $mobile, string $code): bool;
+}
+
+```
+
+- 服務端實現介面
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\RPC;
+
+use RPC\Push\PushInterface;
+use Hyperf\RpcMultiplex\Constant;
+use Hyperf\RpcServer\Annotation\RpcService;
+
+#[RpcService(name: PushInterface::class, server: 'rpc', protocol: Constant::PROTOCOL_DEFAULT)]
+class PushService implements PushInterface
+{
+    public function sendSmsCode(string $mobile, string $code): bool
+    {
+        // 實際處理邏輯
+        return true;
+    }
+}
+```
+
+- 客戶端呼叫
+
+```php
+<?php
+
+use Hyperf\Context\ApplicationContext;
+use RPC\Push\PushInterface;
+
+ApplicationContext::getContainer()->get(PushInterface::class)->sendSmsCode('18600000001', '6666');
+
+```

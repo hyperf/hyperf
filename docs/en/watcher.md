@@ -39,7 +39,7 @@ php bin/hyperf.php vendor:publish hyperf/watcher
 | :----------------------------------: | :---------------------------------: |
 | Hyperf\Watcher\Driver\ScanFileDriver |        no extension required        |
 | Hyperf\Watcher\Driver\FswatchDriver  |          requires fswatch           |
-|   Hyperf\Watcher\Driver\FindDriver   |  requires find，MAC requires gfind  |
+|   Hyperf\Watcher\Driver\FindDriver   |  requires find, MAC requires gfind  |
 
 ### `fswatch` Installation
 Mac:

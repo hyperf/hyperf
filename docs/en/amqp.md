@@ -109,7 +109,7 @@ use Hyperf\Amqp\Result;
 #[Consumer(exchange: 'hyperf', routingKey: 'hyperf', queue: 'hyperf', nums: 1)]
 class DemoConsumer extends ConsumerMessage
 {
-    public function consume($data): string
+    public function consume($data): Result
     {
         print_r($data);
         return Result::ACK;
@@ -131,7 +131,7 @@ There are three parameters that affect the rate of consumption
 
 The framework will determine the response behavior of the message based on the result returned by the `consume` method in `Consumer`. There are 4 response results, namely `\Hyperf\Amqp\Result::ACK`, `\Hyperf\Amqp\ Result::NACK`, `\Hyperf\Amqp\Result::REQUEUE`, `\Hyperf\Amqp\Result::DROP`, each return value represents the following behavior:
 
-| 返回值                       | 行为                                                                 |
+| Return                       | Behavior                                                                 |
 |------------------------------|----------------------------------------------------------------------|
 | \Hyperf\Amqp\Result::ACK     | Confirm that the message has been consumed correctly                                               |
 | \Hyperf\Amqp\Result::NACK    | The message was not consumed correctly, respond with the `basic_nack` method                     |
@@ -253,7 +253,7 @@ class DelayDirectConsumer extends ConsumerMessage
     
     protected $routingKey = '';
 
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         var_dump($data, 'delay+direct consumeTime:' . (microtime(true)));
         return Result::ACK;
@@ -346,7 +346,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 #[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "rpc.reply", name: "ReplyConsumer", nums: 1, enable: true)]
 class ReplyConsumer extends ConsumerMessage
 {
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         $data['message'] .= 'Reply:' . $data['message'];
 
@@ -368,7 +368,7 @@ use Hyperf\Amqp\RpcClient;
 use Hyperf\Context\ApplicationContext;
 
 $rpcClient = ApplicationContext::getContainer()->get(RpcClient::class);
-// 在 DynamicRpcMessage 上设置与 Consumer 一致的 Exchange 和 RoutingKey
+//Set Exchange and RoutingKey consistent with Consumer on DynamicRpcMessage
 $result = $rpcClient->call(new DynamicRpcMessage('hyperf', 'hyperf', ['message' => 'Hello Hyperf'])); 
 
 // $result:
@@ -397,7 +397,7 @@ class FooRpcMessage extends RpcMessage
     
     public function __construct($data)
     {
-        // 要传递数据
+        //To pass data
         $this->payload = $data;
     }
 

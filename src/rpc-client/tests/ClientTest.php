@@ -15,12 +15,14 @@ use Hyperf\Codec\Json;
 use Hyperf\Engine\Exception\SocketConnectException;
 use Hyperf\Engine\Socket\SocketFactory;
 use Hyperf\Engine\Socket\SocketOption;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ClientTest extends TestCase
 {
     public function testConnectNotExistPort()

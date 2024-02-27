@@ -13,12 +13,14 @@ namespace HyperfTest\Command;
 
 use Hyperf\Command\Parser;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CommandParserTest extends TestCase
 {
     public function testBasicParameterParsing()

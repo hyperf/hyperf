@@ -30,7 +30,7 @@ class InfoCommand extends SymfonyCommand
         $this->setDescription('Dump the server info.')->addArgument('type', InputArgument::REQUIRED);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $type = $input->getArgument('type');
         if (! $this->info->has($type)) {

@@ -52,7 +52,7 @@ use Hyperf\Constants\Annotation\Constants;
 class ErrorCode extends AbstractConstants
 {
     /**
-     * @Message("Server Error！")
+     * @Message("Server Error!")
      */
     const SERVER_ERROR = 500;
 

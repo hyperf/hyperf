@@ -11,20 +11,28 @@ declare(strict_types=1);
  */
 namespace HyperfTest\RateLimit;
 
+use bandwidthThrottle\tokenBucket\Rate;
+use bandwidthThrottle\tokenBucket\TokenBucket;
 use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\RateLimit\Aspect\RateLimitAnnotationAspect;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
+use Hyperf\RateLimit\Storage\StorageInterface;
+use HyperfTest\RateLimit\Stub\Storage\EmptyStorage;
+use HyperfTest\RateLimit\Stub\Storage\InvalidStorage;
+use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RateLimitTest extends TestCase
 {
     protected function tearDown(): void
@@ -49,35 +57,52 @@ class RateLimitTest extends TestCase
         $this->assertSame($config['rate_limit'], $aspect->getConfig());
     }
 
-    /**
-     * @deprecated
-     */
-    public function testAspectConfigDeprecated()
+    public function testValidStorage()
     {
         $container = $this->getContainer();
-        $container->shouldReceive('has')->andReturn(true);
-        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturnUsing(function () {
-            $logger = Mockery::mock(StdoutLoggerInterface::class);
-            $logger->shouldReceive('warning')->andReturnUsing(function ($message) {
-                $this->assertSame('Config rate-limit.php will be removed in v1.2, please use rate_limit.php instead.', $message);
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
+            'rate_limit' => [
+                'storage' => [
+                    'class' => EmptyStorage::class,
+                ],
+            ],
+        ]));
+        $container->shouldReceive('make')->with(EmptyStorage::class, Mockery::any())->andReturn(new EmptyStorage(
+            $container,
+            'empty storage',
+            1,
+            []
+        ));
+        $container->shouldReceive('make')->with(Rate::class, Mockery::any())->andReturn(new Rate(1, Rate::SECOND));
+        $container->shouldReceive('make')->with(TokenBucket::class, Mockery::any())
+            ->andReturnUsing(function ($class, $args) {
+                return new TokenBucket(...$args);
             });
 
-            return $logger;
-        });
+        $rateLimitHandler = new RateLimitHandler($container);
+        $rateLimitHandler->build('test', 1, 1, 1);
 
-        $request = Mockery::mock(RequestInterface::class);
-        $handler = Mockery::mock(RateLimitHandler::class);
-        $aspect = new RateLimitAnnotationAspect(new Config($config = [
-            'rate-limit' => [
-                'create' => 1,
-                'consume' => 1,
-                'capacity' => 2,
-                'limitCallback' => [],
-                'waitTimeout' => 1,
+        // 断言正常结束
+        $this->assertTrue(true);
+    }
+
+    public function testInvalidStorage()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
+            'rate_limit' => [
+                'storage' => [
+                    'class' => 'InvalidStorage',
+                ],
             ],
-        ]), $request, $handler);
+        ]));
+        $container->shouldReceive('make')->with('InvalidStorage', Mockery::any())->andReturn(new InvalidStorage());
 
-        $this->assertSame($config['rate-limit'], $aspect->getConfig());
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The storage of rate limit must be an instance of ' . StorageInterface::class);
+
+        $rateLimitHandler = new RateLimitHandler($container);
+        $rateLimitHandler->build('test', 1, 1, 1);
     }
 
     protected function getContainer()

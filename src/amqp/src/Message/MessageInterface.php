@@ -15,14 +15,16 @@ use Hyperf\Amqp\Builder\ExchangeBuilder;
 
 interface MessageInterface
 {
+    public function setPoolName(string $name);
+
     /**
      * Pool name for amqp.
      */
     public function getPoolName(): string;
 
-    public function setType(string $type);
+    public function setType(Type|string $type);
 
-    public function getType(): string;
+    public function getType(): Type|string;
 
     public function setExchange(string $exchange);
 

@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTests\Tappable;
 
 use Hyperf\Tappable\Tappable;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TappableTest extends TestCase
 {
     public function testTappableClassWithCallback()

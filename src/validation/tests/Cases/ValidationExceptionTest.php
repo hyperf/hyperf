@@ -21,6 +21,7 @@ use Hyperf\Validation\ValidationException;
 use Hyperf\Validation\ValidationExceptionHandler;
 use Hyperf\Validation\ValidatorFactory;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -28,6 +29,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationExceptionTest extends TestCase
 {
     protected function tearDown(): void

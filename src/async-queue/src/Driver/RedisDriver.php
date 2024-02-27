@@ -14,7 +14,6 @@ namespace Hyperf\AsyncQueue\Driver;
 use Hyperf\AsyncQueue\Exception\InvalidQueueException;
 use Hyperf\AsyncQueue\JobInterface;
 use Hyperf\AsyncQueue\JobMessage;
-use Hyperf\AsyncQueue\Message;
 use Hyperf\AsyncQueue\MessageInterface;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
@@ -86,12 +85,13 @@ class RedisDriver extends Driver
         }
 
         $data = $res[1];
+
+        $this->redis->zadd($this->channel->getReserved(), time() + $this->handleTimeout, $data);
+
         $message = $this->packer->unpack($data);
         if (! $message) {
             return [false, null];
         }
-
-        $this->redis->zadd($this->channel->getReserved(), time() + $this->handleTimeout, $data);
 
         return [$data, $message];
     }

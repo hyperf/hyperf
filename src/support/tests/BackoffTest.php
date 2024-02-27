@@ -16,8 +16,9 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- * @covers \Hyperf\Support\Backoff
+ * @coversNothing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Support\Backoff::class)]
 class BackoffTest extends TestCase
 {
     public function testBackoff()
@@ -31,5 +32,16 @@ class BackoffTest extends TestCase
         $secondTick = $backoff->nextBackoff();
         $this->assertGreaterThanOrEqual(1, $secondTick);
         $this->assertLessThanOrEqual(3 * $firstTick, $secondTick);
+    }
+
+    public function testCustomBackoff()
+    {
+        $backoff = new Backoff\ArrayBackoff([1, 200]);
+        $backoff->sleep();
+        $this->assertSame(200, $backoff->nextBackoff());
+
+        $backoff = new Backoff\ArrayBackoff([1, 2.2]);
+        $backoff->sleep();
+        $this->assertSame(2, $backoff->nextBackoff());
     }
 }

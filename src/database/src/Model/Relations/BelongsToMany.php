@@ -17,6 +17,7 @@ use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\ModelNotFoundException;
 use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use InvalidArgumentException;
 
 use function Hyperf\Collection\collect;
@@ -1044,6 +1045,6 @@ class BelongsToMany extends Relation
      */
     protected function guessInverseRelation()
     {
-        return Str::camel(Str::pluralStudly(class_basename($this->getParent())));
+        return StrCache::camel(Str::pluralStudly(class_basename($this->getParent())));
     }
 }

@@ -76,7 +76,6 @@ class JsonRpcHttpTransporter implements TransporterInterface
         if ($response->getStatusCode() === 200) {
             return (string) $response->getBody();
         }
-        $this->loadBalancer->removeNode($node);
 
         return '';
     }

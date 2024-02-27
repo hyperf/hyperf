@@ -14,6 +14,7 @@ namespace HyperfTest\Phar;
 use Hyperf\Phar\Package;
 use Hyperf\Phar\PharBuilder;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -21,6 +22,7 @@ use Psr\Log\LoggerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PackageTest extends TestCase
 {
     protected function tearDown(): void
@@ -102,14 +104,9 @@ class PackageTest extends TestCase
     public function testInstallPathWhenGetPackagesDependencies()
     {
         $logger = Mockery::mock(LoggerInterface::class);
-        $builder = new PharBuilder(__DIR__ . '/fixtures/07-composer-versions/2.x/composer.lock', $logger);
+        $builder = new PharBuilder(__DIR__ . '/fixtures/07-composer-versions/composer.lock', $logger);
         $packages = $builder->getPackagesDependencies();
         $this->assertSame('hyperf/engine', $packages[0]->getName());
-        $this->assertStringContainsString('/2.x/vendor/hyperf/engine/', $packages[0]->getDirectory());
-
-        $builder = new PharBuilder(__DIR__ . '/fixtures/07-composer-versions/1.x/composer.lock', $logger);
-        $packages = $builder->getPackagesDependencies();
-        $this->assertSame('hyperf/engine', $packages[0]->getName());
-        $this->assertStringContainsString('/1.x/vendor/hyperf/engine/', $packages[0]->getDirectory());
+        $this->assertStringContainsString('/vendor/hyperf/engine/', $packages[0]->getDirectory());
     }
 }

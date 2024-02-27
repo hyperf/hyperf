@@ -25,6 +25,7 @@ use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\Support\SafeCaller;
 use HyperfTest\HttpServer\Stub\ServerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
@@ -35,6 +36,7 @@ use Swoole\Http\Response;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ServerTest extends TestCase
 {
     protected function tearDown(): void

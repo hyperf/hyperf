@@ -13,22 +13,29 @@ namespace HyperfTest\HttpServer;
 
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Xmlable;
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Response;
 use Hyperf\HttpServer\ResponseEmitter;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use ReflectionClass;
 use Swoole\Http\Response as SwooleResponse;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -45,7 +52,7 @@ class ResponseTest extends TestCase
     {
         $container = Mockery::mock(ContainerInterface::class);
         $request = Mockery::mock(RequestInterface::class);
-        $request->shouldReceive('getUri')->andReturn(new Uri('http://127.0.0.1:9501'));
+        RequestContext::set(new Request('GET', 'http://127.0.0.1:9501'));
         $container->shouldReceive('get')->with(RequestInterface::class)->andReturn($request);
         ApplicationContext::setContainer($container);
 
@@ -86,7 +93,6 @@ class ResponseTest extends TestCase
         $response = new Response();
         $reflectionClass = new ReflectionClass(Response::class);
         $reflectionMethod = $reflectionClass->getMethod('toXml');
-        $reflectionMethod->setAccessible(true);
 
         $expected = '<?xml version="1.0" encoding="utf-8"?>
 <root><kstring>string</kstring><kint1>1</kint1><kint0>0</kint0><kfloat>0.12345</kfloat><kfalse/><ktrue>1</ktrue><karray><kstring>string</kstring><kint1>1</kint1><kint0>0</kint0><kfloat>0.12345</kfloat><kfalse/><ktrue>1</ktrue></karray></root>';

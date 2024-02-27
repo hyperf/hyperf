@@ -11,15 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\ReactiveX\Observable;
 
+use Hyperf\Coroutine\WaitGroup;
 use Rx\Disposable\EmptyDisposable;
 use Rx\DisposableInterface;
 use Rx\Observable;
 use Rx\ObserverInterface;
 use Rx\Scheduler;
 use Rx\SchedulerInterface;
-use Swoole\Coroutine;
-use Swoole\Coroutine\WaitGroup;
 use Throwable;
+
+use function Hyperf\Coroutine\go;
 
 class CoroutineObservable extends Observable
 {
@@ -35,11 +36,12 @@ class CoroutineObservable extends Observable
         if ($this->scheduler === null) {
             $this->scheduler = Scheduler::getDefault();
         }
-        coroutine::create(function () use ($observer) {
+
+        go(function () use ($observer) {
             $wg = new WaitGroup();
             $wg->add(count($this->callables));
             foreach ($this->callables as $callable) {
-                Coroutine::create(function () use ($observer, $callable, &$wg) {
+                go(function () use ($observer, $callable, &$wg) {
                     try {
                         $result = $callable();
                         $this->scheduler->schedule(function () use ($observer, $result) {

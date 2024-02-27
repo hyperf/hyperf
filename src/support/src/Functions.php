@@ -14,7 +14,8 @@ namespace Hyperf\Support;
 use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
+use Hyperf\Support\Backoff\ArrayBackoff;
 use Throwable;
 
 /**
@@ -60,14 +61,19 @@ function env($key, $default = null)
 /**
  * Retry an operation a given number of times.
  *
- * @param float|int $times
+ * @param float|int|int[] $times
  * @param int $sleep millisecond
  * @throws Throwable
  */
 function retry($times, callable $callback, int $sleep = 0)
 {
     $attempts = 0;
-    $backoff = new Backoff($sleep);
+    if (is_array($times)) {
+        $backoff = new ArrayBackoff($times);
+        $times = count($times);
+    } else {
+        $backoff = new Backoff($sleep);
+    }
 
     beginning:
     try {
@@ -171,7 +177,7 @@ function class_uses_recursive($class)
  */
 function setter(string $property): string
 {
-    return 'set' . Str::studly($property);
+    return 'set' . StrCache::studly($property);
 }
 
 /**
@@ -179,7 +185,7 @@ function setter(string $property): string
  */
 function getter(string $property): string
 {
-    return 'get' . Str::studly($property);
+    return 'get' . StrCache::studly($property);
 }
 
 /**

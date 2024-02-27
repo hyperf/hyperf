@@ -10,7 +10,7 @@ composer require hyperf/async-queue
 
 ## 配置
 
-配置檔案位於 `config/autoload/async_queue.php`，如檔案不存在可自行建立。
+配置檔案位於 `config/autoload/async_queue.php`，如該檔案不存在，可透過 `php bin/hyperf.php vendor:publish hyperf/async-queue` 命令來將釋出對應的配置檔案。
 
 > 暫時只支援 `Redis Driver` 驅動。
 
@@ -23,7 +23,7 @@ composer require hyperf/async-queue
 |  retry_seconds   | int,array |                      5                      |           失敗後重新嘗試間隔            |
 |  handle_timeout  |    int    |                     10                      |            訊息處理超時時間             |
 |    processes     |    int    |                      1                      |               消費程序數                |
-| concurrent.limit |    int    |                      1                      |             同時處理訊息數              |
+| concurrent.limit |    int    |                     10                      |             同時處理訊息數              |
 |   max_messages   |    int    |                      0                      | 程序重啟所需最大處理的訊息數 預設不重啟 |
 
 ```php
@@ -41,8 +41,9 @@ return [
         'handle_timeout' => 10,
         'processes' => 1,
         'concurrent' => [
-            'limit' => 5,
+            'limit' => 10,
         ],
+        'max_messages' => 0,
     ],
 ];
 
@@ -112,6 +113,65 @@ use Hyperf\Process\Annotation\Process;
 #[Process(name: "async-queue")]
 class AsyncQueueConsumer extends ConsumerProcess
 {
+}
+```
+
+### 如何使用多個配置
+
+有的開發者會在特殊場景建立多個配置，比如某些訊息要優先處理，所以會放到更加清閒的隊列當中。例如以下配置
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'redis' => [
+            'pool' => 'default'
+        ],
+        'channel' => 'queue',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 5,
+        ],
+    ],
+    'fast' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'redis' => [
+            'pool' => 'default'
+        ],
+        'channel' => '{queue:fast}',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 5,
+        ],
+    ],
+];
+
+```
+
+但是，我們預設的 `Hyperf\AsyncQueue\Process\ConsumerProcess` 只會處理 `default` 配置，所以我們需要建立一個新的 `Process`
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Process;
+
+use Hyperf\AsyncQueue\Process\ConsumerProcess;
+use Hyperf\Process\Annotation\Process;
+
+#[Process(name: "async-queue")]
+class AsyncQueueConsumer extends ConsumerProcess
+{
+    protected string $queue = 'fast';
 }
 ```
 
@@ -338,6 +398,32 @@ class QueueController extends AbstractController
 }
 ```
 
+### 預設指令碼
+
+Arguments:
+  - queue_name: 佇列配置名，預設為 default
+
+Options:
+  - channel_name: 佇列名，例如失敗佇列 failed, 超時佇列 timeout
+
+#### 展示當前佇列的訊息狀態
+
+```shell
+$ php bin/hyperf.php queue:info {queue_name}
+```
+
+#### 過載所有失敗/超時的訊息到待執行佇列
+
+```shell
+php bin/hyperf.php queue:reload {queue_name} -Q {channel_name}
+```
+
+#### 銷燬所有失敗/超時的訊息
+
+```shell
+php bin/hyperf.php queue:flush {queue_name} -Q {channel_name}
+```
+
 ## 事件
 
 |   事件名稱   |        觸發時機         |                         備註                         |
@@ -497,7 +583,6 @@ return [
 ];
 
 ```
-
 
 ## 非同步驅動之間的區別
 

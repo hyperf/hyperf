@@ -12,8 +12,9 @@ composer require hyperf/cache
 |  配置  |                  默認值                  |         備註          |
 |:------:|:----------------------------------------:|:---------------------:|
 | driver |  Hyperf\Cache\Driver\RedisDriver  | 緩存驅動，默認為 Redis |
-| packer | Hyperf\Utils\Packer\PhpSerializer |        打包器         |
+| packer | Hyperf\Codec\Packer\PhpSerializerPacker |        打包器         |
 | prefix |                   c:                   |       緩存前綴        |
+| skip_cache_results |       []                   |       指定的結果不被緩存   |
 
 ```php
 <?php
@@ -21,8 +22,9 @@ composer require hyperf/cache
 return [
     'default' => [
         'driver' => Hyperf\Cache\Driver\RedisDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+        'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
         'prefix' => 'c:',
+        'skip_cache_results' => [],
     ],
 ];
 ```
@@ -43,8 +45,6 @@ $cache = $container->get(\Psr\SimpleCache\CacheInterface::class);
 
 組件提供 `Hyperf\Cache\Annotation\Cacheable` 註解，作用於類方法，可以配置對應的緩存前綴、失效時間、監聽器和緩存組。
 例如，UserService 提供一個 user 方法，可以查詢對應 id 的用户信息。當加上 `Hyperf\Cache\Annotation\Cacheable` 註解後，會自動生成對應的 Redis 緩存，key 值為 `user:id` ，超時時間為 `9000` 秒。首次查詢時，會從數據庫中查，後面查詢時，會從緩存中查。
-
-> 緩存註解基於 [aop](zh-hk/aop.md) 和 [di](zh-hk/di.md)，所以只有在 `Container` 中獲取到的對象實例才有效，比如通過 `$container->get` 和 `make` 方法所獲得的對象，直接 `new` 出來的對象無法使用。
 
 ```php
 <?php
@@ -72,7 +72,11 @@ class UserService
 
 ### 清理 `#[Cacheable]` 生成的緩存
 
-當然，如果我們數據庫中的數據改變了，如何刪除緩存呢？這裏就需要用到後面的監聽器。下面新建一個 Service 提供一方法，來幫我們處理緩存。
+我們提供了 `CachePut` 和 `CacheEvict` 兩個註解，來實現更新緩存和清除緩存操作。
+
+當然，我們也可以通過事件來刪除緩存。下面新建一個 Service 提供一方法，來幫我們處理緩存。
+
+> 不過我們更加推薦用户使用註解處理，而非監聽器
 
 ```php
 <?php
@@ -295,6 +299,22 @@ class UserBookService
 
 `Hyperf\Cache\Driver\RedisDriver` 會把緩存數據存放到 `Redis` 中，需要用户配置相應的 `Redis 配置`。此方式為默認方式。
 
+### 進程內存驅動
+
+如果您需要將數據緩存到內存中，可以嘗試此驅動。
+
+配置如下：
+
+```php
+<?php
+
+return [
+    'memory' => [
+        'driver' => Hyperf\Cache\Driver\MemoryDriver::class,
+    ],
+];
+```
+
 ### 協程內存驅動
 
 如果您需要將數據緩存到 `Context` 中，可以嘗試此驅動。例如以下應用場景 `Demo::get` 會在多個地方調用多次，但是又不想每次都到 `Redis` 中進行查詢。
@@ -326,8 +346,7 @@ class Demo
 return [
     'co' => [
         'driver' => Hyperf\Cache\Driver\CoroutineMemoryDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+        'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
     ],
 ];
 ```
-

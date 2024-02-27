@@ -2,9 +2,7 @@
 
 `Kafka` 是由 `Apache 軟體基金會` 開發的一個開源流處理平臺，由 `Scala` 和 `Java` 編寫。該專案的目標是為處理實時資料提供一個統一、高吞吐、低延遲的平臺。其持久化層本質上是一個 "按照分散式事務日誌架構的大規模釋出/訂閱訊息佇列"
 
-[longlang/phpkafka](https://github.com/longyan/phpkafka) 元件由 [龍之言](http://longlang.org/) 提供，支援 `PHP-FPM` 和 `Swoole`。感謝 `Swoole 團隊` 和 `禪道團隊` 對社群做出的貢獻。
-
-> 本元件為 Beta 版本，謹慎使用
+[longlang/phpkafka](https://github.com/swoole/phpkafka) 元件由 [龍之言](http://longlang.org/) 提供，支援 `PHP-FPM` 和 `Swoole`。感謝 `Swoole 團隊` 和 `禪道團隊` 對社群做出的貢獻。
 
 ## 安裝
 

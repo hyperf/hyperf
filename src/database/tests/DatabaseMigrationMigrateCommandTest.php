@@ -13,7 +13,9 @@ namespace HyperfTest\Database;
 
 use Hyperf\Database\Commands\Migrations\MigrateCommand;
 use Hyperf\Database\Migrations\Migrator;
+use HyperfTest\Database\Stubs\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -23,6 +25,7 @@ use Symfony\Component\Console\Output\NullOutput;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DatabaseMigrationMigrateCommandTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -31,6 +34,8 @@ class DatabaseMigrationMigrateCommandTest extends TestCase
     {
         parent::setUp();
         ! defined('BASE_PATH') && define('BASE_PATH', __DIR__);
+
+        ContainerStub::unsetContainer();
     }
 
     protected function tearDown(): void

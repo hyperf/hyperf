@@ -26,6 +26,7 @@ composer require hyperf/amqp
 <?php
 
 return [
+    'enable' => true,
     'default' => [
         'host' => 'localhost',
         'port' => 5672,
@@ -145,7 +146,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 #[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
 class DemoConsumer extends ConsumerMessage
 {
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         print_r($data);
         return Result::ACK;
@@ -175,7 +176,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 #[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1, enable: false)]
 class DemoConsumer extends ConsumerMessage
 {
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         print_r($data);
         return Result::ACK;
@@ -211,6 +212,41 @@ class DemoConsumer extends ConsumerMessage
 | \Hyperf\Amqp\Result::NACK    | 消息沒有被正確消費掉，以 `basic_nack` 方法來響應                     |
 | \Hyperf\Amqp\Result::REQUEUE | 消息沒有被正確消費掉，以 `basic_reject` 方法來響應，並使消息重新入列 |
 | \Hyperf\Amqp\Result::DROP    | 消息沒有被正確消費掉，以 `basic_reject` 方法來響應                   |
+
+### QOS 配置
+
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Consumers;
+
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
+
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
+class DemoConsumer extends ConsumerMessage
+{
+    protected ?array $qos = [
+        // AMQP 默認並沒有實現此配置。
+        'prefetch_size' => 0,
+        // 同一個消費者，最高同時可以處理的消息數。
+        'prefetch_count' => 30,
+        // 因為 Hyperf 默認一個 Channel 只消費一個 隊列，所以 global 設置為 true/false 效果是一樣的。
+        'global' => false,
+    ];
+    
+    public function consumeMessage($data, AMQPMessage $message): Result
+    {
+        print_r($data);
+        return Result::ACK;
+    }
+}
+```
 
 ### 根據環境自定義消費進程數量
 
@@ -274,11 +310,11 @@ class DelayDirectProducer extends ProducerMessage
 {
     use ProducerDelayedMessageTrait;
 
-    protected $exchange = 'ext.hyperf.delay';
+    protected string $exchange = 'ext.hyperf.delay';
 
-    protected $type = Type::DIRECT;
+    protected Type|string $type = Type::DIRECT;
 
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
     public function __construct($data)
     {
@@ -286,6 +322,7 @@ class DelayDirectProducer extends ProducerMessage
     }
 }
 ```
+
 ### 消費者
 
 使用 `gen:amqp-consumer` 命令創建一個 `consumer`。
@@ -317,15 +354,15 @@ class DelayDirectConsumer extends ConsumerMessage
     use ProducerDelayedMessageTrait;
     use ConsumerDelayedMessageTrait;
 
-    protected $exchange = 'ext.hyperf.delay';
+    protected string $exchange = 'ext.hyperf.delay';
     
-    protected $queue = 'queue.hyperf.delay';
+    protected string $queue = 'queue.hyperf.delay';
     
-    protected $type = Type::DIRECT; //Type::FANOUT;
+    protected Type|string $type = Type::DIRECT; //Type::FANOUT;
     
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         var_dump($data, 'delay+direct consumeTime:' . (microtime(true)));
         return Result::ACK;
@@ -389,11 +426,12 @@ class DelayCommand extends HyperfCommand
 }
 
 ```
+
 執行命令行生產消息
+
 ```
 php bin/hyperf.php demo:command
 ```
-
 
 ## RPC 遠程過程調用
 
@@ -418,7 +456,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 #[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "rpc.reply", name: "ReplyConsumer", nums: 1, enable: true)]
 class ReplyConsumer extends ConsumerMessage
 {
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         $data['message'] .= 'Reply:' . $data['message'];
 
@@ -463,9 +501,9 @@ use Hyperf\Amqp\Message\RpcMessage;
 class FooRpcMessage extends RpcMessage
 {
 
-    protected $exchange = 'hyperf';
+    protected string $exchange = 'hyperf';
 
-    protected $routingKey = 'hyperf';
+    protected array|string $routingKey = 'hyperf';
     
     public function __construct($data)
     {

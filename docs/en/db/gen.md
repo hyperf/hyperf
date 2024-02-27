@@ -8,7 +8,7 @@ php bin/hyperf.php gen:model table_name
 
 ## Create a model
 
-The optional parameters are as follows：
+The optional parameters are as follows:
 
 |     Parameter      |  Type  |             Defaults              |                                             Remark                                             |
 |:------------------:|:------:|:---------------------------------:|:----------------------------------------------------------------------------------------------:|
@@ -204,7 +204,7 @@ declare(strict_types=1);
 namespace App\Kernel\Visitor;
 
 use Hyperf\Database\Commands\Ast\ModelUpdateVisitor as Visitor;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 
 class ModelUpdateVisitor extends Visitor
 {

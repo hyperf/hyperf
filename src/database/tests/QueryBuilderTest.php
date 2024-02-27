@@ -28,7 +28,9 @@ use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use RuntimeException;
 
 use function Hyperf\Collection\collect;
@@ -37,6 +39,7 @@ use function Hyperf\Collection\collect;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class QueryBuilderTest extends TestCase
 {
     protected function tearDown(): void
@@ -3008,6 +3011,33 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals($builder->toSql(), $clone->toSql());
         $this->assertEquals($builder->getBindings(), $clone->getBindings());
         $this->assertNotSame($builder, $clone);
+    }
+
+    public function testToRawSql()
+    {
+        $connection = Mockery::mock(ConnectionInterface::class);
+        $connection->shouldReceive('prepareBindings')
+            ->with(['foo'])
+            ->andReturn(['foo']);
+        $connection->shouldReceive('escape')->with('foo')->andReturn('\'foo\'');
+        $grammar = Mockery::mock(Grammar::class)->makePartial();
+        $builder = new Builder($connection, $grammar, Mockery::mock(Processor::class));
+        $builder->select('*')->from('users')->where('email', 'foo');
+
+        $this->assertSame('select * from "users" where "email" = \'foo\'', $builder->toRawSql());
+    }
+
+    public function testQueryBuilderInvalidOperator()
+    {
+        $class = new ReflectionClass(Builder::class);
+        $method = $class->getMethod('invalidOperator');
+        $call = $method->getClosure($this->getMySqlBuilderWithProcessor());
+
+        $this->assertTrue(call_user_func($call, 1));
+        $this->assertTrue(call_user_func($call, '1'));
+        $this->assertFalse(call_user_func($call, '<>'));
+        $this->assertFalse(call_user_func($call, '='));
+        $this->assertTrue(call_user_func($call, '!'));
     }
 
     protected function getBuilderWithProcessor(): Builder
