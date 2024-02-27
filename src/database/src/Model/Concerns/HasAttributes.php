@@ -630,18 +630,16 @@ trait HasAttributes
             return false;
         }
 
+        if ($current instanceof Expression) {
+            return false;
+        }
+
         if ($this->isDateAttribute($key)) {
             return $this->fromDateTime($current) ===
                 $this->fromDateTime($original);
         }
 
         if ($this->hasCast($key, static::$primitiveCastTypes)) {
-            if ($current instanceof Expression) {
-                $current = $current->getValue();
-                if ($current != $this->castAttribute($key, $current)) {
-                    return false;
-                }
-            }
             return $this->castAttribute($key, $current) ===
                 $this->castAttribute($key, $original);
         }
