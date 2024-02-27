@@ -655,14 +655,14 @@ class ModelRealBuilderTest extends TestCase
         $this->assertTrue($ext->save());
 
         $this->assertFalse($ext->isDirty());
-        $ext->str = Db::raw('concat(`str`, \'test\')');
+        $ext->str = Db::raw('concat(`str`, \'t\')');
         $this->assertTrue($ext->isDirty('str'));
         $this->assertTrue($ext->save());
 
         $this->assertFalse($ext->isDirty());
         $ext->count = Db::raw('`count` + 1');
         $ext->float_num = Db::raw('`float_num` + 0.1');
-        $ext->str = Db::raw('concat(`str`, \'test\')');
+        $ext->str = Db::raw('concat(`str`, \'e\')');
         $this->assertTrue($ext->isDirty());
         $this->assertTrue($ext->save());
 
@@ -670,8 +670,8 @@ class ModelRealBuilderTest extends TestCase
             'select * from `user_ext` where `user_ext`.`id` = ? limit 1',
             'update `user_ext` set `count` = `count` + 1 where `id` = ?',
             'update `user_ext` set `float_num` = `float_num` + 0.1 where `id` = ?',
-            'update `user_ext` set `str` = concat(`str`, \'test\') where `id` = ?',
-            'update `user_ext` set `count` = `count` + 1, `float_num` = `float_num` + 0.1, `str` = concat(`str`, \'test\') where `id` = ?',
+            'update `user_ext` set `str` = concat(`str`, \'t\') where `id` = ?',
+            'update `user_ext` set `count` = `count` + 1, `float_num` = `float_num` + 0.1, `str` = concat(`str`, \'e\') where `id` = ?',
         ];
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
