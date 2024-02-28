@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Cache\Driver;
 
 use Carbon\Carbon;
-use Exception;
 use Hyperf\Coordinator\Timer;
 use Hyperf\Pool\SimplePool\Pool;
 use Hyperf\Pool\SimplePool\PoolFactory;
@@ -61,50 +60,40 @@ class SqliteDriver extends Driver
 
     public function fetch(string $key, $default = null): array
     {
-        [$pdo, $connection] = $this->getPDOConnection();
-        try {
+        return $this->execute(function (PDO $pdo) use ($key, $default) {
             $sql = sprintf('SELECT value, expiration FROM %s WHERE id = ?', $this->table);
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$this->getCacheKey($key)]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
             return $result === false ? [false, $default] : [true, $this->packer->unpack($result['value'])];
-        } finally {
-            $connection->release();
-        }
+        });
     }
 
     public function clearPrefix(string $prefix): bool
     {
-        [$pdo, $connection] = $this->getPDOConnection();
-        try {
+        return $this->execute(function (PDO $pdo) use ($prefix) {
             $sql = sprintf('DELETE FROM %s WHERE id LIKE ?', $this->table);
             $stmt = $pdo->prepare($sql);
             return $stmt->execute([$this->getCacheKey($prefix . '%')]);
-        } finally {
-            $connection->release();
-        }
+        });
     }
 
     public function get($key, $default = null): mixed
     {
-        [$pdo, $connection] = $this->getPDOConnection();
-        try {
+        return $this->execute(function (PDO $pdo) use ($key, $default) {
             $sql = sprintf('SELECT value, expiration FROM %s WHERE id = ?', $this->table);
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$this->getCacheKey($key)]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
             return $result === false ? $default : $this->packer->unpack($result['value']);
-        } finally {
-            $connection->release();
-        }
+        });
     }
 
     public function set($key, $value, $ttl = null): bool
     {
-        [$pdo, $connection] = $this->getPDOConnection();
-        try {
+        return $this->execute(function (PDO $pdo) use ($key, $value, $ttl) {
             $seconds = $this->secondsUntil($ttl);
             $sql = sprintf('INSERT OR REPLACE INTO %s (id, value, expiration) VALUES (?, ?, ?)', $this->table);
             $stmt = $pdo->prepare($sql);
@@ -113,39 +102,30 @@ class SqliteDriver extends Driver
                 $this->packer->pack($value),
                 $seconds > 0 ? Carbon::now()->addSeconds($seconds)->timestamp : 0,
             ]);
-        } finally {
-            $connection->release();
-        }
+        });
     }
 
     public function delete($key): bool
     {
-        [$pdo, $connection] = $this->getPDOConnection();
-        try {
+        return $this->execute(function (PDO $pdo) use ($key) {
             $sql = sprintf('DELETE FROM %s WHERE id = ?', $this->table);
             $stmt = $pdo->prepare($sql);
             return $stmt->execute([$this->getCacheKey($key)]);
-        } finally {
-            $connection->release();
-        }
+        });
     }
 
     public function clear(): bool
     {
-        [$pdo, $connection] = $this->getPDOConnection();
-        try {
+        return $this->execute(function (PDO $pdo) {
             $sql = sprintf('DELETE FROM %s', $this->table);
             $stmt = $pdo->prepare($sql);
             return $stmt->execute();
-        } finally {
-            $connection->release();
-        }
+        });
     }
 
     public function getMultiple($keys, $default = null): iterable
     {
-        [$pdo, $connection] = $this->getPDOConnection();
-        try {
+        return $this->execute(function (PDO $pdo) use ($keys, $default) {
             $sql = sprintf('SELECT id, value, expiration FROM %s WHERE id IN (%s)', $this->table, implode(', ', array_fill(0, count($keys), '?')));
             $stmt = $pdo->prepare($sql);
             $stmt->execute(array_map(fn ($key) => $this->getCacheKey($key), $keys));
@@ -159,15 +139,12 @@ class SqliteDriver extends Driver
             }
 
             return $values;
-        } finally {
-            $connection->release();
-        }
+        });
     }
 
     public function setMultiple($values, $ttl = null): bool
     {
-        [$pdo, $connection] = $this->getPDOConnection();
-        try {
+        return $this->execute(function (PDO $pdo) use ($values, $ttl) {
             $seconds = $this->secondsUntil($ttl);
             $sql = sprintf('INSERT OR REPLACE INTO %s (id, value, expiration) VALUES (?, ?, ?)', $this->table);
             $stmt = $pdo->prepare($sql);
@@ -180,67 +157,44 @@ class SqliteDriver extends Driver
             }
 
             return true;
-        } finally {
-            $connection->release();
-        }
+        });
     }
 
     public function deleteMultiple($keys): bool
     {
-        [$pdo, $connection] = $this->getPDOConnection();
-        try {
+        return $this->execute(function (PDO $pdo) use ($keys) {
             $sql = sprintf('DELETE FROM %s WHERE id IN (%s)', $this->table, implode(', ', array_fill(0, count($keys), '?')));
             $stmt = $pdo->prepare($sql);
             return $stmt->execute(array_map(fn ($key) => $this->getCacheKey($key), $keys));
-        } finally {
-            $connection->release();
-        }
+        });
     }
 
     public function has($key): bool
     {
-        [$pdo, $connection] = $this->getPDOConnection();
-        try {
+        return $this->execute(function (PDO $pdo) use ($key) {
             $sql = sprintf('SELECT 1 FROM %s WHERE id = ?', $this->table);
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$this->getCacheKey($key)]);
             return $stmt->fetch(PDO::FETCH_ASSOC) !== false;
-        } finally {
-            $connection->release();
-        }
+        });
     }
 
     protected function clearExpired()
     {
-        [$pdo, $connection] = $this->getPDOConnection();
-        try {
+        return $this->execute(function (PDO $pdo) {
             $sql = sprintf('DELETE FROM %s WHERE expiration > 0 AND expiration < ?', $this->table);
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$this->currentTime()]);
-        } finally {
-            $connection->release();
-        }
+            return $stmt->execute([$this->currentTime()]);
+        });
     }
 
     protected function dump()
     {
-        $sql = sprintf('SELECT * FROM %s', $this->table);
-        [$pdo, $connection] = $this->getPDOConnection();
-        try {
-            $stmt = $pdo->query($sql);
-            dump($stmt->fetchAll(PDO::FETCH_ASSOC));
-        } finally {
-            $connection->release();
-        }
-    }
-
-    /**
-     * @return array{PDO, \Hyperf\Contract\ConnectionInterface}
-     */
-    protected function getPDOConnection(): array
-    {
-        $connection = $this->pool->get();
-        return [$connection->getConnection(), $connection];
+        dump($this->execute(function (PDO $pdo) {
+            $sql = sprintf('DELETE FROM %s WHERE expiration > 0 AND expiration < ?', $this->table);
+            $stmt = $pdo->prepare($sql);
+            return $stmt->execute([$this->currentTime()]);
+        }));
     }
 
     protected function connect(array $config): PDO
@@ -286,12 +240,19 @@ CREATE TABLE IF NOT EXISTS {$this->table} (
     INDEX expiration (expiration)
 )
 SQL;
-        [$pdo, $connection] = $this->getPDOConnection();
+
+        $this->execute(function (PDO $pdo) use ($creation) {
+            return $pdo->exec($creation);
+        });
+    }
+
+    protected function execute(callable $callback)
+    {
+        $connection = $this->pool->get();
+        $pdo = $connection->getConnection();
+
         try {
-            $result = $pdo->exec($creation);
-            if ($result === false) {
-                throw new Exception($pdo->errorInfo()[0]);
-            }
+            return $callback($pdo);
         } finally {
             $connection->release();
         }
