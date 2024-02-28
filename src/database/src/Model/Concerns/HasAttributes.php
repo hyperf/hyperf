@@ -26,6 +26,7 @@ use Hyperf\Database\Exception\InvalidCastException;
 use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Database\Query\Expression;
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
 use LogicException;
@@ -626,6 +627,14 @@ trait HasAttributes
         }
 
         if (is_null($current)) {
+            return false;
+        }
+
+        // The model parameters should not be set with an expression,
+        // Because after saving the expression, the parameters of the model will not receive the latest results,
+        // When the model be used again, It will cause some problems.
+        // So you must do something by yourself, the framework shouldn't be modified in any way.
+        if ($current instanceof Expression) {
             return false;
         }
 

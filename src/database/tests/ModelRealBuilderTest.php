@@ -635,6 +635,51 @@ class ModelRealBuilderTest extends TestCase
         $this->assertTrue($model->save());
     }
 
+    public function testSaveExpression()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        /** @var UserExt $ext */
+        $ext = UserExt::query()->find(1);
+        $ext->timestamps = false;
+
+        $this->assertFalse($ext->isDirty());
+        $ext->count = Db::raw('`count` + 1');
+        $this->assertTrue($ext->isDirty('count'));
+        $this->assertTrue($ext->save());
+
+        $this->assertFalse($ext->isDirty());
+        $ext->float_num = Db::raw('`float_num` + 0.1');
+        $this->assertTrue($ext->isDirty('float_num'));
+        $this->assertTrue($ext->save());
+
+        $this->assertFalse($ext->isDirty());
+        $ext->str = Db::raw('concat(`str`, \'t\')');
+        $this->assertTrue($ext->isDirty('str'));
+        $this->assertTrue($ext->save());
+
+        $this->assertFalse($ext->isDirty());
+        $ext->count = Db::raw('`count` + 1');
+        $ext->float_num = Db::raw('`float_num` + 0.1');
+        $ext->str = Db::raw('concat(`str`, \'e\')');
+        $this->assertTrue($ext->isDirty());
+        $this->assertTrue($ext->save());
+
+        $sqls = [
+            'select * from `user_ext` where `user_ext`.`id` = ? limit 1',
+            'update `user_ext` set `count` = `count` + 1 where `id` = ?',
+            'update `user_ext` set `float_num` = `float_num` + 0.1 where `id` = ?',
+            'update `user_ext` set `str` = concat(`str`, \'t\') where `id` = ?',
+            'update `user_ext` set `count` = `count` + 1, `float_num` = `float_num` + 0.1, `str` = concat(`str`, \'e\') where `id` = ?',
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, array_shift($sqls));
+            }
+        }
+    }
+
     public function testSelectForBindingIntegerWhenUsingVarcharIndex()
     {
         $container = $this->getContainer();

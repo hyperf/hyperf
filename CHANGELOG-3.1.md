@@ -8,6 +8,10 @@
 
 - [#6550](https://github.com/hyperf/hyperf/pull/6550) Added default config of noop driver for `hyperf/opentracing`.
 
+## Optimized
+
+- [#6556](https://github.com/hyperf/hyperf/pull/6556) You can set an expression to model parameters, but it is not standardized.
+
 # v3.1.10 - 2024-02-23
 
 ## Added
