@@ -21,11 +21,13 @@ use Psr\Container\ContainerInterface;
 
 class SqliteDriver extends Driver
 {
-    protected Pool $pool;
+    protected ?Pool $pool = null;
+
+    protected ?Timer $timer = null;
 
     protected string $table;
 
-    protected Timer $timer;
+    protected bool $tableCreated = false;
 
     public function __construct(ContainerInterface $container, array $config)
     {
@@ -41,20 +43,6 @@ class SqliteDriver extends Driver
         parent::__construct($container, $config);
 
         $this->table = $config['table'];
-        $factory = $container->get(PoolFactory::class);
-        $this->pool = $factory->get(static::class . '.pool', function () use ($config) {
-            return $this->connect($config);
-        }, [
-            'max_connections' => (int) ($config['max_connections'] ?? 10),
-        ]);
-
-        $this->createTable();
-
-        $this->timer = new Timer();
-        $this->timer->tick(1, function () {
-            // $this->dump();
-            $this->clearExpired();
-        });
     }
 
     public function fetch(string $key, $default = null): array
@@ -224,7 +212,7 @@ class SqliteDriver extends Driver
         return new PDO($dsn, null, null, $options);
     }
 
-    protected function createTable(): void
+    protected function createTable(PDO $pdo): void
     {
         $creation = <<<SQL
 CREATE TABLE IF NOT EXISTS {$this->table} (
@@ -235,15 +223,28 @@ CREATE TABLE IF NOT EXISTS {$this->table} (
 )
 SQL;
 
-        $this->execute(function (PDO $pdo) use ($creation) {
-            return $pdo->exec($creation);
-        });
+        $pdo->exec($creation);
     }
 
     protected function execute(callable $callback)
     {
+        if (! $this->pool) {
+            $factory = $this->container->get(PoolFactory::class);
+            $config = $this->config;
+            $this->pool = $factory->get(static::class . '.pool', fn () => $this->connect($config), [
+                'max_connections' => (int) ($config['max_connections'] ?? 10),
+            ]);
+        }
+
         $connection = $this->pool->get();
         $pdo = $connection->getConnection();
+
+        if (! $this->tableCreated) {
+            $this->createTable($pdo);
+            $this->timer ??= new Timer();
+            $this->timer->tick(1, fn () => $this->clearExpired());
+            $this->tableCreated = true;
+        }
 
         try {
             return $callback($pdo);
