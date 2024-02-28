@@ -282,7 +282,8 @@ class SqliteDriver extends Driver
 CREATE TABLE IF NOT EXISTS {$this->table} (
     id TEXT PRIMARY KEY NOT NULL,
     value TEXT NOT NULL,
-    expiration INTEGER NOT NULL
+    expiration INTEGER NOT NULL,
+    INDEX expiration (expiration)
 )
 SQL;
         [$pdo, $connection] = $this->getPDOConnection();
