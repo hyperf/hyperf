@@ -277,7 +277,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 continue;
             }
 
-            $return = end($methodStmt->stmts);
+            $return = reset($methodStmt->stmts);
             if ($return instanceof Node\Stmt\Return_) {
                 $expr = $return->expr;
                 if (
