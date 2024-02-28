@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Cache\Driver;
 
 use Carbon\Carbon;
-use DateInterval;
 use Exception;
 use Hyperf\Coordinator\Timer;
 use Hyperf\Pool\SimplePool\Pool;
@@ -87,7 +86,7 @@ class SqliteDriver extends Driver
         }
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    public function get($key, $default = null): mixed
     {
         [$pdo, $connection] = $this->getPDOConnection();
         try {
@@ -102,7 +101,7 @@ class SqliteDriver extends Driver
         }
     }
 
-    public function set(string $key, mixed $value, int|DateInterval|null $ttl = null): bool
+    public function set($key, $value, $ttl = null): bool
     {
         [$pdo, $connection] = $this->getPDOConnection();
         try {
@@ -119,7 +118,7 @@ class SqliteDriver extends Driver
         }
     }
 
-    public function delete(string $key): bool
+    public function delete($key): bool
     {
         [$pdo, $connection] = $this->getPDOConnection();
         try {
@@ -143,7 +142,7 @@ class SqliteDriver extends Driver
         }
     }
 
-    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    public function getMultiple($keys, $default = null): iterable
     {
         [$pdo, $connection] = $this->getPDOConnection();
         try {
@@ -165,7 +164,7 @@ class SqliteDriver extends Driver
         }
     }
 
-    public function setMultiple(iterable $values, int|DateInterval|null $ttl = null): bool
+    public function setMultiple($values, $ttl = null): bool
     {
         [$pdo, $connection] = $this->getPDOConnection();
         try {
@@ -186,7 +185,7 @@ class SqliteDriver extends Driver
         }
     }
 
-    public function deleteMultiple(iterable $keys): bool
+    public function deleteMultiple($keys): bool
     {
         [$pdo, $connection] = $this->getPDOConnection();
         try {
@@ -198,7 +197,7 @@ class SqliteDriver extends Driver
         }
     }
 
-    public function has(string $key): bool
+    public function has($key): bool
     {
         [$pdo, $connection] = $this->getPDOConnection();
         try {
