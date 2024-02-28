@@ -31,6 +31,8 @@ class SqliteDriver extends Driver
 
     public function __construct(ContainerInterface $container, array $config)
     {
+        // todo check if the sqlite pdo extension is installed and hooked
+
         $config = [
             'database' => ':memory:',
             'prefix' => '',
