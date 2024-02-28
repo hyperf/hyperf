@@ -626,7 +626,15 @@ trait HasAttributes
             return true;
         }
 
-        if (is_null($current) || $current instanceof Expression) {
+        if (is_null($current)) {
+            return false;
+        }
+
+        // The model parameters should not be set with an expression,
+        // Because after saving the expression, the parameters of the model will not receive the latest results,
+        // When the model be used again, It will cause some problems.
+        // So you must do something by yourself, the framework shouldn't be modified in any way.
+        if ($current instanceof Expression) {
             return false;
         }
 
