@@ -199,7 +199,13 @@ class SqliteDriver extends Driver
 
     protected function connect(array $config): PDO
     {
-        $options = $this->getOptions($config);
+        $options = [
+            PDO::ATTR_CASE => PDO::CASE_NATURAL,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
+            PDO::ATTR_STRINGIFY_FETCHES => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ] + ($config['options'] ?? []);
 
         if ($config['database'] === ':memory:') {
             return $this->createConnection('sqlite::memory:', $config, $options);
@@ -212,17 +218,6 @@ class SqliteDriver extends Driver
         }
 
         return $this->createConnection("sqlite:{$path}", $config, $options);
-    }
-
-    protected function getOptions(array $config): array
-    {
-        return [
-            PDO::ATTR_CASE => PDO::CASE_NATURAL,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
-            PDO::ATTR_STRINGIFY_FETCHES => false,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ] + ($config['options'] ?? []);
     }
 
     protected function createConnection($dsn, array $config, array $options): PDO
