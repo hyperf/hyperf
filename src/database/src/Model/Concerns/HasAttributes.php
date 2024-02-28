@@ -626,11 +626,7 @@ trait HasAttributes
             return true;
         }
 
-        if (is_null($current)) {
-            return false;
-        }
-
-        if ($current instanceof Expression) {
+        if (is_null($current) || $current instanceof Expression) {
             return false;
         }
 
