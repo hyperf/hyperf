@@ -31,17 +31,16 @@ class SqliteDriver extends Driver
     {
         // todo check if the sqlite pdo extension is installed and hooked
 
-        $config = [
+        $config = array_replace([
             'database' => ':memory:',
             'table' => 'hyperf_cache' . uniqid('_'),
             'prefix' => '',
             'max_connections' => 10,
             'options' => [],
-        ] + $config;
+        ], $config);
         parent::__construct($container, $config);
 
         $this->table = $config['table'];
-
         $factory = $container->get(PoolFactory::class);
         $this->pool = $factory->get(static::class . '.pool', function () use ($config) {
             return $this->connect($config);
@@ -199,13 +198,13 @@ class SqliteDriver extends Driver
 
     protected function connect(array $config): PDO
     {
-        $options = [
+        $options = array_replace([
             PDO::ATTR_CASE => PDO::CASE_NATURAL,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
             PDO::ATTR_STRINGIFY_FETCHES => false,
             PDO::ATTR_EMULATE_PREPARES => false,
-        ] + ($config['options'] ?? []);
+        ], $config['options'] ?? []);
 
         if ($config['database'] === ':memory:') {
             return $this->createConnection('sqlite::memory:', $config, $options);
