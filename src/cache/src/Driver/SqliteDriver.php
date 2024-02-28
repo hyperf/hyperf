@@ -35,12 +35,14 @@ class SqliteDriver extends Driver
 
         $config = [
             'database' => ':memory:',
+            'table' => 'hyperf_cache' . uniqid('_'),
             'prefix' => '',
             'max_connections' => 10,
+            'options' => [],
         ] + $config;
         parent::__construct($container, $config);
 
-        $this->table = $config['table'] ?? 'hyperf_cache' . uniqid('_');
+        $this->table = $config['table'];
 
         $factory = $container->get(PoolFactory::class);
         $this->pool = $factory->get(static::class . '.pool', function () use ($config) {
