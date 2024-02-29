@@ -23,7 +23,7 @@ class Console
     /**
      * @var ClosureCommand[]
      */
-    protected static $commands = [];
+    protected static array $commands = [];
 
     public static function command(string $signature, Closure $command): ClosureCommand
     {

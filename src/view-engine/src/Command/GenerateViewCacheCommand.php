@@ -24,13 +24,13 @@ class GenerateViewCacheCommand extends HyperfCommand
         parent::__construct('gen:view-engine-cache');
     }
 
-    public function configure()
+    public function configure(): void
     {
         parent::configure();
         $this->setDescription('Generate View Engine Cache');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $dir = $this->container->get(ConfigInterface::class)->get('view.config.view_path');
         if (empty($dir)) {

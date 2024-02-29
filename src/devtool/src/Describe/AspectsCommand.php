@@ -27,7 +27,7 @@ class AspectsCommand extends HyperfCommand
         parent::__construct('describe:aspects');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $classes = $this->input->getOption('classes');
         $classes = $classes ? explode(',', $classes) : null;
@@ -39,7 +39,7 @@ class AspectsCommand extends HyperfCommand
         $this->show('Annotations', $this->handleData($collector['annotations'], $classes, $aspects), $this->output);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Describe the aspects.')
             ->addOption('classes', 'e', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified information by classes.')

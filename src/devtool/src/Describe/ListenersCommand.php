@@ -30,7 +30,7 @@ class ListenersCommand extends HyperfCommand
         parent::__construct('describe:listeners');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $events = $this->input->getOption('events');
         $events = $events ? explode(',', $events) : null;
@@ -41,7 +41,7 @@ class ListenersCommand extends HyperfCommand
         $this->show($this->handleData($provider, $events, $listeners), $this->output);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Describe the events and listeners.')
             ->addOption('events', 'e', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified information by events.')
@@ -80,7 +80,7 @@ class ListenersCommand extends HyperfCommand
         return $data;
     }
 
-    protected function isMatch(string $target, array $keywords = [])
+    protected function isMatch(string $target, array $keywords = []): bool
     {
         foreach ($keywords as $keyword) {
             if (str_contains($target, $keyword)) {
@@ -90,7 +90,7 @@ class ListenersCommand extends HyperfCommand
         return false;
     }
 
-    protected function show(array $data, OutputInterface $output)
+    protected function show(array $data, OutputInterface $output): void
     {
         $rows = [];
         foreach ($data as $route) {

@@ -25,7 +25,7 @@ class BuildCommand extends HyperfCommand
         parent::__construct('phar:build');
     }
 
-    public function configure()
+    public function configure(): void
     {
         $this->setDescription('Pack your project into a Phar package.')
             ->addOption('name', '', InputOption::VALUE_OPTIONAL, 'This is the name of the Phar package, and if it is not passed in, the project name is used by default')
@@ -35,7 +35,7 @@ class BuildCommand extends HyperfCommand
             ->addOption('mount', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The mount path or dir.');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $this->assertWritable();
         $name = $this->input->getOption('name');
@@ -67,7 +67,7 @@ class BuildCommand extends HyperfCommand
     /**
      * check readonly.
      */
-    public function assertWritable()
+    public function assertWritable(): void
     {
         if (ini_get('phar.readonly') === '1') {
             throw new UnexpectedValueException('Your configuration disabled writing phar files (phar.readonly = On), please update your configuration');

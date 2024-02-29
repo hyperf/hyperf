@@ -27,7 +27,7 @@ class FlushFailedMessageCommand extends HyperfCommand
         parent::__construct('queue:flush');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $name = $this->input->getArgument('name');
         $queue = $this->input->getOption('queue');
@@ -40,7 +40,7 @@ class FlushFailedMessageCommand extends HyperfCommand
         $this->output->writeln('<fg=red>Flush all message from failed queue.</>');
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Delete all message from failed queue.');
         $this->addArgument('name', InputArgument::OPTIONAL, 'The name of queue.', 'default');

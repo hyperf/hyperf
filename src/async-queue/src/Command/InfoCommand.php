@@ -26,7 +26,7 @@ class InfoCommand extends HyperfCommand
         parent::__construct('queue:info');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $name = $this->input->getArgument('name');
         $factory = $this->container->get(DriverFactory::class);
@@ -38,7 +38,7 @@ class InfoCommand extends HyperfCommand
         }
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Get all messages from the queue.');
         $this->addArgument('name', InputArgument::OPTIONAL, 'The name of queue.', 'default');

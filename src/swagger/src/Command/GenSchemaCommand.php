@@ -29,7 +29,7 @@ class GenSchemaCommand extends HyperfCommand
         parent::__construct('gen:swagger-schema');
     }
 
-    public function configure()
+    public function configure(): void
     {
         parent::configure();
         $this->setDescription('Generate swagger schemas.');
@@ -38,7 +38,7 @@ class GenSchemaCommand extends HyperfCommand
         $this->addOption('model', 'M', InputOption::VALUE_OPTIONAL, 'The model which used to generate schemas.');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $name = $this->input->getOption('name');
         $force = $this->input->getOption('force');

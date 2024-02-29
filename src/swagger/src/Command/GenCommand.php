@@ -23,13 +23,13 @@ class GenCommand extends HyperfCommand
         parent::__construct('gen:swagger');
     }
 
-    public function configure()
+    public function configure(): void
     {
         parent::configure();
         $this->setDescription('Generate swagger json file.');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $config = $this->container->get(ConfigInterface::class);
 

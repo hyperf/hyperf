@@ -33,7 +33,7 @@ class RoutesCommand extends HyperfCommand
         parent::__construct('describe:routes');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $path = $this->input->getOption('path');
         $server = $this->input->getOption('server');
@@ -46,14 +46,14 @@ class RoutesCommand extends HyperfCommand
         );
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Describe the routes information.')
             ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified route information by path')
             ->addOption('server', 'S', InputOption::VALUE_OPTIONAL, 'Which server you want to describe routes.', 'http');
     }
 
-    protected function analyzeRouter(string $server, RouteCollector $router, ?string $path)
+    protected function analyzeRouter(string $server, RouteCollector $router, ?string $path): array
     {
         $data = [];
         [$staticRouters, $variableRouters] = $router->getData();
@@ -74,7 +74,7 @@ class RoutesCommand extends HyperfCommand
         return $data;
     }
 
-    protected function analyzeHandler(array &$data, string $serverName, string $method, ?string $path, Handler $handler)
+    protected function analyzeHandler(array &$data, string $serverName, string $method, ?string $path, Handler $handler): void
     {
         $uri = $handler->route;
         if (! is_null($path) && ! Str::contains($uri, $path)) {
@@ -108,7 +108,7 @@ class RoutesCommand extends HyperfCommand
         }
     }
 
-    private function show(array $data, OutputInterface $output)
+    private function show(array $data, OutputInterface $output): void
     {
         $rows = [];
         foreach ($data as $route) {

@@ -23,7 +23,7 @@ trait DisableEventDispatcher
         $this->addOption('disable-event-dispatcher', null, InputOption::VALUE_NONE, 'Whether disable event dispatcher.');
     }
 
-    public function disableDispatcher(InputInterface $input)
+    public function disableDispatcher(InputInterface $input): void
     {
         if (! $input->getOption('disable-event-dispatcher')) {
             if (! ApplicationContext::hasContainer()) {
