@@ -84,10 +84,11 @@ class CrontabDispatcherProcess extends AbstractProcess
         $current = date('s', time());
 
         $microtime = microtime(true);
-        $millisecond = explode('.', (string) $microtime)[1] ?? '0000';
-        $millisecond = substr($millisecond, 0, 4) / 10000;
+        $millisecond = explode('.', (string) $microtime)[1] ?? '000';
+        $millisecond = '0.' . substr($millisecond, 0, 3);
 
         $sleep = 60 - $current - $millisecond;
+        $sleep = round($sleep, 3);
         $this->logger->debug('Current microtime: ' . $microtime . '. Crontab dispatcher sleep ' . $sleep . 's.');
 
         if ($sleep > 0) {
