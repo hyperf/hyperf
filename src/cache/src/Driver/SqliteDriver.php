@@ -57,6 +57,15 @@ class SqliteDriver extends Driver
         });
     }
 
+    public function clearExpired()
+    {
+        return $this->execute(function (PDO $pdo) {
+            $sql = sprintf('DELETE FROM %s WHERE expiration > 0 AND expiration < ?', $this->table);
+            $stmt = $pdo->prepare($sql);
+            return $stmt->execute([$this->currentTime()]);
+        });
+    }
+
     public function clearPrefix(string $prefix): bool
     {
         return $this->execute(function (PDO $pdo) use ($prefix) {
@@ -166,21 +175,13 @@ class SqliteDriver extends Driver
         });
     }
 
-    protected function clearExpired()
-    {
-        return $this->execute(function (PDO $pdo) {
-            $sql = sprintf('DELETE FROM %s WHERE expiration > 0 AND expiration < ?', $this->table);
-            $stmt = $pdo->prepare($sql);
-            return $stmt->execute([$this->currentTime()]);
-        });
-    }
-
-    protected function dump()
+    public function dump()
     {
         dump($this->execute(function (PDO $pdo) {
-            $sql = sprintf('DELETE FROM %s WHERE expiration > 0 AND expiration < ?', $this->table);
+            $sql = sprintf('SELECT * FROM %s', $this->table);
             $stmt = $pdo->prepare($sql);
-            return $stmt->execute([$this->currentTime()]);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }));
     }
 
