@@ -218,9 +218,9 @@ class SqliteDriver extends Driver
 CREATE TABLE IF NOT EXISTS {$this->table} (
     id TEXT PRIMARY KEY NOT NULL,
     value TEXT NOT NULL,
-    expiration INTEGER NOT NULL,
-    INDEX expiration (expiration)
-)
+    expiration INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS expiration_index ON {$this->table} (expiration)
 SQL;
 
         $pdo->exec($creation);
