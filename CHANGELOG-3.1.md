@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#6555](https://github.com/hyperf/hyperf/pull/6555) Fixed bug that `invalidOperator` cannot work well when using non-string operators.
+- [#6563](https://github.com/hyperf/hyperf/pull/6563/files) Fixed cron dispatcher sleep accurate.
 
 ## Added
 
