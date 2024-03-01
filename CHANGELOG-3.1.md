@@ -1,4 +1,6 @@
-# v3.1.11 - TBD
+# v3.1.12 - TBD
+
+# v3.1.11 - 2024-03-01
 
 ## Fixed
 
@@ -8,6 +10,7 @@
 ## Added
 
 - [#6550](https://github.com/hyperf/hyperf/pull/6550) Added default config of noop driver for `hyperf/opentracing`.
+- [#6562](https://github.com/hyperf/hyperf/pull/6562) Added `SqliteDriver` for `hyperf/cache`.
 
 ## Optimized
 
