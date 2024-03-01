@@ -77,17 +77,23 @@ class CrontabDispatcherProcess extends AbstractProcess
     }
 
     /**
+     * Get the interval of the current second to the next minute.
+     */
+    public function getInterval(int $currentSecond, float $ms): float
+    {
+        $sleep = 60 - $currentSecond - $ms;
+        return round($sleep, 3);
+    }
+
+    /**
      * @return bool whether the server shutdown
      */
     private function sleep(): bool
     {
         $current = date('s', time());
-
         $ms = microtime();
-        $millisecond = explode(' ', $ms)[0];
 
-        $sleep = 60 - (int) $current - (float) $millisecond;
-        $sleep = round($sleep, 3);
+        $sleep = $this->getInterval((int) $current, (float) explode(' ', $ms)[0]);
         $this->logger->debug('Current microtime: ' . $ms . '. Crontab dispatcher sleep ' . $sleep . 's.');
 
         if ($sleep > 0) {
