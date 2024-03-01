@@ -11,22 +11,17 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Crontab;
 
-use Mockery;
-use Hyperf\Di\Container;
-use Hyperf\Crontab\Parser;
-use Hyperf\Crontab\Scheduler;
-use PHPUnit\Framework\TestCase;
-use Hyperf\Crontab\CrontabManager;
-use Hyperf\Contract\ConfigInterface;
-use HyperfTest\Crontab\Stub\FooCron2;
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Contract\ContainerInterface;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Support\Reflection\ClassInvoker;
-use Hyperf\Crontab\Strategy\StrategyInterface;
-use PHPUnit\Framework\Attributes\CoversNothing;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Hyperf\Crontab\Process\CrontabDispatcherProcess;
+use Hyperf\Crontab\Scheduler;
+use Hyperf\Crontab\Strategy\StrategyInterface;
+use Hyperf\Di\Container;
+use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -46,7 +41,7 @@ class DispatcherTest extends TestCase
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn(Mockery::mock(StdoutLoggerInterface::class));
         ApplicationContext::setContainer($container);
     }
-    
+
     public function testGetSchedules()
     {
         $this->mockContainer();
