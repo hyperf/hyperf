@@ -85,7 +85,7 @@ class RequestTest extends TestCase
         RequestContext::set($psrRequest);
 
         $psrRequest = new Request();
-        $this->assertSame(['id' => 1, 'name' => 'Hyperf', '123' => '123'], $psrRequest->all());
+        $this->assertSame(['id' => 1, 123 => '123', 'name' => 'Hyperf'], $psrRequest->all());
     }
 
     public function testRequestInputs()
