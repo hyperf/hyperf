@@ -86,6 +86,25 @@ class RequestTest extends TestCase
 
         $psrRequest = new Request();
         $this->assertSame(['id' => 1, 123 => '123', 'name' => 'Hyperf'], $psrRequest->all());
+
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn(['name' => 'Hyperf']);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn(['id' => 1, '123' => '123']);
+        RequestContext::set($psrRequest);
+
+        $psrRequest = new Request();
+        $this->assertSame(['id' => 1, 123 => '123', 'name' => 'Hyperf'], $psrRequest->all());
+    }
+
+    public function testRequestAllByReplace()
+    {
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1, 'data' => ['id' => 2]]);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn(['data' => 'Hyperf']);
+        RequestContext::set($psrRequest);
+
+        $psrRequest = new Request();
+        $this->assertEquals(['id' => 1, 'data' => 'Hyperf'], $psrRequest->all());
     }
 
     public function testRequestInputs()
