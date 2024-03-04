@@ -565,8 +565,7 @@ class Request implements RequestInterface
             } else {
                 $data = [];
             }
-
-            return array_merge($data, $request->getQueryParams());
+            return $data + $request->getQueryParams();
         });
     }
 

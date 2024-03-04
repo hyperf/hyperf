@@ -80,12 +80,12 @@ class RequestTest extends TestCase
     public function testRequestAll()
     {
         $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
-        $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1]);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1, '123' => '123']);
         $psrRequest->shouldReceive('getQueryParams')->andReturn(['name' => 'Hyperf']);
         RequestContext::set($psrRequest);
 
         $psrRequest = new Request();
-        $this->assertSame(['id' => 1, 'name' => 'Hyperf'], $psrRequest->all());
+        $this->assertSame(['id' => 1, 'name' => 'Hyperf', '123' => '123'], $psrRequest->all());
     }
 
     public function testRequestInputs()
