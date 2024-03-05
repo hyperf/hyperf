@@ -19,7 +19,7 @@ trait NullDisableEventDispatcher
     {
     }
 
-    public function disableDispatcher(InputInterface $input)
+    public function disableDispatcher(InputInterface $input): void
     {
     }
 }
