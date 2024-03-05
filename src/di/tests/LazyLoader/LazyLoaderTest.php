@@ -13,7 +13,7 @@ namespace HyperfTest\Di\LazyLoader;
 
 use Hyperf\Di\LazyLoader\LazyLoader;
 use HyperfTest\Di\Stub\LazyLoad\FooImplLazyLoad;
-use HyperfTest\Di\Stub\LazyLoad\Test;
+use HyperfTest\Di\Stub\LazyLoad\TestService;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -33,8 +33,8 @@ class LazyLoaderTest extends TestCase
     public function testGeneratorLazyProxyClass()
     {
         $lazyLoader = LazyLoader::bootstrap(BASE_PATH);
-        $proxyCode = file_get_contents(__DIR__ . '/Test.txt');
-        $code = $lazyLoader->generatorLazyProxy('HyperfLazy\\Test\\', Test::class);
+        $proxyCode = file_get_contents(__DIR__ . '/TestService.txt');
+        $code = $lazyLoader->generatorLazyProxy('HyperfLazy\\Test\\', TestService::class);
         self::assertEquals($proxyCode, $code);
     }
 }

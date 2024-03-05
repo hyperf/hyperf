@@ -1,0 +1,18 @@
+<?php
+
+namespace HyperfLazy\Test;
+
+/**
+ * Be careful: This is a lazy proxy, not the real HyperfTest\Di\Stub\LazyLoad\TestService from container.
+ *
+ * {@inheritdoc}
+ */
+class Test extends \HyperfTest\Di\Stub\LazyLoad\TestService
+{
+    use \Hyperf\Di\LazyLoader\LazyProxyTrait;
+    const PROXY_TARGET = 'HyperfTest\\Di\\Stub\\LazyLoad\\TestService';
+    public function works()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+}

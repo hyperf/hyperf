@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di\Stub\LazyLoad;
 
-class Test
+class TestService
 {
     public function works()
     {
