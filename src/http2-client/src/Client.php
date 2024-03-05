@@ -86,7 +86,7 @@ class Client implements ClientInterface
         }
         $streamId = $this->client->send($request);
 
-        $this->channels[$streamId] = new Channel(1);
+        ! isset($this->channels[$streamId]) && $this->channels[$streamId] = new Channel(1);
 
         return $streamId;
     }
@@ -196,6 +196,10 @@ class Client implements ClientInterface
                         $response = $client->recv(-1);
                         if (! $client->isConnected()) {
                             throw new ClientClosedException('Read failed, because the http2 client is closed.');
+                        }
+
+                        if (! isset($this->channels[$response->getStreamId()])) {
+                            $this->channels[$response->getStreamId()] = new Channel(1);
                         }
 
                         $this->channels[$response->getStreamId()]?->push($response);
