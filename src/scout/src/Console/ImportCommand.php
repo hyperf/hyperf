@@ -50,7 +50,7 @@ class ImportCommand extends Command
         $this->info('All [' . $class . '] records have been imported.');
     }
 
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['column', 'c', InputOption::VALUE_OPTIONAL, 'Column used in chunking. (Default use primary key)'],
@@ -58,7 +58,7 @@ class ImportCommand extends Command
         ];
     }
 
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [
             ['model', InputArgument::REQUIRED, 'fully qualified class name of the model'],

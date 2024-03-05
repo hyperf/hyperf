@@ -51,7 +51,7 @@ class SeedCommand extends BaseCommand
      *
      * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['path', null, InputOption::VALUE_OPTIONAL, 'The location where the seeders file stored'],

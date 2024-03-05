@@ -38,7 +38,7 @@ class FlushCommand extends HyperfCommand
         $this->info('All [' . $class . '] records have been flushed.');
     }
 
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [
             ['model', InputArgument::REQUIRED, 'fully qualified class name of the model'],
