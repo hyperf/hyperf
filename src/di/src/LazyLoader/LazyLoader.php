@@ -36,7 +36,7 @@ class LazyLoader
     /**
      * @param array $config the Configuration object
      */
-    private function __construct(protected array $config)
+    private function __construct(protected array $config, protected ?string $proxyFileDirPath = null)
     {
         $this->register();
     }
@@ -44,7 +44,7 @@ class LazyLoader
     /**
      * Get or create the singleton lazy loader instance.
      */
-    public static function bootstrap(string $configDir): LazyLoader
+    public static function bootstrap(string $configDir, ?string $proxyFileDirPath = null): LazyLoader
     {
         if (static::$instance) {
             return static::$instance;
@@ -55,7 +55,7 @@ class LazyLoader
         if (file_exists($path)) {
             $config = include $path;
         }
-        return static::$instance = new static($config);
+        return static::$instance = new static($config,$proxyFileDirPath);
     }
 
     /**
@@ -70,6 +70,29 @@ class LazyLoader
             return true;
         }
         return null;
+    }
+
+    /**
+     * Format the lazy proxy with the proper namespace and class.
+     */
+    public function generatorLazyProxy(string $proxy, string $target): string
+    {
+        $targetReflection = new ReflectionClass($target);
+        $builder = null;
+
+        if ($targetReflection->isFinal()) {
+            $builder = new FallbackLazyProxyBuilder();
+        }
+
+        if ($targetReflection->isInterface()) {
+            $builder = new InterfaceLazyProxyBuilder();
+        }
+
+        return $this->buildNewCode(
+            $builder ?: $this->getDefaultLazyBuilder(),
+            $proxy,
+            $targetReflection
+        );
     }
 
     /**
@@ -96,7 +119,7 @@ class LazyLoader
      */
     protected function ensureProxyExists(string $proxy): string
     {
-        $dir = BASE_PATH . '/runtime/container/proxy/';
+        $dir = $this->proxyFileDirPath ?: BASE_PATH . '/runtime/container/proxy/';
         if (! file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
@@ -118,22 +141,9 @@ class LazyLoader
         return $path;
     }
 
-    /**
-     * Format the lazy proxy with the proper namespace and class.
-     */
-    protected function generatorLazyProxy(string $proxy, string $target): string
+    protected function getDefaultLazyBuilder(): ClassLazyProxyBuilder
     {
-        $targetReflection = new ReflectionClass($target);
-        if ($this->isUnsupportedReflectionType($targetReflection)) {
-            $builder = new FallbackLazyProxyBuilder();
-            return $this->buildNewCode($builder, $proxy, $targetReflection);
-        }
-        if ($targetReflection->isInterface()) {
-            $builder = new InterfaceLazyProxyBuilder();
-            return $this->buildNewCode($builder, $proxy, $targetReflection);
-        }
-        $builder = new ClassLazyProxyBuilder();
-        return $this->buildNewCode($builder, $proxy, $targetReflection);
+        return new ClassLazyProxyBuilder();
     }
 
     /**
@@ -146,28 +156,16 @@ class LazyLoader
         spl_autoload_register($load, true, true);
     }
 
-    /**
-     * These conditions are really hard to proxy via inheritance.
-     * Luckily these conditions are very rarely met.
-     *
-     * TODO: implement some of them.
-     *
-     * @param ReflectionClass $targetReflection [description]
-     * @return bool [description]
-     */
-    private function isUnsupportedReflectionType(ReflectionClass $targetReflection): bool
-    {
-        return $targetReflection->isFinal();
-    }
-
-    private function buildNewCode(AbstractLazyProxyBuilder $builder, string $proxy, ReflectionClass $reflectionClass): string
+    protected function buildNewCode(AbstractLazyProxyBuilder $builder, string $proxy, ReflectionClass $reflectionClass): string
     {
         $target = $reflectionClass->getName();
-        $nodes = PhpParser::getInstance()->getNodesFromReflectionClass($reflectionClass);
+        $parser = PhpParser::getInstance();
+        $nodes = $parser->getNodesFromReflectionClass($reflectionClass);
+        $allNodes = $parser->getNodesFromReflectionAllClass($reflectionClass);
         $builder->addClassBoilerplate($proxy, $target);
         $builder->addClassRelationship();
         $traverser = new NodeTraverser();
-        $methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes);
+        $methods = $parser->getAllMethodsFromStmts($allNodes);
         $visitor = new PublicMethodVisitor($methods, $builder->getOriginalClassName());
         $traverser->addVisitor(new NameResolver());
         $traverser->addVisitor($visitor);

@@ -1,0 +1,22 @@
+<?php
+
+namespace HyperfLazy\Foo;
+
+/**
+ * Be careful: This is a lazy proxy, not the real HyperfTest\Di\Stub\LazyLoad\FooImplLazyLoad from container.
+ *
+ * {@inheritdoc}
+ */
+class Foo extends \HyperfTest\Di\Stub\LazyLoad\FooImplLazyLoad
+{
+    use \Hyperf\Di\LazyLoader\LazyProxyTrait;
+    const PROXY_TARGET = 'HyperfTest\\Di\\Stub\\LazyLoad\\FooImplLazyLoad';
+    public function bar()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+    public function foo()
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+}

@@ -55,7 +55,7 @@ class ClassLoader
         );
 
         // Initialize Lazy Loader. This will prepend LazyLoader to the top of autoload queue.
-        LazyLoader::bootstrap($configDir);
+        LazyLoader::bootstrap($configDir, $proxyFileDirPath);
     }
 
     protected static function loadDotenv(): void

@@ -16,6 +16,7 @@ use Hyperf\Collection\Arr;
 use PhpParser\Node;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter\Standard;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
@@ -64,6 +65,26 @@ class PhpParser
     {
         $code = file_get_contents($reflectionClass->getFileName());
         return $this->parser->parse($code);
+    }
+
+    public function getNodesFromReflectionAllClass(ReflectionClass $reflectionClass): ?array
+    {
+        return $this->parser->parse($this->getReflectionCode($reflectionClass));
+    }
+
+    public function getReflectionCode(ReflectionClass $reflectionClass): string
+    {
+        return (new Standard())->prettyPrintFile($this->getReflectionClassNodes($reflectionClass));
+    }
+
+    public function getReflectionClassNodes(ReflectionClass $class)
+    {
+        $nodes = [];
+        $interfaces = $class->getInterfaces() ?: [];
+        foreach ($interfaces as $interface) {
+            $nodes = array_merge($this->getReflectionClassNodes($interface), $nodes);
+        }
+        return array_merge($nodes, $this->parser->parse(file_get_contents($class->getFileName())));
     }
 
     public function getNodeFromReflectionType(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name
@@ -142,6 +163,7 @@ class PhpParser
     public function getAllMethodsFromStmts(array $stmts): array
     {
         $methods = [];
+        $methodNames = [];
         foreach ($stmts as $namespace) {
             if (! $namespace instanceof Node\Stmt\Namespace_) {
                 continue;
@@ -153,6 +175,10 @@ class PhpParser
                 }
 
                 foreach ($class->getMethods() as $method) {
+                    if (in_array($method->name->name, $methodNames, true)) {
+                        continue;
+                    }
+                    $methodNames[] = $method->name->name;
                     $methods[] = $method;
                 }
             }
