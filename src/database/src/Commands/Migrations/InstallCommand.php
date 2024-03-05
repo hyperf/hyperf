@@ -28,7 +28,7 @@ class InstallCommand extends BaseCommand
     /**
      * Handle the current command.
      */
-    public function handle()
+    public function handle(): void
     {
         $this->repository->setSource($this->input->getOption('database'));
 
@@ -42,7 +42,7 @@ class InstallCommand extends BaseCommand
      *
      * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use'],
