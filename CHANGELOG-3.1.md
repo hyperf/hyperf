@@ -2,6 +2,7 @@
 
 ## Fixed
 
+- [#6561](https://github.com/hyperf/hyperf/pull/6561) Fixed bug that the relation comments cannot be created by `gen:model`.
 - [#6566](https://github.com/hyperf/hyperf/pull/6566) Fixed bug that the numeric keys will be reset when using `$request->all()`.
 
 # v3.1.11 - 2024-03-01
