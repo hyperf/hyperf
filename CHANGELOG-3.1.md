@@ -1,5 +1,7 @@
 # v3.1.12 - TBD
 
+# v3.1.12 - 2024-03-07
+
 ## Fixed
 
 - [#6569](https://github.com/hyperf/hyperf/pull/6569) Fixed bug that reading messages failed when the channel have been removed from channel group.
