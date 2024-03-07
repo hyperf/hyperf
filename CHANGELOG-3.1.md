@@ -2,6 +2,7 @@
 
 ## Fixed
 
+- [#6569](https://github.com/hyperf/hyperf/pull/6569) Fixed bug that reading messages failed when the channel have been removed from channel group.
 - [#6561](https://github.com/hyperf/hyperf/pull/6561) Fixed bug that the relation comments cannot be created by `gen:model`.
 - [#6566](https://github.com/hyperf/hyperf/pull/6566) Fixed bug that the numeric keys will be reset when using `$request->all()`.
 - [#6567](https://github.com/hyperf/hyperf/pull/6567) Fixed bug that the `CrontabRegisterListener` don't check configuration `crontab.enable`.
