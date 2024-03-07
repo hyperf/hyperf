@@ -38,6 +38,6 @@ class UserEnum extends Model
     public function book()
     {
         var_dump(1);
-        return $this->hasOne(Book::class, 'user_id', 'id');
+        return $this->hasOne(Book::class, 'user_id', 'id'); // ignore
     }
 }

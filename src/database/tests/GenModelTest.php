@@ -160,6 +160,7 @@ class UserEnum extends Model
     {
         var_dump(1);
         return \$this->hasOne(Book::class, 'user_id', 'id');
+        // ignore
     }
 }", $code);
     }

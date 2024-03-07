@@ -277,38 +277,40 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 continue;
             }
 
-            $return = end($methodStmt->stmts);
-            if ($return instanceof Node\Stmt\Return_) {
-                $expr = $return->expr;
-                if (
-                    $expr instanceof Node\Expr\MethodCall
-                    && $expr->name instanceof Node\Identifier
-                    && is_string($expr->name->name)
-                ) {
-                    $loop = 0;
-                    while ($expr->var instanceof Node\Expr\MethodCall) {
-                        if ($loop > 32) {
-                            throw new RuntimeException('max loop reached!');
+            foreach ($methodStmt->stmts as $return) {
+                if ($return instanceof Node\Stmt\Return_) {
+                    $expr = $return->expr;
+                    if (
+                        $expr instanceof Node\Expr\MethodCall
+                        && $expr->name instanceof Node\Identifier
+                        && is_string($expr->name->name)
+                    ) {
+                        $loop = 0;
+                        while ($expr->var instanceof Node\Expr\MethodCall) {
+                            if ($loop > 32) {
+                                throw new RuntimeException('max loop reached!');
+                            }
+                            ++$loop;
+                            $expr = $expr->var;
                         }
-                        ++$loop;
-                        $expr = $expr->var;
-                    }
-                    $name = $this->getMethodRelationName($method) ?? $expr->name->name;
-                    if (array_key_exists($name, self::RELATION_METHODS)) {
-                        if ($name === 'morphTo') {
-                            // Model isn't specified because relation is polymorphic
-                            $this->setProperty($method->getName(), ['\\' . Model::class], true, false, '', true);
-                        } elseif (isset($expr->args[0]) && $expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
-                            $related = $expr->args[0]->value->class->toCodeString();
-                            if (str_contains($name, 'Many')) {
-                                // Collection or array of models (because Collection is Arrayable)
-                                $this->setProperty($method->getName(), [$this->getCollectionClass($related), $related . '[]'], true, false, '', true);
-                            } else {
-                                // Single model is returned
-                                $this->setProperty($method->getName(), [$related], true, false, '', true);
+                        $name = $this->getMethodRelationName($method) ?? $expr->name->name;
+                        if (array_key_exists($name, self::RELATION_METHODS)) {
+                            if ($name === 'morphTo') {
+                                // Model isn't specified because relation is polymorphic
+                                $this->setProperty($method->getName(), ['\\' . Model::class], true, false, '', true);
+                            } elseif (isset($expr->args[0]) && $expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
+                                $related = $expr->args[0]->value->class->toCodeString();
+                                if (str_contains($name, 'Many')) {
+                                    // Collection or array of models (because Collection is Arrayable)
+                                    $this->setProperty($method->getName(), [$this->getCollectionClass($related), $related . '[]'], true, false, '', true);
+                                } else {
+                                    // Single model is returned
+                                    $this->setProperty($method->getName(), [$related], true, false, '', true);
+                                }
                             }
                         }
                     }
+                    break;
                 }
             }
         }
