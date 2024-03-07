@@ -57,6 +57,10 @@ class CrontabRegisterListener implements ListenerInterface
         $this->logger = $this->container->get(StdoutLoggerInterface::class);
         $this->config = $this->container->get(ConfigInterface::class);
 
+        if (! $this->config->get('crontab.enable', false)) {
+            return;
+        }
+
         $crontabs = $this->parseCrontabs();
         $environment = (string) $this->config->get('app_env', '');
 
