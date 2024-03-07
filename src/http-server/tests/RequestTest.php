@@ -80,12 +80,32 @@ class RequestTest extends TestCase
     public function testRequestAll()
     {
         $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
-        $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1]);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1, '123' => '123']);
         $psrRequest->shouldReceive('getQueryParams')->andReturn(['name' => 'Hyperf']);
         RequestContext::set($psrRequest);
 
         $psrRequest = new Request();
-        $this->assertSame(['id' => 1, 'name' => 'Hyperf'], $psrRequest->all());
+        $this->assertSame(['name' => 'Hyperf', 'id' => 1, 123 => '123'], $psrRequest->all());
+
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn(['name' => 'Hyperf']);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn(['id' => 1, '123' => '123']);
+        RequestContext::set($psrRequest);
+
+        $psrRequest = new Request();
+
+        $this->assertSame(['name' => 'Hyperf', 'id' => 1, 123 => '123'], $psrRequest->all());
+    }
+
+    public function testRequestAllByReplace()
+    {
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1, 'data' => ['id' => 2]]);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn(['data' => 'Hyperf']);
+        RequestContext::set($psrRequest);
+
+        $psrRequest = new Request();
+        $this->assertEquals(['id' => 1, 'data' => 'Hyperf'], $psrRequest->all());
     }
 
     public function testRequestInputs()

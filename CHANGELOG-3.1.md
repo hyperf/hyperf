@@ -1,12 +1,20 @@
-# v3.1.11 - TBD
+# v3.1.12 - TBD
+
+## Fixed
+
+- [#6566](https://github.com/hyperf/hyperf/pull/6566) Fixed bug that the numeric keys will be reset when using `$request->all()`.
+
+# v3.1.11 - 2024-03-01
 
 ## Fixed
 
 - [#6555](https://github.com/hyperf/hyperf/pull/6555) Fixed bug that `invalidOperator` cannot work well when using non-string operators.
+- [#6563](https://github.com/hyperf/hyperf/pull/6563/files) Fixed cron dispatcher sleep accurate.
 
 ## Added
 
 - [#6550](https://github.com/hyperf/hyperf/pull/6550) Added default config of noop driver for `hyperf/opentracing`.
+- [#6562](https://github.com/hyperf/hyperf/pull/6562) Added `SqliteDriver` for `hyperf/cache`.
 
 ## Optimized
 
