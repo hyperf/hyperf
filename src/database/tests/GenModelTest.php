@@ -140,6 +140,7 @@ namespace HyperfTest\\Database\\Stubs\\Model;
  * @property \\HyperfTest\\Database\\Stubs\\Model\\Gender \$gender 
  * @property \\Carbon\\Carbon \$created_at 
  * @property \\Carbon\\Carbon \$updated_at 
+ * @property-read null|Book \$book 
  */
 class UserEnum extends Model
 {
@@ -155,6 +156,12 @@ class UserEnum extends Model
      * The attributes that should be cast to native types.
      */
     protected array \$casts = ['id' => 'integer', 'gender' => Gender::class, 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+    public function book()
+    {
+        var_dump(1);
+        return \$this->hasOne(Book::class, 'user_id', 'id');
+        // ignore
+    }
 }", $code);
     }
 
