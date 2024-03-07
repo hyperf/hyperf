@@ -43,7 +43,7 @@ use Psr\Container\ContainerInterface;
  * @method static array pretend(Closure $callback)
  * @method static Conn connection(string $pool)
  * @method static Conn beforeExecuting(Closure $callback)
- * @method static Conn clearBeforeExecutingCallbacks(Closure $callback)
+ * @method static Conn clearBeforeExecutingCallbacks()
  */
 class Db
 {

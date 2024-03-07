@@ -715,7 +715,7 @@ class ModelRealBuilderTest extends TestCase
             $this->assertSame(1, $chan->pop(1));
             $this->assertSame(2, $chan->pop(1));
         } finally {
-            Connection::clearBeforeExecutingCallbacks();
+            Db::clearBeforeExecutingCallbacks();
         }
     }
 
