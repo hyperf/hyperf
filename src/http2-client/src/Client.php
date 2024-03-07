@@ -84,9 +84,10 @@ class Client implements ClientInterface
         if (! $this->client) {
             throw new ClientClosedException('http2 client send request failed caused by closed connection.');
         }
+
         $streamId = $this->client->send($request);
 
-        ! isset($this->channels[$streamId]) && $this->channels[$streamId] = new Channel(1);
+        $this->channels[$streamId] = new Channel(1);
 
         return $streamId;
     }
@@ -202,7 +203,9 @@ class Client implements ClientInterface
                             $this->channels[$response->getStreamId()] = new Channel(1);
                         }
 
-                        $this->channels[$response->getStreamId()]?->push($response);
+                        $channel = $this->channels[$response->getStreamId()] ?? null;
+
+                        $channel?->push($response);
                     }
                 }
             } catch (Throwable $e) {
