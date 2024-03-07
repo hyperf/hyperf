@@ -144,7 +144,7 @@ class Connection implements ConnectionInterface
      *
      * @var Closure[]
      */
-    protected static array $beforeExecutingCallbacks = [];
+    protected array $beforeExecutingCallbacks = [];
 
     /**
      * Error count for executing SQL.
@@ -491,17 +491,17 @@ class Connection implements ConnectionInterface
     /**
      * Register a hook to be run just before a database query is executed.
      */
-    public static function beforeExecuting(Closure $callback): void
+    public function beforeExecuting(Closure $callback): void
     {
-        static::$beforeExecutingCallbacks[] = $callback;
+        $this->beforeExecutingCallbacks[] = $callback;
     }
 
     /**
      * Clear all hooks which will be run before a database query.
      */
-    public static function clearBeforeExecutingCallbacks(): void
+    public function clearBeforeExecutingCallbacks(): void
     {
-        static::$beforeExecutingCallbacks = [];
+        $this->beforeExecutingCallbacks = [];
     }
 
     /**
@@ -1087,7 +1087,7 @@ class Connection implements ConnectionInterface
      */
     protected function run(string $query, array $bindings, Closure $callback)
     {
-        foreach (static::$beforeExecutingCallbacks as $beforeExecutingCallback) {
+        foreach ($this->beforeExecutingCallbacks as $beforeExecutingCallback) {
             $beforeExecutingCallback($query, $bindings, $this);
         }
 

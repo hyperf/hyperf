@@ -41,7 +41,9 @@ use Psr\Container\ContainerInterface;
  * @method static void commit()
  * @method static int transactionLevel()
  * @method static array pretend(Closure $callback)
- * @method static ConnectionInterface connection(string $pool)
+ * @method static Conn connection(string $pool)
+ * @method static Conn beforeExecuting(Closure $callback)
+ * @method static Conn clearBeforeExecutingCallbacks(Closure $callback)
  */
 class Db
 {
@@ -70,10 +72,5 @@ class Db
     {
         $resolver = $this->container->get(ConnectionResolverInterface::class);
         return $resolver->connection($name);
-    }
-
-    public static function beforeExecuting(Closure $closure): void
-    {
-        Conn::beforeExecuting($closure);
     }
 }
