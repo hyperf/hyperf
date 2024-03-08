@@ -209,7 +209,7 @@ abstract class Command extends SymfonyCommand
     }
 
     /**
-     * Boot the command traits.
+     * Setup traits of command.
      */
     protected function setUpTraits(): array
     {
