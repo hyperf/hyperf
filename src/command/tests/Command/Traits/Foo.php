@@ -15,7 +15,7 @@ trait Foo
 {
     private ?string $propertyFoo = null;
 
-    public function setUpFoo()
+    protected function setUpFoo()
     {
         $this->propertyFoo = 'foo';
     }
