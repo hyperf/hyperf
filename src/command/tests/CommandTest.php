@@ -75,8 +75,7 @@ class CommandTest extends TestCase
         $this->assertSame(0, $exitCode);
 
         $command = new FooTraitCommand();
-        $traits = (fn () => $this->setUpTraits())->call($command);
-        $this->assertArrayHasKey(\HyperfTest\Command\Command\Traits\Foo::class, $traits);
+        $this->assertArrayHasKey(\HyperfTest\Command\Command\Traits\Foo::class, (fn () => $this->setUpTraits())->call($command));
         $this->assertSame('foo', (fn () => $this->propertyFoo)->call($command));
     }
 
