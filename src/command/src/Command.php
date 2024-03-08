@@ -99,6 +99,8 @@ abstract class Command extends SymfonyCommand
     {
         $this->output = new SymfonyStyle($input, $output);
 
+        $this->setUpTraits();
+
         return parent::run($this->input = $input, $this->output);
     }
 
@@ -202,5 +204,21 @@ abstract class Command extends SymfonyCommand
         }
 
         return $this->exitCode >= 0 && $this->exitCode <= 255 ? $this->exitCode : self::INVALID;
+    }
+
+    /**
+     * Boot the command traits.
+     */
+    protected function setUpTraits(): array
+    {
+        $uses = array_flip(class_uses_recursive(static::class));
+
+        foreach ($uses as $trait) {
+            if (method_exists($this, $method = 'setUp' . class_basename($trait))) {
+                $this->{$method}($this->input, $this->output);
+            }
+        }
+
+        return $uses;
     }
 }
