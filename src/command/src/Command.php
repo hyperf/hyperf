@@ -23,6 +23,8 @@ use Throwable;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Coroutine\run;
+use function Hyperf\Support\class_basename;
+use function Hyperf\Support\class_uses_recursive;
 use function Hyperf\Support\swoole_hook_flags;
 use function Hyperf\Tappable\tap;
 
@@ -98,6 +100,8 @@ abstract class Command extends SymfonyCommand
     public function run(InputInterface $input, OutputInterface $output): int
     {
         $this->output = new SymfonyStyle($input, $output);
+
+        $this->setUpTraits();
 
         return parent::run($this->input = $input, $this->output);
     }
@@ -202,5 +206,21 @@ abstract class Command extends SymfonyCommand
         }
 
         return $this->exitCode >= 0 && $this->exitCode <= 255 ? $this->exitCode : self::INVALID;
+    }
+
+    /**
+     * Setup traits of command.
+     */
+    protected function setUpTraits(): array
+    {
+        $uses = array_flip(class_uses_recursive(static::class));
+
+        foreach ($uses as $trait) {
+            if (method_exists($this, $method = 'setUp' . class_basename($trait))) {
+                $this->{$method}($this->input, $this->output);
+            }
+        }
+
+        return $uses;
     }
 }

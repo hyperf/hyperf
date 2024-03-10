@@ -17,6 +17,7 @@ use HyperfTest\Command\Command\DefaultSwooleFlagsCommand;
 use HyperfTest\Command\Command\FooCommand;
 use HyperfTest\Command\Command\FooExceptionCommand;
 use HyperfTest\Command\Command\FooExitCommand;
+use HyperfTest\Command\Command\FooTraitCommand;
 use HyperfTest\Command\Command\SwooleFlagsCommand;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -72,6 +73,10 @@ class CommandTest extends TestCase
         $command = new ClassInvoker(new FooCommand());
         $exitCode = $command->execute($input, $output);
         $this->assertSame(0, $exitCode);
+
+        $command = new FooTraitCommand();
+        $this->assertArrayHasKey(\HyperfTest\Command\Command\Traits\Foo::class, (fn () => $this->setUpTraits())->call($command));
+        $this->assertSame('foo', (fn () => $this->propertyFoo)->call($command));
     }
 
     public function testExitCodeWhenThrowExceptionInCoroutine()
