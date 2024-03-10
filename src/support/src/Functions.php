@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Support;
 
+use Carbon\Carbon;
 use Closure;
+use DateTimeZone;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Stringable\StrCache;
@@ -263,4 +265,26 @@ function build_sql(string $sql, array $bindings = []): string
 function msleep(int $milliSeconds): void
 {
     usleep($milliSeconds * 1000);
+}
+
+/**
+ * Create a new Carbon instance for the current time.
+ *
+ * @param null|DateTimeZone|string $tz
+ * @return Carbon
+ */
+function now($tz = null)
+{
+    return Carbon::now($tz);
+}
+
+/**
+ * Create a new Carbon instance for the current date.
+ *
+ * @param null|DateTimeZone|string $tz
+ * @return Carbon
+ */
+function today($tz = null)
+{
+    return Carbon::today($tz);
 }
