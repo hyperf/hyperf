@@ -1,5 +1,9 @@
 # v3.1.12 - TBD
 
+## Added
+
+- [#6576](https://github.com/hyperf/hyperf/pull/6576) Added `Hyperf\Stringable\Str::apa()` method.
+
 # v3.1.12 - 2024-03-07
 
 ## Fixed
