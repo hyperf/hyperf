@@ -2,13 +2,13 @@
 
 ## Introduction
 
-Hyperf uses [hyperf/di](https://github.com/hyperf-cloud/di) as the framework's dependency injection management container by default. Although in design, we allow you to replace the dependency injection management container with other components, we strongly recommended that don't replace [hyperf/di](https://github.com/hyperf-cloud/di).
+Hyperf uses [hyperf/di](https://github.com/hyperf/di) as the framework's dependency injection management container by default. Although in design, we allow you to replace the dependency injection management container with other components, we strongly recommended that don't replace [hyperf/di](https://github.com/hyperf/di).
 
-[hyperf/di](https://github.com/hyperf-cloud/di) is a powerful component used to manage dependencies of classes and excute automatic injection. Compared with traditional dependency injection containers, it is more suitable for long-life applications, provides the [Annotation & Annotation Injection](en/annotation.md) support and extremely powerful [AOP Aspect-Oriented Programming](en/aop.md) capabilities. These capabilities and ease of use are the main output of Hyperf, and we firmly believe that this component is the best.
+[hyperf/di](https://github.com/hyperf/di) is a powerful component used to manage dependencies of classes and excute automatic injection. Compared with traditional dependency injection containers, it is more suitable for long-life applications, provides the [Annotation & Annotation Injection](en/annotation.md) support and extremely powerful [AOP Aspect-Oriented Programming](en/aop.md) capabilities. These capabilities and ease of use are the main output of Hyperf, and we firmly believe that this component is the best.
 
 ## Installation
 
-This component exists by default in the [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) and exists as the major component. If you want to use this component in other frameworks, you can install it with the following command.
+This component exists by default in the [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) and exists as the major component. If you want to use this component in other frameworks, you can install it with the following command.
 
 ```bash
 composer require hyperf/di
