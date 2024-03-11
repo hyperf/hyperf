@@ -132,7 +132,7 @@ docker service create \
 
 ## Create a demo project
 
-Login to Gitlab to create a demo project. and import our project [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton)
+Login to Gitlab to create a demo project. and import our project [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton)
 
 
 ## Configure the mirror repository

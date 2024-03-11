@@ -1,6 +1,6 @@
 # Query pagination
 
-When using [hyperf/database](https://github.com/hyperf-cloud/database) to query data, it is very convenient to use [hyperf/paginator](https://github.com/hyperf-cloud /paginator) component to easily paginate query results.
+When using [hyperf/database](https://github.com/hyperf/database) to query data, it is very convenient to use [hyperf/paginator](https://github.com/hyperf/paginator) component to easily paginate query results.
 
 # Instructions
 
