@@ -17,19 +17,21 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab as CrontabAnnotation;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\CrontabManager;
+use Hyperf\Crontab\LoggerInterface;
 use Hyperf\Crontab\Schedule;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use ReflectionException;
 
 class CrontabRegisterListener implements ListenerInterface
 {
     protected CrontabManager $crontabManager;
 
-    protected StdoutLoggerInterface $logger;
+    protected ?PsrLoggerInterface $logger = null;
 
     protected ConfigInterface $config;
 
@@ -54,7 +56,11 @@ class CrontabRegisterListener implements ListenerInterface
     public function process(object $event): void
     {
         $this->crontabManager = $this->container->get(CrontabManager::class);
-        $this->logger = $this->container->get(StdoutLoggerInterface::class);
+        $this->logger = match (true) {
+            $this->container->has(LoggerInterface::class) => $this->container->get(LoggerInterface::class),
+            $this->container->has(StdoutLoggerInterface::class) => $this->container->get(StdoutLoggerInterface::class),
+            default => null,
+        };
         $this->config = $this->container->get(ConfigInterface::class);
 
         if (! $this->config->get('crontab.enable', false)) {
@@ -70,22 +76,22 @@ class CrontabRegisterListener implements ListenerInterface
             }
 
             if (! $crontab->isEnable()) {
-                $this->logger->warning(sprintf('Crontab %s is disabled.', $crontab->getName()));
+                $this->logger?->warning(sprintf('Crontab %s is disabled.', $crontab->getName()));
                 continue;
             }
 
             if (! $crontab->runsInEnvironment($environment)) {
-                $this->logger->warning(sprintf('Crontab %s is disabled in %s environment.', $crontab->getName(), $environment));
+                $this->logger?->warning(sprintf('Crontab %s is disabled in %s environment.', $crontab->getName(), $environment));
                 continue;
             }
 
             if (! $this->crontabManager->isValidCrontab($crontab)) {
-                $this->logger->warning(sprintf('Crontab %s is invalid.', $crontab->getName()));
+                $this->logger?->warning(sprintf('Crontab %s is invalid.', $crontab->getName()));
                 continue;
             }
 
             if ($this->crontabManager->register($crontab)) {
-                $this->logger->debug(sprintf('Crontab %s have been registered.', $crontab->getName()));
+                $this->logger?->debug(sprintf('Crontab %s have been registered.', $crontab->getName()));
             }
         }
     }
@@ -167,9 +173,9 @@ class CrontabRegisterListener implements ListenerInterface
                 }
             }
 
-            $this->logger->info('Crontab enable method is not public, skip register.');
+            $this->logger?->info('Crontab enable method is not public, skip register.');
         } catch (ReflectionException $e) {
-            $this->logger->error('Resolve crontab enable failed, skip register.' . $e);
+            $this->logger?->error('Resolve crontab enable failed, skip register.' . $e);
         }
 
         return false;
