@@ -11,6 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\CircuitBreaker;
 
-class LoggerInterface extends \Psr\Log\LoggerInterface
+interface LoggerInterface extends \Psr\Log\LoggerInterface
 {
 }
