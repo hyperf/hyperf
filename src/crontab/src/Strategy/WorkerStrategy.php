@@ -13,6 +13,7 @@ namespace Hyperf\Crontab\Strategy;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Crontab;
+use Hyperf\Crontab\LoggerInterface;
 use Hyperf\Crontab\PipeMessage;
 use Hyperf\Server\ServerFactory;
 use Psr\Container\ContainerInterface;
@@ -33,15 +34,19 @@ class WorkerStrategy extends AbstractStrategy
 
     public function dispatch(Crontab $crontab): void
     {
-        $logger = $this->container->get(StdoutLoggerInterface::class);
+        $logger = match (true) {
+            $this->container->has(LoggerInterface::class) => $this->container->get(LoggerInterface::class),
+            $this->container->has(StdoutLoggerInterface::class) => $this->container->get(StdoutLoggerInterface::class),
+            default => null,
+        };
         $server = $this->serverFactory->getServer()->getServer();
 
         if (! $server instanceof Server) {
-            $logger->warning('Cannot dispatch crontab, use CoroutineStrategy if run in coroutine style server.');
+            $logger?->warning('Cannot dispatch crontab, use CoroutineStrategy if run in coroutine style server.');
             return;
         }
         if ($crontab->getType() === 'closure') {
-            $logger->warning('Closure type crontab is only supported in CoroutineStrategy.');
+            $logger?->warning('Closure type crontab is only supported in CoroutineStrategy.');
             return;
         }
 
