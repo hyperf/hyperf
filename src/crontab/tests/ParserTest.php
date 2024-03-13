@@ -28,8 +28,8 @@ class ParserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->timezone = ini_get('date.timezone');
-        ini_set('date.timezone', 'Asia/Shanghai');
+        $this->timezone = 'Asia/Shanghai';
+        ini_set('date.timezone', $this->timezone);
     }
 
     protected function tearDown(): void
@@ -60,8 +60,8 @@ class ParserTest extends TestCase
     {
         $crontabString = '*/11 * * * * *';
         $parser = new Parser();
-        $startTime = Carbon::createFromTimestamp(1561052867)->startOfMinute();
-        $result = $parser->parse($crontabString, $startTime->getTimestamp());
+        $startTime = Carbon::createFromTimestamp(1561052867, $this->timezone)->startOfMinute();
+        $result = $parser->parse($crontabString, $startTime->getTimestamp(), $this->timezone);
         $this->assertSame([
             '2019-06-21 01:47:00',
             '2019-06-21 01:47:11',
@@ -72,7 +72,7 @@ class ParserTest extends TestCase
         ], $this->toDatatime($result));
         /** @var Carbon $last */
         $last = end($result);
-        $result = $parser->parse($crontabString, $last->getTimestamp());
+        $result = $parser->parse($crontabString, $last->getTimestamp(), $this->timezone);
         $this->assertSame([
             '2019-06-21 01:47:55',
             '2019-06-21 01:48:06',
@@ -87,8 +87,8 @@ class ParserTest extends TestCase
     {
         $crontabString = '10-15/1 * * * * *';
         $parser = new Parser();
-        $startTime = Carbon::createFromTimestamp(1591754280)->startOfMinute();
-        $result = $parser->parse($crontabString, $startTime->getTimestamp());
+        $startTime = Carbon::createFromTimestamp(1591754280, $this->timezone)->startOfMinute();
+        $result = $parser->parse($crontabString, $startTime->getTimestamp(), $this->timezone);
         $this->assertSame([
             '2020-06-10 09:58:10',
             '2020-06-10 09:58:11',
@@ -103,8 +103,8 @@ class ParserTest extends TestCase
     {
         $crontabString = '10-12/1,14-15/1 * * * * *';
         $parser = new Parser();
-        $startTime = Carbon::createFromTimestamp(1591754280)->startOfMinute();
-        $result = $parser->parse($crontabString, $startTime->getTimestamp());
+        $startTime = Carbon::createFromTimestamp(1591754280, $this->timezone)->startOfMinute();
+        $result = $parser->parse($crontabString, $startTime->getTimestamp(), $this->timezone);
         $this->assertSame([
             '2020-06-10 09:58:10',
             '2020-06-10 09:58:11',
@@ -118,8 +118,8 @@ class ParserTest extends TestCase
     {
         $crontabString = '10-12,14-15/1 * * * * *';
         $parser = new Parser();
-        $startTime = Carbon::createFromTimestamp(1591754280)->startOfMinute();
-        $result = $parser->parse($crontabString, $startTime->getTimestamp());
+        $startTime = Carbon::createFromTimestamp(1591754280, $this->timezone)->startOfMinute();
+        $result = $parser->parse($crontabString, $startTime->getTimestamp(), $this->timezone);
         $this->assertSame([
             '2020-06-10 09:58:10',
             '2020-06-10 09:58:11',
@@ -133,8 +133,8 @@ class ParserTest extends TestCase
     {
         $crontabString = '10,14,,15, * * * * *';
         $parser = new Parser();
-        $startTime = Carbon::createFromTimestamp(1591754280)->startOfMinute();
-        $result = $parser->parse($crontabString, $startTime->getTimestamp());
+        $startTime = Carbon::createFromTimestamp(1591754280, $this->timezone)->startOfMinute();
+        $result = $parser->parse($crontabString, $startTime->getTimestamp(), $this->timezone);
         $this->assertSame([
             '2020-06-10 09:58:10',
             '2020-06-10 09:58:14',
@@ -146,8 +146,8 @@ class ParserTest extends TestCase
     {
         $crontabString = '10-15/1 10-12/1 10 * * *';
         $parser = new Parser();
-        $startTime = Carbon::createFromTimestamp(1591755010)->startOfMinute();
-        $result = $parser->parse($crontabString, $startTime->getTimestamp());
+        $startTime = Carbon::createFromTimestamp(1591755010, $this->timezone)->startOfMinute();
+        $result = $parser->parse($crontabString, $startTime->getTimestamp(), $this->timezone);
         $this->assertSame([
             '2020-06-10 10:10:10',
             '2020-06-10 10:10:11',
@@ -158,7 +158,7 @@ class ParserTest extends TestCase
         ], $this->toDatatime($result));
 
         $last = end($result);
-        $result = $parser->parse($crontabString, $last->addMinute()->startOfMinute());
+        $result = $parser->parse($crontabString, $last->addMinute()->startOfMinute(), $this->timezone);
         $this->assertSame([
             '2020-06-10 10:11:10',
             '2020-06-10 10:11:11',
@@ -169,7 +169,7 @@ class ParserTest extends TestCase
         ], $this->toDatatime($result));
 
         $last = end($result);
-        $result = $parser->parse($crontabString, $last->addMinute()->startOfMinute());
+        $result = $parser->parse($crontabString, $last->addMinute()->startOfMinute(), $this->timezone);
 
         $this->assertSame([
             '2020-06-10 10:12:10',
@@ -181,7 +181,7 @@ class ParserTest extends TestCase
         ], $this->toDatatime($result));
 
         $last = end($result);
-        $result = $parser->parse($crontabString, $last->addMinute()->startOfMinute());
+        $result = $parser->parse($crontabString, $last->addMinute()->startOfMinute(), $this->timezone);
 
         $this->assertSame([], $this->toDatatime($result));
     }
@@ -190,8 +190,8 @@ class ParserTest extends TestCase
     {
         $crontabString = '*/11 * * * * *';
         $parser = new Parser();
-        $startTime = Carbon::createFromTimestamp(1561052867)->startOfMinute();
-        $result = $parser->parse($crontabString, $startTime);
+        $startTime = Carbon::createFromTimestamp(1561052867, $this->timezone)->startOfMinute();
+        $result = $parser->parse($crontabString, $startTime, $this->timezone);
         $this->assertSame([
             '2019-06-21 01:47:00',
             '2019-06-21 01:47:11',
@@ -202,7 +202,7 @@ class ParserTest extends TestCase
         ], $this->toDatatime($result));
         /** @var Carbon $last */
         $last = end($result);
-        $result = $parser->parse($crontabString, $last);
+        $result = $parser->parse($crontabString, $last, $this->timezone);
         $this->assertSame([
             '2019-06-21 01:47:55',
             '2019-06-21 01:48:06',
@@ -217,12 +217,12 @@ class ParserTest extends TestCase
     {
         $crontabString = '*/11 * * * *';
         $parser = new Parser();
-        $startTime = Carbon::createFromTimestamp(1561052867)->startOfMinute();
-        $result = $parser->parse($crontabString, $startTime->getTimestamp());
+        $startTime = Carbon::createFromTimestamp(1561052867, $this->timezone)->startOfMinute();
+        $result = $parser->parse($crontabString, $startTime->getTimestamp(), $this->timezone);
         $this->assertSame([], $this->toDatatime($result));
 
         $startTime->minute(33);
-        $result = $parser->parse($crontabString, $startTime->getTimestamp());
+        $result = $parser->parse($crontabString, $startTime->getTimestamp(), $this->timezone);
         $this->assertSame(['2019-06-21 01:33:00'], $this->toDatatime($result));
     }
 
