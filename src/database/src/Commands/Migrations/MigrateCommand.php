@@ -41,7 +41,7 @@ class MigrateCommand extends BaseCommand
         try {
             $this->runMigrations();
         } catch (Throwable $e) {
-            if ($this->option('graceful')) {
+            if ($this->input->getOption('graceful')) {
                 $this->output->warning($e->getMessage());
 
                 return 0;
