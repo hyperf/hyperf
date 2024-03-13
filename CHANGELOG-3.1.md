@@ -4,6 +4,7 @@
 
 - [#6576](https://github.com/hyperf/hyperf/pull/6576) Added `Hyperf\Stringable\Str::apa()` method.
 - [#6577](https://github.com/hyperf/hyperf/pull/6577) Support setup command traits before running.
+- [#6590](https://github.com/hyperf/hyperf/pull/6590) Added `--graceful` to  migrateCommand.
 
 # v3.1.12 - 2024-03-07
 
