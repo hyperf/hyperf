@@ -16,12 +16,13 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Crontab\Event\CrontabDispatcherStarted;
+use Hyperf\Crontab\LoggerInterface;
 use Hyperf\Crontab\Scheduler;
 use Hyperf\Crontab\Strategy\StrategyInterface;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Swoole\Server;
 
 class CrontabDispatcherProcess extends AbstractProcess
@@ -39,7 +40,7 @@ class CrontabDispatcherProcess extends AbstractProcess
 
     private StrategyInterface $strategy;
 
-    private LoggerInterface $logger;
+    private ?PsrLoggerInterface $logger = null;
 
     public function __construct(ContainerInterface $container)
     {
@@ -47,7 +48,11 @@ class CrontabDispatcherProcess extends AbstractProcess
         $this->config = $container->get(ConfigInterface::class);
         $this->scheduler = $container->get(Scheduler::class);
         $this->strategy = $container->get(StrategyInterface::class);
-        $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->logger = match (true) {
+            $container->has(LoggerInterface::class) => $container->get(LoggerInterface::class),
+            $container->has(StdoutLoggerInterface::class) => $container->get(StdoutLoggerInterface::class),
+            default => null,
+        };
     }
 
     public function bind($server): void
@@ -94,7 +99,7 @@ class CrontabDispatcherProcess extends AbstractProcess
         $ms = microtime();
 
         $sleep = $this->getInterval((int) $current, (float) explode(' ', $ms)[0]);
-        $this->logger->debug('Current microtime: ' . $ms . '. Crontab dispatcher sleep ' . $sleep . 's.');
+        $this->logger?->debug('Current microtime: ' . $ms . '. Crontab dispatcher sleep ' . $sleep . 's.');
 
         if ($sleep > 0) {
             if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($sleep)) {

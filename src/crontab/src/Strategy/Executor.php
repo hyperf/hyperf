@@ -48,15 +48,14 @@ class Executor
 
     public function __construct(protected ContainerInterface $container)
     {
-        if ($container->has(LoggerInterface::class)) {
-            $this->logger = $container->get(LoggerInterface::class);
-        } elseif ($container->has(StdoutLoggerInterface::class)) {
-            $this->logger = $container->get(StdoutLoggerInterface::class);
-        }
+        $this->logger = match (true) {
+            $container->has(LoggerInterface::class) => $container->get(LoggerInterface::class),
+            $container->has(StdoutLoggerInterface::class) => $container->get(StdoutLoggerInterface::class),
+            default => null,
+        };
         if ($container->has(EventDispatcherInterface::class)) {
             $this->dispatcher = $container->get(EventDispatcherInterface::class);
         }
-
         $this->timer = new Timer($this->logger);
     }
 
