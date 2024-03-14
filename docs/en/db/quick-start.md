@@ -4,7 +4,7 @@
 
 > [hyperf/database](https://github.com/hyperf/database) is derived from [illuminate/database](https://github.com/illuminate/database), we have made some modifications to it but most methods remain the same. Thanks to the Laravel development team for implementing such a powerful and easy-to-use ORM component.
 
-The [hyperf/database](https://github.com/hyperf/database) component is based on the components derived from [illuminate/database](https://github.com/illuminate/database) with some The changes to allow usage in both PHP-FPM frameworks or Swoole-based frameworks. In Hyperf, you need to use the [hyperf/db-connection](https://github.com/hyperf/db-connection) component, which implements database connection pool based on [hyperf/pool](https://github.com/hyperf/pool). With it as a bridge, Hyperf can integrate database connections and events.
+The [hyperf/database](https://github.com/hyperf/database) component is based on the components derived from [illuminate/database](https://github.com/illuminate/database) with some changes to allow usage in both PHP-FPM frameworks or Swoole-based frameworks. In Hyperf, you need to use the [hyperf/db-connection](https://github.com/hyperf/db-connection) component, which implements a database connection pool based on [hyperf/pool](https://github.com/hyperf/pool). With it as a bridge, Hyperf can integrate database connections and events.
 
 ## Installation
 
