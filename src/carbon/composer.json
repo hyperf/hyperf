@@ -1,0 +1,36 @@
+{
+    "name": "hyperf/carbon",
+    "description": "A Carbon for Hyperf",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "carbon"
+    ],
+    "require": {
+        "php": ">=8.1",
+        "nesbot/carbon": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Carbon\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Carbon\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Carbon\\ConfigProvider"
+        }
+    }
+}
