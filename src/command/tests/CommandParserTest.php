@@ -80,6 +80,20 @@ class CommandParserTest extends TestCase
         $this->assertSame('The option description.', $results[2][0]->getDescription());
         $this->assertTrue($results[2][0]->acceptValue());
         $this->assertTrue($results[2][0]->isArray());
+
+        $results = Parser::parse('command:name
+            {argument?* : The argument description --json.}
+            {--option=* : The option description --json.}');
+
+        $this->assertSame('command:name', $results[0]);
+        $this->assertSame('argument', $results[1][0]->getName());
+        $this->assertSame('The argument description --json.', $results[1][0]->getDescription());
+        $this->assertTrue($results[1][0]->isArray());
+        $this->assertFalse($results[1][0]->isRequired());
+        $this->assertSame('option', $results[2][0]->getName());
+        $this->assertSame('The option description --json.', $results[2][0]->getDescription());
+        $this->assertTrue($results[2][0]->acceptValue());
+        $this->assertTrue($results[2][0]->isArray());
     }
 
     public function testShortcutNameParsing()
