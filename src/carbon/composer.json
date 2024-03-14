@@ -12,6 +12,10 @@
         "php": ">=8.1",
         "nesbot/carbon": "^2.0"
     },
+    "suggest": {
+        "ramsey/uuid": "Required to use \\Ramsey\\Uuid\\Uuid (^4.7).",
+        "symfony/uid": "Required to use \\Symfony\\Component\\Uid\\Ulid (^7.0)."
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\Carbon\\": "src/"
