@@ -16,7 +16,6 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonInterval;
 use Carbon\CarbonPeriod;
 use Hyperf\Carbon\Carbon;
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
@@ -24,11 +23,8 @@ use Psr\Container\ContainerInterface;
 
 class CarbonListener implements ListenerInterface
 {
-    protected ConfigInterface $config;
-
     public function __construct(protected ContainerInterface $container)
     {
-        $this->config = $container->get(ConfigInterface::class);
     }
 
     public function listen(): array
@@ -56,7 +52,6 @@ class CarbonListener implements ListenerInterface
     protected function getLocale(): ?string
     {
         return match (true) {
-            $this->config->has('app_locate') => (string) $this->config->get('app_locate'),
             $this->container->has(TranslatorInterface::class) => $this->container->get(TranslatorInterface::class)->getLocale(),
             default => null,
         };

@@ -14,7 +14,6 @@ namespace HyperfTest\Carbon;
 use Carbon\Carbon as BaseCarbon;
 use Hyperf\Carbon\Carbon;
 use Hyperf\Carbon\Listener\CarbonListener;
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Mockery;
@@ -45,25 +44,6 @@ class CarbonTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($this->defaultLocale, BaseCarbon::getLocale());
 
         $container = Mockery::mock(ContainerInterface::class);
-        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config = Mockery::mock(ConfigInterface::class));
-        $config->shouldReceive('has')->with('app_locate')->andReturn(true);
-        $config->shouldReceive('get')->with('app_locate')->andReturn('zh_CN');
-
-        $listener = new CarbonListener($container);
-        $listener->process(new BootApplication());
-
-        $this->assertSame('zh_CN', Carbon::getLocale());
-        $this->assertSame('zh_CN', BaseCarbon::getLocale());
-    }
-
-    public function testSetLocaleByTranslator()
-    {
-        $this->assertSame($this->defaultLocale, Carbon::getLocale());
-        $this->assertSame($this->defaultLocale, BaseCarbon::getLocale());
-
-        $container = Mockery::mock(ContainerInterface::class);
-        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config = Mockery::mock(ConfigInterface::class));
-        $config->shouldReceive('has')->with('app_locate')->andReturn(false);
         $container->shouldReceive('has')->with(TranslatorInterface::class)->andReturn(true);
         $container->shouldReceive('get')->with(TranslatorInterface::class)->andReturn($translator = Mockery::mock(TranslatorInterface::class));
         $translator->shouldReceive('getLocale')->andReturn('zh_CN');
