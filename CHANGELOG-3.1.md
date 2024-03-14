@@ -9,6 +9,7 @@
 
 ## Fixed
 
+- [#6586](https://github.com/hyperf/hyperf/pull/6586) Fixed bug that the command description will cause parse error when contains `--`.
 - [#6593](https://github.com/hyperf/hyperf/pull/6593) Fixed the error when register multi `AsCommand`.
 
 # v3.1.12 - 2024-03-07
