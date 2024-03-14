@@ -72,24 +72,28 @@ class RegisterCommandListener implements ListenerInterface
         $commands = AnnotationCollector::getMethodsByAnnotation(AsCommandAnnotation::class);
 
         foreach ($commands as $metadata) {
-            /** @var AsCommandAnnotation $annotation */
-            $annotation = $metadata['annotation'];
-            $command = new AsCommand(
-                $this->container,
-                $annotation->signature,
-                $metadata['class'],
-                $metadata['method'],
-            );
+            /** @var \Hyperf\Di\Annotation\MultipleAnnotation $multiAnnotation */
+            $multiAnnotation = $metadata['annotation'];
+            /** @var AsCommandAnnotation[] $annotations */
+            $annotations = $multiAnnotation->toAnnotations();
+            foreach ($annotations as $annotation) {
+                $command = new AsCommand(
+                    $this->container,
+                    $annotation->signature,
+                    $metadata['class'],
+                    $metadata['method'],
+                );
 
-            if ($annotation->description) {
-                $command->setDescription($annotation->description);
-            }
-            if ($annotation->aliases) {
-                $command->setAliases($annotation->aliases);
-            }
+                if ($annotation->description) {
+                    $command->setDescription($annotation->description);
+                }
+                if ($annotation->aliases) {
+                    $command->setAliases($annotation->aliases);
+                }
 
-            $this->container->set($annotation->id, $command);
-            $this->appendConfig('commands', $annotation->id);
+                $this->container->set($annotation->id, $command);
+                $this->appendConfig('commands', $annotation->id);
+            }
         }
     }
 
