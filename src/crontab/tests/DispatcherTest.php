@@ -14,6 +14,7 @@ namespace HyperfTest\Crontab;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Crontab\LoggerInterface;
 use Hyperf\Crontab\Process\CrontabDispatcherProcess;
 use Hyperf\Crontab\Scheduler;
 use Hyperf\Crontab\Strategy\StrategyInterface;
@@ -35,6 +36,8 @@ class DispatcherTest extends TestCase
         $container = Mockery::mock(Container::class);
 
         $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(LoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnTrue();
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(Mockery::mock(ConfigInterface::class));
         $container->shouldReceive('get')->with(Scheduler::class)->andReturn(Mockery::mock(Scheduler::class));
         $container->shouldReceive('get')->with(StrategyInterface::class)->andReturn(Mockery::mock(StrategyInterface::class));
