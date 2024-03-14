@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Carbon;
 
+use DateTime;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Uid\Ulid;
 
@@ -25,6 +26,6 @@ class Carbon extends \Carbon\Carbon
             $id = Ulid::isValid($id) ? Ulid::fromString($id) : Uuid::fromString($id);
         }
 
-        return static::createFromInterface($id->getDateTime());
+        return new static(DateTime::createFromInterface($id->getDateTime()));
     }
 }
