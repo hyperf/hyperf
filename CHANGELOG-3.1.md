@@ -7,6 +7,10 @@
 - [#6579](https://github.com/hyperf/hyperf/pull/6579) Added `now()` and `today()` helper functions.
 - [#6590](https://github.com/hyperf/hyperf/pull/6590) Added `--graceful` to  migrateCommand.
 
+## Fixed
+
+- [#6593](https://github.com/hyperf/hyperf/pull/6593) Fixed the error when register multi `AsCommand`.
+
 # v3.1.12 - 2024-03-07
 
 ## Fixed
