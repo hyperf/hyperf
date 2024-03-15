@@ -301,7 +301,7 @@ class AMQPConnection extends AbstractConnection
                             $this->chan->push($pkt->getvalue(), 0.001);
                         }
                     } catch (Throwable $exception) {
-                        $this->logger && $this->logger->error((string) $exception);
+                        $this->logger?->error((string) $exception);
                     }
                 }
             });
