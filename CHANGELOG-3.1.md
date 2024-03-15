@@ -2,7 +2,7 @@
 
 ## Optimized
 
-- [#6600](https://github.com/hyperf/hyperf/pull/6600) Optimize the worker process to no longer output warn information after exiting.
+- [#6600](https://github.com/hyperf/hyperf/pull/6600) Optimized the worker process to no longer output warn information after exiting.
 
 # v3.1.13 - 2024-03-14
 
