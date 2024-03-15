@@ -18,7 +18,7 @@ class Bar2 extends Bar
         parent::__construct($id);
     }
 
-    public static function build()
+    public static function build(): array
     {
         return parent::$items;
     }

@@ -13,9 +13,9 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class Bar
 {
-    public $id = 0;
+    public int $id = 0;
 
-    public static $items = [];
+    public static array $items = [];
 
     public function __construct(int $id)
     {
@@ -33,13 +33,13 @@ class Bar
         return $this;
     }
 
-    public static function make()
+    public static function make(): static
     {
         return new static(0);
     }
 
-    public static function getItems()
+    public static function getItems(): array
     {
-        return static::items;
+        return static::$items;
     }
 }
