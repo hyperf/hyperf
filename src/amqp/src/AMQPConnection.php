@@ -174,7 +174,7 @@ class AMQPConnection extends AbstractConnection
             return parent::close($reply_code, $reply_text, $method_sig);
         } catch (Throwable $e) {
             if (! $this->exited) {
-                $this->logger?->error((string) $e);
+                throw $e;
             }
         } finally {
             $this->setIsConnected(false);
