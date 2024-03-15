@@ -43,7 +43,7 @@
 ## 依賴注入容器
 
 - [hyperf/di](https://github.com/hyperf/di) Hyperf 官方提供的支持註解及 AOP 的依賴注入容器
-- [hyperf/pimple](https://github.com/hyperf-cloud/pimple-integration) 基於 `pimple/pimple` 實現的輕量級符合 `PSR11` 規範的容器組件。可以減少其他框架使用 `Hyperf` 組件時的成本
+- [hyperf/pimple](https://github.com/hyperf/pimple-integration) 基於 `pimple/pimple` 實現的輕量級符合 `PSR11` 規範的容器組件。可以減少其他框架使用 `Hyperf` 組件時的成本
 
 ## 服務
 

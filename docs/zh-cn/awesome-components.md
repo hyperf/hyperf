@@ -43,8 +43,8 @@
 ## 依赖注入容器
 
 - [hyperf/di](https://github.com/hyperf/di) Hyperf 官方提供的支持注解及 AOP 的依赖注入容器
-- [hyperf/pimple](https://github.com/hyperf-cloud/pimple-integration) 基于 `pimple/pimple` 实现的轻量级符合 `PSR11` 规范的容器组件。可以减少其他框架使用 `Hyperf` 组件时的成本
-
+- [hyperf/pimple](https://github.com/hyperf/pimple-integration) 基于 `pimple/pimple` 实现的轻量级符合 `PSR11` 规范的容器组件。可以减少其他框架使用 `Hyperf` 组件时的成本
+- [hyperf/lazy-loader-incubator](https://github.com/hyperf/lazy-loader-incubator) 增强懒加载机制，支持多接口实现类
 ## 服务
 
 - [hyperf/http-server](https://github.com/hyperf/http-server) Hyperf 官方提供的 HTTP 服务端
