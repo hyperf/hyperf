@@ -17,7 +17,7 @@ return [
         // The http here corresponds to the name of the server in config/autoload/server.php.
         'http' => [
             // The full class namespace address is configured here to register the exception handler.
-            \App\Exception\Handler\FooExceptionHandler::class, ], \App\Exception\Handler::class, \App\Exception\Handler.
+            \App\Exception\Handler\FooExceptionHandler::class,
         ],    
     ]
 ]; }
