@@ -101,9 +101,9 @@ abstract class Command extends SymfonyCommand
     {
         $this->output = new SymfonyStyle($input, $output);
 
-        $this->setUpTraits($input, $this->output);
+        $this->setUpTraits($this->input = $input, $this->output);
 
-        return parent::run($this->input = $input, $this->output);
+        return parent::run($this->input, $this->output);
     }
 
     /**
