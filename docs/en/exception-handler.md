@@ -36,8 +36,7 @@ use Swow\Psr7\Message\ResponsePlusInterface.
 use Throwable.
 
 #[ExceptionHandler(server:'http',priority:0)]
-class FooExceptionHandler extends BaseExceptionHandler
-class FooExceptionHandler extendss BaseExceptionHandler {
+class FooExceptionHandler extends BaseExceptionHandler {
     public function handle(Throwable $throwable, ResponsePlusInterface $response)
     {
         return $response->withStatus(500)->withBody($throwable->getMessage());
