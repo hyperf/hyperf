@@ -172,12 +172,16 @@ class AMQPConnection extends AbstractConnection
     {
         try {
             $res = parent::close($reply_code, $reply_text, $method_sig);
+        } catch (Throwable $e) {
+            if (! $this->exited) {
+                $this->logger?->error((string) $e);
+            }
         } finally {
             $this->setIsConnected(false);
             $this->chan->close();
             $this->channelManager->flush();
         }
-        return $res;
+        return $res ?? null;
     }
 
     protected function makeChannelId(): int
