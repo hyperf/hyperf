@@ -171,13 +171,17 @@ class AMQPConnection extends AbstractConnection
     public function close($reply_code = 0, $reply_text = '', $method_sig = [0, 0])
     {
         try {
-            $res = parent::close($reply_code, $reply_text, $method_sig);
+            return parent::close($reply_code, $reply_text, $method_sig);
+        } catch (Throwable $e) {
+            if (! $this->exited) {
+                throw $e;
+            }
         } finally {
             $this->setIsConnected(false);
             $this->chan->close();
             $this->channelManager->flush();
         }
-        return $res;
+        return null;
     }
 
     protected function makeChannelId(): int
@@ -297,7 +301,7 @@ class AMQPConnection extends AbstractConnection
                             $this->chan->push($pkt->getvalue(), 0.001);
                         }
                     } catch (Throwable $exception) {
-                        $this->logger && $this->logger->error((string) $exception);
+                        $this->logger?->error((string) $exception);
                     }
                 }
             });
