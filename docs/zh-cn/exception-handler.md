@@ -7,7 +7,8 @@
 
 ### 注册异常处理器
 
-目前仅支持配置文件的形式注册 `异常处理器(ExceptionHandler)`，配置文件位于 `config/autoload/exceptions.php`，将您的自定义异常处理器配置在对应的 `server` 下即可：
+
+* 通过配置文件的形式注册 `异常处理器(ExceptionHandler)`，配置文件位于 `config/autoload/exceptions.php`，将您的自定义异常处理器配置在对应的 `server` 下即可：
 
 ```php
 <?php
@@ -22,6 +23,36 @@ return [
     ],
 ];
 ```
+
+* 也可以通过 `注解` 的形式注册 `异常处理器(ExceptionHandler)` 在您的自定义异常处理器上使用 `\Hyperf\ExceptionHandler\Annotation\ExceptionHandler` 注解
+
+```php
+<?php
+// app/Exception/Handler/FooExceptionHandler.php
+namespace App\Exception\Handler;
+use Hyperf\ExceptionHandler\ExceptionHandler as BaseExceptionHandler;
+use Hyperf\ExceptionHandler\Annotation\ExceptionHandler;
+use Hyperf\ExceptionHandler\ExceptionHandler;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Throwable;
+
+#[ExceptionHandler(server:'http',priority:0)]
+class FooExceptionHandler extends BaseExceptionHandler
+{
+    public function handle(Throwable $throwable, ResponsePlusInterface $response)
+    {
+        return $response->withStatus(500)->withBody($throwable->getMessage());
+    }
+
+    public function isValid(Throwable $throwable): bool
+    {
+        return $throwable instanceof \RuntimeException;
+    }
+}
+    
+}
+```
+
 
 > 每个异常处理器配置数组的顺序决定了异常在处理器间传递的顺序。
 

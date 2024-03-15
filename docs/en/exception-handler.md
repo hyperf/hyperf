@@ -4,22 +4,52 @@ In `Hyperf`, all the business code excute on `Worker Process`. In this case, onc
 
 ## Customize an Exception Handling
 
-### Register Exception Handler
+### Registering an Exception Handler
 
-Currently, it only supports the registration of `ExceptionHandler` in the form of a configuration file. The configuration file is located in `config/autoload/exceptions.php`. Configure your custom exception handler under the corresponding `server`:
+
+* Register an `ExceptionHandler` in the form of a configuration file located at `config/autoload/exceptions.php` and configure your custom exception handler under the corresponding `server`:
 
 ```php
 <?php
 // config/autoload/exceptions.php
 return [
     'handler' => [
-        // The http here corresponds to the name value corresponding to the server in config/autoload/server.php
+        // The http here corresponds to the name of the server in config/autoload/server.php.
         'http' => [
-            // The registration of the exception handler has done by configuring the complete class namespace address here
-            \App\Exception\Handler\FooExceptionHandler::class,
+            // The full class namespace address is configured here to register the exception handler.
+            \App\Exception\Handler\FooExceptionHandler::class, ], \App\Exception\Handler::class, \App\Exception\Handler.
         ],    
-    ],
-];
+    ]
+]; }
+```
+
+* You can also register `ExceptionHandler` in the form of an `Annotation` on your custom exception handler using the `\Hyperf\ExceptionHandler\Annotation\ExceptionHandler` annotation.
+
+```php
+<?php
+// app/Exception/Handler/FooExceptionHandler.php
+namespace App\Exception\Handler.
+use Hyperf\ExceptionHandler\ExceptionHandler as BaseExceptionHandler;
+use Hyperf\ExceptionHandler\Annotation\ExceptionHandler;
+use Hyperf\ExceptionHandler\ExceptionHandler; use Hyperf\ExceptionHandler\Annotation\ExceptionHandler.
+use Swow\Psr7\Message\ResponsePlusInterface.
+use Throwable.
+
+#[ExceptionHandler(server:'http',priority:0)]
+class FooExceptionHandler extends BaseExceptionHandler
+class FooExceptionHandler extendss BaseExceptionHandler {
+    public function handle(Throwable $throwable, ResponsePlusInterface $response)
+    {
+        return $response->withStatus(500)->withBody($throwable->getMessage());
+    }
+
+    public function isValid(Throwable $throwable): bool
+    {
+        return $throwable instanceof \RuntimeException;
+    }
+}
+    
+}
 ```
 
 > The order of each exception handler configuration array determines the order in which exceptions are passed between handlers.

@@ -7,7 +7,7 @@
 
 ### 註冊異常處理器
 
-目前僅支援配置檔案的形式註冊 `異常處理器(ExceptionHandler)`，配置檔案位於 `config/autoload/exceptions.php`，將您的自定義異常處理器配置在對應的 `server` 下即可：
+* 透過組態檔的形式註冊 `異常處理器(ExceptionHandler)`，組態檔位於 `config/autoload/exceptions.php`，將您的自訂異常處理器設定在對應的 `server` 下即可：
 
 ```php
 <?php
@@ -16,11 +16,40 @@ return [
     'handler' => [
         // 這裡的 http 對應 config/autoload/server.php 內的 server 所對應的 name 值
         'http' => [
-            // 這裡配置完整的類名稱空間地址已完成對該異常處理器的註冊
+            // 這裡設定完整的類名前綴位置以完成對該異常處理器的註冊
             \App\Exception\Handler\FooExceptionHandler::class,
         ],    
     ],
 ];
+```
+
+* 也可以透過 `註解` 的形式註冊 `異常處理器(ExceptionHandler)` 在您的自訂異常處理器上使用 `\Hyperf\ExceptionHandler\Annotation\ExceptionHandler` 註解
+
+```php
+<?php
+// app/Exception/Handler/FooExceptionHandler.php
+namespace App\Exception\Handler;
+use Hyperf\ExceptionHandler\ExceptionHandler as BaseExceptionHandler;
+use Hyperf\ExceptionHandler\Annotation\ExceptionHandler;
+use Hyperf\ExceptionHandler\ExceptionHandler;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Throwable;
+
+#[ExceptionHandler(server:'http',priority:0)]
+class FooExceptionHandler extends BaseExceptionHandler
+{
+    public function handle(Throwable $throwable, ResponsePlusInterface $response)
+    {
+        return $response->withStatus(500)->withBody($throwable->getMessage());
+    }
+
+    public function isValid(Throwable $throwable): bool
+    {
+        return $throwable instanceof \RuntimeException;
+    }
+}
+    
+}
 ```
 
 > 每個異常處理器配置陣列的順序決定了異常在處理器間傳遞的順序。
