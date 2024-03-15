@@ -24,6 +24,8 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
         PropertyHandlerTrait::class,
     ];
 
+    private int $classMethodLevel = 0;
+
     public function __construct(protected VisitorMetadata $visitorMetadata)
     {
     }
@@ -40,6 +42,7 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
             }
         }
         if ($node instanceof Node\Stmt\ClassMethod) {
+            $this->classMethodLevel++;
             if ($node->name->toString() === '__construct') {
                 $this->visitorMetadata->hasConstructor = true;
                 $this->visitorMetadata->constructorNode = $node;
@@ -59,8 +62,11 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
             $node->stmts = array_merge([$this->buildProxyTraitUseStatement()], [$constructor], $node->stmts);
             $this->visitorMetadata->hasConstructor = true;
         } else {
-            if ($node instanceof Node\Stmt\ClassMethod && $node->name->toString() === '__construct') {
-                $node->stmts = array_merge([$this->buildMethodCallStatement()], $node->stmts);
+            if ($node instanceof Node\Stmt\ClassMethod) {
+                --$this->classMethodLevel;
+                if ($node->name->toString() === '__construct' && ! $this->classMethodLevel) {
+                    $node->stmts = array_merge([$this->buildMethodCallStatement()], $node->stmts);
+                }
             }
             if ($node instanceof Node\Stmt\Class_ && ! $node->isAnonymous()) {
                 $node->stmts = array_merge([$this->buildProxyTraitUseStatement()], $node->stmts);
