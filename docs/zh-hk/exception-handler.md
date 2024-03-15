@@ -48,8 +48,6 @@ class FooExceptionHandler extends BaseExceptionHandler
         return $throwable instanceof \RuntimeException;
     }
 }
-    
-}
 ```
 
 > 每個異常處理器配置數組的順序決定了異常在處理器間傳遞的順序。

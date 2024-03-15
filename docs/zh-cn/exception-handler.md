@@ -49,8 +49,6 @@ class FooExceptionHandler extends BaseExceptionHandler
         return $throwable instanceof \RuntimeException;
     }
 }
-    
-}
 ```
 
 

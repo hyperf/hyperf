@@ -20,7 +20,7 @@ return [
             \App\Exception\Handler\FooExceptionHandler::class,
         ],    
     ]
-]; }
+];
 ```
 
 * You can also register `ExceptionHandler` in the form of an `Annotation` on your custom exception handler using the `\Hyperf\ExceptionHandler\Annotation\ExceptionHandler` annotation.
@@ -47,8 +47,6 @@ class FooExceptionHandler extendss BaseExceptionHandler {
     {
         return $throwable instanceof \RuntimeException;
     }
-}
-    
 }
 ```
 
