@@ -149,7 +149,9 @@ class AspectTest extends TestCase
         $manager->shouldReceive('getCacheAheadValue')->andReturn(['test', 3600, 'default', new CacheAhead('test', '1', 3600, 600)]);
         $redis = $container->get(CacheManager::class)->getDriver();
         $redis->delete('test');
-        $redis->delete('test:lock');
+        /** @var Redis $conn */
+        $conn = $redis->getConnection();
+        $conn->del('test:lock');
 
         $aspect = new CacheAheadAspect($container->get(CacheManager::class), $manager);
         $closure = static function () {
