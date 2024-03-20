@@ -41,7 +41,7 @@ class CacheAheadAspect extends AbstractAspect
         [$key, $ttl, $group, $annotation] = $this->annotationManager->getCacheAheadValue($className, $method, $arguments);
         $driver = $this->manager->getDriver($group);
 
-        $callback = function () use ($proceedingJoinPoint, $driver, $annotation, $key, $now, $ttl) {
+        $callback = static function () use ($proceedingJoinPoint, $driver, $annotation, $key, $now, $ttl) {
             $result = $proceedingJoinPoint->process();
 
             if (! in_array($result, (array) $annotation->skipCacheResults, true)) {
