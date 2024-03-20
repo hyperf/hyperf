@@ -144,7 +144,7 @@ class AspectTest extends TestCase
 
         $redis->delete('test:lock');
         $res = $aspect->process($point);
-        $this->assertEquals($id, $res);
-        $this->assertSame($res, $aspect->process($point));
+        $this->assertSame($id, $res);
+        $this->assertNotEquals($res, $aspect->process($point));
     }
 }
