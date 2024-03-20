@@ -7,6 +7,7 @@
 ## Optimized
 
 - [#6600](https://github.com/hyperf/hyperf/pull/6600) Optimized the worker process to no longer output warn information after exiting.
+- [#6608](https://github.com/hyperf/hyperf/pull/6608) Optimized `CacheAheadAspect` which store cache in another coroutine instead of blocking current coroutine.
 
 # v3.1.13 - 2024-03-14
 

@@ -15,6 +15,7 @@ use Hyperf\Cache\Annotation\CacheAhead;
 use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Cache\Driver\KeyCollectorInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
@@ -38,37 +39,44 @@ class CacheAheadAspect extends AbstractAspect
         $now = time();
 
         [$key, $ttl, $group, $annotation] = $this->annotationManager->getCacheAheadValue($className, $method, $arguments);
-
         $driver = $this->manager->getDriver($group);
 
+        $callback = static function () use ($proceedingJoinPoint, $driver, $annotation, $key, $now, $ttl) {
+            $result = $proceedingJoinPoint->process();
+
+            if (! in_array($result, (array) $annotation->skipCacheResults, true)) {
+                $driver->set(
+                    $key,
+                    [
+                        'expired_time' => $now + $annotation->ttl - $annotation->aheadSeconds,
+                        'data' => $result,
+                    ],
+                    $ttl
+                );
+
+                if ($driver instanceof KeyCollectorInterface && $annotation instanceof CacheAhead && $annotation->collect) {
+                    $driver->addKey($annotation->prefix . 'MEMBERS', $key);
+                }
+            }
+
+            return $result;
+        };
+
         [$has, $result] = $driver->fetch($key);
+
+        // If the cache exists, return it directly.
         if ($has && isset($result['expired_time'], $result['data'])) {
-            if ($now < $result['expired_time']) {
-                return $result['data'];
+            if (
+                $now > $result['expired_time']
+                && $driver->getConnection()->set($key . ':lock', '1', ['NX', 'EX' => $annotation->lockSeconds])
+            ) { // If the cache is about to expire, refresh the cache.
+                Coroutine::create($callback);
             }
 
-            if (! $driver->getConnection()->set($key . ':lock', '1', ['NX', 'EX' => $annotation->lockSeconds])) {
-                return $result['data'];
-            }
+            return $result['data'];
         }
 
-        $result = $proceedingJoinPoint->process();
-
-        if (! in_array($result, (array) $annotation->skipCacheResults, true)) {
-            $driver->set(
-                $key,
-                [
-                    'expired_time' => $now + $annotation->ttl - $annotation->aheadSeconds,
-                    'data' => $result,
-                ],
-                $ttl
-            );
-
-            if ($driver instanceof KeyCollectorInterface && $annotation instanceof CacheAhead && $annotation->collect) {
-                $driver->addKey($annotation->prefix . 'MEMBERS', $key);
-            }
-        }
-
-        return $result;
+        // If the cache does not exist, execute the callback and cache the result.
+        return $callback();
     }
 }
