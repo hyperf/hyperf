@@ -143,8 +143,8 @@ class AspectTest extends TestCase
         $redis->set('test', $data, 86400);
 
         $redis->delete('test:lock');
-        $res = $aspect->process($point);
+        $res = $aspect->process($point); // Return the old value, then refresh the cache.
         $this->assertSame($id, $res);
-        $this->assertNotEquals($res, $aspect->process($point));
+        $this->assertNotEquals($res, $aspect->process($point)); // Return the new value from the cache.
     }
 }
