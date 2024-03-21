@@ -1,5 +1,9 @@
 # v3.1.14 - TBD
 
+## Fixed
+
+- [#6609](https://github.com/hyperf/hyperf/pull/6609) Fixed bug that the configurations will be cleared when the `scan` configuration does not exist.
+
 ## Added
 
 - [#6594](https://github.com/hyperf/hyperf/pull/6594) Added `hyperf/carbon` component.

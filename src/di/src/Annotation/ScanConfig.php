@@ -135,7 +135,7 @@ class ScanConfig
     private static function allocateConfigValue(array $content, array $config): array
     {
         if (! isset($content['scan'])) {
-            return [];
+            return $config;
         }
         foreach ($content['scan'] as $key => $value) {
             if (! isset($config[$key])) {
