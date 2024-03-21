@@ -1158,6 +1158,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Event\ValidatorFactoryResolved;
+use Hyperf\Validation\Validator;
 
 #[Listener]
 class ValidatorFactoryResolvedListener implements ListenerInterface
