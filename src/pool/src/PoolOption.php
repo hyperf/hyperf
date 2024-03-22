@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Pool;
 
+use Closure;
 use Hyperf\Contract\PoolOptionInterface;
 
 class PoolOption implements PoolOptionInterface
@@ -52,13 +53,19 @@ class PoolOption implements PoolOptionInterface
      */
     private float $maxIdleTime;
 
+    /**
+     * The callback which triggered by releasing connection.
+     */
+    private ?Closure $releaseCallback;
+
     public function __construct(
         int $minConnections = 1,
         int $maxConnections = 10,
         float $connectTimeout = 10.0,
         float $waitTimeout = 3.0,
         float $heartbeat = -1,
-        float $maxIdleTime = 60.0
+        float $maxIdleTime = 60.0,
+        ?Closure $releaseCallback = null,
     ) {
         $this->minConnections = $minConnections;
         $this->maxConnections = $maxConnections;
@@ -66,6 +73,7 @@ class PoolOption implements PoolOptionInterface
         $this->waitTimeout = $waitTimeout;
         $this->heartbeat = $heartbeat;
         $this->maxIdleTime = $maxIdleTime;
+        $this->releaseCallback = $releaseCallback;
     }
 
     public function getMaxConnections(): int
@@ -131,6 +139,17 @@ class PoolOption implements PoolOptionInterface
     public function setMaxIdleTime(float $maxIdleTime): static
     {
         $this->maxIdleTime = $maxIdleTime;
+        return $this;
+    }
+
+    public function getReleaseCallback(): ?Closure
+    {
+        return $this->releaseCallback;
+    }
+
+    public function setReleaseCallback(?Closure $releaseCallback): static
+    {
+        $this->releaseCallback = $releaseCallback;
         return $this;
     }
 }

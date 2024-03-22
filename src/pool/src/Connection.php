@@ -21,13 +21,23 @@ abstract class Connection implements ConnectionInterface
 {
     protected float $lastUseTime = 0.0;
 
+    protected float $lastReleaseTime = 0.0;
+
     public function __construct(protected ContainerInterface $container, protected PoolInterface $pool)
     {
     }
 
     public function release(): void
     {
-        $this->pool->release($this);
+        $this->lastReleaseTime = microtime(true);
+
+        try {
+            if ($callback = $this->pool->getOption()->getReleaseCallback()) {
+                $callback($this);
+            }
+        } finally {
+            $this->pool->release($this);
+        }
     }
 
     public function getConnection()
@@ -52,6 +62,16 @@ abstract class Connection implements ConnectionInterface
 
         $this->lastUseTime = $now;
         return true;
+    }
+
+    public function getLastUseTime(): float
+    {
+        return $this->lastUseTime;
+    }
+
+    public function getLastReleaseTime(): float
+    {
+        return $this->lastReleaseTime;
     }
 
     abstract public function getActiveConnection();

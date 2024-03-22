@@ -38,7 +38,8 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
                     $logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
                 }
             }
-            $this->pool->release($this);
+
+            parent::release();
         } catch (Throwable $exception) {
             if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                 $logger->critical('Release connection failed, caused by ' . $exception);
