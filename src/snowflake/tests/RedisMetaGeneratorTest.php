@@ -15,6 +15,7 @@ use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
@@ -32,6 +33,7 @@ use HyperfTest\Snowflake\Stub\UserDefinedIdGenerator;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 
 use function Hyperf\Coroutine\go;
@@ -263,6 +265,9 @@ class RedisMetaGeneratorTest extends TestCase
         $container->shouldReceive('make')->with(RedisProxy::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($factory) {
             return new RedisProxy($factory, $args['pool']);
         });
+
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
 
         return $container;
     }

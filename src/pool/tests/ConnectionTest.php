@@ -18,6 +18,7 @@ use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -38,6 +39,7 @@ class ConnectionTest extends TestCase
         $logger->shouldReceive('warning')->withAnyArgs()->once()->andReturnTrue();
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->once()->andReturnTrue();
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->once()->andReturn($logger);
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
 
         $connection = new ActiveConnectionStub($container, Mockery::mock(Pool::class));
         $this->assertEquals($connection, $connection->getConnection());
