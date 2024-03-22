@@ -1,5 +1,9 @@
 # v3.1.15 - TBD
 
+## Added
+
+- [#6613](https://github.com/hyperf/hyperf/pull/6613) Added event of release connection for `hyperf/pool`.
+
 # v3.1.14 - 2024-03-21
 
 ## Fixed

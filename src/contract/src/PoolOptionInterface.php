@@ -25,5 +25,5 @@ interface PoolOptionInterface
 
     public function getMaxIdleTime(): float;
 
-    public function getReleaseCallback();
+    public function getEvents(): array;
 }
