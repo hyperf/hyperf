@@ -3,9 +3,13 @@
   <coverage/>
   <testsuites>
     <testsuite name="Tests">
-      <directory suffix="Test.php">./src/d*/tests</directory>
-      <directory suffix="Test.php">./src/e*/tests</directory>
-      <directory suffix="Test.php">./src/f*/tests</directory>
+      <directory suffix="Test.php">./src/g*/tests</directory>
+      <directory suffix="Test.php">./src/h*/tests</directory>
+      <directory suffix="Test.php">./src/i*/tests</directory>
+      <directory suffix="Test.php">./src/j*/tests</directory>
+      <directory suffix="Test.php">./src/k*/tests</directory>
+      <directory suffix="Test.php">./src/l*/tests</directory>
+      <directory suffix="Test.php">./src/m*/tests</directory>
       <exclude>./src/reactive-x/tests</exclude>
     </testsuite>
   </testsuites>
