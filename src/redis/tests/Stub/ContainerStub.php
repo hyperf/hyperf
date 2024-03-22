@@ -24,8 +24,8 @@ use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Mockery;
-
 use Psr\EventDispatcher\EventDispatcherInterface;
+
 use function Hyperf\Support\value;
 
 class ContainerStub

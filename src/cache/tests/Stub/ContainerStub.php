@@ -29,6 +29,7 @@ use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Mockery;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class ContainerStub
 {
@@ -89,6 +90,9 @@ class ContainerStub
                 ],
             ],
         ]);
+
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
 
         $logger = Mockery::mock(StdoutLoggerInterface::class);
         $logger->shouldReceive(Mockery::any())->andReturn(null);
