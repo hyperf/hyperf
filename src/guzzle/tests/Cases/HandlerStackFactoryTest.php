@@ -35,10 +35,6 @@ use Throwable;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class HandlerStackFactoryTest extends TestCase
 {
     public function testCreateCoroutineHandler()
