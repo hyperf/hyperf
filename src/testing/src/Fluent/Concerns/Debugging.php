@@ -18,7 +18,7 @@ trait Debugging
      *
      * @return $this
      */
-    public function dump(string $prop = null): self
+    public function dump(?string $prop = null): self
     {
         dump($this->prop($prop));
 
@@ -30,7 +30,7 @@ trait Debugging
      *
      * @return never
      */
-    public function dd(string $prop = null): void
+    public function dd(?string $prop = null): void
     {
         dd($this->prop($prop));
     }
@@ -40,5 +40,5 @@ trait Debugging
      *
      * @return mixed
      */
-    abstract protected function prop(string $key = null);
+    abstract protected function prop(?string $key = null);
 }

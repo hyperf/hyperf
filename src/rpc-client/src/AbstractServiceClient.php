@@ -134,7 +134,7 @@ abstract class AbstractServiceClient
         return $this->container->get(IdGenerator\UniqidIdGenerator::class);
     }
 
-    protected function createLoadBalancer(array $nodes, callable $refresh = null, bool $isLongPolling = false): LoadBalancerInterface
+    protected function createLoadBalancer(array $nodes, ?callable $refresh = null, bool $isLongPolling = false): LoadBalancerInterface
     {
         $loadBalancer = $this->loadBalancerManager->getInstance($this->serviceName, $this->loadBalancer)->setNodes($nodes);
         $refresh && $loadBalancer->refresh($refresh, $isLongPolling ? 1 : 5000);

@@ -22,7 +22,7 @@ class HttpException extends RuntimeException
      * @param null|string $message error message
      * @param int $code error code
      */
-    public function __construct(public int $statusCode, $message = '', $code = 0, Throwable $previous = null)
+    public function __construct(public int $statusCode, $message = '', $code = 0, ?Throwable $previous = null)
     {
         if (is_null($message)) {
             $message = Response::getReasonPhraseByCode($statusCode);

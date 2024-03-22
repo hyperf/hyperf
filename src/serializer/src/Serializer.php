@@ -150,7 +150,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
         return $this->denormalize($data, $type, $format, $context);
     }
 
-    public function normalize($object, string $format = null, array $context = [])
+    public function normalize($object, ?string $format = null, array $context = [])
     {
         // If a normalizer supports the given data, use it
         if ($normalizer = $this->getNormalizer($object, $format, $context)) {
@@ -189,7 +189,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
      * @param mixed $data
      * @throws NotNormalizableValueException
      */
-    public function denormalize($data, string $type, string $format = null, array $context = [])
+    public function denormalize($data, string $type, ?string $format = null, array $context = [])
     {
         if (isset(self::SCALAR_TYPES[$type])) {
             if (is_scalar($data)) {
@@ -217,12 +217,12 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
         throw new NotNormalizableValueException(sprintf('Could not denormalize object of type "%s", no supporting normalizer found.', $type));
     }
 
-    public function supportsNormalization($data, string $format = null, array $context = []): bool
+    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         return $this->getNormalizer($data, $format, $context) !== null;
     }
 
-    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
+    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = []): bool
     {
         return isset(self::SCALAR_TYPES[$type]) || $this->getDenormalizer($data, $type, $format, $context) !== null;
     }

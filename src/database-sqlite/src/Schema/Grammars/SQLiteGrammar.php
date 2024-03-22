@@ -429,7 +429,7 @@ class SQLiteGrammar extends Grammar
         return 'multipolygon';
     }
 
-    protected function getIndexColumns(Connection $connection, string $tableName = null): array
+    protected function getIndexColumns(Connection $connection, ?string $tableName = null): array
     {
         $sql = <<<'SQL'
             SELECT t.name AS table_name,
@@ -460,7 +460,7 @@ SQL;
     /**
      * @see http://ezcomponents.org/docs/api/trunk/DatabaseSchema/ezcDbSchemaPgsqlReader.html
      */
-    protected function getTableIndexesList(Connection $connection, array $tableIndexes, string $tableName = null): array
+    protected function getTableIndexesList(Connection $connection, array $tableIndexes, ?string $tableName = null): array
     {
         $indexBuffer = [];
 

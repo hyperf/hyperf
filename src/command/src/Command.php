@@ -69,7 +69,7 @@ abstract class Command extends SymfonyCommand
      */
     protected int $exitCode = self::SUCCESS;
 
-    public function __construct(string $name = null)
+    public function __construct(?string $name = null)
     {
         $this->name = $name ?? $this->name;
 

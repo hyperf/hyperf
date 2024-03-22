@@ -103,7 +103,7 @@ class Request implements RequestInterface
     /**
      * Retrieve the input data from request via multi keys, include query parameters, parsed body and json body.
      */
-    public function inputs(array $keys, array $default = null): array
+    public function inputs(array $keys, ?array $default = null): array
     {
         $data = $this->getInputData();
         $result = [];

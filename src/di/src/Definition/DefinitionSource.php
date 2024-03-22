@@ -120,7 +120,7 @@ class DefinitionSource implements DefinitionSourceInterface
         return null;
     }
 
-    protected function autowire(string $name, ObjectDefinition $definition = null): ?ObjectDefinition
+    protected function autowire(string $name, ?ObjectDefinition $definition = null): ?ObjectDefinition
     {
         $className = $definition ? $definition->getClassName() : $name;
         if (! class_exists($className) && ! interface_exists($className)) {

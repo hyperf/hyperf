@@ -290,7 +290,7 @@ class Connection
      * @param string $sid subscription ID
      * @param int $quantity quantity of messages
      */
-    public function unsubscribe(string $sid, int $quantity = null): void
+    public function unsubscribe(string $sid, ?int $quantity = null): void
     {
         $msg = 'UNSUB ' . $sid;
         if ($quantity !== null) {

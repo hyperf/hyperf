@@ -72,7 +72,7 @@ class TargetPhar implements Stringable
     /**
      * Create the default execution file.
      */
-    public function createDefaultStub(string $indexFile, string $webIndexFile = null): string
+    public function createDefaultStub(string $indexFile, ?string $webIndexFile = null): string
     {
         $params = [$indexFile];
         if ($webIndexFile != null) {

@@ -25,7 +25,7 @@ class Request extends BaseRequest
      */
     public $usePipelineRead;
 
-    public function __construct(string $method, Message $argument = null, $headers = [])
+    public function __construct(string $method, ?Message $argument = null, $headers = [])
     {
         $this->method = 'POST';
         $this->headers = array_replace($this->getDefaultHeaders(), $headers);

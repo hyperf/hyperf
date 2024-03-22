@@ -30,7 +30,7 @@ if (interface_exists(EventDispatcherInterface::class)) {
             $this->psrDispatcher = $psrDispatcher;
         }
 
-        public function dispatch(object $event, string $eventName = null): object
+        public function dispatch(object $event, ?string $eventName = null): object
         {
             return $this->psrDispatcher->dispatch($event);
         }

@@ -32,7 +32,7 @@ trait QueriesRelationships
      * @param string $boolean
      * @return \Hyperf\Database\Model\Builder|static
      */
-    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null)
+    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', ?Closure $callback = null)
     {
         if (is_string($relation)) {
             if (str_contains($relation, '.')) {
@@ -94,7 +94,7 @@ trait QueriesRelationships
      * @param string $boolean
      * @return \Hyperf\Database\Model\Builder|static
      */
-    public function doesntHave($relation, $boolean = 'and', Closure $callback = null)
+    public function doesntHave($relation, $boolean = 'and', ?Closure $callback = null)
     {
         return $this->has($relation, '<', 1, $boolean, $callback);
     }
@@ -118,7 +118,7 @@ trait QueriesRelationships
      * @param int $count
      * @return \Hyperf\Database\Model\Builder|static
      */
-    public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1)
+    public function whereHas($relation, ?Closure $callback = null, $operator = '>=', $count = 1)
     {
         return $this->has($relation, $operator, $count, 'and', $callback);
     }
@@ -132,7 +132,7 @@ trait QueriesRelationships
      * @param int $count
      * @return \Hyperf\Database\Model\Builder|static
      */
-    public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1)
+    public function orWhereHas($relation, ?Closure $callback = null, $operator = '>=', $count = 1)
     {
         return $this->has($relation, $operator, $count, 'or', $callback);
     }
@@ -143,7 +143,7 @@ trait QueriesRelationships
      * @param string $relation
      * @return \Hyperf\Database\Model\Builder|static
      */
-    public function whereDoesntHave($relation, Closure $callback = null)
+    public function whereDoesntHave($relation, ?Closure $callback = null)
     {
         return $this->doesntHave($relation, 'and', $callback);
     }
@@ -155,7 +155,7 @@ trait QueriesRelationships
      * @param Closure $callback
      * @return \Hyperf\Database\Model\Builder|static
      */
-    public function orWhereDoesntHave($relation, Closure $callback = null)
+    public function orWhereDoesntHave($relation, ?Closure $callback = null)
     {
         return $this->doesntHave($relation, 'or', $callback);
     }
@@ -328,7 +328,7 @@ trait QueriesRelationships
      * @param int $count
      * @return $this
      */
-    public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1)
+    public function whereHasMorph($relation, $types, ?Closure $callback = null, $operator = '>=', $count = 1)
     {
         return $this->hasMorph($relation, $types, $operator, $count, 'and', $callback);
     }
@@ -340,7 +340,7 @@ trait QueriesRelationships
      * @param Closure $callback
      * @return $this
      */
-    public function orWhereHasMorph(string $relation, $types, Closure $callback = null, string $operator = '>=', int $count = 1)
+    public function orWhereHasMorph(string $relation, $types, ?Closure $callback = null, string $operator = '>=', int $count = 1)
     {
         return $this->hasMorph($relation, $types, $operator, $count, 'or', $callback);
     }
@@ -351,7 +351,7 @@ trait QueriesRelationships
      * @param array|string $types
      * @return $this
      */
-    public function whereDoesntHaveMorph(string $relation, $types, Closure $callback = null)
+    public function whereDoesntHaveMorph(string $relation, $types, ?Closure $callback = null)
     {
         return $this->doesntHaveMorph($relation, $types, 'and', $callback);
     }
@@ -363,7 +363,7 @@ trait QueriesRelationships
      * @param Closure $callback
      * @return $this
      */
-    public function orWhereDoesntHaveMorph(string $relation, $types, Closure $callback = null)
+    public function orWhereDoesntHaveMorph(string $relation, $types, ?Closure $callback = null)
     {
         return $this->doesntHaveMorph($relation, $types, 'or', $callback);
     }
@@ -378,7 +378,7 @@ trait QueriesRelationships
      * @param string $boolean
      * @return $this
      */
-    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null)
+    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', ?Closure $callback = null)
     {
         $relation = $this->getRelationWithoutConstraints($relation);
 
@@ -417,7 +417,7 @@ trait QueriesRelationships
      * @param string $boolean
      * @return $this
      */
-    public function doesntHaveMorph(string $relation, $types, $boolean = 'and', Closure $callback = null)
+    public function doesntHaveMorph(string $relation, $types, $boolean = 'and', ?Closure $callback = null)
     {
         return $this->hasMorph($relation, $types, '<', 1, $boolean, $callback);
     }

@@ -83,7 +83,7 @@ class SQLiteBuilder extends Builder
      *
      * @param array|string $index
      */
-    public function hasIndex(string $table, $index, string $type = null): bool
+    public function hasIndex(string $table, $index, ?string $type = null): bool
     {
         $type = is_null($type) ? $type : strtolower($type);
 

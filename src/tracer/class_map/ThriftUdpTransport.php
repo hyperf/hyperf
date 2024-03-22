@@ -51,7 +51,7 @@ class ThriftUdpTransport extends TTransport
      */
     private $chan;
 
-    public function __construct(string $host, int $port, LoggerInterface $logger = null)
+    public function __construct(string $host, int $port, ?LoggerInterface $logger = null)
     {
         $this->host = $host;
         $this->port = $port;

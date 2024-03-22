@@ -133,7 +133,7 @@ class View implements ArrayAccess, Htmlable, ViewInterface
      *
      * @throws Throwable
      */
-    public function render(callable $callback = null): array|string
+    public function render(?callable $callback = null): array|string
     {
         try {
             $contents = $this->renderContents();

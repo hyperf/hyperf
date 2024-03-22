@@ -95,7 +95,7 @@ class ProxyManager
         return $proxyFilePath;
     }
 
-    protected function isModified(string $className, string $proxyFilePath = null): bool
+    protected function isModified(string $className, ?string $proxyFilePath = null): bool
     {
         $proxyFilePath = $proxyFilePath ?? $this->getProxyFilePath($className);
         $time = $this->filesystem->lastModified($proxyFilePath);

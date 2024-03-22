@@ -32,8 +32,8 @@ class Kafka implements Reporter
     public function __construct(
         private array $options,
         private KafkaClientFactory $clientFactory,
-        LoggerInterface $logger = null,
-        SpanSerializer $serializer = null
+        ?LoggerInterface $logger = null,
+        ?SpanSerializer $serializer = null
     ) {
         $this->serializer = $serializer ?? new JsonV2Serializer();
         $this->logger = $logger ?? new NullLogger();

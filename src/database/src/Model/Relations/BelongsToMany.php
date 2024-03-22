@@ -544,7 +544,7 @@ class BelongsToMany extends Relation
     /**
      * Get a paginator for the "select" statement.
      */
-    public function paginate(int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
+    public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
     {
         $this->query->addSelect($this->shouldSelect($columns));
 

@@ -23,7 +23,7 @@ class RetryMiddleware implements MiddlewareInterface
 
     public function getMiddleware(): callable
     {
-        return Middleware::retry(function ($retries, RequestInterface $request, ResponseInterface $response = null) {
+        return Middleware::retry(function ($retries, RequestInterface $request, ?ResponseInterface $response = null) {
             if (! $this->isOk($response) && $retries < $this->retries) {
                 return true;
             }

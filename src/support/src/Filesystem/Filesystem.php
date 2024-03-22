@@ -422,7 +422,7 @@ class Filesystem
     /**
      * Copy a directory from one location to another.
      */
-    public function copyDirectory(string $directory, string $destination, int $options = null): bool
+    public function copyDirectory(string $directory, string $destination, ?int $options = null): bool
     {
         if (! $this->isDirectory($directory)) {
             return false;

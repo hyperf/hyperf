@@ -319,7 +319,7 @@ class Response implements ResponseInterface, ResponsePlusInterface, Stringable
     /**
      * Is the response a redirect of some form?
      */
-    public function isRedirect(string $location = null): bool
+    public function isRedirect(?string $location = null): bool
     {
         return in_array($this->statusCode, [
             201,

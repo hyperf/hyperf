@@ -209,7 +209,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         return ApplicationContext::getContainer()->get($class);
     }
 
-    public function addCallback(string $ackId, Channel $channel, int $timeoutMs = null)
+    public function addCallback(string $ackId, Channel $channel, ?int $timeoutMs = null)
     {
         $this->clientCallbacks[$ackId] = $channel;
         // Clean up using timer to avoid memory leak.
