@@ -27,6 +27,7 @@ use Hyperf\Redis\Redis;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use RedisCluster;
 
 use function Hyperf\Coroutine\go;
@@ -230,6 +231,9 @@ class RedisProxyTest extends TestCase
         $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new PoolOption(...array_values($args));
         });
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
+
         ApplicationContext::setContainer($container);
 
         $factory = new PoolFactory($container);

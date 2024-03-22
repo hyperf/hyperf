@@ -28,6 +28,7 @@ use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -111,6 +112,9 @@ class RedisConnectionTest extends TestCase
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnTrue();
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn($logger = Mockery::mock(StdoutLoggerInterface::class));
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
+
         $logger->shouldReceive('log')->once();
 
         $conn = new RedisConnectionStub($container, Mockery::mock(Pool::class), []);
@@ -191,6 +195,9 @@ class RedisConnectionTest extends TestCase
         $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new Channel($args['size']);
         });
+
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
 
         ApplicationContext::setContainer($container);
 

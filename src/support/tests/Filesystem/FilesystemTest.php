@@ -80,6 +80,8 @@ class FilesystemTest extends TestCase
         } catch (Throwable $exception) {
             $this->assertSame('mkdir(): File exists', $exception->getMessage());
         }
+
+        $this->assertTrue(true);
     }
 
     #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
@@ -120,6 +122,7 @@ class FilesystemTest extends TestCase
         $path = BASE_PATH . '/runtime/data.log';
         $fs = new Filesystem();
 
+        $fs->makeDirectory(BASE_PATH . '/runtime');
         $this->assertNotFalse($fs->put($path, 'hello'));
         $lastModified = $fs->lastModified($path);
 

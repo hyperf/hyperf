@@ -136,6 +136,7 @@ abstract class Pool implements PoolInterface
             'waitTimeout' => $options['wait_timeout'] ?? 3.0,
             'heartbeat' => $options['heartbeat'] ?? -1,
             'maxIdleTime' => $options['max_idle_time'] ?? 60.0,
+            'events' => $options['events'] ?? [],
         ]);
     }
 
