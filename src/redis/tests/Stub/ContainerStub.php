@@ -25,6 +25,7 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Mockery;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use function Hyperf\Support\value;
 
 class ContainerStub
@@ -74,6 +75,7 @@ class ContainerStub
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn(value(function () {
             return Mockery::mock(StdoutLoggerInterface::class);
         }));
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
 
         ApplicationContext::setContainer($container);
         return $container;

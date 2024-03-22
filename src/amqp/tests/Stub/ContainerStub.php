@@ -52,6 +52,8 @@ class ContainerStub
                 ],
             ]);
         });
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnTrue();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnTrue();
         $container->shouldReceive('get')->with(ConnectionFactory::class)->andReturn(new ConnectionFactory($container));
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturnUsing(function () {
             $logger = Mockery::mock(StdoutLoggerInterface::class);

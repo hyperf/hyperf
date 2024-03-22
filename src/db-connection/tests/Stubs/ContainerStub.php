@@ -89,6 +89,8 @@ class ContainerStub
 
         $container->shouldReceive('get')->with('db.connector.mysql')->andReturn(new MySqlConnector());
         $container->shouldReceive('has')->andReturn(true);
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
         $container->shouldReceive('make')->with(Frequency::class)->andReturn(new Frequency());
 
         return $container;
