@@ -53,7 +53,8 @@ class PoolOption implements PoolOptionInterface
     private float $maxIdleTime;
 
     /**
-     * The callback which triggered by releasing connection.
+     * The events which will be triggered by releasing connection and so on.
+     * @var array<int, string>
      */
     private array $events;
 
