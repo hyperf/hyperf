@@ -29,6 +29,7 @@ use HyperfTest\JsonRpc\Stub\RpcPoolStub;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use stdClass;
 
 /**
@@ -168,6 +169,7 @@ class JsonRpcPoolTransporterTest extends TestCase
         ApplicationContext::setContainer($container);
 
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn(new PoolFactory($container));
         $container->shouldReceive('make')->with(RpcPool::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
             return new RpcPoolStub($container, $args['name'], $args['config']);
