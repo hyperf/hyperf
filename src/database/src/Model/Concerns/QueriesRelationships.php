@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Concerns;
 
 use Closure;
@@ -30,7 +31,7 @@ trait QueriesRelationships
      * @param string $operator
      * @param int $count
      * @param string $boolean
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', ?Closure $callback = null)
     {
@@ -80,7 +81,7 @@ trait QueriesRelationships
      * @param string $relation
      * @param string $operator
      * @param int $count
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     public function orHas($relation, $operator = '>=', $count = 1)
     {
@@ -92,7 +93,7 @@ trait QueriesRelationships
      *
      * @param string $relation
      * @param string $boolean
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     public function doesntHave($relation, $boolean = 'and', ?Closure $callback = null)
     {
@@ -103,7 +104,7 @@ trait QueriesRelationships
      * Add a relationship count / exists condition to the query with an "or".
      *
      * @param string $relation
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     public function orDoesntHave($relation)
     {
@@ -116,7 +117,7 @@ trait QueriesRelationships
      * @param string $relation
      * @param string $operator
      * @param int $count
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     public function whereHas($relation, ?Closure $callback = null, $operator = '>=', $count = 1)
     {
@@ -127,10 +128,9 @@ trait QueriesRelationships
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param Closure $callback
      * @param string $operator
      * @param int $count
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     public function orWhereHas($relation, ?Closure $callback = null, $operator = '>=', $count = 1)
     {
@@ -141,7 +141,7 @@ trait QueriesRelationships
      * Add a relationship count / exists condition to the query with where clauses.
      *
      * @param string $relation
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     public function whereDoesntHave($relation, ?Closure $callback = null)
     {
@@ -152,8 +152,7 @@ trait QueriesRelationships
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param Closure $callback
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     public function orWhereDoesntHave($relation, ?Closure $callback = null)
     {
@@ -302,7 +301,7 @@ trait QueriesRelationships
     /**
      * Merge the where constraints from another query to the current query.
      *
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     public function mergeConstraintsFrom(Builder $from)
     {
@@ -337,7 +336,6 @@ trait QueriesRelationships
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param array|string $types
-     * @param Closure $callback
      * @return $this
      */
     public function orWhereHasMorph(string $relation, $types, ?Closure $callback = null, string $operator = '>=', int $count = 1)
@@ -360,7 +358,6 @@ trait QueriesRelationships
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param array|string $types
-     * @param Closure $callback
      * @return $this
      */
     public function orWhereDoesntHaveMorph(string $relation, $types, ?Closure $callback = null)
@@ -432,7 +429,7 @@ trait QueriesRelationships
      * @param int $count
      * @param string $boolean
      * @param null|Closure $callback
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     protected function hasNested($relations, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
     {
@@ -463,7 +460,7 @@ trait QueriesRelationships
      * @param string $operator
      * @param int $count
      * @param string $boolean
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     protected function addHasWhere(Builder $hasQuery, Relation $relation, $operator, $count, $boolean)
     {
@@ -498,7 +495,7 @@ trait QueriesRelationships
      * Get the "has relation" base query instance.
      *
      * @param string $relation
-     * @return \Hyperf\Database\Model\Relations\Relation
+     * @return Relation
      */
     protected function getRelationWithoutConstraints($relation)
     {

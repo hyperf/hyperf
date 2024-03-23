@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model;
 
 use ArrayAccess;
+use Faker\Generator;
 use Faker\Generator as Faker;
 use Symfony\Component\Finder\Finder;
 
@@ -48,7 +50,7 @@ class Factory implements ArrayAccess
     /**
      * The Faker instance for the builder.
      *
-     * @var \Faker\Generator
+     * @var Generator
      */
     protected $faker;
 
@@ -240,7 +242,7 @@ class Factory implements ArrayAccess
      *
      * @param string $class
      * @param string $name
-     * @return \Hyperf\Database\Model\FactoryBuilder
+     * @return FactoryBuilder
      */
     public function of($class, $name = 'default')
     {

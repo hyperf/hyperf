@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Concerns;
 
 use BackedEnum;
@@ -1154,7 +1155,7 @@ trait HasAttributes
     /**
      * Encode the given value as JSON.
      */
-    protected function asJson(mixed $value): string|false
+    protected function asJson(mixed $value): false|string
     {
         return json_encode($value);
     }
@@ -1238,7 +1239,7 @@ trait HasAttributes
     /**
      * Return a timestamp as unix timestamp.
      */
-    protected function asTimestamp(mixed $value): int|false
+    protected function asTimestamp(mixed $value): false|int
     {
         return $this->asDateTime($value)->getTimestamp();
     }

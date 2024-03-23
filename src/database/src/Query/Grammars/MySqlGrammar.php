@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Query\Grammars;
 
 use Hyperf\Collection\Arr;
@@ -274,7 +275,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a delete query that does not use joins.
      *
-     * @param \Hyperf\Database\Query\Builder $query
+     * @param Builder $query
      * @param string $table
      * @param array $where
      */
@@ -299,7 +300,7 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a delete query that uses joins.
      *
-     * @param \Hyperf\Database\Query\Builder $query
+     * @param Builder $query
      * @param string $table
      * @param array $where
      */

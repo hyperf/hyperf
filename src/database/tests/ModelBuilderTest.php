@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use BadMethodCallException;
@@ -23,7 +24,9 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\ModelNotFoundException;
 use Hyperf\Database\Model\Register;
+use Hyperf\Database\Model\RelationNotFoundException;
 use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\Database\Query\Builder as BaseBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
@@ -101,7 +104,7 @@ class ModelBuilderTest extends TestCase
 
     public function testFindOrFailMethodThrowsModelNotFoundException()
     {
-        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class);
+        $this->expectException(ModelNotFoundException::class);
 
         $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
         $builder->setModel($this->getMockModel());
@@ -112,7 +115,7 @@ class ModelBuilderTest extends TestCase
 
     public function testFindOrFailMethodWithManyThrowsModelNotFoundException()
     {
-        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class);
+        $this->expectException(ModelNotFoundException::class);
 
         $builder = Mockery::mock(Builder::class . '[get]', [$this->getMockQueryBuilder()]);
         $builder->setModel($this->getMockModel());
@@ -123,7 +126,7 @@ class ModelBuilderTest extends TestCase
 
     public function testFirstOrFailMethodThrowsModelNotFoundException()
     {
-        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class);
+        $this->expectException(ModelNotFoundException::class);
 
         $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
         $builder->setModel($this->getMockModel());
@@ -536,7 +539,7 @@ class ModelBuilderTest extends TestCase
 
     public function testGetRelationThrowsException()
     {
-        $this->expectException(\Hyperf\Database\Model\RelationNotFoundException::class);
+        $this->expectException(RelationNotFoundException::class);
 
         $builder = $this->getBuilder();
         $builder->setModel($this->getMockModel());
@@ -1180,18 +1183,18 @@ class ModelBuilderTest extends TestCase
 
     public function testMixin()
     {
-        \Hyperf\Database\Model\Builder::macro('testAbc', fn () => 'abc');
+        Builder::macro('testAbc', fn () => 'abc');
         $this->assertEquals('abc', ModelStub::testAbc());
 
-        \Hyperf\Database\Model\Builder::mixin(new UserMixin());
+        Builder::mixin(new UserMixin());
 
-        $this->assertInstanceOf(\Hyperf\Database\Model\Builder::class, ModelStub::whereFoo());
-        $this->assertInstanceOf(\Hyperf\Database\Model\Builder::class, ModelStub::whereBar());
+        $this->assertInstanceOf(Builder::class, ModelStub::whereFoo());
+        $this->assertInstanceOf(Builder::class, ModelStub::whereBar());
     }
 
     public function testClone()
     {
-        $builder = \HyperfTest\Database\Stubs\ModelStub::query();
+        $builder = ModelStub::query();
         $clone = $builder->clone();
 
         $clone->select(['id']);

@@ -9,11 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Schema\Grammars;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\DBAL\Types\Type;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
@@ -25,7 +28,7 @@ class ChangeColumn
     /**
      * Compile a change column command into a series of SQL statements.
      *
-     * @param \Hyperf\Database\Schema\Grammars\Grammar $grammar
+     * @param Grammar $grammar
      * @throws RuntimeException
      */
     public static function compile($grammar, Blueprint $blueprint, Fluent $command, Connection $connection): array
@@ -53,8 +56,8 @@ class ChangeColumn
     /**
      * Get the Doctrine table difference for the given changes.
      *
-     * @param \Hyperf\Database\Schema\Grammars\Grammar $grammar
-     * @return bool|\Doctrine\DBAL\Schema\TableDiff
+     * @param Grammar $grammar
+     * @return bool|TableDiff
      */
     protected static function getChangedDiff($grammar, Blueprint $blueprint, SchemaManager $schema)
     {
@@ -69,7 +72,7 @@ class ChangeColumn
     /**
      * Get a copy of the given Doctrine table after making the column changes.
      *
-     * @return \Doctrine\DBAL\Schema\Table
+     * @return Table
      */
     protected static function getTableWithColumnChanges(Blueprint $blueprint, Table $table)
     {
@@ -96,7 +99,7 @@ class ChangeColumn
     /**
      * Get the Doctrine column instance for a column change.
      *
-     * @return \Doctrine\DBAL\Schema\Column
+     * @return Column
      */
     protected static function getDoctrineColumn(Table $table, Fluent $fluent)
     {
@@ -133,7 +136,7 @@ class ChangeColumn
      * Get the doctrine column type.
      *
      * @param string $type
-     * @return \Doctrine\DBAL\Types\Type
+     * @return Type
      */
     protected static function getDoctrineColumnType($type)
     {
