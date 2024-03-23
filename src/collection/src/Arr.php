@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Collection;
 
 use ArrayAccess;
@@ -107,7 +108,7 @@ class Arr
     /**
      * Get all the given array except for a specified array of keys.
      */
-    public static function except(array $array, array|string|int $keys): array
+    public static function except(array $array, array|int|string $keys): array
     {
         static::forget($array, $keys);
         return $array;
@@ -159,7 +160,7 @@ class Arr
     /**
      * Flatten a multi-dimensional array into a single level.
      */
-    public static function flatten(array $array, int|float $depth = INF): array
+    public static function flatten(array $array, float|int $depth = INF): array
     {
         $result = [];
         foreach ($array as $item) {
@@ -184,7 +185,7 @@ class Arr
      *
      * @param array|string $keys
      */
-    public static function forget(array &$array, array|string|int $keys): void
+    public static function forget(array &$array, array|int|string $keys): void
     {
         $original = &$array;
         $keys = (array) $keys;
@@ -215,7 +216,7 @@ class Arr
     /**
      * Get an item from an array using "dot" notation.
      */
-    public static function get(mixed $array, int|string|null $key = null, mixed $default = null)
+    public static function get(mixed $array, null|int|string $key = null, mixed $default = null)
     {
         if (! static::accessible($array)) {
             return value($default);
@@ -244,7 +245,7 @@ class Arr
      *
      * @param null|array|string $keys
      */
-    public static function has(array|ArrayAccess $array, int|string|null|array $keys): bool
+    public static function has(array|ArrayAccess $array, null|array|int|string $keys): bool
     {
         if (is_null($keys)) {
             return false;
@@ -276,7 +277,7 @@ class Arr
     /**
      * Determine if any of the keys exist in an array using "dot" notation.
      */
-    public static function hasAny(array|ArrayAccess $array, int|string|null|array $keys): bool
+    public static function hasAny(array|ArrayAccess $array, null|array|int|string $keys): bool
     {
         if (is_null($keys)) {
             return false;
@@ -353,7 +354,7 @@ class Arr
     /**
      * Get a subset of the items from the given array.
      */
-    public static function only(array $array, int|string|array $keys): array
+    public static function only(array $array, array|int|string $keys): array
     {
         return array_intersect_key($array, array_flip((array) $keys));
     }
@@ -394,7 +395,7 @@ class Arr
      * @param TValue $value
      * @return array<TKey, TValue>
      */
-    public static function prepend(array $array, mixed $value, string|int|null $key = null): array
+    public static function prepend(array $array, mixed $value, null|int|string $key = null): array
     {
         if (is_null($key)) {
             array_unshift($array, $value);
