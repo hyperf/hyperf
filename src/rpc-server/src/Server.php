@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcServer;
 
 use Hyperf\Context\RequestContext;
@@ -149,7 +150,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     }
 
     /**
-     * @param \Swoole\Coroutine\Server\Connection|SwooleServer $server
+     * @param Connection|SwooleServer $server
      */
     protected function send($server, int $fd, ResponseInterface $response): void
     {
