@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Constants;
 
 use BackedEnum;
@@ -28,10 +29,10 @@ trait EnumConstantsTrait
 
     /**
      * @throws ContainerExceptionInterface
-     * @throws Exception\ConstantsException
+     * @throws ConstantsException
      * @throws NotFoundExceptionInterface
      */
-    public function __call(string $name, array $arguments): string|array
+    public function __call(string $name, array $arguments): array|string
     {
         $code = match (true) {
             $this instanceof BackedEnum => $this->value,
@@ -42,11 +43,11 @@ trait EnumConstantsTrait
     }
 
     /**
-     * @throws Exception\ConstantsException
+     * @throws ConstantsException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public static function __callStatic(string $name, array $arguments): string|array
+    public static function __callStatic(string $name, array $arguments): array|string
     {
         if (! is_subclass_of(static::class, UnitEnum::class)) {
             throw new ConstantsException('This trait must in enum');
