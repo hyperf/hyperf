@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server;
 
 use Hyperf\Contract\MiddlewareInitializerInterface;
@@ -21,6 +22,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Http\Server as SwooleHttpServer;
 use Swoole\Server as SwooleServer;
+use Swoole\Server\Port;
 use Swoole\Server\Port as SwoolePort;
 use Swoole\WebSocket\Server as SwooleWebSocketServer;
 
@@ -79,7 +81,7 @@ class Server implements ServerInterface
                     $this->eventDispatcher->dispatch(new BeforeMainServerStart($this->server, $config->toArray()));
                 }
             } else {
-                /** @var bool|\Swoole\Server\Port $slaveServer */
+                /** @var bool|Port $slaveServer */
                 $slaveServer = $this->server->addlistener($host, $port, $sockType);
                 if (! $slaveServer) {
                     throw new \RuntimeException("Failed to listen server port [{$host}:{$port}]");

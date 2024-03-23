@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Serializer;
 
 use Countable;
 use Hyperf\Contract\NormalizerInterface as Normalizer;
-use Symfony\Component\Serializer\Encoder;
 use Symfony\Component\Serializer\Encoder\ChainDecoder;
 use Symfony\Component\Serializer\Encoder\ChainEncoder;
 use Symfony\Component\Serializer\Encoder\ContextAwareDecoderInterface;
@@ -61,12 +61,12 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
     ];
 
     /**
-     * @var Encoder\ChainEncoder
+     * @var ChainEncoder
      */
     protected $encoder;
 
     /**
-     * @var Encoder\ChainDecoder
+     * @var ChainDecoder
      */
     protected $decoder;
 
@@ -77,8 +77,8 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
     protected $normalizerCache = [];
 
     /**
-     * @param (NormalizerInterface|DenormalizerInterface|mixed)[] $normalizers
-     * @param (EncoderInterface|DecoderInterface|mixed)[] $encoders
+     * @param (DenormalizerInterface|mixed|NormalizerInterface)[] $normalizers
+     * @param (DecoderInterface|EncoderInterface|mixed)[] $encoders
      */
     public function __construct(array $normalizers = [], array $encoders = [])
     {
