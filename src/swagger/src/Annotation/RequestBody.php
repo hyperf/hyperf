@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Swagger\Annotation;
 
 use Attribute;
@@ -25,11 +26,11 @@ class RequestBody extends \OpenApi\Attributes\RequestBody implements AnnotationI
     public mixed $_content = null;
 
     public function __construct(
-        object|string|null $ref = null,
+        null|object|string $ref = null,
         ?string $request = null,
         ?string $description = null,
         ?bool $required = null,
-        JsonContent|array|Attachable|XmlContent|null $content = null,
+        null|array|Attachable|JsonContent|XmlContent $content = null,
         ?array $x = null,
         ?array $attachables = null
     ) {
