@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\HttpMessage;
 
 use Hyperf\Codec\Json;
 use Hyperf\Codec\Xml;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Server\Request\JsonParser;
 use Hyperf\HttpMessage\Server\Request\Parser;
@@ -25,6 +27,8 @@ use HyperfTest\HttpMessage\Stub\Server\RequestStub;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -75,7 +79,7 @@ class ServerRequestTest extends TestCase
 
     public function testNormalizeParsedBodyException()
     {
-        $this->expectException(\Hyperf\HttpMessage\Exception\BadRequestHttpException::class);
+        $this->expectException(BadRequestHttpException::class);
 
         $this->getContainer();
 
@@ -88,7 +92,7 @@ class ServerRequestTest extends TestCase
 
     public function testXmlNormalizeParsedBodyException()
     {
-        $this->expectException(\Hyperf\HttpMessage\Exception\BadRequestHttpException::class);
+        $this->expectException(BadRequestHttpException::class);
 
         $this->getContainer();
 
@@ -163,7 +167,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame(null, $uri->getPort());
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('ParseHost')]
+    #[Group('ParseHost')]
     public function testParseHost()
     {
         $hostStrIPv4 = '192.168.119.100:9501';
@@ -189,7 +193,7 @@ class ServerRequestTest extends TestCase
      * @param mixed $host
      * @param mixed $port
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('getIPv6Examples')]
+    #[DataProvider('getIPv6Examples')]
     public function testGetUriFromGlobalsForIPv6Host($originHost, $host, $port)
     {
         $swooleRequest = Mockery::mock(SwooleRequest::class);
