@@ -135,7 +135,7 @@ class UserExtEmpty extends Model
         $this->assertEquals($this->license . "
 namespace HyperfTest\\Database\\Stubs\\Model;
 
-use Carbon\Carbon;
+use Carbon\\Carbon;
 /**
  * @property int \$id 
  * @property string \$name 
