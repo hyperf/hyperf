@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Grpc;
 
 use Google\Protobuf\GPBEmpty;
@@ -96,7 +97,7 @@ class Parser
     {
         if (is_array($deserialize)) {
             [$className, $deserializeFunc] = $deserialize;
-            /** @var \Google\Protobuf\Internal\Message $object */
+            /** @var Message $object */
             $object = new $className();
             if ($deserializeFunc && method_exists($object, $deserializeFunc)) {
                 $object->{$deserializeFunc}($unpacked);

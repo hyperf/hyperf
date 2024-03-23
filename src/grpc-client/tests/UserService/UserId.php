@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace UserService;
 
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\Internal\Message;
+use GPBMetadata\User;
 
 /**
  * Generated from protobuf message <code>UserService.UserId</code>.
  */
-class UserId extends \Google\Protobuf\Internal\Message
+class UserId extends Message
 {
     /**
      * Generated from protobuf field <code>uint64 id = 1;</code>.
@@ -31,12 +33,12 @@ class UserId extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *                    Optional. Data for populating the Message object.
      *
-     *     @var int|string $id
-     * }
+     * @var int|string $id
+     *                 }
      */
     public function __construct($data = null)
     {
-        \GPBMetadata\User::initOnce();
+        User::initOnce();
         parent::__construct($data);
     }
 
