@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -27,9 +28,6 @@ class DBPoolWatcher extends PoolWatcher implements ListenerInterface
         return 'mysql';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(object $event): void
     {
         $config = $this->container->get(ConfigInterface::class);
