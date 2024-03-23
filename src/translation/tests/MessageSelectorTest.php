@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Translation;
 
 use Hyperf\Translation\MessageSelector;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,7 +29,7 @@ class MessageSelectorTest extends TestCase
      * @param mixed $id
      * @param mixed $number
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('chooseTestData')]
+    #[DataProvider('chooseTestData')]
     public function testChoose($expected, $id, $number)
     {
         $selector = new MessageSelector();
