@@ -46,7 +46,7 @@ class SwaggerRequest extends FormRequest
 
     protected function getCallbackByContext(): array
     {
-        /** @var Dispatched $dispatched */
+        /** @var null|Dispatched $dispatched */
         $dispatched = RequestContext::getOrNull()?->getAttribute(Dispatched::class);
         if (! $dispatched) {
             throw new RuntimeException('The request is invalid.');
