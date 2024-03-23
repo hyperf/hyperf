@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Watcher;
 
 use Hyperf\Codec\Json;
@@ -22,6 +23,7 @@ use Hyperf\Watcher\Driver\DriverInterface;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 use function Hyperf\Support\make;
 
@@ -110,7 +112,7 @@ class Watcher
                 if (posix_kill((int) $pid, 0)) {
                     posix_kill((int) $pid, SIGTERM);
                 }
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 $this->output->writeln('Stop server failed. Please execute `composer dump-autoload -o`');
             }
         }

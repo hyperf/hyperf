@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Compiler;
 
 use Hyperf\Stringable\Str;
@@ -117,8 +118,6 @@ class ComponentTagCompiler
 
     /**
      * Guess the view or class name for the given component.
-     *
-     * @return string
      */
     public function guessComponentFromAutoload(FactoryInterface $viewFactory, string $component): ?string
     {
