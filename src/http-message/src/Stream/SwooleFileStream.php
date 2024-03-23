@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpMessage\Stream;
 
 use BadMethodCallException;
@@ -17,6 +18,7 @@ use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 use SplFileInfo;
 use Stringable;
+use Throwable;
 
 class SwooleFileStream implements StreamInterface, FileInterface, Stringable
 {
@@ -55,7 +57,7 @@ class SwooleFileStream implements StreamInterface, FileInterface, Stringable
     {
         try {
             return $this->getContents();
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return '';
         }
     }

@@ -19,6 +19,7 @@
         "hyperf/server": "~3.1.0",
         "hyperf/support": "~3.1.0",
         "hyperf/utils": "~3.1.0",
+        "jetbrains/phpstorm-attributes": "^1.0",
         "multiplex/socket": "^1.0",
         "swow/psr7-plus": "^1.0"
     },

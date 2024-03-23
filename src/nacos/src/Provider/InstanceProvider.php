@@ -9,28 +9,32 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nacos\Provider;
 
 use GuzzleHttp\RequestOptions;
 use Hyperf\Codec\Json;
 use Hyperf\Nacos\AbstractProvider;
+use JetBrains\PhpStorm\ArrayShape;
 use Psr\Http\Message\ResponseInterface;
 
 class InstanceProvider extends AbstractProvider
 {
-    /**
-     * @param $optional = [
-     *     'groupName' => '',
-     *     'clusterName' => '',
-     *     'namespaceId' => '',
-     *     'weight' => 99.0,
-     *     'metadata' => '',
-     *     'enabled' => true,
-     *     'ephemeral' => false, // 是否临时实例
-     * ]
-     */
-    public function register(string $ip, int $port, string $serviceName, array $optional = []): ResponseInterface
-    {
+    public function register(
+        string $ip,
+        int $port,
+        string $serviceName,
+        #[ArrayShape([
+            'groupName' => '',
+            'clusterName' => '',
+            'namespaceId' => '',
+            'weight' => 99.0,
+            'metadata' => '',
+            'enabled' => true,
+            'ephemeral' => false, // 是否临时实例
+        ])]
+        array $optional = []
+    ): ResponseInterface {
         return $this->request('POST', 'nacos/v1/ns/instance', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
@@ -40,15 +44,18 @@ class InstanceProvider extends AbstractProvider
         ]);
     }
 
-    /**
-     * @param $optional = [
-     *     'clusterName' => '',
-     *     'namespaceId' => '',
-     *     'ephemeral' => false,
-     * ]
-     */
-    public function delete(string $serviceName, string $groupName, string $ip, int $port, array $optional = []): ResponseInterface
-    {
+    public function delete(
+        string $serviceName,
+        string $groupName,
+        string $ip,
+        int $port,
+        #[ArrayShape([
+            'clusterName' => '',
+            'namespaceId' => '',
+            'ephemeral' => false,
+        ])]
+        array $optional = []
+    ): ResponseInterface {
         return $this->request('DELETE', 'nacos/v1/ns/instance', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
@@ -59,19 +66,21 @@ class InstanceProvider extends AbstractProvider
         ]);
     }
 
-    /**
-     * @param $optional = [
-     *     'groupName' => '',
-     *     'clusterName' => '',
-     *     'namespaceId' => '',
-     *     'weight' => 0.99,
-     *     'metadata' => '', // json
-     *     'enabled' => false,
-     *     'ephemeral' => false,
-     * ]
-     */
-    public function update(string $ip, int $port, string $serviceName, array $optional = []): ResponseInterface
-    {
+    public function update(
+        string $ip,
+        int $port,
+        string $serviceName,
+        #[ArrayShape([
+            'groupName' => '',
+            'clusterName' => '',
+            'namespaceId' => '',
+            'weight' => 0.99,
+            'metadata' => '', // json
+            'enabled' => false,
+            'ephemeral' => false,
+        ])]
+        array $optional = []
+    ): ResponseInterface {
         return $this->request('PUT', 'nacos/v1/ns/instance', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
@@ -81,16 +90,16 @@ class InstanceProvider extends AbstractProvider
         ]);
     }
 
-    /**
-     * @param $optional = [
-     *     'groupName' => '',
-     *     'namespaceId' => '',
-     *     'clusters' => '', // 集群名称(字符串，多个集群用逗号分隔)
-     *     'healthyOnly' => false,
-     * ]
-     */
-    public function list(string $serviceName, array $optional = []): ResponseInterface
-    {
+    public function list(
+        string $serviceName,
+        #[ArrayShape([
+            'groupName' => '',
+            'namespaceId' => '',
+            'clusters' => '', // 集群名称(字
+            'healthyOnly' => false,
+        ])]
+        array $optional = []
+    ): ResponseInterface {
         return $this->request('GET', 'nacos/v1/ns/instance/list', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
@@ -98,17 +107,19 @@ class InstanceProvider extends AbstractProvider
         ]);
     }
 
-    /**
-     * @param $optional = [
-     *     'groupName' => '',
-     *     'namespaceId' => '',
-     *     'cluster' => '',
-     *     'healthyOnly' => false,
-     *     'ephemeral' => false,
-     * ]
-     */
-    public function detail(string $ip, int $port, string $serviceName, array $optional = []): ResponseInterface
-    {
+    public function detail(
+        string $ip,
+        int $port,
+        string $serviceName,
+        #[ArrayShape([
+            'groupName' => '',
+            'namespaceId' => '',
+            'cluster' => '',
+            'healthyOnly' => false,
+            'ephemeral' => false,
+        ])]
+        array $optional = []
+    ): ResponseInterface {
         return $this->request('GET', 'nacos/v1/ns/instance', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'ip' => $ip,
@@ -118,17 +129,21 @@ class InstanceProvider extends AbstractProvider
         ]);
     }
 
-    /**
-     * @param $beat = [
-     *     'ip' => '',
-     *     'port' => 9501,
-     *     'serviceName' => '',
-     *     'cluster' => '',
-     *     'weight' => 1,
-     * ]
-     */
-    public function beat(string $serviceName, array $beat = [], ?string $groupName = null, ?string $namespaceId = null, ?bool $ephemeral = null, bool $lightBeatEnabled = false): ResponseInterface
-    {
+    public function beat(
+        string $serviceName,
+        #[ArrayShape([
+            'ip' => '',
+            'port' => 9501,
+            'serviceName' => '',
+            'cluster' => '',
+            'weight' => 1,
+        ])]
+        array $beat = [],
+        ?string $groupName = null,
+        ?string $namespaceId = null,
+        ?bool $ephemeral = null,
+        bool $lightBeatEnabled = false
+    ): ResponseInterface {
         return $this->request('PUT', 'nacos/v1/ns/instance/beat', [
             RequestOptions::QUERY => $this->filter([
                 'serviceName' => $serviceName,
@@ -142,15 +157,18 @@ class InstanceProvider extends AbstractProvider
         ]);
     }
 
-    /**
-     * @param $optional = [
-     *     'namespaceId' => '',
-     *     'groupName' => '',
-     *     'clusterName' => '',
-     * ]
-     */
-    public function updateHealth(string $ip, int $port, string $serviceName, bool $healthy, array $optional = []): ResponseInterface
-    {
+    public function updateHealth(
+        string $ip,
+        int $port,
+        string $serviceName,
+        bool $healthy,
+        #[ArrayShape([
+            'namespaceId' => '',
+            'groupName' => '',
+            'clusterName' => '',
+        ])]
+        array $optional = []
+    ): ResponseInterface {
         return $this->request('PUT', 'nacos/v1/ns/health/instance', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'ip' => $ip,

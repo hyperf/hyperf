@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\WebSocketServer;
 
 use Hyperf\Config\Config;
@@ -21,6 +22,7 @@ use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Swoole\Server;
 
 /**
  * @internal
@@ -37,12 +39,12 @@ class SenderTest extends TestCase
     public function testSenderCheck()
     {
         $container = $this->getContainer();
-        $server = Mockery::mock(\Swoole\Server::class);
+        $server = Mockery::mock(Server::class);
         $server->shouldReceive('connection_info')->once()->andReturn(false);
         $server->shouldReceive('connection_info')->once()->andReturn([]);
         $server->shouldReceive('connection_info')->once()->andReturn(['websocket_status' => WEBSOCKET_STATUS_CLOSING]);
         $server->shouldReceive('connection_info')->once()->andReturn(['websocket_status' => WEBSOCKET_STATUS_ACTIVE]);
-        $container->shouldReceive('get')->with(\Swoole\Server::class)->andReturn($server);
+        $container->shouldReceive('get')->with(Server::class)->andReturn($server);
         $sender = new Sender($container);
 
         $this->assertFalse($sender->check(1));

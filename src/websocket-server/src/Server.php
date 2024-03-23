@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketServer;
 
 use Hyperf\Context\Context;
@@ -46,6 +47,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Coroutine\Http\Server as SwCoServer;
+use Swoole\Http\Request;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Server as SwooleServer;
 use Swoole\WebSocket\Server as WebSocketServer;
@@ -86,7 +88,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         ]);
     }
 
-    public function getServer(): SwCoServer|WebSocketServer|HttpServer
+    public function getServer(): HttpServer|SwCoServer|WebSocketServer
     {
         if ($this->server) {
             return $this->server;
@@ -110,7 +112,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     }
 
     /**
-     * @param \Swoole\Http\Request|\Swow\Http\Server\Request $request
+     * @param Request|\Swow\Http\Server\Request $request
      * @param SwooleResponse|SwowServerConnection $response
      */
     public function onHandShake($request, $response): void

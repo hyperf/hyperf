@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Conditionable;
 
 use Closure;
@@ -21,9 +22,9 @@ trait Conditionable
      * @template TWhenParameter
      * @template TWhenReturnType
      *
-     * @param  (\Closure($this): TWhenParameter)|TWhenParameter|null  $value
-     * @param  (callable($this, TWhenParameter): TWhenReturnType)|null  $callback
-     * @param  (callable($this, TWhenParameter): TWhenReturnType)|null  $default
+     * @param null|(Closure($this): TWhenParameter)|TWhenParameter $value
+     * @param null|(callable($this, TWhenParameter): TWhenReturnType) $callback
+     * @param null|(callable($this, TWhenParameter): TWhenReturnType) $default
      * @param null|mixed $value
      * @return $this|TWhenReturnType
      */
@@ -55,9 +56,9 @@ trait Conditionable
      * @template TUnlessParameter
      * @template TUnlessReturnType
      *
-     * @param  (\Closure($this): TUnlessParameter)|TUnlessParameter|null  $value
-     * @param  (callable($this, TUnlessParameter): TUnlessReturnType)|null  $callback
-     * @param  (callable($this, TUnlessParameter): TUnlessReturnType)|null  $default
+     * @param null|(Closure($this): TUnlessParameter)|TUnlessParameter $value
+     * @param null|(callable($this, TUnlessParameter): TUnlessReturnType) $callback
+     * @param null|(callable($this, TUnlessParameter): TUnlessReturnType) $default
      * @param null|mixed $value
      * @return $this|TUnlessReturnType
      */

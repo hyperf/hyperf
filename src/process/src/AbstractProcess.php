@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Process;
 
 use Hyperf\Contract\ProcessInterface;
@@ -28,6 +29,7 @@ use Hyperf\Process\Exception\ServerInvalidException;
 use Hyperf\Process\Exception\SocketAcceptException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Swoole\Coroutine\Socket;
 use Swoole\Event;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;
@@ -156,7 +158,7 @@ abstract class AbstractProcess implements ProcessInterface
         Coroutine::create(function () use ($quit) {
             while ($quit->pop(0.001) !== true) {
                 try {
-                    /** @var \Swoole\Coroutine\Socket $sock */
+                    /** @var Socket $sock */
                     $sock = $this->process->exportSocket();
                     $recv = $sock->recv($this->recvLength, $this->recvTimeout);
                     if ($recv === '') {

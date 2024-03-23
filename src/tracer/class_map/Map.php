@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Zipkin\Propagation;
 
 use ArrayAccess;
@@ -56,7 +57,6 @@ class Map implements Getter, Setter
     }
 
     /**
-     * {@inheritdoc}
      * @param array|ArrayAccess $carrier
      */
     public function put(&$carrier, string $key, string $value): void

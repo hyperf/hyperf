@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Definition;
 
 use Hyperf\Di\ReflectionManager;
@@ -67,7 +68,7 @@ class ObjectDefinition implements DefinitionInterface
     }
 
     /**
-     * @return null|\Hyperf\Di\Definition\MethodInjection
+     * @return null|MethodInjection
      */
     public function getConstructorInjection()
     {

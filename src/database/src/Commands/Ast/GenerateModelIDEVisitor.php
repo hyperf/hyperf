@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\CodeParser\PhpParser;
@@ -61,7 +62,7 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         if ($node instanceof Node\Stmt\Class_) {
             $this->originClassName = $node->name->toString();
             $this->class = new Node\Stmt\Class_(
-                new Node\Identifier(self::toIDEClass($this->nsp . '\\' . $this->originClassName))
+                new Identifier(self::toIDEClass($this->nsp . '\\' . $this->originClassName))
             );
         }
 
@@ -89,7 +90,7 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                         new Node\Name('static'),
                         new Node\VarLikeIdentifier('builder')
                     ),
-                    new Node\Identifier('dynamicWhere'),
+                    new Identifier('dynamicWhere'),
                     [
                         new Node\Arg(new Node\Scalar\String_($name)),
                         new Node\Arg(new Node\Expr\Variable('value')),

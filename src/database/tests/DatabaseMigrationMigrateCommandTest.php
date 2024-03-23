@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Commands\Migrations\MigrateCommand;
@@ -115,7 +116,7 @@ class DatabaseMigrationMigrateCommandTest extends TestCase
 class ApplicationDatabaseMigrationStub
 {
     /**
-     * @var \Psr\Container\ContainerInterface
+     * @var ContainerInterface
      */
     private $container;
 

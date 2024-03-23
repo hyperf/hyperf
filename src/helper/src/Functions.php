@@ -38,7 +38,7 @@ if (! function_exists('retry')) {
      *
      * @param float|int $times
      * @param int $sleep millisecond
-     * @throws \Throwable
+     * @throws Throwable
      */
     function retry($times, callable $callback, int $sleep = 0)
     {

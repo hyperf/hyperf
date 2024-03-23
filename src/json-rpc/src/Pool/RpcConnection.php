@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc\Pool;
 
 use Closure;
@@ -54,17 +55,17 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         return $this->connection->{$name};
     }
 
-    public function send(string $data): int|false
+    public function send(string $data): false|int
     {
         return $this->connection->sendAll($data);
     }
 
-    public function recv(float $timeout = 0): string|false
+    public function recv(float $timeout = 0): false|string
     {
         return $this->recvPacket($timeout);
     }
 
-    public function recvPacket(float $timeout = 0): string|false
+    public function recvPacket(float $timeout = 0): false|string
     {
         return $this->connection->recvPacket($timeout);
     }

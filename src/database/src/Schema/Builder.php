@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Schema;
 
 use Closure;
@@ -259,7 +260,7 @@ class Builder
     /**
      * Get the database connection instance.
      *
-     * @return \Hyperf\Database\Connection
+     * @return Connection
      */
     public function getConnection()
     {
@@ -288,8 +289,6 @@ class Builder
 
     /**
      * Execute the blueprint to build / modify the table.
-     *
-     * @param \Hyperf\Database\Schema\Blueprint $blueprint
      */
     protected function build(Blueprint $blueprint)
     {
@@ -300,7 +299,7 @@ class Builder
      * Create a new command set with a Closure.
      *
      * @param string $table
-     * @return \Hyperf\Database\Schema\Blueprint
+     * @return Blueprint
      */
     protected function createBlueprint($table, ?Closure $callback = null)
     {

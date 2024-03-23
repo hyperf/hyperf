@@ -18,7 +18,8 @@
     "require": {
         "php": ">=8.1",
         "hyperf/contract": "~3.1.0",
-        "hyperf/support": "~3.1.0"
+        "hyperf/support": "~3.1.0",
+        "jetbrains/phpstorm-attributes": "^1.0"
     },
     "suggest": {
         "hyperf/event": "Required to use RegisterServiceListener.",

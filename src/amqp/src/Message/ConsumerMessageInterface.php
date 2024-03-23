@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\QueueBuilder;
@@ -40,9 +41,9 @@ interface ConsumerMessageInterface extends MessageInterface
 
     public function setMaxConsumption(int $maxConsumption): static;
 
-    public function getWaitTimeout(): int|float;
+    public function getWaitTimeout(): float|int;
 
-    public function setWaitTimeout(int|float $timeout): static;
+    public function setWaitTimeout(float|int $timeout): static;
 
     public function setNums(int $nums): static;
 

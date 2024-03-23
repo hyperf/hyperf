@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Migrations;
 
 use Hyperf\Collection\Collection;
@@ -51,7 +52,7 @@ class StatusCommand extends BaseCommand
     /**
      * Get the status for the given ran migrations.
      *
-     * @return \Hyperf\Collection\Collection
+     * @return Collection
      */
     protected function getStatusFor(array $ran, array $batches)
     {

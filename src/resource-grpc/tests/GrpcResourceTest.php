@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ResourceGrpc;
 
 use HyperfTest\ResourceGrpc\Stubs\Grpc\AllReply;
@@ -20,6 +21,7 @@ use HyperfTest\ResourceGrpc\Stubs\Resources\AllReplyResource;
 use HyperfTest\ResourceGrpc\Stubs\Resources\HiReplyResource;
 use HyperfTest\ResourceGrpc\Stubs\Resources\HiUserResource;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\TestCase;
 
 use function Hyperf\Collection\collect;
 
@@ -28,7 +30,7 @@ use function Hyperf\Collection\collect;
  * @coversNothing
  */
 #[CoversNothing]
-class GrpcResourceTest extends \PHPUnit\Framework\TestCase
+class GrpcResourceTest extends TestCase
 {
     public function testResourceToMessage()
     {

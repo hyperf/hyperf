@@ -9,14 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database;
 
 use Closure;
 use DateTimeInterface;
 use Doctrine\DBAL\Connection as DoctrineConnection;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Column;
 use Exception;
 use Generator;
 use Hyperf\Collection\Arr;
+use Hyperf\Contracts\Events\Dispatcher;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Exception\InvalidArgumentException;
 use Hyperf\Database\Exception\QueryException;
@@ -129,7 +133,7 @@ class Connection implements ConnectionInterface
     /**
      * The instance of Doctrine connection.
      *
-     * @var \Doctrine\DBAL\Connection
+     * @var DoctrineConnection
      */
     protected mixed $doctrineConnection = null;
 
@@ -510,7 +514,7 @@ class Connection implements ConnectionInterface
     public function listen(Closure $callback)
     {
         // FIXME: Dynamic register query event.
-        $this->events?->listen(Events\QueryExecuted::class, $callback);
+        $this->events?->listen(QueryExecuted::class, $callback);
     }
 
     /**
@@ -583,7 +587,7 @@ class Connection implements ConnectionInterface
      *
      * @param string $table
      * @param string $column
-     * @return \Doctrine\DBAL\Schema\Column
+     * @return Column
      */
     public function getDoctrineColumn($table, $column)
     {
@@ -595,7 +599,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the Doctrine DBAL schema manager for the connection.
      *
-     * @return \Doctrine\DBAL\Schema\AbstractSchemaManager
+     * @return AbstractSchemaManager
      */
     public function getDoctrineSchemaManager()
     {
@@ -610,7 +614,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the Doctrine DBAL database connection instance.
      *
-     * @return \Doctrine\DBAL\Connection
+     * @return DoctrineConnection
      */
     public function getDoctrineConnection()
     {
@@ -740,7 +744,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the query grammar used by the connection.
      *
-     * @return \Hyperf\Database\Query\Grammars\Grammar
+     * @return QueryGrammar
      */
     public function getQueryGrammar()
     {
@@ -750,10 +754,9 @@ class Connection implements ConnectionInterface
     /**
      * Set the query grammar used by the connection.
      *
-     * @param \Hyperf\Database\Query\Grammars\Grammar $grammar
      * @return $this
      */
-    public function setQueryGrammar(Query\Grammars\Grammar $grammar)
+    public function setQueryGrammar(QueryGrammar $grammar)
     {
         $this->queryGrammar = $grammar;
 
@@ -775,10 +778,9 @@ class Connection implements ConnectionInterface
     /**
      * Set the schema grammar used by the connection.
      *
-     * @param \Hyperf\Database\Schema\Grammars\Grammar $grammar
      * @return $this
      */
-    public function setSchemaGrammar(Schema\Grammars\Grammar $grammar)
+    public function setSchemaGrammar(SchemaGrammar $grammar)
     {
         $this->schemaGrammar = $grammar;
 
@@ -806,7 +808,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the event dispatcher used by the connection.
      *
-     * @return \Hyperf\Contracts\Events\Dispatcher
+     * @return Dispatcher
      */
     public function getEventDispatcher()
     {

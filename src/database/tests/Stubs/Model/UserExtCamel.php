@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\Stubs\Model;
 
+use Carbon\Carbon;
 use Hyperf\Database\Model\Concerns\CamelCase;
 
 /**
@@ -19,8 +21,8 @@ use Hyperf\Database\Model\Concerns\CamelCase;
  * @property string $floatNum
  * @property string $str
  * @property string $json
- * @property \Carbon\Carbon $createdAt
- * @property \Carbon\Carbon $updatedAt
+ * @property Carbon $createdAt
+ * @property Carbon $updatedAt
  */
 class UserExtCamel extends Model
 {

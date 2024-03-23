@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Context\ResponseContext;
@@ -29,6 +30,7 @@ use Hyperf\RpcServer\Server;
 use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Server\ServerManager;
 use Psr\Container\ContainerInterface;
+use Swoole\Server\Port;
 use Swow\Psr7\Message\ResponsePlusInterface;
 use Swow\Psr7\Message\ServerRequestPlusInterface;
 
@@ -120,7 +122,7 @@ class TcpServer extends Server
         if (! isset($data['params'])) {
             $data['params'] = [];
         }
-        /** @var \Swoole\Server\Port $port */
+        /** @var Port $port */
         [, $port] = ServerManager::get($this->serverName);
 
         $uri = (new Uri())->setPath($data['method'])->setHost($port->host)->setPort($port->port);

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\SQLite\Schema\Grammars;
 
 use Hyperf\Collection\Arr;
@@ -581,7 +582,7 @@ SQL;
     /**
      * Get the SQL for the foreign key.
      *
-     * @param \Hyperf\Support\Fluent $foreign
+     * @param Fluent $foreign
      */
     protected function getForeignKey($foreign): string
     {

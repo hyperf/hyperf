@@ -9,11 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations\Concerns;
 
 use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Relations\Pivot;
+use Hyperf\Database\Query\Builder;
 
 use function Hyperf\Collection\collect;
 
@@ -75,7 +78,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs without detaching.
      *
-     * @param array|\Hyperf\Collection\Collection|\Hyperf\Database\Model\Model $ids
+     * @param array|BaseCollection|Model $ids
      * @return array
      */
     public function syncWithoutDetaching($ids)
@@ -86,7 +89,7 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs or collection of models.
      *
-     * @param array|\Hyperf\Collection\Collection|\Hyperf\Database\Model\Model $ids
+     * @param array|BaseCollection|Model $ids
      * @param bool $detaching
      * @return array
      */
@@ -220,7 +223,7 @@ trait InteractsWithPivotTable
      * Create a new pivot model instance.
      *
      * @param bool $exists
-     * @return \Hyperf\Database\Model\Relations\Pivot
+     * @return Pivot
      */
     public function newPivot(array $attributes = [], $exists = false)
     {
@@ -238,7 +241,7 @@ trait InteractsWithPivotTable
     /**
      * Create a new existing pivot model instance.
      *
-     * @return \Hyperf\Database\Model\Relations\Pivot
+     * @return Pivot
      */
     public function newExistingPivot(array $attributes = [])
     {
@@ -248,7 +251,7 @@ trait InteractsWithPivotTable
     /**
      * Get a new plain query builder for the pivot table.
      *
-     * @return \Hyperf\Database\Query\Builder
+     * @return Builder
      */
     public function newPivotStatement()
     {
@@ -259,7 +262,7 @@ trait InteractsWithPivotTable
      * Get a new pivot statement for a given "other" ID.
      *
      * @param mixed $id
-     * @return \Hyperf\Database\Query\Builder
+     * @return Builder
      */
     public function newPivotStatementForId($id)
     {
@@ -459,7 +462,7 @@ trait InteractsWithPivotTable
     /**
      * Create a new query builder for the pivot table.
      *
-     * @return \Hyperf\Database\Query\Builder
+     * @return Builder
      */
     protected function newPivotQuery()
     {

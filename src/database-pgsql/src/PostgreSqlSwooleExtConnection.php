@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\PgSQL;
 
 use Exception;
 use Generator;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Exception\QueryException;
+use Hyperf\Database\Grammar;
 use Hyperf\Database\PgSQL\Concerns\PostgreSqlSwooleExtManagesTransactions;
 use Hyperf\Database\PgSQL\DBAL\PostgresDriver;
 use Hyperf\Database\PgSQL\Query\Grammars\PostgresSqlSwooleExtGrammar as QueryGrammar;
@@ -195,7 +197,7 @@ class PostgreSqlSwooleExtConnection extends Connection
 
     /**
      * Get the default query grammar instance.
-     * @return \Hyperf\Database\Grammar
+     * @return Grammar
      */
     protected function getDefaultQueryGrammar(): QueryGrammar
     {

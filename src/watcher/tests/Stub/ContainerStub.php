@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Watcher\Stub;
 
 use Hyperf\Config\Config;
@@ -21,7 +22,7 @@ use Psr\Container\ContainerInterface;
 
 class ContainerStub
 {
-    public static function getContainer(string $driver): MockInterface|ContainerInterface
+    public static function getContainer(string $driver): ContainerInterface|MockInterface
     {
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);

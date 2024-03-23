@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
 use Hyperf\Context\ApplicationContext;
@@ -17,6 +18,7 @@ use Hyperf\Di\Definition\DefinitionSource;
 use HyperfTest\Di\Stub\Bar;
 use HyperfTest\Di\Stub\Demo;
 use HyperfTest\Di\Stub\Foo;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function Hyperf\Support\make;
@@ -25,7 +27,7 @@ use function Hyperf\Support\make;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Di\Container::class)]
+#[CoversClass(Container::class)]
 /**
  * @internal
  * @coversNothing

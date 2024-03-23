@@ -9,16 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Serializer;
 
 use Doctrine\Instantiator\Instantiator;
 use Hyperf\Di\ReflectionManager;
+use ReflectionException;
 use RuntimeException;
 use Serializable;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Throwable;
+use TypeError;
 
 use function get_class;
 
@@ -47,13 +50,13 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
                     }
                 }
                 return $exception;
-            } catch (\ReflectionException) {
+            } catch (ReflectionException) {
                 return new RuntimeException(sprintf(
                     'Bad data %s: %s',
                     $data['class'],
                     $data['message']
                 ), $data['code']);
-            } catch (\TypeError) {
+            } catch (TypeError) {
                 return new RuntimeException(sprintf(
                     'Uncaught data %s: %s',
                     $data['class'],

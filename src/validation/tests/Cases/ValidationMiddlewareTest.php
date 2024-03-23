@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Context\ApplicationContext;
@@ -91,7 +92,7 @@ class ValidationMiddlewareTest extends TestCase
         $router = $factory->getRouter('http');
         $router->addRoute('POST', '/sign-up', 'HyperfTest\Validation\Cases\Stub\DemoController@signUp');
         $router->addRoute('POST', '/sign-in', 'HyperfTest\Validation\Cases\Stub\DemoController::signIn');
-        $router->addRoute('POST', '/sign-out', [\HyperfTest\Validation\Cases\Stub\DemoController::class, 'signOut']);
+        $router->addRoute('POST', '/sign-out', [DemoController::class, 'signOut']);
         $router->addRoute('POST', '/info/{id:\d}', 'HyperfTest\Validation\Cases\Stub\DemoController::info');
 
         $dispatcher = $factory->getDispatcher('http');

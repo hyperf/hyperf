@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Command\Listener;
 
 use Hyperf\Command\Annotation\AsCommand as AsCommandAnnotation;
@@ -18,6 +19,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ContainerInterface as ContainerPlusInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\MultipleAnnotation;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Psr\Container\ContainerInterface;
@@ -72,7 +74,7 @@ class RegisterCommandListener implements ListenerInterface
         $commands = AnnotationCollector::getMethodsByAnnotation(AsCommandAnnotation::class);
 
         foreach ($commands as $metadata) {
-            /** @var \Hyperf\Di\Annotation\MultipleAnnotation $multiAnnotation */
+            /** @var MultipleAnnotation $multiAnnotation */
             $multiAnnotation = $metadata['annotation'];
             /** @var AsCommandAnnotation[] $annotations */
             $annotations = $multiAnnotation->toAnnotations();
