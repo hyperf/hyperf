@@ -24,7 +24,8 @@
         "hyperf/codec": "~3.1.0",
         "hyperf/contract": "~3.1.0",
         "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0"
+        "hyperf/utils": "~3.1.0",
+        "jetbrains/phpstorm-attributes": "^1.0"
     },
     "suggests": {
         "google/protobuf": "Required to use nacos v2 grpc apis.",
