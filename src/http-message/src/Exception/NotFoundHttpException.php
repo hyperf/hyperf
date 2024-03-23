@@ -15,7 +15,7 @@ use Throwable;
 
 class NotFoundHttpException extends HttpException
 {
-    public function __construct($message = null, $code = 0, Throwable $previous = null)
+    public function __construct($message = null, $code = 0, ?Throwable $previous = null)
     {
         parent::__construct(404, $message, $code, $previous);
     }

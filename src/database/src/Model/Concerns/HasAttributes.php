@@ -542,7 +542,7 @@ trait HasAttributes
     /**
      * Sync the changed attributes.
      */
-    public function syncChanges(array $columns = null): static
+    public function syncChanges(?array $columns = null): static
     {
         $changes = $this->getDirty();
 

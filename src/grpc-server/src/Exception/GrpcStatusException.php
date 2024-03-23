@@ -38,7 +38,7 @@ class GrpcStatusException extends GrpcException
      */
     protected array $statusDetails = [];
 
-    public function __construct($message = '', $code = 0, Throwable $previous = null, protected ?Status $status = null)
+    public function __construct($message = '', $code = 0, ?Throwable $previous = null, protected ?Status $status = null)
     {
         parent::__construct($message, $code, $previous);
 

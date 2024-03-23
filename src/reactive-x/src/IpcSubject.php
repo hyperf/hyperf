@@ -57,7 +57,7 @@ class IpcSubject implements MessageBusInterface
         $this->isSubscribed = true;
     }
 
-    public function subscribe($onNextOrObserver = null, callable $onError = null, callable $onCompleted = null): DisposableInterface
+    public function subscribe($onNextOrObserver = null, ?callable $onError = null, ?callable $onCompleted = null): DisposableInterface
     {
         $this->init();
         return $this->subject->subscribe($onNextOrObserver, $onError, $onCompleted);

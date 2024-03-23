@@ -27,7 +27,7 @@ trait Conditionable
      * @param null|mixed $value
      * @return $this|TWhenReturnType
      */
-    public function when($value = null, callable $callback = null, callable $default = null)
+    public function when($value = null, ?callable $callback = null, ?callable $default = null)
     {
         $value = $value instanceof Closure ? $value($this) : $value;
 
@@ -61,7 +61,7 @@ trait Conditionable
      * @param null|mixed $value
      * @return $this|TUnlessReturnType
      */
-    public function unless($value = null, callable $callback = null, callable $default = null)
+    public function unless($value = null, ?callable $callback = null, ?callable $default = null)
     {
         $value = $value instanceof Closure ? $value($this) : $value;
 

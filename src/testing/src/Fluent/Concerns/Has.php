@@ -23,7 +23,7 @@ trait Has
      * @param int|string $key
      * @return $this
      */
-    public function count($key, int $length = null): self
+    public function count($key, ?int $length = null): self
     {
         if (is_null($length)) {
             $path = $this->dotPath();
@@ -55,7 +55,7 @@ trait Has
      * @param null|Closure|int $length
      * @return $this
      */
-    public function has($key, $length = null, Closure $callback = null): self
+    public function has($key, $length = null, ?Closure $callback = null): self
     {
         $prop = $this->prop();
 
@@ -198,7 +198,7 @@ trait Has
      *
      * @return mixed
      */
-    abstract protected function prop(string $key = null);
+    abstract protected function prop(?string $key = null);
 
     /**
      * Instantiate a new "scope" at the path of the given key.

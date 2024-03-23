@@ -223,7 +223,7 @@ class GrpcClient
         return $this->getHttpClient()->write($streamId, $data, $end);
     }
 
-    public function recv(int $streamId, float $timeout = null)
+    public function recv(int $streamId, ?float $timeout = null)
     {
         if (! $this->isConnected() || $streamId <= 0 || ! $this->isStreamExist($streamId)) {
             return false;

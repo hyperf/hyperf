@@ -77,7 +77,7 @@ class Package
     /**
      * Get resource bundle object.
      */
-    public function bundle(Finder $finder = null): Bundle
+    public function bundle(?Finder $finder = null): Bundle
     {
         $bundle = new Bundle();
         $dir = $this->getDirectory();

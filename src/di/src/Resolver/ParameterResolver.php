@@ -24,8 +24,8 @@ class ParameterResolver
     }
 
     public function resolveParameters(
-        MethodInjection $definition = null,
-        ReflectionMethod $method = null,
+        ?MethodInjection $definition = null,
+        ?ReflectionMethod $method = null,
         array $parameters = []
     ): array {
         $args = [];

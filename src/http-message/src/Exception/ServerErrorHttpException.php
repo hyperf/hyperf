@@ -15,7 +15,7 @@ use Throwable;
 
 class ServerErrorHttpException extends HttpException
 {
-    public function __construct($message = null, $code = 0, Throwable $previous = null)
+    public function __construct($message = null, $code = 0, ?Throwable $previous = null)
     {
         parent::__construct(500, $message, $code, $previous);
     }

@@ -78,7 +78,7 @@ class Parser
     /**
      * Parse each segment of crontab string.
      */
-    protected function parseSegment(string $string, int $min, int $max, int $start = null)
+    protected function parseSegment(string $string, int $min, int $max, ?int $start = null)
     {
         if ($start === null || $start < $min) {
             $start = $min;

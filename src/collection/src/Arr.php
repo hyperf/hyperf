@@ -127,7 +127,7 @@ class Arr
     /**
      * Return the first element in an array passing a given truth test.
      */
-    public static function first(array $array, callable $callback = null, mixed $default = null): mixed
+    public static function first(array $array, ?callable $callback = null, mixed $default = null): mixed
     {
         if (is_null($callback)) {
             if (empty($array)) {
@@ -148,7 +148,7 @@ class Arr
     /**
      * Return the last element in an array passing a given truth test.
      */
-    public static function last(array $array, callable $callback = null, mixed $default = null): mixed
+    public static function last(array $array, ?callable $callback = null, mixed $default = null): mixed
     {
         if (is_null($callback)) {
             return empty($array) ? value($default) : end($array);
@@ -419,7 +419,7 @@ class Arr
      *
      * @throws InvalidArgumentException
      */
-    public static function random(array $array, int $number = null): mixed
+    public static function random(array $array, ?int $number = null): mixed
     {
         $requested = is_null($number) ? 1 : $number;
         $count = count($array);
@@ -471,7 +471,7 @@ class Arr
     /**
      * Shuffle the given array and return the result.
      */
-    public static function shuffle(array $array, int $seed = null): array
+    public static function shuffle(array $array, ?int $seed = null): array
     {
         if (empty($array)) {
             return [];

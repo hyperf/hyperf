@@ -26,7 +26,7 @@ class SocketIORouter extends MetadataCollector
         static::set('backward.' . $className, $nsp);
     }
 
-    public static function clear(string $key = null): void
+    public static function clear(?string $key = null): void
     {
         if ($key !== null) {
             parent::clear('backward.' . $key);

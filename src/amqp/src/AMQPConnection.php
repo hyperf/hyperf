@@ -64,7 +64,7 @@ class AMQPConnection extends AbstractConnection
         string $login_method = 'AMQPLAIN',
         $login_response = null,
         string $locale = 'en_US',
-        AbstractIO $io = null,
+        ?AbstractIO $io = null,
         int $heartbeat = 0,
         int $connection_timeout = 0,
         float $channel_rpc_timeout = 0.0

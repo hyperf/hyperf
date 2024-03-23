@@ -313,7 +313,7 @@ abstract class Relation
      * @param bool $merge
      * @return array
      */
-    public static function morphMap(array $map = null, $merge = true)
+    public static function morphMap(?array $map = null, $merge = true)
     {
         $map = static::buildMorphMapFromModels($map);
 
@@ -382,7 +382,7 @@ abstract class Relation
      * @param null|string[] $models
      * @return null|array
      */
-    protected static function buildMorphMapFromModels(array $models = null)
+    protected static function buildMorphMapFromModels(?array $models = null)
     {
         if (is_null($models) || Arr::isAssoc($models)) {
             return $models;

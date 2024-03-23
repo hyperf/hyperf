@@ -32,7 +32,7 @@ class Vertex
      */
     public array $children = [];
 
-    public static function make(callable $job, string $key = null): self
+    public static function make(callable $job, ?string $key = null): self
     {
         $closure = Closure::fromCallable($job);
         if ($key === null) {
@@ -45,7 +45,7 @@ class Vertex
         return $v;
     }
 
-    public static function of(Runner $job, string $key = null): self
+    public static function of(Runner $job, ?string $key = null): self
     {
         if ($key === null) {
             $key = spl_object_hash($job);

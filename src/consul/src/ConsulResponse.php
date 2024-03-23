@@ -32,7 +32,7 @@ class ConsulResponse
         return $this->response->{$name}(...$arguments);
     }
 
-    public function json(string $key = null, $default = null)
+    public function json(?string $key = null, $default = null)
     {
         if ($this->response->getHeaderLine('content-type') !== 'application/json') {
             throw new ServerException('The Content-Type of response is not equal application/json');

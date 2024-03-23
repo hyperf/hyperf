@@ -15,7 +15,7 @@ class FooTraitCommand extends \Hyperf\Command\Command
 {
     use Traits\Foo;
 
-    public function __construct(string $name = null)
+    public function __construct(?string $name = null)
     {
         parent::__construct($name);
     }

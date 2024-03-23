@@ -25,7 +25,7 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
         return get_class($this) === __CLASS__;
     }
 
-    public function denormalize($data, string $type, string $format = null, array $context = [])
+    public function denormalize($data, string $type, ?string $format = null, array $context = [])
     {
         return match ($type) {
             'int' => (int) $data,
@@ -36,7 +36,7 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
         };
     }
 
-    public function supportsDenormalization($data, $type, string $format = null)
+    public function supportsDenormalization($data, $type, ?string $format = null)
     {
         return in_array($type, [
             'int',
@@ -48,12 +48,12 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
         ]);
     }
 
-    public function normalize($object, string $format = null, array $context = [])
+    public function normalize($object, ?string $format = null, array $context = [])
     {
         return $object;
     }
 
-    public function supportsNormalization($data, string $format = null)
+    public function supportsNormalization($data, ?string $format = null)
     {
         return is_scalar($data);
     }

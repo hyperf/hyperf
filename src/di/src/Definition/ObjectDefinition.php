@@ -23,7 +23,7 @@ class ObjectDefinition implements DefinitionInterface
 
     private bool $instantiable = false;
 
-    public function __construct(private string $name, string $className = null)
+    public function __construct(private string $name, ?string $className = null)
     {
         $this->setClassName($className ?? $name);
     }
@@ -44,7 +44,7 @@ class ObjectDefinition implements DefinitionInterface
         return $this;
     }
 
-    public function setClassName(string $className = null): void
+    public function setClassName(?string $className = null): void
     {
         $this->className = $className;
 

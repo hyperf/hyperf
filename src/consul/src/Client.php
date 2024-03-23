@@ -37,7 +37,7 @@ abstract class Client
      */
     private $logger;
 
-    public function __construct(Closure $clientFactory, LoggerInterface $logger = null)
+    public function __construct(Closure $clientFactory, ?LoggerInterface $logger = null)
     {
         $this->clientFactory = $clientFactory;
         $this->logger = $logger ?: new NullLogger();

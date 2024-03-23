@@ -40,7 +40,7 @@ class Finder implements FinderInterface
     /**
      * Create a new file view loader instance.
      */
-    public function __construct(protected Filesystem $files, array $paths, array $extensions = null)
+    public function __construct(protected Filesystem $files, array $paths, ?array $extensions = null)
     {
         $this->paths = array_map([$this, 'resolvePath'], $paths);
 

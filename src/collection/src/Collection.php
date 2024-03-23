@@ -188,7 +188,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param  (callable(int): TTimesValue)|null  $callback
      * @return static<int, TTimesValue>
      */
-    public static function times(int $number, callable $callback = null): self
+    public static function times(int $number, ?callable $callback = null): self
     {
         if ($number < 1) {
             return new static();
@@ -514,7 +514,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param (callable(TValue, TKey): bool)|null $callback
      * @return static<TKey, TValue>
      */
-    public function filter(callable $callback = null): self
+    public function filter(?callable $callback = null): self
     {
         if ($callback) {
             return new static(Arr::where($this->items, $callback));
@@ -529,7 +529,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param callable($this, $value): $this $default
      * @return $this
      */
-    public function when(bool $value, callable $callback, callable $default = null): self
+    public function when(bool $value, callable $callback, ?callable $default = null): self
     {
         if ($value) {
             return $callback($this, $value);
@@ -547,7 +547,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param callable($this): null|$this $default
      * @return $this
      */
-    public function unless(bool $value, callable $callback, callable $default = null): self
+    public function unless(bool $value, callable $callback, ?callable $default = null): self
     {
         return $this->when(! $value, $callback, $default);
     }
@@ -647,7 +647,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param TFirstDefault|(\Closure(): TFirstDefault)  $default
      * @return TFirstDefault|TValue
      */
-    public function first(callable $callback = null, $default = null)
+    public function first(?callable $callback = null, $default = null)
     {
         return Arr::first($this->items, $callback, $default);
     }
@@ -786,7 +786,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Concatenate values of a given key as a string.
      */
-    public function implode(string $value, string $glue = null): string
+    public function implode(string $value, ?string $glue = null): string
     {
         $first = $this->first();
         if (is_array($first) || is_object($first)) {
@@ -850,7 +850,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param  TLastDefault|(\Closure(): TLastDefault)  $default
      * @return TLastDefault|TValue
      */
-    public function last(callable $callback = null, $default = null)
+    public function last(?callable $callback = null, $default = null)
     {
         return Arr::last($this->items, $callback, $default);
     }
@@ -1197,7 +1197,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @return static<int, TValue>|TValue
      * @throws InvalidArgumentException
      */
-    public function random(int $number = null)
+    public function random(?int $number = null)
     {
         if (is_null($number)) {
             return Arr::random($this->items);
@@ -1304,7 +1304,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @return static<TKey, TValue>
      */
-    public function shuffle(int $seed = null): self
+    public function shuffle(?int $seed = null): self
     {
         return new static(Arr::shuffle($this->items, $seed));
     }
@@ -1314,7 +1314,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @return static<TKey, TValue>
      */
-    public function slice(int $offset, int $length = null): self
+    public function slice(int $offset, ?int $length = null): self
     {
         return new static(array_slice($this->items, $offset, $length, true));
     }
@@ -1369,7 +1369,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param callable(TValue, TValue): int $callback
      * @return static<TKey, TValue>
      */
-    public function sort(callable $callback = null): self
+    public function sort(?callable $callback = null): self
     {
         $items = $this->items;
         $callback ? uasort($items, $callback) : asort($items);
@@ -1445,7 +1445,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param array<array-key, TValue> $replacement
      * @return static<TKey, TValue>
      */
-    public function splice(int $offset, int $length = null, $replacement = []): self
+    public function splice(int $offset, ?int $length = null, $replacement = []): self
     {
         if (func_num_args() === 1) {
             return new static(array_splice($this->items, $offset));

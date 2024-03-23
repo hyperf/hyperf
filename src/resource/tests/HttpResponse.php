@@ -309,7 +309,7 @@ class HttpResponse
      * @param null|array $responseData
      * @return $this
      */
-    public function assertJsonStructure(array $structure = null, $responseData = null)
+    public function assertJsonStructure(?array $structure = null, $responseData = null)
     {
         if (is_null($structure)) {
             return $this->assertExactJson($this->json());
