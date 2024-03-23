@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\AsyncQueue;
 
 use Hyperf\AsyncQueue\JobInterface;
 use Hyperf\AsyncQueue\JobMessage;
 use Hyperf\AsyncQueue\MessageInterface;
 use HyperfTest\AsyncQueue\Stub\DemoJob;
+use HyperfTest\AsyncQueue\Stub\OldJobMessage;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
@@ -99,8 +101,8 @@ class JobMessageTest extends TestCase
 
         $serialized = serialize($message);
         $serialized = str_replace(
-            sprintf('O:%d:"%s', strlen(\Hyperf\AsyncQueue\JobMessage::class), \Hyperf\AsyncQueue\JobMessage::class),
-            sprintf('O:%d:"%s', strlen(\HyperfTest\AsyncQueue\Stub\OldJobMessage::class), \HyperfTest\AsyncQueue\Stub\OldJobMessage::class),
+            sprintf('O:%d:"%s', strlen(JobMessage::class), JobMessage::class),
+            sprintf('O:%d:"%s', strlen(OldJobMessage::class), OldJobMessage::class),
             $serialized
         );
         $message = unserialize($serialized);
