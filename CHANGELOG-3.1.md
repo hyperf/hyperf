@@ -4,6 +4,10 @@
 
 - [#6613](https://github.com/hyperf/hyperf/pull/6613) Added event of release connection for `hyperf/pool`.
 
+## Optimized
+
+- [#6616](https://github.com/hyperf/hyperf/pull/6616) [#6617](https://github.com/hyperf/hyperf/pull/6617) Format code by the latest `cs-fixer`.
+
 # v3.1.14 - 2024-03-21
 
 ## Fixed
