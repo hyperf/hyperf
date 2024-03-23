@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Adapter;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Tracer\Adapter\Reporter\ReporterFactory;
 use Hyperf\Tracer\Contract\NamedFactoryInterface;
 use Zipkin\Endpoint;
+use Zipkin\Reporters\Http;
 use Zipkin\Samplers\BinarySampler;
 use Zipkin\TracingBuilder;
 use ZipkinOpenTracing\Tracer;
@@ -56,7 +58,7 @@ class ZipkinTracerFactory implements NamedFactoryInterface
             ]),
             $this->getConfig('sampler', BinarySampler::createAsAlwaysSample()),
             $this->getConfig('reporters.' . $reporter, [
-                'class' => \Zipkin\Reporters\Http::class,
+                'class' => Http::class,
                 'constructor' => [
                     'options' => $this->getConfig('options', []),
                 ],

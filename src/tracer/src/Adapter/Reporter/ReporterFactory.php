@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Adapter\Reporter;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Zipkin\Reporter;
+use Zipkin\Reporters\Http;
 
 use function Hyperf\Support\make;
 
@@ -38,7 +40,7 @@ class ReporterFactory
             throw new RuntimeException('Unsupported reporter.');
         }
 
-        if ($class === \Zipkin\Reporters\Http::class) {
+        if ($class === Http::class) {
             $constructor['requesterFactory'] = $this->container->get(HttpClientFactory::class);
         }
 
