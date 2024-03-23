@@ -9,15 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\SQLite;
 
 use Closure;
+use Doctrine\DBAL\Driver\PDO\SQLite\Driver;
 use Doctrine\DBAL\Driver\PDO\SQLite\Driver as DoctrineDriver;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Query\Grammars\Grammar as HyperfQueryGrammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Database\Schema\Builder as SchemaBuilder;
 use Hyperf\Database\Schema\Grammars\Grammar as HyperfSchemaGrammar;
+use Hyperf\Database\SQLite\Query\Grammars\SQLiteGrammar;
 use Hyperf\Database\SQLite\Query\Grammars\SQLiteGrammar as QueryGrammar;
 use Hyperf\Database\SQLite\Query\Processors\SQLiteProcessor;
 use Hyperf\Database\SQLite\Schema\Grammars\SQLiteGrammar as SchemaGrammar;
@@ -51,7 +54,7 @@ class SQLiteConnection extends Connection
     /**
      * Get a schema builder instance for the connection.
      *
-     * @return \Hyperf\Database\SQLite\Schema\SQLiteBuilder
+     * @return SQLiteBuilder
      */
     public function getSchemaBuilder(): SchemaBuilder
     {
@@ -65,7 +68,7 @@ class SQLiteConnection extends Connection
     /**
      * Get the default query grammar instance.
      *
-     * @return \Hyperf\Database\SQLite\Query\Grammars\SQLiteGrammar
+     * @return SQLiteGrammar
      */
     protected function getDefaultQueryGrammar(): HyperfQueryGrammar
     {
@@ -76,7 +79,7 @@ class SQLiteConnection extends Connection
     /**
      * Get the default schema grammar instance.
      *
-     * @return \Hyperf\Database\SQLite\Schema\Grammars\SQLiteGrammar
+     * @return SchemaGrammar
      */
     protected function getDefaultSchemaGrammar(): HyperfSchemaGrammar
     {
@@ -87,7 +90,7 @@ class SQLiteConnection extends Connection
     /**
      * Get the default post processor instance.
      *
-     * @return \Hyperf\Database\SQLite\Query\Processors\SQLiteProcessor
+     * @return SQLiteProcessor
      */
     protected function getDefaultPostProcessor(): Processor
     {
@@ -97,7 +100,7 @@ class SQLiteConnection extends Connection
     /**
      * Get the Doctrine DBAL driver.
      *
-     * @return \Doctrine\DBAL\Driver\PDO\SQLite\Driver
+     * @return Driver
      */
     protected function getDoctrineDriver()
     {
