@@ -135,12 +135,13 @@ class UserExtEmpty extends Model
         $this->assertEquals($this->license . "
 namespace HyperfTest\\Database\\Stubs\\Model;
 
+use Carbon\Carbon;
 /**
  * @property int \$id 
  * @property string \$name 
  * @property \\HyperfTest\\Database\\Stubs\\Model\\Gender \$gender 
- * @property \\Carbon\\Carbon \$created_at 
- * @property \\Carbon\\Carbon \$updated_at 
+ * @property Carbon \$created_at 
+ * @property Carbon \$updated_at 
  * @property-read null|Book \$book 
  */
 class UserEnum extends Model
