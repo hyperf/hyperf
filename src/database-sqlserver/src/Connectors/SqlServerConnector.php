@@ -15,6 +15,7 @@ use Exception;
 use Hyperf\Collection\Arr;
 use Hyperf\Database\Connectors\Connector;
 use Hyperf\Database\Connectors\ConnectorInterface;
+use Hyperf\Database\Sqlsrv\Exception\InvalidDriverException;
 use PDO;
 
 class SqlServerConnector extends Connector implements ConnectorInterface
@@ -74,11 +75,11 @@ class SqlServerConnector extends Connector implements ConnectorInterface
         if ($this->prefersOdbc($config)) {
             return $this->getOdbcDsn($config);
         }
-
-        if (in_array('sqlsrv', $this->getAvailableDrivers())) {
-            return $this->getSqlSrvDsn($config);
-        }
-        return $this->getDblibDsn($config);
+        throw new InvalidDriverException("Coroutines processing is now only supported for pdo_odbc.");
+        // if (in_array('sqlsrv', $this->getAvailableDrivers())) {
+        //     return $this->getSqlSrvDsn($config);
+        // }
+        // return $this->getDblibDsn($config);
     }
 
     /**
