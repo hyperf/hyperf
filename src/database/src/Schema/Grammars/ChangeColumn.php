@@ -13,8 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Database\Schema\Grammars;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
-use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\DBAL\Types\Type;
@@ -40,14 +38,18 @@ class ChangeColumn
             ));
         }
 
+        $schema = $connection->getDoctrineSchemaManager();
+        $databasePlatform = $connection->getDoctrineConnection()->getDatabasePlatform();
+        $databasePlatform->registerDoctrineTypeMapping('enum', 'string');
+
         $tableDiff = static::getChangedDiff(
             $grammar,
             $blueprint,
-            $schema = $connection->getDoctrineSchemaManager()
+            $schema
         );
 
         if ($tableDiff !== false) {
-            return (array) $schema->getDatabasePlatform()->getAlterTableSQL($tableDiff);
+            return (array) $databasePlatform->getAlterTableSQL($tableDiff);
         }
 
         return [];
@@ -63,7 +65,7 @@ class ChangeColumn
     {
         $current = $schema->introspectTable($grammar->getTablePrefix() . $blueprint->getTable());
 
-        return (new Comparator())->diffTable(
+        return $schema->createComparator()->compareTables(
             $current,
             static::getTableWithColumnChanges($blueprint, $current)
         );

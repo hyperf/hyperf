@@ -605,10 +605,7 @@ class Connection implements ConnectionInterface
     {
         $connection = $this->getDoctrineConnection();
 
-        return $this->getDoctrineDriver()->getSchemaManager(
-            $connection,
-            $connection->getDatabasePlatform()
-        );
+        return $connection->getDatabasePlatform()->createSchemaManager($connection);
     }
 
     /**
