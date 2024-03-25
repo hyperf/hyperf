@@ -137,10 +137,8 @@ class Connection implements ServerInfoAwareConnection
 
     /**
      * Get the server version for the connection.
-     *
-     * @return string
      */
-    public function getServerVersion()
+    public function getServerVersion(): string
     {
         return $this->connection->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
