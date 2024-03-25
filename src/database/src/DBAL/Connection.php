@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\DBAL;
 
+use Doctrine\DBAL\Driver\Connection as ConnectionInterface;
 use Doctrine\DBAL\Driver\PDO\Exception;
 use Doctrine\DBAL\Driver\PDO\Result;
 use Doctrine\DBAL\Driver\PDO\Statement;
 use Doctrine\DBAL\Driver\Result as ResultInterface;
-use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\Driver\Statement as StatementInterface;
 use Doctrine\DBAL\ParameterType;
 use PDO;
@@ -25,7 +25,7 @@ use PDOStatement;
 
 use function assert;
 
-class Connection implements ServerInfoAwareConnection
+class Connection implements ConnectionInterface
 {
     /**
      * Create a new PDO connection instance.
@@ -147,6 +147,11 @@ class Connection implements ServerInfoAwareConnection
      * Get the wrapped PDO connection.
      */
     public function getWrappedConnection(): PDO
+    {
+        return $this->connection;
+    }
+
+    public function getNativeConnection()
     {
         return $this->connection;
     }
