@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Schema\Grammars;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
+use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\DBAL\Types\Type;
@@ -38,18 +39,14 @@ class ChangeColumn
             ));
         }
 
-        $schema = $connection->getDoctrineSchemaManager();
-        $databasePlatform = $connection->getDoctrineConnection()->getDatabasePlatform();
-        $databasePlatform->registerDoctrineTypeMapping('enum', 'string');
-
         $tableDiff = static::getChangedDiff(
             $grammar,
             $blueprint,
-            $schema
+            $schema = $connection->getDoctrineSchemaManager()
         );
 
         if ($tableDiff !== false) {
-            return (array) $databasePlatform->getAlterTableSQL($tableDiff);
+            return (array) $schema->getDatabasePlatform()->getAlterTableSQL($tableDiff);
         }
 
         return [];
@@ -63,9 +60,9 @@ class ChangeColumn
      */
     protected static function getChangedDiff($grammar, Blueprint $blueprint, SchemaManager $schema)
     {
-        $current = $schema->introspectTable($grammar->getTablePrefix() . $blueprint->getTable());
+        $current = $schema->listTableDetails($grammar->getTablePrefix() . $blueprint->getTable());
 
-        return $schema->createComparator()->compareTables(
+        return (new Comparator())->diffTable(
             $current,
             static::getTableWithColumnChanges($blueprint, $current)
         );
@@ -105,7 +102,7 @@ class ChangeColumn
      */
     protected static function getDoctrineColumn(Table $table, Fluent $fluent)
     {
-        return $table->modifyColumn(
+        return $table->changeColumn(
             $fluent['name'],
             static::getDoctrineColumnChangeOptions($fluent)
         )->getColumn($fluent['name']);

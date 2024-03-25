@@ -21,7 +21,7 @@ trait ConnectsToDatabase
     /**
      * Create a new database connection.
      */
-    public function connect(array $params): Connection
+    public function connect(array $params)
     {
         if (! isset($params['pdo']) || ! $params['pdo'] instanceof PDO) {
             throw new InvalidArgumentException('The "pdo" property must be required.');
