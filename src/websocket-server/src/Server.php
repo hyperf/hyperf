@@ -42,7 +42,7 @@ use Hyperf\Support\SafeCaller;
 use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Context as WsContext;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
-use Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException;
+use Hyperf\WebSocketServer\Exception\WebSocketHandShakeException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -130,7 +130,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
             $key = $psr7Request->getHeaderLine(Security::SEC_WEBSOCKET_KEY);
             if ($security->isInvalidSecurityKey($key)) {
-                throw new WebSocketHandeShakeException('sec-websocket-key is invalid!');
+                throw new WebSocketHandShakeException('sec-websocket-key is invalid!');
             }
 
             $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
