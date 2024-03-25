@@ -12,20 +12,19 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\DBAL;
 
-use Doctrine\DBAL\Driver\Connection as ConnectionInterface;
-use Doctrine\DBAL\Driver\Exception\IdentityColumnsNotSupported;
-use Doctrine\DBAL\Driver\Exception\NoIdentityValue;
 use Doctrine\DBAL\Driver\PDO\Exception;
 use Doctrine\DBAL\Driver\PDO\Result;
 use Doctrine\DBAL\Driver\PDO\Statement;
 use Doctrine\DBAL\Driver\Result as ResultInterface;
+use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
+use Doctrine\DBAL\ParameterType;
 use PDO;
 use PDOException;
 use PDOStatement;
 
 use function assert;
 
-class Connection implements ConnectionInterface
+class Connection implements ServerInfoAwareConnection
 {
     /**
      * Create a new PDO connection instance.
@@ -83,37 +82,20 @@ class Connection implements ConnectionInterface
     /**
      * Get the last insert ID.
      *
+     * @param null|mixed $name
      * @return string
      */
-    public function lastInsertId(): int|string
+    public function lastInsertId($name = null): int|string
     {
         try {
-            $value = $this->connection->lastInsertId();
+            if ($name === null) {
+                return $this->connection->lastInsertId();
+            }
+
+            return $this->connection->lastInsertId($name);
         } catch (PDOException $exception) {
-            assert($exception->errorInfo !== null);
-            [$sqlState] = $exception->errorInfo;
-
-            // if the PDO driver does not support this capability, PDO::lastInsertId() triggers an IM001 SQLSTATE
-            // see https://www.php.net/manual/en/pdo.lastinsertid.php
-            if ($sqlState === 'IM001') {
-                throw IdentityColumnsNotSupported::new();
-            }
-
-            // PDO PGSQL throws a 'lastval is not yet defined in this session' error when no identity value is
-            // available, with SQLSTATE 55000 'Object Not In Prerequisite State'
-            if ($sqlState === '55000' && $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
-                throw NoIdentityValue::new($exception);
-            }
-
             throw Exception::new($exception);
         }
-
-        // pdo_mysql & pdo_sqlite return '0', pdo_sqlsrv returns '' or false depending on the PHP version
-        if ($value === '0' || $value === '' || $value === false) {
-            throw NoIdentityValue::new();
-        }
-
-        return $value;
     }
 
     /**
@@ -154,10 +136,12 @@ class Connection implements ConnectionInterface
 
     /**
      * Wrap quotes around the given input.
+     * @param mixed $input
+     * @param mixed $type
      */
-    public function quote(string $value): string
+    public function quote($input, $type = ParameterType::STRING)
     {
-        return $this->connection->quote($value);
+        return $this->connection->quote($input, $type);
     }
 
     /**
