@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab\Strategy;
 
 use Carbon\Carbon;
@@ -28,6 +29,7 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use RuntimeException;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Throwable;
@@ -86,7 +88,7 @@ class Executor
                 case 'command':
                     $input = make(ArrayInput::class, [$crontab->getCallback()]);
                     $output = make(NullOutput::class);
-                    /** @var \Symfony\Component\Console\Application */
+                    /** @var Application */
                     $application = $this->container->get(ApplicationInterface::class);
                     $application->setAutoExit(false);
                     $application->setCatchExceptions(false);

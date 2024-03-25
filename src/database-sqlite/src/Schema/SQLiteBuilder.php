@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\SQLite\Schema;
 
 use Hyperf\Context\ApplicationContext;
@@ -83,7 +84,7 @@ class SQLiteBuilder extends Builder
      *
      * @param array|string $index
      */
-    public function hasIndex(string $table, $index, string $type = null): bool
+    public function hasIndex(string $table, $index, ?string $type = null): bool
     {
         $type = is_null($type) ? $type : strtolower($type);
 

@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Etcd\V3;
 
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Exception\BadResponseException;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @license https://github.com/ouqiang/etcd-php/blob/master/LICENSE
@@ -124,16 +127,19 @@ class EtcdClient
      * @param string $key
      * @param string $value
      * @param array $options 可选参数
-     * @param $options = [
-     *     'lease' => 1,
-     *     'prev_kv' => true,
-     *     'ignore_value' => true,
-     *     'ignore_lease' => true,
-     * ]
      * @return array
      */
-    public function put($key, $value, array $options = [])
-    {
+    public function put(
+        $key,
+        $value,
+        #[ArrayShape([
+            'lease' => 'int',
+            'prev_kv' => 'bool',
+            'ignore_value' => 'bool',
+            'ignore_lease' => 'bool',
+        ])]
+        array $options = []
+    ) {
         $params = [
             'key' => $key,
             'value' => $value,
@@ -159,24 +165,26 @@ class EtcdClient
      * Gets the key or a range of keys.
      *
      * @param string $key
-     * @param $options = [
-     *     'range_end' => '',
-     *     'limit' => 10,
-     *     'revision' => 10,
-     *     'sort_order' => 1,
-     *     'sort_target' => 1,
-     *     'serializable' => false,
-     *     'keys_only' => false,
-     *     'count_only' => false,
-     *     'min_mod_revision' => 1,
-     *     'max_mod_revision' => 1,
-     *     'min_create_revision' => 1,
-     *     'max_create_revision' => 1,
-     * ]
      * @return array
      */
-    public function get($key, array $options = [])
-    {
+    public function get(
+        $key,
+        #[ArrayShape([
+            'range_end' => 'string',
+            'limit' => 'int',
+            'revision' => 'int',
+            'sort_order' => 'int',
+            'sort_target' => 'int',
+            'serializable' => 'bool',
+            'keys_only' => 'bool',
+            'count_only' => 'bool',
+            'min_mod_revision' => 'int',
+            'max_mod_revision' => 'int',
+            'min_create_revision' => 'int',
+            'max_create_revision' => 'int',
+        ])]
+        array $options = []
+    ) {
         $params = [
             'key' => $key,
         ];
@@ -231,13 +239,16 @@ class EtcdClient
      * Removes the specified key or range of keys.
      *
      * @param string $key
-     * @param array $options
-     *                       string range_end
-     *                       bool   prev_kv
      * @return array
      */
-    public function del($key, array $options = [])
-    {
+    public function del(
+        $key,
+        #[ArrayShape([
+            'range_end' => 'string',
+            'prev_kv' => 'bool',
+        ])]
+        array $options = []
+    ) {
         $params = [
             'key' => $key,
         ];
@@ -663,7 +674,7 @@ class EtcdClient
      * @param array $params 请求参数
      * @param array $options 可选参数
      * @return array
-     * @throws \GuzzleHttp\Exception\BadResponseException
+     * @throws BadResponseException
      */
     protected function request($uri, array $params = [], array $options = [])
     {

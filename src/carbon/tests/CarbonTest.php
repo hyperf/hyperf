@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Carbon;
 
 use Carbon\Carbon as BaseCarbon;
@@ -17,13 +18,14 @@ use Hyperf\Carbon\Listener\CarbonListener;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
 /**
  * @internal
  * @coversNothing
  */
-class CarbonTest extends \PHPUnit\Framework\TestCase
+class CarbonTest extends TestCase
 {
     protected ?string $defaultLocale = null;
 

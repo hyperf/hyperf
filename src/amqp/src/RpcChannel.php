@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp;
 
 use Hyperf\Engine\Channel;
@@ -61,7 +62,7 @@ class RpcChannel
         return $this;
     }
 
-    public function wait(int $timeout): bool|AMQPMessage
+    public function wait(int $timeout): AMQPMessage|bool
     {
         $this->channel->wait(null, false, $timeout);
 

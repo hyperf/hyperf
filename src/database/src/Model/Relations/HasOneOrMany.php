@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Database\Model\Builder;
@@ -58,7 +59,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create and return an un-saved instance of the related model.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function make(array $attributes = [])
     {
@@ -119,7 +120,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param array $columns
      * @param mixed $id
-     * @return \Hyperf\Collection\Collection|\Hyperf\Database\Model\Model
+     * @return \Hyperf\Collection\Collection|Model
      */
     public function findOrNew($id, $columns = ['*'])
     {
@@ -135,7 +136,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function firstOrNew(array $attributes, array $values = [])
     {
@@ -151,7 +152,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the first related record matching the attributes or create it.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function firstOrCreate(array $attributes, array $values = [])
     {
@@ -165,7 +166,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function updateOrCreate(array $attributes, array $values = [])
     {
@@ -179,7 +180,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Attach a model instance to the parent model.
      *
-     * @return false|\Hyperf\Database\Model\Model
+     * @return false|Model
      */
     public function save(Model $model)
     {
@@ -206,7 +207,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a new instance of the related model.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function create(array $attributes = [])
     {
@@ -220,7 +221,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a Collection of new instances of the related model.
      *
-     * @return \Hyperf\Database\Model\Collection
+     * @return Collection
      */
     public function createMany(array $records)
     {
@@ -251,7 +252,7 @@ abstract class HasOneOrMany extends Relation
      * Add the constraints for a relationship query.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -266,7 +267,7 @@ abstract class HasOneOrMany extends Relation
      * Add the constraints for a relationship query on the same table.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {

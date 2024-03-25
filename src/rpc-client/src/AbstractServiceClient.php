@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcClient;
 
 use Hyperf\Contract\ConfigInterface;
@@ -134,7 +135,7 @@ abstract class AbstractServiceClient
         return $this->container->get(IdGenerator\UniqidIdGenerator::class);
     }
 
-    protected function createLoadBalancer(array $nodes, callable $refresh = null, bool $isLongPolling = false): LoadBalancerInterface
+    protected function createLoadBalancer(array $nodes, ?callable $refresh = null, bool $isLongPolling = false): LoadBalancerInterface
     {
         $loadBalancer = $this->loadBalancerManager->getInstance($this->serviceName, $this->loadBalancer)->setNodes($nodes);
         $refresh && $loadBalancer->refresh($refresh, $isLongPolling ? 1 : 5000);

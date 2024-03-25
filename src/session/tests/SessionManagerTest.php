@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Session;
 
 use Hyperf\Contract\ConfigInterface;
@@ -18,6 +19,7 @@ use Hyperf\Session\SessionManager;
 use Hyperf\Stringable\Str;
 use HyperfTest\Session\Stub\MockStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
@@ -26,7 +28,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Session\SessionManager::class)]
+#[CoversClass(SessionManager::class)]
 /**
  * @internal
  * @coversNothing

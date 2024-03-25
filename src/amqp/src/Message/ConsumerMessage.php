@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\QueueBuilder;
@@ -38,7 +39,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
 
     protected int $maxConsumption = 0;
 
-    protected int|float $waitTimeout = 0;
+    protected float|int $waitTimeout = 0;
 
     protected int $nums = 1;
 
@@ -113,12 +114,12 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this;
     }
 
-    public function getWaitTimeout(): int|float
+    public function getWaitTimeout(): float|int
     {
         return $this->waitTimeout;
     }
 
-    public function setWaitTimeout(int|float $timeout): static
+    public function setWaitTimeout(float|int $timeout): static
     {
         $this->waitTimeout = $timeout;
         return $this;

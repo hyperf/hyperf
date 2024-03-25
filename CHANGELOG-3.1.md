@@ -1,4 +1,18 @@
-# v3.1.14 - TBD
+# v3.1.15 - TBD
+
+## Added
+
+- [#6613](https://github.com/hyperf/hyperf/pull/6613) Added event of release connection for `hyperf/pool`.
+
+## Optimized
+
+- [#6616](https://github.com/hyperf/hyperf/pull/6616) [#6617](https://github.com/hyperf/hyperf/pull/6617) Format code by the latest `cs-fixer`.
+
+# v3.1.14 - 2024-03-21
+
+## Fixed
+
+- [#6609](https://github.com/hyperf/hyperf/pull/6609) Fixed bug that the configurations will be cleared when the `scan` configuration does not exist.
 
 ## Added
 
@@ -7,6 +21,7 @@
 ## Optimized
 
 - [#6600](https://github.com/hyperf/hyperf/pull/6600) Optimized the worker process to no longer output warn information after exiting.
+- [#6608](https://github.com/hyperf/hyperf/pull/6608) Optimized `CacheAheadAspect` which store cache in another coroutine instead of blocking current coroutine.
 
 # v3.1.13 - 2024-03-14
 

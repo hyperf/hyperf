@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Session\Handler;
 
 use SessionHandlerInterface;
@@ -41,7 +42,7 @@ class NullHandler implements SessionHandlerInterface
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.gc.php
      */
-    public function gc(int $max_lifetime): int|false
+    public function gc(int $max_lifetime): false|int
     {
         return 0;
     }
@@ -65,7 +66,7 @@ class NullHandler implements SessionHandlerInterface
      * @param string $id the session id to read data for
      * @return string
      */
-    public function read(string $id): string|false
+    public function read(string $id): false|string
     {
         return '';
     }

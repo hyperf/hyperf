@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\PgSQL\Schema;
 
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\ColumnDefinition;
+use Hyperf\Database\Schema\ForeignKeyDefinition;
 use Hyperf\Stringable\Str;
 
 class ForeignIdColumnDefinition extends ColumnDefinition
@@ -39,7 +41,7 @@ class ForeignIdColumnDefinition extends ColumnDefinition
      *
      * @param null|string $table
      * @param string $column
-     * @return \Hyperf\Database\Schema\ForeignKeyDefinition
+     * @return ForeignKeyDefinition
      */
     public function constrained($table = null, $column = 'id')
     {
@@ -50,7 +52,7 @@ class ForeignIdColumnDefinition extends ColumnDefinition
      * Specify which column this foreign ID references on another table.
      *
      * @param string $column
-     * @return \Hyperf\Database\Schema\ForeignKeyDefinition
+     * @return ForeignKeyDefinition
      */
     public function references($column)
     {

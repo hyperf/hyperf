@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab\Mutex;
 
 use Hyperf\Collection\Arr;
@@ -25,7 +26,7 @@ class RedisServerMutex implements ServerMutex
     /**
      * The unique name for node, like mac address.
      */
-    private null|string $macAddress;
+    private ?string $macAddress;
 
     private Timer $timer;
 

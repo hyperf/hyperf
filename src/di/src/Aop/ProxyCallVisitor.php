@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Aop;
 
 use Hyperf\Support\Composer;
@@ -94,7 +95,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 }
                 // Rewrite the method to proxy call method.
                 return $this->rewriteMethod($node);
-            case $node instanceof Node\Stmt\Trait_:
+            case $node instanceof Trait_:
                 // If the node is trait and php version >= 7.3, it can `use ProxyTrait` like class.
             case $node instanceof Class_ && ! $node->isAnonymous():
                 // Add use proxy traits.

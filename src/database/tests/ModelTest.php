@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
@@ -29,6 +30,8 @@ use Hyperf\Database\Model\Booted;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Events;
+use Hyperf\Database\Model\JsonEncodingException;
+use Hyperf\Database\Model\MassAssignmentException;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Model\Relations\BelongsTo;
@@ -1050,7 +1053,7 @@ class ModelTest extends TestCase
 
     public function testGlobalGuarded()
     {
-        $this->expectException(\Hyperf\Database\Model\MassAssignmentException::class);
+        $this->expectException(MassAssignmentException::class);
         $this->expectExceptionMessage('name');
 
         $model = new ModelStub();
@@ -1756,7 +1759,7 @@ class ModelTest extends TestCase
 
     public function testModelAttributeCastingFailsOnUnencodableData()
     {
-        $this->expectException(\Hyperf\Database\Model\JsonEncodingException::class);
+        $this->expectException(JsonEncodingException::class);
         $this->expectExceptionMessage('Unable to encode attribute [objectAttribute] for model [HyperfTest\Database\Stubs\ModelCastingStub] to JSON: Malformed UTF-8 characters, possibly incorrectly encoded.');
 
         $model = new ModelCastingStub();

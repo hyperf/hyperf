@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\IDEHelper;
 
 use Hyperf\IDEHelper\Visitor\AnnotationIDEVisitor;
 use Hyperf\Support\Composer;
 use ReflectionClass;
+use Throwable;
 
 class AnnotationGenerator
 {
@@ -55,7 +57,7 @@ class AnnotationGenerator
                             file_put_contents($target . '.php', $code);
                         }
                     }
-                } catch (\Throwable) {
+                } catch (Throwable) {
                 }
             }
         }

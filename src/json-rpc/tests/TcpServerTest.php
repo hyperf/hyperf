@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\JsonRpc;
 
 use Hyperf\Codec\Json;
@@ -135,7 +136,7 @@ class TcpServerTest extends TestCase
                         'port' => 9504,
                         'sock_type' => SWOOLE_SOCK_TCP,
                         'callbacks' => [
-                            Event::ON_RECEIVE => [\Hyperf\JsonRpc\TcpServer::class, 'onReceive'],
+                            Event::ON_RECEIVE => [TcpServer::class, 'onReceive'],
                         ],
                         'settings' => [
                             'open_eof_split' => true,

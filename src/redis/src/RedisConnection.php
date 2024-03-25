@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Redis;
 
 use Hyperf\Contract\ConnectionInterface;
@@ -33,7 +34,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     use Traits\ScanCaller;
     use Traits\MultiExec;
 
-    protected Redis|RedisCluster|null $connection = null;
+    protected null|Redis|RedisCluster $connection = null;
 
     protected array $config = [
         'host' => 'localhost',

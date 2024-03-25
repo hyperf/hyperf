@@ -152,6 +152,7 @@
 ## 分散式鎖
 
 - [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根據 Laravel 的 lock 元件改寫，適配於 Hyperf 框架
+- [pudongping/hyperf-wise-locksmith](https://github.com/pudongping/hyperf-wise-locksmith) 適配 hyperf 框架的互斥鎖庫，用於在高併發場景下提供 PHP 程式碼的有序執行。支援檔案鎖、分散式鎖、紅鎖、協程級互斥鎖
 
 ## 分散式事務
 

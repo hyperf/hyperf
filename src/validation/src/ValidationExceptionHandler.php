@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
 use Hyperf\ExceptionHandler\ExceptionHandler;
@@ -21,7 +22,7 @@ class ValidationExceptionHandler extends ExceptionHandler
     public function handle(Throwable $throwable, ResponsePlusInterface $response)
     {
         $this->stopPropagation();
-        /** @var \Hyperf\Validation\ValidationException $throwable */
+        /** @var ValidationException $throwable */
         $body = $throwable->validator->errors()->first();
         if (! $response->hasHeader('content-type')) {
             $response = $response->addHeader('content-type', 'text/plain; charset=utf-8');

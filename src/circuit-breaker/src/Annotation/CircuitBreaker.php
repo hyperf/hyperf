@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\CircuitBreaker\Annotation;
 
 use Attribute;
@@ -27,7 +28,7 @@ class CircuitBreaker extends AbstractAnnotation
      */
     public function __construct(
         public string $handler = TimeoutHandler::class,
-        public string|array|Closure $fallback = [],
+        public array|Closure|string $fallback = [],
         public float $duration = 10.0,
         public int $successCounter = 10,
         public int $failCounter = 10,

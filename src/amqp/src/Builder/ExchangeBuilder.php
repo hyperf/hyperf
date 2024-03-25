@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Builder;
 
 use Hyperf\Amqp\Message\Type;
@@ -32,7 +33,7 @@ class ExchangeBuilder extends Builder
         return $this;
     }
 
-    public function getType(): Type|string
+    public function getType(): string|Type
     {
         return $this->type;
     }
@@ -42,7 +43,7 @@ class ExchangeBuilder extends Builder
         return $this->type instanceof Type ? $this->type->value : $this->type;
     }
 
-    public function setType(Type|string $type): static
+    public function setType(string|Type $type): static
     {
         $this->type = $type;
         return $this;

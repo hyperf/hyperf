@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpMessage\Base;
 
 use InvalidArgumentException;
@@ -319,7 +320,7 @@ class Response implements ResponseInterface, ResponsePlusInterface, Stringable
     /**
      * Is the response a redirect of some form?
      */
-    public function isRedirect(string $location = null): bool
+    public function isRedirect(?string $location = null): bool
     {
         return in_array($this->statusCode, [
             201,

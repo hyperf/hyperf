@@ -22,6 +22,9 @@
         "hyperf/support": "~3.1.0",
         "hyperf/utils": "~3.1.0"
     },
+    "suggest": {
+        "psr/event-dispatcher": "Required to use events."
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\Pool\\": "src/"

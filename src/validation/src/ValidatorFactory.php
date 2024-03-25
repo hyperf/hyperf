@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
 use Closure;
@@ -24,7 +25,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
     /**
      * The Presence Verifier implementation.
      *
-     * @var \Hyperf\Validation\Contract\PresenceVerifierInterface
+     * @var PresenceVerifierInterface
      */
     protected $verifier;
 
@@ -113,7 +114,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
     /**
      * Validate the given data against the provided rules.
      *
-     * @throws \Hyperf\Validation\ValidationException
+     * @throws ValidationException
      */
     public function validate(array $data, array $rules, array $messages = [], array $customAttributes = []): array
     {

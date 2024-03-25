@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Kafka\Stub;
 
 use Hyperf\Config\Config;
@@ -60,11 +61,7 @@ class ContainerStub
                     'recv_timeout' => -1,
                     'client_id' => 'hyperf',
                     'max_write_attempts' => 3,
-                    'brokers' => [
-                        '127.0.0.1:9092',
-                    ],
                     'bootstrap_servers' => '127.0.0.1:9092',
-                    'update_brokers' => true,
                     'acks' => 0,
                     'producer_id' => -1,
                     'producer_epoch' => -1,

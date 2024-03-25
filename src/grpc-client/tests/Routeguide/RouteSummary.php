@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Routeguide;
 
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\Internal\Message;
+use GPBMetadata\RouteGuide;
 
 /**
  * A RouteSummary is received in response to a RecordRoute rpc.
@@ -23,7 +25,7 @@ use Google\Protobuf\Internal\GPBUtil;
  *
  * Generated from protobuf message <code>routeguide.RouteSummary</code>
  */
-class RouteSummary extends \Google\Protobuf\Internal\Message
+class RouteSummary extends Message
 {
     /**
      * The number of points received.
@@ -59,19 +61,19 @@ class RouteSummary extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *                    Optional. Data for populating the Message object.
      *
-     *     @var int $point_count
-     *           The number of points received
-     *     @var int $feature_count
-     *           The number of known features passed while traversing the route
-     *     @var int $distance
-     *           The distance covered in metres
-     *     @var int $elapsed_time
-     *           The duration of the traversal in seconds.
-     * }
+     * @var int $point_count
+     *          The number of points received
+     * @var int $feature_count
+     *          The number of known features passed while traversing the route
+     * @var int $distance
+     *          The distance covered in metres
+     * @var int $elapsed_time
+     *          The duration of the traversal in seconds.
+     *          }
      */
     public function __construct($data = null)
     {
-        \GPBMetadata\RouteGuide::initOnce();
+        RouteGuide::initOnce();
         parent::__construct($data);
     }
 

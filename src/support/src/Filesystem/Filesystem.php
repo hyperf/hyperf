@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Support\Filesystem;
 
 use ErrorException;
@@ -422,7 +423,7 @@ class Filesystem
     /**
      * Copy a directory from one location to another.
      */
-    public function copyDirectory(string $directory, string $destination, int $options = null): bool
+    public function copyDirectory(string $directory, string $destination, ?int $options = null): bool
     {
         if (! $this->isDirectory($directory)) {
             return false;

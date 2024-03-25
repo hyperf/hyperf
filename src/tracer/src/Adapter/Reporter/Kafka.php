@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Adapter\Reporter;
 
 use Psr\Log\LoggerInterface;
@@ -32,8 +33,8 @@ class Kafka implements Reporter
     public function __construct(
         private array $options,
         private KafkaClientFactory $clientFactory,
-        LoggerInterface $logger = null,
-        SpanSerializer $serializer = null
+        ?LoggerInterface $logger = null,
+        ?SpanSerializer $serializer = null
     ) {
         $this->serializer = $serializer ?? new JsonV2Serializer();
         $this->logger = $logger ?? new NullLogger();

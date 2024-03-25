@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\GrpcClient;
 
 use Hyperf\Coroutine\Channel\Pool as ChannelPool;
@@ -223,7 +224,7 @@ class GrpcClient
         return $this->getHttpClient()->write($streamId, $data, $end);
     }
 
-    public function recv(int $streamId, float $timeout = null)
+    public function recv(int $streamId, ?float $timeout = null)
     {
         if (! $this->isConnected() || $streamId <= 0 || ! $this->isStreamExist($streamId)) {
             return false;

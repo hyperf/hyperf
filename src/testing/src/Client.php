@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Testing;
 
 use Hyperf\Codec\Packer\JsonPacker;
@@ -44,7 +45,7 @@ class Client extends Server
 
     protected string $baseUri = 'http://127.0.0.1/';
 
-    public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
+    public function __construct(ContainerInterface $container, ?PackerInterface $packer = null, $server = 'http')
     {
         parent::__construct(
             $container,

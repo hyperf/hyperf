@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Connectors;
 
 use Closure;
@@ -238,7 +239,7 @@ class ConnectionFactory
      * @param Closure|PDO $connection
      * @param string $database
      * @param string $prefix
-     * @return \Hyperf\Database\Connection
+     * @return Connection
      * @throws InvalidArgumentException
      */
     protected function createConnection($driver, $connection, $database, $prefix = '', array $config = [])

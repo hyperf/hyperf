@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Exception\LoopBrokenException;
@@ -64,7 +65,7 @@ class AMQPConnection extends AbstractConnection
         string $login_method = 'AMQPLAIN',
         $login_response = null,
         string $locale = 'en_US',
-        AbstractIO $io = null,
+        ?AbstractIO $io = null,
         int $heartbeat = 0,
         int $connection_timeout = 0,
         float $channel_rpc_timeout = 0.0

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Collection\Arr;
@@ -48,13 +49,13 @@ class ValidationImageFileRuleTest extends TestCase
     public function testDimensions()
     {
         $this->fails(
-            ( new ImageFile())->dimensions(Rule::dimensions()->width(100)->height(100)),
+            (new ImageFile())->dimensions(Rule::dimensions()->width(100)->height(100)),
             (new FileFactory())->image('foo.png', 101, 101),
             ['validation.dimensions'],
         );
 
         $this->passes(
-            ( new ImageFile())->dimensions(Rule::dimensions()->width(100)->height(100)),
+            (new ImageFile())->dimensions(Rule::dimensions()->width(100)->height(100)),
             (new FileFactory())->image('foo.png', 100, 100),
         );
     }

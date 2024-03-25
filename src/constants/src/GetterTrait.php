@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Constants;
 
 use Hyperf\Constants\Exception\ConstantsException;
@@ -30,7 +31,7 @@ trait GetterTrait
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public static function getValue(string $name, array $arguments): string|array
+    public static function getValue(string $name, array $arguments): array|string
     {
         if (! str_starts_with($name, 'get')) {
             throw new ConstantsException("The function {$name} is not defined!");
@@ -62,7 +63,7 @@ trait GetterTrait
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    protected static function translate(string $key, array $arguments): array|string|null
+    protected static function translate(string $key, array $arguments): null|array|string
     {
         if (! ApplicationContext::hasContainer() || ! ApplicationContext::getContainer()->has(TranslatorInterface::class)) {
             return null;

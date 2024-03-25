@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\ConnectionInterface;
@@ -52,7 +53,7 @@ class ProcessorTestPDOStub extends PDO
     {
     }
 
-    public function lastInsertId($sequence = null): string|false
+    public function lastInsertId($sequence = null): false|string
     {
     }
 }

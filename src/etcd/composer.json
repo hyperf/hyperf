@@ -12,7 +12,8 @@
         "php": ">=8.1",
         "hyperf/guzzle": "~3.1.0",
         "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0"
+        "hyperf/utils": "~3.1.0",
+        "jetbrains/phpstorm-attributes": "^1.0"
     },
     "autoload": {
         "psr-4": {

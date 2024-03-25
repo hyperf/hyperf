@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\GraphQL;
 
 use phpDocumentor\Reflection\Fqsen;
 use phpDocumentor\Reflection\Type;
+use phpDocumentor\Reflection\TypeResolver;
 use phpDocumentor\Reflection\Types\Object_;
 use phpDocumentor\Reflection\Types\Self_;
 use ReflectionClass;
@@ -69,7 +71,7 @@ class InputTypeUtils
 
         $type = (string) $returnType;
 
-        $typeResolver = new \phpDocumentor\Reflection\TypeResolver();
+        $typeResolver = new TypeResolver();
 
         $phpdocType = $typeResolver->resolve($type);
         $phpdocType = $this->resolveSelf($phpdocType, $refMethod->getDeclaringClass());
