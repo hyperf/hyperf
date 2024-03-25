@@ -8,6 +8,10 @@
 
 - [#6616](https://github.com/hyperf/hyperf/pull/6616) [#6617](https://github.com/hyperf/hyperf/pull/6617) Format code by the latest `cs-fixer`.
 
+## Deprecated
+
+- [#6621](https://github.com/hyperf/hyperf/pull/6621) `WebSocketHandeShakeException` is deprecated, please use `WebSocketHandShakeException` instead.
+
 # v3.1.14 - 2024-03-21
 
 ## Fixed
