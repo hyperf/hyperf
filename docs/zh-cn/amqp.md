@@ -10,6 +10,8 @@ composer require hyperf/amqp
 
 ## 默认配置
 
+配置文件位于 `config/autoload/amqp.php`，如该文件不存在，可通过 `php bin/hyperf.php vendor:publish hyperf/amqp` 命令来将发布对应的配置文件。
+
 |       配置       |  类型  |  默认值   |    备注     |
 |:----------------:|:------:|:---------:|:---------:|
 |       host       | string | localhost |   Host    |
@@ -65,10 +67,10 @@ return [
 使用 `gen:producer` 命令创建一个 `producer`
 
 ```bash
-php bin/hyperf.php gen:amqp-producer DemoProducer
+php bin/hyperf.php gen:amqp-producer DemoProducerMessage
 ```
 
-在 DemoProducer 文件中，我们可以修改 `#[Producer]` 注解对应的字段来替换对应的 `exchange` 和 `routingKey`。
+在 DemoProducerMessage 文件中，我们可以修改 `#[Producer]` 注解对应的字段来替换对应的 `exchange` 和 `routingKey`。
 其中 `payload` 就是最终投递到消息队列中的数据，所以我们可以随意改写 `__construct` 方法，只要最后赋值 `payload` 即可。
 示例如下。
 
@@ -86,7 +88,7 @@ use Hyperf\Amqp\Message\ProducerMessage;
 use App\Models\User;
 
 #[Producer(exchange: "hyperf", routingKey: "hyperf")]
-class DemoProducer extends ProducerMessage
+class DemoProducerMessage extends ProducerMessage
 {
     public function __construct($id)
     {
@@ -108,13 +110,31 @@ class DemoProducer extends ProducerMessage
 ```php
 <?php
 use Hyperf\Amqp\Producer;
-use App\Amqp\Producers\DemoProducer;
+use App\Amqp\Producers\DemoProducerMessage;
 use Hyperf\Context\ApplicationContext;
 
-$message = new DemoProducer(1);
+$message = new DemoProducerMessage(1);
 $producer = ApplicationContext::getContainer()->get(Producer::class);
 $result = $producer->produce($message);
 
+```
+使用注解形式注入 `Producer` 实例的参考形式
+
+```php
+use Hyperf\Amqp\Producer;
+use App\Amqp\Producers\DemoProducerMessage;
+
+class AppController extends AbstractController
+{
+    #[Inject]
+    private Producer $producer;    // 注意注入对象为 Hyperf\Amqp\Producer
+
+    public function index()
+    {
+        $message = new DemoProducerMessage(1);
+        $result = $this->producer->produce($message);
+    }
+...
 ```
 
 ## 消费消息
@@ -122,10 +142,10 @@ $result = $producer->produce($message);
 使用 `gen:amqp-consumer` 命令创建一个 `consumer`。
 
 ```bash
-php bin/hyperf.php gen:amqp-consumer DemoConsumer
+php bin/hyperf.php gen:amqp-consumer DemoConsumerMessage
 ```
 
-在 DemoConsumer 文件中，我们可以修改 `#[Consumer]` 注解对应的字段来替换对应的 `exchange`、`routingKey` 和 `queue`。
+在 DemoConsumerMessage 文件中，我们可以修改 `#[Consumer]` 注解对应的字段来替换对应的 `exchange`、`routingKey` 和 `queue`。
 其中 `$data` 就是解析后的消息数据。
 示例如下。
 
@@ -144,7 +164,7 @@ use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
 #[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
-class DemoConsumer extends ConsumerMessage
+class DemoConsumerMessage extends ConsumerMessage
 {
     public function consumeMessage($data, AMQPMessage $message): Result
     {
@@ -174,7 +194,7 @@ use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
 #[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1, enable: false)]
-class DemoConsumer extends ConsumerMessage
+class DemoConsumerMessage extends ConsumerMessage
 {
     public function consumeMessage($data, AMQPMessage $message): Result
     {
@@ -229,7 +249,7 @@ use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
 #[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
-class DemoConsumer extends ConsumerMessage
+class DemoConsumerMessage extends ConsumerMessage
 {
     protected ?array $qos = [
         // AMQP 默认并没有实现此配置。
@@ -290,10 +310,10 @@ rabbitmq-plugins enable rabbitmq_delayed_message_exchange
 使用 `gen:amqp-producer` 命令创建一个 `producer`。这里举例 `direct` 类型，其他类型如 `fanout`、`topic`，改生产者和消费者中的 `type` 即可。
 
 ```bash
-php bin/hyperf.php gen:amqp-producer DelayDirectProducer
+php bin/hyperf.php gen:amqp-producer DelayDirectProducerMessage
 ```
 
-在 DelayDirectProducer 文件中，加入`use ProducerDelayedMessageTrait;`，示例如下：
+在 DelayDirectProducerMessage 文件中，加入`use ProducerDelayedMessageTrait;`，示例如下：
 
 ```php
 <?php
@@ -306,7 +326,7 @@ use Hyperf\Amqp\Message\ProducerMessage;
 use Hyperf\Amqp\Message\Type;
 
 #[Producer]
-class DelayDirectProducer extends ProducerMessage
+class DelayDirectProducerMessage extends ProducerMessage
 {
     use ProducerDelayedMessageTrait;
 
@@ -328,10 +348,10 @@ class DelayDirectProducer extends ProducerMessage
 使用 `gen:amqp-consumer` 命令创建一个 `consumer`。
 
 ```bash
-php bin/hyperf.php gen:amqp-consumer DelayDirectConsumer
+php bin/hyperf.php gen:amqp-consumer DelayDirectConsumerMessage
 ```
 
-在 `DelayDirectConsumer` 文件中，增加引入`use ProducerDelayedMessageTrait, ConsumerDelayedMessageTrait;`，示例如下：
+在 `DelayDirectConsumerMessage` 文件中，增加引入`use ProducerDelayedMessageTrait, ConsumerDelayedMessageTrait;`，示例如下：
 
 ```php
 <?php
@@ -349,7 +369,7 @@ use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
 #[Consumer(nums: 1)]
-class DelayDirectConsumer extends ConsumerMessage
+class DelayDirectConsumerMessage extends ConsumerMessage
 {
     use ProducerDelayedMessageTrait;
     use ConsumerDelayedMessageTrait;
@@ -414,11 +434,11 @@ class DelayCommand extends HyperfCommand
     public function handle()
     {
         //1.delayed + direct
-        $message = new DelayDirectProducer('delay+direct produceTime:'.(microtime(true)));
+        $message = new DelayDirectProducerMessage('delay+direct produceTime:'.(microtime(true)));
         //2.delayed + fanout
-        //$message = new DelayFanoutProducer('delay+fanout produceTime:'.(microtime(true)));
+        //$message = new DelayFanoutProducerMessage('delay+fanout produceTime:'.(microtime(true)));
         //3.delayed + topic
-        //$message = new DelayTopicProducer('delay+topic produceTime:' . (microtime(true)));
+        //$message = new DelayTopicProducerMessage('delay+topic produceTime:' . (microtime(true)));
         $message->setDelayMs(5000);
         $producer = ApplicationContext::getContainer()->get(Producer::class);
         $producer->produce($message);
@@ -454,7 +474,7 @@ use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
 #[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "rpc.reply", name: "ReplyConsumer", nums: 1, enable: true)]
-class ReplyConsumer extends ConsumerMessage
+class ReplyConsumerMessage extends ConsumerMessage
 {
     public function consumeMessage($data, AMQPMessage $message): Result
     {
