@@ -16,6 +16,9 @@ use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Stringable\Str;
 
+use function Hyperf\Collection\collect;
+use function Hyperf\Collection\last;
+
 class SqlServerGrammar extends Grammar
 {
     /**
