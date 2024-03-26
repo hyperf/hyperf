@@ -312,8 +312,8 @@ class SqlServerGrammar extends Grammar
     public function compileDropIfExists(Blueprint $blueprint, Fluent $command): string
     {
         return sprintf(
-            'if object_id(%s, \'U\') is not null drop table %s',
-            $this->quoteString($this->wrapTable($blueprint)),
+            'if exists (select * from sys.sysobjects where id = object_id(%s, \'U\')) drop table %s',
+            "'" . str_replace("'", "''", $this->getTablePrefix() . $blueprint->getTable()) . "'",
             $this->wrapTable($blueprint)
         );
     }
@@ -347,13 +347,12 @@ class SqlServerGrammar extends Grammar
             ? "'" . collect($blueprint->getChangedColumns())->pluck('name')->implode("','") . "'"
             : "'" . implode("','", $command->columns) . "'";
 
-        $table = $this->wrapTable($blueprint);
-        $tableName = $this->quoteString($this->wrapTable($blueprint));
+        $tableName = $this->getTablePrefix() . $blueprint->getTable();
 
         $sql = "DECLARE @sql NVARCHAR(MAX) = '';";
-        $sql .= "SELECT @sql += 'ALTER TABLE {$table} DROP CONSTRAINT ' + OBJECT_NAME([default_object_id]) + ';' ";
+        $sql .= "SELECT @sql += 'ALTER TABLE [dbo].[{$tableName}] DROP CONSTRAINT ' + OBJECT_NAME([default_object_id]) + ';' ";
         $sql .= 'FROM sys.columns ';
-        $sql .= "WHERE [object_id] = OBJECT_ID({$tableName}) AND [name] in ({$columns}) AND [default_object_id] <> 0;";
+        $sql .= "WHERE [object_id] = OBJECT_ID('[dbo].[{$tableName}]') AND [name] in ({$columns}) AND [default_object_id] <> 0;";
         $sql .= 'EXEC(@sql)';
 
         return $sql;
@@ -412,11 +411,9 @@ class SqlServerGrammar extends Grammar
      */
     public function compileRename(Blueprint $blueprint, Fluent $command): string
     {
-        return sprintf(
-            'sp_rename %s, %s',
-            $this->quoteString($this->wrapTable($blueprint)),
-            $this->wrapTable($command->to)
-        );
+        $from = $this->wrapTable($blueprint);
+
+        return "sp_rename {$from}, " . $this->wrapTable($command->to);
     }
 
     /**
@@ -499,6 +496,74 @@ class SqlServerGrammar extends Grammar
         }
 
         return "N'{$value}'";
+    }
+
+    /**
+     * Create the column definition for a spatial Point type.
+     */
+    public function typePoint(Fluent $column): string
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial LineString type.
+     *
+     * @return string
+     */
+    public function typeLineString(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial Polygon type.
+     *
+     * @return string
+     */
+    public function typePolygon(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial GeometryCollection type.
+     *
+     * @return string
+     */
+    public function typeGeometryCollection(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial MultiPoint type.
+     *
+     * @return string
+     */
+    public function typeMultiPoint(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial MultiLineString type.
+     *
+     * @return string
+     */
+    public function typeMultiLineString(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial MultiPolygon type.
+     *
+     * @return string
+     */
+    public function typeMultiPolygon(Fluent $column)
+    {
+        return 'geography';
     }
 
     /**
@@ -606,7 +671,7 @@ class SqlServerGrammar extends Grammar
      */
     protected function typeDouble(Fluent $column): string
     {
-        return 'double precision';
+        return 'float';
     }
 
     /**
@@ -768,7 +833,7 @@ class SqlServerGrammar extends Grammar
      */
     protected function typeGeometry(Fluent $column): string
     {
-        return 'geometry';
+        return 'geography';
     }
 
     /**
@@ -784,7 +849,12 @@ class SqlServerGrammar extends Grammar
      */
     protected function typeComputed(Fluent $column)
     {
-        return "as ({$this->getValue($column->expression)})";
+        $expression = $column->expression;
+        if (! $expression instanceof Expression) {
+            $expression = new Expression($expression);
+        }
+
+        return "as ({$this->getValue($expression)})";
     }
 
     /**
@@ -819,11 +889,13 @@ class SqlServerGrammar extends Grammar
 
     /**
      * Get the SQL for an auto-increment column modifier.
+     *
+     * @return null|string
      */
     protected function modifyIncrement(Blueprint $blueprint, Fluent $column)
     {
         if (! $column->change && in_array($column->type, $this->serials) && $column->autoIncrement) {
-            return $this->hasCommand($blueprint, 'primary') ? ' identity' : ' identity primary key';
+            return ' identity primary key';
         }
     }
 
