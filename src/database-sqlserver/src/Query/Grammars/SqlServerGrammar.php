@@ -254,6 +254,26 @@ class SqlServerGrammar extends Grammar
     }
 
     /**
+     * Compile an update statement into SQL.
+     *
+     * @param array $values
+     */
+    public function compileUpdate(Builder $query, $values): string
+    {
+        $table = $this->wrapTable($query->from);
+
+        $columns = $this->compileUpdateColumns($query, $values);
+
+        $where = $this->compileWheres($query);
+
+        return trim(
+            isset($query->joins)
+                ? $this->compileUpdateWithJoins($query, $table, $columns, $where)
+                : $this->compileUpdateWithoutJoins($query, $table, $columns, $where)
+        );
+    }
+
+    /**
      * Compile the "select *" portion of the query.
      *
      * @param array $columns
@@ -545,5 +565,23 @@ class SqlServerGrammar extends Grammar
         $conjunction = $union['all'] ? ' union all ' : ' union ';
 
         return $conjunction . $this->wrapUnion($union['query']->toSql());
+    }
+
+    /**
+     * Compile the columns for an update statement.
+     */
+    protected function compileUpdateColumns(Builder $query, array $values): string
+    {
+        return collect($values)->map(function ($value, $key) {
+            return $this->wrap($key) . ' = ' . $this->parameter($value);
+        })->implode(', ');
+    }
+
+    /**
+     * Compile an update statement without joins into SQL.
+     */
+    protected function compileUpdateWithoutJoins(Builder $query, string $table, string $columns, string $where): string
+    {
+        return "update {$table} set {$columns} {$where}";
     }
 }
