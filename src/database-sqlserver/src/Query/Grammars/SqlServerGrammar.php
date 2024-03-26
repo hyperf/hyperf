@@ -274,6 +274,22 @@ class SqlServerGrammar extends Grammar
     }
 
     /**
+     * Compile a delete statement into SQL.
+     */
+    public function compileDelete(Builder $query): string
+    {
+        $table = $this->wrapTable($query->from);
+
+        $where = $this->compileWheres($query);
+
+        return trim(
+            isset($query->joins)
+                ? $this->compileDeleteWithJoins($query, $table, $where)
+                : $this->compileDeleteWithoutJoins($query, $table, $where)
+        );
+    }
+
+    /**
      * Compile the "select *" portion of the query.
      *
      * @param array $columns
@@ -432,7 +448,7 @@ class SqlServerGrammar extends Grammar
      */
     protected function compileDeleteWithoutJoins(Builder $query, string $table, string $where): string
     {
-        $sql = parent::compileDeleteWithoutJoins($query, $table, $where);
+        $sql = "delete from {$table} {$where}";
 
         return ! is_null($query->limit) && $query->limit > 0 && $query->offset <= 0
             ? Str::replaceFirst('delete', 'delete top (' . $query->limit . ')', $sql)
@@ -583,5 +599,17 @@ class SqlServerGrammar extends Grammar
     protected function compileUpdateWithoutJoins(Builder $query, string $table, string $columns, string $where): string
     {
         return "update {$table} set {$columns} {$where}";
+    }
+
+    /**
+     * Compile a delete statement with joins into SQL.
+     */
+    protected function compileDeleteWithJoins(Builder $query, string $table, string $where): string
+    {
+        $alias = last(explode(' as ', $table));
+
+        $joins = $this->compileJoins($query, $query->joins);
+
+        return "delete {$alias} from {$table} {$joins} {$where}";
     }
 }
