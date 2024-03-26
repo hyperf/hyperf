@@ -9,11 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-/**
- * Created by PhpStorm
- * Date 2024/3/25 14:29.
- */
-
 namespace HyperfTest\Database\Sqlsrv;
 
 use Hyperf\Database\ConnectionInterface;
