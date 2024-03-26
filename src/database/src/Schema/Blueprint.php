@@ -1339,6 +1339,22 @@ class Blueprint
     }
 
     /**
+     * Create a new unsigned big integer (8-byte) column on the table.
+     *
+     * @param string $column
+     * @return \Hyperf\Database\Schema\ForeignIdColumnDefinition
+     */
+    public function foreignId($column)
+    {
+        return $this->addColumnDefinition(new ForeignIdColumnDefinition($this, [
+            'type' => 'bigInteger',
+            'name' => $column,
+            'autoIncrement' => false,
+            'unsigned' => true,
+        ]));
+    }
+
+    /**
      * Ensure the commands on the blueprint are valid for the connection type.
      *
      * @throws BadMethodCallException
