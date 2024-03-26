@@ -1355,6 +1355,18 @@ class Blueprint
     }
 
     /**
+     * Create a new generated, computed column on the table.
+     *
+     * @param string $column
+     * @param string $expression
+     * @return \hyperf\Database\Schema\ColumnDefinition
+     */
+    public function computed($column, $expression)
+    {
+        return $this->addColumn('computed', $column, compact('expression'));
+    }
+
+    /**
      * Ensure the commands on the blueprint are valid for the connection type.
      *
      * @throws BadMethodCallException
