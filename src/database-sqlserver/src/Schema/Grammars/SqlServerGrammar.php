@@ -190,14 +190,12 @@ class SqlServerGrammar extends Grammar
 
     /**
      * Compile a rename column command.
-     *
-     * @return array|string
      */
     public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection): array
     {
-        return sprintf(
-            "sp_rename %s, %s, N'COLUMN'",
-            $this->quoteString($this->wrapTable($blueprint) . '.' . $this->wrap($command->from)),
+        return (array) sprintf(
+            "sp_rename '%s', %s, 'COLUMN'",
+            $this->wrap($blueprint->getTable() . '.' . $command->from),
             $this->wrap($command->to)
         );
     }
@@ -288,7 +286,7 @@ class SqlServerGrammar extends Grammar
     /**
      * Compile a default command.
      */
-    public function compileDefault(Blueprint $blueprint, Fluent $command): ?string
+    public function compileDefault(Blueprint $blueprint, Fluent $command)
     {
         if ($command->column->change && ! is_null($command->column->default)) {
             return sprintf(
@@ -784,7 +782,7 @@ class SqlServerGrammar extends Grammar
     /**
      * Create the column definition for a generated, computed column type.
      */
-    protected function typeComputed(Fluent $column): ?string
+    protected function typeComputed(Fluent $column)
     {
         return "as ({$this->getValue($column->expression)})";
     }
@@ -792,7 +790,7 @@ class SqlServerGrammar extends Grammar
     /**
      * Get the SQL for a collation column modifier.
      */
-    protected function modifyCollate(Blueprint $blueprint, Fluent $column): ?string
+    protected function modifyCollate(Blueprint $blueprint, Fluent $column)
     {
         if (! is_null($column->collation)) {
             return ' collate ' . $column->collation;
@@ -802,7 +800,7 @@ class SqlServerGrammar extends Grammar
     /**
      * Get the SQL for a nullable column modifier.
      */
-    protected function modifyNullable(Blueprint $blueprint, Fluent $column): ?string
+    protected function modifyNullable(Blueprint $blueprint, Fluent $column)
     {
         if ($column->type !== 'computed') {
             return $column->nullable ? ' null' : ' not null';
@@ -812,7 +810,7 @@ class SqlServerGrammar extends Grammar
     /**
      * Get the SQL for a default column modifier.
      */
-    protected function modifyDefault(Blueprint $blueprint, Fluent $column): ?string
+    protected function modifyDefault(Blueprint $blueprint, Fluent $column)
     {
         if (! $column->change && ! is_null($column->default)) {
             return ' default ' . $this->getDefaultValue($column->default);
@@ -822,7 +820,7 @@ class SqlServerGrammar extends Grammar
     /**
      * Get the SQL for an auto-increment column modifier.
      */
-    protected function modifyIncrement(Blueprint $blueprint, Fluent $column): ?string
+    protected function modifyIncrement(Blueprint $blueprint, Fluent $column)
     {
         if (! $column->change && in_array($column->type, $this->serials) && $column->autoIncrement) {
             return $this->hasCommand($blueprint, 'primary') ? ' identity' : ' identity primary key';
@@ -832,7 +830,7 @@ class SqlServerGrammar extends Grammar
     /**
      * Get the SQL for a generated stored column modifier.
      */
-    protected function modifyPersisted(Blueprint $blueprint, Fluent $column): ?string
+    protected function modifyPersisted(Blueprint $blueprint, Fluent $column)
     {
         if ($column->change) {
             if ($column->type === 'computed') {
