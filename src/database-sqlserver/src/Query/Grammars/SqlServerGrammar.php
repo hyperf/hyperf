@@ -53,6 +53,11 @@ class SqlServerGrammar extends Grammar
     ];
 
     /**
+     * The grammar specific bitwise operators.
+     */
+    protected array $bitwiseOperators = [];
+
+    /**
      * Compile a select query into SQL.
      */
     public function compileSelect(Builder $query): string
@@ -287,6 +292,16 @@ class SqlServerGrammar extends Grammar
                 ? $this->compileDeleteWithJoins($query, $table, $where)
                 : $this->compileDeleteWithoutJoins($query, $table, $where)
         );
+    }
+
+    /**
+     * Get the grammar specific bitwise operators.
+     *
+     * @return array
+     */
+    public function getBitwiseOperators()
+    {
+        return $this->bitwiseOperators;
     }
 
     /**
