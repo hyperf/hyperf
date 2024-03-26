@@ -627,4 +627,53 @@ class SqlServerGrammar extends Grammar
 
         return "delete {$alias} from {$table} {$joins} {$where}";
     }
+
+    /**
+     * Compile a "where JSON contains key" clause.
+     *
+     * @return string
+     */
+    protected function whereJsonContainsKey(Builder $query, array $where)
+    {
+        $not = $where['not'] ? 'not ' : '';
+
+        return $not . $this->compileJsonContainsKey(
+            $where['column']
+        );
+    }
+
+    /**
+     * Wrap the given JSON path.
+     *
+     * @param string $value
+     * @param string $delimiter
+     */
+    protected function wrapJsonPath($value, $delimiter = '->'): string
+    {
+        $value = preg_replace("/([\\\\]+)?\\'/", "''", $value);
+
+        $jsonPath = collect(explode($delimiter, $value))
+            ->map(fn ($segment) => $this->wrapJsonPathSegment($segment))
+            ->implode('.');
+
+        return "'$" . (str_starts_with($jsonPath, '[') ? '' : '.') . $jsonPath . "'";
+    }
+
+    /**
+     * Wrap the given JSON path segment.
+     */
+    protected function wrapJsonPathSegment(string $segment): string
+    {
+        if (preg_match('/(\[[^\]]+\])+$/', $segment, $parts)) {
+            $key = Str::beforeLast($segment, $parts[0]);
+
+            if (! empty($key)) {
+                return '"' . $key . '"' . $parts[0];
+            }
+
+            return $parts[0];
+        }
+
+        return '"' . $segment . '"';
+    }
 }

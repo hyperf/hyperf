@@ -275,6 +275,30 @@ class SqlServerBuilder extends Builder
     }
 
     /**
+     * Add a clause that determines if a JSON path exists to the query.
+     *
+     * @return $this
+     */
+    public function whereJsonContainsKey(string $column, string $boolean = 'and', bool $not = false): static
+    {
+        $type = 'JsonContainsKey';
+
+        $this->wheres[] = compact('type', 'column', 'boolean', 'not');
+
+        return $this;
+    }
+
+    /**
+     * Add an "or" clause that determines if a JSON path exists to the query.
+     *
+     * @return $this
+     */
+    public function orWhereJsonContainsKey(string $column): static
+    {
+        return $this->whereJsonContainsKey($column, 'or');
+    }
+
+    /**
      * Determine if the operator is a bitwise operator.
      */
     protected function isBitwiseOperator(string $operator): bool
