@@ -59,7 +59,35 @@ class SqlServerGrammar extends Grammar
             $query->orders[] = ['sql' => '(SELECT 0)'];
         }
 
-        return parent::compileSelect($query);
+        if (($query->unions || $query->havings) && $query->aggregate) {
+            return $this->compileUnionAggregate($query);
+        }
+
+        // If the query does not have any columns set, we'll set the columns to the
+        // * character to just get all of the columns from the database. Then we
+        // can build the query and concatenate all the pieces together as one.
+        $original = $query->columns;
+
+        if (is_null($query->columns)) {
+            $query->columns = ['*'];
+        }
+
+        // To compile the query, we'll spin through each component of the query and
+        // see if that component exists. If it does we'll just call the compiler
+        // function for the component which is responsible for making the SQL.
+        $sql = trim(
+            $this->concatenate(
+                $this->compileComponents($query)
+            )
+        );
+
+        if ($query->unions) {
+            $sql = $this->wrapUnion($sql) . ' ' . $this->compileUnions($query);
+        }
+
+        $query->columns = $original;
+
+        return $sql;
     }
 
     /**
@@ -474,5 +502,15 @@ class SqlServerGrammar extends Grammar
         }
 
         return $table;
+    }
+
+    /**
+     * Compile a single union statement.
+     */
+    protected function compileUnion(array $union): string
+    {
+        $conjunction = $union['all'] ? ' union all ' : ' union ';
+
+        return $conjunction . $this->wrapUnion($union['query']->toSql());
     }
 }
