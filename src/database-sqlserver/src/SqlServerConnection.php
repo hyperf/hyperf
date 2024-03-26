@@ -15,6 +15,7 @@ use Closure;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Sqlsrv\Query\Grammars\SqlServerGrammar as QueryGrammar;
 use Hyperf\Database\Sqlsrv\Query\Processors\SqlServerProcessor;
+use Hyperf\Database\Sqlsrv\Query\SqlServerBuilder as QueryBuilder;
 use Hyperf\Database\Sqlsrv\Schema\Grammars\SqlServerGrammar as SchemaGrammar;
 use Hyperf\Database\Sqlsrv\Schema\SqlServerBuilder;
 use Throwable;
@@ -70,6 +71,18 @@ class SqlServerConnection extends Connection
     }
 
     /**
+     * Get a new query builder instance.
+     */
+    public function query(): QueryBuilder
+    {
+        return new QueryBuilder(
+            $this,
+            $this->getQueryGrammar(),
+            $this->getPostProcessor()
+        );
+    }
+
+    /**
      * Escape a binary value for safe SQL embedding.
      *
      * @param string $value
@@ -86,7 +99,7 @@ class SqlServerConnection extends Connection
      */
     protected function getDefaultQueryGrammar(): QueryGrammar
     {
-        return $this->withTablePrefix(new QueryGrammar);
+        return $this->withTablePrefix(new QueryGrammar());
     }
 
     /**
@@ -94,7 +107,7 @@ class SqlServerConnection extends Connection
      */
     protected function getDefaultSchemaGrammar(): SchemaGrammar
     {
-        return $this->withTablePrefix(new SchemaGrammar);
+        return $this->withTablePrefix(new SchemaGrammar());
     }
 
     /**
