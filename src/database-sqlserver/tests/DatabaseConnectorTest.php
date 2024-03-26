@@ -1,9 +1,14 @@
 <?php
-/**
- * Created by PhpStorm
- * Date 2024/3/25 11:38
- */
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace HyperfTest\Database\Sqlsrv;
 
 use Hyperf\Database\Sqlsrv\Connectors\SqlServerConnector;
@@ -12,6 +17,10 @@ use Mockery as m;
 use PDO;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class DatabaseConnectorTest extends TestCase
 {
     public function testSqlServerConnectCallsCreateConnectionWithInvalidDriver()
@@ -43,8 +52,8 @@ class DatabaseConnectorTest extends TestCase
 
         $availableDrivers = PDO::getAvailableDrivers();
 
-        if (in_array('odbc', $availableDrivers) &&
-            ($config['odbc'] ?? null) === true) {
+        if (in_array('odbc', $availableDrivers)
+            && ($config['odbc'] ?? null) === true) {
             return isset($config['odbc_datasource_name'])
                 ? 'odbc:' . $config['odbc_datasource_name'] : '';
         }
@@ -56,12 +65,11 @@ class DatabaseConnectorTest extends TestCase
             $pooling = (isset($config['pooling']) && $config['pooling'] == false) ? ';ConnectionPooling=0' : '';
 
             return "sqlsrv:Server={$host}{$port};Database={$database}{$readonly}{$pooling}{$appname}";
-        } else {
-            $port = isset($config['port']) ? ':' . $port : '';
-            $appname = isset($config['appname']) ? ';appname=' . $config['appname'] : '';
-            $charset = isset($config['charset']) ? ';charset=' . $config['charset'] : '';
-
-            return "dblib:host={$host}{$port};dbname={$database}{$charset}{$appname}";
         }
+        $port = isset($config['port']) ? ':' . $port : '';
+        $appname = isset($config['appname']) ? ';appname=' . $config['appname'] : '';
+        $charset = isset($config['charset']) ? ';charset=' . $config['charset'] : '';
+
+        return "dblib:host={$host}{$port};dbname={$database}{$charset}{$appname}";
     }
 }

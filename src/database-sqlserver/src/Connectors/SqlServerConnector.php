@@ -75,7 +75,7 @@ class SqlServerConnector extends Connector implements ConnectorInterface
         if ($this->prefersOdbc($config)) {
             return $this->getOdbcDsn($config);
         }
-        throw new InvalidDriverException("Coroutines processing is now only supported for pdo_odbc.");
+        throw new InvalidDriverException('Coroutines processing is now only supported for pdo_odbc.');
         // if (in_array('sqlsrv', $this->getAvailableDrivers())) {
         //     return $this->getSqlSrvDsn($config);
         // }

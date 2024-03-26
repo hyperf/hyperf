@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
 /**
- * Created by PhpStorm
- * Date 2024/3/25 14:16
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Database\Sqlsrv;
 
 use Hyperf\Database\Sqlsrv\Schema\Grammars\SqlServerGrammar;
@@ -13,6 +17,10 @@ use Hyperf\DbConnection\Connection;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class SqlServerBuilderTest extends TestCase
 {
     protected function tearDown(): void
@@ -22,7 +30,7 @@ class SqlServerBuilderTest extends TestCase
 
     public function testCreateDatabase()
     {
-        $grammar = new SqlServerGrammar;
+        $grammar = new SqlServerGrammar();
 
         $connection = m::mock(Connection::class);
         $connection->shouldReceive('getSchemaGrammar')->once()->andReturn($grammar);
@@ -36,7 +44,7 @@ class SqlServerBuilderTest extends TestCase
 
     public function testDropDatabaseIfExists()
     {
-        $grammar = new SqlServerGrammar;
+        $grammar = new SqlServerGrammar();
 
         $connection = m::mock(Connection::class);
         $connection->shouldReceive('getSchemaGrammar')->once()->andReturn($grammar);

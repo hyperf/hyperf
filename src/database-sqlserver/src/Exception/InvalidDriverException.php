@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Sqlsrv\Exception;
 
-class InvalidDriverException extends \PDOException
+use PDOException;
+
+class InvalidDriverException extends PDOException
 {
 }
