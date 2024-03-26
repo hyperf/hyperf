@@ -31,6 +31,13 @@ class SqlServerBuilder extends Builder
     ];
 
     /**
+     * The index hint for the query.
+     *
+     * @var \hyperf\Database\Sqlsrv\Query\IndexHint
+     */
+    public IndexHint $indexHint;
+
+    /**
      * Add an "order by" clause to the query.
      *
      * @param Closure|\hyperf\Database\Query\Builder|\hyperf\Database\Query\Expression|string $column
@@ -316,6 +323,42 @@ class SqlServerBuilder extends Builder
     public function orWhereJsonDoesntContainKey(string $column): static
     {
         return $this->whereJsonDoesntContainKey($column, 'or');
+    }
+
+    /**
+     * Add an index hint to suggest a query index.
+     *
+     * @return $this
+     */
+    public function useIndex(string $index): static
+    {
+        $this->indexHint = new IndexHint('hint', $index);
+
+        return $this;
+    }
+
+    /**
+     * Add an index hint to force a query index.
+     *
+     * @return $this
+     */
+    public function forceIndex(string $index): static
+    {
+        $this->indexHint = new IndexHint('force', $index);
+
+        return $this;
+    }
+
+    /**
+     * Add an index hint to ignore a query index.
+     *
+     * @return $this
+     */
+    public function ignoreIndex(string $index): static
+    {
+        $this->indexHint = new IndexHint('ignore', $index);
+
+        return $this;
     }
 
     /**

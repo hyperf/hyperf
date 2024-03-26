@@ -14,6 +14,7 @@ namespace Hyperf\Database\Sqlsrv\Query\Grammars;
 use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Grammars\Grammar;
+use hyperf\Database\Sqlsrv\Query\IndexHint;
 use Hyperf\Stringable\Str;
 
 use function Hyperf\Collection\collect;
@@ -675,5 +676,15 @@ class SqlServerGrammar extends Grammar
         }
 
         return '"' . $segment . '"';
+    }
+
+    /**
+     * Compile the index hints for the query.
+     */
+    protected function compileIndexHint(Builder $query, IndexHint $indexHint): string
+    {
+        return $indexHint->type === 'force'
+            ? "with (index({$indexHint->index}))"
+            : '';
     }
 }
