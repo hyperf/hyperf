@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Sqlsrv\Query;
 
 use Closure;
@@ -34,15 +35,13 @@ class SqlServerBuilder extends Builder
 
     /**
      * The index hint for the query.
-     *
-     * @var \hyperf\Database\Sqlsrv\Query\IndexHint
      */
     public IndexHint $indexHint;
 
     /**
      * Add an "order by" clause to the query.
      *
-     * @param Closure|\hyperf\Database\Query\Builder|\hyperf\Database\Query\Expression|string $column
+     * @param Builder|Closure|ExpressionContract|string $column
      * @param string $direction
      * @return $this
      *
@@ -90,7 +89,7 @@ class SqlServerBuilder extends Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param array|Closure|\Hyperf\Database\Query\Expression|string $column
+     * @param array|Closure|ExpressionContract|string $column
      * @param mixed $operator
      * @param mixed $value
      * @param string $boolean
@@ -202,7 +201,7 @@ class SqlServerBuilder extends Builder
     /**
      * Add a "having" clause to the query.
      *
-     * @param Closure|\Hyperf\Database\Query\Expression|string $column
+     * @param Closure|ExpressionContract|string $column
      * @param null|float|int|string $operator
      * @param null|float|int|string $value
      * @param string $boolean

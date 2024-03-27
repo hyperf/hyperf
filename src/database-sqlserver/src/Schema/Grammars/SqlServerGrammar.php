@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Sqlsrv\Schema\Grammars;
 
 use Hyperf\Database\Connection;
@@ -50,7 +51,7 @@ class SqlServerGrammar extends Grammar
     /**
      * Compile a create database command.
      *
-     * @param \Hyperf\Database\Connection $connection
+     * @param Connection $connection
      */
     public function compileCreateDatabase(string $name, $connection): string
     {
@@ -470,7 +471,7 @@ class SqlServerGrammar extends Grammar
     /**
      * Wrap a table in keyword identifiers.
      *
-     * @param \Hyperf\Database\Query\Expression|\Hyperf\Database\Schema\Blueprint|string $table
+     * @param Blueprint|Expression|string $table
      */
     public function wrapTable($table): string
     {

@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Sqlsrv\Query\Grammars;
 
 use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Sqlsrv\Query\IndexHint;
 use Hyperf\Stringable\Str;
@@ -218,7 +220,7 @@ class SqlServerGrammar extends Grammar
     /**
      * Wrap a table in keyword identifiers.
      *
-     * @param \Hyperf\Database\Query\Expression|string $table
+     * @param Expression|string $table
      */
     public function wrapTable($table): string
     {
@@ -349,8 +351,6 @@ class SqlServerGrammar extends Grammar
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param array $where
      */
     protected function whereBitwise(Builder $query, $where): string
