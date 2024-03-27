@@ -1344,7 +1344,7 @@ class Blueprint
      * Create a new unsigned big integer (8-byte) column on the table.
      *
      * @param string $column
-     * @return \Hyperf\Database\Schema\ForeignIdColumnDefinition
+     * @return ForeignIdColumnDefinition
      */
     public function foreignId($column)
     {
