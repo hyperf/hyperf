@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server;
 
 use Hyperf\Contract\MiddlewareInitializerInterface;
@@ -79,7 +80,7 @@ class Server implements ServerInterface
                     $this->eventDispatcher->dispatch(new BeforeMainServerStart($this->server, $config->toArray()));
                 }
             } else {
-                /** @var bool|\Swoole\Server\Port $slaveServer */
+                /** @var bool|SwoolePort $slaveServer */
                 $slaveServer = $this->server->addlistener($host, $port, $sockType);
                 if (! $slaveServer) {
                     throw new \RuntimeException("Failed to listen server port [{$host}:{$port}]");

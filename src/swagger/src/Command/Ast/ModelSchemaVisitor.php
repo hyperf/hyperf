@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Swagger\Command\Ast;
 
+use Hyperf\Database\Connection;
 use Hyperf\Database\Model\Model;
-use Hyperf\Database\Schema\Builder;
 use Hyperf\Database\Schema\Column;
 use Hyperf\Stringable\Str;
 use PhpParser\Node;
@@ -28,8 +29,9 @@ class ModelSchemaVisitor extends NodeVisitorAbstract
 
     public function __construct(public ReflectionClass $ref, public Model $model)
     {
-        /** @var Builder $builder */
-        $builder = $this->model->getConnection()->getSchemaBuilder();
+        /** @var Connection $connection */
+        $connection = $this->model->getConnection();
+        $builder = $connection->getSchemaBuilder();
 
         $this->columns = array_filter($builder->getColumns(), function (Column $column) {
             return $column->getTable() === $this->model->getTable();

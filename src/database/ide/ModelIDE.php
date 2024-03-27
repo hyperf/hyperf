@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model;
 
 use BadMethodCallException;
@@ -16,6 +17,12 @@ use Closure;
 use DateTimeInterface;
 use Generator;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\LengthAwarePaginatorInterface;
+use Hyperf\Contract\PaginatorInterface;
+use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Database\Query\Expression;
+use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\Processors\Processor;
 use InvalidArgumentException;
 use ReflectionException;
 use RuntimeException;
@@ -359,7 +366,7 @@ class ModelIDE
      * @param array $columns
      * @param string $pageName
      * @param null|int $page
-     * @return \Hyperf\Contract\LengthAwarePaginatorInterface
+     * @return LengthAwarePaginatorInterface
      * @throws InvalidArgumentException
      */
     public static function paginate($perPage = null, $columns = [], $pageName = 'page', $page = null)
@@ -374,7 +381,7 @@ class ModelIDE
      * @param array $columns
      * @param string $pageName
      * @param null|int $page
-     * @return \Hyperf\Contract\PaginatorInterface
+     * @return PaginatorInterface
      */
     public static function simplePaginate($perPage = null, $columns = [], $pageName = 'page', $page = null)
     {
@@ -651,7 +658,7 @@ class ModelIDE
     /**
      * Add a relationship count / exists condition to the query.
      *
-     * @param \Hyperf\Database\Model\Relations\Relation|string $relation
+     * @param Relation|string $relation
      * @param string $operator
      * @param int $count
      * @param string $boolean
@@ -2180,7 +2187,7 @@ class ModelIDE
      * Create a raw database expression.
      *
      * @param mixed $value
-     * @return \Hyperf\Database\Query\Expression
+     * @return Expression
      */
     public static function raw($value)
     {
@@ -2247,7 +2254,7 @@ class ModelIDE
     /**
      * Get the database query processor instance.
      *
-     * @return \Hyperf\Database\Query\Processors\Processor
+     * @return Processor
      */
     public static function getProcessor()
     {
@@ -2257,7 +2264,7 @@ class ModelIDE
     /**
      * Get the query grammar instance.
      *
-     * @return \Hyperf\Database\Query\Grammars\Grammar
+     * @return Grammar
      */
     public static function getGrammar()
     {

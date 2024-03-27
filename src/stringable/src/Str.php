@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Stringable;
 
 use Closure;
@@ -1084,7 +1085,7 @@ class Str
         return implode(array_reverse(mb_str_split($value)));
     }
 
-    public static function squish($value): array|string|null
+    public static function squish($value): null|array|string
     {
         return preg_replace('~(\s|\x{3164}|\x{1160})+~u', ' ', preg_replace('~^[\s\x{FEFF}]+|[\s\x{FEFF}]+$~u', '', $value));
     }

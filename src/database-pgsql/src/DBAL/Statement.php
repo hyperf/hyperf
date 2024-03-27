@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\PgSQL\DBAL;
 
 use Doctrine\DBAL\Driver\Statement as StatementInterface;
@@ -25,21 +26,18 @@ final class Statement implements StatementInterface
     {
     }
 
-    /** {@inheritdoc} */
     public function bindValue($param, $value, $type = ParameterType::STRING): bool
     {
         $this->parameters[$param] = $value;
         return true;
     }
 
-    /** {@inheritdoc} */
     public function bindParam($param, &$variable, $type = ParameterType::STRING, $length = null): bool
     {
         $this->parameters[$param] = &$variable;
         return true;
     }
 
-    /** {@inheritdoc} */
     public function execute($params = null): Result
     {
         if (! empty($params)) {

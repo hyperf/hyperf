@@ -9,6 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use Hyperf\Tracer\Adapter\JaegerTracerFactory;
+use Hyperf\Tracer\Adapter\NoOpTracerFactory;
+use Hyperf\Tracer\Adapter\Reporter\Kafka;
+use Hyperf\Tracer\Adapter\ZipkinTracerFactory;
+use Zipkin\Reporters\Http;
+use Zipkin\Reporters\Noop;
 use Zipkin\Samplers\BinarySampler;
 
 use function Hyperf\Support\env;
@@ -30,7 +36,7 @@ return [
     ],
     'tracer' => [
         'zipkin' => [
-            'driver' => Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
+            'driver' => ZipkinTracerFactory::class,
             'app' => [
                 'name' => env('APP_NAME', 'skeleton'),
                 // Hyperf will detect the system info automatically as the value if ipv4, ipv6, port is null
@@ -42,7 +48,7 @@ return [
             'reporters' => [
                 // options for http reporter
                 'http' => [
-                    'class' => \Zipkin\Reporters\Http::class,
+                    'class' => Http::class,
                     'constructor' => [
                         'options' => [
                             'endpoint_url' => env('ZIPKIN_ENDPOINT_URL', 'http://localhost:9411/api/v2/spans'),
@@ -52,7 +58,7 @@ return [
                 ],
                 // options for kafka reporter
                 'kafka' => [
-                    'class' => \Hyperf\Tracer\Adapter\Reporter\Kafka::class,
+                    'class' => Kafka::class,
                     'constructor' => [
                         'options' => [
                             'topic' => env('ZIPKIN_KAFKA_TOPIC', 'zipkin'),
@@ -64,13 +70,13 @@ return [
                     ],
                 ],
                 'noop' => [
-                    'class' => \Zipkin\Reporters\Noop::class,
+                    'class' => Noop::class,
                 ],
             ],
             'sampler' => BinarySampler::createAsAlwaysSample(),
         ],
         'jaeger' => [
-            'driver' => Hyperf\Tracer\Adapter\JaegerTracerFactory::class,
+            'driver' => JaegerTracerFactory::class,
             'name' => env('APP_NAME', 'skeleton'),
             'options' => [
                 /*
@@ -90,7 +96,7 @@ return [
             ],
         ],
         'noop' => [
-            'driver' => Hyperf\Tracer\Adapter\NoOpTracerFactory::class,
+            'driver' => NoOpTracerFactory::class,
         ],
     ],
     'tags' => [

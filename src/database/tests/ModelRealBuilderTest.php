@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
@@ -410,7 +411,7 @@ class ModelRealBuilderTest extends TestCase
     public function testGetRawQueryLog()
     {
         $container = $this->getContainer();
-        /** @var \Hyperf\Database\Connection $conn */
+        /** @var Connection $conn */
         $conn = $container->get(ConnectionResolverInterface::class)->connection();
         $conn->statement('CREATE TABLE `test` (
             `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -781,25 +782,25 @@ class ModelRealBuilderTest extends TestCase
         });
 
         // test insert with enum
-        DB::table('test_enum_cast')->insert([
+        Db::table('test_enum_cast')->insert([
             'string_status' => StringStatus::Active,
             'integer_status' => IntegerStatus::Active,
         ]);
 
         // test select with enum
-        $record = DB::table('test_enum_cast')->where('string_status', StringStatus::Active)->first();
+        $record = Db::table('test_enum_cast')->where('string_status', StringStatus::Active)->first();
 
         $this->assertNotNull($record);
         $this->assertEquals('active', $record->string_status);
         $this->assertEquals(1, $record->integer_status);
 
         // test update with enum
-        DB::table('test_enum_cast')->where('id', $record->id)->update([
+        Db::table('test_enum_cast')->where('id', $record->id)->update([
             'string_status' => StringStatus::Inactive,
             'integer_status' => IntegerStatus::Inactive,
         ]);
 
-        $record2 = DB::table('test_enum_cast')->where('id', $record->id)->first();
+        $record2 = Db::table('test_enum_cast')->where('id', $record->id)->first();
 
         $this->assertNotNull($record2);
         $this->assertEquals('inactive', $record2->string_status);

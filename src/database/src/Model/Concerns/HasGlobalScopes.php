@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Concerns;
 
 use Closure;
@@ -22,11 +23,11 @@ trait HasGlobalScopes
     /**
      * Register a new global scope on the model.
      *
-     * @param Closure|\Hyperf\Database\Model\Scope|string $scope
+     * @param Closure|Scope|string $scope
      *
      * @throws InvalidArgumentException
      */
-    public static function addGlobalScope($scope, Closure $implementation = null)
+    public static function addGlobalScope($scope, ?Closure $implementation = null)
     {
         if (is_string($scope) && ! is_null($implementation)) {
             return GlobalScope::$container[static::class][$scope] = $implementation;
@@ -44,7 +45,7 @@ trait HasGlobalScopes
     /**
      * Determine if a model has a global scope.
      *
-     * @param \Hyperf\Database\Model\Scope|string $scope
+     * @param Scope|string $scope
      */
     public static function hasGlobalScope($scope): bool
     {
@@ -54,8 +55,8 @@ trait HasGlobalScopes
     /**
      * Get a global scope registered with the model.
      *
-     * @param \Hyperf\Database\Model\Scope|string $scope
-     * @return null|Closure|\Hyperf\Database\Model\Scope
+     * @param Scope|string $scope
+     * @return null|Closure|Scope
      */
     public static function getGlobalScope($scope)
     {

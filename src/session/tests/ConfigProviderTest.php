@@ -9,16 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Session;
 
 use Hyperf\Session\ConfigProvider;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Session\ConfigProvider::class)]
+#[CoversClass(ConfigProvider::class)]
 class ConfigProviderTest extends TestCase
 {
     public function testConfigProvider()

@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Support\Filesystem;
 
 use Hyperf\Coroutine\Parallel;
 use Hyperf\Engine\Channel;
 use Hyperf\Support\Filesystem\Filesystem;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Swoole\Runtime;
 use Throwable;
@@ -50,7 +52,7 @@ class FilesystemTest extends TestCase
         unlink('./test.txt');
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
+    #[Group('NonCoroutine')]
     public function testFopenInCoroutine()
     {
         run(function () {
@@ -80,9 +82,11 @@ class FilesystemTest extends TestCase
         } catch (Throwable $exception) {
             $this->assertSame('mkdir(): File exists', $exception->getMessage());
         }
+
+        $this->assertTrue(true);
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
+    #[Group('NonCoroutine')]
     public function testPutLockInCoroutine()
     {
         run(function () {
@@ -120,6 +124,7 @@ class FilesystemTest extends TestCase
         $path = BASE_PATH . '/runtime/data.log';
         $fs = new Filesystem();
 
+        $fs->makeDirectory(BASE_PATH . '/runtime');
         $this->assertNotFalse($fs->put($path, 'hello'));
         $lastModified = $fs->lastModified($path);
 

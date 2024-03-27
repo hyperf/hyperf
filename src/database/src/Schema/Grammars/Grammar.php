@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Schema\Grammars;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
@@ -136,11 +137,11 @@ abstract class Grammar extends BaseGrammar
     /**
      * Wrap a value in keyword identifiers.
      *
-     * @param \Hyperf\Database\Query\Expression|string $value
+     * @param Expression|string $value
      * @param bool $prefixAlias
      * @return string
      */
-    public function wrap(Fluent|Expression|string $value, $prefixAlias = false)
+    public function wrap(Expression|Fluent|string $value, $prefixAlias = false)
     {
         return parent::wrap(
             $value instanceof Fluent ? $value->name : $value,
@@ -151,7 +152,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Create an empty Doctrine DBAL TableDiff from the Blueprint.
      *
-     * @return \Doctrine\DBAL\Schema\TableDiff
+     * @return TableDiff
      */
     public function getDoctrineTableDiff(Blueprint $blueprint, SchemaManager $schema)
     {

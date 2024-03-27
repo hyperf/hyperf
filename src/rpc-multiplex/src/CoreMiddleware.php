@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
 use Closure;
@@ -90,7 +91,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         return $this->responseBuilder->buildResponse($request, $response);
     }
 
-    protected function buildErrorData(ServerRequestInterface $request, int $code, string $message = null, Throwable $throwable = null): array
+    protected function buildErrorData(ServerRequestInterface $request, int $code, ?string $message = null, ?Throwable $throwable = null): array
     {
         $id = $request->getAttribute(Constant::REQUEST_ID);
 

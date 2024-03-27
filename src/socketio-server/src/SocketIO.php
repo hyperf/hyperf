@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer;
 
 use Closure;
@@ -209,7 +210,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         return ApplicationContext::getContainer()->get($class);
     }
 
-    public function addCallback(string $ackId, Channel $channel, int $timeoutMs = null)
+    public function addCallback(string $ackId, Channel $channel, ?int $timeoutMs = null)
     {
         $this->clientCallbacks[$ackId] = $channel;
         // Clean up using timer to avoid memory leak.

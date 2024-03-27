@@ -44,7 +44,7 @@ jobs:
       fail-fast: false
     env:
       SW_VERSION: ${{ matrix.sw-version }}
-      MYSQL_VERSION: '5.7'
+      MYSQL_VERSION: '8.0'
       PGSQL_VERSION: '14'
     steps:
       - name: Checkout

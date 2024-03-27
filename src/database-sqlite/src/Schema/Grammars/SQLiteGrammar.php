@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\SQLite\Schema\Grammars;
 
 use Hyperf\Collection\Arr;
@@ -429,7 +430,7 @@ class SQLiteGrammar extends Grammar
         return 'multipolygon';
     }
 
-    protected function getIndexColumns(Connection $connection, string $tableName = null): array
+    protected function getIndexColumns(Connection $connection, ?string $tableName = null): array
     {
         $sql = <<<'SQL'
             SELECT t.name AS table_name,
@@ -460,7 +461,7 @@ SQL;
     /**
      * @see http://ezcomponents.org/docs/api/trunk/DatabaseSchema/ezcDbSchemaPgsqlReader.html
      */
-    protected function getTableIndexesList(Connection $connection, array $tableIndexes, string $tableName = null): array
+    protected function getTableIndexesList(Connection $connection, array $tableIndexes, ?string $tableName = null): array
     {
         $indexBuffer = [];
 
@@ -581,7 +582,7 @@ SQL;
     /**
      * Get the SQL for the foreign key.
      *
-     * @param \Hyperf\Support\Fluent $foreign
+     * @param Fluent $foreign
      */
     protected function getForeignKey($foreign): string
     {

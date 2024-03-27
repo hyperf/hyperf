@@ -9,9 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Collections;
 
 use Hyperf\Collection\Arr;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Di\Resolver\ResolverDispatcher;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -89,10 +94,10 @@ class ArrTest extends TestCase
             'logger' => [
                 'default' => [
                     'handler' => [
-                        'class' => \Monolog\Handler\StreamHandler::class,
+                        'class' => StreamHandler::class,
                         'constructor' => [
                             'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                            'level' => \Monolog\Logger::DEBUG,
+                            'level' => Logger::DEBUG,
                         ],
                     ],
                 ],
@@ -105,7 +110,7 @@ class ArrTest extends TestCase
                     'mixin',
                 ],
                 'class_map' => [
-                    \Hyperf\Coroutine\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
+                    Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
                 ],
             ],
         ];
@@ -114,10 +119,10 @@ class ArrTest extends TestCase
             'logger' => [
                 'default' => [
                     'handler' => [
-                        'class' => \Monolog\Handler\StreamHandler::class,
+                        'class' => StreamHandler::class,
                         'constructor' => [
                             'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                            'level' => \Monolog\Logger::INFO,
+                            'level' => Logger::INFO,
                         ],
                     ],
                 ],
@@ -128,15 +133,15 @@ class ArrTest extends TestCase
                     'author',
                 ],
                 'class_map' => [
-                    \Hyperf\Coroutine\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
-                    \Hyperf\Di\Resolver\ResolverDispatcher::class => BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php',
+                    Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
+                    ResolverDispatcher::class => BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php',
                 ],
             ],
         ];
 
         $result = Arr::merge($array1, $array2);
-        $array1['logger']['default']['handler']['constructor']['level'] = \Monolog\Logger::INFO;
-        $array1['scan']['class_map'][\Hyperf\Di\Resolver\ResolverDispatcher::class] = BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php';
+        $array1['logger']['default']['handler']['constructor']['level'] = Logger::INFO;
+        $array1['scan']['class_map'][ResolverDispatcher::class] = BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php';
         $array1['scan']['ignore_annotations'][] = 'author';
 
         $this->assertSame($array1, $result);

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Command;
 
 use Hyperf\Stringable\Str;
@@ -60,7 +61,7 @@ class Parser
         $options = [];
 
         foreach ($tokens as $token) {
-            if (preg_match('/-{2,}(.*)/', $token, $matches)) {
+            if (preg_match('/^-{2,}(.*)/', $token, $matches)) {
                 $options[] = static::parseOption($matches[1]);
             } else {
                 $arguments[] = static::parseArgument($token);

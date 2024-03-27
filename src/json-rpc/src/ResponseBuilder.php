@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Context\Context;
@@ -40,7 +41,7 @@ class ResponseBuilder
     {
     }
 
-    public function buildErrorResponse(ServerRequestInterface $request, int $code, Throwable $error = null): ResponsePlusInterface
+    public function buildErrorResponse(ServerRequestInterface $request, int $code, ?Throwable $error = null): ResponsePlusInterface
     {
         $body = new SwooleStream($this->formatErrorResponse($request, $code, $error));
         return $this->response()->addHeader('content-type', 'application/json')->setBody($body);
@@ -67,7 +68,7 @@ class ResponseBuilder
         return $this->packer->pack($response);
     }
 
-    protected function formatErrorResponse(ServerRequestInterface $request, int $code, Throwable $error = null): string
+    protected function formatErrorResponse(ServerRequestInterface $request, int $code, ?Throwable $error = null): string
     {
         [$code, $message] = $this->error($code, $error?->getMessage());
         $response = $this->dataFormatter->formatErrorResponse(

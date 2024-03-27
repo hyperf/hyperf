@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Command;
 
 use Hyperf\Coroutine\Coroutine;
@@ -69,7 +70,7 @@ abstract class Command extends SymfonyCommand
      */
     protected int $exitCode = self::SUCCESS;
 
-    public function __construct(string $name = null)
+    public function __construct(?string $name = null)
     {
         $this->name = $name ?? $this->name;
 
@@ -101,9 +102,9 @@ abstract class Command extends SymfonyCommand
     {
         $this->output = new SymfonyStyle($input, $output);
 
-        $this->setUpTraits();
+        $this->setUpTraits($this->input = $input, $this->output);
 
-        return parent::run($this->input = $input, $this->output);
+        return parent::run($this->input, $this->output);
     }
 
     /**
@@ -211,13 +212,13 @@ abstract class Command extends SymfonyCommand
     /**
      * Setup traits of command.
      */
-    protected function setUpTraits(): array
+    protected function setUpTraits(InputInterface $input, OutputInterface $output): array
     {
         $uses = array_flip(class_uses_recursive(static::class));
 
         foreach ($uses as $trait) {
             if (method_exists($this, $method = 'setUp' . class_basename($trait))) {
-                $this->{$method}($this->input, $this->output);
+                $this->{$method}($input, $output);
             }
         }
 

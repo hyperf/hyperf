@@ -38,7 +38,7 @@ if (! function_exists('retry')) {
      *
      * @param float|int $times
      * @param int $sleep millisecond
-     * @throws \Throwable
+     * @throws Throwable
      */
     function retry($times, callable $callback, int $sleep = 0)
     {
@@ -51,7 +51,7 @@ if (! function_exists('with')) {
      *
      * @param mixed $value
      */
-    function with($value, callable $callback = null)
+    function with($value, ?callable $callback = null)
     {
         return \Hyperf\Support\with($value, $callback);
     }
@@ -271,7 +271,7 @@ if (! function_exists('optional')) {
      * @param mixed $value
      * @return mixed
      */
-    function optional($value = null, callable $callback = null)
+    function optional($value = null, ?callable $callback = null)
     {
         return \Hyperf\Support\optional($value, $callback);
     }

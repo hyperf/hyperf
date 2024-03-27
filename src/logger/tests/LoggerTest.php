@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Logger;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -16,6 +17,7 @@ use Hyperf\Logger\Logger;
 use Mockery;
 use Monolog\Handler\TestHandler;
 use Monolog\LogRecord;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -26,7 +28,7 @@ use function Hyperf\Coroutine\parallel;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Logger\Logger::class)]
+#[CoversClass(Logger::class)]
 class LoggerTest extends TestCase
 {
     public function testInstanceOfMonoLogger()

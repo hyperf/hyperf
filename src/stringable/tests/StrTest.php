@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Stringable;
 
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidInterface;
 
@@ -322,19 +324,13 @@ class StrTest extends TestCase
         $this->assertSame('Hello-World', StrCache::studly('hello world', '-'));
     }
 
-    /**
-     * @param mixed $validUrl
-     */
-    #[\PHPUnit\Framework\Attributes\DataProvider('validUrls')]
+    #[DataProvider('validUrls')]
     public function testValidUrls($url)
     {
         $this->assertTrue(Str::isUrl($url));
     }
 
-    /**
-     * @param mixed $invalidUrl
-     */
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidUrls')]
+    #[DataProvider('invalidUrls')]
     public function testInvalidUrls($url)
     {
         $this->assertFalse(Str::isUrl($url));

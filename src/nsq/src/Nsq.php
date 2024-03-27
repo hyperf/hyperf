@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nsq;
 
 use Closure;
@@ -49,7 +50,7 @@ class Nsq
     /**
      * @param string|string[] $message
      */
-    public function publish(string $topic, string|array $message, float $deferTime = 0.0, bool $confirm = false): bool
+    public function publish(string $topic, array|string $message, float $deferTime = 0.0, bool $confirm = false): bool
     {
         if (is_array($message)) {
             if ($deferTime > 0) {

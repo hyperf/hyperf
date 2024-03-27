@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigCenter;
 
 use Hyperf\ConfigCenter\Contract\ClientInterface;
@@ -25,6 +26,7 @@ use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Swoole\Process;
 use Swoole\Server;
 use Throwable;
 
@@ -166,7 +168,7 @@ abstract class AbstractDriver implements DriverInterface
         $processes = ProcessCollector::all();
         if ($processes) {
             $string = serialize($message);
-            /** @var \Swoole\Process $process */
+            /** @var Process $process */
             foreach ($processes as $process) {
                 $result = $process->exportSocket()->send($string, 10);
                 if ($result === false) {

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
 use BadMethodCallException;
@@ -270,7 +271,7 @@ class Validator implements ValidatorContract
     /**
      * Run the validator's rules against its data.
      *
-     * @throws \Hyperf\Validation\ValidationException if validate fails
+     * @throws ValidationException if validate fails
      */
     public function validate(): array
     {
@@ -284,7 +285,7 @@ class Validator implements ValidatorContract
     /**
      * Get the attributes and values that were validated.
      *
-     * @throws \Hyperf\Validation\ValidationException if invalid
+     * @throws ValidationException if invalid
      */
     public function validated(): array
     {
@@ -644,7 +645,7 @@ class Validator implements ValidatorContract
     /**
      * Get the Presence Verifier implementation.
      *
-     *@throws RuntimeException
+     * @throws RuntimeException
      */
     public function getPresenceVerifier(): PresenceVerifierInterface
     {

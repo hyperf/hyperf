@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nacos\Provider;
 
 use GuzzleHttp\RequestOptions;
 use Hyperf\Nacos\AbstractProvider;
+use JetBrains\PhpStorm\ArrayShape;
 use Psr\Http\Message\ResponseInterface;
 
 class ConfigProvider extends AbstractProvider
@@ -56,16 +58,15 @@ class ConfigProvider extends AbstractProvider
         ]);
     }
 
-    /**
-     * @param $options = [
-     *     'dataId' => '',
-     *     'group' => '',
-     *     'contentMD5' => md5(file_get_contents($configPath)),
-     *     'tenant' => '',
-     * ]
-     */
-    public function listener(array $options = []): ResponseInterface
-    {
+    public function listener(
+        #[ArrayShape([
+            'dataId' => 'string',
+            'group' => 'string',
+            'contentMD5' => 'string', // md5(file_get_contents($configPath))
+            'tenant' => 'string',
+        ])]
+        array $options = []
+    ): ResponseInterface {
         $config = ($options['dataId'] ?? null) . self::WORD_SEPARATOR .
             ($options['group'] ?? null) . self::WORD_SEPARATOR .
             ($options['contentMD5'] ?? null) . self::WORD_SEPARATOR .

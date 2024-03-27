@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Coroutine;
 
 use Exception;
@@ -20,6 +21,7 @@ use Hyperf\Engine\Exception\CoroutineDestroyedException;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Throwable;
@@ -70,7 +72,7 @@ class CoroutineTest extends TestCase
         }
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
+    #[Group('NonCoroutine')]
     public function testCoroutineInTopCoroutine()
     {
         run(function () {

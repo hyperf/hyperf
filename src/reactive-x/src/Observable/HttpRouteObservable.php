@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX\Observable;
 
 use Hyperf\Context\ApplicationContext;
@@ -33,7 +34,7 @@ class HttpRouteObservable extends Observable
      * @param null|callable|string $callback
      */
     public function __construct(
-        private string|array $httpMethod,
+        private array|string $httpMethod,
         private string $uri,
         private mixed $callback = null,
         private ?SchedulerInterface $scheduler = null,

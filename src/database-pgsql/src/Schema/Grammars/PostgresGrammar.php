@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\PgSQL\Schema\Grammars;
 
+use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Grammars\Grammar;
 use Hyperf\Support\Fluent;
@@ -51,7 +53,7 @@ class PostgresGrammar extends Grammar
      * Compile a create database command.
      *
      * @param string $name
-     * @param \Hyperf\Database\Connection $connection
+     * @param Connection $connection
      */
     public function compileCreateDatabase($name, $connection): string
     {

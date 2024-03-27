@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Cache\Cases;
 
 use Hyperf\Cache\Collector\Memory;
@@ -16,13 +17,14 @@ use Hyperf\Cache\Driver\MemoryDriver;
 use Hyperf\Cache\Exception\OverflowException;
 use Hyperf\Codec\Packer\PhpSerializerPacker;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
 /**
  * @internal
  * @coversNothing
  */
-class MemoryDriverTest extends \PHPUnit\Framework\TestCase
+class MemoryDriverTest extends TestCase
 {
     protected function tearDown(): void
     {

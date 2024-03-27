@@ -397,7 +397,7 @@ class DebugCommand extends HyperfCommand
 {
     protected ContainerInterface $container;
 
-    protected $signature = 'test:test {id : user_id} {--name= : user_name}';
+    protected ?string $signature = 'test:test {id : user_id} {--name= : user_name}';
 
     public function __construct(ContainerInterface $container)
     {
