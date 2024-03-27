@@ -19,6 +19,8 @@ use Hyperf\Database\Query\Expression as ExpressionContract;
 use Hyperf\Database\Sqlsrv\Exception\InvalidArgumentException;
 use RectorPrefix202308\Illuminate\Contracts\Database\Query\ConditionExpression;
 
+use function Hyperf\Collection\head;
+
 class SqlServerBuilder extends Builder
 {
     /**

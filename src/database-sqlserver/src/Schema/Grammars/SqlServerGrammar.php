@@ -16,7 +16,8 @@ use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Grammars\Grammar;
 use Hyperf\Support\Fluent;
-use RuntimeException;
+
+use function Hyperf\Collection\collect;
 
 class SqlServerGrammar extends Grammar
 {
@@ -202,10 +203,6 @@ class SqlServerGrammar extends Grammar
 
     /**
      * Compile a change column command into a series of SQL statements.
-     *
-     * @return array|string
-     *
-     * @throws RuntimeException
      */
     public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection): array
     {

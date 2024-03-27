@@ -14,7 +14,7 @@ namespace Hyperf\Database\Sqlsrv\Query\Grammars;
 use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Grammars\Grammar;
-use hyperf\Database\Sqlsrv\Query\IndexHint;
+use Hyperf\Database\Sqlsrv\Query\IndexHint;
 use Hyperf\Stringable\Str;
 
 use function Hyperf\Collection\collect;
@@ -485,18 +485,6 @@ class SqlServerGrammar extends Grammar
         }
 
         return '';
-    }
-
-    /**
-     * Compile a row number clause.
-     */
-    protected function compileRowNumber(string $partition, string $orders): string
-    {
-        if (empty($orders)) {
-            $orders = 'order by (select 0)';
-        }
-
-        return parent::compileRowNumber($partition, $orders);
     }
 
     /**

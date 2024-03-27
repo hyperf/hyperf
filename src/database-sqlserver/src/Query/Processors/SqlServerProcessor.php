@@ -28,6 +28,7 @@ class SqlServerProcessor extends Processor
      */
     public function processInsertGetId(Builder $query, $sql, $values, $sequence = null): int
     {
+        /** @var Connection $connection */
         $connection = $query->getConnection();
 
         $connection->insert($sql, $values);
