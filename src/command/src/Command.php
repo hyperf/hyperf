@@ -148,7 +148,7 @@ abstract class Command extends SymfonyCommand
     /**
      * Configure the console command using a fluent definition.
      */
-    protected function configureUsingFluentDefinition()
+    protected function configureUsingFluentDefinition(): void
     {
         [$name, $arguments, $options] = Parser::parse($this->signature);
 
@@ -161,7 +161,7 @@ abstract class Command extends SymfonyCommand
         $this->getDefinition()->addOptions($options);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
     }

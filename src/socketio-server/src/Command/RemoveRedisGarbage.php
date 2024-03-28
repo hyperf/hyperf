@@ -27,7 +27,7 @@ class RemoveRedisGarbage extends Command
         parent::__construct('socketio:clear');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $redis = $this->factory->get($this->connection);
         $nsp = $this->input->getArgument('namespace');
@@ -47,7 +47,7 @@ class RemoveRedisGarbage extends Command
         }
     }
 
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [
             ['namespace', InputArgument::OPTIONAL, 'The namespace to be cleaned up.'],

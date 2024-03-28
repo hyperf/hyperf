@@ -73,7 +73,7 @@ class ModelCommand extends Command
         return parent::run($input, $output);
     }
 
-    public function handle()
+    public function handle(): void
     {
         $table = $this->input->getArgument('table');
         $pool = $this->input->getOption('pool');
@@ -100,7 +100,7 @@ class ModelCommand extends Command
         }
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addArgument('table', InputArgument::OPTIONAL, 'Which table you want to associated with the Model.');
 
@@ -125,7 +125,7 @@ class ModelCommand extends Command
         return $connection->getSchemaBuilder();
     }
 
-    protected function createModels(ModelOption $option)
+    protected function createModels(ModelOption $option): void
     {
         $builder = $this->getSchemaBuilder($option->getPool());
         $tables = [];
@@ -152,7 +152,7 @@ class ModelCommand extends Command
         return $table === $this->config->get('databases.migrations', 'migrations');
     }
 
-    protected function createModel(string $table, ModelOption $option)
+    protected function createModel(string $table, ModelOption $option): void
     {
         $builder = $this->getSchemaBuilder($option->getPool());
         $table = Str::replaceFirst($option->getPrefix(), '', $table);
@@ -197,7 +197,7 @@ class ModelCommand extends Command
         }
     }
 
-    protected function generateIDE(string $code, ModelOption $option, ModelData $data)
+    protected function generateIDE(string $code, ModelOption $option, ModelData $data): void
     {
         $stmts = $this->astParser->parse($code);
         $traverser = new NodeTraverser();

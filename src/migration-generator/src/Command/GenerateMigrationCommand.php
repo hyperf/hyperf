@@ -38,7 +38,7 @@ class GenerateMigrationCommand extends HyperfCommand
         parent::__construct('gen:migration-from-database');
     }
 
-    public function configure()
+    public function configure(): void
     {
         parent::configure();
         $this->setDescription('Generate migrations from an existing table structure');
@@ -47,7 +47,7 @@ class GenerateMigrationCommand extends HyperfCommand
         $this->addOption('path', null, InputOption::VALUE_OPTIONAL, 'The path that you want the migration to be generated.', 'migrations');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $table = $this->input->getArgument('table');
         $pool = $this->input->getOption('pool');

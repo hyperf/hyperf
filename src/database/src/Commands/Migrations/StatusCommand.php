@@ -78,10 +78,8 @@ class StatusCommand extends BaseCommand
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use'],
