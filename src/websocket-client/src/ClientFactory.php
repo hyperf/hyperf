@@ -19,7 +19,7 @@ use function Hyperf\Support\make;
 
 class ClientFactory
 {
-    public function create(string $uri, bool $autoClose = true, array $headers = [],): Client
+    public function create(string $uri, bool $autoClose = true, array $headers = []): Client
     {
         if (! Str::startsWith($uri, ['ws://', 'wss://'])) {
             $uri = 'ws://' . $uri;
