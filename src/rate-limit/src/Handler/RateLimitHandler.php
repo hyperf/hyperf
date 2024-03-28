@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RateLimit\Handler;
 
 use bandwidthThrottle\tokenBucket\Rate;
+use bandwidthThrottle\tokenBucket\storage\StorageException;
 use bandwidthThrottle\tokenBucket\TokenBucket;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\RateLimit\Storage\RedisStorage;
@@ -30,7 +32,7 @@ class RateLimitHandler
     }
 
     /**
-     * @throws \bandwidthThrottle\tokenBucket\storage\StorageException
+     * @throws StorageException
      */
     public function build(string $key, int $limit, int $capacity, int $timeout): TokenBucket
     {

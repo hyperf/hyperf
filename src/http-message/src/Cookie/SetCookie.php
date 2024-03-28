@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpMessage\Cookie;
 
 use Hyperf\Contract\Arrayable;
@@ -160,8 +161,6 @@ class SetCookie implements Stringable, Arrayable
 
     /**
      * Set the domain of the cookie.
-     *
-     * @param string $domain
      */
     public function setDomain(?string $domain)
     {

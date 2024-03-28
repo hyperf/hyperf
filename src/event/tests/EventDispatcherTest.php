@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Event;
 
 use Hyperf\Config\Config;
@@ -25,6 +26,7 @@ use HyperfTest\Event\Listener\BetaListener;
 use HyperfTest\Event\Listener\PriorityListener;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -35,11 +37,7 @@ use ReflectionClass;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Event\EventDispatcher::class)]
-/**
- * @internal
- * @coversNothing
- */
+#[CoversClass(EventDispatcher::class)]
 class EventDispatcherTest extends TestCase
 {
     use MockeryPHPUnitIntegration;

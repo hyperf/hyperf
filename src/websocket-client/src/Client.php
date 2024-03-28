@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketClient;
 
 use Hyperf\HttpMessage\Server\Response;
@@ -72,7 +73,7 @@ class Client
     /**
      * @param int $flags SWOOLE_WEBSOCKET_FLAG_FIN or SWOOLE_WEBSOCKET_FLAG_COMPRESS
      */
-    public function push(string $data, int $opcode = WEBSOCKET_OPCODE_TEXT, int $flags = null): bool
+    public function push(string $data, int $opcode = WEBSOCKET_OPCODE_TEXT, ?int $flags = null): bool
     {
         return $this->client->push($data, $opcode, $flags);
     }

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Consul;
 
 use Hyperf\Collection\Arr;
@@ -32,7 +33,7 @@ class ConsulResponse
         return $this->response->{$name}(...$arguments);
     }
 
-    public function json(string $key = null, $default = null)
+    public function json(?string $key = null, $default = null)
     {
         if ($this->response->getHeaderLine('content-type') !== 'application/json') {
             throw new ServerException('The Content-Type of response is not equal application/json');

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
 use Hyperf\Collection\Arr;
@@ -61,7 +62,7 @@ class TcpServer extends Server
         ExceptionHandlerDispatcher $exceptionDispatcher,
         ProtocolManager $protocolManager,
         StdoutLoggerInterface $logger,
-        string $protocol = null
+        ?string $protocol = null
     ) {
         parent::__construct($container, $dispatcher, $exceptionDispatcher, $logger);
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer\Collector;
 
 use Hyperf\Context\ApplicationContext;
@@ -26,7 +27,7 @@ class SocketIORouter extends MetadataCollector
         static::set('backward.' . $className, $nsp);
     }
 
-    public static function clear(string $key = null): void
+    public static function clear(?string $key = null): void
     {
         if ($key !== null) {
             parent::clear('backward.' . $key);

@@ -23,20 +23,17 @@ The configuration file of the `kafka` component is located in `config/autoload/k
 The default configuration file is as follows:
 
 |         Configuration         |    Type    |            Default            |                                                                                                Description                                                                                                |
-| :---------------------------: | :--------: | :---------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|:-----------------------------:| :--------: | :---------------------------: |:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 |        connect_timeout        | int｜float |              -1               |                                                          Connection timeout time (unit: second, support decimal), if it is-1, there is no limit                                                           |
 |         send_timeout          | int｜float |              -1               |                                                             Send timeout time (unit: second, support decimal), if it is-1, there is no limit                                                              |
 |         recv_timeout          | int｜float |              -1               |                                                           Receiving timeout time (unit: second, support decimal), if it is-1, there is no limit                                                           |
 |           client_id           |   string   |             null              |                                                                                              Kafka Client ID                                                                                              |
 |      max_write_attempts       |    int     |               3               |                                                                                     Maximum number of write attempts                                                                                      |
-|            brokers            |   array    |              []               |                                             Manually configure the list of brokers, if you want to use manual configuration, please set updateBrokers to true                                             |
-|       bootstrap_server        |   array    |       '127.0.0.1:9092'        |                                        Bootstrap server, if this value is configured, it will automatically connect to the server and automatically update brokers                                        |
-|        update_brokers         |    bool    |             true              |                                                                                  Whether to automatically update brokers                                                                                  |
+|       bootstrap_servers       |   array    |       '127.0.0.1:9092'        |                                       Bootstrap servers, if this value is configured, it will automatically connect to the server and automatically update brokers                                        |
 |             acks              |    int     |               0               | The producer asks the leader to confirm the value that has been received before the confirmation request is completed. Allowed values: 0 means no confirmation, 1 means leader only,-1 means complete ISR |
 |          producer_id          |    int     |              -1               |                                                                                                Producer ID                                                                                                |
 |        producer_epoch         |    int     |              -1               |                                                                                              Producer Epoch                                                                                               |
 |    partition_leader_epoch     |    int     |              -1               |                                                                                          Partition Leader Epoch                                                                                           |
-|            broker             |   string   |              ''               |                                                                                     broker, format: '127.0.0.1:9092'                                                                                      |
 |           interval            | int｜float |               0               |                                        How many seconds to delay trying again when the message is not received, the default is 0, no delay (unit: second, decimal)                                        |
 |        session_timeout        | int｜float |              60               |                                If no heartbeat signal is received after the timeout, the coordinator will consider the user dead. (Unit: seconds, decimals are supported)                                 |
 |       rebalance_timeout       | int｜float |              60               |                                   The longest time the coordinator waits for each member to rejoin when rebalancing the group (unit: seconds, decimals are supported).                                    |
@@ -63,16 +60,11 @@ return [
         'recv_timeout' => -1,
         'client_id' => '',
         'max_write_attempts' => 3,
-        'brokers' => [
-            '127.0.0.1:9092',
-        ],
-        'bootstrap_server' => '127.0.0.1:9092',
-        'update_brokers' => true,
+        'bootstrap_servers' => '127.0.0.1:9092',
         'acks' => 0,
         'producer_id' => -1,
         'producer_epoch' => -1,
         'partition_leader_epoch' => -1,
-        'broker' => '',
         'interval' => 0,
         'session_timeout' => 60,
         'rebalance_timeout' => 60,

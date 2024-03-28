@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer\Contract;
 
 use Hyperf\HttpMessage\Upload\UploadedFile;
@@ -39,7 +40,7 @@ interface RequestInterface extends ServerRequestInterface
     /**
      * Retrieve the input data from request via multi keys, include query parameters, parsed body and json body.
      */
-    public function inputs(array $keys, array $default = null): array;
+    public function inputs(array $keys, ?array $default = null): array;
 
     /**
      * Determine if the $keys is existed in parameters.

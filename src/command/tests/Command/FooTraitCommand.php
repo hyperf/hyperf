@@ -9,13 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Command\Command;
 
-class FooTraitCommand extends \Hyperf\Command\Command
+use Hyperf\Command\Command;
+
+class FooTraitCommand extends Command
 {
     use Traits\Foo;
 
-    public function __construct(string $name = null)
+    public function __construct(?string $name = null)
     {
         parent::__construct($name);
     }

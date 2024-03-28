@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Swagger\Processor;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
@@ -44,7 +45,7 @@ class BuildPathsProcessor implements ProcessorInterface
         // Merge @OA\Operations into existing @OA\PathItems or create a new one.
         foreach ($operations as $operation) {
             $class = $operation->_context->namespace . '\\' . $operation->_context->class;
-            /** @var HyperfServer $serverAnnotation */
+            /** @var null|HyperfServer $serverAnnotation */
             $serverAnnotation = AnnotationCollector::getClassAnnotation($class, HyperfServer::class);
             if (! $serverAnnotation) {
                 continue;
@@ -52,19 +53,17 @@ class BuildPathsProcessor implements ProcessorInterface
 
             $path = $serverAnnotation->name . '|' . $operation->path;
 
-            if ($path) {
-                if (empty($paths[$path])) {
-                    $paths[$path] = $pathItem = new OA\PathItem(
-                        [
-                            'path' => $path,
-                            '_context' => new Context(['generated' => true], $operation->_context),
-                        ]
-                    );
-                    $analysis->addAnnotation($pathItem, $pathItem->_context);
-                }
-                if ($paths[$path]->merge([$operation])) {
-                    $operation->_context->logger->warning('Unable to merge ' . $operation->identity() . ' in ' . $operation->_context);
-                }
+            if (empty($paths[$path])) {
+                $paths[$path] = $pathItem = new OA\PathItem(
+                    [
+                        'path' => $path,
+                        '_context' => new Context(['generated' => true], $operation->_context),
+                    ]
+                );
+                $analysis->addAnnotation($pathItem, $pathItem->_context);
+            }
+            if ($paths[$path]->merge([$operation])) {
+                $operation->_context->logger->warning('Unable to merge ' . $operation->identity() . ' in ' . $operation->_context);
             }
         }
         if ($paths) {

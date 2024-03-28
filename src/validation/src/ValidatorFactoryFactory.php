@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
 use Hyperf\Contract\TranslatorInterface;
@@ -26,7 +27,7 @@ class ValidatorFactoryFactory
     {
         $translator = $container->get(TranslatorInterface::class);
 
-        /** @var \Hyperf\Validation\ValidatorFactory $validatorFactory */
+        /** @var ValidatorFactory $validatorFactory */
         $validatorFactory = make(ValidatorFactory::class, compact('translator', 'container'));
 
         if ($container->has(ConnectionResolverInterface::class) && $container->has(PresenceVerifierInterface::class)) {

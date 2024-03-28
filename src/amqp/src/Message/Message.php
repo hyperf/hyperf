@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\ExchangeBuilder;
@@ -20,17 +21,17 @@ abstract class Message implements MessageInterface
 
     protected string $exchange = '';
 
-    protected Type|string $type = Type::TOPIC;
+    protected string|Type $type = Type::TOPIC;
 
     protected array|string $routingKey = '';
 
-    public function setType(Type|string $type): static
+    public function setType(string|Type $type): static
     {
         $this->type = $type;
         return $this;
     }
 
-    public function getType(): Type|string
+    public function getType(): string|Type
     {
         return $this->type;
     }

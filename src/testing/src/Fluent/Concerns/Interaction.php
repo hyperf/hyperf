@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Testing\Fluent\Concerns;
 
 use Hyperf\Stringable\Str;
@@ -66,5 +67,5 @@ trait Interaction
      *
      * @return mixed
      */
-    abstract protected function prop(string $key = null);
+    abstract protected function prop(?string $key = null);
 }

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Guzzle;
 
 use GuzzleHttp\Middleware;
@@ -23,7 +24,7 @@ class RetryMiddleware implements MiddlewareInterface
 
     public function getMiddleware(): callable
     {
-        return Middleware::retry(function ($retries, RequestInterface $request, ResponseInterface $response = null) {
+        return Middleware::retry(function ($retries, RequestInterface $request, ?ResponseInterface $response = null) {
             if (! $this->isOk($response) && $retries < $this->retries) {
                 return true;
             }

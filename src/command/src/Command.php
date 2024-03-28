@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Command;
 
 use Hyperf\Coroutine\Coroutine;
@@ -69,7 +70,7 @@ abstract class Command extends SymfonyCommand
      */
     protected int $exitCode = self::SUCCESS;
 
-    public function __construct(string $name = null)
+    public function __construct(?string $name = null)
     {
         $this->name = $name ?? $this->name;
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use BadMethodCallException;
@@ -28,6 +29,7 @@ use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
 use InvalidArgumentException;
 use Mockery;
+use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -3054,7 +3056,7 @@ class QueryBuilderTest extends TestCase
     }
 
     /**
-     * @return Builder|\Mockery\MockInterface
+     * @return Builder|MockInterface
      */
     protected function getMockQueryBuilder()
     {

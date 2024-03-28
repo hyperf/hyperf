@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Rules;
 
 use Hyperf\Collection\Arr;
@@ -80,7 +81,7 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
      * @param null|callable|static $callback
      * @return null|static
      */
-    public static function defaults(File|callable $callback = null)
+    public static function defaults(null|callable|File $callback = null)
     {
         if (is_null($callback)) {
             return static::default();

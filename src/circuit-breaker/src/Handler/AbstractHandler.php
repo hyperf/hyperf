@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\CircuitBreaker\Handler;
 
 use Closure;
@@ -193,7 +194,7 @@ abstract class AbstractHandler implements HandlerInterface
 
     abstract protected function process(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreakerInterface $breaker, Annotation $annotation);
 
-    protected function prepareHandler(string|array $fallback, ProceedingJoinPoint $proceedingJoinPoint): array
+    protected function prepareHandler(array|string $fallback, ProceedingJoinPoint $proceedingJoinPoint): array
     {
         if (is_string($fallback)) {
             $fallback = explode('::', $fallback);

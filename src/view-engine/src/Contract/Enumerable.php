@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Contract;
 
 use Countable;
@@ -49,7 +50,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @return static
      */
-    public static function times(int $number, callable $callback = null);
+    public static function times(int $number, ?callable $callback = null);
 
     /**
      * Wrap the given value in a collection if applicable.
@@ -258,7 +259,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @return static
      */
-    public function filter(callable $callback = null);
+    public function filter(?callable $callback = null);
 
     /**
      * Apply the callback if the value is truthy.
@@ -266,21 +267,21 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param bool $value
      * @return mixed|static
      */
-    public function when($value, callable $callback, callable $default = null);
+    public function when($value, callable $callback, ?callable $default = null);
 
     /**
      * Apply the callback if the collection is empty.
      *
      * @return mixed|static
      */
-    public function whenEmpty(callable $callback, callable $default = null);
+    public function whenEmpty(callable $callback, ?callable $default = null);
 
     /**
      * Apply the callback if the collection is not empty.
      *
      * @return mixed|static
      */
-    public function whenNotEmpty(callable $callback, callable $default = null);
+    public function whenNotEmpty(callable $callback, ?callable $default = null);
 
     /**
      * Apply the callback if the value is falsy.
@@ -288,21 +289,21 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param bool $value
      * @return mixed|static
      */
-    public function unless($value, callable $callback, callable $default = null);
+    public function unless($value, callable $callback, ?callable $default = null);
 
     /**
      * Apply the callback unless the collection is empty.
      *
      * @return mixed|static
      */
-    public function unlessEmpty(callable $callback, callable $default = null);
+    public function unlessEmpty(callable $callback, ?callable $default = null);
 
     /**
      * Apply the callback unless the collection is not empty.
      *
      * @return mixed|static
      */
-    public function unlessNotEmpty(callable $callback, callable $default = null);
+    public function unlessNotEmpty(callable $callback, ?callable $default = null);
 
     /**
      * Filter items by the given key value pair.
@@ -393,7 +394,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param mixed $default
      * @return mixed
      */
-    public function first(callable $callback = null, $default = null);
+    public function first(?callable $callback = null, $default = null);
 
     /**
      * Get the first item by the given key value pair.
@@ -507,7 +508,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param mixed $default
      * @return mixed
      */
-    public function last(callable $callback = null, $default = null);
+    public function last(?callable $callback = null, $default = null);
 
     /**
      * Run a map over each of the items.

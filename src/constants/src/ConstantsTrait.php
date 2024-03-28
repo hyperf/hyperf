@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Constants;
 
 use Hyperf\Constants\Exception\ConstantsException;
@@ -27,7 +28,7 @@ trait ConstantsTrait
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public static function __callStatic(string $name, array $arguments): string|array
+    public static function __callStatic(string $name, array $arguments): array|string
     {
         return static::getValue($name, $arguments);
     }

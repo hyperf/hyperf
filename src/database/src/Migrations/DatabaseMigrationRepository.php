@@ -9,9 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Migrations;
 
+use Hyperf\Database\Connection;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\ConnectionResolverInterface as Resolver;
+use Hyperf\Database\Query\Builder;
 
 class DatabaseMigrationRepository implements MigrationRepositoryInterface
 {
@@ -159,7 +163,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Get the connection resolver instance.
      *
-     * @return \Hyperf\Database\ConnectionResolverInterface
+     * @return ConnectionResolverInterface
      */
     public function getConnectionResolver()
     {
@@ -169,7 +173,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Resolve the database connection instance.
      *
-     * @return \Hyperf\Database\Connection
+     * @return Connection
      */
     public function getConnection()
     {
@@ -187,7 +191,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Get a query builder for the migration table.
      *
-     * @return \Hyperf\Database\Query\Builder
+     * @return Builder
      */
     protected function table()
     {

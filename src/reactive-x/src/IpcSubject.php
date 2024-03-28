@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX;
 
 use Hyperf\Framework\Event\OnPipeMessage;
@@ -57,7 +58,7 @@ class IpcSubject implements MessageBusInterface
         $this->isSubscribed = true;
     }
 
-    public function subscribe($onNextOrObserver = null, callable $onError = null, callable $onCompleted = null): DisposableInterface
+    public function subscribe($onNextOrObserver = null, ?callable $onError = null, ?callable $onCompleted = null): DisposableInterface
     {
         $this->init();
         return $this->subject->subscribe($onNextOrObserver, $onError, $onCompleted);

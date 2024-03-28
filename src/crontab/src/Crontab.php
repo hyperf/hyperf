@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
@@ -43,7 +44,7 @@ class Crontab
 
     protected bool $enable = true;
 
-    protected null|string|DateTimeZone $timezone = null;
+    protected null|DateTimeZone|string $timezone = null;
 
     protected ?Channel $running = null;
 
@@ -221,7 +222,7 @@ class Crontab
         return $this->timezone;
     }
 
-    public function setTimezone(string|DateTimeZone $timezone): static
+    public function setTimezone(DateTimeZone|string $timezone): static
     {
         $this->timezone = $timezone;
         return $this;

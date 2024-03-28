@@ -13,12 +13,16 @@ declare(strict_types=1);
 
 namespace HyperfTest\ResourceGrpc\Stubs\Grpc;
 
+use Google\Protobuf\Internal\GPBType;
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\Internal\Message;
+use Google\Protobuf\Internal\RepeatedField;
+use HyperfTest\ResourceGrpc\Stubs\Grpc\GPBMetadata\Grpc\Grpc;
 
 /**
  * Generated from protobuf message <code>HyperfTest.ResourceGrpc.Stubs.Grpc.AllReply</code>.
  */
-class AllReply extends \Google\Protobuf\Internal\Message
+class AllReply extends Message
 {
     /**
      * Generated from protobuf field <code>string message = 1;</code>.
@@ -36,13 +40,13 @@ class AllReply extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *                    Optional. Data for populating the Message object.
      *
-     *     @var string $message
-     *     @var \Google\Protobuf\Internal\RepeatedField|\HyperfTest\ResourceGrpc\Stubs\Grpc\HiUser[] $users
-     * }
+     * @var string $message
+     * @var \HyperfTest\ResourceGrpc\Stubs\Grpc\HiUser[]|RepeatedField $users
+     *                                                                 }
      */
     public function __construct($data = null)
     {
-        \HyperfTest\ResourceGrpc\Stubs\Grpc\GPBMetadata\Grpc\Grpc::initOnce();
+        Grpc::initOnce();
         parent::__construct($data);
     }
 
@@ -70,7 +74,7 @@ class AllReply extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .HyperfTest.ResourceGrpc.Stubs.Grpc.HiUser users = 2;</code>.
-     * @return \Google\Protobuf\Internal\RepeatedField
+     * @return RepeatedField
      */
     public function getUsers()
     {
@@ -79,12 +83,12 @@ class AllReply extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .HyperfTest.ResourceGrpc.Stubs.Grpc.HiUser users = 2;</code>.
-     * @param \Google\Protobuf\Internal\RepeatedField|\HyperfTest\ResourceGrpc\Stubs\Grpc\HiUser[] $var
+     * @param \HyperfTest\ResourceGrpc\Stubs\Grpc\HiUser[]|RepeatedField $var
      * @return $this
      */
     public function setUsers($var)
     {
-        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \HyperfTest\ResourceGrpc\Stubs\Grpc\HiUser::class);
+        $arr = GPBUtil::checkRepeatedField($var, GPBType::MESSAGE, HiUser::class);
         $this->users = $arr;
 
         return $this;

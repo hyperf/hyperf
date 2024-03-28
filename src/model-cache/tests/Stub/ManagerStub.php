@@ -9,13 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ModelCache\Stub;
 
 use DateInterval;
 use Hyperf\Database\Model\Model;
 use Hyperf\ModelCache\Handler\HandlerInterface;
+use Hyperf\ModelCache\Manager;
 
-class ManagerStub extends \Hyperf\ModelCache\Manager
+class ManagerStub extends Manager
 {
     public function getCacheTTL(Model $instance, HandlerInterface $handler): DateInterval|int
     {

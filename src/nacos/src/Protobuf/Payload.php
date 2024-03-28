@@ -14,11 +14,12 @@ declare(strict_types=1);
 namespace Hyperf\Nacos\Protobuf;
 
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\Internal\Message;
 
 /**
  * Generated from protobuf message <code>Payload</code>.
  */
-class Payload extends \Google\Protobuf\Internal\Message
+class Payload extends Message
 {
     /**
      * Generated from protobuf field <code>.Metadata metadata = 2;</code>.
@@ -36,9 +37,9 @@ class Payload extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *                    Optional. Data for populating the Message object.
      *
-     *     @var \Hyperf\Nacos\Protobuf\Metadata $metadata
-     *     @var \Hyperf\Nacos\Protobuf\Any $body
-     * }
+     * @var Metadata $metadata
+     * @var Any $body
+     *          }
      */
     public function __construct($data = null)
     {
@@ -48,7 +49,7 @@ class Payload extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>.Metadata metadata = 2;</code>.
-     * @return null|\Hyperf\Nacos\Protobuf\Metadata
+     * @return null|Metadata
      */
     public function getMetadata()
     {
@@ -67,12 +68,12 @@ class Payload extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>.Metadata metadata = 2;</code>.
-     * @param \Hyperf\Nacos\Protobuf\Metadata $var
+     * @param Metadata $var
      * @return $this
      */
     public function setMetadata($var)
     {
-        GPBUtil::checkMessage($var, \Hyperf\Nacos\Protobuf\Metadata::class);
+        GPBUtil::checkMessage($var, Metadata::class);
         $this->metadata = $var;
 
         return $this;
@@ -80,7 +81,7 @@ class Payload extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>.google.protobuf.Any body = 3;</code>.
-     * @return null|\Hyperf\Nacos\Protobuf\Any
+     * @return null|Any
      */
     public function getBody()
     {
@@ -99,12 +100,12 @@ class Payload extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>.google.protobuf.Any body = 3;</code>.
-     * @param \Hyperf\Nacos\Protobuf\Any $var
+     * @param Any $var
      * @return $this
      */
     public function setBody($var)
     {
-        GPBUtil::checkMessage($var, \Hyperf\Nacos\Protobuf\Any::class);
+        GPBUtil::checkMessage($var, Any::class);
         $this->body = $var;
 
         return $this;

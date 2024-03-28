@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ModelCache\Stub;
 
 use Hyperf\Codec\Packer\PhpSerializerPacker;
@@ -142,6 +143,8 @@ class ContainerStub
 
         $container->shouldReceive('get')->with('db.connector.mysql')->andReturn(new MySqlConnector());
         $container->shouldReceive('has')->andReturn(true);
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnTrue();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn(new Frequency());
         $container->shouldReceive('make')->with(DbPool::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
             return new DbPool($container, $args['name']);

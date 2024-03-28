@@ -9,10 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketServer\Exception;
 
-use Hyperf\HttpMessage\Exception\BadRequestHttpException;
-
-class WebSocketHandeShakeException extends BadRequestHttpException
-{
+if (! class_exists('Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException', false)) {
+    /**
+     * @deprecated since v3.1, will remove at v3.2. Please use Hyperf\WebSocketServer\Exception\WebSocketHandShakeException instead.
+     */
+    class WebSocketHandeShakeException extends WebSocketHandShakeException
+    {
+    }
 }

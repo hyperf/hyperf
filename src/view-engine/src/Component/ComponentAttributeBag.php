@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Component;
 
 use ArrayAccess;
@@ -18,6 +19,7 @@ use Hyperf\Macroable\Macroable;
 use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\HtmlString;
+use Hyperf\ViewEngine\T;
 use IteratorAggregate;
 use Traversable;
 
@@ -221,7 +223,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
                 return $value;
             }
 
-            return \Hyperf\ViewEngine\T::e($value);
+            return T::e($value);
         }, $attributeDefaults);
 
         foreach ($this->attributes as $key => $value) {

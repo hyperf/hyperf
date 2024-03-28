@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\Annotation;
 
+use Composer\Autoload\ClassLoader;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
@@ -56,7 +58,7 @@ class ScannerTest extends TestCase
     {
         $this->getContainer();
 
-        $loader = Mockery::mock(\Composer\Autoload\ClassLoader::class);
+        $loader = Mockery::mock(ClassLoader::class);
         $loader->shouldReceive('findFile')->andReturnUsing(function ($class) {
             return $class;
         });

@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Consul;
 
 use HyperfTest\Consul\Stub\Client;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
@@ -21,11 +23,7 @@ use ReflectionMethod;
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Consul\Client::class)]
-/**
- * @internal
- * @coversNothing
- */
+#[CoversClass(\Hyperf\Consul\Client::class)]
 class ClientTest extends TestCase
 {
     /**

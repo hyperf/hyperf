@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpMessage\Base;
 
 use Hyperf\HttpMessage\Stream\SwooleStream;
@@ -221,7 +222,7 @@ class Request implements RequestInterface, RequestPlusInterface, Stringable
         return $this;
     }
 
-    public function setUri(UriInterface|string $uri, ?bool $preserveHost = null): static
+    public function setUri(string|UriInterface $uri, ?bool $preserveHost = null): static
     {
         $this->uri = $uri;
 

@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace HyperfTest\ResourceGrpc\Stubs\Grpc;
 
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\Internal\Message;
+use HyperfTest\ResourceGrpc\Stubs\Grpc\GPBMetadata\Grpc\Grpc;
 
 /**
  * Generated from protobuf message <code>HyperfTest.ResourceGrpc.Stubs.Grpc.HiUser</code>.
  */
-class HiUser extends \Google\Protobuf\Internal\Message
+class HiUser extends Message
 {
     /**
      * Generated from protobuf field <code>string name = 1;</code>.
@@ -36,13 +38,13 @@ class HiUser extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *                    Optional. Data for populating the Message object.
      *
-     *     @var string $name
-     *     @var int $sex
-     * }
+     * @var string $name
+     * @var int $sex
+     *          }
      */
     public function __construct($data = null)
     {
-        \HyperfTest\ResourceGrpc\Stubs\Grpc\GPBMetadata\Grpc\Grpc::initOnce();
+        Grpc::initOnce();
         parent::__construct($data);
     }
 

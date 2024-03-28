@@ -992,6 +992,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Event\ValidatorFactoryResolved;
+use Hyperf\Validation\Validator;
 
 #[Listener]
 class ValidatorFactoryResolvedListener implements ListenerInterface
@@ -1009,11 +1010,11 @@ class ValidatorFactoryResolvedListener implements ListenerInterface
         /** @var ValidatorFactoryInterface $validatorFactory */
         $validatorFactory = $event->validatorFactory;
         // registered foo validator
-        $validatorFactory->extend('foo', function ($attribute, $value, $parameters, $validator) {
-            return $value =='foo';
+        $validatorFactory->extend('foo', function (string $attribute, mixed $value, array $parameters, Validator $validator): bool {
+            return $value == 'foo';
         });
         // When creating a custom validation rule, you may sometimes need to define a custom placeholder for error messages. Here is an extension of the :foo placeholder
-        $validatorFactory->replacer('foo', function ($message, $attribute, $rule, $parameters) {
+        $validatorFactory->replacer('foo', function (string $message, string $attribute, string $rule, array $parameters): array|string {
             return str_replace(':foo', $attribute, $message);
         });
     }

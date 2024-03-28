@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer;
 
 use Hyperf\Collection\Arr;
@@ -103,7 +104,7 @@ class Request implements RequestInterface
     /**
      * Retrieve the input data from request via multi keys, include query parameters, parsed body and json body.
      */
-    public function inputs(array $keys, array $default = null): array
+    public function inputs(array $keys, ?array $default = null): array
     {
         $data = $this->getInputData();
         $result = [];

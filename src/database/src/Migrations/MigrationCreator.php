@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Migrations;
 
 use Closure;
@@ -36,7 +37,7 @@ class MigrationCreator
      *
      * @throws Exception
      */
-    public function create(string $name, string $path, string $table = null, bool $create = false): string
+    public function create(string $name, string $path, ?string $table = null, bool $create = false): string
     {
         $this->ensureMigrationDoesntAlreadyExist($name, $path);
 

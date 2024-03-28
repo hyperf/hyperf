@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Middleware;
 
 use Hyperf\Coroutine\Coroutine;
@@ -48,7 +49,7 @@ class TraceMiddleware implements MiddlewareInterface
         defer(function () use ($tracer) {
             try {
                 $tracer->flush();
-            } catch (\Throwable) {
+            } catch (Throwable) {
             }
         });
         try {

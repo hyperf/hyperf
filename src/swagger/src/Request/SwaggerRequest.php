@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Swagger\Request;
 
 use Hyperf\Context\RequestContext;
@@ -45,7 +46,7 @@ class SwaggerRequest extends FormRequest
 
     protected function getCallbackByContext(): array
     {
-        /** @var Dispatched $dispatched */
+        /** @var null|Dispatched $dispatched */
         $dispatched = RequestContext::getOrNull()?->getAttribute(Dispatched::class);
         if (! $dispatched) {
             throw new RuntimeException('The request is invalid.');

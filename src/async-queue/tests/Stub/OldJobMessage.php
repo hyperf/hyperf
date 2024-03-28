@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\AsyncQueue\Stub;
 
+use Hyperf\AsyncQueue\JobMessage;
 use Hyperf\Contract\UnCompressInterface;
 
-class OldJobMessage extends \Hyperf\AsyncQueue\JobMessage
+class OldJobMessage extends JobMessage
 {
     public function __unserialize(array $data): void
     {

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Redis\Traits;
 
 use Redis;
@@ -23,7 +24,7 @@ trait MultiExec
      *
      * @return array|Redis
      */
-    public function pipeline(callable $callback = null)
+    public function pipeline(?callable $callback = null)
     {
         $pipeline = $this->__call('pipeline', []);
 
@@ -35,7 +36,7 @@ trait MultiExec
      *
      * @return array|Redis|RedisCluster
      */
-    public function transaction(callable $callback = null)
+    public function transaction(?callable $callback = null)
     {
         $transaction = $this->__call('multi', []);
 

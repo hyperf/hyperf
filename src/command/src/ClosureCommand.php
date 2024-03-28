@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Command;
 
 use Closure;
@@ -49,7 +50,7 @@ final class ClosureCommand extends Command
     }
 
     /**
-     * @param callable(Crontab $crontab):Crontab|null $callback
+     * @param null|callable(Crontab $crontab):Crontab $callback
      */
     public function cron(string $rule, array $arguments = [], ?callable $callback = null): self
     {
