@@ -38,7 +38,7 @@ class ContextTest extends TestCase
         $this->assertEquals(42, Context::get('a'));
     }
 
-    public function testDestory()
+    public function testDestroy()
     {
         Context::set('a', 42);
         Context::destroy('a');

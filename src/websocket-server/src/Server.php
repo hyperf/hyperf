@@ -148,7 +148,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             $class = $psr7Response->getAttribute(CoreMiddleware::HANDLER_NAME);
 
             if (empty($class)) {
-                $this->logger->warning('WebSocket hande shake failed, because the class does not exists.');
+                $this->logger->warning('WebSocket handshake failed, because the class does not exists.');
                 return;
             }
 
