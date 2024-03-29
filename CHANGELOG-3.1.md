@@ -1,5 +1,9 @@
 # v3.1.16 - TBD
 
+## Fixed
+
+- []() Fixed AMQP `ConsumerMessage::getQueue` return type.
+
 # v3.1.15 - 2024-03-28
 
 ## Added
