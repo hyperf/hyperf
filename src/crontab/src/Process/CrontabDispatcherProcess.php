@@ -43,6 +43,8 @@ class CrontabDispatcherProcess extends AbstractProcess
 
     private ?PsrLoggerInterface $logger = null;
 
+    private int $minuteTimestamp = 0;
+
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);
@@ -74,6 +76,9 @@ class CrontabDispatcherProcess extends AbstractProcess
             if ($this->sleep()) {
                 break;
             }
+            if ($this->ensureToNextMinuteTimestamp()) {
+                break;
+            }
             $crontabs = $this->scheduler->schedule();
             while (! $crontabs->isEmpty()) {
                 $crontab = $crontabs->dequeue();
@@ -96,11 +101,11 @@ class CrontabDispatcherProcess extends AbstractProcess
      */
     private function sleep(): bool
     {
-        $current = date('s', time());
-        $ms = microtime();
+        [$ms, $now] = explode(' ', microtime());
+        $current = date('s', (int) $now);
 
-        $sleep = $this->getInterval((int) $current, (float) explode(' ', $ms)[0]);
-        $this->logger?->debug('Current microtime: ' . $ms . '. Crontab dispatcher sleep ' . $sleep . 's.');
+        $sleep = $this->getInterval((int) $current, (float) $ms);
+        $this->logger?->debug('Current microtime: ' . $now . ' ' . $ms . '. Crontab dispatcher sleep ' . $sleep . 's.');
 
         if ($sleep > 0) {
             if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($sleep)) {
@@ -108,6 +113,22 @@ class CrontabDispatcherProcess extends AbstractProcess
             }
         }
 
+        return false;
+    }
+
+    private function ensureToNextMinuteTimestamp(): bool
+    {
+        $minuteTimestamp = (int) (time() / 60);
+        if ($this->minuteTimestamp !== 0 && $minuteTimestamp === $this->minuteTimestamp) {
+            $this->logger?->error('Crontab tasks will be executed at the same minute, but the framework found it, so you don\'t care it. If you received the error message, you can open a issue in `hyperf/hyperf`.');
+            if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(0.1)) {
+                return true;
+            }
+
+            return $this->ensureToNextMinuteTimestamp();
+        }
+
+        $this->minuteTimestamp = $minuteTimestamp;
         return false;
     }
 }

@@ -20,12 +20,12 @@ use function Hyperf\Support\make;
 
 class ClientFactory
 {
-    public function create(string $uri, bool $autoClose = true): Client
+    public function create(string $uri, bool $autoClose = true, array $headers = []): Client
     {
         if (! Str::startsWith($uri, ['ws://', 'wss://'])) {
             $uri = 'ws://' . $uri;
         }
-        $client = make(Client::class, ['uri' => new Uri($uri)]);
+        $client = make(Client::class, ['uri' => new Uri($uri), 'headers' => $headers]);
         if ($autoClose) {
             defer(function () use ($client) {
                 $client->close();
