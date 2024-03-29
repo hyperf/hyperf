@@ -725,7 +725,7 @@ $this->validationFactory->make($request->all(), [
 
 由于该规则要求多个参数，可以使用 `Rule::dimensions` 方法来构造该规则：
 
-```
+```php
 use Hyperf\Validation\Rule;
 
 public function rules(): array
@@ -756,7 +756,7 @@ return [
 
 基本使用：
 
-```
+```php
 'state' => 'exists:states'
 ```
 
@@ -1205,7 +1205,7 @@ class ValidatorFactoryResolvedListener implements ListenerInterface
 
 #### 自定义验证器使用
 
-```
+```php
 <?php
 
 declare(strict_types=1);
