@@ -96,16 +96,14 @@ class CrontabDispatcherProcess extends AbstractProcess
      */
     private function sleep(): bool
     {
-        $current = date('s', time());
-        $ms = microtime();
+        [$ms, $now] = explode(' ', microtime());
+        $current = date('s', (int) $now);
 
-        $sleep = $this->getInterval((int) $current, (float) explode(' ', $ms)[0]);
+        $sleep = $this->getInterval((int) $current, (float) $ms);
         $this->logger?->debug('Current microtime: ' . $ms . '. Crontab dispatcher sleep ' . $sleep . 's.');
 
-        if ($sleep > 0) {
-            if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($sleep)) {
-                return true;
-            }
+        if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($sleep)) {
+            return true;
         }
 
         return false;
