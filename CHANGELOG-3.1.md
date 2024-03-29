@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- []() Fixed AMQP `ConsumerMessage::getQueue` return type.
+- [#6635](https://github.com/hyperf/hyperf/pull/6635) Fixed AMQP `ConsumerMessage::getQueue` return type.
 
 # v3.1.15 - 2024-03-28
 
