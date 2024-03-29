@@ -76,7 +76,7 @@ class CrontabDispatcherProcess extends AbstractProcess
             if ($this->sleep()) {
                 break;
             }
-            if ($this->sleepToNextMinuteTimestamp()) {
+            if ($this->ensureToNextMinuteTimestamp()) {
                 break;
             }
             $crontabs = $this->scheduler->schedule();
@@ -116,7 +116,7 @@ class CrontabDispatcherProcess extends AbstractProcess
         return false;
     }
 
-    private function sleepToNextMinuteTimestamp(): bool
+    private function ensureToNextMinuteTimestamp(): bool
     {
         $minuteTimestamp = (int) (time() / 60);
         if ($this->minuteTimestamp !== 0 && $minuteTimestamp === $this->minuteTimestamp) {
@@ -125,7 +125,7 @@ class CrontabDispatcherProcess extends AbstractProcess
                 return true;
             }
 
-            return $this->sleepToNextMinuteTimestamp();
+            return $this->ensureToNextMinuteTimestamp();
         }
 
         $this->minuteTimestamp = $minuteTimestamp;
