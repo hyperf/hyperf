@@ -1,5 +1,6 @@
 # v3.1.16 - TBD
 
+
 ## Added
 
 - [#6632](https://github.com/hyperf/hyperf/pull/6632) Support to set headers for `websocket-client`.
@@ -7,6 +8,7 @@
 ## Fixed
 
 - [#6633](https://github.com/hyperf/hyperf/pull/6633) Fixed bug that crontab will be skipped sometimes.
+- [#6635](https://github.com/hyperf/hyperf/pull/6635) Fixed AMQP `ConsumerMessage::getQueue` return type.
 
 # v3.1.15 - 2024-03-28
 
