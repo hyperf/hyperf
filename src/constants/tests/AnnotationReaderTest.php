@@ -20,6 +20,7 @@ use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
+use HyperfTest\Constants\Stub\CannotNewInstance;
 use HyperfTest\Constants\Stub\ErrorCodeStub;
 use HyperfTest\Constants\Stub\WarnCode;
 use Mockery;
@@ -142,6 +143,16 @@ class AnnotationReaderTest extends TestCase
         $this->assertSame('越权操作', WarnCode::PERMISSION_DENY->getMessage());
 
         $this->assertSame('系统内部错误', WarnCode::SERVER_ERROR->getMessage());
+    }
+
+    public function testCannotNewInstance()
+    {
+        $reader = new AnnotationReader();
+        $ref = new ReflectionClass(CannotNewInstance::class);
+        $classConstants = $ref->getReflectionConstants();
+
+        $this->expectExceptionMessage('Attribute class "HyperfTest\Constants\Stub\NotFound" not found');
+        $data = $reader->getAnnotations($classConstants);
     }
 
     protected function getContainer($has = false)
