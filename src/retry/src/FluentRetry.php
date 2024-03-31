@@ -129,7 +129,7 @@ class FluentRetry
         end: // Break out of retry
 
         $policy->end($context);
-        if ($context['lastThrowable'] !== null) {
+        if ($context['lastThrowable'] instanceof Throwable) {
             throw $context['lastThrowable'];
         }
         return $context['lastResult'];
