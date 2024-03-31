@@ -39,6 +39,7 @@ trait EnumConstantsTrait
             $this instanceof UnitEnum => $this->name,
             default => throw new ConstantsException('This trait must in enum'),
         };
+
         return static::getValue($name, [$code, ...$arguments]);
     }
 

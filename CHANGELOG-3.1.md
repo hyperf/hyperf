@@ -10,6 +10,10 @@
 - [#6633](https://github.com/hyperf/hyperf/pull/6633) Fixed bug that crontab will be skipped sometimes.
 - [#6635](https://github.com/hyperf/hyperf/pull/6635) Fixed AMQP `ConsumerMessage::getQueue` return type.
 
+## Optimized
+
+- [#6640](https://github.com/hyperf/hyperf/pull/6640) Support PHP8 Attribute for `hyperf/constants`.
+
 # v3.1.15 - 2024-03-28
 
 ## Added
