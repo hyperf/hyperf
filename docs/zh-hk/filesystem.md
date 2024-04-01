@@ -194,7 +194,7 @@ class IndexController
 
 如果您希望通過 http 訪問上傳到本地的文件，請在 `config/autoload/server.php` 配置中增加以下配置。
 
-```
+```php
 return [
     'settings' => [
         ...
