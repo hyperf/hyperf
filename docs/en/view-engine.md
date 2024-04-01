@@ -872,11 +872,11 @@ After installing the extension package, you can override the view in the extensi
 
 ## Optional middleware
 
--Hyperf\ViewEngine\Http\Middleware\ShareErrorsFromSession::class
+- Hyperf\ViewEngine\Http\Middleware\ShareErrorsFromSession::class
 
 Automatically share the `errors` in the `session` to the view, relying on the `hyperf/session` component
 
--Hyperf\ViewEngine\Http\Middleware\ValidationExceptionHandle::class
+- Hyperf\ViewEngine\Http\Middleware\ValidationExceptionHandle::class
 
 Automatically catch exceptions in `validation` and add them to `session`, relying on `hyperf/session` and `hyperf/validation` components
 
