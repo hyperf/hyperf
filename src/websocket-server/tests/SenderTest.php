@@ -62,7 +62,7 @@ class SenderTest extends TestCase
             ],
         ]);
         $sender = new Sender($container);
-        $sender->setResponse(1, new class (){
+        $sender->setResponse(1, new class() {
             public function push($data)
             {
                 return true;
