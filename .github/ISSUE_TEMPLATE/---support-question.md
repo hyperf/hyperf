@@ -7,8 +7,8 @@ assignees: ''
 
 ---
 
-## Before you submit this issue, you has been search all existed issues and search the [documentation](https://hyperf.wiki)
-- [] I've been search all existed issues
-- [] I've been read all documentation
+## Before you submit an issue, please be sure to search through existing issues as well as search through the [documentation](https://hyperf.wiki)
+- [] I've searched all existing issues
+- [] I've read all relevant documentation I could find
 
 ### Describe your question

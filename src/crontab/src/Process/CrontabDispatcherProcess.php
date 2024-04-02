@@ -120,7 +120,7 @@ class CrontabDispatcherProcess extends AbstractProcess
     {
         $minuteTimestamp = (int) (time() / 60);
         if ($this->minuteTimestamp !== 0 && $minuteTimestamp === $this->minuteTimestamp) {
-            $this->logger?->error('Crontab tasks will be executed at the same minute, but the framework found it, so you don\'t care it. If you received the error message, you can open a issue in `hyperf/hyperf`.');
+            $this->logger?->debug('Crontab tasks will be executed at the same minute, but the framework found it, so you don\'t care it. If you received the error message, you can open a issue in `hyperf/hyperf`.');
             if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(0.1)) {
                 return true;
             }
