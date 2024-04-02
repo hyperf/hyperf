@@ -4,6 +4,7 @@
 ## Added
 
 - [#6632](https://github.com/hyperf/hyperf/pull/6632) Support to set headers for `websocket-client`.
+- [#6648](https://github.com/hyperf/hyperf/pull/6648) Return result about websocket sender`push``disconnect`.
 
 ## Fixed
 
