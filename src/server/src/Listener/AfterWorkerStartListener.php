@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server\Listener;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -19,6 +20,7 @@ use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\ServerInterface;
 use Hyperf\Server\ServerManager;
 use Psr\Log\LoggerInterface;
+use Swoole\Coroutine\Server;
 use Swoole\Server\Port;
 
 use function Hyperf\Support\value;
@@ -52,7 +54,7 @@ class AfterWorkerStartListener implements ListenerInterface
         /** @var AfterWorkerStart|MainCoroutineServerStart $event */
         $isCoroutineServer = $event instanceof MainCoroutineServerStart;
         if ($isCoroutineServer || $event->workerId === 0) {
-            /** @var Port|\Swoole\Coroutine\Server $server */
+            /** @var Port|Server $server */
             foreach (ServerManager::list() as [$type, $server]) {
                 $listen = $server->host . ':' . $server->port;
                 $type = value(function () use ($type, $server) {
@@ -60,7 +62,7 @@ class AfterWorkerStartListener implements ListenerInterface
                         case ServerInterface::SERVER_BASE:
                             $sockType = $server->type;
                             // type of Swoole\Coroutine\Server is AF_INET which is equal to SWOOLE_SOCK_UDP
-                            if ($server instanceof \Swoole\Coroutine\Server || in_array($sockType, [SocketType::TCP, SocketType::TCP6])) {
+                            if ($server instanceof Server || in_array($sockType, [SocketType::TCP, SocketType::TCP6])) {
                                 return 'TCP';
                             }
                             if (in_array($sockType, [SocketType::UDP, SocketType::UDP6])) {

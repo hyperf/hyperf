@@ -1,5 +1,0 @@
-{
-    "require": {
-        "hyperf/engine": "^2.0"
-    }
-}

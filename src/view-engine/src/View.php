@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine;
 
 use ArrayAccess;
@@ -133,7 +134,7 @@ class View implements ArrayAccess, Htmlable, ViewInterface
      *
      * @throws Throwable
      */
-    public function render(callable $callback = null): array|string
+    public function render(?callable $callback = null): array|string
     {
         try {
             $contents = $this->renderContents();

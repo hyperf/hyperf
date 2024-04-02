@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nacos;
 
 use Hyperf\Context\ApplicationContext;
@@ -29,7 +30,7 @@ class GrpcFactory
         }
     }
 
-    public function get(string $namespaceId, string|Module $module = 'config'): GrpcClient
+    public function get(string $namespaceId, Module|string $module = 'config'): GrpcClient
     {
         $module instanceof Module && $module = $module->value;
 
@@ -52,7 +53,7 @@ class GrpcFactory
      * @param string $module config or naming
      * @return array<string, GrpcClient> array<namespaceId, GrpcClient>
      */
-    public function moduleClients(string|Module $module): array
+    public function moduleClients(Module|string $module): array
     {
         $module instanceof Module && $module = $module->value;
 

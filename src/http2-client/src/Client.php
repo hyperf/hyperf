@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Http2Client;
 
 use Hyperf\Coordinator\Constants;
@@ -84,6 +85,7 @@ class Client implements ClientInterface
         if (! $this->client) {
             throw new ClientClosedException('http2 client send request failed caused by closed connection.');
         }
+
         $streamId = $this->client->send($request);
 
         $this->channels[$streamId] = new Channel(1);
@@ -198,7 +200,9 @@ class Client implements ClientInterface
                             throw new ClientClosedException('Read failed, because the http2 client is closed.');
                         }
 
-                        $this->channels[$response->getStreamId()]?->push($response);
+                        $channel = $this->channels[$response->getStreamId()] ?? null;
+
+                        $channel?->push($response);
                     }
                 }
             } catch (Throwable $e) {

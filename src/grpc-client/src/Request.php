@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\GrpcClient;
 
 use Google\Protobuf\Internal\Message;
@@ -25,7 +26,7 @@ class Request extends BaseRequest
      */
     public $usePipelineRead;
 
-    public function __construct(string $method, Message $argument = null, $headers = [])
+    public function __construct(string $method, ?Message $argument = null, $headers = [])
     {
         $this->method = 'POST';
         $this->headers = array_replace($this->getDefaultHeaders(), $headers);

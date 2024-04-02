@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Retry;
 
 use BadMethodCallException;
@@ -128,7 +129,7 @@ class FluentRetry
         end: // Break out of retry
 
         $policy->end($context);
-        if ($context['lastThrowable'] !== null) {
+        if ($context['lastThrowable'] instanceof Throwable) {
             throw $context['lastThrowable'];
         }
         return $context['lastResult'];

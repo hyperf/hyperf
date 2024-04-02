@@ -36,7 +36,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         php-version: [ '8.3', '8.2', '8.1' ]
-        sw-version: [ 'v5.0.3', 'v5.1.1', 'master' ]
+        sw-version: [ 'v5.0.3', 'v5.1.2', 'master' ]
         exclude:
           - php-version: '8.3'
             sw-version: 'v5.0.3'
@@ -44,7 +44,7 @@ jobs:
       fail-fast: false
     env:
       SW_VERSION: ${{ matrix.sw-version }}
-      MYSQL_VERSION: '5.7'
+      MYSQL_VERSION: '8.0'
       PGSQL_VERSION: '14'
     steps:
       - name: Checkout

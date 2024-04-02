@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Phar;
 
 use Hyperf\Phar\Package;
@@ -104,14 +105,9 @@ class PackageTest extends TestCase
     public function testInstallPathWhenGetPackagesDependencies()
     {
         $logger = Mockery::mock(LoggerInterface::class);
-        $builder = new PharBuilder(__DIR__ . '/fixtures/07-composer-versions/2.x/composer.lock', $logger);
+        $builder = new PharBuilder(__DIR__ . '/fixtures/07-composer-versions/composer.lock', $logger);
         $packages = $builder->getPackagesDependencies();
         $this->assertSame('hyperf/engine', $packages[0]->getName());
-        $this->assertStringContainsString('/2.x/vendor/hyperf/engine/', $packages[0]->getDirectory());
-
-        $builder = new PharBuilder(__DIR__ . '/fixtures/07-composer-versions/1.x/composer.lock', $logger);
-        $packages = $builder->getPackagesDependencies();
-        $this->assertSame('hyperf/engine', $packages[0]->getName());
-        $this->assertStringContainsString('/1.x/vendor/hyperf/engine/', $packages[0]->getDirectory());
+        $this->assertStringContainsString('/vendor/hyperf/engine/', $packages[0]->getDirectory());
     }
 }

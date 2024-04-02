@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Definition;
 
 use Hyperf\Di\ReflectionManager;
@@ -120,7 +121,7 @@ class DefinitionSource implements DefinitionSourceInterface
         return null;
     }
 
-    protected function autowire(string $name, ObjectDefinition $definition = null): ?ObjectDefinition
+    protected function autowire(string $name, ?ObjectDefinition $definition = null): ?ObjectDefinition
     {
         $className = $definition ? $definition->getClassName() : $name;
         if (! class_exists($className) && ! interface_exists($className)) {

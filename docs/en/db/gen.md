@@ -8,7 +8,7 @@ php bin/hyperf.php gen:model table_name
 
 ## Create a model
 
-The optional parameters are as follows：
+The optional parameters are as follows:
 
 |     Parameter      |  Type  |             Defaults              |                                             Remark                                             |
 |:------------------:|:------:|:---------------------------------:|:----------------------------------------------------------------------------------------------:|

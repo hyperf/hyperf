@@ -30,14 +30,11 @@ composer require hyperf/kafka
 | recv_timeout                  | int｜float | -1                            | 接收超時時間（單位：秒，支持小數），為 - 1 則不限制                                                                  |
 | client_id                     | stirng     | null                          | Kafka 客户端標識                                                                                                     |
 | max_write_attempts            | int        | 3                             | 最大寫入嘗試次數                                                                                                     |
-| brokers                       | array      | []                            | 手動配置 brokers 列表，如果要使用手動配置，請把 updateBrokers 設為 true                                              |
 | bootstrap_servers             | array      | '127.0.0.1:9092'              | 引導服務器，如果配置了該值，會自動連接該服務器，並自動更新 brokers                                                   |
-| update_brokers                | bool       | true                          | 是否自動更新 brokers                                                                                                 |
 | acks                          | int        | 0                             | 生產者要求領導者，在確認請求完成之前已收到的確認數值。允許的值：0 表示無確認，1 表示僅領導者，- 1 表示完整的 ISR。   |
 | producer_id                   | int        | -1                            | 生產者 ID                                                                                                            |
 | producer_epoch                | int        | -1                            | 生產者 Epoch                                                                                                         |
 | partition_leader_epoch        | int        | -1                            | 分區 Leader Epoch                                                                                                    |
-| broker                        | string     | ''| broker，格式：'127.0.0.1:9092'                                                                                       |
 | interval                      | int｜float | 0                             | 未獲取消息到消息時，延遲多少秒再次嘗試，默認為 0 則不延遲（單位：秒，支持小數）                                      |
 | session_timeout               | int｜float | 60                            | 如果超時後沒有收到心跳信號，則協調器會認為該用户死亡。（單位：秒，支持小數）                                         |
 | rebalance_timeout             | int｜float | 60                            | 重新平衡組時，協調器等待每個成員重新加入的最長時間（單位：秒，支持小數）。                                           |
@@ -67,16 +64,11 @@ return [
         'recv_timeout' => -1,
         'client_id' => '',
         'max_write_attempts' => 3,
-        'brokers' => [
-            '127.0.0.1:9092',
-        ],
         'bootstrap_servers' => '127.0.0.1:9092',
-        'update_brokers' => true,
         'acks' => 0,
         'producer_id' => -1,
         'producer_epoch' => -1,
         'partition_leader_epoch' => -1,
-        'broker' => '',
         'interval' => 0,
         'session_timeout' => 60,
         'rebalance_timeout' => 60,

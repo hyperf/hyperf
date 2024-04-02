@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Session;
 
 use Hyperf\Session\Handler\FileHandler;
@@ -16,13 +17,14 @@ use Hyperf\Session\Handler\NullHandler;
 use Hyperf\Session\Session;
 use Hyperf\Stringable\Str;
 use Hyperf\Support\Filesystem\Filesystem;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Session\Session::class)]
+#[CoversClass(Session::class)]
 class SessionTest extends TestCase
 {
     public function testSession()

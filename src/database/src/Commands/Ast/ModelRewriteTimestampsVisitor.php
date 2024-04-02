@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\Collection\Collection;
@@ -76,6 +77,8 @@ class ModelRewriteTimestampsVisitor extends AbstractVisitor
                 }
             }
         }
+
+        return null;
     }
 
     protected function rewriteTimestamps(?Node\Stmt\Property $node = null): ?Node\Stmt\Property

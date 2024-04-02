@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
@@ -410,7 +411,7 @@ class ModelRealBuilderTest extends TestCase
     public function testGetRawQueryLog()
     {
         $container = $this->getContainer();
-        /** @var \Hyperf\Database\Connection $conn */
+        /** @var Connection $conn */
         $conn = $container->get(ConnectionResolverInterface::class)->connection();
         $conn->statement('CREATE TABLE `test` (
             `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -635,6 +636,51 @@ class ModelRealBuilderTest extends TestCase
         $this->assertTrue($model->save());
     }
 
+    public function testSaveExpression()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        /** @var UserExt $ext */
+        $ext = UserExt::query()->find(1);
+        $ext->timestamps = false;
+
+        $this->assertFalse($ext->isDirty());
+        $ext->count = Db::raw('`count` + 1');
+        $this->assertTrue($ext->isDirty('count'));
+        $this->assertTrue($ext->save());
+
+        $this->assertFalse($ext->isDirty());
+        $ext->float_num = Db::raw('`float_num` + 0.1');
+        $this->assertTrue($ext->isDirty('float_num'));
+        $this->assertTrue($ext->save());
+
+        $this->assertFalse($ext->isDirty());
+        $ext->str = Db::raw('concat(`str`, \'t\')');
+        $this->assertTrue($ext->isDirty('str'));
+        $this->assertTrue($ext->save());
+
+        $this->assertFalse($ext->isDirty());
+        $ext->count = Db::raw('`count` + 1');
+        $ext->float_num = Db::raw('`float_num` + 0.1');
+        $ext->str = Db::raw('concat(`str`, \'e\')');
+        $this->assertTrue($ext->isDirty());
+        $this->assertTrue($ext->save());
+
+        $sqls = [
+            'select * from `user_ext` where `user_ext`.`id` = ? limit 1',
+            'update `user_ext` set `count` = `count` + 1 where `id` = ?',
+            'update `user_ext` set `float_num` = `float_num` + 0.1 where `id` = ?',
+            'update `user_ext` set `str` = concat(`str`, \'t\') where `id` = ?',
+            'update `user_ext` set `count` = `count` + 1, `float_num` = `float_num` + 0.1, `str` = concat(`str`, \'e\') where `id` = ?',
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, array_shift($sqls));
+            }
+        }
+    }
+
     public function testSelectForBindingIntegerWhenUsingVarcharIndex()
     {
         $container = $this->getContainer();
@@ -736,25 +782,25 @@ class ModelRealBuilderTest extends TestCase
         });
 
         // test insert with enum
-        DB::table('test_enum_cast')->insert([
+        Db::table('test_enum_cast')->insert([
             'string_status' => StringStatus::Active,
             'integer_status' => IntegerStatus::Active,
         ]);
 
         // test select with enum
-        $record = DB::table('test_enum_cast')->where('string_status', StringStatus::Active)->first();
+        $record = Db::table('test_enum_cast')->where('string_status', StringStatus::Active)->first();
 
         $this->assertNotNull($record);
         $this->assertEquals('active', $record->string_status);
         $this->assertEquals(1, $record->integer_status);
 
         // test update with enum
-        DB::table('test_enum_cast')->where('id', $record->id)->update([
+        Db::table('test_enum_cast')->where('id', $record->id)->update([
             'string_status' => StringStatus::Inactive,
             'integer_status' => IntegerStatus::Inactive,
         ]);
 
-        $record2 = DB::table('test_enum_cast')->where('id', $record->id)->first();
+        $record2 = Db::table('test_enum_cast')->where('id', $record->id)->first();
 
         $this->assertNotNull($record2);
         $this->assertEquals('inactive', $record2->string_status);

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Filesystem\Cases;
 
 use Hyperf\Config\Config;
@@ -39,6 +40,10 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 
 ! defined('BASE_PATH') && define('BASE_PATH', '.');
 
+use Hyperf\Filesystem\Adapter\CosAdapterFactory;
+use Hyperf\Filesystem\Adapter\FtpAdapterFactory;
+use Hyperf\Filesystem\Adapter\QiniuAdapterFactory;
+use Hyperf\Filesystem\Adapter\S3AdapterFactory;
 use Xxtime\Flysystem\Aliyun\OssAdapter as XxtimeOSSAdapter;
 
 /**
@@ -72,7 +77,7 @@ class FilesystemFactoryTest extends AbstractTestCase
         $container = ApplicationContext::getContainer();
         $container->set(ConfigInterface::class, $config);
         $factory = new FilesystemFactory($container, $container->get(ConfigInterface::class));
-        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem = $factory->get('test'));
+        $this->assertInstanceOf(Filesystem::class, $fileSystem = $factory->get('test'));
         if (Version::isV2()) {
             $invoker = new ClassInvoker($fileSystem);
             $this->assertInstanceOf(InMemoryFilesystemAdapter::class, $invoker->adapter);
@@ -101,7 +106,7 @@ class FilesystemFactoryTest extends AbstractTestCase
         $container->set(ConfigInterface::class, $config);
         $container->define(Filesystem::class, FilesystemInvoker::class);
         $fileSystem = $container->get(Filesystem::class);
-        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
+        $this->assertInstanceOf(Filesystem::class, $fileSystem);
         if (Version::isV2()) {
             $invoker = new ClassInvoker($fileSystem);
             $this->assertInstanceOf(LocalFilesystemAdapter::class, $invoker->adapter);
@@ -117,7 +122,7 @@ class FilesystemFactoryTest extends AbstractTestCase
         $container->set(ConfigInterface::class, $config);
         $container->define(Filesystem::class, FilesystemInvoker::class);
         $fileSystem = $container->get(Filesystem::class);
-        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
+        $this->assertInstanceOf(Filesystem::class, $fileSystem);
         if (Version::isV2()) {
             $invoker = new ClassInvoker($fileSystem);
             $this->assertInstanceOf(LocalFilesystemAdapter::class, $invoker->adapter);
@@ -136,7 +141,7 @@ class FilesystemFactoryTest extends AbstractTestCase
                 'default' => 'ftp',
                 'storage' => [
                     'ftp' => [
-                        'driver' => \Hyperf\Filesystem\Adapter\FtpAdapterFactory::class,
+                        'driver' => FtpAdapterFactory::class,
                         'host' => 'ftp.example.com',
                         'username' => 'username',
                         'password' => 'password',
@@ -148,7 +153,7 @@ class FilesystemFactoryTest extends AbstractTestCase
         $container->set(ConfigInterface::class, $config);
         $container->define(Filesystem::class, FilesystemInvoker::class);
         $fileSystem = $container->get(Filesystem::class);
-        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
+        $this->assertInstanceOf(Filesystem::class, $fileSystem);
         if (Version::isV2()) {
             $invoker = new ClassInvoker($fileSystem);
             $this->assertInstanceOf(FtpAdapter::class, $invoker->adapter);
@@ -180,7 +185,7 @@ class FilesystemFactoryTest extends AbstractTestCase
         $container->set(ConfigInterface::class, $config);
         $container->define(Filesystem::class, FilesystemInvoker::class);
         $fileSystem = $container->get(Filesystem::class);
-        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
+        $this->assertInstanceOf(Filesystem::class, $fileSystem);
         if (Version::isV2()) {
             $invoker = new ClassInvoker($fileSystem);
             $this->assertInstanceOf(OSSAdapter::class, $invoker->adapter);
@@ -199,7 +204,7 @@ class FilesystemFactoryTest extends AbstractTestCase
                 'default' => 's3',
                 'storage' => [
                     's3' => [
-                        'driver' => \Hyperf\Filesystem\Adapter\S3AdapterFactory::class,
+                        'driver' => S3AdapterFactory::class,
                         'credentials' => [
                             'key' => 'xxx',
                             'secret' => 'xxx',
@@ -218,7 +223,7 @@ class FilesystemFactoryTest extends AbstractTestCase
         $container->set(ConfigInterface::class, $config);
         $container->define(Filesystem::class, FilesystemInvoker::class);
         $fileSystem = $container->get(Filesystem::class);
-        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
+        $this->assertInstanceOf(Filesystem::class, $fileSystem);
         if (Version::isV2()) {
             $invoker = new ClassInvoker($fileSystem);
             $this->assertInstanceOf(AwsS3V3Adapter::class, $invoker->adapter);
@@ -237,7 +242,7 @@ class FilesystemFactoryTest extends AbstractTestCase
                 'default' => 'cos',
                 'storage' => [
                     'cos' => [
-                        'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,
+                        'driver' => CosAdapterFactory::class,
                         'region' => 'xxx',
                         'app_id' => 'xxx',
                         'secret_id' => 'xxx',
@@ -252,7 +257,7 @@ class FilesystemFactoryTest extends AbstractTestCase
         $container->set(ConfigInterface::class, $config);
         $container->define(Filesystem::class, FilesystemInvoker::class);
         $fileSystem = $container->get(Filesystem::class);
-        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
+        $this->assertInstanceOf(Filesystem::class, $fileSystem);
         if (Version::isV2()) {
             $invoker = new ClassInvoker($fileSystem);
             $this->assertInstanceOf(CosAdapter::class, $invoker->adapter);
@@ -271,7 +276,7 @@ class FilesystemFactoryTest extends AbstractTestCase
                 'default' => 'qiniu',
                 'storage' => [
                     'qiniu' => [
-                        'driver' => \Hyperf\Filesystem\Adapter\QiniuAdapterFactory::class,
+                        'driver' => QiniuAdapterFactory::class,
                         'accessKey' => 'xxx',
                         'secretKey' => 'xxx',
                         'bucket' => 'xxx',
@@ -284,7 +289,7 @@ class FilesystemFactoryTest extends AbstractTestCase
         $container->set(ConfigInterface::class, $config);
         $container->define(Filesystem::class, FilesystemInvoker::class);
         $fileSystem = $container->get(Filesystem::class);
-        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
+        $this->assertInstanceOf(Filesystem::class, $fileSystem);
         if (Version::isV2()) {
             $invoker = new ClassInvoker($fileSystem);
             $this->assertInstanceOf(QiniuAdapter::class, $invoker->adapter);

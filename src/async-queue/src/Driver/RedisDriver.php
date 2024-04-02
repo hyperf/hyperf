@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue\Driver;
 
 use Hyperf\AsyncQueue\Exception\InvalidQueueException;
@@ -85,12 +86,13 @@ class RedisDriver extends Driver
         }
 
         $data = $res[1];
+
+        $this->redis->zadd($this->channel->getReserved(), time() + $this->handleTimeout, $data);
+
         $message = $this->packer->unpack($data);
         if (! $message) {
             return [false, null];
         }
-
-        $this->redis->zadd($this->channel->getReserved(), time() + $this->handleTimeout, $data);
 
         return [$data, $message];
     }
@@ -108,7 +110,7 @@ class RedisDriver extends Driver
         return false;
     }
 
-    public function reload(string $queue = null): int
+    public function reload(?string $queue = null): int
     {
         $channel = $this->channel->getFailed();
         if ($queue) {
@@ -126,7 +128,7 @@ class RedisDriver extends Driver
         return $num;
     }
 
-    public function flush(string $queue = null): bool
+    public function flush(?string $queue = null): bool
     {
         $channel = $this->channel->getFailed();
         if ($queue) {

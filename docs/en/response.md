@@ -78,7 +78,7 @@ Please refer to [View](zh-cn/view.md).
 
 `Hyperf\HttpServer\Contract\ResponseInterface` provides `redirect(string $toUrl, int $status = 302, string $schema = 'http')` method to return an `Psr7ResponseInterface` object which has already setup redirection status.
 
-`redirect`：   
+`redirect`:   
 
 |  Arguments  |  Type  | Default Value |                                                      Comment                                                      |
 |:------:|:------:|:------:|:--------------------------------------------------------------------------------------------------------------:|
@@ -132,7 +132,7 @@ class IndexController
 `Hyperf\HttpServer\Contract\ResponseInterface` provides `download(string $file, string $name = '')` method to return an `Psr7ResponseInterface` object which already setup the file download status.   
 If the request contains `if-match` or `if-none-match` header, Hyperf will also compare it with the `ETag` according to the protocol standard, and if they match, it will return a response with a `304` status code.
 
-`download`：   
+`download`:   
 
 | Arguments |  Type  | Default Value |                                Comment                                 |
 |:----:|:------:|:------:|:-------------------------------------------------------------------:|

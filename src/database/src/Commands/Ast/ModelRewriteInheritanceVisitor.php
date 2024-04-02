@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\Database\Commands\ModelData;
@@ -80,5 +81,7 @@ class ModelRewriteInheritanceVisitor extends AbstractVisitor
                 }
                 return $node;
         }
+
+        return null;
     }
 }

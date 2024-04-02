@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigApollo;
 
 use Closure;
+use Exception;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coroutine\Parallel;
@@ -106,7 +108,7 @@ class Client implements ClientInterface
                     'notifications' => json_encode(array_values($notifications)),
                 ],
             ]);
-        } catch (\Exception) {
+        } catch (Exception) {
             // Do nothing
             return null;
         }

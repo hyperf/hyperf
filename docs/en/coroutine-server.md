@@ -1,5 +1,3 @@
-# 英文版
-
 # Coroutine Style Server
 
 Hyperf uses [Swoole asynchronous style](https://wiki.swoole.com/#/server/init) by default, which is a multi-process model and custom processes are running in separate processes.

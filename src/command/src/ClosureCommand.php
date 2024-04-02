@@ -9,10 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Command;
 
 use Closure;
+use Hyperf\Crontab\Crontab;
+use Hyperf\Crontab\Schedule;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Tappable\tap;
 
 final class ClosureCommand extends Command
 {
@@ -40,6 +45,22 @@ final class ClosureCommand extends Command
     public function describe(string $description): self
     {
         $this->setDescription($description);
+
+        return $this;
+    }
+
+    /**
+     * @param null|callable(Crontab $crontab):Crontab $callback
+     */
+    public function cron(string $rule, array $arguments = [], ?callable $callback = null): self
+    {
+        tap(
+            Schedule::command($this->getName(), $arguments)
+                ->setName($this->getName())
+                ->setRule($rule)
+                ->setMemo($this->getDescription()),
+            $callback
+        );
 
         return $this;
     }

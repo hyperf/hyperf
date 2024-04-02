@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer\Router;
 
 use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
@@ -70,7 +71,7 @@ class DispatcherFactory
         Router::init($this);
         foreach ($this->routes as $route) {
             if (file_exists($route)) {
-                require_once $route;
+                require $route;
             }
         }
     }

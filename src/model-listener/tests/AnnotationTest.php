@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ModelListener;
 
 use Hyperf\ModelListener\Annotation\ModelListener;
@@ -33,7 +34,7 @@ class AnnotationTest extends TestCase
 
     public function testAnnotationCollect()
     {
-        $annotation = new ModelListener(['value' => ModelStub::class]);
+        $annotation = new ModelListener([ModelStub::class]);
         $annotation->collectClass('Foo');
 
         $this->assertSame(['Foo'], ListenerCollector::getListenersForModel(ModelStub::class));
@@ -41,14 +42,14 @@ class AnnotationTest extends TestCase
 
     public function testAnnotationCollectAssocArray()
     {
-        $annotation = new ModelListener(['models' => [ModelStub::class]]);
+        $annotation = new ModelListener([ModelStub::class]);
         $annotation->collectClass('Foo');
         $this->assertSame(['Foo'], ListenerCollector::getListenersForModel(ModelStub::class));
     }
 
     public function testAnnotationCollectArray()
     {
-        $annotation = new ModelListener(['value' => [ModelStub::class, 'ModelStub']]);
+        $annotation = new ModelListener([ModelStub::class, 'ModelStub']);
         $annotation->collectClass('Foo');
         $this->assertSame(['Foo'], ListenerCollector::getListenersForModel(ModelStub::class));
         $this->assertSame(['Foo'], ListenerCollector::getListenersForModel('ModelStub'));

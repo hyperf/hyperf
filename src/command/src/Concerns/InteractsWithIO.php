@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Command\Concerns;
 
 use Closure;
@@ -16,6 +17,7 @@ use Hyperf\Contract\Arrayable;
 use Hyperf\Stringable\Str;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -214,7 +216,7 @@ trait InteractsWithIO
      *
      * @param array $headers
      * @param array|Arrayable $rows
-     * @param string|\Symfony\Component\Console\Helper\TableStyle $tableStyle
+     * @param string|TableStyle $tableStyle
      */
     public function table($headers, $rows, $tableStyle = 'default', array $columnStyles = [])
     {

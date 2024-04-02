@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\Stubs;
 
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
@@ -19,6 +21,8 @@ use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Di\Container;
 use Mockery;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use ReflectionClass;
 
 class ContainerStub
 {
@@ -28,6 +32,8 @@ class ContainerStub
         ApplicationContext::setContainer($container);
 
         $container->shouldReceive('has')->andReturn(true);
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
         $container->shouldReceive('get')->with('db.connector.mysql')->andReturn(new MySqlConnector());
         $connector = new ConnectionFactory($container);
 
@@ -66,5 +72,12 @@ class ContainerStub
             ->setPrefix('')
             ->setWithIde(false);
         return $option;
+    }
+
+    public static function unsetContainer()
+    {
+        $ref = new ReflectionClass(ApplicationContext::class);
+        $c = $ref->getProperty('container');
+        $c->setValue(null);
     }
 }

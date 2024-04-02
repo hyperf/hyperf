@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer;
 
 use Closure;
@@ -165,7 +166,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
         throw new MethodNotAllowedHttpException('Allow: ' . implode(', ', $methods));
     }
 
-    protected function prepareHandler(string|array $handler): array
+    protected function prepareHandler(array|string $handler): array
     {
         if (is_string($handler)) {
             if (str_contains($handler, '@')) {

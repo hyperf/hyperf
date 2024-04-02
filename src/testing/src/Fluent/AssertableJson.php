@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Testing\Fluent;
 
 use Closure;
@@ -45,7 +46,7 @@ class AssertableJson implements Arrayable
     /**
      * Create a new fluent, assertable JSON data instance.
      */
-    protected function __construct(array $props, string $path = null)
+    protected function __construct(array $props, ?string $path = null)
     {
         $this->path = $path;
         $this->props = $props;
@@ -148,7 +149,7 @@ class AssertableJson implements Arrayable
      *
      * @return mixed
      */
-    protected function prop(string $key = null)
+    protected function prop(?string $key = null)
     {
         return Arr::get($this->props, $key);
     }

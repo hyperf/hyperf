@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\GraphQL;
 
 use Doctrine\Common\Annotations\Reader;
+use GraphQL\Type\Schema;
 use TheCodingMachine\GraphQLite\Hydrators\FactoryHydrator;
 use TheCodingMachine\GraphQLite\Hydrators\HydratorInterface;
 use TheCodingMachine\GraphQLite\Mappers\RecursiveTypeMapperInterface;
@@ -29,7 +31,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                \GraphQL\Type\Schema::class => \TheCodingMachine\GraphQLite\Schema::class,
+                Schema::class => \TheCodingMachine\GraphQLite\Schema::class,
                 QueryProviderInterface::class => QueryProvider::class,
                 RecursiveTypeMapperInterface::class => RecursiveTypeMapperFactory::class,
                 Reader::class => ReaderFactory::class,

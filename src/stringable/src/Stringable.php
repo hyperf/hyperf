@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Stringable;
 
 use ArrayAccess;
@@ -84,6 +85,16 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     public function afterLast($search)
     {
         return new static(Str::afterLast($this->value, $search));
+    }
+
+    /**
+     * Convert the given string to APA-style title case.
+     *
+     * @return static
+     */
+    public function apa()
+    {
+        return new static(Str::apa($this->value));
     }
 
     /**

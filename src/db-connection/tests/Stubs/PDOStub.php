@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\DbConnection\Stubs;
 
 use PDO;
@@ -40,10 +41,7 @@ class PDOStub extends PDO
 
     public function prepare($statement, $driver_options = null)
     {
-        if (version_compare(PHP_VERSION, '8.0', '>=')) {
-            return new PDOStatementStubPHP8($statement);
-        }
-        return new PDOStatementStub($statement);
+        return new PDOStatementStubPHP8($statement);
     }
 
     public function exec($statement)

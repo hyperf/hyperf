@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
 class Constant
@@ -28,6 +29,8 @@ class Constant
     public const RESULT = 'result';
 
     public const CONTEXT = 'context';
+
+    public const EXTRA = 'extra';
 
     public const ERROR = 'error';
 

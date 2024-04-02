@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketServer;
 
 use Hyperf\Contract\ConfigInterface;
@@ -26,8 +27,8 @@ use Swow\Psr7\Server\ServerConnection;
 use function Hyperf\Engine\swoole_get_flags_from_frame;
 
 /**
- * @method push(int $fd, $data, int $opcode = null, $finish = null)
- * @method disconnect(int $fd, int $code = null, string $reason = null)
+ * @method bool push(int $fd, $data, int $opcode = null, $finish = null)
+ * @method bool disconnect(int $fd, int $code = null, string $reason = null)
  */
 class Sender
 {
@@ -61,15 +62,22 @@ class Sender
                     $method = 'close';
                 }
 
-                $this->responses[$fd]->{$method}(...$arguments);
-                $this->logger->debug("[WebSocket] Worker send to #{$fd}");
+                $result = $this->responses[$fd]->{$method}(...$arguments);
+                $this->logger->debug(
+                    sprintf(
+                        "[WebSocket] Worker send to #{$fd}.Send %s",
+                        $result ? 'success' : 'failed'
+                    )
+                );
+                return $result;
             }
-            return;
+            return false;
         }
 
         if (! $this->proxy($fd, $method, $arguments)) {
             $this->sendPipeMessage($name, $arguments);
         }
+        return true;
     }
 
     public function pushFrame(int $fd, FrameInterface $frame): bool
@@ -96,8 +104,13 @@ class Sender
         if ($result) {
             /** @var \Swoole\WebSocket\Server $server */
             $server = $this->getServer();
-            $server->{$method}(...$arguments);
-            $this->logger->debug("[WebSocket] Worker.{$this->workerId} send to #{$fd}");
+            $result = $server->{$method}(...$arguments);
+            $this->logger->debug(
+                sprintf(
+                    "[WebSocket] Worker.{$this->workerId} send to #{$fd}.Send %s",
+                    $result ? 'success' : 'failed'
+                )
+            );
         }
 
         return $result;

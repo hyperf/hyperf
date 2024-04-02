@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Aop;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
@@ -95,7 +96,7 @@ class ProxyManager
         return $proxyFilePath;
     }
 
-    protected function isModified(string $className, string $proxyFilePath = null): bool
+    protected function isModified(string $className, ?string $proxyFilePath = null): bool
     {
         $proxyFilePath = $proxyFilePath ?? $this->getProxyFilePath($className);
         $time = $this->filesystem->lastModified($proxyFilePath);

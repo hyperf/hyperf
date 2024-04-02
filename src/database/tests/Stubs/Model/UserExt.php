@@ -9,7 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\Stubs\Model;
+
+use Carbon\Carbon;
 
 /**
  * @property int $id
@@ -17,8 +20,8 @@ namespace HyperfTest\Database\Stubs\Model;
  * @property float $float_num
  * @property string $str
  * @property string $json
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class UserExt extends Model
 {

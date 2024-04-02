@@ -14,6 +14,7 @@ composer require hyperf/cache
 | driver |  Hyperf\Cache\Driver\RedisDriver  | 快取驅動，預設為 Redis |
 | packer | Hyperf\Codec\Packer\PhpSerializerPacker |        打包器         |
 | prefix |                   c:                   |       快取字首        |
+| skip_cache_results |       []                   |       指定的結果不被快取   |
 
 ```php
 <?php
@@ -23,6 +24,7 @@ return [
         'driver' => Hyperf\Cache\Driver\RedisDriver::class,
         'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
         'prefix' => 'c:',
+        'skip_cache_results' => [],
     ],
 ];
 ```
@@ -296,6 +298,22 @@ class UserBookService
 ### Redis 驅動
 
 `Hyperf\Cache\Driver\RedisDriver` 會把快取資料存放到 `Redis` 中，需要使用者配置相應的 `Redis 配置`。此方式為預設方式。
+
+### 程序記憶體驅動
+
+如果您需要將資料快取到記憶體中，可以嘗試此驅動。
+
+配置如下：
+
+```php
+<?php
+
+return [
+    'memory' => [
+        'driver' => Hyperf\Cache\Driver\MemoryDriver::class,
+    ],
+];
+```
 
 ### 協程記憶體驅動
 

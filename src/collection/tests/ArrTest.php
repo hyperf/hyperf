@@ -9,9 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Collections;
 
 use Hyperf\Collection\Arr;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Di\Resolver\ResolverDispatcher;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -89,10 +94,10 @@ class ArrTest extends TestCase
             'logger' => [
                 'default' => [
                     'handler' => [
-                        'class' => \Monolog\Handler\StreamHandler::class,
+                        'class' => StreamHandler::class,
                         'constructor' => [
                             'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                            'level' => \Monolog\Logger::DEBUG,
+                            'level' => Logger::DEBUG,
                         ],
                     ],
                 ],
@@ -105,7 +110,7 @@ class ArrTest extends TestCase
                     'mixin',
                 ],
                 'class_map' => [
-                    \Hyperf\Coroutine\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
+                    Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
                 ],
             ],
         ];
@@ -114,10 +119,10 @@ class ArrTest extends TestCase
             'logger' => [
                 'default' => [
                     'handler' => [
-                        'class' => \Monolog\Handler\StreamHandler::class,
+                        'class' => StreamHandler::class,
                         'constructor' => [
                             'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                            'level' => \Monolog\Logger::INFO,
+                            'level' => Logger::INFO,
                         ],
                     ],
                 ],
@@ -128,15 +133,15 @@ class ArrTest extends TestCase
                     'author',
                 ],
                 'class_map' => [
-                    \Hyperf\Coroutine\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
-                    \Hyperf\Di\Resolver\ResolverDispatcher::class => BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php',
+                    Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
+                    ResolverDispatcher::class => BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php',
                 ],
             ],
         ];
 
         $result = Arr::merge($array1, $array2);
-        $array1['logger']['default']['handler']['constructor']['level'] = \Monolog\Logger::INFO;
-        $array1['scan']['class_map'][\Hyperf\Di\Resolver\ResolverDispatcher::class] = BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php';
+        $array1['logger']['default']['handler']['constructor']['level'] = Logger::INFO;
+        $array1['scan']['class_map'][ResolverDispatcher::class] = BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php';
         $array1['scan']['ignore_annotations'][] = 'author';
 
         $this->assertSame($array1, $result);
@@ -308,5 +313,41 @@ class ArrTest extends TestCase
         $this->assertFalse(Arr::isList([0 => 'foo', 'bar' => 'baz']));
         $this->assertFalse(Arr::isList([0 => 'foo', 2 => 'bar']));
         $this->assertFalse(Arr::isList(['foo' => 'bar', 'baz' => 'qux']));
+    }
+
+    public function testArrayRemove()
+    {
+        $data = [1 => 'a', 2 => 'b', 3 => 'c'];
+        $this->assertSame(['b'], Arr::remove($data, 'a', 'c'));
+
+        $data = [1, 2, 3, 4];
+        $this->assertSame([3, 4], Arr::remove($data, 1, 2));
+
+        $data = [1, 2, 3, 4];
+        $this->assertSame($data, Arr::remove($data, 5));
+
+        $data = [3, 4, 3, 3];
+        $this->assertSame([4], Arr::remove($data, 3));
+
+        $data = [1 => 'a', 2 => 'b', 3 => 'a'];
+        $this->assertSame(['b'], Arr::remove($data, 'a'));
+    }
+
+    public function testArrayRemoveKeepKey()
+    {
+        $data = [1 => 'a', 2 => 'b', 3 => 'c'];
+        $this->assertSame([2 => 'b'], Arr::removeKeepKey($data, 'a', 'c'));
+
+        $data = [1, 2, 3, 4];
+        $this->assertSame([2 => 3, 3 => 4], Arr::removeKeepKey($data, 1, 2));
+
+        $data = [1, 2, 3, 4];
+        $this->assertSame($data, Arr::removeKeepKey($data, 5));
+
+        $data = [3, 4, 3, 3];
+        $this->assertSame([1 => 4], Arr::removeKeepKey($data, 3));
+
+        $data = [1 => 'a', 2 => 'b', 3 => 'a'];
+        $this->assertSame([2 => 'b'], Arr::removeKeepKey($data, 'a'));
     }
 }

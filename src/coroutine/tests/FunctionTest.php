@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Coroutine;
 
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Swoole\Runtime;
 
@@ -40,7 +42,7 @@ class FunctionTest extends TestCase
         $this->assertSame('Hyperf', $uniqid);
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
+    #[Group('NonCoroutine')]
     public function testRun()
     {
         $asserts = [

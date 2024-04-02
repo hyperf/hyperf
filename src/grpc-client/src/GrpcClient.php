@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\GrpcClient;
 
 use Hyperf\Coroutine\Channel\Pool as ChannelPool;
@@ -187,10 +188,6 @@ class GrpcClient
         $request->headers = $request->headers + $metadata;
         $request->pipeline = true;
         if ($usePipelineRead) {
-            // @phpstan-ignore-next-line
-            if (SWOOLE_VERSION_ID < 40503) {
-                throw new InvalidArgumentException('Require Swoole version >= 4.5.3');
-            }
             $request->usePipelineRead = true;
         }
 
@@ -227,7 +224,7 @@ class GrpcClient
         return $this->getHttpClient()->write($streamId, $data, $end);
     }
 
-    public function recv(int $streamId, float $timeout = null)
+    public function recv(int $streamId, ?float $timeout = null)
     {
         if (! $this->isConnected() || $streamId <= 0 || ! $this->isStreamExist($streamId)) {
             return false;

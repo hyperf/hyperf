@@ -1,6 +1,6 @@
 # Query pagination
 
-When using [hyperf/database](https://github.com/hyperf-cloud/database) to query data, it is very convenient to use [hyperf/paginator](https://github.com/hyperf-cloud /paginator) component to easily paginate query results.
+When using [hyperf/database](https://github.com/hyperf/database) to query data, it is very convenient to use [hyperf/paginator](https://github.com/hyperf/paginator) component to easily paginate query results.
 
 # Instructions
 
@@ -26,7 +26,7 @@ You can do pagination by calling the `paginate` method directly from a static me
 return User::paginate(10);
 ```
 
-当然您也可以设置查询的条件或其它查询的设置方法：
+You can also set the query conditions or other query settings:
 
 ```php
 <?php 

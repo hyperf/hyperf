@@ -19,12 +19,13 @@
     },
     "require": {
         "php": ">=8.1",
-        "psr/container": "^1.0|^2.0",
         "hyperf/code-parser": "~3.1.0",
         "hyperf/load-balancer": "~3.1.0",
         "hyperf/rpc": "~3.1.0",
         "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0"
+        "hyperf/utils": "~3.1.0",
+        "jetbrains/phpstorm-attributes": "^1.0",
+        "psr/container": "^1.0|^2.0"
     },
     "suggest": {
         "hyperf/service-governance": "Required to fetch the nodes info from service governance.",

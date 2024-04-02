@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Jaeger;
 
 use Hyperf\Context\ApplicationContext;
@@ -51,7 +52,7 @@ class ThriftUdpTransport extends TTransport
      */
     private $chan;
 
-    public function __construct(string $host, int $port, LoggerInterface $logger = null)
+    public function __construct(string $host, int $port, ?LoggerInterface $logger = null)
     {
         $this->host = $host;
         $this->port = $port;

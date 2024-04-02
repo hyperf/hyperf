@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Contract;
 
 interface PoolOptionInterface
@@ -24,4 +25,6 @@ interface PoolOptionInterface
     public function getHeartbeat(): float;
 
     public function getMaxIdleTime(): float;
+
+    public function getEvents(): array;
 }

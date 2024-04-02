@@ -10,6 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 use Hyperf\Metric\Adapter\Prometheus\Constants;
+use Hyperf\Metric\Adapter\Prometheus\MetricFactory;
 
 use function Hyperf\Support\env;
 
@@ -25,7 +26,7 @@ return [
     'buffer_size' => env('METRIC_BUFFER_SIZE', 200),
     'metric' => [
         'prometheus' => [
-            'driver' => Hyperf\Metric\Adapter\Prometheus\MetricFactory::class,
+            'driver' => MetricFactory::class,
             'mode' => Constants::SCRAPE_MODE,
             'namespace' => env('APP_NAME', 'skeleton'),
             'redis_config' => env('PROMETHEUS_REDIS_CONFIG', 'default'),

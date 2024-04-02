@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Support;
 
 use Composer\Autoload\ClassLoader;
@@ -88,7 +89,7 @@ class Composer
         return '';
     }
 
-    public static function getMergedExtra(string $key = null)
+    public static function getMergedExtra(?string $key = null)
     {
         if (! self::$extra) {
             self::getLockContent();

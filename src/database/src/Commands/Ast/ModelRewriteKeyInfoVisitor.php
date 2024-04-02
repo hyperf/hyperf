@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\Collection\Arr;
@@ -85,6 +86,8 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
                 }
             }
         }
+
+        return null;
     }
 
     protected function rewrite(string $property, ?Node\Stmt\Property $node = null): ?Node\Stmt\Property
@@ -124,7 +127,6 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
 
     /**
      * @param bool|string $value
-     * @return Node\Scalar
      */
     protected function getExpr(string $property, $value): Node\Expr
     {

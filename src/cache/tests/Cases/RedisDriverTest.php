@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Cache\Cases;
 
 use DateInterval;
@@ -35,6 +36,7 @@ use HyperfTest\Cache\Stub\SerializeRedisDriver;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -202,6 +204,9 @@ class RedisDriverTest extends TestCase
                 ],
             ],
         ]);
+
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
 
         $logger = Mockery::mock(StdoutLoggerInterface::class);
         $logger->shouldReceive(Mockery::any())->andReturn(null);

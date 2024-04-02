@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Collection;
 
 use ArrayAccess;
@@ -185,10 +186,10 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @template TTimesValue
      *
-     * @param  (callable(int): TTimesValue)|null  $callback
+     * @param null|(callable(int): TTimesValue) $callback
      * @return static<int, TTimesValue>
      */
-    public static function times(int $number, callable $callback = null): self
+    public static function times(int $number, ?callable $callback = null): self
     {
         if ($number < 1) {
             return new static();
@@ -212,7 +213,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get the average value of a given key.
      *
-     * @param  (callable(TValue): float|int)|string|null  $callback
+     * @param null|(callable(TValue): float|int)|string $callback
      */
     public function avg($callback = null)
     {
@@ -231,7 +232,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Alias for the "avg" method.
      *
-     * @param  (callable(TValue): float|int)|string|null  $callback
+     * @param null|(callable(TValue): float|int)|string $callback
      * @return null|float|int
      */
     public function average($callback = null)
@@ -307,7 +308,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @param null|mixed $operator
      * @param null|mixed $value
-     * @param  (callable(TValue): bool)|TValue|string  $key
+     * @param (callable(TValue): bool)|string|TValue $key
      */
     public function contains($key, $operator = null, $value = null): bool
     {
@@ -471,7 +472,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Determine if all items in the collection pass the given test.
      *
-     * @param  (callable(TValue, TKey): bool)|TValue|string  $key
+     * @param (callable(TValue, TKey): bool)|string|TValue $key
      * @param mixed $operator
      * @param mixed $value
      */
@@ -511,10 +512,10 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Run a filter over each of the items.
      *
-     * @param (callable(TValue, TKey): bool)|null $callback
+     * @param null|(callable(TValue, TKey): bool) $callback
      * @return static<TKey, TValue>
      */
-    public function filter(callable $callback = null): self
+    public function filter(?callable $callback = null): self
     {
         if ($callback) {
             return new static(Arr::where($this->items, $callback));
@@ -529,7 +530,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param callable($this, $value): $this $default
      * @return $this
      */
-    public function when(bool $value, callable $callback, callable $default = null): self
+    public function when(bool $value, callable $callback, ?callable $default = null): self
     {
         if ($value) {
             return $callback($this, $value);
@@ -544,10 +545,10 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Apply the callback if the value is falsy.
      *
      * @param callable($this): $this $callback
-     * @param callable($this): null|$this $default
+     * @param $this|callable($this): null $default
      * @return $this
      */
-    public function unless(bool $value, callable $callback, callable $default = null): self
+    public function unless(bool $value, callable $callback, ?callable $default = null): self
     {
         return $this->when(! $value, $callback, $default);
     }
@@ -643,11 +644,11 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @template TFirstDefault
      *
-     * @param (callable(TValue, TKey): bool)|null $callback
-     * @param TFirstDefault|(\Closure(): TFirstDefault)  $default
+     * @param null|(callable(TValue, TKey): bool) $callback
+     * @param (Closure(): TFirstDefault)|TFirstDefault $default
      * @return TFirstDefault|TValue
      */
-    public function first(callable $callback = null, $default = null)
+    public function first(?callable $callback = null, $default = null)
     {
         return Arr::first($this->items, $callback, $default);
     }
@@ -705,7 +706,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @template TGetDefault
      *
      * @param TKey $key
-     * @param  TGetDefault|(\Closure(): TGetDefault)  $default
+     * @param (Closure(): TGetDefault)|TGetDefault $default
      * @return TGetDefault|TValue
      */
     public function get($key, $default = null)
@@ -751,7 +752,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Key an associative array by a field or using a callback.
      *
-     * @param  (callable(TValue, TKey): array-key)|array|string  $keyBy
+     * @param array|(callable(TValue, TKey): array-key)|string $keyBy
      * @return static<TKey, array<TKey, TValue>>
      */
     public function keyBy($keyBy): self
@@ -786,7 +787,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Concatenate values of a given key as a string.
      */
-    public function implode(string $value, string $glue = null): string
+    public function implode(string $value, ?string $glue = null): string
     {
         $first = $this->first();
         if (is_array($first) || is_object($first)) {
@@ -846,11 +847,11 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @template TLastDefault
      *
-     * @param  (callable(TValue, TKey): bool)|null  $callback
-     * @param  TLastDefault|(\Closure(): TLastDefault)  $default
+     * @param null|(callable(TValue, TKey): bool) $callback
+     * @param (Closure(): TLastDefault)|TLastDefault $default
      * @return TLastDefault|TValue
      */
-    public function last(callable $callback = null, $default = null)
+    public function last(?callable $callback = null, $default = null)
     {
         return Arr::last($this->items, $callback, $default);
     }
@@ -974,7 +975,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get the max value of a given key.
      *
-     * @param  (callable(TValue):mixed)|string|null  $callback
+     * @param null|(callable(TValue):mixed)|string $callback
      * @return TValue
      */
     public function max($callback = null)
@@ -1025,7 +1026,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get the min value of a given key.
      *
-     * @param  (callable(TValue):mixed)|string|null  $callback
+     * @param null|(callable(TValue):mixed)|string $callback
      * @return TValue
      */
     public function min($callback = null)
@@ -1170,7 +1171,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @template TPullDefault
      *
      * @param TKey $key
-     * @param  TPullDefault|(\Closure(): TPullDefault)  $default
+     * @param (Closure(): TPullDefault)|TPullDefault $default
      * @return TPullDefault|TValue
      */
     public function pull($key, $default = null)
@@ -1197,7 +1198,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @return static<int, TValue>|TValue
      * @throws InvalidArgumentException
      */
-    public function random(int $number = null)
+    public function random(?int $number = null)
     {
         if (is_null($number)) {
             return Arr::random($this->items);
@@ -1223,7 +1224,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Create a collection of all elements that do not pass a given truth test.
      *
-     * @param callable(TValue, TKey): bool|bool $callback
+     * @param bool|callable(TValue, TKey): bool $callback
      * @return static<TKey, TValue>
      */
     public function reject($callback): self
@@ -1239,6 +1240,28 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * Replace the collection items with the given items.
+     *
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
+     * @return static
+     */
+    public function replace($items)
+    {
+        return new static(array_replace($this->items, $this->getArrayableItems($items)));
+    }
+
+    /**
+     * Recursively replace the collection items with the given items.
+     *
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
+     * @return static
+     */
+    public function replaceRecursive($items)
+    {
+        return new static(array_replace_recursive($this->items, $this->getArrayableItems($items)));
+    }
+
+    /**
      * Reverse items order.
      *
      * @return static<TKey, TValue>
@@ -1251,7 +1274,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Search the collection for a given value and return the corresponding key if successful.
      *
-     * @param  TValue|(callable(TValue,TKey): bool)  $value
+     * @param (callable(TValue,TKey): bool)|TValue $value
      * @return bool|TKey
      */
     public function search($value, bool $strict = false)
@@ -1282,7 +1305,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @return static<TKey, TValue>
      */
-    public function shuffle(int $seed = null): self
+    public function shuffle(?int $seed = null): self
     {
         return new static(Arr::shuffle($this->items, $seed));
     }
@@ -1292,7 +1315,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @return static<TKey, TValue>
      */
-    public function slice(int $offset, int $length = null): self
+    public function slice(int $offset, ?int $length = null): self
     {
         return new static(array_slice($this->items, $offset, $length, true));
     }
@@ -1347,7 +1370,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param callable(TValue, TValue): int $callback
      * @return static<TKey, TValue>
      */
-    public function sort(callable $callback = null): self
+    public function sort(?callable $callback = null): self
     {
         $items = $this->items;
         $callback ? uasort($items, $callback) : asort($items);
@@ -1357,7 +1380,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Sort the collection using the given callback.
      *
-     * @param (callable(TValue, TKey): mixed)|string|array $callback
+     * @param array|(callable(TValue, TKey): mixed)|string $callback
      * @return static<TKey, TValue>
      */
     public function sortBy($callback, int $options = SORT_REGULAR, bool $descending = false): self
@@ -1387,7 +1410,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Sort the collection in descending order using the given callback.
      *
-     * @param  (callable(TValue, TKey): mixed)|string  $callback
+     * @param (callable(TValue, TKey): mixed)|string $callback
      * @return static<TKey, TValue>
      */
     public function sortByDesc($callback, int $options = SORT_REGULAR): self
@@ -1423,7 +1446,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param array<array-key, TValue> $replacement
      * @return static<TKey, TValue>
      */
-    public function splice(int $offset, int $length = null, $replacement = []): self
+    public function splice(int $offset, ?int $length = null, $replacement = []): self
     {
         if (func_num_args() === 1) {
             return new static(array_splice($this->items, $offset));
@@ -1434,7 +1457,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get the sum of the given values.
      *
-     * @param  (callable(TValue): mixed)|string|null  $callback
+     * @param null|(callable(TValue): mixed)|string $callback
      * @return mixed
      */
     public function sum($callback = null)
@@ -1488,7 +1511,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Return only unique items from the collection array.
      *
-     * @param  (callable(TValue, TKey): mixed)|string|null  $key
+     * @param null|(callable(TValue, TKey): mixed)|string $key
      * @return static<TKey, TValue>
      */
     public function unique($key = null, bool $strict = false): self
@@ -1506,7 +1529,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Return only unique items from the collection array using strict comparison.
      *
-     * @param  (callable(TValue, TKey): mixed)|string|null  $key
+     * @param null|(callable(TValue, TKey): mixed)|string $key
      * @return static<TKey, TValue>
      */
     public function uniqueStrict($key = null): self
@@ -1813,24 +1836,14 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      */
     protected function getArrayableItems($items): array
     {
-        if (is_array($items)) {
-            return $items;
-        }
-        if ($items instanceof self) {
-            return $items->all();
-        }
-        if ($items instanceof Arrayable) {
-            return $items->toArray();
-        }
-        if ($items instanceof Jsonable) {
-            return json_decode($items->__toString(), true);
-        }
-        if ($items instanceof JsonSerializable) {
-            return $items->jsonSerialize();
-        }
-        if ($items instanceof Traversable) {
-            return iterator_to_array($items);
-        }
-        return (array) $items;
+        return match (true) {
+            is_array($items) => $items,
+            $items instanceof self => $items->all(),
+            $items instanceof Arrayable => $items->toArray(),
+            $items instanceof Jsonable => json_decode($items->__toString(), true),
+            $items instanceof JsonSerializable => $items->jsonSerialize(),
+            $items instanceof Traversable => iterator_to_array($items),
+            default => (array) $items,
+        };
     }
 }

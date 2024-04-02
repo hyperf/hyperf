@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database;
 
+use Doctrine\DBAL\Driver\PDO\MySQL\Driver;
 use Hyperf\Database\DBAL\MySqlDriver;
 use Hyperf\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
@@ -72,7 +74,7 @@ class MySqlConnection extends Connection
     /**
      * Get the Doctrine DBAL driver.
      *
-     * @return \Doctrine\DBAL\Driver\PDO\MySQL\Driver
+     * @return Driver
      */
     protected function getDoctrineDriver()
     {
