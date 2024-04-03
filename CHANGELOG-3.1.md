@@ -1,5 +1,9 @@
 # v3.1.17 - TBD
 
+## Added
+
+- [#6652](https://github.com/hyperf/hyperf/pull/6652) Added Str trim methods.
+
 # v3.1.16 - 2024-04-02
 
 ## Added
