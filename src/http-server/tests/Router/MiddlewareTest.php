@@ -165,7 +165,7 @@ class MiddlewareTest extends TestCase
                 'HEAD' => [
                     '/head-register' => 'head-register::handler',
                 ],
-            ]
+            ],
         ]);
         $this->assertSame([
             GroupCountBased::FOUND,
@@ -183,11 +183,9 @@ class MiddlewareTest extends TestCase
             [],
         ], $grouopCountBased->dispatch('HEAD', '/head-register'));
 
-
-        $this->assertSame([FooMiddleware::class,], MiddlewareManager::get('http', '/index', 'GET'));
-        $this->assertSame([FooMiddleware::class,], MiddlewareManager::get('http', '/index', 'HEAD'));
+        $this->assertSame([FooMiddleware::class], MiddlewareManager::get('http', '/index', 'GET'));
+        $this->assertSame([FooMiddleware::class], MiddlewareManager::get('http', '/index', 'HEAD'));
         $this->assertSame([], MiddlewareManager::get('http', '/head-register', 'GET'));
-        
     }
 
     /**
