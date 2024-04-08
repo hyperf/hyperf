@@ -3,6 +3,7 @@
 ## Added
 
 - [#6652](https://github.com/hyperf/hyperf/pull/6652) Added Str trim methods.
+- [#6658](https://github.com/hyperf/hyperf/pull/6658) HEAD requests, attempt fallback to GET in `MiddlewareManager`
 
 # v3.1.16 - 2024-04-02
 
