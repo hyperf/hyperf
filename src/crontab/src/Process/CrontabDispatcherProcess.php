@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Crontab\Process;
 
+use Carbon\Carbon;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
@@ -76,9 +77,6 @@ class CrontabDispatcherProcess extends AbstractProcess
             if ($this->sleep()) {
                 break;
             }
-            if ($this->ensureToNextMinuteTimestamp()) {
-                break;
-            }
             $crontabs = $this->scheduler->schedule();
             while (! $crontabs->isEmpty()) {
                 $crontab = $crontabs->dequeue();
@@ -89,6 +87,7 @@ class CrontabDispatcherProcess extends AbstractProcess
 
     /**
      * Get the interval of the current second to the next minute.
+     * @deprecated since v3.1, will remove in v3.2
      */
     public function getInterval(int $currentSecond, float $ms): float
     {
@@ -101,34 +100,27 @@ class CrontabDispatcherProcess extends AbstractProcess
      */
     private function sleep(): bool
     {
-        [$ms, $now] = explode(' ', microtime());
-        $current = date('s', (int) $now);
-
-        $sleep = $this->getInterval((int) $current, (float) $ms);
-        $this->logger?->debug('Current microtime: ' . $now . ' ' . $ms . '. Crontab dispatcher sleep ' . $sleep . 's.');
+        $now = Carbon::now();
+        $nextMinute = $now->clone()->addMinute()->startOfMinute();
+        $duration = $nextMinute->diffAsCarbonInterval($now);
+        $sleep = $duration->s + round($duration->f, 3);
 
         if ($sleep > 0) {
+            $this->logger?->debug(sprintf('Current microtime: %s, Crontab dispatcher sleep %s s.', $now->format('Y-m-d H:i:s.v'), $sleep));
+
             if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($sleep)) {
                 return true;
             }
         }
 
-        return false;
-    }
-
-    private function ensureToNextMinuteTimestamp(): bool
-    {
-        $minuteTimestamp = (int) (time() / 60);
-        if ($this->minuteTimestamp !== 0 && $minuteTimestamp === $this->minuteTimestamp) {
+        if (Carbon::now()->format('s') !== '00') { // If the current second is not 00, sleep until the next minute.
             $this->logger?->debug('Crontab tasks will be executed at the same minute, but the framework found it, so you don\'t care it. If you received the error message, you can open a issue in `hyperf/hyperf`.');
+
             if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(0.1)) {
                 return true;
             }
-
-            return $this->ensureToNextMinuteTimestamp();
         }
 
-        $this->minuteTimestamp = $minuteTimestamp;
         return false;
     }
 }
