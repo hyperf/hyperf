@@ -46,6 +46,16 @@ class MiddlewareManager
     public static function get(string $server, string $rule, string $method): array
     {
         $method = strtoupper($method);
+        if (isset(static::$container[$server][$rule][$method])) {
+            return static::$container[$server][$rule][$method];
+        }
+
+        // For HEAD requests, attempt fallback to GET
+        // keep the same with FastRoute\Dispatcher\RegexBasedAbstract::dispatch
+        if ($method === 'HEAD') {
+            $method = 'GET';
+        }
+
         return static::$container[$server][$rule][$method] ?? [];
     }
 
