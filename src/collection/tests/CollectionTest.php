@@ -259,7 +259,7 @@ class CollectionTest extends TestCase
         );
     }
 
-    public function testIssetAndPassword()
+    public function testIsset()
     {
         $data = [null, 1];
         $c = new Collection($data);
