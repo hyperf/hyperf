@@ -261,7 +261,7 @@ class CollectionTest extends TestCase
 
     public function testIssetAndPassword()
     {
-        $data = [null,1];
+        $data = [null, 1];
         $c = new Collection($data);
         $this->assertFalse(isset($data[0]));
         $this->assertFalse(isset($c[0]));
