@@ -20,6 +20,7 @@ use Hyperf\Rpc\ErrorResponse;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\Response as RPCResponse;
 use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
+use Hyperf\RpcMultiplex\Exception\NotFoundException;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -50,19 +51,18 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
                 [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
                 $controllerInstance = $this->container->get($controller);
                 if (! method_exists($controller, $action)) {
-                    // Route found, but the handler does not exist.
-                    $data = $this->buildErrorData($request, 500, 'The handler does not exists.');
-                    return $this->responseBuilder->buildResponse($request, $data);
+                    throw new NotFoundException('The handler does not exists.');
                 }
 
-                try {
-                    $parameters = $this->parseMethodParameters($controller, $action, $request->getParsedBody());
-                } catch (InvalidArgumentException $exception) {
-                    $data = $this->buildErrorData($request, 400, 'The params is invalid.', $exception);
-                    return $this->responseBuilder->buildResponse($request, $data);
-                }
+                $parameters = $this->parseMethodParameters($controller, $action, $request->getParsedBody());
                 $response = $controllerInstance->{$action}(...$parameters);
             }
+        } catch (NotFoundException $exception) {
+            $data = $this->buildErrorData($request, 500, $exception->getMessage(), $exception);
+            return $this->responseBuilder->buildResponse($request, $data);
+        } catch (InvalidArgumentException $exception) {
+            $data = $this->buildErrorData($request, 400, 'The params is invalid.', $exception);
+            return $this->responseBuilder->buildResponse($request, $data);
         } catch (Throwable $exception) {
             $data = $this->buildErrorData($request, 500, $exception->getMessage(), $exception);
             $response = $this->responseBuilder->buildResponse($request, $data);
