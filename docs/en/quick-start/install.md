@@ -4,7 +4,7 @@
 
 Hyperf can only run on the Linux and MacOS system environments. However, due to the development of Docker virtualization technology, it is possible to use Windows as the system environment using Docker for Windows. If you use MacOS we recommend a local deployment to avoid the Docker shared disk causing slow startup times for Hyperf.
 
-Various Dockerfiles have been prepared for in the [hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker) project, or you can use a prebuilt image based on [hyperf\Hyperf](https://hub.docker.com/r/hyperf/hyperf).
+Various Dockerfiles have been prepared for in the [hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker) project, or you can use a prebuilt image based on [hyperf/hyperf](https://hub.docker.com/r/hyperf/hyperf).
 
 If you don't use Docker as the basis for your system environment, you can also consider using [Box](en/eco/box.md) as the basic environment for running. If you wish to set up the environment yourself, you need to make sure that your native environment meets the following requirements:
 

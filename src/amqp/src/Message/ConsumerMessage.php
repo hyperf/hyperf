@@ -61,7 +61,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
 
     public function getQueue(): string
     {
-        return $this->queue;
+        return (string) $this->queue;
     }
 
     public function isRequeue(): bool

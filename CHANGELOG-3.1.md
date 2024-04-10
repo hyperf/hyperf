@@ -1,4 +1,31 @@
-# v3.1.15 - TBD
+# v3.1.17 - TBD
+
+## Added
+
+- [#6652](https://github.com/hyperf/hyperf/pull/6652) Added Str trim methods.
+- [#6658](https://github.com/hyperf/hyperf/pull/6658) HEAD requests, attempt fallback to GET in `MiddlewareManager`
+
+# Changed
+
+- [#6661](https://github.com/hyperf/hyperf/pull/6661) Use `PHP_BINARY` instead of `php` as default php binary path for `hyperf/watcher`.
+
+# v3.1.16 - 2024-04-02
+
+## Added
+
+- [#6632](https://github.com/hyperf/hyperf/pull/6632) Support to set headers for `websocket-client`.
+- [#6648](https://github.com/hyperf/hyperf/pull/6648) Return result about websocket sender`push``disconnect`.
+
+## Fixed
+
+- [#6633](https://github.com/hyperf/hyperf/pull/6633) Fixed bug that crontab will be skipped sometimes.
+- [#6635](https://github.com/hyperf/hyperf/pull/6635) Fixed AMQP `ConsumerMessage::getQueue` return type.
+
+## Optimized
+
+- [#6640](https://github.com/hyperf/hyperf/pull/6640) Support PHP8 Attribute for `hyperf/constants`.
+
+# v3.1.15 - 2024-03-28
 
 ## Added
 
@@ -7,6 +34,10 @@
 ## Optimized
 
 - [#6616](https://github.com/hyperf/hyperf/pull/6616) [#6617](https://github.com/hyperf/hyperf/pull/6617) Format code by the latest `cs-fixer`.
+
+## Deprecated
+
+- [#6621](https://github.com/hyperf/hyperf/pull/6621) `WebSocketHandeShakeException` is deprecated, please use `WebSocketHandShakeException` instead.
 
 # v3.1.14 - 2024-03-21
 

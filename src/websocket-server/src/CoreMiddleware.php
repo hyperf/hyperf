@@ -16,7 +16,7 @@ use Hyperf\Context\ResponseContext;
 use Hyperf\HttpMessage\Base\Response;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
-use Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException;
+use Hyperf\WebSocketServer\Exception\WebSocketHandShakeException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -31,7 +31,7 @@ class CoreMiddleware extends HttpCoreMiddleware
     {
         [$controller] = $this->prepareHandler($dispatched->handler->callback);
         if (! $this->container->has($controller)) {
-            throw new WebSocketHandeShakeException('Router not exist.');
+            throw new WebSocketHandShakeException('Router not exist.');
         }
 
         /** @var Response $response */

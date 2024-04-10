@@ -20,7 +20,9 @@ use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
+use HyperfTest\Constants\Stub\CannotNewInstance;
 use HyperfTest\Constants\Stub\ErrorCodeStub;
+use HyperfTest\Constants\Stub\WarnCode;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -42,6 +44,11 @@ class AnnotationReaderTest extends TestCase
 
         $data = $reader->getAnnotations($classConstants);
         ConstantsCollector::set(ErrorCodeStub::class, $data);
+
+        $ref = new ReflectionClass(WarnCode::class);
+        $classConstants = $ref->getReflectionConstants();
+        $data = $reader->getAnnotations($classConstants);
+        ConstantsCollector::set(WarnCode::class, $data);
 
         Context::set(sprintf('%s::%s', TranslatorInterface::class, 'locale'), null);
     }
@@ -118,6 +125,34 @@ class AnnotationReaderTest extends TestCase
         $this->assertSame('', ErrorCodeStub::getMessage(ErrorCodeStub::TYPE_FLOAT));
         $this->assertSame('Type1003.1', ErrorCodeStub::getMessage(ErrorCodeStub::TYPE_FLOAT_STRING));
         $this->assertSame('TypeString', ErrorCodeStub::getMessage(ErrorCodeStub::TYPE_STRING));
+    }
+
+    public function testPHP8Attribute()
+    {
+        $this->getContainer(true);
+
+        $this->assertSame('Not Found.', ErrorCodeStub::getMessage(ErrorCodeStub::NOT_FOUND));
+    }
+
+    public function testEnum()
+    {
+        $this->getContainer(true);
+
+        $this->assertSame('不存在', WarnCode::NOT_FOUND->getMessage());
+
+        $this->assertSame('越权操作', WarnCode::PERMISSION_DENY->getMessage());
+
+        $this->assertSame('系统内部错误', WarnCode::SERVER_ERROR->getMessage());
+    }
+
+    public function testCannotNewInstance()
+    {
+        $reader = new AnnotationReader();
+        $ref = new ReflectionClass(CannotNewInstance::class);
+        $classConstants = $ref->getReflectionConstants();
+
+        $this->expectExceptionMessage('Attribute class "HyperfTest\Constants\Stub\NotFound" not found');
+        $data = $reader->getAnnotations($classConstants);
     }
 
     protected function getContainer($has = false)

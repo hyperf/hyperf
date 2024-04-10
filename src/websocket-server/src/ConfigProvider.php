@@ -12,6 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\WebSocketServer;
 
+use Hyperf\WebSocketServer\Exception\WebSocketHandShakeException;
+
+// Will remove at v3.2
+class_alias(WebSocketHandShakeException::class, 'Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException');
+
 class ConfigProvider
 {
     public function __invoke(): array

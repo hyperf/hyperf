@@ -741,7 +741,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      */
     public function trim($characters = null)
     {
-        return new static(trim(...array_merge([$this->value], func_get_args())));
+        return new static(Str::trim(...array_merge([$this->value], func_get_args())));
     }
 
     /**
@@ -752,7 +752,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      */
     public function ltrim($characters = null)
     {
-        return new static(ltrim(...array_merge([$this->value], func_get_args())));
+        return new static(Str::ltrim(...array_merge([$this->value], func_get_args())));
     }
 
     /**
@@ -763,7 +763,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      */
     public function rtrim($characters = null)
     {
-        return new static(rtrim(...array_merge([$this->value], func_get_args())));
+        return new static(Str::rtrim(...array_merge([$this->value], func_get_args())));
     }
 
     /**
