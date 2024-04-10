@@ -61,6 +61,8 @@ class MigrateCommand extends BaseCommand
     {
         $this->prepareDatabase();
 
+        $this->migrator->setConnection($this->input->getOption('database') ?? 'default');
+
         // Next, we will check to see if a path option has been defined. If it has
         // we will use the path relative to the root of this installation folder
         // so that migrations may be run for any path within the applications.
