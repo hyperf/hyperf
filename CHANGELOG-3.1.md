@@ -1,5 +1,9 @@
 # v3.1.18 - TBD
 
+## Fixed
+
+- [#6670](https://github.com/hyperf/hyperf/pull/6670) Fixed bug that --database option does not work for migrate command.
+
 # v3.1.17 - 2024-04-10
 
 ## Added
