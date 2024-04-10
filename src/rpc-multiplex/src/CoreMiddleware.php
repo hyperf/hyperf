@@ -42,35 +42,34 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 
     protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): mixed
     {
-        if ($dispatched->handler->callback instanceof Closure) {
-            $callback = $dispatched->handler->callback;
-            $response = $callback();
-        } else {
-            [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
-            $controllerInstance = $this->container->get($controller);
-            if (! method_exists($controller, $action)) {
-                // Route found, but the handler does not exist.
-                $data = $this->buildErrorData($request, 500, 'The handler does not exists.');
-                return $this->responseBuilder->buildResponse($request, $data);
-            }
+        try {
+            if ($dispatched->handler->callback instanceof Closure) {
+                $callback = $dispatched->handler->callback;
+                $response = $callback();
+            } else {
+                [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
+                $controllerInstance = $this->container->get($controller);
+                if (! method_exists($controller, $action)) {
+                    // Route found, but the handler does not exist.
+                    $data = $this->buildErrorData($request, 500, 'The handler does not exists.');
+                    return $this->responseBuilder->buildResponse($request, $data);
+                }
 
-            try {
-                $parameters = $this->parseMethodParameters($controller, $action, $request->getParsedBody());
-            } catch (InvalidArgumentException $exception) {
-                $data = $this->buildErrorData($request, 400, 'The params is invalid.', $exception);
-                return $this->responseBuilder->buildResponse($request, $data);
-            }
-
-            try {
+                try {
+                    $parameters = $this->parseMethodParameters($controller, $action, $request->getParsedBody());
+                } catch (InvalidArgumentException $exception) {
+                    $data = $this->buildErrorData($request, 400, 'The params is invalid.', $exception);
+                    return $this->responseBuilder->buildResponse($request, $data);
+                }
                 $response = $controllerInstance->{$action}(...$parameters);
-            } catch (Throwable $exception) {
-                $data = $this->buildErrorData($request, 500, $exception->getMessage(), $exception);
-                $response = $this->responseBuilder->buildResponse($request, $data);
-                $this->responseBuilder->persistToContext($response);
-
-                throw $exception;
             }
+        } catch (Throwable $exception) {
+            $data = $this->buildErrorData($request, 500, $exception->getMessage(), $exception);
+            $response = $this->responseBuilder->buildResponse($request, $data);
+            $this->responseBuilder->persistToContext($response);
+            throw $exception;
         }
+
         return $this->buildData($request, $response);
     }
 
