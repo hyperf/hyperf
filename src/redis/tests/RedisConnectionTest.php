@@ -191,12 +191,13 @@ class RedisConnectionTest extends TestCase
             ],
         ];
     }
+
     private function getRedisPool()
     {
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
-                'default' => $this->getDefaultPoolConfig()
+                'default' => $this->getDefaultPoolConfig(),
             ],
         ]));
 
