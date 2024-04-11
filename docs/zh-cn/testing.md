@@ -10,7 +10,7 @@ composer require pestphp/pest --dev
 
 ```json
 "scripts": {
-    "pest": "pest --parallel --colors=always",
+    "pest": "pest --colors=always",
     "test": "co-phpunit -c phpunit.xml --colors=always"
 },
 ```
@@ -35,7 +35,7 @@ date_default_timezone_set('Asia/Shanghai');
 ! defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
 
-// 当使用 pest --parallel 特性时需要注释掉
+// 默认开启 当使用 pest --parallel 特性或其他涉及到原生并行操作时需要注释掉
 Swoole\Runtime::enableCoroutine(true);
 
 require BASE_PATH . '/vendor/autoload.php';
