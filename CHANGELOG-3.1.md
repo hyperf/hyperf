@@ -1,5 +1,9 @@
 # v3.1.18 - TBD
 
+## Fixed
+
+- [#6664](https://github.com/hyperf/hyperf/pull/6664) Fixed bug that `isset` cannot check `null` in `Hyperf\Collection\Collection`.
+
 # v3.1.17 - 2024-04-10
 
 ## Added
