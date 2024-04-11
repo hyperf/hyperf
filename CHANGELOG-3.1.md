@@ -1,5 +1,9 @@
 # v3.1.18 - TBD
 
+## Added
+
+- [#6674](https://github.com/hyperf/hyperf/pull/6674) Added getConfig for redisPool.
+
 ## Fixed
 
 - [#6664](https://github.com/hyperf/hyperf/pull/6664) Fixed bug that `isset` cannot check `null` in `Hyperf\Collection\Collection`.
