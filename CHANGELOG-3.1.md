@@ -1,9 +1,12 @@
-# v3.1.17 - TBD
+# v3.1.18 - TBD
+
+# v3.1.17 - 2024-04-10
 
 ## Added
 
 - [#6652](https://github.com/hyperf/hyperf/pull/6652) Added Str trim methods.
 - [#6658](https://github.com/hyperf/hyperf/pull/6658) HEAD requests, attempt fallback to GET in `MiddlewareManager`
+- [#6665](https://github.com/hyperf/hyperf/pull/6665) Added logger for `Websocket`.
 
 # Changed
 
