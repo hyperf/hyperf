@@ -20,8 +20,8 @@ use Hyperf\Rpc\ErrorResponse;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\Response as RPCResponse;
 use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
+use Hyperf\RpcMultiplex\Exception\InvalidArgumentException;
 use Hyperf\RpcMultiplex\Exception\NotFoundException;
-use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swow\Psr7\Message\ResponsePlusInterface;
@@ -54,14 +54,19 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
                     throw new NotFoundException('The handler does not exists.');
                 }
 
-                $parameters = $this->parseMethodParameters($controller, $action, $request->getParsedBody());
+                try {
+                    $parameters = $this->parseMethodParameters($controller, $action, $request->getParsedBody());
+                } catch (\InvalidArgumentException) {
+                    throw new InvalidArgumentException('The params is invalid.');
+                }
+
                 $response = $controllerInstance->{$action}(...$parameters);
             }
         } catch (NotFoundException $exception) {
             $data = $this->buildErrorData($request, 500, $exception->getMessage(), $exception);
             return $this->responseBuilder->buildResponse($request, $data);
         } catch (InvalidArgumentException $exception) {
-            $data = $this->buildErrorData($request, 400, 'The params is invalid.', $exception);
+            $data = $this->buildErrorData($request, 400, $exception->getMessage(), $exception);
             return $this->responseBuilder->buildResponse($request, $data);
         } catch (Throwable $exception) {
             $data = $this->buildErrorData($request, 500, $exception->getMessage(), $exception);
