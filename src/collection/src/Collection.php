@@ -1669,7 +1669,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      */
     public function offsetExists(mixed $offset): bool
     {
-        return array_key_exists($offset, $this->items);
+        return isset($this->items[$offset]);
     }
 
     /**
