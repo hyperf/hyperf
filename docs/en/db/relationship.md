@@ -264,3 +264,247 @@ SELECT * FROM `user`;
 
 SELECT * FROM `role` WHERE id in (1, 2, 3, ...);
 ```
+
+## Polymorphic association
+
+Polymorphic association allows the target model to associate multiple models with the help of association relationships.
+
+### One-to-one (polymorphic)
+
+#### Table Structure
+
+A one-to-one polymorphic association is similar to a simple one-to-one association however, the target model can belong to multiple models on a single association.
+For example, Book and User might share a relationship to the Image model. Using a one-to-one polymorphic association allows using a unique image list for both Book and User. Let's look at the table structure first:
+
+```
+book
+  id - integer
+  title - string
+
+user 
+  id - integer
+  name - string
+
+image
+  id - integer
+  url - string
+  imageable_id - integer
+  imageable_type - string
+```
+
+The imageable_id field in the image table will have different meanings depending on the imageable_type. By default, imageable_type is directly the relevant model class name.
+
+#### Model example
+
+```php
+<?php
+namespace App\Model;
+
+class Image extends Model
+{
+    public function imageable()
+    {
+        return $this->morphTo();
+    }
+}
+
+class Book extends Model
+{
+    public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+}
+
+class User extends Model
+{
+    public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+}
+```
+
+#### Get association
+
+After defining the model as above, we can obtain the corresponding model through the model relationship.
+
+For example, we get a picture of a user.
+
+```php
+use App\Model\User;
+
+$user = User::find(1);
+
+$image = $user->image;
+```
+
+Or we get a picture corresponding to a user or book. `imageable` will get the corresponding `User` or `Book` according to `imageable_type`.
+
+```php
+use App\Model\Image;
+
+$image = Image::find(1);
+
+$imageable = $image->imageable;
+```
+
+### One-to-many (polymorphic)
+
+#### Model example
+
+```php
+<?php
+namespace App\Model;
+
+class Image extends Model
+{
+    public function imageable()
+    {
+        return $this->morphTo();
+    }
+}
+
+class Book extends Model
+{
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+}
+
+class User extends Model
+{
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+}
+```
+
+#### Get association
+
+Get all pictures of user
+
+```php
+use App\Model\User;
+
+$user = User::query()->find(1);
+foreach ($user->images as $image) {
+    // ...
+}
+```
+
+### Custom polymorphic mapping
+
+By default, the framework requires that `type` must store the corresponding model class name. For example, the above `imageable_type` must be the corresponding `User::class` and `Book::class`, but obviously in actual applications, this is very inconsistent. convenient. So we can customize the mapping relationship to decouple the database and the internal structure of the application.
+
+```php
+use App\Model;
+use Hyperf\Database\Model\Relations\Relation;
+Relation::morphMap([
+    'user' => Model\User::class,
+    'book' => Model\Book::class,
+]);
+```
+
+Because `Relation::morphMap` will be resident in memory after modification, we can create the corresponding relationship mapping when the project starts. We can create the following listener:
+
+```php
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace App\Listener;
+
+use App\Model;
+use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\BootApplication;
+
+#[Listener]
+class MorphMapRelationListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            BootApplication::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        Relation::morphMap([
+            'user' => Model\User::class,
+            'book' => Model\Book::class,
+        ]);
+    }
+}
+
+```
+
+### Nested preloading `morphTo` association
+
+If you wish to load a `morphTo` relationship, along with nested relationships of various entities that the relationship may return, you can use the `with` method in conjunction with the `morphWith` method of the `morphTo` relationship.
+
+For example, we plan to preload the relationship of book.user of image.
+
+```php
+
+use App\Model\Book;
+use App\Model\Image;
+use Hyperf\Database\Model\Relations\MorphTo;
+
+$images = Image::query()->with([
+    'imageable' => function (MorphTo $morphTo) {
+        $morphTo->morphWith([
+            Book::class => ['user'],
+        ]);
+    },
+])->get();
+```
+
+The corresponding SQL query is as follows:
+
+```sql
+// Search all pictures
+select * from `images`;
+// Query the user list corresponding to the image
+select * from `user` where `user`.`id` in (1, 2);
+// Query the list of books corresponding to the image
+select * from `book` where `book`.`id` in (1, 2, 3);
+// Query the user list corresponding to the book list
+select * from `user` where `user`.`id` in (1, 2);
+```
+
+### Polymorphic relational query
+
+To query for the existence of a `MorphTo` association, you can use the `whereHasMorph` method and its corresponding method:
+
+The following example will query the list of images with the book or user ID 1.
+
+```php
+use App\Model\Book;
+use App\Model\Image;
+use App\Model\User;
+use Hyperf\Database\Model\Builder;
+
+$images = Image::query()->whereHasMorph(
+    'imageable',
+    [
+        User::class,
+        Book::class,
+    ],
+    function (Builder $query) {
+        $query->where('imageable_id', 1);
+    }
+)->get();
+```
