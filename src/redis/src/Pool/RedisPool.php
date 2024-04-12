@@ -48,6 +48,11 @@ class RedisPool extends Pool
         return $this->name;
     }
 
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
     protected function createConnection(): ConnectionInterface
     {
         return new RedisConnection($this->container, $this, $this->config);

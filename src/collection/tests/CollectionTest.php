@@ -258,4 +258,14 @@ class CollectionTest extends TestCase
             $c->replaceRecursive(new Collection(['z', 2 => [1 => 'e']]))->all()
         );
     }
+
+    public function testIsset()
+    {
+        $data = [null, 1];
+        $c = new Collection($data);
+        $this->assertFalse(isset($data[0]));
+        $this->assertFalse(isset($c[0]));
+        $this->assertTrue(isset($data[1]));
+        $this->assertTrue(isset($c[1]));
+    }
 }

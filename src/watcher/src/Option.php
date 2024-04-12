@@ -18,7 +18,7 @@ class Option
 {
     protected string $driver = ScanFileDriver::class;
 
-    protected string $bin = 'php';
+    protected string $bin = PHP_BINARY;
 
     protected string $command = 'vendor/hyperf/watcher/watcher.php start';
 

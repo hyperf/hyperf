@@ -9,14 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-use Hyperf\Watcher\Driver\ScanFileDriver;
 
-return [
-    'driver' => ScanFileDriver::class,
-    'bin' => PHP_BINARY,
-    'watch' => [
-        'dir' => ['app', 'config'],
-        'file' => ['.env'],
-        'scan_interval' => 2000,
-    ],
-];
+namespace Hyperf\RpcMultiplex\Exception;
+
+use RuntimeException;
+
+class NotFoundException extends RuntimeException
+{
+}

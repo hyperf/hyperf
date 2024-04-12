@@ -22,7 +22,10 @@
     "autoload": {
         "psr-4": {
             "Hyperf\\Coordinator\\": "src/"
-        }
+        },
+        "files": [
+            "src/Functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
