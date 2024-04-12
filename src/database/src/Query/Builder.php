@@ -1972,7 +1972,7 @@ class Builder
      * @param int $perPage
      * @param string[] $columns
      * @param string $pageName
-     * @param null $page
+     * @param null|int $page
      */
     public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): LengthAwarePaginatorInterface
     {
