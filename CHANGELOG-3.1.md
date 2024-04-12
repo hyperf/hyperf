@@ -1,5 +1,9 @@
 # v3.1.19 - TBD
 
+## Added
+
+- [#6680](https://github.com/hyperf/hyperf/pull/6680) Added `Hyperf\Coordinator\block` helper function.
+
 # v3.1.18 - 2024-04-12
 
 ## Added
