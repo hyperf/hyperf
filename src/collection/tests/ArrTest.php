@@ -10,13 +10,13 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Collections;
+namespace HyperfTest\Collection;
 
 use Hyperf\Collection\Arr;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Resolver\ResolverDispatcher;
 use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
+use Monolog\Level;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -28,36 +28,36 @@ use stdClass;
 #[CoversNothing]
 class ArrTest extends TestCase
 {
-    public function testArrGet()
+    public function testArrGet(): void
     {
         $data = ['id' => 1, 'name' => 'Hyperf'];
         $this->assertSame(1, Arr::get($data, 'id'));
         $this->assertSame('Hyperf', Arr::get($data, 'name'));
         $this->assertSame($data, Arr::get($data));
-        $this->assertSame(null, Arr::get($data, 'gendar'));
-        $this->assertSame(1, Arr::get($data, 'gendar', 1));
+        $this->assertNull(Arr::get($data, 'gender'));
+        $this->assertSame(1, Arr::get($data, 'gender', 1));
 
         $data = [1, 2, 3, 4];
         $this->assertSame(1, Arr::get($data, 0));
         $this->assertSame(5, Arr::get($data, 4, 5));
-        $this->assertSame(null, Arr::get($data, 5));
+        $this->assertNull(Arr::get($data, 5));
 
         $object = new stdClass();
         $object->id = 1;
-        $this->assertSame(null, Arr::get($object, 'id'));
+        $this->assertNull(Arr::get($object, 'id'));
     }
 
-    public function testArrSet()
+    public function testArrSet(): void
     {
         $data = ['id' => 1, 'name' => 'Hyperf'];
         Arr::set($data, 'id', 2);
         $this->assertSame(['id' => 2, 'name' => 'Hyperf'], $data);
-        Arr::set($data, 'gendar', 2);
-        $this->assertSame(['id' => 2, 'name' => 'Hyperf', 'gendar' => 2], $data);
+        Arr::set($data, 'gender', 2);
+        $this->assertSame(['id' => 2, 'name' => 'Hyperf', 'gender' => 2], $data);
         Arr::set($data, 'book.0', 'Hello Hyperf');
-        $this->assertSame(['id' => 2, 'name' => 'Hyperf', 'gendar' => 2, 'book' => ['Hello Hyperf']], $data);
+        $this->assertSame(['id' => 2, 'name' => 'Hyperf', 'gender' => 2, 'book' => ['Hello Hyperf']], $data);
         Arr::set($data, 'rel.id', 2);
-        $this->assertSame(['id' => 2, 'name' => 'Hyperf', 'gendar' => 2, 'book' => ['Hello Hyperf'], 'rel' => ['id' => 2]], $data);
+        $this->assertSame(['id' => 2, 'name' => 'Hyperf', 'gender' => 2, 'book' => ['Hello Hyperf'], 'rel' => ['id' => 2]], $data);
         Arr::set($data, null, [1, 2, 3]);
         $this->assertSame([1, 2, 3], $data);
 
@@ -68,7 +68,7 @@ class ArrTest extends TestCase
         $this->assertSame([2, 2, 3, 4, 2], $data);
     }
 
-    public function testArrMerge()
+    public function testArrMerge(): void
     {
         $this->assertSame([1, 2, 3, 4], Arr::merge([1, 2, 3], [2, 3, 4]));
         $this->assertSame([1, 2, 3, 2, 3, 4], Arr::merge([1, 2, 3], [2, 3, 4], false));
@@ -97,7 +97,7 @@ class ArrTest extends TestCase
                         'class' => StreamHandler::class,
                         'constructor' => [
                             'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                            'level' => Logger::DEBUG,
+                            'level' => Level::Debug,
                         ],
                     ],
                 ],
@@ -122,7 +122,7 @@ class ArrTest extends TestCase
                         'class' => StreamHandler::class,
                         'constructor' => [
                             'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                            'level' => Logger::INFO,
+                            'level' => Level::Info,
                         ],
                     ],
                 ],
@@ -140,7 +140,7 @@ class ArrTest extends TestCase
         ];
 
         $result = Arr::merge($array1, $array2);
-        $array1['logger']['default']['handler']['constructor']['level'] = Logger::INFO;
+        $array1['logger']['default']['handler']['constructor']['level'] = Level::Info;
         $array1['scan']['class_map'][ResolverDispatcher::class] = BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php';
         $array1['scan']['ignore_annotations'][] = 'author';
 
@@ -150,7 +150,7 @@ class ArrTest extends TestCase
         $this->assertSame($array1, $result);
     }
 
-    public function testArrayForget()
+    public function testArrayForget(): void
     {
         $data = [1, 2];
         Arr::forget($data, [1]);
@@ -179,9 +179,9 @@ class ArrTest extends TestCase
         $this->assertSame([1, 2], $data);
     }
 
-    public function testArrMacroable()
+    public function testArrMacro(): void
     {
-        Arr::macro('foo', function () {
+        Arr::macro('foo', static function () {
             return 'foo';
         });
 
@@ -189,7 +189,7 @@ class ArrTest extends TestCase
         $this->assertFalse(Arr::hasMacro('bar'));
     }
 
-    public function testShuffle()
+    public function testShuffle(): void
     {
         $source = range('a', 'z'); // alphabetic keys to ensure values are returned
 
@@ -208,7 +208,7 @@ class ArrTest extends TestCase
         $this->assertTrue($dontMatch, 'Shuffled array should not have the same order.');
     }
 
-    public function testShuffleWithSeed()
+    public function testShuffleWithSeed(): void
     {
         $this->assertSame(
             Arr::shuffle(range(0, 100, 10), 1234),
@@ -226,12 +226,12 @@ class ArrTest extends TestCase
         );
     }
 
-    public function testEmptyShuffle()
+    public function testEmptyShuffle(): void
     {
         $this->assertEquals([], Arr::shuffle([]));
     }
 
-    public function testMapWithKeys()
+    public function testMapWithKeys(): void
     {
         $data = [
             ['name' => 'Blastoise', 'type' => 'Water', 'idx' => 9],
@@ -239,7 +239,7 @@ class ArrTest extends TestCase
             ['name' => 'Dragonair', 'type' => 'Dragon', 'idx' => 148],
         ];
 
-        $data = Arr::mapWithKeys($data, function ($pokemon) {
+        $data = Arr::mapWithKeys($data, static function ($pokemon) {
             return [$pokemon['name'] => $pokemon['type']];
         });
 
@@ -249,7 +249,7 @@ class ArrTest extends TestCase
         );
     }
 
-    public function testHasMethod()
+    public function testHasMethod(): void
     {
         $array = ['name' => 'Taylor', 'age' => '', 'city' => null];
         $this->assertTrue(Arr::has($array, 'name'));
@@ -258,19 +258,19 @@ class ArrTest extends TestCase
         $this->assertFalse(Arr::has($array, 1));
     }
 
-    public function testHasAnyMethod()
+    public function testHasAnyMethod(): void
     {
         $array = ['name' => 'Taylor', 'age' => '', 'city' => null];
         $this->assertTrue(Arr::hasAny($array, 'name'));
         $this->assertTrue(Arr::hasAny($array, 'age'));
         $this->assertTrue(Arr::hasAny($array, 'city'));
         $this->assertFalse(Arr::hasAny($array, 'foo'));
-        $this->assertTrue(Arr::hasAny($array, 'name', 'email'));
+        $this->assertTrue(Arr::hasAny($array, 'name'));
         $this->assertTrue(Arr::hasAny($array, ['name', 'email']));
 
         $array = ['name' => 'Taylor', 'email' => 'foo'];
-        $this->assertTrue(Arr::hasAny($array, 'name', 'email'));
-        $this->assertFalse(Arr::hasAny($array, 'surname', 'password'));
+        $this->assertTrue(Arr::hasAny($array, 'name'));
+        $this->assertFalse(Arr::hasAny($array, 'surname'));
         $this->assertFalse(Arr::hasAny($array, ['surname', 'password']));
 
         $array = ['foo' => ['bar' => null, 'baz' => '']];
@@ -280,7 +280,7 @@ class ArrTest extends TestCase
         $this->assertTrue(Arr::hasAny($array, ['foo.bax', 'foo.baz']));
     }
 
-    public function testIsAssoc()
+    public function testIsAssoc(): void
     {
         $this->assertTrue(Arr::isAssoc(['a' => 'a', 0 => 'b']));
         $this->assertTrue(Arr::isAssoc([1 => 'a', 0 => 'b']));
@@ -299,7 +299,7 @@ class ArrTest extends TestCase
         $this->assertTrue(Arr::isAssoc(['foo' => 'bar', 'baz' => 'qux']));
     }
 
-    public function testIsList()
+    public function testIsList(): void
     {
         $this->assertTrue(Arr::isList([]));
         $this->assertTrue(Arr::isList([1, 2, 3]));
@@ -315,7 +315,7 @@ class ArrTest extends TestCase
         $this->assertFalse(Arr::isList(['foo' => 'bar', 'baz' => 'qux']));
     }
 
-    public function testArrayRemove()
+    public function testArrayRemove(): void
     {
         $data = [1 => 'a', 2 => 'b', 3 => 'c'];
         $this->assertSame(['b'], Arr::remove($data, 'a', 'c'));
@@ -333,7 +333,7 @@ class ArrTest extends TestCase
         $this->assertSame(['b'], Arr::remove($data, 'a'));
     }
 
-    public function testArrayRemoveKeepKey()
+    public function testArrayRemoveKeepKey(): void
     {
         $data = [1 => 'a', 2 => 'b', 3 => 'c'];
         $this->assertSame([2 => 'b'], Arr::removeKeepKey($data, 'a', 'c'));
