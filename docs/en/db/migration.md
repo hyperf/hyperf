@@ -305,6 +305,7 @@ class CreateUsersTable extends Migration
 | $table->unsignedTinyInteger('votes');	     |  equivalent to UNSIGNED TINYINT                                                 |
 | $table->uuid('id');	                     |  equivalent to UUID                                                             |
 | $table->year('birth_year');	             |  equivalent to YEAR                                                             |
+| $table->comment('Table Comment');          |  Set table comment, equivalent to COMMENT                                       |
 
 ## Modify fields
 
@@ -313,7 +314,7 @@ class CreateUsersTable extends Migration
 Make sure to add the `doctrine/dbal` dependency to the `composer.json` file before modifying the fields. The Doctrine DBAL library is used to determine the current state of a field and create the SQL query required to make the specified adjustments to that field:
 
 ```bash
-composer require doctrine/dbal
+composer require "doctrine/dbal:^3.0"
 ```
 
 ### Update field properties
