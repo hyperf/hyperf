@@ -23,3 +23,8 @@ function block(float $timeout = -1, ?callable $callback = null, string $identifi
         $callback($isWorkerExited);
     }
 }
+
+function resume(string $identifier = Constants::WORKER_EXIT): void
+{
+    CoordinatorManager::until($identifier)->resume();
+}
