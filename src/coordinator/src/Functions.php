@@ -14,6 +14,7 @@ namespace Hyperf\Coordinator;
 
 /**
  * Block the current coroutine until the specified identifier is resumed.
+ * Alias of `CoordinatorManager::until($identifier)->yield($timeout)`.
  */
 function block(float $timeout = -1, string $identifier = Constants::WORKER_EXIT): bool
 {
@@ -22,6 +23,7 @@ function block(float $timeout = -1, string $identifier = Constants::WORKER_EXIT)
 
 /**
  * Resume the coroutine that is blocked by the specified identifier.
+ * Alias of `CoordinatorManager::until($identifier)->resume()`.
  */
 function resume(string $identifier = Constants::WORKER_EXIT): void
 {
@@ -30,6 +32,7 @@ function resume(string $identifier = Constants::WORKER_EXIT): void
 
 /**
  * Clear the coroutine that is blocked by the specified identifier.
+ * Alias of `CoordinatorManager::clear($identifier)`.
  */
 function clear(string $identifier = Constants::WORKER_EXIT): void
 {
