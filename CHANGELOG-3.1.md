@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#6680](https://github.com/hyperf/hyperf/pull/6680) Added `Hyperf\Coordinator\block` helper function.
+- [#6680](https://github.com/hyperf/hyperf/pull/6680) Added `Hyperf\Coordinator` helper functions.
 
 # v3.1.18 - 2024-04-12
 
