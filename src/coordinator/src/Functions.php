@@ -28,3 +28,8 @@ function resume(string $identifier = Constants::WORKER_EXIT): void
 {
     CoordinatorManager::until($identifier)->resume();
 }
+
+function clear(string $identifier = Constants::WORKER_EXIT): void
+{
+    CoordinatorManager::clear($identifier);
+}
