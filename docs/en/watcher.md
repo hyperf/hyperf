@@ -11,7 +11,7 @@ In addition to solving the above startup problems, the `Watcher` component also 
 
 ## Installation
 
-```
+```bash
 composer require hyperf/watcher --dev
 ```
 
@@ -28,24 +28,31 @@ php bin/hyperf.php vendor:publish hyperf/watcher
 |      Name      |      Default     |                                      Description                                     |
 |:--------------:|:----------------:|:------------------------------------------------------------------------------------:|
 |     driver     | `ScanFileDriver` |                           The default polling file watcher                           |
-|       bin      |       `php`      | The script used to start the service, for example: `php -d swoole.use_shortname=Off` |
+|       bin      |   `PHP_BINARY`   | The script used to start the service, for example: `php -d swoole.use_shortname=Off` |
 |    watch.dir   |  `app`, `config` |                                  Watched directories                                 |
 |   watch.file   |      `.env`      |                                     Wached files                                     |
 | watch.interval |      `2000`      |                                 Polling interval (ms)                                |
 
 ## Driver support
 
-|                 Driver               |                Notes                |
-| :----------------------------------: | :---------------------------------: |
-| Hyperf\Watcher\Driver\ScanFileDriver |        no extension required        |
-| Hyperf\Watcher\Driver\FswatchDriver  |          requires fswatch           |
-|   Hyperf\Watcher\Driver\FindDriver   |  requires find, MAC requires gfind  |
+|                 Driver                |                Notes                |
+| :----------------------------------:  | :---------------------------------: |
+| Hyperf\Watcher\Driver\ScanFileDriver  |        no extension required        |
+| Hyperf\Watcher\Driver\FswatchDriver   |          requires fswatch           |
+|   Hyperf\Watcher\Driver\FindDriver    |  requires find, MAC requires gfind  |
+| Hyperf\Watcher\Driver\FindNewerDriver |            requires find            |
 
 ### `fswatch` Installation
 Mac:
 
 ```bash
 brew install fswatch
+```
+
+Ubuntu/Debian
+
+```bash
+apt-get install fswatch
 ```
 
 Linux:
