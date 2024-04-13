@@ -70,7 +70,7 @@ if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
 })();
 require PHPUNIT_COMPOSER_INSTALL;
 $code = 0;
-Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL, 'exit_condition' => function () {
+Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL&~SWOOLE_HOOK_FILE, 'exit_condition' => function () {
     return Swoole\Coroutine::stats()['coroutine_num'] === 0;
 }]);
 
