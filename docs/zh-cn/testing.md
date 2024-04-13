@@ -1,17 +1,16 @@
 # 自动化测试
 
-在 Hyperf 里测试默认通过 `phpunit` 来实现，并在 3.1 引入了基于 phpunit 的框架 `pest` [文档](https://pestphp.com/docs/installation)。
+在 Hyperf 里测试默认通过 `phpunit` 来实现，并在 3.1 支持了基于 phpunit 的框架 `pest` [文档](https://pestphp.com/docs/installation)。
 
-但由于 Hyperf 是一个协程框架，所以默认的 `phpunit/pest` 并不能很好的工作，因此我们提供了对应的协程脚本来进行适配，您可直接调用脚本或者使用对应的 composer 命令来运行。自动化测试没有特定的组件，但是在 Hyperf 提供的骨架包里都会有对应实现。
 
 ```shell
 composer require hyperf/testing --dev
-composer require friendsofhyperf/pest-plugin-hyperf --dev
+composer require pestphp/pest --dev
 ```
 
 ```json
 "scripts": {
-    "pest": "pest --coroutine --colors=always",
+    "pest": "pest --colors=always",
     "test": "co-phpunit -c phpunit.xml --colors=always"
 },
 ```
@@ -36,6 +35,7 @@ date_default_timezone_set('Asia/Shanghai');
 ! defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
 
+// 默认开启 当使用 pest --parallel 特性或其他涉及到原生并行操作时需要注释掉
 Swoole\Runtime::enableCoroutine(true);
 
 require BASE_PATH . '/vendor/autoload.php';
@@ -53,6 +53,11 @@ $container->get(Hyperf\Contract\ApplicationInterface::class);
 ```
 composer test
 ```
+
+## 注意事项
+
+- `hyperf/testing` 提供了 Trait [RunTestsInCoroutine](https://github.com/hyperf/hyperf/blob/master/src/testing/src/Concerns/RunTestsInCoroutine.php) 。只需在特定的 `Test` 中 use 此类即开启协程环境
+- 当使用 pest 中的 --parallel 参数特性 时需要注释掉 `test/bootstrap.php` 中的 `Swoole\Runtime::enableCoroutine(true)`
 
 ## 模拟 HTTP 请求
 
