@@ -1,5 +1,5 @@
 #!/usr/bin/env php
-<?php 
+<?php
 declare (strict_types=1);
 /*
  * This file is part of PHPUnit.
@@ -73,6 +73,7 @@ $code = 0;
 Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL, 'exit_condition' => function () {
     return Swoole\Coroutine::stats()['coroutine_num'] === 0;
 }]);
+
 Swoole\Coroutine\run(function () use(&$code) {
     $code = (new PHPUnit\TextUI\Application())->run($_SERVER['argv']);
     Swoole\Timer::clearAll();
