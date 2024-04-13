@@ -27,7 +27,7 @@ class ConstantCommand extends GeneratorCommand
     public function configure()
     {
         $this->setDescription('Create a new constant class');
-        $this->addOption('type', 'type', InputOption::VALUE_OPTIONAL, 'Constant type, const or enum', '');
+        $this->addOption('type', 't', InputOption::VALUE_OPTIONAL, 'Constant type, const or enum', '');
         parent::configure();
     }
 
