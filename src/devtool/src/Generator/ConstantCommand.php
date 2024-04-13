@@ -40,7 +40,7 @@ class ConstantCommand extends GeneratorCommand
     {
         $type = $this->getType();
         if (! $type) {
-            return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/constant.stub';
+            return $this->getConfig()['stub'] ?? __DIR__ . '/stubs/constant_enum.stub';
         }
 
         $stubs = array_merge(
