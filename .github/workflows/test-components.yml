@@ -320,7 +320,7 @@ jobs:
           composer require "psr/simple-cache:${{ matrix.psr-version }}"
           composer update -oW
           composer analyse src/cache
-          vendor/bin/phpunit src/cache
+          composer test src/cache
           composer analyse src/model-cache
           composer test src/model-cache
           composer info | grep psr/simple-cache
