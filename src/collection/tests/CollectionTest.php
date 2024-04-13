@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Collections;
+namespace HyperfTest\Collection;
 
 use Hyperf\Collection\Collection;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -25,7 +25,7 @@ use function Hyperf\Collection\collect;
 #[CoversNothing]
 class CollectionTest extends TestCase
 {
-    public function testOperatorForWhere()
+    public function testOperatorForWhere(): void
     {
         $col = new Collection([['id' => 1, 'name' => 'Hyperf'], ['id' => 2, 'name' => 'HyperfCloud']]);
 
@@ -38,38 +38,38 @@ class CollectionTest extends TestCase
         $this->assertSame(['id' => 2, 'name' => 'HyperfCloud'], $res->shift());
     }
 
-    public function testRandom()
+    public function testRandom(): void
     {
         $col = new Collection([['id' => 1, 'name' => 'Hyperf'], ['id' => 2, 'name' => 'HyperfCloud']]);
 
         $res = $col->random();
-        $this->assertTrue(is_array($res));
+        $this->assertIsArray($res);
 
         $res = $col->random(1);
-        $this->assertTrue($res instanceof Collection);
+        $this->assertInstanceOf(Collection::class, $res);
     }
 
-    public function testFlatten()
+    public function testFlatten(): void
     {
         $collection = new Collection([
             'item' => [
                 'name' => 'Hyperf',
             ],
             'it' => [
-                'id' => $uuid = uniqid(),
+                'id' => $uuid = uniqid('', true),
             ],
         ]);
 
         $this->assertSame(['Hyperf', $uuid], $collection->flatten()->toArray());
     }
 
-    public function testCollectionAverage()
+    public function testCollectionAverage(): void
     {
         $col = new Collection([]);
         $this->assertNull($col->avg());
     }
 
-    public function testMapWithKeys()
+    public function testMapWithKeys(): void
     {
         $data = new Collection([
             ['name' => 'Blastoise', 'type' => 'Water', 'idx' => 9],
@@ -85,7 +85,7 @@ class CollectionTest extends TestCase
         );
     }
 
-    public function testMapWithKeysIntegerKeys()
+    public function testMapWithKeysIntegerKeys(): void
     {
         $data = new Collection([
             ['id' => 1, 'name' => 'A'],
@@ -101,7 +101,7 @@ class CollectionTest extends TestCase
         );
     }
 
-    public function testMapWithKeysMultipleRows()
+    public function testMapWithKeysMultipleRows(): void
     {
         $data = new Collection([
             ['id' => 1, 'name' => 'A'],
@@ -124,7 +124,7 @@ class CollectionTest extends TestCase
         );
     }
 
-    public function testMapWithKeysCallbackKey()
+    public function testMapWithKeysCallbackKey(): void
     {
         $data = new Collection([
             3 => ['id' => 1, 'name' => 'A'],
@@ -140,7 +140,7 @@ class CollectionTest extends TestCase
         );
     }
 
-    public function testForgetSingleKey()
+    public function testForgetSingleKey(): void
     {
         $c = new Collection(['foo', 'bar']);
         $c = $c->forget(0)->all();
@@ -153,7 +153,7 @@ class CollectionTest extends TestCase
         $this->assertTrue(isset($c['baz']));
     }
 
-    public function testForgetArrayOfKeys()
+    public function testForgetArrayOfKeys(): void
     {
         $c = new Collection(['foo', 'bar', 'baz']);
         $c = $c->forget([0, 2])->all();
@@ -167,7 +167,7 @@ class CollectionTest extends TestCase
         $this->assertTrue(isset($c['name']));
     }
 
-    public function testForgetCollectionOfKeys()
+    public function testForgetCollectionOfKeys(): void
     {
         $c = new Collection(['foo', 'bar', 'baz']);
         $c = $c->forget(collect([0, 2]))->all();
@@ -182,7 +182,7 @@ class CollectionTest extends TestCase
         $this->assertTrue(isset($c['name']));
     }
 
-    public function testExcept()
+    public function testExcept(): void
     {
         $data = new Collection(['first' => 'Swoole', 'last' => 'Hyperf', 'email' => 'hyperf@gmail.com']);
 
@@ -196,13 +196,13 @@ class CollectionTest extends TestCase
         $this->assertEquals(['first' => 'Swoole', 'email' => 'hyperf@gmail.com'], $data->except(collect(['last']))->all());
     }
 
-    public function testReplaceNull()
+    public function testReplaceNull(): void
     {
         $c = new Collection(['a', 'b', 'c']);
         $this->assertEquals(['a', 'b', 'c'], $c->replace(null)->all());
     }
 
-    public function testReplaceArray()
+    public function testReplaceArray(): void
     {
         $c = new Collection(['a', 'b', 'c']);
         $this->assertEquals(['a', 'd', 'e'], $c->replace([1 => 'd', 2 => 'e'])->all());
@@ -214,7 +214,7 @@ class CollectionTest extends TestCase
         $this->assertEquals(['name' => 'taylor', 'family' => 'otwell', 'age' => 26], $c->replace(['name' => 'taylor', 'age' => 26])->all());
     }
 
-    public function testReplaceCollection()
+    public function testReplaceCollection(): void
     {
         $c = new Collection(['a', 'b', 'c']);
         $this->assertEquals(
@@ -235,13 +235,13 @@ class CollectionTest extends TestCase
         );
     }
 
-    public function testReplaceRecursiveNull()
+    public function testReplaceRecursiveNull(): void
     {
         $c = new Collection(['a', 'b', ['c', 'd']]);
         $this->assertEquals(['a', 'b', ['c', 'd']], $c->replaceRecursive(null)->all());
     }
 
-    public function testReplaceRecursiveArray()
+    public function testReplaceRecursiveArray(): void
     {
         $c = new Collection(['a', 'b', ['c', 'd']]);
         $this->assertEquals(['z', 'b', ['c', 'e']], $c->replaceRecursive(['z', 2 => [1 => 'e']])->all());
@@ -250,7 +250,7 @@ class CollectionTest extends TestCase
         $this->assertEquals(['z', 'b', ['c', 'e'], 'f'], $c->replaceRecursive(['z', 2 => [1 => 'e'], 'f'])->all());
     }
 
-    public function testReplaceRecursiveCollection()
+    public function testReplaceRecursiveCollection(): void
     {
         $c = new Collection(['a', 'b', ['c', 'd']]);
         $this->assertEquals(
