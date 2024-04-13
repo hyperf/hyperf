@@ -9,10 +9,10 @@ use Hyperf\Constants\Annotation\Message;
 use Hyperf\Constants\EnumConstantsTrait;
 
 #[Constants]
-enum ErrorCode: int
+enum %CLASS%: int
 {
     use EnumConstantsTrait;
 
-    #[Message('Server Error')]
+    #[Message("Server Error!")]
     case SERVER_ERROR = 500;
 }
