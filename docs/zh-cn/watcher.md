@@ -27,6 +27,7 @@ php bin/hyperf.php vendor:publish hyperf/watcher
 |   watch.dir    | `app`, `config`  |                         监听目录                          |
 |   watch.file   |      `.env`      |                         监听文件                          |
 | watch.interval |      `2000`      |                      扫描间隔(毫秒)                       |
+|      ext       |  `.php`, `.env`  |                  监听目录下的文件扩展名                   |
 
 ## 支持驱动
 
@@ -74,4 +75,3 @@ php bin/hyperf.php server:watch
 
 - 暂时 Alpine Docker 环境下，稍微有点问题，后续会完善。
 - 删除文件和修改`.env`需要手动重启才能生效。
-- vendor 中的文件需要使用 classmap 形式自动加载才能被扫描。（即执行`composer dump-autoload -o`）
