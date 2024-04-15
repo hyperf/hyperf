@@ -79,4 +79,3 @@ php bin/hyperf.php server:watch
 
 - For now, there is a slight problem in the Alpine Docker environment, which will be improved in the future version.
 - Deletion of files and modification of `.env` require a manual restart to take effect.
-- Files in the `vendor` need to be automatically loaded in the form of classmap before they can be scanned. (i.e. execute `composer dump-autoload -o`)
