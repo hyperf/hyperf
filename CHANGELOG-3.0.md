@@ -1,9 +1,10 @@
-# v3.0.48 - TBD
+# v3.0.49 - TBD
+
+# v3.0.48 - 2024-04-17
 
 ## Fixed
 
 - [#6693](https://github.com/hyperf/hyperf/pull/6693) Fixed bug that socket-io cannot parse data with `?` but without `query`.
-
 
 # v3.0.47 - 2024-01-11
 
