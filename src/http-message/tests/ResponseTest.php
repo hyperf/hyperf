@@ -15,8 +15,10 @@ namespace HyperfTest\HttpMessage;
 use Hyperf\Codec\Json;
 use Hyperf\Engine\Http\WritableConnection;
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpMessage\Uri\Uri;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -73,7 +75,7 @@ class ResponseTest extends TestCase
         $this->assertTrue($status);
     }
 
-    public function testToString()
+    public function testToResponseString()
     {
         $response = $this->newResponse();
         if (! $response instanceof ResponsePlusInterface) {
@@ -93,6 +95,25 @@ Connection: close\r
 Content-Length: 22\r
 \r
 ", $response->toString(true));
+    }
+
+    public function testToRequestString()
+    {
+        $request = new Request('GET', new Uri('https://www.baidu.com/'), body: 'q=Hyperf');
+
+        $this->assertSame("GET / HTTP/1.1\r
+host: www.baidu.com\r
+Connection: close\r
+Content-Length: 8\r
+\r
+q=Hyperf", $request->toString());
+
+        $this->assertSame("GET / HTTP/1.1\r
+host: www.baidu.com\r
+Connection: close\r
+Content-Length: 8\r
+\r
+", $request->toString(true));
     }
 
     protected function newResponse()
