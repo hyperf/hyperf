@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\HttpMessage\Base;
 
+use Hyperf\Engine\Http\Http;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
 use InvalidArgumentException;
@@ -245,20 +246,12 @@ class Request implements RequestInterface, RequestPlusInterface, Stringable
 
     public function toString(bool $withoutBody = false): string
     {
-        $headerString = '';
-        foreach ($this->getStandardHeaders() as $key => $values) {
-            foreach ($values as $value) {
-                $headerString .= sprintf("%s: %s\r\n", $key, $value);
-            }
-        }
-
-        return sprintf(
-            "%s %s HTTP/%s\r\n%s\r\n%s",
+        return Http::packRequest(
             $this->getMethod(),
             $this->getUri()->getPath(),
-            $this->getProtocolVersion(),
-            $headerString,
-            $withoutBody ? '' : $this->getBody()
+            $this->getStandardHeaders(),
+            $withoutBody ? '' : (string) $this->getBody(),
+            $this->getProtocolVersion()
         );
     }
 
