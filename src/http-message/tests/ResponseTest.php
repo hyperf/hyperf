@@ -12,13 +12,16 @@ declare(strict_types=1);
 
 namespace HyperfTest\HttpMessage;
 
+use Hyperf\Codec\Json;
 use Hyperf\Engine\Http\WritableConnection;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Server\Response;
+use Hyperf\HttpMessage\Stream\SwooleStream;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Http\Response as SwooleResponse;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
 /**
  * @internal
@@ -68,6 +71,28 @@ class ResponseTest extends TestCase
         $response->setConnection(new WritableConnection($swooleResponse));
         $status = $response->write($content);
         $this->assertTrue($status);
+    }
+
+    public function testToString()
+    {
+        $response = $this->newResponse();
+        if (! $response instanceof ResponsePlusInterface) {
+            $this->markTestSkipped('Don\'t assert response which not instanceof ResponsePlusInterface');
+        }
+
+        $response->setStatus(200)->setHeaders(['Content-Type' => 'application/json'])->setBody(new SwooleStream(Json::encode(['id' => $id = uniqid()])));
+        $this->assertEquals("HTTP/1.1 200 OK\r
+Content-Type: application/json\r
+Connection: close\r
+Content-Length: 22\r
+\r
+{\"id\":\"" . $id . '"}', $response->toString());
+        $this->assertSame("HTTP/1.1 200 OK\r
+Content-Type: application/json\r
+Connection: close\r
+Content-Length: 22\r
+\r
+", $response->toString(true));
     }
 
     protected function newResponse()

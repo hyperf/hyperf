@@ -181,7 +181,7 @@ class ResponsePlusProxy implements ResponsePlusInterface, Stringable
             $this->getStatusCode(),
             $this->getReasonPhrase(),
             $headerString,
-            $this->getBody()
+            $withoutBody ? '' : $this->getBody()
         );
     }
 

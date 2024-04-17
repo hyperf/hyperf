@@ -246,20 +246,19 @@ class Request implements RequestInterface, RequestPlusInterface, Stringable
     public function toString(bool $withoutBody = false): string
     {
         $headerString = '';
-        if (! $withoutBody) {
-            foreach ($this->getStandardHeaders() as $key => $values) {
-                foreach ($values as $value) {
-                    $headerString .= sprintf("%s: %s\r\n", $key, $value);
-                }
+        foreach ($this->getStandardHeaders() as $key => $values) {
+            foreach ($values as $value) {
+                $headerString .= sprintf("%s: %s\r\n", $key, $value);
             }
         }
+
         return sprintf(
             "%s %s HTTP/%s\r\n%s\r\n%s",
             $this->getMethod(),
             $this->getUri()->getPath(),
             $this->getProtocolVersion(),
             $headerString,
-            $this->getBody()
+            $withoutBody ? '' : $this->getBody()
         );
     }
 
