@@ -1,5 +1,9 @@
 # v3.1.19 - TBD
 
+## Fixed
+
+- [#6689](https://github.com/hyperf/hyperf/pull/6689) Fixed bug that socket-io cannot parse data with `?` but without `query`.
+
 ## Added
 
 - [#6680](https://github.com/hyperf/hyperf/pull/6680) Added `Hyperf\Coordinator` helper functions.
