@@ -28,6 +28,11 @@ class Producer extends Builder
         return retry(1, fn () => $this->produceMessage($producerMessage, $confirm, $timeout));
     }
 
+    public function addDeclaredExchange(string $exchange): void
+    {
+        self::$declaredExchanges[$exchange] = true;
+    }
+
     private function produceMessage(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool
     {
         $result = false;
