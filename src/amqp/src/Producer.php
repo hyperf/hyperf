@@ -21,26 +21,9 @@ use function Hyperf\Support\retry;
 
 class Producer extends Builder
 {
-    public static array $declaredExchanges = [];
-
     public function produce(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool
     {
         return retry(1, fn () => $this->produceMessage($producerMessage, $confirm, $timeout));
-    }
-
-    public function addDeclaredExchange(string $exchange): void
-    {
-        self::$declaredExchanges[$exchange] = true;
-    }
-
-    public function removeDeclaredExchange(string $exchange): void
-    {
-        unset(self::$declaredExchanges[$exchange]);
-    }
-
-    public function hasDeclaredExchange(string $exchange): bool
-    {
-        return isset(self::$declaredExchanges[$exchange]);
     }
 
     private function produceMessage(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool
