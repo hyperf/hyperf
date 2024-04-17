@@ -9,6 +9,10 @@
 - [#6680](https://github.com/hyperf/hyperf/pull/6680) Added `Hyperf\Coordinator` helper functions.
 - [#6681](https://github.com/hyperf/hyperf/pull/6681) Added option `type` for `gen:constant` which you can be used to generate files with `const` or `enum`.
 
+## Optimized
+
+- [#6686](https://github.com/hyperf/hyperf/pull/6686) Optimized `FswatchDriver` which don't restart server by empty reading.
+
 # v3.1.18 - 2024-04-12
 
 ## Added
