@@ -20,19 +20,20 @@ php bin/hyperf.php vendor:publish hyperf/watcher
 
 ### 配置說明
 
-|      配置      |      預設值      |                           備註                            |
-| :------------: | :--------------: | :-------------------------------------------------------: |
-|     driver     | `ScanFileDriver` |                   預設定時掃描檔案驅動                    |
+|      配置      |      預設值      |                            備註                             |
+| :------------: | :--------------: | :---------------------------------------------------------: |
+|     driver     | `ScanFileDriver` |                    預設定時掃描檔案驅動                     |
 |      bin       |   `PHP_BINARY`   | 用於啟動服務的指令碼 例如 `php -d swoole.use_shortname=Off` |
-|   watch.dir    | `app`, `config`  |                         監聽目錄                          |
-|   watch.file   |      `.env`      |                         監聽檔案                          |
-| watch.interval |      `2000`      |                      掃描間隔(毫秒)                       |
+|   watch.dir    | `app`, `config`  |                          監聽目錄                           |
+|   watch.file   |      `.env`      |                          監聽檔案                           |
+| watch.interval |      `2000`      |                       掃描間隔(毫秒)                        |
+|      ext       |  `.php`, `.env`  |                   監聽目錄下的檔案副檔名                    |
 
 ## 支援驅動
 
 |                 驅動                  |                備註                 |
 | :-----------------------------------: | :---------------------------------: |
-| Hyperf\Watcher\Driver\ScanFileDriver  |              無需擴充套件               |
+| Hyperf\Watcher\Driver\ScanFileDriver  |            無需擴充套件             |
 |  Hyperf\Watcher\Driver\FswatchDriver  |          需要安裝 fswatch           |
 |   Hyperf\Watcher\Driver\FindDriver    | 需要安裝 find，MAC 下需要安裝 gfind |
 | Hyperf\Watcher\Driver\FindNewerDriver |            需要安裝 find            |
@@ -74,4 +75,3 @@ php bin/hyperf.php server:watch
 
 - 暫時 Alpine Docker 環境下，稍微有點問題，後續會完善。
 - 刪除檔案和修改`.env`需要手動重啟才能生效。
-- vendor 中的檔案需要使用 classmap 形式自動載入才能被掃描。（即執行`composer dump-autoload -o`）

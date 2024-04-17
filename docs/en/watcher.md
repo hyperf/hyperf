@@ -25,22 +25,23 @@ php bin/hyperf.php vendor:publish hyperf/watcher
 
 ### Configuration instructions
 
-|      Name      |      Default     |                                      Description                                     |
-|:--------------:|:----------------:|:------------------------------------------------------------------------------------:|
+|      Name      |     Default      |                                     Description                                      |
+| :------------: | :--------------: | :----------------------------------------------------------------------------------: |
 |     driver     | `ScanFileDriver` |                           The default polling file watcher                           |
-|       bin      |   `PHP_BINARY`   | The script used to start the service, for example: `php -d swoole.use_shortname=Off` |
-|    watch.dir   |  `app`, `config` |                                  Watched directories                                 |
+|      bin       |   `PHP_BINARY`   | The script used to start the service, for example: `php -d swoole.use_shortname=Off` |
+|   watch.dir    | `app`, `config`  |                                 Watched directories                                  |
 |   watch.file   |      `.env`      |                                     Wached files                                     |
-| watch.interval |      `2000`      |                                 Polling interval (ms)                                |
+| watch.interval |      `2000`      |                                Polling interval (ms)                                 |
+|      ext       |  `.php`, `.env`  |                      File extension in the listening directory                       |
 
 ## Driver support
 
-|                 Driver                |                Notes                |
-| :----------------------------------:  | :---------------------------------: |
-| Hyperf\Watcher\Driver\ScanFileDriver  |        no extension required        |
-| Hyperf\Watcher\Driver\FswatchDriver   |          requires fswatch           |
-|   Hyperf\Watcher\Driver\FindDriver    |  requires find, MAC requires gfind  |
-| Hyperf\Watcher\Driver\FindNewerDriver |            requires find            |
+|                Driver                 |               Notes               |
+| :-----------------------------------: | :-------------------------------: |
+| Hyperf\Watcher\Driver\ScanFileDriver  |       no extension required       |
+|  Hyperf\Watcher\Driver\FswatchDriver  |         requires fswatch          |
+|   Hyperf\Watcher\Driver\FindDriver    | requires find, MAC requires gfind |
+| Hyperf\Watcher\Driver\FindNewerDriver |           requires find           |
 
 ### `fswatch` Installation
 Mac:
@@ -78,4 +79,3 @@ php bin/hyperf.php server:watch
 
 - For now, there is a slight problem in the Alpine Docker environment, which will be improved in the future version.
 - Deletion of files and modification of `.env` require a manual restart to take effect.
-- Files in the `vendor` need to be automatically loaded in the form of classmap before they can be scanned. (i.e. execute `composer dump-autoload -o`)

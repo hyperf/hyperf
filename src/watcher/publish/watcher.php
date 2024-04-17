@@ -19,4 +19,5 @@ return [
         'file' => ['.env'],
         'scan_interval' => 2000,
     ],
+    'ext' => ['.php', '.env'],
 ];
