@@ -50,7 +50,8 @@ class Decoder
         if ($payload[$currentIndex + 1] === '/') {
             $nspStart = $currentIndex + 1;
             $nspEnd = strpos($payload, ',');
-            $queryStart = strpos($payload, '?');
+            $payloadWithoutData = $nspEnd === false ? $payload : substr($payload, 0, $nspEnd);
+            $queryStart = strpos($payloadWithoutData, '?');
 
             $currentIndex = $nspEnd !== false ? $nspEnd : $payloadLength;
 

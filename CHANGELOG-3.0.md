@@ -1,5 +1,10 @@
 # v3.0.48 - TBD
 
+## Fixed
+
+- []() Fixed bug that socket-io cannot parse data with `?` but without `query`.
+
+
 # v3.0.47 - 2024-01-11
 
 ## Optimized
