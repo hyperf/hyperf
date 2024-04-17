@@ -520,6 +520,19 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     }
 
     /**
+     * Find the multi-byte safe position of the first occurrence of the given substring.
+     *
+     * @param  string  $needle
+     * @param  int  $offset
+     * @param  string|null  $encoding
+     * @return int|false
+     */
+    public function position($needle, $offset = 0, $encoding = null)
+    {
+        return Str::position($this->value, $needle, $offset, $encoding);
+    }
+
+    /**
      * Prepend the given values to the string.
      *
      * @param string $values
@@ -655,6 +668,16 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     }
 
     /**
+     * Convert the given string to proper case for each word.
+     *
+     * @return static
+     */
+    public function headline()
+    {
+        return new static(Str::headline($this->value));
+    }
+
+    /**
      * Get the singular form of an English word.
      *
      * @return static
@@ -731,6 +754,21 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     public function substrCount($needle, $offset = null, $length = null)
     {
         return Str::substrCount($this->value, $needle, $offset ?? 0, $length);
+    }
+
+    /**
+     * Take the first or last {$limit} characters.
+     *
+     * @param  int  $limit
+     * @return static
+     */
+    public function take(int $limit)
+    {
+        if ($limit < 0) {
+            return $this->substr($limit);
+        }
+
+        return $this->substr(0, $limit);
     }
 
     /**
