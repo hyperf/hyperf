@@ -14,6 +14,7 @@
 
 - [#6686](https://github.com/hyperf/hyperf/pull/6686) Optimized `FswatchDriver` which don't restart server by empty reading.
 - [#6698](https://github.com/hyperf/hyperf/pull/6698) Upgrade `hyperf/engine` to `v2.11`.
+- [#6696](https://github.com/hyperf/hyperf/pull/6696) Automatic declare exchange when produce message.
 
 # v3.1.18 - 2024-04-12
 
