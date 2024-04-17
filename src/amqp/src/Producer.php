@@ -45,8 +45,13 @@ class Producer extends Builder
             }
 
             if (! isset(self::$declaredExchanges[$producerMessage->getExchange()])) {
-                $this->declare($producerMessage, $channel);
-                self::$declaredExchanges[$producerMessage->getExchange()] = true;
+                try {
+                    self::$declaredExchanges[$producerMessage->getExchange()] = true;
+                    $this->declare($producerMessage, $channel);
+                } catch (Throwable $exception) {
+                    unset(self::$declaredExchanges[$producerMessage->getExchange()]);
+                    throw $exception;
+                }
             }
 
             $channel->set_ack_handler(function () use (&$result) {
