@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- []() Fixed bug that socket-io cannot parse data with `?` but without `query`.
+- [#6693](https://github.com/hyperf/hyperf/pull/6693) Fixed bug that socket-io cannot parse data with `?` but without `query`.
 
 
 # v3.0.47 - 2024-01-11
