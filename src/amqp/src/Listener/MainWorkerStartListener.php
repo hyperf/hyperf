@@ -78,6 +78,7 @@ class MainWorkerStartListener implements ListenerInterface
                     $this->logger->debug(sprintf('AMQP exchange[%s] and routingKey[%s] were created successfully.', $instance->getExchange(), $routingKey));
                 } catch (AMQPProtocolChannelException $e) {
                     $this->logger->debug('AMQPProtocolChannelException: ' . $e->getMessage());
+                    $producer->removeDeclaredExchange($instance->getExchange());
                     // Do nothing.
                 } catch (Throwable $exception) {
                     $this->logger->error((string) $exception);
