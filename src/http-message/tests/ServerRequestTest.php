@@ -40,10 +40,6 @@ use Swoole\Http\Request as SwooleRequest;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class ServerRequestTest extends TestCase
 {
     protected function tearDown(): void
