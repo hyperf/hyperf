@@ -33,6 +33,16 @@ class Producer extends Builder
         self::$declaredExchanges[$exchange] = true;
     }
 
+    public function removeDeclaredExchange(string $exchange): void
+    {
+        unset(self::$declaredExchanges[$exchange]);
+    }
+
+    public function hasDeclaredExchange(string $exchange): bool
+    {
+        return isset(self::$declaredExchanges[$exchange]);
+    }
+
     private function produceMessage(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool
     {
         $result = false;
@@ -49,12 +59,12 @@ class Producer extends Builder
                 $channel = $connection->getChannel();
             }
 
-            if (! isset(self::$declaredExchanges[$producerMessage->getExchange()])) {
+            if (! $this->hasDeclaredExchange($producerMessage->getExchange())) {
                 try {
-                    self::$declaredExchanges[$producerMessage->getExchange()] = true;
+                    $this->addDeclaredExchange($producerMessage->getExchange());
                     $this->declare($producerMessage, $channel);
                 } catch (Throwable $exception) {
-                    unset(self::$declaredExchanges[$producerMessage->getExchange()]);
+                    $this->removeDeclaredExchange($producerMessage->getExchange());
                     throw $exception;
                 }
             }
