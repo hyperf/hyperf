@@ -59,12 +59,12 @@ class Producer extends Builder
                 $channel = $connection->getChannel();
             }
 
-            if (! $this->hasDeclaredExchange($producerMessage->getExchange())) {
+            if (! DeclaredExchanges::has($producerMessage->getExchange())) {
                 try {
-                    $this->addDeclaredExchange($producerMessage->getExchange());
+                    DeclaredExchanges::add($producerMessage->getExchange());
                     $this->declare($producerMessage, $channel);
                 } catch (Throwable $exception) {
-                    $this->removeDeclaredExchange($producerMessage->getExchange());
+                    DeclaredExchanges::remove($producerMessage->getExchange());
                     throw $exception;
                 }
             }

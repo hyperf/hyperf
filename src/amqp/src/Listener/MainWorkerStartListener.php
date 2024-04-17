@@ -14,6 +14,7 @@ namespace Hyperf\Amqp\Listener;
 
 use Doctrine\Instantiator\Instantiator;
 use Hyperf\Amqp\Annotation\Producer;
+use Hyperf\Amqp\DeclaredExchanges;
 use Hyperf\Amqp\Message\ProducerMessageInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -70,7 +71,7 @@ class MainWorkerStartListener implements ListenerInterface
                 $annotation->routingKey && $instance->setRoutingKey($annotation->routingKey);
                 try {
                     $producer->declare($instance);
-                    $producer->addDeclaredExchange($instance->getExchange());
+                    DeclaredExchanges::add($instance->getExchange());
                     $routingKey = $instance->getRoutingKey();
                     if (is_array($routingKey)) {
                         $routingKey = implode(',', $routingKey);
@@ -78,7 +79,7 @@ class MainWorkerStartListener implements ListenerInterface
                     $this->logger->debug(sprintf('AMQP exchange[%s] and routingKey[%s] were created successfully.', $instance->getExchange(), $routingKey));
                 } catch (AMQPProtocolChannelException $e) {
                     $this->logger->debug('AMQPProtocolChannelException: ' . $e->getMessage());
-                    $producer->removeDeclaredExchange($instance->getExchange());
+                    DeclaredExchanges::remove($instance->getExchange());
                     // Do nothing.
                 } catch (Throwable $exception) {
                     $this->logger->error((string) $exception);
