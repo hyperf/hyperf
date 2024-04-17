@@ -42,12 +42,14 @@ class Producer extends Builder
                 $channel = $connection->getChannel();
             }
 
-            if (! DeclaredExchanges::has($producerMessage->getExchange())) {
+            $exchange = $producerMessage->getExchange();
+
+            if (! DeclaredExchanges::has($exchange)) {
                 try {
-                    DeclaredExchanges::add($producerMessage->getExchange());
+                    DeclaredExchanges::add($exchange);
                     $this->declare($producerMessage, $channel);
                 } catch (Throwable $exception) {
-                    DeclaredExchanges::remove($producerMessage->getExchange());
+                    DeclaredExchanges::remove($exchange);
                     throw $exception;
                 }
             }
@@ -55,7 +57,7 @@ class Producer extends Builder
             $channel->set_ack_handler(function () use (&$result) {
                 $result = true;
             });
-            $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
+            $channel->basic_publish($message, $exchange, $producerMessage->getRoutingKey());
             $channel->wait_for_pending_acks_returns($timeout);
         } catch (Throwable $exception) {
             isset($channel) && $channel->close();
