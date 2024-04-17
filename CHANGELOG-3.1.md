@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#6689](https://github.com/hyperf/hyperf/pull/6689) Fixed bug that socket-io cannot parse data with `?` but without `query`.
+- [#6697](https://github.com/hyperf/hyperf/pull/6697) Fixed bug that `withoutBody` cannot not work when using `Swow`.
 
 ## Added
 
