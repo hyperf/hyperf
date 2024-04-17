@@ -21,6 +21,8 @@ use function Hyperf\Support\retry;
 
 class Producer extends Builder
 {
+    public static array $declaredExchanges = [];
+
     public function produce(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool
     {
         return retry(1, fn () => $this->produceMessage($producerMessage, $confirm, $timeout));
@@ -40,6 +42,11 @@ class Producer extends Builder
                 $channel = $connection->getConfirmChannel();
             } else {
                 $channel = $connection->getChannel();
+            }
+
+            if (! isset(self::$declaredExchanges[$producerMessage->getExchange()])) {
+                $this->declare($producerMessage, $channel);
+                self::$declaredExchanges[$producerMessage->getExchange()] = true;
             }
 
             $channel->set_ack_handler(function () use (&$result) {
