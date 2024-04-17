@@ -21,6 +21,7 @@ use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Http\Response as SwooleResponse;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
 /**
  * @internal
@@ -75,6 +76,10 @@ class ResponseTest extends TestCase
     public function testToString()
     {
         $response = $this->newResponse();
+        if (! $response instanceof ResponsePlusInterface) {
+            $this->markTestSkipped('Don\'t assert response which not instanceof ResponsePlusInterface');
+        }
+
         $response->setStatus(200)->setHeaders(['Content-Type' => 'application/json'])->setBody(new SwooleStream(Json::encode(['id' => $id = uniqid()])));
         $this->assertEquals("HTTP/1.1 200 OK\r
 Content-Type: application/json\r
