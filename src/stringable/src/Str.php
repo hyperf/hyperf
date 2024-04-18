@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Stringable;
 
 use Closure;
+use Countable;
 use DateTimeInterface;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
@@ -38,7 +39,6 @@ class Str
      * Get a new stringable object from the given string.
      *
      * @param string $string
-     * @return Stringable
      */
     public static function of($string): Stringable
     {
@@ -50,7 +50,6 @@ class Str
      *
      * @param string $subject
      * @param string $search
-     * @return string
      */
     public static function after($subject, $search): string
     {
@@ -62,7 +61,6 @@ class Str
      *
      * @param string $subject
      * @param string $search
-     * @return string
      */
     public static function afterLast($subject, $search): string
     {
@@ -85,7 +83,6 @@ class Str
      * See: https://apastyle.apa.org/style-grammar-guidelines/capitalization/title-case
      *
      * @param string $value
-     * @return string
      */
     public static function apa($value): string
     {
@@ -134,7 +131,6 @@ class Str
      *
      * @param string $value
      * @param string $language
-     * @return string
      */
     public static function ascii($value, $language = 'en'): string
     {
@@ -156,7 +152,6 @@ class Str
      *
      * @param string $subject
      * @param string $search
-     * @return string
      */
     public static function before($subject, $search): string
     {
@@ -168,7 +163,6 @@ class Str
      *
      * @param string $subject
      * @param string $search
-     * @return string
      */
     public static function beforeLast($subject, $search): string
     {
@@ -191,7 +185,6 @@ class Str
      * @param string $subject
      * @param string $from
      * @param string $to
-     * @return string
      */
     public static function between($subject, $from, $to): string
     {
@@ -206,7 +199,6 @@ class Str
      * Convert a value to camel case.
      *
      * @param string $value
-     * @return string
      */
     public static function camel($value): string
     {
@@ -218,7 +210,6 @@ class Str
      *
      * @param string $subject
      * @param int $index
-     * @return null|string
      */
     public static function charAt($subject, $index): ?string
     {
@@ -234,10 +225,7 @@ class Str
     /**
      * Determine if a given string contains a given substring.
      *
-     * @param string $haystack
      * @param array|string $needles
-     * @param bool $ignoreCase
-     * @return bool
      */
     public static function contains(string $haystack, mixed $needles, bool $ignoreCase = false): bool
     {
@@ -258,9 +246,7 @@ class Str
     /**
      * Determine if a given string contains a given substring regardless of case sensitivity.
      *
-     * @param string $haystack
      * @param array|string $needles
-     * @return bool
      */
     public static function containsIgnoreCase(string $haystack, $needles): bool
     {
@@ -277,10 +263,7 @@ class Str
     /**
      * Determine if a given string contains all array values.
      *
-     * @param string $haystack
      * @param string[] $needles
-     * @param bool $ignoreCase
-     * @return bool
      */
     public static function containsAll(string $haystack, array $needles, bool $ignoreCase = false): bool
     {
@@ -296,9 +279,7 @@ class Str
     /**
      * Determine if a given string ends with a given substring.
      *
-     * @param string $haystack
      * @param array|string $needles
-     * @return bool
      */
     public static function endsWith(string $haystack, $needles): bool
     {
@@ -317,7 +298,6 @@ class Str
      *
      * @param string $value
      * @param string $cap
-     * @return string
      */
     public static function finish($value, $cap): string
     {
@@ -331,7 +311,6 @@ class Str
      *
      * @param array|string $pattern
      * @param string $value
-     * @return bool
      */
     public static function is($pattern, $value): bool
     {
@@ -366,9 +345,6 @@ class Str
 
     /**
      * Determine if a given string is 7 bit ASCII.
-     *
-     * @param string $value
-     * @return bool
      */
     public static function isAscii(string $value): bool
     {
@@ -376,14 +352,13 @@ class Str
             return true;
         }
 
-        return !preg_match('/[^\x09\x0A\x0D\x20-\x7E]/', $value);
+        return ! preg_match('/[^\x09\x0A\x0D\x20-\x7E]/', $value);
     }
 
     /**
      * Convert a string to kebab case.
      *
      * @param string $value
-     * @return string
      */
     public static function kebab($value): string
     {
@@ -395,7 +370,6 @@ class Str
      *
      * @param string $value
      * @param string $encoding
-     * @return int
      */
     public static function length($value, $encoding = null): int
     {
@@ -408,7 +382,6 @@ class Str
      * @param string $value
      * @param int $limit
      * @param string $end
-     * @return string
      */
     public static function limit($value, $limit = 100, $end = '...'): string
     {
@@ -423,7 +396,6 @@ class Str
      * Convert the given string to lower-case.
      *
      * @param string $value
-     * @return string
      */
     public static function lower($value): string
     {
@@ -432,11 +404,6 @@ class Str
 
     /**
      * Limit the number of words in a string.
-     * 
-     * @param string $value
-     * @param int $words
-     * @param string $end
-     * @return string
      */
     public static function words(string $value, int $words = 100, string $end = '...'): string
     {
@@ -454,7 +421,6 @@ class Str
      *
      * @param string $pattern
      * @param string $subject
-     * @return string
      */
     public static function match($pattern, $subject): string
     {
@@ -472,7 +438,6 @@ class Str
      *
      * @param iterable<string>|string $patterns
      * @param string $value
-     * @return bool
      */
     public static function isMatch($patterns, $value): bool
     {
@@ -498,7 +463,6 @@ class Str
      *
      * @param string $pattern
      * @param string $subject
-     * @return Collection
      */
     public static function matchAll($pattern, $subject): Collection
     {
@@ -517,7 +481,6 @@ class Str
      * @param string $value
      * @param int $length
      * @param string $pad
-     * @return string
      */
     public static function padBoth($value, $length, $pad = ' '): string
     {
@@ -530,7 +493,6 @@ class Str
      * @param string $value
      * @param int $length
      * @param string $pad
-     * @return string
      */
     public static function padLeft($value, $length, $pad = ' '): string
     {
@@ -543,7 +505,6 @@ class Str
      * @param string $value
      * @param int $length
      * @param string $pad
-     * @return string
      */
     public static function padRight($value, $length, $pad = ' '): string
     {
@@ -554,7 +515,6 @@ class Str
      * Parse a Class@method style callback into class and method.
      *
      * @param null|string $default
-     * @return array
      */
     public static function parseCallback(string $callback, $default = null): array
     {
@@ -564,8 +524,7 @@ class Str
     /**
      * Pluralize the last word of an English, studly caps case string.
      * @param string
-     * @param int|array|\Countable $count
-     * @return string
+     * @param array|Countable|int $count
      */
     public static function pluralStudly(string $value, int $count = 2): string
     {
@@ -578,10 +537,8 @@ class Str
 
     /**
      * Get the plural form of an English word.
-     * 
-     * @param string $value
-     * @param int|array|\Countable $count
-     * @return string
+     *
+     * @param array|Countable|int $count
      */
     public static function plural(string $value, int $count = 2): string
     {
@@ -590,23 +547,14 @@ class Str
 
     /**
      * Find the multi-byte safe position of the first occurrence of a given substring in a string.
-     * 
-     * @param string $haystack
-     * @param string $needle
-     * @param int $offset
-     * @param string|null $encoding
-     * @return int|false
      */
-    public static function position(string $haystack, string $needle, int $offset = 0, ?string $encoding = null): int|false
+    public static function position(string $haystack, string $needle, int $offset = 0, ?string $encoding = null): false|int
     {
         return mb_strpos($haystack, (string) $needle, $offset, $encoding);
     }
 
     /**
      * Generate a more truly "random" alpha-numeric string.
-     * 
-     * @param int $length
-     * @return string
      */
     public static function random(int $length = 16): string
     {
@@ -625,10 +573,6 @@ class Str
 
     /**
      * Repeat the given string.
-     *
-     * @param string $string
-     * @param int $times
-     * @return string
      */
     public static function repeat(string $string, int $times): string
     {
@@ -637,11 +581,8 @@ class Str
 
     /**
      * Replace a given value in the string sequentially with an array.
-     * 
-     * @param string $search
+     *
      * @param string[] $replace
-     * @param string $subject
-     * @return string
      */
     public static function replaceArray(string $search, array $replace, string $subject): string
     {
@@ -658,7 +599,6 @@ class Str
      * @param string|string[] $search
      * @param string|string[] $replace
      * @param string|string[] $subject
-     * @return string
      */
     public static function replace($search, $replace, $subject): string
     {
@@ -667,11 +607,6 @@ class Str
 
     /**
      * Replace the first occurrence of a given value in the string.
-     * 
-     * @param string $search
-     * @param string $replace
-     * @param string $subject
-     * @return string
      */
     public static function replaceFirst(string $search, string $replace, string $subject): string
     {
@@ -690,11 +625,6 @@ class Str
 
     /**
      * Replace the last occurrence of a given value in the string.
-     * 
-     * @param string $search
-     * @param string $replace
-     * @param string $subject
-     * @return string
      */
     public static function replaceLast(string $search, string $replace, string $subject): string
     {
@@ -717,7 +647,6 @@ class Str
      * @param array<string>|string $search
      * @param string $subject
      * @param bool $caseSensitive
-     * @return string
      */
     public static function remove($search, $subject, $caseSensitive = true): string
     {
@@ -728,10 +657,6 @@ class Str
 
     /**
      * Begin a string with a single instance of a given value.
-     * 
-     * @param string $value
-     * @param string $prefix
-     * @return string
      */
     public static function start(string $value, string $prefix): string
     {
@@ -743,7 +668,6 @@ class Str
     /**
      * Strip HTML and PHP tags from the given string.
      *
-     * @param string $value
      * @param null|string|string[] $allowedTags
      */
     public static function stripTags(string $value, $allowedTags = null): string
@@ -753,8 +677,6 @@ class Str
 
     /**
      * Convert the given string to upper-case.
-     * 
-     * @param string $value
      */
     public static function upper(string $value): string
     {
@@ -763,8 +685,6 @@ class Str
 
     /**
      * Convert the given string to title case.
-     * 
-     * @param string $value
      */
     public static function title(string $value): string
     {
@@ -773,9 +693,6 @@ class Str
 
     /**
      * Convert the given string to proper case for each word.
-     * 
-     * @param string $value
-     * @return string
      */
     public static function headline(string $value): string
     {
@@ -792,9 +709,6 @@ class Str
 
     /**
      * Get the singular form of an English word.
-     * 
-     * @param string $value
-     * @return string
      */
     public static function singular(string $value): string
     {
@@ -803,12 +717,8 @@ class Str
 
     /**
      * Generate a URL friendly "slug" from a given string.
-     * 
-     * @param string $title
-     * @param string $separator
-     * @param null|string $language
+     *
      * @param mixed $dictionary
-     * @return string
      */
     public static function slug(string $title, string $separator = '-', ?string $language = 'en', $dictionary = ['@' => 'at']): string
     {
@@ -837,10 +747,6 @@ class Str
 
     /**
      * Convert a string to snake case.
-     * 
-     * @param string $value
-     * @param string $delimiter
-     * @return string
      */
     public static function snake(string $value, string $delimiter = '_'): string
     {
@@ -856,9 +762,7 @@ class Str
     /**
      * Determine if a given string starts with a given substring.
      *
-     * @param string $haystack
      * @param array|string $needles
-     * @return bool
      */
     public static function startsWith(string $haystack, $needles): bool
     {
@@ -874,10 +778,6 @@ class Str
 
     /**
      * Convert a value to studly caps case.
-     * 
-     * @param string $value
-     * @param string $gap
-     * @return string
      */
     public static function studly(string $value, string $gap = ''): string
     {
@@ -892,7 +792,6 @@ class Str
      * @param string $string
      * @param int $start
      * @param null|int $length
-     * @return string
      */
     public static function substr($string, $start, $length = null): string
     {
@@ -906,7 +805,6 @@ class Str
      * @param string $needle
      * @param int $offset
      * @param null|int $length
-     * @return int
      */
     public static function substrCount($haystack, $needle, $offset = 0, $length = null): int
     {
@@ -918,9 +816,6 @@ class Str
 
     /**
      * Make a string's first character uppercase.
-     * 
-     * @param string $string
-     * @return string
      */
     public static function ucfirst(string $string): string
     {
@@ -930,9 +825,7 @@ class Str
     /**
      * Replaces the first or the last ones chars from a string by a given char.
      *
-     * @param string $string
      * @param int $offset if is negative it starts from the end
-     * @param int $length
      * @param string $replacement default is *
      */
     public static function mask(string $string, int $offset = 0, int $length = 0, string $replacement = '*'): string
@@ -960,7 +853,6 @@ class Str
      * Determine if a given value is a valid ULID.
      *
      * @param mixed $value
-     * @return bool
      */
     public static function isUlid($value): bool
     {
@@ -981,9 +873,6 @@ class Str
 
     /**
      * Generate a ULID.
-     * 
-     * @param \DateTimeInterface|null $time
-     * @return Ulid
      */
     public static function ulid(?DateTimeInterface $time = null): Ulid
     {
@@ -996,10 +885,8 @@ class Str
 
     /**
      * Determine if a given value is a valid URL.
-     * 
+     *
      * @param string $value
-     * @param array $protocols
-     * @return bool
      */
     public static function isUrl($value, array $protocols = []): bool
     {
@@ -1041,7 +928,6 @@ class Str
      * Determine if a given value is a valid UUID.
      *
      * @param mixed $value
-     * @return bool
      */
     public static function isUuid($value): bool
     {
@@ -1054,8 +940,6 @@ class Str
 
     /**
      * Generate a UUID (version 4).
-     * 
-     * @return UuidInterface
      */
     public static function uuid(): UuidInterface
     {
@@ -1068,8 +952,6 @@ class Str
 
     /**
      * Generate a time-ordered UUID.
-     * 
-     * @return UuidInterface
      */
     public static function orderedUuid(?DateTimeInterface $time = null): UuidInterface
     {
@@ -1082,11 +964,10 @@ class Str
 
     /**
      * Get the smallest possible portion of a string between two given values.
-     * 
+     *
      * @param string $subject
      * @param string $from
      * @param string $to
-     * @return string
      */
     public static function betweenFirst($subject, $from, $to): string
     {
@@ -1108,11 +989,6 @@ class Str
 
     /**
      * Convert the case of a string.
-     * 
-     * @param string $string
-     * @param int $mode
-     * @param string|null $encoding
-     * @return string
      */
     public static function convertCase(string $string, int $mode = MB_CASE_FOLD, ?string $encoding = 'UTF-8'): string
     {
@@ -1121,11 +997,10 @@ class Str
 
     /**
      * Extracts an excerpt from text that matches the first instance of a phrase.
-     * 
+     *
      * @param string $text
      * @param string $phrase
      * @param array $options
-     * @return string|null
      */
     public static function excerpt($text, $phrase = '', $options = []): ?string
     {
@@ -1157,9 +1032,8 @@ class Str
 
     /**
      * Determine if a given value is valid JSON.
-     * 
+     *
      * @param mixed $value
-     * @return bool
      */
     public static function isJson($value): bool
     {
@@ -1182,9 +1056,8 @@ class Str
 
     /**
      * Make a string's first character lowercase.
-     * 
+     *
      * @param string $string
-     * @return string
      */
     public static function lcfirst($string): string
     {
@@ -1193,13 +1066,12 @@ class Str
 
     /**
      * Generate a random, secure password.
-     * 
+     *
      * @param int $length
      * @param bool $letters
      * @param bool $numbers
      * @param bool $symbols
      * @param bool $spaces
-     * @return string
      */
     public static function password($length = 32, $letters = true, $numbers = true, $symbols = true, $spaces = false): string
     {
@@ -1230,7 +1102,6 @@ class Str
      * @param string $search
      * @param string $replace
      * @param string $subject
-     * @return string
      */
     public static function replaceStart($search, $replace, $subject): string
     {
@@ -1253,7 +1124,6 @@ class Str
      * @param string $search
      * @param string $replace
      * @param string $subject
-     * @return string
      */
     public static function replaceEnd($search, $replace, $subject): string
     {
@@ -1298,7 +1168,6 @@ class Str
      *
      * @param string $value
      * @param null|string $charlist
-     * @return string
      */
     public static function trim($value, $charlist = null): string
     {
@@ -1314,7 +1183,6 @@ class Str
      *
      * @param string $value
      * @param null|string $charlist
-     * @return string
      */
     public static function ltrim($value, $charlist = null): string
     {
@@ -1330,7 +1198,6 @@ class Str
      *
      * @param string $value
      * @param null|string $charlist
-     * @return string
      */
     public static function rtrim($value, $charlist = null): string
     {
@@ -1343,7 +1210,7 @@ class Str
 
     /**
      * Remove all "extra" blank space from the given string.
-     * 
+     *
      * @param string $value
      * @return string
      */
@@ -1358,7 +1225,7 @@ class Str
      * @param string|string[] $string
      * @param string|string[] $replace
      * @param int|int[] $offset
-     * @param int|int[]|null $length
+     * @param null|int|int[] $length
      * @return string|string[]
      */
     public static function substrReplace($string, $replace, $offset = 0, $length = null): array|string
@@ -1373,8 +1240,7 @@ class Str
     /**
      * Swap multiple keywords in a string with other keywords.
      *
-     * @param  array  $map
-     * @param  string  $subject
+     * @param string $subject
      * @return string
      */
     public static function swap(array $map, $subject): array|string
@@ -1384,10 +1250,6 @@ class Str
 
     /**
      * Take the first or last {$limit} characters of a string.
-     *
-     * @param string $string
-     * @param int $limit
-     * @return string
      */
     public static function take(string $string, int $limit): string
     {
@@ -1402,7 +1264,6 @@ class Str
      * Convert the given string to Base64 encoding.
      *
      * @param string $string
-     * @return string
      */
     public static function toBase64($string): string
     {
@@ -1425,7 +1286,7 @@ class Str
      *
      * @param string $value
      * @param string $before
-     * @param string|null $after
+     * @param null|string $after
      * @return string
      */
     public static function unwrap($value, $before, $after = null)
@@ -1444,8 +1305,7 @@ class Str
     /**
      * Get the number of words a string contains.
      *
-     * @param  string  $string
-     * @param  string|null  $characters
+     * @param string $string
      * @return int
      */
     public static function wordCount($string): array|int
@@ -1456,10 +1316,9 @@ class Str
     /**
      * Wrap the string with the given strings.
      *
-     * @param  string  $value
-     * @param  string  $before
-     * @param  string|null  $after
-     * @return string
+     * @param string $value
+     * @param string $before
+     * @param null|string $after
      */
     public static function wrap($value, $before, $after = null): string
     {
@@ -1469,11 +1328,10 @@ class Str
     /**
      * Wrap a string to a given number of characters.
      *
-     * @param  string  $string
-     * @param  int  $characters
-     * @param  string  $break
-     * @param  bool  $cutLongWords
-     * @return string
+     * @param string $string
+     * @param int $characters
+     * @param string $break
+     * @param bool $cutLongWords
      */
     public static function wordWrap($string, $characters = 75, $break = "\n", $cutLongWords = false): string
     {

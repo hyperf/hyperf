@@ -532,10 +532,10 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     /**
      * Find the multi-byte safe position of the first occurrence of the given substring.
      *
-     * @param  string  $needle
-     * @param  int  $offset
-     * @param  string|null  $encoding
-     * @return int|false
+     * @param string $needle
+     * @param int $offset
+     * @param null|string $encoding
+     * @return false|int
      */
     public function position($needle, $offset = 0, $encoding = null)
     {
@@ -769,7 +769,6 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     /**
      * Take the first or last {$limit} characters.
      *
-     * @param  int  $limit
      * @return static
      */
     public function take(int $limit)
@@ -837,8 +836,8 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     /**
      * Unwrap the string with the given strings.
      *
-     * @param  string  $before
-     * @param  string|null  $after
+     * @param string $before
+     * @param null|string $after
      * @return static
      */
     public function unwrap($before, $after = null)
