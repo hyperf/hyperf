@@ -183,6 +183,27 @@ class StringableTest extends TestCase
         $this->assertSame('...is a beautiful morn...', (string) $this->stringable('This is a beautiful morning')->excerpt('beautiful', ['radius' => 5]));
     }
 
+    public function testIsAscii()
+    {
+        $this->assertTrue($this->stringable('Hello World!')->isAscii());
+        $this->assertTrue($this->stringable('1234567890')->isAscii());
+        $this->assertTrue($this->stringable('!@#$%^&*()')->isAscii());
+        $this->assertFalse($this->stringable('Привет, мир!')->isAscii());
+        $this->assertFalse($this->stringable('漢字')->isAscii());
+        $this->assertFalse($this->stringable('áéíóú')->isAscii());
+        $this->assertFalse($this->stringable('àèìòù')->isAscii());
+        $this->assertFalse($this->stringable('äëïöü')->isAscii());
+        $this->assertFalse($this->stringable('âêîôû')->isAscii());
+        $this->assertFalse($this->stringable('ãõñ')->isAscii());
+        $this->assertFalse($this->stringable('ç')->isAscii());
+        $this->assertFalse($this->stringable('ß')->isAscii());
+        $this->assertFalse($this->stringable('æ')->isAscii());
+        $this->assertFalse($this->stringable('ø')->isAscii());
+        $this->assertFalse($this->stringable('Æ')->isAscii());
+        $this->assertFalse($this->stringable('Ö')->isAscii());
+        $this->assertFalse($this->stringable('🙂')->isAscii());
+    }
+
     public function testIsJson()
     {
         $this->assertTrue($this->stringable('1')->isJson());
@@ -275,6 +296,19 @@ class StringableTest extends TestCase
 
         $this->assertTrue($stringable->test('/bar/'));
         $this->assertTrue($stringable->test('/foo (.*)/'));
+    }
+
+    public function testToBase64()
+    {
+        $this->assertSame(base64_encode(''), (string) $this->stringable('')->toBase64());
+        $this->assertSame(base64_encode('foo'), (string) $this->stringable('foo')->toBase64());
+    }
+
+    public function testUnwrap()
+    {
+        $this->assertEquals('value', $this->stringable('"value"')->unwrap('"'));
+        $this->assertEquals('bar', $this->stringable('foo-bar-baz')->unwrap('foo-', '-baz'));
+        $this->assertEquals('some: "json"', $this->stringable('{some: "json"}')->unwrap('{', '}'));
     }
 
     public function testWrap()

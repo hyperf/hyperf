@@ -294,6 +294,27 @@ class StrTest extends TestCase
         $this->assertTrue(Str::isUuid((string) $uuid));
     }
 
+    public function testIsAscii()
+    {
+        $this->assertTrue(Str::isAscii('Hello World!'));
+        $this->assertTrue(Str::isAscii('1234567890'));
+        $this->assertTrue(Str::isAscii('!@#$%^&*()'));
+        $this->assertFalse(Str::isAscii('Привет, мир!'));
+        $this->assertFalse(Str::isAscii('漢字'));
+        $this->assertFalse(Str::isAscii('áéíóú'));
+        $this->assertFalse(Str::isAscii('àèìòù'));
+        $this->assertFalse(Str::isAscii('äëïöü'));
+        $this->assertFalse(Str::isAscii('âêîôû'));
+        $this->assertFalse(Str::isAscii('ãõñ'));
+        $this->assertFalse(Str::isAscii('ç'));
+        $this->assertFalse(Str::isAscii('ß'));
+        $this->assertFalse(Str::isAscii('æ'));
+        $this->assertFalse(Str::isAscii('ø'));
+        $this->assertFalse(Str::isAscii('Æ'));
+        $this->assertFalse(Str::isAscii('Ö'));
+        $this->assertFalse(Str::isAscii('🙂'));
+    }
+
     public function testIsMatch()
     {
         $this->assertTrue(Str::isMatch('/.*,.*!/', 'Hello, Hyperf!'));
@@ -909,6 +930,12 @@ class StrTest extends TestCase
         }
     }
 
+    public function testToBase64()
+    {
+        $this->assertSame(base64_encode('foo'), Str::toBase64('foo'));
+        $this->assertSame(base64_encode('foobar'), Str::toBase64('foobar'));
+    }
+
     public function testTrim()
     {
         $this->assertSame('foo bar', Str::trim('   foo bar   '));
@@ -1036,6 +1063,15 @@ class StrTest extends TestCase
                 'ⓐⓑ' => 'baz',
             ], 'foo bar ⓐⓑ')
         );
+    }
+
+    public function testUnwrap()
+    {
+        $this->assertEquals('value', Str::unwrap('"value"', '"'));
+        $this->assertEquals('value', Str::unwrap('"value', '"'));
+        $this->assertEquals('value', Str::unwrap('value"', '"'));
+        $this->assertEquals('bar', Str::unwrap('foo-bar-baz', 'foo-', '-baz'));
+        $this->assertEquals('some: "json"', Str::unwrap('{some: "json"}', '{', '}'));
     }
 
     public function testWrap()
