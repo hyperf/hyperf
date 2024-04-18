@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Stringable;
 
 use Closure;
-use Countable;
 use DateTimeInterface;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
