@@ -365,6 +365,21 @@ class Str
     }
 
     /**
+     * Determine if a given string is 7 bit ASCII.
+     *
+     * @param string $value
+     * @return bool
+     */
+    public static function isAscii(string $value): bool
+    {
+        if ($value == '') {
+            return true;
+        }
+
+        return !preg_match('/[^\x09\x0A\x0D\x20-\x7E]/', $value);
+    }
+
+    /**
      * Convert a string to kebab case.
      *
      * @param string $value
@@ -1384,6 +1399,17 @@ class Str
     }
 
     /**
+     * Convert the given string to Base64 encoding.
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function toBase64($string): string
+    {
+        return base64_encode($string);
+    }
+
+    /**
      * Split a string into pieces by uppercase characters.
      *
      * @param string $string
@@ -1392,6 +1418,27 @@ class Str
     public static function ucsplit($string): array|bool
     {
         return preg_split('/(?=\p{Lu})/u', $string, -1, PREG_SPLIT_NO_EMPTY);
+    }
+
+    /**
+     * Unwrap the string with the given strings.
+     *
+     * @param string $value
+     * @param string $before
+     * @param string|null $after
+     * @return string
+     */
+    public static function unwrap($value, $before, $after = null)
+    {
+        if (static::startsWith($value, $before)) {
+            $value = static::substr($value, static::length($before));
+        }
+
+        if (static::endsWith($value, $after ??= $before)) {
+            $value = static::substr($value, 0, -static::length($after));
+        }
+
+        return $value;
     }
 
     /**
