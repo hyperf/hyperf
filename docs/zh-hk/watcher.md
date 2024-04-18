@@ -27,7 +27,7 @@ php bin/hyperf.php vendor:publish hyperf/watcher
 |   watch.dir    | `app`, `config`  |                         監聽目錄                          |
 |   watch.file   |      `.env`      |                         監聽文件                          |
 | watch.interval |      `2000`      |                      掃描間隔(毫秒)                       |
-|      ext       |  `.php`, `.env`  |                  監聽目錄下的檔案副檔名                   |
+|      ext       |  `.php`, `.env`  |                  監聽目錄下的文件擴展名                   |
 
 ## 支持驅動
 
