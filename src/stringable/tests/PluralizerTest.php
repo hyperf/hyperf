@@ -129,6 +129,12 @@ class PluralizerTest extends TestCase
         $this->assertPluralStudly('SomeUsers', 'SomeUser', collect(['one', 'two']));
     }
 
+    public function testPluralizerAboutData()
+    {
+        $this->assertSame('datum', Str::singular('data'));
+        $this->assertSame('data', Str::plural('datum'));
+    }
+
     private function assertPluralStudly($expected, $value, $count = 2): void
     {
         $this->assertSame($expected, Str::pluralStudly($value, $count));
