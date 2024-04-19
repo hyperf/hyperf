@@ -131,8 +131,9 @@ class PluralizerTest extends TestCase
 
     public function testPluralizerAboutData()
     {
-        $this->assertSame('datum', Str::singular('data'));
+        $this->assertSame('xxx_datum', Str::singular('xxx_data'));
         $this->assertSame('data', Str::plural('datum'));
+        $this->assertSame('data', Str::singular('data'));
     }
 
     private function assertPluralStudly($expected, $value, $count = 2): void
