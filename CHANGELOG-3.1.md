@@ -1,5 +1,9 @@
 # v3.1.20 - TBD
 
+## Optimized
+
+- [#6700](https://github.com/hyperf/hyperf/pull/6700) Optimized the implementation of `Pluralizer`.
+
 # v3.1.19 - 2024-04-18
 
 ## Fixed

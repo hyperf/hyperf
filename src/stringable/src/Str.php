@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Stringable;
 
 use Closure;
+use Countable;
 use DateTimeInterface;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
@@ -546,8 +547,9 @@ class Str
 
     /**
      * Pluralize the last word of an English, studly caps case string.
+     * @param mixed $count
      */
-    public static function pluralStudly(string $value, int $count = 2): string
+    public static function pluralStudly(string $value, $count = 2): string
     {
         $parts = preg_split('/(.)(?=[A-Z])/u', $value, -1, PREG_SPLIT_DELIM_CAPTURE);
 
@@ -559,7 +561,7 @@ class Str
     /**
      * Get the plural form of an English word.
      */
-    public static function plural(string $value, int $count = 2): string
+    public static function plural(string $value, array|Countable|int $count = 2): string
     {
         return Pluralizer::plural($value, $count);
     }
