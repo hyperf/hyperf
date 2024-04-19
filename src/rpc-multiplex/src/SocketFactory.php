@@ -12,18 +12,20 @@ declare(strict_types=1);
 
 namespace Hyperf\RpcMultiplex;
 
-use Hyperf\Collection\Arr;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\RpcMultiplex\Exception\NoAvailableNodesException;
 use Psr\Container\ContainerInterface;
+use WeakMap;
 
 use function Hyperf\Support\make;
 
 class SocketFactory
 {
     protected ?LoadBalancerInterface $loadBalancer = null;
+
+    protected WeakMap $requestCounter;
 
     /**
      * @var Socket[]
@@ -32,6 +34,7 @@ class SocketFactory
 
     public function __construct(protected ContainerInterface $container, protected array $config)
     {
+        $this->requestCounter = new WeakMap();
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface
@@ -73,11 +76,26 @@ class SocketFactory
 
     public function get(): Socket
     {
-        if (count($this->clients) === 0) {
+        get_client:
+
+        if (count($this->clients) < $this->getCount()) {
             $this->refresh();
         }
 
-        return Arr::random($this->clients);
+        $key = array_rand($this->clients);
+        $client = $this->clients[$key];
+
+        if ($this->getMaxRequests() > 0) {
+            if ($this->requestCounter[$client] > $this->getMaxRequests()) {
+                $client->close();
+                unset($this->clients[$key]);
+                goto get_client;
+            }
+
+            ++$this->requestCounter[$client];
+        }
+
+        return $client;
     }
 
     protected function bindAfterRefreshed(LoadBalancerInterface $loadBalancer): void
@@ -116,5 +134,10 @@ class SocketFactory
     protected function getCount(): int
     {
         return (int) ($this->config['client_count'] ?? 4);
+    }
+
+    protected function getMaxRequests(): int
+    {
+        return (int) ($this->config['max_requests'] ?? 0);
     }
 }
