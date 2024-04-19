@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Stringable;
 
 use Closure;
+use Countable;
 use DateTimeInterface;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
@@ -547,9 +548,8 @@ class Str
 
     /**
      * Get the plural form of an English word.
-     * @param mixed $count
      */
-    public static function plural(string $value, $count = 2): string
+    public static function plural(string $value, array|Countable|int $count = 2): string
     {
         return Pluralizer::plural($value, $count);
     }

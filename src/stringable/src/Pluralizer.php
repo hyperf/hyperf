@@ -37,12 +37,8 @@ class Pluralizer
 
     /**
      * Get the plural form of an English word.
-     *
-     * @param string $value
-     * @param array|Countable|int $count
-     * @return string
      */
-    public static function plural($value, $count = 2)
+    public static function plural(string $value, array|Countable|int $count = 2): string
     {
         if (is_countable($count)) {
             $count = count($count);
@@ -59,11 +55,8 @@ class Pluralizer
 
     /**
      * Get the singular form of an English word.
-     *
-     * @param string $value
-     * @return string
      */
-    public static function singular($value)
+    public static function singular(string $value): string
     {
         $singular = static::getInflector()->singularize($value);
 
@@ -107,12 +100,8 @@ class Pluralizer
 
     /**
      * Attempt to match the case on two strings.
-     *
-     * @param string $value
-     * @param string $comparison
-     * @return string
      */
-    protected static function matchCase($value, $comparison)
+    protected static function matchCase(string $value, string $comparison): string
     {
         $functions = ['mb_strtolower', 'mb_strtoupper', 'ucfirst', 'ucwords'];
 
