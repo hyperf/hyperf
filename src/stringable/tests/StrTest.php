@@ -71,7 +71,7 @@ class StrTest extends TestCase
         $this->assertSame('Hyperf P H P Framework', Str::headline('hyperf_p_h_p_framework'));
         $this->assertSame('Hyperf P H P Framework', Str::headline('hyperf _p _h _p _framework'));
         $this->assertSame('Hyperf Php Framework', Str::headline('hyperf_php_framework'));
-        $this->assertSame('Hyperf Ph P Framework', Str::headline('lhyperf-phP-framework'));
+        $this->assertSame('Hyperf Ph P Framework', Str::headline('hyperf-phP-framework'));
         $this->assertSame('Hyperf Php Framework', Str::headline('hyperf  -_-  php   -_-   framework   '));
 
         $this->assertSame('Foo Bar', Str::headline('fooBar'));
@@ -846,7 +846,7 @@ class StrTest extends TestCase
     {
         $data = [
             [2, 'Hello, world!'],
-            [9, 'Hi, this is my first contribution to the Hyperf framework.'],
+            [10, 'Hi, this is my first contribution to the Hyperf framework.'],
         ];
         foreach ($data as $item) {
             $this->assertSame($item[0], Str::wordCount($item[1]));
@@ -1044,7 +1044,7 @@ class StrTest extends TestCase
     {
         $this->assertSame('12:00', Str::substrReplace('1200', ':', 2, 0));
         $this->assertSame('The Hyperf Framework', Str::substrReplace('The Framework', 'Hyperf ', 4, 0));
-        $this->assertSame('Hyperf – The PHP Framework', Str::substrReplace('Hyperf Framework', '– The PHP Framework', 8));
+        $this->assertSame('Hyperf – The PHP Framework', Str::substrReplace('Hyperf Framework', '– The PHP Framework', 7));
     }
 
     public function testSwapKeywords()

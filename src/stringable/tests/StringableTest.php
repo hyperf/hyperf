@@ -273,7 +273,7 @@ class StringableTest extends TestCase
     {
         $this->assertSame('12:00', (string) $this->stringable('1200')->substrReplace(':', 2, 0));
         $this->assertSame('The Hyperf Framework', (string) $this->stringable('The Framework')->substrReplace('Hyperf ', 4, 0));
-        $this->assertSame('Hyperf – The PHP Framework', (string) $this->stringable('Hyperf Framework')->substrReplace('– The PHP Framework', 8));
+        $this->assertSame('Hyperf – The PHP Framework', (string) $this->stringable('Hyperf Framework')->substrReplace('– The PHP Framework', 7));
     }
 
     public function testSwap()
