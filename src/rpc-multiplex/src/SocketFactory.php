@@ -65,6 +65,7 @@ class SocketFactory
                 'connect_timeout' => $this->config['connect_timeout'] ?? 0.5,
                 'heartbeat' => $this->config['heartbeat'] ?? null,
                 'max_requests' => $this->config['max_requests'] ?? 0,
+                'max_wait_close_seconds' => $this->config['max_wait_close_seconds'] ?? 0.5,
             ]);
             if ($this->container->has(StdoutLoggerInterface::class)) {
                 $client->setLogger($this->container->get(StdoutLoggerInterface::class));
