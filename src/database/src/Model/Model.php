@@ -196,6 +196,26 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
+     * Perform any actions required before the model boots.
+     *
+     * @return void
+     */
+    protected static function booting()
+    {
+        //
+    }
+
+    /**
+     * Perform any actions required after the model boots.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        //
+    }
+
+    /**
      * Handle dynamic static method calls into the method.
      *
      * @param string $method
@@ -1110,6 +1130,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     {
         return StrCache::snake(class_basename($this)) . '_' . $this->getKeyName();
     }
+
 
     /**
      * Get the number of models to return per page.
