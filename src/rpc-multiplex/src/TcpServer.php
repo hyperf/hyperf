@@ -100,6 +100,7 @@ class TcpServer extends Server
      */
     protected function send($server, int $fd, ResponseInterface $response): void
     {
+        /** @var int $id */
         $id = Context::get(Constant::CHANNEL_ID, 0);
 
         $packed = $this->packetPacker->pack(new Packet($id, (string) $response->getBody()));
