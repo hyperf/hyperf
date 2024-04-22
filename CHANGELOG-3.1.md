@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#6709](https://github.com/hyperf/hyperf/pull/6709) Added `onClose` method for rpc Server.
+- [#6709](https://github.com/hyperf/hyperf/pull/6709) Added default `onClose` method for rpc Server.
 
 ## Optimized
 
