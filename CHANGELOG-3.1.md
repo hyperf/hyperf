@@ -1,5 +1,9 @@
 # v3.1.20 - TBD
 
+## Added
+
+- [#6709](https://github.com/hyperf/hyperf/pull/6709) Added `onClose` method for rpc Server.
+
 ## Optimized
 
 - [#6700](https://github.com/hyperf/hyperf/pull/6700) Optimized the implementation of `Pluralizer`.
