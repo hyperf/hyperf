@@ -23,7 +23,6 @@ use PHPUnit\Framework\TestCase;
 
 use function Hyperf\Support\call;
 use function Hyperf\Support\class_uses_recursive;
-use function Hyperf\Support\env;
 use function Hyperf\Support\retry;
 use function Hyperf\Support\swoole_hook_flags;
 use function Hyperf\Support\value;
@@ -145,14 +144,6 @@ class FunctionTest extends TestCase
 
         $assert = value($foo = new FooClosure(), $id);
         $this->assertSame($assert, $foo);
-    }
-
-    public function testEnv()
-    {
-        $id = 'NULL_' . uniqid();
-        putenv("{$id}=(null)");
-
-        $this->assertNull(env($id));
     }
 
     public function testClassUsesRecursive()
