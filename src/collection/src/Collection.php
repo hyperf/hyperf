@@ -324,8 +324,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Determine if the collection contains a single item.
-     *
-     * @return bool
      */
     public function containsOneItem(): bool
     {
@@ -374,7 +372,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param null|mixed $operator
      * @param null|mixed $value
      * @param (callable(TValue): bool)|string|TValue $key
-     * @return bool
      */
     public function doesntContain($key, $operator = null, $value = null): bool
     {
@@ -821,7 +818,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Determine if any of the keys exist in the collection.
      *
      * @param array<array-key, TKey>|TKey $key
-     * @return bool
      */
     public function hasAny($key): bool
     {

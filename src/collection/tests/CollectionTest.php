@@ -536,7 +536,6 @@ class CollectionTest extends TestCase
         $this->assertEquals([9, 10], $data->get(2)->values()->toArray());
     }
 
-
     public function testIsset()
     {
         $data = [null, 1];
