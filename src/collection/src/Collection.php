@@ -35,7 +35,7 @@ use Traversable;
  *
  * @template TKey of array-key
  * @template TValue
- *
+ * @template TTimesValue
  * @implements ArrayAccess<TKey, TValue>
  * @implements Arrayable<TKey, TValue>
  * @implements IteratorAggregate<TKey, TValue>
@@ -183,8 +183,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Create a new collection by invoking the callback a given amount of times.
-     *
-     * @template TTimesValue
      *
      * @param null|(callable(int): TTimesValue) $callback
      * @return static<int, TTimesValue>
