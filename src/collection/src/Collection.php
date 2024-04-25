@@ -1421,7 +1421,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      */
     public function sliding(int $size = 2, int $step = 1): self
     {
-        $chunks = floor(($this->count() - $size) / $step) + 1;
+        $chunks = (int) floor(($this->count() - $size) / $step) + 1;
 
         return static::times($chunks, fn ($number) => $this->slice(($number - 1) * $step, $size));
     }
@@ -1596,7 +1596,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      */
     public function splitIn(int $numberOfGroups)
     {
-        return $this->chunk(ceil($this->count() / $numberOfGroups));
+        return $this->chunk((int) ceil($this->count() / $numberOfGroups));
     }
 
     /**
