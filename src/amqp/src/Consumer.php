@@ -68,7 +68,6 @@ class Consumer extends Builder
             }
 
             $concurrent = $this->getConcurrent($consumerMessage->getPoolName());
-
             $maxConsumption = $consumerMessage->getMaxConsumption();
             $currentConsumption = 0;
 
