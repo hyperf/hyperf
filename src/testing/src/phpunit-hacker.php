@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 foreach ([
     __DIR__ . '/../../../vendor/phpunit/phpunit/src/Framework/TestCase.php', // In hyperf/hyperf dir.
-    __DIR__ . '/../../../phpunit/phpunit/src/Framework/TestCase.php', // In vendor dir.
+    __DIR__ . '/../../../phpunit/phpunit/src/Framework/TestCase.php', // In project dir.
 ] as $target) {
     if (! file_exists($target)) {
         continue;
