@@ -35,7 +35,7 @@ use Traversable;
  *
  * @template TKey of array-key
  * @template TValue
- *
+ * @template TTimesValue
  * @implements ArrayAccess<TKey, TValue>
  * @implements Arrayable<TKey, TValue>
  * @implements IteratorAggregate<TKey, TValue>
@@ -184,8 +184,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Create a new collection by invoking the callback a given amount of times.
      *
-     * @template TTimesValue
-     *
      * @param null|(callable(int): TTimesValue) $callback
      * @return static<int, TTimesValue>
      */
@@ -323,6 +321,14 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * Determine if the collection contains a single item.
+     */
+    public function containsOneItem(): bool
+    {
+        return $this->count() === 1;
+    }
+
+    /**
      * Determine if an item exists in the collection using strict comparison.
      *
      * @param null|TValue $value
@@ -356,6 +362,28 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     {
         call_user_func_array([$this, 'dump'], $args);
         exit(1);
+    }
+
+    /**
+     * Determine if an item is not contained in the collection.
+     *
+     * @param null|mixed $operator
+     * @param null|mixed $value
+     * @param (callable(TValue): bool)|string|TValue $key
+     */
+    public function doesntContain($key, $operator = null, $value = null): bool
+    {
+        return ! $this->contains(...func_get_args());
+    }
+
+    /**
+     * Flatten a multi-dimensional associative array with dots.
+     *
+     * @return static<TKey, TValue>
+     */
+    public function dot(): self
+    {
+        return new static(Arr::dot($this->all()));
     }
 
     /**
@@ -785,6 +813,28 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * Determine if any of the keys exist in the collection.
+     *
+     * @param array<array-key, TKey>|TKey $key
+     */
+    public function hasAny($key): bool
+    {
+        if ($this->isEmpty()) {
+            return false;
+        }
+
+        $keys = is_array($key) ? $key : func_get_args();
+
+        foreach ($keys as $value) {
+            if ($this->has($value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Concatenate values of a given key as a string.
      */
     public function implode(string $value, ?string $glue = null): string
@@ -805,6 +855,17 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function intersect($items): self
     {
         return new static(array_intersect($this->items, $this->getArrayableItems($items)));
+    }
+
+    /**
+     * Intersect the collection with the given items with additional index check.
+     *
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
+     * @return static<TKey, TValue>
+     */
+    public function intersectAssoc($items): self
+    {
+        return new static(array_intersect_assoc($this->items, $this->getArrayableItems($items)));
     }
 
     /**
@@ -997,6 +1058,17 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function merge($items): self
     {
         return new static(array_merge($this->items, $this->getArrayableItems($items)));
+    }
+
+    /**
+     * Recursively merge the collection with the given items.
+     *
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
+     * @return static<TKey, TValue>
+     */
+    public function mergeRecursive($items): self
+    {
+        return new static(array_merge_recursive($this->items, $this->getArrayableItems($items)));
     }
 
     /**
@@ -1207,6 +1279,18 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * Create a collection with the given range.
+     *
+     * @param int $from
+     * @param int $to
+     * @return static<int, int>
+     */
+    public static function range($from, $to): self
+    {
+        return new static(range($from, $to));
+    }
+
+    /**
      * Reduce the collection to a single value.
      *
      * @template TReduceInitial
@@ -1311,6 +1395,16 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * Skip the first {$count} items.
+     *
+     * @return static<TKey, TValue>
+     */
+    public function skip(int $count): self
+    {
+        return $this->slice($count);
+    }
+
+    /**
      * Slice the underlying collection array.
      *
      * @return static<TKey, TValue>
@@ -1318,6 +1412,18 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function slice(int $offset, ?int $length = null): self
     {
         return new static(array_slice($this->items, $offset, $length, true));
+    }
+
+    /**
+     * Create chunks representing a "sliding window" view of the items in the collection.
+     *
+     * @return static<int, TTimesValue>
+     */
+    public function sliding(int $size = 2, int $step = 1): self
+    {
+        $chunks = (int) floor(($this->count() - $size) / $step) + 1;
+
+        return static::times($chunks, fn ($number) => $this->slice(($number - 1) * $step, $size));
     }
 
     /**
@@ -1419,6 +1525,20 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * Sort items in descending order.
+     *
+     * @return static<TKey, TValue>
+     */
+    public function sortDesc(int $options = SORT_REGULAR): self
+    {
+        $items = $this->items;
+
+        arsort($items, $options);
+
+        return new static($items);
+    }
+
+    /**
      * Sort the collection keys.
      *
      * @return static<TKey, TValue>
@@ -1441,6 +1561,21 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * Sort the collection keys using a callback.
+     *
+     * @param callable(TKey, TKey): int $callback
+     * @return static<TKey, TValue>
+     */
+    public function sortKeysUsing(callable $callback): self
+    {
+        $items = $this->items;
+
+        uksort($items, $callback);
+
+        return new static($items);
+    }
+
+    /**
      * Splice a portion of the underlying collection array.
      *
      * @param array<array-key, TValue> $replacement
@@ -1452,6 +1587,16 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
             return new static(array_splice($this->items, $offset));
         }
         return new static(array_splice($this->items, $offset, $length, $replacement));
+    }
+
+    /**
+     * Split a collection into a certain number of groups, and fill the first groups completely.
+     *
+     * @return static<int, static<TKey, TValue>>
+     */
+    public function splitIn(int $numberOfGroups)
+    {
+        return $this->chunk((int) ceil($this->count() / $numberOfGroups));
     }
 
     /**

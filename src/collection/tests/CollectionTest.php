@@ -69,6 +69,127 @@ class CollectionTest extends TestCase
         $this->assertNull($col->avg());
     }
 
+    public function testContainsOneItem(): void
+    {
+        $this->assertFalse((new Collection([]))->containsOneItem());
+        $this->assertTrue((new Collection([1]))->containsOneItem());
+        $this->assertFalse((new Collection([1, 2]))->containsOneItem());
+    }
+
+    public function testDoesntContain(): void
+    {
+        $col = new Collection([1, 3, 5]);
+
+        $this->assertFalse($col->doesntContain(1));
+        $this->assertFalse($col->doesntContain('1'));
+        $this->assertTrue($col->doesntContain(2));
+        $this->assertTrue($col->doesntContain('2'));
+
+        $col = new Collection(['1']);
+        $this->assertFalse($col->doesntContain('1'));
+        $this->assertFalse($col->doesntContain(1));
+
+        $col = new Collection([null]);
+        $this->assertFalse($col->doesntContain(false));
+        $this->assertFalse($col->doesntContain(null));
+        $this->assertFalse($col->doesntContain([]));
+        $this->assertFalse($col->doesntContain(0));
+        $this->assertFalse($col->doesntContain(''));
+
+        $col = new Collection([0]);
+        $this->assertFalse($col->doesntContain(0));
+        $this->assertFalse($col->doesntContain('0'));
+        $this->assertFalse($col->doesntContain(false));
+        $this->assertFalse($col->doesntContain(null));
+
+        $this->assertFalse($col->doesntContain(function ($value) {
+            return $value < 5;
+        }));
+        $this->assertTrue($col->doesntContain(function ($value) {
+            return $value > 5;
+        }));
+
+        $col = new Collection([['v' => 1], ['v' => 3], ['v' => 5]]);
+
+        $this->assertFalse($col->doesntContain('v', 1));
+        $this->assertTrue($col->doesntContain('v', 2));
+
+        $col = new Collection(['date', 'class', (object) ['foo' => 50]]);
+
+        $this->assertFalse($col->doesntContain('date'));
+        $this->assertFalse($col->doesntContain('class'));
+        $this->assertTrue($col->doesntContain('foo'));
+
+        $col = new Collection([
+            null, 1, 2,
+        ]);
+
+        $this->assertFalse($col->doesntContain(function ($value) {
+            return is_null($value);
+        }));
+    }
+
+    public function testDot(): void
+    {
+        $col = Collection::make([
+            'name' => 'Hyperf',
+            'meta' => [
+                'foo' => 'bar',
+                'baz' => 'boom',
+                'bam' => [
+                    'boom' => 'bip',
+                ],
+            ],
+        ])->dot();
+        $this->assertSame([
+            'name' => 'Hyperf',
+            'meta.foo' => 'bar',
+            'meta.baz' => 'boom',
+            'meta.bam.boom' => 'bip',
+        ], $col->all());
+
+        $col = Collection::make([
+            'foo' => [
+                'bar',
+                'baz',
+                'baz' => 'boom',
+            ],
+        ])->dot();
+        $this->assertSame([
+            'foo.0' => 'bar',
+            'foo.1' => 'baz',
+            'foo.baz' => 'boom',
+        ], $col->all());
+    }
+
+    public function testHasAny(): void
+    {
+        $col = new Collection(['id' => 1, 'first' => 'Hello', 'second' => 'World']);
+
+        $this->assertTrue($col->hasAny('first'));
+        $this->assertFalse($col->hasAny('third'));
+        $this->assertTrue($col->hasAny(['first', 'second']));
+        $this->assertTrue($col->hasAny(['first', 'fourth']));
+        $this->assertFalse($col->hasAny(['third', 'fourth']));
+        $this->assertFalse($col->hasAny('third', 'fourth'));
+        $this->assertFalse($col->hasAny([]));
+    }
+
+    public function testIntersectAssocWithNull(): void
+    {
+        $collection = new Collection(['a' => 'green', 'b' => 'brown', 'c' => 'blue', 'red']);
+
+        $this->assertEquals([], $collection->intersectAssoc(null)->all());
+    }
+
+    public function testIntersectAssocCollection(): void
+    {
+        $collectionOne = new Collection(['a' => 'green', 'b' => 'brown', 'c' => 'blue', 'red']);
+        $collectionTwo = new Collection(['a' => 'green', 'b' => 'yellow', 'blue', 'red']);
+
+        $this->assertEquals(['a' => 'green'], $collectionOne->intersectAssoc($collectionTwo)->all());
+    }
+
     public function testMapWithKeys(): void
     {
         $data = new Collection([
@@ -140,6 +261,27 @@ class CollectionTest extends TestCase
         );
     }
 
+    public function testMergeRecursiveNull(): void
+    {
+        $col = new Collection(['name' => 'Hello']);
+        $this->assertEquals(['name' => 'Hello'], $col->mergeRecursive(null)->all());
+    }
+
+    public function testMergeRecursiveArray(): void
+    {
+        $col = new Collection(['name' => 'Hello', 'id' => 1]);
+        $this->assertEquals(['name' => 'Hello', 'id' => [1, 2]], $col->mergeRecursive(['id' => 2])->all());
+    }
+
+    public function testMergeRecursiveCollection(): void
+    {
+        $col = new Collection(['name' => 'Hello', 'id' => 1, 'meta' => ['tags' => ['a', 'b'], 'roles' => 'admin']]);
+        $this->assertEquals(
+            ['name' => 'Hello', 'id' => 1, 'meta' => ['tags' => ['a', 'b', 'c'], 'roles' => ['admin', 'editor']]],
+            $col->mergeRecursive(new Collection(['meta' => ['tags' => ['c'], 'roles' => 'editor']]))->all()
+        );
+    }
+
     public function testForgetSingleKey(): void
     {
         $c = new Collection(['foo', 'bar']);
@@ -194,6 +336,39 @@ class CollectionTest extends TestCase
         $this->assertEquals(['first' => 'Swoole', 'email' => 'hyperf@gmail.com'], $data->except(['last'])->all());
         $this->assertEquals(['first' => 'Swoole', 'email' => 'hyperf@gmail.com'], $data->except('last')->all());
         $this->assertEquals(['first' => 'Swoole', 'email' => 'hyperf@gmail.com'], $data->except(collect(['last']))->all());
+    }
+
+    public function testRangeMethod(): void
+    {
+        $this->assertSame(
+            [1, 2, 3, 4, 5],
+            Collection::range(1, 5)->all()
+        );
+
+        $this->assertSame(
+            [-2, -1, 0, 1, 2],
+            Collection::range(-2, 2)->all()
+        );
+
+        $this->assertSame(
+            [-4, -3, -2],
+            Collection::range(-4, -2)->all()
+        );
+
+        $this->assertSame(
+            [5, 4, 3, 2, 1],
+            Collection::range(5, 1)->all()
+        );
+
+        $this->assertSame(
+            [2, 1, 0, -1, -2],
+            Collection::range(2, -2)->all()
+        );
+
+        $this->assertSame(
+            [-2, -3, -4],
+            Collection::range(-2, -4)->all()
+        );
     }
 
     public function testReplaceNull(): void
@@ -257,6 +432,103 @@ class CollectionTest extends TestCase
             ['z', 'b', ['c', 'e']],
             $c->replaceRecursive(new Collection(['z', 2 => [1 => 'e']]))->all()
         );
+    }
+
+    public function testSkipMethod(): void
+    {
+        $data = new Collection([1, 2, 3, 4, 5, 6]);
+
+        $this->assertSame([5, 6], $data->skip(4)->values()->all());
+        $this->assertSame([], $data->skip(10)->values()->all());
+    }
+
+    public function testSliding(): void
+    {
+        $this->assertSame([], Collection::times(0)->sliding()->toArray());
+        $this->assertSame([], Collection::times(1)->sliding()->toArray());
+        $this->assertSame([[1, 2]], Collection::times(2)->sliding()->toArray());
+        $this->assertSame(
+            [[1, 2], [2, 3]],
+            Collection::times(3)->sliding()->map->values()->toArray()
+        );
+
+        $this->assertSame([], Collection::times(1)->sliding(2, 3)->toArray());
+        $this->assertSame([[1, 2]], Collection::times(2)->sliding(2, 3)->toArray());
+        $this->assertSame([[1, 2]], Collection::times(3)->sliding(2, 3)->toArray());
+        $this->assertSame([[1, 2]], Collection::times(4)->sliding(2, 3)->toArray());
+        $this->assertSame(
+            [[1, 2], [4, 5]],
+            Collection::times(5)->sliding(2, 3)->map->values()->toArray()
+        );
+
+        $this->assertSame([], Collection::times(2)->sliding(3)->toArray());
+        $this->assertSame([[1, 2, 3]], Collection::times(3)->sliding(3)->toArray());
+        $this->assertSame(
+            [[1, 2, 3], [2, 3, 4]],
+            Collection::times(4)->sliding(3)->map->values()->toArray()
+        );
+        $this->assertSame(
+            [[1, 2, 3], [2, 3, 4]],
+            Collection::times(4)->sliding(3)->map->values()->toArray()
+        );
+
+        $this->assertSame([], Collection::times(2)->sliding(3, 2)->toArray());
+        $this->assertSame([[1, 2, 3]], Collection::times(3)->sliding(3, 2)->toArray());
+        $this->assertSame([[1, 2, 3]], Collection::times(4)->sliding(3, 2)->toArray());
+        $this->assertSame(
+            [[1, 2, 3], [3, 4, 5]],
+            Collection::times(5)->sliding(3, 2)->map->values()->toArray()
+        );
+        $this->assertSame(
+            [[1, 2, 3], [3, 4, 5]],
+            Collection::times(6)->sliding(3, 2)->map->values()->toArray()
+        );
+
+        $chunks = Collection::times(3)->sliding();
+
+        $this->assertSame([[0 => 1, 1 => 2], [1 => 2, 2 => 3]], $chunks->toArray());
+
+        $this->assertInstanceOf(Collection::class, $chunks);
+        $this->assertInstanceOf(Collection::class, $chunks->first());
+        $this->assertInstanceOf(Collection::class, $chunks->skip(1)->first());
+    }
+
+    public function testSortDesc(): void
+    {
+        $data = (new Collection([5, 3, 1, 2, 4]))->sortDesc();
+        $this->assertEquals([5, 4, 3, 2, 1], $data->values()->all());
+
+        $data = (new Collection([-1, -3, -2, -4, -5, 0, 5, 3, 1, 2, 4]))->sortDesc();
+        $this->assertEquals([5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5], $data->values()->all());
+
+        $data = (new Collection(['bar-1', 'foo', 'bar-10']))->sortDesc();
+        $this->assertEquals(['foo', 'bar-10', 'bar-1'], $data->values()->all());
+
+        $data = (new Collection(['T2', 'T1', 'T10']))->sortDesc();
+        $this->assertEquals(['T2', 'T10', 'T1'], $data->values()->all());
+
+        $data = (new Collection(['T2', 'T1', 'T10']))->sortDesc(SORT_NATURAL);
+        $this->assertEquals(['T10', 'T2', 'T1'], $data->values()->all());
+    }
+
+    public function testSortKeysUsing(): void
+    {
+        $data = new Collection(['B' => 'dayle', 'a' => 'taylor']);
+
+        $this->assertSame(['a' => 'taylor', 'B' => 'dayle'], $data->sortKeysUsing('strnatcasecmp')->all());
+    }
+
+    public function testSplitIn(): void
+    {
+        $data = new Collection([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+        $data = $data->splitIn(3);
+
+        $this->assertInstanceOf(Collection::class, $data);
+        $this->assertInstanceOf(Collection::class, $data->first());
+        $this->assertCount(3, $data);
+        $this->assertEquals([1, 2, 3, 4], $data->get(0)->values()->toArray());
+        $this->assertEquals([5, 6, 7, 8], $data->get(1)->values()->toArray());
+        $this->assertEquals([9, 10], $data->get(2)->values()->toArray());
     }
 
     public function testIsset()
