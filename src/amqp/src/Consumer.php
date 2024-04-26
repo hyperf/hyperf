@@ -57,14 +57,12 @@ class Consumer extends Builder
             $channel = $connection->getConfirmChannel();
             $exchange = $consumerMessage->getExchange();
 
-            if (! DeclaredExchanges::has($exchange)) {
-                try {
-                    DeclaredExchanges::add($exchange);
-                    $this->declare($consumerMessage, $channel);
-                } catch (Throwable $exception) {
-                    DeclaredExchanges::remove($exchange);
-                    throw $exception;
-                }
+            try {
+                DeclaredExchanges::add($exchange);
+                $this->declare($consumerMessage, $channel);
+            } catch (Throwable $exception) {
+                DeclaredExchanges::remove($exchange);
+                throw $exception;
             }
 
             $concurrent = $this->getConcurrent($consumerMessage->getPoolName());
