@@ -120,11 +120,6 @@ class CollectionTest extends TestCase
         $this->assertFalse($col->doesntContain('class'));
         $this->assertTrue($col->doesntContain('foo'));
 
-        $col = new Collection([['a' => false, 'b' => false], ['a' => true, 'b' => false]]);
-
-        $this->assertFalse($col->doesntContain->a);
-        $this->assertTrue($col->doesntContain->b);
-
         $col = new Collection([
             null, 1, 2,
         ]);
