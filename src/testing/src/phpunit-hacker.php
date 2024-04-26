@@ -10,8 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 foreach ([
-    __DIR__ . '/../../../vendor/phpunit/phpunit/src/Framework/TestCase.php', // In hyperf/hyperf dir.
-    __DIR__ . '/../../../phpunit/phpunit/src/Framework/TestCase.php', // In project dir.
+    __DIR__ . '/../../../vendor/phpunit/phpunit/src/Framework/TestCase.php', // In hyperf/hyperf repository
+    __DIR__ . '/../../../phpunit/phpunit/src/Framework/TestCase.php', // In project
 ] as $target) {
     if (! file_exists($target)) {
         continue;
