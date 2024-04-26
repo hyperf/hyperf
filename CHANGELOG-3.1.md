@@ -1,8 +1,11 @@
-# v3.1.20 - TBD
+# v3.1.21 - TBD
+
+# v3.1.20 - 2024-04-26
 
 ## Added
 
 - [#6709](https://github.com/hyperf/hyperf/pull/6709) Added default `onClose` method for rpc Server.
+- [#6712](https://github.com/hyperf/hyperf/pull/6712) Add new methods in `Hyperf\Collection\Collection`.
 
 ## Optimized
 
