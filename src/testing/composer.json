@@ -12,7 +12,10 @@
     "autoload": {
         "psr-4": {
             "Hyperf\\Testing\\": "src/"
-        }
+        },
+        "files": [
+            "src/phpunit-hacker.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
