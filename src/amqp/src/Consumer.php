@@ -55,10 +55,17 @@ class Consumer extends Builder
 
         try {
             $channel = $connection->getConfirmChannel();
+            $exchange = $consumerMessage->getExchange();
 
-            $this->declare($consumerMessage, $channel);
+            try {
+                DeclaredExchanges::add($exchange);
+                $this->declare($consumerMessage, $channel);
+            } catch (Throwable $exception) {
+                DeclaredExchanges::remove($exchange);
+                throw $exception;
+            }
+
             $concurrent = $this->getConcurrent($consumerMessage->getPoolName());
-
             $maxConsumption = $consumerMessage->getMaxConsumption();
             $currentConsumption = 0;
 
