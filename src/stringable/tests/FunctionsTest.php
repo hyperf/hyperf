@@ -26,7 +26,7 @@ use function Hyperf\Stringable\str;
 #[CoversNothing]
 class FunctionsTest extends TestCase
 {
-    public function testStr()
+    public function testStr(): void
     {
         $stringable = str('string-value');
 

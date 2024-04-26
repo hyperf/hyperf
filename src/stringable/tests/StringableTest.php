@@ -25,17 +25,17 @@ use PHPUnit\Framework\TestCase;
 #[CoversNothing]
 class StringableTest extends TestCase
 {
-    public function testCharAt()
+    public function testCharAt(): void
     {
         $this->assertEquals('р', $this->stringable('Привет, мир!')->charAt(1));
         $this->assertEquals('ち', $this->stringable('「こんにちは世界」')->charAt(4));
         $this->assertEquals('w', $this->stringable('Привет, world!')->charAt(8));
         $this->assertEquals('界', $this->stringable('「こんにちは世界」')->charAt(-2));
         $this->assertEquals(null, $this->stringable('「こんにちは世界」')->charAt(-200));
-        $this->assertEquals(null, $this->stringable('Привет, мир!')->charAt('Привет, мир!', 100));
+        $this->assertEquals(null, $this->stringable('Привет, мир!')->charAt(100));
     }
 
-    public function testExactly()
+    public function testExactly(): void
     {
         $this->assertTrue($this->stringable('foo')->exactly($this->stringable('foo')));
         $this->assertTrue($this->stringable('foo')->exactly('foo'));
@@ -46,14 +46,14 @@ class StringableTest extends TestCase
         $this->assertFalse($this->stringable('0')->exactly(0));
     }
 
-    public function testSlug()
+    public function testSlug(): void
     {
         $str = $this->stringable('hyperf_')->slug('_')->__toString();
 
         $this->assertSame('hyperf', $str);
     }
 
-    public function testMask()
+    public function testMask(): void
     {
         $str = $this->stringable('hyperf');
         $this->assertSame('******', $str->mask()->__toString());
@@ -89,7 +89,7 @@ class StringableTest extends TestCase
         $this->stringable('hyperf')->mask(-1, -1);
     }
 
-    public function testStartsWith()
+    public function testStartsWith(): void
     {
         $this->assertFalse($this->stringable('hyperf.wiki')->startsWith('http://'));
         $this->assertFalse($this->stringable('hyperf.wiki')->startsWith(['http://', 'https://']));
@@ -97,7 +97,7 @@ class StringableTest extends TestCase
         $this->assertTrue($this->stringable('https://www.hyperf.io')->startsWith(['http://', 'https://']));
     }
 
-    public function testStripTags()
+    public function testStripTags(): void
     {
         $this->assertSame('beforeafter', (string) $this->stringable('before<br>after')->stripTags());
         $this->assertSame('before<br>after', (string) $this->stringable('before<br>after')->stripTags('<br>'));
@@ -107,7 +107,7 @@ class StringableTest extends TestCase
         $this->assertSame('beforeafter', (string) $this->stringable('before<br>after')->stripTags(null));
     }
 
-    public function testWhenEmptyAndNot()
+    public function testWhenEmptyAndNot(): void
     {
         $empty = $this->stringable('');
         $this->assertTrue($empty->whenEmpty(function ($str, $value) {
@@ -131,7 +131,7 @@ class StringableTest extends TestCase
         }));
     }
 
-    public function testWhenAndUnless()
+    public function testWhenAndUnless(): void
     {
         $str = $this->stringable('Hyperf is the best PHP framework');
 
@@ -143,7 +143,7 @@ class StringableTest extends TestCase
         })->__toString());
     }
 
-    public function testArrayAccess()
+    public function testArrayAccess(): void
     {
         $str = $this->stringable('my string');
         $this->assertSame('m', $str[0]);
@@ -155,7 +155,7 @@ class StringableTest extends TestCase
         $this->assertSame('My string', (string) $str);
     }
 
-    public function testBetweenFirst()
+    public function testBetweenFirst(): void
     {
         $this->assertSame('abc', (string) $this->stringable('abc')->betweenFirst('', 'c'));
         $this->assertSame('abc', (string) $this->stringable('abc')->betweenFirst('a', ''));
@@ -170,7 +170,7 @@ class StringableTest extends TestCase
         $this->assertSame('', (string) $this->stringable('foobarbar')->betweenFirst('foo', 'bar'));
     }
 
-    public function testClassNamespace()
+    public function testClassNamespace(): void
     {
         $this->assertEquals(
             Str::classNamespace($this::class),
@@ -178,12 +178,12 @@ class StringableTest extends TestCase
         );
     }
 
-    public function testExcerpt()
+    public function testExcerpt(): void
     {
         $this->assertSame('...is a beautiful morn...', (string) $this->stringable('This is a beautiful morning')->excerpt('beautiful', ['radius' => 5]));
     }
 
-    public function testIsAscii()
+    public function testIsAscii(): void
     {
         $this->assertTrue($this->stringable('Hello World!')->isAscii());
         $this->assertTrue($this->stringable('1234567890')->isAscii());
@@ -204,7 +204,7 @@ class StringableTest extends TestCase
         $this->assertFalse($this->stringable('🙂')->isAscii());
     }
 
-    public function testIsJson()
+    public function testIsJson(): void
     {
         $this->assertTrue($this->stringable('1')->isJson());
         $this->assertTrue($this->stringable('[1,2,3]')->isJson());
@@ -221,13 +221,13 @@ class StringableTest extends TestCase
         $this->assertFalse($this->stringable(null)->isJson());
     }
 
-    public function testNewLine()
+    public function testNewLine(): void
     {
         $this->assertSame('Hyperf' . PHP_EOL, (string) $this->stringable('Hyperf')->newLine());
         $this->assertSame('foo' . PHP_EOL . PHP_EOL . 'bar', (string) $this->stringable('foo')->newLine(2)->append('bar'));
     }
 
-    public function testPosition()
+    public function testPosition(): void
     {
         $this->assertSame(7, $this->stringable('Hello, World!')->position('W'));
         $this->assertSame(10, $this->stringable('This is a test string.')->position('test'));
@@ -244,14 +244,14 @@ class StringableTest extends TestCase
         $this->assertFalse($this->stringable('Hello, World!')->position('X'));
     }
 
-    public function testReverse()
+    public function testReverse(): void
     {
         $this->assertSame('FooBar', (string) $this->stringable('raBooF')->reverse());
         $this->assertSame('Teniszütő', (string) $this->stringable('őtüzsineT')->reverse());
         $this->assertSame('❤MultiByte☆', (string) $this->stringable('☆etyBitluM❤')->reverse());
     }
 
-    public function testSquish()
+    public function testSquish(): void
     {
         $this->assertSame('words with spaces', (string) $this->stringable(' words  with   spaces ')->squish());
         $this->assertSame('words with spaces', (string) $this->stringable("words\t\twith\n\nspaces")->squish());
@@ -262,21 +262,21 @@ class StringableTest extends TestCase
         ')->squish());
     }
 
-    public function testScan()
+    public function testScan(): void
     {
         $this->assertSame([123456], $this->stringable('SN/123456')->scan('SN/%d')->toArray());
         $this->assertSame(['Otwell', 'Taylor'], $this->stringable('Otwell, Taylor')->scan('%[^,],%s')->toArray());
         $this->assertSame(['filename', 'jpg'], $this->stringable('filename.jpg')->scan('%[^.].%s')->toArray());
     }
 
-    public function testSubstrReplace()
+    public function testSubstrReplace(): void
     {
         $this->assertSame('12:00', (string) $this->stringable('1200')->substrReplace(':', 2, 0));
         $this->assertSame('The Hyperf Framework', (string) $this->stringable('The Framework')->substrReplace('Hyperf ', 4, 0));
         $this->assertSame('Hyperf – The PHP Framework', (string) $this->stringable('Hyperf Framework')->substrReplace('– The PHP Framework', 7));
     }
 
-    public function testSwap()
+    public function testSwap(): void
     {
         $this->assertSame('PHP 8 is fantastic', (string) $this->stringable('PHP is awesome')->swap([
             'PHP' => 'PHP 8',
@@ -284,13 +284,13 @@ class StringableTest extends TestCase
         ]));
     }
 
-    public function testTake()
+    public function testTake(): void
     {
         $this->assertSame('ab', (string) $this->stringable('abcdef')->take(2));
         $this->assertSame('ef', (string) $this->stringable('abcdef')->take(-2));
     }
 
-    public function testTest()
+    public function testTest(): void
     {
         $stringable = $this->stringable('foo bar');
 
@@ -298,26 +298,26 @@ class StringableTest extends TestCase
         $this->assertTrue($stringable->test('/foo (.*)/'));
     }
 
-    public function testToBase64()
+    public function testToBase64(): void
     {
         $this->assertSame(base64_encode(''), (string) $this->stringable('')->toBase64());
         $this->assertSame(base64_encode('foo'), (string) $this->stringable('foo')->toBase64());
     }
 
-    public function testUnwrap()
+    public function testUnwrap(): void
     {
         $this->assertEquals('value', $this->stringable('"value"')->unwrap('"'));
         $this->assertEquals('bar', $this->stringable('foo-bar-baz')->unwrap('foo-', '-baz'));
         $this->assertEquals('some: "json"', $this->stringable('{some: "json"}')->unwrap('{', '}'));
     }
 
-    public function testWrap()
+    public function testWrap(): void
     {
         $this->assertEquals('This is me!', (string) $this->stringable('is')->wrap('This ', ' me!'));
         $this->assertEquals('"value"', (string) $this->stringable('value')->wrap('"'));
     }
 
-    public function testWhenContains()
+    public function testWhenContains(): void
     {
         $this->assertSame('Tony Stark', (string) $this->stringable('stark')->whenContains('tar', function ($stringable) {
             return $stringable->prepend('Tony ')->title();
@@ -336,7 +336,7 @@ class StringableTest extends TestCase
         }));
     }
 
-    public function testWhenContainsAll()
+    public function testWhenContainsAll(): void
     {
         $this->assertSame('Tony Stark', (string) $this->stringable('tony stark')->whenContainsAll(['tony', 'stark'], function ($stringable) {
             return $stringable->title();
@@ -355,7 +355,7 @@ class StringableTest extends TestCase
         }));
     }
 
-    public function testWhenEndsWith()
+    public function testWhenEndsWith(): void
     {
         $this->assertSame('Tony Stark', (string) $this->stringable('tony stark')->whenEndsWith('ark', function ($stringable) {
             return $stringable->title();
@@ -380,7 +380,7 @@ class StringableTest extends TestCase
         }));
     }
 
-    public function testWhenExactly()
+    public function testWhenExactly(): void
     {
         $this->assertSame('Nailed it...!', (string) $this->stringable('Tony Stark')->whenExactly('Tony Stark', function ($stringable) {
             return 'Nailed it...!';
@@ -399,7 +399,7 @@ class StringableTest extends TestCase
         }));
     }
 
-    public function testWhenNotExactly()
+    public function testWhenNotExactly(): void
     {
         $this->assertSame(
             'Iron Man',
@@ -418,7 +418,7 @@ class StringableTest extends TestCase
         );
     }
 
-    public function testWhenIs()
+    public function testWhenIs(): void
     {
         $this->assertSame('Winner: /', (string) $this->stringable('/')->whenIs('/', function ($stringable) {
             return $stringable->prepend('Winner: ');
@@ -441,7 +441,7 @@ class StringableTest extends TestCase
         }));
     }
 
-    public function testWhenIsUuid()
+    public function testWhenIsUuid(): void
     {
         $this->assertSame('Uuid: 2cdc7039-65a6-4ac7-8e5d-d554a98e7b15', (string) $this->stringable('2cdc7039-65a6-4ac7-8e5d-d554a98e7b15')->whenIsUuid(function ($stringable) {
             return $stringable->prepend('Uuid: ');
@@ -460,7 +460,7 @@ class StringableTest extends TestCase
         }));
     }
 
-    public function testWhenTest()
+    public function testWhenTest(): void
     {
         $this->assertSame('Winner: foo bar', (string) $this->stringable('foo bar')->whenTest('/bar/', function ($stringable) {
             return $stringable->prepend('Winner: ');
@@ -479,7 +479,7 @@ class StringableTest extends TestCase
         }));
     }
 
-    public function testWhenStartsWith()
+    public function testWhenStartsWith(): void
     {
         $this->assertSame('Tony Stark', (string) $this->stringable('tony stark')->whenStartsWith('ton', function ($stringable) {
             return $stringable->title();
@@ -504,13 +504,13 @@ class StringableTest extends TestCase
         }));
     }
 
-    public function testValueAndToString()
+    public function testValueAndToString(): void
     {
         $this->assertSame('foo', $this->stringable('foo')->value());
         $this->assertSame('foo', $this->stringable('foo')->toString());
     }
 
-    public function testReplaceMatches()
+    public function testReplaceMatches(): void
     {
         $this->assertSame('http://hyperf.io', (string) $this->stringable('https://hyperf.io')->replaceMatches('/^https:\/\//', 'http://'));
         $this->assertSame('http://hyperf.io', (string) $this->stringable('https://hyperf.io')->replaceMatches('/^https:\/\//', fn ($matches) => 'http://'));
@@ -518,9 +518,8 @@ class StringableTest extends TestCase
 
     /**
      * @param string $string
-     * @return Stringable
      */
-    protected function stringable($string = '')
+    protected function stringable($string = ''): Stringable
     {
         return new Stringable($string);
     }
