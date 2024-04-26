@@ -1,24 +1,43 @@
 # AMQP
 
-[https://github.com/hyperf/amqp](https://github.com/hyperf/amqp)
+[hyperf/amqp](https://github.com/hyperf/amqp)
+
+## Installation
+
+```bash
+composer require hyperf/amqp
+```
 
 ## Default Config
+
+|   Configuration  |  Type  |  Default value   |                        Remark                       |
+|:----------------:|:------:|:----------------:|:---------------------------------------------------:|
+|       host       | string |     localhost    |                         Host                        |
+|       port       |  int   |       5672       |                     Port number                     |
+|       user       | string |       guest      |                       Username                      |
+|     password     | string |       guest      |                       Password                      |
+|      vhost       | string |         /        |                         vhost                       |
+| concurrent.limit |  int   |         0        |      Maximum quantity consumed simultaneously       |
+|       pool       | object |                  |   Connection pool configuration                     |
+| pool.connections |  int   |         1        | Number of connections maintained within the process |
+|      params      | object |                  |                   Basic configurations              |
+
 ```php
 <?php
 
 return [
+    'enable' => true,
     'default' => [
         'host' => 'localhost',
         'port' => 5672,
         'user' => 'guest',
         'password' => 'guest',
         'vhost' => '/',
+        'concurrent' => [
+            'limit' => 1,
+        ],
         'pool' => [
-            'min_connections' => 1,
-            'max_connections' => 10,
-            'connect_timeout' => 10.0,
-            'wait_timeout' => 3.0,
-            'heartbeat' => -1,
+            'connections' => 1,
         ],
         'params' => [
             'insist' => false,
@@ -30,15 +49,19 @@ return [
             'context' => null,
             'keepalive' => false,
             'heartbeat' => 0,
+            'close_on_destruct' => false,
         ],
     ],
+    'pool2' => [
+        ...
+    ]
 ];
 ```
 
 ## Deliver Message
 
 Use generator command to create a producer.
-```
+```bash
 php bin/hyperf.php gen:amqp-producer DemoProducer
 ```
 
@@ -88,7 +111,7 @@ $result = $producer->produce($message);
 ## Consume Message
 
 Use generator command to create a consumer.
-```
+```bash
 php bin/hyperf.php gen:amqp-consumer DemoConsumer
 ```
 
@@ -105,11 +128,12 @@ namespace App\Amqp\Consumers;
 use Hyperf\Amqp\Annotation\Consumer;
 use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
 
 #[Consumer(exchange: 'hyperf', routingKey: 'hyperf', queue: 'hyperf', nums: 1)]
 class DemoConsumer extends ConsumerMessage
 {
-    public function consume($data): Result
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         print_r($data);
         return Result::ACK;

@@ -161,3 +161,15 @@ class UserService
 ## Hyperf Coroutine Style Server Lifecycle events
 
 ![](https://raw.githubusercontent.com/hyperf/raw-storage/main/hyperf/svg/hyperf-coroutine-events.svg)
+
+## Precautions
+
+### Do not inject `EventDispatcherInterface` in `Listener`
+
+Because `EventDispatcherInterface` depends on `ListenerProviderInterface`, and `ListenerProviderInterface` will collect all `Listener` when it is initialized.
+
+And if `Listener` depends on `EventDispatcherInterface`, it will lead to circular dependency, which will lead to memory overflow.
+
+### It's better to just inject `ContainerInterface` in `Listener`.
+
+It is best to only inject `ContainerInterface` in `Listener`, while other components are obtained through `container` in `process`. When the framework starts, `EventDispatcherInterface` will be instantiated. At this time, it is not a coroutine environment. If `Listener` is injected with a class that may trigger coroutine switching, it will cause the framework to fail to start.
