@@ -554,7 +554,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Apply the callback if the value is truthy.
      *
-     * @param mixed $value
      * @param callable($this, $value): $this $callback
      * @param callable($this, $value): $this $default
      * @return $this

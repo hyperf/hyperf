@@ -92,7 +92,6 @@ trait BuildsQueries
     /**
      * Apply the callback's query changes if the given "value" is true.
      *
-     * @param mixed $value
      * @param callable($this, $value): $this $callback
      * @param callable($this, $value): $this $default
      * @return $this
