@@ -13,21 +13,18 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model;
 
 use Exception;
-use Hyperf\Database\Model\Builder;
-use Hyperf\Database\Model\Concerns\HasGlobalScopes;
 use Hyperf\DbConnection\Model\Model;
 
 /**
+ * 单表字段多租户版。
  * 使用方法：一般你的orm会extends一个Model，在Model文件中use即可（如你只有部分orm需要，则不要在Model中use，只需要在指定orm中use即可。默认字段名为“tenant_id”，如要修改可在orm中添加成员变量“tenant”即可。）
  * @method static Model tenant(array|string|null $tenantId) 注意如果为null代表不增加租户限制条件。
  */
-trait TenantTrait
+trait TenantField
 {
-    use HasGlobalScopes;
-
-    public static function bootTenantTrait(): void
+    public static function bootTenantField(): void
     {
-        static::addGlobalScope(new TenantScope()); // 全局作用域
+        static::addGlobalScope(new TenantFieldScope()); // 全局作用域
     }
 
     /**
@@ -37,15 +34,18 @@ trait TenantTrait
     {
         /*为null代表删除全局租户条件*/
         if ($_tenantId === null) {
-            return $builder->withoutGlobalScope(TenantScope::class);
+            return $builder->withoutGlobalScope(TenantFieldScope::class);
         }
 
         $tenantId = is_array($_tenantId) ? $_tenantId : [$_tenantId];
 
-        return $builder->withoutGlobalScope(TenantScope::class)->withGlobalScope(TenantScope::class, function (Builder $builder) use ($tenantId) {
-            /** @noinspection PhpUndefinedMethodInspection */
-            $builder->whereIn($builder->getModel()->getQualifiedTenantIdColumn(), $tenantId);
-        });
+        return $builder->withoutGlobalScope(TenantFieldScope::class)->withGlobalScope(
+            TenantFieldScope::class,
+            function (Builder $builder) use ($tenantId) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $builder->whereIn($builder->getModel()->getQualifiedTenantIdColumn(), $tenantId);
+            }
+        );
     }
 
     /**
