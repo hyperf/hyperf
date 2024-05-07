@@ -83,7 +83,7 @@ function retry($times, callable $callback, int $sleep = 0)
     try {
         return $callback(++$attempts);
     } catch (Throwable $e) {
-        if (--$times < 0) {
+        if (--$times < 1) {
             throw $e;
         }
 
