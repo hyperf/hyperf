@@ -86,4 +86,20 @@ class ParameterParser
 
         return $injections;
     }
+
+    /**
+     * 补全 signature
+     */
+    public function completeSignature(string $signature, string $class, string $method,):string
+    {
+        return $signature;
+    }
+    
+    /**
+     * 补全 signature
+     */
+    public function completeClosureSignature(string $signature, Closure $closure):string
+    {
+        return $signature;
+    }
 }

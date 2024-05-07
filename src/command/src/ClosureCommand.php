@@ -28,9 +28,9 @@ final class ClosureCommand extends Command
         string $signature,
         private Closure $closure
     ) {
-        $this->signature = $signature;
         $this->parameterParser = $container->get(ParameterParser::class);
-
+        $this->signature = $this->parameterParser->completeClosureSignature($signature, $closure);
+        
         parent::__construct();
     }
 

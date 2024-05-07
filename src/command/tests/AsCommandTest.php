@@ -48,30 +48,62 @@ class AsCommandTest extends TestCase
      * @var AsCommand[]
      */
     protected array $containerSet = [];
+
+    protected ContainerInterface $container;
+
     protected function tearDown(): void
     {
         Mockery::close();
         $this->containerSet = [];
     }
 
-    public function testRegister()
+    protected function setUp(): void
     {
+        parent::setUp();
+
+        if (!empty($this->containerSet)) {
+            return;
+        }
+        
         $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
         $reader = new AnnotationReader();
         $scanner->collect($reader, ReflectionManager::reflectClass(TestAsCommand::class));
 
-        $container = $this->getContainer();
+        $this->container = $container = $this->getContainer();
         
         (fn () => $this->registerAnnotationCommands())->call(
             new RegisterCommandListener($container, $container->get(ConfigInterface::class), $container->get(StdoutLoggerInterface::class))
         );
+    }
 
+    public function testRegister()
+    {
         $commands = array_values($this->containerSet);
         
         $this->assertCount(3, $commands);
         $this->assertEquals($this->getSignature($commands[0]), 'command:testAsCommand:run');
         $this->assertEquals($this->getSignature($commands[1]), 'command:testAsCommand:runWithDefinedOptions {--name=}');
-        $this->assertEquals($this->getSignature($commands[2]), 'command:testAsCommand:runWithoutOptions');
+        $this->assertEquals($this->getSignature($commands[2]), 'command:testAsCommand:runWithoutOptions');// TODO 自动补全
+    }
+
+    public function testParameterParser()
+    {
+        $container = $this->container;
+        $parameterParser = $container->get(ParameterParser::class);
+
+        $class = TestAsCommand::class;
+        $method = 'runWithoutOptions';
+        $arguments = [
+            'name' => 'Hyperf',
+            'test-bool' => '123',// snake case 
+        ];
+
+        $result = $parameterParser->parseMethodParameters($class, $method, $arguments);
+        $this->assertEquals([
+            'Hyperf',
+            9,
+            true,
+        ], $result);
     }
 
     protected function getSignature(AsCommand $asCommand): string
@@ -79,7 +111,7 @@ class AsCommandTest extends TestCase
         return (fn () => $this->signature)->call($asCommand);
     }
 
-    protected function getContainer():ContainerInterface|Mockery\MockInterface
+    protected function getContainer():ContainerInterface
     {
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
@@ -106,11 +138,13 @@ class AsCommandTest extends TestCase
         $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)->andReturn(new ClosureDefinitionCollector());
             
         $container->shouldReceive('get')->with(ParameterParser::class)->andReturn(new ParameterParser($container));
+        $container->shouldReceive('get')->with(TestAsCommand::class)->andReturn(new TestAsCommand());
 
         $container->shouldReceive('set')->withAnyArgs()->andReturnUsing(function ($key, $value) {
             $this->containerSet[$key] = $value;
         });
-
+        
+        /** @var ContainerInterface $container */
         return $container;
     }
 }

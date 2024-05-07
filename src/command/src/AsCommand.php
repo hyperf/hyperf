@@ -27,8 +27,8 @@ final class AsCommand extends Command
         private string $class,
         private string $method,
     ) {
-        $this->signature = $signature;
         $this->parameterParser = $container->get(ParameterParser::class);
+        $this->signature = $this->parameterParser->completeSignature($signature, $class, $method);
 
         parent::__construct();
     }

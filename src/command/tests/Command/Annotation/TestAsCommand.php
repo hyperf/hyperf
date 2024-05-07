@@ -19,7 +19,7 @@ class TestAsCommand
     }
 
     #[AsCommand('command:testAsCommand:runWithoutOptions')]
-    public function runWithoutOptions(string $name, int $age = 9)
+    public function runWithoutOptions(string $name, int $age = 9, bool $testBool = false)
     {
         return 'runWithoutOptions';
     }
