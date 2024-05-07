@@ -3,6 +3,7 @@
 ## Optimized
 
 - [#6716](https://github.com/hyperf/hyperf/pull/6716) [#6717](https://github.com/hyperf/hyperf/pull/6717) Optimized exchange declaration for amqp consumer messages.
+- [#6729](https://github.com/hyperf/hyperf/pull/6729) Modify the number of executions of the retry function.
 
 # v3.1.20 - 2024-04-26
 
