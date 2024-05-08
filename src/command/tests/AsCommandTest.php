@@ -12,11 +12,13 @@ declare(strict_types=1);
 
 namespace HyperfTest\Command;
 
+use Hyperf\Command\AsCommand;
 use Hyperf\Command\Listener\RegisterCommandListener;
 use Hyperf\Command\ParameterParser;
 use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
@@ -34,12 +36,12 @@ use HyperfTest\Command\Command\Annotation\TestAsCommand;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
-use \Hyperf\Contract\ContainerInterface;
-use \Hyperf\Command\AsCommand;
 
 /**
  * @internal
  * @coversNothing
+ * @method void registerAnnotationCommands()
+ * @property string $signature
  */
 #[CoversNothing]
 class AsCommandTest extends TestCase
@@ -51,39 +53,39 @@ class AsCommandTest extends TestCase
 
     protected ContainerInterface $container;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (! empty($this->containerSet)) {
+            return;
+        }
+
+        $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
+        $reader = new AnnotationReader();
+        $scanner->collect($reader, ReflectionManager::reflectClass(TestAsCommand::class));
+
+        $this->container = $container = $this->getContainer();
+
+        (fn () => $this->registerAnnotationCommands())->call(
+            new RegisterCommandListener($container, $container->get(ConfigInterface::class), $container->get(StdoutLoggerInterface::class))
+        );
+    }
+
     protected function tearDown(): void
     {
         Mockery::close();
         $this->containerSet = [];
     }
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        if (!empty($this->containerSet)) {
-            return;
-        }
-        
-        $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
-        $reader = new AnnotationReader();
-        $scanner->collect($reader, ReflectionManager::reflectClass(TestAsCommand::class));
-
-        $this->container = $container = $this->getContainer();
-        
-        (fn () => $this->registerAnnotationCommands())->call(
-            new RegisterCommandListener($container, $container->get(ConfigInterface::class), $container->get(StdoutLoggerInterface::class))
-        );
-    }
-
     public function testRegister()
     {
         $commands = array_values($this->containerSet);
-        
+
         $this->assertCount(3, $commands);
         $this->assertEquals($this->getSignature($commands[0]), 'command:testAsCommand:run');
         $this->assertEquals($this->getSignature($commands[1]), 'command:testAsCommand:runWithDefinedOptions {--name=}');
-        $this->assertEquals($this->getSignature($commands[2]), 'command:testAsCommand:runWithoutOptions');// TODO 自动补全
+        $this->assertEquals($this->getSignature($commands[2]), 'command:testAsCommand:runWithoutOptions'); // TODO 自动补全
     }
 
     public function testParameterParser()
@@ -95,7 +97,7 @@ class AsCommandTest extends TestCase
         $method = 'runWithoutOptions';
         $arguments = [
             'name' => 'Hyperf',
-            'test-bool' => '123',// snake case 
+            'test-bool' => '123', // snake case
         ];
 
         $result = $parameterParser->parseMethodParameters($class, $method, $arguments);
@@ -111,7 +113,10 @@ class AsCommandTest extends TestCase
         return (fn () => $this->signature)->call($asCommand);
     }
 
-    protected function getContainer():ContainerInterface
+    /**
+     * @return ContainerInterface
+     */
+    protected function getContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
@@ -129,22 +134,20 @@ class AsCommandTest extends TestCase
             return $logger;
         });
 
-
         $container->shouldReceive('get')->with(NormalizerInterface::class)->andReturn(new SymfonyNormalizer((new SerializerFactory())->__invoke()));
         $container->shouldReceive('has')->with(NormalizerInterface::class)->andReturn(true);
         $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)->andReturn(new MethodDefinitionCollector());
         $container->shouldReceive('has')->with(MethodDefinitionCollectorInterface::class)->andReturn(true);
         $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)->andReturn(true);
         $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)->andReturn(new ClosureDefinitionCollector());
-            
+
         $container->shouldReceive('get')->with(ParameterParser::class)->andReturn(new ParameterParser($container));
         $container->shouldReceive('get')->with(TestAsCommand::class)->andReturn(new TestAsCommand());
 
         $container->shouldReceive('set')->withAnyArgs()->andReturnUsing(function ($key, $value) {
             $this->containerSet[$key] = $value;
         });
-        
-        /** @var ContainerInterface $container */
+
         return $container;
     }
 }
