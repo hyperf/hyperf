@@ -413,14 +413,6 @@ class Grammar extends BaseGrammar
      */
     protected function compileFrom(Builder $query, $table): string
     {
-        if ($query->forceIndexes) {
-            $forceIndexes = [];
-            foreach ($query->forceIndexes as $forceIndex) {
-                $forceIndexes[] = $this->wrapValue($forceIndex);
-            }
-            return 'from ' . $this->wrapTable($table) . ' force index (' . implode(',', $forceIndexes) . ')';
-        }
-
         return 'from ' . $this->wrapTable($table);
     }
 
