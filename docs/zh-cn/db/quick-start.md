@@ -375,7 +375,7 @@ var_dump(Arr::last(Db::getQueryLog()));
 
 #### 安装
 
-要求 `Swoole >= 5.1.0` 并且编译时开启 --enable-swoole-pgsql
+要求 `Swoole >= 5.1.0` 并且编译时开启 `--enable-swoole-pgsql`
 
 ```bash
 $ composer require hyperf/database-pgsql
