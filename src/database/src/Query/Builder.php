@@ -114,13 +114,6 @@ class Builder
     public $from;
 
     /**
-     * The force indexes.
-     *
-     * @var string[]
-     */
-    public $forceIndexes = [];
-
-    /**
      * The index hint for the query.
      * @var IndexHint
      */
@@ -424,7 +417,8 @@ class Builder
      */
     public function forceIndexes(array $forceIndexes)
     {
-        $this->forceIndexes = $forceIndexes;
+        $this->indexHint = new IndexHint('force', implode(',', $forceIndexes));
+
         return $this;
     }
 
