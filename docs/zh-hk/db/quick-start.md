@@ -367,18 +367,18 @@ var_dump(Arr::last(Db::getQueryLog()));
 
 ## 驅動列表
 
-和 [illuminate/database](https://github.com/illuminate/database) 不同,[hyperf/database](https://github.com/hyperf/database) 默認只提供了 mysql 驅動，目前還提供了 [pgsql](https://github.com/hyperf/database-pgsql) [sqlite](https://github.com/hyperf/database-sqlite) [sqlserver-incubator](https://github.com/hyperf/database-sqlserver-incubator) 等驅動
+和 [illuminate/database](https://github.com/illuminate/database) 不同，[hyperf/database](https://github.com/hyperf/database) 默認只提供了 MySQL 驅動，目前還提供了 [PgSQL](https://github.com/hyperf/database-pgsql)、[SQLite](https://github.com/hyperf/database-sqlite)和[SQLserver](https://github.com/hyperf/database-sqlserver-incubator) 等驅動
 如果默認的 mysql 滿足不了使用需求，可以自行安裝對應的驅動
 
-### pgsql 驅動
+### PgSql 驅動
 
 
 #### 安裝
 
-要求 `Swoole >= 5.1.0` 並且編譯時開啓 --enable-swoole-pgsql
+要求 `Swoole >= 5.1.0` 並且編譯時開啓 `--enable-swoole-pgsql`
 
 ```bash
-$ composer require hyperf/database-pgsql
+composer require hyperf/database-pgsql
 ```
 #### 配置文件
 
@@ -399,14 +399,14 @@ return [
 
 ```
 
-### sqlite 驅動
+### SQLite 驅動
 
 #### 安裝
 
-要求 `Swoole >= 5.1.0` 並且編譯時開啓 --enable-swoole-sqlite
+要求 `Swoole >= 5.1.0` 並且編譯時開啓 `--enable-swoole-sqlite`
 
 ```bash
-$ composer require hyperf/database-sqlite
+composer require hyperf/database-sqlite
 ```
 
 #### 配置文件
@@ -426,15 +426,16 @@ return [
 
 ```
 
-### sqlserver 驅動
+### SQLServer 驅動
 
 #### 安裝
+
 > 孵化階段，目前並不能保證所有功能正常。歡迎反饋
 
-要求 `Swoole >= 5.1.0` 依賴 pdo_odbc,需要編譯時開啓 --with-swoole-odbc
+要求 `Swoole >= 5.1.0` 依賴 pdo_odbc，需要編譯時開啓 `--with-swoole-odbc`
 
 ```bash
-$ composer require hyperf/database-sqlserver-incubator
+composer require hyperf/database-sqlserver-incubator
 ```
 
 #### 配置文件

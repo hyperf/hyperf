@@ -1,6 +1,6 @@
 # 極簡的 DB 組件
 
-[hyperf/database](https://github.com/hyperf/database) 功能十分強大，但也不可否認效率上確實些許不足。這裏提供一個極簡的 `hyperf/db` 組件
+[hyperf/database](https://github.com/hyperf/database) 功能十分強大，但也不可否認效率上確實些許不足。這裏提供一個極簡的 `hyperf/db` 組件。
 
 ## 安裝
 
