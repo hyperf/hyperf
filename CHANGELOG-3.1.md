@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#6738](https://github.com/hyperf/hyperf/pull/6738) Added `unshift` method to `Hyperf\Collection\Collection`.
 - [#6740](https://github.com/hyperf/hyperf/pull/6740) Support `useIndex` `forceIndex` and `ignoreIndex` for `Hyperf\Database\Query\Builder`.
 
 ## Optimized

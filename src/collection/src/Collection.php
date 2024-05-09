@@ -1693,6 +1693,19 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * Prepend one or more items to the beginning of the collection.
+     *
+     * @param TValue ...$values
+     * @return $this
+     */
+    public function unshift(...$values)
+    {
+        array_unshift($this->items, ...$values);
+
+        return $this;
+    }
+
+    /**
      * Reset the keys on the underlying array.
      *
      * @return static<TKey, TValue>
