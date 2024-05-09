@@ -133,6 +133,44 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertSame('select * from "prefix_users"', $builder->toSql());
     }
 
+    public function testUseIndex(): void
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->select('*')->from('users')->useIndex('index1');
+        $this->assertSame('select * from `users` use index (index1)', $builder->toSql());
+
+        $builder->select('*')->from('users')->useIndex('index2');
+        $this->assertSame('select * from `users` use index (index2)', $builder->toSql());
+
+        $builder->select('*')->from('users')->useIndex('index1,index2');
+        $this->assertSame('select * from `users` use index (index1,index2)', $builder->toSql());
+
+        $builder = $this->getMySqlBuilder()->select('*')->from('users');
+        $this->assertSame('select * from `users`', $builder->toSql());
+    }
+
+    public function testForceIndex(): void
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->select('*')->from('users')->forceIndex('index1');
+        $this->assertSame('select * from `users` force index (index1)', $builder->toSql());
+        $builder->select('*')->from('users')->forceIndex('index2');
+        $this->assertSame('select * from `users` force index (index2)', $builder->toSql());
+        $builder->select('*')->from('users')->forceIndex('index1,index2');
+        $this->assertSame('select * from `users` force index (index1,index2)', $builder->toSql());
+    }
+
+    public function testIgnoreIndex(): void
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->select('*')->from('users')->ignoreIndex('index1');
+        $this->assertSame('select * from `users` ignore index (index1)', $builder->toSql());
+        $builder->select('*')->from('users')->ignoreIndex('index2');
+        $this->assertSame('select * from `users` ignore index (index2)', $builder->toSql());
+        $builder->select('*')->from('users')->ignoreIndex('index1,index2');
+        $this->assertSame('select * from `users` ignore index (index1,index2)', $builder->toSql());
+    }
+
     public function testBasicSelectDistinct(): void
     {
         $builder = $this->getBuilder();
