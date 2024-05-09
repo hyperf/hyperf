@@ -152,12 +152,25 @@ class DatabaseQueryBuilderTest extends TestCase
     public function testForceIndex(): void
     {
         $builder = $this->getMySqlBuilder();
-        $builder->select('*')->from('users')->forceIndex('index1');
-        $this->assertSame('select * from `users` force index (index1)', $builder->toSql());
-        $builder->select('*')->from('users')->forceIndex('index2');
-        $this->assertSame('select * from `users` force index (index2)', $builder->toSql());
-        $builder->select('*')->from('users')->forceIndex('index1,index2');
-        $this->assertSame('select * from `users` force index (index1,index2)', $builder->toSql());
+        $builder1 = (clone $builder)->select('*')->from('users')->where('username', 'xxx')->forceIndex('index1');
+        $foeceses = (clone $builder)->select('*')->from('users')->where('username', 'xxx')->forceIndexes(['index1']);
+
+        $this->assertSame('select * from `users` force index (index1) where `username` = ?', $builder1->toSql());
+        $this->assertSame('select * from `users` force index (`index1`) where `username` = ?', $foeceses->toSql());
+
+        $builder2 = (clone $builder);
+        $builder2->select('*')->from('users')->where('username', 'xxx')->forceIndex('index2');
+        $foeceses = (clone $builder);
+        $foeceses->select('*')->from('users')->where('username', 'xxx')->forceIndexes(['index2']);
+        $this->assertSame('select * from `users` force index (index2) where `username` = ?', $builder2->toSql());
+        $this->assertSame('select * from `users` force index (`index2`) where `username` = ?', $foeceses->toSql());
+
+        $builder3 = (clone $builder);
+        $foeceses = (clone $builder);
+        $builder3->select('*')->from('users')->where('username', 'xxx')->forceIndex('index1,index2');
+        $foeceses->select('*')->from('users')->where('username', 'xxx')->forceIndexes(['index1', 'index2']);
+        $this->assertSame('select * from `users` force index (index1,index2) where `username` = ?', $builder3->toSql());
+        $this->assertSame('select * from `users` force index (`index1`,`index2`) where `username` = ?', $foeceses->toSql());
     }
 
     public function testIgnoreIndex(): void

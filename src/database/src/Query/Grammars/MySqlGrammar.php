@@ -34,6 +34,7 @@ class MySqlGrammar extends Grammar
         'columns',
         'from',
         'joins',
+        'indexHint',
         'wheres',
         'groups',
         'havings',
@@ -41,7 +42,6 @@ class MySqlGrammar extends Grammar
         'limit',
         'offset',
         'lock',
-        'indexHint',
     ];
 
     /**
