@@ -417,7 +417,12 @@ class Builder
      */
     public function forceIndexes(array $forceIndexes)
     {
-        $this->indexHint = new IndexHint('force', implode(',', $forceIndexes));
+        $values = [];
+        foreach ($forceIndexes as $forceIndex) {
+            $values[] = '`' . str_replace('`', '``', $forceIndex) . '`';
+        }
+
+        $this->indexHint = new IndexHint('force', implode(',', $values));
 
         return $this;
     }
