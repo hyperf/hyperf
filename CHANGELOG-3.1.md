@@ -10,6 +10,10 @@
 - [#6721](https://github.com/hyperf/hyperf/pull/6721) Optimized the implementation of `When` Method.
 - [#6731](https://github.com/hyperf/hyperf/pull/6731) Updated InteractsWithModelFactory to handle missing dependencies.
 
+## Fixed
+
+- [#6728](https://github.com/hyperf/hyperf/pull/6728) Fixed bug that the enum mode cannot work when using `hyperf/constants`.
+
 # v3.1.20 - 2024-04-26
 
 ## Added

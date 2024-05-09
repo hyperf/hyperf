@@ -27,7 +27,7 @@ class RewriteClassNameVisitor extends NodeVisitorAbstract
             case $node instanceof Node\Stmt\Namespace_:
                 $this->metadata->namespace = $node->name->toCodeString();
                 return $node;
-            case $node instanceof Node\Stmt\Class_:
+            case $node instanceof Node\Stmt\Class_ || $node instanceof Node\Stmt\Enum_:
                 $className = $node->name->name;
                 $this->metadata->className = $className;
                 return $node;
