@@ -540,4 +540,38 @@ class CollectionTest extends TestCase
         $this->assertTrue(isset($data[1]));
         $this->assertTrue(isset($c[1]));
     }
+
+    public function testWhenMethod()
+    {
+        $c = (new Collection([]))
+            ->when(true, fn (Collection $collection) => $collection->push(1))
+            ->when(false, fn (Collection $collection) => $collection->push(2))
+            ->when(null, fn (Collection $collection) => $collection->push(3))
+            ->when('', fn (Collection $collection) => $collection->push(4))
+            ->when([], fn (Collection $collection) => $collection->push(5))
+            ->when(0, fn (Collection $collection) => $collection->push(6));
+
+        $this->assertSame([1], $c->all());
+    }
+
+    public function testWhenMethodForValue()
+    {
+        $c = (new Collection([]))->when('foo', fn(Collection $collection, string $value) => $collection->push($value));
+        $this->assertSame(['foo'], $c->all());
+    }
+
+    public function testWhenMethodForClosure()
+    {
+        $c = (new Collection([]))->when(
+            fn() => 'foo',
+            fn(Collection $collection, string $value) => $collection->push($value)
+        );
+        $this->assertSame(['foo'], $c->all());
+
+        $c = (new Collection([1, 2]))->when(
+            fn(Collection $collection) => $collection->shift(),
+            fn(Collection $collection, int $value) => $collection->push($value)
+        );
+        $this->assertSame([2, 1], $c->all());
+    }
 }
