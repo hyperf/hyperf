@@ -558,13 +558,15 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param callable($this, $value): $this $default
      * @return $this
      */
-    public function when(bool $value, callable $callback, ?callable $default = null): self
+    public function when(mixed $value, callable $callback, ?callable $default = null): static
     {
+        $value = $value instanceof Closure ? $value($this) : $value;
+
         if ($value) {
-            return $callback($this, $value);
+            return $callback($this, $value) ?: $this;
         }
         if ($default) {
-            return $default($this, $value);
+            return $default($this, $value) ?: $this;
         }
         return $this;
     }
@@ -572,13 +574,21 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Apply the callback if the value is falsy.
      *
-     * @param callable($this): $this $callback
-     * @param $this|callable($this): null $default
+     * @param callable($this, $value): $this $callback
+     * @param callable($this, $value): $this $default
      * @return $this
      */
-    public function unless(bool $value, callable $callback, ?callable $default = null): self
+    public function unless(mixed $value, callable $callback, ?callable $default = null): static
     {
-        return $this->when(! $value, $callback, $default);
+        $value = $value instanceof Closure ? $value($this) : $value;
+
+        if (! $value) {
+            return $callback($this, $value) ?: $this;
+        }
+        if ($default) {
+            return $default($this, $value) ?: $this;
+        }
+        return $this;
     }
 
     /**
