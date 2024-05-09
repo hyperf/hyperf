@@ -79,14 +79,14 @@ class BuilderTest extends TestCase
     public function testWhen(): void
     {
         $builder = new Builder(m::mock(Model::class), 'zonda', null, true);
-        $builder->when(true, fn(Builder $collection) => $collection->take(1))
-            ->when(false, fn(Builder $collection) => $collection->take(2));
+        $builder->when(true, fn (Builder $collection) => $collection->take(1))
+            ->when(false, fn (Builder $collection) => $collection->take(2));
         $this->assertEquals(1, $builder->limit);
     }
 
     public function testWhenWithValueForCallback(): void
     {
-        $callback = fn(Builder $collection, int $value) => $collection->take($value);
+        $callback = fn (Builder $collection, int $value) => $collection->take($value);
 
         $builder = new Builder(m::mock(Model::class), 'zonda', null, true);
         $builder->when(0, $callback)->when(1, $callback);
@@ -95,20 +95,20 @@ class BuilderTest extends TestCase
 
     public function testWhenValueOfClosure(): void
     {
-        $callback = fn(Builder $collection, int $value) => $collection->take($value);
+        $callback = fn (Builder $collection, int $value) => $collection->take($value);
 
         $builder = new Builder(m::mock(Model::class), 'zonda', null, true);
-        $builder->when(fn() => 0, $callback)->when(fn() => 1, $callback);
+        $builder->when(fn () => 0, $callback)->when(fn () => 1, $callback);
         $this->assertEquals(1, $builder->limit);
     }
 
     public function testWhenCallbackWithDefault(): void
     {
-        $callback = fn(Builder $collection, int $value) => $collection;
-        $default = fn(Builder $collection, $value) => $collection->take($value);
+        $callback = fn (Builder $collection, int $value) => $collection;
+        $default = fn (Builder $collection, $value) => $collection->take($value);
 
         $builder = new Builder(m::mock(Model::class), 'zonda', null, true);
-        $builder->when(fn() => 0, $callback, $default)->when(fn() => 1, $callback, $default);
+        $builder->when(fn () => 0, $callback, $default)->when(fn () => 1, $callback, $default);
         $this->assertEquals(0, $builder->limit);
     }
 }

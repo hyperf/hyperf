@@ -556,7 +556,7 @@ class CollectionTest extends TestCase
 
     public function testWhenWithValueForCallback(): void
     {
-        $callback = fn(Collection $collection, string $value) => $collection->push($value);
+        $callback = fn (Collection $collection, string $value) => $collection->push($value);
 
         $c = (new Collection([]))
             ->when('foo', $callback)
@@ -567,13 +567,13 @@ class CollectionTest extends TestCase
 
     public function testWhenValueOfClosure(): void
     {
-        $callback = fn(Collection $collection, $value) => $collection->push($value);
+        $callback = fn (Collection $collection, $value) => $collection->push($value);
 
-        $c = (new Collection([]))->when(fn() => 'foo', $callback)->when(fn() => '', $callback);
+        $c = (new Collection([]))->when(fn () => 'foo', $callback)->when(fn () => '', $callback);
         $this->assertSame(['foo'], $c->all());
 
         $c = (new Collection([1, 2]))->when(
-            fn(Collection $collection) => $collection->shift(),
+            fn (Collection $collection) => $collection->shift(),
             $callback
         );
         $this->assertSame([2, 1], $c->all());
@@ -581,8 +581,8 @@ class CollectionTest extends TestCase
 
     public function testWhenCallbackWithDefault(): void
     {
-        $callback = fn(Collection $collection, $value) => $collection;
-        $default = fn(Collection $collection, $value) => $collection->push($value);
+        $callback = fn (Collection $collection, $value) => $collection;
+        $default = fn (Collection $collection, $value) => $collection->push($value);
 
         $c = (new Collection([]))->when('foo', $callback, $default)->when('', $callback, $default);
         $this->assertSame([''], $c->all());
@@ -603,7 +603,7 @@ class CollectionTest extends TestCase
 
     public function testUnlessWithValueForCallback(): void
     {
-        $callback = fn(Collection $collection, string $value) => $collection->push($value);
+        $callback = fn (Collection $collection, string $value) => $collection->push($value);
 
         $c = (new Collection([]))
             ->unless('foo', $callback)
@@ -614,13 +614,13 @@ class CollectionTest extends TestCase
 
     public function testUnlessValueOfClosure(): void
     {
-        $callback = fn(Collection $collection, $value) => $collection->push($value);
+        $callback = fn (Collection $collection, $value) => $collection->push($value);
 
-        $c = (new Collection([]))->unless(fn() => 'foo', $callback)->unless(fn() => '', $callback);
+        $c = (new Collection([]))->unless(fn () => 'foo', $callback)->unless(fn () => '', $callback);
         $this->assertSame([''], $c->all());
 
         $c = (new Collection([1, 2]))->unless(
-            fn(Collection $collection) => $collection->shift(),
+            fn (Collection $collection) => $collection->shift(),
             $callback
         );
         $this->assertSame([2], $c->all());
@@ -628,11 +628,10 @@ class CollectionTest extends TestCase
 
     public function testUnlessCallbackWithDefault(): void
     {
-        $callback = fn(Collection $collection, $value) => $collection;
-        $default = fn(Collection $collection, $value) => $collection->push($value);
+        $callback = fn (Collection $collection, $value) => $collection;
+        $default = fn (Collection $collection, $value) => $collection->push($value);
 
         $c = (new Collection([]))->unless('foo', $callback, $default)->unless('', $callback, $default);
         $this->assertSame(['foo'], $c->all());
     }
-
 }
