@@ -367,7 +367,7 @@ var_dump(Arr::last(Db::getQueryLog()));
 
 ## 驱动列表
 
-和 [illuminate/database](https://github.com/illuminate/database) 不同,[hyperf/database](https://github.com/hyperf/database) 默认只提供了 mysql 驱动，目前还提供了 [pgsql](https://github.com/hyperf/database-pgsql) [sqlite](https://github.com/hyperf/database-sqlite) [sqlserver-incubator](https://github.com/hyperf/database-sqlserver-incubator) 等驱动
+和 [illuminate/database](https://github.com/illuminate/database) 不同，[hyperf/database](https://github.com/hyperf/database) 默认只提供了 MySQL 驱动，目前还提供了 [PgSQL](https://github.com/hyperf/database-pgsql)、[SQLite](https://github.com/hyperf/database-sqlite)和[SQLserver](https://github.com/hyperf/database-sqlserver-incubator) 等驱动
 如果默认的 mysql 满足不了使用需求，可以自行安装对应的驱动
 
 ### pgsql 驱动
