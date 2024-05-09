@@ -791,7 +791,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Key an associative array by a field or using a callback.
      *
      * @param array|(callable(TValue, TKey): array-key)|string $keyBy
-     * @return static<TKey, array<TKey, TValue>>
+     * @return static<TKey, TValue>
      */
     public function keyBy($keyBy): self
     {
