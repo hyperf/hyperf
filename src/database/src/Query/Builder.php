@@ -412,10 +412,9 @@ class Builder
 
     /**
      * Set the force indexes which the query should be used.
-     *
-     * @return $this
+     * @deprecated It will be removed in v3.1, please use `forceIndex` instead
      */
-    public function forceIndexes(array $forceIndexes)
+    public function forceIndexes(array $forceIndexes): static
     {
         $values = [];
         foreach ($forceIndexes as $forceIndex) {
