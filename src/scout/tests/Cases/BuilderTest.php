@@ -34,7 +34,7 @@ class BuilderTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testPaginationCorrectlyHandlesPaginatedResults()
+    public function testPaginationCorrectlyHandlesPaginatedResults(): void
     {
         Paginator::currentPageResolver(function () {
             return 1;
@@ -52,7 +52,7 @@ class BuilderTest extends TestCase
         $builder->paginate();
     }
 
-    public function testMacroable()
+    public function testMacroable(): void
     {
         Builder::macro('foo', function () {
             return 'bar';
@@ -64,15 +64,51 @@ class BuilderTest extends TestCase
         );
     }
 
-    public function testHardDeleteDoesntSetWheres()
+    public function testHardDeleteDoesntSetWheres(): void
     {
         $builder = new Builder($model = m::mock(Model::class), 'zonda', null, false);
         $this->assertArrayNotHasKey('__soft_deleted', $builder->wheres);
     }
 
-    public function testSoftDeleteSetsWheres()
+    public function testSoftDeleteSetsWheres(): void
     {
-        $builder = new Builder($model = m::mock(Model::class), 'zonda', null, true);
+        $builder = new Builder(m::mock(Model::class), 'zonda', null, true);
         $this->assertEquals(0, $builder->wheres['__soft_deleted']);
+    }
+
+    public function testWhen(): void
+    {
+        $builder = new Builder(m::mock(Model::class), 'zonda', null, true);
+        $builder->when(true, fn (Builder $collection) => $collection->take(1))
+            ->when(false, fn (Builder $collection) => $collection->take(2));
+        $this->assertEquals(1, $builder->limit);
+    }
+
+    public function testWhenWithValueForCallback(): void
+    {
+        $callback = fn (Builder $collection, int $value) => $collection->take($value);
+
+        $builder = new Builder(m::mock(Model::class), 'zonda', null, true);
+        $builder->when(0, $callback)->when(1, $callback);
+        $this->assertEquals(1, $builder->limit);
+    }
+
+    public function testWhenValueOfClosure(): void
+    {
+        $callback = fn (Builder $collection, int $value) => $collection->take($value);
+
+        $builder = new Builder(m::mock(Model::class), 'zonda', null, true);
+        $builder->when(fn () => 0, $callback)->when(fn () => 1, $callback);
+        $this->assertEquals(1, $builder->limit);
+    }
+
+    public function testWhenCallbackWithDefault(): void
+    {
+        $callback = fn (Builder $collection, int $value) => $collection;
+        $default = fn (Builder $collection, $value) => $collection->take($value);
+
+        $builder = new Builder(m::mock(Model::class), 'zonda', null, true);
+        $builder->when(fn () => 0, $callback, $default)->when(fn () => 1, $callback, $default);
+        $this->assertEquals(0, $builder->limit);
     }
 }
