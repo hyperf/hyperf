@@ -1,4 +1,6 @@
-# v3.1.21 - TBD
+# v3.1.22 - TBD
+
+# v3.1.21 - 2024-05-09
 
 ## Added
 
@@ -13,7 +15,7 @@
 
 ## Fixed
 
-- [#6728](https://github.com/hyperf/hyperf/pull/6728) Fixed bug that the enum mode cannot work when using `hyperf/constants`.
+- [#6728](https://github.com/hyperf/hyperf/pull/6728) Fixed bug that `hyperf/watch` cannot work when using `hyperf/constants` enum mode.
 
 # v3.1.20 - 2024-04-26
 
