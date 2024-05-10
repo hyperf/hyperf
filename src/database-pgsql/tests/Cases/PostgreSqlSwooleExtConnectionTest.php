@@ -40,6 +40,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function setUp(): void
     {
+        SwooleVersionStub::skipV6();
         $resolver = ContainerStub::getContainer()->get(ConnectionResolverInterface::class);
 
         $this->migrator = new Migrator(
@@ -66,7 +67,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testSelectMethodDuplicateKeyValueException()
     {
-        SwooleVersionStub::skipV6();
+
         $connection = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class)->connection();
 
         $builder = new Builder($connection);
@@ -84,7 +85,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testThrowExceptionWhenStatementExecutionFails()
     {
-        SwooleVersionStub::skipV6();
+
         $connection = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class)->connection();
 
         $builder = new Builder($connection);
@@ -102,7 +103,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testAffectingStatementWithWrongSql()
     {
-        SwooleVersionStub::skipV6();
+
         $connection = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class)->connection();
 
         $this->expectException(QueryException::class);
@@ -112,7 +113,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testCreateConnectionTimedOut()
     {
-        SwooleVersionStub::skipV6();
+
         $factory = new ConnectionFactory(ApplicationContext::getContainer());
 
         $connection = $factory->make([
@@ -132,7 +133,6 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testCreateTableForMigration()
     {
-        SwooleVersionStub::skipV6();
         $queryCommentSQL = "select a.attname,
     d.description
 from pg_class c,
