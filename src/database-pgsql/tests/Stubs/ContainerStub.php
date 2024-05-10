@@ -21,7 +21,6 @@ use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\PgSQL\Connectors\PostgresSqlSwooleExtConnector;
 use Hyperf\Database\PgSQL\PostgreSqlSwooleExtConnection;
 use Mockery;
-use PHPUnit\Framework\Assert;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -29,9 +28,6 @@ class ContainerStub
 {
     public static function getContainer()
     {
-        if (version_compare(swoole_version(), '6.0.0', '>=')) {
-            Assert::markTestSkipped('The test is not compatible with swoole 6.0.0 or later.');
-        }
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('has')->andReturn(true);
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
@@ -42,7 +38,6 @@ class ContainerStub
         Connection::resolverFor('pgsql-swoole', static function ($connection, $database, $prefix, $config) {
             return new PostgreSqlSwooleExtConnection($connection, $database, $prefix, $config);
         });
-
         $connection = $connector->make([
             'driver' => 'pgsql-swoole',
             'host' => '127.0.0.1',

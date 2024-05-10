@@ -23,6 +23,7 @@ use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\Support\Filesystem\Filesystem;
 use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
+use HyperfTest\Database\PgSQL\Stubs\SwooleVersionStub;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -65,6 +66,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testSelectMethodDuplicateKeyValueException()
     {
+        SwooleVersionStub::skipV6();
         $connection = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class)->connection();
 
         $builder = new Builder($connection);
@@ -82,6 +84,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testThrowExceptionWhenStatementExecutionFails()
     {
+        SwooleVersionStub::skipV6();
         $connection = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class)->connection();
 
         $builder = new Builder($connection);
@@ -99,6 +102,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testAffectingStatementWithWrongSql()
     {
+        SwooleVersionStub::skipV6();
         $connection = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class)->connection();
 
         $this->expectException(QueryException::class);
@@ -108,6 +112,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testCreateConnectionTimedOut()
     {
+        SwooleVersionStub::skipV6();
         $factory = new ConnectionFactory(ApplicationContext::getContainer());
 
         $connection = $factory->make([
@@ -127,6 +132,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testCreateTableForMigration()
     {
+        SwooleVersionStub::skipV6();
         $queryCommentSQL = "select a.attname,
     d.description
 from pg_class c,

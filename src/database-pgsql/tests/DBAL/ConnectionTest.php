@@ -15,6 +15,7 @@ namespace HyperfTest\Database\PgSQL\DBAL;
 use Hyperf\Database\PgSQL\DBAL\Connection;
 use Hyperf\Database\PgSQL\DBAL\Result;
 use Hyperf\Database\PgSQL\DBAL\Statement;
+use HyperfTest\Database\PgSQL\Stubs\SwooleVersionStub;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\PostgreSQL;
@@ -54,12 +55,14 @@ class ConnectionTest extends TestCase
 
     public function testPrepare()
     {
+        SwooleVersionStub::skipV6();
         $stmt = $this->connection->prepare('select * from "connection_tests_for_hyperf" where "val1" = $1');
         $this->assertInstanceOf(Statement::class, $stmt);
     }
 
     public function testQuery()
     {
+        SwooleVersionStub::skipV6();
         $this->insertOneRow();
         $result = $this->connection->query('select * from "connection_tests_for_hyperf"');
         $this->assertInstanceOf(Result::class, $result);
@@ -68,6 +71,7 @@ class ConnectionTest extends TestCase
 
     public function testLastInsertId()
     {
+        SwooleVersionStub::skipV6();
         $this->insertOneRow();
         $one = $this->connection->lastInsertId();
         $this->assertIsNumeric($one);
@@ -83,6 +87,7 @@ class ConnectionTest extends TestCase
 
     public function testTransactions()
     {
+        SwooleVersionStub::skipV6();
         $count = $this->getRowCount();
 
         $this->connection->beginTransaction();
@@ -100,21 +105,25 @@ class ConnectionTest extends TestCase
 
     public function testQuote()
     {
+        SwooleVersionStub::skipV6();
         $this->assertSame("'hyperf'", $this->connection->quote('hyperf'));
     }
 
     public function testGetServerVersion()
     {
+        SwooleVersionStub::skipV6();
         $this->assertMatchesRegularExpression('/^(?P<major>\d+)(?:\.(?P<minor>\d+)(?:\.(?P<patch>\d+))?)?/', $this->connection->getServerVersion());
     }
 
     public function testGetNativeConnection()
     {
+        SwooleVersionStub::skipV6();
         $this->assertInstanceOf(PostgreSQL::class, $this->connection->getNativeConnection());
     }
 
     public function testResult()
     {
+        SwooleVersionStub::skipV6();
         $insertResult = $this->connection
             ->prepare('insert into "connection_tests_for_hyperf" ("val1", "val2") values ($1, $2)')
             ->execute([$val1 = uniqid(), $val2 = uniqid()]);
