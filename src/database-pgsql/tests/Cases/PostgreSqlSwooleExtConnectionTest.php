@@ -67,7 +67,6 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testSelectMethodDuplicateKeyValueException()
     {
-
         $connection = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class)->connection();
 
         $builder = new Builder($connection);
@@ -85,7 +84,6 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testThrowExceptionWhenStatementExecutionFails()
     {
-
         $connection = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class)->connection();
 
         $builder = new Builder($connection);
@@ -103,7 +101,6 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testAffectingStatementWithWrongSql()
     {
-
         $connection = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class)->connection();
 
         $this->expectException(QueryException::class);
@@ -113,7 +110,6 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testCreateConnectionTimedOut()
     {
-
         $factory = new ConnectionFactory(ApplicationContext::getContainer());
 
         $connection = $factory->make([
