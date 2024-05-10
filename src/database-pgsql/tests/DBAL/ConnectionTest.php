@@ -15,6 +15,7 @@ namespace HyperfTest\Database\PgSQL\DBAL;
 use Hyperf\Database\PgSQL\DBAL\Connection;
 use Hyperf\Database\PgSQL\DBAL\Result;
 use Hyperf\Database\PgSQL\DBAL\Statement;
+use HyperfTest\Database\PgSQL\Stubs\SwooleVersionStub;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\PostgreSQL;
@@ -30,6 +31,7 @@ class ConnectionTest extends TestCase
 
     public function setUp(): void
     {
+        SwooleVersionStub::skipV6();
         $pgsql = new PostgreSQL();
         $connected = $pgsql->connect('host=127.0.0.1 port=5432 dbname=postgres user=postgres password=postgres');
         if (! $connected) {

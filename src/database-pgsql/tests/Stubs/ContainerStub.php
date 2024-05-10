@@ -38,7 +38,6 @@ class ContainerStub
         Connection::resolverFor('pgsql-swoole', static function ($connection, $database, $prefix, $config) {
             return new PostgreSqlSwooleExtConnection($connection, $database, $prefix, $config);
         });
-
         $connection = $connector->make([
             'driver' => 'pgsql-swoole',
             'host' => '127.0.0.1',

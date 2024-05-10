@@ -23,6 +23,7 @@ use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
+use HyperfTest\Database\PgSQL\Stubs\SwooleVersionStub;
 use Mockery as m;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -43,6 +44,7 @@ class DatabasePostgresBuilderTest extends TestCase
 
     public function testCreateDatabase()
     {
+        SwooleVersionStub::skipV6();
         $grammar = new PostgresGrammar();
 
         $connection = m::mock(Connection::class);
@@ -58,6 +60,7 @@ class DatabasePostgresBuilderTest extends TestCase
 
     public function testDropDatabaseIfExists()
     {
+        SwooleVersionStub::skipV6();
         $grammar = new PostgresGrammar();
 
         $connection = m::mock(Connection::class);
@@ -72,6 +75,7 @@ class DatabasePostgresBuilderTest extends TestCase
 
     public function testWhereFullText()
     {
+        SwooleVersionStub::skipV6();
         $builder = $this->getPostgresBuilderWithProcessor();
         $builder->select('*')->from('users')->whereFullText('body', 'Hello World');
         $this->assertSame('select * from "users" where (to_tsvector(\'english\', "body")) @@ plainto_tsquery(\'english\', ?)', $builder->toSql());
@@ -110,6 +114,7 @@ class DatabasePostgresBuilderTest extends TestCase
 
     public function testWhereFullTextForReal()
     {
+        SwooleVersionStub::skipV6();
         $container = ContainerStub::getContainer();
         $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
 

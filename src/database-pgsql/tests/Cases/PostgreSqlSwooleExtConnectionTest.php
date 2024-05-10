@@ -23,6 +23,7 @@ use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\Support\Filesystem\Filesystem;
 use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
+use HyperfTest\Database\PgSQL\Stubs\SwooleVersionStub;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -39,6 +40,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function setUp(): void
     {
+        SwooleVersionStub::skipV6();
         $resolver = ContainerStub::getContainer()->get(ConnectionResolverInterface::class);
 
         $this->migrator = new Migrator(
