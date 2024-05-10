@@ -25,8 +25,6 @@ class SwooleVersionStub
 
     public static function isV6(): bool
     {
-        return
-            version_compare(swoole_version(), '6.0.0', '>=')
-            || version_compare(swoole_version(), '6.0.0-dev', '>=');
+        return version_compare(swoole_version(), '6.x', '>=');
     }
 }
