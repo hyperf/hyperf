@@ -29,7 +29,7 @@ class ContainerStub
 {
     public static function getContainer()
     {
-        if (version_compare(swoole_version(),'6.0.0','>=')) {
+        if (version_compare(swoole_version(), '6.0.0', '>=')) {
             Assert::markTestSkipped('The test is not compatible with swoole 6.0.0 or later.');
         }
         $container = Mockery::mock(ContainerInterface::class);
