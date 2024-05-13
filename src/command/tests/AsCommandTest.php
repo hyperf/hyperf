@@ -81,11 +81,33 @@ class AsCommandTest extends TestCase
     public function testRegister()
     {
         $commands = array_values($this->containerSet);
-
         $this->assertCount(3, $commands);
-        $this->assertEquals($this->getSignature($commands[0]), 'command:testAsCommand:run');
-        $this->assertEquals($this->getSignature($commands[1]), 'command:testAsCommand:runWithDefinedOptions {--name=}');
-        $this->assertEquals($this->getSignature($commands[2]), 'command:testAsCommand:runWithoutOptions'); // TODO 自动补全
+
+        $runCommand = $commands[0];
+        $runCommandDefinition = $runCommand->getDefinition();
+        $this->assertEquals($this->getSignature($runCommand), 'command:testAsCommand:run');
+        $this->assertEquals(count($runCommandDefinition->getOptions()), 1);
+        $this->assertEquals(count($runCommandDefinition->getArguments()), 0);
+        $this->assertNotNull($runCommandDefinition->getOption('disable-event-dispatcher'));
+
+
+        $runWithDefinedOptionsCommand = $commands[1];
+        $runWithDefinedOptionsCommandDefinition = $runWithDefinedOptionsCommand->getDefinition();
+        $this->assertEquals($this->getSignature($runWithDefinedOptionsCommand), 'command:testAsCommand:runWithDefinedOptions {--name=}');
+        $this->assertEquals(count($runWithDefinedOptionsCommandDefinition->getOptions()), 2);
+        $this->assertEquals(count($runWithDefinedOptionsCommandDefinition->getArguments()), 0);
+        $this->assertNotNull($runCommandDefinition->getOption('disable-event-dispatcher'));
+        $this->assertNotNull($runWithDefinedOptionsCommandDefinition->getOption('name'));
+
+        $runWithoutOptionsCommand = $commands[2];
+        $runWithoutOptionsCommandDefinition = $runWithoutOptionsCommand->getDefinition();
+        $this->assertEquals($this->getSignature($runWithoutOptionsCommand), 'command:testAsCommand:runWithoutOptions');
+        $this->assertEquals(count($runWithoutOptionsCommandDefinition->getOptions()), 4);
+        $this->assertEquals(count($runWithoutOptionsCommandDefinition->getArguments()), 0);
+        $this->assertNotNull($runCommandDefinition->getOption('disable-event-dispatcher'));
+        $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('name'));
+        $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('age'));
+        $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('testBool'));
     }
 
     public function testParameterParser()
