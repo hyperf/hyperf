@@ -121,22 +121,6 @@ class ParameterParser
         return $options;
     }
 
-    /**
-     * 补全 signature.
-     */
-    public function completeSignature(string $signature, string $class, string $method): string
-    {
-        return $signature;
-    }
-
-    /**
-     * 补全 signature.
-     */
-    public function completeClosureSignature(string $signature, Closure $closure): string
-    {
-        return $signature;
-    }
-
     private function getInjections(array $definitions, string $callableName, array $arguments): array
     {
         $injections = [];

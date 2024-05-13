@@ -15,6 +15,7 @@ namespace Hyperf\Command;
 use Closure;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\Schedule;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 
 use function Hyperf\Tappable\tap;
@@ -28,10 +29,28 @@ final class ClosureCommand extends Command
         string $signature,
         private Closure $closure
     ) {
+        $this->signature = $signature;
         $this->parameterParser = $container->get(ParameterParser::class);
-        $this->signature = $this->parameterParser->completeClosureSignature($signature, $closure);
 
         parent::__construct();
+
+        $options = $this->parameterParser->parseClosureOptions($closure);
+        $definition = $this->getDefinition();
+        foreach ($options as $option) {
+            $name = $option->getName();
+            $snakeName = Str::snake($option->getName(), '-');
+
+            if (
+                $definition->hasOption($name)
+                || $definition->hasArgument($name)
+                || $definition->hasOption($snakeName)
+                || $definition->hasArgument($snakeName)
+            ) {
+                continue;
+            }
+
+            $this->getDefinition()->addOption($option);
+        }
     }
 
     public function handle()
