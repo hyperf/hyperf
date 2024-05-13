@@ -69,7 +69,6 @@ class AsCommandAndClosureCommandTest extends TestCase
         $scanner->collect($reader, ReflectionManager::reflectClass(TestAsCommand::class));
 
         $this->container = $container = $this->getContainer();
-
     }
 
     protected function tearDown(): void
@@ -84,7 +83,7 @@ class AsCommandAndClosureCommandTest extends TestCase
         (fn () => $this->registerAnnotationCommands())->call(
             new RegisterCommandListener($container, $container->get(ConfigInterface::class), $container->get(StdoutLoggerInterface::class))
         );
-        
+
         $commands = array_values($this->containerSet);
         $this->assertCount(3, $commands);
 
@@ -125,8 +124,6 @@ class AsCommandAndClosureCommandTest extends TestCase
         $this->assertEquals(count($runCommandDefinition->getArguments()), 0);
         $this->assertNotNull($runCommandDefinition->getOption('disable-event-dispatcher'));
 
-
-
         $runWithDefinedOptionsCommand = Console::command('command:closure:withDefineOptions {--name=}', function (string $name) {
             return 'with define options';
         });
@@ -136,8 +133,6 @@ class AsCommandAndClosureCommandTest extends TestCase
         $this->assertEquals(count($runWithDefinedOptionsCommandDefinition->getArguments()), 0);
         $this->assertNotNull($runCommandDefinition->getOption('disable-event-dispatcher'));
         $this->assertNotNull($runWithDefinedOptionsCommandDefinition->getOption('name'));
-
-
 
         $runWithoutOptionsCommand = Console::command('command:closure:withoutDefineOptions', function (string $name, int $age = 9, bool $testBool = false) {
             return 'with define options';
@@ -150,8 +145,6 @@ class AsCommandAndClosureCommandTest extends TestCase
         $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('name'));
         $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('age'));
         $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('testBool'));
-        
-        
     }
 
     public function testParameterParser()
@@ -216,11 +209,11 @@ class AsCommandAndClosureCommandTest extends TestCase
 
         $container->shouldReceive('get')->with(ClosureCommand::class)->andReturn(ClosureCommand::class);
 
-        // closure command 
+        // closure command
         $container->shouldReceive('make')->with(ClosureCommand::class, Mockery::any())
-        ->andReturnUsing(function ($class, $arguments) {
-            return new ClosureCommand($this->container, $arguments['signature'], $arguments['closure']);
-        });
+            ->andReturnUsing(function ($class, $arguments) {
+                return new ClosureCommand($this->container, $arguments['signature'], $arguments['closure']);
+            });
 
         return $container;
     }
