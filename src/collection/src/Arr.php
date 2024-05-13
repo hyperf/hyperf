@@ -621,4 +621,17 @@ class Arr
         $key = is_null($key) || is_array($key) ? $key : explode('.', $key);
         return [$value, $key];
     }
+
+    /**
+     * Convert a flatten "dot" notation array into an expanded array.
+     */
+    public static function undot(array $array): array
+    {
+        $result = [];
+
+        foreach ($array as $key => $value){
+            static::set($result,$key,$value);
+        }
+        return $result;
+    }
 }
