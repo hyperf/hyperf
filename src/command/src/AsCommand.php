@@ -28,9 +28,19 @@ final class AsCommand extends Command
         private string $method,
     ) {
         $this->parameterParser = $container->get(ParameterParser::class);
-        $this->signature = $this->parameterParser->completeSignature($signature, $class, $method);
 
         parent::__construct();
+
+        $options = $this->parameterParser->parseMethodOptions($class, $method);
+        foreach ($options as $option) {
+            if ($this->getDefinition()->hasOption($option->getName())) {
+                continue;
+            }
+            if ($this->getDefinition()->hasArgument($option->getName())) {
+                continue;
+            }
+            $this->getDefinition()->addOption($option);
+        }
     }
 
     public function handle()
