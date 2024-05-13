@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace HyperfTest\Command;
 
 use Hyperf\Command\AsCommand;
+use Hyperf\Command\ClosureCommand;
+use Hyperf\Command\Console;
 use Hyperf\Command\Listener\RegisterCommandListener;
 use Hyperf\Command\ParameterParser;
 use Hyperf\Config\Config;
@@ -41,10 +43,11 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  * @method void registerAnnotationCommands()
+ * @method void registerClosureCommands()
  * @property string $signature
  */
 #[CoversNothing]
-class AsCommandTest extends TestCase
+class AsCommandAndClosureCommandTest extends TestCase
 {
     /**
      * @var AsCommand[]
@@ -67,9 +70,6 @@ class AsCommandTest extends TestCase
 
         $this->container = $container = $this->getContainer();
 
-        (fn () => $this->registerAnnotationCommands())->call(
-            new RegisterCommandListener($container, $container->get(ConfigInterface::class), $container->get(StdoutLoggerInterface::class))
-        );
     }
 
     protected function tearDown(): void
@@ -78,22 +78,26 @@ class AsCommandTest extends TestCase
         $this->containerSet = [];
     }
 
-    public function testRegister()
+    public function testRegisterAsCommand()
     {
+        $container = $this->container;
+        (fn () => $this->registerAnnotationCommands())->call(
+            new RegisterCommandListener($container, $container->get(ConfigInterface::class), $container->get(StdoutLoggerInterface::class))
+        );
+        
         $commands = array_values($this->containerSet);
         $this->assertCount(3, $commands);
 
         $runCommand = $commands[0];
         $runCommandDefinition = $runCommand->getDefinition();
-        $this->assertEquals($this->getSignature($runCommand), 'command:testAsCommand:run');
+        $this->assertEquals($this->getSignature($runCommand), 'command:as-command:run');
         $this->assertEquals(count($runCommandDefinition->getOptions()), 1);
         $this->assertEquals(count($runCommandDefinition->getArguments()), 0);
         $this->assertNotNull($runCommandDefinition->getOption('disable-event-dispatcher'));
 
-
         $runWithDefinedOptionsCommand = $commands[1];
         $runWithDefinedOptionsCommandDefinition = $runWithDefinedOptionsCommand->getDefinition();
-        $this->assertEquals($this->getSignature($runWithDefinedOptionsCommand), 'command:testAsCommand:runWithDefinedOptions {--name=}');
+        $this->assertEquals($this->getSignature($runWithDefinedOptionsCommand), 'command:as-command:runWithDefinedOptions {--name=}');
         $this->assertEquals(count($runWithDefinedOptionsCommandDefinition->getOptions()), 2);
         $this->assertEquals(count($runWithDefinedOptionsCommandDefinition->getArguments()), 0);
         $this->assertNotNull($runCommandDefinition->getOption('disable-event-dispatcher'));
@@ -101,13 +105,53 @@ class AsCommandTest extends TestCase
 
         $runWithoutOptionsCommand = $commands[2];
         $runWithoutOptionsCommandDefinition = $runWithoutOptionsCommand->getDefinition();
-        $this->assertEquals($this->getSignature($runWithoutOptionsCommand), 'command:testAsCommand:runWithoutOptions');
+        $this->assertEquals($this->getSignature($runWithoutOptionsCommand), 'command:as-command:runWithoutOptions');
         $this->assertEquals(count($runWithoutOptionsCommandDefinition->getOptions()), 4);
         $this->assertEquals(count($runWithoutOptionsCommandDefinition->getArguments()), 0);
         $this->assertNotNull($runCommandDefinition->getOption('disable-event-dispatcher'));
         $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('name'));
         $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('age'));
         $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('testBool'));
+    }
+
+    public function testRegisterClosureCommand()
+    {
+        $runCommand = Console::command('command:closure:run', function () {
+            return 'closure';
+        });
+        $runCommandDefinition = $runCommand->getDefinition();
+        $this->assertEquals($this->getSignature($runCommand), 'command:closure:run');
+        $this->assertEquals(count($runCommandDefinition->getOptions()), 1);
+        $this->assertEquals(count($runCommandDefinition->getArguments()), 0);
+        $this->assertNotNull($runCommandDefinition->getOption('disable-event-dispatcher'));
+
+
+
+        $runWithDefinedOptionsCommand = Console::command('command:closure:withDefineOptions {--name=}', function (string $name) {
+            return 'with define options';
+        });
+        $runWithDefinedOptionsCommandDefinition = $runWithDefinedOptionsCommand->getDefinition();
+        $this->assertEquals($this->getSignature($runWithDefinedOptionsCommand), 'command:closure:withDefineOptions {--name=}');
+        $this->assertEquals(count($runWithDefinedOptionsCommandDefinition->getOptions()), 2);
+        $this->assertEquals(count($runWithDefinedOptionsCommandDefinition->getArguments()), 0);
+        $this->assertNotNull($runCommandDefinition->getOption('disable-event-dispatcher'));
+        $this->assertNotNull($runWithDefinedOptionsCommandDefinition->getOption('name'));
+
+
+
+        $runWithoutOptionsCommand = Console::command('command:closure:withoutDefineOptions', function (string $name, int $age = 9, bool $testBool = false) {
+            return 'with define options';
+        });
+        $runWithoutOptionsCommandDefinition = $runWithoutOptionsCommand->getDefinition();
+        $this->assertEquals($this->getSignature($runWithoutOptionsCommand), 'command:closure:withoutDefineOptions');
+        $this->assertEquals(count($runWithoutOptionsCommandDefinition->getOptions()), 4);
+        $this->assertEquals(count($runWithoutOptionsCommandDefinition->getArguments()), 0);
+        $this->assertNotNull($runCommandDefinition->getOption('disable-event-dispatcher'));
+        $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('name'));
+        $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('age'));
+        $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('testBool'));
+        
+        
     }
 
     public function testParameterParser()
@@ -130,7 +174,7 @@ class AsCommandTest extends TestCase
         ], $result);
     }
 
-    protected function getSignature(AsCommand $asCommand): string
+    protected function getSignature(AsCommand|ClosureCommand $asCommand): string
     {
         return (fn () => $this->signature)->call($asCommand);
     }
@@ -168,6 +212,14 @@ class AsCommandTest extends TestCase
 
         $container->shouldReceive('set')->withAnyArgs()->andReturnUsing(function ($key, $value) {
             $this->containerSet[$key] = $value;
+        });
+
+        $container->shouldReceive('get')->with(ClosureCommand::class)->andReturn(ClosureCommand::class);
+
+        // closure command 
+        $container->shouldReceive('make')->with(ClosureCommand::class, Mockery::any())
+        ->andReturnUsing(function ($class, $arguments) {
+            return new ClosureCommand($this->container, $arguments['signature'], $arguments['closure']);
         });
 
         return $container;
