@@ -48,7 +48,7 @@ final class AsCommand extends Command
                 continue;
             }
 
-            $this->getDefinition()->addOption($option);
+            $definition->addOption($option);
         }
     }
 
