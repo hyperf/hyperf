@@ -42,9 +42,6 @@ class ParameterParser
         }
     }
 
-    /**
-     * @deprecated
-     */
     public function parseClosureParameters(Closure $closure, array $arguments): array
     {
         if (! $this->closureDefinitionCollector) {
@@ -56,9 +53,6 @@ class ParameterParser
         return $this->getInjections($definitions, 'Closure', $arguments);
     }
 
-    /**
-     * @deprecated
-     */
     public function parseMethodParameters(string $class, string $method, array $arguments): array
     {
         if (! $this->methodDefinitionCollector) {
@@ -123,6 +117,7 @@ class ParameterParser
 
     /**
      * 补全 signature.
+     * @deprecated
      */
     public function completeSignature(string $signature, string $class, string $method): string
     {
@@ -131,6 +126,7 @@ class ParameterParser
 
     /**
      * 补全 signature.
+     * @deprecated
      */
     public function completeClosureSignature(string $signature, Closure $closure): string
     {
