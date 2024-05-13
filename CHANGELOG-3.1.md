@@ -1,5 +1,9 @@
 # v3.1.22 - TBD
 
+## Added
+
+- [#6734](https://github.com/hyperf/hyperf/pull/6734) Auto complete options for as command and closure command.
+
 # v3.1.21 - 2024-05-09
 
 ## Added
@@ -7,9 +11,6 @@
 - [#6738](https://github.com/hyperf/hyperf/pull/6738) Added `unshift` method to `Hyperf\Collection\Collection`.
 - [#6740](https://github.com/hyperf/hyperf/pull/6740) Support `useIndex` `forceIndex` and `ignoreIndex` for `Hyperf\Database\Query\Builder`.
 
-## Added
-
-- [#6734](https://github.com/hyperf/hyperf/pull/6734) Auto complete options for as command and closure command.
 
 ## Optimized
 
