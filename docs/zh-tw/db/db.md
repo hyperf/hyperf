@@ -1,6 +1,6 @@
 # 極簡的 DB 元件
 
-[hyperf/database](https://github.com/hyperf/database) 功能十分強大，但也不可否認效率上確實些許不足。這裡提供一個極簡的 `hyperf/db` 元件，支援 `PDO` 和 `Swoole Mysql`。
+[hyperf/database](https://github.com/hyperf/database) 功能十分強大，但也不可否認效率上確實些許不足。這裡提供一個極簡的 `hyperf/db` 元件。
 
 ## 安裝
 
@@ -12,6 +12,7 @@ composer require hyperf/db
 
 該元件的配置檔案位於 `config/autoload/db.php`，如果檔案不存在，可透過下面的命令來將配置檔案釋出到骨架去：
 
+
 ```bash
 php bin/hyperf.php vendor:publish hyperf/db
 ```
@@ -22,7 +23,7 @@ php bin/hyperf.php vendor:publish hyperf/db
 
 |        配置項        |  型別  |       預設值       |               備註               |
 |:--------------------:|:------:|:------------------:|:--------------------------------:|
-|        driver        | string |         無         | 資料庫引擎 支援 `pdo` 和 `mysql` |
+|        driver        | string |         無         | 資料庫引擎  |
 |         host         | string |    `localhost`     |            資料庫地址            |
 |         port         |  int   |        3306        |            資料庫地址            |
 |       database       | string |         無         |          資料庫預設 DB           |

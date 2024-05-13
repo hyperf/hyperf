@@ -14,6 +14,7 @@ namespace Hyperf\Database\Query\Grammars;
 
 use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Query\IndexHint;
 use Hyperf\Database\Query\JsonExpression;
 
 use function Hyperf\Collection\collect;
@@ -33,6 +34,7 @@ class MySqlGrammar extends Grammar
         'columns',
         'from',
         'joins',
+        'indexHint',
         'wheres',
         'groups',
         'havings',
@@ -191,6 +193,18 @@ class MySqlGrammar extends Grammar
         return array_values(
             array_merge($bindings['join'], Arr::flatten($cleanBindings))
         );
+    }
+
+    /**
+     * Compile the index hints for the query.
+     */
+    protected function compileIndexHint(Builder $query, IndexHint $indexHint): string
+    {
+        return match ($indexHint->type) {
+            'hint' => "use index ({$indexHint->index})",
+            'force' => "force index ({$indexHint->index})",
+            default => "ignore index ({$indexHint->index})",
+        };
     }
 
     /**

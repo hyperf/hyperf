@@ -1,6 +1,6 @@
 # 极简的 DB 组件
 
-[hyperf/database](https://github.com/hyperf/database) 功能十分强大，但也不可否认效率上确实些许不足。这里提供一个极简的 `hyperf/db` 组件，支持 `PDO` 和 `Swoole Mysql`。
+[hyperf/database](https://github.com/hyperf/database) 功能十分强大，但也不可否认效率上确实些许不足。这里提供一个极简的 `hyperf/db` 组件。
 
 ## 安装
 
@@ -12,6 +12,7 @@ composer require hyperf/db
 
 该组件的配置文件位于 `config/autoload/db.php`，如果文件不存在，可通过下面的命令来将配置文件发布到骨架去：
 
+
 ```bash
 php bin/hyperf.php vendor:publish hyperf/db
 ```
@@ -22,7 +23,7 @@ php bin/hyperf.php vendor:publish hyperf/db
 
 |        配置项        |  类型  |       默认值       |               备注               |
 |:--------------------:|:------:|:------------------:|:--------------------------------:|
-|        driver        | string |         无         | 数据库引擎 支持 `pdo` 和 `mysql` |
+|        driver        | string |         无         | 数据库引擎  |
 |         host         | string |    `localhost`     |            数据库地址            |
 |         port         |  int   |        3306        |            数据库地址            |
 |       database       | string |         无         |          数据库默认 DB           |
