@@ -30,7 +30,7 @@ final class ClosureCommand extends Command
     ) {
         $this->parameterParser = $container->get(ParameterParser::class);
         $this->signature = $this->parameterParser->completeClosureSignature($signature, $closure);
-        
+
         parent::__construct();
     }
 
