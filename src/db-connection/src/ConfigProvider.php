@@ -19,6 +19,7 @@ use Hyperf\Database\Migrations\MigrationRepositoryInterface;
 use Hyperf\DbConnection\Aspect\TransactionAspect;
 use Hyperf\DbConnection\Listener\RegisterConnectionResolverListener;
 use Hyperf\DbConnection\Listener\RegisterMigrationPathsListener;
+use Hyperf\DbConnection\Listener\RegisterSeederPathsListener;
 use Hyperf\DbConnection\Pool\PoolFactory;
 
 class ConfigProvider
@@ -36,6 +37,7 @@ class ConfigProvider
             'listeners' => [
                 RegisterConnectionResolverListener::class,
                 RegisterMigrationPathsListener::class,
+                RegisterSeederPathsListener::class,
             ],
             'aspects' => [
                 TransactionAspect::class,

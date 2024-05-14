@@ -13,9 +13,13 @@ declare(strict_types=1);
 namespace Hyperf\Database\Commands\Migrations;
 
 use Hyperf\Command\Command;
+use Hyperf\Database\Migrations\Migrator;
 
 use function Hyperf\Collection\collect;
 
+/**
+ * @property Migrator $migrator
+ */
 abstract class BaseCommand extends Command
 {
     /**

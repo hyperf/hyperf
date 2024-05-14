@@ -46,6 +46,23 @@ class Seed
     }
 
     /**
+     * Register a seeder path with the seed manager.
+     */
+    public function path(string $path): void
+    {
+        $this->paths = array_unique(array_merge($this->paths, (array) $path));
+    }
+
+    /**
+     * Get all the paths to the seeders.
+     * @return string[]
+     */
+    public function paths(): array
+    {
+        return $this->paths;
+    }
+
+    /**
      * Run the pending seeders at a given path.
      *
      * @param array|string $paths
@@ -53,7 +70,7 @@ class Seed
      */
     public function run($paths = [], array $options = [])
     {
-        $files = $this->getSeederFiles($paths);
+        $files = $this->getSeederFiles(array_merge($this->paths(), $paths));
 
         $this->requireFiles($files);
 
