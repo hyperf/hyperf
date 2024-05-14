@@ -29,7 +29,7 @@ abstract class ExceptionHandler
      * an exception, as returning `true` in `isValid` does not stop the handlers call loop.
      *
      * @return bool If return true, then this exception handler will handle the exception and then call the next handler,
-     *              If return false, this handler will be ignored and the next will be called.
+     *              If return false, this handler will be ignored and the next will be called
      */
     abstract public function isValid(Throwable $throwable): bool;
 
