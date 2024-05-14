@@ -3,7 +3,7 @@
 ## Added
 
 - [#6734](https://github.com/hyperf/hyperf/pull/6734) Auto complete options for as command and closure command.
-- [#6751](https://github.com/hyperf/hyperf/pull/6751) Added support to auto register migration paths through ConfigProvider.
+- [#6751](https://github.com/hyperf/hyperf/pull/6751) Added support to auto register migration and seeder paths through ConfigProvider.
 
 # v3.1.21 - 2024-05-09
 
