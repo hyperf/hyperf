@@ -47,7 +47,7 @@ class Seed
 
     public function path(string $path): void
     {
-        $this->paths[] = array_unique(array_merge($this->paths, [$path]));
+        $this->paths = array_unique(array_merge($this->paths, [$path]));
     }
 
     public function paths(): array
