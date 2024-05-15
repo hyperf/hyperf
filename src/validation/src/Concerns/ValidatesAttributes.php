@@ -1251,7 +1251,7 @@ trait ValidatesAttributes
         [$values, $other] = $this->parseDependentRuleParameters($parameters);
 
         if (in_array($other, $values, is_bool($other) || is_null($other))) {
-            return $this->validatePresent($attribute, $value, $parameters);
+            return $this->validatePresent($attribute, $value);
         }
 
         return true;
@@ -1272,7 +1272,7 @@ trait ValidatesAttributes
         [$values, $other] = $this->parseDependentRuleParameters($parameters);
 
         if (! in_array($other, $values, is_bool($other) || is_null($other))) {
-            return $this->validatePresent($attribute, $value, $parameters);
+            return $this->validatePresent($attribute, $value);
         }
 
         return true;
@@ -1291,7 +1291,7 @@ trait ValidatesAttributes
         $this->requireParameterCount(1, $parameters, 'present_with');
 
         if (Arr::hasAny($this->data, $parameters)) {
-            return $this->validatePresent($attribute, $value, $parameters);
+            return $this->validatePresent($attribute, $value);
         }
 
         return true;
@@ -1310,7 +1310,7 @@ trait ValidatesAttributes
         $this->requireParameterCount(1, $parameters, 'present_with_all');
 
         if (Arr::has($this->data, $parameters)) {
-            return $this->validatePresent($attribute, $value, $parameters);
+            return $this->validatePresent($attribute, $value);
         }
 
         return true;
