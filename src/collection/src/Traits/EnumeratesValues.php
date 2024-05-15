@@ -15,6 +15,7 @@ namespace Hyperf\Collection\Traits;
 use BackedEnum;
 use CachingIterator;
 use Closure;
+use Exception;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
 use Hyperf\Collection\Enumerable;
@@ -28,11 +29,13 @@ use UnexpectedValueException;
 use UnitEnum;
 
 use function Hyperf\Collection\data_get;
+use function Hyperf\Support\class_basename;
+use function Hyperf\Support\value;
 
 /**
  * @template TKey of array-key
  *
- * @template-covariant TValue
+ * @template TValue
  * @property HigherOrderCollectionProxy $average
  * @property HigherOrderCollectionProxy $avg
  * @property HigherOrderCollectionProxy $contains
@@ -125,7 +128,7 @@ trait EnumeratesValues
      * @param string $key
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __get($key)
     {
@@ -438,7 +441,6 @@ trait EnumeratesValues
      * Map the values into a new class.
      *
      * @template TMapIntoValue
-     *
      * @param class-string<TMapIntoValue> $class
      * @return static<TKey, TMapIntoValue>
      */
@@ -937,7 +939,7 @@ trait EnumeratesValues
      *
      * @return Collection<TKey, TValue>
      */
-    public function collect()
+    public function collect(): Collection
     {
         return new Collection($this->all());
     }
@@ -1035,7 +1037,7 @@ trait EnumeratesValues
             $items instanceof Enumerable => $items->all(),
             $items instanceof Arrayable => $items->toArray(),
             $items instanceof Traversable => iterator_to_array($items),
-            $items instanceof Jsonable => json_decode($items->toJson(), true),
+            $items instanceof Jsonable => json_decode((string) $items, true, 512, JSON_THROW_ON_ERROR),
             $items instanceof JsonSerializable => (array) $items->jsonSerialize(),
             $items instanceof UnitEnum => [$items],
             default => (array) $items,

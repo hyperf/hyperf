@@ -16,11 +16,13 @@ use ArrayIterator;
 use Carbon\Carbon;
 use Closure;
 use DateTimeInterface;
+use Exception;
 use Generator;
 use Hyperf\Collection\Traits\EnumeratesValues;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
+use Iterator;
 use IteratorAggregate;
 use stdClass;
 use Traversable;
@@ -28,7 +30,7 @@ use Traversable;
 /**
  * @template TKey of array-key
  *
- * @template-covariant TValue
+ * @template TValue
  *
  * @implements Enumerable<TKey, TValue>
  * /
@@ -1739,7 +1741,8 @@ class LazyCollection implements Enumerable
      * @template TIteratorValue
      *
      * @param array<TIteratorKey, TIteratorValue>|(callable(): Generator<TIteratorKey, TIteratorValue>)|IteratorAggregate<TIteratorKey, TIteratorValue> $source
-     * @return ArrayIterator
+     * @return Iterator
+     * @throws Exception
      */
     protected function makeIterator($source)
     {

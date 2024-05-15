@@ -27,7 +27,7 @@ use UnexpectedValueException;
 /**
  * @template TKey of array-key
  *
- * @template-covariant TValue
+ * @template TValue
  *
  * @extends Arrayable<TKey, TValue>
  * @extends IteratorAggregate<TKey, TValue>
@@ -313,7 +313,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Get all items except for those with the specified keys.
      *
-     * @param array<array-key, TKey>|\Illuminate\Support\Enumerable<array-key, TKey> $keys
+     * @param array<array-key, TKey>|Enumerable<array-key, TKey> $keys
      * @return static
      */
     public function except($keys);
@@ -1244,7 +1244,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @return Collection<TKey, TValue>
      */
-    public function collect();
+    public function collect(): Collection;
 
     /**
      * Get the collection of items as a plain array.
