@@ -266,6 +266,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
                     continue;
                 }
 
+                // TODO: Use getSupportedTypes to rewrite this since Symfony 7.
                 if (! $normalizer instanceof CacheableSupportsMethodInterface || ! $normalizer->hasCacheableSupportsMethod()) {
                     $this->normalizerCache[$format][$type][$k] = false;
                 } elseif ($normalizer->supportsNormalization($data, $format)) {
