@@ -62,6 +62,6 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
 
     public function getSupportedTypes(?string $format): array
     {
-        return ['object' => static::class === __CLASS__];
+        return ['*' => static::class === __CLASS__];
     }
 }
