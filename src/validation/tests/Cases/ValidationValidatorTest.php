@@ -5457,6 +5457,22 @@ class ValidationValidatorTest extends TestCase
         $this->assertSame('The last field is prohibited unless first is in taylor, jess.', $v->messages()->first('last'));
     }
 
+    public function testValidateRequiredAcceptedIf()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'no', 'bar' => 'baz'], ['bar' => 'required_if_accepted:foo']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => 'yes', 'bar' => 'baz'], ['bar' => 'required_if_accepted:foo']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => 'no', 'bar' => ''], ['bar' => 'required_if_accepted:foo']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => 'yes', 'bar' => ''], ['bar' => 'required_if_accepted:foo']);
+        $this->assertFalse($v->passes());
+    }
+
     public function getIlluminateArrayTranslator()
     {
         return new Translator(

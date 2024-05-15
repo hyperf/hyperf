@@ -871,6 +871,25 @@ trait ValidatesAttributes
     }
 
     /**
+     * Validate that an attribute exists when another attribute was "accepted".
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param mixed $parameters
+     * @return bool
+     */
+    public function validateRequiredIfAccepted($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(1, $parameters, 'required_if_accepted');
+
+        if ($this->validateAccepted($parameters[0], $this->getValue($parameters[0]))) {
+            return $this->validateRequired($attribute, $value);
+        }
+
+        return true;
+    }
+
+    /**
      * Validate that an attribute is an integer.
      *
      * @param mixed $value

@@ -130,7 +130,7 @@ class Validator implements ValidatorContract
         'RequiredWithoutAll', 'RequiredIf', 'RequiredUnless', 'Accepted', 'Present',
         'RequiredIfDeclined', 'RequiredIfDeclined', 'PresentIf', 'PresentUnless',
         'PresentWith', 'PresentWithAll', 'Missing', 'MissingIf', 'MissingUnless',
-        'MissingWith', 'MissingWithAll',
+        'MissingWith', 'MissingWithAll', 'RequiredIfAccepted',
     ];
 
     /**
@@ -140,6 +140,7 @@ class Validator implements ValidatorContract
         'RequiredWith', 'RequiredWithAll', 'RequiredWithout', 'RequiredWithoutAll',
         'RequiredIf', 'RequiredUnless', 'Confirmed', 'Same', 'Different', 'Unique',
         'Before', 'After', 'BeforeOrEqual', 'AfterOrEqual', 'Gt', 'Lt', 'Gte', 'Lte',
+        'RequiredIfAccepted',
     ];
 
     /**
