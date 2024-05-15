@@ -74,7 +74,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
         return class_exists($type) && is_a($type, Throwable::class, true);
     }
 
-    public function normalize($object, ?string $format = null, array $context = []): null|array|ArrayObject|bool|float|int|string
+    public function normalize(mixed $object, ?string $format = null, array $context = []): null|array|ArrayObject|bool|float|int|string
     {
         if ($object instanceof Serializable) {
             return serialize($object);
@@ -88,7 +88,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
         ];
     }
 
-    public function supportsNormalization($data, ?string $format = null)
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof Throwable;
     }
