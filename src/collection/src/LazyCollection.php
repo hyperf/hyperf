@@ -41,6 +41,7 @@ class LazyCollection implements Enumerable
      * @use EnumeratesValues<TKey, TValue>
      */
     use EnumeratesValues;
+
     use Macroable;
 
     /**
