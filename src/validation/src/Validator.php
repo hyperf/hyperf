@@ -129,7 +129,8 @@ class Validator implements ValidatorContract
         'Required', 'Filled', 'RequiredWith', 'RequiredWithAll', 'RequiredWithout',
         'RequiredWithoutAll', 'RequiredIf', 'RequiredUnless', 'Accepted', 'Present',
         'RequiredIfDeclined', 'RequiredIfDeclined', 'PresentIf', 'PresentUnless',
-        'PresentWith', 'PresentWithAll',
+        'PresentWith', 'PresentWithAll', 'Missing', 'MissingIf', 'MissingUnless',
+        'MissingWith', 'MissingWithAll',
     ];
 
     /**
@@ -1003,6 +1004,7 @@ class Validator implements ValidatorContract
         if (is_string($callback)) {
             return $this->callClassBasedExtension($callback, $parameters);
         }
+        return null;
     }
 
     /**
