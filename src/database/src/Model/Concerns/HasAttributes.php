@@ -897,6 +897,10 @@ trait HasAttributes
      */
     protected function castAttribute(string $key, mixed $value): mixed
     {
+        if ($value instanceof Expression) {
+            return $value;
+        }
+
         $castType = $this->getCastType($key);
 
         if (is_null($value) && in_array($castType, static::$primitiveCastTypes)) {

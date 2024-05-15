@@ -24,6 +24,7 @@ use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Model\Collection as ModelCollection;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
+use Hyperf\Database\Query\Expression;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Stringable\Str;
 use Hyperf\Support\Traits\ForwardsCalls;
@@ -538,6 +539,12 @@ class Builder
     {
         return tap($this->firstOrNew($attributes), function ($instance) use ($values) {
             $instance->fill($values)->save();
+            foreach ($values as $value) {
+                if ($value instanceof Expression) {
+                    $instance->refresh();
+                    break;
+                }
+            }
         });
     }
 
