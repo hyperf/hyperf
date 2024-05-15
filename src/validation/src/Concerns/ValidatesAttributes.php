@@ -50,6 +50,29 @@ trait ValidatesAttributes
         return $this->validateRequired($attribute, $value) && in_array($value, $acceptable, true);
     }
 
+    /**
+     * Validate an attribute has a list of values.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array<int, int|string> $parameters
+     * @return bool
+     */
+    public function validateContains($attribute, $value, $parameters)
+    {
+        if (! is_array($value)) {
+            return false;
+        }
+
+        foreach ($parameters as $parameter) {
+            if (! in_array($parameter, $value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function validateAcceptedIf(string $attribute, mixed $value, $parameters): bool
     {
         $acceptable = ['yes', 'on', '1', 1, true, 'true'];
@@ -539,6 +562,10 @@ trait ValidatesAttributes
 
         $expected = is_array($value) ? count(array_unique($value)) : 1;
 
+        if ($expected === 0) {
+            return true;
+        }
+
         return $this->getExistCount(
             $connection,
             $table,
@@ -781,6 +808,18 @@ trait ValidatesAttributes
     public function validateUppercase(string $attribute, mixed $value, array $parameters): bool
     {
         return Str::upper($value) === $value;
+    }
+
+    /**
+     * Validate that an attribute is a valid HEX color.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @return bool
+     */
+    public function validateHexColor($attribute, $value)
+    {
+        return preg_match('/^#(?:(?:[0-9a-f]{3}){1,2}|(?:[0-9a-f]{4}){1,2})$/i', $value) === 1;
     }
 
     /**
@@ -1195,6 +1234,86 @@ trait ValidatesAttributes
     }
 
     /**
+     * Validate that an attribute is present when another attribute has a given value.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array<int, int|string> $parameters
+     * @return bool
+     */
+    public function validatePresentIf($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(2, $parameters, 'present_if');
+
+        [$values, $other] = $this->parseDependentRuleParameters($parameters);
+
+        if (in_array($other, $values, is_bool($other) || is_null($other))) {
+            return $this->validatePresent($attribute, $value, $parameters);
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate that an attribute is present unless another attribute has a given value.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array<int, int|string> $parameters
+     * @return bool
+     */
+    public function validatePresentUnless($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(2, $parameters, 'present_unless');
+
+        [$values, $other] = $this->parseDependentRuleParameters($parameters);
+
+        if (! in_array($other, $values, is_bool($other) || is_null($other))) {
+            return $this->validatePresent($attribute, $value, $parameters);
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate that an attribute is present when any given attribute is present.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array<int, int|string> $parameters
+     * @return bool
+     */
+    public function validatePresentWith($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(1, $parameters, 'present_with');
+
+        if (Arr::hasAny($this->data, $parameters)) {
+            return $this->validatePresent($attribute, $value, $parameters);
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate that an attribute is present when all given attributes are present.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array<int, int|string> $parameters
+     * @return bool
+     */
+    public function validatePresentWithAll($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(1, $parameters, 'present_with_all');
+
+        if (Arr::has($this->data, $parameters)) {
+            return $this->validatePresent($attribute, $value, $parameters);
+        }
+
+        return true;
+    }
+
+    /**
      * Validate that an attribute passes a regular expression check.
      *
      * @param mixed $value
@@ -1494,6 +1613,37 @@ trait ValidatesAttributes
         }
     }
 
+    /**
+     * Validate that an attribute exists when another attribute was "declined".
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param mixed $parameters
+     * @return bool
+     */
+    public function validateRequiredIfDeclined($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(1, $parameters, 'required_if_declined');
+
+        if ($this->validateDeclined($parameters[0], $this->getValue($parameters[0]))) {
+            return $this->validateRequired($attribute, $value);
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate that an attribute is a list.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @return bool
+     */
+    public function validateList($attribute, $value)
+    {
+        return is_array($value) && array_is_list($value);
+    }
+
     protected function convertValuesToNull(array $values): array
     {
         return array_map(function ($value) {
@@ -1649,7 +1799,7 @@ trait ValidatesAttributes
             array_filter(sscanf($parameters['ratio'], '%f/%d'))
         );
 
-        $precision = 1 / max($width, $height);
+        $precision = 1 / (max(($width + $height) / 2, $height) + 1);
 
         return abs($numerator / $denominator - $width / $height) > $precision;
     }

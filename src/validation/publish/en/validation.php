@@ -71,6 +71,7 @@ return [
     'ipv4' => 'The :attribute must be a valid IPv4 address.',
     'ipv6' => 'The :attribute must be a valid IPv6 address.',
     'json' => 'The :attribute must be a valid JSON string.',
+    'list' => 'The :attribute field must be a list.',
     'lt' => [
         'numeric' => 'The :attribute must be less than :value',
         'file' => 'The :attribute must be less than :value kb',
@@ -101,6 +102,10 @@ return [
     'not_regex' => 'The :attribute cannot match a given regular rule.',
     'numeric' => 'The :attribute must be a number.',
     'present' => 'The :attribute field must be present.',
+    'present_if' => 'The :attribute field must be present when :other is :value.',
+    'present_unless' => 'The :attribute field must be present unless :other is :value.',
+    'present_with' => 'The :attribute field must be present when :values is present.',
+    'present_with_all' => 'The :attribute field must be present when :values are present.',
     'regex' => 'The :attribute format is invalid.',
     'required' => 'The :attribute field is required.',
     'required_if' => 'The :attribute field is required when :other is :value.',
