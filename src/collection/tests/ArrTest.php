@@ -350,4 +350,25 @@ class ArrTest extends TestCase
         $data = [1 => 'a', 2 => 'b', 3 => 'a'];
         $this->assertSame([2 => 'b'], Arr::removeKeepKey($data, 'a'));
     }
+
+    public function testArrayUndot(): void
+    {
+        $data = ['user' => ['name' => 'Hyperf', 'age' => 18]];
+        $this->assertSame($dotData = Arr::dot($data), [
+            'user.name' => 'Hyperf',
+            'user.age' => 18,
+        ]);
+
+        $this->assertSame($data, Arr::undot($dotData));
+
+        $data = ['user' => [['name' => 'Hyperf', 'age' => 18], ['name' => 'test', 'age' => 21]]];
+        $this->assertSame($dotData = Arr::dot($data), [
+            'user.0.name' => 'Hyperf',
+            'user.0.age' => 18,
+            'user.1.name' => 'test',
+            'user.1.age' => 21,
+        ]);
+
+        $this->assertSame($data, Arr::undot($dotData));
+    }
 }

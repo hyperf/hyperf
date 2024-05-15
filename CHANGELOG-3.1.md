@@ -3,6 +3,7 @@
 ## Added
 
 - [#6734](https://github.com/hyperf/hyperf/pull/6734) Auto complete options for as command and closure command.
+- [#6749](https://github.com/hyperf/hyperf/pull/6749) Added some rules for `hyperf/validation`.
 
 # v3.1.21 - 2024-05-09
 
