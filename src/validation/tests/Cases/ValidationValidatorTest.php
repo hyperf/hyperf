@@ -47,10 +47,19 @@ use Symfony\Component\HttpFoundation\File\File;
 #[CoversNothing]
 class ValidationValidatorTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        $image5 = imagecreatetruecolor(1366, 768);
+        $white = imagecolorallocate($image5, 255, 255, 255);
+        imagefill($image5, 0, 0, $white);
+        imagepng($image5, __DIR__ . '/fixtures/image5.png');
+    }
+
     protected function tearDown(): void
     {
         Carbon::setTestNow();
         m::close();
+        unlink(__DIR__ . '/fixtures/image5.png');
     }
 
     public function testSometimesWorksOnNestedArrays()
