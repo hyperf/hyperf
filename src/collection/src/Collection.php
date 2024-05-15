@@ -1999,6 +1999,84 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * Get a lazy collection for the items in this collection.
+     *
+     * @return LazyCollection<TKey, TValue>
+     */
+    public function lazy()
+    {
+        return new LazyCollection($this->items);
+    }
+
+    /**
+     * Skip items in the collection until the given condition is met.
+     *
+     * @param callable(TValue,TKey): bool|TValue $value
+     * @return static
+     */
+    public function skipUntil($value)
+    {
+        return new static($this->lazy()->skipUntil($value)->all());
+    }
+
+    /**
+     * Skip items in the collection while the given condition is met.
+     *
+     * @param callable(TValue,TKey): bool|TValue $value
+     * @return static
+     */
+    public function skipWhile($value)
+    {
+        return new static($this->lazy()->skipWhile($value)->all());
+    }
+
+    /**
+     * Chunk the collection into chunks with a callback.
+     *
+     * @param callable(TValue, TKey, static<int, TValue>): bool $callback
+     * @return static<int, static<int, TValue>>
+     */
+    public function chunkWhile(callable $callback)
+    {
+        return new static(
+            $this->lazy()->chunkWhile($callback)->mapInto(static::class)
+        );
+    }
+
+    /**
+     * Take items in the collection until the given condition is met.
+     *
+     * @param callable(TValue,TKey): bool|TValue $value
+     * @return static
+     */
+    public function takeUntil($value)
+    {
+        return new static($this->lazy()->takeUntil($value)->all());
+    }
+
+    /**
+     * Take items in the collection while the given condition is met.
+     *
+     * @param callable(TValue,TKey): bool|TValue $value
+     * @return static
+     */
+    public function takeWhile($value)
+    {
+        return new static($this->lazy()->takeWhile($value)->all());
+    }
+
+    /**
+     * Count the number of items in the collection by a field or using a callback.
+     *
+     * @param null|(callable(TValue, TKey): array-key)|string $countBy
+     * @return static<array-key, int>
+     */
+    public function countBy($countBy = null)
+    {
+        return new static($this->lazy()->countBy($countBy)->all());
+    }
+
+    /**
      * Sort the collection using multiple comparisons.
      *
      * @return static
