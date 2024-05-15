@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Serializer;
 
+use ArrayObject;
 use Doctrine\Instantiator\Instantiator;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Serializer\Contract\CacheableSupportsMethodInterface;
@@ -73,7 +74,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
         return class_exists($type) && is_a($type, Throwable::class, true);
     }
 
-    public function normalize($object, ?string $format = null, array $context = [])
+    public function normalize($object, ?string $format = null, array $context = []): null|array|ArrayObject|bool|float|int|string
     {
         if ($object instanceof Serializable) {
             return serialize($object);
