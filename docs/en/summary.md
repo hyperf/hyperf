@@ -163,3 +163,4 @@
   * [2.1 Upgrade Guide](en/upgrade/2.1.md)
   * [2.2 Upgrade Guide](en/upgrade/2.2.md)
   * [3.0 Upgrade Guide](en/upgrade/3.0.md)
+  * [3.1 Upgrade Guide](en/upgrade/3.1.md)
