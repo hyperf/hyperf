@@ -32,8 +32,7 @@ use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\ScanHandler\NullScanHandler;
-use Hyperf\Serializer\SerializerFactory;
-use Hyperf\Serializer\SymfonyNormalizer;
+use Hyperf\Serializer\SimpleNormalizer;
 use HyperfTest\Command\Command\Annotation\TestAsCommand;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -156,7 +155,7 @@ class AsCommandAndClosureCommandTest extends TestCase
         $method = 'runWithoutOptions';
         $arguments = [
             'name' => 'Hyperf',
-            'test-bool' => true, // snake case
+            'test-bool' => '123', // snake case
         ];
 
         $result = $parameterParser->parseMethodParameters($class, $method, $arguments);
@@ -193,7 +192,7 @@ class AsCommandAndClosureCommandTest extends TestCase
             return $logger;
         });
 
-        $container->shouldReceive('get')->with(NormalizerInterface::class)->andReturn(new SymfonyNormalizer((new SerializerFactory())->__invoke()));
+        $container->shouldReceive('get')->with(NormalizerInterface::class)->andReturn(new SimpleNormalizer());
         $container->shouldReceive('has')->with(NormalizerInterface::class)->andReturn(true);
         $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)->andReturn(new MethodDefinitionCollector());
         $container->shouldReceive('has')->with(MethodDefinitionCollectorInterface::class)->andReturn(true);
