@@ -1,5 +1,9 @@
 # v3.1.22 - TBD
 
+## Fixed
+
+- [#6755](https://github.com/hyperf/hyperf/pull/6755) Fixed bug that exception normalizer cannot support symfony 7.
+
 ## Added
 
 - [#6734](https://github.com/hyperf/hyperf/pull/6734) Auto complete options for as command and closure command.
