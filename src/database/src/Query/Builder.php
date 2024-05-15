@@ -45,7 +45,7 @@ use function Hyperf\Tappable\tap;
 
 class Builder
 {
-    use BuildsQueries,ExplainsQueries, ForwardsCalls, Macroable {
+    use BuildsQueries, ExplainsQueries, ForwardsCalls, Macroable {
         __call as macroCall;
     }
 
