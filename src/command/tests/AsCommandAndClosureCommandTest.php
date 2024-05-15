@@ -156,7 +156,7 @@ class AsCommandAndClosureCommandTest extends TestCase
         $method = 'runWithoutOptions';
         $arguments = [
             'name' => 'Hyperf',
-            'test-bool' => '123', // snake case
+            'test-bool' => true, // snake case
         ];
 
         $result = $parameterParser->parseMethodParameters($class, $method, $arguments);
