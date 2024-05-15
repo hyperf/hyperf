@@ -22,6 +22,7 @@ use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Query\Processors\Processor;
 use Mockery as m;
+use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -726,6 +727,43 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertEquals([], $builder->getBindings());
     }
 
+    public function testExplain(): void
+    {
+        $builder = $this->getBuilder();
+        /**
+         * @var ConnectionInterface|MockInterface $connection
+         */
+        $connection = $builder->getConnection();
+        $connection->allows('select')
+            ->once()
+            ->withArgs(function ($sql, $bindings) {
+                $this->assertSame($sql, 'EXPLAIN select * from "users" where 0 = 1');
+                $this->assertIsArray($bindings);
+                $this->assertCount(0, $bindings);
+                return $sql === 'EXPLAIN select * from "users" where 0 = 1' && $bindings === [];
+            })
+            ->andReturn([]);
+        $builder->select('*')->from('users')->whereIntegerInRaw('id', []);
+        $this->assertCount(0, $builder->explain());
+
+        $builder = $this->getBuilder();
+        /**
+         * @var ConnectionInterface|MockInterface $connection
+         */
+        $connection = $builder->getConnection();
+        $connection->allows('select')
+            ->once()
+            ->withArgs(function ($sql, $bindings) {
+                $this->assertSame($sql, 'EXPLAIN select * from "hyperf" where "id" in (?, ?, ?)');
+                $this->assertIsArray($bindings);
+                $this->assertCount(3, $bindings);
+                return $sql === 'EXPLAIN select * from "hyperf" where "id" in (?, ?, ?)' && $bindings === [1, 2, 3];
+            })
+            ->andReturn([]);
+        $builder->select('*')->from('hyperf')->whereIn('id', [1, 2, 3]);
+        $this->assertCount(0, $builder->explain());
+    }
+
     public function testEmptyWhereIntegerNotInRaw(): void
     {
         $builder = $this->getBuilder();
@@ -831,7 +869,7 @@ class DatabaseQueryBuilderTest extends TestCase
         return new Builder(m::mock(ConnectionInterface::class), $grammar, $processor);
     }
 
-    protected function getMockQueryBuilder(): m\MockInterface
+    protected function getMockQueryBuilder(): MockInterface
     {
         return m::mock(Builder::class, [
             m::mock(ConnectionInterface::class),

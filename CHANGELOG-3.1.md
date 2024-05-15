@@ -7,6 +7,7 @@
 ## Added
 
 - [#6734](https://github.com/hyperf/hyperf/pull/6734) Auto complete options for as command and closure command.
+- [#6746](https://github.com/hyperf/hyperf/pull/6746) Added `explain()` for `Hyperf\Database\Query\Builder`.
 - [#6749](https://github.com/hyperf/hyperf/pull/6749) Added some rules for `hyperf/validation`.
 - [#6752](https://github.com/hyperf/hyperf/pull/6752) Added `path` and `paths` methods to `Hyperf\Database\Seeders\Seed`.
 
