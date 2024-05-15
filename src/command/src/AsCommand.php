@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Command;
 
 use Hyperf\Command\Concerns\InteractsWithIO;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 
 use function Hyperf\Support\class_uses_recursive;
@@ -31,6 +32,24 @@ final class AsCommand extends Command
         $this->parameterParser = $container->get(ParameterParser::class);
 
         parent::__construct();
+
+        $options = $this->parameterParser->parseMethodOptions($class, $method);
+        $definition = $this->getDefinition();
+        foreach ($options as $option) {
+            $name = $option->getName();
+            $snakeName = Str::snake($option->getName(), '-');
+
+            if (
+                $definition->hasOption($name)
+                || $definition->hasArgument($name)
+                || $definition->hasOption($snakeName)
+                || $definition->hasArgument($snakeName)
+            ) {
+                continue;
+            }
+
+            $definition->addOption($option);
+        }
     }
 
     public function handle()
