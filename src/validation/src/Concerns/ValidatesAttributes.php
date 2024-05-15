@@ -147,10 +147,7 @@ trait ValidatesAttributes
      */
     public function validateAscii(string $attribute, mixed $value): bool
     {
-        if ($value === '') {
-            return true;
-        }
-        return ! \preg_match('/[^\x00-\x7F]/', (string) $value);
+        return Str::isAscii((string) $value);
     }
 
     /**
@@ -1630,6 +1627,81 @@ trait ValidatesAttributes
 
         if ($this->validateDeclined($parameters[0], $this->getValue($parameters[0]))) {
             return $this->validateRequired($attribute, $value);
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate that an attribute does not exist or is an empty string.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @return bool
+     */
+    public function validateProhibited($attribute, $value)
+    {
+        return ! $this->validateRequired($attribute, $value);
+    }
+
+    /**
+     * Validate that an attribute does not exist when another attribute has a given value.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param mixed $parameters
+     * @return bool
+     */
+    public function validateProhibitedIf($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(2, $parameters, 'prohibited_if');
+
+        [$values, $other] = $this->parseDependentRuleParameters($parameters);
+
+        if (in_array($other, $values, is_bool($other) || is_null($other))) {
+            return ! $this->validateRequired($attribute, $value);
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate that an attribute does not exist unless another attribute has a given value.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param mixed $parameters
+     * @return bool
+     */
+    public function validateProhibitedUnless($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(2, $parameters, 'prohibited_unless');
+
+        [$values, $other] = $this->parseDependentRuleParameters($parameters);
+
+        if (! in_array($other, $values, is_bool($other) || is_null($other))) {
+            return ! $this->validateRequired($attribute, $value);
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate that other attributes do not exist when this attribute exists.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param mixed $parameters
+     * @return bool
+     */
+    public function validateProhibits($attribute, $value, $parameters)
+    {
+        if ($this->validateRequired($attribute, $value)) {
+            foreach ($parameters as $parameter) {
+                if ($this->validateRequired($parameter, Arr::get($this->data, $parameter))) {
+                    return false;
+                }
+            }
         }
 
         return true;
