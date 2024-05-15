@@ -30,7 +30,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
 {
     protected ?Instantiator $instantiator = null;
 
-    public function denormalize($data, string $type, ?string $format = null, array $context = [])
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
     {
         if (is_string($data)) {
             $ex = unserialize($data);
@@ -69,7 +69,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
         return new RuntimeException('Bad data data: ' . json_encode($data));
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
         return class_exists($type) && is_a($type, Throwable::class, true);
     }
