@@ -27,7 +27,7 @@
         "jean85/pretty-package-versions": "^1.2|^2.0"
     },
     "suggest": {
-        "hyperf/load-balancer": "Use LoadBalancer for GrpcTransporter.(~3.0.0)"
+        "hyperf/load-balancer": "Use LoadBalancer for GrpcTransporter.(~3.1.0)"
     },
     "autoload": {
         "psr-4": {
