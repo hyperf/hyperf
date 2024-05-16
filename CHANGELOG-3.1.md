@@ -1,5 +1,9 @@
 # v3.1.23 - TBD
 
+## Added
+
+- [#6763](https://github.com/hyperf/hyperf/pull/6763) Added `Premature end of data` into `DetectsLostConnections`.
+
 ## Changed
 
 - [#6760](https://github.com/hyperf/hyperf/pull/6760) Update the deleted_at field type to datetime.
