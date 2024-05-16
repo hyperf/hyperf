@@ -518,7 +518,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Get a flattened array of the items in the collection.
      *
-     * @param int $depth
+     * @param float|int $depth
      * @return static
      */
     public function flatten($depth = INF);

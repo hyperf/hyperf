@@ -491,7 +491,7 @@ class LazyCollection implements Enumerable
     /**
      * Get a flattened list of the items in the collection.
      *
-     * @param int $depth
+     * @param float|int $depth
      * @return static<int, mixed>
      */
     public function flatten($depth = INF)

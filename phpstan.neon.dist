@@ -70,5 +70,3 @@ parameters:
       path: src/collection/*.php
     - message: '#Method .* should return .* but returns#'
       path: src/collection/src/*.php
-    - message: '#Default value of the parameter \#1 \$depth \(float\) of method .* is incompatible with type int#'
-      path: src/collection/src/*.php
