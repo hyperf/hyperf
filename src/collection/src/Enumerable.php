@@ -814,7 +814,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Get the items with the specified keys.
      *
-     * @param array<array-key, TKey>|Enumerable<array-key, TKey>|string $keys
+     * @param null|array<array-key, TKey>|Enumerable<array-key, TKey>|string $keys
      * @return static
      */
     public function only($keys);

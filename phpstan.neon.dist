@@ -68,8 +68,6 @@ parameters:
     - '#Call to an undefined method Hyperf\\Database\\.*\\Processor::#'
     - message: '#Type mixed in generic type.*#'
       path: src/collection/*.php
-    - message: '#Call to function is_null\(\) with array#'
-      path: src/collection/src/*.php
     - message: '#Method .* should return .* but returns#'
       path: src/collection/src/*.php
     - message: '#Default value of the parameter \#1 \$depth \(float\) of method .* is incompatible with type int#'

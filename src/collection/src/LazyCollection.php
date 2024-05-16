@@ -929,7 +929,7 @@ class LazyCollection implements Enumerable
     /**
      * Get the items with the specified keys.
      *
-     * @param array<array-key, TKey>|Enumerable<array-key, TKey>|string $keys
+     * @param null|array<array-key, TKey>|Enumerable<array-key, TKey>|string $keys
      * @return static
      */
     public function only($keys)
@@ -964,7 +964,7 @@ class LazyCollection implements Enumerable
     /**
      * Select specific values from the items within the collection.
      *
-     * @param array<array-key, TKey>|Enumerable<array-key, TKey>|string $keys
+     * @param null|array<array-key, TKey>|Enumerable<array-key, TKey>|string $keys
      * @return static
      */
     public function select($keys)
