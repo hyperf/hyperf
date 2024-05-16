@@ -45,6 +45,16 @@ trait DetectsLostConnections
             'Name or service not known',
             'ORA-03114',
             'Packets out of order. Expected',
+            'Broken pipe',
+            'Error reading result',
+            // PDO::prepare(): Send of 77 bytes failed with errno=110 Operation timed out
+            // SSL: Handshake timed out
+            // SSL: Operation timed out
+            // SSL: Connection timed out
+            // SQLSTATE[HY000] [2002] Connection timed out
+            'timed out',
+            // PDOStatement::execute(): Premature end of data
+            'Premature end of data',
         ]);
     }
 }
