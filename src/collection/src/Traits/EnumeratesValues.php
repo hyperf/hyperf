@@ -966,7 +966,7 @@ trait EnumeratesValues
                 return $value->jsonSerialize();
             }
             if ($value instanceof Jsonable) {
-                return json_decode($value->toJson(), true);
+                return json_decode($value->__toString(), true);
             }
             if ($value instanceof Arrayable) {
                 return $value->toArray();

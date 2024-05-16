@@ -1717,6 +1717,7 @@ class LazyCollection implements Enumerable
 
     /**
      * Get the values iterator.
+     * @return Iterator
      */
     public function getIterator(): Traversable
     {
