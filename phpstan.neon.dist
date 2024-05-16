@@ -55,7 +55,6 @@ parameters:
     - message: '#Match arm is unreachable because previous comparison is always true#'
       path: src/amqp/src/IO/IOFactory.php
     - '#.*TKey.*TValue#'
-    - '#Method Hyperf\\Utils\\Serializer\\Serializer::normalize\(\) should return array\|ArrayObject\|bool\|float\|int\|string\|null#'
     - '#Method Hyperf\\Serializer\\Serializer::normalize\(\) should return array\|ArrayObject\|bool\|float\|int\|string\|null#'
     - '#Class RedisSentinel constructor invoked with .*#'
     - '#Hyperf\\Engine\\Http\\Server#'
@@ -63,9 +62,21 @@ parameters:
     - '#has invalid type Swow#'
     - '#has unknown class Swow#'
     - '#PHPDoc tag \@var above a method has no effect#'
-    - '#\(Hyperf\\Utils\\Collection\) does not accept Hyperf\\Collection\\Collection#'
-    - '#should return Hyperf\\Utils\\Collection but returns Hyperf\\Collection\\Collectio#'
     - '#Call to an undefined method Hyperf\\Collection\\HigherOrderCollectionProxy::\w+\(\)#'
     - '#Access to an undefined property Hyperf\\Support\\Fluent#'
     - '#Call to an undefined method Hyperf\\Database\\.*\\Grammar::#'
     - '#Call to an undefined method Hyperf\\Database\\.*\\Processor::#'
+    - message: '#Type mixed in generic type.*#'
+      path: src/collection/*.php
+    - message: '#Call to function is_null\(\) with array#'
+      path: src/collection/src/*.php
+    - message: '#Method .* should return .* but returns#'
+      path: src/collection/src/*.php
+    - message: '#Default value of the parameter \#1 \$depth \(float\) of method .* is incompatible with type int#'
+      path: src/collection/src/*.php
+    - message: '#operator condition is always true#'
+      path: src/collection/src/*.php
+    - message: '#code above always terminates#'
+      path: src/collection/src/*.php
+    - message: '#Parameter \#2 \$flags of class CachingIterator constructor expects#'
+      path: src/collection/src/*.php

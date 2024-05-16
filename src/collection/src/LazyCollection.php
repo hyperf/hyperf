@@ -462,12 +462,13 @@ class LazyCollection implements Enumerable
      *
      * @template TFirstDefault
      *
-     * @param null|(callable(TValue): bool) $callback
+     * @param null|(callable(TValue,TKey): bool) $callback
      * @param (Closure(): TFirstDefault)|TFirstDefault $default
      * @return TFirstDefault|TValue
      */
     public function first(?callable $callback = null, $default = null)
     {
+        /** @var Iterator $iterator */
         $iterator = $this->getIterator();
 
         if (is_null($callback)) {

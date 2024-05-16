@@ -26,7 +26,6 @@ use UnexpectedValueException;
 
 /**
  * @template TKey of array-key
- *
  * @template TValue
  *
  * @extends Arrayable<TKey, TValue>
@@ -329,7 +328,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Apply the callback if the given "value" is (or resolves to) truthy.
      *
-     * @template TWhenReturnType as null
+     * @template TWhenReturnType
      *
      * @param bool $value
      * @param null|(callable($this): TWhenReturnType) $callback
@@ -522,7 +521,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param int $depth
      * @return static
      */
-    public function flatten($depth = INF);
+    public function flatten($depth = INF); /** @phpstan-ignore-line */
 
     /**
      * Flip the values with their keys.
