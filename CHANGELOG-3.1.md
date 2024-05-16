@@ -1,5 +1,9 @@
 # v3.1.23 - TBD
 
+## Changed
+
+- [#6760](https://github.com/hyperf/hyperf/pull/6760) Update the deleted_at field type to datetime.
+
 # v3.1.22 - 2024-05-16
 
 ## Fixed
