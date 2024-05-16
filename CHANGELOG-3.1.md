@@ -1,5 +1,9 @@
 # v3.1.23 - TBD
 
+## Added
+
+- [#6763](https://github.com/hyperf/hyperf/pull/6763) Added `Premature end of data` into `DetectsLostConnections`.
+
 # v3.1.22 - 2024-05-16
 
 ## Fixed
