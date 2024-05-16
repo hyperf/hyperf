@@ -1,4 +1,20 @@
-# v3.0.47 - TBD
+# v3.0.49 - 2024-05-16
+
+## Added
+
+- [#6764](https://github.com/hyperf/hyperf/pull/6764) Added `Premature end of data` into `DetectsLostConnections`.
+
+# v3.0.48 - 2024-04-17
+
+## Fixed
+
+- [#6693](https://github.com/hyperf/hyperf/pull/6693) Fixed bug that socket-io cannot parse data with `?` but without `query`.
+
+# v3.0.47 - 2024-01-11
+
+## Optimized
+
+- [#6455](https://github.com/hyperf/hyperf/pull/6455) Optimized code of Hyperf\SocketIOServer\Parser\Decoder::decode().
 
 # v3.0.46 - 2023-11-30
 

@@ -52,6 +52,8 @@ trait DetectsLostConnections
             // SSL: Connection timed out
             // SQLSTATE[HY000] [2002] Connection timed out
             'timed out',
+            // PDOStatement::execute(): Premature end of data
+            'Premature end of data',
         ]);
     }
 }
