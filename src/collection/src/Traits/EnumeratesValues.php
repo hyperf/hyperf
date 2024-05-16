@@ -995,6 +995,7 @@ trait EnumeratesValues
      */
     public function getCachingIterator($flags = CachingIterator::CALL_TOSTRING)
     {
+        /* @phpstan-ignore-next-line */
         return new CachingIterator($this->getIterator(), $flags);
     }
 

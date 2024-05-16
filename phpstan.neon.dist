@@ -72,9 +72,3 @@ parameters:
       path: src/collection/src/*.php
     - message: '#Default value of the parameter \#1 \$depth \(float\) of method .* is incompatible with type int#'
       path: src/collection/src/*.php
-    - message: '#operator condition is always true#'
-      path: src/collection/src/*.php
-    - message: '#code above always terminates#'
-      path: src/collection/src/*.php
-    - message: '#Parameter \#2 \$flags of class CachingIterator constructor expects#'
-      path: src/collection/src/*.php

@@ -1742,7 +1742,7 @@ class LazyCollection implements Enumerable
      * @template TIteratorKey of array-key
      * @template TIteratorValue
      *
-     * @param array<TIteratorKey, TIteratorValue>|(callable(): Generator<TIteratorKey, TIteratorValue>)|IteratorAggregate<TIteratorKey, TIteratorValue> $source
+     * @param array<TIteratorKey, TIteratorValue>|(callable(): mixed|Generator<TIteratorKey, TIteratorValue>)|IteratorAggregate<TIteratorKey, TIteratorValue> $source
      * @return Iterator
      * @throws Exception
      */
