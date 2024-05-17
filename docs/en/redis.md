@@ -67,8 +67,7 @@ use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 
-$redis = $this->container->get(\Redis::class);
-
+$redis = $container->get(\Hyperf\Redis\Redis::class);
 $result = $redis->keys('*');
 
 ```
