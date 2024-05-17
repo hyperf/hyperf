@@ -364,7 +364,7 @@ var_dump(Arr::last(Db::getQueryLog()));
 
 ## Driver list
 
-Different from [illuminate/database](https://github.com/illuminate/database), [hyperf/database](https://github.com/hyperf/database) only provides MySQL driver by default, and currently also provides [PgSQL](https://github.com/hyperf/database-pgsql), [SQLite](https://github.com/hyperf/database-sqlite) and [SQLserver](https://github.com/ hyperf/database-sqlserver-incubator) and other drivers
+Different from [illuminate/database](https://github.com/illuminate/database), [hyperf/database](https://github.com/hyperf/database) only provides MySQL driver by default, and currently also provides [PgSQL](https://github.com/hyperf/database-pgsql), [SQLite](https://github.com/hyperf/database-sqlite) and [SQL Server](https://github.com/hyperf/database-sqlserver-incubator) and other drivers
 If the default mysql cannot meet the usage needs, you can install the corresponding driver yourself.
 
 ### PgSql driver
