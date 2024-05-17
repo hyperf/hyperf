@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#6757](https://github.com/hyperf/hyperf/pull/6757) Added `Hyperf\Collection\LazyCollection`.
 - [#6763](https://github.com/hyperf/hyperf/pull/6763) Added `Premature end of data` into `DetectsLostConnections`.
 
 # v3.1.22 - 2024-05-16

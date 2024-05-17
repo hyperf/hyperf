@@ -168,7 +168,7 @@ class Arr
             if (! is_array($item)) {
                 $result[] = $item;
             } else {
-                $values = $depth === 1
+                $values = $depth <= 1
                     ? array_values($item)
                     : static::flatten($item, $depth - 1);
 

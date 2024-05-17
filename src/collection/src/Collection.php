@@ -18,6 +18,7 @@ use CachingIterator;
 use Closure;
 use Countable;
 use Exception;
+use Hyperf\Conditionable\Conditionable;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Macroable\Macroable;
@@ -63,6 +64,7 @@ use Traversable;
 class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
 {
     use Macroable;
+    use Conditionable;
 
     /**
      * The items contained in the collection.
@@ -549,46 +551,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
             return new static(Arr::where($this->items, $callback));
         }
         return new static(array_filter($this->items));
-    }
-
-    /**
-     * Apply the callback if the value is truthy.
-     *
-     * @param callable($this, $value): $this $callback
-     * @param callable($this, $value): $this $default
-     * @return $this
-     */
-    public function when(mixed $value, callable $callback, ?callable $default = null): static
-    {
-        $value = $value instanceof Closure ? $value($this) : $value;
-
-        if ($value) {
-            return $callback($this, $value) ?: $this;
-        }
-        if ($default) {
-            return $default($this, $value) ?: $this;
-        }
-        return $this;
-    }
-
-    /**
-     * Apply the callback if the value is falsy.
-     *
-     * @param callable($this, $value): $this $callback
-     * @param callable($this, $value): $this $default
-     * @return $this
-     */
-    public function unless(mixed $value, callable $callback, ?callable $default = null): static
-    {
-        $value = $value instanceof Closure ? $value($this) : $value;
-
-        if (! $value) {
-            return $callback($this, $value) ?: $this;
-        }
-        if ($default) {
-            return $default($this, $value) ?: $this;
-        }
-        return $this;
     }
 
     /**
@@ -1753,6 +1715,66 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * Retrieve duplicate items from the collection.
+     *
+     * @param null|(callable(TValue): bool)|string $callback
+     * @param bool $strict
+     * @return static
+     */
+    public function duplicates($callback = null, $strict = false)
+    {
+        $items = $this->map($this->valueRetriever($callback));
+
+        $uniqueItems = $items->unique(null, $strict);
+
+        $compare = $this->duplicateComparator($strict);
+
+        $duplicates = new static();
+
+        foreach ($items as $key => $value) {
+            if ($uniqueItems->isNotEmpty() && $compare($value, $uniqueItems->first())) {
+                $uniqueItems->shift();
+            } else {
+                $duplicates[$key] = $value;
+            }
+        }
+
+        return $duplicates;
+    }
+
+    /**
+     * Get the first item in the collection, but only if exactly one item exists. Otherwise, throw an exception.
+     *
+     * @param (callable(TValue, TKey): bool)|string $key
+     * @param mixed $operator
+     * @param mixed $value
+     * @return TValue
+     *
+     * @throws ItemNotFoundException
+     * @throws MultipleItemsFoundException
+     */
+    public function sole($key = null, $operator = null, $value = null)
+    {
+        $filter = func_num_args() > 1
+            ? $this->operatorForWhere(...func_get_args())
+            : $key;
+
+        $items = $this->unless($filter == null)->filter($filter);
+
+        $count = $items->count();
+
+        if ($count === 0) {
+            throw new ItemNotFoundException();
+        }
+
+        if ($count > 1) {
+            throw new MultipleItemsFoundException($count);
+        }
+
+        return $items->first();
+    }
+
+    /**
      * Get the collection of items as a plain array.
      *
      * @return array<TKey, mixed>
@@ -1885,6 +1907,176 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * Get the first item in the collection but throw an exception if no matching items exist.
+     *
+     * @param (callable(TValue, TKey): bool)|string $key
+     * @param mixed $operator
+     * @param mixed $value
+     * @return TValue
+     *
+     * @throws ItemNotFoundException
+     */
+    public function firstOrFail($key = null, $operator = null, $value = null)
+    {
+        $filter = func_num_args() > 1
+            ? $this->operatorForWhere(...func_get_args())
+            : $key;
+
+        $placeholder = new stdClass();
+
+        $item = $this->first($filter, $placeholder);
+
+        if ($item === $placeholder) {
+            throw new ItemNotFoundException();
+        }
+
+        return $item;
+    }
+
+    /**
+     * Join all items from the collection using a string. The final items can use a separate glue string.
+     *
+     * @param string $glue
+     * @param string $finalGlue
+     * @return string
+     */
+    public function join($glue, $finalGlue = '')
+    {
+        if ($finalGlue === '') {
+            return $this->implode($glue);
+        }
+
+        $count = $this->count();
+
+        if ($count === 0) {
+            return '';
+        }
+
+        if ($count === 1) {
+            return $this->last();
+        }
+
+        $collection = new static($this->items);
+
+        $finalItem = $collection->pop();
+
+        return $collection->implode($glue) . $finalGlue . $finalItem;
+    }
+
+    /**
+     * Intersect the collection with the given items with additional index check, using the callback.
+     *
+     * @param Arrayable<array-key, TValue>|iterable<array-key, TValue> $items
+     * @param callable(TValue, TValue): int $callback
+     * @return static
+     */
+    public function intersectAssocUsing($items, callable $callback)
+    {
+        return new static(array_intersect_uassoc($this->items, $this->getArrayableItems($items), $callback));
+    }
+
+    /**
+     * Intersect the collection with the given items, using the callback.
+     *
+     * @param Arrayable<array-key, TValue>|iterable<array-key, TValue> $items
+     * @param callable(TValue, TValue): int $callback
+     * @return static
+     */
+    public function intersectUsing($items, callable $callback)
+    {
+        return new static(array_uintersect($this->items, $this->getArrayableItems($items), $callback));
+    }
+
+    /**
+     * Retrieve duplicate items from the collection using strict comparison.
+     *
+     * @param null|(callable(TValue): bool)|string $callback
+     * @return static
+     */
+    public function duplicatesStrict($callback = null)
+    {
+        return $this->duplicates($callback, true);
+    }
+
+    /**
+     * Get a lazy collection for the items in this collection.
+     *
+     * @return LazyCollection<TKey, TValue>
+     */
+    public function lazy()
+    {
+        return new LazyCollection($this->items);
+    }
+
+    /**
+     * Skip items in the collection until the given condition is met.
+     *
+     * @param callable(TValue,TKey): bool|TValue $value
+     * @return static
+     */
+    public function skipUntil($value)
+    {
+        return new static($this->lazy()->skipUntil($value)->all());
+    }
+
+    /**
+     * Skip items in the collection while the given condition is met.
+     *
+     * @param callable(TValue,TKey): bool|TValue $value
+     * @return static
+     */
+    public function skipWhile($value)
+    {
+        return new static($this->lazy()->skipWhile($value)->all());
+    }
+
+    /**
+     * Chunk the collection into chunks with a callback.
+     *
+     * @param callable(TValue, TKey, static<int, TValue>): bool $callback
+     * @return static<int, static<int, TValue>>
+     */
+    public function chunkWhile(callable $callback)
+    {
+        return new static(
+            $this->lazy()->chunkWhile($callback)->mapInto(static::class)
+        );
+    }
+
+    /**
+     * Take items in the collection until the given condition is met.
+     *
+     * @param callable(TValue,TKey): bool|TValue $value
+     * @return static
+     */
+    public function takeUntil($value)
+    {
+        return new static($this->lazy()->takeUntil($value)->all());
+    }
+
+    /**
+     * Take items in the collection while the given condition is met.
+     *
+     * @param callable(TValue,TKey): bool|TValue $value
+     * @return static
+     */
+    public function takeWhile($value)
+    {
+        return new static($this->lazy()->takeWhile($value)->all());
+    }
+
+    /**
+     * Count the number of items in the collection by a field or using a callback.
+     *
+     * @param null|(callable(TValue, TKey): array-key)|string $countBy
+     * @return static<array-key, int>
+     */
+    public function countBy($countBy = null)
+    {
+        return new static($this->lazy()->countBy($countBy)->all());
+    }
+
+    /**
      * Sort the collection using multiple comparisons.
      *
      * @return static
@@ -1972,6 +2164,21 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
                     return $retrieved !== $value;
             }
         };
+    }
+
+    /**
+     * Get the comparison function to detect duplicates.
+     *
+     * @param bool $strict
+     * @return callable(TValue, TValue): bool
+     */
+    protected function duplicateComparator($strict)
+    {
+        if ($strict) {
+            return fn ($a, $b) => $a === $b;
+        }
+
+        return fn ($a, $b) => $a == $b;
     }
 
     /**
