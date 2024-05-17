@@ -1562,6 +1562,70 @@ class Builder
     }
 
     /**
+     * Add a "where" clause to the query for multiple columns with "and" conditions between them.
+     *
+     * @param string[] $columns
+     */
+    public function whereAll(array $columns, mixed $operator = null, mixed $value = null, string $boolean = 'and'): static
+    {
+        [$value, $operator] = $this->prepareValueAndOperator(
+            $value,
+            $operator,
+            func_num_args() === 2
+        );
+
+        $this->whereNested(function ($query) use ($columns, $operator, $value) {
+            foreach ($columns as $column) {
+                $query->where($column, $operator, $value, 'and');
+            }
+        }, $boolean);
+
+        return $this;
+    }
+
+    /**
+     * Add an "or where" clause to the query for multiple columns with "and" conditions between them.
+     *
+     * @param string[] $columns
+     */
+    public function orWhereAll(array $columns, mixed $operator = null, mixed $value = null): static
+    {
+        return $this->whereAll($columns, $operator, $value, 'or');
+    }
+
+    /**
+     * Add an "where" clause to the query for multiple columns with "or" conditions between them.
+     *
+     * @param string[] $columns
+     */
+    public function whereAny(array $columns, mixed $operator = null, mixed $value = null, string $boolean = 'and'): static
+    {
+        [$value, $operator] = $this->prepareValueAndOperator(
+            $value,
+            $operator,
+            func_num_args() === 2
+        );
+
+        $this->whereNested(function ($query) use ($columns, $operator, $value) {
+            foreach ($columns as $column) {
+                $query->where($column, $operator, $value, 'or');
+            }
+        }, $boolean);
+
+        return $this;
+    }
+
+    /**
+     * Add an "or where" clause to the query for multiple columns with "or" conditions between them.
+     *
+     * @param string[] $columns
+     */
+    public function orWhereAny(array $columns, mixed $operator = null, mixed $value = null): static
+    {
+        return $this->whereAny($columns, $operator, $value, 'or');
+    }
+
+    /**
      * Add a "group by" clause to the query.
      *
      * @param array|string ...$groups
