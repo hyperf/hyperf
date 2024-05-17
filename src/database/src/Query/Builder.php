@@ -1565,12 +1565,8 @@ class Builder
      * Add a "where" clause to the query for multiple columns with "and" conditions between them.
      *
      * @param string[] $columns
-     * @param mixed $operator
-     * @param mixed $value
-     * @param string $boolean
-     * @return $this
      */
-    public function whereAll($columns, $operator = null, $value = null, $boolean = 'and')
+    public function whereAll(array $columns, mixed $operator = null, mixed $value = null, string $boolean = 'and'): static
     {
         [$value, $operator] = $this->prepareValueAndOperator(
             $value,
@@ -1591,11 +1587,8 @@ class Builder
      * Add an "or where" clause to the query for multiple columns with "and" conditions between them.
      *
      * @param string[] $columns
-     * @param string $operator
-     * @param mixed $value
-     * @return $this
      */
-    public function orWhereAll($columns, $operator = null, $value = null)
+    public function orWhereAll(array $columns, mixed $operator = null, mixed $value = null): static
     {
         return $this->whereAll($columns, $operator, $value, 'or');
     }
@@ -1604,12 +1597,8 @@ class Builder
      * Add an "where" clause to the query for multiple columns with "or" conditions between them.
      *
      * @param string[] $columns
-     * @param string $operator
-     * @param mixed $value
-     * @param string $boolean
-     * @return $this
      */
-    public function whereAny($columns, $operator = null, $value = null, $boolean = 'and')
+    public function whereAny(array $columns, mixed $operator = null, mixed $value = null, string $boolean = 'and'): static
     {
         [$value, $operator] = $this->prepareValueAndOperator(
             $value,
@@ -1630,11 +1619,8 @@ class Builder
      * Add an "or where" clause to the query for multiple columns with "or" conditions between them.
      *
      * @param string[] $columns
-     * @param string $operator
-     * @param mixed $value
-     * @return $this
      */
-    public function orWhereAny($columns, $operator = null, $value = null)
+    public function orWhereAny(array $columns, mixed $operator = null, mixed $value = null): static
     {
         return $this->whereAny($columns, $operator, $value, 'or');
     }
