@@ -491,16 +491,15 @@ class LazyCollection implements Enumerable
     /**
      * Get a flattened list of the items in the collection.
      *
-     * @param float|int $depth
      * @return static<int, mixed>
      */
-    public function flatten($depth = INF)
+    public function flatten(float|int $depth = INF)
     {
         $instance = new static(function () use ($depth) {
             foreach ($this as $item) {
                 if (! is_array($item) && ! $item instanceof Enumerable) {
                     yield $item;
-                } elseif ($depth === 1) {
+                } elseif ($depth <= 1) {
                     yield from $item;
                 } else {
                     yield from (new static($item))->flatten($depth - 1);
