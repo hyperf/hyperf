@@ -6,6 +6,10 @@ parameters:
   level: 5
   bootstrapFiles:
     - "bootstrap.php"
+  parallel:
+    jobSize: 20
+    maximumNumberOfProcesses: 32
+    minimumNumberOfJobsPerProcess: 2
   inferPrivatePropertyTypeFromConstructor: true
   treatPhpDocTypesAsCertain: true
   reportUnmatchedIgnoredErrors: false
