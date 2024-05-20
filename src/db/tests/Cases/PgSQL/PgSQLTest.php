@@ -25,7 +25,7 @@ use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 #[CoversNothing]
 class PgSQLTest extends AbstractTestCase
 {
-    #[RequiresPhpExtension('swoole','< 6.0')]
+    #[RequiresPhpExtension('swoole', '< 6.0')]
     public function testExecute()
     {
         $res = DB::connection('pgsql')->execute('INSERT INTO public.users (email, name) VALUES (?, ?);', ['l@hyperf.io', 'limx']);
