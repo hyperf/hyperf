@@ -40,8 +40,8 @@ class DatabasePostgresBuilderTest extends TestCase
     {
         ContainerStub::getContainer();
         Schema::dropIfExists('test_full_text_index');
-        Schema::drop('posts');
-        Schema::drop('users');
+        Schema::dropIfExists('join_posts');
+        Schema::dropIfExists('join_users');
         m::close();
     }
 
@@ -127,34 +127,34 @@ class DatabasePostgresBuilderTest extends TestCase
 
     public function testJoinLateralTest(): void
     {
-        Schema::create('users', static function (Blueprint $table) {
+        Schema::create('join_users', static function (Blueprint $table) {
             $table->id('id');
             $table->string('name');
         });
 
-        Schema::create('posts', static function (Blueprint $table) {
+        Schema::create('join_posts', static function (Blueprint $table) {
             $table->id('id');
             $table->string('title');
             $table->integer('rating');
             $table->unsignedBigInteger('user_id');
         });
-        Db::table('users')->insert([
+        Db::table('join_users')->insert([
             ['name' => Str::random()],
             ['name' => Str::random()],
         ]);
 
-        Db::table('posts')->insert([
+        Db::table('join_posts')->insert([
             ['title' => Str::random(), 'rating' => 1, 'user_id' => 1],
             ['title' => Str::random(), 'rating' => 3, 'user_id' => 1],
             ['title' => Str::random(), 'rating' => 7, 'user_id' => 1],
         ]);
-        $subquery = Db::table('posts')
+        $subquery = Db::table('join_posts')
             ->select('title as best_post_title', 'rating as best_post_rating')
             ->whereColumn('user_id', 'users.id')
             ->orderBy('rating', 'desc')
             ->limit(2);
 
-        $userWithPosts = Db::table('users')
+        $userWithPosts = Db::table('join_users')
             ->where('id', 1)
             ->joinLateral($subquery, 'best_post')
             ->get();
@@ -163,20 +163,20 @@ class DatabasePostgresBuilderTest extends TestCase
         $this->assertEquals(7, $userWithPosts[0]->best_post_rating);
         $this->assertEquals(3, $userWithPosts[1]->best_post_rating);
 
-        $userWithoutPosts = Db::table('users')
+        $userWithoutPosts = Db::table('join_users')
             ->where('id', 2)
             ->joinLateral($subquery, 'best_post')
             ->get();
 
         $this->assertCount(0, $userWithoutPosts);
 
-        $subquery = Db::table('posts')
+        $subquery = Db::table('join_posts')
             ->select('title as best_post_title', 'rating as best_post_rating')
             ->whereColumn('user_id', 'users.id')
             ->orderBy('rating', 'desc')
             ->limit(2);
 
-        $userWithPosts = Db::table('users')
+        $userWithPosts = Db::table('join_users')
             ->where('id', 1)
             ->leftJoinLateral($subquery, 'best_post')
             ->get();
@@ -185,7 +185,7 @@ class DatabasePostgresBuilderTest extends TestCase
         $this->assertEquals(7, $userWithPosts[0]->best_post_rating);
         $this->assertEquals(3, $userWithPosts[1]->best_post_rating);
 
-        $userWithoutPosts = Db::table('users')
+        $userWithoutPosts = Db::table('join_users')
             ->where('id', 2)
             ->leftJoinLateral($subquery, 'best_post')
             ->get();
