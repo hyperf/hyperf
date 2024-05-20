@@ -792,7 +792,7 @@ class ModelRealBuilderTest extends TestCase
 
         $mySqlVersion = Db::select('select version()')[0]->{'version()'} ?? '';
 
-        if ((float) $mySqlVersion < '8.0.14') {
+        if (version_compare($mySqlVersion, '8.0.14', '<')) {
             $this->markTestSkipped('Lateral joins are not supported on MySQL < 8.0.14' . __CLASS__);
         }
         Db::table('users')->insert([
