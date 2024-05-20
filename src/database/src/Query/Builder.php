@@ -541,7 +541,7 @@ class Builder
     /**
      * Add a lateral join clause to the query.
      */
-    public function joinLateral(array|Builder|Closure|ModelBuilder|string $query, string $as, string $type = 'inner'): static
+    public function joinLateral(Builder|Closure|ModelBuilder|string $query, string $as, string $type = 'inner'): static
     {
         [$query, $bindings] = $this->createSub($query);
 
@@ -557,7 +557,7 @@ class Builder
     /**
      * Add a lateral left join to the query.
      */
-    public function leftJoinLateral(array|Builder|Closure|ModelBuilder|string $query, string $as): static
+    public function leftJoinLateral(Builder|Closure|ModelBuilder|string $query, string $as): static
     {
         return $this->joinLateral($query, $as, 'left');
     }

@@ -974,10 +974,6 @@ class DatabaseQueryBuilderTest extends TestCase
         $builder->from('users')
             ->leftJoinLateral($sub->from('contacts')->whereColumn('contracts.user_id', 'users.id'), 'sub');
         $this->assertSame('select * from `users` left join lateral (select * from `contacts` where `contracts`.`user_id` = `users`.`id`) as `sub` on true', $builder->toSql());
-
-        $this->expectException(InvalidArgumentException::class);
-        $builder = $this->getBuilder();
-        $builder->from('users')->leftJoinLateral(['foo'], 'sub');
     }
 
     protected function getBuilder(): Builder
