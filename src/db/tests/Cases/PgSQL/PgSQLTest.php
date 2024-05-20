@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Cases\PgSQL;
 
 use Hyperf\DB\DB;
-use HyperfTest\Database\PgSQL\Stubs\SwooleVersionStub;
 use HyperfTest\DB\Cases\AbstractTestCase;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
