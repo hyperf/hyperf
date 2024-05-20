@@ -15,6 +15,7 @@ namespace Hyperf\Database\Query\Grammars;
 use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\IndexHint;
+use Hyperf\Database\Query\JoinLateralClause;
 use Hyperf\Database\Query\JsonExpression;
 
 use function Hyperf\Collection\collect;
@@ -167,6 +168,14 @@ class MySqlGrammar extends Grammar
         })->all();
 
         return parent::prepareBindingsForUpdate($bindings, $values);
+    }
+
+    /**
+     * Compile a "lateral join" clause.
+     */
+    public function compileJoinLateral(JoinLateralClause $join, string $expression): string
+    {
+        return trim("{$join->type} join lateral {$expression} on true");
     }
 
     /**
