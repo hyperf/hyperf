@@ -154,7 +154,7 @@ class DatabasePostgresBuilderTest extends TestCase
         ]);
         $subquery = Db::table('join_posts')
             ->select('title as best_post_title', 'rating as best_post_rating')
-            ->whereColumn('user_id', 'users.id')
+            ->whereColumn('user_id', 'join_users.id')
             ->orderBy('rating', 'desc')
             ->limit(2);
 
