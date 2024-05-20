@@ -787,6 +787,9 @@ class ModelRealBuilderTest extends TestCase
             $table->unsignedBigInteger('user_id');
         });
 
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
         Db::table('users')->insert([
             ['name' => Str::random()],
             ['name' => Str::random()],
