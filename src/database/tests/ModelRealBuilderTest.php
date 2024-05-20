@@ -775,11 +775,6 @@ class ModelRealBuilderTest extends TestCase
 
     public function testJoinLateral(): void
     {
-        $mySqlVersion = Db::select('select version()')[0]->{'version()'} ?? '';
-
-        if ((float) $mySqlVersion < '8.0.14') {
-            $this->markTestSkipped('Lateral joins are not supported on MySQL < 8.0.14' . __CLASS__);
-        }
         Schema::create('users', function (Blueprint $table) {
             $table->id('id');
             $table->string('name');
@@ -795,6 +790,11 @@ class ModelRealBuilderTest extends TestCase
         $container = $this->getContainer();
         $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
 
+        $mySqlVersion = Db::select('select version()')[0]->{'version()'} ?? '';
+
+        if ((float) $mySqlVersion < '8.0.14') {
+            $this->markTestSkipped('Lateral joins are not supported on MySQL < 8.0.14' . __CLASS__);
+        }
         Db::table('users')->insert([
             ['name' => Str::random()],
             ['name' => Str::random()],
