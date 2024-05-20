@@ -21,7 +21,6 @@ use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Query\Processors\Processor;
-use InvalidArgumentException;
 use Mockery as m;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\CoversNothing;
