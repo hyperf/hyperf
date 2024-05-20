@@ -24,9 +24,9 @@ use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use Hyperf\Stringable\Str;
 use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
-use HyperfTest\Database\PgSQL\Stubs\SwooleVersionStub;
 use Mockery as m;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -45,9 +45,9 @@ class DatabasePostgresBuilderTest extends TestCase
         m::close();
     }
 
+    #[RequiresPhpExtension('swoole', '< 6.0')]
     public function testCreateDatabase()
     {
-        SwooleVersionStub::skipV6();
         $grammar = new PostgresGrammar();
 
         $connection = m::mock(Connection::class);
@@ -61,9 +61,9 @@ class DatabasePostgresBuilderTest extends TestCase
         $this->assertEquals(true, $builder->createDatabase('my_temporary_database'));
     }
 
+    #[RequiresPhpExtension('swoole', '< 6.0')]
     public function testDropDatabaseIfExists()
     {
-        SwooleVersionStub::skipV6();
         $grammar = new PostgresGrammar();
 
         $connection = m::mock(Connection::class);
@@ -76,9 +76,9 @@ class DatabasePostgresBuilderTest extends TestCase
         $this->assertEquals(true, $builder->dropDatabaseIfExists('my_database_a'));
     }
 
+    #[RequiresPhpExtension('swoole', '< 6.0')]
     public function testWhereFullText()
     {
-        SwooleVersionStub::skipV6();
         $builder = $this->getPostgresBuilderWithProcessor();
         $builder->select('*')->from('users')->whereFullText('body', 'Hello World');
         $this->assertSame('select * from "users" where (to_tsvector(\'english\', "body")) @@ plainto_tsquery(\'english\', ?)', $builder->toSql());
@@ -125,9 +125,9 @@ class DatabasePostgresBuilderTest extends TestCase
         $this->assertSame('select * from "users" inner join lateral (select * from "contacts" where "contracts"."user_id" = "users"."id") as "sub" on true', $builder->toSql());
     }
 
+    #[RequiresPhpExtension('swoole', '< 6.0')]
     public function testJoinLateralTest(): void
     {
-        SwooleVersionStub::skipV6();
         $container = ContainerStub::getContainer();
         $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
         Schema::create('join_users', static function (Blueprint $table) {
@@ -198,9 +198,9 @@ class DatabasePostgresBuilderTest extends TestCase
         $this->assertNull($userWithoutPosts[0]->best_post_rating);
     }
 
+    #[RequiresPhpExtension('swoole', '< 6.0')]
     public function testWhereFullTextForReal()
     {
-        SwooleVersionStub::skipV6();
         $container = ContainerStub::getContainer();
         $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
 
