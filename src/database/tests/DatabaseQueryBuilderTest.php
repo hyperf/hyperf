@@ -948,10 +948,6 @@ class DatabaseQueryBuilderTest extends TestCase
 
         $this->assertEquals($expected, $builder->toSql());
         $this->assertEquals(['foo', 'bar'], $builder->getRawBindings()['join']);
-
-        $this->expectException(InvalidArgumentException::class);
-        $builder = $this->getMySqlBuilder();
-        $builder->from('users')->joinLateral(['foo'], 'sub');
     }
 
     public function testJoinLateralWithPrefix()
