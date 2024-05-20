@@ -9,6 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use PhpCsFixer\Config;
+use PhpCsFixer\Finder;
+use PhpCsFixer\Runner\Parallel\ParallelConfig;
+
 $header = <<<'EOF'
 This file is part of Hyperf.
 
@@ -18,7 +22,10 @@ This file is part of Hyperf.
 @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
 EOF;
 
-return (new PhpCsFixer\Config())
+$maxProcesses = function_exists('swoole_cpu_num') ? swoole_cpu_num() : 4;
+
+return (new Config())
+    ->setParallelConfig(new ParallelConfig($maxProcesses, 20))
     ->setRiskyAllowed(true)
     ->setRules([
         '@PSR2' => true,
@@ -99,7 +106,7 @@ return (new PhpCsFixer\Config())
         'single_line_empty_body' => false,
     ])
     ->setFinder(
-        PhpCsFixer\Finder::create()
+        Finder::create()
             ->exclude('bin')
             ->exclude('public')
             ->exclude('runtime')
