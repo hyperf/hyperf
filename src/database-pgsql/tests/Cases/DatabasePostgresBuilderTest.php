@@ -115,6 +115,7 @@ class DatabasePostgresBuilderTest extends TestCase
         $this->assertEquals(['Car Plane'], $builder->getBindings());
     }
 
+    #[RequiresPhpExtension('swoole', '< 6.0')]
     public function testJoinLateralPostgres()
     {
         $builder = $this->getPostgresBuilderWithProcessor();
