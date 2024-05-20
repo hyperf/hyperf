@@ -127,6 +127,9 @@ class DatabasePostgresBuilderTest extends TestCase
 
     public function testJoinLateralTest(): void
     {
+        SwooleVersionStub::skipV6();
+        $container = ContainerStub::getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
         Schema::create('join_users', static function (Blueprint $table) {
             $table->id('id');
             $table->string('name');
