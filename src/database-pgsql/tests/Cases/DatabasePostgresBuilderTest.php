@@ -40,8 +40,6 @@ class DatabasePostgresBuilderTest extends TestCase
     {
         ContainerStub::getContainer();
         Schema::dropIfExists('test_full_text_index');
-        Schema::dropIfExists('join_posts');
-        Schema::dropIfExists('join_users');
         m::close();
     }
 
@@ -131,6 +129,8 @@ class DatabasePostgresBuilderTest extends TestCase
     {
         $container = ContainerStub::getContainer();
         $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        Schema::dropIfExists('join_posts');
+        Schema::dropIfExists('join_users');
         Schema::create('join_users', static function (Blueprint $table) {
             $table->id('id');
             $table->string('name');
@@ -164,8 +164,8 @@ class DatabasePostgresBuilderTest extends TestCase
             ->get();
 
         $this->assertCount(2, $userWithPosts);
-        $this->assertEquals(7, $userWithPosts[0]->best_post_rating);
-        $this->assertEquals(3, $userWithPosts[1]->best_post_rating);
+        $this->assertEquals(7, $userWithPosts[0]['best_post_rating']);
+        $this->assertEquals(3, $userWithPosts[1]['best_post_rating']);
 
         $userWithoutPosts = Db::table('join_users')
             ->where('id', 2)
@@ -186,8 +186,8 @@ class DatabasePostgresBuilderTest extends TestCase
             ->get();
 
         $this->assertCount(2, $userWithPosts);
-        $this->assertEquals(7, $userWithPosts[0]->best_post_rating);
-        $this->assertEquals(3, $userWithPosts[1]->best_post_rating);
+        $this->assertEquals(7, $userWithPosts[0]['best_post_rating']);
+        $this->assertEquals(3, $userWithPosts[1]['best_post_rating']);
 
         $userWithoutPosts = Db::table('join_users')
             ->where('id', 2)
@@ -195,8 +195,8 @@ class DatabasePostgresBuilderTest extends TestCase
             ->get();
 
         $this->assertCount(1, $userWithoutPosts);
-        $this->assertNull($userWithoutPosts[0]->best_post_title);
-        $this->assertNull($userWithoutPosts[0]->best_post_rating);
+        $this->assertNull($userWithoutPosts[0]['best_post_title']);
+        $this->assertNull($userWithoutPosts[0]['best_post_rating']);
     }
 
     #[RequiresPhpExtension('swoole', '< 6.0')]
