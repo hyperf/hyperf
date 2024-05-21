@@ -1548,20 +1548,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Get a value retrieving callback.
-     * @param mixed $value
-     */
-    protected function valueRetriever($value): callable
-    {
-        if ($this->useAsCallable($value)) {
-            return $value;
-        }
-        return function ($item) use ($value) {
-            return data_get($item, $value);
-        };
-    }
-
-    /**
      * Results array of items from Collection or Arrayable.
      * @param null|Arrayable<TKey,TValue>|iterable<TKey,TValue>|Jsonable|JsonSerializable|static<TKey,TValue> $items
      * @return array<TKey,TValue>
