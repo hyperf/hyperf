@@ -35,8 +35,6 @@ use function Hyperf\Support\value;
 /**
  * @template TKey of array-key
  *
- * @template TTimesValue
- *
  * @template TValue
  * @property HigherOrderCollectionProxy $average
  * @property HigherOrderCollectionProxy $avg
@@ -197,6 +195,8 @@ trait EnumeratesValues
     /**
      * Create a new collection by invoking the callback a given amount of times.
      *
+     * @template TTimesValue
+     *
      * @param int $number
      * @param null|(callable(int): TTimesValue) $callback
      * @return static<int, TTimesValue>
@@ -210,28 +210,6 @@ trait EnumeratesValues
         return static::range(1, $number)
             ->unless($callback == null)
             ->map($callback);
-    }
-
-    /**
-     * Get the average value of a given key.
-     *
-     * @param null|(callable(TValue): float|int)|string $callback
-     * @return null|float|int
-     */
-    public function avg($callback = null)
-    {
-        $callback = $this->valueRetriever($callback);
-
-        $reduced = $this->reduce(static function (&$reduce, $value) use ($callback) {
-            if (! is_null($resolved = $callback($value))) {
-                $reduce[0] += $resolved;
-                ++$reduce[1];
-            }
-
-            return $reduce;
-        }, [0, 0]);
-
-        return $reduced[1] ? $reduced[0] / $reduced[1] : null;
     }
 
     /**
@@ -927,16 +905,20 @@ trait EnumeratesValues
      * Return only unique items from the collection array.
      *
      * @param null|(callable(TValue, TKey): mixed)|string $key
-     * @return static<TKey, TValue>
+     * @param bool $strict
+     * @return static
      */
-    public function unique($key = null, bool $strict = false): self
+    public function unique($key = null, $strict = false)
     {
         $callback = $this->valueRetriever($key);
+
         $exists = [];
+
         return $this->reject(function ($item, $key) use ($callback, $strict, &$exists) {
             if (in_array($id = $callback($item, $key), $exists, $strict)) {
                 return true;
             }
+
             $exists[] = $id;
         });
     }
