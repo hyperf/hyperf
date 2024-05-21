@@ -18,7 +18,7 @@ use CachingIterator;
 use Closure;
 use Countable;
 use Exception;
-use Hyperf\Conditionable\Conditionable;
+use Hyperf\Collection\Traits\EnumeratesValues;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Macroable\Macroable;
@@ -63,8 +63,8 @@ use Traversable;
  */
 class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
 {
+    use EnumeratesValues;
     use Macroable;
-    use Conditionable;
 
     /**
      * The items contained in the collection.
@@ -72,34 +72,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @var array<TKey, TValue>
      */
     protected array $items = [];
-
-    /**
-     * The methods that can be proxied.
-     *
-     * @var string[]
-     */
-    protected static array $proxies
-        = [
-            'average',
-            'avg',
-            'contains',
-            'each',
-            'every',
-            'filter',
-            'first',
-            'flatMap',
-            'groupBy',
-            'keyBy',
-            'map',
-            'max',
-            'min',
-            'partition',
-            'reject',
-            'sortBy',
-            'sortByDesc',
-            'sum',
-            'unique',
-        ];
 
     /**
      * Create a new collection.
