@@ -361,19 +361,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Filter the items, removing any items that don't match the given type.
-     *
-     * @param class-string $type
-     * @return static<TKey, TValue>
-     */
-    public function whereInstanceOf(string $type): self
-    {
-        return $this->filter(function ($value) use ($type) {
-            return $value instanceof $type;
-        });
-    }
-
-    /**
      * Get the first item from the collection.
      *
      * @template TFirstDefault
@@ -735,19 +722,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         }
         $keys = is_array($keys) ? $keys : func_get_args();
         return new static(Arr::only($this->items, $keys));
-    }
-
-    /**
-     * Pass the collection to the given callback and return the result.
-     *
-     * @template TPipeReturnType
-     *
-     * @param callable($this): TPipeReturnType $callback
-     * @return TPipeReturnType
-     */
-    public function pipe(callable $callback)
-    {
-        return $callback($this);
     }
 
     /**
