@@ -14,7 +14,6 @@ namespace Hyperf\Collection;
 
 use ArrayAccess;
 use ArrayIterator;
-use CachingIterator;
 use Closure;
 use Countable;
 use Exception;
@@ -1257,15 +1256,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Get a CachingIterator instance.
-     */
-    public function getCachingIterator(int $flags = CachingIterator::CALL_TOSTRING): CachingIterator
-    {
-        /* @phpstan-ignore-next-line */
-        return new CachingIterator($this->getIterator(), $flags);
-    }
-
-    /**
      * Count the number of items in the collection.
      */
     public function count(): int
@@ -1327,14 +1317,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function offsetUnset(mixed $offset): void
     {
         unset($this->items[$offset]);
-    }
-
-    /**
-     * Add a method to the list of proxied methods.
-     */
-    public static function proxy(string $method): void
-    {
-        static::$proxies[] = $method;
     }
 
     /**
