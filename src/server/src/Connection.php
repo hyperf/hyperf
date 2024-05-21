@@ -16,7 +16,7 @@ use Hyperf\Engine\Contract\SocketInterface;
 
 class Connection
 {
-    protected $socket;
+    protected SocketInterface $socket;
 
     public function __construct(SocketInterface $conn)
     {

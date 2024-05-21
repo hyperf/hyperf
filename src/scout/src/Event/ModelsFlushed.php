@@ -21,7 +21,7 @@ class ModelsFlushed
     /**
      * @param Collection<int, Model&Searchable>
      */
-    public $models;
+    public Collection $models;
 
     public function __construct(Collection $models)
     {

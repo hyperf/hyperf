@@ -16,6 +16,9 @@ use RuntimeException;
 
 class CircuitBreakerException extends RuntimeException
 {
+    /**
+     * @var mixed
+     */
     public $result;
 
     public function setResult($result): static

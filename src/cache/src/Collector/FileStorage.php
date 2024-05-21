@@ -14,6 +14,9 @@ namespace Hyperf\Cache\Collector;
 
 class FileStorage
 {
+    /**
+     * @var mixed
+     */
     protected $data;
 
     protected ?int $expiredTime = null;
