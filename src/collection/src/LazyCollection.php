@@ -172,17 +172,6 @@ class LazyCollection implements Enumerable
     }
 
     /**
-     * Get the average value of a given key.
-     *
-     * @param null|(callable(TValue): float|int)|string $callback
-     * @return null|float|int
-     */
-    public function avg($callback = null)
-    {
-        return $this->collect()->avg($callback);
-    }
-
-    /**
      * Get the median of a given key.
      *
      * @param null|array<array-key, string>|string $key

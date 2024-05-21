@@ -100,25 +100,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Get the average value of a given key.
-     *
-     * @param null|(callable(TValue): float|int)|string $callback
-     */
-    public function avg($callback = null)
-    {
-        $callback = $this->valueRetriever($callback);
-        $items = $this->map(function ($value) use ($callback) {
-            return $callback($value);
-        })->filter(function ($value) {
-            return ! is_null($value);
-        });
-        if ($count = $items->count()) {
-            return $items->sum() / $count;
-        }
-        return null;
-    }
-
-    /**
      * Get the median of a given key.
      *
      * @param null|array<array-key, string>|string $key
