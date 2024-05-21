@@ -19,6 +19,9 @@ use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 
 /**
+ * @template TKey of array-key
+ * @template TValue
+ *
  * Most of the methods in this file come from illuminate/collections,
  * thanks Laravel Team provide such a useful class.
  */
@@ -329,8 +332,6 @@ class Arr
      *
      * The callback should return an associative array with a single key/value pair.
      *
-     * @template TKey
-     * @template TValue
      * @template TMapWithKeysKey of array-key
      * @template TMapWithKeysValue
      *
@@ -388,9 +389,6 @@ class Arr
 
     /**
      * Push an item onto the beginning of an array.
-     *
-     * @template TKey of array-key
-     * @template TValue
      *
      * @param array<TKey, TValue> $array
      * @param null|TKey $key
