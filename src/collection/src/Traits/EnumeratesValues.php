@@ -24,6 +24,7 @@ use Hyperf\Conditionable\Conditionable;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use JsonSerializable;
+use RuntimeException;
 use Traversable;
 use UnexpectedValueException;
 use UnitEnum;
@@ -278,7 +279,12 @@ trait EnumeratesValues
      */
     public function dump(...$args)
     {
-        var_dump($this->all(), ...$args);
+        if (! function_exists('dump')) {
+            throw new RuntimeException('symfony/var-dumper package required, please require the package via "composer require symfony/var-dumper"');
+        }
+
+        dump($this->all(), ...$args);
+
         return $this;
     }
 
