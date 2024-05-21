@@ -1247,47 +1247,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Get the collection of items as a plain array.
-     *
-     * @return array<TKey, mixed>
-     */
-    public function toArray(): array
-    {
-        return array_map(function ($value) {
-            return $value instanceof Arrayable ? $value->toArray() : $value;
-        }, $this->items);
-    }
-
-    /**
-     * Convert the object into something JSON serializable.
-     *
-     * @return array<TKey, mixed>
-     */
-    public function jsonSerialize(): mixed
-    {
-        return array_map(function ($value) {
-            if ($value instanceof JsonSerializable) {
-                return $value->jsonSerialize();
-            }
-            if ($value instanceof Jsonable) {
-                return json_decode($value->__toString(), true);
-            }
-            if ($value instanceof Arrayable) {
-                return $value->toArray();
-            }
-            return $value;
-        }, $this->items);
-    }
-
-    /**
-     * Get the collection of items as JSON.
-     */
-    public function toJson(int $options = 0): string
-    {
-        return json_encode($this->jsonSerialize(), $options);
-    }
-
-    /**
      * Get an iterator for the items.
      *
      * @return ArrayIterator<TKey, TValue>
