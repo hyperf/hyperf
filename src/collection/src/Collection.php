@@ -628,6 +628,31 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
+     * Run a dictionary map over the items.
+     * The callback should return an associative array with a single key/value pair.
+     *
+     * @template TMapToDictionaryKey of array-key
+     * @template TMapToDictionaryValue
+     *
+     * @param callable(TValue, TKey): array<TMapToDictionaryKey, TMapToDictionaryValue> $callback
+     * @return static<TMapToDictionaryKey, array<int, TMapToDictionaryValue>>
+     */
+    public function mapToDictionary(callable $callback): self
+    {
+        $dictionary = [];
+        foreach ($this->items as $key => $item) {
+            $pair = $callback($item, $key);
+            $key = key($pair);
+            $value = reset($pair);
+            if (! isset($dictionary[$key])) {
+                $dictionary[$key] = [];
+            }
+            $dictionary[$key][] = $value;
+        }
+        return new static($dictionary);
+    }
+
+    /**
      * Run an associative map over each of the items.
      * The callback should return an associative array with a single key/value pair.
      *
