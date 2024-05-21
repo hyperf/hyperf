@@ -826,24 +826,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Create a collection of all elements that do not pass a given truth test.
-     *
-     * @param bool|callable(TValue, TKey): bool $callback
-     * @return static<TKey, TValue>
-     */
-    public function reject($callback): self
-    {
-        if ($this->useAsCallable($callback)) {
-            return $this->filter(function ($value, $key) use ($callback) {
-                return ! $callback($value, $key);
-            });
-        }
-        return $this->filter(function ($item) use ($callback) {
-            return $item != $callback;
-        });
-    }
-
-    /**
      * Replace the collection items with the given items.
      *
      * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
@@ -1130,18 +1112,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
             return $this->slice($limit, abs($limit));
         }
         return $this->slice(0, $limit);
-    }
-
-    /**
-     * Pass the collection to the given callback and then return it.
-     *
-     * @param callable(static<TKey,TValue>): mixed $callback
-     * @return $this
-     */
-    public function tap(callable $callback): self
-    {
-        $callback(new static($this->items));
-        return $this;
     }
 
     /**
