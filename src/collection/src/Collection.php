@@ -730,23 +730,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Get the max value of a given key.
-     *
-     * @param null|(callable(TValue):mixed)|string $callback
-     * @return TValue
-     */
-    public function max($callback = null)
-    {
-        $callback = $this->valueRetriever($callback);
-        return $this->filter(function ($value) {
-            return ! is_null($value);
-        })->reduce(function ($result, $item) use ($callback) {
-            $value = $callback($item);
-            return is_null($result) || $value > $result ? $value : $result;
-        });
-    }
-
-    /**
      * Merge the collection with the given items.
      * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
      * @return static<TKey, TValue>
@@ -792,24 +775,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Get the min value of a given key.
-     *
-     * @param null|(callable(TValue):mixed)|string $callback
-     * @return TValue
-     */
-    public function min($callback = null)
-    {
-        $callback = $this->valueRetriever($callback);
-        return $this->map(function ($value) use ($callback) {
-            return $callback($value);
-        })->filter(function ($value) {
-            return ! is_null($value);
-        })->reduce(function ($result, $value) {
-            return is_null($result) || $value < $result ? $value : $result;
-        });
-    }
-
-    /**
      * Create a new collection consisting of every n-th element.
      *
      * @return static<TKey, TValue>
@@ -843,33 +808,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         }
         $keys = is_array($keys) ? $keys : func_get_args();
         return new static(Arr::only($this->items, $keys));
-    }
-
-    /**
-     * "Paginate" the collection by slicing it into a smaller collection.
-     */
-    public function forPage(int $page, int $perPage): self
-    {
-        $offset = max(0, ($page - 1) * $perPage);
-        return $this->slice($offset, $perPage);
-    }
-
-    /**
-     * Partition the collection into two arrays using the given callback or key.
-     *
-     * @param  callable(TValue, TKey) bool)|TValue|string  $key
-     * @param null|string|TValue $operator
-     * @param null|TValue $value
-     * @return static<int, static<TKey, TValue>>
-     */
-    public function partition($key, $operator = null, $value = null): self
-    {
-        $partitions = [new static(), new static()];
-        $callback = func_num_args() === 1 ? $this->valueRetriever($key) : $this->operatorForWhere(...func_get_args());
-        foreach ($this->items as $key => $item) {
-            $partitions[(int) ! $callback($item, $key)][$key] = $item;
-        }
-        return new static($partitions);
     }
 
     /**
