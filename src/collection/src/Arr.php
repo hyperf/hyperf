@@ -502,9 +502,8 @@ class Arr
 
     /**
      * Recursively sort an array by keys and values.
-     * @param mixed $descending
      */
-    public static function sortRecursive(array $array, int $options = SORT_REGULAR, $descending = false): array
+    public static function sortRecursive(array $array, int $options = SORT_REGULAR, bool $descending = false): array
     {
         foreach ($array as &$value) {
             if (is_array($value)) {
