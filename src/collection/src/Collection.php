@@ -826,21 +826,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Reduce the collection to a single value.
-     *
-     * @template TReduceInitial
-     * @template TReduceReturnType
-     *
-     * @param callable(TReduceInitial|TReduceReturnType, TValue): TReduceReturnType $callback
-     * @param TReduceInitial $initial
-     * @return TReduceInitial|TReduceReturnType
-     */
-    public function reduce(callable $callback, $initial = null)
-    {
-        return array_reduce($this->items, $callback, $initial);
-    }
-
-    /**
      * Create a collection of all elements that do not pass a given truth test.
      *
      * @param bool|callable(TValue, TKey): bool $callback
