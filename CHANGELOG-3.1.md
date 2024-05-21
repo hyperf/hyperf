@@ -6,6 +6,10 @@
 - [#6763](https://github.com/hyperf/hyperf/pull/6763) Added `Premature end of data` into `DetectsLostConnections`.
 - [#6767](https://github.com/hyperf/hyperf/pull/6767) Support `whereAll/orWhereAll` `whereAny/orWhereAny` for `Hyperf\Database\Query\Builder`.
 
+## Optimized
+
+- [#6777](https://github.com/hyperf/hyperf/pull/6777) Optimized StdoutLogger to improve log message handling.
+
 # v3.1.22 - 2024-05-16
 
 ## Fixed
