@@ -715,41 +715,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Run a dictionary map over the items.
-     * The callback should return an associative array with a single key/value pair.
-     *
-     * @template TMapToDictionaryKey of array-key
-     * @template TMapToDictionaryValue
-     *
-     * @param callable(TValue, TKey): array<TMapToDictionaryKey, TMapToDictionaryValue> $callback
-     * @return static<TMapToDictionaryKey, array<int, TMapToDictionaryValue>>
-     */
-    public function mapToDictionary(callable $callback): self
-    {
-        $dictionary = [];
-        foreach ($this->items as $key => $item) {
-            $pair = $callback($item, $key);
-            $key = key($pair);
-            $value = reset($pair);
-            if (! isset($dictionary[$key])) {
-                $dictionary[$key] = [];
-            }
-            $dictionary[$key][] = $value;
-        }
-        return new static($dictionary);
-    }
-
-    /**
-     * Run a grouping map over the items.
-     * The callback should return an associative array with a single key/value pair.
-     */
-    public function mapToGroups(callable $callback): self
-    {
-        $groups = $this->mapToDictionary($callback);
-        return $groups->map([$this, 'make']);
-    }
-
-    /**
      * Run an associative map over each of the items.
      * The callback should return an associative array with a single key/value pair.
      *
@@ -762,30 +727,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function mapWithKeys(callable $callback): self
     {
         return new static(Arr::mapWithKeys($this->items, $callback));
-    }
-
-    /**
-     * Map a collection and flatten the result by a single level.
-     *
-     * @param callable(TValue, TKey): mixed $callback
-     * @return static<int, mixed>
-     */
-    public function flatMap(callable $callback): self
-    {
-        return $this->map($callback)->collapse();
-    }
-
-    /**
-     * Map the values into a new class.
-     *
-     * @param class-string $class
-     * @return static<TKey, mixed>
-     */
-    public function mapInto(string $class): self
-    {
-        return $this->map(function ($value, $key) use ($class) {
-            return new $class($value, $key);
-        });
     }
 
     /**
