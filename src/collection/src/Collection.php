@@ -637,7 +637,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param callable(TValue, TKey): array<TMapToDictionaryKey, TMapToDictionaryValue> $callback
      * @return static<TMapToDictionaryKey, array<int, TMapToDictionaryValue>>
      */
-    public function mapToDictionary(callable $callback): self
+    public function mapToDictionary(callable $callback)
     {
         $dictionary = [];
         foreach ($this->items as $key => $item) {
