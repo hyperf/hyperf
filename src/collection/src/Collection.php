@@ -1533,53 +1533,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Get an operator checker callback.
-     * @param mixed|string $operator
-     * @param null|TValue $value
-     */
-    protected function operatorForWhere(string $key, $operator = null, $value = null): Closure
-    {
-        if (func_num_args() === 1) {
-            $value = true;
-            $operator = '=';
-        }
-        if (func_num_args() === 2) {
-            $value = $operator;
-            $operator = '=';
-        }
-        return function ($item) use ($key, $operator, $value) {
-            $retrieved = data_get($item, $key);
-            $strings = array_filter([$retrieved, $value], function ($value) {
-                return is_string($value) || (is_object($value) && method_exists($value, '__toString'));
-            });
-            if (count($strings) < 2 && count(array_filter([$retrieved, $value], 'is_object')) == 1) {
-                return in_array($operator, ['!=', '<>', '!==']);
-            }
-            switch ($operator) {
-                default:
-                case '=':
-                case '==':
-                    return $retrieved == $value;
-                case '!=':
-                case '<>':
-                    return $retrieved != $value;
-                case '<':
-                    return $retrieved < $value;
-                case '>':
-                    return $retrieved > $value;
-                case '<=':
-                    return $retrieved <= $value;
-                case '>=':
-                    return $retrieved >= $value;
-                case '===':
-                    return $retrieved === $value;
-                case '!==':
-                    return $retrieved !== $value;
-            }
-        };
-    }
-
-    /**
      * Get the comparison function to detect duplicates.
      *
      * @param bool $strict
@@ -1592,15 +1545,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         }
 
         return fn ($a, $b) => $a == $b;
-    }
-
-    /**
-     * Determine if the given value is callable, but not a string.
-     * @param mixed $value
-     */
-    protected function useAsCallable($value): bool
-    {
-        return ! is_string($value) && is_callable($value);
     }
 
     /**
