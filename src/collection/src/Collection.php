@@ -328,27 +328,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Determine if all items in the collection pass the given test.
-     *
-     * @param (callable(TValue, TKey): bool)|string|TValue $key
-     * @param mixed $operator
-     * @param mixed $value
-     */
-    public function every($key, $operator = null, $value = null): bool
-    {
-        if (func_num_args() === 1) {
-            $callback = $this->valueRetriever($key);
-            foreach ($this->items as $k => $v) {
-                if (! $callback($v, $k)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return $this->every($this->operatorForWhere(...func_get_args()));
-    }
-
-    /**
      * Get all items except for those with the specified keys.
      *
      * @param null|array<array-key, TKey>|static<array-key, TKey> $keys
@@ -687,14 +666,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Determine if the collection is not empty.
-     */
-    public function isNotEmpty(): bool
-    {
-        return ! $this->isEmpty();
-    }
-
-    /**
      * Get the keys of the collection items.
      * @return static<int, TKey>
      */
@@ -741,22 +712,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         $keys = array_keys($this->items);
         $items = array_map($callback, $this->items, $keys);
         return new static(array_combine($keys, $items));
-    }
-
-    /**
-     * Run a map over each nested chunk of items.
-     *
-     * @template TMapSpreadValue
-     *
-     * @param callable(mixed): TMapSpreadValue $callback
-     * @return static<TKey, TMapSpreadValue>
-     */
-    public function mapSpread(callable $callback): self
-    {
-        return $this->map(function ($chunk, $key) use ($callback) {
-            $chunk[] = $key;
-            return $callback(...$chunk);
-        });
     }
 
     /**
