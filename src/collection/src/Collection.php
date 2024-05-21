@@ -93,34 +93,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Wrap the given value in a collection if applicable.
-     *
-     * @template TWrapKey of array-key
-     * @template TWrapValue
-     *
-     * @param iterable<TWrapKey, TWrapValue> $value
-     * @return static<TWrapKey, TWrapValue>
-     */
-    public static function wrap($value): self
-    {
-        return $value instanceof self ? new static($value) : new static(Arr::wrap($value));
-    }
-
-    /**
-     * Get the underlying items from the given collection if applicable.
-     *
-     * @template TUnwrapKey of array-key
-     * @template TUnwrapValue
-     *
-     * @param array<TUnwrapKey, TUnwrapValue>|static<TUnwrapKey, TUnwrapValue> $value
-     * @return array<TUnwrapKey, TUnwrapValue>
-     */
-    public static function unwrap($value): array
-    {
-        return $value instanceof self ? $value->all() : $value;
-    }
-
-    /**
      * Create a new collection by invoking the callback a given amount of times.
      *
      * @param null|(callable(int): TTimesValue) $callback
