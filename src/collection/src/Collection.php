@@ -83,27 +83,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Convert the collection to its string representation.
-     */
-    public function __toString(): string
-    {
-        return $this->toJson();
-    }
-
-    /**
-     * Dynamically access collection proxies.
-     *
-     * @throws Exception
-     */
-    public function __get(string $key)
-    {
-        if (! in_array($key, static::$proxies)) {
-            throw new Exception("Property [{$key}] does not exist on this collection instance.");
-        }
-        return new HigherOrderCollectionProxy($this, $key);
-    }
-
-    /**
      * @param null|iterable<TKey,TValue>|Jsonable|JsonSerializable $items
      * @return static<TKey, TValue>
      */
@@ -111,20 +90,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     {
         $this->items = $this->getArrayableItems($items);
         return $this;
-    }
-
-    /**
-     * Create a new collection instance if the value isn't one already.
-     *
-     * @template TMakeKey of array-key
-     * @template TMakeValue
-     *
-     * @param null|Arrayable<TMakeKey, TMakeValue>|iterable<TMakeKey, TMakeValue>|Jsonable|JsonSerializable $items
-     * @return static<TMakeKey, TMakeValue>
-     */
-    public static function make($items = []): self
-    {
-        return new static($items);
     }
 
     /**
