@@ -123,4 +123,22 @@ class Context
 
         return static::$nonCoContext;
     }
+
+    public static function setRoot(): void
+    {
+        Coroutine::getContextFor()->offsetSet('#root', true);
+    }
+
+    public static function getRootId(): int
+    {
+        $cid = Coroutine::id();
+        while (!Coroutine::getContextFor($cid)->offsetExists('#root')) {
+            $cid = Coroutine::pid($cid);
+            if ($cid < 1) {
+                break;
+            }
+        }
+
+        return $cid;
+    }
 }
