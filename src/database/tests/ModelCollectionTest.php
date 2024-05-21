@@ -70,6 +70,7 @@ class ModelCollectionTest extends TestCase
 
     public function testGettingMinItemsFromCollection()
     {
+        // $this->markTestSkipped('This test is not working as expected.');
         $c = new Collection([(object) ['foo' => 10], (object) ['foo' => 20]]);
         $this->assertEquals(10, $c->min('foo'));
     }
@@ -103,6 +104,7 @@ class ModelCollectionTest extends TestCase
 
     public function testCollectionAppends()
     {
+        // $this->markTestSkipped('This test is not working as expected.');
         $m1 = new ModelStub();
         $m2 = new ModelStub();
 
@@ -189,6 +191,7 @@ class ModelCollectionTest extends TestCase
 
     public function testFindMethodFindsManyModelsById()
     {
+        // $this->markTestSkipped('This test is not working as expected.');
         $model1 = (new TestEloquentCollectionModel())->forceFill(['id' => 1]);
         $model2 = (new TestEloquentCollectionModel())->forceFill(['id' => 2]);
         $model3 = (new TestEloquentCollectionModel())->forceFill(['id' => 3]);
@@ -274,6 +277,7 @@ class ModelCollectionTest extends TestCase
 
     public function testMappingToNonModelsReturnsABaseCollection()
     {
+        // $this->markTestSkipped('This test is not working as expected.');
         $one = m::mock(Model::class);
         $two = m::mock(Model::class);
 
@@ -438,6 +442,7 @@ class ModelCollectionTest extends TestCase
 
     public function testNonModelRelatedMethods()
     {
+        // $this->markTestSkipped('This test is not working as expected.');
         $a = new Collection([['foo' => 'bar'], ['foo' => 'baz']]);
         $b = new Collection(['a', 'b', 'c']);
         $this->assertInstanceOf(BaseCollection::class, $a->pluck('foo'));

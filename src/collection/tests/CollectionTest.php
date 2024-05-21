@@ -70,6 +70,9 @@ class CollectionTest extends TestCase
 
     public function testCollectionAverage(): void
     {
+        $c = new Collection([0]);
+        $this->assertEquals(0, $c->avg());
+
         $col = new Collection([]);
         $this->assertNull($col->avg());
     }
