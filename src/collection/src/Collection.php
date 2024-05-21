@@ -25,9 +25,7 @@ use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
 use IteratorAggregate;
 use JsonSerializable;
-use RuntimeException;
 use stdClass;
-use Symfony\Component\VarDumper\VarDumper;
 use Traversable;
 
 /**
@@ -93,23 +91,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Create a new collection by invoking the callback a given amount of times.
-     *
-     * @param null|(callable(int): TTimesValue) $callback
-     * @return static<int, TTimesValue>
-     */
-    public static function times(int $number, ?callable $callback = null): self
-    {
-        if ($number < 1) {
-            return new static();
-        }
-        if (is_null($callback)) {
-            return new static(range(1, $number));
-        }
-        return (new static(range(1, $number)))->map($callback);
-    }
-
-    /**
      * Get all of the items in the collection.
      *
      * @return array<TKey, TValue>
@@ -136,17 +117,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
             return $items->sum() / $count;
         }
         return null;
-    }
-
-    /**
-     * Alias for the "avg" method.
-     *
-     * @param null|(callable(TValue): float|int)|string $callback
-     * @return null|float|int
-     */
-    public function average($callback = null)
-    {
-        return $this->avg($callback);
     }
 
     /**
@@ -267,15 +237,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Dump the collection and end the script.
-     */
-    public function dd(...$args): void
-    {
-        call_user_func_array([$this, 'dump'], $args);
-        exit(1);
-    }
-
-    /**
      * Determine if an item is not contained in the collection.
      *
      * @param null|mixed $operator
@@ -295,21 +256,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function dot(): self
     {
         return new static(Arr::dot($this->all()));
-    }
-
-    /**
-     * Dump the collection.
-     */
-    public function dump(): self
-    {
-        $params = (new static(func_get_args()));
-        $params->push($this)->each(function ($item) {
-            if (! class_exists(VarDumper::class)) {
-                throw new RuntimeException('symfony/var-dumper package required, please require the package via "composer require symfony/var-dumper"');
-            }
-            VarDumper::dump($item);
-        });
-        return $this;
     }
 
     /**
@@ -379,33 +325,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function diffKeysUsing($items, callable $callback): self
     {
         return new static(array_diff_ukey($this->items, $this->getArrayableItems($items), $callback));
-    }
-
-    /**
-     * Execute a callback over each item.
-     * @param callable(TValue,TKey): mixed $callback
-     */
-    public function each(callable $callback): self
-    {
-        foreach ($this->items as $key => $item) {
-            if ($callback($item, $key) === false) {
-                break;
-            }
-        }
-        return $this;
-    }
-
-    /**
-     * Execute a callback over each nested chunk of items.
-     * @param  callable(...mixed): mixed  $callback
-     * @return static<TKey, TValue>
-     */
-    public function eachSpread(callable $callback): self
-    {
-        return $this->each(function ($chunk, $key) use ($callback) {
-            $chunk[] = $key;
-            return $callback(...$chunk);
-        });
     }
 
     /**

@@ -34,6 +34,7 @@ use function Hyperf\Support\value;
 
 /**
  * @template TKey of array-key
+ * @template TTimesValue
  *
  * @template TValue
  * @property HigherOrderCollectionProxy $average
@@ -194,8 +195,6 @@ trait EnumeratesValues
 
     /**
      * Create a new collection by invoking the callback a given amount of times.
-     *
-     * @template TTimesValue
      *
      * @param int $number
      * @param null|(callable(int): TTimesValue) $callback
