@@ -26,6 +26,7 @@ use Hyperf\Contract\Jsonable;
 use JsonSerializable;
 use Traversable;
 use UnexpectedValueException;
+use UnitEnum;
 
 use function Hyperf\Collection\data_get;
 use function Hyperf\Support\class_basename;
@@ -1032,6 +1033,7 @@ trait EnumeratesValues
             $items instanceof Jsonable => json_decode($items->__toString(), true),
             $items instanceof JsonSerializable => $items->jsonSerialize(),
             $items instanceof Traversable => iterator_to_array($items),
+            $items instanceof UnitEnum => [$items],
             default => (array) $items,
         };
     }

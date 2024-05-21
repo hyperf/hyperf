@@ -176,7 +176,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @return static<int, mixed>
      */
-    public function collapse(): static
+    public function collapse()
     {
         return new static(Arr::collapse($this->items));
     }
@@ -263,7 +263,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param Arrayable<array-key, TValue>|iterable<array-key, TValue> $items
      * @return static<TKey, TValue>
      */
-    public function diff($items): static
+    public function diff($items)
     {
         return new static(array_diff($this->items, $this->getArrayableItems($items)));
     }
@@ -332,7 +332,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param null|array<array-key, TKey>|static<array-key, TKey> $keys
      * @return static<TKey, TValue>
      */
-    public function except($keys): static
+    public function except($keys)
     {
         if (is_null($keys)) {
             return new static($this->items);
@@ -391,7 +391,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param float|int $depth
      * @return static<int, mixed>
      */
-    public function flatten($depth = INF): static
+    public function flatten($depth = INF)
     {
         return new static(Arr::flatten($this->items, $depth));
     }
@@ -401,7 +401,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @return static<TKey, TValue>
      */
-    public function flip(): static
+    public function flip()
     {
         return new static(array_flip($this->items));
     }
@@ -544,7 +544,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
      * @return static<TKey, TValue>
      */
-    public function intersect($items): static
+    public function intersect($items)
     {
         return new static(array_intersect($this->items, $this->getArrayableItems($items)));
     }
@@ -582,7 +582,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Get the keys of the collection items.
      * @return static<int, TKey>
      */
-    public function keys(): static
+    public function keys()
     {
         return new static(array_keys($this->items));
     }
@@ -607,7 +607,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param array<array-key, string>|string $value
      * @return static<int, mixed>
      */
-    public function pluck($value, ?string $key = null): static
+    public function pluck($value, ?string $key = null)
     {
         return new static(Arr::pluck($this->items, $value, $key));
     }
@@ -620,7 +620,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param callable(TValue, TKey): TMapValue $callback
      * @return static<TKey, TMapValue>
      */
-    public function map(callable $callback): static
+    public function map(callable $callback)
     {
         $keys = array_keys($this->items);
         $items = array_map($callback, $this->items, $keys);
@@ -647,7 +647,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
      * @return static<TKey, TValue>
      */
-    public function merge($items): static
+    public function merge($items)
     {
         return new static(array_merge($this->items, $this->getArrayableItems($items)));
     }
@@ -711,7 +711,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param null|array<array-key, TKey>|static<array-key, TKey>|string $keys
      * @return static<TKey, TValue>
      */
-    public function only($keys): static
+    public function only($keys)
     {
         if (is_null($keys)) {
             return new static($this->items);
@@ -1158,7 +1158,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param Arrayable<array-key, TZipValue>|iterable<array-key, TZipValue> ...$items
      * @return static<int, static<int, TValue|TZipValue>>
      */
-    public function zip($items): static
+    public function zip($items)
     {
         $arrayableItems = array_map(function ($items) {
             return $this->getArrayableItems($items);
@@ -1180,7 +1180,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param TPadValue $value
      * @return static<int, TPadValue|TValue>
      */
-    public function pad(int $size, $value): static
+    public function pad(int $size, $value)
     {
         return new static(array_pad($this->items, $size, $value));
     }
