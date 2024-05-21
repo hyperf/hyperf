@@ -1234,23 +1234,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Get the sum of the given values.
-     *
-     * @param null|(callable(TValue): mixed)|string $callback
-     * @return mixed
-     */
-    public function sum($callback = null)
-    {
-        if (is_null($callback)) {
-            return array_sum($this->items);
-        }
-        $callback = $this->valueRetriever($callback);
-        return $this->reduce(function ($result, $item) use ($callback) {
-            return $result + $callback($item);
-        }, 0);
-    }
-
-    /**
      * Take the first or last {$limit} items.
      *
      * @return static<TKey, TValue>
