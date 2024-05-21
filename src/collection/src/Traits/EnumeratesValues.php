@@ -904,10 +904,8 @@ trait EnumeratesValues
      * Return only unique items from the collection array.
      *
      * @param null|(callable(TValue, TKey): mixed)|string $key
-     * @param bool $strict
-     * @return static
      */
-    public function unique($key = null, $strict = false)
+    public function unique($key = null, bool $strict = false): static
     {
         $callback = $this->valueRetriever($key);
 

@@ -1127,35 +1127,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Return only unique items from the collection array.
-     *
-     * @param null|(callable(TValue, TKey): mixed)|string $key
-     * @return static<TKey, TValue>
-     */
-    public function unique($key = null, bool $strict = false): self
-    {
-        $callback = $this->valueRetriever($key);
-        $exists = [];
-        return $this->reject(function ($item, $key) use ($callback, $strict, &$exists) {
-            if (in_array($id = $callback($item, $key), $exists, $strict)) {
-                return true;
-            }
-            $exists[] = $id;
-        });
-    }
-
-    /**
-     * Return only unique items from the collection array using strict comparison.
-     *
-     * @param null|(callable(TValue, TKey): mixed)|string $key
-     * @return static<TKey, TValue>
-     */
-    public function uniqueStrict($key = null): self
-    {
-        return $this->unique($key, true);
-    }
-
-    /**
      * Prepend one or more items to the beginning of the collection.
      *
      * @param TValue ...$values

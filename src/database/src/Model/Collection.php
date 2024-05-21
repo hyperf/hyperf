@@ -332,7 +332,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param null|(callable(TModel, TKey): bool)|string $key
      * @return static<int, TModel>
      */
-    public function unique($key = null, bool $strict = false): BaseCollection
+    public function unique($key = null, bool $strict = false): static
     {
         if (! is_null($key)) {
             return parent::unique($key, $strict);
