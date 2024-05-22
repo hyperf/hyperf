@@ -965,7 +965,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Sort through each item with a callback.
      *
-     * @param null|(callable(TValue, TValue): int)|int $callback
+     * @param null|(callable(TValue, TValue): int) $callback
      */
     public function sort(?callable $callback = null): static;
 
@@ -1074,7 +1074,6 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Get the values of a given key.
      *
      * @param array<array-key, string>|string $value
-     * @param null|string $key
      * @return static<int, mixed>
      */
     public function pluck($value, ?string $key = null);
@@ -1119,7 +1118,6 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @template TPadValue
      *
-     * @param int $size
      * @param TPadValue $value
      * @return static<int, TPadValue|TValue>
      */

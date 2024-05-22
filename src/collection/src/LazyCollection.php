@@ -1343,7 +1343,7 @@ class LazyCollection implements Enumerable
     /**
      * Sort through each item with a callback.
      *
-     * @param null|(callable(TValue, TValue): int)|int $callback
+     * @param null|(callable(TValue, TValue): int) $callback
      */
     public function sort(?callable $callback = null): static
     {

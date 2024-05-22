@@ -46,7 +46,6 @@ parameters:
     - '#Variable .* in PHPDoc tag @var does not exist#'
     - '#Call to an undefined method Hyperf\\Database\\Model\\Model::hydrate#'
     - '#PHPDoc tag @param has invalid value#'
-    - '#PHPDoc tag @param for parameter#'
     - '#Static call to instance method Hyperf\\RpcServer\\Router\\Router::#'
     - '#Method Hyperf\\Utils\\Serializer\\ScalarNormalizer::denormalize\(\) should return array\|object but returns#'
     - '#Function get_debug_type invoked with 1 parameter, 0 required#'
