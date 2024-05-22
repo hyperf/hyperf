@@ -561,7 +561,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Get the keys of the collection items.
      * @return static<int, TKey>
      */
-    public function keys()
+    public function keys(): self|static
     {
         return new static(array_keys($this->items));
     }

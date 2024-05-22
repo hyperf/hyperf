@@ -481,7 +481,7 @@ class Collection extends BaseCollection implements CompressInterface
      *
      * @return BaseCollection<int, TKey>
      */
-    public function keys()
+    public function keys(): BaseCollection
     {
         return $this->toBase()->keys();
     }
