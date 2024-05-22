@@ -1085,7 +1085,6 @@ trait EnumeratesValues
      * Determine if the given value is callable, but not a string.
      *
      * @param mixed $value
-     * @return bool
      */
     protected function useAsCallable($value): bool
     {
@@ -1096,7 +1095,6 @@ trait EnumeratesValues
      * Get a value retrieving callback.
      *
      * @param null|callable|string $value
-     * @return callable
      */
     protected function valueRetriever($value): callable
     {
