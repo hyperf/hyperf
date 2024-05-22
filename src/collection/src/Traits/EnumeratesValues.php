@@ -633,7 +633,7 @@ trait EnumeratesValues
     /**
      * Filter items by the given key value pair.
      */
-    public function where(callable|string $key, mixed $operator = null, mixed $value = null): static
+    public function where(null|callable|string $key, mixed $operator = null, mixed $value = null): static
     {
         return $this->filter($this->operatorForWhere(...func_get_args()));
     }
@@ -663,7 +663,7 @@ trait EnumeratesValues
     /**
      * Filter items by the given key value pair using strict comparison.
      */
-    public function whereStrict(string $key, mixed $value): static
+    public function whereStrict(?string $key, mixed $value): static
     {
         return $this->where($key, '===', $value);
     }
