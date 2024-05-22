@@ -620,9 +620,6 @@ class Collection implements Enumerable, ArrayAccess
         }
 
         return new static($result);
-        // $keys = array_keys($this->items);
-        // $items = array_map($callback, $this->items, $keys);
-        // return new static(array_combine($keys, $items));
     }
 
     /**
