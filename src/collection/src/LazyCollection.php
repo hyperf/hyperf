@@ -82,7 +82,7 @@ class LazyCollection implements Enumerable
      * @param null|array<TMakeKey, TMakeValue>|Arrayable<TMakeKey, TMakeValue>|(Closure(): Generator<TMakeKey, TMakeValue, mixed, void>)|iterable<TMakeKey, TMakeValue>|self<TMakeKey, TMakeValue> $items
      * @return static<TMakeKey, TMakeValue>
      */
-    public static function make($items = []): static
+    public static function make(mixed $items = []): static
     {
         return new static($items);
     }
@@ -90,11 +90,9 @@ class LazyCollection implements Enumerable
     /**
      * Create a collection with the given range.
      *
-     * @param int $from
-     * @param int $to
      * @return static<int, int>
      */
-    public static function range($from, $to): static
+    public static function range(float|int|string $from, float|int|string $to): static
     {
         return new static(function () use ($from, $to) {
             if ($from <= $to) {
@@ -742,7 +740,7 @@ class LazyCollection implements Enumerable
      * @param array<array-key, string>|string $value
      * @return static<int, mixed>
      */
-    public function pluck($value, ?string $key = null)
+    public function pluck(array|string $value, ?string $key = null): static
     {
         return new static(function () use ($value, $key) {
             [$value, $key] = $this->explodePluckParameters($value, $key);
@@ -773,7 +771,7 @@ class LazyCollection implements Enumerable
      * @param callable(TValue, TKey): TMapValue $callback
      * @return static<TKey, TMapValue>
      */
-    public function map(callable $callback)
+    public function map(callable $callback): self|static
     {
         return new static(function () use ($callback) {
             foreach ($this as $key => $value) {
@@ -1609,7 +1607,7 @@ class LazyCollection implements Enumerable
      * @param Arrayable<array-key, TZipValue>|iterable<array-key, TZipValue> ...$items
      * @return static<int, static<int, TValue|TZipValue>>
      */
-    public function zip($items)
+    public function zip($items): self|static
     {
         $iterables = func_get_args();
 
@@ -1634,7 +1632,7 @@ class LazyCollection implements Enumerable
      * @param TPadValue $value
      * @return static<int, TPadValue|TValue>
      */
-    public function pad(int $size, $value)
+    public function pad(int $size, $value): self|static
     {
         if ($size < 0) {
             return $this->passthru('pad', func_get_args());

@@ -57,7 +57,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param null|Arrayable<TMakeKey, TMakeValue>|iterable<TMakeKey, TMakeValue> $items
      * @return static<TMakeKey, TMakeValue>
      */
-    public static function make($items = []): static;
+    public static function make(mixed $items = []): static;
 
     /**
      * Create a new instance by invoking the callback a given amount of times.
@@ -66,11 +66,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
 
     /**
      * Create a collection with the given range.
-     *
-     * @param int $from
-     * @param int $to
      */
-    public static function range($from, $to): static;
+    public static function range(float|int|string $from, float|int|string $to): static;
 
     /**
      * Wrap the given value in a collection if applicable.
@@ -80,7 +77,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param iterable<array-key, TWrapValue>|TWrapValue $value
      * @return static<array-key, TWrapValue>
      */
-    public static function wrap($value);
+    public static function wrap(mixed $value): static;
 
     /**
      * Get the underlying items from the given collection if applicable.
@@ -91,28 +88,24 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param array<TUnwrapKey, TUnwrapValue>|static<TUnwrapKey, TUnwrapValue> $value
      * @return array<TUnwrapKey, TUnwrapValue>
      */
-    public static function unwrap($value);
+    public static function unwrap(mixed $value): array;
 
     /**
      * Create a new instance with no items.
-     *
-     * @return static
      */
-    public static function empty();
+    public static function empty(): static;
 
     /**
      * Get all items in the enumerable.
-     *
-     * @return array
      */
-    public function all();
+    public function all(): array;
 
     /**
      * Alias for the "avg" method.
      *
      * @param null|(callable(TValue): float|int)|string $callback
      */
-    public function average($callback = null): null|float|int;
+    public function average(mixed $callback = null): null|float|int;
 
     /**
      * Get the median of a given key.
@@ -161,7 +154,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @param null|(callable(TValue): float|int)|string $callback
      */
-    public function avg($callback = null): null|float|int;
+    public function avg(mixed $callback = null): null|float|int;
 
     /**
      * Determine if an item exists in the enumerable.
@@ -492,7 +485,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @return static<TValue, TKey>
      */
-    public function flip();
+    public function flip(): self|static;
 
     /**
      * Get an item from the collection by key.
@@ -643,7 +636,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param callable(TValue, TKey): TMapValue $callback
      * @return static<TKey, TMapValue>
      */
-    public function map(callable $callback);
+    public function map(callable $callback): self|static;
 
     /**
      * Run a map over each nested chunk of items.
@@ -1076,7 +1069,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param array<array-key, string>|string $value
      * @return static<int, mixed>
      */
-    public function pluck($value, ?string $key = null);
+    public function pluck(array|string $value, ?string $key = null): self|static;
 
     /**
      * Create a collection of all elements that do not pass a given truth test.
@@ -1121,7 +1114,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param TPadValue $value
      * @return static<int, TPadValue|TValue>
      */
-    public function pad(int $size, $value);
+    public function pad(int $size, $value): self|static;
 
     /**
      * Get the values iterator.
@@ -1154,7 +1147,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param Arrayable<array-key, TZipValue>|iterable<array-key, TZipValue> ...$items
      * @return static<int, static<int, TValue|TZipValue>>
      */
-    public function zip($items);
+    public function zip($items): self|static;
 
     /**
      * Collect the values into a collection.

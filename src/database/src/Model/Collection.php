@@ -249,7 +249,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param callable(TModel, TKey): TMapValue $callback
      * @return BaseCollection<TKey, TMapValue>|static<TKey, TMapValue>
      */
-    public function map(callable $callback)
+    public function map(callable $callback): BaseCollection|static
     {
         $result = parent::map($callback);
 
@@ -471,7 +471,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param array<array-key, string>|string $value
      * @return BaseCollection<int, mixed>
      */
-    public function pluck($value, ?string $key = null)
+    public function pluck(array|string $value, ?string $key = null): BaseCollection
     {
         return $this->toBase()->pluck($value, $key);
     }
@@ -494,7 +494,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param Arrayable<array-key, TZipValue>|iterable<array-key, TZipValue> ...$items
      * @return BaseCollection<int, BaseCollection<int, TModel|TZipValue>>
      */
-    public function zip($items)
+    public function zip($items): BaseCollection
     {
         return call_user_func_array([$this->toBase(), 'zip'], func_get_args());
     }
@@ -525,7 +525,7 @@ class Collection extends BaseCollection implements CompressInterface
      *
      * @return BaseCollection<TModel, TKey>
      */
-    public function flip()
+    public function flip(): BaseCollection
     {
         return $this->toBase()->flip();
     }
@@ -538,7 +538,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param TPadValue $value
      * @return BaseCollection<int, TModel|TPadValue>
      */
-    public function pad(int $size, $value)
+    public function pad(int $size, $value): BaseCollection
     {
         return $this->toBase()->pad($size, $value);
     }

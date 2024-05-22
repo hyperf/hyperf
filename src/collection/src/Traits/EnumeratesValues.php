@@ -150,7 +150,7 @@ trait EnumeratesValues
      * @param null|Arrayable<TMakeKey, TMakeValue>|iterable<TMakeKey, TMakeValue> $items
      * @return static<TMakeKey, TMakeValue>
      */
-    public static function make($items = []): static
+    public static function make(mixed $items = []): static
     {
         return new static($items);
     }
@@ -163,9 +163,8 @@ trait EnumeratesValues
      * @param iterable<array-key, TWrapValue>|TWrapValue $value
      * @return static<array-key, TWrapValue>
      */
-    public static function wrap($value): static
+    public static function wrap(mixed $value): static
     {
-        // TODO: Collection must instance of Enumerable
         return $value instanceof Enumerable
             ? new static($value)
             : new static(Arr::wrap($value));
@@ -180,17 +179,15 @@ trait EnumeratesValues
      * @param array<TUnwrapKey, TUnwrapValue>|static<TUnwrapKey, TUnwrapValue> $value
      * @return array<TUnwrapKey, TUnwrapValue>
      */
-    public static function unwrap($value): array
+    public static function unwrap(mixed $value): array
     {
         return $value instanceof Enumerable ? $value->all() : $value;
     }
 
     /**
      * Create a new instance with no items.
-     *
-     * @return static
      */
-    public static function empty()
+    public static function empty(): static
     {
         return new static([]);
     }
@@ -217,7 +214,7 @@ trait EnumeratesValues
      *
      * @param null|(callable(TValue): float|int)|string $callback
      */
-    public function avg($callback = null): null|float|int
+    public function avg(mixed $callback = null): null|float|int
     {
         $callback = $this->valueRetriever($callback);
 
@@ -238,7 +235,7 @@ trait EnumeratesValues
      *
      * @param null|(callable(TValue): float|int)|string $callback
      */
-    public function average($callback = null): null|float|int
+    public function average(mixed $callback = null): null|float|int
     {
         return $this->avg($callback);
     }

@@ -387,7 +387,7 @@ class Collection implements Enumerable, ArrayAccess
      *
      * @return static<TKey, TValue>
      */
-    public function flip()
+    public function flip(): self|static
     {
         return new static(array_flip($this->items));
     }
@@ -600,7 +600,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param array<array-key, string>|string $value
      * @return static<int, mixed>
      */
-    public function pluck($value, ?string $key = null)
+    public function pluck(array|string $value, ?string $key = null): self|static
     {
         return new static(Arr::pluck($this->items, $value, $key));
     }
@@ -613,7 +613,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param callable(TValue, TKey): TMapValue $callback
      * @return static<TKey, TMapValue>
      */
-    public function map(callable $callback)
+    public function map(callable $callback): self|static
     {
         $keys = array_keys($this->items);
         $items = array_map($callback, $this->items, $keys);
@@ -833,11 +833,9 @@ class Collection implements Enumerable, ArrayAccess
     /**
      * Create a collection with the given range.
      *
-     * @param int $from
-     * @param int $to
      * @return static<int, int>
      */
-    public static function range($from, $to): static
+    public static function range(float|int|string $from, float|int|string $to): static
     {
         return new static(range($from, $to));
     }
@@ -1176,7 +1174,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param Arrayable<array-key, TZipValue>|iterable<array-key, TZipValue> ...$items
      * @return static<int, static<int, TValue|TZipValue>>
      */
-    public function zip($items)
+    public function zip($items): self|static
     {
         $arrayableItems = array_map(function ($items) {
             return $this->getArrayableItems($items);
