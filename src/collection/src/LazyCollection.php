@@ -94,7 +94,7 @@ class LazyCollection implements Enumerable
      * @param int $to
      * @return static<int, int>
      */
-    public static function range($from, $to)
+    public static function range($from, $to): static
     {
         return new static(function () use ($from, $to) {
             if ($from <= $to) {
@@ -326,9 +326,8 @@ class LazyCollection implements Enumerable
      * Get the items that are not present in the given items.
      *
      * @param Arrayable<array-key, TValue>|iterable<array-key, TValue> $items
-     * @return static
      */
-    public function diff($items)
+    public function diff($items): static
     {
         return $this->passthru('diff', func_get_args());
     }
@@ -418,9 +417,8 @@ class LazyCollection implements Enumerable
      * Get all items except for those with the specified keys.
      *
      * @param array<array-key, TKey>|Enumerable<array-key, TKey> $keys
-     * @return static
      */
-    public function except($keys)
+    public function except($keys): static
     {
         return $this->passthru('except', func_get_args());
     }
@@ -1776,9 +1774,8 @@ class LazyCollection implements Enumerable
      *
      * @param string $method
      * @param array<mixed> $params
-     * @return static
      */
-    protected function passthru($method, array $params)
+    protected function passthru($method, array $params): static
     {
         return new static(function () use ($method, $params) {
             yield from $this->collect()->{$method}(...$params);

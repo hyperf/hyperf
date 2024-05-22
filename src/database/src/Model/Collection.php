@@ -397,7 +397,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param null|array<array-key, mixed> $keys
      * @return static<int, TModel>
      */
-    public function except($keys)
+    public function except($keys): static
     {
         if (is_null($keys)) {
             return new static($this->items);
@@ -504,7 +504,7 @@ class Collection extends BaseCollection implements CompressInterface
      *
      * @return BaseCollection<int, mixed>
      */
-    public function collapse()
+    public function collapse(): BaseCollection
     {
         return $this->toBase()->collapse();
     }

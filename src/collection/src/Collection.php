@@ -157,7 +157,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @return static<int, mixed>
      */
-    public function collapse()
+    public function collapse(): self
     {
         return new static(Arr::collapse($this->items));
     }
@@ -244,7 +244,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param Arrayable<array-key, TValue>|iterable<array-key, TValue> $items
      * @return static<TKey, TValue>
      */
-    public function diff($items)
+    public function diff($items): static
     {
         return new static(array_diff($this->items, $this->getArrayableItems($items)));
     }
@@ -313,7 +313,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param null|array<array-key, TKey>|static<array-key, TKey> $keys
      * @return static<TKey, TValue>
      */
-    public function except($keys)
+    public function except($keys): static
     {
         if (is_null($keys)) {
             return new static($this->items);

@@ -57,24 +57,20 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param null|Arrayable<TMakeKey, TMakeValue>|iterable<TMakeKey, TMakeValue> $items
      * @return static<TMakeKey, TMakeValue>
      */
-    public static function make($items = []);
+    public static function make($items = []): static;
 
     /**
      * Create a new instance by invoking the callback a given amount of times.
-     *
-     * @param int $number
-     * @return static
      */
-    public static function times($number, ?callable $callback = null);
+    public static function times(int $number, ?callable $callback = null): static;
 
     /**
      * Create a collection with the given range.
      *
      * @param int $from
      * @param int $to
-     * @return static
      */
-    public static function range($from, $to);
+    public static function range($from, $to): static;
 
     /**
      * Wrap the given value in a collection if applicable.
@@ -115,9 +111,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Alias for the "avg" method.
      *
      * @param null|(callable(TValue): float|int)|string $callback
-     * @return null|float|int
      */
-    public function average($callback = null);
+    public function average($callback = null): null|float|int;
 
     /**
      * Get the median of a given key.
@@ -165,9 +160,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Get the average value of a given key.
      *
      * @param null|(callable(TValue): float|int)|string $callback
-     * @return null|float|int
      */
-    public function avg($callback = null);
+    public function avg($callback = null): null|float|int;
 
     /**
      * Determine if an item exists in the enumerable.
@@ -220,9 +214,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Get the items that are not present in the given items.
      *
      * @param Arrayable<array-key, TValue>|iterable<array-key, TValue> $items
-     * @return static
      */
-    public function diff($items);
+    public function diff($items): static;
 
     /**
      * Get the items that are not present in the given items, using the callback.
@@ -288,34 +281,27 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Execute a callback over each item.
      *
      * @param callable(TValue, TKey): mixed $callback
-     * @return $this
      */
-    public function each(callable $callback);
+    public function each(callable $callback): static;
 
     /**
      * Execute a callback over each nested chunk of items.
-     *
-     * @return static
      */
-    public function eachSpread(callable $callback);
+    public function eachSpread(callable $callback): static;
 
     /**
      * Determine if all items pass the given truth test.
      *
      * @param (callable(TValue, TKey): bool)|string|TValue $key
-     * @param mixed $operator
-     * @param mixed $value
-     * @return bool
      */
-    public function every($key, $operator = null, $value = null);
+    public function every(mixed $key, mixed $operator = null, mixed $value = null): bool;
 
     /**
      * Get all items except for those with the specified keys.
      *
      * @param array<array-key, TKey>|Enumerable<array-key, TKey> $keys
-     * @return static
      */
-    public function except($keys);
+    public function except($keys): static;
 
     /**
      * Run a filter over each of the items.
@@ -396,12 +382,9 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Filter items by the given key value pair.
      *
-     * @param string $key
-     * @param mixed $operator
-     * @param mixed $value
      * @return static
      */
-    public function where($key, $operator = null, $value = null);
+    public function where(string $key, mixed $operator = null, mixed $value = null);
 
     /**
      * Filter items where the value for the given key is null.

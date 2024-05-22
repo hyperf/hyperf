@@ -150,7 +150,7 @@ trait EnumeratesValues
      * @param null|Arrayable<TMakeKey, TMakeValue>|iterable<TMakeKey, TMakeValue> $items
      * @return static<TMakeKey, TMakeValue>
      */
-    public static function make($items = [])
+    public static function make($items = []): static
     {
         return new static($items);
     }
@@ -163,8 +163,9 @@ trait EnumeratesValues
      * @param iterable<array-key, TWrapValue>|TWrapValue $value
      * @return static<array-key, TWrapValue>
      */
-    public static function wrap($value)
+    public static function wrap($value): static
     {
+        // TODO: Collection must instance of Enumerable
         return $value instanceof Enumerable
             ? new static($value)
             : new static(Arr::wrap($value));
@@ -179,7 +180,7 @@ trait EnumeratesValues
      * @param array<TUnwrapKey, TUnwrapValue>|static<TUnwrapKey, TUnwrapValue> $value
      * @return array<TUnwrapKey, TUnwrapValue>
      */
-    public static function unwrap($value)
+    public static function unwrap($value): array
     {
         return $value instanceof Enumerable ? $value->all() : $value;
     }
@@ -197,11 +198,10 @@ trait EnumeratesValues
     /**
      * Create a new collection by invoking the callback a given amount of times.
      *
-     * @param int $number
      * @param null|(callable(int): TTimesValue) $callback
      * @return static<int, TTimesValue>
      */
-    public static function times($number, ?callable $callback = null)
+    public static function times(int $number, ?callable $callback = null): static
     {
         if ($number < 1) {
             return new static();
@@ -216,9 +216,8 @@ trait EnumeratesValues
      * Get the average value of a given key.
      *
      * @param null|(callable(TValue): float|int)|string $callback
-     * @return null|float|int
      */
-    public function avg($callback = null)
+    public function avg($callback = null): null|float|int
     {
         $callback = $this->valueRetriever($callback);
 
@@ -238,9 +237,8 @@ trait EnumeratesValues
      * Alias for the "avg" method.
      *
      * @param null|(callable(TValue): float|int)|string $callback
-     * @return null|float|int
      */
-    public function average($callback = null)
+    public function average($callback = null): null|float|int
     {
         return $this->avg($callback);
     }
@@ -292,9 +290,8 @@ trait EnumeratesValues
      * Execute a callback over each item.
      *
      * @param callable(TValue, TKey): mixed $callback
-     * @return $this
      */
-    public function each(callable $callback)
+    public function each(callable $callback): static
     {
         foreach ($this as $key => $item) {
             if ($callback($item, $key) === false) {
@@ -308,10 +305,9 @@ trait EnumeratesValues
     /**
      * Execute a callback over each nested chunk of items.
      *
-     * @param  callable(...mixed): mixed  $callback
-     * @return static
+     * @param callable(...mixed): mixed  $callback
      */
-    public function eachSpread(callable $callback)
+    public function eachSpread(callable $callback): static
     {
         return $this->each(function ($chunk, $key) use ($callback) {
             $chunk[] = $key;
@@ -324,11 +320,8 @@ trait EnumeratesValues
      * Determine if all items pass the given truth test.
      *
      * @param (callable(TValue, TKey): bool)|string|TValue $key
-     * @param mixed $operator
-     * @param mixed $value
-     * @return bool
      */
-    public function every($key, $operator = null, $value = null)
+    public function every(mixed $key, mixed $operator = null, mixed $value = null): bool
     {
         if (func_num_args() === 1) {
             $callback = $this->valueRetriever($key);
@@ -647,11 +640,9 @@ trait EnumeratesValues
      * Filter items by the given key value pair.
      *
      * @param callable|string $key
-     * @param mixed $operator
-     * @param mixed $value
      * @return static
      */
-    public function where($key, $operator = null, $value = null)
+    public function where(string $key, mixed $operator = null, mixed $value = null)
     {
         return $this->filter($this->operatorForWhere(...func_get_args()));
     }
@@ -1071,10 +1062,9 @@ trait EnumeratesValues
      *
      * @param callable|string $key
      * @param null|string $operator
-     * @param mixed $value
      * @return Closure
      */
-    protected function operatorForWhere($key, $operator = null, $value = null)
+    protected function operatorForWhere(mixed $key, mixed $operator = null, mixed $value = null)
     {
         if ($this->useAsCallable($key)) {
             return $key;
@@ -1106,16 +1096,25 @@ trait EnumeratesValues
             switch ($operator) {
                 default:
                 case '=':
-                case '==':  return $retrieved == $value;
+                case '==':
+                    return $retrieved == $value;
                 case '!=':
-                case '<>':  return $retrieved != $value;
-                case '<':   return $retrieved < $value;
-                case '>':   return $retrieved > $value;
-                case '<=':  return $retrieved <= $value;
-                case '>=':  return $retrieved >= $value;
-                case '===': return $retrieved === $value;
-                case '!==': return $retrieved !== $value;
-                case '<=>': return $retrieved <=> $value;
+                case '<>':
+                    return $retrieved != $value;
+                case '<':
+                    return $retrieved < $value;
+                case '>':
+                    return $retrieved > $value;
+                case '<=':
+                    return $retrieved <= $value;
+                case '>=':
+                    return $retrieved >= $value;
+                case '===':
+                    return $retrieved === $value;
+                case '!==':
+                    return $retrieved !== $value;
+                case '<=>':
+                    return $retrieved <=> $value;
             }
         };
     }
