@@ -539,9 +539,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Intersect the collection with the given items.
      *
      * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
-     * @return static
      */
-    public function intersect($items);
+    public function intersect(mixed $items): static;
 
     /**
      * Intersect the collection with the given items, using the callback.
@@ -586,10 +585,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
 
     /**
      * Determine if the collection is not empty.
-     *
-     * @return bool
      */
-    public function isNotEmpty();
+    public function isNotEmpty(): bool;
 
     /**
      * Determine if the collection contains a single item.
@@ -637,10 +634,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
 
     /**
      * Run a map over each nested chunk of items.
-     *
-     * @return static
      */
-    public function mapSpread(callable $callback);
+    public function mapSpread(callable $callback): static;
 
     /**
      * Run a dictionary map over the items.
@@ -653,7 +648,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param callable(TValue, TKey): array<TMapToDictionaryKey, TMapToDictionaryValue> $callback
      * @return static<TMapToDictionaryKey, array<int, TMapToDictionaryValue>>
      */
-    public function mapToDictionary(callable $callback);
+    public function mapToDictionary(callable $callback): static;
 
     /**
      * Run a grouping map over the items.
@@ -666,7 +661,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param callable(TValue, TKey): array<TMapToGroupsKey, TMapToGroupsValue> $callback
      * @return static<TMapToGroupsKey, static<int, TMapToGroupsValue>>
      */
-    public function mapToGroups(callable $callback);
+    public function mapToGroups(callable $callback): static;
 
     /**
      * Run an associative map over each of the items.

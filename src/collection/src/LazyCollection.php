@@ -617,7 +617,7 @@ class LazyCollection implements Enumerable
      * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
      * @return static
      */
-    public function intersect($items)
+    public function intersect(mixed $items)
     {
         return $this->passthru('intersect', func_get_args());
     }
@@ -789,7 +789,7 @@ class LazyCollection implements Enumerable
      * @param callable(TValue, TKey): array<TMapToDictionaryKey, TMapToDictionaryValue> $callback
      * @return static<TMapToDictionaryKey, array<int, TMapToDictionaryValue>>
      */
-    public function mapToDictionary(callable $callback)
+    public function mapToDictionary(callable $callback): static
     {
         return $this->passthru('mapToDictionary', func_get_args());
     }

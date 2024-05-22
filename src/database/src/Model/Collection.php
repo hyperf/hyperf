@@ -311,7 +311,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param iterable<array-key, TModel> $items
      * @return static<TKey, TModel>
      */
-    public function intersect($items)
+    public function intersect(mixed $items): static
     {
         $intersect = new static();
 

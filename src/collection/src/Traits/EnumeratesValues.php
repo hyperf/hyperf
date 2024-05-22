@@ -394,10 +394,8 @@ trait EnumeratesValues
 
     /**
      * Determine if the collection is not empty.
-     *
-     * @return bool
      */
-    public function isNotEmpty()
+    public function isNotEmpty(): bool
     {
         return ! $this->isEmpty();
     }
@@ -410,7 +408,7 @@ trait EnumeratesValues
      * @param callable(mixed...): TMapSpreadValue $callback
      * @return static<TKey, TMapSpreadValue>
      */
-    public function mapSpread(callable $callback)
+    public function mapSpread(callable $callback): static
     {
         return $this->map(function ($chunk, $key) use ($callback) {
             $chunk[] = $key;
@@ -430,7 +428,7 @@ trait EnumeratesValues
      * @param callable(TValue, TKey): array<TMapToGroupsKey, TMapToGroupsValue> $callback
      * @return static<TMapToGroupsKey, static<int, TMapToGroupsValue>>
      */
-    public function mapToGroups(callable $callback)
+    public function mapToGroups(callable $callback): static
     {
         $groups = $this->mapToDictionary($callback);
 

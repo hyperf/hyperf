@@ -536,7 +536,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
      * @return static<TKey, TValue>
      */
-    public function intersect($items)
+    public function intersect(mixed $items): static
     {
         return new static(array_intersect($this->items, $this->getArrayableItems($items)));
     }
@@ -629,7 +629,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param callable(TValue, TKey): array<TMapToDictionaryKey, TMapToDictionaryValue> $callback
      * @return static<TMapToDictionaryKey, array<int, TMapToDictionaryValue>>
      */
-    public function mapToDictionary(callable $callback)
+    public function mapToDictionary(callable $callback): static
     {
         $dictionary = [];
         foreach ($this->items as $key => $item) {
