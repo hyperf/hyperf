@@ -15,14 +15,12 @@ namespace Hyperf\Collection;
 use ArrayAccess;
 use ArrayIterator;
 use Closure;
-use Countable;
 use Exception;
 use Hyperf\Collection\Traits\EnumeratesValues;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
-use IteratorAggregate;
 use JsonSerializable;
 use stdClass;
 use Traversable;
@@ -35,8 +33,7 @@ use Traversable;
  * @template TValue
  * @template TTimesValue
  * @implements ArrayAccess<TKey, TValue>
- * @implements Arrayable<TKey, TValue>
- * @implements IteratorAggregate<TKey, TValue>
+ * @implements Enumerable<TKey, TValue>
  *
  * @property HigherOrderCollectionProxy $average
  * @property HigherOrderCollectionProxy $avg
@@ -58,7 +55,7 @@ use Traversable;
  * @property HigherOrderCollectionProxy $sum
  * @property HigherOrderCollectionProxy $unique
  */
-class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
+class Collection implements Enumerable, ArrayAccess
 {
     use EnumeratesValues;
     use Macroable;
@@ -103,6 +100,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Get the median of a given key.
      *
      * @param null|array<array-key, string>|string $key
+     * @return null|float|int
      */
     public function median($key = null)
     {
@@ -111,7 +109,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         })->sort()->values();
         $count = $values->count();
         if ($count == 0) {
-            return;
+            return null;
         }
         $middle = (int) ($count / 2);
         if ($count % 2) {
@@ -236,6 +234,14 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function dot(): static
     {
         return new static(Arr::dot($this->all()));
+    }
+
+    /**
+     * Convert a flatten "dot" notation array into an expanded array.
+     */
+    public function undot(): static
+    {
+        return new static(Arr::undot($this->all()));
     }
 
     /**
@@ -507,14 +513,21 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Concatenate values of a given key as a string.
+     * @param mixed $value
      */
-    public function implode(string $value, ?string $glue = null): string
+    public function implode($value, ?string $glue = null): string
     {
-        $first = $this->first();
-        if (is_array($first) || is_object($first)) {
-            return implode($glue, $this->pluck($value)->all());
+        if ($this->useAsCallable($value)) {
+            return implode($glue ?? '', $this->map($value)->all());
         }
-        return implode($value, $this->items);
+
+        $first = $this->first();
+
+        if (is_array($first) || (is_object($first) && ! $first instanceof Stringable)) {
+            return implode($glue ?? '', $this->pluck($value)->all());
+        }
+
+        return implode($value ?? '', $this->items);
     }
 
     /**
