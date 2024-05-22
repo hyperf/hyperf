@@ -20,6 +20,7 @@ use Hyperf\Collection\Traits\EnumeratesValues;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Macroable\Macroable;
+use Hyperf\Stringable\Stringable;
 use InvalidArgumentException;
 use JsonSerializable;
 use stdClass;
