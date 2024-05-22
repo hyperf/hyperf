@@ -605,10 +605,8 @@ class LazyCollection implements Enumerable
 
     /**
      * Concatenate values of a given key as a string.
-     *
-     * @param callable|string $value
      */
-    public function implode($value, ?string $glue = null): string
+    public function implode(array|callable|string $value, ?string $glue = null): string
     {
         return $this->collect()->implode(...func_get_args());
     }

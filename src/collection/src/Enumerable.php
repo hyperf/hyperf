@@ -532,11 +532,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
 
     /**
      * Concatenate values of a given key as a string.
-     *
-     * @param callable|string $value
-     * @return string
      */
-    public function implode($value, ?string $glue = null);
+    public function implode(array|callable|string $value, ?string $glue = null): string;
 
     /**
      * Intersect the collection with the given items.

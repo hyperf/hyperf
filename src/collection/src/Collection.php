@@ -514,9 +514,8 @@ class Collection implements Enumerable, ArrayAccess
 
     /**
      * Concatenate values of a given key as a string.
-     * @param mixed $value
      */
-    public function implode($value, ?string $glue = null): string
+    public function implode(array|callable|string $value, ?string $glue = null): string
     {
         if ($this->useAsCallable($value)) {
             return implode($glue ?? '', $this->map($value)->all());
