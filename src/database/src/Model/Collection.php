@@ -290,7 +290,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param iterable<array-key, TModel> $items
      * @return static<TKey, TModel>
      */
-    public function diff($items)
+    public function diff($items): static
     {
         $diff = new static();
 
