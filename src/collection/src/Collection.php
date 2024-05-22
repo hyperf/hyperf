@@ -614,9 +614,15 @@ class Collection implements Enumerable, ArrayAccess
      */
     public function map(callable $callback): self|static
     {
-        $keys = array_keys($this->items);
-        $items = array_map($callback, $this->items, $keys);
-        return new static(array_combine($keys, $items));
+        $result = [];
+        foreach ($this->items as $key => $value) {
+            $result[$key] = $callback($value, $key);
+        }
+
+        return new static($result);
+        // $keys = array_keys($this->items);
+        // $items = array_map($callback, $this->items, $keys);
+        // return new static(array_combine($keys, $items));
     }
 
     /**
@@ -728,7 +734,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param null|array<array-key, TKey>|static<array-key, TKey>|string $keys
      * @return static<TKey, TValue>
      */
-    public function only($keys)
+    public function only($keys): static
     {
         if (is_null($keys)) {
             return new static($this->items);

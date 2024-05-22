@@ -758,28 +758,21 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Get the items with the specified keys.
      *
      * @param null|array<array-key, TKey>|Enumerable<array-key, TKey>|string $keys
-     * @return static
      */
-    public function only($keys);
+    public function only($keys): static;
 
     /**
      * "Paginate" the collection by slicing it into a smaller collection.
-     *
-     * @param int $page
-     * @param int $perPage
-     * @return static
      */
-    public function forPage($page, $perPage);
+    public function forPage(int $page, int $perPage): static;
 
     /**
      * Partition the collection into two arrays using the given callback or key.
      *
      * @param (callable(TValue, TKey): bool)|string|TValue $key
-     * @param mixed $operator
-     * @param mixed $value
      * @return static<int<0, 1>, static<TKey, TValue>>
      */
-    public function partition($key, $operator = null, $value = null);
+    public function partition(mixed $key, mixed $operator = null, mixed $value = null): static;
 
     /**
      * Push all of the given items onto the collection.
@@ -811,7 +804,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param TReduceInitial $initial
      * @return TReduceReturnType
      */
-    public function reduce(callable $callback, $initial = null);
+    public function reduce(callable $callback, mixed $initial = null): mixed;
 
     /**
      * Reduce the collection to multiple aggregate values.
@@ -1025,7 +1018,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param callable(TValue): mixed $callback
      * @return $this
      */
-    public function tap(callable $callback);
+    public function tap(callable $callback): static;
 
     /**
      * Pass the enumerable to the given callback and return the result.
@@ -1035,7 +1028,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param callable($this): TPipeReturnType $callback
      * @return TPipeReturnType
      */
-    public function pipe(callable $callback);
+    public function pipe(callable $callback): mixed;
 
     /**
      * Pass the collection into a new class.
@@ -1067,9 +1060,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Create a collection of all elements that do not pass a given truth test.
      *
      * @param bool|(callable(TValue, TKey): bool)|TValue $callback
-     * @return static
      */
-    public function reject($callback = true);
+    public function reject(mixed $callback = true): static;
 
     /**
      * Convert a flatten "dot" notation array into an expanded array.
@@ -1081,15 +1073,14 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @param null|(callable(TValue, TKey): mixed)|string $key
      */
-    public function unique($key = null, bool $strict = false): static;
+    public function unique(mixed $key = null, bool $strict = false): static;
 
     /**
      * Return only unique items from the collection array using strict comparison.
      *
      * @param null|(callable(TValue, TKey): mixed)|string $key
-     * @return static
      */
-    public function uniqueStrict($key = null);
+    public function uniqueStrict(mixed $key = null): static;
 
     /**
      * Reset the keys on the underlying array.
@@ -1163,18 +1154,16 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Get the collection of items as JSON.
      *
-     * @param int $options
      * @return string
      */
-    public function toJson($options = 0);
+    public function toJson(int $options = 0);
 
     /**
      * Get a CachingIterator instance.
      *
-     * @param int $flags
      * @return CachingIterator
      */
-    public function getCachingIterator($flags = CachingIterator::CALL_TOSTRING);
+    public function getCachingIterator(int $flags = CachingIterator::CALL_TOSTRING);
 
     /**
      * Indicate that the model's string representation should be escaped when __toString is invoked.
@@ -1186,8 +1175,6 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
 
     /**
      * Add a method to the list of proxied methods.
-     *
-     * @param string $method
      */
-    public static function proxy($method);
+    public static function proxy(string $method): void;
 }

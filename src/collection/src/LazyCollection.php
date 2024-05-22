@@ -903,9 +903,8 @@ class LazyCollection implements Enumerable
      * Get the items with the specified keys.
      *
      * @param null|array<array-key, TKey>|Enumerable<array-key, TKey>|string $keys
-     * @return static
      */
-    public function only($keys)
+    public function only($keys): static
     {
         if ($keys instanceof Enumerable) {
             $keys = $keys->all();
@@ -1562,7 +1561,7 @@ class LazyCollection implements Enumerable
      *
      * @param null|(callable(TValue, TKey): mixed)|string $key
      */
-    public function unique($key = null, bool $strict = false): static
+    public function unique(mixed $key = null, bool $strict = false): static
     {
         $callback = $this->valueRetriever($key);
 

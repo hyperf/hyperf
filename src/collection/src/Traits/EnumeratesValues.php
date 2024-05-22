@@ -499,12 +499,8 @@ trait EnumeratesValues
 
     /**
      * "Paginate" the collection by slicing it into a smaller collection.
-     *
-     * @param int $page
-     * @param int $perPage
-     * @return static
      */
-    public function forPage($page, $perPage)
+    public function forPage(int $page, int $perPage): static
     {
         $offset = max(0, ($page - 1) * $perPage);
 
@@ -519,7 +515,7 @@ trait EnumeratesValues
      * @param null|TValue $value
      * @return static<int<0, 1>, static<TKey, TValue>>
      */
-    public function partition($key, $operator = null, $value = null)
+    public function partition(mixed $key, mixed $operator = null, mixed $value = null): static
     {
         $passed = [];
         $failed = [];
@@ -769,7 +765,7 @@ trait EnumeratesValues
      * @param callable($this): TPipeReturnType $callback
      * @return TPipeReturnType
      */
-    public function pipe(callable $callback)
+    public function pipe(callable $callback): mixed
     {
         return $callback($this);
     }
@@ -811,7 +807,7 @@ trait EnumeratesValues
      * @param TReduceInitial $initial
      * @return TReduceReturnType
      */
-    public function reduce(callable $callback, $initial = null)
+    public function reduce(callable $callback, mixed $initial = null): mixed
     {
         $result = $initial;
 
@@ -868,9 +864,8 @@ trait EnumeratesValues
      * Create a collection of all elements that do not pass a given truth test.
      *
      * @param bool|(callable(TValue, TKey): bool)|TValue $callback
-     * @return static
      */
-    public function reject($callback = true)
+    public function reject(mixed $callback = true): static
     {
         $useAsCallable = $this->useAsCallable($callback);
 
@@ -887,7 +882,7 @@ trait EnumeratesValues
      * @param callable($this): mixed $callback
      * @return $this
      */
-    public function tap(callable $callback)
+    public function tap(callable $callback): static
     {
         $callback($this);
 
@@ -899,7 +894,7 @@ trait EnumeratesValues
      *
      * @param null|(callable(TValue, TKey): mixed)|string $key
      */
-    public function unique($key = null, bool $strict = false): static
+    public function unique(mixed $key = null, bool $strict = false): static
     {
         $callback = $this->valueRetriever($key);
 
@@ -911,6 +906,8 @@ trait EnumeratesValues
             }
 
             $exists[] = $id;
+
+            return false;
         });
     }
 
@@ -918,9 +915,8 @@ trait EnumeratesValues
      * Return only unique items from the collection array using strict comparison.
      *
      * @param null|(callable(TValue, TKey): mixed)|string $key
-     * @return static
      */
-    public function uniqueStrict($key = null)
+    public function uniqueStrict(mixed $key = null): static
     {
         return $this->unique($key, true);
     }
@@ -952,28 +948,25 @@ trait EnumeratesValues
      */
     public function jsonSerialize(): array
     {
-        return array_map(function ($value) {
-            if ($value instanceof JsonSerializable) {
-                return $value->jsonSerialize();
-            }
-            if ($value instanceof Jsonable) {
-                return json_decode($value->__toString(), true);
-            }
-            if ($value instanceof Arrayable) {
-                return $value->toArray();
-            }
+        $result = [];
+        foreach ($this->all() as $key => $value) {
+            $result[$key] = match (true) {
+                $value instanceof JsonSerializable => $value->jsonSerialize(),
+                $value instanceof Jsonable => json_decode($value->__toString(), true),
+                $value instanceof Arrayable => $value->toArray(),
+                default => $value
+            };
+        }
 
-            return $value;
-        }, $this->all());
+        return $result;
     }
 
     /**
      * Get the collection of items as JSON.
      *
-     * @param int $options
      * @return string
      */
-    public function toJson($options = 0)
+    public function toJson(int $options = 0)
     {
         return json_encode($this->jsonSerialize(), $options);
     }
@@ -981,10 +974,9 @@ trait EnumeratesValues
     /**
      * Get a CachingIterator instance.
      *
-     * @param int $flags
      * @return CachingIterator
      */
-    public function getCachingIterator($flags = CachingIterator::CALL_TOSTRING)
+    public function getCachingIterator(int $flags = CachingIterator::CALL_TOSTRING)
     {
         /* @phpstan-ignore-next-line */
         return new CachingIterator($this->getIterator(), $flags);
@@ -1005,10 +997,8 @@ trait EnumeratesValues
 
     /**
      * Add a method to the list of proxied methods.
-     *
-     * @param string $method
      */
-    public static function proxy($method)
+    public static function proxy(string $method): void
     {
         static::$proxies[] = $method;
     }
@@ -1037,9 +1027,8 @@ trait EnumeratesValues
      *
      * @param callable|string $key
      * @param null|string $operator
-     * @return Closure
      */
-    protected function operatorForWhere(mixed $key, mixed $operator = null, mixed $value = null)
+    protected function operatorForWhere(mixed $key, mixed $operator = null, mixed $value = null): Closure
     {
         if ($this->useAsCallable($key)) {
             return $key;
@@ -1100,7 +1089,7 @@ trait EnumeratesValues
      * @param mixed $value
      * @return bool
      */
-    protected function useAsCallable($value)
+    protected function useAsCallable($value): bool
     {
         return ! is_string($value) && is_callable($value);
     }
@@ -1111,7 +1100,7 @@ trait EnumeratesValues
      * @param null|callable|string $value
      * @return callable
      */
-    protected function valueRetriever($value)
+    protected function valueRetriever($value): callable
     {
         if ($this->useAsCallable($value)) {
             return $value;

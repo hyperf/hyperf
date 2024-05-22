@@ -332,7 +332,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param null|(callable(TModel, TKey): bool)|string $key
      * @return static<int, TModel>
      */
-    public function unique($key = null, bool $strict = false): static
+    public function unique(mixed $key = null, bool $strict = false): static
     {
         if (! is_null($key)) {
             return parent::unique($key, $strict);
@@ -347,7 +347,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param null|array<array-key, mixed> $keys
      * @return static<int, TModel>
      */
-    public function only($keys)
+    public function only($keys): static
     {
         if (is_null($keys)) {
             return new static($this->items);
