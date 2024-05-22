@@ -527,7 +527,7 @@ class Collection implements Enumerable, ArrayAccess
             return implode($glue ?? '', $this->pluck($value)->all());
         }
 
-        return implode($value ?? '', $this->items);
+        return implode($value ?: '', $this->items);
     }
 
     /**

@@ -615,9 +615,8 @@ class LazyCollection implements Enumerable
      * Intersect the collection with the given items.
      *
      * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
-     * @return static
      */
-    public function intersect(mixed $items)
+    public function intersect(mixed $items): static
     {
         return $this->passthru('intersect', func_get_args());
     }
