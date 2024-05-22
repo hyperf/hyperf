@@ -24,6 +24,9 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use RuntimeException;
 use Symfony\Component\Uid\Ulid;
+use Throwable;
+use Traversable;
+use voku\helper\ASCII;
 
 use function Hyperf\Collection\collect;
 
@@ -34,6 +37,21 @@ use function Hyperf\Collection\collect;
 class Str
 {
     use Macroable;
+
+    /**
+     * The callback that should be used to generate random strings.
+     */
+    protected static ?Closure $randomStringFactory = null;
+
+    /**
+     * The callback that should be used to generate UUIDs.
+     */
+    protected static ?Closure $uuidFactory = null;
+
+    /**
+     * The callback that should be used to generate ULIDs.
+     */
+    protected static ?Closure $ulidFactory = null;
 
     /**
      * Get a new stringable object from the given string.
@@ -139,17 +157,15 @@ class Str
      */
     public static function ascii($value, $language = 'en')
     {
-        $languageSpecific = static::languageSpecificCharsArray($language);
+        return ASCII::to_ascii($value, $language);
+    }
 
-        if (! is_null($languageSpecific)) {
-            $value = str_replace($languageSpecific[0], $languageSpecific[1], $value);
-        }
-
-        foreach (static::charsArray() as $key => $val) {
-            $value = str_replace($val, (string) $key, $value);
-        }
-
-        return preg_replace('/[^\x20-\x7E]/u', '', $value);
+    /**
+     * Transliterate a string to its closest ASCII representation.
+     */
+    public static function transliterate(string $string, ?string $unknown = '?', bool $strict = false): string
+    {
+        return ASCII::to_transliterate($string, $unknown, $strict);
     }
 
     /**
@@ -362,11 +378,7 @@ class Str
      */
     public static function isAscii(string $value): bool
     {
-        if ($value == '') {
-            return true;
-        }
-
-        return ! preg_match('/[^\x09\x0A\x0D\x20-\x7E]/', $value);
+        return ASCII::is_ascii($value);
     }
 
     /**
@@ -536,12 +548,23 @@ class Str
     }
 
     /**
-     * Parse a Class@method style callback into class and method.
+     * Parse a Class[@]method style callback into class and method.
      *
-     * @param null|string $default
+     * @return array<int, null|string>
      */
-    public static function parseCallback(string $callback, $default = null): array
+    public static function parseCallback(string $callback, ?string $default = null): array
     {
+        if (static::contains($callback, "@anonymous\0")) {
+            if (static::substrCount($callback, '@') > 1) {
+                return [
+                    static::beforeLast($callback, '@'),
+                    static::afterLast($callback, '@'),
+                ];
+            }
+
+            return [$callback, $default];
+        }
+
         return static::contains($callback, '@') ? explode('@', $callback, 2) : [$callback, $default];
     }
 
@@ -579,17 +602,67 @@ class Str
      */
     public static function random(int $length = 16): string
     {
-        $string = '';
+        return (static::$randomStringFactory ?? function ($length) {
+            $string = '';
 
-        while (($len = strlen($string)) < $length) {
-            $size = $length - $len;
+            while (($len = strlen($string)) < $length) {
+                $size = $length - $len;
 
-            $bytes = random_bytes($size);
+                $bytesSize = (int) ceil($size / 3) * 3;
 
-            $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
-        }
+                $bytes = random_bytes($bytesSize);
 
-        return $string;
+                $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
+            }
+
+            return $string;
+        })($length);
+    }
+
+    /**
+     * Set the callable that will be used to generate random strings.
+     */
+    public static function createRandomStringsUsing(?Closure $factory = null): void
+    {
+        static::$randomStringFactory = $factory;
+    }
+
+    /**
+     * Set the sequence that will be used to generate random strings.
+     */
+    public static function createRandomStringsUsingSequence(array $sequence, ?Closure $whenMissing = null): void
+    {
+        $next = 0;
+
+        $whenMissing ??= static function ($length) use (&$next) {
+            $factoryCache = static::$randomStringFactory;
+
+            static::$randomStringFactory = null;
+
+            $randomString = static::random($length);
+
+            static::$randomStringFactory = $factoryCache;
+
+            ++$next;
+
+            return $randomString;
+        };
+
+        static::createRandomStringsUsing(static function ($length) use (&$next, $sequence, $whenMissing) {
+            if (array_key_exists($next, $sequence)) {
+                return $sequence[$next++];
+            }
+
+            return $whenMissing($length);
+        });
+    }
+
+    /**
+     * Indicate that random strings should be created normally and not using a custom factory.
+     */
+    public static function createRandomStringsNormally(): void
+    {
+        static::$randomStringFactory = null;
     }
 
     /**
@@ -605,15 +678,23 @@ class Str
     /**
      * Replace a given value in the string sequentially with an array.
      *
-     * @param string[] $replace
+     * @param string[]|Traversable $replace
      */
-    public static function replaceArray(string $search, array $replace, string $subject): string
+    public static function replaceArray(string $search, array|Traversable $replace, string $subject): string
     {
-        foreach ($replace as $value) {
-            $subject = static::replaceFirst($search, (string) $value, $subject);
+        if ($replace instanceof Traversable) {
+            $replace = collect($replace)->all();
         }
 
-        return $subject;
+        $segments = explode($search, $subject);
+
+        $result = array_shift($segments);
+
+        foreach ($segments as $segment) {
+            $result .= self::toStringOr(array_shift($replace) ?? $search, $search) . $segment;
+        }
+
+        return $result;
     }
 
     /**
@@ -668,13 +749,16 @@ class Str
     /**
      * Remove any occurrence of the given string in the subject.
      *
-     * @param array<string>|string $search
+     * @param array|string|Traversable $search
      * @param string $subject
      * @param bool $caseSensitive
      * @return string
      */
     public static function remove($search, $subject, $caseSensitive = true)
     {
+        if ($search instanceof Traversable) {
+            $search = collect($search)->all();
+        }
         return $caseSensitive
                     ? str_replace($search, '', $subject)
                     : str_ireplace($search, '', $subject);
@@ -901,13 +985,87 @@ class Str
     /**
      * Generate a ULID.
      */
-    public static function ulid(?DateTimeInterface $time = null): Ulid
+    public static function ulid(?DateTimeInterface $time = null): mixed
     {
         if (! class_exists(Ulid::class)) {
             throw new RuntimeException('The "symfony/uid" package is required to use the "ulid" method. Please run "composer require symfony/uid".');
         }
 
+        if (static::$ulidFactory) {
+            return call_user_func(static::$ulidFactory);
+        }
+
+        if ($time === null) {
+            return new Ulid();
+        }
+
         return new Ulid(Ulid::generate($time));
+    }
+
+    /**
+     * Indicate that ULIDs should be created normally and not using a custom factory.
+     */
+    public static function createUlidsNormally(): void
+    {
+        static::$ulidFactory = null;
+    }
+
+    /**
+     * Set the callable that will be used to generate ULIDs.
+     */
+    public static function createUlidsUsing(?Closure $factory = null): void
+    {
+        static::$ulidFactory = $factory;
+    }
+
+    /**
+     * Set the sequence that will be used to generate ULIDs.
+     */
+    public static function createUlidsUsingSequence(array $sequence, ?Closure $whenMissing = null): void
+    {
+        $next = 0;
+
+        $whenMissing ??= static function () use (&$next) {
+            $factoryCache = static::$ulidFactory;
+
+            static::$ulidFactory = null;
+
+            $ulid = static::ulid();
+
+            static::$ulidFactory = $factoryCache;
+
+            ++$next;
+
+            return $ulid;
+        };
+
+        static::createUlidsUsing(static function () use (&$next, $sequence, $whenMissing) {
+            if (array_key_exists($next, $sequence)) {
+                return $sequence[$next++];
+            }
+
+            return $whenMissing();
+        });
+    }
+
+    /**
+     * Always return the same ULID when generating new ULIDs.
+     */
+    public static function freezeUlids(?Closure $callback = null): Stringable|Ulid
+    {
+        $ulid = static::ulid();
+
+        static::createUlidsUsing(static fn () => $ulid);
+
+        if ($callback !== null) {
+            try {
+                $callback($ulid);
+            } finally {
+                static::createUlidsNormally();
+            }
+        }
+
+        return $ulid;
     }
 
     /**
@@ -968,8 +1126,12 @@ class Str
     /**
      * Generate a UUID (version 4).
      */
-    public static function uuid(): UuidInterface
+    public static function uuid(): mixed
     {
+        if (static::$uuidFactory) {
+            return call_user_func(static::$uuidFactory);
+        }
+
         if (! class_exists(Uuid::class)) {
             throw new RuntimeException('The "ramsey/uuid" package is required to use the "uuid" method. Please run "composer require ramsey/uuid".');
         }
@@ -980,13 +1142,83 @@ class Str
     /**
      * Generate a time-ordered UUID.
      */
-    public static function orderedUuid(?DateTimeInterface $time = null): UuidInterface
+    public static function orderedUuid(?DateTimeInterface $time = null): mixed
     {
+        if (static::$uuidFactory) {
+            return call_user_func(static::$uuidFactory);
+        }
+
         if (! class_exists(Uuid::class)) {
             throw new RuntimeException('The "ramsey/uuid" package is required to use the "orderedUuid" method. Please run "composer require ramsey/uuid".');
         }
 
         return Uuid::uuid7($time);
+    }
+
+    /**
+     * Set the callable that will be used to generate UUIDs.
+     */
+    public static function createUuidsUsing(?Closure $factory = null): void
+    {
+        static::$uuidFactory = $factory;
+    }
+
+    /**
+     * Set the sequence that will be used to generate UUIDs.
+     */
+    public static function createUuidsUsingSequence(array $sequence, ?Closure $whenMissing = null): void
+    {
+        $next = 0;
+
+        $whenMissing ??= static function () use (&$next) {
+            $factoryCache = static::$uuidFactory;
+
+            static::$uuidFactory = null;
+
+            $uuid = static::uuid();
+
+            static::$uuidFactory = $factoryCache;
+
+            ++$next;
+
+            return $uuid;
+        };
+
+        static::createUuidsUsing(static function () use (&$next, $sequence, $whenMissing) {
+            if (array_key_exists($next, $sequence)) {
+                return $sequence[$next++];
+            }
+
+            return $whenMissing();
+        });
+    }
+
+    /**
+     * Always return the same UUID when generating new UUIDs.
+     */
+    public static function freezeUuids(?Closure $callback = null): UuidInterface
+    {
+        $uuid = static::uuid();
+
+        static::createUuidsUsing(static fn () => $uuid);
+
+        if ($callback !== null) {
+            try {
+                $callback($uuid);
+            } finally {
+                static::createUuidsNormally();
+            }
+        }
+
+        return $uuid;
+    }
+
+    /**
+     * Indicate that UUIDs should be created normally and not using a custom factory.
+     */
+    public static function createUuidsNormally(): void
+    {
+        static::$uuidFactory = null;
     }
 
     /**
@@ -1395,6 +1627,8 @@ class Str
     /**
      * Returns the replacements for the ascii method.
      * Note: Adapted from Stringy\Stringy.
+     *
+     * @deprecated since v3.1, will be removed in v3.2
      *
      * @see https://github.com/danielstjules/Stringy/blob/3.1.0/LICENSE.txt
      */
@@ -1946,6 +2180,8 @@ class Str
      * Returns the language specific replacements for the ascii method.
      * Note: Adapted from Stringy\Stringy.
      *
+     * @deprecated since v3.1, will be removed in v3.2
+     *
      * @see https://github.com/danielstjules/Stringy/blob/3.1.0/LICENSE.txt
      * @return null|array
      */
@@ -1967,5 +2203,17 @@ class Str
         }
 
         return $languageSpecific[$language] ?? null;
+    }
+
+    /**
+     * Convert the given value to a string or return the given fallback on failure.
+     */
+    private static function toStringOr(mixed $value, string $fallback): string
+    {
+        try {
+            return (string) $value;
+        } catch (Throwable) { // @phpstan-ignore-line
+            return $fallback;
+        }
     }
 }

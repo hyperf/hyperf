@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Stringable;
 
+use Exception;
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
 use InvalidArgumentException;
@@ -1115,7 +1116,7 @@ class StrTest extends TestCase
         $this->assertSame('http://hyperf.io', Str::replaceMatches('/^https:\/\//', fn ($matches) => 'http://', 'https://hyperf.io'));
     }
 
-    public function testNumbers(): void
+    public function testNumbers()
     {
         $this->assertSame('5551234567', Str::numbers('(555) 123-4567'));
         $this->assertSame('443', Str::numbers('L4r4v3l!'));
@@ -1126,9 +1127,248 @@ class StrTest extends TestCase
         $this->assertSame($arrayExpected, Str::numbers($arrayValue));
     }
 
-    public function testFromBase64(): void
+    public function testParseCallback()
+    {
+        $this->assertEquals(['Class', 'method'], Str::parseCallback('Class@method'));
+        $this->assertEquals(['Class', 'method'], Str::parseCallback('Class@method', 'foo'));
+        $this->assertEquals(['Class', 'foo'], Str::parseCallback('Class', 'foo'));
+        $this->assertEquals(['Class', null], Str::parseCallback('Class'));
+
+        $this->assertEquals(["Class@anonymous\0/laravel/382.php:8$2ec", 'method'], Str::parseCallback("Class@anonymous\0/laravel/382.php:8$2ec@method"));
+        $this->assertEquals(["Class@anonymous\0/laravel/382.php:8$2ec", 'method'], Str::parseCallback("Class@anonymous\0/laravel/382.php:8$2ec@method", 'foo'));
+        $this->assertEquals(["Class@anonymous\0/laravel/382.php:8$2ec", 'foo'], Str::parseCallback("Class@anonymous\0/laravel/382.php:8$2ec", 'foo'));
+        $this->assertEquals(["Class@anonymous\0/laravel/382.php:8$2ec", null], Str::parseCallback("Class@anonymous\0/laravel/382.php:8$2ec"));
+    }
+
+    public function testItCanSpecifyASequenceOfRandomStringsToUtilise()
+    {
+        Str::createRandomStringsUsingSequence([
+            0 => 'x',
+            // 1 => just generate a random one here...
+            2 => 'y',
+            3 => 'z',
+            // ... => continue to generate random strings...
+        ]);
+
+        $this->assertSame('x', Str::random());
+        $this->assertSame(16, mb_strlen(Str::random()));
+        $this->assertSame('y', Str::random());
+        $this->assertSame('z', Str::random());
+        $this->assertSame(16, mb_strlen(Str::random()));
+        $this->assertSame(16, mb_strlen(Str::random()));
+
+        Str::createRandomStringsNormally();
+    }
+
+    public function testItCanSpecifyAFallbackForARandomStringSequence()
+    {
+        Str::createRandomStringsUsingSequence([Str::random(), Str::random()], fn () => throw new Exception('Out of random strings.'));
+        Str::random();
+        Str::random();
+
+        try {
+            $this->expectExceptionMessage('Out of random strings.');
+            Str::random();
+            $this->fail();
+        } finally {
+            Str::createRandomStringsNormally();
+        }
+    }
+
+    public function testReplaceArray()
+    {
+        $this->assertSame('foo/bar/baz', Str::replaceArray('?', ['foo', 'bar', 'baz'], '?/?/?'));
+        $this->assertSame('foo/bar/baz/?', Str::replaceArray('?', ['foo', 'bar', 'baz'], '?/?/?/?'));
+        $this->assertSame('foo/bar', Str::replaceArray('?', ['foo', 'bar', 'baz'], '?/?'));
+        $this->assertSame('?/?/?', Str::replaceArray('x', ['foo', 'bar', 'baz'], '?/?/?'));
+        // Ensure recursive replacements are avoided
+        $this->assertSame('foo?/bar/baz', Str::replaceArray('?', ['foo?', 'bar', 'baz'], '?/?/?'));
+        // Test for associative array support
+        $this->assertSame('foo/bar', Str::replaceArray('?', [1 => 'foo', 2 => 'bar'], '?/?'));
+        $this->assertSame('foo/bar', Str::replaceArray('?', ['x' => 'foo', 'y' => 'bar'], '?/?'));
+        // Test does not crash on bad input
+        $this->assertSame('?', Str::replaceArray('?', [(object) ['foo' => 'bar']], '?'));
+    }
+
+    public function testFromBase64()
     {
         $this->assertSame('foo', Str::fromBase64(base64_encode('foo')));
         $this->assertSame('foobar', Str::fromBase64(base64_encode('foobar'), true));
+    }
+
+    public function testItCanSpecifyASequenceOfUuidsToUtilise()
+    {
+        Str::createUuidsUsingSequence([
+            0 => ($zeroth = Str::uuid()),
+            1 => ($first = Str::uuid()),
+            // just generate a random one here...
+            3 => ($third = Str::uuid()),
+            // continue to generate random uuids...
+        ]);
+
+        $retrieved = Str::uuid();
+        $this->assertSame($zeroth, $retrieved);
+        $this->assertSame((string) $zeroth, (string) $retrieved);
+
+        $retrieved = Str::uuid();
+        $this->assertSame($first, $retrieved);
+        $this->assertSame((string) $first, (string) $retrieved);
+
+        $retrieved = Str::uuid();
+        $this->assertFalse(in_array($retrieved, [$zeroth, $first, $third], true));
+        $this->assertFalse(in_array((string) $retrieved, [(string) $zeroth, (string) $first, (string) $third], true));
+
+        $retrieved = Str::uuid();
+        $this->assertSame($third, $retrieved);
+        $this->assertSame((string) $third, (string) $retrieved);
+
+        $retrieved = Str::uuid();
+        $this->assertFalse(in_array($retrieved, [$zeroth, $first, $third], true));
+        $this->assertFalse(in_array((string) $retrieved, [(string) $zeroth, (string) $first, (string) $third], true));
+
+        Str::createUuidsNormally();
+    }
+
+    public function testItCreatesUuidsNormallyAfterFailureWithinFreezeMethod()
+    {
+        try {
+            Str::freezeUuids(function () {
+                Str::createUuidsUsing(static fn () => Str::of('1234'));
+                $this->assertSame('1234', Str::uuid()->toString());
+                throw new Exception('Something failed.');
+            });
+        } catch (Exception) {
+            $this->assertNotSame('1234', Str::uuid()->toString());
+        }
+    }
+
+    public function testItCanFreezeUuids()
+    {
+        $this->assertNotSame((string) Str::uuid(), (string) Str::uuid());
+        $this->assertNotSame(Str::uuid(), Str::uuid());
+
+        $uuid = Str::freezeUuids();
+
+        $this->assertSame($uuid, Str::uuid());
+        $this->assertSame(Str::uuid(), Str::uuid());
+        $this->assertSame((string) $uuid, (string) Str::uuid());
+        $this->assertSame((string) Str::uuid(), (string) Str::uuid());
+
+        Str::createUuidsNormally();
+
+        $this->assertNotSame(Str::uuid(), Str::uuid());
+        $this->assertNotSame((string) Str::uuid(), (string) Str::uuid());
+    }
+
+    public function testItCanFreezeUuidsInAClosure()
+    {
+        $uuids = [];
+
+        $uuid = Str::freezeUuids(function ($uuid) use (&$uuids) {
+            $uuids[] = $uuid;
+            $uuids[] = Str::uuid();
+            $uuids[] = Str::uuid();
+        });
+
+        $this->assertSame($uuid, $uuids[0]);
+        $this->assertSame((string) $uuid, (string) $uuids[0]);
+        $this->assertSame((string) $uuids[0], (string) $uuids[1]);
+        $this->assertSame($uuids[0], $uuids[1]);
+        $this->assertSame((string) $uuids[0], (string) $uuids[1]);
+        $this->assertSame($uuids[1], $uuids[2]);
+        $this->assertSame((string) $uuids[1], (string) $uuids[2]);
+        $this->assertNotSame(Str::uuid(), Str::uuid());
+        $this->assertNotSame((string) Str::uuid(), (string) Str::uuid());
+
+        Str::createUuidsNormally();
+    }
+
+    public function testItCanSpecifyAFallbackForASequence()
+    {
+        Str::createUuidsUsingSequence([Str::uuid(), Str::uuid()], fn () => throw new Exception('Out of Uuids.'));
+        Str::uuid();
+        Str::uuid();
+
+        try {
+            $this->expectExceptionMessage('Out of Uuids.');
+            Str::uuid();
+            $this->fail();
+        } finally {
+            Str::createUuidsNormally();
+        }
+    }
+
+    public function testItCanFreezeUlids()
+    {
+        $this->assertNotSame((string) Str::ulid(), (string) Str::ulid());
+        $this->assertNotSame(Str::ulid(), Str::ulid());
+
+        $ulid = Str::freezeUlids();
+
+        $this->assertSame($ulid, Str::ulid());
+        $this->assertSame(Str::ulid(), Str::ulid());
+        $this->assertSame((string) $ulid, (string) Str::ulid());
+        $this->assertSame((string) Str::ulid(), (string) Str::ulid());
+
+        Str::createUlidsNormally();
+
+        $this->assertNotSame(Str::ulid(), Str::ulid());
+        $this->assertNotSame((string) Str::ulid(), (string) Str::ulid());
+    }
+
+    public function testItCanFreezeUlidsInAClosure()
+    {
+        $ulids = [];
+
+        $ulid = Str::freezeUlids(function ($ulid) use (&$ulids) {
+            $ulids[] = $ulid;
+            $ulids[] = Str::ulid();
+            $ulids[] = Str::ulid();
+        });
+
+        $this->assertSame($ulid, $ulids[0]);
+        $this->assertSame((string) $ulid, (string) $ulids[0]);
+        $this->assertSame((string) $ulids[0], (string) $ulids[1]);
+        $this->assertSame($ulids[0], $ulids[1]);
+        $this->assertSame((string) $ulids[0], (string) $ulids[1]);
+        $this->assertSame($ulids[1], $ulids[2]);
+        $this->assertSame((string) $ulids[1], (string) $ulids[2]);
+        $this->assertNotSame(Str::ulid(), Str::ulid());
+        $this->assertNotSame((string) Str::ulid(), (string) Str::ulid());
+
+        Str::createUlidsNormally();
+    }
+
+    public function testItCreatesUlidsNormallyAfterFailureWithinFreezeMethod()
+    {
+        try {
+            Str::freezeUlids(function () {
+                Str::createUlidsUsing(fn () => Str::of('1234'));
+                $this->assertSame('1234', (string) Str::ulid());
+                throw new Exception('Something failed');
+            });
+        } catch (Exception) {
+            $this->assertNotSame('1234', (string) Str::ulid());
+        }
+    }
+
+    #[DataProvider('specialCharacterProvider')]
+    public function testTransliterate(string $value, string $expected): void
+    {
+        $this->assertSame($expected, Str::transliterate($value));
+    }
+
+    public static function specialCharacterProvider(): array
+    {
+        return [
+            ['ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ', 'abcdefghijklmnopqrstuvwxyz'],
+            ['⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳', '01234567891011121314151617181920'],
+            ['⓵⓶⓷⓸⓹⓺⓻⓼⓽⓾', '12345678910'],
+            ['⓿⓫⓬⓭⓮⓯⓰⓱⓲⓳⓴', '011121314151617181920'],
+            ['ⓣⓔⓢⓣ@ⓛⓐⓡⓐⓥⓔⓛ.ⓒⓞⓜ', 'test@laravel.com'],
+            ['🎂', '?'],
+            ['abcdefghijklmnopqrstuvwxyz', 'abcdefghijklmnopqrstuvwxyz'],
+            ['0123456789', '0123456789'],
+        ];
     }
 }
