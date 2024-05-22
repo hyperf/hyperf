@@ -1402,7 +1402,7 @@ class LazyCollectionIsLazyTest extends TestCase
 
     public function testTimesIsLazy()
     {
-        $data = LazyCollection::times(INF);
+        $data = LazyCollection::times(PHP_INT_MAX);
 
         $this->assertEnumeratesCollection($data, 2, function ($collection) {
             $collection->take(2)->all();

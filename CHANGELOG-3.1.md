@@ -10,6 +10,7 @@
 ## Optimized
 
 - [#6777](https://github.com/hyperf/hyperf/pull/6777) Optimized StdoutLogger to improve log message handling.
+- [#6778](https://github.com/hyperf/hyperf/pull/6778) Optimized Collection using EnumeratesValues.
 
 # v3.1.22 - 2024-05-16
 
