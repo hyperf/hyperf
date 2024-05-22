@@ -26,6 +26,7 @@ use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
 use HyperfTest\Database\PgSQL\Stubs\SwooleVersionStub;
 use Mockery as m;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -149,6 +150,7 @@ class DatabasePostgresBuilderTest extends TestCase
         $this->assertCount(1, $result);
     }
 
+    #[RequiresPhpExtension('swoole', '< 6.0')]
     public function testPostgresInsertOrIgnoreUsingMethod()
     {
         $builder = $this->getPostgresBuilderWithProcessor();
