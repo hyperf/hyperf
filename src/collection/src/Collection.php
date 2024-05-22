@@ -651,7 +651,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
      * @return static<TKey, TValue>
      */
-    public function merge($items)
+    public function merge($items): static
     {
         return new static(array_merge($this->items, $this->getArrayableItems($items)));
     }

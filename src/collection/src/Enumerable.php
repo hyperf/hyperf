@@ -382,7 +382,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Filter items by the given key value pair.
      */
-    public function where(string|callable $key, mixed $operator = null, mixed $value = null): static;
+    public function where(callable|string $key, mixed $operator = null, mixed $value = null): static;
 
     /**
      * Filter items where the value for the given key is null.
