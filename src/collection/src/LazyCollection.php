@@ -499,7 +499,7 @@ class LazyCollection implements Enumerable
      *
      * @return static<TValue, TKey>
      */
-    public function flip()
+    public function flip(): self|static
     {
         return new static(function () {
             foreach ($this as $key => $value) {

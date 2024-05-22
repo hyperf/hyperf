@@ -1196,7 +1196,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param TPadValue $value
      * @return static<int, TPadValue|TValue>
      */
-    public function pad(int $size, $value)
+    public function pad(int $size, $value): self|static
     {
         return new static(array_pad($this->items, $size, $value));
     }
