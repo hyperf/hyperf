@@ -82,7 +82,7 @@ class LazyCollection implements Enumerable
      * @param null|array<TMakeKey, TMakeValue>|Arrayable<TMakeKey, TMakeValue>|(Closure(): Generator<TMakeKey, TMakeValue, mixed, void>)|iterable<TMakeKey, TMakeValue>|self<TMakeKey, TMakeValue> $items
      * @return static<TMakeKey, TMakeValue>
      */
-    public static function make($items = [])
+    public static function make($items = []): static
     {
         return new static($items);
     }
@@ -427,9 +427,8 @@ class LazyCollection implements Enumerable
      * Run a filter over each of the items.
      *
      * @param null|(callable(TValue, TKey): bool) $callback
-     * @return static
      */
-    public function filter(?callable $callback = null)
+    public function filter(?callable $callback = null): static
     {
         if (is_null($callback)) {
             $callback = fn ($value) => (bool) $value;

@@ -357,11 +357,9 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get the first item by the given key value pair.
      *
-     * @param mixed $operator
-     * @param mixed $value
      * @return null|TValue
      */
-    public function firstWhere(string $key, $operator, $value = null)
+    public function firstWhere(callable|string $key, mixed $operator = null, mixed $value = null): mixed
     {
         return $this->first($this->operatorForWhere(...func_get_args()));
     }
@@ -372,7 +370,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param float|int $depth
      * @return static<int, mixed>
      */
-    public function flatten($depth = INF)
+    public function flatten($depth = INF): self
     {
         return new static(Arr::flatten($this->items, $depth));
     }

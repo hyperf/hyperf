@@ -341,12 +341,9 @@ trait EnumeratesValues
     /**
      * Get the first item by the given key value pair.
      *
-     * @param callable|string $key
-     * @param mixed $operator
-     * @param mixed $value
      * @return null|TValue
      */
-    public function firstWhere($key, $operator = null, $value = null)
+    public function firstWhere(callable|string $key, mixed $operator = null, mixed $value = null): mixed
     {
         return $this->first($this->operatorForWhere(...func_get_args()));
     }
@@ -638,11 +635,8 @@ trait EnumeratesValues
 
     /**
      * Filter items by the given key value pair.
-     *
-     * @param callable|string $key
-     * @return static
      */
-    public function where(string $key, mixed $operator = null, mixed $value = null)
+    public function where(callable|string $key, mixed $operator = null, mixed $value = null): static
     {
         return $this->filter($this->operatorForWhere(...func_get_args()));
     }
@@ -671,12 +665,8 @@ trait EnumeratesValues
 
     /**
      * Filter items by the given key value pair using strict comparison.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return static
      */
-    public function whereStrict($key, $value)
+    public function whereStrict(string $key, mixed $value): static
     {
         return $this->where($key, '===', $value);
     }
@@ -684,12 +674,9 @@ trait EnumeratesValues
     /**
      * Filter items by the given key value pair.
      *
-     * @param string $key
      * @param Arrayable|iterable $values
-     * @param bool $strict
-     * @return static
      */
-    public function whereIn($key, $values, $strict = false)
+    public function whereIn(string $key, mixed $values, bool $strict = false): static
     {
         $values = $this->getArrayableItems($values);
 
@@ -699,11 +686,9 @@ trait EnumeratesValues
     /**
      * Filter items by the given key value pair using strict comparison.
      *
-     * @param string $key
      * @param Arrayable|iterable $values
-     * @return static
      */
-    public function whereInStrict($key, $values)
+    public function whereInStrict(string $key, mixed $values): static
     {
         return $this->whereIn($key, $values, true);
     }
@@ -737,12 +722,9 @@ trait EnumeratesValues
     /**
      * Filter items by the given key value pair.
      *
-     * @param string $key
      * @param Arrayable|iterable $values
-     * @param bool $strict
-     * @return static
      */
-    public function whereNotIn($key, $values, $strict = false)
+    public function whereNotIn(string $key, mixed $values, bool $strict = false): static
     {
         $values = $this->getArrayableItems($values);
 
@@ -752,11 +734,9 @@ trait EnumeratesValues
     /**
      * Filter items by the given key value pair using strict comparison.
      *
-     * @param string $key
      * @param Arrayable|iterable $values
-     * @return static
      */
-    public function whereNotInStrict($key, $values)
+    public function whereNotInStrict(string $key, mixed $values): static
     {
         return $this->whereNotIn($key, $values, true);
     }
@@ -769,7 +749,7 @@ trait EnumeratesValues
      * @param array<array-key, class-string<TWhereInstanceOf>>|class-string<TWhereInstanceOf> $type
      * @return static<TKey, TWhereInstanceOf>
      */
-    public function whereInstanceOf($type)
+    public function whereInstanceOf(array|string $type): static
     {
         return $this->filter(function ($value) use ($type) {
             if (is_array($type)) {

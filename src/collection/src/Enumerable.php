@@ -381,10 +381,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
 
     /**
      * Filter items by the given key value pair.
-     *
-     * @return static
      */
-    public function where(string $key, mixed $operator = null, mixed $value = null);
+    public function where(string|callable $key, mixed $operator = null, mixed $value = null): static;
 
     /**
      * Filter items where the value for the given key is null.
@@ -404,31 +402,22 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
 
     /**
      * Filter items by the given key value pair using strict comparison.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return static
      */
-    public function whereStrict($key, $value);
+    public function whereStrict(string $key, mixed $value): static;
 
     /**
      * Filter items by the given key value pair.
      *
-     * @param string $key
      * @param Arrayable|iterable $values
-     * @param bool $strict
-     * @return static
      */
-    public function whereIn($key, $values, $strict = false);
+    public function whereIn(string $key, mixed $values, bool $strict = false): static;
 
     /**
      * Filter items by the given key value pair using strict comparison.
      *
-     * @param string $key
      * @param Arrayable|iterable $values
-     * @return static
      */
-    public function whereInStrict($key, $values);
+    public function whereInStrict(string $key, mixed $values): static;
 
     /**
      * Filter items such that the value of the given key is between the given values.
@@ -451,21 +440,16 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Filter items by the given key value pair.
      *
-     * @param string $key
      * @param Arrayable|iterable $values
-     * @param bool $strict
-     * @return static
      */
-    public function whereNotIn($key, $values, $strict = false);
+    public function whereNotIn(string $key, mixed $values, bool $strict = false): static;
 
     /**
      * Filter items by the given key value pair using strict comparison.
      *
-     * @param string $key
      * @param Arrayable|iterable $values
-     * @return static
      */
-    public function whereNotInStrict($key, $values);
+    public function whereNotInStrict(string $key, mixed $values): static;
 
     /**
      * Filter the items, removing any items that don't match the given type(s).
@@ -475,7 +459,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param array<array-key, class-string<TWhereInstanceOf>>|class-string<TWhereInstanceOf> $type
      * @return static<TKey, TWhereInstanceOf>
      */
-    public function whereInstanceOf($type);
+    public function whereInstanceOf(array|string $type): static;
 
     /**
      * Get the first item from the enumerable passing the given truth test.
@@ -492,11 +476,9 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Get the first item by the given key value pair.
      *
      * @param string $key
-     * @param mixed $operator
-     * @param mixed $value
      * @return null|TValue
      */
-    public function firstWhere($key, $operator = null, $value = null);
+    public function firstWhere(callable|string $key, mixed $operator = null, mixed $value = null): mixed;
 
     /**
      * Get a flattened array of the items in the collection.

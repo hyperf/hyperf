@@ -515,7 +515,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param int $depth
      * @return BaseCollection<int, mixed>
      */
-    public function flatten($depth = INF)
+    public function flatten($depth = INF): BaseCollection
     {
         return $this->toBase()->flatten($depth);
     }
