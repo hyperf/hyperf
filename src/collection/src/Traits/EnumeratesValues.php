@@ -444,7 +444,7 @@ trait EnumeratesValues
      * @param callable(TValue, TKey): (array<TFlatMapKey, TFlatMapValue>|Collection<TFlatMapKey, TFlatMapValue>) $callback
      * @return static<TFlatMapKey, TFlatMapValue>
      */
-    public function flatMap(callable $callback)
+    public function flatMap(callable $callback): static
     {
         return $this->map($callback)->collapse();
     }
@@ -456,7 +456,7 @@ trait EnumeratesValues
      * @param class-string<TMapIntoValue> $class
      * @return static<TKey, TMapIntoValue>
      */
-    public function mapInto($class)
+    public function mapInto(mixed $class): static
     {
         if (is_subclass_of($class, BackedEnum::class)) {
             return $this->map(fn ($value, $key) => $class::from($value));
@@ -469,9 +469,8 @@ trait EnumeratesValues
      * Get the min value of a given key.
      *
      * @param null|(callable(TValue):mixed)|string $callback
-     * @return mixed
      */
-    public function min($callback = null)
+    public function min(mixed $callback = null): mixed
     {
         $callback = $this->valueRetriever($callback);
 
@@ -484,9 +483,8 @@ trait EnumeratesValues
      * Get the max value of a given key.
      *
      * @param null|(callable(TValue):mixed)|string $callback
-     * @return mixed
      */
-    public function max($callback = null)
+    public function max(mixed $callback = null): mixed
     {
         $callback = $this->valueRetriever($callback);
 

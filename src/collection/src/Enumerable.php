@@ -685,7 +685,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param callable(TValue, TKey): (array<TFlatMapKey, TFlatMapValue>|Collection<TFlatMapKey, TFlatMapValue>) $callback
      * @return static<TFlatMapKey, TFlatMapValue>
      */
-    public function flatMap(callable $callback);
+    public function flatMap(callable $callback): static;
 
     /**
      * Map the values into a new class.
@@ -695,7 +695,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param class-string<TMapIntoValue> $class
      * @return static<TKey, TMapIntoValue>
      */
-    public function mapInto($class);
+    public function mapInto(mixed $class): static;
 
     /**
      * Merge the collection with the given items.
@@ -737,17 +737,15 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Get the min value of a given key.
      *
      * @param null|(callable(TValue):mixed)|string $callback
-     * @return mixed
      */
-    public function min($callback = null);
+    public function min(mixed $callback = null): mixed;
 
     /**
      * Get the max value of a given key.
      *
      * @param null|(callable(TValue):mixed)|string $callback
-     * @return mixed
      */
-    public function max($callback = null);
+    public function max(mixed $callback = null): mixed;
 
     /**
      * Create a new collection consisting of every n-th element.
