@@ -948,4 +948,35 @@ class CollectionTest extends TestCase
         $duplicates = $collection::make([new $collection(['laravel']), $expected, $expected, [], '2', '2'])->duplicatesStrict()->all();
         $this->assertSame([2 => $expected, 5 => '2'], $duplicates);
     }
+
+    public function testGetOrPut()
+    {
+        $data = new Collection(['name' => 'taylor', 'email' => 'foo']);
+
+        $this->assertSame('taylor', $data->getOrPut('name', null));
+        $this->assertSame('foo', $data->getOrPut('email', null));
+        $this->assertSame('male', $data->getOrPut('gender', 'male'));
+
+        $this->assertSame('taylor', $data->get('name'));
+        $this->assertSame('foo', $data->get('email'));
+        $this->assertSame('male', $data->get('gender'));
+
+        $data = new Collection(['name' => 'taylor', 'email' => 'foo']);
+
+        $this->assertSame('taylor', $data->getOrPut('name', function () {
+            return null;
+        }));
+
+        $this->assertSame('foo', $data->getOrPut('email', function () {
+            return null;
+        }));
+
+        $this->assertSame('male', $data->getOrPut('gender', function () {
+            return 'male';
+        }));
+
+        $this->assertSame('taylor', $data->get('name'));
+        $this->assertSame('foo', $data->get('email'));
+        $this->assertSame('male', $data->get('gender'));
+    }
 }
