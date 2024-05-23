@@ -236,6 +236,29 @@ class DatabasePostgresBuilderTest extends TestCase
         $this->assertCount(1, $result);
     }
 
+    #[RequiresPhpExtension('swoole', '< 6.0')]
+    public function testPostgresInsertOrIgnoreUsingMethod()
+    {
+        $builder = $this->getPostgresBuilderWithProcessor();
+        /**
+         * @var ConnectionInterface&m\MockInterface $connection
+         */
+        $connection = $builder->getConnection();
+        $connection->allows('affectingStatement')->andReturnUsing(function ($query, $bindings) {
+            $this->assertEquals('insert into "table1" ("foo") select "bar" from "table2" where "foreign_id" = ? on conflict do nothing', $query);
+            $this->assertEquals([5], $bindings);
+            return 1;
+        });
+        $result = $builder->from('table1')->insertOrIgnoreUsing(
+            ['foo'],
+            function (Builder $query) {
+                $query->select(['bar'])->from('table2')->where('foreign_id', '=', 5);
+            }
+        );
+
+        $this->assertEquals(1, $result);
+    }
+
     protected function getBuilder($connection): PostgresBuilder
     {
         return new PostgresBuilder($connection);
