@@ -684,7 +684,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param array|Closure|string $column
+     * @param array|Builder|Closure|ModelBuilder|string $column
      * @param string $boolean
      * @param null|mixed $operator
      * @param null|mixed $value
@@ -721,7 +721,7 @@ class Builder
         // If the value is a Closure, it means the developer is performing an entire
         // sub-select within the query and we will need to compile the sub-select
         // within the where clause to get the appropriate query record results.
-        if ($value instanceof Closure) {
+        if ($this->isQueryable($value)) {
             return $this->whereSub($column, $operator, $value, $boolean);
         }
 
@@ -3032,16 +3032,24 @@ class Builder
      * @param string $column
      * @param string $operator
      * @param string $boolean
+     * @param mixed $callback
      * @return $this
      */
-    protected function whereSub($column, $operator, Closure $callback, $boolean)
+    protected function whereSub($column, $operator, $callback, $boolean)
     {
         $type = 'Sub';
 
         // Once we have the query instance we can simply execute it so it can add all
         // of the sub-select's conditions to itself, and then we can cache it off
         // in the array of where clauses for the "main" parent query instance.
-        call_user_func($callback, $query = $this->forSubQuery());
+        if ($callback instanceof Closure) {
+            // Once we have the query instance we can simply execute it so it can add all
+            // of the sub-select's conditions to itself, and then we can cache it off
+            // in the array of where clauses for the "main" parent query instance.
+            $callback($query = $this->forSubQuery());
+        } else {
+            $query = $callback instanceof ModelBuilder ? $callback->toBase() : $callback;
+        }
 
         $this->wheres[] = compact('type', 'column', 'operator', 'query', 'boolean');
 

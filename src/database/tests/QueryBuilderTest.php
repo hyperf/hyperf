@@ -24,6 +24,7 @@ use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\DbConnection\Db;
 use Hyperf\Di\Container;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
@@ -3027,6 +3028,18 @@ class QueryBuilderTest extends TestCase
         $builder->select('*')->from('users')->where('email', 'foo');
 
         $this->assertSame('select * from "users" where "email" = \'foo\'', $builder->toRawSql());
+    }
+
+    public function testWhereValueSubQueryBuilder()
+    {
+        $subQuery = $this->getMysqlBuilder()->from('posts')->selectRaw("'Sub query value'")->limit(1);
+        $this->assertTrue($this->getMysqlBuilder()->from('posts')->where($subQuery, 'Sub query value')->exists());
+        $this->assertFalse($this->getMysqlBuilder()->from('posts')->where($subQuery, 'Does not match')->exists());
+        $this->assertTrue($this->getMysqlBuilder()->from('posts')->where($subQuery, '!=', 'Does not match')->exists());
+
+        $this->assertTrue($this->getMysqlBuilder()->from('posts')->where(Db::raw('\'Sub query value\''), $subQuery)->exists());
+        $this->assertFalse($this->getMysqlBuilder()->from('posts')->where(Db::raw('\'Does not match\''), $subQuery)->exists());
+        $this->assertTrue($this->getMysqlBuilder()->from('posts')->where(Db::raw('\'Does not match\''), '!=', $subQuery)->exists());
     }
 
     public function testQueryBuilderInvalidOperator()
