@@ -930,6 +930,8 @@ class ModelRealBuilderTest extends TestCase
 
     public function testIncrementEach()
     {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
         Schema::create('accounting', function (Blueprint $table) {
             $table->increments('id');
             $table->float('wallet_1');
@@ -1043,6 +1045,8 @@ class ModelRealBuilderTest extends TestCase
 
     public function testDecrementEach()
     {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
         Schema::create('accounting_test', function (Blueprint $table) {
             $table->increments('id');
             $table->float('wallet_1');
