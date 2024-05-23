@@ -372,6 +372,27 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Compile a "where JSON overlaps" clause.
+     */
+    protected function whereJsonOverlaps(Builder $query, array $where): string
+    {
+        $not = $where['not'] ? 'not ' : '';
+
+        return $not . $this->compileJsonOverlaps(
+            $where['column'],
+            $this->parameter($where['value'])
+        );
+    }
+
+    /**
+     * Compile a "JSON overlaps" statement into SQL.
+     */
+    protected function compileJsonOverlaps(string $column, string $value): string
+    {
+        throw new RuntimeException('This database engine does not support JSON overlaps operations.');
+    }
+
+    /**
      * Compile the components necessary for a select clause.
      */
     protected function compileComponents(Builder $query): array

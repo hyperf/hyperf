@@ -1477,6 +1477,46 @@ class Builder
     }
 
     /**
+     * Add a "where JSON overlaps" clause to the query.
+     */
+    public function whereJsonOverlaps(string $column, mixed $value, string $boolean = 'and', bool $not = false): static
+    {
+        $type = 'JsonOverlaps';
+
+        $this->wheres[] = compact('type', 'column', 'value', 'boolean', 'not');
+
+        if (! $value instanceof Expression) {
+            $this->addBinding($this->grammar->prepareBindingForJsonContains($value));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add an "or where JSON overlaps" clause to the query.
+     */
+    public function orWhereJsonOverlaps(string $column, mixed $value): static
+    {
+        return $this->whereJsonOverlaps($column, $value, 'or');
+    }
+
+    /**
+     * Add a "where JSON not overlap" clause to the query.
+     */
+    public function whereJsonDoesntOverlap(string $column, mixed $value, string $boolean = 'and'): static
+    {
+        return $this->whereJsonOverlaps($column, $value, $boolean, true);
+    }
+
+    /**
+     * Add an "or where JSON not overlap" clause to the query.
+     */
+    public function orWhereJsonDoesntOverlap(string $column, mixed $value): static
+    {
+        return $this->whereJsonDoesntOverlap($column, $value, 'or');
+    }
+
+    /**
      * Add a "where JSON length" clause to the query.
      *
      * @param string $column

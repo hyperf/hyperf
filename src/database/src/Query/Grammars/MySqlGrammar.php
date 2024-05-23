@@ -239,6 +239,16 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile a "JSON overlaps" statement into SQL.
+     */
+    protected function compileJsonOverlaps(string $column, string $value): string
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        return 'json_overlaps(' . $field . ', ' . $value . $path . ')';
+    }
+
+    /**
      * Compile a "JSON length" statement into SQL.
      *
      * @param string $column
