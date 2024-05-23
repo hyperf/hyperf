@@ -2598,11 +2598,26 @@ class Builder
             throw new InvalidArgumentException('Non-numeric value passed to increment method.');
         }
 
-        $wrapped = $this->grammar->wrap($column);
+        return $this->incrementEach([$column => $amount], $extra);
+    }
 
-        $columns = array_merge([$column => $this->raw("{$wrapped} + {$amount}")], $extra);
+    /**
+     * Increment the given column's values by the given amounts.
+     */
+    public function incrementEach(array $columns, array $extra = []): int
+    {
+        foreach ($columns as $column => $amount) {
+            if (! is_numeric($amount)) {
+                throw new InvalidArgumentException("Non-numeric value passed as increment amount for column: '{$column}'.");
+            }
+            if (! is_string($column)) {
+                throw new InvalidArgumentException('Non-associative array passed to incrementEach method.');
+            }
 
-        return $this->update($columns);
+            $columns[$column] = $this->raw("{$this->grammar->wrap($column)} + {$amount}");
+        }
+
+        return $this->update(array_merge($columns, $extra));
     }
 
     /**
@@ -2618,11 +2633,26 @@ class Builder
             throw new InvalidArgumentException('Non-numeric value passed to decrement method.');
         }
 
-        $wrapped = $this->grammar->wrap($column);
+        return $this->decrementEach([$column => $amount], $extra);
+    }
 
-        $columns = array_merge([$column => $this->raw("{$wrapped} - {$amount}")], $extra);
+    /**
+     * Decrement the given column's values by the given amounts.
+     */
+    public function decrementEach(array $columns, array $extra = []): int
+    {
+        foreach ($columns as $column => $amount) {
+            if (! is_numeric($amount)) {
+                throw new InvalidArgumentException("Non-numeric value passed as decrement amount for column: '{$column}'.");
+            }
+            if (! is_string($column)) {
+                throw new InvalidArgumentException('Non-associative array passed to decrementEach method.');
+            }
 
-        return $this->update($columns);
+            $columns[$column] = $this->raw("{$this->grammar->wrap($column)} - {$amount}");
+        }
+
+        return $this->update(array_merge($columns, $extra));
     }
 
     /**
