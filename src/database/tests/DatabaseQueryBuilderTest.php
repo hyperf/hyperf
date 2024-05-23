@@ -260,14 +260,14 @@ class DatabaseQueryBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->select('*')
             ->from('users')
-            ->when(fn(Builder $query) => true, $callback)
+            ->when(fn (Builder $query) => true, $callback)
             ->where('email', 'foo');
         $this->assertSame('select * from "users" where "id" = ? and "email" = ?', $builder->toSql());
 
         $builder = $this->getBuilder();
         $builder->select('*')
             ->from('users')
-            ->when(fn(Builder $query) => false, $callback)
+            ->when(fn (Builder $query) => false, $callback)
             ->where('email', 'foo');
         $this->assertSame('select * from "users" where "email" = ?', $builder->toSql());
     }
@@ -342,14 +342,14 @@ class DatabaseQueryBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->select('*')
             ->from('users')
-            ->unless(fn(Builder $query) => true, $callback)
+            ->unless(fn (Builder $query) => true, $callback)
             ->where('email', 'foo');
         $this->assertSame('select * from "users" where "email" = ?', $builder->toSql());
 
         $builder = $this->getBuilder();
         $builder->select('*')
             ->from('users')
-            ->unless(fn(Builder $query) => false, $callback)
+            ->unless(fn (Builder $query) => false, $callback)
             ->where('email', 'foo');
         $this->assertSame('select * from "users" where "id" = ? and "email" = ?', $builder->toSql());
     }
@@ -967,7 +967,6 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertEquals(['%Taylor%', '%Otwell%', '%Otwell%'], $builder->getBindings());
     }
 
-
     public function testWhereJsonOverlapsMySql(): void
     {
         $builder = $this->getMySqlBuilder();
@@ -998,7 +997,7 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertSame('select * from `users` where `id` = ? or not json_overlaps(`options`, \'["en", "fr"]\', \'$."languages"\')', $builder->toSql());
         $this->assertEquals([1], $builder->getBindings());
     }
-    
+
     public function testJoinLateral()
     {
         $builder = $this->getMySqlBuilder();
@@ -1061,8 +1060,6 @@ class DatabaseQueryBuilderTest extends TestCase
         $builder->from('users')
             ->leftJoinLateral($sub->from('contacts')->whereColumn('contracts.user_id', 'users.id'), 'sub');
         $this->assertSame('select * from `users` left join lateral (select * from `contacts` where `contracts`.`user_id` = `users`.`id`) as `sub` on true', $builder->toSql());
-        >>>>>>>
-        master
     }
 
     protected function getBuilder(): Builder
