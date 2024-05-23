@@ -19,12 +19,9 @@ use Hyperf\Scout\Searchable;
 class ModelsImported
 {
     /**
-     * @param Collection<int, Model&Searchable>
+     * @param Collection<int, Model&Searchable> $models
      */
-    public Collection $models;
-
-    public function __construct(Collection $models)
+    public function __construct(public Collection $models)
     {
-        $this->models = $models;
     }
 }
