@@ -59,7 +59,7 @@ class TraceMiddleware implements MiddlewareInterface
             }
             $span->setTag($this->spanTagManager->get('response', 'status_code'), (string) $response->getStatusCode());
             if ($this->spanTagManager->has('response', 'body')) {
-                $span->setTag($this->spanTagManager->get('response', 'body'), $response->getBody());
+                $span->setTag($this->spanTagManager->get('response', 'body'), (string) $response->getBody());
             }
         } catch (Throwable $exception) {
             if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($exception)) {
@@ -68,7 +68,7 @@ class TraceMiddleware implements MiddlewareInterface
             if ($exception instanceof HttpException) {
                 $span->setTag($this->spanTagManager->get('response', 'status_code'), (string) $exception->getStatusCode());
                 if ($this->spanTagManager->has('response', 'body')) {
-                    $span->setTag($this->spanTagManager->get('response', 'body'), $response->getBody());
+                    $span->setTag($this->spanTagManager->get('response', 'body'), (string) $response->getBody());
                 }
             }
             throw $exception;
