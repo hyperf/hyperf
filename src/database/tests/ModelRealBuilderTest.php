@@ -1119,7 +1119,7 @@ class ModelRealBuilderTest extends TestCase
         ], (array) $rows[1]);
 
         // Test Can affect multiple rows at once.
-        $affectedRowsCount = Db::table('accounting_test')->incrementEach([
+        $affectedRowsCount = Db::table('accounting_test')->decrementEach([
             'wallet_1' => 31.5,
             'wallet_2' => '32.5',
         ]);
@@ -1144,7 +1144,7 @@ class ModelRealBuilderTest extends TestCase
         ], (array) $rows[1]);
 
         // In case of a conflict, the second argument wins and sets a fixed value:
-        $affectedRowsCount = Db::table('accounting_test')->incrementEach([
+        $affectedRowsCount = Db::table('accounting_test')->decrementEach([
             'wallet_1' => 3000,
         ], ['wallet_1' => 1.5]);
 
