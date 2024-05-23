@@ -432,7 +432,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param (Closure(): TGetOrPutValue)|TGetOrPutValue $value
      * @return TGetOrPutValue|TValue
      */
-    public function getOrPut($key, $value)
+    public function getOrPut(int|string $key, mixed $value): mixed
     {
         if (array_key_exists($key, $this->items)) {
             return $this->items[$key];
@@ -441,6 +441,20 @@ class Collection implements Enumerable, ArrayAccess
         $this->offsetSet($key, $value = value($value));
 
         return $value;
+    }
+
+    /**
+     * Get an item from the collection by key or add it to collection if it does not exist.
+     *
+     * @template TGetOrPutValue
+     *
+     * @param mixed $key
+     * @param (Closure(): TGetOrPutValue)|TGetOrPutValue $value
+     * @return TGetOrPutValue|TValue
+     */
+    public function getOrSet(int|string $key, mixed $value): mixed
+    {
+        return $this->getOrPut($key, $value);
     }
 
     /**

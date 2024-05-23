@@ -7,11 +7,12 @@
 - [#6767](https://github.com/hyperf/hyperf/pull/6767) Support `whereAll/orWhereAll` `whereAny/orWhereAny` for `Hyperf\Database\Query\Builder`.
 - [#6774](https://github.com/hyperf/hyperf/pull/6774) Support Lateral Join to `Hyperf\Database\Query\Builder`
 - [#6781](https://github.com/hyperf/hyperf/pull/6781) Added some methods to `Hyperf\Collection\Arr`.
+- [#6784](https://github.com/hyperf/hyperf/pull/6784) Added `getOrPut` and `getOrSet` into `Hyperf\Collection\Collection`.
 
 ## Optimized
 
 - [#6777](https://github.com/hyperf/hyperf/pull/6777) Optimized StdoutLogger to improve log message handling.
-- [#6778](https://github.com/hyperf/hyperf/pull/6778) [#6784](https://github.com/hyperf/hyperf/pull/6784) Optimized Collection using EnumeratesValues.
+- [#6778](https://github.com/hyperf/hyperf/pull/6778) Optimized Collection using EnumeratesValues.
 
 # v3.1.22 - 2024-05-16
 
