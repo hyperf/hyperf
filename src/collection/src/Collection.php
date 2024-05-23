@@ -428,7 +428,6 @@ class Collection implements Enumerable, ArrayAccess
      *
      * @template TGetOrPutValue
      *
-     * @param mixed $key
      * @param (Closure(): TGetOrPutValue)|TGetOrPutValue $value
      * @return TGetOrPutValue|TValue
      */
@@ -448,7 +447,6 @@ class Collection implements Enumerable, ArrayAccess
      *
      * @template TGetOrPutValue
      *
-     * @param mixed $key
      * @param (Closure(): TGetOrPutValue)|TGetOrPutValue $value
      * @return TGetOrPutValue|TValue
      */
