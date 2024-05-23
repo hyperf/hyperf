@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Contract\Database\Query;
 
-use Hyperf\Contract\Database\Query\Expression as ExpressionContract;
-
-interface ConditionExpression extends ExpressionContract
+interface ConditionExpression extends Expression
 {
 }
