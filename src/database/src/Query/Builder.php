@@ -2538,7 +2538,7 @@ class Builder
         return $this->connection->update($sql, $this->cleanBindings(
             $this->grammar->prepareBindingsForUpdate(
                 $this->bindings,
-                $values->map(fn ($value) => $value['bindings']())->all()
+                $values->map(fn ($value) => $value['bindings'])->all()
             )
         ));
     }
