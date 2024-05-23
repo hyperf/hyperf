@@ -2442,6 +2442,19 @@ class Builder
     }
 
     /**
+     * Insert new records into the table using a subquery while ignoring errors.
+     */
+    public function insertOrIgnoreUsing(array $columns, array|Builder|Closure|ModelBuilder|string $query): int
+    {
+        [$sql, $bindings] = $this->createSub($query);
+
+        return $this->connection->affectingStatement(
+            $this->grammar->compileInsertOrIgnoreUsing($this, $columns, $sql),
+            $this->cleanBindings($bindings)
+        );
+    }
+
+    /**
      * Insert ignore a new record into the database.
      */
     public function insertOrIgnore(array $values): int

@@ -47,6 +47,14 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile an insert ignore statement using a subquery into SQL.
+     */
+    public function compileInsertOrIgnoreUsing(Builder $query, array $columns, string $sql): string
+    {
+        return $this->compileInsertUsing($query, $columns, $sql) . ' on conflict do nothing';
+    }
+
+    /**
      * Compile an insert and get ID statement into SQL.
      *
      * @param array $values

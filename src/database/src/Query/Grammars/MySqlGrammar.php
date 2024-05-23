@@ -17,6 +17,7 @@ use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\IndexHint;
 use Hyperf\Database\Query\JoinLateralClause;
 use Hyperf\Database\Query\JsonExpression;
+use Hyperf\Stringable\Str;
 
 use function Hyperf\Collection\collect;
 
@@ -69,6 +70,14 @@ class MySqlGrammar extends Grammar
     public function compileInsertOrIgnore(Builder $query, array $values): string
     {
         return substr_replace($this->compileInsert($query, $values), ' ignore', 6, 0);
+    }
+
+    /**
+     * Compile an insert ignore statement using a subquery into SQL.
+     */
+    public function compileInsertOrIgnoreUsing(Builder $query, array $columns, string $sql): string
+    {
+        return Str::replaceFirst('insert', 'insert ignore', $this->compileInsertUsing($query, $columns, $sql));
     }
 
     /**

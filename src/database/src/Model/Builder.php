@@ -94,7 +94,7 @@ class Builder
     protected $passthru = [
         'insert', 'insertGetId', 'getBindings', 'toSql', 'toRawSql', 'insertOrIgnore',
         'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'average', 'sum', 'getConnection',
-        'upsert', 'updateOrInsert',
+        'upsert', 'updateOrInsert', 'insertOrIgnoreUsing',
     ];
 
     /**

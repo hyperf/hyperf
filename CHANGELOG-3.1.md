@@ -5,8 +5,9 @@
 - [#6757](https://github.com/hyperf/hyperf/pull/6757) Added `Hyperf\Collection\LazyCollection`.
 - [#6763](https://github.com/hyperf/hyperf/pull/6763) Added `Premature end of data` into `DetectsLostConnections`.
 - [#6767](https://github.com/hyperf/hyperf/pull/6767) Support `whereAll/orWhereAll` `whereAny/orWhereAny` for `Hyperf\Database\Query\Builder`.
-- [#6774](https://github.com/hyperf/hyperf/pull/6774) Support Lateral Join to `Hyperf\Database\Query\Builder`
+- [#6774](https://github.com/hyperf/hyperf/pull/6774) Support Lateral Join for `Hyperf\Database\Query\Builder`
 - [#6781](https://github.com/hyperf/hyperf/pull/6781) Added some methods to `Hyperf\Collection\Arr`.
+- [#6783](https://github.com/hyperf/hyperf/pull/6783) Support `insertOrIgnoreUsing` for `Hyperf\Database\Query\Builder`.
 - [#6784](https://github.com/hyperf/hyperf/pull/6784) Added `getOrPut` and `getOrSet` into `Hyperf\Collection\Collection`.
 
 ## Optimized

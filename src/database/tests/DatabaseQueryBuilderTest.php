@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Query\Builder;
@@ -21,11 +22,13 @@ use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Query\Processors\Processor;
+use InvalidArgumentException;
 use Mockery as m;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 use TypeError;
 
 /**
@@ -887,6 +890,63 @@ class DatabaseQueryBuilderTest extends TestCase
         $builder->select('*')->from('users')->whereAny(['last_name', 'email'], '%Otwell%');
         $this->assertSame('select * from "users" where ("last_name" = ? or "email" = ?)', $builder->toSql());
         $this->assertEquals(['%Otwell%', '%Otwell%'], $builder->getBindings());
+    }
+
+    public function testInsertOrIgnoreUsingMethod(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('does not support');
+        $builder = $this->getBuilder();
+        $builder->from('users')->insertOrIgnoreUsing(['email' => 'foo'], 'bar');
+    }
+
+    public function testMySqlInsertOrIgnoreUsingMethod(): void
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->getConnection()->shouldReceive('getDatabaseName');
+        $builder->getConnection()->shouldReceive('affectingStatement')->once()->with('insert ignore into `table1` (`foo`) select `bar` from `table2` where `foreign_id` = ?', [0 => 5])->andReturn(1);
+
+        $result = $builder->from('table1')->insertOrIgnoreUsing(
+            ['foo'],
+            function (Builder $query) {
+                $query->select(['bar'])->from('table2')->where('foreign_id', '=', 5);
+            }
+        );
+
+        $this->assertEquals(1, $result);
+    }
+
+    public function testMySqlInsertOrIgnoreUsingWithEmptyColumns(): void
+    {
+        $builder = $this->getMySqlBuilder();
+        /**
+         * @var Connection&MockInterface $connection
+         */
+        $connection = $builder->getConnection();
+        $connection->allows('getDatabaseName');
+        $connection->allows('affectingStatement')
+            ->once()
+            ->andReturnUsing(function ($sql, $bindings) {
+                $this->assertSame('insert ignore into `table1` select * from `table2` where `foreign_id` = ?', $sql);
+                $this->assertSame([0 => 5], $bindings);
+                return 1;
+            });
+
+        $result = $builder->from('table1')->insertOrIgnoreUsing(
+            [],
+            function (Builder $query) {
+                $query->from('table2')->where('foreign_id', '=', 5);
+            }
+        );
+
+        $this->assertEquals(1, $result);
+    }
+
+    public function testMySqlInsertOrIgnoreUsingInvalidSubquery(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $builder = $this->getMySqlBuilder();
+        $builder->from('table1')->insertOrIgnoreUsing(['foo'], ['bar']);
     }
 
     public function testOrWhereAny()
