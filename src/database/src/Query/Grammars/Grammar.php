@@ -17,6 +17,7 @@ use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\JoinClause;
+use Hyperf\Database\Query\JoinLateralClause;
 use Hyperf\Stringable\Str;
 use RuntimeException;
 
@@ -348,6 +349,16 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Compile a "lateral join" clause.
+     *
+     * @throws RuntimeException
+     */
+    public function compileJoinLateral(JoinLateralClause $join, string $expression): string
+    {
+        throw new RuntimeException('This database engine does not support lateral joins.');
+    }
+
+    /**
      * Compile the components necessary for a select clause.
      */
     protected function compileComponents(Builder $query): array
@@ -429,6 +440,10 @@ class Grammar extends BaseGrammar
             $nestedJoins = is_null($join->joins) ? '' : ' ' . $this->compileJoins($query, $join->joins);
 
             $tableAndNestedJoins = is_null($join->joins) ? $table : '(' . $table . $nestedJoins . ')';
+
+            if ($join instanceof JoinLateralClause) {
+                return $this->compileJoinLateral($join, $tableAndNestedJoins);
+            }
 
             return trim("{$join->type} join {$tableAndNestedJoins} {$this->compileWheres($join)}");
         })->implode(' ');

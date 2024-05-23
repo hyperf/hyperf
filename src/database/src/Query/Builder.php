@@ -539,6 +539,30 @@ class Builder
     }
 
     /**
+     * Add a lateral join clause to the query.
+     */
+    public function joinLateral(Builder|Closure|ModelBuilder|string $query, string $as, string $type = 'inner'): static
+    {
+        [$query, $bindings] = $this->createSub($query);
+
+        $expression = '(' . $query . ') as ' . $this->grammar->wrapTable($as);
+
+        $this->addBinding($bindings, 'join');
+
+        $this->joins[] = $this->newJoinLateralClause($this, $type, new Expression($expression));
+
+        return $this;
+    }
+
+    /**
+     * Add a lateral left join to the query.
+     */
+    public function leftJoinLateral(Builder|Closure|ModelBuilder|string $query, string $as): static
+    {
+        return $this->joinLateral($query, $as, 'left');
+    }
+
+    /**
      * Add a left join to the query.
      *
      * @param string $table
@@ -2773,6 +2797,16 @@ class Builder
                 $clone->bindings[$type] = [];
             }
         });
+    }
+
+    /**
+     * Get a new join lateral clause.
+     *
+     * @param string $table
+     */
+    protected function newJoinLateralClause(self $parentQuery, string $type, Expression|string $table): JoinLateralClause
+    {
+        return new JoinLateralClause($parentQuery, $type, $table);
     }
 
     /**
