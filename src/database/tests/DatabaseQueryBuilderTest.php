@@ -1062,6 +1062,15 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertSame('select * from `users` left join lateral (select * from `contacts` where `contracts`.`user_id` = `users`.`id`) as `sub` on true', $builder->toSql());
     }
 
+    public function testUpdateMethodWorksWithQueryAsValue()
+    {
+        $builder = $this->getBuilder();
+        $builder->getConnection()->shouldReceive('update')->once()->with('update "users" set "credits" = (select sum(credits) from "transactions" where "transactions"."user_id" = "users"."id" and "type" = ?) where "id" = ?', ['foo', 1])->andReturn(1);
+        $result = $builder->from('users')->where('id', '=', 1)->update(['credits' => $this->getBuilder()->from('transactions')->selectRaw('sum(credits)')->whereColumn('transactions.user_id', 'users.id')->where('type', 'foo')]);
+
+        $this->assertEquals(1, $result);
+    }
+
     protected function getBuilder(): Builder
     {
         $grammar = new Grammar();

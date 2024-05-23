@@ -24,6 +24,7 @@ use RuntimeException;
 use function Hyperf\Collection\collect;
 use function Hyperf\Collection\head;
 use function Hyperf\Collection\last;
+use function Hyperf\Collection\value;
 
 class Grammar extends BaseGrammar
 {
@@ -228,7 +229,7 @@ class Grammar extends BaseGrammar
     public function prepareBindingsForUpdate(array $bindings, array $values): array
     {
         $cleanBindings = Arr::except($bindings, ['join', 'select']);
-
+        $values = Arr::flatten(array_map(fn ($value) => value($value), $values));
         return array_values(
             array_merge($bindings['join'], $values, Arr::flatten($cleanBindings))
         );

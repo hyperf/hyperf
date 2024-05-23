@@ -2523,9 +2523,24 @@ class Builder
      */
     public function update(array $values)
     {
-        $sql = $this->grammar->compileUpdate($this, $values);
+        $values = collect($values)->map(function ($value) {
+            if (! $value instanceof Builder) {
+                return ['value' => $value, 'bindings' => $value];
+            }
 
-        return $this->connection->update($sql, $this->cleanBindings($this->grammar->prepareBindingsForUpdate($this->bindings, $values)));
+            [$query, $bindings] = $this->parseSub($value);
+
+            return ['value' => new Expression("({$query})"), 'bindings' => fn () => $bindings];
+        });
+
+        $sql = $this->grammar->compileUpdate($this, $values->map(fn ($value) => $value['value'])->all());
+
+        return $this->connection->update($sql, $this->cleanBindings(
+            $this->grammar->prepareBindingsForUpdate(
+                $this->bindings,
+                $values->map(fn ($value) => $value['bindings']())->all()
+            )
+        ));
     }
 
     /**
