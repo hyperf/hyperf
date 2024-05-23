@@ -1112,7 +1112,7 @@ class ModelRealBuilderTest extends TestCase
 
         $this->assertEquals([
             'id' => 2,
-            'wallet_1' => 15 - (10 - 20),
+            'wallet_1' => 15 - (10 + 20),
             'wallet_2' => 300 - (20 + 20),
             'user_id' => 2,
             'name' => 'foo',
