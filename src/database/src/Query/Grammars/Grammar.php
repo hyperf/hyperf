@@ -372,6 +372,14 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Compile a clause based on an expression.
+     */
+    public function whereExpression(Builder $query, array $where): string
+    {
+        return $where['column']->getValue($this);
+    }
+
+    /**
      * Compile a "where JSON overlaps" clause.
      */
     protected function whereJsonOverlaps(Builder $query, array $where): string
@@ -938,8 +946,19 @@ class Grammar extends BaseGrammar
         if ($having['type'] === 'between') {
             return $this->compileHavingBetween($having);
         }
+        if ($having['type'] === 'Expression') {
+            return $this->compileHavingExpression($having);
+        }
 
         return $this->compileBasicHaving($having);
+    }
+
+    /**
+     * Compile a having clause involving an expression.
+     */
+    protected function compileHavingExpression(array $having): string
+    {
+        return $having['column']->getValue($this);
     }
 
     /**

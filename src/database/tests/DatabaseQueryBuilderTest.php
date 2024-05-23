@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\Database\Query\ConditionExpression;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Exception\InvalidBindingException;
@@ -1060,6 +1061,21 @@ class DatabaseQueryBuilderTest extends TestCase
         $builder->from('users')
             ->leftJoinLateral($sub->from('contacts')->whereColumn('contracts.user_id', 'users.id'), 'sub');
         $this->assertSame('select * from `users` left join lateral (select * from `contacts` where `contracts`.`user_id` = `users`.`id`) as `sub` on true', $builder->toSql());
+    }
+
+    public function testHavingExpression()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->having(
+            new class() implements ConditionExpression {
+                public function getValue(\Hyperf\Database\Grammar $grammar)
+                {
+                    return '1 = 1';
+                }
+            }
+        );
+        $this->assertSame('select * from "users" having 1 = 1', $builder->toSql());
+        $this->assertSame([], $builder->getBindings());
     }
 
     protected function getBuilder(): Builder
