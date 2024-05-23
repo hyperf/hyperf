@@ -3,7 +3,7 @@
 #
 
 parameters:
-  level: 5
+  level: 6
   bootstrapFiles:
     - "bootstrap.php"
   parallel:
@@ -33,6 +33,15 @@ parameters:
     - %currentWorkingDirectory%/src/server/src/SwowServer.php
     - %currentWorkingDirectory%/src/amqp/src/IO/SwowIO.php
   ignoreErrors:
+    -
+      identifier: missingType.iterableValue
+    -
+      identifier: missingType.generics
+    -
+      identifier: missingType.return
+    -
+      identifier: missingType.parameter
+    - '#Unable to resolve the template type#'
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
     - '#Argument of an invalid type Hyperf\\AsyncQueue\\Job supplied for foreach, only iterables are supported#'
@@ -74,3 +83,5 @@ parameters:
       path: src/collection/*.php
     - message: '#Method .* should return .* but returns#'
       path: src/collection/src/*.php
+    - message: '#has no type specified#'
+      path: src/nacos/src/Protobuf/*.php
