@@ -31,7 +31,7 @@ class Producer
 
     protected ?LongLangProducer $producer = null;
 
-    protected $channelSize = 65535;
+    protected int $channelSize = 65535;
 
     public function __construct(protected ConfigInterface $config, protected string $name = 'default', protected int $timeout = 10)
     {
