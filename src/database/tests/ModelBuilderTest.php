@@ -600,8 +600,11 @@ class ModelBuilderTest extends TestCase
         $this->assertInstanceOf(Builder::class, $builder->foobar());
 
         $builder = $this->getBuilder();
-        $builder->getQuery()->shouldReceive('insert')->once()->with(['bar'])->andReturn('foo');
+        $builder->getQuery()->shouldReceive('insertOrIgnoreUsing')->once()->with(['bar'], 'baz')->andReturn(1);
+        $this->assertSame(1, $builder->insertOrIgnoreUsing(['bar'], 'baz'));
 
+        $builder = $this->getBuilder();
+        $builder->getQuery()->shouldReceive('insert')->once()->with(['bar'])->andReturn('foo');
         $this->assertEquals('foo', $builder->insert(['bar']));
     }
 

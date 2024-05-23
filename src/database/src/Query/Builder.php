@@ -539,6 +539,30 @@ class Builder
     }
 
     /**
+     * Add a lateral join clause to the query.
+     */
+    public function joinLateral(Builder|Closure|ModelBuilder|string $query, string $as, string $type = 'inner'): static
+    {
+        [$query, $bindings] = $this->createSub($query);
+
+        $expression = '(' . $query . ') as ' . $this->grammar->wrapTable($as);
+
+        $this->addBinding($bindings, 'join');
+
+        $this->joins[] = $this->newJoinLateralClause($this, $type, new Expression($expression));
+
+        return $this;
+    }
+
+    /**
+     * Add a lateral left join to the query.
+     */
+    public function leftJoinLateral(Builder|Closure|ModelBuilder|string $query, string $as): static
+    {
+        return $this->joinLateral($query, $as, 'left');
+    }
+
+    /**
      * Add a left join to the query.
      *
      * @param string $table
@@ -2458,6 +2482,19 @@ class Builder
     }
 
     /**
+     * Insert new records into the table using a subquery while ignoring errors.
+     */
+    public function insertOrIgnoreUsing(array $columns, array|Builder|Closure|ModelBuilder|string $query): int
+    {
+        [$sql, $bindings] = $this->createSub($query);
+
+        return $this->connection->affectingStatement(
+            $this->grammar->compileInsertOrIgnoreUsing($this, $columns, $sql),
+            $this->cleanBindings($bindings)
+        );
+    }
+
+    /**
      * Insert ignore a new record into the database.
      */
     public function insertOrIgnore(array $values): int
@@ -2813,6 +2850,16 @@ class Builder
                 $clone->bindings[$type] = [];
             }
         });
+    }
+
+    /**
+     * Get a new join lateral clause.
+     *
+     * @param string $table
+     */
+    protected function newJoinLateralClause(self $parentQuery, string $type, Expression|string $table): JoinLateralClause
+    {
+        return new JoinLateralClause($parentQuery, $type, $table);
     }
 
     /**

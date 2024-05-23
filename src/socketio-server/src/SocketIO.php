@@ -68,7 +68,7 @@ use function Hyperf\Support\make;
  */
 class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    public static $isMainWorker = false;
+    public static bool $isMainWorker = false;
 
     public static string $serverId = '';
 
