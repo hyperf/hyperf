@@ -2598,7 +2598,11 @@ class Builder
             throw new InvalidArgumentException('Non-numeric value passed to increment method.');
         }
 
-        return $this->incrementEach([$column => $amount], $extra);
+        $wrapped = $this->grammar->wrap($column);
+
+        $columns = array_merge([$column => $this->raw("{$wrapped} + {$amount}")], $extra);
+
+        return $this->update($columns);
     }
 
     /**
@@ -2633,7 +2637,11 @@ class Builder
             throw new InvalidArgumentException('Non-numeric value passed to decrement method.');
         }
 
-        return $this->decrementEach([$column => $amount], $extra);
+        $wrapped = $this->grammar->wrap($column);
+
+        $columns = array_merge([$column => $this->raw("{$wrapped} - {$amount}")], $extra);
+
+        return $this->update($columns);
     }
 
     /**
