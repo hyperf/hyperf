@@ -664,7 +664,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param callable(TValue, TKey): array<TMapToDictionaryKey, TMapToDictionaryValue> $callback
      * @return static<TMapToDictionaryKey, array<int, TMapToDictionaryValue>>
      */
-    public function mapToDictionary(callable $callback): static
+    public function mapToDictionary(callable $callback): self|static
     {
         $dictionary = [];
         foreach ($this->items as $key => $item) {
@@ -689,7 +689,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param callable(TValue, TKey): array<TMapWithKeysKey, TMapWithKeysValue> $callback
      * @return static<TMapWithKeysKey, TMapWithKeysValue>
      */
-    public function mapWithKeys(callable $callback): static
+    public function mapWithKeys(callable $callback): self|static
     {
         return new static(Arr::mapWithKeys($this->items, $callback));
     }

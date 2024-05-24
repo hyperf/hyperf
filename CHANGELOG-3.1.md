@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- [#6796](https://github.com/hyperf/hyperf/pull/6796) Fixed bug that the return type of `Collection::mapInto()` is invalid sometimes.
+- [#6796](https://github.com/hyperf/hyperf/pull/6796) [#6798](https://github.com/hyperf/hyperf/pull/6798) Fixed bug that the return type of `Collection::mapInto()` is invalid sometimes.
 
 ## Added
 
