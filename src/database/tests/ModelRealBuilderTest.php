@@ -928,6 +928,236 @@ class ModelRealBuilderTest extends TestCase
         }
     }
 
+    public function testIncrementEach()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        Schema::create('accounting', function (Blueprint $table) {
+            $table->increments('id');
+            $table->float('wallet_1');
+            $table->float('wallet_2');
+            $table->integer('user_id');
+            $table->string('name', 20);
+        });
+
+        Db::table('accounting')->insert([
+            [
+                'wallet_1' => 100,
+                'wallet_2' => 200,
+                'user_id' => 1,
+                'name' => 'Taylor',
+            ],
+            [
+                'wallet_1' => 15,
+                'wallet_2' => 300,
+                'user_id' => 2,
+                'name' => 'Otwell',
+            ],
+        ]);
+        $connection = Db::table('accounting')->getConnection();
+        $connection->enableQueryLog();
+
+        Db::table('accounting')->where('user_id', 2)->incrementEach([
+            'wallet_1' => 10,
+            'wallet_2' => -20,
+        ], ['name' => 'foo']);
+
+        $queryLogs = $connection->getQueryLog();
+        $this->assertCount(1, $queryLogs);
+
+        $rows = Db::table('accounting')->get();
+
+        $this->assertCount(2, $rows);
+        // other rows are not affected.
+        $this->assertEquals([
+            'id' => 1,
+            'wallet_1' => 100,
+            'wallet_2' => 200,
+            'user_id' => 1,
+            'name' => 'Taylor',
+        ], (array) $rows[0]);
+
+        $this->assertEquals([
+            'id' => 2,
+            'wallet_1' => 15 + 10,
+            'wallet_2' => 300 - 20,
+            'user_id' => 2,
+            'name' => 'foo',
+        ], (array) $rows[1]);
+
+        // without the second argument.
+        $affectedRowsCount = Db::table('accounting')->where('user_id', 2)->incrementEach([
+            'wallet_1' => 20,
+            'wallet_2' => 20,
+        ]);
+
+        $this->assertEquals(1, $affectedRowsCount);
+
+        $rows = Db::table('accounting')->get();
+
+        $this->assertEquals([
+            'id' => 2,
+            'wallet_1' => 15 + (10 + 20),
+            'wallet_2' => 300 + (-20 + 20),
+            'user_id' => 2,
+            'name' => 'foo',
+        ], (array) $rows[1]);
+
+        // Test Can affect multiple rows at once.
+        $affectedRowsCount = Db::table('accounting')->incrementEach([
+            'wallet_1' => 31.5,
+            'wallet_2' => '-32.5',
+        ]);
+
+        $this->assertEquals(2, $affectedRowsCount);
+
+        $rows = Db::table('accounting')->get();
+        $this->assertEquals([
+            'id' => 1,
+            'wallet_1' => 100 + 31.5,
+            'wallet_2' => 200 - 32.5,
+            'user_id' => 1,
+            'name' => 'Taylor',
+        ], (array) $rows[0]);
+
+        $this->assertEquals([
+            'id' => 2,
+            'wallet_1' => 15 + (10 + 20 + 31.5),
+            'wallet_2' => 300 + (-20 + 20 - 32.5),
+            'user_id' => 2,
+            'name' => 'foo',
+        ], (array) $rows[1]);
+
+        // In case of a conflict, the second argument wins and sets a fixed value:
+        $affectedRowsCount = Db::table('accounting')->incrementEach([
+            'wallet_1' => 3000,
+        ], ['wallet_1' => 1.5]);
+
+        $this->assertEquals(2, $affectedRowsCount);
+
+        $rows = Db::table('accounting')->get();
+
+        $this->assertEquals(1.5, $rows[0]->wallet_1);
+        $this->assertEquals(1.5, $rows[1]->wallet_1);
+
+        Schema::drop('accounting');
+    }
+
+    public function testDecrementEach()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        Schema::create('accounting_test', function (Blueprint $table) {
+            $table->increments('id');
+            $table->float('wallet_1');
+            $table->float('wallet_2');
+            $table->integer('user_id');
+            $table->string('name', 20);
+        });
+
+        Db::table('accounting_test')->insert([
+            [
+                'wallet_1' => 100,
+                'wallet_2' => 200,
+                'user_id' => 1,
+                'name' => 'Taylor',
+            ],
+            [
+                'wallet_1' => 15,
+                'wallet_2' => 300,
+                'user_id' => 2,
+                'name' => 'Otwell',
+            ],
+        ]);
+        $connection = Db::table('accounting_test')->getConnection();
+        $connection->enableQueryLog();
+
+        Db::table('accounting_test')->where('user_id', 2)->decrementEach([
+            'wallet_1' => 10,
+            'wallet_2' => 20,
+        ], ['name' => 'foo']);
+
+        $queryLogs = $connection->getQueryLog();
+        $this->assertCount(1, $queryLogs);
+
+        $rows = Db::table('accounting_test')->get();
+
+        $this->assertCount(2, $rows);
+        // other rows are not affected.
+        $this->assertEquals([
+            'id' => 1,
+            'wallet_1' => 100,
+            'wallet_2' => 200,
+            'user_id' => 1,
+            'name' => 'Taylor',
+        ], (array) $rows[0]);
+
+        $this->assertEquals([
+            'id' => 2,
+            'wallet_1' => 15 - 10,
+            'wallet_2' => 300 - 20,
+            'user_id' => 2,
+            'name' => 'foo',
+        ], (array) $rows[1]);
+
+        // without the second argument.
+        $affectedRowsCount = Db::table('accounting_test')->where('user_id', 2)->decrementEach([
+            'wallet_1' => 20,
+            'wallet_2' => 20,
+        ]);
+
+        $this->assertEquals(1, $affectedRowsCount);
+
+        $rows = Db::table('accounting_test')->get();
+
+        $this->assertEquals([
+            'id' => 2,
+            'wallet_1' => 15 - (10 + 20),
+            'wallet_2' => 300 - (20 + 20),
+            'user_id' => 2,
+            'name' => 'foo',
+        ], (array) $rows[1]);
+
+        // Test Can affect multiple rows at once.
+        $affectedRowsCount = Db::table('accounting_test')->decrementEach([
+            'wallet_1' => 31.5,
+            'wallet_2' => '32.5',
+        ]);
+
+        $this->assertEquals(2, $affectedRowsCount);
+
+        $rows = Db::table('accounting_test')->get();
+        $this->assertEquals([
+            'id' => 1,
+            'wallet_1' => 100 - 31.5,
+            'wallet_2' => 200 - 32.5,
+            'user_id' => 1,
+            'name' => 'Taylor',
+        ], (array) $rows[0]);
+
+        $this->assertEquals([
+            'id' => 2,
+            'wallet_1' => 15 - (10 + 20 + 31.5),
+            'wallet_2' => 300 - (20 + 20 + 32.5),
+            'user_id' => 2,
+            'name' => 'foo',
+        ], (array) $rows[1]);
+
+        // In case of a conflict, the second argument wins and sets a fixed value:
+        $affectedRowsCount = Db::table('accounting_test')->decrementEach([
+            'wallet_1' => 3000,
+        ], ['wallet_1' => 1.5]);
+
+        $this->assertEquals(2, $affectedRowsCount);
+
+        $rows = Db::table('accounting_test')->get();
+
+        $this->assertSame(1.5, $rows[0]->wallet_1);
+        $this->assertSame(1.5, $rows[1]->wallet_1);
+
+        Schema::drop('accounting_test');
+    }
+
     protected function getContainer()
     {
         $dispatcher = Mockery::mock(EventDispatcherInterface::class);

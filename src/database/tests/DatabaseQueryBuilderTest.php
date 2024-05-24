@@ -1062,6 +1062,38 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertSame('select * from `users` left join lateral (select * from `contacts` where `contracts`.`user_id` = `users`.`id`) as `sub` on true', $builder->toSql());
     }
 
+    public function testIncrementManyArgumentValidation1()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Non-numeric value passed as increment amount for column: \'col\'.');
+        $builder = $this->getBuilder();
+        $builder->from('users')->incrementEach(['col' => 'a']);
+    }
+
+    public function testIncrementManyArgumentValidation2()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Non-associative array passed to incrementEach method.');
+        $builder = $this->getBuilder();
+        $builder->from('users')->incrementEach([11 => 11]);
+    }
+
+    public function testDecrementManyArgumentValidation1()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Non-numeric value passed as decrement amount for column: \'col\'.');
+        $builder = $this->getBuilder();
+        $builder->from('users')->decrementEach(['col' => 'a']);
+    }
+
+    public function testDecrementManyArgumentValidation2()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Non-associative array passed to decrementEach method.');
+        $builder = $this->getBuilder();
+        $builder->from('users')->decrementEach([11 => 11]);
+    }
+
     protected function getBuilder(): Builder
     {
         $grammar = new Grammar();
