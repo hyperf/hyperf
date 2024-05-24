@@ -695,7 +695,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param class-string<TMapIntoValue> $class
      * @return static<TKey, TMapIntoValue>
      */
-    public function mapInto(mixed $class): static;
+    public function mapInto(mixed $class): self|static;
 
     /**
      * Merge the collection with the given items.

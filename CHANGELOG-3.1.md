@@ -1,5 +1,9 @@
 # v3.1.24 - TBD
 
+## Fixed
+
+- [#6796](https://github.com/hyperf/hyperf/pull/6796) Fixed bug that the return type of `Collection::mapInto()` is invalid sometimes.
+
 ## Added
 
 - [#6793](https://github.com/hyperf/hyperf/pull/6793) Added the request body and response body to the tracer.

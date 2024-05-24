@@ -12,15 +12,20 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database;
 
+use Hyperf\Codec\Json;
 use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Support\Fluent;
+use HyperfTest\Database\Stubs\ContainerStub;
+use HyperfTest\Database\Stubs\Model\Book;
 use HyperfTest\Database\Stubs\ModelStub;
+use JsonSerializable;
 use LogicException;
 use Mockery as m;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use stdClass;
 
 use function Hyperf\Collection\collect;
@@ -469,6 +474,31 @@ class ModelCollectionTest extends TestCase
 
         $c = new Collection();
         $c->toQuery();
+    }
+
+    public function testCollectionMapInto()
+    {
+        $container = ContainerStub::getContainer();
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturnNull();
+
+        $arr = [new Book(['id' => 1]), new Book(['id' => 2]), new Book(['id' => 3])];
+        $collection = new Collection($arr);
+        $col = $collection->mapInto(TestBookModelSchema::class);
+        $this->assertSame('[{"no":1},{"no":2},{"no":3}]', Json::encode($col));
+    }
+}
+
+class TestBookModelSchema implements JsonSerializable
+{
+    public function __construct(public Book $book)
+    {
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'no' => $this->book->id,
+        ];
     }
 }
 
