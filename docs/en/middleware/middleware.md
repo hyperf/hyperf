@@ -258,3 +258,154 @@ use Psr\Http\Message\ServerRequestInterface;
 $request = \Hyperf\Context\Context::set(ServerRequestInterface::class, $request);
 $response = \Hyperf\Context\Context::set(ResponseInterface::class, $response);
 ```
+
+## Customize the behavior of CoreMiddleWare
+
+By default, when Hyperf handles a route that cannot be found or the HTTP method is not allowed, that is, when the HTTP status code is `404` or `405`, `CoreMiddleware` directly handles it and returns the corresponding response object. Due to the design of Hyperf dependency injection, you can point `CoreMiddleware` to the `CoreMiddleware` implemented by yourself by replacing the object.
+
+For example, we want to define an `App\Middleware\CoreMiddleware` class to override the default behavior. We can first define an `App\Middleware\CoreMiddleware` class as follows. Here we only take HTTP Server as an example. Other servers can also use the same method. practices to achieve the same purpose.
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Hyperf\Contract\Arrayable;
+use Hyperf\HttpMessage\Stream\SwooleStream;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
+{
+    /**
+     * Handle the response when cannot found any routes.
+     *
+     * @return array|Arrayable|mixed|ResponseInterface|string
+     */
+    protected function handleNotFound(ServerRequestInterface $request)
+    {
+        // Rewrite the processing logic for route not found
+        return $this->response()->withStatus(404);
+    }
+
+    /**
+     * Handle the response when the routes found but doesn't match any available methods.
+     *
+     * @return array|Arrayable|mixed|ResponseInterface|string
+     */
+    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request)
+    {
+        // Rewrite processing logic that is not allowed by HTTP methods
+        return $this->response()->withStatus(405);
+    }
+}
+```
+
+Then define the object relationship in `config/autoload/dependencies.php` and rewrite the CoreMiddleware object:
+
+```php
+<?php
+return [
+    Hyperf\HttpServer\CoreMiddleware::class => App\Middleware\CoreMiddleware::class,
+];
+```
+
+> The method of directly rewriting CoreMiddleware here needs to be effective in version 1.1.0+. Version 1.0.x still requires you to rewrite the upper-level calls of CoreMiddleware through DI, and then replace the value passed by CoreMiddleware with the middleware you define. kind.
+
+## Commonly used middleware
+
+### Cross-domain middleware
+
+If you need to solve cross-domain in the framework, you can implement the following middleware as per your needs
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Hyperf\Context\Context;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+class CorsMiddleware implements MiddlewareInterface
+{
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        $response = Context::get(ResponseInterface::class);
+        $response = $response->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Credentials', 'true')
+            // Headers can be rewritten according to actual conditions.
+            ->withHeader('Access-Control-Allow-Headers', 'DNT,Keep-Alive,User-Agent,Cache-Control,Content-Type,Authorization');
+
+        Context::set(ResponseInterface::class, $response);
+
+        if ($request->getMethod() == 'OPTIONS') {
+            return $response;
+        }
+
+        return $handler->handle($request);
+    }
+}
+```
+
+In fact, cross-domain configuration can also be directly hung on `Nginx`.
+
+```
+location / {
+    add_header Access-Control-Allow-Origin *;
+    add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS';
+    add_header Access-Control-Allow-Headers 'DNT,Keep-Alive,User-Agent,Cache-Control,Content-Type,Authorization';
+
+    if ($request_method = 'OPTIONS') {
+        return 204;
+    }
+}
+```
+
+### Post-middleware
+
+Normally, we execute last
+
+```
+return $handler->handle($request);
+```
+
+Therefore, it is equivalent to front-end middleware. If you want to make the middleware logic post-end, you only need to change the execution order.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+class OpenApiMiddleware implements MiddlewareInterface
+{
+    public function __construct(protected ContainerInterface $container)
+    {
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        // TODO: pre-operation
+        try{
+            $result = $handler->handle($request);
+        } finally {
+            // TODO: post operation
+        }
+        return $result;
+    }
+}
+```

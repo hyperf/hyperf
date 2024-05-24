@@ -19,6 +19,7 @@ use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 class ParameterParser
 {
@@ -60,6 +61,58 @@ class ParameterParser
 
         $definitions = $this->methodDefinitionCollector->getParameters($class, $method);
         return $this->getInjections($definitions, "{$class}::{$method}", $arguments);
+    }
+
+    /**
+     * @return InputOption[]
+     */
+    public function parseClosureOptions(Closure $closure): array
+    {
+        if (! $this->closureDefinitionCollector) {
+            return [];
+        }
+
+        $definitions = $this->closureDefinitionCollector->getParameters($closure);
+        $options = [];
+
+        foreach ($definitions as $definition) {
+            $type = $definition->getName();
+            if (! in_array($type, ['int', 'float', 'string', 'bool'])) {
+                continue;
+            }
+            $name = $definition->getMeta('name');
+            $mode = $definition->allowsNull() ? InputOption::VALUE_OPTIONAL : InputOption::VALUE_REQUIRED;
+            $default = $definition->getMeta('defaultValue');
+            $options[] = new InputOption($name, null, $mode, '', $default, []);
+        }
+
+        return $options;
+    }
+
+    /**
+     * @return InputOption[]
+     */
+    public function parseMethodOptions(string $class, string $method): array
+    {
+        if (! $this->methodDefinitionCollector) {
+            return [];
+        }
+
+        $definitions = $this->methodDefinitionCollector->getParameters($class, $method);
+        $options = [];
+
+        foreach ($definitions as $definition) {
+            $type = $definition->getName();
+            if (! in_array($type, ['int', 'float', 'string', 'bool'])) {
+                continue;
+            }
+            $name = $definition->getMeta('name');
+            $mode = $definition->allowsNull() ? InputOption::VALUE_OPTIONAL : InputOption::VALUE_REQUIRED;
+            $default = $definition->getMeta('defaultValue');
+            $options[] = new InputOption($name, null, $mode, '', $default, []);
+        }
+
+        return $options;
     }
 
     private function getInjections(array $definitions, string $callableName, array $arguments): array

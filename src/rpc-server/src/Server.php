@@ -134,12 +134,20 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         }
     }
 
-    public function onConnect(SwooleServer $server)
+    public function onConnect($server, int $fd)
     {
         // $server is the main server object, not the server object that this callback on.
         /* @var \Swoole\Server\Port */
         [$type, $port] = ServerManager::get($this->serverName);
         $this->logger->debug(sprintf('Connect to %s:%d', $port->host, $port->port));
+    }
+
+    public function onClose($server, int $fd)
+    {
+        // $server is the main server object, not the server object that this callback on.
+        /* @var \Swoole\Server\Port */
+        [$type, $port] = ServerManager::get($this->serverName);
+        $this->logger->debug(sprintf('Close on %s:%d', $port->host, $port->port));
     }
 
     protected function getDefaultExceptionHandler(): array

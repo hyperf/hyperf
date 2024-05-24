@@ -40,6 +40,7 @@ use Hyperf\Di\Container;
 use Hyperf\Engine\Channel;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
+use Hyperf\Stringable\Str;
 use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\IntegerStatus;
@@ -87,6 +88,8 @@ class ModelRealBuilderTest extends TestCase
         $conn->statement('DROP TABLE IF EXISTS `test`;');
         $conn->statement('DROP TABLE IF EXISTS `test_full_text_index`;');
         $conn->statement('DROP TABLE IF EXISTS `test_enum_cast`;');
+        $conn->statement('DROP TABLE IF EXISTS `users`;');
+        $conn->statement('DROP TABLE IF EXISTS `posts`;');
         Mockery::close();
     }
 
@@ -768,6 +771,85 @@ class ModelRealBuilderTest extends TestCase
         // expanded query
         $result = Db::table('test_full_text_index')->whereFullText(['title', 'body'], 'database', ['expanded' => true])->get();
         $this->assertCount(6, $result);
+    }
+
+    public function testJoinLateral(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id('id');
+            $table->string('name');
+        });
+
+        Schema::create('posts', function (Blueprint $table) {
+            $table->id('id');
+            $table->string('title');
+            $table->integer('rating');
+            $table->unsignedBigInteger('user_id');
+        });
+
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        $mySqlVersion = Db::select('select version()')[0]->{'version()'} ?? '';
+
+        if (version_compare($mySqlVersion, '8.0.14', '<')) {
+            $this->markTestSkipped('Lateral joins are not supported on MySQL < 8.0.14' . __CLASS__);
+        }
+        Db::table('users')->insert([
+            ['name' => Str::random()],
+            ['name' => Str::random()],
+        ]);
+
+        Db::table('posts')->insert([
+            ['title' => Str::random(), 'rating' => 1, 'user_id' => 1],
+            ['title' => Str::random(), 'rating' => 3, 'user_id' => 1],
+            ['title' => Str::random(), 'rating' => 7, 'user_id' => 1],
+        ]);
+        $subquery = Db::table('posts')
+            ->select('title as best_post_title', 'rating as best_post_rating')
+            ->whereColumn('user_id', 'users.id')
+            ->orderBy('rating', 'desc')
+            ->limit(2);
+
+        $userWithPosts = Db::table('users')
+            ->where('id', 1)
+            ->joinLateral($subquery, 'best_post')
+            ->get();
+
+        $this->assertCount(2, $userWithPosts);
+        $this->assertEquals(7, $userWithPosts[0]->best_post_rating);
+        $this->assertEquals(3, $userWithPosts[1]->best_post_rating);
+
+        $userWithoutPosts = Db::table('users')
+            ->where('id', 2)
+            ->joinLateral($subquery, 'best_post')
+            ->get();
+
+        $this->assertCount(0, $userWithoutPosts);
+
+        $subquery = Db::table('posts')
+            ->select('title as best_post_title', 'rating as best_post_rating')
+            ->whereColumn('user_id', 'users.id')
+            ->orderBy('rating', 'desc')
+            ->limit(2);
+
+        $userWithPosts = Db::table('users')
+            ->where('id', 1)
+            ->leftJoinLateral($subquery, 'best_post')
+            ->get();
+
+        $this->assertCount(2, $userWithPosts);
+        $this->assertEquals(7, $userWithPosts[0]->best_post_rating);
+        $this->assertEquals(3, $userWithPosts[1]->best_post_rating);
+
+        $userWithoutPosts = Db::table('users')
+            ->where('id', 2)
+            ->leftJoinLateral($subquery, 'best_post')
+            ->get();
+
+        $this->assertCount(1, $userWithoutPosts);
+        $this->assertNull($userWithoutPosts[0]->best_post_title);
+        $this->assertNull($userWithoutPosts[0]->best_post_rating);
     }
 
     public function testEnumCast()

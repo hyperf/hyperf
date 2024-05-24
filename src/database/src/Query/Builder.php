@@ -24,6 +24,7 @@ use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
+use Hyperf\Database\Concerns\ExplainsQueries;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Model\Builder as ModelBuilder;
@@ -44,7 +45,7 @@ use function Hyperf\Tappable\tap;
 
 class Builder
 {
-    use BuildsQueries, ForwardsCalls, Macroable {
+    use BuildsQueries, ExplainsQueries, ForwardsCalls, Macroable {
         __call as macroCall;
     }
 
@@ -114,11 +115,10 @@ class Builder
     public $from;
 
     /**
-     * The force indexes.
-     *
-     * @var string[]
+     * The index hint for the query.
+     * @var IndexHint
      */
-    public $forceIndexes = [];
+    public $indexHint;
 
     /**
      * The table joins for the query.
@@ -413,12 +413,49 @@ class Builder
 
     /**
      * Set the force indexes which the query should be used.
+     * @deprecated It will be removed in v3.1, please use `forceIndex` instead
+     */
+    public function forceIndexes(array $forceIndexes): static
+    {
+        $values = [];
+        foreach ($forceIndexes as $forceIndex) {
+            $values[] = '`' . str_replace('`', '``', $forceIndex) . '`';
+        }
+
+        $this->indexHint = new IndexHint('force', implode(',', $values));
+
+        return $this;
+    }
+
+    /**
+     * Add an index hint to suggest a query index.
+     */
+    public function useIndex(string $index): static
+    {
+        $this->indexHint = new IndexHint('hint', $index);
+
+        return $this;
+    }
+
+    /**
+     * Add an index hint to force a query index.
+     */
+    public function forceIndex(string $index): static
+    {
+        $this->indexHint = new IndexHint('force', $index);
+
+        return $this;
+    }
+
+    /**
+     * Add an index hint to ignore a query index.
      *
      * @return $this
      */
-    public function forceIndexes(array $forceIndexes)
+    public function ignoreIndex(string $index): static
     {
-        $this->forceIndexes = $forceIndexes;
+        $this->indexHint = new IndexHint('ignore', $index);
+
         return $this;
     }
 
@@ -499,6 +536,30 @@ class Builder
         $this->addBinding($bindings, 'join');
 
         return $this->join(new Expression($expression), $first, $operator, $second, $type, $where);
+    }
+
+    /**
+     * Add a lateral join clause to the query.
+     */
+    public function joinLateral(Builder|Closure|ModelBuilder|string $query, string $as, string $type = 'inner'): static
+    {
+        [$query, $bindings] = $this->createSub($query);
+
+        $expression = '(' . $query . ') as ' . $this->grammar->wrapTable($as);
+
+        $this->addBinding($bindings, 'join');
+
+        $this->joins[] = $this->newJoinLateralClause($this, $type, new Expression($expression));
+
+        return $this;
+    }
+
+    /**
+     * Add a lateral left join to the query.
+     */
+    public function leftJoinLateral(Builder|Closure|ModelBuilder|string $query, string $as): static
+    {
+        return $this->joinLateral($query, $as, 'left');
     }
 
     /**
@@ -1416,6 +1477,46 @@ class Builder
     }
 
     /**
+     * Add a "where JSON overlaps" clause to the query.
+     */
+    public function whereJsonOverlaps(string $column, mixed $value, string $boolean = 'and', bool $not = false): static
+    {
+        $type = 'JsonOverlaps';
+
+        $this->wheres[] = compact('type', 'column', 'value', 'boolean', 'not');
+
+        if (! $value instanceof Expression) {
+            $this->addBinding($this->grammar->prepareBindingForJsonContains($value));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add an "or where JSON overlaps" clause to the query.
+     */
+    public function orWhereJsonOverlaps(string $column, mixed $value): static
+    {
+        return $this->whereJsonOverlaps($column, $value, 'or');
+    }
+
+    /**
+     * Add a "where JSON not overlap" clause to the query.
+     */
+    public function whereJsonDoesntOverlap(string $column, mixed $value, string $boolean = 'and'): static
+    {
+        return $this->whereJsonOverlaps($column, $value, $boolean, true);
+    }
+
+    /**
+     * Add an "or where JSON not overlap" clause to the query.
+     */
+    public function orWhereJsonDoesntOverlap(string $column, mixed $value): static
+    {
+        return $this->whereJsonDoesntOverlap($column, $value, 'or');
+    }
+
+    /**
      * Add a "where JSON length" clause to the query.
      *
      * @param string $column
@@ -1522,6 +1623,70 @@ class Builder
     public function orWhereFullText(array|string $columns, string $value, array $options = []): static
     {
         return $this->whereFullText($columns, $value, $options, 'or');
+    }
+
+    /**
+     * Add a "where" clause to the query for multiple columns with "and" conditions between them.
+     *
+     * @param string[] $columns
+     */
+    public function whereAll(array $columns, mixed $operator = null, mixed $value = null, string $boolean = 'and'): static
+    {
+        [$value, $operator] = $this->prepareValueAndOperator(
+            $value,
+            $operator,
+            func_num_args() === 2
+        );
+
+        $this->whereNested(function ($query) use ($columns, $operator, $value) {
+            foreach ($columns as $column) {
+                $query->where($column, $operator, $value, 'and');
+            }
+        }, $boolean);
+
+        return $this;
+    }
+
+    /**
+     * Add an "or where" clause to the query for multiple columns with "and" conditions between them.
+     *
+     * @param string[] $columns
+     */
+    public function orWhereAll(array $columns, mixed $operator = null, mixed $value = null): static
+    {
+        return $this->whereAll($columns, $operator, $value, 'or');
+    }
+
+    /**
+     * Add an "where" clause to the query for multiple columns with "or" conditions between them.
+     *
+     * @param string[] $columns
+     */
+    public function whereAny(array $columns, mixed $operator = null, mixed $value = null, string $boolean = 'and'): static
+    {
+        [$value, $operator] = $this->prepareValueAndOperator(
+            $value,
+            $operator,
+            func_num_args() === 2
+        );
+
+        $this->whereNested(function ($query) use ($columns, $operator, $value) {
+            foreach ($columns as $column) {
+                $query->where($column, $operator, $value, 'or');
+            }
+        }, $boolean);
+
+        return $this;
+    }
+
+    /**
+     * Add an "or where" clause to the query for multiple columns with "or" conditions between them.
+     *
+     * @param string[] $columns
+     */
+    public function orWhereAny(array $columns, mixed $operator = null, mixed $value = null): static
+    {
+        return $this->whereAny($columns, $operator, $value, 'or');
     }
 
     /**
@@ -1972,7 +2137,7 @@ class Builder
      * @param int $perPage
      * @param string[] $columns
      * @param string $pageName
-     * @param null $page
+     * @param null|int $page
      */
     public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): LengthAwarePaginatorInterface
     {
@@ -2314,6 +2479,19 @@ class Builder
         [$sql, $bindings] = $this->createSub($query);
 
         return $this->connection->insert($this->grammar->compileInsertUsing($this, $columns, $sql), $this->cleanBindings($bindings));
+    }
+
+    /**
+     * Insert new records into the table using a subquery while ignoring errors.
+     */
+    public function insertOrIgnoreUsing(array $columns, array|Builder|Closure|ModelBuilder|string $query): int
+    {
+        [$sql, $bindings] = $this->createSub($query);
+
+        return $this->connection->affectingStatement(
+            $this->grammar->compileInsertOrIgnoreUsing($this, $columns, $sql),
+            $this->cleanBindings($bindings)
+        );
     }
 
     /**
@@ -2672,6 +2850,16 @@ class Builder
                 $clone->bindings[$type] = [];
             }
         });
+    }
+
+    /**
+     * Get a new join lateral clause.
+     *
+     * @param string $table
+     */
+    protected function newJoinLateralClause(self $parentQuery, string $type, Expression|string $table): JoinLateralClause
+    {
+        return new JoinLateralClause($parentQuery, $type, $table);
     }
 
     /**

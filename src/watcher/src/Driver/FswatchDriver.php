@@ -44,16 +44,16 @@ class FswatchDriver extends AbstractDriver
 
         while (! $channel->isClosing()) {
             $ret = fread($pipes[1], 8192);
-            Coroutine::create(function () use ($ret, $channel) {
-                if (is_string($ret)) {
+            if (is_string($ret) && $ret !== '') {
+                Coroutine::create(function () use ($ret, $channel) {
                     $files = array_filter(explode("\n", $ret));
                     foreach ($files as $file) {
                         if (Str::endsWith($file, $this->option->getExt())) {
                             $channel->push($file);
                         }
                     }
-                }
-            });
+                });
+            }
         }
     }
 

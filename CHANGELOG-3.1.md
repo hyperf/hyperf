@@ -1,9 +1,107 @@
-# v3.1.17 - TBD
+# v3.1.24 - TBD
+
+# v3.1.23 - 2024-05-23
+
+## Added
+
+- [#6757](https://github.com/hyperf/hyperf/pull/6757) Added `Hyperf\Collection\LazyCollection`.
+- [#6763](https://github.com/hyperf/hyperf/pull/6763) Added `Premature end of data` into `DetectsLostConnections`.
+- [#6767](https://github.com/hyperf/hyperf/pull/6767) Support `whereAll/orWhereAll` `whereAny/orWhereAny` for `Hyperf\Database\Query\Builder`.
+- [#6774](https://github.com/hyperf/hyperf/pull/6774) Support Lateral Join for `Hyperf\Database\Query\Builder`
+- [#6781](https://github.com/hyperf/hyperf/pull/6781) Added some methods to `Hyperf\Collection\Arr`.
+- [#6782](https://github.com/hyperf/hyperf/pull/6782) Added `whereJsonOverlaps`,`orWhereJsonOverlaps` and `whereJsonDoesntOverlap` to `Hyperf\Database\Query\Builder`.
+- [#6783](https://github.com/hyperf/hyperf/pull/6783) Support `insertOrIgnoreUsing` for `Hyperf\Database\Query\Builder`.
+- [#6784](https://github.com/hyperf/hyperf/pull/6784) Added `getOrPut` and `getOrSet` into `Hyperf\Collection\Collection`.
+
+## Optimized
+
+- [#6777](https://github.com/hyperf/hyperf/pull/6777) Optimized StdoutLogger to improve log message handling.
+- [#6778](https://github.com/hyperf/hyperf/pull/6778) Optimized Collection using EnumeratesValues.
+
+# v3.1.22 - 2024-05-16
+
+## Fixed
+
+- [#6755](https://github.com/hyperf/hyperf/pull/6755) Fixed bug that exception normalizer cannot support symfony 7.
+
+## Added
+
+- [#6734](https://github.com/hyperf/hyperf/pull/6734) Auto complete options for as command and closure command.
+- [#6746](https://github.com/hyperf/hyperf/pull/6746) Added `explain()` for `Hyperf\Database\Query\Builder`.
+- [#6749](https://github.com/hyperf/hyperf/pull/6749) Added some rules for `hyperf/validation`.
+- [#6752](https://github.com/hyperf/hyperf/pull/6752) Added `path` and `paths` methods to `Hyperf\Database\Seeders\Seed`.
+
+# v3.1.21 - 2024-05-09
+
+## Added
+
+- [#6738](https://github.com/hyperf/hyperf/pull/6738) Added `unshift` method to `Hyperf\Collection\Collection`.
+- [#6740](https://github.com/hyperf/hyperf/pull/6740) Support `useIndex` `forceIndex` and `ignoreIndex` for `Hyperf\Database\Query\Builder`.
+
+## Optimized
+
+- [#6716](https://github.com/hyperf/hyperf/pull/6716) [#6717](https://github.com/hyperf/hyperf/pull/6717) Optimized exchange declaration for amqp consumer messages.
+- [#6721](https://github.com/hyperf/hyperf/pull/6721) Optimized the implementation of `When` Method.
+- [#6731](https://github.com/hyperf/hyperf/pull/6731) Updated InteractsWithModelFactory to handle missing dependencies.
+
+## Fixed
+
+- [#6728](https://github.com/hyperf/hyperf/pull/6728) Fixed bug that `hyperf/watch` cannot work when using `hyperf/constants` enum mode.
+
+# v3.1.20 - 2024-04-26
+
+## Added
+
+- [#6709](https://github.com/hyperf/hyperf/pull/6709) Added default `onClose` method for rpc Server.
+- [#6712](https://github.com/hyperf/hyperf/pull/6712) Add new methods in `Hyperf\Collection\Collection`.
+
+## Optimized
+
+- [#6700](https://github.com/hyperf/hyperf/pull/6700) Optimized the implementation of `Pluralizer`.
+
+# v3.1.19 - 2024-04-18
+
+## Fixed
+
+- [#6689](https://github.com/hyperf/hyperf/pull/6689) Fixed bug that socket-io cannot parse data with `?` but without `query`.
+- [#6697](https://github.com/hyperf/hyperf/pull/6697) Fixed bug that `withoutBody` cannot not work when using `Swow`.
+
+## Added
+
+- [#6680](https://github.com/hyperf/hyperf/pull/6680) Added `Hyperf\Coordinator` helper functions.
+- [#6681](https://github.com/hyperf/hyperf/pull/6681) Added option `type` for `gen:constant` which you can be used to generate files with `const` or `enum`.
+
+## Optimized
+
+- [#6686](https://github.com/hyperf/hyperf/pull/6686) Optimized `FswatchDriver` which don't restart server by empty reading.
+- [#6698](https://github.com/hyperf/hyperf/pull/6698) Upgrade `hyperf/engine` to `v2.11`.
+- [#6696](https://github.com/hyperf/hyperf/pull/6696) Automatic declare exchange when produce message.
+
+# v3.1.18 - 2024-04-12
+
+## Added
+
+- [#6674](https://github.com/hyperf/hyperf/pull/6674) Added getConfig for redisPool.
+
+## Fixed
+
+- [#6664](https://github.com/hyperf/hyperf/pull/6664) Fixed bug that `isset` cannot check `null` in `Hyperf\Collection\Collection`.
+
+## Optimized
+
+- [#6668](https://github.com/hyperf/hyperf/pull/6668) Added error handling when using `callback` in multiplexed RPC.
+
+# v3.1.17 - 2024-04-10
 
 ## Added
 
 - [#6652](https://github.com/hyperf/hyperf/pull/6652) Added Str trim methods.
-- [#6658](https://github.com/hyperf/hyperf/pull/6658) HEAD requests, attempt fallback to GET in `MiddlewareManager`
+- [#6658](https://github.com/hyperf/hyperf/pull/6658) HEAD requests, attempt fallback to GET in `MiddlewareManager`.
+- [#6665](https://github.com/hyperf/hyperf/pull/6665) Added logger for `Websocket`.
+
+# Changed
+
+- [#6661](https://github.com/hyperf/hyperf/pull/6661) Use `PHP_BINARY` instead of `php` as default php binary path for `hyperf/watcher`.
 
 # v3.1.16 - 2024-04-02
 

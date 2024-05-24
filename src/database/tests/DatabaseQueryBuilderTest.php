@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Query\Builder;
@@ -21,10 +22,13 @@ use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Query\Processors\Processor;
+use InvalidArgumentException;
 use Mockery as m;
+use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 use TypeError;
 
 /**
@@ -133,6 +137,57 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertSame('select * from "prefix_users"', $builder->toSql());
     }
 
+    public function testUseIndex(): void
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->select('*')->from('users')->useIndex('index1');
+        $this->assertSame('select * from `users` use index (index1)', $builder->toSql());
+
+        $builder->select('*')->from('users')->useIndex('index2');
+        $this->assertSame('select * from `users` use index (index2)', $builder->toSql());
+
+        $builder->select('*')->from('users')->useIndex('index1,index2');
+        $this->assertSame('select * from `users` use index (index1,index2)', $builder->toSql());
+
+        $builder = $this->getMySqlBuilder()->select('*')->from('users');
+        $this->assertSame('select * from `users`', $builder->toSql());
+    }
+
+    public function testForceIndex(): void
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder1 = (clone $builder)->select('*')->from('users')->where('username', 'xxx')->forceIndex('index1');
+        $foeceses = (clone $builder)->select('*')->from('users')->where('username', 'xxx')->forceIndexes(['index1']);
+
+        $this->assertSame('select * from `users` force index (index1) where `username` = ?', $builder1->toSql());
+        $this->assertSame('select * from `users` force index (`index1`) where `username` = ?', $foeceses->toSql());
+
+        $builder2 = (clone $builder);
+        $builder2->select('*')->from('users')->where('username', 'xxx')->forceIndex('index2');
+        $foeceses = (clone $builder);
+        $foeceses->select('*')->from('users')->where('username', 'xxx')->forceIndexes(['index2']);
+        $this->assertSame('select * from `users` force index (index2) where `username` = ?', $builder2->toSql());
+        $this->assertSame('select * from `users` force index (`index2`) where `username` = ?', $foeceses->toSql());
+
+        $builder3 = (clone $builder);
+        $foeceses = (clone $builder);
+        $builder3->select('*')->from('users')->where('username', 'xxx')->forceIndex('index1,index2');
+        $foeceses->select('*')->from('users')->where('username', 'xxx')->forceIndexes(['index1', 'index2']);
+        $this->assertSame('select * from `users` force index (index1,index2) where `username` = ?', $builder3->toSql());
+        $this->assertSame('select * from `users` force index (`index1`,`index2`) where `username` = ?', $foeceses->toSql());
+    }
+
+    public function testIgnoreIndex(): void
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->select('*')->from('users')->ignoreIndex('index1');
+        $this->assertSame('select * from `users` ignore index (index1)', $builder->toSql());
+        $builder->select('*')->from('users')->ignoreIndex('index2');
+        $this->assertSame('select * from `users` ignore index (index2)', $builder->toSql());
+        $builder->select('*')->from('users')->ignoreIndex('index1,index2');
+        $this->assertSame('select * from `users` ignore index (index1,index2)', $builder->toSql());
+    }
+
     public function testBasicSelectDistinct(): void
     {
         $builder = $this->getBuilder();
@@ -194,6 +249,29 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertSame('select * from "users" where "email" = ?', $builder->toSql());
     }
 
+    public function testWhenValueOfCallback(): void
+    {
+        $callback = function (Builder $query, $condition) {
+            $this->assertTrue($condition);
+
+            $query->where('id', '=', 1);
+        };
+
+        $builder = $this->getBuilder();
+        $builder->select('*')
+            ->from('users')
+            ->when(fn (Builder $query) => true, $callback)
+            ->where('email', 'foo');
+        $this->assertSame('select * from "users" where "id" = ? and "email" = ?', $builder->toSql());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')
+            ->from('users')
+            ->when(fn (Builder $query) => false, $callback)
+            ->where('email', 'foo');
+        $this->assertSame('select * from "users" where "email" = ?', $builder->toSql());
+    }
+
     public function testWhenCallbackWithReturn(): void
     {
         $callback = function ($query, $condition) {
@@ -251,6 +329,29 @@ class DatabaseQueryBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->select('*')->from('users')->unless(true, $callback)->where('email', 'foo');
         $this->assertSame('select * from "users" where "email" = ?', $builder->toSql());
+    }
+
+    public function testUnlessValueOfCallback(): void
+    {
+        $callback = function (Builder $query, $condition) {
+            $this->assertFalse($condition);
+
+            $query->where('id', '=', 1);
+        };
+
+        $builder = $this->getBuilder();
+        $builder->select('*')
+            ->from('users')
+            ->unless(fn (Builder $query) => true, $callback)
+            ->where('email', 'foo');
+        $this->assertSame('select * from "users" where "email" = ?', $builder->toSql());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')
+            ->from('users')
+            ->unless(fn (Builder $query) => false, $callback)
+            ->where('email', 'foo');
+        $this->assertSame('select * from "users" where "id" = ? and "email" = ?', $builder->toSql());
     }
 
     public function testUnlessCallbackWithReturn(): void
@@ -629,6 +730,43 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertEquals([], $builder->getBindings());
     }
 
+    public function testExplain(): void
+    {
+        $builder = $this->getBuilder();
+        /**
+         * @var ConnectionInterface|MockInterface $connection
+         */
+        $connection = $builder->getConnection();
+        $connection->allows('select')
+            ->once()
+            ->withArgs(function ($sql, $bindings) {
+                $this->assertSame($sql, 'EXPLAIN select * from "users" where 0 = 1');
+                $this->assertIsArray($bindings);
+                $this->assertCount(0, $bindings);
+                return $sql === 'EXPLAIN select * from "users" where 0 = 1' && $bindings === [];
+            })
+            ->andReturn([]);
+        $builder->select('*')->from('users')->whereIntegerInRaw('id', []);
+        $this->assertCount(0, $builder->explain());
+
+        $builder = $this->getBuilder();
+        /**
+         * @var ConnectionInterface|MockInterface $connection
+         */
+        $connection = $builder->getConnection();
+        $connection->allows('select')
+            ->once()
+            ->withArgs(function ($sql, $bindings) {
+                $this->assertSame($sql, 'EXPLAIN select * from "hyperf" where "id" in (?, ?, ?)');
+                $this->assertIsArray($bindings);
+                $this->assertCount(3, $bindings);
+                return $sql === 'EXPLAIN select * from "hyperf" where "id" in (?, ?, ?)' && $bindings === [1, 2, 3];
+            })
+            ->andReturn([]);
+        $builder->select('*')->from('hyperf')->whereIn('id', [1, 2, 3]);
+        $this->assertCount(0, $builder->explain());
+    }
+
     public function testEmptyWhereIntegerNotInRaw(): void
     {
         $builder = $this->getBuilder();
@@ -710,6 +848,220 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertEquals(['Car,Plane'], $builder->getBindings());
     }
 
+    public function testWhereAll()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereAll(['last_name', 'email'], '%Otwell%');
+        $this->assertSame('select * from "users" where ("last_name" = ? and "email" = ?)', $builder->toSql());
+        $this->assertEquals(['%Otwell%', '%Otwell%'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereAll(['last_name', 'email'], 'not like', '%Otwell%');
+        $this->assertSame('select * from "users" where ("last_name" not like ? and "email" not like ?)', $builder->toSql());
+        $this->assertEquals(['%Otwell%', '%Otwell%'], $builder->getBindings());
+    }
+
+    public function testOrWhereAll()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('first_name', 'like', '%Taylor%')->orWhereAll(['last_name', 'email'], 'like', '%Otwell%');
+        $this->assertSame('select * from "users" where "first_name" like ? or ("last_name" like ? and "email" like ?)', $builder->toSql());
+        $this->assertEquals(['%Taylor%', '%Otwell%', '%Otwell%'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('first_name', 'like', '%Taylor%')->whereAll(['last_name', 'email'], 'like', '%Otwell%', 'or');
+        $this->assertSame('select * from "users" where "first_name" like ? or ("last_name" like ? and "email" like ?)', $builder->toSql());
+        $this->assertEquals(['%Taylor%', '%Otwell%', '%Otwell%'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('first_name', 'like', '%Taylor%')->orWhereAll(['last_name', 'email'], '%Otwell%');
+        $this->assertSame('select * from "users" where "first_name" like ? or ("last_name" = ? and "email" = ?)', $builder->toSql());
+        $this->assertEquals(['%Taylor%', '%Otwell%', '%Otwell%'], $builder->getBindings());
+    }
+
+    public function testWhereAny()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereAny(['last_name', 'email'], 'like', '%Otwell%');
+        $this->assertSame('select * from "users" where ("last_name" like ? or "email" like ?)', $builder->toSql());
+        $this->assertEquals(['%Otwell%', '%Otwell%'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereAny(['last_name', 'email'], '%Otwell%');
+        $this->assertSame('select * from "users" where ("last_name" = ? or "email" = ?)', $builder->toSql());
+        $this->assertEquals(['%Otwell%', '%Otwell%'], $builder->getBindings());
+    }
+
+    public function testInsertOrIgnoreUsingMethod(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('does not support');
+        $builder = $this->getBuilder();
+        $builder->from('users')->insertOrIgnoreUsing(['email' => 'foo'], 'bar');
+    }
+
+    public function testMySqlInsertOrIgnoreUsingMethod(): void
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->getConnection()->shouldReceive('getDatabaseName');
+        $builder->getConnection()->shouldReceive('affectingStatement')->once()->with('insert ignore into `table1` (`foo`) select `bar` from `table2` where `foreign_id` = ?', [0 => 5])->andReturn(1);
+
+        $result = $builder->from('table1')->insertOrIgnoreUsing(
+            ['foo'],
+            function (Builder $query) {
+                $query->select(['bar'])->from('table2')->where('foreign_id', '=', 5);
+            }
+        );
+
+        $this->assertEquals(1, $result);
+    }
+
+    public function testMySqlInsertOrIgnoreUsingWithEmptyColumns(): void
+    {
+        $builder = $this->getMySqlBuilder();
+        /**
+         * @var Connection&MockInterface $connection
+         */
+        $connection = $builder->getConnection();
+        $connection->allows('getDatabaseName');
+        $connection->allows('affectingStatement')
+            ->once()
+            ->andReturnUsing(function ($sql, $bindings) {
+                $this->assertSame('insert ignore into `table1` select * from `table2` where `foreign_id` = ?', $sql);
+                $this->assertSame([0 => 5], $bindings);
+                return 1;
+            });
+
+        $result = $builder->from('table1')->insertOrIgnoreUsing(
+            [],
+            function (Builder $query) {
+                $query->from('table2')->where('foreign_id', '=', 5);
+            }
+        );
+
+        $this->assertEquals(1, $result);
+    }
+
+    public function testMySqlInsertOrIgnoreUsingInvalidSubquery(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $builder = $this->getMySqlBuilder();
+        $builder->from('table1')->insertOrIgnoreUsing(['foo'], ['bar']);
+    }
+
+    public function testOrWhereAny()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('first_name', 'like', '%Taylor%')->orWhereAny(['last_name', 'email'], 'like', '%Otwell%');
+        $this->assertSame('select * from "users" where "first_name" like ? or ("last_name" like ? or "email" like ?)', $builder->toSql());
+        $this->assertEquals(['%Taylor%', '%Otwell%', '%Otwell%'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('first_name', 'like', '%Taylor%')->whereAny(['last_name', 'email'], 'like', '%Otwell%', 'or');
+        $this->assertSame('select * from "users" where "first_name" like ? or ("last_name" like ? or "email" like ?)', $builder->toSql());
+        $this->assertEquals(['%Taylor%', '%Otwell%', '%Otwell%'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('first_name', 'like', '%Taylor%')->orWhereAny(['last_name', 'email'], '%Otwell%');
+        $this->assertSame('select * from "users" where "first_name" like ? or ("last_name" = ? or "email" = ?)', $builder->toSql());
+        $this->assertEquals(['%Taylor%', '%Otwell%', '%Otwell%'], $builder->getBindings());
+    }
+
+    public function testWhereJsonOverlapsMySql(): void
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->select('*')->from('users')->whereJsonOverlaps('options', ['en', 'fr']);
+        $this->assertSame('select * from `users` where json_overlaps(`options`, ?)', $builder->toSql());
+        $this->assertEquals(['["en","fr"]'], $builder->getBindings());
+
+        $builder = $this->getMySqlBuilder();
+        $builder->select('*')->from('users')->whereJsonOverlaps('users.options->languages', ['en', 'fr']);
+        $this->assertSame('select * from `users` where json_overlaps(`users`.`options`, ?, \'$."languages"\')', $builder->toSql());
+        $this->assertEquals(['["en","fr"]'], $builder->getBindings());
+
+        $builder = $this->getMySqlBuilder();
+        $builder->select('*')->from('users')->where('id', '=', 1)->orWhereJsonOverlaps('options->languages', new Raw("'[\"en\", \"fr\"]'"));
+        $this->assertSame('select * from `users` where `id` = ? or json_overlaps(`options`, \'["en", "fr"]\', \'$."languages"\')', $builder->toSql());
+        $this->assertEquals([1], $builder->getBindings());
+    }
+
+    public function testWhereJsonDoesntOverlapMySql(): void
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->select('*')->from('users')->whereJsonDoesntOverlap('options->languages', ['en', 'fr']);
+        $this->assertSame('select * from `users` where not json_overlaps(`options`, ?, \'$."languages"\')', $builder->toSql());
+        $this->assertEquals(['["en","fr"]'], $builder->getBindings());
+
+        $builder = $this->getMySqlBuilder();
+        $builder->select('*')->from('users')->where('id', '=', 1)->orWhereJsonDoesntOverlap('options->languages', new Raw("'[\"en\", \"fr\"]'"));
+        $this->assertSame('select * from `users` where `id` = ? or not json_overlaps(`options`, \'["en", "fr"]\', \'$."languages"\')', $builder->toSql());
+        $this->assertEquals([1], $builder->getBindings());
+    }
+
+    public function testJoinLateral()
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->getConnection()->shouldReceive('getDatabaseName');
+        $builder->from('users')->joinLateral('select * from `contacts` where `contracts`.`user_id` = `users`.`id`', 'sub');
+        $this->assertSame('select * from `users` inner join lateral (select * from `contacts` where `contracts`.`user_id` = `users`.`id`) as `sub` on true', $builder->toSql());
+
+        $builder = $this->getMySqlBuilder();
+        $builder->getConnection()->shouldReceive('getDatabaseName');
+        $builder->from('users')->joinLateral(function ($q) {
+            $q->from('contacts')->whereColumn('contracts.user_id', 'users.id');
+        }, 'sub');
+        $this->assertSame('select * from `users` inner join lateral (select * from `contacts` where `contracts`.`user_id` = `users`.`id`) as `sub` on true', $builder->toSql());
+
+        $builder = $this->getMySqlBuilder();
+        $builder->getConnection()->shouldReceive('getDatabaseName');
+        $sub = $this->getMySqlBuilder();
+        $sub->getConnection()->shouldReceive('getDatabaseName');
+        $eloquentBuilder = $sub->from('contacts')->whereColumn('contracts.user_id', 'users.id');
+        $builder->from('users')->joinLateral($eloquentBuilder, 'sub');
+        $this->assertSame('select * from `users` inner join lateral (select * from `contacts` where `contracts`.`user_id` = `users`.`id`) as `sub` on true', $builder->toSql());
+
+        $sub1 = $this->getMySqlBuilder();
+        $sub1->getConnection()->shouldReceive('getDatabaseName');
+        $sub1 = $sub1->from('contacts')->whereColumn('contracts.user_id', 'users.id')->where('name', 'foo');
+
+        $sub2 = $this->getMySqlBuilder();
+        $sub2->getConnection()->shouldReceive('getDatabaseName');
+        $sub2 = $sub2->from('contacts')->whereColumn('contracts.user_id', 'users.id')->where('name', 'bar');
+
+        $builder = $this->getMySqlBuilder();
+        $builder->getConnection()->shouldReceive('getDatabaseName');
+        $builder->from('users')->joinLateral($sub1, 'sub1')->joinLateral($sub2, 'sub2');
+
+        $expected = 'select * from `users` ';
+        $expected .= 'inner join lateral (select * from `contacts` where `contracts`.`user_id` = `users`.`id` and `name` = ?) as `sub1` on true ';
+        $expected .= 'inner join lateral (select * from `contacts` where `contracts`.`user_id` = `users`.`id` and `name` = ?) as `sub2` on true';
+
+        $this->assertEquals($expected, $builder->toSql());
+        $this->assertEquals(['foo', 'bar'], $builder->getRawBindings()['join']);
+    }
+
+    public function testJoinLateralWithPrefix()
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->getConnection()->shouldReceive('getDatabaseName');
+        $builder->getGrammar()->setTablePrefix('prefix_');
+        $builder->from('users')->joinLateral('select * from `contacts` where `contracts`.`user_id` = `users`.`id`', 'sub');
+        $this->assertSame('select * from `prefix_users` inner join lateral (select * from `contacts` where `contracts`.`user_id` = `users`.`id`) as `prefix_sub` on true', $builder->toSql());
+    }
+
+    public function testLeftJoinLateral()
+    {
+        $builder = $this->getMySqlBuilder();
+        $builder->getConnection()->shouldReceive('getDatabaseName');
+
+        $sub = $this->getMySqlBuilder();
+        $sub->getConnection()->shouldReceive('getDatabaseName');
+
+        $builder->from('users')
+            ->leftJoinLateral($sub->from('contacts')->whereColumn('contracts.user_id', 'users.id'), 'sub');
+        $this->assertSame('select * from `users` left join lateral (select * from `contacts` where `contracts`.`user_id` = `users`.`id`) as `sub` on true', $builder->toSql());
+    }
+
     protected function getBuilder(): Builder
     {
         $grammar = new Grammar();
@@ -734,7 +1086,7 @@ class DatabaseQueryBuilderTest extends TestCase
         return new Builder(m::mock(ConnectionInterface::class), $grammar, $processor);
     }
 
-    protected function getMockQueryBuilder(): m\MockInterface
+    protected function getMockQueryBuilder(): MockInterface
     {
         return m::mock(Builder::class, [
             m::mock(ConnectionInterface::class),

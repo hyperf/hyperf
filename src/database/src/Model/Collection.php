@@ -230,7 +230,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param iterable<array-key, TModel> $items
      * @return static<TKey, TModel>
      */
-    public function merge($items): BaseCollection
+    public function merge($items): static
     {
         $dictionary = $this->getDictionary();
 
@@ -249,7 +249,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param callable(TModel, TKey): TMapValue $callback
      * @return BaseCollection<TKey, TMapValue>|static<TKey, TMapValue>
      */
-    public function map(callable $callback): BaseCollection
+    public function map(callable $callback): BaseCollection|static
     {
         $result = parent::map($callback);
 
@@ -290,7 +290,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param iterable<array-key, TModel> $items
      * @return static<TKey, TModel>
      */
-    public function diff($items): BaseCollection
+    public function diff($items): static
     {
         $diff = new static();
 
@@ -311,7 +311,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param iterable<array-key, TModel> $items
      * @return static<TKey, TModel>
      */
-    public function intersect($items): BaseCollection
+    public function intersect(mixed $items): static
     {
         $intersect = new static();
 
@@ -332,7 +332,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param null|(callable(TModel, TKey): bool)|string $key
      * @return static<int, TModel>
      */
-    public function unique($key = null, bool $strict = false): BaseCollection
+    public function unique(mixed $key = null, bool $strict = false): static
     {
         if (! is_null($key)) {
             return parent::unique($key, $strict);
@@ -347,7 +347,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param null|array<array-key, mixed> $keys
      * @return static<int, TModel>
      */
-    public function only($keys): BaseCollection
+    public function only($keys): static
     {
         if (is_null($keys)) {
             return new static($this->items);
@@ -364,7 +364,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param null|array|TKey $keys
      * @return static<int, mixed>
      */
-    public function columns($keys): BaseCollection
+    public function columns($keys)
     {
         if (is_null($keys)) {
             return new BaseCollection([]);
@@ -397,7 +397,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param null|array<array-key, mixed> $keys
      * @return static<int, TModel>
      */
-    public function except($keys): BaseCollection
+    public function except($keys): static
     {
         if (is_null($keys)) {
             return new static($this->items);
@@ -471,7 +471,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param array<array-key, string>|string $value
      * @return BaseCollection<int, mixed>
      */
-    public function pluck($value, ?string $key = null): BaseCollection
+    public function pluck(array|string $value, ?string $key = null): BaseCollection
     {
         return $this->toBase()->pluck($value, $key);
     }

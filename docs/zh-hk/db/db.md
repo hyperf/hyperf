@@ -1,6 +1,6 @@
 # 極簡的 DB 組件
 
-[hyperf/database](https://github.com/hyperf/database) 功能十分強大，但也不可否認效率上確實些許不足。這裏提供一個極簡的 `hyperf/db` 組件，支持 `PDO` 和 `Swoole Mysql`。
+[hyperf/database](https://github.com/hyperf/database) 功能十分強大，但也不可否認效率上確實些許不足。這裏提供一個極簡的 `hyperf/db` 組件。
 
 ## 安裝
 
@@ -22,7 +22,7 @@ php bin/hyperf.php vendor:publish hyperf/db
 
 |        配置項        |  類型  |       默認值       |               備註               |
 |:--------------------:|:------:|:------------------:|:--------------------------------:|
-|        driver        | string |         無         | 數據庫引擎 支持 `pdo` 和 `mysql` |
+|        driver        | string |         無         | 數據庫引擎  |
 |         host         | string |    `localhost`     |            數據庫地址            |
 |         port         |  int   |        3306        |            數據庫地址            |
 |       database       | string |         無         |          數據庫默認 DB           |

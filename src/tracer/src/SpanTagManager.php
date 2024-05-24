@@ -14,7 +14,7 @@ namespace Hyperf\Tracer;
 
 class SpanTagManager
 {
-    private $tags = [
+    private array $tags = [
         'http_client' => [
             'http.url' => 'http.url',
             'http.method' => 'http.method',

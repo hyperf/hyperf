@@ -6,7 +6,7 @@
 
 ## 安装
 
-```
+```bash
 composer require hyperf/watcher --dev
 ```
 
@@ -23,10 +23,11 @@ php bin/hyperf.php vendor:publish hyperf/watcher
 |      配置      |      默认值      |                           备注                            |
 | :------------: | :--------------: | :-------------------------------------------------------: |
 |     driver     | `ScanFileDriver` |                   默认定时扫描文件驱动                    |
-|      bin       |      `php`       | 用于启动服务的脚本 例如 `php -d swoole.use_shortname=Off` |
+|      bin       |   `PHP_BINARY`   | 用于启动服务的脚本 例如 `php -d swoole.use_shortname=Off` |
 |   watch.dir    | `app`, `config`  |                         监听目录                          |
 |   watch.file   |      `.env`      |                         监听文件                          |
 | watch.interval |      `2000`      |                      扫描间隔(毫秒)                       |
+|      ext       |  `.php`, `.env`  |                  监听目录下的文件扩展名                   |
 
 ## 支持驱动
 
@@ -74,5 +75,3 @@ php bin/hyperf.php server:watch
 
 - 暂时 Alpine Docker 环境下，稍微有点问题，后续会完善。
 - 删除文件和修改`.env`需要手动重启才能生效。
-- vendor 中的文件需要使用 classmap 形式自动加载才能被扫描。（即执行`composer dump-autoload -o`)
-

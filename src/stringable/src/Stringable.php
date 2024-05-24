@@ -307,6 +307,16 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     }
 
     /**
+     * Determine if a given string is 7 bit ASCII.
+     *
+     * @return bool
+     */
+    public function isAscii()
+    {
+        return Str::isAscii($this->value);
+    }
+
+    /**
      * Determine if the given string is empty.
      *
      * @return bool
@@ -520,6 +530,19 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     }
 
     /**
+     * Find the multi-byte safe position of the first occurrence of the given substring.
+     *
+     * @param string $needle
+     * @param int $offset
+     * @param null|string $encoding
+     * @return false|int
+     */
+    public function position($needle, $offset = 0, $encoding = null)
+    {
+        return Str::position($this->value, $needle, $offset, $encoding);
+    }
+
+    /**
      * Prepend the given values to the string.
      *
      * @param string $values
@@ -655,6 +678,16 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     }
 
     /**
+     * Convert the given string to proper case for each word.
+     *
+     * @return static
+     */
+    public function headline()
+    {
+        return new static(Str::headline($this->value));
+    }
+
+    /**
      * Get the singular form of an English word.
      *
      * @return static
@@ -734,6 +767,30 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     }
 
     /**
+     * Take the first or last {$limit} characters.
+     *
+     * @return static
+     */
+    public function take(int $limit)
+    {
+        if ($limit < 0) {
+            return $this->substr($limit);
+        }
+
+        return $this->substr(0, $limit);
+    }
+
+    /**
+     * Convert the string to Base64 encoding.
+     *
+     * @return static
+     */
+    public function toBase64()
+    {
+        return new static(base64_encode($this->value));
+    }
+
+    /**
      * Trim the string of the given characters.
      *
      * @param string $characters
@@ -774,6 +831,18 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     public function ucfirst()
     {
         return new static(Str::ucfirst($this->value));
+    }
+
+    /**
+     * Unwrap the string with the given strings.
+     *
+     * @param string $before
+     * @param null|string $after
+     * @return static
+     */
+    public function unwrap($before, $after = null)
+    {
+        return new static(Str::unwrap($this->value, $before, $after));
     }
 
     /**

@@ -60,21 +60,15 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
         'string' => true,
     ];
 
-    /**
-     * @var ChainEncoder
-     */
-    protected $encoder;
+    protected ChainEncoder $encoder;
 
-    /**
-     * @var ChainDecoder
-     */
-    protected $decoder;
+    protected ChainDecoder $decoder;
 
-    protected $normalizers = [];
+    protected array $normalizers = [];
 
-    protected $denormalizerCache = [];
+    protected array $denormalizerCache = [];
 
-    protected $normalizerCache = [];
+    protected array $normalizerCache = [];
 
     /**
      * @param (DenormalizerInterface|mixed|NormalizerInterface)[] $normalizers
@@ -266,6 +260,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
                     continue;
                 }
 
+                // TODO: Use getSupportedTypes to rewrite this since Symfony 7.
                 if (! $normalizer instanceof CacheableSupportsMethodInterface || ! $normalizer->hasCacheableSupportsMethod()) {
                     $this->normalizerCache[$format][$type][$k] = false;
                 } elseif ($normalizer->supportsNormalization($data, $format)) {
