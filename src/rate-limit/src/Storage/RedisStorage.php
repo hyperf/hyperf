@@ -92,7 +92,7 @@ class RedisStorage implements Storage, GlobalScope, StorageInterface
             if (! $this->redis->set($this->key, $data)) {
                 throw new StorageException('Failed to store microtime');
             }
-            if (! empty($this->options['expire'])) {
+            if (! empty($this->options['expire']) && $this->options['expire'] > 0) {
                 $this->redis->expire($this->key, $this->options['expire']);
             }
         } catch (InvalidArgumentException $e) {
