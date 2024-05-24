@@ -6,6 +6,7 @@
 
 ## Added
 
+- [#6792](https://github.com/hyperf/hyperf/pull/6792) Support `IncrementEach` and `DecrementEach` to `Hyperf\Database\Query\Builder`.
 - [#6793](https://github.com/hyperf/hyperf/pull/6793) Added the request body and response body to the tracer.
 
 ## Optimized
