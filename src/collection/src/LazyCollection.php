@@ -788,7 +788,7 @@ class LazyCollection implements Enumerable
      * @param callable(TValue, TKey): array<TMapToDictionaryKey, TMapToDictionaryValue> $callback
      * @return static<TMapToDictionaryKey, array<int, TMapToDictionaryValue>>
      */
-    public function mapToDictionary(callable $callback): static
+    public function mapToDictionary(callable $callback): self|static
     {
         return $this->passthru('mapToDictionary', func_get_args());
     }
@@ -804,7 +804,7 @@ class LazyCollection implements Enumerable
      * @param callable(TValue, TKey): array<TMapWithKeysKey, TMapWithKeysValue> $callback
      * @return static<TMapWithKeysKey, TMapWithKeysValue>
      */
-    public function mapWithKeys(callable $callback)
+    public function mapWithKeys(callable $callback): self|static
     {
         return new static(function () use ($callback) {
             foreach ($this as $key => $value) {
