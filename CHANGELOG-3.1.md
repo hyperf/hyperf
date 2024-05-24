@@ -1,7 +1,9 @@
 # v3.1.24 - TBD
+
 ## Optimized
 
 - [#6778](https://github.com/hyperf/hyperf/pull/6788) Consumer routingKey param support array for `Hyperf\Amqp\Annotation\Consumer`.
+
 # v3.1.23 - 2024-05-23
 
 ## Added
