@@ -4,6 +4,10 @@
 
 - [#6793](https://github.com/hyperf/hyperf/pull/6793) Added the request body and response body to the tracer.
 
+## Optimized
+
+- [#6778](https://github.com/hyperf/hyperf/pull/6788) Support array for `Hyperf\Amqp\Annotation\Consumer::routingKey`.
+
 # v3.1.23 - 2024-05-23
 
 ## Added
