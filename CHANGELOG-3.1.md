@@ -1,5 +1,9 @@
 # v3.1.24 - TBD
 
+## Added
+
+- [#6793](https://github.com/hyperf/hyperf/pull/6793) Added the request body and response body to the tracer
+
 # v3.1.23 - 2024-05-23
 
 ## Added
