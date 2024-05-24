@@ -1377,6 +1377,22 @@ class Str
     }
 
     /**
+     * Remove all non-numeric characters from a string.
+     */
+    public static function numbers(array|string $value): array|string
+    {
+        return preg_replace('/[^0-9]/', '', $value);
+    }
+
+    /**
+     * Decode the given Base64 encoded string.
+     */
+    public static function fromBase64(string $string, bool $strict = false): false|string
+    {
+        return base64_decode($string, $strict);
+    }
+
+    /**
      * Returns the replacements for the ascii method.
      * Note: Adapted from Stringy\Stringy.
      *
