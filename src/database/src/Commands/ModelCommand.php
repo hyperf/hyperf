@@ -282,7 +282,7 @@ class ModelCommand extends Command
             ->replaceConnection($stub, $option->getPool())
             ->replaceUses($stub, $option->getUses())
             ->replaceClass($stub, $name)
-            ->replaceTable($stub, $table);
+            ->replaceTable($stub, $option->getPrefix().$table);
     }
 
     /**
