@@ -24,6 +24,7 @@ use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
+use Hyperf\Database\Concerns\ExplainsQueries;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Model\Builder as ModelBuilder;
@@ -44,7 +45,7 @@ use function Hyperf\Tappable\tap;
 
 class Builder
 {
-    use BuildsQueries, ForwardsCalls, Macroable {
+    use BuildsQueries, ExplainsQueries, ForwardsCalls, Macroable {
         __call as macroCall;
     }
 
@@ -535,6 +536,30 @@ class Builder
         $this->addBinding($bindings, 'join');
 
         return $this->join(new Expression($expression), $first, $operator, $second, $type, $where);
+    }
+
+    /**
+     * Add a lateral join clause to the query.
+     */
+    public function joinLateral(Builder|Closure|ModelBuilder|string $query, string $as, string $type = 'inner'): static
+    {
+        [$query, $bindings] = $this->createSub($query);
+
+        $expression = '(' . $query . ') as ' . $this->grammar->wrapTable($as);
+
+        $this->addBinding($bindings, 'join');
+
+        $this->joins[] = $this->newJoinLateralClause($this, $type, new Expression($expression));
+
+        return $this;
+    }
+
+    /**
+     * Add a lateral left join to the query.
+     */
+    public function leftJoinLateral(Builder|Closure|ModelBuilder|string $query, string $as): static
+    {
+        return $this->joinLateral($query, $as, 'left');
     }
 
     /**
@@ -1452,6 +1477,46 @@ class Builder
     }
 
     /**
+     * Add a "where JSON overlaps" clause to the query.
+     */
+    public function whereJsonOverlaps(string $column, mixed $value, string $boolean = 'and', bool $not = false): static
+    {
+        $type = 'JsonOverlaps';
+
+        $this->wheres[] = compact('type', 'column', 'value', 'boolean', 'not');
+
+        if (! $value instanceof Expression) {
+            $this->addBinding($this->grammar->prepareBindingForJsonContains($value));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add an "or where JSON overlaps" clause to the query.
+     */
+    public function orWhereJsonOverlaps(string $column, mixed $value): static
+    {
+        return $this->whereJsonOverlaps($column, $value, 'or');
+    }
+
+    /**
+     * Add a "where JSON not overlap" clause to the query.
+     */
+    public function whereJsonDoesntOverlap(string $column, mixed $value, string $boolean = 'and'): static
+    {
+        return $this->whereJsonOverlaps($column, $value, $boolean, true);
+    }
+
+    /**
+     * Add an "or where JSON not overlap" clause to the query.
+     */
+    public function orWhereJsonDoesntOverlap(string $column, mixed $value): static
+    {
+        return $this->whereJsonDoesntOverlap($column, $value, 'or');
+    }
+
+    /**
      * Add a "where JSON length" clause to the query.
      *
      * @param string $column
@@ -1558,6 +1623,70 @@ class Builder
     public function orWhereFullText(array|string $columns, string $value, array $options = []): static
     {
         return $this->whereFullText($columns, $value, $options, 'or');
+    }
+
+    /**
+     * Add a "where" clause to the query for multiple columns with "and" conditions between them.
+     *
+     * @param string[] $columns
+     */
+    public function whereAll(array $columns, mixed $operator = null, mixed $value = null, string $boolean = 'and'): static
+    {
+        [$value, $operator] = $this->prepareValueAndOperator(
+            $value,
+            $operator,
+            func_num_args() === 2
+        );
+
+        $this->whereNested(function ($query) use ($columns, $operator, $value) {
+            foreach ($columns as $column) {
+                $query->where($column, $operator, $value, 'and');
+            }
+        }, $boolean);
+
+        return $this;
+    }
+
+    /**
+     * Add an "or where" clause to the query for multiple columns with "and" conditions between them.
+     *
+     * @param string[] $columns
+     */
+    public function orWhereAll(array $columns, mixed $operator = null, mixed $value = null): static
+    {
+        return $this->whereAll($columns, $operator, $value, 'or');
+    }
+
+    /**
+     * Add an "where" clause to the query for multiple columns with "or" conditions between them.
+     *
+     * @param string[] $columns
+     */
+    public function whereAny(array $columns, mixed $operator = null, mixed $value = null, string $boolean = 'and'): static
+    {
+        [$value, $operator] = $this->prepareValueAndOperator(
+            $value,
+            $operator,
+            func_num_args() === 2
+        );
+
+        $this->whereNested(function ($query) use ($columns, $operator, $value) {
+            foreach ($columns as $column) {
+                $query->where($column, $operator, $value, 'or');
+            }
+        }, $boolean);
+
+        return $this;
+    }
+
+    /**
+     * Add an "or where" clause to the query for multiple columns with "or" conditions between them.
+     *
+     * @param string[] $columns
+     */
+    public function orWhereAny(array $columns, mixed $operator = null, mixed $value = null): static
+    {
+        return $this->whereAny($columns, $operator, $value, 'or');
     }
 
     /**
@@ -2353,6 +2482,19 @@ class Builder
     }
 
     /**
+     * Insert new records into the table using a subquery while ignoring errors.
+     */
+    public function insertOrIgnoreUsing(array $columns, array|Builder|Closure|ModelBuilder|string $query): int
+    {
+        [$sql, $bindings] = $this->createSub($query);
+
+        return $this->connection->affectingStatement(
+            $this->grammar->compileInsertOrIgnoreUsing($this, $columns, $sql),
+            $this->cleanBindings($bindings)
+        );
+    }
+
+    /**
      * Insert ignore a new record into the database.
      */
     public function insertOrIgnore(array $values): int
@@ -2450,7 +2592,7 @@ class Builder
      * @param float|int $amount
      * @return int
      */
-    public function increment($column, $amount = 1, array $extra = [])
+    public function increment(Expression|string $column, mixed $amount = 1, array $extra = [])
     {
         if (! is_numeric($amount)) {
             throw new InvalidArgumentException('Non-numeric value passed to increment method.');
@@ -2464,13 +2606,32 @@ class Builder
     }
 
     /**
+     * Increment the given column's values by the given amounts.
+     */
+    public function incrementEach(array $columns, array $extra = []): int
+    {
+        foreach ($columns as $column => $amount) {
+            if (! is_numeric($amount)) {
+                throw new InvalidArgumentException("Non-numeric value passed as increment amount for column: '{$column}'.");
+            }
+            if (! is_string($column)) {
+                throw new InvalidArgumentException('Non-associative array passed to incrementEach method.');
+            }
+
+            $columns[$column] = $this->raw("{$this->grammar->wrap($column)} + {$amount}");
+        }
+
+        return $this->update(array_merge($columns, $extra));
+    }
+
+    /**
      * Decrement a column's value by a given amount.
      *
      * @param string $column
      * @param float|int $amount
      * @return int
      */
-    public function decrement($column, $amount = 1, array $extra = [])
+    public function decrement(Expression|string $column, mixed $amount = 1, array $extra = [])
     {
         if (! is_numeric($amount)) {
             throw new InvalidArgumentException('Non-numeric value passed to decrement method.');
@@ -2481,6 +2642,25 @@ class Builder
         $columns = array_merge([$column => $this->raw("{$wrapped} - {$amount}")], $extra);
 
         return $this->update($columns);
+    }
+
+    /**
+     * Decrement the given column's values by the given amounts.
+     */
+    public function decrementEach(array $columns, array $extra = []): int
+    {
+        foreach ($columns as $column => $amount) {
+            if (! is_numeric($amount)) {
+                throw new InvalidArgumentException("Non-numeric value passed as decrement amount for column: '{$column}'.");
+            }
+            if (! is_string($column)) {
+                throw new InvalidArgumentException('Non-associative array passed to decrementEach method.');
+            }
+
+            $columns[$column] = $this->raw("{$this->grammar->wrap($column)} - {$amount}");
+        }
+
+        return $this->update(array_merge($columns, $extra));
     }
 
     /**
@@ -2708,6 +2888,16 @@ class Builder
                 $clone->bindings[$type] = [];
             }
         });
+    }
+
+    /**
+     * Get a new join lateral clause.
+     *
+     * @param string $table
+     */
+    protected function newJoinLateralClause(self $parentQuery, string $type, Expression|string $table): JoinLateralClause
+    {
+        return new JoinLateralClause($parentQuery, $type, $table);
     }
 
     /**

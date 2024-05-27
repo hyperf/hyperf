@@ -12,7 +12,6 @@ composer require hyperf/db
 
 該組件的配置文件位於 `config/autoload/db.php`，如果文件不存在，可通過下面的命令來將配置文件發佈到骨架去：
 
-
 ```bash
 php bin/hyperf.php vendor:publish hyperf/db
 ```

@@ -17,6 +17,7 @@ use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\JoinClause;
+use Hyperf\Database\Query\JoinLateralClause;
 use Hyperf\Stringable\Str;
 use RuntimeException;
 
@@ -162,7 +163,20 @@ class Grammar extends BaseGrammar
      */
     public function compileInsertUsing(Builder $query, array $columns, string $sql): string
     {
-        return "insert into {$this->wrapTable($query->from)} ({$this->columnize($columns)}) {$sql}";
+        $table = $this->wrapTable($query->from);
+        if (empty($columns) || $columns === ['*']) {
+            return "insert into {$table} {$sql}";
+        }
+
+        return "insert into {$table} ({$this->columnize($columns)}) {$sql}";
+    }
+
+    /**
+     * Compile an insert ignore statement using a subquery into SQL.
+     */
+    public function compileInsertOrIgnoreUsing(Builder $query, array $columns, string $sql): string
+    {
+        throw new RuntimeException('This database engine does not support inserting while ignoring errors.');
     }
 
     /**
@@ -348,6 +362,37 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Compile a "lateral join" clause.
+     *
+     * @throws RuntimeException
+     */
+    public function compileJoinLateral(JoinLateralClause $join, string $expression): string
+    {
+        throw new RuntimeException('This database engine does not support lateral joins.');
+    }
+
+    /**
+     * Compile a "where JSON overlaps" clause.
+     */
+    protected function whereJsonOverlaps(Builder $query, array $where): string
+    {
+        $not = $where['not'] ? 'not ' : '';
+
+        return $not . $this->compileJsonOverlaps(
+            $where['column'],
+            $this->parameter($where['value'])
+        );
+    }
+
+    /**
+     * Compile a "JSON overlaps" statement into SQL.
+     */
+    protected function compileJsonOverlaps(string $column, string $value): string
+    {
+        throw new RuntimeException('This database engine does not support JSON overlaps operations.');
+    }
+
+    /**
      * Compile the components necessary for a select clause.
      */
     protected function compileComponents(Builder $query): array
@@ -429,6 +474,10 @@ class Grammar extends BaseGrammar
             $nestedJoins = is_null($join->joins) ? '' : ' ' . $this->compileJoins($query, $join->joins);
 
             $tableAndNestedJoins = is_null($join->joins) ? $table : '(' . $table . $nestedJoins . ')';
+
+            if ($join instanceof JoinLateralClause) {
+                return $this->compileJoinLateral($join, $tableAndNestedJoins);
+            }
 
             return trim("{$join->type} join {$tableAndNestedJoins} {$this->compileWheres($join)}");
         })->implode(' ');

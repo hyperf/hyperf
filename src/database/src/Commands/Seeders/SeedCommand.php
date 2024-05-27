@@ -44,7 +44,7 @@ class SeedCommand extends BaseCommand
             $this->seed->setConnection($this->input->getOption('database'));
         }
 
-        $this->seed->run([$this->getSeederPath()]);
+        $this->seed->run($this->getSeederPaths());
     }
 
     /**

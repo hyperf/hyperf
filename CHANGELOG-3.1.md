@@ -1,4 +1,49 @@
-# v3.1.22 - TBD
+# v3.1.24 - TBD
+
+## Fixed
+
+- [#6796](https://github.com/hyperf/hyperf/pull/6796) [#6798](https://github.com/hyperf/hyperf/pull/6798) Fixed bug that the return type of `Collection::mapInto()` is invalid sometimes.
+
+## Added
+
+- [#6792](https://github.com/hyperf/hyperf/pull/6792) Support `IncrementEach` and `DecrementEach` for `Hyperf\Database\Query\Builder`.
+- [#6793](https://github.com/hyperf/hyperf/pull/6793) Added the request body and response body to the tracer.
+
+## Optimized
+
+- [#6778](https://github.com/hyperf/hyperf/pull/6788) Support array for `Hyperf\Amqp\Annotation\Consumer::routingKey`.
+- [#6799](https://github.com/hyperf/hyperf/pull/6799) Support `numbers` and `fromBase64` methods for `\Hyperf\Stringable\Str`
+
+# v3.1.23 - 2024-05-23
+
+## Added
+
+- [#6757](https://github.com/hyperf/hyperf/pull/6757) Added `Hyperf\Collection\LazyCollection`.
+- [#6763](https://github.com/hyperf/hyperf/pull/6763) Added `Premature end of data` into `DetectsLostConnections`.
+- [#6767](https://github.com/hyperf/hyperf/pull/6767) Support `whereAll/orWhereAll` `whereAny/orWhereAny` for `Hyperf\Database\Query\Builder`.
+- [#6774](https://github.com/hyperf/hyperf/pull/6774) Support Lateral Join for `Hyperf\Database\Query\Builder`.
+- [#6781](https://github.com/hyperf/hyperf/pull/6781) Added some methods to `Hyperf\Collection\Arr`.
+- [#6782](https://github.com/hyperf/hyperf/pull/6782) Added `whereJsonOverlaps`,`orWhereJsonOverlaps` and `whereJsonDoesntOverlap` to `Hyperf\Database\Query\Builder`.
+- [#6783](https://github.com/hyperf/hyperf/pull/6783) Support `insertOrIgnoreUsing` for `Hyperf\Database\Query\Builder`.
+- [#6784](https://github.com/hyperf/hyperf/pull/6784) Added `getOrPut` and `getOrSet` into `Hyperf\Collection\Collection`.
+
+## Optimized
+
+- [#6777](https://github.com/hyperf/hyperf/pull/6777) Optimized StdoutLogger to improve log message handling.
+- [#6778](https://github.com/hyperf/hyperf/pull/6778) Optimized Collection using EnumeratesValues.
+
+# v3.1.22 - 2024-05-16
+
+## Fixed
+
+- [#6755](https://github.com/hyperf/hyperf/pull/6755) Fixed bug that exception normalizer cannot support symfony 7.
+
+## Added
+
+- [#6734](https://github.com/hyperf/hyperf/pull/6734) Auto complete options for as command and closure command.
+- [#6746](https://github.com/hyperf/hyperf/pull/6746) Added `explain()` for `Hyperf\Database\Query\Builder`.
+- [#6749](https://github.com/hyperf/hyperf/pull/6749) Added some rules for `hyperf/validation`.
+- [#6752](https://github.com/hyperf/hyperf/pull/6752) Added `path` and `paths` methods to `Hyperf\Database\Seeders\Seed`.
 
 # v3.1.21 - 2024-05-09
 

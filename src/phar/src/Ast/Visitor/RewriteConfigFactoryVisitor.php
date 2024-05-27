@@ -18,7 +18,7 @@ use PhpParser\ParserFactory;
 
 class RewriteConfigFactoryVisitor extends NodeVisitorAbstract
 {
-    protected $replaceFunc = "<?php
+    protected string $replaceFunc = "<?php
 class ConfigFactory{
     private function readPaths(array \$paths)
     {

@@ -197,6 +197,7 @@ return [
 ];
 
 ```
+
 使用時，只需要規定 `connection` 為 `test`，就可以使用 `test` 中的配置，如下。
 
 ```php
@@ -363,15 +364,13 @@ $book = Book::query()->find(1);
 var_dump(Arr::last(Db::getQueryLog()));
 ```
 
-
-
 ## 驅動列表
 
-和 [illuminate/database](https://github.com/illuminate/database) 不同，[hyperf/database](https://github.com/hyperf/database) 預設只提供了 MySQL 驅動，目前還提供了 [PgSQL](https://github.com/hyperf/database-pgsql)、[SQLite](https://github.com/hyperf/database-sqlite)和[SQLserver](https://github.com/hyperf/database-sqlserver-incubator) 等驅動
-如果預設的 mysql 滿足不了使用需求，可以自行安裝對應的驅動
+和 [illuminate/database](https://github.com/illuminate/database) 不同，[hyperf/database](https://github.com/hyperf/database) 預設只提供了 MySQL 驅動，目前還提供了 [PgSQL](https://github.com/hyperf/database-pgsql)、[SQLite](https://github.com/hyperf/database-sqlite)和[SQL Server](https://github.com/hyperf/database-sqlserver-incubator) 等驅動。
+
+如果預設的 MySQL 驅動滿足不了使用需求，可以自行安裝對應的驅動：
 
 ### PgSql 驅動
-
 
 #### 安裝
 
@@ -380,6 +379,7 @@ var_dump(Arr::last(Db::getQueryLog()));
 ```bash
 composer require hyperf/database-pgsql
 ```
+
 #### 配置檔案
 
 ```php
@@ -395,8 +395,7 @@ return [
         'password' => env('DB_PASSWORD'),
         'charset' => env('DB_CHARSET', 'utf8'),
     ]
-]
-
+];
 ```
 
 ### SQLite 驅動
@@ -422,15 +421,14 @@ return [
         'database' => env('DB_DATABASE', ':memory:'),
         // other sqlite config
     ]
-]
-
+];
 ```
 
-### SQLServer 驅動
+### SQL Server 驅動
 
 #### 安裝
 
-> 孵化階段，目前並不能保證所有功能正常。歡迎反饋
+> 孵化階段，目前並不能保證所有功能正常，歡迎反饋問題。
 
 要求 `Swoole >= 5.1.0` 依賴 pdo_odbc，需要編譯時開啟 `--with-swoole-odbc`
 
@@ -441,7 +439,9 @@ composer require hyperf/database-sqlserver-incubator
 #### 配置檔案
 
 ```php
+// config/autoload/databases.php
 return [
+     // 其他配置
     'sqlserver' => [
         'driver' => env('DB_DRIVER', 'sqlsrv'),
         'host' => env('DB_HOST', 'mssql'),
@@ -451,6 +451,6 @@ return [
         'password' => env('DB_PASSWORD'),
         'odbc_datasource_name' => 'DRIVER={ODBC Driver 18 for SQL Server};SERVER=127.0.0.1,1433;TrustServerCertificate=yes;database=hyperf',
         'odbc'  =>  true,
-    ],
+    ]
 ];
 ```

@@ -88,6 +88,8 @@ trait Macroable
      *
      * @param string $name
      * @param callable|object $macro
+     *
+     * @param-closure-this static $macro
      */
     public static function macro($name, $macro)
     {
