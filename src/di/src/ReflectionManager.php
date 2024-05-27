@@ -110,7 +110,8 @@ class ReflectionManager extends MetadataCollector
         $reflectionClasses = [];
         foreach ($finder as $file) {
             try {
-                $stmts = $parser->parse($file->getContents());
+                // $stmts = $parser->parse($file->getContents());
+                $stmts = $parser->parse(file_get_contents($file->getPathname()));
                 if (! $className = $parser->parseClassByStmts($stmts)) {
                     continue;
                 }
