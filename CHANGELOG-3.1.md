@@ -12,7 +12,8 @@
 ## Optimized
 
 - [#6778](https://github.com/hyperf/hyperf/pull/6788) Support array for `Hyperf\Amqp\Annotation\Consumer::routingKey`.
-- [#6799](https://github.com/hyperf/hyperf/pull/6799) Support `numbers` and `fromBase64` methods for `\Hyperf\Stringable\Str`
+- [#6799](https://github.com/hyperf/hyperf/pull/6799) Support `numbers` and `fromBase64` methods for `Hyperf\Stringable\Str`
+- [#6804](https://github.com/hyperf/hyperf/pull/6804) Optimized code for reading php contents for `Hyperf\Di\getAllClassesByFinder`.
 
 # v3.1.23 - 2024-05-23
 
