@@ -1059,7 +1059,7 @@ class Str
             fn ($endWithRadius) => $endWithRadius->append($omission),
         );
 
-        return $start->append($matches[2], $end)->__toString();
+        return $start->append($matches[2], (string) $end)->__toString();
     }
 
     /**
