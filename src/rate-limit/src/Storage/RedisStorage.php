@@ -38,11 +38,14 @@ class RedisStorage implements Storage, GlobalScope, StorageInterface
 
     private Redis $redis;
 
+    private array $options;
+
     public function __construct(protected ContainerInterface $container, string $key, $timeout = 0, array $options = [])
     {
         $this->redis = $container->get(RedisFactory::class)->get(
             $options['pool'] ?? 'default'
         );
+        $this->options = $options;
         $this->key = self::KEY_PREFIX . $key;
         $this->mutex = make(PHPRedisMutex::class, [
             'redisAPIs' => [$this->redis],
@@ -88,6 +91,9 @@ class RedisStorage implements Storage, GlobalScope, StorageInterface
 
             if (! $this->redis->set($this->key, $data)) {
                 throw new StorageException('Failed to store microtime');
+            }
+            if (! empty($this->options['expired_time']) && $this->options['expired_time'] > 0) {
+                $this->redis->expire($this->key, $this->options['expired_time']);
             }
         } catch (InvalidArgumentException $e) {
             throw new StorageException('Failed to store microtime', 0, $e);
