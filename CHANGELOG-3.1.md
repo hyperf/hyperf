@@ -8,6 +8,7 @@
 
 - [#6792](https://github.com/hyperf/hyperf/pull/6792) Support `IncrementEach` and `DecrementEach` for `Hyperf\Database\Query\Builder`.
 - [#6793](https://github.com/hyperf/hyperf/pull/6793) Added the request body and response body to the tracer.
+- [#6795](https://github.com/hyperf/hyperf/pull/6795) Added config `rate_limit.storage.options.expired_time` for `rate-limit`.
 
 ## Optimized
 

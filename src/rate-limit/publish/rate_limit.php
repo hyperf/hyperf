@@ -21,7 +21,7 @@ return [
         'class' => RedisStorage::class,
         'options' => [
             'pool' => 'default',
-            'expire' => 0,
+            'expired_time' => 0,
         ],
     ],
 ];
