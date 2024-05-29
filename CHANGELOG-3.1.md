@@ -1,5 +1,20 @@
 # v3.1.24 - TBD
 
+## Fixed
+
+- [#6796](https://github.com/hyperf/hyperf/pull/6796) [#6798](https://github.com/hyperf/hyperf/pull/6798) Fixed bug that the return type of `Collection::mapInto()` is invalid sometimes.
+
+## Added
+
+- [#6792](https://github.com/hyperf/hyperf/pull/6792) Support `IncrementEach` and `DecrementEach` for `Hyperf\Database\Query\Builder`.
+- [#6793](https://github.com/hyperf/hyperf/pull/6793) Added the request body and response body to the tracer.
+
+## Optimized
+
+- [#6778](https://github.com/hyperf/hyperf/pull/6788) Support array for `Hyperf\Amqp\Annotation\Consumer::routingKey`.
+- [#6799](https://github.com/hyperf/hyperf/pull/6799) Support `numbers` and `fromBase64` methods for `\Hyperf\Stringable\Str`.
+- [#6803](https://github.com/hyperf/hyperf/pull/6803) Cancel AsCommand and ClosureCommand return values.
+
 # v3.1.23 - 2024-05-23
 
 ## Added
@@ -7,7 +22,7 @@
 - [#6757](https://github.com/hyperf/hyperf/pull/6757) Added `Hyperf\Collection\LazyCollection`.
 - [#6763](https://github.com/hyperf/hyperf/pull/6763) Added `Premature end of data` into `DetectsLostConnections`.
 - [#6767](https://github.com/hyperf/hyperf/pull/6767) Support `whereAll/orWhereAll` `whereAny/orWhereAny` for `Hyperf\Database\Query\Builder`.
-- [#6774](https://github.com/hyperf/hyperf/pull/6774) Support Lateral Join for `Hyperf\Database\Query\Builder`
+- [#6774](https://github.com/hyperf/hyperf/pull/6774) Support Lateral Join for `Hyperf\Database\Query\Builder`.
 - [#6781](https://github.com/hyperf/hyperf/pull/6781) Added some methods to `Hyperf\Collection\Arr`.
 - [#6782](https://github.com/hyperf/hyperf/pull/6782) Added `whereJsonOverlaps`,`orWhereJsonOverlaps` and `whereJsonDoesntOverlap` to `Hyperf\Database\Query\Builder`.
 - [#6783](https://github.com/hyperf/hyperf/pull/6783) Support `insertOrIgnoreUsing` for `Hyperf\Database\Query\Builder`.

@@ -2592,7 +2592,7 @@ class Builder
      * @param float|int $amount
      * @return int
      */
-    public function increment($column, $amount = 1, array $extra = [])
+    public function increment(Expression|string $column, mixed $amount = 1, array $extra = [])
     {
         if (! is_numeric($amount)) {
             throw new InvalidArgumentException('Non-numeric value passed to increment method.');
@@ -2606,13 +2606,32 @@ class Builder
     }
 
     /**
+     * Increment the given column's values by the given amounts.
+     */
+    public function incrementEach(array $columns, array $extra = []): int
+    {
+        foreach ($columns as $column => $amount) {
+            if (! is_numeric($amount)) {
+                throw new InvalidArgumentException("Non-numeric value passed as increment amount for column: '{$column}'.");
+            }
+            if (! is_string($column)) {
+                throw new InvalidArgumentException('Non-associative array passed to incrementEach method.');
+            }
+
+            $columns[$column] = $this->raw("{$this->grammar->wrap($column)} + {$amount}");
+        }
+
+        return $this->update(array_merge($columns, $extra));
+    }
+
+    /**
      * Decrement a column's value by a given amount.
      *
      * @param string $column
      * @param float|int $amount
      * @return int
      */
-    public function decrement($column, $amount = 1, array $extra = [])
+    public function decrement(Expression|string $column, mixed $amount = 1, array $extra = [])
     {
         if (! is_numeric($amount)) {
             throw new InvalidArgumentException('Non-numeric value passed to decrement method.');
@@ -2623,6 +2642,25 @@ class Builder
         $columns = array_merge([$column => $this->raw("{$wrapped} - {$amount}")], $extra);
 
         return $this->update($columns);
+    }
+
+    /**
+     * Decrement the given column's values by the given amounts.
+     */
+    public function decrementEach(array $columns, array $extra = []): int
+    {
+        foreach ($columns as $column => $amount) {
+            if (! is_numeric($amount)) {
+                throw new InvalidArgumentException("Non-numeric value passed as decrement amount for column: '{$column}'.");
+            }
+            if (! is_string($column)) {
+                throw new InvalidArgumentException('Non-associative array passed to decrementEach method.');
+            }
+
+            $columns[$column] = $this->raw("{$this->grammar->wrap($column)} - {$amount}");
+        }
+
+        return $this->update(array_merge($columns, $extra));
     }
 
     /**

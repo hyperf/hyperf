@@ -63,6 +63,6 @@ final class AsCommand extends Command
             $instance->setOutput($this->output);
         }
 
-        return (fn ($method) => $this->{$method}(...$parameters))->call($instance, $this->method);
+        (fn ($method) => $this->{$method}(...$parameters))->call($instance, $this->method);
     }
 }

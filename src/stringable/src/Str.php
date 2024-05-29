@@ -1059,7 +1059,7 @@ class Str
             fn ($endWithRadius) => $endWithRadius->append($omission),
         );
 
-        return $start->append($matches[2], $end)->__toString();
+        return $start->append($matches[2], (string) $end)->__toString();
     }
 
     /**
@@ -1374,6 +1374,22 @@ class Str
     public static function wordWrap($string, $characters = 75, $break = "\n", $cutLongWords = false): string
     {
         return wordwrap($string, $characters, $break, $cutLongWords);
+    }
+
+    /**
+     * Remove all non-numeric characters from a string.
+     */
+    public static function numbers(array|string $value): array|string
+    {
+        return preg_replace('/[^0-9]/', '', $value);
+    }
+
+    /**
+     * Decode the given Base64 encoded string.
+     */
+    public static function fromBase64(string $string, bool $strict = false): false|string
+    {
+        return base64_decode($string, $strict);
     }
 
     /**

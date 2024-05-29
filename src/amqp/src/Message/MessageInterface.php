@@ -31,7 +31,7 @@ interface MessageInterface
 
     public function getExchange(): string;
 
-    public function setRoutingKey($routingKey);
+    public function setRoutingKey(array|string $routingKey);
 
     public function getRoutingKey(): array|string;
 
