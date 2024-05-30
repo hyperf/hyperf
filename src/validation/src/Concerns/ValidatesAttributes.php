@@ -255,6 +255,14 @@ trait ValidatesAttributes
     }
 
     /**
+     * Validate that an attribute is a list.
+     */
+    public function validateList(string $attribute, mixed $value): bool
+    {
+        return is_array($value) && array_is_list($value);
+    }
+
+    /**
      * Validate that an array has all of the given keys.
      *
      * @param array<int, int|string> $parameters

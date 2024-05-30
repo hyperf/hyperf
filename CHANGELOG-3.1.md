@@ -1,5 +1,9 @@
 # v3.1.25 - TBD
 
+## Added
+
+- [#6811](https://github.com/hyperf/hyperf/pull/6811) Added `list` rule for `hyperf/validation`.
+
 # v3.1.24 - 2024-05-30
 
 ## Fixed
