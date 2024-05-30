@@ -15,6 +15,7 @@ namespace HyperfTest\Paginator;
 use Hyperf\Collection\Collection;
 use Hyperf\Paginator\Cursor;
 use Hyperf\Paginator\CursorPaginator;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -23,6 +24,11 @@ use PHPUnit\Framework\TestCase;
  */
 class CursorPaginatorTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Mockery::close();
+    }
+
     public function testReturnsRelevantContextInformation()
     {
         $p = new CursorPaginator($array = [['id' => 1], ['id' => 2], ['id' => 3]], 2, null, [

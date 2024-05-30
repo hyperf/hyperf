@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Paginator;
 
-use Hyperf\Collection\Collection;
+use Hyperf\Database\Model\Collection;
 use Hyperf\Paginator\AbstractCursorPaginator;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
@@ -23,6 +23,11 @@ use PHPUnit\Framework\TestCase;
  */
 class CursorPaginatorLoadMorphCountTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        m::close();
+    }
+
     public function testCollectionLoadMorphCountCanChainOnThePaginator(): void
     {
         $relations = [
@@ -31,7 +36,7 @@ class CursorPaginatorLoadMorphCountTest extends TestCase
         ];
 
         $items = m::mock(Collection::class);
-        $items->shouldReceive('loadMorphCount')->once()->with('parentable', $relations);
+        $items->expects('loadMorphCount')->with('parentable', $relations);
 
         $p = (new class() extends AbstractCursorPaginator {
             public function __toString()

@@ -14,6 +14,7 @@ namespace HyperfTest\Paginator;
 
 use Hyperf\Carbon\Carbon;
 use Hyperf\Paginator\Cursor;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,6 +23,11 @@ use PHPUnit\Framework\TestCase;
  */
 class CursorTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Mockery::close();
+    }
+
     public function testCanEncodeAndDecodeSuccessfully(): void
     {
         $cursor = new Cursor([

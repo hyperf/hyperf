@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Paginator;
 
-use Hyperf\Collection\Collection;
+use Hyperf\Database\Model\Collection;
 use Hyperf\Paginator\AbstractCursorPaginator;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
@@ -23,6 +23,11 @@ use PHPUnit\Framework\TestCase;
  */
 class CursorPaginatorLoadMorphTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        m::close();
+    }
+
     public function testCollectionLoadMorphCanChainOnThePaginator(): void
     {
         $relations = [
