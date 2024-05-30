@@ -24,6 +24,7 @@ use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Model\Collection as ModelCollection;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
+use Hyperf\Database\Query\Expression;
 use Hyperf\Paginator\Contract\CursorPaginator;
 use Hyperf\Paginator\Cursor;
 use Hyperf\Paginator\Paginator;
@@ -1140,6 +1141,14 @@ class Builder
     public function qualifyColumn($column)
     {
         return $this->model->qualifyColumn($column);
+    }
+
+    /**
+     * Qualify the given columns with the model's table.
+     */
+    public function qualifyColumns(array $columns): array
+    {
+        return $this->model->qualifyColumns($columns);
     }
 
     /**
