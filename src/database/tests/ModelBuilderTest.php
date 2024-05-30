@@ -1244,7 +1244,7 @@ class ModelBuilderTest extends TestCase
     {
         Carbon::setTestNow($now = '2017-10-10 10:10:10');
 
-        $query = m::mock(BaseBuilder::class);
+        $query = Mockery::mock(BaseBuilder::class);
         $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
         $query->from = 'foo_table';
 
@@ -1263,7 +1263,7 @@ class ModelBuilderTest extends TestCase
     {
         Carbon::setTestNow($now = '2017-10-10 10:10:10');
 
-        $query = m::mock(BaseBuilder::class);
+        $query = Mockery::mock(BaseBuilder::class);
         $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
         $query->from = 'foo_table';
 
