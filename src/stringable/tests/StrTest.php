@@ -1231,14 +1231,16 @@ class StrTest extends TestCase
 
     public function testItCreatesUuidsNormallyAfterFailureWithinFreezeMethod()
     {
+        $uuid = Str::uuid();
+
         try {
-            Str::freezeUuids(function () {
-                Str::createUuidsUsing(static fn () => Str::of('1234'));
-                $this->assertSame('1234', Str::uuid()->toString());
+            Str::freezeUuids(function () use ($uuid) {
+                Str::createUuidsUsing(static fn () => $uuid);
+                $this->assertSame((string) $uuid, Str::uuid()->toString());
                 throw new Exception('Something failed.');
             });
         } catch (Exception) {
-            $this->assertNotSame('1234', Str::uuid()->toString());
+            $this->assertNotSame((string) $uuid, Str::uuid()->toString());
         }
     }
 
@@ -1342,13 +1344,14 @@ class StrTest extends TestCase
     public function testItCreatesUlidsNormallyAfterFailureWithinFreezeMethod()
     {
         try {
-            Str::freezeUlids(function () {
-                Str::createUlidsUsing(fn () => Str::of('1234'));
-                $this->assertSame('1234', (string) Str::ulid());
+            $ulid = Str::ulid();
+            Str::freezeUlids(function () use ($ulid) {
+                Str::createUlidsUsing(fn () => $ulid);
+                $this->assertSame($ulid, Str::ulid());
                 throw new Exception('Something failed');
             });
         } catch (Exception) {
-            $this->assertNotSame('1234', (string) Str::ulid());
+            $this->assertNotSame($ulid, Str::ulid());
         }
     }
 }

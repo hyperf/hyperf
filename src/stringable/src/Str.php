@@ -26,7 +26,6 @@ use RuntimeException;
 use Symfony\Component\Uid\Ulid;
 use Throwable;
 use Traversable;
-use voku\helper\ASCII;
 
 use function Hyperf\Collection\collect;
 
@@ -608,25 +607,24 @@ class Str
      */
     public static function random(int $length = 16): string
     {
-        return (static::$randomStringFactory ?? function ($length) {
-            $string = '';
+        if (static::$randomStringFactory) {
+            return call_user_func(static::$randomStringFactory, $length);
+        }
 
-            while (($len = strlen($string)) < $length) {
-                $size = $length - $len;
+        $string = '';
 
-                $bytesSize = (int) ceil($size / 3) * 3;
+        while (($len = strlen($string)) < $length) {
+            $size = $length - $len;
+            $bytes = random_bytes($size);
+            $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
+        }
 
-                $bytes = random_bytes($bytesSize);
-
-                $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
-            }
-
-            return $string;
-        })($length);
+        return $string;
     }
 
     /**
      * Set the callable that will be used to generate random strings.
+     * @param null|Closure(int):string $factory
      */
     public static function createRandomStringsUsing(?Closure $factory = null): void
     {
@@ -642,13 +640,9 @@ class Str
 
         $whenMissing ??= static function ($length) use (&$next) {
             $factoryCache = static::$randomStringFactory;
-
             static::$randomStringFactory = null;
-
             $randomString = static::random($length);
-
             static::$randomStringFactory = $factoryCache;
-
             ++$next;
 
             return $randomString;
@@ -693,7 +687,6 @@ class Str
         }
 
         $segments = explode($search, $subject);
-
         $result = array_shift($segments);
 
         foreach ($segments as $segment) {
@@ -765,6 +758,7 @@ class Str
         if ($search instanceof Traversable) {
             $search = collect($search)->all();
         }
+
         return $caseSensitive
                     ? str_replace($search, '', $subject)
                     : str_ireplace($search, '', $subject);
@@ -991,7 +985,7 @@ class Str
     /**
      * Generate a ULID.
      */
-    public static function ulid(?DateTimeInterface $time = null): mixed
+    public static function ulid(?DateTimeInterface $time = null): Ulid
     {
         if (! class_exists(Ulid::class)) {
             throw new RuntimeException('The "symfony/uid" package is required to use the "ulid" method. Please run "composer require symfony/uid".');
@@ -1018,6 +1012,7 @@ class Str
 
     /**
      * Set the callable that will be used to generate ULIDs.
+     * @param null|Closure():Ulid $factory
      */
     public static function createUlidsUsing(?Closure $factory = null): void
     {
@@ -1132,7 +1127,7 @@ class Str
     /**
      * Generate a UUID (version 4).
      */
-    public static function uuid(): mixed
+    public static function uuid(): UuidInterface
     {
         if (static::$uuidFactory) {
             return call_user_func(static::$uuidFactory);
@@ -1148,7 +1143,7 @@ class Str
     /**
      * Generate a time-ordered UUID.
      */
-    public static function orderedUuid(?DateTimeInterface $time = null): mixed
+    public static function orderedUuid(?DateTimeInterface $time = null): UuidInterface
     {
         if (static::$uuidFactory) {
             return call_user_func(static::$uuidFactory);
@@ -1163,6 +1158,7 @@ class Str
 
     /**
      * Set the callable that will be used to generate UUIDs.
+     * @param null|Closure():UuidInterface $factory
      */
     public static function createUuidsUsing(?Closure $factory = null): void
     {
@@ -1178,13 +1174,9 @@ class Str
 
         $whenMissing ??= static function () use (&$next) {
             $factoryCache = static::$uuidFactory;
-
             static::$uuidFactory = null;
-
             $uuid = static::uuid();
-
             static::$uuidFactory = $factoryCache;
-
             ++$next;
 
             return $uuid;
