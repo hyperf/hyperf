@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database;
 
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Register;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
@@ -38,7 +40,11 @@ class DatabaseModelCursorPaginateTest extends TestCase
     {
         $this->channel = new Channel(999);
         $container = ContainerStub::getContainer();
-        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        $db = new Db($container);
+        $container->shouldReceive('get')->with(Db::class)->andReturn($db);
+        $connectionResolverInterface = Mockery::mock(ConnectionResolverInterface::class);
+        $connectionResolverInterface->allows('connection')->andReturnUsing(fn ($name) => Db::connection($name));
+        Register::setConnectionResolver($connectionResolverInterface);
         Schema::create('test_posts', static function (Blueprint $table) {
             $table->increments('id');
             $table->string('title')->nullable();
