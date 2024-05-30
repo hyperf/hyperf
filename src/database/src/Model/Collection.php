@@ -182,7 +182,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string> $relations
      * @return $this
      */
-    public function loadMorphCount($relation, $relations)
+    public function loadMorphCount(string $relation, array $relations)
     {
         $this->pluck($relation)
             ->filter()
