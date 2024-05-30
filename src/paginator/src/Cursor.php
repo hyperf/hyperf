@@ -39,7 +39,7 @@ class Cursor implements Arrayable
             throw new UnexpectedValueException("Unable to find parameter [{$parameterName}] in pagination item.");
         }
 
-        return (string)$this->parameters[$parameterName];
+        return (string) $this->parameters[$parameterName];
     }
 
     /**
