@@ -1240,6 +1240,61 @@ class ModelBuilderTest extends TestCase
         $this->assertSame(vsprintf('select * from "table" where exists (select * from "table" as "%s" where "%s"."id" = "table"."customer_id")', [$relationHash2, $relationHash2]), $builder2->toSql());
     }
 
+    public function testTouch()
+    {
+        Carbon::setTestNow($now = '2017-10-10 10:10:10');
+
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
+        $query->from = 'foo_table';
+
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder->setModel($model);
+
+        $query->shouldReceive('update')->once()->with(['updated_at' => $now])->andReturn(2);
+
+        $result = $builder->touch();
+
+        $this->assertEquals(2, $result);
+    }
+
+    public function testTouchWithCustomColumn()
+    {
+        Carbon::setTestNow($now = '2017-10-10 10:10:10');
+
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
+        $query->from = 'foo_table';
+
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder->setModel($model);
+
+        $query->shouldReceive('update')->once()->with(['published_at' => $now])->andReturn(2);
+
+        $result = $builder->touch('published_at');
+
+        $this->assertEquals(2, $result);
+    }
+
+    public function testTouchWithoutUpdatedAtColumn()
+    {
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('table')->andReturn('table');
+        $query->from = 'table';
+
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubWithoutTimestamp();
+        $builder->setModel($model);
+
+        $query->shouldNotReceive('update');
+
+        $result = $builder->touch();
+
+        $this->assertFalse($result);
+    }
+
     protected function mockConnectionForModel($model, $database)
     {
         $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';
@@ -1273,6 +1328,14 @@ class ModelBuilderTest extends TestCase
 
         return $query;
     }
+}
+class ModelBuilderTestStubStringPrimaryKey extends Model
+{
+    public bool $incrementing = false;
+
+    protected ?string $table = 'foo_table';
+
+    protected string $keyType = 'string';
 }
 
 class UserMixin

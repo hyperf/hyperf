@@ -853,6 +853,26 @@ class Builder
     }
 
     /**
+     * Update the column's update timestamp.
+     */
+    public function touch(?string $column = null): false|int
+    {
+        $time = $this->model->freshTimestamp();
+
+        if ($column) {
+            return $this->toBase()->update([$column => $time]);
+        }
+
+        $column = $this->model->getUpdatedAtColumn();
+
+        if (! $this->model->usesTimestamps() || is_null($column)) {
+            return false;
+        }
+
+        return $this->toBase()->update([$column => $time]);
+    }
+
+    /**
      * Increment a column's value by a given amount.
      *
      * @param string $column
