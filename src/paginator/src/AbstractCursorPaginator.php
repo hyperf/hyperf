@@ -81,6 +81,13 @@ abstract class AbstractCursorPaginator implements Stringable
     protected array $options = [];
 
     /**
+     * Indicates whether there are more items in the data source.
+     *
+     * @return bool
+     */
+    protected bool $hasMore;
+
+    /**
      * The current cursor resolver callback.
      */
     protected static ?Closure $currentCursorResolver = null;
@@ -145,7 +152,7 @@ abstract class AbstractCursorPaginator implements Stringable
     public function previousCursor(): ?Cursor
     {
         if (is_null($this->cursor)
-            || ($this->cursor->pointsToPreviousItems() && property_exists($this, 'hasMore') && ! $this->hasMore)) {
+            || ($this->cursor->pointsToPreviousItems() && ! $this->hasMore)) {
             return null;
         }
 
@@ -161,8 +168,8 @@ abstract class AbstractCursorPaginator implements Stringable
      */
     public function nextCursor(): ?Cursor
     {
-        if ((is_null($this->cursor) && property_exists($this, 'hasMore'))
-            || (! is_null($this->cursor) && $this->cursor->pointsToNextItems() && property_exists($this, 'hasMore') && ! $this->hasMore)) {
+        if ((is_null($this->cursor) && ! $this->hasMore)
+            || (! is_null($this->cursor) && $this->cursor->pointsToNextItems() && ! $this->hasMore)) {
             return null;
         }
 
