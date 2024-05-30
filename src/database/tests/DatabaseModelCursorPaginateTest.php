@@ -42,8 +42,7 @@ class DatabaseModelCursorPaginateTest extends TestCase
         $container = ContainerStub::getContainer();
         $db = new Db($container);
         $container->shouldReceive('get')->with(Db::class)->andReturn($db);
-        $connectionResolverInterface = Mockery::mock(ConnectionResolverInterface::class);
-        $connectionResolverInterface->allows('connection')->andReturnUsing(fn ($name) => Db::connection($name));
+        $connectionResolverInterface = $container->get(ConnectionResolverInterface::class);
         Register::setConnectionResolver($connectionResolverInterface);
         Schema::create('test_posts', static function (Blueprint $table) {
             $table->increments('id');
