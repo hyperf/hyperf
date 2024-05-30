@@ -178,7 +178,6 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship counts onto the mixed relationship collection.
      *
-     * @param string $relation
      * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string> $relations
      * @return $this
      */
