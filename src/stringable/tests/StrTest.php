@@ -1351,24 +1351,4 @@ class StrTest extends TestCase
             $this->assertNotSame('1234', (string) Str::ulid());
         }
     }
-
-    #[DataProvider('specialCharacterProvider')]
-    public function testTransliterate(string $value, string $expected): void
-    {
-        $this->assertSame($expected, Str::transliterate($value));
-    }
-
-    public static function specialCharacterProvider(): array
-    {
-        return [
-            ['ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ', 'abcdefghijklmnopqrstuvwxyz'],
-            ['⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳', '01234567891011121314151617181920'],
-            ['⓵⓶⓷⓸⓹⓺⓻⓼⓽⓾', '12345678910'],
-            ['⓿⓫⓬⓭⓮⓯⓰⓱⓲⓳⓴', '011121314151617181920'],
-            ['ⓣⓔⓢⓣ@ⓛⓐⓡⓐⓥⓔⓛ.ⓒⓞⓜ', 'test@laravel.com'],
-            ['🎂', '?'],
-            ['abcdefghijklmnopqrstuvwxyz', 'abcdefghijklmnopqrstuvwxyz'],
-            ['0123456789', '0123456789'],
-        ];
-    }
 }

@@ -171,14 +171,6 @@ class Str
     }
 
     /**
-     * Transliterate a string to its closest ASCII representation.
-     */
-    public static function transliterate(string $string, ?string $unknown = '?', bool $strict = false): string
-    {
-        return ASCII::to_transliterate($string, $unknown, $strict);
-    }
-
-    /**
      * Get the portion of a string before a given value.
      *
      * @param string $subject
