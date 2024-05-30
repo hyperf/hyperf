@@ -56,7 +56,7 @@ class FilesystemTest extends TestCase
     public function testFopenInCoroutine()
     {
         $this->markTestSkipped();
-        
+
         run(function () {
             $max = 2;
             $chan = new Channel($max);
