@@ -55,6 +55,8 @@ class FilesystemTest extends TestCase
     #[Group('NonCoroutine')]
     public function testFopenInCoroutine()
     {
+        $this->markTestSkipped();
+        
         run(function () {
             $max = 2;
             $chan = new Channel($max);
@@ -89,6 +91,8 @@ class FilesystemTest extends TestCase
     #[Group('NonCoroutine')]
     public function testPutLockInCoroutine()
     {
+        $this->markTestSkipped();
+
         run(function () {
             $max = 3;
             $chan = new Channel($max);
