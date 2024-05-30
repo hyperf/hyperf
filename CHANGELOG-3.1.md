@@ -4,6 +4,10 @@
 
 - [#6811](https://github.com/hyperf/hyperf/pull/6811) Added `list` rule for `hyperf/validation`.
 
+## Fixed
+
+- [#6813](https://github.com/hyperf/hyperf/pull/6813) Fixed bug that cannot read the messages from non-lower keys for `Hyperf\Constants\Annotation\Message`.
+
 # v3.1.24 - 2024-05-30
 
 ## Fixed
