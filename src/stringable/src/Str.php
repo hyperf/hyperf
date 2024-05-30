@@ -157,7 +157,17 @@ class Str
      */
     public static function ascii($value, $language = 'en')
     {
-        return ASCII::to_ascii($value, $language);
+        $languageSpecific = static::languageSpecificCharsArray($language);
+
+        if (! is_null($languageSpecific)) {
+            $value = str_replace($languageSpecific[0], $languageSpecific[1], $value);
+        }
+
+        foreach (static::charsArray() as $key => $val) {
+            $value = str_replace($val, (string) $key, $value);
+        }
+
+        return preg_replace('/[^\x20-\x7E]/u', '', $value);
     }
 
     /**
@@ -378,7 +388,11 @@ class Str
      */
     public static function isAscii(string $value): bool
     {
-        return ASCII::is_ascii($value);
+        if ($value == '') {
+            return true;
+        }
+
+        return ! preg_match('/[^\x09\x0A\x0D\x20-\x7E]/', $value);
     }
 
     /**
@@ -1628,8 +1642,6 @@ class Str
      * Returns the replacements for the ascii method.
      * Note: Adapted from Stringy\Stringy.
      *
-     * @deprecated since v3.1, will be removed in v3.2
-     *
      * @see https://github.com/danielstjules/Stringy/blob/3.1.0/LICENSE.txt
      */
     protected static function charsArray(): array
@@ -2179,8 +2191,6 @@ class Str
     /**
      * Returns the language specific replacements for the ascii method.
      * Note: Adapted from Stringy\Stringy.
-     *
-     * @deprecated since v3.1, will be removed in v3.2
      *
      * @see https://github.com/danielstjules/Stringy/blob/3.1.0/LICENSE.txt
      * @return null|array
