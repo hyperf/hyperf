@@ -24,7 +24,6 @@ use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Model\Collection as ModelCollection;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
-use Hyperf\Database\Query\Expression;
 use Hyperf\Paginator\Contract\CursorPaginator;
 use Hyperf\Paginator\Cursor;
 use Hyperf\Paginator\Paginator;
