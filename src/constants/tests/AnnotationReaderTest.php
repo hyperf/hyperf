@@ -51,6 +51,11 @@ class AnnotationReaderTest extends TestCase
         $data = $reader->getAnnotations($classConstants);
         ConstantsCollector::set(WarnCode::class, $data);
 
+        $ref = new ReflectionClass(MessageMoreCaseKey::class);
+        $classConstants = $ref->getReflectionConstants();
+        $data = $reader->getAnnotations($classConstants);
+        ConstantsCollector::set(MessageMoreCaseKey::class, $data);
+
         Context::set(sprintf('%s::%s', TranslatorInterface::class, 'locale'), null);
     }
 

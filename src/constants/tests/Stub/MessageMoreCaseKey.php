@@ -14,6 +14,7 @@ namespace HyperfTest\Constants\Stub;
 
 use Hyperf\Constants\Annotation\Constants;
 use Hyperf\Constants\Annotation\Message;
+use Hyperf\Constants\EnumConstantsTrait;
 
 /**
  * @method string getSnakeKey()
@@ -25,6 +26,8 @@ use Hyperf\Constants\Annotation\Message;
 #[Constants]
 enum MessageMoreCaseKey
 {
+    use EnumConstantsTrait;
+
     #[Message('snake key value', 'snake_key')]
     #[Message('snake key1 value', 'snake_key_1')]
     #[Message('camel case value', 'camelCase')]
