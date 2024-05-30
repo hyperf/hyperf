@@ -1198,6 +1198,16 @@ class Builder
     }
 
     /**
+     * Get the Eloquent builder instances that are used in the union of the query.
+     */
+    protected function getUnionBuilders(): Collection
+    {
+        return isset($this->query->unions)
+            ? collect($this->query->unions)->pluck('query')
+            : collect();
+    }
+
+    /**
      * Register the given mixin with the builder.
      *
      * @param string $mixin
