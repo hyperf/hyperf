@@ -17,6 +17,7 @@ use Closure;
 use Exception;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
+use Hyperf\Database\Model\Collection as ModelCollection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Resource\Json\JsonResource;
@@ -37,7 +38,7 @@ abstract class AbstractCursorPaginator implements Stringable
     /**
      * All of the items being paginated.
      */
-    protected Collection $items;
+    protected Collection|ModelCollection $items;
 
     /**
      * The number of items to be shown per page.
@@ -95,14 +96,6 @@ abstract class AbstractCursorPaginator implements Stringable
     }
 
     /**
-     * Render the contents of the paginator when casting to a string.
-     */
-    public function __toString()
-    {
-        return (string) $this->render();
-    }
-
-    /**
      * Get the URL for a given cursor.
      */
     public function url(?Cursor $cursor): string
@@ -152,7 +145,7 @@ abstract class AbstractCursorPaginator implements Stringable
     public function previousCursor(): ?Cursor
     {
         if (is_null($this->cursor)
-            || ($this->cursor->pointsToPreviousItems() && ! $this->hasMore)) {
+            || ($this->cursor->pointsToPreviousItems() && property_exists($this, 'hasMore') && ! $this->hasMore)) {
             return null;
         }
 
@@ -168,8 +161,8 @@ abstract class AbstractCursorPaginator implements Stringable
      */
     public function nextCursor(): ?Cursor
     {
-        if ((is_null($this->cursor) && ! $this->hasMore)
-            || (! is_null($this->cursor) && $this->cursor->pointsToNextItems() && ! $this->hasMore)) {
+        if ((is_null($this->cursor) && property_exists($this, 'hasMore'))
+            || (! is_null($this->cursor) && $this->cursor->pointsToNextItems() && property_exists($this, 'hasMore') && ! $this->hasMore)) {
             return null;
         }
 
@@ -177,7 +170,7 @@ abstract class AbstractCursorPaginator implements Stringable
             return null;
         }
 
-        return $this->getCursorForItem($this->items->last(), true);
+        return $this->getCursorForItem($this->items->last());
     }
 
     /**
@@ -260,7 +253,7 @@ abstract class AbstractCursorPaginator implements Stringable
      */
     public function withQueryString(): static
     {
-        if (! is_null($query = Paginator::resolveQueryString())) {
+        if ($query = Paginator::resolveQueryString()) {
             return $this->appends($query);
         }
 
@@ -272,8 +265,10 @@ abstract class AbstractCursorPaginator implements Stringable
      */
     public function loadMorph(string $relation, array $relations): static
     {
-        $this->getCollection()->loadMorph($relation, $relations);
-
+        $collection = $this->getCollection();
+        if ($collection instanceof ModelCollection) {
+            $collection->loadMorph($relation, $relations);
+        }
         return $this;
     }
 
@@ -282,7 +277,10 @@ abstract class AbstractCursorPaginator implements Stringable
      */
     public function loadMorphCount(string $relation, array $relations): static
     {
-        $this->getCollection()->loadMorphCount($relation, $relations);
+        $collection = $this->getCollection();
+        if ($collection instanceof ModelCollection) {
+            $collection->loadMorphCount($relation, $relations);
+        }
 
         return $this;
     }
@@ -421,7 +419,7 @@ abstract class AbstractCursorPaginator implements Stringable
     /**
      * Get the paginator's underlying collection.
      */
-    public function getCollection(): Collection
+    public function getCollection(): Collection|ModelCollection
     {
         return $this->items;
     }
@@ -482,12 +480,13 @@ abstract class AbstractCursorPaginator implements Stringable
     protected function getPivotParameterForItem(ArrayAccess|stdClass $item, string $parameterName): ?string
     {
         $table = Str::beforeLast($parameterName, '.');
-
-        foreach ($item->getRelations() as $relation) {
-            if ($relation instanceof Pivot && $relation->getTable() === $table) {
-                return $this->ensureParameterIsPrimitive(
-                    $relation->getAttribute(Str::afterLast($parameterName, '.'))
-                );
+        if (is_object($item) && method_exists($item, 'getRelations')) {
+            foreach ($item->getRelations() as $relation) {
+                if ($relation instanceof Pivot && $relation->getTable() === $table) {
+                    return $this->ensureParameterIsPrimitive(
+                        $relation->getAttribute(Str::afterLast($parameterName, '.'))
+                    );
+                }
             }
         }
         return null;
