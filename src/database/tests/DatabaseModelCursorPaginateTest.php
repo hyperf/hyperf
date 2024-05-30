@@ -285,16 +285,16 @@ class DatabaseModelCursorPaginateTest extends TestCase
     public function testPaginationWithDistinctColumnsAndSelect(): void
     {
         // distinct is not supported column in MySQL
-       /* for ($i = 1; $i <= 3; ++$i) {
-            TestPost::create(['title' => 'Hello world']);
-            TestPost::create(['title' => 'GooDbye world']);
-        }
+        /* for ($i = 1; $i <= 3; ++$i) {
+             TestPost::create(['title' => 'Hello world']);
+             TestPost::create(['title' => 'GooDbye world']);
+         }
 
-        $query = TestPost::query()->orderBy('title')->distinct('title')->select('title');
+         $query = TestPost::query()->orderBy('title')->distinct('title')->select('title');
 
-        $this->assertEquals(2, $query->get()->count());
-        $this->assertEquals(2, $query->count());
-        $this->assertCount(2, $query->cursorPaginate()->items());*/
+         $this->assertEquals(2, $query->get()->count());
+         $this->assertEquals(2, $query->count());
+         $this->assertCount(2, $query->cursorPaginate()->items());*/
     }
 
     public function testPaginationWithDistinctColumnsAndSelectAndJoin(): void
