@@ -20,4 +20,9 @@ class Message
     public function __construct(public string $value, public string $key = 'message')
     {
     }
+
+    public function getLowerCaseKey(): string
+    {
+        return strtolower(str_replace('_', '', $this->key));
+    }
 }

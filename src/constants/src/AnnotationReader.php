@@ -41,7 +41,7 @@ class AnnotationReader
             foreach ($classConstant->getAttributes() as $ref) {
                 $attribute = $ref->newInstance();
                 if ($attribute instanceof Message) {
-                    $result[$code][$attribute->key] = $attribute->value;
+                    $result[$code][$attribute->getLowerCaseKey()] = $attribute->value;
                 }
             }
         }
