@@ -55,7 +55,9 @@ class FilesystemTest extends TestCase
     #[Group('NonCoroutine')]
     public function testFopenInCoroutine()
     {
-        $this->markTestSkipped();
+        if (SWOOLE_VERSION_ID >= 60000) {
+            $this->markTestSkipped();
+        }
 
         run(function () {
             $max = 2;
@@ -91,7 +93,9 @@ class FilesystemTest extends TestCase
     #[Group('NonCoroutine')]
     public function testPutLockInCoroutine()
     {
-        $this->markTestSkipped();
+        if (SWOOLE_VERSION_ID >= 60000) {
+            $this->markTestSkipped();
+        }
 
         run(function () {
             $max = 3;
