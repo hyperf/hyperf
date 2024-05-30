@@ -71,6 +71,7 @@ return [
     'ipv4' => ':attribute 必须是一个合法的 IPv4 地址',
     'ipv6' => ':attribute 必须是一个合法的 IPv6 地址',
     'json' => ':attribute 必须是一个合法的 JSON 字符串',
+    'list' => ':attribute 必须是一个数组列表',
     'lt' => [
         'numeric' => ':attribute 必须小于 :value',
         'file' => ':attribute 必须小于 :value kb',
