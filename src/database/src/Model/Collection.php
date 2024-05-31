@@ -158,17 +158,6 @@ class Collection extends BaseCollection implements CompressInterface
     }
 
     /**
-     * Load a set of related existences onto the collection.
-     *
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
-     * @return $this
-     */
-    public function loadExists(array|string $relations): static
-    {
-        return $this->loadAggregate($relations, '*', 'exists');
-    }
-
-    /**
      * Load a set of relationship counts onto the collection.
      *
      * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations

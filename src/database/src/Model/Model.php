@@ -514,14 +514,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
-     * Eager load related model existence values on the model.
-     */
-    public function loadExists(array|string $relations): static
-    {
-        return $this->loadAggregate($relations, '*', 'exists');
-    }
-
-    /**
      * Eager load relation counts on the model.
      *
      * @param array|string $relations

@@ -510,15 +510,6 @@ class ModelCollectionTest extends TestCase
         $this->assertSame('[{"no":1},{"no":2},{"no":3}]', Json::encode($col));
     }
 
-    public function testLoadExistsShouldCastBool()
-    {
-        $this->seedData();
-        $user = TestUserModel::with('articles')->first();
-        $user->articles->loadExists('comments');
-        $commentsExists = $user->articles->pluck('comments_exists')->toArray();
-        $this->assertContainsOnly('bool', $commentsExists);
-    }
-
     protected function createSchema()
     {
         Schema::create('users', function ($table) {
