@@ -1195,11 +1195,11 @@ class ModelRealBuilderTest extends TestCase
         }
         $results = LazyUserModel::query()->lazyById(5);
         $dbResults = Db::table('lazy_users')->lazyById(5);
-        $this->assertCount(5, $results);
+        $this->assertCount(10, $results);
         foreach ($results as $index => $value) {
             $this->assertSame('Hyperf' . ($index + 1), $value->name);
         }
-        $this->assertCount(5, $dbResults);
+        $this->assertCount(10, $dbResults);
         foreach ($dbResults as $index => $value) {
             $this->assertSame('Hyperf' . ($index + 1), $value->name);
         }
@@ -1215,11 +1215,11 @@ class ModelRealBuilderTest extends TestCase
         }
         $results = LazyUserModel::query()->lazyByIdDesc(5);
         $dbResults = Db::table('lazy_users')->lazyByIdDesc(5);
-        $this->assertCount(5, $dbResults);
+        $this->assertCount(10, $dbResults);
         foreach ($dbResults as $index => $value) {
             $this->assertSame('Hyperf' . (10 - $index), $value->name);
         }
-        $this->assertCount(5, $results);
+        $this->assertCount(10, $results);
         foreach ($results as $index => $value) {
             $this->assertSame('Hyperf' . (10 - $index), $value->name);
         }
