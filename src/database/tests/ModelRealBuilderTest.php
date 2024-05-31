@@ -854,6 +854,13 @@ class ModelRealBuilderTest extends TestCase
 
     public function testChunkMap()
     {
+        Schema::dropIfExists('posts');
+        Schema::create('posts', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->integer('rating');
+            $table->unsignedBigInteger('user_id');
+        });
         $container = $this->getContainer();
 
         $db = new Db($container);
