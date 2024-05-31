@@ -1295,6 +1295,29 @@ class ModelBuilderTest extends TestCase
         $this->assertFalse($result);
     }
 
+    public function testQualifyColumns()
+    {
+        $builder = new Builder(Mockery::mock(BaseBuilder::class));
+        $builder->shouldReceive('from')->with('foo_table');
+
+        $builder->setModel(new ModelBuilderTestStubStringPrimaryKey());
+
+        $this->assertEquals(['foo_table.column', 'foo_table.name'], $builder->qualifyColumns(['column', 'name']));
+    }
+
+    public function testValueOrFailMethodWithModelFound()
+    {
+        $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
+        $mockModel = new stdClass();
+        $mockModel->name = 'foo';
+        $builder->shouldReceive('first')->with(['name'])->andReturn($mockModel);
+        $builder->shouldReceive('first')->with(['test'])->andReturn(null);
+        $builder->setModel(new ModelBuilderTestStubStringPrimaryKey());
+        $this->assertSame('foo', $builder->valueOrFail('name'));
+        $this->expectException(ModelNotFoundException::class);
+        $builder->valueOrFail('test');
+    }
+
     protected function mockConnectionForModel($model, $database)
     {
         $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';

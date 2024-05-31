@@ -84,6 +84,80 @@ class Collection extends BaseCollection implements CompressInterface
     }
 
     /**
+     * Load a set of aggregations over relationship's column onto the collection.
+     *
+     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     */
+    public function loadAggregate(array|string $relations, string $column, ?string $function = null): static
+    {
+        if ($this->isEmpty()) {
+            return $this;
+        }
+
+        $models = $this->first()->newModelQuery()
+            ->whereKey($this->modelKeys())
+            ->select($this->first()->getKeyName())
+            ->withAggregate($relations, $column, $function)
+            ->get()
+            ->keyBy($this->first()->getKeyName());
+
+        $attributes = Arr::except(
+            array_keys($models->first()->getAttributes()),
+            $models->first()->getKeyName()
+        );
+
+        $this->each(function ($model) use ($models, $attributes) {
+            $extraAttributes = Arr::only($models->get($model->getKey())->getAttributes(), $attributes);
+
+            $model->forceFill($extraAttributes)
+                ->syncOriginalAttributes($attributes)
+                ->mergeCasts($models->get($model->getKey())->getCasts());
+        });
+
+        return $this;
+    }
+
+    /**
+     * Load a set of relationship's max column values onto the collection.
+     *
+     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     */
+    public function loadMax(array $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'max');
+    }
+
+    /**
+     * Load a set of relationship's min column values onto the collection.
+     *
+     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     */
+    public function loadMin(array $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'min');
+    }
+
+    /**
+     * Load a set of relationship's column summations onto the collection.
+     *
+     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     */
+    public function loadSum(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'sum');
+    }
+
+    /**
+     * Load a set of relationship's average column values onto the collection.
+     *
+     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     */
+    public function loadAvg(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'avg');
+    }
+
+    /**
      * Load a set of relationship counts onto the collection.
      *
      * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
