@@ -14,8 +14,10 @@ namespace HyperfTest\Database;
 
 use Hyperf\Codec\Json;
 use Hyperf\Collection\Collection as BaseCollection;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Register;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\Engine\Channel;
 use Hyperf\Support\Fluent;
@@ -49,7 +51,10 @@ class ModelCollectionTest extends TestCase
         $container = ContainerStub::getContainer(function ($conn) use ($dispatcher) {
             $conn->setEventDispatcher($dispatcher);
         });
+        $connectionResolverInterface = $container->get(ConnectionResolverInterface::class);
+        Register::setConnectionResolver($connectionResolverInterface);
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
+        $this->createSchema();
     }
 
     protected function tearDown(): void

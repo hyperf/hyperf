@@ -12,8 +12,11 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database;
 
+use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Model\Register;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
+use Hyperf\DbConnection\Db;
 use Hyperf\Engine\Channel;
 use HyperfTest\Database\Stubs\ContainerStub;
 use Mockery;
@@ -29,6 +32,10 @@ class ModelLoadMinTest extends TestCase
     protected function setUp(): void
     {
         $this->channel = new Channel(999);
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        $connectionResolverInterface = $container->get(ConnectionResolverInterface::class);
+        Register::setConnectionResolver($connectionResolverInterface);
         Schema::create('base_models', function (Blueprint $table) {
             $table->increments('id');
         });
