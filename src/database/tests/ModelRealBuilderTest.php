@@ -1171,7 +1171,7 @@ class ModelRealBuilderTest extends TestCase
         $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
 
         $now = Carbon::now();
-        Db::table('lazy_usersv')->insert([
+        Db::table('lazy_users')->insert([
             ['name' => 'Hyperf', 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'Hyperf2', 'created_at' => $now->addMinutes(), 'updated_at' => $now->addMinutes()],
             ['name' => 'Hyperf3', 'created_at' => $now->addMinutes(2), 'updated_at' => $now->addMinutes(2)],
