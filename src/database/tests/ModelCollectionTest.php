@@ -14,8 +14,12 @@ namespace HyperfTest\Database;
 
 use Hyperf\Codec\Json;
 use Hyperf\Collection\Collection as BaseCollection;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Register;
+use Hyperf\Database\Schema\Schema;
+use Hyperf\Engine\Channel;
 use Hyperf\Support\Fluent;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\Book;
@@ -37,9 +41,28 @@ use function Hyperf\Collection\collect;
 #[CoversNothing]
 class ModelCollectionTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        $this->channel = new Channel(999);
+        $dispatcher = m::mock(EventDispatcherInterface::class);
+        $dispatcher->shouldReceive('dispatch')->with(m::any())->andReturnUsing(function ($event) {
+            $this->channel->push($event);
+        });
+        $container = ContainerStub::getContainer(function ($conn) use ($dispatcher) {
+            $conn->setEventDispatcher($dispatcher);
+        });
+        $connectionResolverInterface = $container->get(ConnectionResolverInterface::class);
+        Register::setConnectionResolver($connectionResolverInterface);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
+        $this->createSchema();
+    }
+
     protected function tearDown(): void
     {
         m::close();
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('articles');
+        Schema::dropIfExists('comments');
     }
 
     public function testAddingItemsToCollection()
@@ -486,6 +509,45 @@ class ModelCollectionTest extends TestCase
         $col = $collection->mapInto(TestBookModelSchema::class);
         $this->assertSame('[{"no":1},{"no":2},{"no":3}]', Json::encode($col));
     }
+
+    protected function createSchema()
+    {
+        Schema::create('users', function ($table) {
+            $table->increments('id');
+            $table->string('email')->unique();
+        });
+
+        Schema::create('articles', function ($table) {
+            $table->increments('id');
+            $table->integer('user_id');
+            $table->string('title');
+        });
+
+        Schema::create('comments', function ($table) {
+            $table->increments('id');
+            $table->integer('article_id');
+            $table->string('content');
+        });
+    }
+
+    /**
+     * Helpers...
+     */
+    protected function seedData()
+    {
+        $user = TestUserModel::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
+
+        TestArticleModel::query()->insert([
+            ['user_id' => 1, 'title' => 'Another title'],
+            ['user_id' => 1, 'title' => 'Another title'],
+            ['user_id' => 1, 'title' => 'Another title'],
+        ]);
+
+        TestCommentModel::query()->insert([
+            ['article_id' => 1, 'content' => 'Another comment'],
+            ['article_id' => 2, 'content' => 'Another comment'],
+        ]);
+    }
 }
 
 class TestBookModelSchema implements JsonSerializable
@@ -512,4 +574,40 @@ class TestEloquentCollectionModel extends Model
     {
         return 'test';
     }
+}
+
+class TestUserModel extends Model
+{
+    public bool $timestamps = false;
+
+    protected ?string $table = 'users';
+
+    protected array $guarded = [];
+
+    public function articles()
+    {
+        return $this->hasMany(TestArticleModel::class, 'user_id');
+    }
+}
+
+class TestArticleModel extends Model
+{
+    public bool $timestamps = false;
+
+    protected ?string $table = 'articles';
+
+    protected array $guarded = [];
+
+    public function comments()
+    {
+        return $this->hasMany(TestCommentModel::class, 'article_id');
+    }
+}
+class TestCommentModel extends Model
+{
+    public bool $timestamps = false;
+
+    protected ?string $table = 'comments';
+
+    protected array $guarded = [];
 }

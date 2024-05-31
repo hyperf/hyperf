@@ -331,6 +331,16 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
+     * Qualify the given columns with the model's table.
+     */
+    public function qualifyColumns(array $columns): array
+    {
+        return collect($columns)->map(function ($column) {
+            return $this->qualifyColumn($column);
+        })->all();
+    }
+
+    /**
      * Create a new instance of the given model.
      *
      * @param array $attributes
@@ -469,6 +479,48 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         $this->newCollection([$this])->loadMissing($relations);
 
         return $this;
+    }
+
+    /**
+     * Eager load relation's column aggregations on the model.
+     */
+    public function loadAggregate(array|string $relations, string $column, ?string $function = null): static
+    {
+        $this->newCollection([$this])->loadAggregate($relations, $column, $function);
+
+        return $this;
+    }
+
+    /**
+     * Eager load relation max column values on the model.
+     */
+    public function loadMax(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'max');
+    }
+
+    /**
+     * Eager load relation min column values on the model.
+     */
+    public function loadMin(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'min');
+    }
+
+    /**
+     * Eager load relation's column summations on the model.
+     */
+    public function loadSum(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'sum');
+    }
+
+    /**
+     * Eager load relation average column values on the model.
+     */
+    public function loadAvg(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'avg');
     }
 
     /**

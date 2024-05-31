@@ -1155,6 +1155,14 @@ class Builder
     }
 
     /**
+     * Qualify the given columns with the model's table.
+     */
+    public function qualifyColumns(array $columns): array
+    {
+        return $this->model->qualifyColumns($columns);
+    }
+
+    /**
      * Get the given macro by name.
      *
      * @param string $name
