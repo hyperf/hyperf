@@ -24,6 +24,7 @@ use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Model\Collection as ModelCollection;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
+use Hyperf\Database\Query\Expression;
 use Hyperf\Paginator\Contract\CursorPaginator;
 use Hyperf\Paginator\Cursor;
 use Hyperf\Paginator\Paginator;
@@ -590,6 +591,17 @@ class Builder
         if ($result = $this->first([$column])) {
             return $result->{Str::afterLast($column, '.')};
         }
+    }
+
+    /**
+     * Get a single column's value from the first result of the query or throw an exception.
+     * @throws ModelNotFoundException<Model>
+     */
+    public function valueOrFail(Expression|string $column): mixed
+    {
+        $column = $column instanceof Expression ? $column->getValue() : $column;
+
+        return $this->firstOrFail([$column])->{Str::afterLast($column, '.')};
     }
 
     /**
