@@ -1227,11 +1227,11 @@ class ModelRealBuilderTest extends TestCase
         $dbResults = Db::table('lazy_users')->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyByIdDesc(10, 'created_at', 'create_date');
         $this->assertCount(10, $results);
         foreach ($results as $index => $value) {
-            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
         }
         $this->assertCount(10, $dbResults);
         foreach ($dbResults as $index => $value) {
-            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
         }
         $results = LazyUserModel::query()->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyById(10, 'created_at', 'create_date');
         $dbResults = Db::table('lazy_users')->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyById(10, 'created_at', 'create_date');
