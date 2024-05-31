@@ -26,6 +26,7 @@ use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\Events\Saved;
+use Hyperf\Database\Model\Model;
 use Hyperf\Database\MySqlBitConnection;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Database\Query\Expression;
@@ -1158,6 +1159,42 @@ class ModelRealBuilderTest extends TestCase
         Schema::drop('accounting_test');
     }
 
+    public function testOrderedLazyById(): void
+    {
+        Schema::create('lazy_usersv', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        Db::table('lazy_usersv')->insert([
+            ['name' => 'Hyperf'],
+            ['name' => 'Hyperf2'],
+            ['name' => 'Hyperf3'],
+            ['name' => 'Hyperf4'],
+            ['name' => 'Hyperf5'],
+            ['name' => 'Hyperf6'],
+            ['name' => 'Hyperf7'],
+            ['name' => 'Hyperf8'],
+            ['name' => 'Hyperf9'],
+            ['name' => 'Hyperf10'],
+        ]);
+
+        $results = LazyUserModel::query()->lazyById(10);
+
+        $this->assertCount(10, $results);
+        $this->assertSame('Hyperf', $results[0]->name);
+        $this->assertSame('Hyperf10', $results[9]->name);
+        $results = LazyUserModel::query()->lazyById(5);
+        $this->assertCount(5, $results);
+        $this->assertSame('Hyperf', $results[0]->name);
+        $this->assertSame('Hyperf5', $results[4]->name);
+        Schema::dropIfExists('lazy_users');
+    }
+
     protected function getContainer()
     {
         $dispatcher = Mockery::mock(EventDispatcherInterface::class);
@@ -1171,4 +1208,9 @@ class ModelRealBuilderTest extends TestCase
 
         return $container;
     }
+}
+
+class LazyUserModel extends Model
+{
+    protected ?string $table = 'lazy_users';
 }
