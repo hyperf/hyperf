@@ -854,7 +854,10 @@ class ModelRealBuilderTest extends TestCase
 
     public function testChunkMap()
     {
-        $this->getContainer();
+        $container = $this->getContainer();
+
+        $db = new Db($container);
+        $container->shouldReceive('get')->with(Db::class)->andReturn($db);
         Db::table('posts')->whereRaw('1=1')->delete();
         Db::table('posts')->insert([
             ['title' => 'Foo Post', 'content' => 'Lorem Ipsum.', 'created_at' => new Carbon('2017-11-12 13:14:15')],
