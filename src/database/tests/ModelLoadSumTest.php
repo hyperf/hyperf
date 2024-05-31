@@ -28,7 +28,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  */
 class ModelLoadSumTest extends TestCase
 {
-
     protected function setUp(): void
     {
         $this->channel = new Channel(999);
