@@ -29,6 +29,7 @@ use Hyperf\Database\Schema\Builder;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Container;
 use HyperfTest\Database\Stubs\ContainerStub;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
