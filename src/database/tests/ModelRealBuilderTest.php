@@ -1161,15 +1161,13 @@ class ModelRealBuilderTest extends TestCase
 
     public function testOrderedLazyById(): void
     {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
         Schema::create('lazy_users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->timestamps();
         });
-
-        $container = $this->getContainer();
-        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
-
         $now = Carbon::now();
         Db::table('lazy_users')->insert([
             ['name' => 'Hyperf1', 'created_at' => $now, 'updated_at' => $now],
