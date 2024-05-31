@@ -852,6 +852,21 @@ class ModelRealBuilderTest extends TestCase
         $this->assertNull($userWithoutPosts[0]->best_post_rating);
     }
 
+    public function testChunkMap()
+    {
+        Db::table('posts')->truncate();
+        Db::table('posts')->insert([
+            ['title' => 'Foo Post', 'content' => 'Lorem Ipsum.', 'created_at' => new Carbon('2017-11-12 13:14:15')],
+            ['title' => 'Bar Post', 'content' => 'Lorem Ipsum.', 'created_at' => new Carbon('2018-01-02 03:04:05')],
+        ]);
+        $results = Db::table('posts')->orderBy('id')->chunkMap(function ($post) {
+            return $post->title;
+        }, 1);
+        $this->assertCount(2, $results);
+        $this->assertSame('Foo Post', $results[0]);
+        $this->assertSame('Bar Post', $results[1]);
+    }
+
     public function testEnumCast()
     {
         $container = $this->getContainer();
