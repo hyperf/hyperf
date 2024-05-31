@@ -1172,7 +1172,7 @@ class ModelRealBuilderTest extends TestCase
 
         $now = Carbon::now();
         Db::table('lazy_users')->insert([
-            ['name' => 'Hyperf', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Hyperf1', 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'Hyperf2', 'created_at' => $now->addMinutes(), 'updated_at' => $now->addMinutes()],
             ['name' => 'Hyperf3', 'created_at' => $now->addMinutes(2), 'updated_at' => $now->addMinutes(2)],
             ['name' => 'Hyperf4', 'created_at' => $now->addMinutes(3), 'updated_at' => $now->addMinutes(3)],
