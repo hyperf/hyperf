@@ -861,6 +861,7 @@ class ModelRealBuilderTest extends TestCase
             $table->text('content');
             $table->integer('rating');
             $table->unsignedBigInteger('user_id');
+            $table->timestamps();
         });
         $container = $this->getContainer();
 
