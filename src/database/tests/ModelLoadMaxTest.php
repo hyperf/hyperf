@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database;
 
-use Hyperf\Database\Model\Model;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
@@ -26,15 +25,13 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
-class ModelLoadSumTest extends TestCase
+class ModelLoadMaxTest extends TestCase
 {
-
     protected function setUp(): void
     {
         $this->channel = new Channel(999);
         $container = $this->getContainer();
         $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
-
         Schema::create('base_models', function (Blueprint $table) {
             $table->increments('id');
         });
@@ -56,6 +53,7 @@ class ModelLoadSumTest extends TestCase
         Related1::create(['base_model_id' => 1, 'number' => 10]);
         Related1::create(['base_model_id' => 1, 'number' => 11]);
         Related2::create(['base_model_id' => 1, 'number' => 12]);
+        Related2::create(['base_model_id' => 1, 'number' => 13]);
     }
 
     protected function tearDown(): void
@@ -66,20 +64,19 @@ class ModelLoadSumTest extends TestCase
         Schema::dropIfExists('related2s');
     }
 
-    public function testLoadSumSingleRelation()
+    public function testLoadMaxSingleRelation()
     {
         $model = BaseModel::first();
-        $model->loadSum('related1', 'number');
-        $this->assertEquals(21, $model->related1_sum_number);
+        $model->loadMax('related1', 'number');
+        $this->assertEquals(11, $model->related1_max_number);
     }
 
-    public function testLoadSumMultipleRelations()
+    public function testLoadMaxMultipleRelations()
     {
         $model = BaseModel::first();
-
-        $model->loadSum(['related1', 'related2'], 'number');
-        $this->assertEquals(21, $model->related1_sum_number);
-        $this->assertEquals(12, $model->related2_sum_number);
+        $model->loadMax(['related1', 'related2'], 'number');
+        $this->assertEquals(11, $model->related1_max_number);
+        $this->assertEquals(13, $model->related2_max_number);
     }
 
     protected function getContainer()
@@ -94,46 +91,5 @@ class ModelLoadSumTest extends TestCase
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
 
         return $container;
-    }
-}
-
-class BaseModel extends Model
-{
-    public bool $timestamps = false;
-
-    protected array $guarded = [];
-
-    public function related1()
-    {
-        return $this->hasMany(Related1::class);
-    }
-
-    public function related2()
-    {
-        return $this->hasMany(Related2::class);
-    }
-}
-
-class Related1 extends Model
-{
-    public bool $timestamps = false;
-
-    protected array $fillable = ['base_model_id', 'number'];
-
-    public function parent()
-    {
-        return $this->belongsTo(BaseModel::class);
-    }
-}
-
-class Related2 extends Model
-{
-    public bool $timestamps = false;
-
-    protected array $fillable = ['base_model_id', 'number'];
-
-    public function parent()
-    {
-        return $this->belongsTo(BaseModel::class);
     }
 }
