@@ -482,6 +482,48 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
+     * Eager load relation's column aggregations on the model.
+     */
+    public function loadAggregate(array|string $relations, string $column, ?string $function = null): static
+    {
+        $this->newCollection([$this])->loadAggregate($relations, $column, $function);
+
+        return $this;
+    }
+
+    /**
+     * Eager load relation max column values on the model.
+     */
+    public function loadMax(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'max');
+    }
+
+    /**
+     * Eager load relation min column values on the model.
+     */
+    public function loadMin(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'min');
+    }
+
+    /**
+     * Eager load relation's column summations on the model.
+     */
+    public function loadSum(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'sum');
+    }
+
+    /**
+     * Eager load relation average column values on the model.
+     */
+    public function loadAvg(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'avg');
+    }
+
+    /**
      * Eager load relation counts on the model.
      *
      * @param array|string $relations
