@@ -1183,59 +1183,66 @@ class ModelRealBuilderTest extends TestCase
             ['name' => 'Hyperf9', 'created_at' => $now->addMinutes(8), 'updated_at' => $now->addMinutes(8)],
             ['name' => 'Hyperf10', 'created_at' => $now->addMinutes(9), 'updated_at' => $now->addMinutes(9)],
         ]);
-
         $results = LazyUserModel::query()->lazyById(10);
         $this->assertCount(10, $results);
-        $this->assertSame('Hyperf', $results[0]->name);
-        $this->assertSame('Hyperf10', $results[9]->name);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
         $dbResults = Db::table('lazy_users')->lazyById(10);
         $this->assertCount(10, $dbResults);
-        $this->assertSame('Hyperf', $dbResults[0]->name);
-        $this->assertSame('Hyperf10', $dbResults[9]->name);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
         $results = LazyUserModel::query()->lazyById(5);
         $dbResults = Db::table('lazy_users')->lazyById(5);
         $this->assertCount(5, $results);
-        $this->assertSame('Hyperf', $results[0]->name);
-        $this->assertSame('Hyperf5', $results[4]->name);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
         $this->assertCount(5, $dbResults);
-        $this->assertSame('Hyperf', $dbResults[0]->name);
-        $this->assertSame('Hyperf5', $dbResults[4]->name);
-
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
         $results = LazyUserModel::query()->lazyByIdDesc(10);
         $this->assertCount(10, $results);
-        $this->assertSame('Hyperf10', $results[0]->name);
-        $this->assertSame('Hyperf', $results[9]->name);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
         $dbResults = Db::table('lazy_users')->lazyByIdDesc(10);
         $this->assertCount(10, $dbResults);
-        $this->assertSame('Hyperf10', $dbResults[0]->name);
-        $this->assertSame('Hyperf', $dbResults[9]->name);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
         $results = LazyUserModel::query()->lazyByIdDesc(5);
         $dbResults = Db::table('lazy_users')->lazyByIdDesc(5);
         $this->assertCount(5, $dbResults);
-        $this->assertSame('Hyperf5', $dbResults[0]->name);
-        $this->assertSame('Hyperf', $dbResults[4]->name);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
         $this->assertCount(5, $results);
-        $this->assertSame('Hyperf5', $results[0]->name);
-        $this->assertSame('Hyperf', $results[4]->name);
-
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
         $results = LazyUserModel::query()->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyByIdDesc(10, 'created_at', 'create_date');
         $dbResults = Db::table('lazy_users')->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyByIdDesc(10, 'created_at', 'create_date');
         $this->assertCount(10, $results);
-        $this->assertSame('Hyperf10', $results[0]->name);
-        $this->assertSame('Hyperf', $results[9]->name);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
         $this->assertCount(10, $dbResults);
-        $this->assertSame('Hyperf10', $dbResults[0]->name);
-        $this->assertSame('Hyperf', $dbResults[9]->name);
-
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
         $results = LazyUserModel::query()->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyById(10, 'created_at', 'create_date');
         $dbResults = Db::table('lazy_users')->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyById(10, 'created_at', 'create_date');
         $this->assertCount(10, $results);
-        $this->assertSame('Hyperf', $results[0]->name);
-        $this->assertSame('Hyperf10', $results[9]->name);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
         $this->assertCount(10, $dbResults);
-        $this->assertSame('Hyperf', $dbResults[0]->name);
-        $this->assertSame('Hyperf10', $dbResults[9]->name);
-
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
         Schema::dropIfExists('lazy_users');
     }
 
