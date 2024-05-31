@@ -83,7 +83,6 @@ class DatabaseIntegrationTest extends TestCase
 
         $container->shouldReceive('get')->with(Db::class)->andReturn($db);
         $connectionResolverInterface = $container->get(ConnectionResolverInterface::class);
-        $connectionResolverInterface->addConnection('test', $connectionResolverInterface->get('default'));
         Register::setConnectionResolver($connectionResolverInterface);
         $this->createSchema($connectionResolverInterface);
     }
