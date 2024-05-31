@@ -858,6 +858,7 @@ class ModelRealBuilderTest extends TestCase
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->text('content');
             $table->integer('rating');
             $table->unsignedBigInteger('user_id');
         });
