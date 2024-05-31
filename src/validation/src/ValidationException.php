@@ -45,7 +45,7 @@ class ValidationException extends ServerException
         public ?ResponseInterface $response = null,
         public string $errorBag = 'default'
     ) {
-        parent::__construct('The given data was invalid.');
+        parent::__construct($validator->errors()->first() ?: 'The given data was invalid.');
     }
 
     /**
