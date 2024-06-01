@@ -141,6 +141,7 @@ class DatabaseIntegrationTest extends TestCase
         foreach (['default', 'second_connection'] as $connection) {
             $this->schema($connection)->create('users', function ($table) {
                 $table->increments('id');
+                $table->string('email')->nullable();
                 $table->string('name')->nullable();
                 $table->string('value')->nullable();
             });
