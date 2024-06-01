@@ -71,7 +71,7 @@ class DatabaseIntegrationTest extends TestCase
         $connection = $connector->make($dbConfig);
         $connection2 = $connector->make($db2Config);
 
-        $resolver = new ConnectionResolver(['default' => $connection, 'test' => $connection2]);
+        $resolver = new ConnectionResolver(['default' => $connection, 'second_connection' => $connection2]);
 
         $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
         $container = ContainerStub::getContainer();
