@@ -138,7 +138,6 @@ class DatabaseIntegrationTest extends TestCase
         foreach (['default', 'second_connection'] as $connection) {
             $this->schema($connection)->drop('users');
         }
-        Register::unsetConnectionResolver();
     }
 
     protected function createSchema(): void
