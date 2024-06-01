@@ -76,10 +76,8 @@ class DatabaseIntegrationTest extends TestCase
         $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
         $container = ContainerStub::getContainer();
         $db = new Db($container);
-
         $container->shouldReceive('get')->with(Db::class)->andReturn($db);
-        $connectionResolverInterface = $container->get(ConnectionResolverInterface::class);
-        Register::setConnectionResolver($connectionResolverInterface);
+        Register::setConnectionResolver($resolver);
     }
 
     public function testUpdateOrCreateOnDifferentConnection(): void
