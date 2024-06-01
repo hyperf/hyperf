@@ -99,7 +99,6 @@ class DatabaseIntegrationTest extends TestCase
 
         $this->assertEquals(1, ModelTestUser::count());
         $this->assertEquals(2, ModelTestUser::on('second_connection')->count());
-        $this->down();
     }
 
     public function testCheckAndCreateMethodsOnMultiConnections(): void
@@ -130,10 +129,9 @@ class DatabaseIntegrationTest extends TestCase
         $this->assertSame('second_connection', $user1->getConnectionName());
         $this->assertSame('second_connection', $user2->getConnectionName());
         $this->assertEquals(2, ModelTestUser::on('second_connection')->count());
-        $this->down();
     }
 
-    protected function down()
+    protected function tearDown(): void
     {
         foreach (['default', 'second_connection'] as $connection) {
             $this->schema($connection)->drop('users');
