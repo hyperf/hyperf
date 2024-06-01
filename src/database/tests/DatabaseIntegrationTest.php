@@ -86,7 +86,7 @@ class DatabaseIntegrationTest extends TestCase
         Register::setConnectionResolver($connectionResolverInterface);
     }
 
-    protected function tearDown(): void
+    protected function down()
     {
         foreach (['default', 'second_connection'] as $connection) {
             $this->schema($connection)->drop('users');
@@ -115,6 +115,7 @@ class DatabaseIntegrationTest extends TestCase
 
         $this->assertEquals(1, ModelTestUser::count());
         $this->assertEquals(2, ModelTestUser::on('second_connection')->count());
+        $this->down();
     }
 
     public function testCheckAndCreateMethodsOnMultiConnections(): void
@@ -145,6 +146,7 @@ class DatabaseIntegrationTest extends TestCase
         $this->assertSame('second_connection', $user1->getConnectionName());
         $this->assertSame('second_connection', $user2->getConnectionName());
         $this->assertEquals(2, ModelTestUser::on('second_connection')->count());
+        $this->down();
     }
 
     protected function createSchema(): void
@@ -250,6 +252,7 @@ class DatabaseIntegrationTest extends TestCase
         $this->schema($connection)->create('non_incrementing_users', function ($table) {
             $table->string('name')->nullable();
         });
+        $this->down();
     }
 
     protected function connection($connection = 'default'): Connection
