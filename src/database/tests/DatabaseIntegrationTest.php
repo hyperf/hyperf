@@ -144,6 +144,8 @@ class DatabaseIntegrationTest extends TestCase
                 $table->string('email')->nullable();
                 $table->string('name')->nullable();
                 $table->string('value')->nullable();
+                $table->timestamp('birthday')->nullable();
+                $table->timestamps();
             });
         }
     }
