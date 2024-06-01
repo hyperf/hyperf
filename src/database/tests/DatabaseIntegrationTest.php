@@ -51,7 +51,7 @@ class DatabaseIntegrationTest extends TestCase
             'host' => '127.0.0.1',
             'database' => 'hyperf',
             'username' => 'root',
-            'password' => '',
+            'password' => '123456',
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
@@ -62,14 +62,14 @@ class DatabaseIntegrationTest extends TestCase
             'host' => '127.0.0.1',
             'database' => 'hyperf2',
             'username' => 'root',
-            'password' => '',
+            'password' => '123456',
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
         ];
 
-        $connection = $connector->make($dbConfig);
-        $connection2 = $connector->make($db2Config);
+        $connection = $connector->make($dbConfig, 'default');
+        $connection2 = $connector->make($db2Config, 'second_connection');
 
         $resolver = new ConnectionResolver(['default' => $connection, 'second_connection' => $connection2]);
 
