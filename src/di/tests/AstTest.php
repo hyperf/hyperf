@@ -418,7 +418,6 @@ class FooConstruct
         return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'name\', \'age\', \'id\'], \'keys\' => compact([\'name\', \'age\', \'id\']), \'variadic\' => \'\'], function (string $name, int $age = 18, int|null $id = null) use($__function__, $__method__) {
             $this->__handlePropertyHandler(__CLASS__);
         });
-
     }
 }', $code);
     }
