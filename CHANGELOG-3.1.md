@@ -9,11 +9,13 @@
 - [#6816](https://github.com/hyperf/hyperf/pull/6816) Added methods `Hyperf\Database\Model\Builder::load*`.
 - [#6820](https://github.com/hyperf/hyperf/pull/6820) Added method `Hyperf\Database\Model\Builder::valueOrFail()`. 
 - [#6821](https://github.com/hyperf/hyperf/pull/6821) Added method `Hyperf\Database\Concerns\BuildsQueries::chunkMap()`.
+- [#6822](https://github.com/hyperf/hyperf/pull/6822) Added methods `lazyById` and `lazyByIdDesc` for lazy queries.
 
 ## Fixed
 
 - [#6813](https://github.com/hyperf/hyperf/pull/6813) Fixed bug that cannot read the messages from non-lower keys for `Hyperf\Constants\Annotation\Message`.
 - [#6818](https://github.com/hyperf/hyperf/pull/6818) Fixed bug that `updateOrInsert` cannot work when the input is empty.
+- [#6828](https://github.com/hyperf/hyperf/pull/6828) Fixed bug that `AOP` cannot work on `__construct`.
 
 # v3.1.24 - 2024-05-30
 

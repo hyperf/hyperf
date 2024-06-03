@@ -25,7 +25,9 @@ use HyperfTest\Di\Stub\Ast\BarAspect;
 use HyperfTest\Di\Stub\Ast\BarInterface;
 use HyperfTest\Di\Stub\Ast\Chi;
 use HyperfTest\Di\Stub\Ast\Foo;
+use HyperfTest\Di\Stub\Ast\FooConstruct;
 use HyperfTest\Di\Stub\Ast\FooTrait;
+use HyperfTest\Di\Stub\FooAspect;
 use HyperfTest\Di\Stub\FooEnumStruct;
 use HyperfTest\Di\Stub\Par2;
 use HyperfTest\Di\Stub\PathStub;
@@ -388,6 +390,35 @@ namespace HyperfTest\Di\Stub\Ast;
 interface BarInterface
 {
     public function toArray() : array;
+}', $code);
+    }
+
+    public function testRewriteConstructor()
+    {
+        $aspect = FooAspect::class;
+
+        AspectCollector::setAround($aspect, [
+            FooConstruct::class . '::__construct',
+        ], []);
+
+        $ast = new Ast();
+        $code = $ast->proxy(FooConstruct::class);
+
+        $this->assertEquals($this->license . '
+namespace HyperfTest\Di\Stub\Ast;
+
+class FooConstruct
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    public function __construct(public readonly string $name, protected readonly int $age = 18, private ?int $id = null)
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'name\', \'age\', \'id\'], \'keys\' => compact([\'name\', \'age\', \'id\']), \'variadic\' => \'\'], function (string $name, int $age = 18, ?int $id = null) use($__function__, $__method__) {
+            $this->__handlePropertyHandler(__CLASS__);
+        });
+    }
 }', $code);
     }
 }
