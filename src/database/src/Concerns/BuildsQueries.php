@@ -14,6 +14,7 @@ namespace Hyperf\Database\Concerns;
 
 use Closure;
 use Hyperf\Collection\Collection as BaseCollection;
+use Hyperf\Collection\LazyCollection;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
@@ -26,6 +27,7 @@ use Hyperf\Paginator\Cursor;
 use Hyperf\Paginator\CursorPaginator;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Stringable\Str;
+use InvalidArgumentException;
 use RuntimeException;
 
 trait BuildsQueries
@@ -103,6 +105,22 @@ trait BuildsQueries
     }
 
     /**
+     * Query lazily, by chunking the results of a query by comparing IDs.
+     */
+    public function lazyById(int $chunkSize = 1000, ?string $column = null, ?string $alias = null): LazyCollection
+    {
+        return $this->orderedLazyById($chunkSize, $column, $alias);
+    }
+
+    /**
+     * Query lazily, by chunking the results of a query by comparing IDs in descending order.
+     */
+    public function lazyByIdDesc(int $chunkSize = 1000, ?string $column = null, ?string $alias = null): LazyCollection
+    {
+        return $this->orderedLazyById($chunkSize, $column, $alias, true);
+    }
+
+    /**
      * Execute the query and get the first result.
      *
      * @param array $columns
@@ -163,6 +181,48 @@ trait BuildsQueries
         }
 
         return $this;
+    }
+
+    /**
+     * Query lazily, by chunking the results of a query by comparing IDs in a given order.
+     */
+    protected function orderedLazyById(int $chunkSize = 1000, ?string $column = null, ?string $alias = null, bool $descending = false): LazyCollection
+    {
+        if ($chunkSize < 1) {
+            throw new InvalidArgumentException('The chunk size should be at least 1');
+        }
+
+        $column ??= $this->defaultKeyName();
+
+        $alias ??= $column;
+
+        return LazyCollection::make(function () use ($chunkSize, $column, $alias, $descending) {
+            $lastId = null;
+
+            while (true) {
+                $clone = clone $this;
+
+                if ($descending) {
+                    $results = $clone->forPageBeforeId($chunkSize, $lastId, $column)->get();
+                } else {
+                    $results = $clone->forPageAfterId($chunkSize, $lastId, $column)->get();
+                }
+
+                foreach ($results as $result) {
+                    yield $result;
+                }
+
+                if ($results->count() < $chunkSize) {
+                    return;
+                }
+
+                $lastId = $results->last()->{$alias};
+
+                if ($lastId === null) {
+                    throw new RuntimeException("The lazyById operation was aborted because the [{$alias}] column is not present in the query result.");
+                }
+            }
+        });
     }
 
     /**

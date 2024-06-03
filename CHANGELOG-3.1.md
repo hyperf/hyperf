@@ -9,6 +9,7 @@
 - [#6816](https://github.com/hyperf/hyperf/pull/6816) Added methods `Hyperf\Database\Model\Builder::load*`.
 - [#6820](https://github.com/hyperf/hyperf/pull/6820) Added method `Hyperf\Database\Model\Builder::valueOrFail()`. 
 - [#6821](https://github.com/hyperf/hyperf/pull/6821) Added method `Hyperf\Database\Concerns\BuildsQueries::chunkMap()`.
+- [#6822](https://github.com/hyperf/hyperf/pull/6822) Added methods `lazyById` and `lazyByIdDesc` for lazy queries.
 
 ## Fixed
 

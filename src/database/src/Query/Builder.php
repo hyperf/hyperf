@@ -2920,6 +2920,14 @@ class Builder
     }
 
     /**
+     * Get the default key name of the table.
+     */
+    protected function defaultKeyName(): string
+    {
+        return 'id';
+    }
+
+    /**
      * Ensure the proper order by required for cursor pagination.
      */
     protected function ensureOrderForCursorPagination(bool $shouldReverse = false): Collection

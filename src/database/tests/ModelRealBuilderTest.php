@@ -26,6 +26,7 @@ use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\Events\Saved;
+use Hyperf\Database\Model\Model;
 use Hyperf\Database\MySqlBitConnection;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Database\Query\Expression;
@@ -1184,6 +1185,91 @@ class ModelRealBuilderTest extends TestCase
         Schema::drop('accounting_test');
     }
 
+    public function testOrderedLazyById(): void
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        Schema::create('lazy_users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+        $now = Carbon::now();
+        Db::table('lazy_users')->insert([
+            ['name' => 'Hyperf1', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Hyperf2', 'created_at' => $now->addMinutes(), 'updated_at' => $now->addMinutes()],
+            ['name' => 'Hyperf3', 'created_at' => $now->addMinutes(2), 'updated_at' => $now->addMinutes(2)],
+            ['name' => 'Hyperf4', 'created_at' => $now->addMinutes(3), 'updated_at' => $now->addMinutes(3)],
+            ['name' => 'Hyperf5', 'created_at' => $now->addMinutes(4), 'updated_at' => $now->addMinutes(4)],
+            ['name' => 'Hyperf6', 'created_at' => $now->addMinutes(5), 'updated_at' => $now->addMinutes(5)],
+            ['name' => 'Hyperf7', 'created_at' => $now->addMinutes(6), 'updated_at' => $now->addMinutes(6)],
+            ['name' => 'Hyperf8', 'created_at' => $now->addMinutes(7), 'updated_at' => $now->addMinutes(7)],
+            ['name' => 'Hyperf9', 'created_at' => $now->addMinutes(8), 'updated_at' => $now->addMinutes(8)],
+            ['name' => 'Hyperf10', 'created_at' => $now->addMinutes(9), 'updated_at' => $now->addMinutes(9)],
+        ]);
+        $results = LazyUserModel::query()->lazyById(10);
+        $this->assertCount(10, $results);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $dbResults = Db::table('lazy_users')->lazyById(10);
+        $this->assertCount(10, $dbResults);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $results = LazyUserModel::query()->lazyById(5);
+        $dbResults = Db::table('lazy_users')->lazyById(5);
+        $this->assertCount(10, $results);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $this->assertCount(10, $dbResults);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $results = LazyUserModel::query()->lazyByIdDesc(10);
+        $this->assertCount(10, $results);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
+        $dbResults = Db::table('lazy_users')->lazyByIdDesc(10);
+        $this->assertCount(10, $dbResults);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
+        $results = LazyUserModel::query()->lazyByIdDesc(5);
+        $dbResults = Db::table('lazy_users')->lazyByIdDesc(5);
+        $this->assertCount(10, $dbResults);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
+        $this->assertCount(10, $results);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
+        $results = LazyUserModel::query()->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyByIdDesc(10, 'created_at', 'create_date');
+        $dbResults = Db::table('lazy_users')->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyByIdDesc(10, 'created_at', 'create_date');
+        $this->assertCount(10, $results);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $this->assertCount(10, $dbResults);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $results = LazyUserModel::query()->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyById(10, 'created_at', 'create_date');
+        $dbResults = Db::table('lazy_users')->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyById(10, 'created_at', 'create_date');
+        $this->assertCount(10, $results);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $this->assertCount(10, $dbResults);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        Schema::dropIfExists('lazy_users');
+    }
+
     protected function getContainer()
     {
         $dispatcher = Mockery::mock(EventDispatcherInterface::class);
@@ -1197,4 +1283,9 @@ class ModelRealBuilderTest extends TestCase
 
         return $container;
     }
+}
+
+class LazyUserModel extends Model
+{
+    protected ?string $table = 'lazy_users';
 }
