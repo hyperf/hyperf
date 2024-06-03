@@ -81,6 +81,7 @@ class DatabaseIntegrationTest extends TestCase
         $db = new Db($container);
         $container->shouldReceive('get')->with(Db::class)->andReturn($db);
         Register::setConnectionResolver($resolver);
+        $this->createSchema();
     }
 
     protected function tearDown(): void
@@ -92,7 +93,7 @@ class DatabaseIntegrationTest extends TestCase
 
     public function testUpdateOrCreateOnDifferentConnection(): void
     {
-        $this->createSchema();
+
         ModelTestUser::create(['email' => 'taylorotwell@gmail.com']);
 
         ModelTestUser::on('second_connection')->updateOrCreate(
@@ -111,7 +112,7 @@ class DatabaseIntegrationTest extends TestCase
 
     public function testCheckAndCreateMethodsOnMultiConnections(): void
     {
-        $this->createSchema();
+
         ModelTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
         ModelTestUser::on('second_connection')->find(
             ModelTestUser::on('second_connection')->insert(['id' => 2, 'email' => 'themsaid@gmail.com'])
