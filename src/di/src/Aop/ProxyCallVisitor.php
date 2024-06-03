@@ -202,7 +202,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     {
         return array_map(function (Node\Param $param) {
             $tempParam = clone $param;
-            $tempParam->flags &= ~Node\Stmt\Class_::VISIBILITY_MODIFIER_MASK & ~Node\Stmt\Class_::MODIFIER_READONLY;
+            $tempParam->flags &= ~Class_::VISIBILITY_MODIFIER_MASK & ~Class_::MODIFIER_READONLY;
             return $tempParam;
         }, $params);
     }
