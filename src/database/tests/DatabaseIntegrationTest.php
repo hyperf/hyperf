@@ -19,11 +19,14 @@ use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Schema\Builder;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Container;
+use Hyperf\Paginator\LengthAwarePaginator;
+use Hyperf\Paginator\Paginator;
 use HyperfTest\Database\Stubs\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -134,6 +137,130 @@ class DatabaseIntegrationTest extends TestCase
         $this->assertSame('second_connection', $user1->getConnectionName());
         $this->assertSame('second_connection', $user2->getConnectionName());
         $this->assertEquals(2, ModelTestUser::on('second_connection')->count());
+    }
+
+    /**
+     * Tests...
+     */
+    public function testBasicModelRetrieval(): void
+    {
+        ModelTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
+        ModelTestUser::create(['id' => 2, 'email' => 'abigailotwell@gmail.com']);
+
+        $this->assertEquals(2, ModelTestUser::count());
+
+        $this->assertFalse(ModelTestUser::where('email', 'taylorotwell@gmail.com')->doesntExist());
+        $this->assertTrue(ModelTestUser::where('email', 'mohamed@laravel.com')->doesntExist());
+
+        $model = ModelTestUser::where('email', 'taylorotwell@gmail.com')->first();
+        $this->assertSame('taylorotwell@gmail.com', $model->email);
+        $this->assertTrue(isset($model->email));
+        $this->assertTrue(isset($model->friends));
+
+        $model = ModelTestUser::find(1);
+        $this->assertInstanceOf(ModelTestUser::class, $model);
+        $this->assertEquals(1, $model->id);
+
+        $model = ModelTestUser::find(2);
+        $this->assertInstanceOf(ModelTestUser::class, $model);
+        $this->assertEquals(2, $model->id);
+
+        $missing = ModelTestUser::find(3);
+        $this->assertNull($missing);
+
+        $collection = ModelTestUser::find([]);
+        $this->assertInstanceOf(Collection::class, $collection);
+        $this->assertCount(0, $collection);
+
+        $collection = ModelTestUser::find([1, 2, 3]);
+        $this->assertInstanceOf(Collection::class, $collection);
+        $this->assertCount(2, $collection);
+
+        $models = ModelTestUser::where('id', 1)->cursor();
+        foreach ($models as $model) {
+            $this->assertEquals(1, $model->id);
+            $this->assertSame('default', $model->getConnectionName());
+        }
+
+        $records = Db::table('users')->where('id', 1)->cursor();
+        foreach ($records as $record) {
+            $this->assertEquals(1, $record->id);
+        }
+
+        $records = Db::cursor('select * from users where id = ?', [1]);
+        foreach ($records as $record) {
+            $this->assertEquals(1, $record->id);
+        }
+    }
+
+    public function testBasicModelCollectionRetrieval(): void
+    {
+        ModelTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
+        ModelTestUser::create(['id' => 2, 'email' => 'abigailotwell@gmail.com']);
+
+        $models = ModelTestUser::oldest('id')->get();
+
+        $this->assertCount(2, $models);
+        $this->assertInstanceOf(Collection::class, $models);
+        $this->assertInstanceOf(ModelTestUser::class, $models[0]);
+        $this->assertInstanceOf(ModelTestUser::class, $models[1]);
+        $this->assertSame('taylorotwell@gmail.com', $models[0]->email);
+        $this->assertSame('abigailotwell@gmail.com', $models[1]->email);
+    }
+
+    public function testPaginatedModelCollectionRetrieval(): void
+    {
+        ModelTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
+        ModelTestUser::create(['id' => 2, 'email' => 'abigailotwell@gmail.com']);
+        ModelTestUser::create(['id' => 3, 'email' => 'foo@gmail.com']);
+
+        Paginator::currentPageResolver(static function () {
+            return 1;
+        });
+        $models = ModelTestUser::oldest('id')->paginate(2);
+
+        $this->assertCount(2, $models);
+        $this->assertInstanceOf(LengthAwarePaginator::class, $models);
+        $this->assertInstanceOf(ModelTestUser::class, $models[0]);
+        $this->assertInstanceOf(ModelTestUser::class, $models[1]);
+        $this->assertSame('taylorotwell@gmail.com', $models[0]->email);
+        $this->assertSame('abigailotwell@gmail.com', $models[1]->email);
+
+        Paginator::currentPageResolver(static function () {
+            return 2;
+        });
+        $models = ModelTestUser::oldest('id')->paginate(2);
+
+        $this->assertCount(1, $models);
+        $this->assertInstanceOf(LengthAwarePaginator::class, $models);
+        $this->assertInstanceOf(ModelTestUser::class, $models[0]);
+        $this->assertSame('foo@gmail.com', $models[0]->email);
+    }
+
+    public function testPaginatedModelCollectionRetrievalWhenNoElements(): void
+    {
+        Paginator::currentPageResolver(static function () {
+            return 1;
+        });
+        $models = ModelTestUser::oldest('id')->paginate(2);
+
+        $this->assertCount(0, $models);
+        $this->assertInstanceOf(LengthAwarePaginator::class, $models);
+
+        Paginator::currentPageResolver(static function () {
+            return 2;
+        });
+        $models = ModelTestUser::oldest('id')->paginate(2);
+
+        $this->assertCount(0, $models);
+    }
+
+    public function testPaginatedModelCollectionRetrievalWhenNoElementsAndDefaultPerPage(): void
+    {
+        $models = ModelTestUser::oldest('id')->paginate();
+
+        $this->assertCount(0, $models);
+        $this->assertInstanceOf(LengthAwarePaginator::class, $models);
     }
 
     protected function createSchema(): void
