@@ -56,6 +56,40 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile a create database command.
+     */
+    public function compileCreateDatabase(string $name, Connection $connection): string
+    {
+        $charset = $connection->getConfig('charset');
+        $collation = $connection->getConfig('collation');
+
+        if (! $charset || ! $collation) {
+            return sprintf(
+                'create database %s',
+                $this->wrapValue($name),
+            );
+        }
+
+        return sprintf(
+            'create database %s default character set %s default collate %s',
+            $this->wrapValue($name),
+            $this->wrapValue($charset),
+            $this->wrapValue($collation),
+        );
+    }
+
+    /**
+     * Compile a drop database if exists command.
+     */
+    public function compileDropDatabaseIfExists(string $name): string
+    {
+        return sprintf(
+            'drop database if exists %s',
+            $this->wrapValue($name)
+        );
+    }
+
+    /**
      * Compile a create table command.
      *
      * @return string

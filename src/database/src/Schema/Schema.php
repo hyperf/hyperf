@@ -18,6 +18,8 @@ use Hyperf\Database\ConnectionResolverInterface;
 
 /**
  * @method static bool hasTable(string $table)
+ * @method static bool createDatabase(string $name)
+ * @method static bool dropDatabaseIfExists(string $name)
  * @method static array getColumnListing(string $table)
  * @method static array getColumnTypeListing(string $table)
  * @method static void dropAllTables()

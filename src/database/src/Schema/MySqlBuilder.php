@@ -17,6 +17,26 @@ use Hyperf\Database\Query\Processors\MySqlProcessor;
 class MySqlBuilder extends Builder
 {
     /**
+     * Create a database in the schema.
+     */
+    public function createDatabase(string $name): bool
+    {
+        return $this->connection->statement(
+            $this->grammar->compileCreateDatabase($name, $this->connection)
+        );
+    }
+
+    /**
+     * Drop a database from the schema if the database exists.
+     */
+    public function dropDatabaseIfExists(string $name): bool
+    {
+        return $this->connection->statement(
+            $this->grammar->compileDropDatabaseIfExists($name)
+        );
+    }
+
+    /**
      * Determine if the given table exists.
      *
      * @param string $table
