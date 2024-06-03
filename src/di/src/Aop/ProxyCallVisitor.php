@@ -201,8 +201,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     private function filterModifier(array $params): array
     {
         return array_map(function (Node\Param $param) {
-            $param->flags &= ~Node\Stmt\Class_::VISIBILITY_MODIFIER_MASK & ~Node\Stmt\Class_::MODIFIER_READONLY;
-            return $param;
+            $tempParam = clone $param;
+            $tempParam->flags &= ~Node\Stmt\Class_::VISIBILITY_MODIFIER_MASK & ~Node\Stmt\Class_::MODIFIER_READONLY;
+            return $tempParam;
         }, $params);
     }
 
