@@ -15,6 +15,7 @@
 
 - [#6813](https://github.com/hyperf/hyperf/pull/6813) Fixed bug that cannot read the messages from non-lower keys for `Hyperf\Constants\Annotation\Message`.
 - [#6818](https://github.com/hyperf/hyperf/pull/6818) Fixed bug that `updateOrInsert` cannot work when the input is empty.
+- [#6828](https://github.com/hyperf/hyperf/pull/6828) Fixed bug that `AOP` cannot work on `__construct`.
 
 # v3.1.24 - 2024-05-30
 

@@ -176,7 +176,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             new Arg($this->getArguments($node->getParams())),
             // A closure that wrapped original method code.
             new Arg(new Closure([
-                'params' => $node->getParams(),
+                'params' => $this->filterModifier($node->getParams()),
                 'uses' => [
                     new Variable('__function__'),
                     new Variable('__method__'),
@@ -192,6 +192,19 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         }
         $node->stmts = $stmts;
         return $node;
+    }
+
+    /**
+     * @param Node\Param[] $params
+     * @return Node\Param[]
+     */
+    private function filterModifier(array $params): array
+    {
+        return array_map(function (Node\Param $param) {
+            $tempParam = clone $param;
+            $tempParam->flags &= ~Class_::VISIBILITY_MODIFIER_MASK & ~Class_::MODIFIER_READONLY;
+            return $tempParam;
+        }, $params);
     }
 
     /**
