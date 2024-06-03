@@ -10,6 +10,7 @@
 - [#6820](https://github.com/hyperf/hyperf/pull/6820) Added method `Hyperf\Database\Model\Builder::valueOrFail()`. 
 - [#6821](https://github.com/hyperf/hyperf/pull/6821) Added method `Hyperf\Database\Concerns\BuildsQueries::chunkMap()`.
 - [#6822](https://github.com/hyperf/hyperf/pull/6822) Added methods `lazyById` and `lazyByIdDesc` for lazy queries.
+- [#6825](https://github.com/hyperf/hyperf/pull/6825) Added `createDatabase` and `dropDatabaseIfExists` methods into `Hyperf\Database\Schmea`.
 
 ## Fixed
 
