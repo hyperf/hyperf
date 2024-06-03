@@ -218,7 +218,7 @@ class DatabaseIntegrationTest extends TestCase
         Paginator::currentPageResolver(static function () {
             return 1;
         });
-        $models = ModelTestUser::oldest('id')->paginate(2);
+        $models = ModelTestUser::query()->oldest('id')->paginate(2);
 
         $this->assertCount(2, $models);
         $this->assertInstanceOf(LengthAwarePaginator::class, $models);
@@ -230,7 +230,7 @@ class DatabaseIntegrationTest extends TestCase
         Paginator::currentPageResolver(static function () {
             return 2;
         });
-        $models = ModelTestUser::oldest('id')->paginate(2);
+        $models = ModelTestUser::query()->oldest('id')->paginate(2);
 
         $this->assertCount(1, $models);
         $this->assertInstanceOf(LengthAwarePaginator::class, $models);
@@ -243,7 +243,7 @@ class DatabaseIntegrationTest extends TestCase
         Paginator::currentPageResolver(static function () {
             return 1;
         });
-        $models = ModelTestUser::oldest('id')->paginate(2);
+        $models = ModelTestUser::query()->oldest('id')->paginate(2);
 
         $this->assertCount(0, $models);
         $this->assertInstanceOf(LengthAwarePaginator::class, $models);
@@ -251,14 +251,14 @@ class DatabaseIntegrationTest extends TestCase
         Paginator::currentPageResolver(static function () {
             return 2;
         });
-        $models = ModelTestUser::oldest('id')->paginate(2);
+        $models = ModelTestUser::query()->oldest('id')->paginate(2);
 
         $this->assertCount(0, $models);
     }
 
     public function testPaginatedModelCollectionRetrievalWhenNoElementsAndDefaultPerPage(): void
     {
-        $models = ModelTestUser::oldest('id')->paginate();
+        $models = ModelTestUser::query()->oldest('id')->paginate();
 
         $this->assertCount(0, $models);
         $this->assertInstanceOf(LengthAwarePaginator::class, $models);
