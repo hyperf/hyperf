@@ -84,6 +84,11 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
     protected static ?Closure $currentPageResolver = null;
 
     /**
+     * The query string resolver callback.
+     */
+    protected static ?Closure $queryStringResolver = null;
+
+    /**
      * Make dynamic calls into the collection.
      */
     public function __call(string $method, array $parameters)
@@ -409,6 +414,38 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
     public function offsetUnset(mixed $offset): void
     {
         $this->items->forget($offset);
+    }
+
+    /**
+     * Add all current query string values to the paginator.
+     */
+    public function withQueryString(): static
+    {
+        if (isset(static::$queryStringResolver)) {
+            return $this->appends(call_user_func(static::$queryStringResolver));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Resolve the query string or return the default value.
+     */
+    public static function resolveQueryString(null|array|string $default = null): string
+    {
+        if (isset(static::$queryStringResolver)) {
+            return (static::$queryStringResolver)();
+        }
+
+        return $default;
+    }
+
+    /**
+     * Set with query string resolver callback.
+     */
+    public static function queryStringResolver(Closure $resolver): void
+    {
+        static::$queryStringResolver = $resolver;
     }
 
     /**

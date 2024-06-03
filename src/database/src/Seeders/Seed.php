@@ -45,6 +45,16 @@ class Seed
     {
     }
 
+    public function path(string $path): void
+    {
+        $this->paths = array_unique(array_merge($this->paths, [$path]));
+    }
+
+    public function paths(): array
+    {
+        return $this->paths;
+    }
+
     /**
      * Run the pending seeders at a given path.
      *

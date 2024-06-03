@@ -600,8 +600,11 @@ class ModelBuilderTest extends TestCase
         $this->assertInstanceOf(Builder::class, $builder->foobar());
 
         $builder = $this->getBuilder();
-        $builder->getQuery()->shouldReceive('insert')->once()->with(['bar'])->andReturn('foo');
+        $builder->getQuery()->shouldReceive('insertOrIgnoreUsing')->once()->with(['bar'], 'baz')->andReturn(1);
+        $this->assertSame(1, $builder->insertOrIgnoreUsing(['bar'], 'baz'));
 
+        $builder = $this->getBuilder();
+        $builder->getQuery()->shouldReceive('insert')->once()->with(['bar'])->andReturn('foo');
         $this->assertEquals('foo', $builder->insert(['bar']));
     }
 
@@ -1237,6 +1240,84 @@ class ModelBuilderTest extends TestCase
         $this->assertSame(vsprintf('select * from "table" where exists (select * from "table" as "%s" where "%s"."id" = "table"."customer_id")', [$relationHash2, $relationHash2]), $builder2->toSql());
     }
 
+    public function testTouch()
+    {
+        Carbon::setTestNow($now = '2017-10-10 10:10:10');
+
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
+        $query->from = 'foo_table';
+
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder->setModel($model);
+
+        $query->shouldReceive('update')->once()->with(['updated_at' => $now])->andReturn(2);
+
+        $result = $builder->touch();
+
+        $this->assertEquals(2, $result);
+    }
+
+    public function testTouchWithCustomColumn()
+    {
+        Carbon::setTestNow($now = '2017-10-10 10:10:10');
+
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
+        $query->from = 'foo_table';
+
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder->setModel($model);
+
+        $query->shouldReceive('update')->once()->with(['published_at' => $now])->andReturn(2);
+
+        $result = $builder->touch('published_at');
+
+        $this->assertEquals(2, $result);
+    }
+
+    public function testTouchWithoutUpdatedAtColumn()
+    {
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('table')->andReturn('table');
+        $query->from = 'table';
+
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubWithoutTimestamp();
+        $builder->setModel($model);
+
+        $query->shouldNotReceive('update');
+
+        $result = $builder->touch();
+
+        $this->assertFalse($result);
+    }
+
+    public function testQualifyColumns()
+    {
+        $builder = new Builder(Mockery::mock(BaseBuilder::class));
+        $builder->shouldReceive('from')->with('foo_table');
+
+        $builder->setModel(new ModelBuilderTestStubStringPrimaryKey());
+
+        $this->assertEquals(['foo_table.column', 'foo_table.name'], $builder->qualifyColumns(['column', 'name']));
+    }
+
+    public function testValueOrFailMethodWithModelFound()
+    {
+        $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
+        $mockModel = new stdClass();
+        $mockModel->name = 'foo';
+        $builder->shouldReceive('first')->with(['name'])->andReturn($mockModel);
+        $builder->shouldReceive('first')->with(['test'])->andReturn(null);
+        $builder->setModel(new ModelBuilderTestStubStringPrimaryKey());
+        $this->assertSame('foo', $builder->valueOrFail('name'));
+        $this->expectException(ModelNotFoundException::class);
+        $builder->valueOrFail('test');
+    }
+
     protected function mockConnectionForModel($model, $database)
     {
         $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';
@@ -1270,6 +1351,14 @@ class ModelBuilderTest extends TestCase
 
         return $query;
     }
+}
+class ModelBuilderTestStubStringPrimaryKey extends Model
+{
+    public bool $incrementing = false;
+
+    protected ?string $table = 'foo_table';
+
+    protected string $keyType = 'string';
 }
 
 class UserMixin

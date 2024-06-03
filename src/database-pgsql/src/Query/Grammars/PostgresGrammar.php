@@ -15,6 +15,7 @@ namespace Hyperf\Database\PgSQL\Query\Grammars;
 use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\JoinLateralClause;
 use Hyperf\Stringable\Str;
 
 use function Hyperf\Collection\collect;
@@ -43,6 +44,14 @@ class PostgresGrammar extends Grammar
     public function compileInsertOrIgnore(Builder $query, array $values)
     {
         return $this->compileInsert($query, $values) . ' on conflict do nothing';
+    }
+
+    /**
+     * Compile an insert ignore statement using a subquery into SQL.
+     */
+    public function compileInsertOrIgnoreUsing(Builder $query, array $columns, string $sql): string
+    {
+        return $this->compileInsertUsing($query, $columns, $sql) . ' on conflict do nothing';
     }
 
     /**
@@ -151,6 +160,14 @@ class PostgresGrammar extends Grammar
     public function compileTruncate(Builder $query): array
     {
         return ['truncate ' . $this->wrapTable($query->from) . ' restart identity cascade' => []];
+    }
+
+    /**
+     * Compile a "lateral join" clause.
+     */
+    public function compileJoinLateral(JoinLateralClause $join, string $expression): string
+    {
+        return trim("{$join->type} join lateral {$expression} on true");
     }
 
     /**

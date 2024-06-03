@@ -20,7 +20,7 @@ class JsonLengthPacker implements PackerInterface
 
     protected int $length;
 
-    protected $defaultOptions = [
+    protected array $defaultOptions = [
         'package_length_type' => 'N',
         'package_body_offset' => 4,
     ];

@@ -16,6 +16,7 @@ use Hyperf\Database\PgSQL\DBAL\Connection;
 use Hyperf\Database\PgSQL\DBAL\Result;
 use Hyperf\Database\PgSQL\DBAL\Statement;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\PostgreSQL;
 
@@ -24,6 +25,7 @@ use Swoole\Coroutine\PostgreSQL;
  * @coversNothing
  */
 #[CoversNothing]
+#[RequiresPhpExtension('swoole', '< 6.0')]
 class ConnectionTest extends TestCase
 {
     protected Connection $connection;
