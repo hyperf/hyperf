@@ -398,7 +398,7 @@ interface BarInterface
         $aspect = FooAspect::class;
 
         AspectCollector::setAround($aspect, [
-            FooConstruct::class.'::__construct',
+            FooConstruct::class . '::__construct',
         ], []);
 
         $ast = new Ast();
@@ -411,7 +411,7 @@ class FooConstruct
 {
     use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
-    public function __construct(public readonly string $name, protected readonly int $age = 18, private int|null $id = null)
+    public function __construct(public readonly string $name, protected readonly int $age = 18, private ?int $id = null)
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
