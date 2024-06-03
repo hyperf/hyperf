@@ -157,6 +157,11 @@ class ModelCommand extends Command
         $builder = $this->getSchemaBuilder($option->getPool());
         $table = Str::replaceFirst($option->getPrefix(), '', $table);
         $columns = $this->formatColumns($builder->getColumnTypeListing($table));
+        if (empty($columns)){
+            $this->output && $this->error(
+                sprintf('Query columns empty, maybe is table `%s` does not exist.You can check it in database.', $table)
+            );
+        }
 
         $project = new Project();
         $class = $option->getTableMapping()[$table] ?? Str::studly(Str::singular($table));
@@ -208,6 +213,9 @@ class ModelCommand extends Command
         $path = BASE_PATH . '/runtime/ide/' . $class . '.php';
         $this->mkdir($path);
         file_put_contents($path, $code);
+        // modify file permission
+        chmod($path, 0777);
+        
         $this->output->writeln(sprintf('<info>Model IDE %s was created.</info>', $data->getClass()));
     }
 
@@ -215,7 +223,7 @@ class ModelCommand extends Command
     {
         $dir = dirname($path);
         if (! is_dir($dir)) {
-            @mkdir($dir, 0755, true);
+            @mkdir($dir, 0777, true);
         }
     }
 
