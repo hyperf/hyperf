@@ -190,7 +190,7 @@ abstract class Command extends SymfonyCommand
                     throw $exception;
                 }
 
-                if ($this->output){
+                if ($this->output) {
                     $container = ApplicationContext::getContainer();
                     if ($container->has(FormatterInterface::class)) {
                         $formatter = $container->get(FormatterInterface::class);

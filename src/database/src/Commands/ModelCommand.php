@@ -157,7 +157,7 @@ class ModelCommand extends Command
         $builder = $this->getSchemaBuilder($option->getPool());
         $table = Str::replaceFirst($option->getPrefix(), '', $table);
         $columns = $this->formatColumns($builder->getColumnTypeListing($table));
-        if (empty($columns)){
+        if (empty($columns)) {
             $this->output && $this->error(
                 sprintf('Query columns empty, maybe is table `%s` does not exist.You can check it in database.', $table)
             );
@@ -215,7 +215,7 @@ class ModelCommand extends Command
         file_put_contents($path, $code);
         // modify file permission
         chmod($path, 0777);
-        
+
         $this->output->writeln(sprintf('<info>Model IDE %s was created.</info>', $data->getClass()));
     }
 
