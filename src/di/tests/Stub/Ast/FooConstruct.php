@@ -17,7 +17,7 @@ class FooConstruct
     public function __construct(
         public readonly string $name,
         protected readonly int $age = 18,
-        private readonly int|null $id = null,
+        private int|null $id = null,
     ) {
     }
 }
