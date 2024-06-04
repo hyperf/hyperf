@@ -100,8 +100,8 @@ class DispatcherFactory
         array $middlewares = []
     ): void {
         $prefix = $annotation->name ?: $className;
+        $aliases = $annotation->aliases;
         $router = $this->getRouter($annotation->server);
-
         $publicMethods = ReflectionManager::reflectClass($className)->getMethods(ReflectionMethod::IS_PUBLIC);
 
         foreach ($publicMethods as $reflectionMethod) {
@@ -114,6 +114,13 @@ class DispatcherFactory
                 $className,
                 $methodName,
             ]);
+
+            foreach ((array) $aliases as $alias) {
+                $router->addRoute($this->pathGenerator->generate($alias, $methodName), [
+                    $className,
+                    $methodName,
+                ]);
+            }
 
             $methodMiddlewares = $middlewares;
             // Handle method level middlewares.
