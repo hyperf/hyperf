@@ -68,6 +68,24 @@ class SetCookie implements Stringable, Arrayable
         return rtrim($str, '; ');
     }
 
+    public static function fromArray(array $data): static
+    {
+        foreach ($data as $key => $value) {
+            if ($value === null) {
+                continue;
+            }
+
+            $data[$key] = match ($key) {
+                'Name', 'Value', 'Domain', 'Path' => (string) $value,
+                'Max-Age' => (int) $value,
+                'Secure', 'Discard', 'HttpOnly' => (bool) $value,
+                default => $value,
+            };
+        }
+
+        return new static($data);
+    }
+
     /**
      * Create a new SetCookie object from a string.
      *
@@ -107,7 +125,7 @@ class SetCookie implements Stringable, Arrayable
             }
         }
 
-        return new self($data);
+        return static::fromArray($data);
     }
 
     public function toArray(): array
