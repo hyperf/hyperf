@@ -12,9 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Command;
 
-use Hyperf\Context\ApplicationContext;
 use Hyperf\Coroutine\Coroutine;
-use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\ExitException;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
@@ -190,15 +188,7 @@ abstract class Command extends SymfonyCommand
                     throw $exception;
                 }
 
-                if ($this->output) {
-                    $container = ApplicationContext::getContainer();
-                    if ($container->has(FormatterInterface::class)) {
-                        $formatter = $container->get(FormatterInterface::class);
-                        $this->output->error($formatter->format($exception));
-                    } else {
-                        $this->output->error($exception->getMessage());
-                    }
-                }
+                $this->output?->error((string) $exception);
 
                 $this->exitCode = self::FAILURE;
 
