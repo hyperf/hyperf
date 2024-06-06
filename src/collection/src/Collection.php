@@ -156,7 +156,7 @@ class Collection implements Enumerable, ArrayAccess
      *
      * @return static<int, mixed>
      */
-    public function collapse(): self
+    public function collapse(): Enumerable
     {
         return new static(Arr::collapse($this->items));
     }
@@ -377,7 +377,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param float|int $depth
      * @return static<int, mixed>
      */
-    public function flatten($depth = INF): self
+    public function flatten($depth = INF): Enumerable
     {
         return new static(Arr::flatten($this->items, $depth));
     }
@@ -387,7 +387,7 @@ class Collection implements Enumerable, ArrayAccess
      *
      * @return static<TKey, TValue>
      */
-    public function flip(): self|static
+    public function flip(): Enumerable
     {
         return new static(array_flip($this->items));
     }
@@ -459,7 +459,7 @@ class Collection implements Enumerable, ArrayAccess
      * Group an associative array by a field or using a callback.
      * @param mixed $groupBy
      */
-    public function groupBy($groupBy, bool $preserveKeys = false): static
+    public function groupBy($groupBy, bool $preserveKeys = false): Enumerable
     {
         if (is_array($groupBy)) {
             $nextGroups = $groupBy;
@@ -606,7 +606,7 @@ class Collection implements Enumerable, ArrayAccess
      * Get the keys of the collection items.
      * @return static<int, TKey>
      */
-    public function keys(): self|static
+    public function keys(): Enumerable
     {
         return new static(array_keys($this->items));
     }
@@ -631,7 +631,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param array<array-key, string>|string $value
      * @return static<int, mixed>
      */
-    public function pluck(array|string $value, ?string $key = null): self|static
+    public function pluck(array|string $value, ?string $key = null): Enumerable
     {
         return new static(Arr::pluck($this->items, $value, $key));
     }
@@ -644,7 +644,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param callable(TValue, TKey): TMapValue $callback
      * @return static<TKey, TMapValue>
      */
-    public function map(callable $callback): self|static
+    public function map(callable $callback): Enumerable
     {
         $result = [];
         foreach ($this->items as $key => $value) {
@@ -664,7 +664,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param callable(TValue, TKey): array<TMapToDictionaryKey, TMapToDictionaryValue> $callback
      * @return static<TMapToDictionaryKey, array<int, TMapToDictionaryValue>>
      */
-    public function mapToDictionary(callable $callback): self|static
+    public function mapToDictionary(callable $callback): Enumerable
     {
         $dictionary = [];
         foreach ($this->items as $key => $item) {
@@ -689,7 +689,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param callable(TValue, TKey): array<TMapWithKeysKey, TMapWithKeysValue> $callback
      * @return static<TMapWithKeysKey, TMapWithKeysValue>
      */
-    public function mapWithKeys(callable $callback): self|static
+    public function mapWithKeys(callable $callback): Enumerable
     {
         return new static(Arr::mapWithKeys($this->items, $callback));
     }
@@ -1208,7 +1208,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param Arrayable<array-key, TZipValue>|iterable<array-key, TZipValue> ...$items
      * @return static<int, static<int, TValue|TZipValue>>
      */
-    public function zip($items): self|static
+    public function zip($items): Enumerable
     {
         $arrayableItems = array_map(function ($items) {
             return $this->getArrayableItems($items);
@@ -1230,7 +1230,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param TPadValue $value
      * @return static<int, TPadValue|TValue>
      */
-    public function pad(int $size, $value): self|static
+    public function pad(int $size, $value): Enumerable
     {
         return new static(array_pad($this->items, $size, $value));
     }
