@@ -196,7 +196,7 @@ class LazyCollection implements Enumerable
      *
      * @return static<int, mixed>
      */
-    public function collapse()
+    public function collapse(): Enumerable
     {
         return new static(function () {
             foreach ($this as $values) {
@@ -477,7 +477,7 @@ class LazyCollection implements Enumerable
      *
      * @return static<int, mixed>
      */
-    public function flatten(float|int $depth = INF)
+    public function flatten(float|int $depth = INF): Enumerable
     {
         $instance = new static(function () use ($depth) {
             foreach ($this as $item) {

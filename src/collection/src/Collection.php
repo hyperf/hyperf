@@ -156,7 +156,7 @@ class Collection implements Enumerable, ArrayAccess
      *
      * @return static<int, mixed>
      */
-    public function collapse(): self
+    public function collapse(): Enumerable
     {
         return new static(Arr::collapse($this->items));
     }
@@ -377,7 +377,7 @@ class Collection implements Enumerable, ArrayAccess
      * @param float|int $depth
      * @return static<int, mixed>
      */
-    public function flatten($depth = INF): self
+    public function flatten($depth = INF): Enumerable
     {
         return new static(Arr::flatten($this->items, $depth));
     }

@@ -128,7 +128,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @return static<int, mixed>
      */
-    public function collapse();
+    public function collapse(): Enumerable;
 
     /**
      * Alias for the "contains" method.
@@ -478,7 +478,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @return static
      */
-    public function flatten(float|int $depth = INF);
+    public function flatten(float|int $depth = INF): Enumerable;
 
     /**
      * Flip the values with their keys.
