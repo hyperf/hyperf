@@ -16,12 +16,14 @@ use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[RequiresPhpExtension('swoole', '< 6.0')]
 class SchemaBuilderTest extends TestCase
 {
     protected function setUp(): void
