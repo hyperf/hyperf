@@ -136,7 +136,7 @@ trait BuildsQueries
     /**
      * Chunk the results of a query by comparing IDs in a given order.
      */
-    public function orderedChunkById(int $count, callable $callback,string|null $column = null,string|null $alias = null,bool $descending = false): bool
+    public function orderedChunkById(int $count, callable $callback, ?string $column = null, ?string $alias = null, bool $descending = false): bool
     {
         $column ??= $this->defaultKeyName();
 
@@ -179,7 +179,7 @@ trait BuildsQueries
 
             unset($results);
 
-            $page++;
+            ++$page;
         } while ($countResults === $count);
 
         return true;
@@ -188,7 +188,7 @@ trait BuildsQueries
     /**
      * Chunk the results of a query by comparing IDs.
      */
-    public function chunkById(int $count, callable $callback,string|null $column = null,string|null $alias = null): bool
+    public function chunkById(int $count, callable $callback, ?string $column = null, ?string $alias = null): bool
     {
         return $this->orderedChunkById($count, $callback, $column, $alias);
     }
@@ -196,7 +196,7 @@ trait BuildsQueries
     /**
      * Chunk the results of a query by comparing IDs in descending order.
      */
-    public function chunkByIdDesc(int $count, callable $callback,string|null $column = null,string|null $alias = null): bool
+    public function chunkByIdDesc(int $count, callable $callback, ?string $column = null, ?string $alias = null): bool
     {
         return $this->orderedChunkById($count, $callback, $column, $alias, descending: true);
     }

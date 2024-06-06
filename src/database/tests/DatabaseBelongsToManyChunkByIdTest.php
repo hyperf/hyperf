@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Collection\Collection;
@@ -20,6 +30,10 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class DatabaseBelongsToManyChunkByIdTest extends TestCase
 {
     protected function setUp(): void
@@ -56,6 +70,43 @@ class DatabaseBelongsToManyChunkByIdTest extends TestCase
         $this->createSchema();
     }
 
+    protected function tearDown(): void
+    {
+        $this->schema()->drop('article_user');
+        $this->schema()->drop('articles');
+        $this->schema()->drop('users');
+    }
+
+    public function testBelongsToChunkById(): void
+    {
+        $this->seedData();
+
+        $user = BelongsToManyChunkByIdTestTestUser::query()->first();
+        $i = 0;
+
+        $user->articles()->chunkById(1, function (Collection $collection) use (&$i) {
+            ++$i;
+            $this->assertEquals($i, $collection->first()->id);
+        }, 'articles.id', 'id');
+
+        $this->assertSame(3, $i);
+    }
+
+    public function testBelongsToChunkByIdDesc(): void
+    {
+        $this->seedData();
+
+        $user = BelongsToManyChunkByIdTestTestUser::query()->first();
+        $i = 0;
+
+        $user->articles()->chunkByIdDesc(1, function (Collection $collection) use (&$i) {
+            $this->assertEquals(3 - $i, $collection->first()->id);
+            ++$i;
+        }, 'articles.id', 'id');
+
+        $this->assertSame(3, $i);
+    }
+
     protected function connection($connection = 'default'): Connection
     {
         return Register::getConnectionResolver()->connection($connection);
@@ -64,6 +115,19 @@ class DatabaseBelongsToManyChunkByIdTest extends TestCase
     protected function schema($connection = 'default'): Builder
     {
         return $this->connection($connection)->getSchemaBuilder();
+    }
+
+    protected function seedData()
+    {
+        $user = BelongsToManyChunkByIdTestTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
+        $data = [
+            ['id' => 1, 'title' => 'Another title'],
+            ['id' => 2, 'title' => 'Another title'],
+            ['id' => 3, 'title' => 'Another title'],
+        ];
+        foreach ($data as $item) {
+            $user->articles()->create($item);
+        }
     }
 
     private function createSchema(): void
@@ -86,64 +150,15 @@ class DatabaseBelongsToManyChunkByIdTest extends TestCase
             $table->foreign('user_id')->references('id')->on('users');
         });
     }
-
-    protected function tearDown(): void
-    {
-        $this->schema()->drop('article_user');
-        $this->schema()->drop('articles');
-        $this->schema()->drop('users');
-    }
-
-    protected function seedData()
-    {
-        $user = BelongsToManyChunkByIdTestTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
-        $data = [
-            ['id' => 1, 'title' => 'Another title'],
-            ['id' => 2, 'title' => 'Another title'],
-            ['id' => 3, 'title' => 'Another title'],
-        ];
-        foreach ($data as $item) {
-            $user->articles()->create($item);
-        }
-    }
-
-    public function testBelongsToChunkById(): void
-    {
-        $this->seedData();
-
-        $user = BelongsToManyChunkByIdTestTestUser::query()->first();
-        $i = 0;
-
-        $user->articles()->chunkById(1, function (Collection $collection) use (&$i) {
-            $i++;
-            $this->assertEquals($i, $collection->first()->id);
-        },'articles.id','id');
-
-        $this->assertSame(3, $i);
-    }
-
-    public function testBelongsToChunkByIdDesc(): void
-    {
-        $this->seedData();
-
-        $user = BelongsToManyChunkByIdTestTestUser::query()->first();
-        $i = 0;
-
-        $user->articles()->chunkByIdDesc(1, function (Collection $collection) use (&$i) {
-            $this->assertEquals(3 - $i, $collection->first()->id);
-            $i++;
-        },'articles.id','id');
-
-        $this->assertSame(3, $i);
-    }
-
 }
 
 class BelongsToManyChunkByIdTestTestUser extends Model
 {
-    protected ?string $table = 'users';
-    protected array $fillable = ['id', 'email'];
     public bool $timestamps = false;
+
+    protected ?string $table = 'users';
+
+    protected array $fillable = ['id', 'email'];
 
     public function articles()
     {
@@ -153,9 +168,13 @@ class BelongsToManyChunkByIdTestTestUser extends Model
 
 class BelongsToManyChunkByIdTestTestArticle extends Model
 {
-    protected ?string $table = 'articles';
-    protected string $keyType = 'string';
     public bool $incrementing = false;
+
     public bool $timestamps = false;
+
+    protected ?string $table = 'articles';
+
+    protected string $keyType = 'string';
+
     protected array $fillable = ['id', 'title'];
 }
