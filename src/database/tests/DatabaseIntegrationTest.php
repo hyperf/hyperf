@@ -78,18 +78,20 @@ class DatabaseIntegrationTest extends TestCase
         $db = new Db($container);
         $container->shouldReceive('get')->with(Db::class)->andReturn($db);
         Register::setConnectionResolver($resolver);
+        $this->createSchema();
     }
 
     protected function tearDown(): void
     {
         foreach (['default', 'second_connection'] as $connection) {
             $this->schema($connection)->drop('users');
+            $this->schema($connection)->drop('friends');
+            $this->schema($connection)->drop('posts');
         }
     }
 
     public function testUpdateOrCreateOnDifferentConnection(): void
     {
-        $this->createSchema();
         ModelTestUser::create(['email' => 'taylorotwell@gmail.com']);
 
         ModelTestUser::on('second_connection')->updateOrCreate(
@@ -108,7 +110,6 @@ class DatabaseIntegrationTest extends TestCase
 
     public function testCheckAndCreateMethodsOnMultiConnections(): void
     {
-        $this->createSchema();
         ModelTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
         ModelTestUser::on('second_connection')->find(
             ModelTestUser::on('second_connection')->insert(['id' => 2, 'email' => 'themsaid@gmail.com'])
@@ -136,6 +137,103 @@ class DatabaseIntegrationTest extends TestCase
         $this->assertEquals(2, ModelTestUser::on('second_connection')->count());
     }
 
+    public function testWithWhereHasOnNestedSelfReferencingBelongsToManyRelationship()
+    {
+        $user = ModelTestUser::create(['email' => 'taylorotwell@gmail.com']);
+        $friend = $user->friends()->create(['email' => 'abigailotwell@gmail.com']);
+        $friend->friends()->create(['email' => 'foo@gmail.com']);
+
+        $results = ModelTestUser::withWhereHas('friends.friends', function ($query) {
+            $query->where('email', 'foo@gmail.com');
+        })->get();
+
+        $this->assertCount(1, $results);
+        $this->assertSame('taylorotwell@gmail.com', $results->first()->email);
+        $this->assertTrue($results->first()->relationLoaded('friends'));
+        $this->assertSame($results->first()->friends->pluck('email')->unique()->toArray(), ['abigailotwell@gmail.com']);
+        $this->assertSame($results->first()->friends->pluck('friends')->flatten()->pluck('email')->unique()->toArray(), ['foo@gmail.com']);
+    }
+
+    public function testWithWhereHasOnSelfReferencingBelongsToManyRelationship()
+    {
+        $user = ModelTestUser::create(['email' => 'taylorotwell@gmail.com']);
+        $user->friends()->create(['email' => 'abigailotwell@gmail.com']);
+
+        $results = ModelTestUser::withWhereHas('friends', function ($query) {
+            $query->where('email', 'abigailotwell@gmail.com');
+        })->get();
+
+        $this->assertCount(1, $results);
+        $this->assertSame('taylorotwell@gmail.com', $results->first()->email);
+        $this->assertTrue($results->first()->relationLoaded('friends'));
+        $this->assertSame($results->first()->friends->pluck('email')->unique()->toArray(), ['abigailotwell@gmail.com']);
+    }
+
+    public function testWithWhereHasOnSelfReferencingBelongsToRelationship()
+    {
+        $parentPost = ModelTestPost::create(['name' => 'Parent Post', 'user_id' => 1]);
+        ModelTestPost::create(['name' => 'Child Post', 'parent_id' => $parentPost->id, 'user_id' => 2]);
+
+        $results = ModelTestPost::withWhereHas('parentPost', function ($query) {
+            $query->where('name', 'Parent Post');
+        })->get();
+
+        $this->assertCount(1, $results);
+        $this->assertSame('Child Post', $results->first()->name);
+        $this->assertTrue($results->first()->relationLoaded('parentPost'));
+        $this->assertSame($results->first()->parentPost->name, 'Parent Post');
+    }
+
+    public function testWithWhereHasOnNestedSelfReferencingBelongsToRelationship()
+    {
+        $grandParentPost = ModelTestPost::create(['name' => 'Grandparent Post', 'user_id' => 1]);
+        $parentPost = ModelTestPost::create(['name' => 'Parent Post', 'parent_id' => $grandParentPost->id, 'user_id' => 2]);
+        ModelTestPost::create(['name' => 'Child Post', 'parent_id' => $parentPost->id, 'user_id' => 3]);
+
+        $results = ModelTestPost::withWhereHas('parentPost.parentPost', function ($query) {
+            $query->where('name', 'Grandparent Post');
+        })->get();
+
+        $this->assertCount(1, $results);
+        $this->assertSame('Child Post', $results->first()->name);
+        $this->assertTrue($results->first()->relationLoaded('parentPost'));
+        $this->assertSame($results->first()->parentPost->name, 'Parent Post');
+        $this->assertTrue($results->first()->parentPost->relationLoaded('parentPost'));
+        $this->assertSame($results->first()->parentPost->parentPost->name, 'Grandparent Post');
+    }
+
+    public function testWithWhereHasOnSelfReferencingHasManyRelationship()
+    {
+        $parentPost = ModelTestPost::create(['name' => 'Parent Post', 'user_id' => 1]);
+        ModelTestPost::create(['name' => 'Child Post', 'parent_id' => $parentPost->id, 'user_id' => 2]);
+
+        $results = ModelTestPost::withWhereHas('childPosts', function ($query) {
+            $query->where('name', 'Child Post');
+        })->get();
+
+        $this->assertCount(1, $results);
+        $this->assertSame('Parent Post', $results->first()->name);
+        $this->assertTrue($results->first()->relationLoaded('childPosts'));
+        $this->assertSame($results->first()->childPosts->pluck('name')->unique()->toArray(), ['Child Post']);
+    }
+
+    public function testWithWhereHasOnNestedSelfReferencingHasManyRelationship()
+    {
+        $grandParentPost = ModelTestPost::create(['name' => 'Grandparent Post', 'user_id' => 1]);
+        $parentPost = ModelTestPost::create(['name' => 'Parent Post', 'parent_id' => $grandParentPost->id, 'user_id' => 2]);
+        ModelTestPost::create(['name' => 'Child Post', 'parent_id' => $parentPost->id, 'user_id' => 3]);
+
+        $results = ModelTestPost::withWhereHas('childPosts.childPosts', function ($query) {
+            $query->where('name', 'Child Post');
+        })->get();
+
+        $this->assertCount(1, $results);
+        $this->assertSame('Grandparent Post', $results->first()->name);
+        $this->assertTrue($results->first()->relationLoaded('childPosts'));
+        $this->assertSame($results->first()->childPosts->pluck('name')->unique()->toArray(), ['Parent Post']);
+        $this->assertSame($results->first()->childPosts->pluck('childPosts')->flatten()->pluck('name')->unique()->toArray(), ['Child Post']);
+    }
+
     protected function createSchema(): void
     {
         foreach (['default', 'second_connection'] as $connection) {
@@ -145,6 +243,19 @@ class DatabaseIntegrationTest extends TestCase
                 $table->string('name')->nullable();
                 $table->string('value')->nullable();
                 $table->timestamp('birthday')->nullable();
+                $table->timestamps();
+            });
+
+            $this->schema($connection)->create('friends', function ($table) {
+                $table->integer('user_id');
+                $table->integer('friend_id');
+                $table->integer('friend_level_id')->nullable();
+            });
+            $this->schema($connection)->create('posts', function ($table) {
+                $table->increments('id');
+                $table->integer('user_id');
+                $table->integer('parent_id')->nullable();
+                $table->string('name');
                 $table->timestamps();
             });
         }
@@ -160,6 +271,7 @@ class DatabaseIntegrationTest extends TestCase
         return $this->connection($connection)->getSchemaBuilder();
     }
 }
+
 class ModelTestUser extends Model
 {
     protected ?string $table = 'users';
@@ -167,4 +279,31 @@ class ModelTestUser extends Model
     protected array $casts = ['birthday' => 'datetime'];
 
     protected array $guarded = [];
+
+    public function friends()
+    {
+        return $this->belongsToMany(self::class, 'friends', 'user_id', 'friend_id');
+    }
+}
+
+class ModelTestPost extends Model
+{
+    protected ?string $table = 'posts';
+
+    protected array $guarded = [];
+
+    public function user()
+    {
+        return $this->belongsTo(ModelTestUser::class, 'user_id');
+    }
+
+    public function childPosts()
+    {
+        return $this->hasMany(self::class, 'parent_id');
+    }
+
+    public function parentPost()
+    {
+        return $this->belongsTo(self::class, 'parent_id');
+    }
 }

@@ -125,6 +125,17 @@ trait QueriesRelationships
     }
 
     /**
+     * Add a relationship count / exists condition to the query with where clauses.
+     *
+     * Also load the relationship with same condition.
+     */
+    public function withWhereHas(string $relation, ?Closure $callback = null, string $operator = '>=', int $count = 1): Builder|static
+    {
+        return $this->whereHas(Str::before($relation, ':'), $callback, $operator, $count)
+            ->with($callback ? [$relation => fn ($query) => $callback($query)] : $relation);
+    }
+
+    /**
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
