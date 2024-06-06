@@ -538,7 +538,7 @@ class LazyCollection implements Enumerable
      * @param array|(callable(TValue, TKey): array-key)|string $groupBy
      * @return static<array-key, static<array-key, TValue>>
      */
-    public function groupBy($groupBy, bool $preserveKeys = false)
+    public function groupBy($groupBy, bool $preserveKeys = false): self|static
     {
         return $this->passthru('groupBy', func_get_args());
     }
