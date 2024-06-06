@@ -25,6 +25,7 @@ use Hyperf\Database\ConnectionResolverInterface;
  * @method static void dropAllTables()
  * @method static void dropAllViews()
  * @method static array getAllTables()
+ * @method static array getTables()
  * @method static array getAllViews()
  * @method static bool hasColumn(string $table, string $column)
  * @method static bool hasColumns(string $table, array $columns)

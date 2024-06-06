@@ -115,6 +115,14 @@ class Builder
     }
 
     /**
+     * Get the tables that belong to the database.
+     */
+    public function getTables(): array
+    {
+        throw new LogicException('This database driver does not support getting all tables.');
+    }
+
+    /**
      * Get the data type for the given column name.
      *
      * @param string $table
