@@ -1,5 +1,9 @@
 # v3.1.26 - TBD
 
+## Optimized
+
+- [#6841](https://github.com/hyperf/hyperf/pull/6841) Optimized the return type of `Collection::groupBy` to `self|static`.
+
 ## Added
 
 - [#6837](https://github.com/hyperf/hyperf/pull/6837) Added method `Model\Concerns\QueriesRelationships::withWhereHas()`.
