@@ -68,23 +68,23 @@ class DatabaseModelCursorPaginateTest extends TestCase
     public function testCursorPaginationOnTopOfColumns()
     {
         for ($i = 1; $i <= 50; ++$i) {
-            TestPost::create([
+            ModelTestPost::create([
                 'title' => 'Title ' . $i,
             ]);
         }
 
-        $this->assertCount(15, TestPost::cursorPaginate(15, ['id', 'title']));
+        $this->assertCount(15, ModelTestPost::cursorPaginate(15, ['id', 'title']));
     }
 
     public function testPaginationWithUnion()
     {
-        TestPost::create(['title' => 'Hello world', 'user_id' => 1]);
-        TestPost::create(['title' => 'GooDbye world', 'user_id' => 2]);
-        TestPost::create(['title' => 'Howdy', 'user_id' => 3]);
-        TestPost::create(['title' => '4th', 'user_id' => 4]);
+        ModelTestPost::create(['title' => 'Hello world', 'user_id' => 1]);
+        ModelTestPost::create(['title' => 'GooDbye world', 'user_id' => 2]);
+        ModelTestPost::create(['title' => 'Howdy', 'user_id' => 3]);
+        ModelTestPost::create(['title' => '4th', 'user_id' => 4]);
 
-        $table1 = TestPost::query()->whereIn('user_id', [1, 2]);
-        $table2 = TestPost::query()->whereIn('user_id', [3, 4]);
+        $table1 = ModelTestPost::query()->whereIn('user_id', [1, 2]);
+        $table2 = ModelTestPost::query()->whereIn('user_id', [3, 4]);
 
         $result = $table1->unionAll($table2)
             ->orderBy('user_id', 'desc')
@@ -96,11 +96,11 @@ class DatabaseModelCursorPaginateTest extends TestCase
     public function testPaginationWithDistinct()
     {
         for ($i = 1; $i <= 3; ++$i) {
-            TestPost::create(['title' => 'Hello world']);
-            TestPost::create(['title' => 'GooDbye world']);
+            ModelTestPost::create(['title' => 'Hello world']);
+            ModelTestPost::create(['title' => 'GooDbye world']);
         }
 
-        $query = TestPost::query()->distinct();
+        $query = ModelTestPost::query()->distinct();
 
         $this->assertEquals(6, $query->get()->count());
         $this->assertEquals(6, $query->count());
@@ -110,11 +110,11 @@ class DatabaseModelCursorPaginateTest extends TestCase
     public function testPaginationWithWhereClause()
     {
         for ($i = 1; $i <= 3; ++$i) {
-            TestPost::create(['title' => 'Hello world', 'user_id' => null]);
-            TestPost::create(['title' => 'GooDbye world', 'user_id' => 2]);
+            ModelTestPost::create(['title' => 'Hello world', 'user_id' => null]);
+            ModelTestPost::create(['title' => 'GooDbye world', 'user_id' => 2]);
         }
 
-        $query = TestPost::query()->whereNull('user_id');
+        $query = ModelTestPost::query()->whereNull('user_id');
 
         $this->assertEquals(3, $query->get()->count());
         $this->assertEquals(3, $query->count());
@@ -125,9 +125,9 @@ class DatabaseModelCursorPaginateTest extends TestCase
     {
         for ($i = 1; $i <= 3; ++$i) {
             TestUser::create();
-            TestPost::create(['title' => 'Hello world', 'user_id' => null]);
-            TestPost::create(['title' => 'GooDbye world', 'user_id' => 2]);
-            TestPost::create(['title' => 'Howdy', 'user_id' => 3]);
+            ModelTestPost::create(['title' => 'Hello world', 'user_id' => null]);
+            ModelTestPost::create(['title' => 'GooDbye world', 'user_id' => 2]);
+            ModelTestPost::create(['title' => 'Howdy', 'user_id' => 3]);
         }
 
         $query = TestUser::query()->has('posts');
@@ -141,9 +141,9 @@ class DatabaseModelCursorPaginateTest extends TestCase
     {
         for ($i = 1; $i <= 3; ++$i) {
             TestUser::create();
-            TestPost::create(['title' => 'Hello world', 'user_id' => null]);
-            TestPost::create(['title' => 'GooDbye world', 'user_id' => 2]);
-            TestPost::create(['title' => 'Howdy', 'user_id' => 3]);
+            ModelTestPost::create(['title' => 'Hello world', 'user_id' => null]);
+            ModelTestPost::create(['title' => 'GooDbye world', 'user_id' => 2]);
+            ModelTestPost::create(['title' => 'Howdy', 'user_id' => 3]);
         }
 
         $query = TestUser::query()->whereHas('posts', function ($query) {
@@ -159,9 +159,9 @@ class DatabaseModelCursorPaginateTest extends TestCase
     {
         for ($i = 1; $i <= 3; ++$i) {
             TestUser::create();
-            TestPost::create(['title' => 'Hello world', 'user_id' => null]);
-            TestPost::create(['title' => 'GooDbye world', 'user_id' => 2]);
-            TestPost::create(['title' => 'Howdy', 'user_id' => 3]);
+            ModelTestPost::create(['title' => 'Hello world', 'user_id' => null]);
+            ModelTestPost::create(['title' => 'GooDbye world', 'user_id' => 2]);
+            ModelTestPost::create(['title' => 'Howdy', 'user_id' => 3]);
         }
 
         $query = TestUser::query()->whereExists(function ($query) {
@@ -179,10 +179,10 @@ class DatabaseModelCursorPaginateTest extends TestCase
     {
         for ($i = 1; $i <= 4; ++$i) {
             TestUser::create();
-            TestPost::create(['title' => 'Hello world', 'user_id' => null]);
-            TestPost::create(['title' => 'GooDbye world', 'user_id' => 2]);
-            TestPost::create(['title' => 'Howdy', 'user_id' => 3]);
-            TestPost::create(['title' => 'Howdy', 'user_id' => 4]);
+            ModelTestPost::create(['title' => 'Hello world', 'user_id' => null]);
+            ModelTestPost::create(['title' => 'GooDbye world', 'user_id' => 2]);
+            ModelTestPost::create(['title' => 'Howdy', 'user_id' => 3]);
+            ModelTestPost::create(['title' => 'Howdy', 'user_id' => 4]);
         }
 
         $query = TestUser::query()->whereExists(function ($query) {
@@ -209,12 +209,12 @@ class DatabaseModelCursorPaginateTest extends TestCase
 
     public function testPaginationWithMultipleUnionAndMultipleWhereClauses(): void
     {
-        TestPost::create(['title' => 'Post A', 'user_id' => 100]);
-        TestPost::create(['title' => 'Post B', 'user_id' => 101]);
+        ModelTestPost::create(['title' => 'Post A', 'user_id' => 100]);
+        ModelTestPost::create(['title' => 'Post B', 'user_id' => 101]);
 
-        $table1 = TestPost::select(['id', 'title', 'user_id'])->where('user_id', 100);
-        $table2 = TestPost::select(['id', 'title', 'user_id'])->where('user_id', 101);
-        $table3 = TestPost::select(['id', 'title', 'user_id'])->where('user_id', 101);
+        $table1 = ModelTestPost::select(['id', 'title', 'user_id'])->where('user_id', 100);
+        $table2 = ModelTestPost::select(['id', 'title', 'user_id'])->where('user_id', 101);
+        $table3 = ModelTestPost::select(['id', 'title', 'user_id'])->where('user_id', 101);
 
         $columns = ['id'];
         $cursorName = 'cursor-name';
@@ -240,10 +240,10 @@ class DatabaseModelCursorPaginateTest extends TestCase
         TestUser::create(['name' => 'A (user)']);
         TestUser::create(['name' => 'C (user)']);
 
-        TestPost::create(['title' => 'B (post)']);
-        TestPost::create(['title' => 'D (post)']);
+        ModelTestPost::create(['title' => 'B (post)']);
+        ModelTestPost::create(['title' => 'D (post)']);
 
-        $table1 = TestPost::select(['title as alias']);
+        $table1 = ModelTestPost::select(['title as alias']);
         $table2 = TestUser::select(['name as alias']);
 
         $columns = ['alias'];
@@ -347,6 +347,6 @@ class TestUser extends Model
 
     public function posts()
     {
-        return $this->hasMany(TestPost::class, 'user_id');
+        return $this->hasMany(ModelTestPost::class, 'user_id');
     }
 }
