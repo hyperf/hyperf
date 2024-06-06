@@ -340,7 +340,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param callable(TModel, TKey): TMapValue $callback
      * @return BaseCollection<TKey, TMapValue>|static<TKey, TMapValue>
      */
-    public function map(callable $callback): Enumerable|static
+    public function map(callable $callback): Enumerable
     {
         $result = parent::map($callback);
 
