@@ -37,8 +37,6 @@ use Traversable;
  */
 class LazyCollection implements Enumerable
 {
-    use Macroable;
-
     /**
      * @use EnumeratesValues<TKey, TValue>
      */
