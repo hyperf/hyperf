@@ -1026,7 +1026,7 @@ trait EnumeratesValues
      * @param callable|string $key
      * @param null|string $operator
      */
-    protected function operatorForWhere(mixed $key, mixed $operator = null, mixed $value = null): Closure
+    protected function operatorForWhere(mixed $key, mixed $operator = null, mixed $value = null): callable|Closure
     {
         if ($this->useAsCallable($key)) {
             return $key;
