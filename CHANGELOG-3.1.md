@@ -1,5 +1,7 @@
 # v3.1.26 - TBD
 
+# v3.1.25.1 - 2024-06-07
+
 ## Added
 
 - [#6837](https://github.com/hyperf/hyperf/pull/6837) Added method `Model\Concerns\QueriesRelationships::withWhereHas()`.
