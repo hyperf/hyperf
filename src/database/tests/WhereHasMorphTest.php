@@ -317,11 +317,11 @@ class WhereHasMorphTest extends TestCase
 
 class MorphComment extends Model
 {
-    protected ?string $table = 'comments';
-
     use SoftDeletes;
 
     public bool $timestamps = false;
+
+    protected ?string $table = 'comments';
 
     protected array $guarded = [];
 
@@ -343,11 +343,11 @@ class MorphComment extends Model
 
 class MorphPost extends Model
 {
-    protected ?string $table = 'posts';
-
     use SoftDeletes;
 
     public bool $timestamps = false;
+
+    protected ?string $table = 'posts';
 
     protected array $guarded = [];
 
