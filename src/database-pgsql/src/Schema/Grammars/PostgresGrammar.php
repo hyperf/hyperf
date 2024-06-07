@@ -78,6 +78,17 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine the tables.
+     */
+    public function compileTables(): string
+    {
+        return 'select c.relname as name, n.nspname as schema, pg_total_relation_size(c.oid) as size, '
+            . "obj_description(c.oid, 'pg_class') as comment from pg_class c, pg_namespace n "
+            . "where c.relkind in ('r', 'p') and n.oid = c.relnamespace and n.nspname not in ('pg_catalog', 'information_schema') "
+            . 'order by c.relname';
+    }
+
+    /**
      * Compile the query to determine if a table exists.
      */
     public function compileTableExists(): string

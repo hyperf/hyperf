@@ -4,6 +4,10 @@
 
 - [#6848](https://github.com/hyperf/hyperf/pull/6848) Fixed bug that `LazyCollection::splitIn()` cannot work caused by type hint.
 
+## Added
+
+- [#6845](https://github.com/hyperf/hyperf/pull/6845) Added method `Hyperf\Database\Schema::getTables()`.
+
 # v3.1.25.1 - 2024-06-07
 
 ## Added
