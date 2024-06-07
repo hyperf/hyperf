@@ -15,7 +15,6 @@ namespace Hyperf\Collection;
 use ArrayAccess;
 use ArrayIterator;
 use Closure;
-use Exception;
 use Hyperf\Collection\Traits\EnumeratesValues;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
@@ -395,7 +394,7 @@ class Collection implements Enumerable, ArrayAccess
     /**
      * Remove an item from the collection by key.
      *
-     * @param \Hyperf\Contract\Arrayable<array-key, TValue>|iterable<array-key, TKey>|TKey $keys
+     * @param Arrayable<array-key, TValue>|iterable<array-key, TKey>|TKey $keys
      * @return $this
      */
     public function forget($keys): static
@@ -1556,8 +1555,6 @@ class Collection implements Enumerable, ArrayAccess
 
                 $ascending = Arr::get($comparison, 1, true) === true
                     || Arr::get($comparison, 1, true) === 'asc';
-
-                $result = 0;
 
                 if (! is_string($prop) && is_callable($prop)) {
                     $result = $prop($a, $b);

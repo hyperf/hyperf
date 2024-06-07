@@ -1294,7 +1294,7 @@ class LazyCollection implements Enumerable
      */
     public function splitIn(int $numberOfGroups)
     {
-        return $this->chunk(ceil($this->count() / $numberOfGroups));
+        return $this->chunk((int) ceil($this->count() / $numberOfGroups));
     }
 
     /**
