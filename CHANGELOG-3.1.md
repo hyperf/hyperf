@@ -1,5 +1,9 @@
 # v3.1.26 - TBD
 
+## Fixed
+
+- [#6848](https://github.com/hyperf/hyperf/pull/6848) Fixed bug that `LazyCollection::splitIn()` cannot work caused by type hint.
+
 # v3.1.25.1 - 2024-06-07
 
 ## Added
