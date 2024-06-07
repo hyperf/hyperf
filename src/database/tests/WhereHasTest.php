@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Builder as ModelBuilder;
 use Hyperf\Database\Model\Model;
@@ -47,6 +48,9 @@ class WhereHasTest extends TestCase
         Schema::dropIfExists('texts');
         Schema::dropIfExists('posts');
         Schema::dropIfExists('users');
+        \Mockery::close();
+        $reflection = new \ReflectionClass(ApplicationContext::class);
+        $reflection->setStaticPropertyValue('container',null);
     }
 
     public function createSchema()
@@ -233,6 +237,8 @@ class Text extends Model
 
 class User extends Model
 {
+    protected ?string $table = 'users';
+
     public bool $timestamps = false;
 
     public function posts()
