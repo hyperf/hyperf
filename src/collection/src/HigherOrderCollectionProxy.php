@@ -23,7 +23,7 @@ class HigherOrderCollectionProxy
      * @param Collection $collection the collection being operated on
      * @param string $method the method being proxied
      */
-    public function __construct(protected Collection $collection, protected string $method)
+    public function __construct(protected Enumerable $collection, protected string $method)
     {
     }
 
