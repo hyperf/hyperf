@@ -4,6 +4,10 @@
 
 - [#6837](https://github.com/hyperf/hyperf/pull/6837) Added method `Model\Concerns\QueriesRelationships::withWhereHas()`.
 
+## Optimized
+
+- [#6843](https://github.com/hyperf/hyperf/pull/6843) [#6847](https://github.com/hyperf/hyperf/pull/6847) Update return type hints in `Collection` and `LazyCollection`.
+
 # v3.1.25 - 2024-06-06
 
 ## Added
