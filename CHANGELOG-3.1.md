@@ -6,7 +6,7 @@
 
 ## Optimized
 
-- [#6843](https://github.com/hyperf/hyperf/pull/6843) [#6847](https://github.com/hyperf/hyperf/pull/6847) Update return type hints in `Collection` and `LazyCollection`.
+- [#6843](https://github.com/hyperf/hyperf/pull/6843) [#6847](https://github.com/hyperf/hyperf/pull/6847) Updated return type hints in `Collection` and `LazyCollection`.
 
 # v3.1.25 - 2024-06-06
 
