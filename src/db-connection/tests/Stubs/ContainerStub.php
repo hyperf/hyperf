@@ -19,7 +19,6 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
-use Hyperf\Database\Model\Register;
 use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\DbConnection\Frequency;
 use Hyperf\DbConnection\Pool\PoolFactory;
@@ -43,7 +42,6 @@ class ContainerStub
 
         $resolver = new ConnectionResolver($container);
         $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
-        Register::setConnectionResolver($resolver);
 
         $config = new Config([
             StdoutLoggerInterface::class => [
