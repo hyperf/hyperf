@@ -1,8 +1,19 @@
 # v3.1.26 - TBD
 
+## Fixed
+
+- [#6848](https://github.com/hyperf/hyperf/pull/6848) Fixed bug that `LazyCollection::splitIn()` cannot work caused by type hint.
+
+# v3.1.25.1 - 2024-06-07
+
 ## Added
 
 - [#6837](https://github.com/hyperf/hyperf/pull/6837) Added method `Model\Concerns\QueriesRelationships::withWhereHas()`.
+- [#6844](https://github.com/hyperf/hyperf/pull/6844) Added methods `whereRelation` and `orWhereRelation` into `Hyperf\Database\Model\Concerns\QueriesRelationships`.
+
+## Optimized
+
+- [#6843](https://github.com/hyperf/hyperf/pull/6843) [#6847](https://github.com/hyperf/hyperf/pull/6847) Updated return type hints in `Collection` and `LazyCollection`.
 
 # v3.1.25 - 2024-06-06
 
