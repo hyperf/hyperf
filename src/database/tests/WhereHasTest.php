@@ -22,7 +22,9 @@ use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use HyperfTest\Database\Stubs\ContainerStub;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 use function Hyperf\Tappable\tap;
 
@@ -48,9 +50,9 @@ class WhereHasTest extends TestCase
         Schema::dropIfExists('texts');
         Schema::dropIfExists('posts');
         Schema::dropIfExists('users');
-        \Mockery::close();
-        $reflection = new \ReflectionClass(ApplicationContext::class);
-        $reflection->setStaticPropertyValue('container',null);
+        Mockery::close();
+        $reflection = new ReflectionClass(ApplicationContext::class);
+        $reflection->setStaticPropertyValue('container', null);
     }
 
     public function createSchema()
@@ -237,9 +239,9 @@ class Text extends Model
 
 class User extends Model
 {
-    protected ?string $table = 'users';
-
     public bool $timestamps = false;
+
+    protected ?string $table = 'users';
 
     public function posts()
     {
