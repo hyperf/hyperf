@@ -55,7 +55,7 @@ class WhereHasMorphTest extends TestCase
 
     public function testWhereHasMorph(): void
     {
-        $comments = Comment::whereHasMorph('commentable', [Post::class, Video::class], function (Builder $query) {
+        $comments = MorphComment::whereHasMorph('commentable', [MorphPost::class, Video::class], function (Builder $query) {
             $query->where('title', 'foo');
         })->orderBy('id')->get();
 
@@ -64,12 +64,12 @@ class WhereHasMorphTest extends TestCase
 
     public function testWhereHasMorphWithMorphMap()
     {
-        Relation::morphMap(['posts' => Post::class]);
+        Relation::morphMap(['posts' => MorphPost::class]);
 
-        Comment::where('commentable_type', Post::class)->update(['commentable_type' => 'posts']);
+        MorphComment::where('commentable_type', MorphPost::class)->update(['commentable_type' => 'posts']);
 
         try {
-            $comments = Comment::whereHasMorph('commentable', [Post::class, Video::class], function (Builder $query) {
+            $comments = MorphComment::whereHasMorph('commentable', [MorphPost::class, Video::class], function (Builder $query) {
                 $query->where('title', 'foo');
             })->orderBy('id')->get();
 
@@ -82,9 +82,9 @@ class WhereHasMorphTest extends TestCase
     public function testWhereHasMorphWithWildcard()
     {
         // Test newModelQuery() without global scopes.
-        Comment::where('commentable_type', Video::class)->delete();
+        MorphComment::where('commentable_type', Video::class)->delete();
 
-        $comments = Comment::withTrashed()
+        $comments = MorphComment::withTrashed()
             ->whereHasMorph('commentable', '*', function (Builder $query) {
                 $query->where('title', 'foo');
             })->orderBy('id')->get();
@@ -94,12 +94,12 @@ class WhereHasMorphTest extends TestCase
 
     public function testWhereHasMorphWithWildcardAndMorphMap()
     {
-        Relation::morphMap(['posts' => Post::class]);
+        Relation::morphMap(['posts' => MorphPost::class]);
 
-        Comment::where('commentable_type', Post::class)->update(['commentable_type' => 'posts']);
+        MorphComment::where('commentable_type', MorphPost::class)->update(['commentable_type' => 'posts']);
 
         try {
-            $comments = Comment::whereHasMorph('commentable', '*', function (Builder $query) {
+            $comments = MorphComment::whereHasMorph('commentable', '*', function (Builder $query) {
                 $query->where('title', 'foo');
             })->orderBy('id')->get();
 
@@ -111,9 +111,9 @@ class WhereHasMorphTest extends TestCase
 
     public function testWhereHasMorphWithWildcardAndOnlyNullMorphTypes()
     {
-        Comment::whereNotNull('commentable_type')->delete();
+        MorphComment::whereNotNull('commentable_type')->delete();
 
-        $comments = Comment::query()
+        $comments = MorphComment::query()
             ->whereHasMorph('commentable', '*', function (Builder $query) {
                 $query->where('title', 'foo');
             })
@@ -124,7 +124,7 @@ class WhereHasMorphTest extends TestCase
 
     public function testWhereHasMorphWithRelationConstraint()
     {
-        $comments = Comment::whereHasMorph('commentableWithConstraint', Video::class, function (Builder $query) {
+        $comments = MorphComment::whereHasMorph('commentableWithConstraint', Video::class, function (Builder $query) {
             $query->where('title', 'like', 'ba%');
         })->orderBy('id')->get();
 
@@ -133,8 +133,8 @@ class WhereHasMorphTest extends TestCase
 
     public function testWhereHasMorphWitDifferentConstraints()
     {
-        $comments = Comment::whereHasMorph('commentable', [Post::class, Video::class], function (Builder $query, $type) {
-            if ($type === Post::class) {
+        $comments = MorphComment::whereHasMorph('commentable', [MorphPost::class, Video::class], function (Builder $query, $type) {
+            if ($type === MorphPost::class) {
                 $query->where('title', 'foo');
             }
 
@@ -160,11 +160,11 @@ class WhereHasMorphTest extends TestCase
             $table->string('commentable_id')->nullable()->change();
         });
 
-        Post::where('id', 1)->update(['slug' => 'foo']);
+        MorphPost::where('id', 1)->update(['slug' => 'foo']);
 
-        Comment::where('id', 1)->update(['commentable_id' => 'foo']);
+        MorphComment::where('id', 1)->update(['commentable_id' => 'foo']);
 
-        $comments = Comment::whereHasMorph('commentableWithOwnerKey', Post::class, function (Builder $query) {
+        $comments = MorphComment::whereHasMorph('commentableWithOwnerKey', MorphPost::class, function (Builder $query) {
             $query->where('title', 'foo');
         })->orderBy('id')->get();
 
@@ -173,35 +173,35 @@ class WhereHasMorphTest extends TestCase
 
     public function testHasMorph()
     {
-        $comments = Comment::hasMorph('commentable', Post::class)->orderBy('id')->get();
+        $comments = MorphComment::hasMorph('commentable', MorphPost::class)->orderBy('id')->get();
 
         $this->assertEquals([1, 2], $comments->pluck('id')->all());
     }
 
     public function testOrHasMorph()
     {
-        $comments = Comment::where('id', 1)->orHasMorph('commentable', Video::class)->orderBy('id')->get();
+        $comments = MorphComment::where('id', 1)->orHasMorph('commentable', Video::class)->orderBy('id')->get();
 
         $this->assertEquals([1, 4, 5, 6], $comments->pluck('id')->all());
     }
 
     public function testDoesntHaveMorph()
     {
-        $comments = Comment::doesntHaveMorph('commentable', Post::class)->orderBy('id')->get();
+        $comments = MorphComment::doesntHaveMorph('commentable', MorphPost::class)->orderBy('id')->get();
 
         $this->assertEquals([3], $comments->pluck('id')->all());
     }
 
     public function testOrDoesntHaveMorph()
     {
-        $comments = Comment::where('id', 1)->orDoesntHaveMorph('commentable', Post::class)->orderBy('id')->get();
+        $comments = MorphComment::where('id', 1)->orDoesntHaveMorph('commentable', MorphPost::class)->orderBy('id')->get();
 
         $this->assertEquals([1, 3], $comments->pluck('id')->all());
     }
 
     public function testOrWhereHasMorph()
     {
-        $comments = Comment::where('id', 1)
+        $comments = MorphComment::where('id', 1)
             ->orWhereHasMorph('commentable', Video::class, function (Builder $query) {
                 $query->where('title', 'foo');
             })->orderBy('id')->get();
@@ -211,9 +211,9 @@ class WhereHasMorphTest extends TestCase
 
     public function testOrWhereHasMorphWithWildcardAndOnlyNullMorphTypes()
     {
-        Comment::whereNotNull('commentable_type')->forceDelete();
+        MorphComment::whereNotNull('commentable_type')->forceDelete();
 
-        $comments = Comment::where('id', 7)
+        $comments = MorphComment::where('id', 7)
             ->orWhereHasMorph('commentable', '*', function (Builder $query) {
                 $query->where('title', 'foo');
             })->orderBy('id')->get();
@@ -223,7 +223,7 @@ class WhereHasMorphTest extends TestCase
 
     public function testWhereDoesntHaveMorph()
     {
-        $comments = Comment::whereDoesntHaveMorph('commentable', Post::class, function (Builder $query) {
+        $comments = MorphComment::whereDoesntHaveMorph('commentable', MorphPost::class, function (Builder $query) {
             $query->where('title', 'foo');
         })->orderBy('id')->get();
 
@@ -232,9 +232,9 @@ class WhereHasMorphTest extends TestCase
 
     public function testWhereDoesntHaveMorphWithWildcardAndOnlyNullMorphTypes()
     {
-        Comment::whereNotNull('commentable_type')->forceDelete();
+        MorphComment::whereNotNull('commentable_type')->forceDelete();
 
-        $comments = Comment::whereDoesntHaveMorph('commentable', [], function (Builder $query) {
+        $comments = MorphComment::whereDoesntHaveMorph('commentable', [], function (Builder $query) {
             $query->where('title', 'foo');
         })->orderBy('id')->get();
 
@@ -243,8 +243,8 @@ class WhereHasMorphTest extends TestCase
 
     public function testOrWhereDoesntHaveMorph()
     {
-        $comments = Comment::where('id', 1)
-            ->orWhereDoesntHaveMorph('commentable', Post::class, function (Builder $query) {
+        $comments = MorphComment::where('id', 1)
+            ->orWhereDoesntHaveMorph('commentable', MorphPost::class, function (Builder $query) {
                 $query->where('title', 'foo');
             })->orderBy('id')->get();
 
@@ -253,7 +253,7 @@ class WhereHasMorphTest extends TestCase
 
     public function testModelScopesAreAccessible()
     {
-        $comments = Comment::whereHasMorph('commentable', [Post::class, Video::class], function (Builder $query) {
+        $comments = MorphComment::whereHasMorph('commentable', [MorphPost::class, Video::class], function (Builder $query) {
             $query->someSharedModelScope();
         })->orderBy('id')->get();
 
@@ -291,9 +291,9 @@ class WhereHasMorphTest extends TestCase
 
         $models = [];
 
-        $models[] = Post::create(['title' => 'foo']);
-        $models[] = Post::create(['title' => 'bar']);
-        $models[] = Post::create(['title' => 'baz']);
+        $models[] = MorphPost::create(['title' => 'foo']);
+        $models[] = MorphPost::create(['title' => 'bar']);
+        $models[] = MorphPost::create(['title' => 'baz']);
         end($models)->delete();
 
         $models[] = Video::create(['title' => 'foo']);
@@ -303,7 +303,7 @@ class WhereHasMorphTest extends TestCase
         $models[] = null; // deleted
 
         foreach ($models as $model) {
-            (new Comment())->commentable()->associate($model)->save();
+            (new MorphComment())->commentable()->associate($model)->save();
         }
     }
 
@@ -315,8 +315,10 @@ class WhereHasMorphTest extends TestCase
     }
 }
 
-class Comment extends Model
+class MorphComment extends Model
 {
+    protected ?string $table = 'comments';
+
     use SoftDeletes;
 
     public bool $timestamps = false;
@@ -339,8 +341,10 @@ class Comment extends Model
     }
 }
 
-class Post extends Model
+class MorphPost extends Model
 {
+    protected ?string $table = 'posts';
+
     use SoftDeletes;
 
     public bool $timestamps = false;
