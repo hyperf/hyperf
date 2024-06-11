@@ -45,9 +45,11 @@ return [
             'login_response' => null,
             'locale' => 'en_US',
             'connection_timeout' => 3.0,
+            // Try to maintain twice value heartbeat as much as possible
             'read_write_timeout' => 3.0,
             'context' => null,
             'keepalive' => false,
+            // Try to ensure that the consumption time of each message is less than the heartbeat time as much as possible
             'heartbeat' => 0,
             'close_on_destruct' => false,
         ],
