@@ -61,6 +61,16 @@ class PostgresBuilder extends Builder
     }
 
     /**
+     * Get the tables that belong to the database.
+     */
+    public function getTables(): array
+    {
+        return $this->connection->getPostProcessor()->processTables(
+            $this->connection->selectFromWriteConnection($this->grammar->compileTables())
+        );
+    }
+
+    /**
      * Drop all tables from the database.
      */
     public function dropAllTables(): void
