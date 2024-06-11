@@ -262,6 +262,7 @@ trait BuildsQueries
      */
     protected function paginator(Collection $items, int $total, int $perPage, int $currentPage, array $options): LengthAwarePaginatorInterface
     {
+        /** @var Container $container */
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
             throw new RuntimeException('The DI container does not support make() method.');
@@ -274,6 +275,7 @@ trait BuildsQueries
      */
     protected function simplePaginator(Collection $items, int $perPage, int $currentPage, array $options): PaginatorInterface
     {
+        /** @var Container $container */
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
             throw new RuntimeException('The DI container does not support make() method.');
