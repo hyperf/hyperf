@@ -15,6 +15,7 @@ namespace Hyperf\Database\Concerns;
 use Closure;
 use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Collection\LazyCollection;
+use Hyperf\Conditionable\Conditionable;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
@@ -34,6 +35,8 @@ use function Hyperf\Collection\data_get;
 
 trait BuildsQueries
 {
+    use Conditionable;
+
     /**
      * Chunk the results of the query.
      *
@@ -202,26 +205,6 @@ trait BuildsQueries
     }
 
     /**
-     * Apply the callback's query changes if the given "value" is true.
-     *
-     * @param callable($this, $value): $this $callback
-     * @param callable($this, $value): $this $default
-     * @return $this
-     */
-    public function when(mixed $value, callable $callback, ?callable $default = null): static
-    {
-        $value = $value instanceof Closure ? $value($this) : $value;
-
-        if ($value) {
-            return $callback($this, $value) ?: $this;
-        }
-        if ($default) {
-            return $default($this, $value) ?: $this;
-        }
-        return $this;
-    }
-
-    /**
      * Pass the query to a given callback.
      *
      * @param Closure $callback
@@ -230,27 +213,6 @@ trait BuildsQueries
     public function tap($callback)
     {
         return $this->when(true, $callback);
-    }
-
-    /**
-     * Apply the callback's query changes if the given "value" is false.
-     *
-     * @param callable($this, $value): $this $callback
-     * @param callable($this, $value): $this $default
-     * @return $this
-     */
-    public function unless(mixed $value, callable $callback, ?callable $default = null): static
-    {
-        $value = $value instanceof Closure ? $value($this) : $value;
-
-        if (! $value) {
-            return $callback($this, $value) ?: $this;
-        }
-        if ($default) {
-            return $default($this, $value) ?: $this;
-        }
-
-        return $this;
     }
 
     /**
@@ -300,6 +262,7 @@ trait BuildsQueries
      */
     protected function paginator(Collection $items, int $total, int $perPage, int $currentPage, array $options): LengthAwarePaginatorInterface
     {
+        /** @var Container $container */
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
             throw new RuntimeException('The DI container does not support make() method.');
@@ -312,6 +275,7 @@ trait BuildsQueries
      */
     protected function simplePaginator(Collection $items, int $perPage, int $currentPage, array $options): PaginatorInterface
     {
+        /** @var Container $container */
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
             throw new RuntimeException('The DI container does not support make() method.');
