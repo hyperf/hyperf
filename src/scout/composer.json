@@ -19,7 +19,8 @@
         "hyperf/tappable": "~3.1.0",
         "hyperf/utils": "~3.1.0",
         "psr/container": "^1.0|^2.0",
-        "psr/event-dispatcher": "^1.0"
+        "psr/event-dispatcher": "^1.0",
+        "hyperf/conditionable": "~3.1.0"
     },
     "suggest": {
         "hyperf/elasticsearch": "Required to use elasticsearch driver.",
