@@ -9,6 +9,10 @@
 - [#6845](https://github.com/hyperf/hyperf/pull/6845) Added method `Hyperf\Database\Schema::getTables()`.
 - [#6846](https://github.com/hyperf/hyperf/pull/6846) Added methods `BuildsQueries::[chunkById|chunkByIdDesc]`.
 
+## Optimized
+
+- [#6855](https://github.com/hyperf/hyperf/pull/6855) Optimized BuildsQueries to use `Conditionable` instead of `when` and `unless`.
+
 # v3.1.25.1 - 2024-06-07
 
 ## Added
