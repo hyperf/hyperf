@@ -35,9 +35,11 @@ return [
             'login_response' => null,
             'locale' => 'en_US',
             'connection_timeout' => 3,
+            // Try to maintain twice value heartbeat as much as possible
             'read_write_timeout' => 6,
             'context' => null,
             'keepalive' => true,
+            // Try to ensure that the consumption time of each message is less than the heartbeat time as much as possible
             'heartbeat' => 3,
             'channel_rpc_timeout' => 0.0,
             'close_on_destruct' => false,

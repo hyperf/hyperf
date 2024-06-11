@@ -30,6 +30,8 @@ use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 use RuntimeException;
 
+use function Hyperf\Collection\data_get;
+
 trait BuildsQueries
 {
     /**
@@ -129,6 +131,74 @@ trait BuildsQueries
     public function first($columns = ['*'])
     {
         return $this->take(1)->get($columns)->first();
+    }
+
+    /**
+     * Chunk the results of a query by comparing IDs in a given order.
+     */
+    public function orderedChunkById(int $count, callable $callback, ?string $column = null, ?string $alias = null, bool $descending = false): bool
+    {
+        $column ??= $this->defaultKeyName();
+
+        $alias ??= $column;
+
+        $lastId = null;
+
+        $page = 1;
+
+        do {
+            $clone = clone $this;
+
+            // We'll execute the query for the given page and get the results. If there are
+            // no results we can just break and return from here. When there are results
+            // we will call the callback with the current chunk of these results here.
+            if ($descending) {
+                $results = $clone->forPageBeforeId($count, $lastId, $column)->get();
+            } else {
+                $results = $clone->forPageAfterId($count, $lastId, $column)->get();
+            }
+
+            $countResults = $results->count();
+
+            if ($countResults === 0) {
+                break;
+            }
+
+            // On each chunk result set, we will pass them to the callback and then let the
+            // developer take care of everything within the callback, which allows us to
+            // keep the memory low for spinning through large result sets for working.
+            if ($callback($results, $page) === false) {
+                return false;
+            }
+
+            $lastId = data_get($results->last(), $alias);
+
+            if ($lastId === null) {
+                throw new RuntimeException("The chunkById operation was aborted because the [{$alias}] column is not present in the query result.");
+            }
+
+            unset($results);
+
+            ++$page;
+        } while ($countResults === $count);
+
+        return true;
+    }
+
+    /**
+     * Chunk the results of a query by comparing IDs.
+     */
+    public function chunkById(int $count, callable $callback, ?string $column = null, ?string $alias = null): bool
+    {
+        return $this->orderedChunkById($count, $callback, $column, $alias);
+    }
+
+    /**
+     * Chunk the results of a query by comparing IDs in descending order.
+     */
+    public function chunkByIdDesc(int $count, callable $callback, ?string $column = null, ?string $alias = null): bool
+    {
+        return $this->orderedChunkById($count, $callback, $column, $alias, descending: true);
     }
 
     /**
