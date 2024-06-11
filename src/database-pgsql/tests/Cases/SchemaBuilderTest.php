@@ -60,4 +60,24 @@ class SchemaBuilderTest extends TestCase
             return $table['name'] === 'foo';
         }));
     }
+
+    public function testView(): void
+    {
+        Schema::create('view_1', static function (Blueprint $table) {
+            $table->comment('This is a comment');
+            $table->increments('id');
+        });
+        Db::table('view_1')->insert(['id' => 1]);
+        Db::statement('create view demo1 as select id from view_1');
+        $this->assertNotEmpty(array_filter(Schema::getViews(), function ($table) {
+            return $table['name'] === 'demo1';
+        }));
+        $this->assertTrue(Schema::hasView('demo1'));
+        Schema::dropAllViews();
+        $this->assertFalse(Schema::hasView('demo1'));
+        $this->assertEmpty(array_filter(Schema::getViews(), function ($table) {
+            return $table['name'] === 'demo1';
+        }));
+        Schema::drop('view_1');
+    }
 }

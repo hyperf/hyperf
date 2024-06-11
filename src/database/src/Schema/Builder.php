@@ -123,6 +123,32 @@ class Builder
     }
 
     /**
+     * Get the views that belong to the database.
+     */
+    public function getViews(): array
+    {
+        return $this->connection->getPostProcessor()->processViews(
+            $this->connection->selectFromWriteConnection($this->grammar->compileViews())
+        );
+    }
+
+    /**
+     * Determine if the given view exists.
+     */
+    public function hasView(string $view): bool
+    {
+        $view = $this->connection->getTablePrefix() . $view;
+
+        foreach ($this->getViews() as $value) {
+            if (strtolower($view) === strtolower($value['name'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get the data type for the given column name.
      *
      * @param string $table
