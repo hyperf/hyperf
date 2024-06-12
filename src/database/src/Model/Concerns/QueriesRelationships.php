@@ -447,6 +447,14 @@ trait QueriesRelationships
     }
 
     /**
+     * Add a polymorphic relationship count / exists condition to the query with an "or".
+     */
+    public function orHasMorph(MorphTo|string $relation, array|string $types, string $operator = '>=', int $count = 1): Builder|static
+    {
+        return $this->hasMorph($relation, $types, $operator, $count, 'or');
+    }
+
+    /**
      * Add a polymorphic relationship count / exists condition to the query.
      *
      * @param array|string $types
@@ -456,6 +464,14 @@ trait QueriesRelationships
     public function doesntHaveMorph(string $relation, $types, $boolean = 'and', ?Closure $callback = null)
     {
         return $this->hasMorph($relation, $types, '<', 1, $boolean, $callback);
+    }
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query with an "or".
+     */
+    public function orDoesntHaveMorph(MorphTo|string $relation, array|string $types): Builder|static
+    {
+        return $this->doesntHaveMorph($relation, $types, 'or');
     }
 
     /**
