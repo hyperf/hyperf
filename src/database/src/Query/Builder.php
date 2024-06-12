@@ -1820,15 +1820,9 @@ class Builder
             $this->addBinding($bindings, $this->unions ? 'unionOrder' : 'order');
         }
 
-        $direction = strtolower($direction);
-
-        if (! in_array($direction, ['asc', 'desc'], true)) {
-            throw new InvalidArgumentException('Order direction must be "asc" or "desc".');
-        }
-
         $this->{$this->unions ? 'unionOrders' : 'orders'}[] = [
             'column' => $column,
-            'direction' => $direction,
+            'direction' => strtolower($direction) === 'asc' ? 'asc' : 'desc',
         ];
 
         return $this;
