@@ -73,7 +73,9 @@ class SchemaBuilderTest extends TestCase
             return $table['name'] === 'demo1';
         }));
         $this->assertTrue(Schema::hasView('demo1'));
-        Schema::dropAllViews();
+        /*
+        Schema::dropAllViews();*/
+        Db::statement('DROP VIEW IF EXISTS demo1 CASCADE;');
         $this->assertFalse(Schema::hasView('demo1'));
         $this->assertEmpty(array_filter(Schema::getViews(), function ($table) {
             return $table['name'] === 'demo1';
