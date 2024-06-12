@@ -8,6 +8,7 @@
 
 - [#6845](https://github.com/hyperf/hyperf/pull/6845) Added method `Hyperf\Database\Schema::getTables()`.
 - [#6846](https://github.com/hyperf/hyperf/pull/6846) Added methods `BuildsQueries::[chunkById|chunkByIdDesc]`.
+- [#6829](https://github.com/hyperf/hyperf/pull/6829) Optimize command error format. Improve file permission when `gen:model`.
 
 ## Optimized
 
@@ -37,7 +38,6 @@
 - [#6821](https://github.com/hyperf/hyperf/pull/6821) Added method `Hyperf\Database\Concerns\BuildsQueries::chunkMap()`.
 - [#6822](https://github.com/hyperf/hyperf/pull/6822) Added methods `lazyById` and `lazyByIdDesc` for lazy queries.
 - [#6825](https://github.com/hyperf/hyperf/pull/6825) Added methods `createDatabase` and `dropDatabaseIfExists` for `Hyperf\Database\Schmea`.
-- [#6829](https://github.com/hyperf/hyperf/pull/6829) Optimize command error format. Improve file permission when `gen:model`.
 
 ## Fixed
 
