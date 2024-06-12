@@ -214,7 +214,7 @@ class ModelCommand extends Command
         $this->mkdir($path);
         file_put_contents($path, $code);
         // modify file permission
-        chmod($path, 0777);
+        chmod($path, 0766);
 
         $this->output->writeln(sprintf('<info>Model IDE %s was created.</info>', $data->getClass()));
     }
@@ -223,7 +223,7 @@ class ModelCommand extends Command
     {
         $dir = dirname($path);
         if (! is_dir($dir)) {
-            @mkdir($dir, 0777, true);
+            @mkdir($dir, 0766, true);
         }
     }
 
