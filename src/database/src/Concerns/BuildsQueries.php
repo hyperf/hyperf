@@ -15,6 +15,7 @@ namespace Hyperf\Database\Concerns;
 use Closure;
 use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Collection\LazyCollection;
+use Hyperf\Conditionable\Conditionable;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
@@ -30,8 +31,12 @@ use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 use RuntimeException;
 
+use function Hyperf\Collection\data_get;
+
 trait BuildsQueries
 {
+    use Conditionable;
+
     /**
      * Chunk the results of the query.
      *
@@ -132,23 +137,71 @@ trait BuildsQueries
     }
 
     /**
-     * Apply the callback's query changes if the given "value" is true.
-     *
-     * @param callable($this, $value): $this $callback
-     * @param callable($this, $value): $this $default
-     * @return $this
+     * Chunk the results of a query by comparing IDs in a given order.
      */
-    public function when(mixed $value, callable $callback, ?callable $default = null): static
+    public function orderedChunkById(int $count, callable $callback, ?string $column = null, ?string $alias = null, bool $descending = false): bool
     {
-        $value = $value instanceof Closure ? $value($this) : $value;
+        $column ??= $this->defaultKeyName();
 
-        if ($value) {
-            return $callback($this, $value) ?: $this;
-        }
-        if ($default) {
-            return $default($this, $value) ?: $this;
-        }
-        return $this;
+        $alias ??= $column;
+
+        $lastId = null;
+
+        $page = 1;
+
+        do {
+            $clone = clone $this;
+
+            // We'll execute the query for the given page and get the results. If there are
+            // no results we can just break and return from here. When there are results
+            // we will call the callback with the current chunk of these results here.
+            if ($descending) {
+                $results = $clone->forPageBeforeId($count, $lastId, $column)->get();
+            } else {
+                $results = $clone->forPageAfterId($count, $lastId, $column)->get();
+            }
+
+            $countResults = $results->count();
+
+            if ($countResults === 0) {
+                break;
+            }
+
+            // On each chunk result set, we will pass them to the callback and then let the
+            // developer take care of everything within the callback, which allows us to
+            // keep the memory low for spinning through large result sets for working.
+            if ($callback($results, $page) === false) {
+                return false;
+            }
+
+            $lastId = data_get($results->last(), $alias);
+
+            if ($lastId === null) {
+                throw new RuntimeException("The chunkById operation was aborted because the [{$alias}] column is not present in the query result.");
+            }
+
+            unset($results);
+
+            ++$page;
+        } while ($countResults === $count);
+
+        return true;
+    }
+
+    /**
+     * Chunk the results of a query by comparing IDs.
+     */
+    public function chunkById(int $count, callable $callback, ?string $column = null, ?string $alias = null): bool
+    {
+        return $this->orderedChunkById($count, $callback, $column, $alias);
+    }
+
+    /**
+     * Chunk the results of a query by comparing IDs in descending order.
+     */
+    public function chunkByIdDesc(int $count, callable $callback, ?string $column = null, ?string $alias = null): bool
+    {
+        return $this->orderedChunkById($count, $callback, $column, $alias, descending: true);
     }
 
     /**
@@ -160,27 +213,6 @@ trait BuildsQueries
     public function tap($callback)
     {
         return $this->when(true, $callback);
-    }
-
-    /**
-     * Apply the callback's query changes if the given "value" is false.
-     *
-     * @param callable($this, $value): $this $callback
-     * @param callable($this, $value): $this $default
-     * @return $this
-     */
-    public function unless(mixed $value, callable $callback, ?callable $default = null): static
-    {
-        $value = $value instanceof Closure ? $value($this) : $value;
-
-        if (! $value) {
-            return $callback($this, $value) ?: $this;
-        }
-        if ($default) {
-            return $default($this, $value) ?: $this;
-        }
-
-        return $this;
     }
 
     /**
@@ -230,6 +262,7 @@ trait BuildsQueries
      */
     protected function paginator(Collection $items, int $total, int $perPage, int $currentPage, array $options): LengthAwarePaginatorInterface
     {
+        /** @var Container $container */
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
             throw new RuntimeException('The DI container does not support make() method.');
@@ -242,6 +275,7 @@ trait BuildsQueries
      */
     protected function simplePaginator(Collection $items, int $perPage, int $currentPage, array $options): PaginatorInterface
     {
+        /** @var Container $container */
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
             throw new RuntimeException('The DI container does not support make() method.');

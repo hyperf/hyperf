@@ -14,8 +14,8 @@ namespace Hyperf\ViewEngine\Component;
 
 use ArrayIterator;
 use Closure;
+use Hyperf\Collection\Enumerable;
 use Hyperf\ViewEngine\Contract\DeferringDisplayableValue;
-use Hyperf\ViewEngine\Contract\Enumerable;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use IteratorAggregate;
 use Stringable;
@@ -82,7 +82,7 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
     }
 
     /**
-     * Get an interator instance for the variable.
+     * Get an iterator instance for the variable.
      */
     public function getIterator(): Traversable
     {
