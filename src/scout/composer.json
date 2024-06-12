@@ -10,6 +10,7 @@
     "require": {
         "php": ">=8.1",
         "hyperf/command": "~3.1.0",
+        "hyperf/conditionable": "~3.1.0",
         "hyperf/contract": "~3.1.0",
         "hyperf/database": "~3.1.0",
         "hyperf/event": "~3.1.0",
