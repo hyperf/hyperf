@@ -19,7 +19,7 @@ return new class() extends Migration {
      */
     public function up()
     {
-        (new Schema())->connection('sqlite3')->getSchemaBuilder()->create('jobs', function (Blueprint $table) {
+        (new Schema())->connection('mysql3')->getSchemaBuilder()->create('jobs', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('queue')->index();
             $table->longText('payload');
@@ -35,6 +35,6 @@ return new class() extends Migration {
      */
     public function down()
     {
-        (new Schema())->connection('sqlite3')->getSchemaBuilder()->dropIfExists('jobs');
+        (new Schema())->connection('mysql3')->getSchemaBuilder()->dropIfExists('jobs');
     }
 };

@@ -17,7 +17,7 @@ return new class() extends Migration {
     /**
      * The database connection that should be used by the migration.
      */
-    protected string $connection = 'sqlite3';
+    protected string $connection = 'mysql3';
 
     /**
      * Run the migrations.
