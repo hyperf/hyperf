@@ -32,13 +32,6 @@ class SchemaBuilderTest extends TestCase
         $container->allows('get')->with(Db::class)->andReturns(new Db($container));
     }
 
-    protected function tearDown(): void
-    {
-        Schema::drop('foo');
-        Schema::drop('bar');
-        Schema::drop('baz');
-    }
-
     public function testGetTables(): void
     {
         Schema::create('foo', static function (Blueprint $table) {
@@ -59,6 +52,9 @@ class SchemaBuilderTest extends TestCase
         $this->assertNotEmpty(array_filter($tables, static function ($table) {
             return $table['name'] === 'foo';
         }));
+        Schema::drop('foo');
+        Schema::drop('bar');
+        Schema::drop('baz');
     }
 
     public function testView(): void
