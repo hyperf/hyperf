@@ -1,4 +1,30 @@
-# v3.1.25 - TBD
+# v3.1.26 - TBD
+
+## Fixed
+
+- [#6848](https://github.com/hyperf/hyperf/pull/6848) Fixed bug that `LazyCollection::splitIn()` cannot work caused by type hint.
+
+## Added
+
+- [#6845](https://github.com/hyperf/hyperf/pull/6845) Added method `Hyperf\Database\Schema::getTables()`.
+- [#6846](https://github.com/hyperf/hyperf/pull/6846) Added methods `BuildsQueries::[chunkById|chunkByIdDesc]`.
+
+## Optimized
+
+- [#6855](https://github.com/hyperf/hyperf/pull/6855) Optimized BuildsQueries to use `Conditionable` instead of `when` and `unless`.
+
+# v3.1.25.1 - 2024-06-07
+
+## Added
+
+- [#6837](https://github.com/hyperf/hyperf/pull/6837) Added method `Model\Concerns\QueriesRelationships::withWhereHas()`.
+- [#6844](https://github.com/hyperf/hyperf/pull/6844) Added methods `whereRelation` and `orWhereRelation` into `Hyperf\Database\Model\Concerns\QueriesRelationships`.
+
+## Optimized
+
+- [#6843](https://github.com/hyperf/hyperf/pull/6843) [#6847](https://github.com/hyperf/hyperf/pull/6847) Updated return type hints in `Collection` and `LazyCollection`.
+
+# v3.1.25 - 2024-06-06
 
 ## Added
 
@@ -18,6 +44,7 @@
 - [#6813](https://github.com/hyperf/hyperf/pull/6813) Fixed bug that cannot read the messages from non-lower keys for `Hyperf\Constants\Annotation\Message`.
 - [#6818](https://github.com/hyperf/hyperf/pull/6818) Fixed bug that `updateOrInsert` cannot work when the input is empty.
 - [#6828](https://github.com/hyperf/hyperf/pull/6828) Fixed bug that `AOP` cannot work on `__construct`.
+- [#6836](https://github.com/hyperf/hyperf/pull/6836) Fixed bug that `SetCookie::fromString` cannot not work by invalid types.
 
 # v3.1.24 - 2024-05-30
 
