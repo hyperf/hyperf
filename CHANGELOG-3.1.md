@@ -12,6 +12,7 @@
 ## Optimized
 
 - [#6855](https://github.com/hyperf/hyperf/pull/6855) Optimized BuildsQueries to use `Conditionable` instead of `when` and `unless`.
+- [#6856](https://github.com/hyperf/hyperf/pull/6856) Optimized `Hyperf\Scout\Builder` to use `Conditionable` instead of `when` and `unless`.
 - [#6860](https://github.com/hyperf/hyperf/pull/6860) Use `Hyperf\Collection\Enumerable` instead of `Hyperf\ViewEngine\Contract\Enumerable`.
 
 # v3.1.25.1 - 2024-06-07
