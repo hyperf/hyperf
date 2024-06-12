@@ -9,6 +9,7 @@
 - [#6845](https://github.com/hyperf/hyperf/pull/6845) Added method `Hyperf\Database\Schema::getTables()`.
 - [#6846](https://github.com/hyperf/hyperf/pull/6846) Added methods `chunkById` and `chunkByIdDesc` into `Hyperf\Database\Concerns\BuildsQueries`.
 - [#6851](https://github.com/hyperf/hyperf/pull/6851) Added methods `orDoesntHaveMorph` and `orHasMorph` into `Hyperf\Database\Model\Concerns`.
+- [#6858](https://github.com/hyperf/hyperf/pull/6858) Added methods `makeHiddenIf` and `makeVisibleIf` into `Hyperf\Database\Model\Concerns\HidesAttributes`.
 
 ## Optimized
 
