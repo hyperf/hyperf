@@ -103,7 +103,7 @@
 
 ## ID 生成器
 
-- [hyperf/snowflake](https://github.com/hyperf/snowflake) Hyperf 官方提供的 Snowflake ID 生成器组件 (beta)
+- [hyperf/snowflake](https://github.com/hyperf/snowflake) Hyperf 官方提供的 Snowflake ID 生成器组件
 - [tangwei/snowflake](https://github.com/tw2066/snowflake) 基于`hyperf/snowflake`组件，增强了`工作机器ID`的维护
 
 ## 文档生成
