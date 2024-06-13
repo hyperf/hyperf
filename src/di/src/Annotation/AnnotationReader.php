@@ -27,14 +27,23 @@ class AnnotationReader
     {
     }
 
+    /**
+     * @deprecated deprecated since 3.1, will remove in 3.2.
+     */
     public function getClassAnnotations(ReflectionClass $class)
     {
         return $this->getAttributes($class);
     }
 
-    public function getClassAnnotation(ReflectionClass $class, $annotationName)
+    /**
+     * @template T
+     *
+     * @param class-string<T>|T $annotationName
+     * @return T|null
+     */
+    protected function getAnnotation(Reflector $reflector, $annotationName)
     {
-        $annotations = $this->getClassAnnotations($class);
+        $annotations = $this->getAttributes($reflector);
 
         foreach ($annotations as $annotation) {
             if ($annotation instanceof $annotationName) {
@@ -45,6 +54,14 @@ class AnnotationReader
         return null;
     }
 
+    public function getClassAnnotation(ReflectionClass $class, $annotationName)
+    {
+        return $this->getAnnotation($class, $annotationName);
+    }
+
+    /**
+     * @deprecated deprecated since 3.1, will remove in 3.2.
+     */
     public function getPropertyAnnotations(ReflectionProperty $property)
     {
         return $this->getAttributes($property);
@@ -52,17 +69,12 @@ class AnnotationReader
 
     public function getPropertyAnnotation(ReflectionProperty $property, $annotationName)
     {
-        $annotations = $this->getPropertyAnnotations($property);
-
-        foreach ($annotations as $annotation) {
-            if ($annotation instanceof $annotationName) {
-                return $annotation;
-            }
-        }
-
-        return null;
+        return $this->getAnnotation($property, $annotationName);
     }
 
+    /**
+     * @deprecated deprecated since 3.1, will remove in 3.2.
+     */
     public function getMethodAnnotations(ReflectionMethod $method)
     {
         return $this->getAttributes($method);
@@ -70,17 +82,12 @@ class AnnotationReader
 
     public function getMethodAnnotation(ReflectionMethod $method, $annotationName)
     {
-        $annotations = $this->getMethodAnnotations($method);
-
-        foreach ($annotations as $annotation) {
-            if ($annotation instanceof $annotationName) {
-                return $annotation;
-            }
-        }
-
-        return null;
+        return $this->getAnnotation($method, $annotationName);
     }
 
+    /**
+     * @return list<object|AnnotationInterface>
+     */
     public function getAttributes(Reflector $reflection): array
     {
         $result = [];

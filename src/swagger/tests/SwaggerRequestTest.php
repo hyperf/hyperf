@@ -40,7 +40,7 @@ class SwaggerRequestTest extends TestCase
         $reflectionMethod = $reflectionClass->getMethod('index');
 
         $annotationReader = new AnnotationReader();
-        $annotations = $annotationReader->getMethodAnnotations($reflectionMethod);
+        $annotations = $annotationReader->getAttributes($reflectionMethod);
         foreach ($annotations as $annotation) {
             AnnotationCollector::collectMethod($reflectionClass->getName(), $reflectionMethod->getName(), get_class($annotation), $annotation);
         }
@@ -63,7 +63,7 @@ class SwaggerRequestTest extends TestCase
         $reflectionMethod = $reflectionClass->getMethod('json');
 
         $annotationReader = new AnnotationReader();
-        $annotations = $annotationReader->getMethodAnnotations($reflectionMethod);
+        $annotations = $annotationReader->getAttributes($reflectionMethod);
         foreach ($annotations as $annotation) {
             AnnotationCollector::collectMethod($reflectionClass->getName(), $reflectionMethod->getName(), get_class($annotation), $annotation);
         }
