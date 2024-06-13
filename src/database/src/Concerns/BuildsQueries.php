@@ -217,14 +217,6 @@ trait BuildsQueries
     }
 
     /**
-     * Chunk the results of a query by comparing IDs.
-     */
-    public function chunkById(int $count, callable $callback, ?string $column = null, ?string $alias = null): bool
-    {
-        return $this->orderedChunkById($count, $callback, $column, $alias);
-    }
-
-    /**
      * Chunk the results of a query by comparing IDs in descending order.
      */
     public function chunkByIdDesc(int $count, callable $callback, ?string $column = null, ?string $alias = null): bool
