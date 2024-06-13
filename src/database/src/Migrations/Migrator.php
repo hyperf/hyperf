@@ -286,10 +286,8 @@ class Migrator
 
     /**
      * Resolve a migration instance from migration path.
-     *
-     * @return object
      */
-    protected function resolvePath(string $path)
+    protected function resolvePath(string $path): object
     {
         $class = $this->getMigrationClass($this->getMigrationName($path));
         if (class_exists($class)) {
