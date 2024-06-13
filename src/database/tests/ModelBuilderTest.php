@@ -1318,6 +1318,100 @@ class ModelBuilderTest extends TestCase
         $builder->valueOrFail('test');
     }
 
+    public function testLazyWithLastChunkComplete()
+    {
+        $builder = Mockery::mock(Builder::class . '[forPage,get]', [$this->getMockQueryBuilder()]);
+        $builder->getQuery()->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
+
+        $builder->shouldReceive('forPage')->once()->with(1, 2)->andReturnSelf();
+        $builder->shouldReceive('forPage')->once()->with(2, 2)->andReturnSelf();
+        $builder->shouldReceive('forPage')->once()->with(3, 2)->andReturnSelf();
+        $builder->shouldReceive('get')->times(3)->andReturn(
+            new Collection(['foo1', 'foo2']),
+            new Collection(['foo3', 'foo4']),
+            new Collection([])
+        );
+
+        $this->assertEquals(
+            ['foo1', 'foo2', 'foo3', 'foo4'],
+            $builder->lazy(2)->all()
+        );
+    }
+
+    public function testLazyWithLastChunkPartial()
+    {
+        $builder = Mockery::mock(Builder::class . '[forPage,get]', [$this->getMockQueryBuilder()]);
+        $builder->getQuery()->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
+
+        $builder->shouldReceive('forPage')->once()->with(1, 2)->andReturnSelf();
+        $builder->shouldReceive('forPage')->once()->with(2, 2)->andReturnSelf();
+        $builder->shouldReceive('get')->times(2)->andReturn(
+            new Collection(['foo1', 'foo2']),
+            new Collection(['foo3'])
+        );
+
+        $this->assertEquals(
+            ['foo1', 'foo2', 'foo3'],
+            $builder->lazy(2)->all()
+        );
+    }
+
+    public function testLazyIsLazy()
+    {
+        $builder = Mockery::mock(Builder::class . '[forPage,get]', [$this->getMockQueryBuilder()]);
+        $builder->getQuery()->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
+
+        $builder->shouldReceive('forPage')->once()->with(1, 2)->andReturnSelf();
+        $builder->shouldReceive('get')->once()->andReturn(new Collection(['foo1', 'foo2']));
+
+        $this->assertEquals(['foo1', 'foo2'], $builder->lazy(2)->take(2)->all());
+    }
+
+    public function testLazyByIdWithLastChunkComplete()
+    {
+        $builder = Mockery::mock(Builder::class . '[forPageAfterId,get]', [$this->getMockQueryBuilder()]);
+        $builder->getQuery()->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
+
+        $chunk1 = new Collection([(object) ['someIdField' => 1], (object) ['someIdField' => 2]]);
+        $chunk2 = new Collection([(object) ['someIdField' => 10], (object) ['someIdField' => 11]]);
+        $chunk3 = new Collection([]);
+        $builder->shouldReceive('forPageAfterId')->once()->with(2, 0, 'someIdField')->andReturnSelf();
+        $builder->shouldReceive('forPageAfterId')->once()->with(2, 2, 'someIdField')->andReturnSelf();
+        $builder->shouldReceive('forPageAfterId')->once()->with(2, 11, 'someIdField')->andReturnSelf();
+        $builder->shouldReceive('get')->times(3)->andReturn($chunk1, $chunk2, $chunk3);
+
+        $this->assertEquals(
+            [
+                (object) ['someIdField' => 1],
+                (object) ['someIdField' => 2],
+                (object) ['someIdField' => 10],
+                (object) ['someIdField' => 11],
+            ],
+            $builder->lazyById(2, 'someIdField')->all()
+        );
+    }
+
+    public function testLazyByIdWithLastChunkPartial()
+    {
+        $builder = Mockery::mock(Builder::class . '[forPageAfterId,get]', [$this->getMockQueryBuilder()]);
+        $builder->getQuery()->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
+
+        $chunk1 = new Collection([(object) ['someIdField' => 1], (object) ['someIdField' => 2]]);
+        $chunk2 = new Collection([(object) ['someIdField' => 10]]);
+        $builder->shouldReceive('forPageAfterId')->once()->with(2, 0, 'someIdField')->andReturnSelf();
+        $builder->shouldReceive('forPageAfterId')->once()->with(2, 2, 'someIdField')->andReturnSelf();
+        $builder->shouldReceive('get')->times(2)->andReturn($chunk1, $chunk2);
+
+        $this->assertEquals(
+            [
+                (object) ['someIdField' => 1],
+                (object) ['someIdField' => 2],
+                (object) ['someIdField' => 10],
+            ],
+            $builder->lazyById(2, 'someIdField')->all()
+        );
+    }
+
     protected function mockConnectionForModel($model, $database)
     {
         $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';

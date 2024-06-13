@@ -1,4 +1,11 @@
-# v3.1.26 - TBD
+# v3.1.27 - TBD
+
+## Added
+
+- [#6866](https://github.com/hyperf/hyperf/pull/6866) Added method `Hyperf\Database\Concerns\BuildsQueries::lazy`.
+- [#6869](https://github.com/hyperf/hyperf/pull/6869) Added methods `before` and `after` into `Collection`.
+
+# v3.1.26 - 2024-06-13
 
 ## Fixed
 
@@ -7,11 +14,15 @@
 ## Added
 
 - [#6845](https://github.com/hyperf/hyperf/pull/6845) Added method `Hyperf\Database\Schema::getTables()`.
-- [#6846](https://github.com/hyperf/hyperf/pull/6846) Added methods `BuildsQueries::[chunkById|chunkByIdDesc]`.
+- [#6846](https://github.com/hyperf/hyperf/pull/6846) Added methods `chunkById` and `chunkByIdDesc` into `Hyperf\Database\Concerns\BuildsQueries`.
+- [#6851](https://github.com/hyperf/hyperf/pull/6851) Added methods `orDoesntHaveMorph` and `orHasMorph` into `Hyperf\Database\Model\Concerns`.
+- [#6858](https://github.com/hyperf/hyperf/pull/6858) Added methods `makeHiddenIf` and `makeVisibleIf` into `Hyperf\Database\Model\Concerns\HidesAttributes`.
 
 ## Optimized
 
 - [#6855](https://github.com/hyperf/hyperf/pull/6855) Optimized BuildsQueries to use `Conditionable` instead of `when` and `unless`.
+- [#6856](https://github.com/hyperf/hyperf/pull/6856) Optimized `Hyperf\Scout\Builder` to use `Conditionable` instead of `when` and `unless`.
+- [#6860](https://github.com/hyperf/hyperf/pull/6860) Use `Hyperf\Collection\Enumerable` instead of `Hyperf\ViewEngine\Contract\Enumerable`.
 
 # v3.1.25.1 - 2024-06-07
 
