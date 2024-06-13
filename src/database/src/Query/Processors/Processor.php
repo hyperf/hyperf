@@ -84,4 +84,20 @@ class Processor
 
         return $columns;
     }
+
+    /**
+     * Process the results of a views query.
+     */
+    public function processViews(array $results): array
+    {
+        return array_map(function ($result) {
+            $result = (object) $result;
+
+            return [
+                'name' => $result->name,
+                'schema' => $result->schema ?? null, // PostgreSQL and SQL Server
+                'definition' => $result->definition,
+            ];
+        }, $results);
+    }
 }

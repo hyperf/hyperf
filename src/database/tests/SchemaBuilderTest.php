@@ -35,13 +35,6 @@ class SchemaBuilderTest extends TestCase
         Register::setConnectionResolver($connectionResolverInterface);
     }
 
-    protected function tearDown(): void
-    {
-        Schema::drop('foo');
-        Schema::drop('bar');
-        Schema::drop('baz');
-    }
-
     public function testGetTables(): void
     {
         Schema::create('foo', static function (Blueprint $table) {
@@ -62,5 +55,28 @@ class SchemaBuilderTest extends TestCase
         $this->assertNotEmpty(array_filter($tables, static function ($table) {
             return $table['name'] === 'foo' && $table['comment'] === 'This is a comment';
         }));
+        Schema::drop('foo');
+        Schema::drop('bar');
+        Schema::drop('baz');
+    }
+
+    public function testViews(): void
+    {
+        Schema::create('view_1', static function (Blueprint $table) {
+            $table->comment('This is a comment');
+            $table->increments('id');
+        });
+        Db::table('view_1')->insert(['id' => 1]);
+        Db::statement('create view demo1 as select id from view_1');
+        $this->assertNotEmpty(array_filter(Schema::getViews(), function ($table) {
+            return $table['name'] === 'demo1';
+        }));
+        $this->assertTrue(Schema::hasView('demo1'));
+        Schema::dropAllViews();
+        $this->assertFalse(Schema::hasView('demo1'));
+        $this->assertEmpty(array_filter(Schema::getViews(), function ($table) {
+            return $table['name'] === 'demo1';
+        }));
+        Schema::drop('view_1');
     }
 }

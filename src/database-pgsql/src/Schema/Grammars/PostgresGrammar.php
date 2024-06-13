@@ -89,6 +89,14 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine the views.
+     */
+    public function compileViews(): string
+    {
+        return "select viewname as name, schemaname as schema, definition from pg_views where schemaname not in ('pg_catalog', 'information_schema') order by viewname";
+    }
+
+    /**
      * Compile the query to determine if a table exists.
      */
     public function compileTableExists(): string
