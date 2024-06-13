@@ -928,10 +928,9 @@ class Collection implements Enumerable, ArrayAccess
      * Get the item before the given item.
      *
      * @param (callable(TValue,TKey): bool)|TValue $value
-     * @param bool $strict
      * @return null|TValue
      */
-    public function before($value, $strict = false)
+    public function before(mixed $value, bool $strict = false): mixed
     {
         $key = $this->search($value, $strict);
 
@@ -952,10 +951,9 @@ class Collection implements Enumerable, ArrayAccess
      * Get the item after the given item.
      *
      * @param (callable(TValue,TKey): bool)|TValue $value
-     * @param bool $strict
      * @return null|TValue
      */
-    public function after($value, $strict = false)
+    public function after(mixed $value, bool $strict = false): mixed
     {
         $key = $this->search($value, $strict);
 
