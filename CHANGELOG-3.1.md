@@ -7,6 +7,7 @@
 - [#6869](https://github.com/hyperf/hyperf/pull/6869) Added methods `before` and `after` into `Collection`.
 
 ## Optimized
+
 - [#6874](https://github.com/hyperf/hyperf/pull/6874) Using `Scanner` in Watcher component.
 
 # v3.1.26 - 2024-06-13
