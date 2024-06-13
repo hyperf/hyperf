@@ -925,6 +925,52 @@ class Collection implements Enumerable, ArrayAccess
     }
 
     /**
+     * Get the item before the given item.
+     *
+     * @param (callable(TValue,TKey): bool)|TValue $value
+     * @return null|TValue
+     */
+    public function before(mixed $value, bool $strict = false): mixed
+    {
+        $key = $this->search($value, $strict);
+
+        if ($key === false) {
+            return null;
+        }
+
+        $position = $this->keys()->search($key);
+
+        if ($position === 0) {
+            return null;
+        }
+
+        return $this->get($this->keys()->get($position - 1));
+    }
+
+    /**
+     * Get the item after the given item.
+     *
+     * @param (callable(TValue,TKey): bool)|TValue $value
+     * @return null|TValue
+     */
+    public function after(mixed $value, bool $strict = false): mixed
+    {
+        $key = $this->search($value, $strict);
+
+        if ($key === false) {
+            return null;
+        }
+
+        $position = $this->keys()->search($key);
+
+        if ($position === $this->keys()->count() - 1) {
+            return null;
+        }
+
+        return $this->get($this->keys()->get($position + 1));
+    }
+
+    /**
      * Get and remove the first item from the collection.
      *
      * @return null|TValue
