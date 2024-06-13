@@ -1,4 +1,10 @@
-# v3.1.26 - TBD
+# v3.1.27 - TBD
+
+## Added
+
+- [#6869](https://github.com/hyperf/hyperf/pull/6869) Added `before` and `after` methods to `Collection`.
+
+# v3.1.26 - 2024-06-13
 
 ## Fixed
 
