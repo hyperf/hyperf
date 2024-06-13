@@ -2,7 +2,8 @@
 
 ## Added
 
-- [#6869](https://github.com/hyperf/hyperf/pull/6869) Added `before` and `after` methods to `Collection`.
+- [#6866](https://github.com/hyperf/hyperf/pull/6866) Added method `Hyperf\Database\Concerns\BuildsQueries::lazy`.
+- [#6869](https://github.com/hyperf/hyperf/pull/6869) Added methods `before` and `after` into `Collection`.
 
 # v3.1.26 - 2024-06-13
 
