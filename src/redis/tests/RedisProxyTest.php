@@ -197,10 +197,10 @@ class RedisProxyTest extends TestCase
     }
 
     /**
-     * @param mixed $optinos
+     * @param mixed $options
      * @return \Redis|Redis
      */
-    private function getRedis($optinos = [])
+    private function getRedis($options = [])
     {
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
@@ -211,7 +211,7 @@ class RedisProxyTest extends TestCase
                     'auth' => null,
                     'port' => 6379,
                     'db' => 0,
-                    'options' => $optinos,
+                    'options' => $options,
                     'pool' => [
                         'min_connections' => 1,
                         'max_connections' => 30,
