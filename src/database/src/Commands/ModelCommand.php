@@ -158,7 +158,7 @@ class ModelCommand extends Command
         $table = Str::replaceFirst($option->getPrefix(), '', $table);
         $columns = $this->formatColumns($builder->getColumnTypeListing($table));
         if (empty($columns)) {
-            $this->output && $this->error(
+            $this->output?->error(
                 sprintf('Query columns empty, maybe is table `%s` does not exist.You can check it in database.', $table)
             );
         }
