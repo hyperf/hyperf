@@ -35,10 +35,7 @@
     "autoload": {
         "psr-4": {
             "Hyperf\\Database\\": "src/"
-        },
-        "files": [
-            "src/Model/Functions.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
