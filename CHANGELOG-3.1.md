@@ -5,6 +5,7 @@
 - [#6864](https://github.com/hyperf/hyperf/pull/6864) Added methods `getViews` and `hasView` into `Hyperf\Database\Schema\Schema`.
 - [#6866](https://github.com/hyperf/hyperf/pull/6866) Added method `Hyperf\Database\Concerns\BuildsQueries::lazy`.
 - [#6869](https://github.com/hyperf/hyperf/pull/6869) Added methods `before` and `after` into `Collection`.
+- [#6876](https://github.com/hyperf/hyperf/pull/6876) Added method `Hyperf\Database\Concerns\Builder::eachById`.
 
 # v3.1.26 - 2024-06-13
 
