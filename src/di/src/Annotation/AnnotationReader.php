@@ -35,25 +35,6 @@ class AnnotationReader
         return $this->getAttributes($class);
     }
 
-    /**
-     * @template T
-     *
-     * @param class-string<T>|T $annotationName
-     * @return T|null
-     */
-    protected function getAnnotation(Reflector $reflector, $annotationName)
-    {
-        $annotations = $this->getAttributes($reflector);
-
-        foreach ($annotations as $annotation) {
-            if ($annotation instanceof $annotationName) {
-                return $annotation;
-            }
-        }
-
-        return null;
-    }
-
     public function getClassAnnotation(ReflectionClass $class, $annotationName)
     {
         return $this->getAnnotation($class, $annotationName);
@@ -86,7 +67,7 @@ class AnnotationReader
     }
 
     /**
-     * @return list<object|AnnotationInterface>
+     * @return list<AnnotationInterface|object>
      */
     public function getAttributes(Reflector $reflection): array
     {
@@ -126,5 +107,24 @@ class AnnotationReader
             $result[] = $attribute->newInstance();
         }
         return $result;
+    }
+
+    /**
+     * @template T
+     *
+     * @param class-string<T>|T $annotationName
+     * @return T|null
+     */
+    protected function getAnnotation(Reflector $reflector, $annotationName)
+    {
+        $annotations = $this->getAttributes($reflector);
+
+        foreach ($annotations as $annotation) {
+            if ($annotation instanceof $annotationName) {
+                return $annotation;
+            }
+        }
+
+        return null;
     }
 }
