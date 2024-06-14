@@ -165,6 +165,21 @@ trait BuildsQueries
     }
 
     /**
+     * Execute a callback over each item while chunking by ID.
+     */
+    public function eachById(callable $callback, int $count = 1000, ?string $column = null, ?string $alias = null): bool
+    {
+        return $this->chunkById($count, function (Collection $results) use ($callback) {
+            foreach ($results as $value) {
+                if ($callback($value) === false) {
+                    return false;
+                }
+            }
+            return true;
+        }, $column, $alias);
+    }
+
+    /**
      * Chunk the results of a query by comparing IDs in a given order.
      */
     public function orderedChunkById(int $count, callable $callback, ?string $column = null, ?string $alias = null, bool $descending = false): bool
