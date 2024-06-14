@@ -6,6 +6,7 @@
 - [#6866](https://github.com/hyperf/hyperf/pull/6866) Added method `Hyperf\Database\Concerns\BuildsQueries::lazy`.
 - [#6869](https://github.com/hyperf/hyperf/pull/6869) Added methods `before` and `after` into `Collection`.
 - [#6876](https://github.com/hyperf/hyperf/pull/6876) Added method `Hyperf\Database\Concerns\Builder::eachById`.
+- [#6829](https://github.com/hyperf/hyperf/pull/6829) Optimize command error format. Improve file permission when `gen:model`.
 
 ## Optimized
 
@@ -24,7 +25,6 @@
 - [#6846](https://github.com/hyperf/hyperf/pull/6846) Added methods `chunkById` and `chunkByIdDesc` into `Hyperf\Database\Concerns\BuildsQueries`.
 - [#6851](https://github.com/hyperf/hyperf/pull/6851) Added methods `orDoesntHaveMorph` and `orHasMorph` into `Hyperf\Database\Model\Concerns`.
 - [#6858](https://github.com/hyperf/hyperf/pull/6858) Added methods `makeHiddenIf` and `makeVisibleIf` into `Hyperf\Database\Model\Concerns\HidesAttributes`.
-- [#6829](https://github.com/hyperf/hyperf/pull/6829) Optimize command error format. Improve file permission when `gen:model`.
 
 ## Optimized
 
