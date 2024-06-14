@@ -120,7 +120,7 @@ class AnnotationReader
      * @template T
      *
      * @param class-string<T>|T $annotationName
-     * @return T|null
+     * @return null|T
      */
     protected function getAnnotation(Reflector $reflector, $annotationName)
     {
