@@ -1806,16 +1806,16 @@ class Builder
     /**
      * Add an "order by" clause to the query.
      *
-     * @param  \Closure|\Hyperf\Database\Query\Builder|\Hyperf\Database\Model\Builder|\Hyperf\Database\Query\Expression|string  $column
+     * @param Closure|Expression|ModelBuilder|static|string $column
      * @param string $direction
      * @return $this
      */
-    public function orderBy($column, $direction = 'asc')
+    public function orderBy(mixed $column, string $direction = 'asc'): static
     {
         if ($this->isQueryable($column)) {
             [$query, $bindings] = $this->createSub($column);
 
-            $column = new Expression('('.$query.')');
+            $column = new Expression('(' . $query . ')');
 
             $this->addBinding($bindings, $this->unions ? 'unionOrder' : 'order');
         }
