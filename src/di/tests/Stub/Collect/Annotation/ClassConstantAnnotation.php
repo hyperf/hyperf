@@ -18,5 +18,4 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS_CONSTANT)]
 class ClassConstantAnnotation extends AbstractAnnotation
 {
-
 }

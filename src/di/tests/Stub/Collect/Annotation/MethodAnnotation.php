@@ -18,5 +18,4 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_METHOD)]
 class MethodAnnotation extends AbstractAnnotation
 {
-
 }
