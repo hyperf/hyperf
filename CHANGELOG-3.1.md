@@ -7,6 +7,10 @@
 - [#6869](https://github.com/hyperf/hyperf/pull/6869) Added methods `before` and `after` into `Collection`.
 - [#6876](https://github.com/hyperf/hyperf/pull/6876) Added method `Hyperf\Database\Concerns\Builder::eachById`.
 
+## Optimized
+
+- [#6870](https://github.com/hyperf/hyperf/pull/6870) Updated default path for factories in Model Factory construct method.
+
 # v3.1.26 - 2024-06-13
 
 ## Fixed
