@@ -59,7 +59,7 @@ class ScannerTest extends TestCase
         $this->getContainer();
 
         $loader = Mockery::mock(ClassLoader::class);
-        $loader->shouldReceive('findFile')->andReturnUsing(fn($class) => $class);
+        $loader->shouldReceive('findFile')->andReturnUsing(fn ($class) => $class);
         Composer::setLoader($loader);
 
         $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
