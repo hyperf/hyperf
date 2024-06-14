@@ -10,6 +10,7 @@
 ## Optimized
 
 - [#6870](https://github.com/hyperf/hyperf/pull/6870) Updated default path for factories in Model Factory construct method.
+- [#6868](https://github.com/hyperf/hyperf/pull/6868) Support type `Closure|Expression|ModelBuilder|static|string` of `$column` for `QueryBuilder::orderBy()`.
 
 # v3.1.26 - 2024-06-13
 
