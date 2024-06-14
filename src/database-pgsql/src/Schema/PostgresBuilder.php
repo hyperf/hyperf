@@ -163,6 +163,25 @@ class PostgresBuilder extends Builder
     }
 
     /**
+     * Determine if the given view exists.
+     */
+    public function hasView(string $view): bool
+    {
+        [$schema, $view] = $this->parseSchemaAndTable($view);
+
+        $view = $this->connection->getTablePrefix() . $view;
+
+        foreach ($this->getViews() as $value) {
+            if (strtolower($view) === strtolower($value['name'])
+                && strtolower($schema) === strtolower($value['schema'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get all of the type names for the database.
      *
      * @return array

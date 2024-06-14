@@ -1070,6 +1070,64 @@ class LazyCollection implements Enumerable
     }
 
     /**
+     * Get the item before the given item.
+     *
+     * @param (callable(TValue,TKey): bool)|TValue $value
+     * @return null|TValue
+     */
+    public function before(mixed $value, bool $strict = false): mixed
+    {
+        $previous = null;
+
+        /** @var (callable(TValue,TKey): bool) $predicate */
+        $predicate = $this->useAsCallable($value)
+            ? $value
+            : function ($item) use ($value, $strict) {
+                return $strict ? $item === $value : $item == $value;
+            };
+
+        foreach ($this as $key => $item) {
+            if ($predicate($item, $key)) {
+                return $previous;
+            }
+
+            $previous = $item;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the item after the given item.
+     *
+     * @param (callable(TValue,TKey): bool)|TValue $value
+     * @return null|TValue
+     */
+    public function after(mixed $value, bool $strict = false): mixed
+    {
+        $found = false;
+
+        /** @var (callable(TValue,TKey): bool) $predicate */
+        $predicate = $this->useAsCallable($value)
+            ? $value
+            : function ($item) use ($value, $strict) {
+                return $strict ? $item === $value : $item == $value;
+            };
+
+        foreach ($this as $key => $item) {
+            if ($found) {
+                return $item;
+            }
+
+            if ($predicate($item, $key)) {
+                $found = true;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Shuffle the items in the collection.
      *
      * @return Collection

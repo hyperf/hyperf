@@ -32,13 +32,6 @@ class SchemaBuilderTest extends TestCase
         $container->allows('get')->with(Db::class)->andReturns(new Db($container));
     }
 
-    protected function tearDown(): void
-    {
-        Schema::drop('foo');
-        Schema::drop('bar');
-        Schema::drop('baz');
-    }
-
     public function testGetTables(): void
     {
         Schema::create('foo', static function (Blueprint $table) {
@@ -59,5 +52,30 @@ class SchemaBuilderTest extends TestCase
         $this->assertNotEmpty(array_filter($tables, static function ($table) {
             return $table['name'] === 'foo';
         }));
+        Schema::drop('foo');
+        Schema::drop('bar');
+        Schema::drop('baz');
+    }
+
+    public function testView(): void
+    {
+        Schema::create('view_1', static function (Blueprint $table) {
+            $table->comment('This is a comment');
+            $table->increments('id');
+        });
+        Db::table('view_1')->insert(['id' => 1]);
+        Db::statement('create view demo1 as select id from view_1');
+        $this->assertNotEmpty(array_filter(Schema::getViews(), function ($table) {
+            return $table['name'] === 'demo1';
+        }));
+        $this->assertTrue(Schema::hasView('demo1'));
+        /*
+        Schema::dropAllViews();*/
+        Db::statement('DROP VIEW IF EXISTS demo1 CASCADE;');
+        $this->assertFalse(Schema::hasView('demo1'));
+        $this->assertEmpty(array_filter(Schema::getViews(), function ($table) {
+            return $table['name'] === 'demo1';
+        }));
+        Schema::drop('view_1');
     }
 }

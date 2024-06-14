@@ -116,6 +116,18 @@ class MySqlBuilder extends Builder
     }
 
     /**
+     * Get the views for the database.
+     */
+    public function getViews(): array
+    {
+        return $this->connection->getPostProcessor()->processViews(
+            $this->connection->selectFromWriteConnection(
+                $this->grammar->compileViews($this->connection->getDatabaseName())
+            )
+        );
+    }
+
+    /**
      * Drop all tables from the database.
      */
     public function dropAllTables(): void

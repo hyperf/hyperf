@@ -110,6 +110,34 @@ trait BuildsQueries
     }
 
     /**
+     * Query lazily, by chunks of the given size.
+     */
+    public function lazy(int $chunkSize = 1000): LazyCollection
+    {
+        if ($chunkSize < 1) {
+            throw new InvalidArgumentException('The chunk size should be at least 1');
+        }
+
+        $this->enforceOrderBy();
+
+        return LazyCollection::make(function () use ($chunkSize) {
+            $page = 1;
+
+            while (true) {
+                $results = $this->forPage($page++, $chunkSize)->get();
+
+                foreach ($results as $result) {
+                    yield $result;
+                }
+
+                if ($results->count() < $chunkSize) {
+                    return;
+                }
+            }
+        });
+    }
+
+    /**
      * Query lazily, by chunking the results of a query by comparing IDs.
      */
     public function lazyById(int $chunkSize = 1000, ?string $column = null, ?string $alias = null): LazyCollection
@@ -134,6 +162,21 @@ trait BuildsQueries
     public function first($columns = ['*'])
     {
         return $this->take(1)->get($columns)->first();
+    }
+
+    /**
+     * Execute a callback over each item while chunking by ID.
+     */
+    public function eachById(callable $callback, int $count = 1000, ?string $column = null, ?string $alias = null): bool
+    {
+        return $this->chunkById($count, function (Collection $results) use ($callback) {
+            foreach ($results as $value) {
+                if ($callback($value) === false) {
+                    return false;
+                }
+            }
+            return true;
+        }, $column, $alias);
     }
 
     /**
@@ -186,14 +229,6 @@ trait BuildsQueries
         } while ($countResults === $count);
 
         return true;
-    }
-
-    /**
-     * Chunk the results of a query by comparing IDs.
-     */
-    public function chunkById(int $count, callable $callback, ?string $column = null, ?string $alias = null): bool
-    {
-        return $this->orderedChunkById($count, $callback, $column, $alias);
     }
 
     /**

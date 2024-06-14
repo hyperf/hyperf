@@ -54,6 +54,19 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine the views.
+     */
+    public function compileViews(string $database): string
+    {
+        return sprintf(
+            'select table_name as `name`, view_definition as `definition` '
+            . 'from information_schema.views where table_schema = %s '
+            . 'order by table_name',
+            $this->quoteString($database)
+        );
+    }
+
+    /**
      * Compile the query to determine the list of columns.
      */
     public function compileColumnListing(): string
