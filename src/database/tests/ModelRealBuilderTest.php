@@ -172,6 +172,15 @@ class ModelRealBuilderTest extends TestCase
         }
     }
 
+    public function testOrderByModelBuilder()
+    {
+        $this->getContainer();
+
+        $sql = User::query()->orderBy(User::query()->select('id')->limit(1))->toSql();
+
+        $this->assertSame('select * from `user` order by (select `id` from `user` limit 1) asc', $sql);
+    }
+
     public function testForPageAfterId()
     {
         $this->getContainer();
