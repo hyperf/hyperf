@@ -60,6 +60,11 @@ class MultipleAnnotation implements MultipleAnnotationInterface
         throw new AnnotationException('MultipleAnnotation[' . $this->className() . '] does not support collectClass()');
     }
 
+    public function collectClassConstant(string $className, ?string $target): void
+    {
+        throw new AnnotationException('MultipleAnnotation[' . $this->className() . '] does not support collectClassConstant()');
+    }
+
     public function collectMethod(string $className, ?string $target): void
     {
         throw new AnnotationException('MultipleAnnotation[' . $this->className() . '] does not support collectMethod()');
