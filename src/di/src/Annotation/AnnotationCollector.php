@@ -47,6 +47,19 @@ class AnnotationCollector extends MetadataCollector
         }
     }
 
+    public static function getClassConstantsByAnnotation(string $annotation): array
+    {
+        $result = [];
+        foreach (static::$container as $class => $metadata) {
+            foreach ($metadata['_cc'] ?? [] as $constant => $_metadata) {
+                if ($value = $_metadata[$annotation] ?? null) {
+                    $result[] = ['class' => $class, 'constant' => $constant, 'annotation' => $value];
+                }
+            }
+        }
+        return $result;
+    }
+
     public static function getClassesByAnnotation(string $annotation): array
     {
         $result = [];
