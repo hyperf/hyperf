@@ -188,7 +188,7 @@ abstract class Command extends SymfonyCommand
                     throw $exception;
                 }
 
-                $this->output && $this->error($exception->getMessage());
+                $this->output?->error((string) $exception);
 
                 $this->exitCode = self::FAILURE;
 

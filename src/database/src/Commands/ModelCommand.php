@@ -157,6 +157,11 @@ class ModelCommand extends Command
         $builder = $this->getSchemaBuilder($option->getPool());
         $table = Str::replaceFirst($option->getPrefix(), '', $table);
         $columns = $this->formatColumns($builder->getColumnTypeListing($table));
+        if (empty($columns)) {
+            $this->output?->error(
+                sprintf('Query columns empty, maybe is table `%s` does not exist.You can check it in database.', $table)
+            );
+        }
 
         $project = new Project();
         $class = $option->getTableMapping()[$table] ?? Str::studly(Str::singular($table));
