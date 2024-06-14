@@ -1807,7 +1807,6 @@ class Builder
      * Add an "order by" clause to the query.
      *
      * @param Closure|Expression|ModelBuilder|static|string $column
-     * @param string $direction
      * @return $this
      */
     public function orderBy(mixed $column, string $direction = 'asc'): static
