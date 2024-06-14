@@ -23,6 +23,11 @@ class AnnotationCollector extends MetadataCollector
         static::$container[$class]['_c'][$annotation] = $value;
     }
 
+    public static function collectClassConstant(string $class, string $constant, string $annotation, $value): void
+    {
+        static::$container[$class]['_cc'][$constant][$annotation] = $value;
+    }
+
     public static function collectProperty(string $class, string $property, string $annotation, $value): void
     {
         static::$container[$class]['_p'][$property][$annotation] = $value;
@@ -88,6 +93,11 @@ class AnnotationCollector extends MetadataCollector
     public static function getClassAnnotations(string $class)
     {
         return static::get($class . '._c');
+    }
+
+    public static function getClassConstantAnnotation(string $class, string $constant)
+    {
+        return static::get($class . '._cc.' . $constant);
     }
 
     public static function getClassMethodAnnotation(string $class, string $method)
