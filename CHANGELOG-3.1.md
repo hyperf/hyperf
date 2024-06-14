@@ -5,13 +5,13 @@
 - [#6864](https://github.com/hyperf/hyperf/pull/6864) Added methods `getViews` and `hasView` into `Hyperf\Database\Schema\Schema`.
 - [#6866](https://github.com/hyperf/hyperf/pull/6866) Added method `Hyperf\Database\Concerns\BuildsQueries::lazy`.
 - [#6869](https://github.com/hyperf/hyperf/pull/6869) Added methods `before` and `after` into `Collection`.
-- [#6876](https://github.com/hyperf/hyperf/pull/6876) Added method `Hyperf\Database\Concerns\Builder::eachById`.=
+- [#6876](https://github.com/hyperf/hyperf/pull/6876) Added method `Hyperf\Database\Concerns\Builder::eachById`.
 
 ## Optimized
 
 - [#6870](https://github.com/hyperf/hyperf/pull/6870) Updated default path for factories in Model Factory construct method.
 - [#6868](https://github.com/hyperf/hyperf/pull/6868) Support type `Closure|Expression|ModelBuilder|static|string` of `$column` for `QueryBuilder::orderBy()`.
-- [#6829](https://github.com/hyperf/hyperf/pull/6829) Optimize error format log for command.
+- [#6829](https://github.com/hyperf/hyperf/pull/6829) Optimized the format of command error logs.
 
 # v3.1.26 - 2024-06-13
 
