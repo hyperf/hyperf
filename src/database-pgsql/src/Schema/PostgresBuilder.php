@@ -237,6 +237,20 @@ class PostgresBuilder extends Builder
     }
 
     /**
+     * Get the indexes for a given table.
+     */
+    public function getIndexes(string $table): array
+    {
+        [$schema, $table] = $this->parseSchemaAndTable($table);
+
+        $table = $this->connection->getTablePrefix() . $table;
+
+        return $this->connection->getPostProcessor()->processIndexes(
+            $this->connection->selectFromWriteConnection($this->grammar->compileIndexes($schema, $table))
+        );
+    }
+
+    /**
      * Parse the table name and extract the schema and table.
      *
      * @param string $table
