@@ -31,8 +31,8 @@ class CursorPaginatorLoadMorphCountTest extends TestCase
     public function testCollectionLoadMorphCountCanChainOnThePaginator(): void
     {
         $relations = [
-            'App\\User' => 'photos',
-            'App\\Company' => ['employees', 'calendars'],
+            'App\User' => 'photos',
+            'App\Company' => ['employees', 'calendars'],
         ];
 
         $items = m::mock(Collection::class);

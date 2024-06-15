@@ -26,12 +26,12 @@ class Info
         if (! $this->has($key)) {
             return null;
         }
-        $class = __NAMESPACE__ . '\\Adapter\\' . ucfirst($key);
+        $class = __NAMESPACE__ . '\Adapter\\' . ucfirst($key);
         return $this->container->get($class);
     }
 
     public function has(string $key): bool
     {
-        return class_exists(__NAMESPACE__ . '\\Adapter\\' . ucfirst($key));
+        return class_exists(__NAMESPACE__ . '\Adapter\\' . ucfirst($key));
     }
 }
