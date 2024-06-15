@@ -79,4 +79,27 @@ class SchemaBuilderTest extends TestCase
         }));
         Schema::drop('view_1');
     }
+
+    public function testColumn(): void
+    {
+        Schema::create('column_1', static function (Blueprint $table) {
+            $table->comment('This is a comment');
+            $table->increments('id');
+            $table->string('name');
+            $table->integer('ranking');
+        });
+
+        $this->assertTrue(Schema::hasColumn('column_1', 'name'));
+        $this->assertTrue(Schema::hasColumn('column_1', 'naMe'));
+        $this->assertFalse(Schema::hasColumn('column_1', 'names'));
+        $this->assertTrue(Schema::hasColumn('column_1', 'ranking'));
+        $this->assertFalse(Schema::hasColumn('column_1', 'rankings'));
+        $this->assertTrue(Schema::hasColumns('column_1', ['name', 'ranking']));
+        $this->assertFalse(Schema::hasColumns('column_1', ['names', 'ranking']));
+        $this->assertSame('string', Schema::getColumnType('column_1', 'name'));
+        $this->assertSame('integer', Schema::getColumnType('column_1', 'ranking'));
+        $columns = Schema::getColumnTypeListing('column_1');
+        $this->assertSame(['id', 'name', 'ranking'], array_column($columns, 'column_name'));
+        Schema::drop('column_1');
+    }
 }
