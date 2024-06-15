@@ -569,6 +569,19 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
+     * Update the model in the database within a transaction.
+     * @throws Throwable
+     */
+    public function updateOrFail(array $attributes = [], array $options = []): bool
+    {
+        if (! $this->exists) {
+            return false;
+        }
+
+        return $this->fill($attributes)->saveOrFail($options);
+    }
+
+    /**
      * Save the model and all of its relationships.
      *
      * @return bool
