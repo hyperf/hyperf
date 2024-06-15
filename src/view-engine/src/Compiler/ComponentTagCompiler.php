@@ -164,7 +164,7 @@ class ComponentTagCompiler
         $class = $this->formatClassName($component);
 
         if (! $prefix) {
-            $prefix = 'App\\View\\Component\\';
+            $prefix = 'App\View\Component\\';
         }
 
         return rtrim($prefix, '\\') . '\\' . $class;
@@ -379,7 +379,7 @@ class ComponentTagCompiler
      */
     protected function compileClosingTags(string $value): string
     {
-        return preg_replace('/<\\/\\s*x[-\\:][\\w\\-\\:\\.]*\\s*>/', ' @endcomponentClass ', $value);
+        return preg_replace('/<\/\s*x[-\:][\w\-\:\.]*\s*>/', ' @endcomponentClass ', $value);
     }
 
     /**
@@ -441,8 +441,8 @@ class ComponentTagCompiler
     protected function parseAttributeBag(string $attributeString): string
     {
         $pattern = '/
-            (?:^|\\s+)                                        # start of the string or whitespace between attributes
-            \\{\\{\\s*(\\$attributes(?:[^}]+?(?<!\\s))?)\\s*\\}\\} # exact match of attributes variable being echoed
+            (?:^|\s+)                                        # start of the string or whitespace between attributes
+            \{\{\s*(\$attributes(?:[^}]+?(?<!\s))?)\s*\}\} # exact match of attributes variable being echoed
         /x';
 
         return preg_replace($pattern, ' :attributes="$1"', $attributeString);
@@ -454,9 +454,9 @@ class ComponentTagCompiler
     protected function parseBindAttributes(string $attributeString): string
     {
         $pattern = '/
-            (?:^|\\s+)     # start of the string or whitespace between attributes
+            (?:^|\s+)     # start of the string or whitespace between attributes
             :             # attribute needs to start with a semicolon
-            ([\\w\\-:.@]+)  # match the actual attribute name
+            ([\w\-:.@]+)  # match the actual attribute name
             =             # only match attributes that have a value
         /xm';
 

@@ -368,11 +368,11 @@ class Bar3 extends Bar
 
         $code = $ast->proxy(FooTrait::class);
         $this->assertSame($this->license . '
-namespace HyperfTest\\Di\\Stub\\Ast;
+namespace HyperfTest\Di\Stub\Ast;
 
 trait FooTrait
 {
-    use \\Hyperf\\Di\\Aop\\ProxyTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function getString() : string
     {
         $__function__ = __FUNCTION__;

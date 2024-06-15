@@ -102,7 +102,7 @@ class BladeEchosTest extends AbstractBladeTestCase
     public function testBladeHandlerCanInterceptRegularEchos()
     {
         $this->assertSame(
-            '<?php echo \\Hyperf\\ViewEngine\\T::e($exampleObject); ?>',
+            '<?php echo \Hyperf\ViewEngine\T::e($exampleObject); ?>',
             $this->compiler->compileString('{{$exampleObject}}')
         );
     }
