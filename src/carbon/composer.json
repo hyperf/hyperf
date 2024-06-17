@@ -1,8 +1,8 @@
 {
     "name": "hyperf/carbon",
     "description": "A Carbon for Hyperf",
-    "type": "library",
     "license": "MIT",
+    "type": "library",
     "keywords": [
         "php",
         "swoole",

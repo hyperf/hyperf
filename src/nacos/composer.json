@@ -1,13 +1,22 @@
 {
     "name": "hyperf/nacos",
-    "type": "library",
+    "description": "Nacos SDK",
     "license": "MIT",
+    "type": "library",
     "keywords": [
         "php",
         "hyperf",
         "nacos"
     ],
-    "description": "Nacos SDK",
+    "require": {
+        "php": ">=8.1",
+        "guzzlehttp/guzzle": "^6.5 || ^7.0",
+        "hyperf/codec": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/support": "~3.1.0",
+        "hyperf/utils": "~3.1.0",
+        "jetbrains/phpstorm-attributes": "^1.0"
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\Nacos\\": "src/"
@@ -17,20 +26,6 @@
         "psr-4": {
             "HyperfTest\\Nacos\\": "tests"
         }
-    },
-    "require": {
-        "php": ">=8.1",
-        "guzzlehttp/guzzle": "^6.5|^7.0",
-        "hyperf/codec": "~3.1.0",
-        "hyperf/contract": "~3.1.0",
-        "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0",
-        "jetbrains/phpstorm-attributes": "^1.0"
-    },
-    "suggests": {
-        "google/protobuf": "Required to use nacos v2 grpc apis.",
-        "hyperf/grpc": "Required to use nacos v2 grpc apis.",
-        "hyperf/http2-client": "Required to use nacos v2 grpc apis."
     },
     "config": {
         "sort-packages": true
@@ -42,5 +37,10 @@
         "hyperf": {
             "config": "Hyperf\\Nacos\\ConfigProvider"
         }
+    },
+    "suggests": {
+        "google/protobuf": "Required to use nacos v2 grpc apis.",
+        "hyperf/grpc": "Required to use nacos v2 grpc apis.",
+        "hyperf/http2-client": "Required to use nacos v2 grpc apis."
     }
 }
