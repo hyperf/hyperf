@@ -1,14 +1,31 @@
 {
     "name": "hyperf/testing",
-    "type": "library",
+    "description": "Testing for hyperf",
     "license": "MIT",
+    "type": "library",
     "keywords": [
         "dev",
         "php",
         "swoole",
         "testing"
     ],
-    "description": "Testing for hyperf",
+    "require": {
+        "php": ">=8.1",
+        "hyperf/codec": "~3.1.0",
+        "hyperf/collection": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/coroutine": "~3.1.0",
+        "hyperf/http-message": "~3.1.0",
+        "hyperf/http-server": "~3.1.0",
+        "hyperf/support": "~3.1.0",
+        "hyperf/utils": "~3.1.0",
+        "phpunit/phpunit": "^10.0",
+        "psr/container": "^1.0 || ^2.0",
+        "symfony/http-foundation": "^5.4 || ^6.0"
+    },
+    "suggest": {
+        "fakerphp/faker": "Required to use Faker feature.(^1.23)"
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\Testing\\": "src/"
@@ -19,29 +36,12 @@
             "HyperfTest\\Testing\\": "tests/"
         }
     },
-    "require": {
-        "php": ">=8.1",
-        "psr/container": "^1.0|^2.0",
-        "phpunit/phpunit": "^10.0",
-        "hyperf/codec": "~3.1.0",
-        "hyperf/collection": "~3.1.0",
-        "hyperf/contract": "~3.1.0",
-        "hyperf/coroutine": "~3.1.0",
-        "hyperf/http-message": "~3.1.0",
-        "hyperf/http-server": "~3.1.0",
-        "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0",
-        "symfony/http-foundation": "^5.4|^6.0"
-    },
-    "suggest": {
-        "fakerphp/faker": "Required to use Faker feature.(^1.23)"
-    },
+    "bin": [
+        "co-phpunit"
+    ],
     "extra": {
         "branch-alias": {
             "dev-master": "3.1-dev"
         }
-    },
-    "bin": [
-        "co-phpunit"
-    ]
+    }
 }

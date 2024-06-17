@@ -1,22 +1,12 @@
 {
     "name": "hyperf/validation",
-    "type": "library",
+    "description": "hyperf validation",
     "license": "MIT",
+    "type": "library",
     "keywords": [
         "validation",
         "hyperf"
     ],
-    "description": "hyperf validation",
-    "autoload": {
-        "psr-4": {
-            "Hyperf\\Validation\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "HyperfTest\\Validation\\": "tests"
-        }
-    },
     "require": {
         "php": ">=8.1",
         "egulias/email-validator": "^3.0",
@@ -26,19 +16,29 @@
         "hyperf/di": "~3.1.0",
         "hyperf/framework": "~3.1.0",
         "hyperf/macroable": "~3.1.0",
-        "hyperf/tappable": "~3.1.0",
-        "hyperf/translation": "~3.1.0",
         "hyperf/stringable": "~3.1.0",
         "hyperf/support": "~3.1.0",
+        "hyperf/tappable": "~3.1.0",
+        "hyperf/translation": "~3.1.0",
         "hyperf/utils": "~3.1.0",
         "nesbot/carbon": "^2.21",
-        "psr/container": "^1.0|^2.0",
+        "psr/container": "^1.0 || ^2.0",
         "psr/event-dispatcher": "^1.0",
-        "psr/http-message": "^1.0|^2.0"
+        "psr/http-message": "^1.0 || ^2.0"
     },
     "suggest": {
         "hyperf/database": "Required if you want to use the database validation rule (~3.1.0).",
         "hyperf/http-server": "Required if you want to use the request validation rule (~3.1.0)."
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Validation\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Validation\\": "tests"
+        }
     },
     "config": {
         "sort-packages": true
