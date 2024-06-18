@@ -46,11 +46,4 @@ trait AnnotationTrait
         AnnotationCollector::collectProperty($className, $target, static::class, $this);
         ClassCollector::collect($className);
     }
-
-    protected function bindMainProperty(string $key, array $value)
-    {
-        if (isset($value['value'])) {
-            $this->{$key} = $value['value'];
-        }
-    }
 }

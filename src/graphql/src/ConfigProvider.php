@@ -14,8 +14,6 @@ namespace Hyperf\GraphQL;
 
 use Doctrine\Common\Annotations\Reader;
 use GraphQL\Type\Schema;
-use TheCodingMachine\GraphQLite\Hydrators\FactoryHydrator;
-use TheCodingMachine\GraphQLite\Hydrators\HydratorInterface;
 use TheCodingMachine\GraphQLite\Mappers\RecursiveTypeMapperInterface;
 use TheCodingMachine\GraphQLite\NamingStrategy;
 use TheCodingMachine\GraphQLite\NamingStrategyInterface;
@@ -35,7 +33,6 @@ class ConfigProvider
                 QueryProviderInterface::class => QueryProvider::class,
                 RecursiveTypeMapperInterface::class => RecursiveTypeMapperFactory::class,
                 Reader::class => ReaderFactory::class,
-                HydratorInterface::class => FactoryHydrator::class,
                 AuthenticationServiceInterface::class => FailAuthenticationService::class,
                 AuthorizationServiceInterface::class => FailAuthorizationService::class,
                 NamingStrategyInterface::class => NamingStrategy::class,

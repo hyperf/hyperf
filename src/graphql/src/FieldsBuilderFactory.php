@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\GraphQL;
 
-use TheCodingMachine\GraphQLite\Hydrators\HydratorInterface;
 use TheCodingMachine\GraphQLite\Mappers\RecursiveTypeMapperInterface;
 use TheCodingMachine\GraphQLite\NamingStrategyInterface;
 use TheCodingMachine\GraphQLite\Reflection\CachedDocBlockFactory;
@@ -27,11 +26,6 @@ class FieldsBuilderFactory
      * @var AnnotationReader
      */
     private $annotationReader;
-
-    /**
-     * @var HydratorInterface
-     */
-    private $hydrator;
 
     /**
      * @var AuthenticationServiceInterface
@@ -60,7 +54,6 @@ class FieldsBuilderFactory
 
     public function __construct(
         AnnotationReader $annotationReader,
-        HydratorInterface $hydrator,
         AuthenticationServiceInterface $authenticationService,
         AuthorizationServiceInterface $authorizationService,
         TypeResolver $typeResolver,
@@ -68,7 +61,6 @@ class FieldsBuilderFactory
         NamingStrategyInterface $namingStrategy
     ) {
         $this->annotationReader = $annotationReader;
-        $this->hydrator = $hydrator;
         $this->authenticationService = $authenticationService;
         $this->authorizationService = $authorizationService;
         $this->typeResolver = $typeResolver;
@@ -81,7 +73,7 @@ class FieldsBuilderFactory
         return new FieldsBuilder(
             $this->annotationReader,
             $typeMapper,
-            new ArgumentResolver($this->hydrator),
+            new ArgumentResolver(),
             $this->authenticationService,
             $this->authorizationService,
             $this->typeResolver,

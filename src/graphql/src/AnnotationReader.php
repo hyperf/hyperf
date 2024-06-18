@@ -237,11 +237,11 @@ class AnnotationReader
     private function isErrorImportant(string $annotationClass, string $docComment, string $className): bool
     {
         foreach ($this->strictNamespaces as $strictNamespace) {
-            if (strpos($className, $strictNamespace) === 0) {
+            if (str_starts_with($className, $strictNamespace)) {
                 return true;
             }
         }
         $shortAnnotationClass = substr($annotationClass, strrpos($annotationClass, '\\') + 1);
-        return strpos($docComment, '@' . $shortAnnotationClass) !== false;
+        return str_contains($docComment, '@' . $shortAnnotationClass);
     }
 }

@@ -15,7 +15,7 @@
         "hyperf/contract": "~3.1.0",
         "hyperf/di": "~3.1.0",
         "swow/psr7-plus": "^1.0",
-        "thecodingmachine/graphqlite": "^3.0"
+        "thecodingmachine/graphqlite": "^7.0"
     },
     "suggest": {
         "hyperf/http-message": "Required to use GraphQLMiddleware.",

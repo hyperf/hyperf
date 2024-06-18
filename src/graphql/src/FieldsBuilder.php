@@ -42,6 +42,7 @@ use ReflectionException;
 use ReflectionMethod;
 use ReflectionParameter;
 use TheCodingMachine\GraphQLite\Annotations\SourceField;
+use TheCodingMachine\GraphQLite\Annotations\SourceFieldInterface;
 use TheCodingMachine\GraphQLite\FieldNotFoundException;
 use TheCodingMachine\GraphQLite\FromSourceFieldsInterface;
 use TheCodingMachine\GraphQLite\GraphQLException;
@@ -192,7 +193,7 @@ class FieldsBuilder
      */
     public function getSelfFields(string $className): array
     {
-        $fieldAnnotations = $this->getFieldsByAnnotations(null, Field::class, false, $className);
+        $fieldAnnotations = $this->getFieldsByAnnotations($className, Field::class, false);
 
         $refClass = new ReflectionClass($className);
 
@@ -233,13 +234,9 @@ class FieldsBuilder
      * @throws CannotMapTypeExceptionInterface
      * @throws ReflectionException
      */
-    private function getFieldsByAnnotations($controller, string $annotationName, bool $injectSource, ?string $sourceClassName = null): array
+    private function getFieldsByAnnotations(object|string $controller, string $annotationName, bool $injectSource): array
     {
-        if ($sourceClassName !== null) {
-            $refClass = new ReflectionClass($sourceClassName);
-        } else {
-            $refClass = new ReflectionClass($controller);
-        }
+        $refClass = new ReflectionClass($controller);
 
         $queryList = [];
 
@@ -309,7 +306,7 @@ class FieldsBuilder
                     $queryList[] = new QueryField($name, $type, $args, $callable, null, $this->argumentResolver, $docBlockComment, $injectSource);
                 } else {
                     $callable = [$controller, $methodName];
-                    if ($sourceClassName !== null) {
+                    if (is_string($controller)) {
                         $queryList[] = new QueryField($name, $type, $args, null, $callable[1], $this->argumentResolver, $docBlockComment, $injectSource);
                     } else {
                         $queryList[] = new QueryField($name, $type, $args, $callable, null, $this->argumentResolver, $docBlockComment, $injectSource);
