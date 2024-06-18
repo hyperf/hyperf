@@ -21,7 +21,6 @@ class ReaderFactory
 {
     public function __invoke()
     {
-        AnnotationRegistry::registerLoader('class_exists');
         $doctrineAnnotationReader = new AnnotationReader();
 
         if (function_exists('apcu_fetch')) {

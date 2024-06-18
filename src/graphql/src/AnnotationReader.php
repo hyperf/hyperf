@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\GraphQL;
 
 use Doctrine\Common\Annotations\AnnotationException;
-use Doctrine\Common\Annotations\Reader;
+use Hyperf\Di\Annotation\AnnotationReader as Reader;
 use Hyperf\GraphQL\Annotation\ExtendType;
 use Hyperf\GraphQL\Annotation\Factory;
 use Hyperf\GraphQL\Annotation\FailWith;
@@ -22,6 +22,7 @@ use Hyperf\GraphQL\Annotation\Right;
 use Hyperf\GraphQL\Annotation\SourceField;
 use Hyperf\GraphQL\Annotation\Type;
 use InvalidArgumentException;
+use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionMethod;
 use RuntimeException;
@@ -68,9 +69,9 @@ class AnnotationReader
      * AnnotationReader constructor.
      * @param string $mode One of self::LAX_MODE or self::STRICT_MODE
      */
-    public function __construct(Reader $reader, string $mode = self::STRICT_MODE, array $strictNamespaces = [])
+    public function __construct(ContainerInterface $container, string $mode = self::STRICT_MODE, array $strictNamespaces = [])
     {
-        $this->reader = $reader;
+        $this->reader = $container->get(Reader::class);
         if (! in_array($mode, [self::LAX_MODE, self::STRICT_MODE], true)) {
             throw new InvalidArgumentException('The mode passed must be one of AnnotationReader::LAX_MODE, AnnotationReader::STRICT_MODE');
         }

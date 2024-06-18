@@ -32,7 +32,6 @@ class ConfigProvider
                 Schema::class => \TheCodingMachine\GraphQLite\Schema::class,
                 QueryProviderInterface::class => QueryProvider::class,
                 RecursiveTypeMapperInterface::class => RecursiveTypeMapperFactory::class,
-                Reader::class => ReaderFactory::class,
                 AuthenticationServiceInterface::class => FailAuthenticationService::class,
                 AuthorizationServiceInterface::class => FailAuthorizationService::class,
                 NamingStrategyInterface::class => NamingStrategy::class,

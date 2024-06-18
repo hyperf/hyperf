@@ -55,7 +55,7 @@ class RecursiveTypeMapperFactory
 
     public function __invoke()
     {
-        $annotationReader = new AnnotationReader($this->container->get(Reader::class), AnnotationReader::LAX_MODE);
+        $annotationReader = new AnnotationReader($this->container, AnnotationReader::LAX_MODE);
         $typeGenerator = $this->container->get(TypeGenerator::class);
         $inputTypeGenerator = $this->container->get(InputTypeGenerator::class);
         $inputTypeUtils = $this->container->get(InputTypeUtils::class);
