@@ -6,6 +6,7 @@
 - [#6866](https://github.com/hyperf/hyperf/pull/6866) Added method `Hyperf\Database\Concerns\BuildsQueries::lazy`.
 - [#6869](https://github.com/hyperf/hyperf/pull/6869) Added methods `before` and `after` into `Collection`.
 - [#6876](https://github.com/hyperf/hyperf/pull/6876) Added method `Hyperf\Database\Concerns\Builder::eachById`.
+- [#6878](https://github.com/hyperf/hyperf/pull/6878) Added methods `whereMorphRelation` and `orWhereMorphRelation` into `Hyperf\Database\Model\Concerns\QueriesRelationships`.
 
 ## Optimized
 

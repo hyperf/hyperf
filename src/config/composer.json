@@ -11,33 +11,33 @@
     ],
     "homepage": "https://hyperf.io",
     "support": {
-        "docs": "https://hyperf.wiki",
         "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
         "php": ">=8.1",
         "hyperf/collection": "~3.1.0",
         "hyperf/contract": "~3.1.0",
         "hyperf/support": "~3.1.0",
-        "psr/container": "^1.0|^2.0",
-        "symfony/finder": "^5.0|^6.0|^7.0"
+        "psr/container": "^1.0 || ^2.0",
+        "symfony/finder": "^5.0 || ^6.0 || ^7.0"
     },
     "suggest": {
-        "vlucas/phpdotenv": "Allows using enviroment value to override the config",
+        "hyperf/context": "Required to use config()",
         "hyperf/di": "Allows using @Value annotation",
         "hyperf/event": "Allows using @Value annotation",
         "hyperf/framework": "Allows using @Value annotation",
-        "hyperf/context": "Required to use config()"
+        "vlucas/phpdotenv": "Allows using enviroment value to override the config"
     },
     "autoload": {
-        "files": [
-            "./src/Functions.php"
-        ],
         "psr-4": {
             "Hyperf\\Config\\": "src/"
-        }
+        },
+        "files": [
+            "./src/Functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
