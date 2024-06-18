@@ -11,10 +11,10 @@
     ],
     "homepage": "https://hyperf.io",
     "support": {
-        "docs": "https://hyperf.wiki",
         "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
         "php": ">=8.1",

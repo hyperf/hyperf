@@ -7,6 +7,13 @@
 - [#6869](https://github.com/hyperf/hyperf/pull/6869) Added methods `before` and `after` into `Collection`.
 - [#6876](https://github.com/hyperf/hyperf/pull/6876) Added method `Hyperf\Database\Concerns\Builder::eachById`.
 
+## Optimized
+
+- [#6829](https://github.com/hyperf/hyperf/pull/6829) Optimized the format of command error logs.
+- [#6868](https://github.com/hyperf/hyperf/pull/6868) Support type `Closure|Expression|ModelBuilder|static|string` of `$column` for `QueryBuilder::orderBy()`.
+- [#6870](https://github.com/hyperf/hyperf/pull/6870) Updated default path for factories in Model Factory construct method.
+- [#6874](https://github.com/hyperf/hyperf/pull/6874) Using `Scanner` instead of hard code for `hyperf/watcher` component.
+
 # v3.1.26 - 2024-06-13
 
 ## Fixed

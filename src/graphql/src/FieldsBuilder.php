@@ -707,12 +707,12 @@ class FieldsBuilder
         if ($type instanceof Object_) {
             $fqcn = (string) $type->getFqsen();
             switch ($fqcn) {
-                case '\\DateTimeImmutable':
-                case '\\DateTimeInterface':
+                case '\DateTimeImmutable':
+                case '\DateTimeInterface':
                     return DateTimeType::getInstance();
                 case '\\' . UploadedFileInterface::class:
                     return CustomTypesRegistry::getUploadType();
-                case '\\DateTime':
+                case '\DateTime':
                     throw new GraphQLException('Type-hinting a parameter against DateTime is not allowed. Please use the DateTimeImmutable type instead.');
                 case '\\' . ID::class:
                     return GraphQLType::id();
