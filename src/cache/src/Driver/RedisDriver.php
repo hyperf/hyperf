@@ -80,6 +80,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
         foreach ($keys as $i => $key) {
             $result[$key] = $values[$i] === false ? $default : $this->packer->unpack($values[$i]);
         }
+
         return $result;
     }
 
