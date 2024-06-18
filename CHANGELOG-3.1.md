@@ -7,6 +7,7 @@
 - [#6869](https://github.com/hyperf/hyperf/pull/6869) Added methods `before` and `after` into `Collection`.
 - [#6876](https://github.com/hyperf/hyperf/pull/6876) Added method `Hyperf\Database\Concerns\Builder::eachById`.
 - [#6878](https://github.com/hyperf/hyperf/pull/6878) Added methods `whereMorphRelation` and `orWhereMorphRelation` into `Hyperf\Database\Model\Concerns\QueriesRelationships`.
+- [#6883](https://github.com/hyperf/hyperf/pull/6883) Added methods `getIndexes` `hasIndex` and `getIndexListing` into `Hyperf\Database\Schema\Builder`.
 
 ## Optimized
 

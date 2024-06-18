@@ -373,6 +373,21 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine the indexes.
+     */
+    public function compileIndexes(string $database, string $table): string
+    {
+        return sprintf(
+            'select index_name as `name`, group_concat(column_name order by seq_in_index) as `columns`, '
+            . 'index_type as `type`, not non_unique as `unique` '
+            . 'from information_schema.statistics where table_schema = %s and table_name = %s '
+            . 'group by index_name, index_type, non_unique',
+            $this->quoteString($database),
+            $this->quoteString($table)
+        );
+    }
+
+    /**
      * Compile the SQL needed to retrieve all view names.
      *
      * @return string
