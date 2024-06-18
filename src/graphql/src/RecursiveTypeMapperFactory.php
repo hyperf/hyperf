@@ -52,22 +52,28 @@ class RecursiveTypeMapperFactory
     public function __invoke()
     {
         $annotationReader = new AnnotationReader($this->container, AnnotationReader::LAX_MODE);
-        // $typeGenerator = $this->container->get(TypeGenerator::class);
-        // $inputTypeGenerator = $this->container->get(InputTypeGenerator::class);
-        // $inputTypeUtils = $this->container->get(InputTypeUtils::class);
-        // $namingStrategy = $this->container->get(NamingStrategyInterface::class);
+        $typeGenerator = $this->container->get(TypeGenerator::class);
+        $inputTypeGenerator = $this->container->get(InputTypeGenerator::class);
+        $inputTypeUtils = $this->container->get(InputTypeUtils::class);
+        $namingStrategy = $this->container->get(NamingStrategyInterface::class);
 
-        // $typeMappers[] = new TypeMapper(
-        //     'app',
-        //     $typeGenerator,
-        //     $inputTypeGenerator,
-        //     $inputTypeUtils,
-        //     $this->container,
-        //     $annotationReader,
-        //     $namingStrategy,
-        //     $this->cache
-        // );
+        $typeMapper = new TypeMapper(
+            'app',
+            $typeGenerator,
+            $inputTypeGenerator,
+            $inputTypeUtils,
+            $this->container,
+            $annotationReader,
+            $namingStrategy,
+            $this->cache
+        );
         $compositeTypeMapper = new CompositeTypeMapper();
-        return new RecursiveTypeMapper($compositeTypeMapper, $this->namingStrategy, $this->cache, $this->typeRegistry, $annotationReader);
+        $compositeTypeMapper->addTypeMapper($typeMapper);
+
+        $mapper = new RecursiveTypeMapper($compositeTypeMapper, $this->namingStrategy, $this->cache, $this->typeRegistry, $annotationReader);
+
+        $typeMapper->setRecursiveTypeMapper($mapper);
+
+        return $mapper;
     }
 }

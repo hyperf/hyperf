@@ -179,7 +179,11 @@ class TypeMapper implements TypeMapperInterface
         $this->inputTypeGenerator = $inputTypeGenerator;
         $this->inputTypeUtils = $inputTypeUtils;
         $this->recursive = $recursive;
-        $this->recursiveTypeMapper = $container->get(RecursiveTypeMapperInterface::class);
+    }
+
+    public function setRecursiveTypeMapper(RecursiveTypeMapperInterface $recursiveTypeMapper): void
+    {
+        $this->recursiveTypeMapper = $recursiveTypeMapper;
     }
 
     /**
