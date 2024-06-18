@@ -30,7 +30,6 @@ use TheCodingMachine\GraphQLite\Annotations\Exceptions\ClassNotFoundException;
 
 use function array_filter;
 use function in_array;
-use function strpos;
 use function substr;
 
 class AnnotationReader

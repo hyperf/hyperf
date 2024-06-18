@@ -13,19 +13,20 @@ declare(strict_types=1);
 namespace Hyperf\GraphQL;
 
 use GraphQL\Type\Definition\InputObjectType;
+use GraphQL\Type\Definition\ResolveInfo;
 use ReflectionMethod;
-use TheCodingMachine\GraphQLite\GraphQLException;
+use TheCodingMachine\GraphQLite\Exceptions\GraphQLException;
 use TheCodingMachine\GraphQLite\Mappers\RecursiveTypeMapperInterface;
 use TheCodingMachine\GraphQLite\Types\ArgumentResolver;
-use TheCodingMachine\GraphQLite\Types\ResolvableInputInterface;
-use TheCodingMachine\GraphQLite\Types\ResolvableInputObjectType as TheCodingMachineResolvableInputObjectType;
+use TheCodingMachine\GraphQLite\Types\ResolvableMutableInputInterface;
+use TheCodingMachine\GraphQLite\Types\ResolvableMutableInputObjectType;
 
 use function get_class;
 
 /**
  * A GraphQL input object that can be resolved using a factory.
  */
-class ResolvableInputObjectType extends TheCodingMachineResolvableInputObjectType implements ResolvableInputInterface
+class ResolvableInputObjectType extends ResolvableMutableInputObjectType implements ResolvableMutableInputInterface
 {
     /**
      * @var ArgumentResolver
@@ -64,16 +65,13 @@ class ResolvableInputObjectType extends TheCodingMachineResolvableInputObjectTyp
         InputObjectType::__construct($config);
     }
 
-    /**
-     * @return object
-     */
-    public function resolve(array $args)
+    public function resolve(?object $source, array $args, mixed $context, ResolveInfo $resolveInfo): object
     {
         $toPassArgs = [];
         foreach ($this->getFields() as $name => $field) {
             $type = $field->getType();
             if (isset($args[$name])) {
-                $val = $this->argumentResolver->resolve($args[$name], $type);
+                $val = $this->argumentResolver->resolve($source, $args[$name], $context, $resolveInfo, $type);
             } elseif ($field->defaultValueExists()) {
                 $val = $field->defaultValue;
             } else {

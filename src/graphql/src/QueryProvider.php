@@ -73,4 +73,9 @@ class QueryProvider implements QueryProviderInterface
         }
         return $mutationList;
     }
+
+    public function getSubscriptions(): array
+    {
+        return [];
+    }
 }

@@ -12,8 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\GraphQL;
 
-use GraphQL\Type\Definition\InputObjectType;
+use GraphQL\Type\Definition\NamedType as NamedTypeDefinition;
 use GraphQL\Type\Definition\OutputType;
+use GraphQL\Type\Definition\Type as TypeDefinition;
 use Hyperf\GraphQL\Annotation\Type;
 use Psr\Container\ContainerInterface;
 use Psr\SimpleCache\CacheInterface;
@@ -29,7 +30,9 @@ use TheCodingMachine\GraphQLite\Mappers\DuplicateMappingException;
 use TheCodingMachine\GraphQLite\Mappers\RecursiveTypeMapperInterface;
 use TheCodingMachine\GraphQLite\Mappers\TypeMapperInterface;
 use TheCodingMachine\GraphQLite\NamingStrategyInterface;
+use TheCodingMachine\GraphQLite\Types\MutableInterface;
 use TheCodingMachine\GraphQLite\Types\MutableObjectType;
+use TheCodingMachine\GraphQLite\Types\ResolvableMutableInputInterface;
 
 use function array_keys;
 use function class_exists;
@@ -157,6 +160,8 @@ class TypeMapper implements TypeMapperInterface
      */
     private $lockFactory;
 
+    private RecursiveTypeMapperInterface $recursiveTypeMapper;
+
     /**
      * @param string $namespace The namespace that contains the GraphQL types (they must have a `@Type` annotation)
      */
@@ -174,6 +179,7 @@ class TypeMapper implements TypeMapperInterface
         $this->inputTypeUtils = $inputTypeUtils;
         $this->recursive = $recursive;
         $this->lockFactory = $lockFactory;
+        $this->recursiveTypeMapper = $container->get(RecursiveTypeMapperInterface::class);
     }
 
     /**
@@ -199,7 +205,7 @@ class TypeMapper implements TypeMapperInterface
      * @param null|OutputType $subType an optional sub-type if the main class is an iterator that needs to be typed
      * @throws CannotMapTypeExceptionInterface
      */
-    public function mapClassToType(string $className, ?OutputType $subType, RecursiveTypeMapperInterface $recursiveTypeMapper): MutableObjectType
+    public function mapClassToType(string $className, ?OutputType $subType): MutableObjectType
     {
         $typeClassName = $this->getTypeFromCacheByObjectClass($className);
 
@@ -211,7 +217,7 @@ class TypeMapper implements TypeMapperInterface
             $typeClassName = $map[$className];
         }
 
-        return $this->typeGenerator->mapAnnotatedObject($typeClassName, $recursiveTypeMapper);
+        return $this->typeGenerator->mapAnnotatedObject($typeClassName, $this->recursiveTypeMapper);
     }
 
     /**
@@ -243,7 +249,7 @@ class TypeMapper implements TypeMapperInterface
      *
      * @throws CannotMapTypeExceptionInterface
      */
-    public function mapClassToInputType(string $className, RecursiveTypeMapperInterface $recursiveTypeMapper): InputObjectType
+    public function mapClassToInputType(string $className): ResolvableMutableInputInterface
     {
         $factory = $this->getFactoryFromCacheByObjectClass($className);
 
@@ -255,7 +261,7 @@ class TypeMapper implements TypeMapperInterface
             $factory = $map[$className];
         }
 
-        return $this->inputTypeGenerator->mapFactoryMethod($factory[0], $factory[1], $recursiveTypeMapper, $this->container);
+        return $this->inputTypeGenerator->mapFactoryMethod($factory[0], $factory[1], $this->recursiveTypeMapper, $this->container);
     }
 
     /**
@@ -266,7 +272,7 @@ class TypeMapper implements TypeMapperInterface
      * @throws CannotMapTypeExceptionInterface
      * @throws ReflectionException
      */
-    public function mapNameToType(string $typeName, RecursiveTypeMapperInterface $recursiveTypeMapper): \GraphQL\Type\Definition\Type
+    public function mapNameToType(string $typeName): NamedTypeDefinition&TypeDefinition
     {
         $typeClassName = $this->getTypeFromCacheByGraphQLTypeName($typeName);
         if ($typeClassName === null) {
@@ -285,10 +291,10 @@ class TypeMapper implements TypeMapperInterface
         }
 
         if (isset($typeClassName)) {
-            return $this->typeGenerator->mapAnnotatedObject($typeClassName, $recursiveTypeMapper);
+            return $this->typeGenerator->mapAnnotatedObject($typeClassName, $this->recursiveTypeMapper);
         }
         if (isset($factory)) {
-            return $this->inputTypeGenerator->mapFactoryMethod($factory[0], $factory[1], $recursiveTypeMapper, $this->container);
+            return $this->inputTypeGenerator->mapFactoryMethod($factory[0], $factory[1], $this->recursiveTypeMapper, $this->container);
         }
 
         throw CannotMapTypeException::createForName($typeName);
@@ -320,7 +326,7 @@ class TypeMapper implements TypeMapperInterface
     /**
      * Returns true if this type mapper can extend an existing type for the $className FQCN.
      */
-    public function canExtendTypeForClass(string $className, MutableObjectType $type, RecursiveTypeMapperInterface $recursiveTypeMapper): bool
+    public function canExtendTypeForClass(string $className, MutableInterface $type): bool
     {
         $extendTypeClassName = $this->getExtendTypesFromCacheByObjectClass($className);
 
@@ -336,7 +342,7 @@ class TypeMapper implements TypeMapperInterface
      *
      * @throws CannotMapTypeExceptionInterface
      */
-    public function extendTypeForClass(string $className, MutableObjectType $type, RecursiveTypeMapperInterface $recursiveTypeMapper): void
+    public function extendTypeForClass(string $className, MutableInterface $type): void
     {
         $extendTypeClassNames = $this->getExtendTypesFromCacheByObjectClass($className);
 
@@ -349,14 +355,14 @@ class TypeMapper implements TypeMapperInterface
         }
 
         foreach ($this->mapClassToExtendTypeArray[$className] as $extendedTypeClass) {
-            $this->typeGenerator->extendAnnotatedObject($this->container->get($extendedTypeClass), $type, $recursiveTypeMapper);
+            $this->typeGenerator->extendAnnotatedObject($this->container->get($extendedTypeClass), $type, $this->recursiveTypeMapper);
         }
     }
 
     /**
      * Returns true if this type mapper can extend an existing type for the $typeName GraphQL type.
      */
-    public function canExtendTypeForName(string $typeName, MutableObjectType $type, RecursiveTypeMapperInterface $recursiveTypeMapper): bool
+    public function canExtendTypeForName(string $typeName, MutableInterface $type): bool
     {
         $typeClassNames = $this->getExtendTypesFromCacheByGraphQLTypeName($typeName);
 
@@ -364,14 +370,9 @@ class TypeMapper implements TypeMapperInterface
             return true;
         }
 
-        /*$factory = $this->getFactoryFromCacheByGraphQLInputTypeName($typeName);
-        if ($factory !== null) {
-            return true;
-        }*/
+        $map = $this->getMapNameToExtendType($this->recursiveTypeMapper);
 
-        $map = $this->getMapNameToExtendType($recursiveTypeMapper);
-
-        return isset($map[$typeName])/* || isset($this->mapInputNameToFactory[$typeName]) */;
+        return isset($map[$typeName])/* || isset($this->mapInputNameToFactory[$typeName]) */ ;
     }
 
     /**
@@ -379,29 +380,29 @@ class TypeMapper implements TypeMapperInterface
      *
      * @throws CannotMapTypeExceptionInterface
      */
-    public function extendTypeForName(string $typeName, MutableObjectType $type, RecursiveTypeMapperInterface $recursiveTypeMapper): void
+    public function extendTypeForName(string $typeName, MutableInterface $type): void
     {
         $extendTypeClassNames = $this->getExtendTypesFromCacheByGraphQLTypeName($typeName);
         if ($extendTypeClassNames === null) {
-            /*$factory = $this->getFactoryFromCacheByGraphQLInputTypeName($typeName);
-            if ($factory === null) {*/
-            $map = $this->getMapNameToExtendType($recursiveTypeMapper);
+            $map = $this->getMapNameToExtendType($this->recursiveTypeMapper);
             if (! isset($map[$typeName])) {
                 throw CannotMapTypeException::createForExtendName($typeName, $type);
             }
             $extendTypeClassNames = $map[$typeName];
-
-            // }
         }
 
         foreach ($extendTypeClassNames as $extendedTypeClass) {
-            $this->typeGenerator->extendAnnotatedObject($this->container->get($extendedTypeClass), $type, $recursiveTypeMapper);
+            $this->typeGenerator->extendAnnotatedObject($this->container->get($extendedTypeClass), $type, $this->recursiveTypeMapper);
         }
+    }
 
-        /*if (isset($this->mapInputNameToFactory[$typeName])) {
-            $factory = $this->mapInputNameToFactory[$typeName];
-            return $this->inputTypeGenerator->mapFactoryMethod($this->container->get($factory[0]), $factory[1], $recursiveTypeMapper);
-        }*/
+    public function canDecorateInputTypeForName(string $typeName, ResolvableMutableInputInterface $type): bool
+    {
+        return false;
+    }
+
+    public function decorateInputTypeForName(string $typeName, ResolvableMutableInputInterface $type): void
+    {
     }
 
     /**
