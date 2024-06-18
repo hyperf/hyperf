@@ -25,31 +25,31 @@ class Reader implements \Doctrine\Common\Annotations\Reader
 
     public function getClassAnnotations(ReflectionClass $class)
     {
-        return $this->reader->getClassAnnotations($class);
+        return [];
     }
 
     public function getClassAnnotation(ReflectionClass $class, $annotationName)
     {
-        return $this->reader->getClassAnnotation($class, $annotationName);
+        return null;
     }
 
     public function getMethodAnnotations(ReflectionMethod $method)
     {
-        return $this->reader->getMethodAnnotations($method);
+        return [];
     }
 
     public function getMethodAnnotation(ReflectionMethod $method, $annotationName)
     {
-        return $this->reader->getMethodAnnotation($method, $annotationName);
+        return null;
     }
 
     public function getPropertyAnnotations(ReflectionProperty $property)
     {
-        return $this->reader->getPropertyAnnotations($property);
+        return [];
     }
 
     public function getPropertyAnnotation(ReflectionProperty $property, $annotationName)
     {
-        return $this->reader->getPropertyAnnotation($property, $annotationName);
+        return null;
     }
 }

@@ -30,11 +30,11 @@ class ConfigProvider
         return [
             'dependencies' => [
                 Schema::class => SchemaFactory::class,
-                QueryProviderInterface::class => QueryProvider::class,
-                RecursiveTypeMapperInterface::class => RecursiveTypeMapperFactory::class,
-                AuthenticationServiceInterface::class => FailAuthenticationService::class,
-                AuthorizationServiceInterface::class => FailAuthorizationService::class,
-                NamingStrategyInterface::class => NamingStrategy::class,
+                // QueryProviderInterface::class => QueryProvider::class,
+                // RecursiveTypeMapperInterface::class => RecursiveTypeMapperFactory::class,
+                // AuthenticationServiceInterface::class => FailAuthenticationService::class,
+                // AuthorizationServiceInterface::class => FailAuthorizationService::class,
+                // NamingStrategyInterface::class => NamingStrategy::class,
                 // RootTypeMapperInterface::class => RootTypeMapperFactory::class
             ],
             'annotations' => [
