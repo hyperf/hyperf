@@ -82,7 +82,6 @@ class RedisDriver extends Driver implements KeyCollectorInterface
         }
 
 
-
         return $result;
     }
 
