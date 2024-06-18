@@ -22,7 +22,6 @@ use TheCodingMachine\GraphQLite\Security\AuthenticationServiceInterface;
 use TheCodingMachine\GraphQLite\Security\AuthorizationServiceInterface;
 use TheCodingMachine\GraphQLite\Security\FailAuthenticationService;
 use TheCodingMachine\GraphQLite\Security\FailAuthorizationService;
-use TheCodingMachine\GraphQLite\Schema as GraphQLSchema;
 
 class ConfigProvider
 {
