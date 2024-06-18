@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\GraphQL;
 
-use Doctrine\Common\Annotations\Reader;
 use GraphQL\Type\Schema;
 use TheCodingMachine\GraphQLite\Mappers\RecursiveTypeMapperInterface;
 use TheCodingMachine\GraphQLite\NamingStrategy;
@@ -29,7 +28,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                Schema::class => \TheCodingMachine\GraphQLite\Schema::class,
+                Schema::class => SchemaFactory::class,
                 QueryProviderInterface::class => QueryProvider::class,
                 RecursiveTypeMapperInterface::class => RecursiveTypeMapperFactory::class,
                 AuthenticationServiceInterface::class => FailAuthenticationService::class,

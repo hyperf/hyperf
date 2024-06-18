@@ -15,6 +15,7 @@ namespace Hyperf\GraphQL;
 use GraphQL\Type\Definition\NamedType as NamedTypeDefinition;
 use GraphQL\Type\Definition\OutputType;
 use GraphQL\Type\Definition\Type as TypeDefinition;
+use Hyperf\Coroutine\Locker;
 use Hyperf\GraphQL\Annotation\Type;
 use Psr\Container\ContainerInterface;
 use Psr\SimpleCache\CacheInterface;
@@ -165,7 +166,7 @@ class TypeMapper implements TypeMapperInterface
     /**
      * @param string $namespace The namespace that contains the GraphQL types (they must have a `@Type` annotation)
      */
-    public function __construct(string $namespace, TypeGenerator $typeGenerator, InputTypeGenerator $inputTypeGenerator, InputTypeUtils $inputTypeUtils, ContainerInterface $container, AnnotationReader $annotationReader, NamingStrategyInterface $namingStrategy, LockFactory $lockFactory, CacheInterface $cache, ?int $globTtl = 2, ?int $mapTtl = null, bool $recursive = true)
+    public function __construct(string $namespace, TypeGenerator $typeGenerator, InputTypeGenerator $inputTypeGenerator, InputTypeUtils $inputTypeUtils, ContainerInterface $container, AnnotationReader $annotationReader, NamingStrategyInterface $namingStrategy, CacheInterface $cache, ?int $globTtl = 2, ?int $mapTtl = null, bool $recursive = true)
     {
         $this->namespace = $namespace;
         $this->typeGenerator = $typeGenerator;
@@ -178,7 +179,6 @@ class TypeMapper implements TypeMapperInterface
         $this->inputTypeGenerator = $inputTypeGenerator;
         $this->inputTypeUtils = $inputTypeUtils;
         $this->recursive = $recursive;
-        $this->lockFactory = $lockFactory;
         $this->recursiveTypeMapper = $container->get(RecursiveTypeMapperInterface::class);
     }
 
@@ -427,18 +427,14 @@ class TypeMapper implements TypeMapperInterface
                 || $this->mapClassToFactory === null
                 || $this->mapInputNameToFactory === null
             ) {
-                $lock = $this->lockFactory->createLock('buildmap_' . $this->namespace, 5);
-                if (! $lock->acquire()) {
-                    // Lock is being held right now. Generation is happening.
-                    // Let's wait and fetch the result from the cache.
-                    $lock->acquire(true);
-                    $lock->release();
+                $lockKey = 'buildmap_' . $this->namespace;
+                if (! Locker::lock($lockKey)) {
                     return $this->getMaps();
                 }
                 try {
                     $this->buildMap();
                 } finally {
-                    $lock->release();
+                    Locker::unlock($lockKey);
                 }
                 // This is a very short lived cache. Useful to avoid overloading a server in case of heavy load.
                 // Defaults to 2 seconds.
@@ -484,19 +480,16 @@ class TypeMapper implements TypeMapperInterface
             $keyExtendClassCache = 'globTypeMapperExtend_' . $namespace;
             $this->mapClassToExtendTypeArray = $this->cache->get($keyExtendClassCache);
             if ($this->mapClassToExtendTypeArray === null) {
+                $lockKey = 'buildmapclassextend_' . $this->namespace;
                 $lock = $this->lockFactory->createLock('buildmapclassextend_' . $this->namespace, 5);
-                if (! $lock->acquire()) {
-                    // Lock is being held right now. Generation is happening.
-                    // Let's wait and fetch the result from the cache.
-                    $lock->acquire(true);
-                    $lock->release();
+                if (! Locker::lock($lockKey)) {
                     return $this->getMapClassToExtendTypeArray();
                 }
-                $lock->acquire(true);
+
                 try {
                     $this->buildMapClassToExtendTypeArray($lock);
                 } finally {
-                    $lock->release();
+                    Locker::unlock($lockKey);
                 }
                 // This is a very short lived cache. Useful to avoid overloading a server in case of heavy load.
                 // Defaults to 2 seconds.
@@ -514,19 +507,14 @@ class TypeMapper implements TypeMapperInterface
             $keyExtendNameCache = 'globTypeMapperExtend_names_' . $namespace;
             $this->mapNameToExtendType = $this->cache->get($keyExtendNameCache);
             if ($this->mapNameToExtendType === null) {
-                $lock = $this->lockFactory->createLock('buildmapnameextend_' . $this->namespace, 5);
-                if (! $lock->acquire()) {
-                    // Lock is being held right now. Generation is happening.
-                    // Let's wait and fetch the result from the cache.
-                    $lock->acquire(true);
-                    $lock->release();
+                $lockKey = 'buildmapnameextend_' . $this->namespace;
+                if (! Locker::lock($lockKey)) {
                     return $this->getMapNameToExtendType($recursiveTypeMapper);
                 }
-                $lock->acquire(true);
                 try {
                     $this->buildMapNameToExtendTypeArray($recursiveTypeMapper);
                 } finally {
-                    $lock->release();
+                    Locker::unlock($lockKey);
                 }
                 // This is a very short lived cache. Useful to avoid overloading a server in case of heavy load.
                 // Defaults to 2 seconds.

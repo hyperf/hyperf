@@ -33,7 +33,7 @@ use function array_filter;
 use function in_array;
 use function substr;
 
-class AnnotationReader
+class AnnotationReader extends \TheCodingMachine\GraphQLite\AnnotationReader
 {
     // In this mode, no exceptions will be thrown for incorrect annotations (unless the name of the annotation we are looking for is part of the docblock)
     public const LAX_MODE = 'LAX_MODE';
@@ -142,7 +142,7 @@ class AnnotationReader
      *
      * @return object[]
      */
-    public function getClassAnnotations(ReflectionClass $refClass, string $annotationClass): array
+    public function getClassAnnotations(ReflectionClass $refClass, string $annotationClass, bool $inherited = true): array
     {
         $toAddAnnotations = [];
         do {
