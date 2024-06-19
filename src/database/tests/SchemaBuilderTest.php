@@ -20,6 +20,8 @@ use Hyperf\DbConnection\Db;
 use HyperfTest\Database\Stubs\ContainerStub;
 use PHPUnit\Framework\TestCase;
 
+use function Hyperf\Collection\collect;
+
 /**
  * @internal
  * @coversNothing
@@ -101,5 +103,102 @@ class SchemaBuilderTest extends TestCase
         $columns = Schema::getColumnTypeListing('column_1');
         $this->assertSame(['id', 'name', 'ranking'], array_column($columns, 'column_name'));
         Schema::drop('column_1');
+    }
+
+    public function index(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->string('name');
+            $table->string('email');
+        });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->index(['name', 'email'], 'index1');
+        });
+
+        $indexes = Schema::getIndexListing('users');
+
+        $this->assertContains('index1', $indexes);
+        $this->assertNotContains('index2', $indexes);
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->renameIndex('index1', 'index2');
+        });
+
+        $this->assertFalse(Schema::hasIndex('users', 'index1'));
+        $this->assertTrue(collect(Schema::getIndexes('users'))->contains(
+            fn ($index) => $index['name'] === 'index2' && $index['columns'] === ['name', 'email']
+        ));
+        Schema::create('foo', function (Blueprint $table) {
+            $table->id();
+            $table->string('bar');
+            $table->integer('baz');
+
+            $table->unique(['baz', 'bar']);
+        });
+
+        $indexes = Schema::getIndexes('foo');
+
+        $this->assertCount(2, $indexes);
+        $this->assertTrue(collect($indexes)->contains(
+            fn ($index) => $index['columns'] === ['id'] && $index['primary']
+        ));
+        $this->assertTrue(collect($indexes)->contains(
+            fn ($index) => $index['name'] === 'foo_baz_bar_unique' && $index['columns'] === ['baz', 'bar'] && $index['unique']
+        ));
+        $this->assertTrue(Schema::hasIndex('foo', 'foo_baz_bar_unique'));
+        $this->assertTrue(Schema::hasIndex('foo', 'foo_baz_bar_unique', 'unique'));
+        $this->assertTrue(Schema::hasIndex('foo', ['baz', 'bar']));
+        $this->assertTrue(Schema::hasIndex('foo', ['baz', 'bar'], 'unique'));
+        $this->assertFalse(Schema::hasIndex('foo', ['baz', 'bar'], 'primary'));
+        Schema::drop('foo');
+        Schema::create('foo', function (Blueprint $table) {
+            $table->string('bar')->index('my_index');
+        });
+
+        $indexes = Schema::getIndexes('foo');
+
+        $this->assertCount(1, $indexes);
+        $this->assertTrue(
+            $indexes[0]['name'] === 'my_index'
+            && $indexes[0]['columns'] === ['bar']
+            && ! $indexes[0]['unique']
+            && ! $indexes[0]['primary']
+        );
+        $this->assertTrue(Schema::hasIndex('foo', 'my_index'));
+        $this->assertTrue(Schema::hasIndex('foo', ['bar']));
+        $this->assertFalse(Schema::hasIndex('foo', 'my_index', 'primary'));
+        $this->assertFalse(Schema::hasIndex('foo', ['bar'], 'unique'));
+        Schema::drop('foo');
+        Schema::create('foo', function (Blueprint $table) {
+            $table->unsignedBigInteger('key');
+            $table->string('bar')->unique();
+            $table->integer('baz');
+
+            $table->primary(['baz', 'key']);
+        });
+
+        $indexes = Schema::getIndexes('foo');
+
+        $this->assertCount(2, $indexes);
+        $this->assertTrue(collect($indexes)->contains(
+            fn ($index) => $index['columns'] === ['baz', 'key'] && $index['primary']
+        ));
+        $this->assertTrue(collect($indexes)->contains(
+            fn ($index) => $index['name'] === 'foo_bar_unique' && $index['columns'] === ['bar'] && $index['unique']
+        ));
+        Schema::create('articles', function (Blueprint $table) {
+            $table->id();
+            $table->string('title', 200);
+            $table->text('body');
+
+            $table->fulltext(['body', 'title']);
+        });
+
+        $indexes = Schema::getIndexes('articles');
+
+        $this->assertCount(2, $indexes);
+        $this->assertTrue(collect($indexes)->contains(fn ($index) => $index['columns'] === ['id'] && $index['primary']));
+        $this->assertTrue(collect($indexes)->contains('name', 'articles_body_title_fulltext'));
     }
 }

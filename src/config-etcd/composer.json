@@ -1,14 +1,22 @@
 {
     "name": "hyperf/config-etcd",
-    "type": "library",
     "description": "An etcd adapter for config center component.",
     "license": "MIT",
+    "type": "library",
     "keywords": [
         "php",
         "hyperf",
         "etcd",
         "config"
     ],
+    "require": {
+        "php": ">=8.1",
+        "hyperf/codec": "~3.1.0",
+        "hyperf/config-center": "~3.1.0",
+        "hyperf/etcd": "~3.1.0",
+        "hyperf/support": "~3.1.0",
+        "hyperf/utils": "~3.1.0"
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\ConfigEtcd\\": "src/"
@@ -19,20 +27,8 @@
             "HyperfTest\\ConfigEtcd\\": "tests"
         }
     },
-    "require": {
-        "php": ">=8.1",
-        "hyperf/codec": "~3.1.0",
-        "hyperf/config-center": "~3.1.0",
-        "hyperf/etcd": "~3.1.0",
-        "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0"
-    },
     "config": {
         "sort-packages": true
-    },
-    "scripts": {
-        "test": "co-phpunit -c phpunit.xml --colors=always",
-        "cs-fix": "php-cs-fixer fix $1"
     },
     "extra": {
         "branch-alias": {
@@ -41,5 +37,9 @@
         "hyperf": {
             "config": "Hyperf\\ConfigEtcd\\ConfigProvider"
         }
+    },
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "co-phpunit -c phpunit.xml --colors=always"
     }
 }

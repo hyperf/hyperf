@@ -26,6 +26,10 @@ jobs:
           extensions: redis, pdo, pdo_mysql, bcmath, ${{ matrix.swoole }}
       - name: Setup Packages
         run: composer update -oW
+      - name: Check Composer Json
+        run: |
+          composer normalize --dry-run --no-update-lock
+          find ./src -name composer.json -exec composer normalize --dry-run --no-update-lock {} \;
       - name: Run CS Fix
         run: vendor/bin/php-cs-fixer fix src --dry-run --diff
   tests:
