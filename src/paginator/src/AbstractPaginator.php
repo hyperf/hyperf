@@ -471,7 +471,7 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
     /**
      * Add a query string value to the paginator.
      */
-    protected function addQuery(string $key, string $value): static
+    protected function addQuery(string $key, $value): static
     {
         if ($key !== $this->pageName) {
             $this->query[$key] = $value;
