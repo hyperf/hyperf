@@ -15,7 +15,7 @@ namespace Hyperf\Kafka\Event;
 use Hyperf\Kafka\AbstractConsumer;
 use longlang\phpkafka\Consumer\ConsumerConfig;
 
-class BeforeConsumerCreated extends Event
+class BeforeLongLangConsumerCreated extends Event
 {
     public function __construct(AbstractConsumer $consumer, public ConsumerConfig $config)
     {
