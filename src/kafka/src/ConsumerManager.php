@@ -21,6 +21,7 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
 use Hyperf\Kafka\Event\BeforeConsume;
+use Hyperf\Kafka\Event\BeforeConsumerCreated;
 use Hyperf\Kafka\Event\FailToConsume;
 use Hyperf\Kafka\Exception\InvalidConsumeResultException;
 use Hyperf\Process\AbstractProcess;
@@ -108,6 +109,7 @@ class ConsumerManager
             {
                 $consumerConfig = $this->getConsumerConfig();
                 $consumer = $this->consumer;
+                $this->dispatcher?->dispatch(new BeforeConsumerCreated($consumer, $consumerConfig));
                 $longLangConsumer = new LongLangConsumer(
                     $consumerConfig,
                     function (ConsumeMessage $message) use ($consumer, $consumerConfig) {
