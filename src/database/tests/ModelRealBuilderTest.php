@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
+use Exception;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
@@ -24,9 +25,11 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
+use Hyperf\Database\Exception\QueryException;
 use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Register;
 use Hyperf\Database\MySqlBitConnection;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Database\Query\Expression;
@@ -1279,6 +1282,38 @@ class ModelRealBuilderTest extends TestCase
         Schema::dropIfExists('lazy_users');
     }
 
+    public function testUpdateOrFail(): void
+    {
+        $container = $this->getContainer();
+        Register::setConnectionResolver($container->get(ConnectionResolverInterface::class));
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        Schema::create('update_or_fail', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 5);
+            $table->timestamps();
+        });
+        $model = UpdateOrFail::create([
+            'name' => Str::random(5),
+        ]);
+
+        try {
+            $model->updateOrFail([
+                'name' => Str::random(6),
+            ]);
+        } catch (Exception $e) {
+            $this->assertInstanceOf(QueryException::class, $e);
+        }
+
+        $this->assertFalse((new UpdateOrFail())->updateOrFail([]));
+        $name = Str::random(4);
+        $model->updateOrFail([
+            'name' => $name,
+        ]);
+        $this->assertSame($name, $model->name);
+        Schema::drop('update_or_fail');
+    }
+
     protected function getContainer()
     {
         $dispatcher = Mockery::mock(EventDispatcherInterface::class);
@@ -1297,4 +1332,11 @@ class ModelRealBuilderTest extends TestCase
 class LazyUserModel extends Model
 {
     protected ?string $table = 'lazy_users';
+}
+
+class UpdateOrFail extends Model
+{
+    protected ?string $table = 'update_or_fail';
+
+    protected array $guarded = [];
 }
