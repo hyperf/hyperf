@@ -9,6 +9,7 @@ env:
   SW_VERSION: 'v5.1.3'
 jobs:
   database:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Test for Database
     runs-on: 'ubuntu-latest'
     env:
@@ -45,6 +46,7 @@ jobs:
           composer test src/database -- --exclude-group NonCoroutine
           vendor/bin/phpunit src/database --group NonCoroutine
   filesystem:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Test for Filesystem
     runs-on: 'ubuntu-latest'
     env:
@@ -94,6 +96,7 @@ jobs:
           ./.travis/requirement.install.sh
           composer test src/filesystem -- --exclude-group NonCoroutine
   phar:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Test for Building PHAR
     runs-on: 'ubuntu-latest'
     env:
@@ -146,6 +149,7 @@ jobs:
           sudo chmod u+x link_env.phar
           ./link_env.phar show:name -N helloworld
   container:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Test for Psr Container V1.0 ~ V2.0
     runs-on: 'ubuntu-latest'
     env:
@@ -182,6 +186,7 @@ jobs:
           composer analyse src/di
           vendor/bin/phpunit src/di
   http-message:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Test for Http Message V1.0 ~ V2.0
     runs-on: 'ubuntu-latest'
     env:
@@ -225,6 +230,7 @@ jobs:
           composer analyse src/http-server
           vendor/bin/phpunit src/http-message
   log:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Test for Psr Log V1.0 ~ V3.0
     runs-on: 'ubuntu-latest'
     env:
@@ -284,6 +290,7 @@ jobs:
           composer test src/logger
           composer info | grep psr/log
   simple-cache:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Test for Psr SimpleCache V1.0 ~ V3.0
     runs-on: 'ubuntu-latest'
     env:
@@ -326,6 +333,7 @@ jobs:
           composer info | grep psr/simple-cache
 
   ext-redis:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Test for Redis Module
     runs-on: 'ubuntu-latest'
     env:
@@ -360,6 +368,7 @@ jobs:
           composer test src/redis
 
   symfony:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Test for Symfony
     runs-on: 'ubuntu-latest'
     env:
