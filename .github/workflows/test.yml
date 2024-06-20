@@ -2,7 +2,7 @@ name: PHPUnit for Hyperf
 
 on:
   workflow_run:
-    workflows: [Test For Lint]
+    workflows: ["Test For Lint"]
     types: [completed]
 
 jobs:
