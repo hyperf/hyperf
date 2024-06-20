@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Schema;
 
 use Closure;
@@ -114,6 +115,40 @@ class Builder
     }
 
     /**
+     * Get the tables that belong to the database.
+     */
+    public function getTables(): array
+    {
+        throw new LogicException('This database driver does not support getting all tables.');
+    }
+
+    /**
+     * Get the views that belong to the database.
+     */
+    public function getViews(): array
+    {
+        return $this->connection->getPostProcessor()->processViews(
+            $this->connection->selectFromWriteConnection($this->grammar->compileViews())
+        );
+    }
+
+    /**
+     * Determine if the given view exists.
+     */
+    public function hasView(string $view): bool
+    {
+        $view = $this->connection->getTablePrefix() . $view;
+
+        foreach ($this->getViews() as $value) {
+            if (strtolower($view) === strtolower($value['name'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get the data type for the given column name.
      *
      * @param string $table
@@ -153,6 +188,47 @@ class Builder
             ]
         );
         return $this->connection->getPostProcessor()->processColumns($results);
+    }
+
+    /**
+     * Get the indexes for a given table.
+     */
+    public function getIndexes(string $table): array
+    {
+        $table = $this->connection->getTablePrefix() . $table;
+
+        return $this->connection->getPostProcessor()->processIndexes(
+            $this->connection->selectFromWriteConnection($this->grammar->compileIndexes($table))
+        );
+    }
+
+    /**
+     * Get the names of the indexes for a given table.
+     */
+    public function getIndexListing(string $table): array
+    {
+        return array_column($this->getIndexes($table), 'name');
+    }
+
+    /**
+     * Determine if the given table has a given index.
+     */
+    public function hasIndex(string $table, array|string $index, ?string $type = null): bool
+    {
+        $type = is_null($type) ? $type : strtolower($type);
+
+        foreach ($this->getIndexes($table) as $value) {
+            $typeMatches = is_null($type)
+                || ($type === 'primary' && $value['primary'])
+                || ($type === 'unique' && $value['unique'])
+                || $type === $value['type'];
+
+            if (($value['name'] === $index || $value['columns'] === $index) && $typeMatches) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -259,7 +335,7 @@ class Builder
     /**
      * Get the database connection instance.
      *
-     * @return \Hyperf\Database\Connection
+     * @return Connection
      */
     public function getConnection()
     {
@@ -288,8 +364,6 @@ class Builder
 
     /**
      * Execute the blueprint to build / modify the table.
-     *
-     * @param \Hyperf\Database\Schema\Blueprint $blueprint
      */
     protected function build(Blueprint $blueprint)
     {
@@ -300,9 +374,9 @@ class Builder
      * Create a new command set with a Closure.
      *
      * @param string $table
-     * @return \Hyperf\Database\Schema\Blueprint
+     * @return Blueprint
      */
-    protected function createBlueprint($table, Closure $callback = null)
+    protected function createBlueprint($table, ?Closure $callback = null)
     {
         $prefix = $this->connection->getConfig('prefix_indexes')
             ? $this->connection->getConfig('prefix')

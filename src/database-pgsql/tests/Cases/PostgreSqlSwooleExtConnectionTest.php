@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\PgSQL\Cases;
 
 use Exception;
@@ -24,6 +25,7 @@ use Hyperf\Support\Filesystem\Filesystem;
 use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Style\OutputStyle;
 
@@ -32,6 +34,7 @@ use Symfony\Component\Console\Style\OutputStyle;
  * @coversNothing
  */
 #[CoversNothing]
+#[RequiresPhpExtension('swoole', '< 6.0')]
 class PostgreSqlSwooleExtConnectionTest extends TestCase
 {
     protected Migrator $migrator;

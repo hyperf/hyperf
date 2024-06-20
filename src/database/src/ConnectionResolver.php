@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database;
 
 class ConnectionResolver implements ConnectionResolverInterface
@@ -35,9 +36,6 @@ class ConnectionResolver implements ConnectionResolverInterface
 
     /**
      * Get a database connection instance.
-     *
-     * @param string $name
-     * @return \Hyperf\Database\ConnectionInterface
      */
     public function connection(?string $name = null): ConnectionInterface
     {
@@ -52,7 +50,6 @@ class ConnectionResolver implements ConnectionResolverInterface
      * Add a connection to the resolver.
      *
      * @param string $name
-     * @param \Hyperf\Database\ConnectionInterface $connection
      */
     public function addConnection($name, ConnectionInterface $connection)
     {

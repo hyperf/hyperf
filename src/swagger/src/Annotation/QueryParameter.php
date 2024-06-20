@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Swagger\Annotation;
 
 use Attribute;
@@ -32,11 +33,11 @@ class QueryParameter extends \OpenApi\Attributes\QueryParameter implements Annot
         ?bool $required = null,
         ?bool $deprecated = null,
         ?bool $allowEmptyValue = null,
-        object|string|null $ref = null,
+        null|object|string $ref = null,
         ?Schema $schema = null,
         mixed $example = Generator::UNDEFINED,
         ?array $examples = null,
-        JsonContent|array|Attachable|XmlContent|null $content = null,
+        null|array|Attachable|JsonContent|XmlContent $content = null,
         ?string $style = null,
         ?bool $explode = null,
         ?bool $allowReserved = null,
@@ -45,6 +46,7 @@ class QueryParameter extends \OpenApi\Attributes\QueryParameter implements Annot
         ?array $x = null,
         ?array $attachables = null,
         public mixed $rules = null,
+        public mixed $attribute = null,
     ) {
         parent::__construct(
             $parameter,

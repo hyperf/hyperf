@@ -10,24 +10,24 @@
     ],
     "homepage": "https://hyperf.io",
     "support": {
-        "docs": "https://hyperf.wiki",
         "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
         "php": ">=8.1",
-        "psr/container": "^1.0|^2.0",
         "hyperf/codec": "~3.1.0",
+        "hyperf/context": "~3.1.0",
         "hyperf/contract": "~3.1.0",
         "hyperf/engine": "^2.0",
-        "hyperf/load-balancer": "~3.1.0",
         "hyperf/http-message": "~3.1.0",
+        "hyperf/load-balancer": "~3.1.0",
         "hyperf/rpc": "~3.1.0",
         "hyperf/serializer": "~3.1.0",
         "hyperf/support": "~3.1.0",
         "hyperf/utils": "~3.1.0",
-        "hyperf/context": "~3.1.0",
+        "psr/container": "^1.0 || ^2.0",
         "swow/psr7-plus": "^1.0"
     },
     "suggest": {

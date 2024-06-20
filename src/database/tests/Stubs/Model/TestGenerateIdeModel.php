@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\Stubs\Model;
 
 class TestGenerateIdeModel extends Model
@@ -46,15 +47,15 @@ class TestGenerateIdeModel extends Model
     {
     }
 
-    public function scopeUnion($query, int $appId, string|int $uid)
+    public function scopeUnion($query, int $appId, int|string $uid)
     {
     }
 
-    public function scopeUnionOrNull($query, int $appId, string|int|null $uid)
+    public function scopeUnionOrNull($query, int $appId, null|int|string $uid)
     {
     }
 
-    public function scopeSingleOrNull($query, null|string $test)
+    public function scopeSingleOrNull($query, ?string $test)
     {
     }
 

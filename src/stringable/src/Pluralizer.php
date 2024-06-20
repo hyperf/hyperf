@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Stringable;
 
-use Doctrine\Inflector\CachedWordInflector;
+use Countable;
 use Doctrine\Inflector\Inflector;
-use Doctrine\Inflector\Rules\English;
-use Doctrine\Inflector\RulesetInflector;
+use Doctrine\Inflector\InflectorFactory;
+use Doctrine\Inflector\Language;
 
 class Pluralizer
 {
@@ -23,61 +24,27 @@ class Pluralizer
      */
     public static array $uncountable
         = [
-            'audio',
-            'bison',
-            'cattle',
-            'chassis',
-            'compensation',
-            'coreopsis',
-            'data',
-            'deer',
-            'education',
-            'emoji',
-            'equipment',
-            'evidence',
-            'feedback',
-            'firmware',
-            'fish',
-            'furniture',
-            'gold',
-            'hardware',
-            'information',
-            'jedi',
-            'kin',
-            'knowledge',
-            'love',
-            'metadata',
-            'money',
-            'moose',
-            'news',
-            'nutrition',
-            'offspring',
-            'plankton',
-            'pokemon',
-            'police',
-            'rain',
-            'rice',
-            'series',
-            'sheep',
-            'software',
-            'species',
-            'swine',
-            'traffic',
-            'wheat',
+            'recommended',
+            'related',
         ];
+
+    /**
+     * The language that should be used by the inflector.
+     */
+    protected static string $language = Language::ENGLISH;
 
     protected static ?Inflector $inflector = null;
 
     /**
      * Get the plural form of an English word.
-     *
-     * @param string $value
-     * @param int $count
-     * @return string
      */
-    public static function plural($value, $count = 2)
+    public static function plural(string $value, array|Countable|int $count = 2): string
     {
-        if ((int) abs($count) === 1 || static::uncountable($value)) {
+        if (is_countable($count)) {
+            $count = count($count);
+        }
+
+        if ((int) abs($count) === 1 || static::uncountable($value) || preg_match('/^(.*)[A-Za-z0-9\x{0080}-\x{FFFF}]$/u', $value) == 0) {
             return $value;
         }
 
@@ -88,11 +55,8 @@ class Pluralizer
 
     /**
      * Get the singular form of an English word.
-     *
-     * @param string $value
-     * @return string
      */
-    public static function singular($value)
+    public static function singular(string $value): string
     {
         $singular = static::getInflector()->singularize($value);
 
@@ -110,17 +74,17 @@ class Pluralizer
     public static function getInflector(): Inflector
     {
         if (is_null(static::$inflector)) {
-            static::$inflector = new Inflector(
-                new CachedWordInflector(new RulesetInflector(
-                    English\Rules::getSingularRuleset()
-                )),
-                new CachedWordInflector(new RulesetInflector(
-                    English\Rules::getPluralRuleset()
-                ))
-            );
+            static::$inflector = InflectorFactory::createForLanguage(static::$language)->build();
         }
 
         return static::$inflector;
+    }
+
+    public static function useLanguage(string $language): void
+    {
+        static::$language = $language;
+
+        static::$inflector = null;
     }
 
     /**
@@ -136,18 +100,14 @@ class Pluralizer
 
     /**
      * Attempt to match the case on two strings.
-     *
-     * @param string $value
-     * @param string $comparison
-     * @return string
      */
-    protected static function matchCase($value, $comparison)
+    protected static function matchCase(string $value, string $comparison): string
     {
         $functions = ['mb_strtolower', 'mb_strtoupper', 'ucfirst', 'ucwords'];
 
         foreach ($functions as $function) {
-            if (call_user_func($function, $comparison) === $comparison) {
-                return call_user_func($function, $value);
+            if ($function($comparison) === $comparison) {
+                return $function($value);
             }
         }
 

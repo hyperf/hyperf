@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Codec;
 
 use Hyperf\Codec\Exception\InvalidArgumentException;
@@ -32,7 +33,7 @@ class Base62
 
     public static function decode(string $data): int
     {
-        if (strlen($data) !== strspn($data, self::CHARS)) {
+        if ($data === '' || strlen($data) !== strspn($data, self::CHARS)) {
             throw new InvalidArgumentException('The decode data contains content outside of CHARS.');
         }
         return array_reduce(array_map(function ($character) {

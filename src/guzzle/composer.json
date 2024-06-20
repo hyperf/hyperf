@@ -1,8 +1,8 @@
 {
     "name": "hyperf/guzzle",
     "description": "Swoole coroutine handler for guzzle",
-    "type": "library",
     "license": "MIT",
+    "type": "library",
     "keywords": [
         "php",
         "swoole",
@@ -11,13 +11,13 @@
     ],
     "require": {
         "php": ">=8.1",
-        "guzzlehttp/guzzle": "^6.3|^7.0",
-        "psr/container": "^1.0|^2.0",
-        "psr/http-message": "^1.0|^2.0"
+        "guzzlehttp/guzzle": "^6.3 || ^7.0",
+        "psr/container": "^1.0 || ^2.0",
+        "psr/http-message": "^1.0 || ^2.0"
     },
     "suggest": {
-        "hyperf/pool": "Required to use pool handler.",
-        "ext-curl": "Required for CURL handler support"
+        "ext-curl": "Required for CURL handler support",
+        "hyperf/pool": "Required to use pool handler."
     },
     "autoload": {
         "psr-4": {

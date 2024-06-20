@@ -9,9 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Contract;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Throwable;
 
 interface ContainerInterface extends PsrContainerInterface
 {
@@ -25,8 +29,8 @@ interface ContainerInterface extends PsrContainerInterface
      * @param array $parameters Optional parameters to use to build the entry. Use this to force specific parameters
      *                          to specific values. Parameters not defined in this array will be resolved using
      *                          the container.
-     * @throws InvalidArgumentException the name parameter must be of type string
-     * @throws NotFoundException no entry found for the given name
+     * @throws ContainerExceptionInterface&Throwable the name parameter must be of type string
+     * @throws NotFoundExceptionInterface&Throwable no entry found for the given name
      */
     public function make(string $name, array $parameters = []);
 

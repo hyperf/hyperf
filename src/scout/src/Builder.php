@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Scout;
 
 use Closure;
 use Hyperf\Collection\Collection as BaseCollection;
+use Hyperf\Conditionable\Conditionable;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Macroable\Macroable;
@@ -25,6 +27,7 @@ use function Hyperf\Tappable\tap;
 class Builder
 {
     use Macroable;
+    use Conditionable;
 
     /**
      * Optional callback before model query execution.
@@ -123,21 +126,6 @@ class Builder
             'column' => $column,
             'direction' => strtolower($direction) == 'asc' ? 'asc' : 'desc',
         ];
-        return $this;
-    }
-
-    /**
-     * Apply the callback's query changes if the given "value" is true.
-     * @param mixed $value
-     */
-    public function when($value, callable $callback, ?callable $default = null): static
-    {
-        if ($value) {
-            return $callback($this, $value) ?: $this;
-        }
-        if ($default) {
-            return $default($this, $value) ?: $this;
-        }
         return $this;
     }
 

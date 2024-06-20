@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Connection;
 use Hyperf\Database\Query\Grammars\MySqlGrammar;
+use HyperfTest\Database\Stubs\ContainerStub;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
@@ -22,6 +24,11 @@ use PHPUnit\Framework\TestCase;
  */
 class DatabaseMySqlQueryGrammarTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        ContainerStub::unsetContainer();
+    }
+
     protected function tearDown(): void
     {
         m::close();

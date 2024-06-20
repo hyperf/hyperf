@@ -9,8 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Testing\Concerns;
 
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Swoole\Coroutine;
+use Swoole\Timer;
 use Throwable;
 
 /**
@@ -36,8 +41,8 @@ trait RunTestsInCoroutine
             } catch (Throwable $e) {
                 $exception = $e;
             } finally {
-                \Swoole\Timer::clearAll();
-                \Hyperf\Coordinator\CoordinatorManager::until(\Hyperf\Coordinator\Constants::WORKER_EXIT)->resume();
+                Timer::clearAll();
+                CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
             }
         });
 
@@ -50,7 +55,7 @@ trait RunTestsInCoroutine
 
     final protected function runTest(): mixed
     {
-        if (extension_loaded('swoole') && \Swoole\Coroutine::getCid() === -1 && $this->enableCoroutine) {
+        if (extension_loaded('swoole') && Coroutine::getCid() === -1 && $this->enableCoroutine) {
             $this->realTestName = $this->name();
             parent::setName('runTestsInCoroutine');
         }

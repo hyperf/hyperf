@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\HttpServer\Router;
 
 use FastRoute\Dispatcher;
@@ -35,10 +36,10 @@ class DispatcherFactoryTest extends TestCase
     {
         $factory = new DispatcherFactory();
 
-        $res = $factory->getPrefix('App\\Controller\\Admin\\UserController', '');
+        $res = $factory->getPrefix('App\Controller\Admin\UserController', '');
         $this->assertSame('/admin/user', $res);
 
-        $res = $factory->getPrefix('App\\Controller\\Admin\\UserAuthController', '');
+        $res = $factory->getPrefix('App\Controller\Admin\UserAuthController', '');
         $this->assertSame('/admin/user_auth', $res);
     }
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Concerns;
 
 use BackedEnum;
@@ -26,6 +27,7 @@ use Hyperf\Database\Exception\InvalidCastException;
 use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\JsonEncodingException;
 use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Database\Query\Expression;
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
 use LogicException;
@@ -541,7 +543,7 @@ trait HasAttributes
     /**
      * Sync the changed attributes.
      */
-    public function syncChanges(array $columns = null): static
+    public function syncChanges(?array $columns = null): static
     {
         $changes = $this->getDirty();
 
@@ -626,6 +628,14 @@ trait HasAttributes
         }
 
         if (is_null($current)) {
+            return false;
+        }
+
+        // The model parameters should not be set with an expression,
+        // Because after saving the expression, the parameters of the model will not receive the latest results,
+        // When the model be used again, It will cause some problems.
+        // So you must do something by yourself, the framework shouldn't be modified in any way.
+        if ($current instanceof Expression) {
             return false;
         }
 
@@ -1145,7 +1155,7 @@ trait HasAttributes
     /**
      * Encode the given value as JSON.
      */
-    protected function asJson(mixed $value): string|false
+    protected function asJson(mixed $value): false|string
     {
         return json_encode($value);
     }
@@ -1229,7 +1239,7 @@ trait HasAttributes
     /**
      * Return a timestamp as unix timestamp.
      */
-    protected function asTimestamp(mixed $value): int|false
+    protected function asTimestamp(mixed $value): false|int
     {
         return $this->asDateTime($value)->getTimestamp();
     }

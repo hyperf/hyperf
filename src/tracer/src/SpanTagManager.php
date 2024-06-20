@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer;
 
 class SpanTagManager
 {
-    private $tags = [
+    private array $tags = [
         'http_client' => [
             'http.url' => 'http.url',
             'http.method' => 'http.method',

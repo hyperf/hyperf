@@ -22,6 +22,41 @@ return [
 ];
 ```
 
+### Register the exception handler through [annotation](https://github.com/hyperf/hyperf/blob/master/src/exception-handler/src/Annotation/ExceptionHandler.php)
+
+```php
+<?php
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\ExceptionHandler\ExceptionHandler;
+use Hyperf\HttpMessage\Stream\SwooleStream;
+use Psr\Http\Message\ResponseInterface;
+use Throwable;
+use Hyperf\ExceptionHandler\Annotation\ExceptionHandler as RegisterHandler;
+
+// The http here corresponds to the name value corresponding to the server in config/autoload/server.php
+// priority is sorting
+#[RegisterHandler(server: 'http')]
+class AppExceptionHandler extends ExceptionHandler
+{
+    public function __construct(protected StdoutLoggerInterface $logger)
+    {
+    }
+
+    public function handle(Throwable $throwable, ResponseInterface $response)
+    {
+        $this->logger->error(sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
+        $this->logger->error($throwable->getTraceAsString());
+        return $response->withHeader('Server', 'Hyperf')->withStatus(500)->withBody(new SwooleStream('Internal Server Error.'));
+    }
+
+    public function isValid(Throwable $throwable): bool
+    {
+        return true;
+    }
+}
+
+```
+
 > The order of each exception handler configuration array determines the order in which exceptions are passed between handlers.
 
 ### Define Exception Handler

@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Testing\Concerns;
 
 use Faker\Factory as FakerFactory;
+use Hyperf\Database\Model\Factory;
 use Hyperf\Testing\ModelFactory;
 
 trait InteractsWithModelFactory
@@ -25,7 +27,7 @@ trait InteractsWithModelFactory
 
     protected function setUpInteractsWithModelFactory()
     {
-        if (! class_exists(FakerFactory::class)) {
+        if (! class_exists(Factory::class) || ! class_exists(FakerFactory::class)) {
             return;
         }
 

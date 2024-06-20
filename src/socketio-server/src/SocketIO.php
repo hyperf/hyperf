@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer;
 
 use Closure;
@@ -67,7 +68,7 @@ use function Hyperf\Support\make;
  */
 class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    public static $isMainWorker = false;
+    public static bool $isMainWorker = false;
 
     public static string $serverId = '';
 
@@ -125,12 +126,8 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
             $this->stdoutLogger->error("EngineIO event type {$frame->data[0]} not supported");
             return;
         }
-        // Check that the namespace is correct
-        if (! str_contains($frame->data, ',') && ! str_contains($frame->data, '?')) {
-            $this->stdoutLogger->error("The data format is incorrect: {$frame->data}");
-            return;
-        }
-        $packet = $this->decoder->decode(substr($frame->data, 1));
+
+        $packet = $this->decoder->decode($frame->data);
         switch ($packet->type) {
             case Packet::OPEN: // client open
                 $responsePacket = Packet::create([
@@ -213,7 +210,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         return ApplicationContext::getContainer()->get($class);
     }
 
-    public function addCallback(string $ackId, Channel $channel, int $timeoutMs = null)
+    public function addCallback(string $ackId, Channel $channel, ?int $timeoutMs = null)
     {
         $this->clientCallbacks[$ackId] = $channel;
         // Clean up using timer to avoid memory leak.

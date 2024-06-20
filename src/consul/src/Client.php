@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Consul;
 
 use Closure;
@@ -37,7 +38,7 @@ abstract class Client
      */
     private $logger;
 
-    public function __construct(Closure $clientFactory, LoggerInterface $logger = null)
+    public function __construct(Closure $clientFactory, ?LoggerInterface $logger = null)
     {
         $this->clientFactory = $clientFactory;
         $this->logger = $logger ?: new NullLogger();

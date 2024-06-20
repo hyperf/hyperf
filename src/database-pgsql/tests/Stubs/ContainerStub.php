@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\PgSQL\Stubs;
 
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
@@ -20,6 +22,7 @@ use Hyperf\Database\PgSQL\Connectors\PostgresSqlSwooleExtConnector;
 use Hyperf\Database\PgSQL\PostgreSqlSwooleExtConnection;
 use Mockery;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class ContainerStub
 {
@@ -27,13 +30,14 @@ class ContainerStub
     {
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('has')->andReturn(true);
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
         $container->shouldReceive('get')->with('db.connector.pgsql-swoole')->andReturn(new PostgresSqlSwooleExtConnector());
         $connector = new ConnectionFactory($container);
 
         Connection::resolverFor('pgsql-swoole', static function ($connection, $database, $prefix, $config) {
             return new PostgreSqlSwooleExtConnection($connection, $database, $prefix, $config);
         });
-
         $connection = $connector->make([
             'driver' => 'pgsql-swoole',
             'host' => '127.0.0.1',

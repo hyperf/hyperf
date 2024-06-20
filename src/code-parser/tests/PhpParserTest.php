@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\CodeParser;
 
 use Hyperf\CodeParser\PhpParser;
@@ -79,7 +80,7 @@ class PhpParserTest extends TestCase
 
         $code = $printer->prettyPrint([$stmts]);
 
-        $this->assertSame('object $id = new \\stdClass()', $code);
+        $this->assertSame('object $id = new \stdClass()', $code);
 
         $parameters = $bar->getMethod('class')->getParameters();
 

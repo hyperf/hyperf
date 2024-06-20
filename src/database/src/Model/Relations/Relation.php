@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use Closure;
@@ -42,21 +43,21 @@ abstract class Relation
     /**
      * The Model query builder instance.
      *
-     * @var \Hyperf\Database\Model\Builder
+     * @var Builder
      */
     protected $query;
 
     /**
      * The parent model instance.
      *
-     * @var \Hyperf\Database\Model\Model
+     * @var Model
      */
     protected $parent;
 
     /**
      * The related model instance.
      *
-     * @var \Hyperf\Database\Model\Model
+     * @var Model
      */
     protected $related;
 
@@ -154,7 +155,7 @@ abstract class Relation
     /**
      * Get the relationship for eager loading.
      *
-     * @return \Hyperf\Database\Model\Collection
+     * @return Collection
      */
     public function getEager()
     {
@@ -165,7 +166,7 @@ abstract class Relation
      * Execute the query as a "select" statement.
      *
      * @param array $columns
-     * @return \Hyperf\Database\Model\Collection
+     * @return Collection
      */
     public function get($columns = ['*'])
     {
@@ -199,7 +200,7 @@ abstract class Relation
     /**
      * Add the constraints for a relationship count query.
      *
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceCountQuery(Builder $query, Builder $parentQuery)
     {
@@ -216,7 +217,7 @@ abstract class Relation
      * Essentially, these queries compare on column names like whereColumn.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -230,7 +231,7 @@ abstract class Relation
     /**
      * Get the underlying query for the relation.
      *
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getQuery()
     {
@@ -250,7 +251,7 @@ abstract class Relation
     /**
      * Get the parent model of the relation.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function getParent()
     {
@@ -270,7 +271,7 @@ abstract class Relation
     /**
      * Get the related model of the relation.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function getRelated()
     {
@@ -313,7 +314,7 @@ abstract class Relation
      * @param bool $merge
      * @return array
      */
-    public static function morphMap(array $map = null, $merge = true)
+    public static function morphMap(?array $map = null, $merge = true)
     {
         $map = static::buildMorphMapFromModels($map);
 
@@ -382,7 +383,7 @@ abstract class Relation
      * @param null|string[] $models
      * @return null|array
      */
-    protected static function buildMorphMapFromModels(array $models = null)
+    protected static function buildMorphMapFromModels(?array $models = null)
     {
         if (is_null($models) || Arr::isAssoc($models)) {
             return $models;

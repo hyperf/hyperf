@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Connection;
@@ -1082,6 +1083,12 @@ class MySqlSchemaGrammarTest extends TestCase
         $statement = $this->getGrammar()->compileDropAllViews(['alpha', 'beta', 'gamma']);
 
         $this->assertSame('drop view `alpha`,`beta`,`gamma`', $statement);
+    }
+
+    public function testCompileTables(): void
+    {
+        $statement = $this->getGrammar()->compileTables('foo');
+        $this->assertSame("select table_name as `name`, (data_length + index_length) as `size`, table_comment as `comment`, engine as `engine`, table_collation as `collation` from information_schema.tables where table_schema = 'foo' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED') order by table_name", $statement);
     }
 
     public function testGrammarsAreMacroable()

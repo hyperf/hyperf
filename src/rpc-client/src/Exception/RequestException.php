@@ -9,30 +9,30 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcClient\Exception;
 
+use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;
 
 class RequestException extends RuntimeException
 {
-    /**
-     * @param $throwable
-     * [
-     *     'class' => 'RuntimeException', // The exception class name
-     *     'code' => 0, // The exception code
-     *     'message' => '', // The exception message
-     *     'attributes' => [
-     *         'message' => '', // The exception message
-     *         'code' => 0, // The exception code
-     *         'file' => '/opt/www/hyperf/app/JsonRpc/CalculatorService.php', // The file path which the exception occurred
-     *         'line' => 99, // The line of file which the exception occurred
-     *     ],
-     * ]
-     * @param string $message
-     * @param int $code
-     */
-    public function __construct($message = '', $code = 0, protected array $throwable = [])
-    {
+    public function __construct(
+        string $message = '',
+        int $code = 0,
+        #[ArrayShape([
+            'class' => 'string', // The exception class name
+            'code' => 'int', // The exception code
+            'message' => 'string', // The exception message
+            'attributes' => [
+                'message' => 'string', // The exception message
+                'code' => 'int', // The exception code
+                'file' => 'string', // The file path which the exception occurred
+                'line' => 'int', // The line of file which the exception occurred
+            ],
+        ])]
+        protected array $throwable = []
+    ) {
         parent::__construct($message, $code);
     }
 

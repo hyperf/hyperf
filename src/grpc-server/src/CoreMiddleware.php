@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\GrpcServer;
 
 use Closure;
@@ -146,7 +147,7 @@ class CoreMiddleware extends HttpCoreMiddleware
         $injections = [];
         $definitions = MethodDefinitionCollector::getOrParse($controller, $action);
 
-        foreach ($definitions ?? [] as $definition) {
+        foreach ($definitions as $definition) {
             if (! is_array($definition)) {
                 throw new RuntimeException('Invalid method definition.');
             }

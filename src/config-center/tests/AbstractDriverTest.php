@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ConfigCenter;
 
 use Hyperf\Codec\Json;
@@ -23,6 +24,7 @@ use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -39,7 +41,7 @@ class AbstractDriverTest extends TestCase
         CoordinatorManager::clear(Constants::WORKER_EXIT);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('getConfig')]
+    #[DataProvider('getConfig')]
     public function testCreateMessageFetcherLoopForCoroutineMode(Config $config)
     {
         ContainerStub::mockContainer($config);
@@ -52,7 +54,7 @@ class AbstractDriverTest extends TestCase
         $this->assertSame(['message' => 'Hello Hyperf', 'id' => 1], $config->get('test'));
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('getConfigAndPipeMessage')]
+    #[DataProvider('getConfigAndPipeMessage')]
     public function testOnPipeMessage(Config $config, PipeMessageInterface $pipeMessage, array $assert)
     {
         ContainerStub::mockContainer($config);

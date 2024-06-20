@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Middleware;
 
 use Hyperf\Coroutine\Coroutine;
@@ -48,7 +49,7 @@ class TraceMiddleware implements MiddlewareInterface
         defer(function () use ($tracer) {
             try {
                 $tracer->flush();
-            } catch (\Throwable) {
+            } catch (Throwable) {
             }
         });
         try {
@@ -57,6 +58,9 @@ class TraceMiddleware implements MiddlewareInterface
                 $response = $response->withHeader('Trace-Id', $traceId);
             }
             $span->setTag($this->spanTagManager->get('response', 'status_code'), (string) $response->getStatusCode());
+            if ($this->spanTagManager->has('response', 'body')) {
+                $span->setTag($this->spanTagManager->get('response', 'body'), (string) $response->getBody());
+            }
         } catch (Throwable $exception) {
             if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($exception)) {
                 $this->appendExceptionToSpan($span, $exception);
@@ -89,6 +93,9 @@ class TraceMiddleware implements MiddlewareInterface
         $span->setTag($this->spanTagManager->get('request', 'path'), (string) $uri->getPath());
         $span->setTag($this->spanTagManager->get('request', 'method'), $request->getMethod());
         $span->setTag($this->spanTagManager->get('request', 'uri'), (string) $uri);
+        if ($this->spanTagManager->has('request', 'body')) {
+            $span->setTag($this->spanTagManager->get('request', 'body'), (string) $request->getBody());
+        }
         foreach ($request->getHeaders() as $key => $value) {
             $span->setTag($this->spanTagManager->get('request', 'header') . '.' . $key, implode(', ', $value));
         }

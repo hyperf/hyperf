@@ -41,6 +41,7 @@ return [
     'confirmed' => 'The :attribute confirmation does not match.',
     'date' => 'The :attribute is not a valid date.',
     'date_format' => 'The :attribute does not match the format :format.',
+    'decimal' => 'The :attribute must have :decimal decimal places.',
     'different' => 'The :attribute and :other must be different.',
     'digits' => 'The :attribute must be :digits digits.',
     'digits_between' => 'The :attribute must be between :min and :max digits.',
@@ -70,6 +71,7 @@ return [
     'ipv4' => 'The :attribute must be a valid IPv4 address.',
     'ipv6' => 'The :attribute must be a valid IPv6 address.',
     'json' => 'The :attribute must be a valid JSON string.',
+    'list' => 'The :attribute must be a list.',
     'lt' => [
         'numeric' => 'The :attribute must be less than :value',
         'file' => 'The :attribute must be less than :value kb',

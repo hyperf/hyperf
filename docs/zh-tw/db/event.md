@@ -31,7 +31,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Collection\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -183,3 +183,36 @@ class DeleteCacheListener implements ListenerInterface
 }
 
 ```
+
+### 觀察者
+
+得益於 [hyperf/model-listener](https://github.com/hyperf/blob/master/src/model-listener/) 元件，我們也可以使用 `Observer` 來監聽模型事件。
+透過 [ModelListener](https://github.com/hyperf/hyperf/blob/master/src/model-listener/src/Annotation/ModelListener.php) 註解，我們可以很方便的定義一個觀察者，示例程式碼如下：
+
+```php
+<?php
+use Hyperf\ModelListener\Annotation\ModelListener;
+use App\Model\User;
+
+/**
+ * 定義一個 UserObserver 觀察者，監聽 User 模型的事件.
+ * 也可以監聽多個模型，只需要在 models 屬性中傳入多個模型即可
+ * 需要注意，此類將會被自動註冊到容器中成為單例
+ */
+#[ModelListener(models: [ User::class ])]
+class UserObserver
+{
+    public function creating(User $user)
+    {
+        // 建立使用者時觸發
+    }
+    
+    public function created(User $user)
+    {
+        // 使用者建立完成後觸發
+    }
+    
+    //... 省略其他事件
+}
+```
+

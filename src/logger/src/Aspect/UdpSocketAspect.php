@@ -9,39 +9,50 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Logger\Aspect;
 
-use Hyperf\Context\Context;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Monolog\Handler\SyslogUdp\UdpSocket;
+use Socket;
+use WeakMap;
 
+/**
+ * @property null|Socket $socket
+ */
 class UdpSocketAspect extends AbstractAspect
 {
     public array $classes = [
         UdpSocket::class . '::getSocket',
     ];
 
+    public static WeakMap $coSockets;
+
+    public function __construct()
+    {
+        self::$coSockets = new WeakMap();
+    }
+
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        if (Coroutine::inCoroutine()) {
-            [$ip, $port] = (fn () => [$this->ip, $this->port])->call($proceedingJoinPoint->getInstance());
-
-            $key = sprintf('%s_%s_%s_%s', $proceedingJoinPoint->className, 'Socket', $ip, $port);
-            return Context::getOrSet($key, function () use ($port) {
-                $domain = AF_INET;
-                $protocol = SOL_UDP;
-                // Check if we are using unix sockets.
-                if ($port === 0) {
-                    $domain = AF_UNIX;
-                    $protocol = IPPROTO_IP;
-                }
-
-                return socket_create($domain, SOCK_DGRAM, $protocol);
-            });
+        if (! Coroutine::inCoroutine()) {
+            return $proceedingJoinPoint->process();
         }
 
-        return $proceedingJoinPoint->process();
+        $instance = $proceedingJoinPoint->getInstance();
+
+        if (isset(self::$coSockets[$instance]) && self::$coSockets[$instance] instanceof Socket) {
+            return self::$coSockets[$instance];
+        }
+
+        return self::$coSockets[$instance] = (function () use ($proceedingJoinPoint) {
+            $nonCoSocket = $this->socket; // Save the socket of non-coroutine.
+            $this->socket = null; // Unset the socket of non-coroutine.
+            $coSocket = $proceedingJoinPoint->process(); // ReCreate the socket in coroutine.
+            $this->socket = $nonCoSocket; // Restore the socket of non-coroutine.
+            return $coSocket;
+        })->call($instance);
     }
 }

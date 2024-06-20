@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpMessage\Base;
 
+use Hyperf\Engine\Http\Http;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Stringable;
@@ -319,7 +321,7 @@ class Response implements ResponseInterface, ResponsePlusInterface, Stringable
     /**
      * Is the response a redirect of some form?
      */
-    public function isRedirect(string $location = null): bool
+    public function isRedirect(?string $location = null): bool
     {
         return in_array($this->statusCode, [
             201,
@@ -341,19 +343,12 @@ class Response implements ResponseInterface, ResponsePlusInterface, Stringable
 
     public function toString(bool $withoutBody = false): string
     {
-        $headerString = '';
-        foreach ($this->getStandardHeaders() as $key => $values) {
-            foreach ($values as $value) {
-                $headerString .= sprintf("%s: %s\r\n", $key, $value);
-            }
-        }
-        return sprintf(
-            "HTTP/%s %s %s\r\n%s\r\n%s",
-            $this->getProtocolVersion(),
+        return Http::packResponse(
             $this->getStatusCode(),
             $this->getReasonPhrase(),
-            $headerString,
-            $this->getBody()
+            $this->getStandardHeaders(),
+            $withoutBody ? '' : (string) $this->getBody(),
+            $this->getProtocolVersion()
         );
     }
 

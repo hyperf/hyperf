@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Seeders;
 
 use Hyperf\Command\Concerns\Confirmable as ConfirmableTrait;
@@ -43,7 +44,7 @@ class SeedCommand extends BaseCommand
             $this->seed->setConnection($this->input->getOption('database'));
         }
 
-        $this->seed->run([$this->getSeederPath()]);
+        $this->seed->run($this->getSeederPaths());
     }
 
     /**

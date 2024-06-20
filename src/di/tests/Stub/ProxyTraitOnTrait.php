@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\Stub;
 
 use Hyperf\Di\Aop\ProxyTrait;
@@ -17,48 +18,47 @@ trait ProxyTraitOnTrait
 {
     use ProxyTrait;
 
-    /**
-     * @var string
-     */
-    public $name;
-
-    public function __construct(string $name = 'Hyperf')
+    public function __construct(public string $name = 'Hyperf')
     {
-        $this->name = $name;
     }
 
     public function get(?int $id, string $str = '')
     {
-        return $this->__getParamsMap(__TRAIT__, 'get', func_get_args());
+        return ['order' => ['id', 'str'], 'keys' => compact('id', 'str'), 'variadic' => ''];
     }
 
     public function get2(?int $id = 1, string $str = '')
     {
-        return $this->__getParamsMap(__TRAIT__, 'get2', func_get_args());
+        return ['order' => ['id', 'str'], 'keys' => compact('id', 'str'), 'variadic' => ''];
     }
 
     public function get3(?int $id = 1, string $str = '', float $num = 1.0)
     {
-        return $this->__getParamsMap(__TRAIT__, 'get3', func_get_args());
+        return ['order' => ['id', 'str', 'num'], 'keys' => compact('id', 'str', 'num'), 'variadic' => ''];
+    }
+
+    public function get4(?int $id = 1, string ...$variadic)
+    {
+        return ['order' => ['id', 'variadic'], 'keys' => compact('id', 'variadic'), 'variadic' => 'variadic'];
     }
 
     public function incr()
     {
-        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__TRAIT__, __FUNCTION__, func_get_args()), function () {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, ['keys' => []], function () {
             return 1;
         });
     }
 
     public function getName()
     {
-        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__TRAIT__, __FUNCTION__, func_get_args()), function () {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, ['keys' => []], function () {
             return 'HyperfCloud';
         });
     }
 
     public function getName2()
     {
-        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__TRAIT__, __FUNCTION__, func_get_args()), function () {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, ['keys' => []], function () {
             return 'HyperfCloud';
         });
     }

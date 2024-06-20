@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
@@ -27,26 +28,6 @@ trait ManagesFrequencies
         $this->setRule($expression);
 
         return $this;
-    }
-
-    /**
-     * Schedule the event to run between start and end time.
-     *
-     * @return $this
-     */
-    public function between(string $startTime, string $endTime): static
-    {
-        return $this->when($this->inTimeInterval($startTime, $endTime));
-    }
-
-    /**
-     * Schedule the event to not run between start and end time.
-     *
-     * @return $this
-     */
-    public function unlessBetween(string $startTime, string $endTime): static
-    {
-        return $this->skip($this->inTimeInterval($startTime, $endTime));
     }
 
     /**
@@ -610,7 +591,7 @@ trait ManagesFrequencies
      */
     protected function spliceIntoPosition(int $position, int|string $value): static
     {
-        $segments = preg_split('/\\s+/', $this->rule ?: '* * * * *');
+        $segments = preg_split('/\s+/', $this->rule ?: '* * * * *');
 
         $segments[$position - 1] = $value;
 
@@ -630,9 +611,9 @@ trait ManagesFrequencies
 
         if ($endTime->lessThan($startTime)) {
             if ($startTime->greaterThan($now)) {
-                $startTime->subDay(1);
+                $startTime->subDay();
             } else {
-                $endTime->addDay(1);
+                $endTime->addDay();
             }
         }
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\CodeParser\PhpDocReader;
@@ -16,6 +17,7 @@ use Hyperf\CodeParser\PhpParser;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
+use Hyperf\Database\Commands\Annotations\RewriteReturnType;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
@@ -64,6 +66,8 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
     protected array $properties = [];
 
+    protected array $uses = [];
+
     public function __construct(string $class, protected array $columns, protected ModelOption $option)
     {
         $this->class = new $class();
@@ -82,6 +86,12 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         switch ($node) {
+            case $node instanceof Node\Stmt\UseUse:
+                $parts = $node->name->getParts();
+                $class = implode('\\', $parts);
+                $alias = $node->alias?->name ?? array_pop($parts);
+                $this->uses[$class] = $alias;
+                return $node;
             case $node instanceof Node\Stmt\PropertyProperty:
                 if ((string) $node->name === 'fillable' && $this->option->isRefreshFillable()) {
                     $node = $this->rewriteFillable($node);
@@ -187,21 +197,54 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             $doc .= sprintf(' * @property %s $%s %s', $type, $name, $comment) . PHP_EOL;
         }
         foreach ($this->properties as $name => $property) {
+            $type = $property['type'];
+            $sorted = [];
+            foreach ($type as $item) {
+                if ($item === 'null') {
+                    array_unshift($sorted, $item);
+                    continue;
+                }
+                $sorted[] = $this->parsePropertyType($item);
+            }
+
             $comment = $property['comment'] ?? '';
+            $type = implode('|', $sorted);
             if ($property['read'] && $property['write']) {
-                $doc .= sprintf(' * @property %s $%s %s', $property['type'], $name, $comment) . PHP_EOL;
+                $doc .= sprintf(' * @property %s $%s %s', $type, $name, $comment) . PHP_EOL;
                 continue;
             }
             if ($property['read']) {
-                $doc .= sprintf(' * @property-read %s $%s %s', $property['type'], $name, $comment) . PHP_EOL;
+                $doc .= sprintf(' * @property-read %s $%s %s', $type, $name, $comment) . PHP_EOL;
                 continue;
             }
             if ($property['write']) {
-                $doc .= sprintf(' * @property-write %s $%s %s', $property['type'], $name, $comment) . PHP_EOL;
+                $doc .= sprintf(' * @property-write %s $%s %s', $type, $name, $comment) . PHP_EOL;
                 continue;
             }
         }
         return $doc;
+    }
+
+    protected function parsePropertyType(string $type): string
+    {
+        $origin = $type;
+        $isArray = false;
+        if (str_ends_with($type, '[]')) {
+            $isArray = true;
+            $type = substr($type, 0, -2);
+        }
+
+        $type = ltrim($type, '\\');
+        if ($alias = $this->uses[$type] ?? null) {
+            $type = $alias;
+            if ($isArray) {
+                $type .= '[]';
+            }
+
+            return $type;
+        }
+
+        return $origin;
     }
 
     protected function initPropertiesFromMethods()
@@ -235,8 +278,11 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 continue;
             }
 
-            $return = end($methodStmt->stmts);
-            if ($return instanceof Node\Stmt\Return_) {
+            foreach ($methodStmt->stmts as $return) {
+                if (! $return instanceof Node\Stmt\Return_) {
+                    continue;
+                }
+
                 $expr = $return->expr;
                 if (
                     $expr instanceof Node\Expr\MethodCall
@@ -268,6 +314,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                         }
                     }
                 }
+                break;
             }
         }
 
@@ -280,9 +327,21 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             if (is_subclass_of($caster, CastsAttributes::class)) {
                 $ref = new ReflectionClass($caster);
                 $method = $ref->getMethod('get');
+                $annotations = $method->getAttributes(RewriteReturnType::class);
+                /** @var RewriteReturnType $annotation */
+                if (isset($annotations[0]) && $annotation = $annotations[0]->newInstance()) {
+                    $this->setProperty($key, [$annotation->type], true, true, '', false);
+                    continue;
+                }
+
                 if ($type = $method->getReturnType()) {
+                    $typeName = '\\' . ltrim($type->getName(), '\\');
+                    // TODO: Support after some days.
+                    // if (PhpDocReader::getInstance()->isPrimitiveType($typeName)) {
+                    //     $typeName = $type->getName();
+                    // }
                     // Get return type which defined in `CastsAttributes::get()`.
-                    $this->setProperty($key, ['\\' . ltrim($type->getName(), '\\')], true, true, '', true);
+                    $this->setProperty($key, [$typeName], true, true, '', true);
                 }
             }
         }
@@ -303,7 +362,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     {
         if (! isset($this->properties[$name])) {
             $this->properties[$name] = [];
-            $this->properties[$name]['type'] = implode('|', array_unique($type ?: ['mixed']));
+            $this->properties[$name]['type'] = array_unique($type ?: ['mixed']);
             $this->properties[$name]['read'] = false;
             $this->properties[$name]['write'] = false;
             $this->properties[$name]['comment'] = $comment;
@@ -313,11 +372,11 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             return;
         }
 
-        $type = array_merge(explode('|', $this->properties[$name]['type'] ?? []), $type);
+        $type = array_merge($this->properties[$name]['type'] ?? [], $type);
         if ($nullable) {
             $type[] = 'null';
         }
-        $this->properties[$name]['type'] = implode('|', array_unique($type));
+        $this->properties[$name]['type'] = array_unique($type);
         $this->properties[$name]['read'] = $this->properties[$name]['read'] || $read;
         $this->properties[$name]['write'] = $this->properties[$name]['write'] || $write;
         $this->properties[$name]['priority'] = $priority;
@@ -361,7 +420,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
         return match ($cast) {
             'integer' => 'int',
-            'date', 'datetime' => '\Carbon\Carbon',
+            'date', 'datetime' => $this->uses['Carbon\Carbon'] ?? '\Carbon\Carbon',
             'json' => 'array',
             default => $cast,
         };

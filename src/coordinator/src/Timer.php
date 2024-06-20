@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Coordinator;
 
-use Hyperf\Contract\StdoutLoggerInterface;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 use function Hyperf\Coroutine\go;
@@ -28,7 +29,7 @@ class Timer
 
     private static int $round = 0;
 
-    public function __construct(private ?StdoutLoggerInterface $logger = null)
+    public function __construct(private ?LoggerInterface $logger = null)
     {
     }
 

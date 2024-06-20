@@ -9,21 +9,21 @@
     ],
     "homepage": "https://hyperf.io",
     "support": {
-        "docs": "https://hyperf.wiki",
         "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
         "php": ">=8.1",
-        "psr/container": "^1.0|^2.0",
-        "psr/event-dispatcher": "^1.0",
         "hyperf/codec": "~3.1.0",
         "hyperf/collection": "~3.1.0",
-        "hyperf/contract": "~3.1.0",
         "hyperf/command": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
         "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0"
+        "hyperf/utils": "~3.1.0",
+        "psr/container": "^1.0 || ^2.0",
+        "psr/event-dispatcher": "^1.0"
     },
     "suggest": {
         "hyperf/di": "Required to use annotations.",
@@ -32,12 +32,12 @@
         "hyperf/process": "Auto register the consumer process for server."
     },
     "autoload": {
-        "files": [
-            "src/Functions.php"
-        ],
         "psr-4": {
             "Hyperf\\AsyncQueue\\": "src/"
-        }
+        },
+        "files": [
+            "src/Functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

@@ -13,13 +13,15 @@ declare(strict_types=1);
 
 namespace Hyperf\Nacos\Protobuf\GPBMetadata;
 
+use Google\Protobuf\Internal\DescriptorPool;
+
 class Any
 {
     public static $is_initialized = false;
 
     public static function initOnce()
     {
-        $pool = \Google\Protobuf\Internal\DescriptorPool::getGeneratedPool();
+        $pool = DescriptorPool::getGeneratedPool();
 
         if (static::$is_initialized == true) {
             return;
@@ -31,7 +33,7 @@ class Any
 Any
 type_url (	
 value (B«
-com.google.protobufBAnyProtoPZ%github.com/golang/protobuf/ptypes/any¢GPBªGoogle.Protobuf.WellKnownTypesÊHyperf\\Nacos\\Protobufâ!Hyperf\\Nacos\\Protobuf\\GPBMetadatabproto3',
+com.google.protobufBAnyProtoPZ%github.com/golang/protobuf/ptypes/any¢GPBªGoogle.Protobuf.WellKnownTypesÊHyperf\Nacos\Protobufâ!Hyperf\Nacos\Protobuf\GPBMetadatabproto3',
             true
         );
 

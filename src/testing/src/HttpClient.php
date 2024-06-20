@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Testing;
 
 use GuzzleHttp\Client;
@@ -26,7 +27,7 @@ class HttpClient
 
     protected PackerInterface $packer;
 
-    public function __construct(protected ContainerInterface $container, PackerInterface $packer = null, $baseUri = 'http://127.0.0.1:9501')
+    public function __construct(protected ContainerInterface $container, ?PackerInterface $packer = null, $baseUri = 'http://127.0.0.1:9501')
     {
         $this->packer = $packer ?? new JsonPacker();
         $handler = null;

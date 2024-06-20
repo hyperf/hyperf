@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Database\Model\Builder;
@@ -65,7 +66,7 @@ class MorphPivot extends Pivot
      * Set the morph class for the pivot.
      *
      * @param string $morphClass
-     * @return \Hyperf\Database\Model\Relations\MorphPivot
+     * @return MorphPivot
      */
     public function setMorphClass($morphClass)
     {
@@ -78,7 +79,7 @@ class MorphPivot extends Pivot
      * Get a new query to restore one or more models by their queueable IDs.
      *
      * @param array|int $ids
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function newQueryForRestoration($ids)
     {
@@ -101,7 +102,7 @@ class MorphPivot extends Pivot
     /**
      * Set the keys for a save update query.
      *
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     protected function setKeysForSaveQuery(Builder $query)
     {
@@ -114,7 +115,7 @@ class MorphPivot extends Pivot
      * Get a new query to restore multiple models by their queueable IDs.
      *
      * @param array<int> $ids
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     protected function newQueryForCollectionRestoration(array $ids)
     {

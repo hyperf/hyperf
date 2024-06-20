@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool\Generator;
 
 use Hyperf\CodeParser\Project;
@@ -42,10 +43,8 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->input = $input;
         $this->output = $output;
@@ -81,7 +80,7 @@ abstract class GeneratorCommand extends Command
      */
     protected function qualifyClass(string $name): string
     {
-        $name = ltrim($name, '\\/');
+        $name = ltrim($name, '\/');
 
         $name = str_replace('/', '\\', $name);
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Macroable;
 
 use BadMethodCallException;
@@ -87,6 +88,8 @@ trait Macroable
      *
      * @param string $name
      * @param callable|object $macro
+     *
+     * @param-closure-this static $macro
      */
     public static function macro($name, $macro)
     {

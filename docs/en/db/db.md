@@ -1,6 +1,6 @@
 # Minimalist DB component
 
-[hyperf/database](https://github.com/hyperf/database) The function is very powerful, but it is undeniable that the efficiency is indeed a little insufficient. Here is a minimalist `hyperf/db` component that supports `PDO` and `Swoole Mysql`.
+[hyperf/database](https://github.com/hyperf/database) The function is very powerful, but it is undeniable that the efficiency is indeed a little insufficient. Here is a minimalist `hyperf/db` component.
 
 ## Install
 
@@ -22,7 +22,7 @@ The default configuration `config/autoload/db.php` is as follows, the database s
 
 |  configuration item  |  type  |       default      |                          remark                          |
 |:--------------------:|:------:|:------------------:|:--------------------------------------------------------:|
-|        driver        | string |        none        |       The database engine supports `pdo` and `mysql`     |
+|        driver        | string |        none        |                    The database engine                   |
 |         host         | string |    `localhost`     |                      database address                    |
 |         port         |  int   |        3306        |                      database address                    |
 |       database       | string |        none        |                    Database default DB                   |
@@ -41,7 +41,7 @@ The default configuration `config/autoload/db.php` is as follows, the database s
 
 ## Component supported methods
 
-The specific interface can be viewed `Hyperf\DB\ConnectionInterface`。
+The specific interface can be viewed `Hyperf\DB\ConnectionInterface`.
 
 |    method name   |  return value  |                                       remark                                        |
 |:----------------:|:--------------:|:-----------------------------------------------------------------------------------:|

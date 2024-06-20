@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Support\Filesystem;
 
 use Hyperf\Coroutine\Parallel;
 use Hyperf\Engine\Channel;
 use Hyperf\Support\Filesystem\Filesystem;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Swoole\Runtime;
 use Throwable;
@@ -50,9 +52,13 @@ class FilesystemTest extends TestCase
         unlink('./test.txt');
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
+    #[Group('NonCoroutine')]
     public function testFopenInCoroutine()
     {
+        if (SWOOLE_VERSION_ID >= 60000) {
+            $this->markTestSkipped();
+        }
+
         run(function () {
             $max = 2;
             $chan = new Channel($max);
@@ -74,23 +80,23 @@ class FilesystemTest extends TestCase
     public function testMakeDirection()
     {
         $system = new Filesystem();
-        if (SWOOLE_VERSION_ID > 40701) {
-            try {
-                $system->makeDirectory(BASE_PATH . '/runtime/test');
-                $system->makeDirectory(BASE_PATH . '/runtime/test');
-            } catch (Throwable $exception) {
-                $this->assertSame('mkdir(): File exists', $exception->getMessage());
-            }
-        } else {
+        try {
             $system->makeDirectory(BASE_PATH . '/runtime/test');
             $system->makeDirectory(BASE_PATH . '/runtime/test');
-            $this->assertTrue(true);
+        } catch (Throwable $exception) {
+            $this->assertSame('mkdir(): File exists', $exception->getMessage());
         }
+
+        $this->assertTrue(true);
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
+    #[Group('NonCoroutine')]
     public function testPutLockInCoroutine()
     {
+        if (SWOOLE_VERSION_ID >= 60000) {
+            $this->markTestSkipped();
+        }
+
         run(function () {
             $max = 3;
             $chan = new Channel($max);
@@ -126,6 +132,7 @@ class FilesystemTest extends TestCase
         $path = BASE_PATH . '/runtime/data.log';
         $fs = new Filesystem();
 
+        $fs->makeDirectory(BASE_PATH . '/runtime');
         $this->assertNotFalse($fs->put($path, 'hello'));
         $lastModified = $fs->lastModified($path);
 

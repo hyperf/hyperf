@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
+use DateTime;
+use DateTimeZone;
 use InvalidArgumentException;
 
 class Parser
@@ -34,7 +37,7 @@ class Parser
      * @return Carbon[]
      * @throws InvalidArgumentException
      */
-    public function parse(string $crontabString, $startTime = null): array
+    public function parse(string $crontabString, $startTime = null, null|DateTimeZone|string $timezone = null): array
     {
         if (! $this->isValid($crontabString)) {
             throw new InvalidArgumentException('Invalid cron string: ' . $crontabString);
@@ -42,14 +45,22 @@ class Parser
         $startTime = $this->parseStartTime($startTime);
         $date = $this->parseDate($crontabString);
         $result = [];
-        if (in_array((int) date('i', $startTime), $date['minutes'])
-            && in_array((int) date('G', $startTime), $date['hours'])
-            && in_array((int) date('j', $startTime), $date['day'])
-            && in_array((int) date('w', $startTime), $date['week'])
-            && in_array((int) date('n', $startTime), $date['month'])
+        $currentDateTime = new DateTime();
+        $currentDateTime->setTimestamp($startTime);
+
+        if (isset($timezone)) {
+            $timezone = is_string($timezone) ? new DateTimeZone($timezone) : $timezone;
+            $currentDateTime->setTimezone($timezone);
+        }
+
+        if (in_array((int) $currentDateTime->format('i'), $date['minutes'])
+            && in_array((int) $currentDateTime->format('G'), $date['hours'])
+            && in_array((int) $currentDateTime->format('j'), $date['day'])
+            && in_array((int) $currentDateTime->format('w'), $date['week'])
+            && in_array((int) $currentDateTime->format('n'), $date['month'])
         ) {
             foreach ($date['second'] as $second) {
-                $result[] = Carbon::createFromTimestamp($startTime + $second);
+                $result[] = Carbon::createFromTimestamp($startTime + $second, $timezone);
             }
         }
         return $result;
@@ -68,7 +79,7 @@ class Parser
     /**
      * Parse each segment of crontab string.
      */
-    protected function parseSegment(string $string, int $min, int $max, int $start = null)
+    protected function parseSegment(string $string, int $min, int $max, ?int $start = null)
     {
         if ($start === null || $start < $min) {
             $start = $min;

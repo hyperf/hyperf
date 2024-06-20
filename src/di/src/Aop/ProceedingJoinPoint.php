@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Aop;
 
 use Closure;
@@ -52,11 +53,7 @@ class ProceedingJoinPoint
     {
         $this->pipe = null;
         $closure = $this->originalMethod;
-        if (count($this->arguments['keys']) > 1) {
-            $arguments = $this->getArguments();
-        } else {
-            $arguments = array_values($this->arguments['keys']);
-        }
+        $arguments = $this->getArguments();
         return $closure(...$arguments);
     }
 
@@ -71,6 +68,12 @@ class ProceedingJoinPoint
         $result = [];
         foreach ($this->arguments['order'] ?? [] as $order) {
             $result[] = $this->arguments['keys'][$order];
+        }
+
+        // Variable arguments are always placed at the end.
+        if (isset($this->arguments['variadic'], $order) && $order === $this->arguments['variadic']) {
+            $variadic = array_pop($result);
+            $result = array_merge($result, $variadic);
         }
         return $result;
     }

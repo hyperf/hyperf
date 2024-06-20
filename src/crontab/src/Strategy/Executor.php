@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab\Strategy;
 
 use Carbon\Carbon;
@@ -22,14 +23,13 @@ use Hyperf\Crontab\Event\BeforeExecute;
 use Hyperf\Crontab\Event\FailToExecute;
 use Hyperf\Crontab\Exception\InvalidArgumentException;
 use Hyperf\Crontab\LoggerInterface;
-use Hyperf\Crontab\Mutex\RedisServerMutex;
-use Hyperf\Crontab\Mutex\RedisTaskMutex;
 use Hyperf\Crontab\Mutex\ServerMutex;
 use Hyperf\Crontab\Mutex\TaskMutex;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use RuntimeException;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Throwable;
@@ -50,15 +50,14 @@ class Executor
 
     public function __construct(protected ContainerInterface $container)
     {
-        if ($container->has(LoggerInterface::class)) {
-            $this->logger = $container->get(LoggerInterface::class);
-        } elseif ($container->has(StdoutLoggerInterface::class)) {
-            $this->logger = $container->get(StdoutLoggerInterface::class);
-        }
+        $this->logger = match (true) {
+            $container->has(LoggerInterface::class) => $container->get(LoggerInterface::class),
+            $container->has(StdoutLoggerInterface::class) => $container->get(StdoutLoggerInterface::class),
+            default => null,
+        };
         if ($container->has(EventDispatcherInterface::class)) {
             $this->dispatcher = $container->get(EventDispatcherInterface::class);
         }
-
         $this->timer = new Timer($this->logger);
     }
 
@@ -89,7 +88,7 @@ class Executor
                 case 'command':
                     $input = make(ArrayInput::class, [$crontab->getCallback()]);
                     $output = make(NullOutput::class);
-                    /** @var \Symfony\Component\Console\Application */
+                    /** @var Application */
                     $application = $this->container->get(ApplicationInterface::class);
                     $application->setAutoExit(false);
                     $application->setCatchExceptions(false);
@@ -132,7 +131,7 @@ class Executor
             $taskMutex = $this->getTaskMutex();
 
             if ($taskMutex->exists($crontab) || ! $taskMutex->create($crontab)) {
-                $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s caused by task mutex.', $crontab->getName(), date('Y-m-d H:i:s')));
                 return;
             }
 
@@ -146,12 +145,7 @@ class Executor
 
     protected function getTaskMutex(): TaskMutex
     {
-        if (! $this->taskMutex) {
-            $this->taskMutex = $this->container->has(TaskMutex::class)
-                ? $this->container->get(TaskMutex::class)
-                : $this->container->get(RedisTaskMutex::class);
-        }
-        return $this->taskMutex;
+        return $this->taskMutex ??= $this->container->get(TaskMutex::class);
     }
 
     protected function runOnOneServer(Crontab $crontab, Closure $runnable): Closure
@@ -160,7 +154,7 @@ class Executor
             $taskMutex = $this->getServerMutex();
 
             if (! $taskMutex->attempt($crontab)) {
-                $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s caused by server mutex.', $crontab->getName(), date('Y-m-d H:i:s')));
                 return;
             }
 
@@ -170,12 +164,7 @@ class Executor
 
     protected function getServerMutex(): ServerMutex
     {
-        if (! $this->serverMutex) {
-            $this->serverMutex = $this->container->has(ServerMutex::class)
-                ? $this->container->get(ServerMutex::class)
-                : $this->container->get(RedisServerMutex::class);
-        }
-        return $this->serverMutex;
+        return $this->serverMutex ??= $this->container->get(ServerMutex::class);
     }
 
     protected function decorateRunnable(Crontab $crontab, Closure $runnable): Closure

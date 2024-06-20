@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Retry\Annotation;
 
 use Attribute;
@@ -16,7 +17,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class BackoffRetryThrowable extends RetryThrowable
 {
-    public function __construct(int $base = 100, string $sleepStrategyClass = 'Hyperf\\Retry\\BackoffStrategy')
+    public function __construct(int $base = 100, string $sleepStrategyClass = 'Hyperf\Retry\BackoffStrategy')
     {
     }
 }

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Guzzle\Cases;
 
 use GuzzleHttp\Client;
@@ -35,10 +36,6 @@ use Throwable;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class HandlerStackFactoryTest extends TestCase
 {
     public function testCreateCoroutineHandler()

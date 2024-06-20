@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
+use Hyperf\Validation\Contract\UncompromisedVerifier;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface as FactoryInterface;
 
 class ConfigProvider
@@ -29,6 +31,7 @@ class ConfigProvider
             'dependencies' => [
                 PresenceVerifierInterface::class => DatabasePresenceVerifierFactory::class,
                 FactoryInterface::class => ValidatorFactoryFactory::class,
+                UncompromisedVerifier::class => NotPwnedVerifier::class,
             ],
             'publish' => [
                 [

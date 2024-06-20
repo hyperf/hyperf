@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Rpc\PathGenerator;
 
 use Hyperf\JsonRpc\PathGenerator;
@@ -25,7 +26,7 @@ class PathGeneratorTest extends TestCase
     public function testGenerateFromClassName()
     {
         $pathGenerator = new PathGenerator();
-        $this->assertEquals('/user/query', $pathGenerator->generate('Foo\\UserService', 'query'));
+        $this->assertEquals('/user/query', $pathGenerator->generate('Foo\UserService', 'query'));
     }
 
     public function testGenerateFromName()

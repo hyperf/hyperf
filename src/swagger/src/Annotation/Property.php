@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Swagger\Annotation;
 
 use Attribute;
@@ -24,7 +25,7 @@ class Property extends \OpenApi\Attributes\Property
 {
     public function __construct(
         ?string $property = null,
-        object|string|null $ref = null,
+        null|object|string $ref = null,
         ?string $schema = null,
         ?string $title = null,
         ?string $description = null,
@@ -47,7 +48,7 @@ class Property extends \OpenApi\Attributes\Property
         ?int $minItems = null,
         ?bool $uniqueItems = null,
         ?string $pattern = null,
-        array|string|null $enum = null,
+        null|array|string $enum = null,
         ?Discriminator $discriminator = null,
         ?bool $readOnly = null,
         ?bool $writeOnly = null,
@@ -59,10 +60,11 @@ class Property extends \OpenApi\Attributes\Property
         ?array $allOf = null,
         ?array $anyOf = null,
         ?array $oneOf = null,
-        AdditionalProperties|bool|null $additionalProperties = null,
+        null|AdditionalProperties|bool $additionalProperties = null,
         ?array $x = null,
         ?array $attachables = null,
-        public mixed $rules = null
+        public mixed $rules = null,
+        public mixed $attribute = null
     ) {
         parent::__construct(
             $property,

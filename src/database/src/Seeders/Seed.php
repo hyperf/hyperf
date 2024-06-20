@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Seeders;
 
 use Hyperf\Collection\Collection;
@@ -42,6 +43,16 @@ class Seed
      */
     public function __construct(protected Resolver $resolver, protected Filesystem $files)
     {
+    }
+
+    public function path(string $path): void
+    {
+        $this->paths = array_unique(array_merge($this->paths, [$path]));
+    }
+
+    public function paths(): array
+    {
+        return $this->paths;
     }
 
     /**

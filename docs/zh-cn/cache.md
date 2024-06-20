@@ -12,8 +12,9 @@ composer require hyperf/cache
 |  配置  |                  默认值                  |         备注          |
 |:------:|:----------------------------------------:|:---------------------:|
 | driver |  Hyperf\Cache\Driver\RedisDriver  | 缓存驱动，默认为 Redis |
-| packer | Hyperf\Utils\Packer\PhpSerializer |        打包器         |
+| packer | Hyperf\Codec\Packer\PhpSerializerPacker |        打包器         |
 | prefix |                   c:                   |       缓存前缀        |
+| skip_cache_results |       []                   |       指定的结果不被缓存   |
 
 ```php
 <?php
@@ -21,8 +22,9 @@ composer require hyperf/cache
 return [
     'default' => [
         'driver' => Hyperf\Cache\Driver\RedisDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+        'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
         'prefix' => 'c:',
+        'skip_cache_results' => [],
     ],
 ];
 ```
@@ -297,6 +299,22 @@ class UserBookService
 
 `Hyperf\Cache\Driver\RedisDriver` 会把缓存数据存放到 `Redis` 中，需要用户配置相应的 `Redis 配置`。此方式为默认方式。
 
+### 进程内存驱动
+
+如果您需要将数据缓存到内存中，可以尝试此驱动。
+
+配置如下：
+
+```php
+<?php
+
+return [
+    'memory' => [
+        'driver' => Hyperf\Cache\Driver\MemoryDriver::class,
+    ],
+];
+```
+
 ### 协程内存驱动
 
 如果您需要将数据缓存到 `Context` 中，可以尝试此驱动。例如以下应用场景 `Demo::get` 会在多个地方调用多次，但是又不想每次都到 `Redis` 中进行查询。
@@ -328,7 +346,7 @@ class Demo
 return [
     'co' => [
         'driver' => Hyperf\Cache\Driver\CoroutineMemoryDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+        'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
     ],
 ];
 ```

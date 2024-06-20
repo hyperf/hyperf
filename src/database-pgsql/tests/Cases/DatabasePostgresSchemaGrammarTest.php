@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\PgSQL\Cases;
 
 use Hyperf\Database\Connection;
@@ -1043,6 +1044,14 @@ class DatabasePostgresSchemaGrammarTest extends TestCase
         $c = $this->getGrammar()::compileReplace();
 
         $this->assertTrue($c);
+    }
+
+    public function testCompileTables(): void
+    {
+        $this->assertSame('select c.relname as name, n.nspname as schema, pg_total_relation_size(c.oid) as size, '
+            . "obj_description(c.oid, 'pg_class') as comment from pg_class c, pg_namespace n "
+            . "where c.relkind in ('r', 'p') and n.oid = c.relnamespace and n.nspname not in ('pg_catalog', 'information_schema') "
+            . 'order by c.relname', $this->getGrammar()->compileTables());
     }
 
     public function testAddingFulltextIndexMultipleColumns()

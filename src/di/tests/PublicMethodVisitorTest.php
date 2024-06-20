@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
 use Hyperf\CodeParser\PhpParser;
@@ -130,6 +131,6 @@ CODETEMPLATE;
     private function getStmt($ast)
     {
         $stmts = PhpParser::getInstance()->getAllMethodsFromStmts($ast);
-        return [$stmts, 'foo\\foo'];
+        return [$stmts, 'foo\foo'];
     }
 }

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Scout;
 
 use Closure;
@@ -21,6 +22,7 @@ use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\ModelListener\Collector\ListenerCollector;
 use Hyperf\Scout\Engine\Engine;
 
+use function Hyperf\Config\config;
 use function Hyperf\Support\class_uses_recursive;
 use function Hyperf\Support\make;
 

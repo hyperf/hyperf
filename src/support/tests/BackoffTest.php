@@ -9,16 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Support;
 
 use Hyperf\Support\Backoff;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\Hyperf\Support\Backoff::class)]
+#[CoversClass(Backoff::class)]
 class BackoffTest extends TestCase
 {
     public function testBackoff()
@@ -32,5 +34,16 @@ class BackoffTest extends TestCase
         $secondTick = $backoff->nextBackoff();
         $this->assertGreaterThanOrEqual(1, $secondTick);
         $this->assertLessThanOrEqual(3 * $firstTick, $secondTick);
+    }
+
+    public function testCustomBackoff()
+    {
+        $backoff = new Backoff\ArrayBackoff([1, 200]);
+        $backoff->sleep();
+        $this->assertSame(200, $backoff->nextBackoff());
+
+        $backoff = new Backoff\ArrayBackoff([1, 2.2]);
+        $backoff->sleep();
+        $this->assertSame(2, $backoff->nextBackoff());
     }
 }

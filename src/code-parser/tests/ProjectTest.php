@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\CodeParser;
 
 use Hyperf\CodeParser\Project;
@@ -27,34 +28,34 @@ class ProjectTest extends TestCase
     {
         $mock = $this->createProject();
         $ns = $mock->namespace('app/Model');
-        $this->assertEquals('App\\Model\\', $ns);
+        $this->assertEquals('App\Model\\', $ns);
     }
 
     public function testClassNameFor()
     {
         $mock = $this->createProject();
         $ns = $mock->className('app/Model/User.php');
-        $this->assertEquals('App\\Model\\User', $ns);
+        $this->assertEquals('App\Model\User', $ns);
     }
 
     public function testPathForClass()
     {
         $mock = $this->createProject();
-        $path = $mock->path('App\\Model\\Foo');
+        $path = $mock->path('App\Model\Foo');
         $this->assertEquals('app/Model/Foo.php', $path);
     }
 
     public function testPathForNamespace()
     {
         $mock = $this->createProject();
-        $path = $mock->path('App\\Model\\');
+        $path = $mock->path('App\Model\\');
         $this->assertEquals('app/Model/', $path);
     }
 
     public function testPathForNoExtension()
     {
         $mock = $this->createProject();
-        $path = $mock->path('App\\Model', '');
+        $path = $mock->path('App\Model', '');
         $this->assertEquals('app/Model', $path);
     }
 

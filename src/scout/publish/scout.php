@@ -9,6 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use Hyperf\Scout\Provider\ElasticsearchProvider;
+
 use function Hyperf\Support\env;
 
 return [
@@ -22,7 +24,7 @@ return [
     'concurrency' => 100,
     'engine' => [
         'elasticsearch' => [
-            'driver' => Hyperf\Scout\Provider\ElasticsearchProvider::class,
+            'driver' => ElasticsearchProvider::class,
             'index' => null,
             'hosts' => [
                 env('ELASTICSEARCH_HOST', 'http://127.0.0.1:9200'),

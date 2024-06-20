@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\PgSQL\Query\Grammars;
 
 use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\JoinLateralClause;
 use Hyperf\Stringable\Str;
 
 use function Hyperf\Collection\collect;
@@ -42,6 +44,14 @@ class PostgresGrammar extends Grammar
     public function compileInsertOrIgnore(Builder $query, array $values)
     {
         return $this->compileInsert($query, $values) . ' on conflict do nothing';
+    }
+
+    /**
+     * Compile an insert ignore statement using a subquery into SQL.
+     */
+    public function compileInsertOrIgnoreUsing(Builder $query, array $columns, string $sql): string
+    {
+        return $this->compileInsertUsing($query, $columns, $sql) . ' on conflict do nothing';
     }
 
     /**
@@ -153,6 +163,14 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile a "lateral join" clause.
+     */
+    public function compileJoinLateral(JoinLateralClause $join, string $expression): string
+    {
+        return trim("{$join->type} join lateral {$expression} on true");
+    }
+
+    /**
      * Substitute the given bindings into the given raw SQL query.
      *
      * @param string $sql
@@ -198,8 +216,6 @@ class PostgresGrammar extends Grammar
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param array $where
      */
     protected function whereBasic(Builder $query, $where): string

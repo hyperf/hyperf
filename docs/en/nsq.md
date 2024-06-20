@@ -262,8 +262,8 @@ $client->delete('hyperf.test');
 ```
 
 - `Hyperf\Nsq\Api\Topic` class corresponds to `topic` related API;
-- `Hyperf\Nsq\Api\Channle` class corresponds to `channel` related API；
-- `Hyperf\Nsq\Api\Api` class corresponds to `ping`、`stats`、`config`、`debug` related API；
+- `Hyperf\Nsq\Api\Channle` class corresponds to `channel` related API;
+- `Hyperf\Nsq\Api\Api` class corresponds to `ping`、`stats`、`config`、`debug` related API;
 
 ## NSQ Protocol
 

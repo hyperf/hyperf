@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Swagger\Command;
 
 use Hyperf\Command\Command as HyperfCommand;
@@ -63,7 +64,12 @@ class GenSchemaCommand extends HyperfCommand
             $name = $ref->getShortName() . 'Schema';
         }
 
-        $path = BASE_PATH . '/app/Schema/' . $name . '.php';
+        $dirname = BASE_PATH . '/app/Schema';
+        if (! is_dir($dirname)) {
+            mkdir($dirname, 0755, true);
+        }
+
+        $path = $dirname . '/' . $name . '.php';
         if (file_exists($path) && ! $force) {
             $this->output->error(sprintf('The path of schema %s is exists.', $path));
             return;

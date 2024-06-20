@@ -35,7 +35,7 @@ It has the following structure:
      └── vendor
 ```
 
-The purpose of this is to allow the `hyperf-skeleton` project to be directly sourced through the `path` form, so that Composer can be directly loaded into the `vendor` of the `hyperf-skelton` project through the project in the `hyperf` folder as a dependency ` directory, we add a `repositories` item to the `composer.json` file in `hyperf-skelton`, as follows:
+The purpose of this is to allow the `hyperf-skeleton` project to be directly sourced through the `path` form, so that Composer can be directly loaded into the `vendor` of the `hyperf-skeleton` project through the project in the `hyperf` folder as a dependency ` directory, we add a `repositories` item to the `composer.json` file in `hyperf-skeleton`, as follows:
 
 ```json
 {
@@ -87,7 +87,7 @@ process -> ../../../hyperf/src/process
 redis -> ../../../hyperf/src/redis
 server -> ../../../hyperf/src/server
 testing -> ../../../hyperf/src/testing
-utils -> ../../../hyperf/src/utils
+support -> ../../../hyperf/src/support
 ```
 
 At this point, we can directly modify the files in `vendor/hyperf` in the IDE, but what we modify is the code in `hyperf`, so that we can directly modify the `hyperf` project in the end. `commit`, and then submit a `Pull Request (PR)` to the trunk.

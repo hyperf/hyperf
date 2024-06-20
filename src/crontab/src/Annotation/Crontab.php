@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab\Annotation;
 
 use Attribute;
@@ -29,9 +30,12 @@ class Crontab extends AbstractAnnotation
         public ?string $mutexPool = null,
         public ?int $mutexExpires = null,
         public ?bool $onOneServer = null,
-        public array|string|null $callback = null,
+        public null|array|string $callback = null,
         public ?string $memo = null,
-        public array|string|bool $enable = true
+        public array|bool|string $enable = true,
+        public ?string $timezone = null,
+        public array|string $environments = [],
+        public array $options = [],
     ) {
         if (! empty($this->rule)) {
             $this->rule = str_replace('\\', '', $this->rule);

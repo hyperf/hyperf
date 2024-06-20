@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpMessage\Base;
 
+use Hyperf\Engine\Http\Http;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
 use InvalidArgumentException;
@@ -221,7 +223,7 @@ class Request implements RequestInterface, RequestPlusInterface, Stringable
         return $this;
     }
 
-    public function setUri(UriInterface|string $uri, ?bool $preserveHost = null): static
+    public function setUri(string|UriInterface $uri, ?bool $preserveHost = null): static
     {
         $this->uri = $uri;
 
@@ -244,21 +246,12 @@ class Request implements RequestInterface, RequestPlusInterface, Stringable
 
     public function toString(bool $withoutBody = false): string
     {
-        $headerString = '';
-        if (! $withoutBody) {
-            foreach ($this->getStandardHeaders() as $key => $values) {
-                foreach ($values as $value) {
-                    $headerString .= sprintf("%s: %s\r\n", $key, $value);
-                }
-            }
-        }
-        return sprintf(
-            "%s %s HTTP/%s\r\n%s\r\n%s",
+        return Http::packRequest(
             $this->getMethod(),
             $this->getUri()->getPath(),
-            $this->getProtocolVersion(),
-            $headerString,
-            $this->getBody()
+            $this->getStandardHeaders(),
+            $withoutBody ? '' : (string) $this->getBody(),
+            $this->getProtocolVersion()
         );
     }
 

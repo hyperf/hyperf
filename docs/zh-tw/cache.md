@@ -12,8 +12,9 @@ composer require hyperf/cache
 |  配置  |                  預設值                  |         備註          |
 |:------:|:----------------------------------------:|:---------------------:|
 | driver |  Hyperf\Cache\Driver\RedisDriver  | 快取驅動，預設為 Redis |
-| packer | Hyperf\Utils\Packer\PhpSerializer |        打包器         |
+| packer | Hyperf\Codec\Packer\PhpSerializerPacker |        打包器         |
 | prefix |                   c:                   |       快取字首        |
+| skip_cache_results |       []                   |       指定的結果不被快取   |
 
 ```php
 <?php
@@ -21,8 +22,9 @@ composer require hyperf/cache
 return [
     'default' => [
         'driver' => Hyperf\Cache\Driver\RedisDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+        'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
         'prefix' => 'c:',
+        'skip_cache_results' => [],
     ],
 ];
 ```
@@ -297,6 +299,22 @@ class UserBookService
 
 `Hyperf\Cache\Driver\RedisDriver` 會把快取資料存放到 `Redis` 中，需要使用者配置相應的 `Redis 配置`。此方式為預設方式。
 
+### 程序記憶體驅動
+
+如果您需要將資料快取到記憶體中，可以嘗試此驅動。
+
+配置如下：
+
+```php
+<?php
+
+return [
+    'memory' => [
+        'driver' => Hyperf\Cache\Driver\MemoryDriver::class,
+    ],
+];
+```
+
 ### 協程記憶體驅動
 
 如果您需要將資料快取到 `Context` 中，可以嘗試此驅動。例如以下應用場景 `Demo::get` 會在多個地方呼叫多次，但是又不想每次都到 `Redis` 中進行查詢。
@@ -328,7 +346,7 @@ class Demo
 return [
     'co' => [
         'driver' => Hyperf\Cache\Driver\CoroutineMemoryDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+        'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
     ],
 ];
 ```

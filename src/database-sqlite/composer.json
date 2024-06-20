@@ -1,0 +1,48 @@
+{
+    "name": "hyperf/database-sqlite",
+    "description": "The sqlite driver for hyperf/database.",
+    "license": "MIT",
+    "type": "library",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "database",
+        "sqlite"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
+    },
+    "require": {
+        "php": ">=8.1",
+        "hyperf/collection": "~3.1.0",
+        "hyperf/database": "~3.1.0",
+        "hyperf/stringable": "~3.1.0",
+        "hyperf/support": "~3.1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Database\\SQLite\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Database\\SQLite\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Database\\SQLite\\ConfigProvider"
+        }
+    }
+}

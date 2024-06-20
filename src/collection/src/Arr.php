@@ -9,13 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Collection;
 
+use ArgumentCountError;
 use ArrayAccess;
 use Hyperf\Macroable\Macroable;
+use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 
 /**
+ * @template TKey of array-key
+ * @template TValue
+ *
  * Most of the methods in this file come from illuminate/collections,
  * thanks Laravel Team provide such a useful class.
  */
@@ -107,7 +113,7 @@ class Arr
     /**
      * Get all the given array except for a specified array of keys.
      */
-    public static function except(array $array, array|string|int $keys): array
+    public static function except(array $array, array|int|string $keys): array
     {
         static::forget($array, $keys);
         return $array;
@@ -127,7 +133,7 @@ class Arr
     /**
      * Return the first element in an array passing a given truth test.
      */
-    public static function first(array $array, callable $callback = null, mixed $default = null): mixed
+    public static function first(array $array, ?callable $callback = null, mixed $default = null): mixed
     {
         if (is_null($callback)) {
             if (empty($array)) {
@@ -148,7 +154,7 @@ class Arr
     /**
      * Return the last element in an array passing a given truth test.
      */
-    public static function last(array $array, callable $callback = null, mixed $default = null): mixed
+    public static function last(array $array, ?callable $callback = null, mixed $default = null): mixed
     {
         if (is_null($callback)) {
             return empty($array) ? value($default) : end($array);
@@ -159,7 +165,7 @@ class Arr
     /**
      * Flatten a multi-dimensional array into a single level.
      */
-    public static function flatten(array $array, int|float $depth = INF): array
+    public static function flatten(array $array, float|int $depth = INF): array
     {
         $result = [];
         foreach ($array as $item) {
@@ -167,7 +173,7 @@ class Arr
             if (! is_array($item)) {
                 $result[] = $item;
             } else {
-                $values = $depth === 1
+                $values = $depth <= 1
                     ? array_values($item)
                     : static::flatten($item, $depth - 1);
 
@@ -184,7 +190,7 @@ class Arr
      *
      * @param array|string $keys
      */
-    public static function forget(array &$array, array|string|int $keys): void
+    public static function forget(array &$array, array|int|string $keys): void
     {
         $original = &$array;
         $keys = (array) $keys;
@@ -215,7 +221,7 @@ class Arr
     /**
      * Get an item from an array using "dot" notation.
      */
-    public static function get(mixed $array, int|string|null $key = null, mixed $default = null)
+    public static function get(mixed $array, null|int|string $key = null, mixed $default = null)
     {
         if (! static::accessible($array)) {
             return value($default);
@@ -244,7 +250,7 @@ class Arr
      *
      * @param null|array|string $keys
      */
-    public static function has(array|ArrayAccess $array, int|string|null|array $keys): bool
+    public static function has(array|ArrayAccess $array, null|array|int|string $keys): bool
     {
         if (is_null($keys)) {
             return false;
@@ -276,7 +282,7 @@ class Arr
     /**
      * Determine if any of the keys exist in an array using "dot" notation.
      */
-    public static function hasAny(array|ArrayAccess $array, int|string|null|array $keys): bool
+    public static function hasAny(array|ArrayAccess $array, null|array|int|string $keys): bool
     {
         if (is_null($keys)) {
             return false;
@@ -326,8 +332,6 @@ class Arr
      *
      * The callback should return an associative array with a single key/value pair.
      *
-     * @template TKey
-     * @template TValue
      * @template TMapWithKeysKey of array-key
      * @template TMapWithKeysValue
      *
@@ -353,7 +357,7 @@ class Arr
     /**
      * Get a subset of the items from the given array.
      */
-    public static function only(array $array, int|string|array $keys): array
+    public static function only(array $array, array|int|string $keys): array
     {
         return array_intersect_key($array, array_flip((array) $keys));
     }
@@ -386,15 +390,12 @@ class Arr
     /**
      * Push an item onto the beginning of an array.
      *
-     * @template TKey of array-key
-     * @template TValue
-     *
      * @param array<TKey, TValue> $array
      * @param null|TKey $key
      * @param TValue $value
      * @return array<TKey, TValue>
      */
-    public static function prepend(array $array, mixed $value, string|int|null $key = null): array
+    public static function prepend(array $array, mixed $value, null|int|string $key = null): array
     {
         if (is_null($key)) {
             array_unshift($array, $value);
@@ -419,7 +420,7 @@ class Arr
      *
      * @throws InvalidArgumentException
      */
-    public static function random(array $array, int $number = null): mixed
+    public static function random(array $array, ?int $number = null): mixed
     {
         $requested = is_null($number) ? 1 : $number;
         $count = count($array);
@@ -471,7 +472,7 @@ class Arr
     /**
      * Shuffle the given array and return the result.
      */
-    public static function shuffle(array $array, int $seed = null): array
+    public static function shuffle(array $array, ?int $seed = null): array
     {
         if (empty($array)) {
             return [];
@@ -500,17 +501,17 @@ class Arr
     /**
      * Recursively sort an array by keys and values.
      */
-    public static function sortRecursive(array $array): array
+    public static function sortRecursive(array $array, int $options = SORT_REGULAR, bool $descending = false): array
     {
         foreach ($array as &$value) {
             if (is_array($value)) {
-                $value = static::sortRecursive($value);
+                $value = static::sortRecursive($value, $options, $descending);
             }
         }
         if (static::isAssoc($array)) {
-            ksort($array);
+            $descending ? krsort($array, $options) : ksort($array, $options);
         } else {
-            sort($array);
+            $descending ? rsort($array, $options) : sort($array, $options);
         }
         return $array;
     }
@@ -586,6 +587,199 @@ class Arr
             $array1 = array_values($array1);
         }
         return $array1;
+    }
+
+    /**
+     * Remove one or more elements from an array.
+     */
+    public static function remove(array $array, mixed ...$value): array
+    {
+        $array = array_diff($array, $value);
+        return array_values($array);
+    }
+
+    /**
+     * Removes one or more elements from an array, keeping the original keys.
+     */
+    public static function removeKeepKey(array $array, mixed ...$value): array
+    {
+        foreach ($value as $item) {
+            while (false !== ($index = array_search($item, $array))) {
+                unset($array[$index]);
+            }
+        }
+
+        return $array;
+    }
+
+    /**
+     * Convert a flatten "dot" notation array into an expanded array.
+     */
+    public static function undot(array $array): array
+    {
+        $result = [];
+
+        foreach ($array as $key => $value) {
+            static::set($result, $key, $value);
+        }
+        return $result;
+    }
+
+    /**
+     * Conditionally compile classes from an array into a CSS class list.
+     */
+    public static function toCssClasses(array $array): string
+    {
+        $classList = static::wrap($array);
+
+        $classes = [];
+
+        foreach ($classList as $class => $constraint) {
+            if (is_numeric($class)) {
+                $classes[] = $constraint;
+            } elseif ($constraint) {
+                $classes[] = $class;
+            }
+        }
+
+        return implode(' ', $classes);
+    }
+
+    /**
+     * Conditionally compile styles from an array into a style list.
+     */
+    public static function toCssStyles(array $array): string
+    {
+        $styleList = static::wrap($array);
+
+        $styles = [];
+
+        foreach ($styleList as $class => $constraint) {
+            if (is_numeric($class)) {
+                $styles[] = Str::finish($constraint, ';');
+            } elseif ($constraint) {
+                $styles[] = Str::finish($class, ';');
+            }
+        }
+
+        return implode(' ', $styles);
+    }
+
+    /**
+     * Join all items using a string. The final items can use a separate glue string.
+     */
+    public static function join(array $array, string $glue, string $finalGlue = ''): string
+    {
+        if ($finalGlue === '') {
+            return implode($glue, $array);
+        }
+
+        if (count($array) === 0) {
+            return '';
+        }
+
+        if (count($array) === 1) {
+            return end($array);
+        }
+
+        $finalItem = array_pop($array);
+
+        return implode($glue, $array) . $finalGlue . $finalItem;
+    }
+
+    /**
+     * Key an associative array by a field or using a callback.
+     */
+    public static function keyBy(array $array, array|callable|string $keyBy): array
+    {
+        return Collection::make($array)->keyBy($keyBy)->all();
+    }
+
+    /**
+     * Prepend the key names of an associative array.
+     */
+    public static function prependKeysWith(array $array, string $prependWith): array
+    {
+        return static::mapWithKeys($array, fn ($item, $key) => [$prependWith . $key => $item]);
+    }
+
+    /**
+     * Select an array of values from an array.
+     */
+    public static function select(array $array, array|string $keys): array
+    {
+        $keys = static::wrap($keys);
+
+        return static::map($array, static function ($item) use ($keys) {
+            $result = [];
+
+            foreach ($keys as $key) {
+                if (Arr::accessible($item) && Arr::exists($item, $key)) {
+                    $result[$key] = $item[$key];
+                } elseif (is_object($item) && isset($item->{$key})) {
+                    $result[$key] = $item->{$key};
+                }
+            }
+
+            return $result;
+        });
+    }
+
+    /**
+     * Run a map over each nested chunk of items.
+     *
+     * @template TMapSpreadValue
+     *
+     * @param callable(mixed...): TMapSpreadValue $callback
+     * @return array<TKey, TMapSpreadValue>
+     */
+    public static function mapSpread(array $array, callable $callback): array
+    {
+        return static::map($array, function ($chunk, $key) use ($callback) {
+            $chunk[] = $key;
+
+            return $callback(...$chunk);
+        });
+    }
+
+    /**
+     * Run a map over each of the items in the array.
+     */
+    public static function map(array $array, callable $callback): array
+    {
+        $keys = array_keys($array);
+
+        try {
+            $items = array_map($callback, $array, $keys);
+        } catch (ArgumentCountError) {
+            $items = array_map($callback, $array);
+        }
+
+        return array_combine($keys, $items);
+    }
+
+    /**
+     * Sort the array in descending order using the given callback or "dot" notation.
+     */
+    public static function sortDesc(array $array, null|array|callable|string $callback = null): array
+    {
+        return Collection::make($array)->sortByDesc($callback)->all();
+    }
+
+    /**
+     * Recursively sort an array by keys and values in descending order.
+     */
+    public static function sortRecursiveDesc(array $array, int $options = SORT_REGULAR): array
+    {
+        return static::sortRecursive($array, $options, true);
+    }
+
+    /**
+     * Filter items where the value is not null.
+     */
+    public static function whereNotNull(array $array): array
+    {
+        return static::where($array, static fn ($value) => ! is_null($value));
     }
 
     /**

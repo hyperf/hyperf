@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
@@ -28,6 +29,7 @@ use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -90,6 +92,15 @@ class RedisConnectionTest extends TestCase
         ], $config);
     }
 
+    public function testRedisPoolConfig()
+    {
+        $pool = $this->getRedisPool();
+
+        $config = $pool->getConfig();
+
+        $this->assertSame($this->getDefaultPoolConfig(), $config);
+    }
+
     public function testRedisConnectionReconnect()
     {
         $pool = $this->getRedisPool();
@@ -111,6 +122,9 @@ class RedisConnectionTest extends TestCase
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnTrue();
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn($logger = Mockery::mock(StdoutLoggerInterface::class));
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
+
         $logger->shouldReceive('log')->once();
 
         $conn = new RedisConnectionStub($container, Mockery::mock(Pool::class), []);
@@ -142,43 +156,48 @@ class RedisConnectionTest extends TestCase
         $connection->release();
     }
 
+    private function getDefaultPoolConfig()
+    {
+        return [
+            'host' => 'redis',
+            'auth' => 'redis',
+            'port' => 16379,
+            'read_timeout' => 3.0,
+            'reserved' => null,
+            'retry_interval' => 5,
+            'context' => [
+                'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
+            ],
+            'pool' => [
+                'min_connections' => 1,
+                'max_connections' => 30,
+                'connect_timeout' => 10.0,
+                'wait_timeout' => 3.0,
+                'heartbeat' => -1,
+                'max_idle_time' => 1,
+            ],
+            'cluster' => [
+                'enable' => false,
+                'name' => null,
+                'seeds' => [
+                    '127.0.0.1:6379',
+                ],
+                'context' => [
+                    'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
+                ],
+            ],
+            'sentinel' => [
+                'enable' => false,
+            ],
+        ];
+    }
+
     private function getRedisPool()
     {
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
-                'default' => [
-                    'host' => 'redis',
-                    'auth' => 'redis',
-                    'port' => 16379,
-                    'read_timeout' => 3.0,
-                    'reserved' => null,
-                    'retry_interval' => 5,
-                    'context' => [
-                        'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
-                    ],
-                    'pool' => [
-                        'min_connections' => 1,
-                        'max_connections' => 30,
-                        'connect_timeout' => 10.0,
-                        'wait_timeout' => 3.0,
-                        'heartbeat' => -1,
-                        'max_idle_time' => 1,
-                    ],
-                    'cluster' => [
-                        'enable' => false,
-                        'name' => null,
-                        'seeds' => [
-                            '127.0.0.1:6379',
-                        ],
-                        'context' => [
-                            'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
-                        ],
-                    ],
-                    'sentinel' => [
-                        'enable' => false,
-                    ],
-                ],
+                'default' => $this->getDefaultPoolConfig(),
             ],
         ]));
 
@@ -191,6 +210,9 @@ class RedisConnectionTest extends TestCase
         $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new Channel($args['size']);
         });
+
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
 
         ApplicationContext::setContainer($container);
 

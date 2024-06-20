@@ -3,7 +3,7 @@ Model events are implemented in the [psr/event-dispatcher](https://github.com/ph
 
 ## Custom listener
 
-Thanks to the support of the [hyperf/event](https://github.com/hyperf-cloud/event) component, users can easily monitor the following events.
+Thanks to the support of the [hyperf/event](https://github.com/hyperf/event) component, users can easily monitor the following events.
 For example `QueryExecuted` , `StatementPrepared` , `TransactionBeginning` , `TransactionCommitted` , `TransactionRolledBack` .
 Next, we will implement a listener that records SQL and talk about how to use it.
 First, we define `DbQueryExecutedListener`, implement the `Hyperf\Event\Contract\ListenerInterface` interface and define the `Hyperf\Event\Annotation\Listener` annotation on the class, so that Hyperf will automatically register the listener to the event scheduler, Without any manual configuration, the sample code is as follows:
@@ -20,7 +20,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Collection\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -68,7 +68,7 @@ class DbQueryExecutedListener implements ListenerInterface
 
 ## Model events
 
-Model events are not consistent with `EloquentORM`, which uses `Observer` to listen for model events. `Hyperf` directly uses `hooks` to handle corresponding events. If you still like the way of `Observer`, you can implement `event listener` by yourself. Of course, you can also let us know under [issue#2](https://github.com/hyperf-cloud/hyperf/issues/2).
+Model events are not consistent with `EloquentORM`, which uses `Observer` to listen for model events. `Hyperf` directly uses `hooks` to handle corresponding events. If you still like the way of `Observer`, you can implement `event listener` by yourself. Of course, you can also let us know under [issue#2](https://github.com/hyperf/hyperf/issues/2).
 
 ### Hook function
 

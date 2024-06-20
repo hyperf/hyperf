@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Command\Concerns;
 
 use Closure;
+use Composer\InstalledVersions;
 
 use function Hyperf\Support\value;
 
@@ -50,6 +52,6 @@ trait Confirmable
     protected function isShouldConfirm(): bool
     {
         return is_callable(['Composer\InstalledVersions', 'getRootPackage'])
-            && (\Composer\InstalledVersions::getRootPackage()['dev'] ?? false) === false;
+            && (InstalledVersions::getRootPackage()['dev'] ?? false) === false;
     }
 }

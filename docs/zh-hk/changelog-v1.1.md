@@ -572,23 +572,23 @@
 
 ## 新增
 
-- [#722](https://github.com/hyperf-cloud/hyperf/pull/722) 為 AMQP Consumer 新增 `concurrent.limit` 配置來對協程消費進行速率限制；
+- [#722](https://github.com/hyperf/hyperf/pull/722) 為 AMQP Consumer 新增 `concurrent.limit` 配置來對協程消費進行速率限制；
 
 ## 變更
 
-- [#678](https://github.com/hyperf-cloud/hyperf/pull/678) 為 `gen:model` 命令增加 `ignore-tables` 參數，同時默認屏蔽 `migrations` 表，即 `migrations` 表對應的模型在執行 `gen:model` 命令時不會生成；
+- [#678](https://github.com/hyperf/hyperf/pull/678) 為 `gen:model` 命令增加 `ignore-tables` 參數，同時默認屏蔽 `migrations` 表，即 `migrations` 表對應的模型在執行 `gen:model` 命令時不會生成；
 
 ## 修復
 
-- [#694](https://github.com/hyperf-cloud/hyperf/pull/694) 修復 `Hyperf\Validation\Request\FormRequest` 的 `validationData` 方法不包含上傳的文件的問題；
-- [#700](https://github.com/hyperf-cloud/hyperf/pull/700) 修復 `Hyperf\HttpServer\Contract\ResponseInterface` 的 `download` 方法不能按預期運行的問題；
-- [#701](https://github.com/hyperf-cloud/hyperf/pull/701) 修復自定義進程在出現未捕獲的異常時不會自動重啓的問題；
-- [#704](https://github.com/hyperf-cloud/hyperf/pull/704) 修復 `Hyperf\Validation\Middleware\ValidationMiddleware` 在 action 參數沒有定義參數類型時會報錯的問題；
-- [#713](https://github.com/hyperf-cloud/hyperf/pull/713) 修復當開啓了註解緩存功能是，`ignoreAnnotations` 不能按預期工作的問題；
-- [#717](https://github.com/hyperf-cloud/hyperf/pull/717) 修復 `getValidatorInstance` 方法會重複創建驗證器對象的問題；
-- [#724](https://github.com/hyperf-cloud/hyperf/pull/724) 修復 `db:seed` 命令在沒有傳 `database` 參數時會報錯的問題；
-- [#729](https://github.com/hyperf-cloud/hyperf/pull/729) 修正組件配置項 `db:model` 為 `gen:model`；
-- [#737](https://github.com/hyperf-cloud/hyperf/pull/737) 修復非 Worker 進程下無法使用 Tracer 組件來追蹤調用鏈的問題；
+- [#694](https://github.com/hyperf/hyperf/pull/694) 修復 `Hyperf\Validation\Request\FormRequest` 的 `validationData` 方法不包含上傳的文件的問題；
+- [#700](https://github.com/hyperf/hyperf/pull/700) 修復 `Hyperf\HttpServer\Contract\ResponseInterface` 的 `download` 方法不能按預期運行的問題；
+- [#701](https://github.com/hyperf/hyperf/pull/701) 修復自定義進程在出現未捕獲的異常時不會自動重啓的問題；
+- [#704](https://github.com/hyperf/hyperf/pull/704) 修復 `Hyperf\Validation\Middleware\ValidationMiddleware` 在 action 參數沒有定義參數類型時會報錯的問題；
+- [#713](https://github.com/hyperf/hyperf/pull/713) 修復當開啓了註解緩存功能是，`ignoreAnnotations` 不能按預期工作的問題；
+- [#717](https://github.com/hyperf/hyperf/pull/717) 修復 `getValidatorInstance` 方法會重複創建驗證器對象的問題；
+- [#724](https://github.com/hyperf/hyperf/pull/724) 修復 `db:seed` 命令在沒有傳 `database` 參數時會報錯的問題；
+- [#729](https://github.com/hyperf/hyperf/pull/729) 修正組件配置項 `db:model` 為 `gen:model`；
+- [#737](https://github.com/hyperf/hyperf/pull/737) 修復非 Worker 進程下無法使用 Tracer 組件來追蹤調用鏈的問題；
 
 # v1.1.1 - 2019-10-08
 

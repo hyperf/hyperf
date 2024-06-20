@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Concerns;
 
 use Brick\Math\BigDecimal;
@@ -254,6 +255,14 @@ trait ValidatesAttributes
     }
 
     /**
+     * Validate that an attribute is a list.
+     */
+    public function validateList(string $attribute, mixed $value): bool
+    {
+        return is_array($value) && array_is_list($value);
+    }
+
+    /**
      * Validate that an array has all of the given keys.
      *
      * @param array<int, int|string> $parameters
@@ -387,7 +396,7 @@ trait ValidatesAttributes
 
         $matches = [];
 
-        if (preg_match('/^[+-]?\d*\.?(\d*)$/', $value, $matches) !== 1) {
+        if (preg_match('/^[+-]?\d*\.?(\d*)$/', (string) $value, $matches) !== 1) {
             return false;
         }
 
@@ -935,7 +944,8 @@ trait ValidatesAttributes
     {
         $this->requireParameterCount(1, $parameters, 'max_digits');
 
-        $length = strlen((string) $value);
+        $value = (string) $value;
+        $length = strlen($value);
 
         return ! preg_match('/[^0-9]/', $value) && $length <= $parameters[0];
     }
@@ -1011,7 +1021,8 @@ trait ValidatesAttributes
     {
         $this->requireParameterCount(1, $parameters, 'min_digits');
 
-        $length = strlen((string) $value);
+        $value = (string) $value;
+        $length = strlen($value);
 
         return ! preg_match('/[^0-9]/', $value) && $length >= $parameters[0];
     }
@@ -1681,7 +1692,7 @@ trait ValidatesAttributes
 
         $pattern = str_replace('\*', '[^.]+', preg_quote($attribute, '#'));
 
-        return Arr::where(Arr::dot($attributeData), fn ($value, $key) => (bool) preg_match('#^' . $pattern . '\z#u', $key));
+        return Arr::where(Arr::dot($attributeData), fn ($value, $key) => (bool) preg_match('#^' . $pattern . '\z#u', (string) $key));
     }
 
     /**
@@ -1725,7 +1736,7 @@ trait ValidatesAttributes
      */
     protected function prepareUniqueId($id)
     {
-        if (preg_match('/\[(.*)\]/', $id, $matches)) {
+        if (preg_match('/\[(.*)\]/', (string) $id, $matches)) {
             $id = $this->getValue($matches[1]);
         }
 

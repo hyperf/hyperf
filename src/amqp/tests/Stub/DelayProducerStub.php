@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Amqp\Stub;
 
 use Hyperf\Amqp\Annotation\Producer;
@@ -23,7 +24,7 @@ class DelayProducerStub extends ProducerMessage
 
     protected string $exchange = 'ext.hyperf.delay';
 
-    protected Type|string $type = Type::DIRECT;
+    protected string|Type $type = Type::DIRECT;
 
     protected array|string $routingKey = '';
 

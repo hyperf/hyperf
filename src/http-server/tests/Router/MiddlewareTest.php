@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\HttpServer\Router;
 
+use FastRoute\Dispatcher\GroupCountBased;
 use Hyperf\Di\Annotation\MultipleAnnotation;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
@@ -148,6 +150,42 @@ class MiddlewareTest extends TestCase
                 }
             }
         }
+    }
+
+    public function testFallbackForHead()
+    {
+        MiddlewareManager::addMiddlewares('http', '/index', 'GET', [FooMiddleware::class]);
+        MiddlewareManager::addMiddlewares('http', '/head-register', 'HEAD', []);
+
+        $grouopCountBased = new GroupCountBased([
+            [
+                'GET' => [
+                    '/index' => 'index::handler',
+                ],
+                'HEAD' => [
+                    '/head-register' => 'head-register::handler',
+                ],
+            ],
+        ]);
+        $this->assertSame([
+            GroupCountBased::FOUND,
+            'index::handler',
+            [],
+        ], $grouopCountBased->dispatch('GET', '/index'));
+        $this->assertSame([
+            GroupCountBased::FOUND,
+            'index::handler',
+            [],
+        ], $grouopCountBased->dispatch('HEAD', '/index'));
+        $this->assertSame([
+            GroupCountBased::FOUND,
+            'head-register::handler',
+            [],
+        ], $grouopCountBased->dispatch('HEAD', '/head-register'));
+
+        $this->assertSame([FooMiddleware::class], MiddlewareManager::get('http', '/index', 'GET'));
+        $this->assertSame([FooMiddleware::class], MiddlewareManager::get('http', '/index', 'HEAD'));
+        $this->assertSame([], MiddlewareManager::get('http', '/head-register', 'GET'));
     }
 
     /**

@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace HyperfTest\ResourceGrpc\Stubs\Grpc;
 
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\Internal\Message;
+use HyperfTest\ResourceGrpc\Stubs\Grpc\GPBMetadata\Grpc\Grpc;
 
 /**
  * Generated from protobuf message <code>HyperfTest.ResourceGrpc.Stubs.Grpc.HiReply</code>.
  */
-class HiReply extends \Google\Protobuf\Internal\Message
+class HiReply extends Message
 {
     /**
      * Generated from protobuf field <code>string message = 1;</code>.
@@ -36,13 +38,13 @@ class HiReply extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *                    Optional. Data for populating the Message object.
      *
-     *     @var string $message
-     *     @var \HyperfTest\ResourceGrpc\Stubs\Grpc\HiUser $user
-     * }
+     * @var string $message
+     * @var HiUser $user
+     *             }
      */
     public function __construct($data = null)
     {
-        \HyperfTest\ResourceGrpc\Stubs\Grpc\GPBMetadata\Grpc\Grpc::initOnce();
+        Grpc::initOnce();
         parent::__construct($data);
     }
 
@@ -70,7 +72,7 @@ class HiReply extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>.HyperfTest.ResourceGrpc.Stubs.Grpc.HiUser user = 2;</code>.
-     * @return \HyperfTest\ResourceGrpc\Stubs\Grpc\HiUser
+     * @return HiUser
      */
     public function getUser()
     {
@@ -79,12 +81,12 @@ class HiReply extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>.HyperfTest.ResourceGrpc.Stubs.Grpc.HiUser user = 2;</code>.
-     * @param \HyperfTest\ResourceGrpc\Stubs\Grpc\HiUser $var
+     * @param HiUser $var
      * @return $this
      */
     public function setUser($var)
     {
-        GPBUtil::checkMessage($var, \HyperfTest\ResourceGrpc\Stubs\Grpc\HiUser::class);
+        GPBUtil::checkMessage($var, HiUser::class);
         $this->user = $var;
 
         return $this;

@@ -9,22 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Watcher;
 
-use Hyperf\Di\Annotation\AnnotationInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Di\Annotation\ScanConfig;
+use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Aop\ProxyManager;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\Di\ScanHandler\NullScanHandler;
 use Hyperf\Support\Composer;
 use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\Watcher\Ast\Metadata;
 use Hyperf\Watcher\Ast\RewriteClassNameVisitor;
 use PhpParser\NodeTraverser;
-use ReflectionClass;
 
 class Process
 {
@@ -71,7 +72,9 @@ class Process
         foreach ($collectors as $collector) {
             $collector::clear($class);
         }
-        $this->collect($class, $ref);
+
+        $scanner = new Scanner($this->config, new NullScanHandler());
+        $scanner->collect($this->reader, $ref);
 
         $collectors = $this->config->getCollectors();
         $data = [];
@@ -90,43 +93,6 @@ class Process
         $aspectClasses = $manager->getAspectClasses();
 
         $this->putCache($this->path, serialize([$data, $proxies, $aspectClasses]));
-    }
-
-    public function collect($className, ReflectionClass $reflection)
-    {
-        // Parse class annotations
-        $classAnnotations = $this->reader->getClassAnnotations($reflection);
-        if (! empty($classAnnotations)) {
-            foreach ($classAnnotations as $classAnnotation) {
-                if ($classAnnotation instanceof AnnotationInterface) {
-                    $classAnnotation->collectClass($className);
-                }
-            }
-        }
-        // Parse properties annotations
-        $properties = $reflection->getProperties();
-        foreach ($properties as $property) {
-            $propertyAnnotations = $this->reader->getPropertyAnnotations($property);
-            if (! empty($propertyAnnotations)) {
-                foreach ($propertyAnnotations as $propertyAnnotation) {
-                    if ($propertyAnnotation instanceof AnnotationInterface) {
-                        $propertyAnnotation->collectProperty($className, $property->getName());
-                    }
-                }
-            }
-        }
-        // Parse methods annotations
-        $methods = $reflection->getMethods();
-        foreach ($methods as $method) {
-            $methodAnnotations = $this->reader->getMethodAnnotations($method);
-            if (! empty($methodAnnotations)) {
-                foreach ($methodAnnotations as $methodAnnotation) {
-                    if ($methodAnnotation instanceof AnnotationInterface) {
-                        $methodAnnotation->collectMethod($className, $method->getName());
-                    }
-                }
-            }
-        }
     }
 
     protected function putCache($path, $data)

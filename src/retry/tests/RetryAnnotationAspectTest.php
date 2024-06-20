@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Retry;
 
 use Exception;
@@ -26,6 +27,7 @@ use Hyperf\Retry\Annotation\CircuitBreaker;
 use Hyperf\Retry\Annotation\Retry;
 use Hyperf\Retry\Aspect\RetryAnnotationAspect;
 use Hyperf\Retry\BackoffStrategy;
+use Hyperf\Retry\CircuitBreakerState;
 use Hyperf\Retry\FlatStrategy;
 use Hyperf\Retry\NoOpRetryBudget;
 use Hyperf\Retry\Policy\TimeoutRetryPolicy;
@@ -51,7 +53,7 @@ class RetryAnnotationAspectTest extends TestCase
         $container = new Container(new DefinitionSource([
             RetryBudgetInterface::class => NoOpRetryBudget::class,
             RetryBudget::class => NoOpRetryBudget::class,
-            SleepStrategyInterface::class => flatStrategy::class,
+            SleepStrategyInterface::class => FlatStrategy::class,
         ]));
         ApplicationContext::setContainer($container);
     }
@@ -282,7 +284,7 @@ class RetryAnnotationAspectTest extends TestCase
                 public function __construct()
                 {
                     $state = Mockery::mock(
-                        \Hyperf\Retry\CircuitBreakerState::class
+                        CircuitBreakerState::class
                     );
                     $state->shouldReceive('open')->andReturnNull();
                     $state->shouldReceive('isOpen')->twice()->andReturns(false);
@@ -312,7 +314,7 @@ class RetryAnnotationAspectTest extends TestCase
 
                 public function __construct()
                 {
-                    $state = new \Hyperf\Retry\CircuitBreakerState(10);
+                    $state = new CircuitBreakerState(10);
                     $retry = new CircuitBreaker(circuitBreakerState: $state);
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $retry->fallback = Foo::class . '@fallbackWithThrowable';

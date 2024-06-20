@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
 use Closure;
@@ -19,7 +20,8 @@ use Hyperf\Rpc\ErrorResponse;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\Response as RPCResponse;
 use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
-use InvalidArgumentException;
+use Hyperf\RpcMultiplex\Exception\InvalidArgumentException;
+use Hyperf\RpcMultiplex\Exception\NotFoundException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swow\Psr7\Message\ResponsePlusInterface;
@@ -41,35 +43,38 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 
     protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): mixed
     {
-        if ($dispatched->handler->callback instanceof Closure) {
-            $callback = $dispatched->handler->callback;
-            $response = $callback();
-        } else {
-            [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
-            $controllerInstance = $this->container->get($controller);
-            if (! method_exists($controller, $action)) {
-                // Route found, but the handler does not exist.
-                $data = $this->buildErrorData($request, 500, 'The handler does not exists.');
-                return $this->responseBuilder->buildResponse($request, $data);
-            }
+        try {
+            if ($dispatched->handler->callback instanceof Closure) {
+                $callback = $dispatched->handler->callback;
+                $response = $callback();
+            } else {
+                [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
+                $controllerInstance = $this->container->get($controller);
+                if (! method_exists($controller, $action)) {
+                    throw new NotFoundException('The handler does not exists.');
+                }
 
-            try {
-                $parameters = $this->parseMethodParameters($controller, $action, $request->getParsedBody());
-            } catch (InvalidArgumentException $exception) {
-                $data = $this->buildErrorData($request, 400, 'The params is invalid.', $exception);
-                return $this->responseBuilder->buildResponse($request, $data);
-            }
+                try {
+                    $parameters = $this->parseMethodParameters($controller, $action, $request->getParsedBody());
+                } catch (\InvalidArgumentException) {
+                    throw new InvalidArgumentException('The params is invalid.');
+                }
 
-            try {
                 $response = $controllerInstance->{$action}(...$parameters);
-            } catch (Throwable $exception) {
-                $data = $this->buildErrorData($request, 500, $exception->getMessage(), $exception);
-                $response = $this->responseBuilder->buildResponse($request, $data);
-                $this->responseBuilder->persistToContext($response);
-
-                throw $exception;
             }
+        } catch (NotFoundException $exception) {
+            $data = $this->buildErrorData($request, 500, $exception->getMessage(), $exception);
+            return $this->responseBuilder->buildResponse($request, $data);
+        } catch (InvalidArgumentException $exception) {
+            $data = $this->buildErrorData($request, 400, $exception->getMessage(), $exception);
+            return $this->responseBuilder->buildResponse($request, $data);
+        } catch (Throwable $exception) {
+            $data = $this->buildErrorData($request, 500, $exception->getMessage(), $exception);
+            $response = $this->responseBuilder->buildResponse($request, $data);
+            $this->responseBuilder->persistToContext($response);
+            throw $exception;
         }
+
         return $this->buildData($request, $response);
     }
 
@@ -90,7 +95,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         return $this->responseBuilder->buildResponse($request, $response);
     }
 
-    protected function buildErrorData(ServerRequestInterface $request, int $code, string $message = null, Throwable $throwable = null): array
+    protected function buildErrorData(ServerRequestInterface $request, int $code, ?string $message = null, ?Throwable $throwable = null): array
     {
         $id = $request->getAttribute(Constant::REQUEST_ID);
 

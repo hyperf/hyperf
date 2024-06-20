@@ -32,4 +32,4 @@ AstVisitorRegistry::insert(ProxyCallVisitor::class);
 // Register Property Handler.
 RegisterInjectPropertyHandler::register();
 
-(new RegisterPropertyHandlerListener())->process(new \stdClass());
+(new RegisterPropertyHandlerListener())->process(new stdClass());

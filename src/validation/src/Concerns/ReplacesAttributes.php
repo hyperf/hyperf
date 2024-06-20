@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Concerns;
 
 use Hyperf\Collection\Arr;
@@ -29,6 +30,20 @@ trait ReplacesAttributes
     protected function replaceDateFormat(string $message, string $attribute, string $rule, array $parameters): string
     {
         return str_replace(':format', $parameters[0], $message);
+    }
+
+    /**
+     * Replace all place-holders for the decimal rule.
+     */
+    protected function replaceDecimal(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        return str_replace(
+            ':decimal',
+            isset($parameters[1])
+                ? $parameters[0] . '-' . $parameters[1]
+                : $parameters[0],
+            $message
+        );
     }
 
     /**

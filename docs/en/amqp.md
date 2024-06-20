@@ -1,24 +1,43 @@
 # AMQP
 
-[https://github.com/hyperf/amqp](https://github.com/hyperf/amqp)
+[hyperf/amqp](https://github.com/hyperf/amqp)
+
+## Installation
+
+```bash
+composer require hyperf/amqp
+```
 
 ## Default Config
+
+|   Configuration  |  Type  |  Default value   |                        Remark                       |
+|:----------------:|:------:|:----------------:|:---------------------------------------------------:|
+|       host       | string |     localhost    |                         Host                        |
+|       port       |  int   |       5672       |                     Port number                     |
+|       user       | string |       guest      |                       Username                      |
+|     password     | string |       guest      |                       Password                      |
+|      vhost       | string |         /        |                         vhost                       |
+| concurrent.limit |  int   |         0        |      Maximum quantity consumed simultaneously       |
+|       pool       | object |                  |   Connection pool configuration                     |
+| pool.connections |  int   |         1        | Number of connections maintained within the process |
+|      params      | object |                  |                   Basic configurations              |
+
 ```php
 <?php
 
 return [
+    'enable' => true,
     'default' => [
         'host' => 'localhost',
         'port' => 5672,
         'user' => 'guest',
         'password' => 'guest',
         'vhost' => '/',
+        'concurrent' => [
+            'limit' => 1,
+        ],
         'pool' => [
-            'min_connections' => 1,
-            'max_connections' => 10,
-            'connect_timeout' => 10.0,
-            'wait_timeout' => 3.0,
-            'heartbeat' => -1,
+            'connections' => 1,
         ],
         'params' => [
             'insist' => false,
@@ -26,19 +45,25 @@ return [
             'login_response' => null,
             'locale' => 'en_US',
             'connection_timeout' => 3.0,
+            // Try to maintain twice value heartbeat as much as possible
             'read_write_timeout' => 3.0,
             'context' => null,
             'keepalive' => false,
+            // Try to ensure that the consumption time of each message is less than the heartbeat time as much as possible
             'heartbeat' => 0,
+            'close_on_destruct' => false,
         ],
     ],
+    'pool2' => [
+        ...
+    ]
 ];
 ```
 
 ## Deliver Message
 
 Use generator command to create a producer.
-```
+```bash
 php bin/hyperf.php gen:amqp-producer DemoProducer
 ```
 
@@ -88,7 +113,7 @@ $result = $producer->produce($message);
 ## Consume Message
 
 Use generator command to create a consumer.
-```
+```bash
 php bin/hyperf.php gen:amqp-consumer DemoConsumer
 ```
 
@@ -105,11 +130,12 @@ namespace App\Amqp\Consumers;
 use Hyperf\Amqp\Annotation\Consumer;
 use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
 
 #[Consumer(exchange: 'hyperf', routingKey: 'hyperf', queue: 'hyperf', nums: 1)]
 class DemoConsumer extends ConsumerMessage
 {
-    public function consume($data): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         print_r($data);
         return Result::ACK;
@@ -131,7 +157,7 @@ There are three parameters that affect the rate of consumption
 
 The framework will determine the response behavior of the message based on the result returned by the `consume` method in `Consumer`. There are 4 response results, namely `\Hyperf\Amqp\Result::ACK`, `\Hyperf\Amqp\ Result::NACK`, `\Hyperf\Amqp\Result::REQUEUE`, `\Hyperf\Amqp\Result::DROP`, each return value represents the following behavior:
 
-| 返回值                       | 行为                                                                 |
+| Return                       | Behavior                                                                 |
 |------------------------------|----------------------------------------------------------------------|
 | \Hyperf\Amqp\Result::ACK     | Confirm that the message has been consumed correctly                                               |
 | \Hyperf\Amqp\Result::NACK    | The message was not consumed correctly, respond with the `basic_nack` method                     |
@@ -253,7 +279,7 @@ class DelayDirectConsumer extends ConsumerMessage
     
     protected $routingKey = '';
 
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         var_dump($data, 'delay+direct consumeTime:' . (microtime(true)));
         return Result::ACK;
@@ -346,7 +372,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 #[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "rpc.reply", name: "ReplyConsumer", nums: 1, enable: true)]
 class ReplyConsumer extends ConsumerMessage
 {
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         $data['message'] .= 'Reply:' . $data['message'];
 
@@ -368,7 +394,7 @@ use Hyperf\Amqp\RpcClient;
 use Hyperf\Context\ApplicationContext;
 
 $rpcClient = ApplicationContext::getContainer()->get(RpcClient::class);
-// 在 DynamicRpcMessage 上设置与 Consumer 一致的 Exchange 和 RoutingKey
+//Set Exchange and RoutingKey consistent with Consumer on DynamicRpcMessage
 $result = $rpcClient->call(new DynamicRpcMessage('hyperf', 'hyperf', ['message' => 'Hello Hyperf'])); 
 
 // $result:
@@ -397,7 +423,7 @@ class FooRpcMessage extends RpcMessage
     
     public function __construct($data)
     {
-        // 要传递数据
+        //To pass data
         $this->payload = $data;
     }
 

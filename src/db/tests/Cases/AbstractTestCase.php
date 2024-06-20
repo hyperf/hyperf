@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\DB\Cases;
 
 use Hyperf\Config\Config;
@@ -26,6 +27,7 @@ use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class AbstractTestCase.
@@ -95,7 +97,8 @@ abstract class AbstractTestCase extends TestCase
         $container->shouldReceive('make')->with(DB::class, Mockery::any())->andReturnUsing(function ($_, $params) use ($factory) {
             return new DB($factory, $params['poolName']);
         });
-        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(false);
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
         return $container;
     }
 }

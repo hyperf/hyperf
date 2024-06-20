@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Command;
 
 use Hyperf\Coroutine\Coroutine;
@@ -23,6 +24,8 @@ use Throwable;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Coroutine\run;
+use function Hyperf\Support\class_basename;
+use function Hyperf\Support\class_uses_recursive;
 use function Hyperf\Support\swoole_hook_flags;
 use function Hyperf\Tappable\tap;
 
@@ -67,7 +70,7 @@ abstract class Command extends SymfonyCommand
      */
     protected int $exitCode = self::SUCCESS;
 
-    public function __construct(string $name = null)
+    public function __construct(?string $name = null)
     {
         $this->name = $name ?? $this->name;
 
@@ -99,7 +102,9 @@ abstract class Command extends SymfonyCommand
     {
         $this->output = new SymfonyStyle($input, $output);
 
-        return parent::run($this->input = $input, $this->output);
+        $this->setUpTraits($this->input = $input, $this->output);
+
+        return parent::run($this->input, $this->output);
     }
 
     /**
@@ -161,7 +166,7 @@ abstract class Command extends SymfonyCommand
         parent::configure();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->disableDispatcher($input);
         $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
@@ -183,7 +188,7 @@ abstract class Command extends SymfonyCommand
                     throw $exception;
                 }
 
-                $this->output && $this->error($exception->getMessage());
+                $this->output?->error((string) $exception);
 
                 $this->exitCode = self::FAILURE;
 
@@ -202,5 +207,21 @@ abstract class Command extends SymfonyCommand
         }
 
         return $this->exitCode >= 0 && $this->exitCode <= 255 ? $this->exitCode : self::INVALID;
+    }
+
+    /**
+     * Setup traits of command.
+     */
+    protected function setUpTraits(InputInterface $input, OutputInterface $output): array
+    {
+        $uses = array_flip(class_uses_recursive(static::class));
+
+        foreach ($uses as $trait) {
+            if (method_exists($this, $method = 'setUp' . class_basename($trait))) {
+                $this->{$method}($input, $output);
+            }
+        }
+
+        return $uses;
     }
 }

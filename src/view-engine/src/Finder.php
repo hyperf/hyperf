@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine;
 
 use Hyperf\Support\Filesystem\Filesystem;
@@ -40,7 +41,7 @@ class Finder implements FinderInterface
     /**
      * Create a new file view loader instance.
      */
-    public function __construct(protected Filesystem $files, array $paths, array $extensions = null)
+    public function __construct(protected Filesystem $files, array $paths, ?array $extensions = null)
     {
         $this->paths = array_map([$this, 'resolvePath'], $paths);
 

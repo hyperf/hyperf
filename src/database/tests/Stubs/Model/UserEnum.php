@@ -9,14 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\Stubs\Model;
+
+use Carbon\Carbon;
 
 /**
  * @property int $id
  * @property string $name
  * @property Gender $gender
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class UserEnum extends Model
 {
@@ -34,4 +37,10 @@ class UserEnum extends Model
      * The attributes that should be cast to native types.
      */
     protected array $casts = ['id' => 'integer', 'gender' => Gender::class, 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+
+    public function book()
+    {
+        var_dump(1);
+        return $this->hasOne(Book::class, 'user_id', 'id'); // ignore
+    }
 }

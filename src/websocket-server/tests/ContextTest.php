@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\WebSocketServer;
 
 use Hyperf\Context\Context as CoContext;
@@ -37,7 +38,7 @@ class ContextTest extends TestCase
         $this->assertEquals(42, Context::get('a'));
     }
 
-    public function testDestory()
+    public function testDestroy()
     {
         Context::set('a', 42);
         Context::destroy('a');

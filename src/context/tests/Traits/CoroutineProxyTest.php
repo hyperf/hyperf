@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Context\Traits;
 
 use Hyperf\Context\Context;
@@ -37,7 +38,7 @@ class CoroutineProxyTest extends TestCase
     public function testCoroutineProxyException()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Missing $proxyKey property in HyperfTest\\Context\\Traits\\Foo2.');
+        $this->expectExceptionMessage('Missing $proxyKey property in HyperfTest\Context\Traits\Foo2.');
         $foo = new Foo2();
         $foo->callBar();
     }

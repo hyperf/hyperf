@@ -145,8 +145,8 @@ After using multiplex technologies such as AMQP in Command, it will not be able 
 
 ```php
 <?php
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Constants;
 
 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
 ```

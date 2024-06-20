@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
 use Hyperf\Di\Aop\Ast;
@@ -24,7 +25,9 @@ use HyperfTest\Di\Stub\Ast\BarAspect;
 use HyperfTest\Di\Stub\Ast\BarInterface;
 use HyperfTest\Di\Stub\Ast\Chi;
 use HyperfTest\Di\Stub\Ast\Foo;
+use HyperfTest\Di\Stub\Ast\FooConstruct;
 use HyperfTest\Di\Stub\Ast\FooTrait;
+use HyperfTest\Di\Stub\FooAspect;
 use HyperfTest\Di\Stub\FooEnumStruct;
 use HyperfTest\Di\Stub\Par2;
 use HyperfTest\Di\Stub\PathStub;
@@ -170,7 +173,7 @@ abstract class Abs
     {
         \$__function__ = __FUNCTION__;
         \$__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use(\$__function__, \$__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, ['keys' => []], function () use(\$__function__, \$__method__) {
             return 'abs';
         });
     }
@@ -196,7 +199,7 @@ class Chi extends Abs
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'keys\' => []], function () use($__function__, $__method__) {
             return \'chi\';
         });
     }
@@ -286,7 +289,7 @@ class Bar4
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function (int $count) use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'count\'], \'keys\' => compact([\'count\']), \'variadic\' => \'\'], function (int $count) use($__function__, $__method__) {
             return $__method__;
         });
     }
@@ -297,7 +300,7 @@ class Bar4
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function (int &$count) use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'count\'], \'keys\' => compact([\'count\']), \'variadic\' => \'\'], function (int &$count) use($__function__, $__method__) {
             return $__method__;
         });
     }
@@ -308,7 +311,7 @@ class Bar4
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function ($params) use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'params\'], \'keys\' => compact([\'params\']), \'variadic\' => \'params\'], function (...$params) use($__function__, $__method__) {
             return $__method__;
         });
     }
@@ -319,7 +322,7 @@ class Bar4
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function (int &$count, $params) use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'count\', \'params\'], \'keys\' => compact([\'count\', \'params\']), \'variadic\' => \'params\'], function (int &$count, string ...$params) use($__function__, $__method__) {
             return $__method__;
         });
     }
@@ -357,45 +360,28 @@ class Bar3 extends Bar
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'keys\' => []], function () use($__function__, $__method__) {
             return parent::getId();
         });
     }
 }', $code);
 
         $code = $ast->proxy(FooTrait::class);
-        if (version_compare(PHP_VERSION, '7.3.0', '>=')) {
-            $this->assertSame($this->license . '
-namespace HyperfTest\\Di\\Stub\\Ast;
+        $this->assertSame($this->license . '
+namespace HyperfTest\Di\Stub\Ast;
 
 trait FooTrait
 {
-    use \\Hyperf\\Di\\Aop\\ProxyTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function getString() : string
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__TRAIT__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, [\'keys\' => []], function () use($__function__, $__method__) {
             return uniqid();
         });
     }
 }', $code);
-        } else {
-            $this->assertSame($this->license . '
-namespace HyperfTest\\Di\\Stub\\Ast;
-
-trait FooTrait
-{
-    public function getString() : string
-    {
-        $__function__ = __FUNCTION__;
-        $__method__ = __METHOD__;
-        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__TRAIT__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
-            return uniqid();
-        });
-    }
-}', $code);
-        }
 
         $code = $ast->proxy(BarInterface::class);
         $this->assertSame($this->license . '
@@ -404,6 +390,35 @@ namespace HyperfTest\Di\Stub\Ast;
 interface BarInterface
 {
     public function toArray() : array;
+}', $code);
+    }
+
+    public function testRewriteConstructor()
+    {
+        $aspect = FooAspect::class;
+
+        AspectCollector::setAround($aspect, [
+            FooConstruct::class . '::__construct',
+        ], []);
+
+        $ast = new Ast();
+        $code = $ast->proxy(FooConstruct::class);
+
+        $this->assertEquals($this->license . '
+namespace HyperfTest\Di\Stub\Ast;
+
+class FooConstruct
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    public function __construct(public readonly string $name, protected readonly int $age = 18, private ?int $id = null)
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'name\', \'age\', \'id\'], \'keys\' => compact([\'name\', \'age\', \'id\']), \'variadic\' => \'\'], function (string $name, int $age = 18, ?int $id = null) use($__function__, $__method__) {
+            $this->__handlePropertyHandler(__CLASS__);
+        });
+    }
 }', $code);
     }
 }

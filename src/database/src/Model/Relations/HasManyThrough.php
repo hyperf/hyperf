@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use Generator;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
+use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
@@ -26,14 +28,14 @@ class HasManyThrough extends Relation
     /**
      * The "through" parent model instance.
      *
-     * @var \Hyperf\Database\Model\Model
+     * @var Model
      */
     protected $throughParent;
 
     /**
      * The far parent model instance.
      *
-     * @var \Hyperf\Database\Model\Model
+     * @var Model
      */
     protected $farParent;
 
@@ -182,7 +184,7 @@ class HasManyThrough extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function firstOrNew(array $attributes)
     {
@@ -196,7 +198,7 @@ class HasManyThrough extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function updateOrCreate(array $attributes, array $values = [])
     {
@@ -223,8 +225,8 @@ class HasManyThrough extends Relation
      * Execute the query and get the first result or throw an exception.
      *
      * @param array $columns
-     * @return \Hyperf\Database\Model\Model|static
-     * @throws \Hyperf\Database\Model\ModelNotFoundException
+     * @return Model|static
+     * @throws ModelNotFoundException
      */
     public function firstOrFail($columns = ['*'])
     {
@@ -240,7 +242,7 @@ class HasManyThrough extends Relation
      *
      * @param array $columns
      * @param mixed $id
-     * @return null|\Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
+     * @return null|Collection|Model
      */
     public function find($id, $columns = ['*'])
     {
@@ -260,7 +262,7 @@ class HasManyThrough extends Relation
      *
      * @param array $columns
      * @param mixed $ids
-     * @return \Hyperf\Database\Model\Collection
+     * @return Collection
      */
     public function findMany($ids, $columns = ['*'])
     {
@@ -279,8 +281,8 @@ class HasManyThrough extends Relation
      *
      * @param array $columns
      * @param mixed $id
-     * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
-     * @throws \Hyperf\Database\Model\ModelNotFoundException
+     * @return Collection|Model
+     * @throws ModelNotFoundException
      */
     public function findOrFail($id, $columns = ['*'])
     {
@@ -309,7 +311,7 @@ class HasManyThrough extends Relation
      * Execute the query as a "select" statement.
      *
      * @param array $columns
-     * @return \Hyperf\Database\Model\Collection
+     * @return Collection
      */
     public function get($columns = ['*'])
     {
@@ -330,7 +332,7 @@ class HasManyThrough extends Relation
     /**
      * Get a paginator for the "select" statement.
      */
-    public function paginate(int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
+    public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
     {
         $this->query->addSelect($this->shouldSelect($columns));
 
@@ -344,7 +346,7 @@ class HasManyThrough extends Relation
      * @param array $columns
      * @param string $pageName
      * @param null|int $page
-     * @return \Hyperf\Contract\PaginatorInterface
+     * @return PaginatorInterface
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -395,7 +397,7 @@ class HasManyThrough extends Relation
      * Add the constraints for a relationship query.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -420,7 +422,7 @@ class HasManyThrough extends Relation
      * Add the constraints for a relationship query on the same table.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -445,7 +447,7 @@ class HasManyThrough extends Relation
      * Add the constraints for a relationship query on the same table as the through parent.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQueryForThroughSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -545,9 +547,21 @@ class HasManyThrough extends Relation
     }
 
     /**
+     * Execute a callback over each item while chunking by ID.
+     */
+    public function eachById(callable $callback, int $count = 1000, ?string $column = null, ?string $alias = null): bool
+    {
+        $column = $column ?? $this->getRelated()->getQualifiedKeyName();
+
+        $alias = $alias ?? $this->getRelated()->getKeyName();
+
+        return $this->prepareQueryBuilder()->eachById($callback, $count, $column, $alias);
+    }
+
+    /**
      * Set the join clause on the query.
      */
-    protected function performJoin(Builder $query = null)
+    protected function performJoin(?Builder $query = null)
     {
         $query = $query ?: $this->query;
 
@@ -597,7 +611,7 @@ class HasManyThrough extends Relation
      * Prepare the query builder for query execution.
      *
      * @param array $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     protected function prepareQueryBuilder($columns = ['*'])
     {

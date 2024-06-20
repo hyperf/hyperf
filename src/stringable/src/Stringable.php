@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Stringable;
 
 use ArrayAccess;
@@ -84,6 +85,16 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     public function afterLast($search)
     {
         return new static(Str::afterLast($this->value, $search));
+    }
+
+    /**
+     * Convert the given string to APA-style title case.
+     *
+     * @return static
+     */
+    public function apa()
+    {
+        return new static(Str::apa($this->value));
     }
 
     /**
@@ -293,6 +304,16 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     public function is($pattern)
     {
         return Str::is($pattern, $this->value);
+    }
+
+    /**
+     * Determine if a given string is 7 bit ASCII.
+     *
+     * @return bool
+     */
+    public function isAscii()
+    {
+        return Str::isAscii($this->value);
     }
 
     /**
@@ -509,6 +530,19 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     }
 
     /**
+     * Find the multi-byte safe position of the first occurrence of the given substring.
+     *
+     * @param string $needle
+     * @param int $offset
+     * @param null|string $encoding
+     * @return false|int
+     */
+    public function position($needle, $offset = 0, $encoding = null)
+    {
+        return Str::position($this->value, $needle, $offset, $encoding);
+    }
+
+    /**
      * Prepend the given values to the string.
      *
      * @param string $values
@@ -644,6 +678,16 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     }
 
     /**
+     * Convert the given string to proper case for each word.
+     *
+     * @return static
+     */
+    public function headline()
+    {
+        return new static(Str::headline($this->value));
+    }
+
+    /**
      * Get the singular form of an English word.
      *
      * @return static
@@ -723,6 +767,30 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     }
 
     /**
+     * Take the first or last {$limit} characters.
+     *
+     * @return static
+     */
+    public function take(int $limit)
+    {
+        if ($limit < 0) {
+            return $this->substr($limit);
+        }
+
+        return $this->substr(0, $limit);
+    }
+
+    /**
+     * Convert the string to Base64 encoding.
+     *
+     * @return static
+     */
+    public function toBase64()
+    {
+        return new static(base64_encode($this->value));
+    }
+
+    /**
      * Trim the string of the given characters.
      *
      * @param string $characters
@@ -730,7 +798,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      */
     public function trim($characters = null)
     {
-        return new static(trim(...array_merge([$this->value], func_get_args())));
+        return new static(Str::trim(...array_merge([$this->value], func_get_args())));
     }
 
     /**
@@ -741,7 +809,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      */
     public function ltrim($characters = null)
     {
-        return new static(ltrim(...array_merge([$this->value], func_get_args())));
+        return new static(Str::ltrim(...array_merge([$this->value], func_get_args())));
     }
 
     /**
@@ -752,7 +820,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      */
     public function rtrim($characters = null)
     {
-        return new static(rtrim(...array_merge([$this->value], func_get_args())));
+        return new static(Str::rtrim(...array_merge([$this->value], func_get_args())));
     }
 
     /**
@@ -763,6 +831,18 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     public function ucfirst()
     {
         return new static(Str::ucfirst($this->value));
+    }
+
+    /**
+     * Unwrap the string with the given strings.
+     *
+     * @param string $before
+     * @param null|string $after
+     * @return static
+     */
+    public function unwrap($before, $after = null)
+    {
+        return new static(Str::unwrap($this->value, $before, $after));
     }
 
     /**
