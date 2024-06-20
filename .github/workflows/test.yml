@@ -7,6 +7,7 @@ on:
 
 jobs:
   tests:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Test on PHP${{ matrix.php-version }} Swoole-${{ matrix.sw-version }}
     runs-on: "${{ matrix.os }}"
     strategy:
