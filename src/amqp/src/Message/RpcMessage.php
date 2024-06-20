@@ -19,6 +19,7 @@ use Hyperf\Context\ApplicationContext;
 abstract class RpcMessage extends Message implements RpcMessageInterface
 {
     protected string $queue = '';
+
     protected mixed $payload;
 
     public function getQueueBuilder(): QueueBuilder
