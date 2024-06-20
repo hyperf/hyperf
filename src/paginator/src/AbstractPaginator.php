@@ -166,8 +166,9 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
      * Add a set of query string values to the paginator.
      *
      * @param null|array|string $key
+     * @param null|array|string $value
      */
-    public function appends($key, null|array|string $value = null): static
+    public function appends($key, $value = null): static
     {
         if (is_null($key)) {
             return $this;
