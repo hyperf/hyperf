@@ -1,5 +1,9 @@
 # v3.1.28 - TBD
 
+## Fixed
+
+- [#6900](https://github.com/hyperf/hyperf/pull/6900) Fixed bug that `LengthAwarePaginator::addQuery()` cannot support array `$values`.
+
 # v3.1.27 -  2024-06-20
 
 ## Added
