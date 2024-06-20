@@ -1,39 +1,42 @@
 name: PHPUnit for Hyperf
 
 on:
-  push:
-  pull_request:
-  schedule:
-    - cron: '0 2 * * *'
+  workflow_run:
+    workflows: [Test For Lint]
+    types: [completed]
+  # push:
+  # pull_request:
+  # schedule:
+  #   - cron: '0 2 * * *'
 
 jobs:
-  cs-fix:
-    name: PHP CS Fix on PHP${{ matrix.php }} ${{ matrix.swoole }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        php: [ '8.1' ]
-        swoole: [ 'swoole']
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
-          tools: php-cs-fixer
-          extensions: redis, pdo, pdo_mysql, bcmath, ${{ matrix.swoole }}
-      - name: Setup Packages
-        run: composer update -oW
-      - name: Check Composer Json
-        run: |
-          composer normalize --dry-run --no-update-lock
-          find ./src -name composer.json -exec composer normalize --dry-run --no-update-lock {} \;
-      - name: Run CS Fix
-        run: vendor/bin/php-cs-fixer fix src --dry-run --diff
+  # cs-fix:
+  #   name: PHP CS Fix on PHP${{ matrix.php }} ${{ matrix.swoole }}
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       os: [ ubuntu-latest ]
+  #       php: [ '8.1' ]
+  #       swoole: [ 'swoole']
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  #     - name: Setup PHP
+  #       uses: shivammathur/setup-php@v2
+  #       with:
+  #         php-version: '8.1'
+  #         tools: php-cs-fixer
+  #         extensions: redis, pdo, pdo_mysql, bcmath, ${{ matrix.swoole }}
+  #     - name: Setup Packages
+  #       run: composer update -oW
+  #     - name: Check Composer Json
+  #       run: |
+  #         composer normalize --dry-run --no-update-lock
+  #         find ./src -name composer.json -exec composer normalize --dry-run --no-update-lock {} \;
+  #     - name: Run CS Fix
+  #       run: vendor/bin/php-cs-fixer fix src --dry-run --diff
   tests:
-    needs: cs-fix
+    # needs: cs-fix
     name: Test on PHP${{ matrix.php-version }} Swoole-${{ matrix.sw-version }}
     runs-on: "${{ matrix.os }}"
     strategy:
