@@ -421,4 +421,67 @@ class FooConstruct
     }
 }', $code);
     }
+
+    public function testParseClassByStmtsMethods()
+    {
+        $parser = new Ast();
+        $testCases = [
+            [
+                'code' => <<<'CODE'
+<?php
+namespace HyperfTest\Di\Stub\Ast;
+
+class FooClass
+{
+    public function bar(){}
+}
+CODE,
+                'expected' => 'HyperfTest\Di\Stub\Ast\FooClass',
+            ],
+            [
+                'code' => <<<'CODE'
+<?php
+namespace HyperfTest\Di\Stub\Ast;
+
+class FooTrait
+{
+    public function bar(){}
+}
+CODE,
+                'expected' => 'HyperfTest\Di\Stub\Ast\FooTrait',
+            ],
+            [
+                'code' => <<<'CODE'
+<?php
+namespace HyperfTest\Di\Stub\Ast;
+
+interface FooInterface
+{
+    public function bar();
+}
+CODE,
+                'expected' => 'HyperfTest\Di\Stub\Ast\FooInterface',
+            ],
+            [
+                'code' => <<<'CODE'
+<?php
+namespace HyperfTest\Di\Stub\Ast;
+
+enum FooEnum
+{
+    case Pending = 'pending';
+    case Processing = 'processing';
+    case Completed = 'completed';
+    case Canceled = 'canceled';
+}
+CODE,
+                'expected' => 'HyperfTest\Di\Stub\Ast\FooEnum',
+            ],
+        ];
+
+        foreach ($testCases as $testCase) {
+            $stmts = $parser->parse($testCase['code']);
+            $this->assertEquals($testCase['expected'], $parser->parseClassByStmts($stmts));
+        }
+    }
 }
