@@ -14,6 +14,8 @@ namespace Hyperf\Framework;
 
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Parser;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\ApplicationInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Framework\Event\BootApplication;
@@ -35,6 +37,8 @@ class ApplicationFactory
             $eventDispatcher = $container->get(EventDispatcherInterface::class);
             $eventDispatcher->dispatch(new BootApplication());
         }
+
+        ApplicationContext::getContainer()->get(ApplicationInterface::class)->
 
         $config = $container->get(ConfigInterface::class);
         $commands = $config->get('commands', []);
