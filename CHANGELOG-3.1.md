@@ -8,6 +8,10 @@
 
 - [#6903](https://github.com/hyperf/hyperf/pull/6903) Optimized code for `config-nacos`.
 
+## Added
+
+- [#6885](https://github.com/hyperf/hyperf/pull/6885) Added validation rule `prohibiti`.
+
 # v3.1.27 -  2024-06-20
 
 ## Added
