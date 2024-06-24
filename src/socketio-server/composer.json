@@ -1,12 +1,12 @@
 {
     "name": "hyperf/socketio-server",
-    "type": "library",
+    "description": "Socket.io implementation for hyperf",
     "license": "MIT",
+    "type": "library",
     "keywords": [
         "php",
         "hyperf"
     ],
-    "description": "Socket.io implementation for hyperf",
     "require": {
         "php": ">=8.1",
         "ext-json": "*",
@@ -16,16 +16,16 @@
         "hyperf/di": "~3.1.0",
         "hyperf/redis": "~3.1.0",
         "hyperf/websocket-server": "~3.1.0",
-        "psr/container": "^1.0|^2.0"
-    },
-    "suggest": {
-        "hyperf/command": "Required to use RemoveRedisGarbage command",
-        "hyperf/session": "Required to use session",
-        "hyperf/nsq": "Required to use RedisNsqAdapter",
-        "mix/redis-subscriber": "Suggest to use RedisAdapter (^3.0.4)"
+        "psr/container": "^1.0 || ^2.0"
     },
     "conflict": {
         "mix/redis-subscriber": "<3.0.4"
+    },
+    "suggest": {
+        "hyperf/command": "Required to use RemoveRedisGarbage command",
+        "hyperf/nsq": "Required to use RedisNsqAdapter",
+        "hyperf/session": "Required to use session",
+        "mix/redis-subscriber": "Suggest to use RedisAdapter (^3.0.4)"
     },
     "autoload": {
         "psr-4": {

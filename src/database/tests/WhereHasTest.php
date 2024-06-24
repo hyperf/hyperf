@@ -146,6 +146,22 @@ class WhereHasTest extends TestCase
         $this->assertEquals([1, 2], $texts->pluck('id')->all());
     }
 
+    public function testWhereMorphRelation()
+    {
+        $comments = Comment::whereMorphRelation('commentable', '*', 'public', true)->get();
+
+        $this->assertEquals([1], $comments->pluck('id')->all());
+    }
+
+    public function testOrWhereMorphRelation()
+    {
+        $comments = Comment::whereMorphRelation('commentable', '*', 'public', true)
+            ->orWhereMorphRelation('commentable', '*', 'public', false)
+            ->get();
+
+        $this->assertEquals([1, 2], $comments->pluck('id')->all());
+    }
+
     /**
      * Check that the 'whereRelation' callback function works.
      *

@@ -10,10 +10,10 @@
     ],
     "homepage": "https://hyperf.io",
     "support": {
-        "docs": "https://hyperf.wiki",
         "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
         "php": ">=8.1",
@@ -24,7 +24,7 @@
         "hyperf/engine": "^2.0",
         "hyperf/support": "~3.1.0",
         "hyperf/utils": "~3.1.0",
-        "jean85/pretty-package-versions": "^1.2|^2.0"
+        "jean85/pretty-package-versions": "^1.2 || ^2.0"
     },
     "suggest": {
         "hyperf/guzzle": "Required to use coroutine nsqd http api. (~2.2.0)"

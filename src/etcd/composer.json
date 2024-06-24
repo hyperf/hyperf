@@ -1,13 +1,13 @@
 {
     "name": "hyperf/etcd",
-    "type": "library",
+    "description": "Etcd Client for Hyperf.",
     "license": "MIT",
+    "type": "library",
     "keywords": [
         "php",
         "hyperf",
         "etcd"
     ],
-    "description": "Etcd Client for Hyperf.",
     "require": {
         "php": ">=8.1",
         "hyperf/guzzle": "~3.1.0",

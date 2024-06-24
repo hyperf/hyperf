@@ -11,10 +11,10 @@
     ],
     "homepage": "https://hyperf.io",
     "support": {
-        "docs": "https://hyperf.wiki",
         "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
         "php": ">=8.1",
@@ -25,13 +25,13 @@
         "hyperf/support": "~3.1.0",
         "nikic/php-parser": "^4.1",
         "php-di/phpdoc-reader": "^2.2",
-        "psr/container": "^1.0|^2.0",
-        "symfony/finder": "^5.0|^6.0|^7.0",
+        "psr/container": "^1.0 || ^2.0",
+        "symfony/finder": "^5.0 || ^6.0 || ^7.0",
         "vlucas/phpdotenv": "^5.0"
     },
     "suggest": {
-        "hyperf/config": "Require this component for annotation scan progress to retrieve the scan path.",
-        "ext-pcntl": "Required to scan annotations."
+        "ext-pcntl": "Required to scan annotations.",
+        "hyperf/config": "Require this component for annotation scan progress to retrieve the scan path."
     },
     "autoload": {
         "psr-4": {
