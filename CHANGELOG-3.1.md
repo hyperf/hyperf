@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#6900](https://github.com/hyperf/hyperf/pull/6900) Fixed bug that `LengthAwarePaginator::addQuery()` cannot support array `$values`.
+- [#6909](https://github.com/hyperf/hyperf/pull/6909) Fixed bug that `Aop` doesn't work on `Trait`.
 
 ## Optimized
 
