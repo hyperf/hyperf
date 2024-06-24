@@ -4,6 +4,10 @@
 
 - [#6900](https://github.com/hyperf/hyperf/pull/6900) Fixed bug that `LengthAwarePaginator::addQuery()` cannot support array `$values`.
 
+## Optimized
+
+- [#6903](https://github.com/hyperf/hyperf/pull/6903) Optimized code for `config-nacos`.
+
 # v3.1.27 -  2024-06-20
 
 ## Added
