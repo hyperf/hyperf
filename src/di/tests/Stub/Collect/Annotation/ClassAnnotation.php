@@ -10,15 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Contract;
+namespace HyperfTest\Di\Stub\Collect\Annotation;
 
-use Hyperf\Framework\ApplicationFactory;
-use Symfony\Component\Console\Application;
+use Attribute;
+use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @see ApplicationFactory
- * @mixin Application
- */
-interface ApplicationInterface
+#[Attribute(Attribute::TARGET_CLASS)]
+class ClassAnnotation extends AbstractAnnotation
 {
 }

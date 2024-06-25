@@ -1258,6 +1258,22 @@ trait ValidatesAttributes
     }
 
     /**
+     * Validate that other attributes do not exist when this attribute exists.
+     */
+    public function validateProhibits(string $attribute, mixed $value, mixed $parameters): bool
+    {
+        if ($this->validateRequired($attribute, $value)) {
+            foreach ($parameters as $parameter) {
+                if ($this->validateRequired($parameter, Arr::get($this->data, $parameter))) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Validate that an attribute exists when another attribute has a given value.
      *
      * @param mixed $value

@@ -191,6 +191,47 @@ class Builder
     }
 
     /**
+     * Get the indexes for a given table.
+     */
+    public function getIndexes(string $table): array
+    {
+        $table = $this->connection->getTablePrefix() . $table;
+
+        return $this->connection->getPostProcessor()->processIndexes(
+            $this->connection->selectFromWriteConnection($this->grammar->compileIndexes($table))
+        );
+    }
+
+    /**
+     * Get the names of the indexes for a given table.
+     */
+    public function getIndexListing(string $table): array
+    {
+        return array_column($this->getIndexes($table), 'name');
+    }
+
+    /**
+     * Determine if the given table has a given index.
+     */
+    public function hasIndex(string $table, array|string $index, ?string $type = null): bool
+    {
+        $type = is_null($type) ? $type : strtolower($type);
+
+        foreach ($this->getIndexes($table) as $value) {
+            $typeMatches = is_null($type)
+                || ($type === 'primary' && $value['primary'])
+                || ($type === 'unique' && $value['unique'])
+                || $type === $value['type'];
+
+            if (($value['name'] === $index || $value['columns'] === $index) && $typeMatches) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Modify a table on the schema.
      *
      * @param string $table

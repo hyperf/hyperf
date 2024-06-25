@@ -33,6 +33,7 @@ use PhpParser\Node\Scalar\MagicConst\Trait_ as MagicConstTrait;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Enum_;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\Trait_;
@@ -97,6 +98,8 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 return $this->rewriteMethod($node);
             case $node instanceof Trait_:
                 // If the node is trait and php version >= 7.3, it can `use ProxyTrait` like class.
+            case $node instanceof Enum_:
+                // If the node is enum and php version >= 8.1, it can `use ProxyTrait` like class.
             case $node instanceof Class_ && ! $node->isAnonymous():
                 // Add use proxy traits.
                 $stmts = $node->stmts;

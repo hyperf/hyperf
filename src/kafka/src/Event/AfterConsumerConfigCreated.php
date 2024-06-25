@@ -10,15 +10,13 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Contract;
+namespace Hyperf\Kafka\Event;
 
-use Hyperf\Framework\ApplicationFactory;
-use Symfony\Component\Console\Application;
+use longlang\phpkafka\Consumer\ConsumerConfig;
 
-/**
- * @see ApplicationFactory
- * @mixin Application
- */
-interface ApplicationInterface
+class AfterConsumerConfigCreated
 {
+    public function __construct(public ConsumerConfig $config)
+    {
+    }
 }

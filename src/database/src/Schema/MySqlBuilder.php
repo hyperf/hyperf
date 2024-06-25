@@ -104,6 +104,20 @@ class MySqlBuilder extends Builder
     }
 
     /**
+     * Get the indexes for a given table.
+     */
+    public function getIndexes(string $table): array
+    {
+        $table = $this->connection->getTablePrefix() . $table;
+
+        return $this->connection->getPostProcessor()->processIndexes(
+            $this->connection->selectFromWriteConnection(
+                $this->grammar->compileIndexes($this->connection->getDatabaseName(), $table)
+            )
+        );
+    }
+
+    /**
      * Get the tables that belong to the database.
      */
     public function getTables(): array
