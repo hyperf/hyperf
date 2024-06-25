@@ -18,6 +18,9 @@ return [
         'packer' => PhpSerializerPacker::class,
         'prefix' => 'c:',
         'skip_cache_results' => [],
+        'options' => [
+            'pool' => 'default',
+        ],
     ],
     // 'sqlite' => [
     //     'driver' => Hyperf\Cache\Driver\SqliteDriver::class,
