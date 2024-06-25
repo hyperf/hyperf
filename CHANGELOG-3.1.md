@@ -12,6 +12,7 @@
 ## Added
 
 - [#6885](https://github.com/hyperf/hyperf/pull/6885) Added validation rule `prohibiti`.
+- [#6895](https://github.com/hyperf/hyperf/pull/6895) Support to collect enum annotations.
 
 # v3.1.27 -  2024-06-20
 
