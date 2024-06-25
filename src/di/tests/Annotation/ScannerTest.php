@@ -41,10 +41,6 @@ use ReflectionClass;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class ScannerTest extends TestCase
 {
     protected function tearDown(): void
