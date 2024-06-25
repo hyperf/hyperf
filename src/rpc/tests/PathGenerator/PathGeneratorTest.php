@@ -26,7 +26,7 @@ class PathGeneratorTest extends TestCase
     public function testGenerateFromClassName()
     {
         $pathGenerator = new PathGenerator();
-        $this->assertEquals('/user/query', $pathGenerator->generate('Foo\\UserService', 'query'));
+        $this->assertEquals('/user/query', $pathGenerator->generate('Foo\UserService', 'query'));
     }
 
     public function testGenerateFromName()

@@ -102,6 +102,7 @@ return [
     'not_regex' => 'The :attribute cannot match a given regular rule.',
     'numeric' => 'The :attribute must be a number.',
     'present' => 'The :attribute field must be present.',
+    'prohibits' => 'The :attribute field must be present.',
     'regex' => 'The :attribute format is invalid.',
     'required' => 'The :attribute field is required.',
     'required_if' => 'The :attribute field is required when :other is :value.',

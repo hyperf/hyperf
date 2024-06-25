@@ -1806,12 +1806,19 @@ class Builder
     /**
      * Add an "order by" clause to the query.
      *
-     * @param string $column
-     * @param string $direction
+     * @param Closure|Expression|ModelBuilder|static|string $column
      * @return $this
      */
-    public function orderBy($column, $direction = 'asc')
+    public function orderBy(mixed $column, string $direction = 'asc'): static
     {
+        if ($this->isQueryable($column)) {
+            [$query, $bindings] = $this->createSub($column);
+
+            $column = new Expression('(' . $query . ')');
+
+            $this->addBinding($bindings, $this->unions ? 'unionOrder' : 'order');
+        }
+
         $this->{$this->unions ? 'unionOrders' : 'orders'}[] = [
             'column' => $column,
             'direction' => strtolower($direction) === 'asc' ? 'asc' : 'desc',

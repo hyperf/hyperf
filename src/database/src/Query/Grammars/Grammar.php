@@ -996,9 +996,7 @@ class Grammar extends BaseGrammar
     protected function compileOrdersToArray(Builder $query, $orders): array
     {
         return array_map(function ($order) {
-            return ! isset($order['sql'])
-                ? $this->wrap($order['column']) . ' ' . $order['direction']
-                : $order['sql'];
+            return $order['sql'] ?? $this->wrap($order['column']) . ' ' . $order['direction'];
         }, $orders);
     }
 

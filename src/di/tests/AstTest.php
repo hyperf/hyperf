@@ -17,6 +17,7 @@ use Hyperf\Di\ReflectionManager;
 use HyperfTest\Di\Stub\AspectCollector;
 use HyperfTest\Di\Stub\Ast\Abs;
 use HyperfTest\Di\Stub\Ast\AbsAspect;
+use HyperfTest\Di\Stub\Ast\Bar;
 use HyperfTest\Di\Stub\Ast\Bar2;
 use HyperfTest\Di\Stub\Ast\Bar3;
 use HyperfTest\Di\Stub\Ast\Bar4;
@@ -26,6 +27,7 @@ use HyperfTest\Di\Stub\Ast\BarInterface;
 use HyperfTest\Di\Stub\Ast\Chi;
 use HyperfTest\Di\Stub\Ast\Foo;
 use HyperfTest\Di\Stub\Ast\FooConstruct;
+use HyperfTest\Di\Stub\Ast\FooEnum;
 use HyperfTest\Di\Stub\Ast\FooTrait;
 use HyperfTest\Di\Stub\FooAspect;
 use HyperfTest\Di\Stub\FooEnumStruct;
@@ -33,6 +35,7 @@ use HyperfTest\Di\Stub\Par2;
 use HyperfTest\Di\Stub\PathStub;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
@@ -368,11 +371,11 @@ class Bar3 extends Bar
 
         $code = $ast->proxy(FooTrait::class);
         $this->assertSame($this->license . '
-namespace HyperfTest\\Di\\Stub\\Ast;
+namespace HyperfTest\Di\Stub\Ast;
 
 trait FooTrait
 {
-    use \\Hyperf\\Di\\Aop\\ProxyTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function getString() : string
     {
         $__function__ = __FUNCTION__;
@@ -420,5 +423,35 @@ class FooConstruct
         });
     }
 }', $code);
+    }
+
+    public function testParseClassByStmtsMethods()
+    {
+        $parser = new Ast();
+        $testCases = [
+            [
+                'class' => Bar::class,
+                'expected' => 'HyperfTest\Di\Stub\Ast\Bar',
+            ],
+            [
+                'class' => FooTrait::class,
+                'expected' => 'HyperfTest\Di\Stub\Ast\FooTrait',
+            ],
+            [
+                'class' => BarInterface::class,
+                'expected' => 'HyperfTest\Di\Stub\Ast\BarInterface',
+            ],
+            [
+                'class' => FooEnum::class,
+                'expected' => 'HyperfTest\Di\Stub\Ast\FooEnum',
+            ],
+        ];
+
+        foreach ($testCases as $testCase) {
+            $reflector = new ReflectionClass($testCase['class']);
+            $fileName = $reflector->getFileName();
+            $stmts = $parser->parse(file_get_contents($fileName));
+            $this->assertEquals($testCase['expected'], $parser->parseClassByStmts($stmts));
+        }
     }
 }

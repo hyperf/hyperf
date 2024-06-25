@@ -61,4 +61,22 @@ class PostgresProcessor extends Processor
             return (array) $result;
         }, $results);
     }
+
+    /**
+     * Process the results of an indexes query.
+     */
+    public function processIndexes(array $results): array
+    {
+        return array_map(function ($result) {
+            $result = (object) $result;
+
+            return [
+                'name' => strtolower($result->name),
+                'columns' => explode(',', $result->columns),
+                'type' => strtolower($result->type),
+                'unique' => (bool) $result->unique,
+                'primary' => (bool) $result->primary,
+            ];
+        }, $results);
+    }
 }

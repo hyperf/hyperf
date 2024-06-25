@@ -17,7 +17,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class RetryFalsy extends Retry
 {
-    public function __construct(array $retryThrowables = [], mixed $retryOnResultPredicate = ['Hyperf\\Retry\\Annotation\\RetryFalsy', 'isFalsy'])
+    public function __construct(array $retryThrowables = [], mixed $retryOnResultPredicate = ['Hyperf\Retry\Annotation\RetryFalsy', 'isFalsy'])
     {
     }
 }

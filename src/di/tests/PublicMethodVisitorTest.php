@@ -131,6 +131,6 @@ CODETEMPLATE;
     private function getStmt($ast)
     {
         $stmts = PhpParser::getInstance()->getAllMethodsFromStmts($ast);
-        return [$stmts, 'foo\\foo'];
+        return [$stmts, 'foo\foo'];
     }
 }
