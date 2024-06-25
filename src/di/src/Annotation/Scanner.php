@@ -43,14 +43,14 @@ class Scanner
             }
         }
         // Parse class annotations
-        foreach ($reader->getClassAnnotations($reflection) as $classAnnotation) {
+        foreach ($reader->getAttributes($reflection) as $classAnnotation) {
             if ($classAnnotation instanceof AnnotationInterface) {
                 $classAnnotation->collectClass($className);
             }
         }
         // Parse properties annotations
         foreach ($reflection->getProperties() as $property) {
-            foreach ($reader->getPropertyAnnotations($property) as $propertyAnnotation) {
+            foreach ($reader->getAttributes($property) as $propertyAnnotation) {
                 if ($propertyAnnotation instanceof AnnotationInterface) {
                     $propertyAnnotation->collectProperty($className, $property->getName());
                 }
@@ -58,7 +58,7 @@ class Scanner
         }
         // Parse methods annotations
         foreach ($reflection->getMethods() as $method) {
-            foreach ($reader->getMethodAnnotations($method) as $methodAnnotation) {
+            foreach ($reader->getAttributes($method) as $methodAnnotation) {
                 if ($methodAnnotation instanceof AnnotationInterface) {
                     $methodAnnotation->collectMethod($className, $method->getName());
                 }
