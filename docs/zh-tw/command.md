@@ -173,14 +173,16 @@ class FooCommand extends HyperfCommand
 
 ### 設定 Help
 
-```
+```php
 public function configure()
 {
     parent::configure();
     $this->setHelp('Hyperf 自定義命令演示');
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command --help
+# 輸出
 ...
 Help:
   Hyperf 自定義命令演示
@@ -189,14 +191,16 @@ Help:
 
 ### 設定 Description
 
-```
+```php
 public function configure()
 {
     parent::configure();
     $this->setDescription('Hyperf Demo Command');
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command --help
+# 輸出
 ...
 Description:
   Hyperf Demo Command
@@ -205,14 +209,16 @@ Description:
 
 ### 設定 Usage
 
-```
+```php
 public function configure()
 {
     parent::configure();
     $this->addUsage('--name 演示程式碼');
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command --help
+# 輸出
 ...
 Usage:
   demo:command
@@ -231,7 +237,7 @@ Usage:
 
 #### 可選型別
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -242,19 +248,22 @@ public function handle()
 {
     $this->line($this->input->getArgument('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# 輸出
 ...
 Hyperf
 
 $ php bin/hyperf.php demo:command Swoole
+# 輸出
 ...
 Swoole
 ```
 
 #### 陣列型別
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -265,8 +274,10 @@ public function handle()
 {
     var_dump($this->input->getArgument('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command Hyperf Swoole
+# 輸出
 ...
 array(2) {
   [0]=>
@@ -289,7 +300,7 @@ array(2) {
 
 #### 是否傳入可選項
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -300,14 +311,18 @@ public function handle()
 {
     var_dump($this->input->getOption('opt'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# 輸出
 bool(false)
 
 $ php bin/hyperf.php demo:command -o
+# 輸出
 bool(true)
 
 $ php bin/hyperf.php demo:command --opt
+# 輸出
 bool(true)
 ```
 
@@ -315,7 +330,7 @@ bool(true)
 
 `VALUE_OPTIONAL` 在單獨使用上與 `VALUE_REQUIRED` 並無二致
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -326,11 +341,14 @@ public function handle()
 {
     var_dump($this->input->getOption('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# 輸出
 string(6) "Hyperf"
 
 $ php bin/hyperf.php demo:command --name Swoole
+# 輸出
 string(6) "Swoole"
 ```
 
@@ -338,7 +356,7 @@ string(6) "Swoole"
 
 `VALUE_IS_ARRAY` 和 `VALUE_OPTIONAL` 配合使用，可以達到傳入多個 `Option` 的效果。
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -349,12 +367,15 @@ public function handle()
 {
     var_dump($this->input->getOption('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# 輸出
 array(0) {
 }
 
 $ php bin/hyperf.php demo:command --name Hyperf --name Swoole
+# 輸出
 array(2) {
   [0]=>
   string(6) "Hyperf"
