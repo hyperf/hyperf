@@ -31,7 +31,7 @@ jobs:
           composer normalize --dry-run --no-update-lock
           find ./src -name composer.json -exec composer normalize --dry-run --no-update-lock {} \;
       - name: Run CS Fix
-        run: vendor/bin/php-cs-fixer fix src --dry-run --diff
+        run: vendor/bin/php-cs-fixer $1 src --dry-run --diff
   tests:
     needs: cs-fix
     name: Test on PHP${{ matrix.php-version }} Swoole-${{ matrix.sw-version }}
