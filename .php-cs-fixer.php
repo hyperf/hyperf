@@ -111,6 +111,7 @@ return (new Config())
             ->exclude('public')
             ->exclude('runtime')
             ->exclude('vendor')
+            ->exclude('src/nacos/src/Protobuf/GPBMetadata')
             ->in(__DIR__)
     )
     ->setUsingCache(false);
