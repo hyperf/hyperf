@@ -32,7 +32,7 @@ class ClassLoader
         }
 
         if (! $configDir) {
-            // This dir is the default proxy file dir path of Hyperf
+            // This dir is the default config file dir path of Hyperf
             $configDir = BASE_PATH . '/config/';
         }
 
