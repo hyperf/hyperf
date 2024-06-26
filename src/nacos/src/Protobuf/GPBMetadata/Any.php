@@ -33,7 +33,7 @@ class Any
 Any
 type_url (	
 value (B«
-com.google.protobufBAnyProtoPZ%github.com/golang/protobuf/ptypes/any¢GPBªGoogle.Protobuf.WellKnownTypesÊHyperf\Nacos\Protobufâ!Hyperf\Nacos\Protobuf\GPBMetadatabproto3',
+com.google.protobufBAnyProtoPZ%github.com/golang/protobuf/ptypes/any¢GPBªGoogle.Protobuf.WellKnownTypesÊHyperf\\Nacos\\Protobufâ!Hyperf\\Nacos\\Protobuf\\GPBMetadatabproto3',
             true
         );
 
