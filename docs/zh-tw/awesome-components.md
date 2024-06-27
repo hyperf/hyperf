@@ -164,6 +164,10 @@
 
 - [hyperf-helper/dependency](https://github.com/lazychanger/hyperf-helper-dependency) 使用註解快速的配置依賴關係，並且支援依賴優先順序
 
+## clickhouse
+
+- [tangwei/hyperf-clickhouse](https://github.com/tw2066/hyperf-clickhouse) 支援Hyperf的clickhouse資料庫客戶端
+
 ## 第三方 SDK
 
 - [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支援 Swoole 協程的支付寶/微信支付 SDK
