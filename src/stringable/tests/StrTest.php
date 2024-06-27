@@ -1172,4 +1172,3 @@ class StrTest extends TestCase
         }
     }
 }
-
