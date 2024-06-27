@@ -1,5 +1,9 @@
 # v3.1.29 - TBD
 
+## Added
+
+- [#6917](https://github.com/hyperf/hyperf/pull/6917) Introduce `Str::chopStart` and `Str::chopEnd`.
+
 # v3.1.28 - 2024-06-27
 
 ## Fixed
