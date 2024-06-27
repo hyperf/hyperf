@@ -179,6 +179,7 @@ public function configure()
     parent::configure();
     $this->setHelp('Hyperf 自定義命令演示');
 }
+
 ```
 ```bash
 $ php bin/hyperf.php demo:command --help
@@ -186,8 +187,8 @@ $ php bin/hyperf.php demo:command --help
 ...
 Help:
   Hyperf 自定義命令演示
-
 ```
+
 
 ### 設定 Description
 
