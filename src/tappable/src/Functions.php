@@ -17,7 +17,7 @@ namespace Hyperf\Tappable;
  * @template TValue
  * @param TValue $value
  * @param null|callable $callback
- * @return HigherOrderTapProxy<TValue>|TValue
+ * @return ($callback is null ? HigherOrderTapProxy<TValue> : TValue)
  */
 function tap($value, $callback = null)
 {
