@@ -1104,40 +1104,39 @@ class CollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testSortBy($collection)
     {
-
         $data = (new $collection(
             [
                 ['id' => 5, 'name' => 'e'],
                 ['id' => 4, 'name' => 'd'],
                 ['id' => 3, 'name' => 'c'],
                 ['id' => 2, 'name' => 'b'],
-                ['id' => 1, 'name' => 'a']
+                ['id' => 1, 'name' => 'a'],
             ]
         ))->sortBy('id');
-        $this->assertEquals([
+        $this->assertEquals(json_encode([
             4 => ['id' => 1, 'name' => 'a'],
             3 => ['id' => 2, 'name' => 'b'],
             2 => ['id' => 3, 'name' => 'c'],
             1 => ['id' => 4, 'name' => 'd'],
-            0 => ['id' => 5, 'name' => 'e']
-        ], $data->all());
-        $this->assertEquals([
+            0 => ['id' => 5, 'name' => 'e'],
+        ]), (string) $data);
+        $this->assertEquals(json_encode([
             ['id' => 1, 'name' => 'a'],
             ['id' => 2, 'name' => 'b'],
             ['id' => 3, 'name' => 'c'],
             ['id' => 4, 'name' => 'd'],
-            ['id' => 5, 'name' => 'e']
-        ], $data->values()->all());
+            ['id' => 5, 'name' => 'e'],
+        ]), (string) $data->values());
         $dataMany = (new $collection(
             [
                 ['id' => 5, 'name' => 'e'],
                 ['id' => 4, 'name' => 'd'],
                 ['id' => 3, 'name' => 'c'],
                 ['id' => 2, 'name' => 'b'],
-                ['id' => 1, 'name' => 'a']
+                ['id' => 1, 'name' => 'a'],
             ]
         ))->sortBy(['id', 'asc']);
-        $this->assertEquals($data->all(), $dataMany->all());
+        $this->assertEquals((string) $data, (string) $dataMany);
 
         $data = (new $collection(
             [
@@ -1145,32 +1144,32 @@ class CollectionTest extends TestCase
                 ['id' => 2, 'name' => 'b'],
                 ['id' => 3, 'name' => 'c'],
                 ['id' => 4, 'name' => 'd'],
-                ['id' => 5, 'name' => 'e']
+                ['id' => 5, 'name' => 'e'],
             ]
         ))->sortByDesc('id');
-        $this->assertEquals([
+        $this->assertEquals(json_encode([
             4 => ['id' => 5, 'name' => 'e'],
             3 => ['id' => 4, 'name' => 'd'],
             2 => ['id' => 3, 'name' => 'c'],
             1 => ['id' => 2, 'name' => 'b'],
-            0 => ['id' => 1, 'name' => 'a']
-        ], $data->all());
-        $this->assertEquals([
+            0 => ['id' => 1, 'name' => 'a'],
+        ]), (string) $data);
+        $this->assertEquals(json_encode([
             ['id' => 5, 'name' => 'e'],
             ['id' => 4, 'name' => 'd'],
             ['id' => 3, 'name' => 'c'],
             ['id' => 2, 'name' => 'b'],
-            ['id' => 1, 'name' => 'a']
-        ], $data->values()->all());
+            ['id' => 1, 'name' => 'a'],
+        ]), (string) $data->values());
         $dataMany = (new $collection(
             [
                 ['id' => 1, 'name' => 'a'],
                 ['id' => 2, 'name' => 'b'],
                 ['id' => 3, 'name' => 'c'],
                 ['id' => 4, 'name' => 'd'],
-                ['id' => 5, 'name' => 'e']
+                ['id' => 5, 'name' => 'e'],
             ]
         ))->sortByDesc(['id']);
-        $this->assertEquals($data->all(), $dataMany->all());
+        $this->assertEquals((string) $data, (string) $dataMany);
     }
 }
