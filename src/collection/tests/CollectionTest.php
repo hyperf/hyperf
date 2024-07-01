@@ -1100,4 +1100,77 @@ class CollectionTest extends TestCase
         $c = new $collection(['foo' => 'bar', 1, 2, 3, 4, 5]);
         $this->assertNull($c->after(5));
     }
+
+    #[DataProvider('collectionClassProvider')]
+    public function testSortBy($collection)
+    {
+
+        $data = (new $collection(
+            [
+                ['id' => 5, 'name' => 'e'],
+                ['id' => 4, 'name' => 'd'],
+                ['id' => 3, 'name' => 'c'],
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 1, 'name' => 'a']
+            ]
+        ))->sortBy('id');
+        $this->assertEquals([
+            4 => ['id' => 1, 'name' => 'a'],
+            3 => ['id' => 2, 'name' => 'b'],
+            2 => ['id' => 3, 'name' => 'c'],
+            1 => ['id' => 4, 'name' => 'd'],
+            0 => ['id' => 5, 'name' => 'e']
+        ], $data->all());
+        $this->assertEquals([
+            ['id' => 1, 'name' => 'a'],
+            ['id' => 2, 'name' => 'b'],
+            ['id' => 3, 'name' => 'c'],
+            ['id' => 4, 'name' => 'd'],
+            ['id' => 5, 'name' => 'e']
+        ], $data->values()->all());
+        $dataMany = (new $collection(
+            [
+                ['id' => 5, 'name' => 'e'],
+                ['id' => 4, 'name' => 'd'],
+                ['id' => 3, 'name' => 'c'],
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 1, 'name' => 'a']
+            ]
+        ))->sortBy(['id', 'asc']);
+        $this->assertEquals($data->all(), $dataMany->all());
+
+        $data = (new $collection(
+            [
+                ['id' => 1, 'name' => 'a'],
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 3, 'name' => 'c'],
+                ['id' => 4, 'name' => 'd'],
+                ['id' => 5, 'name' => 'e']
+            ]
+        ))->sortByDesc('id');
+        $this->assertEquals([
+            4 => ['id' => 5, 'name' => 'e'],
+            3 => ['id' => 4, 'name' => 'd'],
+            2 => ['id' => 3, 'name' => 'c'],
+            1 => ['id' => 2, 'name' => 'b'],
+            0 => ['id' => 1, 'name' => 'a']
+        ], $data->all());
+        $this->assertEquals([
+            ['id' => 5, 'name' => 'e'],
+            ['id' => 4, 'name' => 'd'],
+            ['id' => 3, 'name' => 'c'],
+            ['id' => 2, 'name' => 'b'],
+            ['id' => 1, 'name' => 'a']
+        ], $data->values()->all());
+        $dataMany = (new $collection(
+            [
+                ['id' => 1, 'name' => 'a'],
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 3, 'name' => 'c'],
+                ['id' => 4, 'name' => 'd'],
+                ['id' => 5, 'name' => 'e']
+            ]
+        ))->sortByDesc(['id']);
+        $this->assertEquals($data->all(), $dataMany->all());
+    }
 }
