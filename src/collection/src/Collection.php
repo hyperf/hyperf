@@ -1112,7 +1112,7 @@ class Collection implements Enumerable, ArrayAccess
     /**
      * Sort the collection in descending order using the given callback.
      *
-     * @param (callable(TValue, TKey): mixed)|string $callback
+     * @param array|(callable(TValue, TKey): mixed)|string $callback
      * @return static<TKey, TValue>
      */
     public function sortByDesc($callback, int $options = SORT_REGULAR): static
