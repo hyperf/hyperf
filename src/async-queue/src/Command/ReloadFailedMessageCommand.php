@@ -28,7 +28,7 @@ class ReloadFailedMessageCommand extends HyperfCommand
         parent::__construct('queue:reload');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $name = $this->input->getArgument('name');
         $queue = $this->input->getOption('queue');
@@ -41,7 +41,7 @@ class ReloadFailedMessageCommand extends HyperfCommand
         $this->output->writeln(sprintf('<fg=green>Reload %d failed message into waiting queue.</>', $num));
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Reload all failed message into waiting queue.');
         $this->addArgument('name', InputArgument::OPTIONAL, 'The name of queue.', 'default');
