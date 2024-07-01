@@ -3,6 +3,7 @@
 ## Added
 
 - [#6896](https://github.com/hyperf/hyperf/pull/6896) Added `SftpAdapter` for `hyperf/filesystem`.
+- [#6917](https://github.com/hyperf/hyperf/pull/6917) Added `Str::chopStart` and `Str::chopEnd`.
 
 # v3.1.28 - 2024-06-27
 
