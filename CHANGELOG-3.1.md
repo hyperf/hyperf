@@ -1,4 +1,23 @@
-# v3.1.27 - TBD
+# v3.1.29 - TBD
+
+# v3.1.28 - 2024-06-27
+
+## Fixed
+
+- [#6900](https://github.com/hyperf/hyperf/pull/6900) Fixed bug that `LengthAwarePaginator::addQuery()` cannot support array `$values`.
+- [#6909](https://github.com/hyperf/hyperf/pull/6909) Fixed bug that `Aop` doesn't work on `Trait`.
+
+## Optimized
+
+- [#6903](https://github.com/hyperf/hyperf/pull/6903) Optimized code for `config-nacos`.
+
+## Added
+
+- [#6885](https://github.com/hyperf/hyperf/pull/6885) Added validation rule `prohibiti`.
+- [#6891](https://github.com/hyperf/hyperf/pull/6891) Support `cache.*.options.pool` to select redis instance for `hyperf/cache`.
+- [#6895](https://github.com/hyperf/hyperf/pull/6895) Support to collect enum annotations.
+
+# v3.1.27 -  2024-06-20
 
 ## Added
 
@@ -8,6 +27,8 @@
 - [#6876](https://github.com/hyperf/hyperf/pull/6876) Added method `Hyperf\Database\Concerns\Builder::eachById`.
 - [#6878](https://github.com/hyperf/hyperf/pull/6878) Added methods `whereMorphRelation` and `orWhereMorphRelation` into `Hyperf\Database\Model\Concerns\QueriesRelationships`.
 - [#6883](https://github.com/hyperf/hyperf/pull/6883) Added methods `getIndexes` `hasIndex` and `getIndexListing` into `Hyperf\Database\Schema\Builder`.
+- [#6884](https://github.com/hyperf/hyperf/pull/6884) Added method `Hyperf\Database\Model\Model::updateOrFail`.
+- [#6897](https://github.com/hyperf/hyperf/pull/6897) [#6899](https://github.com/hyperf/hyperf/pull/6899) Added events `BeforeLongLangConsumerCreated` and `AfterConsumerConfigCreated` into `Hyperf\Kafka\ConsumerManager`.
 
 ## Optimized
 

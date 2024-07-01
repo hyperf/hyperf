@@ -10,15 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Contract;
+namespace HyperfTest\Di\Stub\Ast;
 
-use Hyperf\Framework\ApplicationFactory;
-use Symfony\Component\Console\Application;
-
-/**
- * @see ApplicationFactory
- * @mixin Application
- */
-interface ApplicationInterface
+enum FooEnum: string
 {
+    case A = 'A';
+    case B = 'B';
+    case C = 'C';
+    case D = 'D';
 }
