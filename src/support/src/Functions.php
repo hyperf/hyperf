@@ -95,7 +95,10 @@ function retry($times, callable $callback, int $sleep = 0)
 /**
  * Return the given value, optionally passed through the given callback.
  *
- * @param mixed $value
+ * @template TValue
+ *
+ * @param TValue $value
+ * @return ($callback is null ? TValue : mixed)
  */
 function with($value, ?callable $callback = null)
 {
