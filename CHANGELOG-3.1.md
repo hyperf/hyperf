@@ -1,5 +1,9 @@
 # v3.1.29 - TBD
 
+## Added
+
+- [#6896](https://github.com/hyperf/hyperf/pull/6896) Added `SftpAdapter` for `hyperf/filesystem`.
+
 # v3.1.28 - 2024-06-27
 
 ## Fixed
