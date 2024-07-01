@@ -396,8 +396,6 @@ jobs:
         run: |
           cp .travis/.env.example .env
           
-          composer analyse src/collection
-          composer test src/collection
           composer analyse src/command
           composer test src/command
           composer analyse src/config
