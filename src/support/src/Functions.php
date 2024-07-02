@@ -73,7 +73,7 @@ function env($key, $default = null)
  *@template TReturn
  *
  * @param float|int|int[] $times
- * @param callable():TReturn $callback
+ * @param callable(int):TReturn $callback
  * @param int $sleep millisecond
  * @return TReturn
  * @throws Throwable

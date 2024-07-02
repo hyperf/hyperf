@@ -45,7 +45,7 @@ if (! function_exists('retry')) {
      * @template TReturn
      *
      * @param float|int $times
-     * @param callable():TReturn $callback
+     * @param callable(int):TReturn $callback
      * @param int $sleep millisecond
      * @return TReturn
      * @throws Throwable
