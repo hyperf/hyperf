@@ -75,7 +75,7 @@ function env($key, $default = null)
  * @param float|int|int[] $times
  * @param callable(int):TReturn $callback
  * @param int $sleep millisecond
- * @return TReturn
+ * @return TReturn|void
  * @throws Throwable
  */
 function retry($times, callable $callback, int $sleep = 0)
