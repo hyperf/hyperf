@@ -25,10 +25,10 @@ use Throwable;
 /**
  * Return the default value of the given value.
  * @template T
- * @template TClosureReturn
+ * @template TReturn
  *
- * @param (Closure():TClosureReturn)|T $value
- * @return ($value is Closure ? TClosureReturn : T)
+ * @param (Closure():TReturn)|T $value
+ * @return ($value is Closure ? TReturn : T)
  */
 function value(mixed $value, ...$args)
 {

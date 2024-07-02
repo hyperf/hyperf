@@ -30,6 +30,12 @@ function parallel(array $callables, int $concurrent = 0): array
     return $parallel->wait();
 }
 
+/**
+ * @template TReturn
+ *
+ * @param Closure():TReturn $closure
+ * @return TReturn
+ */
 function wait(Closure $closure, ?float $timeout = null)
 {
     if (ApplicationContext::hasContainer()) {

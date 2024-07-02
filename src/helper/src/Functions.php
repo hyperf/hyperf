@@ -15,10 +15,10 @@ if (! function_exists('value')) {
     /**
      * Return the default value of the given value.
      * @template T
-     * @template TClosureReturn
+     * @template TReturn
      *
-     * @param (Closure():TClosureReturn)|T $value
-     * @return ($value is Closure ? TClosureReturn : T)
+     * @param (Closure():TReturn)|T $value
+     * @return ($value is Closure ? TReturn : T)
      */
     function value(mixed $value, ...$args)
     {
@@ -293,6 +293,12 @@ if (! function_exists('optional')) {
 }
 
 if (! function_exists('wait')) {
+    /**
+     * @template TReturn
+     *
+     * @param Closure():TReturn $closure
+     * @return TReturn
+     */
     function wait(Closure $closure, ?float $timeout = null)
     {
         return \Hyperf\Coroutine\wait($closure, $timeout);
