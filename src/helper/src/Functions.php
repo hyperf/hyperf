@@ -14,11 +14,11 @@ use Hyperf\Collection\Collection;
 if (! function_exists('value')) {
     /**
      * Return the default value of the given value.
-     * @template T
+     * @template TValue
      * @template TReturn
      *
-     * @param (Closure(T $value):TReturn)|T $value
-     * @return ($value is Closure ? TReturn : T)
+     * @param (Closure(TValue):TReturn)|TValue $value
+     * @return ($value is Closure ? TReturn : TValue)
      */
     function value(mixed $value, ...$args)
     {
