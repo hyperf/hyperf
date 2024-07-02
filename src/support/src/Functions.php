@@ -70,8 +70,12 @@ function env($key, $default = null)
 /**
  * Retry an operation a given number of times.
  *
+ *@template TReturn
+ *
  * @param float|int|int[] $times
+ * @param callable():TReturn $callback
  * @param int $sleep millisecond
+ * @return TReturn
  * @throws Throwable
  */
 function retry($times, callable $callback, int $sleep = 0)
