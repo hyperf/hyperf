@@ -279,9 +279,12 @@ if (! function_exists('swoole_hook_flags')) {
 if (! function_exists('optional')) {
     /**
      * Provide access to optional objects.
+     * @template T
+     * @template TReturn
      *
-     * @param mixed $value
-     * @return mixed
+     * @param T $value
+     * @param null|(callable(T $value):TReturn) $callback
+     * @return ($callback is null ? \Hyperf\Support\Optional<T> : ($value is null ? null : TReturn))
      */
     function optional($value = null, ?callable $callback = null)
     {
