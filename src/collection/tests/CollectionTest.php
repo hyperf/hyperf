@@ -1142,15 +1142,15 @@ class CollectionTest extends TestCase
             [
                 ['id' => 5, 'name' => '5a'],
                 ['id' => 4, 'name' => '4b'],
-                ['id' => 3, 'name' => '3c'],
+                ['id' => 3, 'name' => 'c3'],
                 ['id' => 2, 'name' => '2d'],
                 ['id' => 1, 'name' => '1e'],
             ]
         ))->sortBy('name', SORT_NUMERIC);
         $this->assertEquals(json_encode([
+            2 => ['id' => 3, 'name' => 'c3'],
             4 => ['id' => 1, 'name' => '1e'],
             3 => ['id' => 2, 'name' => '2d'],
-            2 => ['id' => 3, 'name' => '3c'],
             1 => ['id' => 4, 'name' => '4b'],
             0 => ['id' => 5, 'name' => '5a'],
         ]), (string) $data);
@@ -1158,38 +1158,38 @@ class CollectionTest extends TestCase
             [
                 ['id' => 5, 'name' => '5a'],
                 ['id' => 4, 'name' => '4b'],
-                ['id' => 3, 'name' => '3c'],
+                ['id' => 3, 'name' => 'c3'],
                 ['id' => 2, 'name' => '2d'],
                 ['id' => 1, 'name' => '1e'],
             ]
-        ))->sortBy(['name', 'asc'], SORT_NUMERIC);
+        ))->sortBy([['name', 'asc']], SORT_NUMERIC);
         $this->assertEquals((string) $data, (string) $dataMany);
 
         $data = (new $collection(
             [
-                ['id' => 5, 'name' => 'e'],
-                ['id' => 4, 'name' => 'd'],
-                ['id' => 3, 'name' => 'c'],
-                ['id' => 2, 'name' => 'b'],
-                ['id' => 1, 'name' => 'a'],
+                ['id' => 5, 'name' => '5a'],
+                ['id' => 4, 'name' => '4b'],
+                ['id' => 3, 'name' => 'c3'],
+                ['id' => 2, 'name' => '2d'],
+                ['id' => 1, 'name' => '1e'],
             ]
         ))->sortBy('name', SORT_STRING);
         $this->assertEquals(json_encode([
-            4 => ['id' => 1, 'name' => 'a'],
-            3 => ['id' => 2, 'name' => 'b'],
-            2 => ['id' => 3, 'name' => 'c'],
-            1 => ['id' => 4, 'name' => 'd'],
-            0 => ['id' => 5, 'name' => 'e'],
+            4 => ['id' => 1, 'name' => '1e'],
+            3 => ['id' => 2, 'name' => '2d'],
+            1 => ['id' => 4, 'name' => '4b'],
+            0 => ['id' => 5, 'name' => '5a'],
+            2 => ['id' => 3, 'name' => 'c3'],
         ]), (string) $data);
         $dataMany = (new $collection(
             [
-                ['id' => 5, 'name' => 'e'],
-                ['id' => 4, 'name' => 'd'],
-                ['id' => 3, 'name' => 'c'],
-                ['id' => 2, 'name' => 'b'],
-                ['id' => 1, 'name' => 'a'],
+                ['id' => 5, 'name' => '5a'],
+                ['id' => 4, 'name' => '4b'],
+                ['id' => 3, 'name' => 'c3'],
+                ['id' => 2, 'name' => '2d'],
+                ['id' => 1, 'name' => '1e'],
             ]
-        ))->sortBy(['name', 'asc'], SORT_STRING);
+        ))->sortBy([['name', 'asc']], SORT_STRING);
         $this->assertEquals((string) $data, (string) $dataMany);
 
         $data = (new $collection(
@@ -1216,7 +1216,35 @@ class CollectionTest extends TestCase
                 ['id' => 2, 'name' => 'a2'],
                 ['id' => 1, 'name' => 'a1'],
             ]
-        ))->sortBy(['name', 'asc'], SORT_NATURAL);
+        ))->sortBy([['name', 'asc']], SORT_NATURAL);
+        $this->assertEquals((string) $data, (string) $dataMany);
+
+        setlocale(LC_COLLATE, 'en_US.utf8');
+        $data = (new $collection(
+            [
+                ['id' => 5, 'name' => 'A'],
+                ['id' => 4, 'name' => 'a'],
+                ['id' => 3, 'name' => 'B'],
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 1, 'name' => 'c'],
+            ]
+        ))->sortBy('name', SORT_LOCALE_STRING);
+        $this->assertEquals(json_encode([
+            1 => ['id' => 4, 'name' => 'a'],
+            0 => ['id' => 5, 'name' => 'A'],
+            3 => ['id' => 2, 'name' => 'b'],
+            2 => ['id' => 3, 'name' => 'B'],
+            4 => ['id' => 1, 'name' => 'c'],
+        ]), (string) $data);
+        $dataMany = (new $collection(
+            [
+                ['id' => 5, 'name' => 'A'],
+                ['id' => 4, 'name' => 'a'],
+                ['id' => 3, 'name' => 'B'],
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 1, 'name' => 'c'],
+            ]
+        ))->sortBy([['name', 'asc']], SORT_LOCALE_STRING);
         $this->assertEquals((string) $data, (string) $dataMany);
 
         $data = (new $collection(
