@@ -14,6 +14,11 @@ use Hyperf\Collection\Collection;
 if (! function_exists('value')) {
     /**
      * Return the default value of the given value.
+     * @template T
+     * @template TClosureReturn
+     *
+     * @param (Closure():TClosureReturn)|T $value
+     * @return ($value is Closure ? TClosureReturn : T)
      */
     function value(mixed $value, ...$args)
     {
@@ -49,7 +54,12 @@ if (! function_exists('with')) {
     /**
      * Return the given value, optionally passed through the given callback.
      *
-     * @param mixed $value
+     * @template TValue
+     * @template TReturn
+     *
+     * @param TValue $value
+     * @param null|(callable(TValue):TReturn) $callback
+     * @return ($callback is null ? TValue : TReturn)
      */
     function with($value, ?callable $callback = null)
     {
@@ -61,14 +71,18 @@ if (! function_exists('collect')) {
     /**
      * Create a collection from the given value.
      *
-     * @param null|mixed $value
-     * @return Collection
+     * @template TKey of array-key
+     * @template TValue
+     *
+     * @param null|\Hyperf\Contract\Arrayable<TKey, TValue>|iterable<TKey, TValue> $value
+     * @return Collection<TKey, TValue>
      */
     function collect($value = null)
     {
         return \Hyperf\Collection\collect($value);
     }
 }
+
 if (! function_exists('data_fill')) {
     /**
      * Fill in data where it's missing.
@@ -134,12 +148,10 @@ if (! function_exists('last')) {
 if (! function_exists('tap')) {
     /**
      * Call the given Closure with the given value then return the value.
-     *
      * @template TValue
-     *
-     * @param null|callable $callback
      * @param TValue $value
-     * @return TValue
+     * @param null|callable $callback
+     * @return ($callback is null ? HigherOrderTapProxy<TValue> : TValue)
      */
     function tap($value, $callback = null)
     {

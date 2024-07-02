@@ -24,6 +24,11 @@ use Throwable;
 
 /**
  * Return the default value of the given value.
+ * @template T
+ * @template TClosureReturn
+ *
+ * @param (Closure():TClosureReturn)|T $value
+ * @return ($value is Closure ? TClosureReturn : T)
  */
 function value(mixed $value, ...$args)
 {
@@ -96,9 +101,11 @@ function retry($times, callable $callback, int $sleep = 0)
  * Return the given value, optionally passed through the given callback.
  *
  * @template TValue
+ * @template TReturn
  *
  * @param TValue $value
- * @return ($callback is null ? TValue : mixed)
+ * @param null|(callable(TValue):TReturn) $callback
+ * @return ($callback is null ? TValue : TReturn)
  */
 function with($value, ?callable $callback = null)
 {
@@ -223,9 +230,12 @@ function swoole_hook_flags(): int
 
 /**
  * Provide access to optional objects.
+ * @template T
+ * @template TReturn
  *
- * @param mixed $value
- * @return mixed
+ * @param T $value
+ * @param null|(callable(T $value):TReturn) $callback
+ * @return ($callback is null ? Optional<T> : ($value is null ? null : TReturn))
  */
 function optional($value = null, ?callable $callback = null)
 {
