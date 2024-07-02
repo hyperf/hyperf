@@ -230,12 +230,12 @@ function swoole_hook_flags(): int
 
 /**
  * Provide access to optional objects.
- * @template T
+ * @template TValue
  * @template TReturn
  *
- * @param T $value
- * @param null|(callable(T $value):TReturn) $callback
- * @return ($callback is null ? Optional<T> : ($value is null ? null : TReturn))
+ * @param TValue $value
+ * @param null|(callable(TValue):TReturn) $callback
+ * @return ($callback is null ? Optional<TValue> : ($value is null ? null : TReturn))
  */
 function optional($value = null, ?callable $callback = null)
 {
