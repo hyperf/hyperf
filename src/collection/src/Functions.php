@@ -216,7 +216,8 @@ function last($array)
  * @template TValue
  * @template TReturn
  *
- * @param (Closure(TValue):TReturn)|TValue $value
+ * @param (Closure():TReturn)|TValue $value
+ * @param mixed ...$args
  * @return ($value is Closure ? TReturn : TValue)
  */
 function value(mixed $value, ...$args)

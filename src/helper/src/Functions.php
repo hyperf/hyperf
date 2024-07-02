@@ -17,7 +17,7 @@ if (! function_exists('value')) {
      * @template TValue
      * @template TReturn
      *
-     * @param (Closure(TValue):TReturn)|TValue $value
+     * @param (Closure():TReturn)|TValue $value
      * @return ($value is Closure ? TReturn : TValue)
      */
     function value(mixed $value, ...$args)
