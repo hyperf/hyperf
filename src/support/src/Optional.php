@@ -16,6 +16,9 @@ use ArrayAccess;
 use Hyperf\Collection\Arr;
 use Hyperf\Macroable\Macroable;
 
+/**
+ * @template TValue
+ */
 class Optional implements ArrayAccess
 {
     use Macroable {
@@ -25,7 +28,7 @@ class Optional implements ArrayAccess
     /**
      * Create a new optional instance.
      *
-     * @param mixed $value the underlying object
+     * @param TValue $value the underlying object
      */
     public function __construct(protected $value)
     {

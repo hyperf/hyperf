@@ -1088,7 +1088,7 @@ class Collection implements Enumerable, ArrayAccess
     public function sortBy($callback, int $options = SORT_REGULAR, bool $descending = false): static
     {
         if (is_array($callback) && ! is_callable($callback)) {
-            return $this->sortByMany($callback);
+            return $this->sortByMany($callback, $options);
         }
 
         $results = [];
@@ -1112,11 +1112,21 @@ class Collection implements Enumerable, ArrayAccess
     /**
      * Sort the collection in descending order using the given callback.
      *
-     * @param (callable(TValue, TKey): mixed)|string $callback
+     * @param array|(callable(TValue, TKey): mixed)|string $callback
      * @return static<TKey, TValue>
      */
     public function sortByDesc($callback, int $options = SORT_REGULAR): static
     {
+        if (is_array($callback) && ! is_callable($callback)) {
+            foreach ($callback as $index => $key) {
+                $comparison = Arr::wrap($key);
+
+                $comparison[1] = 'desc';
+
+                $callback[$index] = $comparison;
+            }
+        }
+
         return $this->sortBy($callback, $options, true);
     }
 
@@ -1589,11 +1599,11 @@ class Collection implements Enumerable, ArrayAccess
      *
      * @return static
      */
-    protected function sortByMany(array $comparisons = [])
+    protected function sortByMany(array $comparisons = [], int $options = SORT_REGULAR)
     {
         $items = $this->items;
 
-        usort($items, function ($a, $b) use ($comparisons) {
+        uasort($items, function ($a, $b) use ($comparisons, $options) {
             foreach ($comparisons as $comparison) {
                 $comparison = Arr::wrap($comparison);
 
@@ -1611,7 +1621,21 @@ class Collection implements Enumerable, ArrayAccess
                         $values = array_reverse($values);
                     }
 
-                    $result = $values[0] <=> $values[1];
+                    if (($options & SORT_FLAG_CASE) === SORT_FLAG_CASE) {
+                        if (($options & SORT_NATURAL) === SORT_NATURAL) {
+                            $result = strnatcasecmp($values[0], $values[1]);
+                        } else {
+                            $result = strcasecmp($values[0], $values[1]);
+                        }
+                    } else {
+                        $result = match ($options) {
+                            SORT_NUMERIC => intval($values[0]) <=> intval($values[1]),
+                            SORT_STRING => strcmp($values[0], $values[1]),
+                            SORT_NATURAL => strnatcmp($values[0], $values[1]),
+                            SORT_LOCALE_STRING => strcoll($values[0], $values[1]),
+                            default => $values[0] <=> $values[1],
+                        };
+                    }
                 }
 
                 if ($result === 0) {

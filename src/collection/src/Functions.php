@@ -213,9 +213,12 @@ function last($array)
 
 /**
  * Return the default value of the given value.
+ * @template TValue
+ * @template TReturn
  *
+ * @param (Closure():TReturn)|TValue $value
  * @param mixed ...$args
- * @return mixed
+ * @return ($value is Closure ? TReturn : TValue)
  */
 function value(mixed $value, ...$args)
 {

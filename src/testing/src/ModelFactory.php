@@ -16,7 +16,7 @@ use Faker\Generator;
 use Hyperf\Database\Model\Factory;
 
 /**
- * @template T
+ * @template TClass
  */
 class ModelFactory
 {
@@ -35,8 +35,8 @@ class ModelFactory
     }
 
     /**
-     * @param class-string<T> $class
-     * @return T
+     * @param class-string<TClass> $class
+     * @return TClass
      */
     public function factory(string $class)
     {
