@@ -1,5 +1,9 @@
 # v3.1.29 - TBD
 
+## Fixed
+
+- [#6925](https://github.com/hyperf/hyperf/pull/6925) Fixed bug that `sortByMany` cannot support options like `sortBy`.
+
 ## Added
 
 - [#6896](https://github.com/hyperf/hyperf/pull/6896) Added `SftpAdapter` for `hyperf/filesystem`.
