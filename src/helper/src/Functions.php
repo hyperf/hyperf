@@ -14,6 +14,12 @@ use Hyperf\Collection\Collection;
 if (! function_exists('value')) {
     /**
      * Return the default value of the given value.
+     * @template TValue
+     * @template TReturn
+     *
+     * @param (Closure():TReturn)|TValue $value
+     * @param mixed ...$args
+     * @return ($value is Closure ? TReturn : TValue)
      */
     function value(mixed $value, ...$args)
     {
@@ -36,8 +42,12 @@ if (! function_exists('retry')) {
     /**
      * Retry an operation a given number of times.
      *
+     * @template TReturn
+     *
      * @param float|int $times
+     * @param callable(int):TReturn $callback
      * @param int $sleep millisecond
+     * @return TReturn
      * @throws Throwable
      */
     function retry($times, callable $callback, int $sleep = 0)
@@ -49,7 +59,12 @@ if (! function_exists('with')) {
     /**
      * Return the given value, optionally passed through the given callback.
      *
-     * @param mixed $value
+     * @template TValue
+     * @template TReturn
+     *
+     * @param TValue $value
+     * @param null|(callable(TValue):TReturn) $callback
+     * @return ($callback is null ? TValue : TReturn)
      */
     function with($value, ?callable $callback = null)
     {
@@ -61,14 +76,18 @@ if (! function_exists('collect')) {
     /**
      * Create a collection from the given value.
      *
-     * @param null|mixed $value
-     * @return Collection
+     * @template TKey of array-key
+     * @template TValue
+     *
+     * @param null|\Hyperf\Contract\Arrayable<TKey, TValue>|iterable<TKey, TValue> $value
+     * @return Collection<TKey, TValue>
      */
     function collect($value = null)
     {
         return \Hyperf\Collection\collect($value);
     }
 }
+
 if (! function_exists('data_fill')) {
     /**
      * Fill in data where it's missing.
@@ -134,12 +153,10 @@ if (! function_exists('last')) {
 if (! function_exists('tap')) {
     /**
      * Call the given Closure with the given value then return the value.
-     *
      * @template TValue
-     *
-     * @param null|callable $callback
      * @param TValue $value
-     * @return TValue
+     * @param null|callable $callback
+     * @return ($callback is null ? HigherOrderTapProxy<TValue> : TValue)
      */
     function tap($value, $callback = null)
     {
@@ -267,9 +284,12 @@ if (! function_exists('swoole_hook_flags')) {
 if (! function_exists('optional')) {
     /**
      * Provide access to optional objects.
+     * @template TValue
+     * @template TReturn
      *
-     * @param mixed $value
-     * @return mixed
+     * @param TValue $value
+     * @param null|(callable(TValue):TReturn) $callback
+     * @return ($callback is null ? \Hyperf\Support\Optional<TValue> : ($value is null ? null : TReturn))
      */
     function optional($value = null, ?callable $callback = null)
     {
@@ -278,6 +298,12 @@ if (! function_exists('optional')) {
 }
 
 if (! function_exists('wait')) {
+    /**
+     * @template TReturn
+     *
+     * @param Closure():TReturn $closure
+     * @return TReturn
+     */
     function wait(Closure $closure, ?float $timeout = null)
     {
         return \Hyperf\Coroutine\wait($closure, $timeout);

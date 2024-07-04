@@ -24,6 +24,11 @@ use Throwable;
 
 /**
  * Return the default value of the given value.
+ * @template TValue
+ * @template TReturn
+ *
+ * @param (Closure(TValue):TReturn)|TValue $value
+ * @return ($value is Closure ? TReturn : TValue)
  */
 function value(mixed $value, ...$args)
 {
@@ -65,8 +70,12 @@ function env($key, $default = null)
 /**
  * Retry an operation a given number of times.
  *
+ * @template TReturn
+ *
  * @param float|int|int[] $times
+ * @param callable(int):TReturn $callback
  * @param int $sleep millisecond
+ * @return TReturn|void
  * @throws Throwable
  */
 function retry($times, callable $callback, int $sleep = 0)
@@ -96,9 +105,11 @@ function retry($times, callable $callback, int $sleep = 0)
  * Return the given value, optionally passed through the given callback.
  *
  * @template TValue
+ * @template TReturn
  *
  * @param TValue $value
- * @return ($callback is null ? TValue : mixed)
+ * @param null|(callable(TValue):TReturn) $callback
+ * @return ($callback is null ? TValue : TReturn)
  */
 function with($value, ?callable $callback = null)
 {
@@ -223,9 +234,12 @@ function swoole_hook_flags(): int
 
 /**
  * Provide access to optional objects.
+ * @template TValue
+ * @template TReturn
  *
- * @param mixed $value
- * @return mixed
+ * @param TValue $value
+ * @param null|(callable(TValue):TReturn) $callback
+ * @return ($callback is null ? Optional<TValue> : ($value is null ? null : TReturn))
  */
 function optional($value = null, ?callable $callback = null)
 {
