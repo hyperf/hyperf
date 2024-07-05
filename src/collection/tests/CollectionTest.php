@@ -1299,5 +1299,39 @@ class CollectionTest extends TestCase
             'b' => ['id' => 2, 'name' => 'b'],
             'a' => ['id' => 1, 'name' => 'a'],
         ]), (string) $dataMany);
+
+        $dataMany = (new $collection(
+            [
+                'e' => ['id' => 5, 'name' => 'e'],
+                'd' => ['id' => 4, 'name' => 'd'],
+                'c' => ['id' => 3, 'name' => 'c'],
+                'b' => ['id' => 2, 'name' => 'b'],
+                'a' => ['id' => 1, 'name' => 'a'],
+            ]
+        ))->sortBy(['id']);
+        $this->assertEquals(Json::encode([
+            'a' => ['id' => 1, 'name' => 'a'],
+            'b' => ['id' => 2, 'name' => 'b'],
+            'c' => ['id' => 3, 'name' => 'c'],
+            'd' => ['id' => 4, 'name' => 'd'],
+            'e' => ['id' => 5, 'name' => 'e'],
+        ]), (string) $dataMany);
+
+        $dataMany = (new $collection(
+            [
+                'e' => ['id' => 5, 'name' => 'e'],
+                'd' => ['id' => 4, 'name' => 'd'],
+                'c' => ['id' => 3, 'name' => 'c'],
+                'b' => ['id' => 2, 'name' => 'b'],
+                'a' => ['id' => 1, 'name' => 'a'],
+            ]
+        ))->sortBy('id');
+        $this->assertEquals(Json::encode([
+            'a' => ['id' => 1, 'name' => 'a'],
+            'b' => ['id' => 2, 'name' => 'b'],
+            'c' => ['id' => 3, 'name' => 'c'],
+            'd' => ['id' => 4, 'name' => 'd'],
+            'e' => ['id' => 5, 'name' => 'e'],
+        ]), (string) $dataMany);
     }
 }
