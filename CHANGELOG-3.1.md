@@ -1,5 +1,11 @@
 # v3.1.30 - TBD
 
+# v3.1.30 - 2024-07-05
+
+## Fixed
+
+- [#6925](https://github.com/hyperf/hyperf/pull/6925) Fixed bug that `sortByMany` don't reset indexes for `Collection`. But it will be return the same result like `sortBy` in `v3.2`.
+
 # v3.1.29 - 2024-07-04
 
 ## Fixed
