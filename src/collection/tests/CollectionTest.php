@@ -1120,6 +1120,7 @@ class CollectionTest extends TestCase
             1 => ['id' => 4, 'name' => 'd'],
             0 => ['id' => 5, 'name' => 'e'],
         ]), (string) $data);
+
         $this->assertEquals(json_encode([
             ['id' => 1, 'name' => 'a'],
             ['id' => 2, 'name' => 'b'],
@@ -1136,7 +1137,7 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => 'a'],
             ]
         ))->sortBy(['id', 'asc']);
-        $this->assertEquals((string) $data, (string) $dataMany);
+        $this->assertEquals((string) $data->values(), (string) $dataMany);
 
         $data = (new $collection(
             [
@@ -1163,7 +1164,7 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => '1e'],
             ]
         ))->sortBy([['name', 'asc']], SORT_NUMERIC);
-        $this->assertEquals((string) $data, (string) $dataMany);
+        $this->assertEquals((string) $data->values(), (string) $dataMany);
 
         $data = (new $collection(
             [
@@ -1190,7 +1191,7 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => '1e'],
             ]
         ))->sortBy([['name', 'asc']], SORT_STRING);
-        $this->assertEquals((string) $data, (string) $dataMany);
+        $this->assertEquals((string) $data->values(), (string) $dataMany);
 
         $data = (new $collection(
             [
@@ -1217,7 +1218,7 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => 'a1'],
             ]
         ))->sortBy([['name', 'asc']], SORT_NATURAL);
-        $this->assertEquals((string) $data, (string) $dataMany);
+        $this->assertEquals((string) $data->values(), (string) $dataMany);
 
         setlocale(LC_COLLATE, 'en_US.utf8');
         $data = (new $collection(
