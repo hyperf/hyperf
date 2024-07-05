@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Collection;
 
 use Exception;
+use Hyperf\Codec\Json;
 use Hyperf\Collection\Collection;
 use Hyperf\Collection\ItemNotFoundException;
 use Hyperf\Collection\LazyCollection;
@@ -1281,5 +1282,22 @@ class CollectionTest extends TestCase
             ]
         ))->sortByDesc(['id']);
         $this->assertEquals((string) $data, (string) $dataMany);
+
+        $dataMany = (new $collection(
+            [
+                'a' => ['id' => 1, 'name' => 'a'],
+                'b' => ['id' => 2, 'name' => 'b'],
+                'c' => ['id' => 3, 'name' => 'c'],
+                'd' => ['id' => 4, 'name' => 'd'],
+                'e' => ['id' => 5, 'name' => 'e'],
+            ]
+        ))->sortByDesc(['id']);
+        $this->assertEquals(Json::encode([
+            'e' => ['id' => 5, 'name' => 'e'],
+            'd' => ['id' => 4, 'name' => 'd'],
+            'c' => ['id' => 3, 'name' => 'c'],
+            'b' => ['id' => 2, 'name' => 'b'],
+            'a' => ['id' => 1, 'name' => 'a'],
+        ]), (string) $dataMany);
     }
 }
