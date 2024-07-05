@@ -1281,7 +1281,7 @@ class CollectionTest extends TestCase
                 ['id' => 5, 'name' => 'e'],
             ]
         ))->sortByDesc(['id']);
-        $this->assertEquals((string) $data, (string) $dataMany);
+        $this->assertEquals((string) $data->values(), (string) $dataMany);
 
         $dataMany = (new $collection(
             [
