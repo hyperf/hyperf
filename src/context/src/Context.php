@@ -12,15 +12,26 @@ declare(strict_types=1);
 
 namespace Hyperf\Context;
 
+use ArrayObject;
 use Closure;
 use Hyperf\Engine\Coroutine;
 
 use function Hyperf\Support\value;
 
+/**
+ * @template TValue
+ */
 class Context
 {
+    /**
+     * @var array<string, TValue>
+     */
     protected static array $nonCoContext = [];
 
+    /**
+     * @param TValue $value
+     * @return TValue
+     */
     public static function set(string $id, mixed $value, ?int $coroutineId = null): mixed
     {
         if (Coroutine::id() > 0) {
@@ -32,6 +43,9 @@ class Context
         return $value;
     }
 
+    /**
+     * @return TValue
+     */
     public static function get(string $id, mixed $default = null, ?int $coroutineId = null): mixed
     {
         if (Coroutine::id() > 0) {
@@ -105,6 +119,8 @@ class Context
 
     /**
      * Retrieve the value and store it if not exists.
+     * @param TValue $value
+     * @return TValue
      */
     public static function getOrSet(string $id, mixed $value, ?int $coroutineId = null): mixed
     {
@@ -115,6 +131,9 @@ class Context
         return self::get($id, null, $coroutineId);
     }
 
+    /**
+     * @return null|array<string, TValue>|ArrayObject<string, TValue>
+     */
     public static function getContainer(?int $coroutineId = null)
     {
         if (Coroutine::id() > 0) {
