@@ -19,7 +19,7 @@ use Hyperf\Engine\Coroutine;
 use function Hyperf\Support\value;
 
 /**
- * @template TKey of array-key
+ * @template TKey of string
  * @template TValue
  */
 class Context
@@ -111,7 +111,7 @@ class Context
      * Retrieve the value and override it by closure.
      *
      * @param TKey $id
-     * @param (Closure():TValue) $closure
+     * @param (Closure(TValue):TValue) $closure
      */
     public static function override(string $id, Closure $closure, ?int $coroutineId = null): mixed
     {
