@@ -42,10 +42,7 @@ class FilesystemFactory
             return new Filesystem($adapter, $options['storage'][$adapterName] ?? []);
         }
 
-        return new Filesystem(
-            $adapter,
-            (new Config($options['storage'][$adapterName]))->toArray()
-        );
+        return new Filesystem($adapter, new Config($options['storage'][$adapterName]));
     }
 
     public function getAdapter($options, $adapterName)
