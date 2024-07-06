@@ -12,9 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
-use Dotenv\Dotenv;
-use Dotenv\Repository\Adapter;
-use Dotenv\Repository\RepositoryBuilder;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\LazyLoader\LazyLoader;
@@ -43,7 +40,7 @@ class ClassLoader
         $composerLoader = Composer::getLoader();
 
         if (file_exists(BASE_PATH . '/.env')) {
-            static::loadDotenv();
+            DotenvManager::load([BASE_PATH]);
         }
 
         // Scan by ScanConfig to generate the reflection class map
@@ -57,15 +54,5 @@ class ClassLoader
 
         // Initialize Lazy Loader. This will prepend LazyLoader to the top of autoload queue.
         LazyLoader::bootstrap($configDir);
-    }
-
-    protected static function loadDotenv(): void
-    {
-        $repository = RepositoryBuilder::createWithNoAdapters()
-            ->addAdapter(Adapter\PutenvAdapter::class)
-            ->immutable()
-            ->make();
-
-        Dotenv::create($repository, [BASE_PATH])->load();
     }
 }
