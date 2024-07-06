@@ -53,7 +53,7 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      * Handle dynamic calls to the fluent instance to set attributes.
      *
      * @param TKey $method
-     * @param array{TValue,...mixed} $parameters
+     * @param array $parameters
      * @return $this
      */
     public function __call($method, $parameters)
