@@ -10,15 +10,18 @@
     ],
     "homepage": "https://hyperf.io",
     "support": {
-        "docs": "https://hyperf.wiki",
         "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
         "php": ">=8.1",
         "hyperf/command": "~3.1.0",
         "zircote/swagger-php": "^4.6"
+    },
+    "suggest": {
+        "hyperf/validation": "Required to use SwaggerRequest."
     },
     "autoload": {
         "psr-4": {
@@ -29,9 +32,6 @@
         "psr-4": {
             "HyperfTest\\Swagger\\": "tests/"
         }
-    },
-    "suggest": {
-        "hyperf/validation": "Required to use SwaggerRequest."
     },
     "config": {
         "sort-packages": true

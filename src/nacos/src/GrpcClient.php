@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nacos;
 
 use Exception;
@@ -239,7 +240,6 @@ class GrpcClient
 
         $request = new ConnectionSetupRequest($this->namespaceId, $this->module);
         $this->write($id, $request);
-        sleep(1);
 
         return $id;
     }

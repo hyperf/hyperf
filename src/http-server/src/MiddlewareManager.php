@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer;
 
 use Hyperf\Stdlib\SplPriorityQueue;
@@ -45,6 +46,16 @@ class MiddlewareManager
     public static function get(string $server, string $rule, string $method): array
     {
         $method = strtoupper($method);
+        if (isset(static::$container[$server][$rule][$method])) {
+            return static::$container[$server][$rule][$method];
+        }
+
+        // For HEAD requests, attempt fallback to GET
+        // keep the same with FastRoute\Dispatcher\RegexBasedAbstract::dispatch
+        if ($method === 'HEAD') {
+            $method = 'GET';
+        }
+
         return static::$container[$server][$rule][$method] ?? [];
     }
 

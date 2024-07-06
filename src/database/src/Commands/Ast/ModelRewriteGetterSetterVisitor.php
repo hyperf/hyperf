@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\CodeParser\PhpParser;
@@ -42,6 +43,8 @@ class ModelRewriteGetterSetterVisitor extends AbstractVisitor
         $methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes);
 
         $this->collectMethods($methods);
+
+        return null;
     }
 
     public function afterTraverse(array $nodes)

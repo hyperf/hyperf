@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
 use Hyperf\CodeParser\PhpParser;
@@ -83,7 +84,7 @@ class SomeClass extends \App\SomeClass
 CODETEMPLATE;
 
         $builder = new ClassLazyProxyBuilder();
-        $builder->addClassBoilerplate('Lazy\\SomeClass', 'App\\SomeClass');
+        $builder->addClassBoilerplate('Lazy\SomeClass', 'App\SomeClass');
         $builder->addClassRelationship();
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $ast = $parser->parse($code);
@@ -103,6 +104,6 @@ CODETEMPLATE;
     private function getStmt($ast)
     {
         $stmts = PhpParser::getInstance()->getAllMethodsFromStmts($ast);
-        return [$stmts, 'foo\\foo'];
+        return [$stmts, 'foo\foo'];
     }
 }

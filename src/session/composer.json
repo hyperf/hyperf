@@ -8,21 +8,21 @@
     ],
     "homepage": "https://hyperf.io",
     "support": {
-        "docs": "https://hyperf.wiki",
         "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
         "php": ">=8.1",
-        "psr/http-server-middleware": "^1.0",
         "hyperf/collection": "~3.1.0",
         "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0"
+        "hyperf/utils": "~3.1.0",
+        "psr/http-server-middleware": "^1.0"
     },
     "suggest": {
-        "psr/container": "Required to use SessionFactory.",
-        "hyperf/config": "Required to load session config."
+        "hyperf/config": "Required to load session config.",
+        "psr/container": "Required to use SessionFactory."
     },
     "autoload": {
         "psr-4": {

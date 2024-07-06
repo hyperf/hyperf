@@ -9,12 +9,33 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Schema;
 
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 
 class MySqlBuilder extends Builder
 {
+    /**
+     * Create a database in the schema.
+     */
+    public function createDatabase(string $name): bool
+    {
+        return $this->connection->statement(
+            $this->grammar->compileCreateDatabase($name, $this->connection)
+        );
+    }
+
+    /**
+     * Drop a database from the schema if the database exists.
+     */
+    public function dropDatabaseIfExists(string $name): bool
+    {
+        return $this->connection->statement(
+            $this->grammar->compileDropDatabaseIfExists($name)
+        );
+    }
+
     /**
      * Determine if the given table exists.
      *
@@ -80,6 +101,44 @@ class MySqlBuilder extends Builder
         /** @var MySqlProcessor $processor */
         $processor = $this->connection->getPostProcessor();
         return $processor->processListing($results);
+    }
+
+    /**
+     * Get the indexes for a given table.
+     */
+    public function getIndexes(string $table): array
+    {
+        $table = $this->connection->getTablePrefix() . $table;
+
+        return $this->connection->getPostProcessor()->processIndexes(
+            $this->connection->selectFromWriteConnection(
+                $this->grammar->compileIndexes($this->connection->getDatabaseName(), $table)
+            )
+        );
+    }
+
+    /**
+     * Get the tables that belong to the database.
+     */
+    public function getTables(): array
+    {
+        return $this->connection->getPostProcessor()->processTables(
+            $this->connection->selectFromWriteConnection(
+                $this->grammar->compileTables($this->connection->getDatabaseName())
+            )
+        );
+    }
+
+    /**
+     * Get the views for the database.
+     */
+    public function getViews(): array
+    {
+        return $this->connection->getPostProcessor()->processViews(
+            $this->connection->selectFromWriteConnection(
+                $this->grammar->compileViews($this->connection->getDatabaseName())
+            )
+        );
     }
 
     /**

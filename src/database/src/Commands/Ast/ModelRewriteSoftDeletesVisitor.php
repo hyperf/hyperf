@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\Collection\Collection;
@@ -73,6 +74,8 @@ class ModelRewriteSoftDeletesVisitor extends AbstractVisitor
                 }
             }
         }
+
+        return null;
     }
 
     protected function rewriteSoftDeletesUse(?Node\Stmt\Use_ $node = null): ?Node\Stmt\Use_

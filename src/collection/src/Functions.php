@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Collection;
 
 use Closure;
@@ -212,9 +213,12 @@ function last($array)
 
 /**
  * Return the default value of the given value.
+ * @template TValue
+ * @template TReturn
  *
+ * @param (Closure():TReturn)|TValue $value
  * @param mixed ...$args
- * @return mixed
+ * @return ($value is Closure ? TReturn : TValue)
  */
 function value(mixed $value, ...$args)
 {

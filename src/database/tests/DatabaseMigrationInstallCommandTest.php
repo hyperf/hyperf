@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Commands\Migrations\InstallCommand;
 use Hyperf\Database\Migrations\MigrationRepositoryInterface;
+use HyperfTest\Database\Stubs\ContainerStub;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -28,6 +30,11 @@ use Symfony\Component\Console\Output\NullOutput;
 class DatabaseMigrationInstallCommandTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
+
+    protected function setUp(): void
+    {
+        ContainerStub::unsetContainer();
+    }
 
     protected function tearDown(): void
     {

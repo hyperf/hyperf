@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool;
 
 use Hyperf\Devtool\Adapter\AbstractAdapter;
@@ -25,12 +26,12 @@ class Info
         if (! $this->has($key)) {
             return null;
         }
-        $class = __NAMESPACE__ . '\\Adapter\\' . ucfirst($key);
+        $class = __NAMESPACE__ . '\Adapter\\' . ucfirst($key);
         return $this->container->get($class);
     }
 
     public function has(string $key): bool
     {
-        return class_exists(__NAMESPACE__ . '\\Adapter\\' . ucfirst($key));
+        return class_exists(__NAMESPACE__ . '\Adapter\\' . ucfirst($key));
     }
 }

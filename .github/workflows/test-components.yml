@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v5.1.2'
+  SW_VERSION: 'v5.1.3'
 jobs:
   database:
     name: Test for Database
@@ -317,6 +317,7 @@ jobs:
       - name: Run Test Cases
         run: |
           ./.travis/requirement.install.sh
+          composer remove thecodingmachine/graphqlite --dev -W
           composer require "psr/simple-cache:${{ matrix.psr-version }}"
           composer update -oW
           composer analyse src/cache

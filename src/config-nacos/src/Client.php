@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigNacos;
 
 use Hyperf\Codec\Json;
@@ -17,6 +18,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Exception\RequestException;
+use JetBrains\PhpStorm\ArrayShape;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -46,8 +48,8 @@ class Client implements ClientInterface
 
         $config = [];
         foreach ($listener as $key => $item) {
-            $dataId = $item['data_id'];
-            $group = $item['group'];
+            $dataId = $item['data_id'] ?? '';
+            $group = $item['group'] ?? '';
             $tenant = $item['tenant'] ?? null;
             $type = $item['type'] ?? null;
             $response = $this->client->config->get($dataId, $group, $tenant);
@@ -64,29 +66,25 @@ class Client implements ClientInterface
     public function decode(string $body, ?string $type = null): array|string
     {
         $type = strtolower((string) $type);
-        switch ($type) {
-            case 'json':
-                return Json::decode($body);
-            case 'yml':
-            case 'yaml':
-                return yaml_parse($body);
-            case 'xml':
-                return Xml::toArray($body);
-            default:
-                return $body;
-        }
+
+        return match ($type) {
+            'json' => Json::decode($body),
+            'yml', 'yaml' => yaml_parse($body),
+            'xml' => Xml::toArray($body),
+            default => $body,
+        };
     }
 
-    /**
-     * @param $optional = [
-     *     'groupName' => '',
-     *     'namespaceId' => '',
-     *     'clusters' => '', // 集群名称(字符串，多个集群用逗号分隔)
-     *     'healthyOnly' => false,
-     * ]
-     */
-    public function getValidNodes(string $serviceName, array $optional = []): array
-    {
+    public function getValidNodes(
+        string $serviceName,
+        #[ArrayShape([
+            'groupName' => 'string',
+            'namespaceId' => 'string',
+            'clusters' => 'string', // 集群名称(字符串，多个集群用逗号分隔)
+            'healthyOnly' => 'bool',
+        ])]
+        array $optional = []
+    ): array {
         $response = $this->client->instance->list($serviceName, $optional);
         if ($response->getStatusCode() !== 200) {
             throw new RequestException((string) $response->getBody(), $response->getStatusCode());

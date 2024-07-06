@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Constants;
 
 use BackedEnum;
+use Hyperf\Constants\Annotation\Message;
 use Hyperf\Stringable\Str;
 use ReflectionClassConstant;
 
@@ -33,6 +35,14 @@ class AnnotationReader
             // Not support float and bool, because it will be convert to int.
             if ($docComment && (is_int($code) || is_string($code))) {
                 $result[$code] = $this->parse($docComment, $result[$code] ?? []);
+            }
+
+            // Support PHP8 Attribute.
+            foreach ($classConstant->getAttributes() as $ref) {
+                $attribute = $ref->newInstance();
+                if ($attribute instanceof Message) {
+                    $result[$code][$attribute->getLowerCaseKey()] = $attribute->value;
+                }
             }
         }
 

@@ -39,6 +39,7 @@
 - [hyperf/model-cache](https://github.com/hyperf/model-cache) Hyperf 官方提供的基於 [hyperf/database](https://github.com/hyperf/database) 元件的自動模型快取元件
 - [reasno/fastmongo](https://github.com/Reasno/fastmongo) 基於 `hyperf/gotask` 實現的協程化 `MongoDB` 客戶端
 - [hyperf-ext/translatable](https://github.com/hyperf-ext/translatable) 為模型提供多語言能力
+- [233cy/hyperf-tenant](https://github.com/233cy/hyperf-tenant) 為模型提供多租戶欄位區分
 
 ## 依賴注入容器
 
@@ -102,7 +103,8 @@
 
 ## ID 生成器
 
-- [hyperf/snowflake](https://github.com/hyperf/snowflake) Hyperf 官方提供的 Snowflake ID 生成器元件 (beta)
+- [hyperf/snowflake](https://github.com/hyperf/snowflake) Hyperf 官方提供的 Snowflake ID 生成器元件
+- [tangwei/snowflake](https://github.com/tw2066/snowflake) 基於`hyperf/snowflake`元件，增強了`工作機器ID`的維護
 
 ## 文件生成
 
@@ -152,6 +154,7 @@
 ## 分散式鎖
 
 - [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根據 Laravel 的 lock 元件改寫，適配於 Hyperf 框架
+- [pudongping/hyperf-wise-locksmith](https://github.com/pudongping/hyperf-wise-locksmith) 適配 hyperf 框架的互斥鎖庫，用於在高併發場景下提供 PHP 程式碼的有序執行。支援檔案鎖、分散式鎖、紅鎖、協程級互斥鎖
 
 ## 分散式事務
 

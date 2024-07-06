@@ -9,17 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server;
 
 use Hyperf\Engine\Contract\SocketInterface;
 
 class Connection
 {
-    protected $socket;
-
-    public function __construct(SocketInterface $conn)
+    public function __construct(protected SocketInterface $socket)
     {
-        $this->socket = $conn;
     }
 
     public function recv(float $timeout = 0)

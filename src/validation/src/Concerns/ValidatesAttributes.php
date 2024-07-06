@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Concerns;
 
 use Brick\Math\BigDecimal;
@@ -251,6 +252,14 @@ trait ValidatesAttributes
         }
 
         return empty(array_diff_key($value, array_fill_keys($parameters, '')));
+    }
+
+    /**
+     * Validate that an attribute is a list.
+     */
+    public function validateList(string $attribute, mixed $value): bool
+    {
+        return is_array($value) && array_is_list($value);
     }
 
     /**
@@ -1243,6 +1252,22 @@ trait ValidatesAttributes
         }
         if ($value instanceof SplFileInfo) {
             return (string) $value->getPath() !== '';
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate that other attributes do not exist when this attribute exists.
+     */
+    public function validateProhibits(string $attribute, mixed $value, mixed $parameters): bool
+    {
+        if ($this->validateRequired($attribute, $value)) {
+            foreach ($parameters as $parameter) {
+                if ($this->validateRequired($parameter, Arr::get($this->data, $parameter))) {
+                    return false;
+                }
+            }
         }
 
         return true;

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
@@ -30,7 +31,7 @@ abstract class Pool implements PoolInterface
 
     protected int $currentConnections = 0;
 
-    protected null|LowFrequencyInterface|FrequencyInterface $frequency = null;
+    protected null|FrequencyInterface|LowFrequencyInterface $frequency = null;
 
     public function __construct(protected ContainerInterface $container, array $config = [])
     {
@@ -136,6 +137,7 @@ abstract class Pool implements PoolInterface
             'waitTimeout' => $options['wait_timeout'] ?? 3.0,
             'heartbeat' => $options['heartbeat'] ?? -1,
             'maxIdleTime' => $options['max_idle_time'] ?? 60.0,
+            'events' => $options['events'] ?? [],
         ]);
     }
 

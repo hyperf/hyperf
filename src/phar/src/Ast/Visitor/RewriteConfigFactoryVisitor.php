@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Phar\Ast\Visitor;
 
 use PhpParser\Node;
@@ -17,7 +18,7 @@ use PhpParser\ParserFactory;
 
 class RewriteConfigFactoryVisitor extends NodeVisitorAbstract
 {
-    protected $replaceFunc = "<?php
+    protected string $replaceFunc = "<?php
 class ConfigFactory{
     private function readPaths(array \$paths)
     {

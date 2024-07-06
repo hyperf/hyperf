@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Schema\Grammars;
 
 use Hyperf\Database\Connection;
@@ -39,6 +40,33 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine the tables.
+     */
+    public function compileTables(string $database): string
+    {
+        return sprintf(
+            'select table_name as `name`, (data_length + index_length) as `size`, '
+            . 'table_comment as `comment`, engine as `engine`, table_collation as `collation` '
+            . "from information_schema.tables where table_schema = %s and table_type in ('BASE TABLE', 'SYSTEM VERSIONED') "
+            . 'order by table_name',
+            $this->quoteString($database)
+        );
+    }
+
+    /**
+     * Compile the query to determine the views.
+     */
+    public function compileViews(string $database): string
+    {
+        return sprintf(
+            'select table_name as `name`, view_definition as `definition` '
+            . 'from information_schema.views where table_schema = %s '
+            . 'order by table_name',
+            $this->quoteString($database)
+        );
+    }
+
+    /**
      * Compile the query to determine the list of columns.
      */
     public function compileColumnListing(): string
@@ -52,6 +80,40 @@ class MySqlGrammar extends Grammar
     public function compileColumns(): string
     {
         return 'select `table_schema`, `table_name`, `column_name`, `ordinal_position`, `column_default`, `is_nullable`, `data_type`, `column_comment` from information_schema.columns where `table_schema` = ? order by ORDINAL_POSITION';
+    }
+
+    /**
+     * Compile a create database command.
+     */
+    public function compileCreateDatabase(string $name, Connection $connection): string
+    {
+        $charset = $connection->getConfig('charset');
+        $collation = $connection->getConfig('collation');
+
+        if (! $charset || ! $collation) {
+            return sprintf(
+                'create database %s',
+                $this->wrapValue($name),
+            );
+        }
+
+        return sprintf(
+            'create database %s default character set %s default collate %s',
+            $this->wrapValue($name),
+            $this->wrapValue($charset),
+            $this->wrapValue($collation),
+        );
+    }
+
+    /**
+     * Compile a drop database if exists command.
+     */
+    public function compileDropDatabaseIfExists(string $name): string
+    {
+        return sprintf(
+            'drop database if exists %s',
+            $this->wrapValue($name)
+        );
     }
 
     /**
@@ -308,6 +370,21 @@ class MySqlGrammar extends Grammar
     public function compileGetAllTables()
     {
         return 'SHOW FULL TABLES WHERE table_type = \'BASE TABLE\'';
+    }
+
+    /**
+     * Compile the query to determine the indexes.
+     */
+    public function compileIndexes(string $database, string $table): string
+    {
+        return sprintf(
+            'select index_name as `name`, group_concat(column_name order by seq_in_index) as `columns`, '
+            . 'index_type as `type`, not non_unique as `unique` '
+            . 'from information_schema.statistics where table_schema = %s and table_name = %s '
+            . 'group by index_name, index_type, non_unique',
+            $this->quoteString($database),
+            $this->quoteString($table)
+        );
     }
 
     /**

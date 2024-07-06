@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Migrations;
 
 interface MigrationRepositoryInterface
@@ -78,8 +79,6 @@ interface MigrationRepositoryInterface
 
     /**
      * Set the information source to gather data.
-     *
-     * @param string $name
      */
     public function setSource(?string $name);
 }

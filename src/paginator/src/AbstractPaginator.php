@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Paginator;
 
 use ArrayAccess;
@@ -81,6 +82,11 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
      * The current page resolver callback.
      */
     protected static ?Closure $currentPageResolver = null;
+
+    /**
+     * The query string resolver callback.
+     */
+    protected static ?Closure $queryStringResolver = null;
 
     /**
      * Make dynamic calls into the collection.
@@ -161,7 +167,7 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
      *
      * @param null|array|string $key
      */
-    public function appends($key, ?string $value = null): static
+    public function appends($key, null|array|string $value = null): static
     {
         if (is_null($key)) {
             return $this;
@@ -411,6 +417,38 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
     }
 
     /**
+     * Add all current query string values to the paginator.
+     */
+    public function withQueryString(): static
+    {
+        if (isset(static::$queryStringResolver)) {
+            return $this->appends(call_user_func(static::$queryStringResolver));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Resolve the query string or return the default value.
+     */
+    public static function resolveQueryString(null|array|string $default = null): string
+    {
+        if (isset(static::$queryStringResolver)) {
+            return (static::$queryStringResolver)();
+        }
+
+        return $default;
+    }
+
+    /**
+     * Set with query string resolver callback.
+     */
+    public static function queryStringResolver(Closure $resolver): void
+    {
+        static::$queryStringResolver = $resolver;
+    }
+
+    /**
      * Determine if the given value is a valid page number.
      */
     protected function isValidPageNumber(int $page): bool
@@ -433,7 +471,7 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
     /**
      * Add a query string value to the paginator.
      */
-    protected function addQuery(string $key, string $value): static
+    protected function addQuery(string $key, array|string $value): static
     {
         if ($key !== $this->pageName) {
             $this->query[$key] = $value;

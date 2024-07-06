@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Compiler;
 
 use Hyperf\Collection\Arr;
@@ -266,8 +267,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
         }
 
         if (is_null($alias)) {
-            $alias = Str::contains($class, '\\View\\Components\\')
-                            ? collect(explode('\\', Str::after($class, '\\View\\Components\\')))->map(fn ($segment) => Str::kebab($segment))->implode(':')
+            $alias = Str::contains($class, '\View\Components\\')
+                            ? collect(explode('\\', Str::after($class, '\View\Components\\')))->map(fn ($segment) => Str::kebab($segment))->implode(':')
                             : Str::kebab(class_basename($class));
         }
 

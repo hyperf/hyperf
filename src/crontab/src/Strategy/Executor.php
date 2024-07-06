@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab\Strategy;
 
 use Carbon\Carbon;
@@ -28,6 +29,7 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use RuntimeException;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Throwable;
@@ -48,15 +50,14 @@ class Executor
 
     public function __construct(protected ContainerInterface $container)
     {
-        if ($container->has(LoggerInterface::class)) {
-            $this->logger = $container->get(LoggerInterface::class);
-        } elseif ($container->has(StdoutLoggerInterface::class)) {
-            $this->logger = $container->get(StdoutLoggerInterface::class);
-        }
+        $this->logger = match (true) {
+            $container->has(LoggerInterface::class) => $container->get(LoggerInterface::class),
+            $container->has(StdoutLoggerInterface::class) => $container->get(StdoutLoggerInterface::class),
+            default => null,
+        };
         if ($container->has(EventDispatcherInterface::class)) {
             $this->dispatcher = $container->get(EventDispatcherInterface::class);
         }
-
         $this->timer = new Timer($this->logger);
     }
 
@@ -87,7 +88,7 @@ class Executor
                 case 'command':
                     $input = make(ArrayInput::class, [$crontab->getCallback()]);
                     $output = make(NullOutput::class);
-                    /** @var \Symfony\Component\Console\Application */
+                    /** @var Application */
                     $application = $this->container->get(ApplicationInterface::class);
                     $application->setAutoExit(false);
                     $application->setCatchExceptions(false);

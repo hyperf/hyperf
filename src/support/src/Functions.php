@@ -9,17 +9,26 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Support;
 
+use Carbon\Carbon;
 use Closure;
+use DateTimeZone;
 use Hyperf\Collection\Arr;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Di\Container;
 use Hyperf\Stringable\StrCache;
 use Hyperf\Support\Backoff\ArrayBackoff;
 use Throwable;
 
 /**
  * Return the default value of the given value.
+ * @template TValue
+ * @template TReturn
+ *
+ * @param (Closure(TValue):TReturn)|TValue $value
+ * @return ($value is Closure ? TReturn : TValue)
  */
 function value(mixed $value, ...$args)
 {
@@ -61,8 +70,12 @@ function env($key, $default = null)
 /**
  * Retry an operation a given number of times.
  *
+ * @template TReturn
+ *
  * @param float|int|int[] $times
+ * @param callable(int):TReturn $callback
  * @param int $sleep millisecond
+ * @return TReturn|void
  * @throws Throwable
  */
 function retry($times, callable $callback, int $sleep = 0)
@@ -91,9 +104,14 @@ function retry($times, callable $callback, int $sleep = 0)
 /**
  * Return the given value, optionally passed through the given callback.
  *
- * @param mixed $value
+ * @template TValue
+ * @template TReturn
+ *
+ * @param TValue $value
+ * @param null|(callable(TValue):TReturn) $callback
+ * @return ($callback is null ? TValue : TReturn)
  */
-function with($value, callable $callback = null)
+function with($value, ?callable $callback = null)
 {
     return is_null($callback) ? $value : $callback($value);
 }
@@ -196,7 +214,7 @@ function getter(string $property): string
 function make(string $name, array $parameters = [])
 {
     if (ApplicationContext::hasContainer()) {
-        /** @var \Hyperf\Di\Container $container */
+        /** @var Container $container */
         $container = ApplicationContext::getContainer();
         if (method_exists($container, 'make')) {
             return $container->make($name, $parameters);
@@ -216,11 +234,14 @@ function swoole_hook_flags(): int
 
 /**
  * Provide access to optional objects.
+ * @template TValue
+ * @template TReturn
  *
- * @param mixed $value
- * @return mixed
+ * @param TValue $value
+ * @param null|(callable(TValue):TReturn) $callback
+ * @return ($callback is null ? Optional<TValue> : ($value is null ? null : TReturn))
  */
-function optional($value = null, callable $callback = null)
+function optional($value = null, ?callable $callback = null)
 {
     if (is_null($callback)) {
         return new Optional($value);
@@ -263,4 +284,26 @@ function build_sql(string $sql, array $bindings = []): string
 function msleep(int $milliSeconds): void
 {
     usleep($milliSeconds * 1000);
+}
+
+/**
+ * Create a new Carbon instance for the current time.
+ *
+ * @param null|DateTimeZone|string $tz
+ * @return Carbon
+ */
+function now($tz = null)
+{
+    return Carbon::now($tz);
+}
+
+/**
+ * Create a new Carbon instance for the current date.
+ *
+ * @param null|DateTimeZone|string $tz
+ * @return Carbon
+ */
+function today($tz = null)
+{
+    return Carbon::today($tz);
 }

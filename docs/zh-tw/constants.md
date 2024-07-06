@@ -35,8 +35,10 @@ composer require hyperf/constants
 透過 `gen:constant` 命令可以快速的生成一個列舉類。
 
 ```bash
-php bin/hyperf.php gen:constant ErrorCode
+php bin/hyperf.php gen:constant ErrorCode --type enum
 ```
+
+
 
 ```php
 <?php
@@ -45,21 +47,19 @@ declare(strict_types=1);
 
 namespace App\Constants;
 
-use Hyperf\Constants\AbstractConstants;
 use Hyperf\Constants\Annotation\Constants;
+use Hyperf\Constants\Annotation\Message;
+use Hyperf\Constants\EnumConstantsTrait;
 
 #[Constants]
-class ErrorCode extends AbstractConstants
+enum ErrorCode: int
 {
-    /**
-     * @Message("Server Error！")
-     */
-    const SERVER_ERROR = 500;
+    use EnumConstantsTrait
+    #[Message("Server Error！")]
+    case SERVER_ERROR = 500;
 
-    /**
-     * @Message("系統引數錯誤")
-     */
-    const SYSTEM_INVALID = 700;
+    #[Message("系統引數錯誤")]
+    case SYSTEM_INVALID = 700;
 }
 ```
 
@@ -123,16 +123,18 @@ class IndexController extends AbstractController
 ```php
 <?php
 
-use Hyperf\Constants\AbstractConstants;
+
 use Hyperf\Constants\Annotation\Constants;
+use Hyperf\Constants\Annotation\Message;
+use Hyperf\Constants\EnumConstantsTrait;
 
 #[Constants]
-class ErrorCode extends AbstractConstants
+enum ErrorCode: int
 {
-    /**
-     * @Message("Params %s is invalid.")
-     */
-    const PARAMS_INVALID = 1000;
+    use EnumConstantsTrait;
+    
+    #[Message("Params %s is invalid.")]
+    case PARAMS_INVALID = 1000;
 }
 
 $message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, ['user_id']);
@@ -160,16 +162,16 @@ return [
     'params.invalid' => 'Params :param is invalid.',
 ];
 
-use Hyperf\Constants\AbstractConstants;
 use Hyperf\Constants\Annotation\Constants;
+use Hyperf\Constants\Annotation\Message;
+use Hyperf\Constants\EnumConstantsTrait;
 
 #[Constants]
-class ErrorCode extends AbstractConstants
+enum ErrorCode: int
 {
-    /**
-     * @Message("params.invalid")
-     */
-    const PARAMS_INVALID = 1000;
+
+    #[Message("params.invalid")]
+    case PARAMS_INVALID = 1000;
 }
 
 $message = ErrorCode::getMessage(ErrorCode::SERVER_ERROR, ['param' => 'user_id']);

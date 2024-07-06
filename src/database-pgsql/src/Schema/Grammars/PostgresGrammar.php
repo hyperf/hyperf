@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\PgSQL\Schema\Grammars;
 
+use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Grammars\Grammar;
 use Hyperf\Support\Fluent;
@@ -51,7 +53,7 @@ class PostgresGrammar extends Grammar
      * Compile a create database command.
      *
      * @param string $name
-     * @param \Hyperf\Database\Connection $connection
+     * @param Connection $connection
      */
     public function compileCreateDatabase($name, $connection): string
     {
@@ -76,6 +78,25 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine the tables.
+     */
+    public function compileTables(): string
+    {
+        return 'select c.relname as name, n.nspname as schema, pg_total_relation_size(c.oid) as size, '
+            . "obj_description(c.oid, 'pg_class') as comment from pg_class c, pg_namespace n "
+            . "where c.relkind in ('r', 'p') and n.oid = c.relnamespace and n.nspname not in ('pg_catalog', 'information_schema') "
+            . 'order by c.relname';
+    }
+
+    /**
+     * Compile the query to determine the views.
+     */
+    public function compileViews(): string
+    {
+        return "select viewname as name, schemaname as schema, definition from pg_views where schemaname not in ('pg_catalog', 'information_schema') order by viewname";
+    }
+
+    /**
      * Compile the query to determine if a table exists.
      */
     public function compileTableExists(): string
@@ -97,6 +118,28 @@ class PostgresGrammar extends Grammar
     public function compileColumns(): string
     {
         return 'select table_schema,table_name,column_name,ordinal_position,column_default,is_nullable,data_type from information_schema.columns where table_schema = ? order by ORDINAL_POSITION';
+    }
+
+    /**
+     * Compile the query to determine the indexes.
+     */
+    public function compileIndexes(string $schema, string $table): string
+    {
+        return sprintf(
+            "select ic.relname as name, string_agg(a.attname, ',' order by indseq.ord) as columns, "
+            . 'am.amname as "type", i.indisunique as "unique", i.indisprimary as "primary" '
+            . 'from pg_index i '
+            . 'join pg_class tc on tc.oid = i.indrelid '
+            . 'join pg_namespace tn on tn.oid = tc.relnamespace '
+            . 'join pg_class ic on ic.oid = i.indexrelid '
+            . 'join pg_am am on am.oid = ic.relam '
+            . 'join lateral unnest(i.indkey) with ordinality as indseq(num, ord) on true '
+            . 'left join pg_attribute a on a.attrelid = i.indrelid and a.attnum = indseq.num '
+            . 'where tc.relname = %s and tn.nspname = %s '
+            . 'group by ic.relname, am.amname, i.indisunique, i.indisprimary',
+            $this->quoteString($table),
+            $this->quoteString($schema)
+        );
     }
 
     /**

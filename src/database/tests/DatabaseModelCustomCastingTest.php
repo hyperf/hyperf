@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Collection\Arr;
@@ -18,6 +19,7 @@ use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Exception\InvalidCastException;
 use Hyperf\Database\Model\CastsValue;
 use Hyperf\Database\Model\Model;
+use HyperfTest\Database\Stubs\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -29,12 +31,13 @@ use stdClass;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class DatabaseModelCustomCastingTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        ContainerStub::unsetContainer();
+    }
+
     protected function tearDown(): void
     {
         Mockery::close();

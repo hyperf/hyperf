@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model;
 
 use ArrayAccess;
@@ -19,68 +20,45 @@ class Factory implements ArrayAccess
 {
     /**
      * The model definitions in the container.
-     *
-     * @var array
      */
-    protected $definitions = [];
+    protected array $definitions = [];
 
     /**
      * The registered model states.
-     *
-     * @var array
      */
-    protected $states = [];
+    protected array $states = [];
 
     /**
      * The registered after making callbacks.
-     *
-     * @var array
      */
-    protected $afterMaking = [];
+    protected array $afterMaking = [];
 
     /**
      * The registered after creating callbacks.
-     *
-     * @var array
      */
-    protected $afterCreating = [];
-
-    /**
-     * The Faker instance for the builder.
-     *
-     * @var \Faker\Generator
-     */
-    protected $faker;
+    protected array $afterCreating = [];
 
     /**
      * Create a new factory instance.
      */
-    public function __construct(Faker $faker)
+    public function __construct(protected Faker $faker)
     {
-        $this->faker = $faker;
     }
 
     /**
      * Create a new factory container.
-     *
-     * @param null|string $pathToFactories
-     * @return static
      */
-    public static function construct(Faker $faker, $pathToFactories = null)
+    public static function construct(Faker $faker, string $pathToFactories = BASE_PATH . '/database/factories'): static
     {
-        $pathToFactories = $pathToFactories ?: database_path('factories');
-
         return (new static($faker))->load($pathToFactories);
     }
 
     /**
      * Define a class with a given short-name.
      *
-     * @param string $class
-     * @param string $name
      * @return $this
      */
-    public function defineAs($class, $name, callable $attributes)
+    public function defineAs(string $class, string $name, callable $attributes)
     {
         return $this->define($class, $attributes, $name);
     }
@@ -88,11 +66,9 @@ class Factory implements ArrayAccess
     /**
      * Define a class with a given set of attributes.
      *
-     * @param string $class
-     * @param string $name
      * @return $this
      */
-    public function define($class, callable $attributes, $name = 'default')
+    public function define(string $class, callable $attributes, string $name = 'default')
     {
         $this->definitions[$class][$name] = $attributes;
 
@@ -102,12 +78,9 @@ class Factory implements ArrayAccess
     /**
      * Define a state with a given set of attributes.
      *
-     * @param string $class
-     * @param string $state
-     * @param array|callable $attributes
      * @return $this
      */
-    public function state($class, $state, $attributes)
+    public function state(string $class, string $state, array|callable $attributes)
     {
         $this->states[$class][$state] = $attributes;
 
@@ -117,11 +90,9 @@ class Factory implements ArrayAccess
     /**
      * Define a callback to run after making a model.
      *
-     * @param string $class
-     * @param string $name
      * @return $this
      */
-    public function afterMaking($class, callable $callback, $name = 'default')
+    public function afterMaking(string $class, callable $callback, string $name = 'default')
     {
         $this->afterMaking[$class][$name][] = $callback;
 
@@ -131,11 +102,9 @@ class Factory implements ArrayAccess
     /**
      * Define a callback to run after making a model with given state.
      *
-     * @param string $class
-     * @param string $state
      * @return $this
      */
-    public function afterMakingState($class, $state, callable $callback)
+    public function afterMakingState(string $class, string $state, callable $callback)
     {
         return $this->afterMaking($class, $callback, $state);
     }
@@ -143,11 +112,9 @@ class Factory implements ArrayAccess
     /**
      * Define a callback to run after creating a model.
      *
-     * @param string $class
-     * @param string $name
      * @return $this
      */
-    public function afterCreating($class, callable $callback, $name = 'default')
+    public function afterCreating(string $class, callable $callback, string $name = 'default')
     {
         $this->afterCreating[$class][$name][] = $callback;
 
@@ -157,77 +124,57 @@ class Factory implements ArrayAccess
     /**
      * Define a callback to run after creating a model with given state.
      *
-     * @param string $class
-     * @param string $state
      * @return $this
      */
-    public function afterCreatingState($class, $state, callable $callback)
+    public function afterCreatingState(string $class, string $state, callable $callback)
     {
         return $this->afterCreating($class, $callback, $state);
     }
 
     /**
      * Create an instance of the given model and persist it to the database.
-     *
-     * @param string $class
      */
-    public function create($class, array $attributes = [])
+    public function create(string $class, array $attributes = [])
     {
         return $this->of($class)->create($attributes);
     }
 
     /**
      * Create an instance of the given model and type and persist it to the database.
-     *
-     * @param string $class
-     * @param string $name
      */
-    public function createAs($class, $name, array $attributes = [])
+    public function createAs(string $class, string $name, array $attributes = [])
     {
         return $this->of($class, $name)->create($attributes);
     }
 
     /**
      * Create an instance of the given model.
-     *
-     * @param string $class
      */
-    public function make($class, array $attributes = [])
+    public function make(string $class, array $attributes = [])
     {
         return $this->of($class)->make($attributes);
     }
 
     /**
      * Create an instance of the given model and type.
-     *
-     * @param string $class
-     * @param string $name
      */
-    public function makeAs($class, $name, array $attributes = [])
+    public function makeAs(string $class, string $name, array $attributes = [])
     {
         return $this->of($class, $name)->make($attributes);
     }
 
     /**
      * Get the raw attribute array for a given named model.
-     *
-     * @param string $class
-     * @param string $name
-     * @return array
      */
-    public function rawOf($class, $name, array $attributes = [])
+    public function rawOf(string $class, string $name, array $attributes = []): array
     {
         return $this->raw($class, $attributes, $name);
     }
 
     /**
      * Get the raw attribute array for a given model.
-     *
-     * @param string $class
-     * @param string $name
-     * @return array
      */
-    public function raw($class, array $attributes = [], $name = 'default')
+    public function raw(string $class, array $attributes = [], string $name = 'default'): array
     {
         return array_merge(
             call_user_func($this->definitions[$class][$name], $this->faker),
@@ -238,11 +185,9 @@ class Factory implements ArrayAccess
     /**
      * Create a builder for the given model.
      *
-     * @param string $class
-     * @param string $name
-     * @return \Hyperf\Database\Model\FactoryBuilder
+     * @return FactoryBuilder
      */
-    public function of($class, $name = 'default')
+    public function of(string $class, string $name = 'default')
     {
         return new FactoryBuilder(
             $class,
@@ -258,10 +203,9 @@ class Factory implements ArrayAccess
     /**
      * Load factories from path.
      *
-     * @param string $path
      * @return $this
      */
-    public function load($path)
+    public function load(string $path)
     {
         $factory = $this;
 

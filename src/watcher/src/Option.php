@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Watcher;
 
 use Hyperf\Watcher\Driver\ScanFileDriver;
@@ -17,7 +18,7 @@ class Option
 {
     protected string $driver = ScanFileDriver::class;
 
-    protected string $bin = 'php';
+    protected string $bin = PHP_BINARY;
 
     protected string $command = 'vendor/hyperf/watcher/watcher.php start';
 

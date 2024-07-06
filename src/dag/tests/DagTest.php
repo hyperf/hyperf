@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Dag;
 
 use Hyperf\Coroutine\Coroutine;
@@ -29,31 +30,31 @@ class DagTest extends TestCase
     {
         $dag = new Dag();
         $chan = new Channel(1);
-        $a = \Hyperf\Dag\Vertex::make(function () use ($chan) {
+        $a = Vertex::make(function () use ($chan) {
             $chan->push('A');
         });
-        $b = \Hyperf\Dag\Vertex::make(function () use ($chan) {
+        $b = Vertex::make(function () use ($chan) {
             $chan->push('B');
         });
-        $c = \Hyperf\Dag\Vertex::make(function () use ($chan) {
+        $c = Vertex::make(function () use ($chan) {
             $chan->push('C');
         });
-        $d = \Hyperf\Dag\Vertex::make(function () use ($chan) {
+        $d = Vertex::make(function () use ($chan) {
             $chan->push('D');
         });
-        $e = \Hyperf\Dag\Vertex::make(function () use ($chan) {
+        $e = Vertex::make(function () use ($chan) {
             $chan->push('E');
         });
-        $f = \Hyperf\Dag\Vertex::make(function () use ($chan) {
+        $f = Vertex::make(function () use ($chan) {
             $chan->push('F');
         });
-        $g = \Hyperf\Dag\Vertex::make(function () use ($chan) {
+        $g = Vertex::make(function () use ($chan) {
             $chan->push('G');
         });
-        $h = \Hyperf\Dag\Vertex::make(function () use ($chan) {
+        $h = Vertex::make(function () use ($chan) {
             $chan->push('H');
         });
-        $i = \Hyperf\Dag\Vertex::make(function () use ($chan) {
+        $i = Vertex::make(function () use ($chan) {
             $chan->push('I');
         });
         $dag->addVertex($a)
@@ -237,16 +238,16 @@ class DagTest extends TestCase
     public function testCheckCircularDependences()
     {
         $key = 1;
-        $dag = new \Hyperf\Dag\Dag();
-        $a = \Hyperf\Dag\Vertex::make(function () {echo "A\n"; }, (string) $key++);
-        $b = \Hyperf\Dag\Vertex::make(function () {echo "B\n"; }, (string) $key++);
-        $c = \Hyperf\Dag\Vertex::make(function () {echo "C\n"; }, (string) $key++);
-        $d = \Hyperf\Dag\Vertex::make(function () {echo "D\n"; }, (string) $key++);
-        $e = \Hyperf\Dag\Vertex::make(function () {echo "E\n"; }, (string) $key++);
-        $f = \Hyperf\Dag\Vertex::make(function () {echo "F\n"; }, (string) $key++);
-        $g = \Hyperf\Dag\Vertex::make(function () {echo "G\n"; }, (string) $key++);
-        $h = \Hyperf\Dag\Vertex::make(function () {echo "H\n"; }, (string) $key++);
-        $i = \Hyperf\Dag\Vertex::make(function () {echo "I\n"; }, (string) $key++);
+        $dag = new Dag();
+        $a = Vertex::make(function () {echo "A\n"; }, (string) $key++);
+        $b = Vertex::make(function () {echo "B\n"; }, (string) $key++);
+        $c = Vertex::make(function () {echo "C\n"; }, (string) $key++);
+        $d = Vertex::make(function () {echo "D\n"; }, (string) $key++);
+        $e = Vertex::make(function () {echo "E\n"; }, (string) $key++);
+        $f = Vertex::make(function () {echo "F\n"; }, (string) $key++);
+        $g = Vertex::make(function () {echo "G\n"; }, (string) $key++);
+        $h = Vertex::make(function () {echo "H\n"; }, (string) $key++);
+        $i = Vertex::make(function () {echo "I\n"; }, (string) $key++);
         $dag->addVertex($a)
             ->addVertex($b)
             ->addVertex($c)

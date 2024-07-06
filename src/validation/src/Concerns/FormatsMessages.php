@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Concerns;
 
 use Closure;
@@ -334,7 +335,7 @@ trait FormatsMessages
     /**
      * Call a class based validator message replacer.
      *
-     * @param \Hyperf\Validation\Validator $validator
+     * @param Validator $validator
      */
     protected function callClassBasedReplacer(string $callback, string $message, string $attribute, string $rule, array $parameters, $validator): string
     {

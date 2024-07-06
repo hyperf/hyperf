@@ -49,7 +49,7 @@ We have provided you with a [Hyperf component development guide](en/component-gu
 ## Database
 
 - [hyperf/database](https://github.com/hyperf/database) Based on the Eloquent database ORM forked by Hyperf, this component can be reused in other frameworks
-- [hyperf/model-cache](https://github.com/hyperf/model-cache) [Hyperf/database](https://github.com/hyperf/database) component-based automatic model caching component provided by Hyperf officially
+- [hyperf/model-cache](https://github.com/hyperf/model-cache) [hyperf/database](https://github.com/hyperf/database) component-based automatic model caching component provided by Hyperf officially
 
 ## Dependency injection container
 

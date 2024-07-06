@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigNacos;
 
 use Hyperf\Collection\Arr;
@@ -44,8 +45,8 @@ class NacosDriver extends AbstractDriver
         $application = $this->client->getClient();
         $listeners = $this->config->get('config_center.drivers.nacos.listener_config', []);
         foreach ($listeners as $key => $item) {
-            $dataId = $item['data_id'];
-            $group = $item['group'];
+            $dataId = $item['data_id'] ?? '';
+            $group = $item['group'] ?? '';
             $tenant = $item['tenant'] ?? '';
             $type = $item['type'] ?? null;
 

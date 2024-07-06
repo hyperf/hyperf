@@ -197,6 +197,7 @@ return [
 ];
 
 ```
+
 使用时，只需要规定 `connection` 为 `test`，就可以使用 `test` 中的配置，如下。
 
 ```php
@@ -361,4 +362,95 @@ $book = Book::query()->find(1);
 
 // 打印最后一条 SQL 相关数据
 var_dump(Arr::last(Db::getQueryLog()));
+```
+
+## 驱动列表
+
+和 [illuminate/database](https://github.com/illuminate/database) 不同，[hyperf/database](https://github.com/hyperf/database) 默认只提供了 MySQL 驱动，目前还提供了 [PgSQL](https://github.com/hyperf/database-pgsql)、[SQLite](https://github.com/hyperf/database-sqlite)和[SQL Server](https://github.com/hyperf/database-sqlserver-incubator) 等驱动。
+
+如果默认的 MySQL 驱动满足不了使用需求，可以自行安装对应的驱动：
+
+### PgSql 驱动
+
+#### 安装
+
+要求 `Swoole >= 5.1.0` 并且编译时开启 `--enable-swoole-pgsql`
+
+```bash
+composer require hyperf/database-pgsql
+```
+
+#### 配置文件
+
+```php
+// config/autoload/databases.php
+return [
+     // 其他配置
+    'pgsql'=>[
+        'driver' => env('DB_DRIVER', 'pgsql'),
+        'host' => env('DB_HOST', 'localhost'),
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'port' => env('DB_PORT', 5432),
+        'username' => env('DB_USERNAME', 'postgres'),
+        'password' => env('DB_PASSWORD'),
+        'charset' => env('DB_CHARSET', 'utf8'),
+    ]
+];
+```
+
+### SQLite 驱动
+
+#### 安装
+
+要求 `Swoole >= 5.1.0` 并且编译时开启 `--enable-swoole-sqlite`
+
+```bash
+composer require hyperf/database-sqlite
+```
+
+#### 配置文件
+
+```php
+// config/autoload/databases.php
+return [
+     // 其他配置
+    'sqlite'=>[
+        'driver' => env('DB_DRIVER', 'sqlite'),
+        'host' => env('DB_HOST', 'localhost'),
+        // :memory: 为内存数据库 也可以指定文件绝对路径
+        'database' => env('DB_DATABASE', ':memory:'),
+        // other sqlite config
+    ]
+];
+```
+
+### SQL Server 驱动
+
+#### 安装
+
+> 孵化阶段，目前并不能保证所有功能正常，欢迎反馈问题。
+
+要求 `Swoole >= 5.1.0` 依赖 pdo_odbc，需要编译时开启 `--with-swoole-odbc`
+
+```bash
+composer require hyperf/database-sqlserver-incubator
+```
+
+#### 配置文件
+
+```php
+// config/autoload/databases.php
+return [
+     // 其他配置
+    'sqlserver' => [
+        'driver' => env('DB_DRIVER', 'sqlsrv'),
+        'host' => env('DB_HOST', 'mssql'),
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'port' => env('DB_PORT', 1443),
+        'username' => env('DB_USERNAME', 'SA'),
+        'password' => env('DB_PASSWORD'),
+        'odbc_datasource_name' => 'DRIVER={ODBC Driver 18 for SQL Server};SERVER=127.0.0.1,1433;TrustServerCertificate=yes;database=hyperf',
+        'odbc'  =>  true,
+    ]
+];
 ```

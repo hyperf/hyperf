@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer\Parser;
 
 use InvalidArgumentException;
@@ -50,7 +51,8 @@ class Decoder
         if ($payload[$currentIndex + 1] === '/') {
             $nspStart = $currentIndex + 1;
             $nspEnd = strpos($payload, ',');
-            $queryStart = strpos($payload, '?');
+            $payloadWithoutData = $nspEnd === false ? $payload : substr($payload, 0, $nspEnd);
+            $queryStart = strpos($payloadWithoutData, '?');
 
             $currentIndex = $nspEnd !== false ? $nspEnd : $payloadLength;
 

@@ -97,7 +97,7 @@ php bin/hyperf.php vendor:publish hyperf/amqp
 由于 `composer.json` 内的 `extra` 属性在数据不被利用时无其它作用和影响，故这些组件内的定义在其它框架使用时，不会造成任何的干扰和影响，故`ConfigProvider` 是一种仅作用于 Hyperf 框架的机制，对其它没有利用此机制的框架不会造成任何的影响，这也就为组件的复用打下了基础，但这也要求在进行组件设计时，必须遵循以下规范：
 
 - 所有类的设计都必须允许通过标准 `OOP` 的使用方式来使用，所有 Hyperf 专有的功能必须作为增强功能并以单独的类来提供，也就意味着在非 Hyperf 框架下仍能通过标准的手段来实现组件的使用；
-- 组件的依赖设计如果可满足 [PSR 标准](https://www.php-fig.org/psr) 则优先满足且依赖对应的接口而不是实现类；如 [PSR 标准](https://www.php-fig.org/psr) 没有包含的功能，则可满足由 Hyperf 定义的契约库 [Hyperf/contract](https://github.com/hyperf/contract) 内的接口时优先满足且依赖对应的接口而不是实现类；
+- 组件的依赖设计如果可满足 [PSR 标准](https://www.php-fig.org/psr) 则优先满足且依赖对应的接口而不是实现类；如 [PSR 标准](https://www.php-fig.org/psr) 没有包含的功能，则可满足由 Hyperf 定义的契约库 [hyperf/contract](https://github.com/hyperf/contract) 内的接口时优先满足且依赖对应的接口而不是实现类；
 - 对于实现 Hyperf 专有功能所增加的增强功能类，通常来说也会对 Hyperf 的一些组件有依赖，那么这些组件的依赖不应该写在 `composer.json` 的 `require` 项，而是写在 `suggest` 项作为建议项存在；
 - 组件设计时不应该通过注解进行任何的依赖注入，注入方式应只使用 `构造函数注入` 的方式，这样同时也能满足在 `OOP` 下的使用；
 - 组件设计时不应该通过注解进行任何的功能定义，功能定义应只通过 `ConfigProvider` 来定义； 

@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Routeguide;
 
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\Internal\Message;
+use GPBMetadata\RouteGuide;
 
 /**
  * A latitude-longitude rectangle, represented as two diagonally opposite
@@ -21,7 +23,7 @@ use Google\Protobuf\Internal\GPBUtil;
  *
  * Generated from protobuf message <code>routeguide.Rectangle</code>
  */
-class Rectangle extends \Google\Protobuf\Internal\Message
+class Rectangle extends Message
 {
     /**
      * One corner of the rectangle.
@@ -43,15 +45,15 @@ class Rectangle extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *                    Optional. Data for populating the Message object.
      *
-     *     @var \Routeguide\Point $lo
-     *           One corner of the rectangle
-     *     @var \Routeguide\Point $hi
-     *           The other corner of the rectangle.
-     * }
+     * @var Point $lo
+     *            One corner of the rectangle
+     * @var Point $hi
+     *            The other corner of the rectangle.
+     *            }
      */
     public function __construct($data = null)
     {
-        \GPBMetadata\RouteGuide::initOnce();
+        RouteGuide::initOnce();
         parent::__construct($data);
     }
 
@@ -59,7 +61,7 @@ class Rectangle extends \Google\Protobuf\Internal\Message
      * One corner of the rectangle.
      *
      * Generated from protobuf field <code>.routeguide.Point lo = 1;</code>
-     * @return \Routeguide\Point
+     * @return Point
      */
     public function getLo()
     {
@@ -70,12 +72,12 @@ class Rectangle extends \Google\Protobuf\Internal\Message
      * One corner of the rectangle.
      *
      * Generated from protobuf field <code>.routeguide.Point lo = 1;</code>
-     * @param \Routeguide\Point $var
+     * @param Point $var
      * @return $this
      */
     public function setLo($var)
     {
-        GPBUtil::checkMessage($var, \Routeguide\Point::class);
+        GPBUtil::checkMessage($var, Point::class);
         $this->lo = $var;
 
         return $this;
@@ -85,7 +87,7 @@ class Rectangle extends \Google\Protobuf\Internal\Message
      * The other corner of the rectangle.
      *
      * Generated from protobuf field <code>.routeguide.Point hi = 2;</code>
-     * @return \Routeguide\Point
+     * @return Point
      */
     public function getHi()
     {
@@ -96,12 +98,12 @@ class Rectangle extends \Google\Protobuf\Internal\Message
      * The other corner of the rectangle.
      *
      * Generated from protobuf field <code>.routeguide.Point hi = 2;</code>
-     * @param \Routeguide\Point $var
+     * @param Point $var
      * @return $this
      */
     public function setHi($var)
     {
-        GPBUtil::checkMessage($var, \Routeguide\Point::class);
+        GPBUtil::checkMessage($var, Point::class);
         $this->hi = $var;
 
         return $this;

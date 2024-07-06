@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketServer;
 
 use Hyperf\Context\Context;
@@ -41,11 +42,12 @@ use Hyperf\Support\SafeCaller;
 use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Context as WsContext;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
-use Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException;
+use Hyperf\WebSocketServer\Exception\WebSocketHandShakeException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Coroutine\Http\Server as SwCoServer;
+use Swoole\Http\Request;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Server as SwooleServer;
 use Swoole\WebSocket\Server as WebSocketServer;
@@ -86,7 +88,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         ]);
     }
 
-    public function getServer(): SwCoServer|WebSocketServer|HttpServer
+    public function getServer(): HttpServer|SwCoServer|WebSocketServer
     {
         if ($this->server) {
             return $this->server;
@@ -110,7 +112,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     }
 
     /**
-     * @param \Swoole\Http\Request|\Swow\Http\Server\Request $request
+     * @param Request|\Swow\Http\Server\Request $request
      * @param SwooleResponse|SwowServerConnection $response
      */
     public function onHandShake($request, $response): void
@@ -128,7 +130,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
             $key = $psr7Request->getHeaderLine(Security::SEC_WEBSOCKET_KEY);
             if ($security->isInvalidSecurityKey($key)) {
-                throw new WebSocketHandeShakeException('sec-websocket-key is invalid!');
+                throw new WebSocketHandShakeException('sec-websocket-key is invalid!');
             }
 
             $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
@@ -146,14 +148,14 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             $class = $psr7Response->getAttribute(CoreMiddleware::HANDLER_NAME);
 
             if (empty($class)) {
-                $this->logger->warning('WebSocket hande shake failed, because the class does not exists.');
+                $this->logger->warning('WebSocket handshake failed, because the class does not exists.');
                 return;
             }
 
             FdCollector::set($fd, $class);
             $server = $this->getServer();
             if (Constant::isCoroutineServer($server)) {
-                $upgrade = new WebSocket($response, $request);
+                $upgrade = new WebSocket($response, $request, $this->logger);
 
                 $this->getSender()->setResponse($fd, $response);
                 $this->deferOnOpen($request, $class, $response, $fd);

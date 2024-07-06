@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\MetadataCollector;
@@ -20,6 +21,11 @@ class AnnotationCollector extends MetadataCollector
     public static function collectClass(string $class, string $annotation, $value): void
     {
         static::$container[$class]['_c'][$annotation] = $value;
+    }
+
+    public static function collectClassConstant(string $class, string $constant, string $annotation, $value): void
+    {
+        static::$container[$class]['_cc'][$constant][$annotation] = $value;
     }
 
     public static function collectProperty(string $class, string $property, string $annotation, $value): void
@@ -39,6 +45,19 @@ class AnnotationCollector extends MetadataCollector
         } else {
             static::$container = [];
         }
+    }
+
+    public static function getClassConstantsByAnnotation(string $annotation): array
+    {
+        $result = [];
+        foreach (static::$container as $class => $metadata) {
+            foreach ($metadata['_cc'] ?? [] as $constant => $_metadata) {
+                if ($value = $_metadata[$annotation] ?? null) {
+                    $result[] = ['class' => $class, 'constant' => $constant, 'annotation' => $value];
+                }
+            }
+        }
+        return $result;
     }
 
     public static function getClassesByAnnotation(string $annotation): array
@@ -87,6 +106,11 @@ class AnnotationCollector extends MetadataCollector
     public static function getClassAnnotations(string $class)
     {
         return static::get($class . '._c');
+    }
+
+    public static function getClassConstantAnnotation(string $class, string $constant)
+    {
+        return static::get($class . '._cc.' . $constant);
     }
 
     public static function getClassMethodAnnotation(string $class, string $method)

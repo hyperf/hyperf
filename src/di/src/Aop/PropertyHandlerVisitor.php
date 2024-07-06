@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Aop;
 
 use Hyperf\CodeParser\PhpParser;
@@ -17,6 +18,7 @@ use PhpParser\Node;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\NodeVisitorAbstract;
+use ReflectionException;
 
 class PropertyHandlerVisitor extends NodeVisitorAbstract
 {
@@ -83,7 +85,7 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
                 foreach ($parameters as $parameter) {
                     $constructor->params[] = PhpParser::getInstance()->getNodeFromReflectionParameter($parameter);
                 }
-            } catch (\ReflectionException) {
+            } catch (ReflectionException) {
                 // Cannot found __construct method in parent class or traits, do nothing.
             }
         }

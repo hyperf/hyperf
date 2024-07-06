@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Exception\LoopBrokenException;
@@ -64,7 +65,7 @@ class AMQPConnection extends AbstractConnection
         string $login_method = 'AMQPLAIN',
         $login_response = null,
         string $locale = 'en_US',
-        AbstractIO $io = null,
+        ?AbstractIO $io = null,
         int $heartbeat = 0,
         int $connection_timeout = 0,
         float $channel_rpc_timeout = 0.0
@@ -171,13 +172,17 @@ class AMQPConnection extends AbstractConnection
     public function close($reply_code = 0, $reply_text = '', $method_sig = [0, 0])
     {
         try {
-            $res = parent::close($reply_code, $reply_text, $method_sig);
+            return parent::close($reply_code, $reply_text, $method_sig);
+        } catch (Throwable $e) {
+            if (! $this->exited) {
+                throw $e;
+            }
         } finally {
             $this->setIsConnected(false);
             $this->chan->close();
             $this->channelManager->flush();
         }
-        return $res;
+        return null;
     }
 
     protected function makeChannelId(): int
@@ -297,7 +302,7 @@ class AMQPConnection extends AbstractConnection
                             $this->chan->push($pkt->getvalue(), 0.001);
                         }
                     } catch (Throwable $exception) {
-                        $this->logger && $this->logger->error((string) $exception);
+                        $this->logger?->error((string) $exception);
                     }
                 }
             });

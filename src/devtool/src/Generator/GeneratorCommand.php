@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool\Generator;
 
 use Hyperf\CodeParser\Project;
@@ -79,7 +80,7 @@ abstract class GeneratorCommand extends Command
      */
     protected function qualifyClass(string $name): string
     {
-        $name = ltrim($name, '\\/');
+        $name = ltrim($name, '\/');
 
         $name = str_replace('/', '\\', $name);
 

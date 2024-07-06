@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Redis\Pool;
 
 use Hyperf\Collection\Arr;
@@ -45,6 +46,11 @@ class RedisPool extends Pool
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
     }
 
     protected function createConnection(): ConnectionInterface

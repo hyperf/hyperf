@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\GrpcServer\Exception;
 
 use Google\Protobuf\Any;
@@ -38,7 +39,7 @@ class GrpcStatusException extends GrpcException
      */
     protected array $statusDetails = [];
 
-    public function __construct($message = '', $code = 0, Throwable $previous = null, protected ?Status $status = null)
+    public function __construct($message = '', $code = 0, ?Throwable $previous = null, protected ?Status $status = null)
     {
         parent::__construct($message, $code, $previous);
 

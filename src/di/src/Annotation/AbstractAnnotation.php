@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Contract\Arrayable;
@@ -30,6 +31,11 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
     public function collectClass(string $className): void
     {
         AnnotationCollector::collectClass($className, static::class, $this);
+    }
+
+    public function collectClassConstant(string $className, ?string $target): void
+    {
+        AnnotationCollector::collectClassConstant($className, $target, static::class, $this);
     }
 
     public function collectMethod(string $className, ?string $target): void

@@ -13,13 +13,15 @@ declare(strict_types=1);
 
 namespace GPBMetadata;
 
+use Google\Protobuf\Internal\DescriptorPool;
+
 class RouteGuide
 {
     public static $is_initialized = false;
 
     public static function initOnce()
     {
-        $pool = \Google\Protobuf\Internal\DescriptorPool::getGeneratedPool();
+        $pool = DescriptorPool::getGeneratedPool();
 
         if (static::$is_initialized == true) {
             return;

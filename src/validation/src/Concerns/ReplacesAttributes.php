@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Concerns;
 
 use Hyperf\Collection\Arr;
@@ -335,5 +336,14 @@ trait ReplacesAttributes
         }
 
         return str_replace(':values', implode(', ', $parameters), $message);
+    }
+
+    /**
+     * Replace all place-holders for the prohibited_with rule.
+     * @param array<int,string> $parameters
+     */
+    protected function replaceProhibits(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        return str_replace(':other', implode(' / ', $this->getAttributeList($parameters)), $message);
     }
 }

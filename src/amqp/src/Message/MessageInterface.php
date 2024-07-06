@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\ExchangeBuilder;
@@ -22,15 +23,15 @@ interface MessageInterface
      */
     public function getPoolName(): string;
 
-    public function setType(Type|string $type);
+    public function setType(string|Type $type);
 
-    public function getType(): Type|string;
+    public function getType(): string|Type;
 
     public function setExchange(string $exchange);
 
     public function getExchange(): string;
 
-    public function setRoutingKey($routingKey);
+    public function setRoutingKey(array|string $routingKey);
 
     public function getRoutingKey(): array|string;
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\SocketIOServer\Cases;
 
 use Hyperf\SocketIOServer\Parser\Decoder;
@@ -123,5 +124,12 @@ class DecoderTest extends AbstractTestCase
         } catch (InvalidArgumentException $e) {
             $this->assertEquals('Empty packet', $e->getMessage());
         }
+
+        $packet = $decoder->decode('42/test,3["TEST_EVENT",{"url": "https://hyperf.wiki/3.0/#/zh-cn/quick-start/install?foo=bar&baz=1"}]');
+        $this->assertEquals('3', $packet['id']);
+        $this->assertEquals('2', $packet['type']);
+        $this->assertEquals('/test', $packet['nsp']);
+        $this->assertEquals(['TEST_EVENT', ['url' => 'https://hyperf.wiki/3.0/#/zh-cn/quick-start/install?foo=bar&baz=1']], $packet['data']);
+        $this->assertEquals([], $packet['query']);
     }
 }

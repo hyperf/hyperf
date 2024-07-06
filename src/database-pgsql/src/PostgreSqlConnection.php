@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\PgSQL;
 
 use Hyperf\Database\Connection;
@@ -17,6 +18,7 @@ use Hyperf\Database\PgSQL\Query\Grammars\PostgresGrammar as QueryGrammar;
 use Hyperf\Database\PgSQL\Query\Processors\PostgresProcessor;
 use Hyperf\Database\PgSQL\Schema\Grammars\PostgresGrammar as SchemaGrammar;
 use Hyperf\Database\PgSQL\Schema\PostgresBuilder;
+use Hyperf\Database\Query\Grammars\PostgresGrammar;
 use PDOStatement;
 
 class PostgreSqlConnection extends Connection
@@ -48,7 +50,7 @@ class PostgreSqlConnection extends Connection
 
     /**
      * Get the default query grammar instance.
-     * @return \Hyperf\Database\Query\Grammars\PostgresGrammar
+     * @return PostgresGrammar
      */
     protected function getDefaultQueryGrammar(): QueryGrammar
     {

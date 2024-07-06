@@ -9,12 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Support;
 
 use ArrayAccess;
 use Hyperf\Collection\Arr;
 use Hyperf\Macroable\Macroable;
 
+/**
+ * @template TValue
+ */
 class Optional implements ArrayAccess
 {
     use Macroable {
@@ -24,7 +28,7 @@ class Optional implements ArrayAccess
     /**
      * Create a new optional instance.
      *
-     * @param mixed $value the underlying object
+     * @param TValue $value the underlying object
      */
     public function __construct(protected $value)
     {

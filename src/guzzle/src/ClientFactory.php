@@ -9,15 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Guzzle;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Hyperf\Coroutine\Coroutine;
+use Hyperf\Di\Container;
 use Psr\Container\ContainerInterface;
+use Swoole\Runtime;
 
 /**
- * @property \Hyperf\Di\Container $container
+ * @property Container $container
  */
 class ClientFactory
 {
@@ -40,7 +43,7 @@ class ClientFactory
         if (
             $this->runInSwoole
             && Coroutine::inCoroutine()
-            && (\Swoole\Runtime::getHookFlags() & $this->nativeCurlHook) == 0
+            && (Runtime::getHookFlags() & $this->nativeCurlHook) == 0
         ) {
             $stack = HandlerStack::create(new CoroutineHandler());
         }

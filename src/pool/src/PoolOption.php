@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Pool;
 
 use Hyperf\Contract\PoolOptionInterface;
@@ -52,13 +53,20 @@ class PoolOption implements PoolOptionInterface
      */
     private float $maxIdleTime;
 
+    /**
+     * The events which will be triggered by releasing connection and so on.
+     * @var array<int, string>
+     */
+    private array $events;
+
     public function __construct(
         int $minConnections = 1,
         int $maxConnections = 10,
         float $connectTimeout = 10.0,
         float $waitTimeout = 3.0,
         float $heartbeat = -1,
-        float $maxIdleTime = 60.0
+        float $maxIdleTime = 60.0,
+        array $events = [],
     ) {
         $this->minConnections = $minConnections;
         $this->maxConnections = $maxConnections;
@@ -66,6 +74,7 @@ class PoolOption implements PoolOptionInterface
         $this->waitTimeout = $waitTimeout;
         $this->heartbeat = $heartbeat;
         $this->maxIdleTime = $maxIdleTime;
+        $this->events = $events;
     }
 
     public function getMaxConnections(): int
@@ -131,6 +140,17 @@ class PoolOption implements PoolOptionInterface
     public function setMaxIdleTime(float $maxIdleTime): static
     {
         $this->maxIdleTime = $maxIdleTime;
+        return $this;
+    }
+
+    public function getEvents(): array
+    {
+        return $this->events;
+    }
+
+    public function setEvents(array $events): static
+    {
+        $this->events = $events;
         return $this;
     }
 }

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
@@ -27,6 +28,7 @@ use Hyperf\Redis\Redis;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use RedisCluster;
 
 use function Hyperf\Coroutine\go;
@@ -195,10 +197,10 @@ class RedisProxyTest extends TestCase
     }
 
     /**
-     * @param mixed $optinos
+     * @param mixed $options
      * @return \Redis|Redis
      */
-    private function getRedis($optinos = [])
+    private function getRedis($options = [])
     {
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
@@ -209,7 +211,7 @@ class RedisProxyTest extends TestCase
                     'auth' => null,
                     'port' => 6379,
                     'db' => 0,
-                    'options' => $optinos,
+                    'options' => $options,
                     'pool' => [
                         'min_connections' => 1,
                         'max_connections' => 30,
@@ -230,6 +232,9 @@ class RedisProxyTest extends TestCase
         $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new PoolOption(...array_values($args));
         });
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
+
         ApplicationContext::setContainer($container);
 
         $factory = new PoolFactory($container);

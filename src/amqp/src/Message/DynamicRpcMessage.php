@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Message;
 
 class DynamicRpcMessage extends RpcMessage
 {
-    public function __construct(string $exchange, string $routingKey, $data)
+    public function __construct(string $exchange, string $routingKey, mixed $data)
     {
         $this->exchange = $exchange;
         $this->routingKey = $routingKey;

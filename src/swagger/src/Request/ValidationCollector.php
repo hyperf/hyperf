@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Swagger\Request;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
@@ -57,7 +58,7 @@ class ValidationCollector
 
     protected static function collectJsonContentRequestBody($methodAnnotations, array $data, string $field): array
     {
-        /** @var RequestBody $body */
+        /** @var null|RequestBody $body */
         $body = Util::findAnnotations($methodAnnotations, RequestBody::class)[0] ?? null;
         if (! $body) {
             return $data;
@@ -84,7 +85,7 @@ class ValidationCollector
 
     protected static function collectMediaTypeRequestBody($methodAnnotations, array $data, string $field): array
     {
-        /** @var RequestBody $body */
+        /** @var null|RequestBody $body */
         $body = Util::findAnnotations($methodAnnotations, RequestBody::class)[0] ?? null;
         if (! $body || ! is_array($body->content)) {
             return $data;
@@ -94,6 +95,8 @@ class ValidationCollector
             if (! $content instanceof MediaType) {
                 continue;
             }
+
+            /* @phpstan-ignore-next-line */
             if (! $content->schema || ! is_array($content->schema->properties)) {
                 continue;
             }

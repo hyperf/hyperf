@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Testing\Fluent\Concerns;
 
 trait Debugging
@@ -18,7 +19,7 @@ trait Debugging
      *
      * @return $this
      */
-    public function dump(string $prop = null): self
+    public function dump(?string $prop = null): self
     {
         dump($this->prop($prop));
 
@@ -30,7 +31,7 @@ trait Debugging
      *
      * @return never
      */
-    public function dd(string $prop = null): void
+    public function dd(?string $prop = null): void
     {
         dd($this->prop($prop));
     }
@@ -40,5 +41,5 @@ trait Debugging
      *
      * @return mixed
      */
-    abstract protected function prop(string $key = null);
+    abstract protected function prop(?string $key = null);
 }

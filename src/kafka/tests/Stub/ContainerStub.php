@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Kafka\Stub;
 
 use Hyperf\Config\Config;
@@ -38,7 +39,9 @@ class ContainerStub
             return $logger;
         });
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturnUsing(function () {
-            return Mockery::mock(EventDispatcherInterface::class);
+            $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+            $dispatcher->shouldReceive('dispatch')->andReturnNull();
+            return $dispatcher;
         });
         $container->shouldReceive('has')->andReturnUsing(function ($class) {
             return true;
@@ -60,11 +63,7 @@ class ContainerStub
                     'recv_timeout' => -1,
                     'client_id' => 'hyperf',
                     'max_write_attempts' => 3,
-                    'brokers' => [
-                        '127.0.0.1:9092',
-                    ],
                     'bootstrap_servers' => '127.0.0.1:9092',
-                    'update_brokers' => true,
                     'acks' => 0,
                     'producer_id' => -1,
                     'producer_epoch' => -1,

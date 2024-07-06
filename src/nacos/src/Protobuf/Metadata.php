@@ -13,12 +13,15 @@ declare(strict_types=1);
 
 namespace Hyperf\Nacos\Protobuf;
 
+use Google\Protobuf\Internal\GPBType;
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\Internal\MapField;
+use Google\Protobuf\Internal\Message;
 
 /**
  * Generated from protobuf message <code>Metadata</code>.
  */
-class Metadata extends \Google\Protobuf\Internal\Message
+class Metadata extends Message
 {
     /**
      * Generated from protobuf field <code>string type = 3;</code>.
@@ -41,10 +44,10 @@ class Metadata extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *                    Optional. Data for populating the Message object.
      *
-     *     @var string $type
-     *     @var string $clientIp
-     *     @var array|\Google\Protobuf\Internal\MapField $headers
-     * }
+     * @var string $type
+     * @var string $clientIp
+     * @var array|MapField $headers
+     *                     }
      */
     public function __construct($data = null)
     {
@@ -98,7 +101,7 @@ class Metadata extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>map<string, string> headers = 7;</code>.
-     * @return \Google\Protobuf\Internal\MapField
+     * @return MapField
      */
     public function getHeaders()
     {
@@ -107,12 +110,12 @@ class Metadata extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>map<string, string> headers = 7;</code>.
-     * @param array|\Google\Protobuf\Internal\MapField $var
+     * @param array|MapField $var
      * @return $this
      */
     public function setHeaders($var)
     {
-        $arr = GPBUtil::checkMapField($var, \Google\Protobuf\Internal\GPBType::STRING, \Google\Protobuf\Internal\GPBType::STRING);
+        $arr = GPBUtil::checkMapField($var, GPBType::STRING, GPBType::STRING);
         $this->headers = $arr;
 
         return $this;

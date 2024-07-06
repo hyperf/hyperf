@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Command;
 
 use Hyperf\Context\ApplicationContext;
@@ -17,9 +18,12 @@ use HyperfTest\Command\Command\DefaultSwooleFlagsCommand;
 use HyperfTest\Command\Command\FooCommand;
 use HyperfTest\Command\Command\FooExceptionCommand;
 use HyperfTest\Command\Command\FooExitCommand;
+use HyperfTest\Command\Command\FooTraitCommand;
 use HyperfTest\Command\Command\SwooleFlagsCommand;
+use HyperfTest\Command\Command\Traits\Foo;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -47,7 +51,7 @@ class CommandTest extends TestCase
         $this->assertSame(SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL, $command->getHookFlags());
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('NonCoroutine')]
+    #[Group('NonCoroutine')]
     public function testExitCodeWhenThrowException()
     {
         ApplicationContext::setContainer($container = Mockery::mock(ContainerInterface::class));
@@ -72,6 +76,10 @@ class CommandTest extends TestCase
         $command = new ClassInvoker(new FooCommand());
         $exitCode = $command->execute($input, $output);
         $this->assertSame(0, $exitCode);
+
+        $command = new FooTraitCommand();
+        $this->assertArrayHasKey(Foo::class, (fn () => $this->setUpTraits($input, $output))->call($command));
+        $this->assertSame('foo', (fn () => $this->propertyFoo)->call($command));
     }
 
     public function testExitCodeWhenThrowExceptionInCoroutine()

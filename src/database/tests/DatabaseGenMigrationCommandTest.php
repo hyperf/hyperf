@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Commands\Migrations\GenMigrateCommand;
 use Hyperf\Database\Migrations\MigrationCreator;
+use HyperfTest\Database\Stubs\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -32,6 +34,8 @@ class DatabaseGenMigrationCommandTest extends TestCase
     {
         parent::setUp();
         ! defined('BASE_PATH') && define('BASE_PATH', __DIR__);
+
+        ContainerStub::unsetContainer();
     }
 
     protected function tearDown(): void

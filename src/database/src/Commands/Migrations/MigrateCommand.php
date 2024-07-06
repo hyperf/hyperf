@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Migrations;
 
 use Hyperf\Command\Concerns\Confirmable as ConfirmableTrait;
 use Hyperf\Database\Migrations\Migrator;
 use Symfony\Component\Console\Input\InputOption;
+use Throwable;
 
 class MigrateCommand extends BaseCommand
 {
@@ -34,9 +36,29 @@ class MigrateCommand extends BaseCommand
     public function handle()
     {
         if (! $this->confirmToProceed()) {
-            return;
+            return 0;
         }
 
+        try {
+            $this->runMigrations();
+        } catch (Throwable $e) {
+            if ($this->input->getOption('graceful')) {
+                $this->output->warning($e->getMessage());
+
+                return 0;
+            }
+
+            throw $e;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Run the pending migrations.
+     */
+    protected function runMigrations()
+    {
         $this->prepareDatabase();
 
         // Next, we will check to see if a path option has been defined. If it has
@@ -66,6 +88,7 @@ class MigrateCommand extends BaseCommand
             ['pretend', null, InputOption::VALUE_NONE, 'Dump the SQL queries that would be run'],
             ['seed', null, InputOption::VALUE_NONE, 'Indicates if the seed task should be re-run'],
             ['step', null, InputOption::VALUE_NONE, 'Force the migrations to be run so they can be rolled back individually'],
+            ['graceful', null, InputOption::VALUE_NONE, 'Return a successful exit code even if an error occurs'],
         ];
     }
 

@@ -9,13 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Testing;
 
 use Faker\Generator;
 use Hyperf\Database\Model\Factory;
 
 /**
- * @template T
+ * @template TClass
  */
 class ModelFactory
 {
@@ -34,8 +35,8 @@ class ModelFactory
     }
 
     /**
-     * @param class-string<T> $class
-     * @return T
+     * @param class-string<TClass> $class
+     * @return TClass
      */
     public function factory(string $class)
     {

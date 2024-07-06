@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\CircuitBreaker\Annotation;
 
 use Attribute;
@@ -20,7 +21,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractAnnotation
 {
-    public function __construct(string $handler = 'Hyperf\\CircuitBreaker\\Handler\\TimeoutHandler', ?string $fallback = null, float $duration = 10.0, int $successCounter = 10, int $failCounter = 10, array $value = null)
+    public function __construct(string $handler = 'Hyperf\CircuitBreaker\Handler\TimeoutHandler', ?string $fallback = null, float $duration = 10.0, int $successCounter = 10, int $failCounter = 10, ?array $value = null)
     {
     }
 }

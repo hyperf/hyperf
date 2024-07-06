@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Collection\Arr;
@@ -96,7 +97,7 @@ class MorphToMany extends BelongsToMany
      * Add the constraints for a relationship count query.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -110,7 +111,7 @@ class MorphToMany extends BelongsToMany
      * Create a new pivot model instance.
      *
      * @param bool $exists
-     * @return \Hyperf\Database\Model\Relations\Pivot
+     * @return Pivot
      */
     public function newPivot(array $attributes = [], $exists = false)
     {

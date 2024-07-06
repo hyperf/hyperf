@@ -201,7 +201,7 @@ class IndexController
 
 If you want to access files uploaded locally via http, please add the following configuration to the `config/autoload/server.php` configuration.
 
-```
+```php
 return [
     'settings' => [
         ...

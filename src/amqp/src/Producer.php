@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Message\ProducerMessageInterface;
@@ -41,10 +42,22 @@ class Producer extends Builder
                 $channel = $connection->getChannel();
             }
 
+            $exchange = $producerMessage->getExchange();
+
+            if (! DeclaredExchanges::has($exchange)) {
+                try {
+                    DeclaredExchanges::add($exchange);
+                    $this->declare($producerMessage, $channel);
+                } catch (Throwable $exception) {
+                    DeclaredExchanges::remove($exchange);
+                    throw $exception;
+                }
+            }
+
             $channel->set_ack_handler(function () use (&$result) {
                 $result = true;
             });
-            $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
+            $channel->basic_publish($message, $exchange, $producerMessage->getRoutingKey());
             $channel->wait_for_pending_acks_returns($timeout);
         } catch (Throwable $exception) {
             isset($channel) && $channel->close();
@@ -64,7 +77,7 @@ class Producer extends Builder
     private function injectMessageProperty(ProducerMessageInterface $producerMessage): void
     {
         if (class_exists(AnnotationCollector::class)) {
-            /** @var null|\Hyperf\Amqp\Annotation\Producer $annotation */
+            /** @var null|Annotation\Producer $annotation */
             $annotation = AnnotationCollector::getClassAnnotation(get_class($producerMessage), Annotation\Producer::class);
             if ($annotation) {
                 $annotation->routingKey && $producerMessage->setRoutingKey($annotation->routingKey);

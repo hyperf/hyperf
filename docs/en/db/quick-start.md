@@ -4,7 +4,7 @@
 
 > [hyperf/database](https://github.com/hyperf/database) is derived from [illuminate/database](https://github.com/illuminate/database), we have made some modifications to it but most methods remain the same. Thanks to the Laravel development team for implementing such a powerful and easy-to-use ORM component.
 
-The [hyperf/database](https://github.com/hyperf/database) component is based on the components derived from [illuminate/database](https://github.com/illuminate/database) with some The changes to allow usage in both PHP-FPM frameworks or Swoole-based frameworks. In Hyperf, you need to use the [hyperf/db-connection](https://github.com/hyperf/db-connection) component, which implements database connection pool based on [hyperf/pool](https://github.com/hyperf/pool). With it as a bridge, Hyperf can integrate database connections and events.
+The [hyperf/database](https://github.com/hyperf/database) component is based on the components derived from [illuminate/database](https://github.com/illuminate/database) with some changes to allow usage in both PHP-FPM frameworks or Swoole-based frameworks. In Hyperf, you need to use the [hyperf/db-connection](https://github.com/hyperf/db-connection) component, which implements a database connection pool based on [hyperf/pool](https://github.com/hyperf/pool). With it as a bridge, Hyperf can integrate database connections and events.
 
 ## Installation
 
@@ -360,4 +360,94 @@ $book = Book::query()->find(1);
 
 // Print the last SQL query
 var_dump(Arr::last(Db::getQueryLog()));
+```
+
+## Driver list
+
+Different from [illuminate/database](https://github.com/illuminate/database), [hyperf/database](https://github.com/hyperf/database) only provides MySQL driver by default, and currently also provides [PgSQL](https://github.com/hyperf/database-pgsql), [SQLite](https://github.com/hyperf/database-sqlite) and [SQL Server](https://github.com/hyperf/database-sqlserver-incubator) and other drivers
+If the default mysql cannot meet the usage needs, you can install the corresponding driver yourself.
+
+### PgSql driver
+
+#### Install
+
+Requires `Swoole >= 5.1.0` and `--enable-swoole-pgsql` is enabled when compiling
+
+```bash
+composer require hyperf/database-pgsql
+```
+
+#### Configuration file
+
+```php
+// config/autoload/databases.php
+return [
+    // Other configurations
+    'pgsql'=> [
+        'driver' => env('DB_DRIVER', 'pgsql'),
+        'host' => env('DB_HOST', 'localhost'),
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'port' => env('DB_PORT', 5432),
+        'username' => env('DB_USERNAME', 'postgres'),
+        'password' => env('DB_PASSWORD'),
+        'charset' => env('DB_CHARSET', 'utf8'),
+    ]
+];
+```
+
+### SQLite driver
+
+#### Install
+
+Requires `Swoole >= 5.1.0` and `--enable-swoole-sqlite` is enabled when compiling
+
+```bash
+composer require hyperf/database-pgsql
+```
+
+#### Configuration file
+
+```php
+// config/autoload/databases.php
+return [
+    // Other configurations
+    'sqlite'=>[
+        'driver' => env('DB_DRIVER', 'sqlite'),
+        'host' => env('DB_HOST', 'localhost'),
+        // :memory: For an in-memory database, you can also specify the absolute path to the file.
+        'database' => env('DB_DATABASE', ':memory:'),
+        // other sqlite config
+    ]
+];
+```
+
+### SQL Server driver
+
+#### Install
+
+> In the incubation stage, we currently cannot guarantee that all functions will work properly. Feedback is welcome.
+
+Requirements `Swoole >= 5.1.0` depends on pdo_odbc, and needs to be enabled during compilation `--with-swoole-odbc`
+
+```bash
+composer require hyperf/database-sqlserver-incubator
+```
+
+#### Configuration file
+
+```php
+// config/autoload/databases.php
+return [
+    // Other configurations
+    'sqlserver' => [
+        'driver' => env('DB_DRIVER', 'sqlsrv'),
+        'host' => env('DB_HOST', 'mssql'),
+        'database' => env('DB_DATABASE', 'hyperf'),
+        'port' => env('DB_PORT', 1443),
+        'username' => env('DB_USERNAME', 'SA'),
+        'password' => env('DB_PASSWORD'),
+        'odbc_datasource_name' => 'DRIVER={ODBC Driver 18 for SQL Server};SERVER=127.0.0.1,1433;TrustServerCertificate=yes;database=hyperf',
+        'odbc'  =>  true,
+    ]
+];
 ```

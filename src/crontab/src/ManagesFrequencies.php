@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
@@ -590,7 +591,7 @@ trait ManagesFrequencies
      */
     protected function spliceIntoPosition(int $position, int|string $value): static
     {
-        $segments = preg_split('/\\s+/', $this->rule ?: '* * * * *');
+        $segments = preg_split('/\s+/', $this->rule ?: '* * * * *');
 
         $segments[$position - 1] = $value;
 

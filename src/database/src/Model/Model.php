@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model;
 
 use ArrayAccess;
@@ -280,7 +281,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Fill the model with an array of attributes.
      *
      * @return $this
-     * @throws \Hyperf\Database\Model\MassAssignmentException
+     * @throws MassAssignmentException
      */
     public function fill(array $attributes)
     {
@@ -327,6 +328,16 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         }
 
         return $this->getTable() . '.' . $column;
+    }
+
+    /**
+     * Qualify the given columns with the model's table.
+     */
+    public function qualifyColumns(array $columns): array
+    {
+        return collect($columns)->map(function ($column) {
+            return $this->qualifyColumn($column);
+        })->all();
     }
 
     /**
@@ -378,7 +389,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Begin querying the model on a given connection.
      *
      * @param null|string $connection
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public static function on($connection = null)
     {
@@ -395,7 +406,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Begin querying the model on the write connection.
      *
-     * @return \Hyperf\Database\Query\Builder
+     * @return QueryBuilder
      */
     public static function onWriteConnection()
     {
@@ -406,7 +417,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Get all of the models from the database.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Collection|static[]
+     * @return Collection|static[]
      */
     public static function all($columns = ['*'])
     {
@@ -417,7 +428,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Begin querying a model with eager loading.
      *
      * @param array|string $relations
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     public static function with($relations)
     {
@@ -471,6 +482,48 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
+     * Eager load relation's column aggregations on the model.
+     */
+    public function loadAggregate(array|string $relations, string $column, ?string $function = null): static
+    {
+        $this->newCollection([$this])->loadAggregate($relations, $column, $function);
+
+        return $this;
+    }
+
+    /**
+     * Eager load relation max column values on the model.
+     */
+    public function loadMax(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'max');
+    }
+
+    /**
+     * Eager load relation min column values on the model.
+     */
+    public function loadMin(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'min');
+    }
+
+    /**
+     * Eager load relation's column summations on the model.
+     */
+    public function loadSum(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'sum');
+    }
+
+    /**
+     * Eager load relation average column values on the model.
+     */
+    public function loadAvg(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'avg');
+    }
+
+    /**
      * Eager load relation counts on the model.
      *
      * @param array|string $relations
@@ -513,6 +566,19 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         }
 
         return $this->fill($attributes)->save($options);
+    }
+
+    /**
+     * Update the model in the database within a transaction.
+     * @throws Throwable
+     */
+    public function updateOrFail(array $attributes = [], array $options = []): bool
+    {
+        if (! $this->exists) {
+            return false;
+        }
+
+        return $this->fill($attributes)->saveOrFail($options);
     }
 
     /**
@@ -602,7 +668,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Destroy the models for the given IDs.
      *
-     * @param array|\Hyperf\Collection\Collection|int $ids
+     * @param array|BaseCollection|int $ids
      */
     public static function destroy($ids): int
     {
@@ -687,7 +753,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Begin querying the model.
      *
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public static function query()
     {
@@ -697,7 +763,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Get a new query builder for the model's table.
      *
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function newQuery()
     {
@@ -707,7 +773,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Get a new query builder that doesn't have any global scopes or eager loading.
      *
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     public function newModelQuery()
     {
@@ -717,7 +783,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Get a new query builder with no relationships loaded.
      *
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function newQueryWithoutRelationships()
     {
@@ -727,8 +793,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Register the global scopes for this builder instance.
      *
-     * @param \Hyperf\Database\Model\Builder $builder
-     * @return \Hyperf\Database\Model\Builder
+     * @param Builder $builder
+     * @return Builder
      */
     public function registerGlobalScopes($builder)
     {
@@ -742,7 +808,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Get a new query builder that doesn't have any global scopes.
      *
-     * @return \Hyperf\Database\Model\Builder|static
+     * @return Builder|static
      */
     public function newQueryWithoutScopes()
     {
@@ -752,8 +818,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Get a new query instance without a given scope.
      *
-     * @param \Hyperf\Database\Model\Scope|string $scope
-     * @return \Hyperf\Database\Model\Builder
+     * @param Scope|string $scope
+     * @return Builder
      */
     public function newQueryWithoutScope($scope)
     {
@@ -764,7 +830,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Get a new query to restore one or more models by their queueable IDs.
      *
      * @param array|int $ids
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function newQueryForRestoration($ids)
     {
@@ -775,8 +841,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Create a new Model query builder for the model.
      *
-     * @param \Hyperf\Database\Query\Builder $query
-     * @return \Hyperf\Database\Model\Builder|static
+     * @param QueryBuilder $query
+     * @return Builder|static
      */
     public function newModelBuilder($query)
     {
@@ -786,7 +852,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Create a new Model Collection instance.
      *
-     * @return \Hyperf\Database\Model\Collection
+     * @return Collection
      */
     public function newCollection(array $models = [])
     {
@@ -796,11 +862,10 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Create a new pivot model instance.
      *
-     * @param \Hyperf\Database\Model\Model $parent
      * @param string $table
      * @param bool $exists
      * @param null|string $using
-     * @return \Hyperf\Database\Model\Relations\Pivot
+     * @return Pivot
      */
     public function newPivot(self $parent, array $attributes, $table, $exists, $using = null)
     {
@@ -820,7 +885,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      *
      * @param int $options
      * @return string
-     * @throws \Hyperf\Database\Model\JsonEncodingException
+     * @throws JsonEncodingException
      */
     public function toJson($options = 0)
     {
@@ -884,7 +949,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      *
      * @return static
      */
-    public function replicate(array $except = null)
+    public function replicate(?array $except = null)
     {
         $defaults = [
             $this->getKeyName(),
@@ -904,7 +969,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Determine if two models have the same ID and belong to the same table.
      *
-     * @param null|\Hyperf\Database\Model\Model $model
+     * @param null|Model $model
      * @return bool
      */
     public function is($model)
@@ -915,7 +980,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Determine if two models are not the same.
      *
-     * @param null|\Hyperf\Database\Model\Model $model
+     * @param null|Model $model
      * @return bool
      */
     public function isNot($model)
@@ -1094,7 +1159,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Retrieve the model for a bound value.
      *
      * @param mixed $value
-     * @return null|\Hyperf\Database\Model\Model
+     * @return null|Model
      */
     public function resolveRouteBinding($value)
     {
@@ -1300,7 +1365,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Perform a model update operation.
      *
-     * @param \Hyperf\Database\Model\Builder $query
      * @return bool
      */
     protected function performUpdate(Builder $query)
@@ -1340,8 +1404,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Set the keys for a save update query.
      *
-     * @param \Hyperf\Database\Model\Builder $query
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     protected function setKeysForSaveQuery(Builder $query)
     {
@@ -1361,7 +1424,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Perform a model insert operation.
      *
-     * @param \Hyperf\Database\Model\Builder $query
      * @return bool
      */
     protected function performInsert(Builder $query)
@@ -1414,7 +1476,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Insert the given attributes and set the ID on the model.
      *
-     * @param \Hyperf\Database\Model\Builder $query
      * @param array $attributes
      */
     protected function insertAndSetId(Builder $query, $attributes)
@@ -1437,7 +1498,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Get a new query builder instance for the connection.
      *
-     * @return \Hyperf\Database\Query\Builder
+     * @return QueryBuilder
      */
     protected function newBaseQueryBuilder()
     {

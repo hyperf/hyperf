@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Grpc;
 
 use Google\Protobuf\GPBEmpty;
@@ -59,7 +60,7 @@ class Parser
         if (! $response) {
             return ['No response', self::GRPC_ERROR_NO_RESPONSE, $response];
         }
-        if (self::isinvalidStatus($response->statusCode)) {
+        if (self::isInvalidStatus($response->statusCode)) {
             $message = $response->headers['grpc-message'] ?? 'Http status Error';
             $code = $response->headers['grpc-status'] ?? ($response->errCode ?: $response->statusCode);
             return [$message, (int) $code, $response];
@@ -96,7 +97,7 @@ class Parser
     {
         if (is_array($deserialize)) {
             [$className, $deserializeFunc] = $deserialize;
-            /** @var \Google\Protobuf\Internal\Message $object */
+            /** @var Message $object */
             $object = new $className();
             if ($deserializeFunc && method_exists($object, $deserializeFunc)) {
                 $object->{$deserializeFunc}($unpacked);
@@ -126,7 +127,7 @@ class Parser
         return (string) $data;
     }
 
-    private static function isinvalidStatus(int $code)
+    private static function isInvalidStatus(int $code): bool
     {
         return $code !== 0 && $code !== 200 && $code !== 400;
     }

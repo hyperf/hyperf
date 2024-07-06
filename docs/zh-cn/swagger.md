@@ -117,3 +117,114 @@ class CardController extends Controller
     }
 }
 ```
+
+### 替换 Swagger 面板
+
+以下是默认的 Swagger 前端页面，如果需要自定义，则可以修改 `swagger.html` 配置
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="SwaggerUI"
+    />
+    <title>SwaggerUI</title>
+    <link rel="stylesheet" href="https://unpkg.hyperf.wiki/swagger-ui-dist@4.5.0/swagger-ui.css" />
+  </head>
+  <body>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.hyperf.wiki/swagger-ui-dist@4.5.0/swagger-ui-bundle.js" crossorigin></script>
+  <script src="https://unpkg.hyperf.wiki/swagger-ui-dist@4.5.0/swagger-ui-standalone-preset.js" crossorigin></script>
+  <script>
+    window.onload = () => {
+      window.ui = SwaggerUIBundle({
+        url: GetQueryString("search"),
+        dom_id: '#swagger-ui',
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: "StandaloneLayout",
+      });
+    };
+    function GetQueryString(name) {
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+      var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
+      var context = "";
+      if (r != null)
+        context = decodeURIComponent(r[2]);
+      reg = null;
+      r = null;
+      return context == null || context == "" || context == "undefined" ? "/http.json" : context;
+    }
+  </script>
+  </body>
+</html>
+```
+
+例如，当 `unpkg.hyperf.wiki` 出现故障时，可以手动替换为 `unpkg.com`，手动修改 `config/autoload/swagger.php` 配置
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'enable' => true,
+    'port' => 9500,
+    'json_dir' => BASE_PATH . '/storage/swagger',
+    'html' => <<<'HTML'
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="SwaggerUI"
+    />
+    <title>SwaggerUI</title>
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui.css" />
+  </head>
+  <body>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui-bundle.js" crossorigin></script>
+  <script src="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui-standalone-preset.js" crossorigin></script>
+  <script>
+    window.onload = () => {
+      window.ui = SwaggerUIBundle({
+        url: GetQueryString("search"),
+        dom_id: '#swagger-ui',
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: "StandaloneLayout",
+      });
+    };
+    function GetQueryString(name) {
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+      var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
+      var context = "";
+      if (r != null)
+        context = decodeURIComponent(r[2]);
+      reg = null;
+      r = null;
+      return context == null || context == "" || context == "undefined" ? "/http.json" : context;
+    }
+  </script>
+  </body>
+</html>
+HTML,
+    'url' => '/swagger',
+    'auto_generate' => true,
+    'scan' => [
+        'paths' => null,
+    ],
+];
+
+```

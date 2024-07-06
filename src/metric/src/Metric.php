@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric;
 
 use Hyperf\Metric\Contract\MetricFactoryInterface;
@@ -55,6 +56,7 @@ class Metric
 
     public static function time(string $name, callable $func, ?array $args = [], ?array $labels = [])
     {
+        // Must be keep the variable $timer alive, otherwise the destructor will be called right now.
         $timer = new Timer($name, $labels);
         return $func(...$args);
     }

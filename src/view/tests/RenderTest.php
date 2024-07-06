@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\View;
 
 use Hyperf\Config\Config;
@@ -57,11 +58,11 @@ class RenderTest extends TestCase
         ]));
 
         try {
-            $render->getContents('index.tpl', ['title' => 'Hyperf']);
+            $render->getContents('index2.tpl', ['title' => 'Hyperf']);
             $this->assertTrue(false);
         } catch (Throwable $throwable) {
             $this->assertInstanceOf(RenderException::class, $throwable);
-            $this->assertSame('Undefined index: name', $throwable->getMessage());
+            $this->assertSame("Unable to load template 'file:index2.tpl'", $throwable->getMessage());
             $this->assertNotNull($throwable->getPrevious());
         }
     }

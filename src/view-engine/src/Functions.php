@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine;
 
 use Hyperf\Context\ApplicationContext;
@@ -20,7 +21,7 @@ use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\ViewInterface;
 use Psr\Http\Message\ResponseInterface;
 
-if (! function_exists('Hyperf\\ViewEngine\\view')) {
+if (! function_exists('Hyperf\ViewEngine\view')) {
     /**
      * Get the evaluated view contents for the given view.
      *

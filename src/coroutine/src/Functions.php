@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Coroutine;
 
 use Closure;
 use Hyperf\Context\ApplicationContext;
 use RuntimeException;
+use Swoole\Runtime;
 
 /**
  * @param callable[] $callables
@@ -28,6 +30,12 @@ function parallel(array $callables, int $concurrent = 0): array
     return $parallel->wait();
 }
 
+/**
+ * @template TReturn
+ *
+ * @param Closure():TReturn $closure
+ * @return TReturn
+ */
 function wait(Closure $closure, ?float $timeout = null)
 {
     if (ApplicationContext::hasContainer()) {
@@ -65,11 +73,11 @@ function run($callbacks, int $flags = SWOOLE_HOOK_ALL): bool
         throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
     }
 
-    \Swoole\Runtime::enableCoroutine($flags);
+    Runtime::enableCoroutine($flags);
 
     /* @phpstan-ignore-next-line */
     $result = \Swoole\Coroutine\run(...(array) $callbacks);
 
-    \Swoole\Runtime::enableCoroutine(false);
+    Runtime::enableCoroutine(false);
     return $result;
 }

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\ConnectionInterface;
@@ -30,8 +31,8 @@ class ModelDynamicRelationsTest extends TestCase
 {
     public function setUp(): void
     {
-        $grammarClass = 'Hyperf\Database\Query\Grammars\\Grammar';
-        $processorClass = 'Hyperf\Database\Query\Processors\\Processor';
+        $grammarClass = 'Hyperf\Database\Query\Grammars\Grammar';
+        $processorClass = 'Hyperf\Database\Query\Processors\Processor';
         $grammar = new $grammarClass();
         $processor = new $processorClass();
         $connection = Mockery::mock(ConnectionInterface::class, ['getQueryGrammar' => $grammar, 'getPostProcessor' => $processor]);

@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\Exception\NotFoundException;
 use ReflectionClass;
+use ReflectionClassConstant;
 use ReflectionMethod;
 use ReflectionProperty;
 use Reflector;
@@ -92,7 +94,7 @@ class AnnotationReader
                 continue;
             }
             if (! class_exists($attribute->getName())) {
-                $className = $methodName = $propertyName = '';
+                $className = $methodName = $propertyName = $classConstantName = '';
                 if ($reflection instanceof ReflectionClass) {
                     $className = $reflection->getName();
                 } elseif ($reflection instanceof ReflectionMethod) {
@@ -101,6 +103,9 @@ class AnnotationReader
                 } elseif ($reflection instanceof ReflectionProperty) {
                     $className = $reflection->getDeclaringClass()->getName();
                     $propertyName = $reflection->getName();
+                } elseif ($reflection instanceof ReflectionClassConstant) {
+                    $className = $reflection->getDeclaringClass()->getName();
+                    $classConstantName = $reflection->getName();
                 }
                 $message = sprintf(
                     "No attribute class found for '%s' in %s",
@@ -112,6 +117,9 @@ class AnnotationReader
                 }
                 if ($propertyName) {
                     $message .= sprintf('::$%s property', $propertyName);
+                }
+                if ($classConstantName) {
+                    $message .= sprintf('::%s class constant', $classConstantName);
                 }
                 throw new NotFoundException($message);
             }

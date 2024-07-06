@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
 use Hyperf\Di\ReflectionManager;
@@ -106,9 +107,21 @@ class ReflectionTest extends TestCase
     {
         $reflections = ReflectionManager::getAllClasses([__DIR__ . '/Stub']);
         $this->assertGreaterThan(0, count($reflections));
+        $classes = [];
+        $interfaces = [];
+        $traits = [];
+        $enums = [];
         foreach ($reflections as $name => $reflection) {
-            $this->assertTrue(class_exists($name) || interface_exists($name) || trait_exists($name));
+            $this->assertTrue(class_exists($name) || interface_exists($name) || trait_exists($name) || enum_exists($name));
             $this->assertInstanceOf(ReflectionClass::class, $reflection);
+            match (true) {
+                enum_exists($name) => $enums[] = $name,
+                class_exists($name) => $classes[] = $name,
+                interface_exists($name) => $interfaces[] = $name,
+                trait_exists($name) => $traits[] = $name,
+            };
         }
+
+        $this->assertTrue($classes && $interfaces && $traits && $enums);
     }
 }

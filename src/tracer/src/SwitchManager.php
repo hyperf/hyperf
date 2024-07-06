@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer;
 
 use Hyperf\Context\Context;
@@ -51,7 +52,7 @@ class SwitchManager
         return $this->config[$identifier] && Context::get('tracer.root') instanceof Span;
     }
 
-    public function isIgnoreException(Throwable|string $exception): bool
+    public function isIgnoreException(string|Throwable $exception): bool
     {
         $ignoreExceptions = $this->config['ignore_exceptions'] ?? [];
         foreach ($ignoreExceptions as $ignoreException) {

@@ -3,9 +3,13 @@
 #
 
 parameters:
-  level: 5
+  level: 6
   bootstrapFiles:
     - "bootstrap.php"
+  parallel:
+    jobSize: 20
+    maximumNumberOfProcesses: 32
+    minimumNumberOfJobsPerProcess: 2
   inferPrivatePropertyTypeFromConstructor: true
   treatPhpDocTypesAsCertain: true
   reportUnmatchedIgnoredErrors: false
@@ -16,21 +20,27 @@ parameters:
     - %currentWorkingDirectory%/src/*/class_map/*
     - %currentWorkingDirectory%/src/di/src/Resolver/FactoryResolver.php
     - %currentWorkingDirectory%/src/config-zookeeper/src/Client.php
-    - %currentWorkingDirectory%/src/contract/*
     - %currentWorkingDirectory%/src/database/*
     - %currentWorkingDirectory%/src/database-pgsql/*
     - %currentWorkingDirectory%/src/db/src/PgSQL/*
     - %currentWorkingDirectory%/src/filesystem/*
-    - %currentWorkingDirectory%/src/graphql/*
     - %currentWorkingDirectory%/src/grpc/*
     - %currentWorkingDirectory%/src/grpc-server/*
     - %currentWorkingDirectory%/src/ide-helper/*
-    - %currentWorkingDirectory%/src/swagger/*
     - %currentWorkingDirectory%/src/validation/*
     - %currentWorkingDirectory%/src/view/src/Engine/*
     - %currentWorkingDirectory%/src/server/src/SwowServer.php
     - %currentWorkingDirectory%/src/amqp/src/IO/SwowIO.php
   ignoreErrors:
+    -
+      identifier: missingType.iterableValue
+    -
+      identifier: missingType.generics
+    -
+      identifier: missingType.return
+    -
+      identifier: missingType.parameter
+    - '#Unable to resolve the template type#'
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
     - '#Argument of an invalid type Hyperf\\AsyncQueue\\Job supplied for foreach, only iterables are supported#'
@@ -57,7 +67,6 @@ parameters:
     - message: '#Match arm is unreachable because previous comparison is always true#'
       path: src/amqp/src/IO/IOFactory.php
     - '#.*TKey.*TValue#'
-    - '#Method Hyperf\\Utils\\Serializer\\Serializer::normalize\(\) should return array\|ArrayObject\|bool\|float\|int\|string\|null#'
     - '#Method Hyperf\\Serializer\\Serializer::normalize\(\) should return array\|ArrayObject\|bool\|float\|int\|string\|null#'
     - '#Class RedisSentinel constructor invoked with .*#'
     - '#Hyperf\\Engine\\Http\\Server#'
@@ -65,6 +74,13 @@ parameters:
     - '#has invalid type Swow#'
     - '#has unknown class Swow#'
     - '#PHPDoc tag \@var above a method has no effect#'
-    - '#\(Hyperf\\Utils\\Collection\) does not accept Hyperf\\Collection\\Collection#'
-    - '#should return Hyperf\\Utils\\Collection but returns Hyperf\\Collection\\Collectio#'
     - '#Call to an undefined method Hyperf\\Collection\\HigherOrderCollectionProxy::\w+\(\)#'
+    - '#Access to an undefined property Hyperf\\Support\\Fluent#'
+    - '#Call to an undefined method Hyperf\\Database\\.*\\Grammar::#'
+    - '#Call to an undefined method Hyperf\\Database\\.*\\Processor::#'
+    - message: '#Type mixed in generic type.*#'
+      path: src/collection/*.php
+    - message: '#Method .* should return .* but returns#'
+      path: src/collection/src/*.php
+    - message: '#has no type specified#'
+      path: src/nacos/src/Protobuf/*.php

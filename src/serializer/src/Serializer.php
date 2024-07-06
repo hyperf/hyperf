@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Serializer;
 
 use Countable;
 use Hyperf\Contract\NormalizerInterface as Normalizer;
-use Symfony\Component\Serializer\Encoder;
 use Symfony\Component\Serializer\Encoder\ChainDecoder;
 use Symfony\Component\Serializer\Encoder\ChainEncoder;
 use Symfony\Component\Serializer\Encoder\ContextAwareDecoderInterface;
@@ -60,25 +60,19 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
         'string' => true,
     ];
 
-    /**
-     * @var Encoder\ChainEncoder
-     */
-    protected $encoder;
+    protected ChainEncoder $encoder;
+
+    protected ChainDecoder $decoder;
+
+    protected array $normalizers = [];
+
+    protected array $denormalizerCache = [];
+
+    protected array $normalizerCache = [];
 
     /**
-     * @var Encoder\ChainDecoder
-     */
-    protected $decoder;
-
-    protected $normalizers = [];
-
-    protected $denormalizerCache = [];
-
-    protected $normalizerCache = [];
-
-    /**
-     * @param (NormalizerInterface|DenormalizerInterface|mixed)[] $normalizers
-     * @param (EncoderInterface|DecoderInterface|mixed)[] $encoders
+     * @param (DenormalizerInterface|mixed|NormalizerInterface)[] $normalizers
+     * @param (DecoderInterface|EncoderInterface|mixed)[] $encoders
      */
     public function __construct(array $normalizers = [], array $encoders = [])
     {
@@ -150,7 +144,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
         return $this->denormalize($data, $type, $format, $context);
     }
 
-    public function normalize($object, string $format = null, array $context = [])
+    public function normalize($object, ?string $format = null, array $context = [])
     {
         // If a normalizer supports the given data, use it
         if ($normalizer = $this->getNormalizer($object, $format, $context)) {
@@ -189,7 +183,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
      * @param mixed $data
      * @throws NotNormalizableValueException
      */
-    public function denormalize($data, string $type, string $format = null, array $context = [])
+    public function denormalize($data, string $type, ?string $format = null, array $context = [])
     {
         if (isset(self::SCALAR_TYPES[$type])) {
             if (is_scalar($data)) {
@@ -217,12 +211,12 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
         throw new NotNormalizableValueException(sprintf('Could not denormalize object of type "%s", no supporting normalizer found.', $type));
     }
 
-    public function supportsNormalization($data, string $format = null, array $context = []): bool
+    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         return $this->getNormalizer($data, $format, $context) !== null;
     }
 
-    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
+    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = []): bool
     {
         return isset(self::SCALAR_TYPES[$type]) || $this->getDenormalizer($data, $type, $format, $context) !== null;
     }
@@ -266,6 +260,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
                     continue;
                 }
 
+                // TODO: Use getSupportedTypes to rewrite this since Symfony 7.
                 if (! $normalizer instanceof CacheableSupportsMethodInterface || ! $normalizer->hasCacheableSupportsMethod()) {
                     $this->normalizerCache[$format][$type][$k] = false;
                 } elseif ($normalizer->supportsNormalization($data, $format)) {

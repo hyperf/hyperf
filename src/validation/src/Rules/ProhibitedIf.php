@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Rules;
 
 use Closure;
@@ -17,7 +18,7 @@ use Stringable;
 
 class ProhibitedIf implements Stringable
 {
-    public Closure|bool $condition;
+    public bool|Closure $condition;
 
     /**
      * Create a new prohibited validation rule based on a condition.

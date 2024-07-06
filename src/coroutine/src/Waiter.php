@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Coroutine;
 
 use Closure;
@@ -29,7 +30,11 @@ class Waiter
     }
 
     /**
+     * @template TReturn
+     *
+     * @param Closure():TReturn $closure
      * @param null|float $timeout seconds
+     * @return TReturn
      */
     public function wait(Closure $closure, ?float $timeout = null)
     {

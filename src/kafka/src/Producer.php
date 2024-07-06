@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
@@ -30,7 +31,7 @@ class Producer
 
     protected ?LongLangProducer $producer = null;
 
-    protected $channelSize = 65535;
+    protected int $channelSize = 65535;
 
     public function __construct(protected ConfigInterface $config, protected string $name = 'default', protected int $timeout = 10)
     {

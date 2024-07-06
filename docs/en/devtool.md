@@ -28,3 +28,21 @@ All commands supported by Command can be listed by executing the above command. 
  vendor
   vendor:publish     Publish any publishable configs from vendor packages.
 ```
+
+## Quick Open
+
+Added a very simple function to quickly open created files with the built-in `gen` command, supporting `sublime`, `textmate`, `emacs`, `macvim`, `phpstorm`, `idea`, `vscode`, `vscode-insiders`, `vscode-remote`, `vscode-insiders-remote`, `atom`, `nova`, `netbeans`, `xdebug`.
+
+You also need to add this configuration block on `config/autoload/devtool.php`:
+
+```php
+return [
+    /**
+     * Supported IDEs: "sublime", "textmate", "emacs", "macvim", "phpstorm", "idea",
+     *        "vscode", "vscode-insiders", "vscode-remote", "vscode-insiders-remote",
+     *        "atom", "nova", "netbeans", "xdebug"
+     */
+    'ide' => env('DEVTOOL_IDE', ''),
+    //...
+];
+```

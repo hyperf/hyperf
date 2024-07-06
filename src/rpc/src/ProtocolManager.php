@@ -9,17 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpc;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
-use Hyperf\RpcMultiplex\DataFormatter;
-use Hyperf\RpcMultiplex\Packer\JsonPacker;
-use Hyperf\RpcMultiplex\PathGenerator;
-use Hyperf\RpcMultiplex\Transporter;
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\ArrayShape;
 
 class ProtocolManager
 {
@@ -27,17 +25,17 @@ class ProtocolManager
     {
     }
 
-    /**
-     * @param $data = [
-     *     'packer' => JsonPacker::class,
-     *     'transporter' => Transporter::class,
-     *     'path-generator' => PathGenerator::class,
-     *     'data-formatter' => DataFormatter::class,
-     *     'normalizer' => JsonRpcNormalizer::class,
-     * ]
-     */
-    public function register(string $name, array $data): void
-    {
+    public function register(
+        string $name,
+        #[ArrayShape([
+            'packer' => 'string', // \Hyperf\RpcMultiplex\Packer\JsonPacker::class,
+            'transporter' => 'string', // \Hyperf\RpcMultiplex\Transporter::class,
+            'path-generator' => 'string', // \Hyperf\RpcMultiplex\PathGenerator::class,
+            'data-formatter' => 'string', // \Hyperf\RpcMultiplex\DataFormatter::class,
+            'normalizer' => 'string', // \Hyperf\JsonRpc\JsonRpcNormalizer::class,
+        ])]
+        array $data
+    ): void {
         $this->config->set('protocols.' . $name, $data);
     }
 

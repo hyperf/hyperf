@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Watcher;
 
 use RuntimeException;
+use Swoole\Coroutine\System;
 
 use function passthru;
 
@@ -21,8 +23,8 @@ if (function_exists('exec')) {
      */
     function exec(string $command)
     {
-        if (class_exists(\Swoole\Coroutine\System::class)) {
-            return \Swoole\Coroutine\System::exec($command);
+        if (class_exists(System::class)) {
+            return System::exec($command);
         }
 
         if (function_exists('\exec')) {

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 interface AnnotationInterface
@@ -17,6 +18,11 @@ interface AnnotationInterface
      * Collect the annotation metadata to a container that you want.
      */
     public function collectClass(string $className): void;
+
+    /**
+     * Collect the annotation metadata to a container that you want.
+     */
+    public function collectClassConstant(string $className, ?string $target): void;
 
     /**
      * Collect the annotation metadata to a container that you want.

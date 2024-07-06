@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\CodeParser\PhpDocReader;
@@ -277,8 +278,11 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 continue;
             }
 
-            $return = end($methodStmt->stmts);
-            if ($return instanceof Node\Stmt\Return_) {
+            foreach ($methodStmt->stmts as $return) {
+                if (! $return instanceof Node\Stmt\Return_) {
+                    continue;
+                }
+
                 $expr = $return->expr;
                 if (
                     $expr instanceof Node\Expr\MethodCall
@@ -310,6 +314,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                         }
                     }
                 }
+                break;
             }
         }
 

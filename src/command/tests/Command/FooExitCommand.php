@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Command\Command;
 
 use Hyperf\Command\Command;
@@ -17,7 +18,7 @@ use Hyperf\Event\ListenerProvider;
 
 class FooExitCommand extends Command
 {
-    public function __construct(string $name = null)
+    public function __construct(?string $name = null)
     {
         parent::__construct($name);
 

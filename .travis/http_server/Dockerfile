@@ -44,6 +44,8 @@ WORKDIR /opt/www
 
 COPY . /opt/www
 
+RUN composer update -o
+
 EXPOSE 10001
 
 ENTRYPOINT ["php", "/opt/www/http_server.php"]

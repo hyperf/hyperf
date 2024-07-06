@@ -63,8 +63,11 @@ php bin/hyperf.php vendor:publish hyperf/redis
 ```php
 <?php
 
-$redis = $this->container->get(\Redis::class);
+use Hyperf\Context\ApplicationContext;
 
+$container = ApplicationContext::getContainer();
+
+$redis = $container->get(\Hyperf\Redis\Redis::class);
 $result = $redis->keys('*');
 
 ```

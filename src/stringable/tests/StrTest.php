@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Stringable;
 
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidInterface;
 
@@ -25,6 +27,70 @@ use Ramsey\Uuid\UuidInterface;
 #[CoversNothing]
 class StrTest extends TestCase
 {
+    public function testStringApa()
+    {
+        $this->assertSame('Tom and Jerry', Str::apa('tom and jerry'));
+        $this->assertSame('Tom and Jerry', Str::apa('TOM AND JERRY'));
+        $this->assertSame('Tom and Jerry', Str::apa('Tom And Jerry'));
+
+        $this->assertSame('Back to the Future', Str::apa('back to the future'));
+        $this->assertSame('Back to the Future', Str::apa('BACK TO THE FUTURE'));
+        $this->assertSame('Back to the Future', Str::apa('Back To The Future'));
+
+        $this->assertSame('This, Then That', Str::apa('this, then that'));
+        $this->assertSame('This, Then That', Str::apa('THIS, THEN THAT'));
+        $this->assertSame('This, Then That', Str::apa('This, Then That'));
+
+        $this->assertSame('Bond. James Bond.', Str::apa('bond. james bond.'));
+        $this->assertSame('Bond. James Bond.', Str::apa('BOND. JAMES BOND.'));
+        $this->assertSame('Bond. James Bond.', Str::apa('Bond. James Bond.'));
+
+        $this->assertSame('Self-Report', Str::apa('self-report'));
+        $this->assertSame('Self-Report', Str::apa('Self-report'));
+        $this->assertSame('Self-Report', Str::apa('SELF-REPORT'));
+
+        $this->assertSame('As the World Turns, So Are the Days of Our Lives', Str::apa('as the world turns, so are the days of our lives'));
+        $this->assertSame('As the World Turns, So Are the Days of Our Lives', Str::apa('AS THE WORLD TURNS, SO ARE THE DAYS OF OUR LIVES'));
+        $this->assertSame('As the World Turns, So Are the Days of Our Lives', Str::apa('As The World Turns, So Are The Days Of Our Lives'));
+
+        $this->assertSame('To Kill a Mockingbird', Str::apa('to kill a mockingbird'));
+        $this->assertSame('To Kill a Mockingbird', Str::apa('TO KILL A MOCKINGBIRD'));
+        $this->assertSame('To Kill a Mockingbird', Str::apa('To Kill A Mockingbird'));
+
+        $this->assertSame('', Str::apa(''));
+        $this->assertSame('   ', Str::apa('   '));
+    }
+
+    public function testStringHeadline()
+    {
+        $this->assertSame('Jefferson Costella', Str::headline('jefferson costella'));
+        $this->assertSame('Jefferson Costella', Str::headline('jefFErson coSTella'));
+        $this->assertSame('Jefferson Costella Uses Hyperf', Str::headline('jefferson_costella uses-_Hyperf'));
+        $this->assertSame('Jefferson Costella Uses Hyperf', Str::headline('jefferson_costella uses__Hyperf'));
+
+        $this->assertSame('Hyperf P H P Framework', Str::headline('hyperf_p_h_p_framework'));
+        $this->assertSame('Hyperf P H P Framework', Str::headline('hyperf _p _h _p _framework'));
+        $this->assertSame('Hyperf Php Framework', Str::headline('hyperf_php_framework'));
+        $this->assertSame('Hyperf Ph P Framework', Str::headline('hyperf-phP-framework'));
+        $this->assertSame('Hyperf Php Framework', Str::headline('hyperf  -_-  php   -_-   framework   '));
+
+        $this->assertSame('Foo Bar', Str::headline('fooBar'));
+        $this->assertSame('Foo Bar', Str::headline('foo_bar'));
+        $this->assertSame('Foo Bar Baz', Str::headline('foo-barBaz'));
+        $this->assertSame('Foo Bar Baz', Str::headline('foo-bar_baz'));
+
+        $this->assertSame('Öffentliche Überraschungen', Str::headline('öffentliche-überraschungen'));
+        $this->assertSame('Öffentliche Überraschungen', Str::headline('-_öffentliche_überraschungen_-'));
+        $this->assertSame('Öffentliche Überraschungen', Str::headline('-öffentliche überraschungen'));
+
+        $this->assertSame('Sind Öde Und So', Str::headline('sindÖdeUndSo'));
+
+        $this->assertSame('Orwell 1984', Str::headline('orwell 1984'));
+        $this->assertSame('Orwell 1984', Str::headline('orwell   1984'));
+        $this->assertSame('Orwell 1984', Str::headline('-orwell-1984 -'));
+        $this->assertSame('Orwell 1984', Str::headline(' orwell_- 1984 '));
+    }
+
     public function testCharAt()
     {
         $this->assertEquals('р', Str::charAt('Привет, мир!', 1));
@@ -228,22 +294,43 @@ class StrTest extends TestCase
         $this->assertTrue(Str::isUuid((string) $uuid));
     }
 
+    public function testIsAscii()
+    {
+        $this->assertTrue(Str::isAscii('Hello World!'));
+        $this->assertTrue(Str::isAscii('1234567890'));
+        $this->assertTrue(Str::isAscii('!@#$%^&*()'));
+        $this->assertFalse(Str::isAscii('Привет, мир!'));
+        $this->assertFalse(Str::isAscii('漢字'));
+        $this->assertFalse(Str::isAscii('áéíóú'));
+        $this->assertFalse(Str::isAscii('àèìòù'));
+        $this->assertFalse(Str::isAscii('äëïöü'));
+        $this->assertFalse(Str::isAscii('âêîôû'));
+        $this->assertFalse(Str::isAscii('ãõñ'));
+        $this->assertFalse(Str::isAscii('ç'));
+        $this->assertFalse(Str::isAscii('ß'));
+        $this->assertFalse(Str::isAscii('æ'));
+        $this->assertFalse(Str::isAscii('ø'));
+        $this->assertFalse(Str::isAscii('Æ'));
+        $this->assertFalse(Str::isAscii('Ö'));
+        $this->assertFalse(Str::isAscii('🙂'));
+    }
+
     public function testIsMatch()
     {
-        $this->assertTrue(Str::isMatch('/.*,.*!/', 'Hello, Laravel!'));
-        $this->assertTrue(Str::isMatch('/^.*$(.*)/', 'Hello, Laravel!'));
-        $this->assertTrue(Str::isMatch('/laravel/i', 'Hello, Laravel!'));
-        $this->assertTrue(Str::isMatch('/^(.*(.*(.*)))/', 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch('/.*,.*!/', 'Hello, Hyperf!'));
+        $this->assertTrue(Str::isMatch('/^.*$(.*)/', 'Hello, Hyperf!'));
+        $this->assertTrue(Str::isMatch('/hyperf/i', 'Hello, Hyperf!'));
+        $this->assertTrue(Str::isMatch('/^(.*(.*(.*)))/', 'Hello, Hyperf!'));
 
-        $this->assertFalse(Str::isMatch('/H.o/', 'Hello, Laravel!'));
-        $this->assertFalse(Str::isMatch('/^laravel!/i', 'Hello, Laravel!'));
-        $this->assertFalse(Str::isMatch('/laravel!(.*)/', 'Hello, Laravel!'));
-        $this->assertFalse(Str::isMatch('/^[a-zA-Z,!]+$/', 'Hello, Laravel!'));
+        $this->assertFalse(Str::isMatch('/H.o/', 'Hello, Hyperf!'));
+        $this->assertFalse(Str::isMatch('/^hyperf!/i', 'Hello, Hyperf!'));
+        $this->assertFalse(Str::isMatch('/hyperf!(.*)/', 'Hello, Hyperf!'));
+        $this->assertFalse(Str::isMatch('/^[a-zA-Z,!]+$/', 'Hello, Hyperf!'));
 
-        $this->assertTrue(Str::isMatch(['/.*,.*!/', '/H.o/'], 'Hello, Laravel!'));
-        $this->assertTrue(Str::isMatch(['/^laravel!/i', '/^.*$(.*)/'], 'Hello, Laravel!'));
-        $this->assertTrue(Str::isMatch(['/laravel/i', '/laravel!(.*)/'], 'Hello, Laravel!'));
-        $this->assertTrue(Str::isMatch(['/^[a-zA-Z,!]+$/', '/^(.*(.*(.*)))/'], 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch(['/.*,.*!/', '/H.o/'], 'Hello, Hyperf!'));
+        $this->assertTrue(Str::isMatch(['/^hyperf!/i', '/^.*$(.*)/'], 'Hello, Hyperf!'));
+        $this->assertTrue(Str::isMatch(['/hyperf/i', '/hyperf!(.*)/'], 'Hello, Hyperf!'));
+        $this->assertTrue(Str::isMatch(['/^[a-zA-Z,!]+$/', '/^(.*(.*(.*)))/'], 'Hello, Hyperf!'));
     }
 
     public function testCamel()
@@ -288,19 +375,13 @@ class StrTest extends TestCase
         $this->assertSame('Hello-World', StrCache::studly('hello world', '-'));
     }
 
-    /**
-     * @param mixed $validUrl
-     */
-    #[\PHPUnit\Framework\Attributes\DataProvider('validUrls')]
+    #[DataProvider('validUrls')]
     public function testValidUrls($url)
     {
         $this->assertTrue(Str::isUrl($url));
     }
 
-    /**
-     * @param mixed $invalidUrl
-     */
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidUrls')]
+    #[DataProvider('invalidUrls')]
     public function testInvalidUrls($url)
     {
         $this->assertFalse(Str::isUrl($url));
@@ -535,16 +616,16 @@ class StrTest extends TestCase
             ['https://google.com'],
             ['http://illuminate.dev'],
             ['http://localhost'],
-            ['https://laravel.com/?'],
+            ['https://hyperf.wiki/?'],
             ['http://президент.рф/'],
             ['http://스타벅스코리아.com'],
             ['http://xn--d1abbgf6aiiy.xn--p1ai/'],
-            ['https://laravel.com?'],
-            ['https://laravel.com?q=1'],
-            ['https://laravel.com/?q=1'],
-            ['https://laravel.com#'],
-            ['https://laravel.com#fragment'],
-            ['https://laravel.com/#fragment'],
+            ['https://hyperf.wiki?'],
+            ['https://hyperf.wiki?q=1'],
+            ['https://hyperf.wiki/?q=1'],
+            ['https://hyperf.wiki#'],
+            ['https://hyperf.wiki#fragment'],
+            ['https://hyperf.wiki/#fragment'],
         ];
     }
 
@@ -725,8 +806,8 @@ class StrTest extends TestCase
     public function testLcfirst()
     {
         $data = [
-            ['laravel', 'Laravel'],
-            ['laravel framework', 'Laravel framework'],
+            ['hyperf', 'Hyperf'],
+            ['hyperf framework', 'Hyperf framework'],
             ['мама', 'Мама'],
             ['мама мыла раму', 'Мама мыла раму'],
         ];
@@ -738,10 +819,10 @@ class StrTest extends TestCase
     public function testUcsplit()
     {
         $data = [
-            [['Laravel_p_h_p_framework'], 'Laravel_p_h_p_framework'],
-            [['Laravel_', 'P_h_p_framework'], 'Laravel_P_h_p_framework'],
-            [['laravel', 'P', 'H', 'P', 'Framework'], 'laravelPHPFramework'],
-            [['Laravel-ph', 'P-framework'], 'Laravel-phP-framework'],
+            [['Hyperf_p_h_p_framework'], 'Hyperf_p_h_p_framework'],
+            [['Hyperf_', 'P_h_p_framework'], 'Hyperf_P_h_p_framework'],
+            [['hyperf', 'P', 'H', 'P', 'Framework'], 'hyperfPHPFramework'],
+            [['Hyperf-ph', 'P-framework'], 'Hyperf-phP-framework'],
             [['Żółta', 'Łódka'], 'ŻółtaŁódka'],
             [['sind', 'Öde', 'Und', 'So'], 'sindÖdeUndSo'],
             [['Öffentliche', 'Überraschungen'], 'ÖffentlicheÜberraschungen'],
@@ -765,7 +846,7 @@ class StrTest extends TestCase
     {
         $data = [
             [2, 'Hello, world!'],
-            [10, 'Hi, this is my first contribution to the Laravel framework.'],
+            [10, 'Hi, this is my first contribution to the Hyperf framework.'],
         ];
         foreach ($data as $item) {
             $this->assertSame($item[0], Str::wordCount($item[1]));
@@ -782,6 +863,23 @@ class StrTest extends TestCase
             $this->assertIsString(Str::password(...$item[1]));
             $this->assertSame($item[0], strlen(Str::password(...$item[1])));
         }
+    }
+
+    public function testPosition()
+    {
+        $this->assertSame(7, Str::position('Hello, World!', 'W'));
+        $this->assertSame(10, Str::position('This is a test string.', 'test'));
+        $this->assertSame(23, Str::position('This is a test string, test again.', 'test', 15));
+        $this->assertSame(0, Str::position('Hello, World!', 'Hello'));
+        $this->assertSame(7, Str::position('Hello, World!', 'World!'));
+        $this->assertSame(10, Str::position('This is a tEsT string.', 'tEsT', 0, 'UTF-8'));
+        $this->assertSame(7, Str::position('Hello, World!', 'W', -6));
+        $this->assertSame(18, Str::position('Äpfel, Birnen und Kirschen', 'Kirschen', -10, 'UTF-8'));
+        $this->assertSame(9, Str::position('@%€/=!"][$', '$', 0, 'UTF-8'));
+        $this->assertFalse(Str::position('Hello, World!', 'w', 0, 'UTF-8'));
+        $this->assertFalse(Str::position('Hello, World!', 'X', 0, 'UTF-8'));
+        $this->assertFalse(Str::position('', 'test'));
+        $this->assertFalse(Str::position('Hello, World!', 'X'));
     }
 
     public function testReplaceStart()
@@ -832,21 +930,104 @@ class StrTest extends TestCase
         }
     }
 
+    public function testToBase64()
+    {
+        $this->assertSame(base64_encode('foo'), Str::toBase64('foo'));
+        $this->assertSame(base64_encode('foobar'), Str::toBase64('foobar'));
+    }
+
+    public function testTrim()
+    {
+        $this->assertSame('foo bar', Str::trim('   foo bar   '));
+        $this->assertSame('foo bar', Str::trim('foo bar   '));
+        $this->assertSame('foo bar', Str::trim('   foo bar'));
+        $this->assertSame('foo bar', Str::trim('foo bar'));
+        $this->assertSame(' foo bar ', Str::trim(' foo bar ', ''));
+        $this->assertSame('foo bar', Str::trim(' foo bar ', ' '));
+        $this->assertSame('foo  bar', Str::trim('-foo  bar_', '-_'));
+
+        $this->assertSame('foo    bar', Str::trim(' foo    bar '));
+
+        $this->assertSame('123', Str::trim('   123    '));
+        $this->assertSame('だ', Str::trim('だ'));
+        $this->assertSame('ム', Str::trim('ム'));
+        $this->assertSame('だ', Str::trim('   だ    '));
+        $this->assertSame('ム', Str::trim('   ム    '));
+
+        $this->assertSame(
+            'foo bar',
+            Str::trim('
+                foo bar
+            ')
+        );
+        $this->assertSame(
+            'foo
+                bar',
+            Str::trim('
+                foo
+                bar
+            ')
+        );
+
+        $this->assertSame("\xE9", Str::trim(" \xE9 "));
+    }
+
+    public function testLtrim()
+    {
+        $this->assertSame('foo    bar ', Str::ltrim(' foo    bar '));
+
+        $this->assertSame('123    ', Str::ltrim('   123    '));
+        $this->assertSame('だ', Str::ltrim('だ'));
+        $this->assertSame('ム', Str::ltrim('ム'));
+        $this->assertSame('だ    ', Str::ltrim('   だ    '));
+        $this->assertSame('ム    ', Str::ltrim('   ム    '));
+
+        $this->assertSame(
+            'foo bar
+            ',
+            Str::ltrim('
+                foo bar
+            ')
+        );
+        $this->assertSame("\xE9 ", Str::ltrim(" \xE9 "));
+    }
+
+    public function testRtrim()
+    {
+        $this->assertSame(' foo    bar', Str::rtrim(' foo    bar '));
+
+        $this->assertSame('   123', Str::rtrim('   123    '));
+        $this->assertSame('だ', Str::rtrim('だ'));
+        $this->assertSame('ム', Str::rtrim('ム'));
+        $this->assertSame('   だ', Str::rtrim('   だ    '));
+        $this->assertSame('   ム', Str::rtrim('   ム    '));
+
+        $this->assertSame(
+            '
+                foo bar',
+            Str::rtrim('
+                foo bar
+            ')
+        );
+
+        $this->assertSame(" \xE9", Str::rtrim(" \xE9 "));
+    }
+
     public function testSquish()
     {
         $data = [
-            ['laravel php framework', ' laravel   php  framework '],
-            ['laravel php framework', "laravel\t\tphp\n\nframework"],
+            ['hyperf php framework', ' hyperf   php  framework '],
+            ['hyperf php framework', "hyperf\t\tphp\n\nframework"],
             [
-                'laravel php framework', '
-            laravel
+                'hyperf php framework', '
+            hyperf
             php
             framework
         ',
             ],
-            ['laravel php framework', 'laravelㅤㅤㅤphpㅤframework'],
-            ['laravel php framework', 'laravelᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠphpᅠᅠframework'],
-            ['laravel php framework', '   laravel   php   framework   '],
+            ['hyperf php framework', 'hyperfㅤㅤㅤphpㅤframework'],
+            ['hyperf php framework', 'hyperfᅠᅠᅠᅠᅠᅠᅠᅠᅠᅠphpᅠᅠframework'],
+            ['hyperf php framework', '   hyperf   php   framework   '],
             ['123', '   123    '],
             ['だ', 'だ'],
             ['ム', 'ム'],
@@ -862,8 +1043,8 @@ class StrTest extends TestCase
     public function testSubstrReplace()
     {
         $this->assertSame('12:00', Str::substrReplace('1200', ':', 2, 0));
-        $this->assertSame('The Laravel Framework', Str::substrReplace('The Framework', 'Laravel ', 4, 0));
-        $this->assertSame('Laravel – The PHP Framework for Web Artisans', Str::substrReplace('Laravel Framework', '– The PHP Framework for Web Artisans', 8));
+        $this->assertSame('The Hyperf Framework', Str::substrReplace('The Framework', 'Hyperf ', 4, 0));
+        $this->assertSame('Hyperf – The PHP Framework', Str::substrReplace('Hyperf Framework', '– The PHP Framework', 7));
     }
 
     public function testSwapKeywords()
@@ -882,6 +1063,15 @@ class StrTest extends TestCase
                 'ⓐⓑ' => 'baz',
             ], 'foo bar ⓐⓑ')
         );
+    }
+
+    public function testUnwrap()
+    {
+        $this->assertEquals('value', Str::unwrap('"value"', '"'));
+        $this->assertEquals('value', Str::unwrap('"value', '"'));
+        $this->assertEquals('value', Str::unwrap('value"', '"'));
+        $this->assertEquals('bar', Str::unwrap('foo-bar-baz', 'foo-', '-baz'));
+        $this->assertEquals('some: "json"', Str::unwrap('{some: "json"}', '{', '}'));
     }
 
     public function testWrap()
@@ -923,5 +1113,62 @@ class StrTest extends TestCase
     {
         $this->assertSame('http://hyperf.io', Str::replaceMatches('/^https:\/\//', 'http://', 'https://hyperf.io'));
         $this->assertSame('http://hyperf.io', Str::replaceMatches('/^https:\/\//', fn ($matches) => 'http://', 'https://hyperf.io'));
+    }
+
+    public function testNumbers(): void
+    {
+        $this->assertSame('5551234567', Str::numbers('(555) 123-4567'));
+        $this->assertSame('443', Str::numbers('L4r4v3l!'));
+        $this->assertSame('', Str::numbers('Laravel!'));
+
+        $arrayValue = ['(555) 123-4567', 'L4r4v3l', 'Laravel!'];
+        $arrayExpected = ['5551234567', '443', ''];
+        $this->assertSame($arrayExpected, Str::numbers($arrayValue));
+    }
+
+    public function testFromBase64(): void
+    {
+        $this->assertSame('foo', Str::fromBase64(base64_encode('foo')));
+        $this->assertSame('foobar', Str::fromBase64(base64_encode('foobar'), true));
+    }
+
+    public function testChopStart()
+    {
+        foreach ([
+            'http://laravel.com' => ['http://', 'laravel.com'],
+            'http://-http://' => ['http://', '-http://'],
+            'http://laravel.com' => ['htp:/', 'http://laravel.com'],
+            'http://laravel.com' => ['http://www.', 'http://laravel.com'],
+            'http://laravel.com' => ['-http://', 'http://laravel.com'],
+            'http://laravel.com' => [['https://', 'http://'], 'laravel.com'],
+            'http://www.laravel.com' => [['http://', 'www.'], 'www.laravel.com'],
+            'http://http-is-fun.test' => ['http://', 'http-is-fun.test'],
+            '🌊✋' => ['🌊', '✋'],
+            '🌊✋' => ['✋', '🌊✋'],
+        ] as $subject => $value) {
+            [$needle, $expected] = $value;
+
+            $this->assertSame($expected, Str::chopStart($subject, $needle));
+        }
+    }
+
+    public function testChopEnd()
+    {
+        foreach ([
+            'path/to/file.php' => ['.php', 'path/to/file'],
+            '.php-.php' => ['.php', '.php-'],
+            'path/to/file.php' => ['.ph', 'path/to/file.php'],
+            'path/to/file.php' => ['foo.php', 'path/to/file.php'],
+            'path/to/file.php' => ['.php-', 'path/to/file.php'],
+            'path/to/file.php' => [['.html', '.php'], 'path/to/file'],
+            'path/to/file.php' => [['.php', 'file'], 'path/to/file'],
+            'path/to/php.php' => ['.php', 'path/to/php'],
+            '✋🌊' => ['🌊', '✋'],
+            '✋🌊' => ['✋', '✋🌊'],
+        ] as $subject => $value) {
+            [$needle, $expected] = $value;
+
+            $this->assertSame($expected, Str::chopEnd($subject, $needle));
+        }
     }
 }

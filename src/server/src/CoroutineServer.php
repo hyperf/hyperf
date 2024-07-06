@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server;
 
 use Hyperf\Contract\ConfigInterface;
@@ -36,7 +37,7 @@ class CoroutineServer implements ServerInterface
 {
     protected ?ServerConfig $config = null;
 
-    protected HttpServer|Server|null $server = null;
+    protected null|HttpServer|Server $server = null;
 
     /**
      * @var callable

@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Routeguide;
 
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\Internal\Message;
+use GPBMetadata\RouteGuide;
 
 /**
  * Points are represented as latitude-longitude pairs in the E7 representation
@@ -23,7 +25,7 @@ use Google\Protobuf\Internal\GPBUtil;
  *
  * Generated from protobuf message <code>routeguide.Point</code>
  */
-class Point extends \Google\Protobuf\Internal\Message
+class Point extends Message
 {
     /**
      * Generated from protobuf field <code>int32 latitude = 1;</code>.
@@ -41,13 +43,13 @@ class Point extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *                    Optional. Data for populating the Message object.
      *
-     *     @var int $latitude
-     *     @var int $longitude
-     * }
+     * @var int $latitude
+     * @var int $longitude
+     *          }
      */
     public function __construct($data = null)
     {
-        \GPBMetadata\RouteGuide::initOnce();
+        RouteGuide::initOnce();
         parent::__construct($data);
     }
 

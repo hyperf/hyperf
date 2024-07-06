@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di;
 
 use Dotenv\Dotenv;
@@ -31,7 +32,7 @@ class ClassLoader
         }
 
         if (! $configDir) {
-            // This dir is the default proxy file dir path of Hyperf
+            // This dir is the default config file dir path of Hyperf
             $configDir = BASE_PATH . '/config/';
         }
 

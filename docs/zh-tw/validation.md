@@ -725,7 +725,7 @@ $this->validationFactory->make($request->all(), [
 
 由於該規則要求多個引數，可以使用 `Rule::dimensions` 方法來構造該規則：
 
-```
+```php
 use Hyperf\Validation\Rule;
 
 public function rules(): array
@@ -756,7 +756,7 @@ return [
 
 基本使用：
 
-```
+```php
 'state' => 'exists:states'
 ```
 
@@ -1158,6 +1158,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Event\ValidatorFactoryResolved;
+use Hyperf\Validation\Validator;
 
 #[Listener]
 class ValidatorFactoryResolvedListener implements ListenerInterface
@@ -1175,11 +1176,11 @@ class ValidatorFactoryResolvedListener implements ListenerInterface
         /**  @var ValidatorFactoryInterface $validatorFactory */
         $validatorFactory = $event->validatorFactory;
         // 註冊了 foo 驗證器
-        $validatorFactory->extend('foo', function ($attribute, $value, $parameters, $validator) {
+        $validatorFactory->extend('foo', function (string $attribute, mixed $value, array $parameters, Validator $validator): bool {
             return $value == 'foo';
         });
         // 當建立一個自定義驗證規則時，你可能有時候需要為錯誤資訊定義自定義佔位符這裡擴充套件了 :foo 佔位符
-        $validatorFactory->replacer('foo', function ($message, $attribute, $rule, $parameters) {
+        $validatorFactory->replacer('foo', function (string $message, string $attribute, string $rule, array $parameters): array|string {
             return str_replace(':foo', $attribute, $message);
         });
     }
@@ -1204,7 +1205,7 @@ class ValidatorFactoryResolvedListener implements ListenerInterface
 
 #### 自定義驗證器使用
 
-```
+```php
 <?php
 
 declare(strict_types=1);

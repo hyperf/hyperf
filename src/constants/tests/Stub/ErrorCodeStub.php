@@ -9,12 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Constants\Stub;
 
 use Hyperf\Constants\AbstractConstants;
+use Hyperf\Constants\Annotation\Message;
 
 class ErrorCodeStub extends AbstractConstants
 {
+    #[Message('Not Found.')]
+    public const NOT_FOUND = 404;
+
     /**
      * @Message("Server Error!")
      */
@@ -22,8 +27,9 @@ class ErrorCodeStub extends AbstractConstants
 
     /**
      * @Message("SHOW ECHO")
-     * @Echo("ECHO")
+     * @Echo("Don't ECHO")
      */
+    #[Message('ECHO', 'echo')]
     public const SHOW_ECHO = 501;
 
     public const NO_MESSAGE = 502;

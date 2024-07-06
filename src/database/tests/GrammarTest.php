@@ -9,12 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\MySqlConnection;
+use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Grammars\MySqlGrammar as MySqlQueryGrammar;
 use Hyperf\Database\Schema\Grammars\MySqlGrammar;
 use Hyperf\Support\Fluent;
+use Hyperf\Support\Reflection\ClassInvoker;
+use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
@@ -37,5 +41,23 @@ class GrammarTest extends TestCase
         $conn = new MySqlConnection(fn () => 1);
         $grammar = $conn->getQueryGrammar();
         $this->assertInstanceOf(MySqlQueryGrammar::class, $grammar);
+    }
+
+    public function testCompileOrdersToArray()
+    {
+        $grammar = new MySqlQueryGrammar();
+        /** @var MySqlQueryGrammar $grammar */
+        $grammar = new ClassInvoker($grammar);
+        $res = $grammar->compileOrdersToArray(Mockery::mock(Builder::class), [
+            [
+                'column' => 'id',
+                'direction' => 'asc',
+            ],
+            [
+                'sql' => 'name desc',
+            ],
+        ]);
+
+        $this->assertSame(['`id` asc', 'name desc'], $res);
     }
 }

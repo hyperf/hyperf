@@ -9,14 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
 use Multiplex\Contract\IdGeneratorInterface;
 use Multiplex\Contract\PackerInterface;
 use Multiplex\Contract\SerializerInterface;
+use Multiplex\Socket\Client;
 use Psr\Container\ContainerInterface;
 
-class Socket extends \Multiplex\Socket\Client
+class Socket extends Client
 {
     public function __construct(ContainerInterface $container)
     {

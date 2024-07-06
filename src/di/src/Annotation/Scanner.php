@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Config\ProviderConfig;
@@ -32,7 +33,7 @@ class Scanner
         $this->filesystem = new Filesystem();
     }
 
-    public function collect(AnnotationReader $reader, ReflectionClass $reflection)
+    public function collect(AnnotationReader $reader, ReflectionClass $reflection): void
     {
         $className = $reflection->getName();
         if ($path = $this->scanConfig->getClassMap()[$className] ?? null) {
@@ -42,40 +43,37 @@ class Scanner
             }
         }
         // Parse class annotations
-        $classAnnotations = $reader->getClassAnnotations($reflection);
-        if (! empty($classAnnotations)) {
-            foreach ($classAnnotations as $classAnnotation) {
-                if ($classAnnotation instanceof AnnotationInterface) {
-                    $classAnnotation->collectClass($className);
-                }
+        foreach ($reader->getAttributes($reflection) as $classAnnotation) {
+            if ($classAnnotation instanceof AnnotationInterface) {
+                $classAnnotation->collectClass($className);
             }
         }
         // Parse properties annotations
-        $properties = $reflection->getProperties();
-        foreach ($properties as $property) {
-            $propertyAnnotations = $reader->getPropertyAnnotations($property);
-            if (! empty($propertyAnnotations)) {
-                foreach ($propertyAnnotations as $propertyAnnotation) {
-                    if ($propertyAnnotation instanceof AnnotationInterface) {
-                        $propertyAnnotation->collectProperty($className, $property->getName());
-                    }
+        foreach ($reflection->getProperties() as $property) {
+            foreach ($reader->getAttributes($property) as $propertyAnnotation) {
+                if ($propertyAnnotation instanceof AnnotationInterface) {
+                    $propertyAnnotation->collectProperty($className, $property->getName());
                 }
             }
         }
         // Parse methods annotations
-        $methods = $reflection->getMethods();
-        foreach ($methods as $method) {
-            $methodAnnotations = $reader->getMethodAnnotations($method);
-            if (! empty($methodAnnotations)) {
-                foreach ($methodAnnotations as $methodAnnotation) {
-                    if ($methodAnnotation instanceof AnnotationInterface) {
-                        $methodAnnotation->collectMethod($className, $method->getName());
-                    }
+        foreach ($reflection->getMethods() as $method) {
+            foreach ($reader->getAttributes($method) as $methodAnnotation) {
+                if ($methodAnnotation instanceof AnnotationInterface) {
+                    $methodAnnotation->collectMethod($className, $method->getName());
+                }
+            }
+        }
+        // Parse class constants annotations
+        foreach ($reflection->getReflectionConstants() as $classConstant) {
+            foreach ($reader->getAttributes($classConstant) as $constantAnnotation) {
+                if ($constantAnnotation instanceof AnnotationInterface) {
+                    $constantAnnotation->collectClassConstant($className, $classConstant->getName());
                 }
             }
         }
 
-        unset($reflection, $classAnnotations, $properties, $methods);
+        unset($reflection);
     }
 
     public function scan(array $classMap = [], string $proxyDir = ''): array

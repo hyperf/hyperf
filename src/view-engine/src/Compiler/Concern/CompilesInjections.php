@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Compiler\Concern;
 
 trait CompilesInjections
@@ -18,7 +19,7 @@ trait CompilesInjections
      */
     protected function compileInject(string $expression): string
     {
-        $segments = explode(',', preg_replace('/[\\(\\)]/', '', $expression));
+        $segments = explode(',', preg_replace('/[\(\)]/', '', $expression));
 
         $variable = trim($segments[0], " '\"");
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\QueueBuilder;
@@ -19,10 +20,7 @@ abstract class RpcMessage extends Message implements RpcMessageInterface
 {
     protected string $queue = '';
 
-    /**
-     * @var mixed
-     */
-    protected $payload;
+    protected mixed $payload;
 
     public function getQueueBuilder(): QueueBuilder
     {
