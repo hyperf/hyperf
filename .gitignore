@@ -18,3 +18,4 @@ node_modules/*
 .bashrc
 /phpstan.neon
 /phpunit.xml
+!/src/di/tests/envs/**/*.env
