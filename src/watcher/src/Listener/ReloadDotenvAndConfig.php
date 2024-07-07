@@ -41,7 +41,7 @@ class ReloadDotenvAndConfig implements ListenerInterface
     {
         if ($event instanceof BeforeWorkerStart
             && $event->workerId === 0
-            && static::$restartCounter === 0
+            && static::$restartCounter->get() === 0
         ) {
             static::$restartCounter->add();
             return;
