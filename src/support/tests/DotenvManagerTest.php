@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace HyperfTest\Di;
+namespace HyperfTest\Support;
 
-use Hyperf\Di\DotenvManager;
+use Hyperf\Support\DotenvManager;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
