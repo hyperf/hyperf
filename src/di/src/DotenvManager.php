@@ -52,7 +52,7 @@ class DotenvManager
         static::$cachedValues = $entries;
     }
 
-    private static function getDotenv(array $paths, bool $force = false): Dotenv
+    protected static function getDotenv(array $paths, bool $force = false): Dotenv
     {
         if (isset(static::$dotenv) && ! $force) {
             return static::$dotenv;
@@ -66,7 +66,7 @@ class DotenvManager
         );
     }
 
-    private static function getAdapter(bool $force = false): AdapterInterface
+    protected static function getAdapter(bool $force = false): AdapterInterface
     {
         if (isset(static::$adapter) && ! $force) {
             return static::$adapter;
