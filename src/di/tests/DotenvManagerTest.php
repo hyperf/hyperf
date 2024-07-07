@@ -23,10 +23,6 @@ use function Hyperf\Support\env;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class DotenvManagerTest extends TestCase
 {
     public function testLoad()
