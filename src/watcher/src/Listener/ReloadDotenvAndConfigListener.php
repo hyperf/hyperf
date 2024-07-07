@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Hyperf\Watcher\Listener;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Di\DotenvManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeServerRestart;
 use Hyperf\Framework\Event\BeforeWorkerStart;
+use Hyperf\Support\DotenvManager;
 use Psr\Container\ContainerInterface;
 use Swoole\Atomic;
 
-class ReloadDotenvAndConfig implements ListenerInterface
+class ReloadDotenvAndConfigListener implements ListenerInterface
 {
     protected static Atomic $restartCounter;
 
