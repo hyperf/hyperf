@@ -61,7 +61,7 @@ class ClassLoader
     }
 
     /**
-     * @deprecated use DotenvManager instead.
+     * @deprecated use DotenvManager instead
      */
     protected static function loadDotenv(): void
     {
