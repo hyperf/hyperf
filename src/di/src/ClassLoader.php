@@ -21,6 +21,7 @@ use Hyperf\Di\LazyLoader\LazyLoader;
 use Hyperf\Di\ScanHandler\PcntlScanHandler;
 use Hyperf\Di\ScanHandler\ScanHandlerInterface;
 use Hyperf\Support\Composer;
+use Hyperf\Support\DotenvManager;
 
 class ClassLoader
 {
