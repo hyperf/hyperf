@@ -61,6 +61,7 @@ class DotenvManager
         return static::$dotenv = Dotenv::create(
             RepositoryBuilder::createWithNoAdapters()
                 ->addAdapter(static::getAdapter($force))
+                ->immutable()
                 ->make(),
             $paths
         );

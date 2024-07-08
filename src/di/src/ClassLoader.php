@@ -61,6 +61,7 @@ class ClassLoader
     }
 
     /**
+     * @see DotenvManager::load()
      * @deprecated use DotenvManager instead
      */
     protected static function loadDotenv(): void
