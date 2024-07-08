@@ -50,7 +50,6 @@ jobs:
       SW_VERSION: ${{ matrix.sw-version }}
       MYSQL_VERSION: '8.0'
       PGSQL_VERSION: '14'
-      TEST_ENV_VALUE: 'environment'
     steps:
       - name: Checkout
         uses: actions/checkout@v4

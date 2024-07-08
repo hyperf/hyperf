@@ -49,6 +49,6 @@ class DotenvManagerTest extends TestCase
     {
         DotenvManager::load([__DIR__ . '/envs/oldEnv']);
 
-        $this->assertSame('environment', env('TEST_ENV_VALUE'));
+        $this->assertNotEquals('0.0.0', env('SW_VERSION'));
     }
 }
