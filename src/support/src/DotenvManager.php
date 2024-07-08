@@ -42,12 +42,11 @@ class DotenvManager
             return;
         }
 
-        $entries = static::getDotenv($paths, $force)->load();
-        $deletedEntries = array_diff_key(static::$cachedValues, $entries);
-
-        foreach ($deletedEntries as $deletedEntry => $value) {
+        foreach (static::$cachedValues as $deletedEntry => $value) {
             static::getAdapter()->delete($deletedEntry);
         }
+
+        $entries = static::getDotenv($paths, $force)->load();
 
         static::$cachedValues = $entries;
     }

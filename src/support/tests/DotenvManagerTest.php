@@ -36,8 +36,10 @@ class DotenvManagerTest extends TestCase
     public function testReload()
     {
         DotenvManager::load([__DIR__ . '/envs/oldEnv']);
-        DotenvManager::reload([__DIR__ . '/envs/newEnv'], true);
+        $this->assertEquals('1.0', env('TEST_VERSION'));
+        $this->assertTrue(env('OLD_FLAG'));
 
+        DotenvManager::reload([__DIR__ . '/envs/newEnv'], true);
         $this->assertEquals('2.0', env('TEST_VERSION'));
         $this->assertNull(env('OLD_FLAG'));
         $this->assertTrue(env('NEW_FLAG'));
