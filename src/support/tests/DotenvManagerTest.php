@@ -42,4 +42,11 @@ class DotenvManagerTest extends TestCase
         $this->assertNull(env('OLD_FLAG'));
         $this->assertTrue(env('NEW_FLAG'));
     }
+
+    public function testGetEnvFromEnvironment()
+    {
+        DotenvManager::load([__DIR__ . '/envs/oldEnv']);
+
+        $this->assertSame('environment', env('TEST_ENV_VALUE'));
+    }
 }
