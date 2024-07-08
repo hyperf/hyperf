@@ -46,9 +46,7 @@ class DotenvManager
             static::getAdapter()->delete($deletedEntry);
         }
 
-        $entries = static::getDotenv($paths, $force)->load();
-
-        static::$cachedValues = $entries;
+        static::$cachedValues = static::getDotenv($paths, $force)->load();
     }
 
     protected static function getDotenv(array $paths, bool $force = false): Dotenv
