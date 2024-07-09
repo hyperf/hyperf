@@ -121,7 +121,7 @@ class Collection extends BaseCollection implements CompressInterface
      *
      * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      */
-    public function loadAggregate(array|string $relations, string $column, ?string $function = null): static
+    public function loadAggregate(array|string $relations, string $column, ?string $function = null)
     {
         if ($this->isEmpty()) {
             return $this;
@@ -155,7 +155,7 @@ class Collection extends BaseCollection implements CompressInterface
      *
      * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      */
-    public function loadMax(array $relations, string $column): static
+    public function loadMax(array $relations, string $column)
     {
         return $this->loadAggregate($relations, $column, 'max');
     }
@@ -165,7 +165,7 @@ class Collection extends BaseCollection implements CompressInterface
      *
      * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      */
-    public function loadMin(array $relations, string $column): static
+    public function loadMin(array $relations, string $column)
     {
         return $this->loadAggregate($relations, $column, 'min');
     }
@@ -175,7 +175,7 @@ class Collection extends BaseCollection implements CompressInterface
      *
      * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      */
-    public function loadSum(array|string $relations, string $column): static
+    public function loadSum(array|string $relations, string $column)
     {
         return $this->loadAggregate($relations, $column, 'sum');
     }
@@ -185,7 +185,7 @@ class Collection extends BaseCollection implements CompressInterface
      *
      * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      */
-    public function loadAvg(array|string $relations, string $column): static
+    public function loadAvg(array|string $relations, string $column)
     {
         return $this->loadAggregate($relations, $column, 'avg');
     }
@@ -353,7 +353,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param iterable<array-key, TModel> $items
      * @return static<TKey, TModel>
      */
-    public function merge($items): static
+    public function merge($items)
     {
         $dictionary = $this->getDictionary();
 
@@ -372,7 +372,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param callable(TModel, TKey): TMapValue $callback
      * @return BaseCollection<TKey, TMapValue>|static<TKey, TMapValue>
      */
-    public function map(callable $callback): static
+    public function map(callable $callback)
     {
         $result = parent::map($callback);
 
@@ -413,7 +413,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param iterable<array-key, TModel> $items
      * @return static<TKey, TModel>
      */
-    public function diff($items): static
+    public function diff($items)
     {
         $diff = new static();
 
@@ -434,7 +434,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param iterable<array-key, TModel> $items
      * @return static<TKey, TModel>
      */
-    public function intersect(mixed $items): static
+    public function intersect(mixed $items)
     {
         $intersect = new static();
 
@@ -455,7 +455,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param null|(callable(TModel, TKey): bool)|string $key
      * @return static<int, TModel>
      */
-    public function unique(mixed $key = null, bool $strict = false): static
+    public function unique(mixed $key = null, bool $strict = false)
     {
         if (! is_null($key)) {
             return parent::unique($key, $strict);
@@ -470,7 +470,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param null|array<array-key, mixed> $keys
      * @return static<int, TModel>
      */
-    public function only($keys): static
+    public function only($keys)
     {
         if (is_null($keys)) {
             return new static($this->items);
@@ -520,7 +520,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param null|array<array-key, mixed> $keys
      * @return static<int, TModel>
      */
-    public function except($keys): static
+    public function except($keys)
     {
         if (is_null($keys)) {
             return new static($this->items);
