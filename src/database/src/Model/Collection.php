@@ -196,7 +196,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      * @return $this
      */
-    public function loadCount($relations): static
+    public function loadCount($relations)
     {
         if ($this->isEmpty()) {
             return $this;
