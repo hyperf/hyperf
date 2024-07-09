@@ -229,6 +229,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
 
     /**
      * Convert a flatten "dot" notation array into an expanded array.
+     * @return static<TKey, TValue>
      */
     public function undot()
     {
