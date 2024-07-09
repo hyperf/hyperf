@@ -140,7 +140,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      *
      * @return static<int, mixed>
      */
-    public function collapse(): Enumerable
+    public function collapse(): static
     {
         return new static(Arr::collapse($this->items));
     }
@@ -361,7 +361,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @param float|int $depth
      * @return static<int, mixed>
      */
-    public function flatten($depth = INF): Enumerable
+    public function flatten($depth = INF): static
     {
         return new static(Arr::flatten($this->items, $depth));
     }
@@ -371,7 +371,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      *
      * @return static<TKey, TValue>
      */
-    public function flip(): Enumerable
+    public function flip(): static
     {
         return new static(array_flip($this->items));
     }
@@ -443,7 +443,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * Group an associative array by a field or using a callback.
      * @param mixed $groupBy
      */
-    public function groupBy($groupBy, bool $preserveKeys = false): Enumerable
+    public function groupBy($groupBy, bool $preserveKeys = false): static
     {
         if (is_array($groupBy)) {
             $nextGroups = $groupBy;
@@ -590,7 +590,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * Get the keys of the collection items.
      * @return static<int, TKey>
      */
-    public function keys(): Enumerable
+    public function keys(): static
     {
         return new static(array_keys($this->items));
     }
@@ -615,7 +615,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @param array<array-key, string>|string $value
      * @return static<int, mixed>
      */
-    public function pluck(array|string $value, ?string $key = null): Enumerable
+    public function pluck(array|string $value, ?string $key = null): static
     {
         return new static(Arr::pluck($this->items, $value, $key));
     }
@@ -628,7 +628,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @param callable(TValue, TKey): TMapValue $callback
      * @return static<TKey, TMapValue>
      */
-    public function map(callable $callback): Enumerable
+    public function map(callable $callback): static
     {
         $result = [];
         foreach ($this->items as $key => $value) {
@@ -648,7 +648,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @param callable(TValue, TKey): array<TMapToDictionaryKey, TMapToDictionaryValue> $callback
      * @return static<TMapToDictionaryKey, array<int, TMapToDictionaryValue>>
      */
-    public function mapToDictionary(callable $callback): Enumerable
+    public function mapToDictionary(callable $callback): static
     {
         $dictionary = [];
         foreach ($this->items as $key => $item) {
@@ -673,7 +673,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @param callable(TValue, TKey): array<TMapWithKeysKey, TMapWithKeysValue> $callback
      * @return static<TMapWithKeysKey, TMapWithKeysValue>
      */
-    public function mapWithKeys(callable $callback): Enumerable
+    public function mapWithKeys(callable $callback): static
     {
         return new static(Arr::mapWithKeys($this->items, $callback));
     }
@@ -1248,7 +1248,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @param Arrayable<array-key, TZipValue>|iterable<array-key, TZipValue> ...$items
      * @return static<int, static<int, TValue|TZipValue>>
      */
-    public function zip($items): Enumerable
+    public function zip($items): static
     {
         $arrayableItems = array_map(function ($items) {
             return $this->getArrayableItems($items);
@@ -1270,7 +1270,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @param TPadValue $value
      * @return static<int, TPadValue|TValue>
      */
-    public function pad(int $size, $value): Enumerable
+    public function pad(int $size, $value): static
     {
         return new static(array_pad($this->items, $size, $value));
     }
