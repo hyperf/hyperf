@@ -210,6 +210,11 @@ function getter(string $property): string
  * Create an object instance, if the DI container exist in ApplicationContext,
  * then the object will be created by DI container via `make()` method, if not,
  * the object will create by `new` keyword.
+ *
+ * @template TClass
+ *
+ * @param class-string<TClass>|string $name
+ * @return ($name is class-string<TClass> ? TClass : mixed)
  */
 function make(string $name, array $parameters = [])
 {
