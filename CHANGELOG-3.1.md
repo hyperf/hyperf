@@ -1,4 +1,10 @@
-# v3.1.31 - TBD
+# v3.1.32 - TBD
+
+# v3.1.31 - 2024-07-11
+
+## Added
+
+- [#6936](https://github.com/hyperf/hyperf/pull/6936) Support to reload `.env` when using `hyperf/watcher`.
 
 # v3.1.30 - 2024-07-05
 
