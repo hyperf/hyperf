@@ -14,7 +14,6 @@ namespace Hyperf\Watcher\Listener;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Support\DotenvManager;
 use Hyperf\Watcher\Event\BeforeServerRestart;
 use Psr\Container\ContainerInterface;
@@ -28,7 +27,6 @@ class ReloadDotenvAndConfigListener implements ListenerInterface
     public function listen(): array
     {
         return [
-            BeforeWorkerStart::class,
             BeforeServerRestart::class,
         ];
     }
