@@ -17,7 +17,7 @@ use Hyperf\Support\DotenvManager;
 use Hyperf\Watcher\Event\BeforeServerRestart;
 use Psr\Container\ContainerInterface;
 
-class ReloadDotenvListener implements ListenerInterface
+final class ReloadDotenvListener implements ListenerInterface
 {
     public function __construct(protected ContainerInterface $container)
     {
