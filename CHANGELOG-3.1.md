@@ -1,5 +1,9 @@
 # v3.1.32 - TBD
 
+## Optimized
+
+- [#6946](https://github.com/hyperf/hyperf/pull/6946) Removed Swoole Atomic dependency and useless restart counter in watcher.
+
 # v3.1.31 - 2024-07-11
 
 ## Added
