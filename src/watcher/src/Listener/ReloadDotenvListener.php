@@ -12,13 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Watcher\Listener;
 
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Support\DotenvManager;
 use Hyperf\Watcher\Event\BeforeServerRestart;
 use Psr\Container\ContainerInterface;
 
-class ReloadDotenvAndConfigListener implements ListenerInterface
+class ReloadDotenvListener implements ListenerInterface
 {
     public function __construct(protected ContainerInterface $container)
     {
@@ -34,16 +33,6 @@ class ReloadDotenvAndConfigListener implements ListenerInterface
     public function process(object $event): void
     {
         $this->reloadDotenv();
-        $this->reloadConfig();
-    }
-
-    protected function reloadConfig(): void
-    {
-        if (! method_exists($this->container, 'unbind')) {
-            return;
-        }
-
-        $this->container->unbind(ConfigInterface::class);
     }
 
     protected function reloadDotenv(): void
