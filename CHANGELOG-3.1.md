@@ -1,5 +1,9 @@
 # v3.1.32 - TBD
 
+## Fixed
+
+- [#6949](https://github.com/hyperf/hyperf/pull/6949) Fixed bug that restart failed when don't have `.env`.
+
 ## Optimized
 
 - [#6946](https://github.com/hyperf/hyperf/pull/6946) Removed Swoole Atomic dependency and useless restart counter in watcher.
