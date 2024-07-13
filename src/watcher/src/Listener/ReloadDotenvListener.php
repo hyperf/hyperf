@@ -35,8 +35,10 @@ final class ReloadDotenvListener implements ListenerInterface
         $this->reloadDotenv();
     }
 
-    protected function reloadDotenv(): void
+    private function reloadDotenv(): void
     {
-        DotenvManager::reload([BASE_PATH]);
+        if (file_exists(BASE_PATH . '/.env')) {
+            DotenvManager::reload([BASE_PATH]);
+        }
     }
 }
