@@ -3022,7 +3022,7 @@ class QueryBuilderTest extends TestCase
         $clone->select('*')->from('users')->whereBit('type', '!=',$type);
         $this->assertEquals('select * from "users" where type & 16 != 16', $clone->toSql());
         $clone->select('*')->from('users')->orWhereBit('type',$flags);
-        $this->assertEquals('select * from "users" where type & 16 != 16  or flags & 32 = 32', $clone->toSql());
+        $this->assertEquals('select * from "users" where type & 16 != 16 or flags & 32 = 32', $clone->toSql());
     }
 
     public function testClone()
