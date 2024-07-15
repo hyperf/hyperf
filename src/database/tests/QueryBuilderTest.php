@@ -3008,8 +3008,8 @@ class QueryBuilderTest extends TestCase
 
     public function testBitWheres()
     {
-        $type=16;
-        $flags=32;
+        $type = 16;
+        $flags = 32;
 
         $builder = $this->getBuilder();
         $clone = $builder->clone();
@@ -3019,9 +3019,9 @@ class QueryBuilderTest extends TestCase
         $builder->select('*')->from('users')->orWhereBit('flags', $flags);
         $this->assertEquals('select * from "users" where type & 16 = 16 or flags & 32 = 32', $builder->toSql());
 
-        $clone->select('*')->from('users')->whereBit('type', '!=',$type);
+        $clone->select('*')->from('users')->whereBit('type', '!=', $type);
         $this->assertEquals('select * from "users" where type & 16 != 16', $clone->toSql());
-        $clone->select('*')->from('users')->orWhereBit('flags',$flags);
+        $clone->select('*')->from('users')->orWhereBit('flags', $flags);
         $this->assertEquals('select * from "users" where type & 16 != 16 or flags & 32 = 32', $clone->toSql());
     }
 

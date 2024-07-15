@@ -1529,7 +1529,7 @@ class Builder
      */
     public function whereBit($key, $operator = '=', $value = null, $boolean = 'and')
     {
-        [$value, $operator] = $this->prepareValueAndOperator($value, $operator , func_num_args() === 2);
+        [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
         $operator == '!=' ? $operator : '=';
         return $this->whereRaw(sprintf('%s & %s %s %s', $key, $value, $operator, $value), [], $boolean);
     }
@@ -1537,14 +1537,14 @@ class Builder
     /**
      * Add an "or where Bit Functions and Operators" clause to the query.
      *
-     * @param string $boolean
      * @param null|mixed $value
      * @param mixed $key
+     * @param mixed $operator
      * @return $this
      */
     public function orWhereBit($key, $operator = '=', $value = null)
     {
-        [$value, $operator] = $this->prepareValueAndOperator($value, $operator , func_num_args() === 2);
+        [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
         $operator == '!=' ? $operator : '=';
         return $this->whereRaw(sprintf('%s & %s %s %s', $key, $value, $operator, $value), [], 'or');
     }
