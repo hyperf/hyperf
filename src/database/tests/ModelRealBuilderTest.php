@@ -131,10 +131,10 @@ class ModelRealBuilderTest extends TestCase
         $this->getContainer();
 
         $sql = User::query()->orderByWith('book', 'created_at', 'asc')->toSql();
-        $this->assertSame('select * from `user` order by (select `group` from `created_at` where `book`.`user_id` = `user`.`id`) asc', $sql);
+        $this->assertSame('select * from `user` order by (select `created_at` from `book` where `book`.`user_id` = `user`.`id`) asc', $sql);
 
         $desc = User::query()->orderByWithDesc('book', 'created_at')->toSql();
-        $this->assertSame('select * from `user` order by (select `group` from `created_at` where `book`.`user_id` = `user`.`id`) desc', $desc);
+        $this->assertSame('select * from `user` order by (select `created_at` from `book` where `book`.`user_id` = `user`.`id`) desc', $desc);
     }
 
     public function testModelEnum()
