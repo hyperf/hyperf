@@ -1521,7 +1521,7 @@ class Builder
     /**
      * Add an "where Bit Functions and Operators" clause to the query.
      */
-    public function whereBit(string $key, string $operator = 'and', mixed $value = null, string $boolean = 'and', bool $not = false): self
+    public function whereBit(string $key, mixed $operator = 'and', mixed $value = null, string $boolean = 'and', bool $not = false): self
     {
         $type = $not ? '!=' : '=';
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
@@ -1537,7 +1537,7 @@ class Builder
     /**
      * Add an "where Bit Not Functions and Operators" clause to the query.
      */
-    public function whereBitNot(string $key, string $operator = 'and', mixed $value = null, string $boolean = 'and'): self
+    public function whereBitNot(string $key, mixed $operator = 'and', mixed $value = null, string $boolean = 'and'): self
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
         return $this->whereBit($key, $operator, $value, $boolean, true);
@@ -1546,7 +1546,7 @@ class Builder
     /**
      * Add an "or where Bit Functions and Operators" clause to the query.
      */
-    public function orWhereBit(string $key, string $operator = 'and', mixed $value = null, bool $not = false): self
+    public function orWhereBit(string $key, mixed $operator = 'and', mixed $value = null, bool $not = false): self
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
         return $this->whereBit($key, $operator, $value, 'or', $not);
@@ -1555,7 +1555,7 @@ class Builder
     /**
      * Add an "or where Bit Not Functions and Operators" clause to the query.
      */
-    public function orWhereBitNot(string $key, string $operator = 'and', mixed $value = null): self
+    public function orWhereBitNot(string $key, mixed $operator = 'and', mixed $value = null): self
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
         return $this->orWhereBit($key, $operator, $value, true);
