@@ -1521,7 +1521,7 @@ class Builder
     /**
      * Add an "where Bit Functions and Operators" clause to the query.
      */
-    public function whereBit(string $key, string $operator = 'and', ?mixed $value = null, string $boolean = 'and', bool $not = false): self
+    public function whereBit(string $key, string $operator = 'and', mixed $value = null, string $boolean = 'and', bool $not = false): self
     {
         $type = $not ? '!=' : '=';
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
@@ -1537,7 +1537,7 @@ class Builder
     /**
      * Add an "where Bit Not Functions and Operators" clause to the query.
      */
-    public function whereBitNot(string $key, string $operator = 'and', ?mixed $value = null, string $boolean = 'and'): self
+    public function whereBitNot(string $key, string $operator = 'and', mixed $value = null, string $boolean = 'and'): self
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
         return $this->whereBit($key, $operator, $value, $boolean, true);
@@ -1546,7 +1546,7 @@ class Builder
     /**
      * Add an "or where Bit Functions and Operators" clause to the query.
      */
-    public function orWhereBit(string $key, string $operator = 'and', ?mixed $value = null, bool $not = false): self
+    public function orWhereBit(string $key, string $operator = 'and', mixed $value = null, bool $not = false): self
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
         return $this->whereBit($key, $operator, $value, 'or', $not);
@@ -1555,7 +1555,7 @@ class Builder
     /**
      * Add an "or where Bit Not Functions and Operators" clause to the query.
      */
-    public function orWhereBitNot(string $key, string $operator = 'and', ?mixed $value = null): self
+    public function orWhereBitNot(string $key, string $operator = 'and', mixed $value = null): self
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
         return $this->orWhereBit($key, $operator, $value, true);
@@ -1564,7 +1564,7 @@ class Builder
     /**
      * Add an "where Bit Or Functions and Operators" clause to the query.
      */
-    public function whereBitOr(string $key, ?mixed $value = null, bool $not = false): self
+    public function whereBitOr(string $key, mixed $value = null, bool $not = false): self
     {
         return $this->whereBit($key, 'or', $value, 'and', $not);
     }
@@ -1572,7 +1572,7 @@ class Builder
     /**
      * Add an "where Bit Or Not Functions and Operators" clause to the query.
      */
-    public function whereBitOrNot(string $key, ?mixed $value = null): self
+    public function whereBitOrNot(string $key, mixed $value = null): self
     {
         return $this->orWhereBit($key, 'or', $value, true);
     }
@@ -1580,7 +1580,7 @@ class Builder
     /**
      * Add an "or where Bit Or Functions and Operators" clause to the query.
      */
-    public function orWhereBitOr(string $key, ?mixed $value = null, bool $not = false): self
+    public function orWhereBitOr(string $key, mixed $value = null, bool $not = false): self
     {
         return $this->orWhereBit($key, 'or', $value, $not);
     }
@@ -1588,7 +1588,7 @@ class Builder
     /**
      * Add an "or where Bit Or Functions and Operators" clause to the query.
      */
-    public function orWhereBitOrNot(string $key, ?mixed $value = null): self
+    public function orWhereBitOrNot(string $key, mixed $value = null): self
     {
         return $this->orWhereBitOr($key, $value, true);
     }
@@ -1596,7 +1596,7 @@ class Builder
     /**
      * Add an "where Bit Xor Functions and Operators" clause to the query.
      */
-    public function whereBitXor(string $key, ?mixed $value = null, bool $not = false): self
+    public function whereBitXor(string $key, mixed $value = null, bool $not = false): self
     {
         return $this->whereBit($key, 'xor', $value, 'and', $not);
     }
@@ -1604,7 +1604,7 @@ class Builder
     /**
      * Add an "where Bit Xor Not Functions and Operators" clause to the query.
      */
-    public function whereBitXorNot(string $key, ?mixed $value = null): self
+    public function whereBitXorNot(string $key, mixed $value = null): self
     {
         return $this->whereBitXor($key, $value, true);
     }
@@ -1612,7 +1612,7 @@ class Builder
     /**
      * Add an "or where Bit Xor Functions and Operators" clause to the query.
      */
-    public function orWhereBitXor(string $key, ?mixed $value = null, bool $not = false): self
+    public function orWhereBitXor(string $key, mixed $value = null, bool $not = false): self
     {
         return $this->orWhereBit($key, 'xor', $value, $not);
     }
@@ -1620,7 +1620,7 @@ class Builder
     /**
      * Add an "or where Bit Xor Not Functions and Operators" clause to the query.
      */
-    public function orWhereBitXorNot(string $key, ?mixed $value = null): self
+    public function orWhereBitXorNot(string $key, mixed $value = null): self
     {
         return $this->orWhereBitXor($key, $value, true);
     }
