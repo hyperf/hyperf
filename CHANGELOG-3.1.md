@@ -8,6 +8,10 @@
 
 - [#6946](https://github.com/hyperf/hyperf/pull/6946) Removed Swoole Atomic dependency and useless restart counter in watcher.
 
+## Added
+
+- [#6950](https://github.com/hyperf/hyperf/pull/6950) Support `where bit functions and operators` for `database`.
+
 # v3.1.31 - 2024-07-11
 
 ## Added
