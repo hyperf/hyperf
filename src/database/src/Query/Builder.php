@@ -1599,7 +1599,7 @@ class Builder
     }
 
     /**
-     * Add an "or where Bit Or Functions and Operators" clause to the query.
+     * Add an "where Bit Or Not Functions and Operators" clause to the query.
      *
      * @param null|mixed $value
      * @param mixed $key
@@ -1608,6 +1608,17 @@ class Builder
     public function whereBitOrNot($key, $value = null)
     {
         return $this->orWhereBit($key, 'or', $value, true);
+    }
+
+    /**
+     * Add an "or where Bit Or Functions and Operators" clause to the query.
+     * @param mixed $key
+     * @param null|mixed $value
+     * @param mixed $not
+     */
+    public function orWhereBitOr($key, $value = null, $not = false)
+    {
+        return $this->orWhereBit($key, 'or', $value, $not);
     }
 
     /**
