@@ -1632,6 +1632,17 @@ class Builder
     }
 
     /**
+     * Add an "where Bit Xor Functions and Operators" clause to the query.
+     * @param mixed $key
+     * @param null|mixed $value
+     * @param mixed $not
+     */
+    public function whereBitXor($key, $value = null, $not = false)
+    {
+        return $this->whereBit($key, 'xor', $value, 'and', $not);
+    }
+
+    /**
      * Add a "where JSON length" clause to the query.
      *
      * @param string $column
