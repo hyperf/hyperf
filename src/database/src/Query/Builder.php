@@ -1526,12 +1526,11 @@ class Builder
         $type = $not ? '!=' : '=';
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
         $operator = match ($operator) {
-            '|','or' => '|',
-            '&','and' => '&',
-            '^','xor' => '^',
+            '|', 'or' => '|',
+            '^', 'xor' => '^',
             default => '&'
         };
-        return $this->whereRaw(sprintf('%s %s %s %s %s', $key, $operator, $value, $type, $value), [], $boolean);
+        return $this->whereRaw(sprintf('%s %s ? %s ?', $key, $operator, $type), [$value, $value], $boolean);
     }
 
     /**

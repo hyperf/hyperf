@@ -204,6 +204,24 @@ class ModelRealBuilderTest extends TestCase
         }
     }
 
+    public function testUserWhereBit()
+    {
+        $this->getContainer();
+
+        $query = User::query()->whereBit('gender', 1);
+        $res = $query->get();
+        $this->assertTrue($res->count() > 0);
+
+        $sqls = [
+            ['select * from `user` where gender & ? = ?', [1, 1]],
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
+            }
+        }
+    }
+
     public function testForceIndexes()
     {
         $this->getContainer();

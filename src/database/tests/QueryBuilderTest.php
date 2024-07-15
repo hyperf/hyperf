@@ -3014,14 +3014,14 @@ class QueryBuilderTest extends TestCase
         $clone = $builder->clone();
 
         $builder->select('*')->from('users')->whereBit('type', $type);
-        $this->assertEquals('select * from "users" where type & 16 = 16', $builder->toSql());
+        $this->assertEquals('select * from "users" where type & ? = ?', $builder->toSql());
         $builder->select('*')->from('users')->orWhereBit('flags', $flags);
-        $this->assertEquals('select * from "users" where type & 16 = 16 or flags & 32 = 32', $builder->toSql());
+        $this->assertEquals('select * from "users" where type & ? = ? or flags & ? = ?', $builder->toSql());
 
         $clone->select('*')->from('users')->whereBitNot('type', $type);
-        $this->assertEquals('select * from "users" where type & 16 != 16', $clone->toSql());
+        $this->assertEquals('select * from "users" where type & ? != ?', $clone->toSql());
         $clone->select('*')->from('users')->orWhereBitNot('flags', $flags);
-        $this->assertEquals('select * from "users" where type & 16 != 16 or flags & 32 != 32', $clone->toSql());
+        $this->assertEquals('select * from "users" where type & ? != ? or flags & ? != ?', $clone->toSql());
     }
 
     public function testBitWheresOr()
@@ -3032,14 +3032,14 @@ class QueryBuilderTest extends TestCase
         $clone = $builder->clone();
 
         $builder->select('*')->from('users')->whereBitOr('type', $type);
-        $this->assertEquals('select * from "users" where type | 16 = 16', $builder->toSql());
+        $this->assertEquals('select * from "users" where type | ? = ?', $builder->toSql());
         $builder->select('*')->from('users')->orWhereBitOr('flags', $flags);
-        $this->assertEquals('select * from "users" where type | 16 = 16 or flags | 32 = 32', $builder->toSql());
+        $this->assertEquals('select * from "users" where type | ? = ? or flags | ? = ?', $builder->toSql());
 
         $clone->select('*')->from('users')->whereBitOrNot('type', $type);
-        $this->assertEquals('select * from "users" where type | 16 != 16', $clone->toSql());
+        $this->assertEquals('select * from "users" where type | ? != ?', $clone->toSql());
         $clone->select('*')->from('users')->orWhereBitOrNot('flags', $flags);
-        $this->assertEquals('select * from "users" where type | 16 != 16 or flags | 32 != 32', $clone->toSql());
+        $this->assertEquals('select * from "users" where type | ? != ? or flags | ? != ?', $clone->toSql());
     }
 
     public function testBitWheresXor()
@@ -3050,14 +3050,14 @@ class QueryBuilderTest extends TestCase
         $clone = $builder->clone();
 
         $builder->select('*')->from('users')->whereBitXor('type', $type);
-        $this->assertEquals('select * from "users" where type ^ 16 = 16', $builder->toSql());
+        $this->assertEquals('select * from "users" where type ^ ? = ?', $builder->toSql());
         $builder->select('*')->from('users')->orWhereBitXor('flags', $flags);
-        $this->assertEquals('select * from "users" where type ^ 16 = 16 or flags ^ 32 = 32', $builder->toSql());
+        $this->assertEquals('select * from "users" where type ^ ? = ? or flags ^ ? = ?', $builder->toSql());
 
         $clone->select('*')->from('users')->whereBitXorNot('type', $type);
-        $this->assertEquals('select * from "users" where type ^ 16 != 16', $clone->toSql());
+        $this->assertEquals('select * from "users" where type ^ ? != ?', $clone->toSql());
         $clone->select('*')->from('users')->orWhereBitXorNot('flags', $flags);
-        $this->assertEquals('select * from "users" where type ^ 16 != 16 or flags ^ 32 != 32', $clone->toSql());
+        $this->assertEquals('select * from "users" where type ^ ? != ? or flags ^ ? != ?', $clone->toSql());
     }
 
     public function testClone()
