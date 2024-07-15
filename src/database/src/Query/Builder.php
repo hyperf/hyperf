@@ -1525,13 +1525,20 @@ class Builder
      * @param null|mixed $value
      * @param mixed $operator
      * @param mixed $key
+     * @param bool $not
      * @return $this
      */
-    public function whereBit($key, $operator = '=', $value = null, $boolean = 'and')
+    public function whereBit($key, $operator = 'and', $value = null, $boolean = 'and', $not = false)
     {
+        $type = $not ? '!=' : '=';
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
-        $operator == '!=' ? $operator : '=';
-        return $this->whereRaw(sprintf('%s & %s %s %s', $key, $value, $operator, $value), [], $boolean);
+        $operator = match ($operator) {
+            '|','or' => '|',
+            '&','and' => '&',
+            '^','xor' => '^',
+            default => '&'
+        };
+        return $this->whereRaw(sprintf('%s %s %s %s %s', $key, $operator, $value, $type, $value), [], $boolean);
     }
 
     /**
@@ -1540,13 +1547,39 @@ class Builder
      * @param null|mixed $value
      * @param mixed $key
      * @param mixed $operator
+     * @param bool $not
      * @return $this
      */
-    public function orWhereBit($key, $operator = '=', $value = null)
+    public function orWhereBit($key, $operator = 'and', $value = null, $not = false)
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
-        $operator == '!=' ? $operator : '=';
-        return $this->whereRaw(sprintf('%s & %s %s %s', $key, $value, $operator, $value), [], 'or');
+        return $this->whereBit($key, $operator, $value, 'or', $not);
+    }
+
+    /**
+     * Add an "where Bit Or Functions and Operators" clause to the query.
+     *
+     * @param null|mixed $value
+     * @param mixed $key
+     * @param mixed $not
+     * @return $this
+     */
+    public function whereBitOr($key, $value = null, $not = false)
+    {
+        return $this->whereBit($key, 'or', $value, 'and', $not);
+    }
+
+    /**
+     * Add an "or where Bit Or Functions and Operators" clause to the query.
+     *
+     * @param null|mixed $value
+     * @param mixed $key
+     * @param mixed $not
+     * @return $this
+     */
+    public function orWhereBitOr($key, $value = null, $not = false)
+    {
+        return $this->orWhereBit($key, 'or', $value, $not);
     }
 
     /**
