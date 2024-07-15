@@ -1947,7 +1947,7 @@ class Builder
     /**
      *  Add a descending "order by with" clause to the query.
      *
-     * @param array $column
+     * @param array|mixed $column
      */
     public function orderByWith(mixed $relation, mixed $column = ['*'], string $direction = 'asc'): static
     {
@@ -1960,7 +1960,7 @@ class Builder
     /**
      *  Add a descending "order by with desc" clause to the query.
      *
-     * @param array $column
+     * @param array|mixed $column
      */
     public function orderByWithDesc(mixed $relation, mixed $column = ['*']): static
     {
