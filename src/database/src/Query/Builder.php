@@ -1945,6 +1945,32 @@ class Builder
     }
 
     /**
+     *  Add a descending "order by with" clause to the query.
+     *
+     * @param array $column
+     */
+    public function orderByWith(mixed $relation, mixed $column = ['*'], string $direction = 'asc'): static
+    {
+        if (is_string($relation)) {
+            $relation = $this->getRelationWithoutConstraints($relation);
+        }
+        return $this->orderBy($relation->getRelationExistenceQuery($relation->getRelated()->newQueryWithoutRelationships(), $this, $column), $direction);
+    }
+
+    /**
+     *  Add a descending "order by with desc" clause to the query.
+     *
+     * @param array $column
+     */
+    public function orderByWithDesc(mixed $relation, mixed $column = ['*']): static
+    {
+        if (is_string($relation)) {
+            $relation = $this->getRelationWithoutConstraints($relation);
+        }
+        return $this->orderByDesc($relation->getRelationExistenceQuery($relation->getRelated()->newQueryWithoutRelationships(), $this, $column));
+    }
+
+    /**
      * Add an "order by" clause for a timestamp to the query.
      *
      * @param string $column
