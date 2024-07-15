@@ -1542,6 +1542,20 @@ class Builder
     }
 
     /**
+     * Add an "where Bit Not Functions and Operators" clause to the query.
+     *
+     * @param null|mixed $value
+     * @param mixed $key
+     * @param mixed $operator
+     * @return $this
+     */
+    public function whereBitNot($key, $operator = 'and', $value = null)
+    {
+        [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
+        return $this->whereBit($key, $operator, $value, 'or', true);
+    }
+
+    /**
      * Add an "or where Bit Functions and Operators" clause to the query.
      *
      * @param null|mixed $value
