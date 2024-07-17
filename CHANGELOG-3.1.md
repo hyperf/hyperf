@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#6949](https://github.com/hyperf/hyperf/pull/6949) Fixed bug that restart failed when don't have `.env`.
+- [#6953](https://github.com/hyperf/hyperf/pull/6953) Fixed bug that socketio-server cannot work for swow engine.
 
 ## Optimized
 
