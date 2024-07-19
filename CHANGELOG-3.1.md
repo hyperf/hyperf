@@ -1,5 +1,9 @@
 # v3.1.33 - TBD
 
+## Fixed
+
+- [#6954](https://github.com/hyperf/hyperf/pull/6954) Fixed bug that the connection cannot reconnect to the server in a situation where there was a failover and exchange of read and write hosts.
+
 # v3.1.32 - 2024-07-18
 
 ## Fixed
