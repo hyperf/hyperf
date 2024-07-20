@@ -1,4 +1,24 @@
-# v3.1.32 - TBD
+# v3.1.33 - TBD
+
+## Fixed
+
+- [#6954](https://github.com/hyperf/hyperf/pull/6954) Fixed bug that the connection cannot reconnect to the server in a situation where there was a failover and exchange of read and write hosts.
+- [#6961](https://github.com/hyperf/hyperf/pull/6961) Fixed bug that `websocket sender` not support `Swow`.
+
+# v3.1.32 - 2024-07-18
+
+## Fixed
+
+- [#6949](https://github.com/hyperf/hyperf/pull/6949) Fixed bug that restart failed when don't have `.env`.
+- [#6953](https://github.com/hyperf/hyperf/pull/6953) Fixed bug that socketio-server cannot work for swow engine.
+
+## Optimized
+
+- [#6946](https://github.com/hyperf/hyperf/pull/6946) Removed Swoole Atomic dependency and useless restart counter in watcher.
+
+## Added
+
+- [#6950](https://github.com/hyperf/hyperf/pull/6950) Support `where bit functions and operators` for `database`.
 
 # v3.1.31 - 2024-07-11
 

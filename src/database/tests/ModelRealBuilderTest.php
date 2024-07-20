@@ -204,6 +204,24 @@ class ModelRealBuilderTest extends TestCase
         }
     }
 
+    public function testUserWhereBit()
+    {
+        $this->getContainer();
+
+        $query = User::query()->whereBit('gender', 1);
+        $res = $query->get();
+        $this->assertTrue($res->count() > 0);
+
+        $sqls = [
+            ['select * from `user` where gender & ? = ?', [1, 1]],
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
+            }
+        }
+    }
+
     public function testForceIndexes()
     {
         $this->getContainer();
@@ -446,6 +464,38 @@ class ModelRealBuilderTest extends TestCase
         $this->assertIsArray($logs);
         $this->assertCount(1, $logs);
         $this->assertSame('select * from `test` where `user_id` = 1', $logs[0]['raw_query']);
+    }
+
+    public function testMySQLSetNull()
+    {
+        $container = $this->getContainer();
+        /** @var Connection $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->statement('CREATE TABLE `test` (
+            `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            `user_id` bigint(20) unsigned NOT NULL,
+            `uid` bigint(20) unsigned NOT NULL,
+            `version` bigint(20) unsigned NOT NULL,
+            `str_value` varchar(32) NULL DEFAULT NULL,
+            `int_value` bigint(20) unsigned NULL DEFAULT NULL,
+            `created_at` datetime DEFAULT NULL,
+            `updated_at` datetime DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY (`user_id`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
+        $conn->enableQueryLog();
+        $model = new TestModel();
+        $model->user_id = 1;
+        $model->uid = 1;
+        $model->version = 1;
+        $model->str_value = null;
+        $model->int_value = null;
+        $model->save();
+
+        $model = TestModel::query()->where('user_id', 1)->first();
+        $this->assertNull($model->str_value);
+        $this->assertNull($model->int_value);
     }
 
     public function testRewriteSetKeysForSaveQuery()

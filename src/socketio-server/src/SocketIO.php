@@ -108,26 +108,28 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     public function onMessage($server, $frame): void
     {
         $response = (new Response($server))->init($frame);
-        if ($frame->opcode == Opcode::PING) {
+        $frame = Frame::from($frame);
+        $data = (string) $frame->getPayloadData();
+        if ($frame->getOpcode() == Opcode::PING) {
             $response->push(new Frame(opcode: Opcode::PONG));
             return;
         }
 
-        if ($frame->data[0] === Engine::PING) {
-            $this->renewInAllNamespaces($frame->fd);
+        if ($data[0] === Engine::PING) {
+            $this->renewInAllNamespaces($response->getFd());
             $response->push(new Frame(payloadData: Engine::PONG));
             return;
         }
-        if ($frame->data[0] === Engine::CLOSE) {
+        if ($data[0] === Engine::CLOSE) {
             $response->close();
             return;
         }
-        if ($frame->data[0] !== Engine::MESSAGE) {
-            $this->stdoutLogger->error("EngineIO event type {$frame->data[0]} not supported");
+        if ($data[0] !== Engine::MESSAGE) {
+            $this->stdoutLogger->error("EngineIO event type {$data[0]} not supported");
             return;
         }
 
-        $packet = $this->decoder->decode($frame->data);
+        $packet = $this->decoder->decode($data);
         switch ($packet->type) {
             case Packet::OPEN: // client open
                 $responsePacket = Packet::create([
@@ -152,7 +154,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
                         $this->sender->pushFrame($response->getFd(), new Frame(payloadData: Engine::MESSAGE . $this->encoder->encode($responsePacket)));
                     };
                 }
-                $this->dispatch($frame->fd, $packet->nsp, ...$packet->data);
+                $this->dispatch($response->getFd(), $packet->nsp, ...$packet->data);
                 break;
             case Packet::ACK: // server ack
                 $ackId = $packet->id;
