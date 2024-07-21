@@ -18,6 +18,7 @@ use Hyperf\Phar\Ast\Ast;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigFactoryVisitor;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigVisitor;
 use InvalidArgumentException;
+use JsonException;
 use Phar;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -388,10 +389,12 @@ EOD;
      */
     private function loadJson(string $path): array
     {
-        $result = json_decode(file_get_contents($path), true);
-        if ($result === null) {
-            throw new InvalidArgumentException(sprintf('Unable to parse given path %s', $path), json_last_error());
+        try {
+            $result = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw new InvalidArgumentException(sprintf('Unable to parse given path %s', $path), $e->getCode(), $e);
         }
+
         return $result;
     }
 
