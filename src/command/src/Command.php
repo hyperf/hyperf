@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Command;
 
-use Hyperf\Context\ApplicationContext;
-use Hyperf\Contract\ApplicationInterface;
 use Hyperf\Coroutine\Coroutine;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\ExitException;
@@ -232,8 +230,6 @@ abstract class Command extends SymfonyCommand
      */
     protected function renderThrowable(Throwable $exception, OutputInterface $output): void
     {
-        ApplicationContext::getContainer()
-            ->get(ApplicationInterface::class)
-            ->renderThrowable($exception, $output);
+        $this->getApplication()?->renderThrowable($exception, $output);
     }
 }
