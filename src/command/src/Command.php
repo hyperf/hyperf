@@ -188,7 +188,7 @@ abstract class Command extends SymfonyCommand
                     throw $exception;
                 }
 
-                $this->renderThrowable($exception, $this->output);
+                $this->getApplication()?->renderThrowable($exception, $this->output);
 
                 $this->exitCode = self::FAILURE;
 
@@ -223,13 +223,5 @@ abstract class Command extends SymfonyCommand
         }
 
         return $uses;
-    }
-
-    /**
-     * Render throwable exception to the console output.
-     */
-    protected function renderThrowable(Throwable $exception, OutputInterface $output): void
-    {
-        $this->getApplication()?->renderThrowable($exception, $output);
     }
 }
