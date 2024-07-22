@@ -1,5 +1,9 @@
 # v3.1.33 - TBD
 
+## Optimized
+
+-[#6963](https://github.com/hyperf/hyperf/pull/6963) Optimized `Model/JsonResource::toJson`.
+
 ## Fixed
 
 - [#6954](https://github.com/hyperf/hyperf/pull/6954) Fixed bug that the connection cannot reconnect to the server in a situation where there was a failover and exchange of read and write hosts.
