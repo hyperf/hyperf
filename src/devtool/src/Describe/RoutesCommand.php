@@ -26,6 +26,8 @@ use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function Hyperf\Collection\collect;
+
 #[Command]
 class RoutesCommand extends HyperfCommand
 {
