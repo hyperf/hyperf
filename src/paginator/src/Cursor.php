@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Paginator;
 
 use Hyperf\Contract\Arrayable;
+use JsonException;
 use UnexpectedValueException;
 
 use function Hyperf\Collection\collect;
@@ -95,9 +96,9 @@ class Cursor implements Arrayable
             return null;
         }
 
-        $parameters = json_decode(base64_decode(str_replace(['-', '_'], ['+', '/'], $encodedString)), true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        try {
+            $parameters = json_decode(base64_decode(str_replace(['-', '_'], ['+', '/'], $encodedString)), true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
             return null;
         }
 
