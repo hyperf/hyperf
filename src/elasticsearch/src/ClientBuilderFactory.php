@@ -18,7 +18,7 @@ use Hyperf\Guzzle\RingPHP\CoroutineHandler;
 
 class ClientBuilderFactory
 {
-    public function create()
+    public function create(): ClientBuilder
     {
         $builder = ClientBuilder::create();
         if (Coroutine::inCoroutine()) {
