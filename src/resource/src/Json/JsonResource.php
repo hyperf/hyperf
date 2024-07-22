@@ -20,6 +20,7 @@ use Hyperf\Resource\Concerns\ConditionallyLoadsAttributes;
 use Hyperf\Resource\Concerns\DelegatesToResource;
 use Hyperf\Resource\JsonEncodingException;
 use Hyperf\Resource\Response\Response;
+use JsonException;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
 
@@ -117,10 +118,10 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
      */
     public function toJson(int $options = 0): string
     {
-        $json = json_encode($this->jsonSerialize(), $options);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw JsonEncodingException::forResource($this, json_last_error_msg());
+        try {
+            $json = json_encode($this->jsonSerialize(), $options | JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw JsonEncodingException::forResource($this, $e->getMessage());
         }
 
         return $json;
