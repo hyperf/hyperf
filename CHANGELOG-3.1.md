@@ -2,7 +2,8 @@
 
 ## Optimized
 
--[#6963](https://github.com/hyperf/hyperf/pull/6963) Optimized `Model/JsonResource::toJson`.
+- [#6962](https://github.com/hyperf/hyperf/pull/6962) Optimized error message of command exceptions.
+- [#6963](https://github.com/hyperf/hyperf/pull/6963) Optimized code for `Model/JsonResource::toJson`.
 
 ## Fixed
 
