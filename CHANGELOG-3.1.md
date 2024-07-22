@@ -1,5 +1,9 @@
 # v3.1.33 - TBD
 
+## Added
+
+- [#6964](https://github.com/hyperf/hyperf/pull/6964) Added JSON output option to describe:routes.
+
 ## Optimized
 
 - [#6962](https://github.com/hyperf/hyperf/pull/6962) Optimized error message of command exceptions.
