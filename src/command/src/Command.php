@@ -169,13 +169,11 @@ abstract class Command extends SymfonyCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->disableDispatcher($input);
-        $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
 
-        $callback = function () use ($method): int {
+        $callback = function (): int {
             try {
                 $this->eventDispatcher?->dispatch(new Event\BeforeHandle($this));
-                $statusCode = $this->{$method}();
-                if (is_int($statusCode)) {
+                if (is_int($statusCode = $this->executeCommand())) {
                     $this->exitCode = $statusCode;
                 }
                 $this->eventDispatcher?->dispatch(new Event\AfterHandle($this));
@@ -207,6 +205,13 @@ abstract class Command extends SymfonyCommand
         }
 
         return $this->exitCode >= 0 && $this->exitCode <= 255 ? $this->exitCode : self::INVALID;
+    }
+
+    protected function executeCommand()
+    {
+        $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
+
+        return $this->{$method}();
     }
 
     /**
