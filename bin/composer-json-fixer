@@ -53,15 +53,16 @@ foreach ($files as $fileInfo) {
     $component = basename(dirname($file));
     $composerJson = json_decode(file_get_contents($file), true);
     if ($version) {
-        foreach ($composerJson['require'] ?? [] as $key => $item) {
+        $json = json_decode(file_get_contents($file));
+        foreach ($json->require ?? [] as $key => $item) {
             if (in_array($key, $packages)) {
-                $composerJson['require'][$key] = $version;
+                $json->require->{$key} = $version;
             }
         }
 
         file_put_contents(
             $fileInfo->getRealPath(),
-            json_encode($composerJson, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL
+            json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL
         );
     }
     if (isset($composerJson['name']) && str_starts_with($composerJson['name'], 'hyperf')) {
