@@ -61,6 +61,8 @@ foreach ($files as $fileInfo) {
             }
         }
 
+        unset($json->{"require-dev"});
+
         file_put_contents(
             $fileInfo->getRealPath(),
             json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL
