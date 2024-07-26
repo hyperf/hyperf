@@ -20,6 +20,7 @@ foreach ([__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', 
 }
 
 $options = $argv;
+// ./bin/composer-json-fixer --version=~3.1.0
 $version = '';
 foreach ($options as $option) {
     if (str_starts_with($option, '--') && $option = substr($option, 2)) {
