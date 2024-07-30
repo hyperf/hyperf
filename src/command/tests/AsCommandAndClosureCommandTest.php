@@ -33,15 +33,11 @@ use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\ScanHandler\NullScanHandler;
 use Hyperf\Serializer\SimpleNormalizer;
-use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Command\Command\Annotation\TestAsCommand;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @internal
@@ -123,21 +119,7 @@ class AsCommandAndClosureCommandTest extends TestCase
         $this->assertEquals(count($runStaticCommandDefinition->getArguments()), 0);
         // assert runtime exception
         try {
-            ApplicationContext::setContainer($container = Mockery::mock(ContainerInterface::class));
-            $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
-
-            $output = Mockery::mock(OutputInterface::class);
-
-            $runStaticCommand = new ClassInvoker($runStaticCommand);
-            $runStaticCommand->setOutput($output);
-
-            $input = Mockery::mock(InputInterface::class);
-            $input->shouldReceive('getOption')->andReturnFalse();
-            $input->shouldReceive('getOptions')->andReturn([]);
-            $input->shouldReceive('getArguments')->andReturn([]);
-            $runStaticCommand->setInput($input);
-
-            $runStaticCommand->execute($input, $output);
+            $runStaticCommand->handle();
         } catch (RuntimeException $e) {
             $this->assertEquals('command:as-command:runStatic', $e->getMessage());
         }
