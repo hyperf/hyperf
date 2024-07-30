@@ -85,7 +85,7 @@ class AsCommandAndClosureCommandTest extends TestCase
         );
 
         $commands = array_values($this->containerSet);
-        $this->assertCount(3, $commands);
+        $this->assertCount(4, $commands);
 
         $runCommand = $commands[0];
         $runCommandDefinition = $runCommand->getDefinition();
