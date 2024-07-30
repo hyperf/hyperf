@@ -130,7 +130,7 @@ class AsCommandAndClosureCommandTest extends TestCase
     public function testRegisterClosureCommand()
     {
         $runCommand = Console::command('command:closure:run', function () {
-            throw new \RuntimeException('command:closure:run');
+            throw new RuntimeException('command:closure:run');
         });
         $runCommand->setInput(new ArrayInput([]));
         $runCommand->setOutput(new BufferedOutput());
@@ -147,7 +147,7 @@ class AsCommandAndClosureCommandTest extends TestCase
     public function testRegisterStaticClosureCommand()
     {
         $runCommand = Console::command('command:closure:run-static', static function () {
-            throw new \RuntimeException('command:closure:run-static');
+            throw new RuntimeException('command:closure:run-static');
         });
         $runCommand->setInput(new ArrayInput([]));
         $runCommand->setOutput(new BufferedOutput());
