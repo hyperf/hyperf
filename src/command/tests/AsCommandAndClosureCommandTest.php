@@ -38,6 +38,8 @@ use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * @internal
@@ -113,6 +115,8 @@ class AsCommandAndClosureCommandTest extends TestCase
         $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('testBool'));
 
         $runStaticCommand = $commands[3];
+        $runStaticCommand->setInput(new ArrayInput([]));
+        $runStaticCommand->setOutput(new BufferedOutput());
         $runStaticCommandDefinition = $runStaticCommand->getDefinition();
         $this->assertEquals($this->getSignature($runStaticCommand), 'command:as-command:runStatic');
         $this->assertEquals(count($runStaticCommandDefinition->getOptions()), 1);
