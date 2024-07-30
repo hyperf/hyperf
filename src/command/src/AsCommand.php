@@ -60,8 +60,9 @@ final class AsCommand extends Command
         $parameters = $this->parameterParser->parseMethodParameters($this->class, $this->method, $inputs);
 
         if (ReflectionManager::reflectMethod($this->class, $this->method)->isStatic()) {
-            $method = $this->method;
-            Closure::bind(fn () => self::{$method}(...$parameters), null, $this->class)();
+            // $method = $this->method;
+            // Closure::bind(fn () => self::{$method}(...$parameters), null, $this->class)();
+            call_user_func([$this->class, $this->method], ...$parameters);
             return;
         }
 
@@ -72,6 +73,7 @@ final class AsCommand extends Command
             $instance->setOutput($this->output);
         }
 
-        (fn ($method) => $this->{$method}(...$parameters))->call($instance, $this->method);
+        // (fn ($method) => $this->{$method}(...$parameters))->call($instance, $this->method);
+        call_user_func([$instance, $this->method], ...$parameters);
     }
 }
