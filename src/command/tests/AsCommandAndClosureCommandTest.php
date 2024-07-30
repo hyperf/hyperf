@@ -115,7 +115,7 @@ class AsCommandAndClosureCommandTest extends TestCase
         $runStaticCommand = $commands[3];
         $runStaticCommandDefinition = $runStaticCommand->getDefinition();
         $this->assertEquals($this->getSignature($runStaticCommand), 'command:as-command:runStatic');
-        $this->assertEquals(count($runStaticCommandDefinition->getOptions()), 0);
+        $this->assertEquals(count($runStaticCommandDefinition->getOptions()), 1);
         $this->assertEquals(count($runStaticCommandDefinition->getArguments()), 0);
         // assert runtime exception
         try {
