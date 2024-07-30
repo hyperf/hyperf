@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Command\Command\Annotation;
 
 use Hyperf\Command\Annotation\AsCommand;
+use RuntimeException;
 
 class TestAsCommand
 {
@@ -37,6 +38,6 @@ class TestAsCommand
     #[AsCommand('command:as-command:runStatic')]
     protected static function runStatic()
     {
-        throw new \RuntimeException('command:as-command:runStatic');
+        throw new RuntimeException('command:as-command:runStatic');
     }
 }

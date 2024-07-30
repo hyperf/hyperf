@@ -37,6 +37,7 @@ use HyperfTest\Command\Command\Annotation\TestAsCommand;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * @internal
@@ -112,14 +113,14 @@ class AsCommandAndClosureCommandTest extends TestCase
         $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('testBool'));
 
         $runStaticCommand = $commands[3];
-        $$runStaticCommandDefinition = $$runStaticCommand->getDefinition();
-        $this->assertEquals($this->getSignature($$runStaticCommand), 'command:as-command:runStatic');
+        $runStaticCommandDefinition = $runStaticCommand->getDefinition();
+        $this->assertEquals($this->getSignature($runStaticCommand), 'command:as-command:runStatic');
         $this->assertEquals(count($runStaticCommandDefinition->getOptions()), 0);
         $this->assertEquals(count($runStaticCommandDefinition->getArguments()), 0);
         // assert runtime exception
-        try{
+        try {
             $runStaticCommand->handle();
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $this->assertEquals('command:as-command:runStatic', $e->getMessage());
         }
     }
