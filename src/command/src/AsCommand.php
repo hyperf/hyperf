@@ -60,8 +60,7 @@ final class AsCommand extends Command
         $parameters = $this->parameterParser->parseMethodParameters($this->class, $this->method, $inputs);
 
         if (ReflectionManager::reflectMethod($this->class, $this->method)->isStatic()) {
-            $method = $this->method;
-            Closure::bind(fn () => self::{$method}(...$parameters), null, $this->class)();
+            Closure::bind(fn ($method) => self::{$method}(...$parameters), null, $this->class)($this->method);
             return;
         }
 
