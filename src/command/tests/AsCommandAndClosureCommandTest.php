@@ -110,6 +110,13 @@ class AsCommandAndClosureCommandTest extends TestCase
         $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('name'));
         $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('age'));
         $this->assertNotNull($runWithoutOptionsCommandDefinition->getOption('testBool'));
+
+        $runStaticCommand = $commands[3];
+        $$runStaticCommandDefinition = $$runStaticCommand->getDefinition();
+        $this->assertEquals($this->getSignature($$runStaticCommand), 'command:as-command:runStatic');
+        $this->assertEquals(count($runStaticCommandDefinition->getOptions()), 0);
+        $this->assertEquals(count($runStaticCommandDefinition->getArguments()), 0);
+        $runStaticCommand->handle();
     }
 
     public function testRegisterClosureCommand()

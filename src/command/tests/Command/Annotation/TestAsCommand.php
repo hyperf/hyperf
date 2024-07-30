@@ -33,4 +33,10 @@ class TestAsCommand
     {
         return 'runWithoutOptions';
     }
+
+    #[AsCommand('command:as-command:runStatic')]
+    protected static function runStatic()
+    {
+        throw new \RuntimeException('command:as-command:runStatic');
+    }
 }

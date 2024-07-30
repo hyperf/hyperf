@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Command;
 
+use Closure;
 use Hyperf\Command\Concerns\InteractsWithIO;
+use Hyperf\Di\ReflectionManager;
 use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 
@@ -56,6 +58,13 @@ final class AsCommand extends Command
     {
         $inputs = array_merge($this->input->getArguments(), $this->input->getOptions());
         $parameters = $this->parameterParser->parseMethodParameters($this->class, $this->method, $inputs);
+
+        if (ReflectionManager::reflectMethod($this->class, $this->method)->isStatic()) {
+            $method = $this->method;
+            Closure::bind(fn () => self::{$method}(...$parameters), null, $this->class)();
+            return;
+        }
+
         $instance = $this->container->get($this->class);
 
         if (in_array(InteractsWithIO::class, class_uses_recursive($this->class))) {
