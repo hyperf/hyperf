@@ -1,5 +1,9 @@
 # v3.1.34 - TBD
 
+## Added
+
+- [#6978](https://github.com/hyperf/hyperf/pull/6978) Added as command for static method.
+
 # v3.1.33 - 2024-07-25
 
 ## Optimized
