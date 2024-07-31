@@ -1213,7 +1213,7 @@ class Connection implements ConnectionInterface
      * Fire an event for this connection.
      *
      * @param string $event
-     * @return null|array
+     * @return null|object
      */
     protected function fireConnectionEvent($event)
     {
