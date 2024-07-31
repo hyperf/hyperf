@@ -53,9 +53,9 @@ class DynamicReloadMessageCommand extends HyperfCommand
         }
 
         $ref = new ClassInvoker($driver);
-        /** @var RedisProxy $redis */
+        /** @phpstan-ignore-next-line */
         $redis = $ref->redis;
-        /** @var ChannelConfig $channel */
+        /** @phpstan-ignore-next-line */
         $channel = $ref->channel;
 
         if (! $reload) {
@@ -71,7 +71,7 @@ class DynamicReloadMessageCommand extends HyperfCommand
         $index = 0;
         $key = $channel->get($queue);
         if (! $limit) {
-            $limit = $redis->llen($key);
+            $limit = (int) $redis->llen($key);
         }
 
         while (true) {
