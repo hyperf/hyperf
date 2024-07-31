@@ -1,5 +1,9 @@
 # v3.1.34 - TBD
 
+## Added
+
+- [#6979](https://github.com/hyperf/hyperf/pull/6979) Added command `queue:dynamic-reload`.
+
 # v3.1.33 - 2024-07-25
 
 ## Optimized
