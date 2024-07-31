@@ -2,7 +2,8 @@
 
 ## Added
 
-- [#6978](https://github.com/hyperf/hyperf/pull/6978) Added as command for static method.
+- [#6978](https://github.com/hyperf/hyperf/pull/6978) Support static method for `#[AsCommand]`.
+- [#6979](https://github.com/hyperf/hyperf/pull/6979) Added command `queue:dynamic-reload`.
 
 # v3.1.33 - 2024-07-25
 
