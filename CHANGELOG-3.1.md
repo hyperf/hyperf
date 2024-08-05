@@ -1,5 +1,9 @@
 # v3.1.35 - TBD
 
+## Fixed
+
+- [#6987](https://github.com/hyperf/hyperf/pull/6987) Fixed bug that the root path of swagger server cannot work.
+
 # v3.1.34 - 2024-08-01
 
 ## Added
