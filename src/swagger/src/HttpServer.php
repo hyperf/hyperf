@@ -73,7 +73,7 @@ class HttpServer implements OnRequestInterface
             return $this->metadata[$id];
         }
 
-        if (file_exists($path)) {
+        if (is_file($path) && file_exists($path)) {
             $metadata = file_get_contents($path);
         } else {
             $metadata = Json::encode([
