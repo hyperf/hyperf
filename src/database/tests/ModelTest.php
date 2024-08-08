@@ -1791,7 +1791,7 @@ class ModelTest extends TestCase
 
     public function testGetOriginalIncrementWithExtra()
     {
-        $model = new class() extends ModelCastingStub {
+        $model = new class extends ModelCastingStub {
             public function newBaseQueryBuilder()
             {
                 $connection = Mockery::mock(Connection::class);
