@@ -2,6 +2,10 @@
 
 # v3.1.35 - 2024-08-08
 
+## Added
+
+- [#6990](https://github.com/hyperf/hyperf/pull/6990) Added support for retrieving the current system time with milliseconds for `Hyperf\Support\Traits\InteractsWithTime`.
+
 ## Fixed
 
 - [#6987](https://github.com/hyperf/hyperf/pull/6987) Fixed bug that the root path of swagger server cannot work.
