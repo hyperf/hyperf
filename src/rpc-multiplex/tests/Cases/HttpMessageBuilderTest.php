@@ -42,7 +42,7 @@ class HttpMessageBuilderTest extends AbstractTestCase
 
     public function testBuildRequestWithHostReader()
     {
-        $invoker = new ClassInvoker(new HttpMessageBuilder(new JsonPacker(), new Context(), new class() implements HostReaderInterface {
+        $invoker = new ClassInvoker(new HttpMessageBuilder(new JsonPacker(), new Context(), new class implements HostReaderInterface {
             public function read(): string
             {
                 return 'test_case';
