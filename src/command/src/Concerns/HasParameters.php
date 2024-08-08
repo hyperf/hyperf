@@ -20,7 +20,7 @@ trait HasParameters
     /**
      * Specify the arguments and options on the command.
      */
-    protected function specifyParameters()
+    protected function specifyParameters(): void
     {
         // We will loop through all of the arguments and options for the command and
         // set them all on the base command instance. This specifies what can get
@@ -44,20 +44,16 @@ trait HasParameters
 
     /**
      * Get the console command arguments.
-     *
-     * @return array
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [];
     }
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [];
     }
