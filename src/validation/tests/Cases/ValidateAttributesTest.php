@@ -117,15 +117,15 @@ class ValidateAttributesTest extends TestCase
         $this->assertFalse($validator->validateJson('', [3.14]));
         $this->assertTrue($validator->validateJson('', '["a"]'));
         // object
-        $this->assertFalse($validator->validateJson('', new class() {}));
-        $this->assertTrue($validator->validateJson('', new class() implements Stringable {
+        $this->assertFalse($validator->validateJson('', new class {}));
+        $this->assertTrue($validator->validateJson('', new class implements Stringable {
             public function __toString(): string
             {
                 return json_encode(['foo' => 'bar'], JSON_UNESCAPED_UNICODE);
             }
         }));
 
-        $this->assertTrue($validator->validateJson('', new class() {
+        $this->assertTrue($validator->validateJson('', new class {
             public function __toString(): string
             {
                 return json_encode(['foo' => 'bar'], JSON_UNESCAPED_UNICODE);

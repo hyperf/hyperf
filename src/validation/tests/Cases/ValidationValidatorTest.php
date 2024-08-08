@@ -2358,7 +2358,7 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['x' => ['not a string']], ['x' => 'Email']);
         $this->assertFalse($v->passes());
 
-        $v = new Validator($trans, ['x' => new class() {
+        $v = new Validator($trans, ['x' => new class {
             public function __toString()
             {
                 return 'aslsdlks';
@@ -2366,7 +2366,7 @@ class ValidationValidatorTest extends TestCase
         }], ['x' => 'Email']);
         $this->assertFalse($v->passes());
 
-        $v = new Validator($trans, ['x' => new class() {
+        $v = new Validator($trans, ['x' => new class {
             public function __toString()
             {
                 return 'foo@gmail.com';
@@ -4496,7 +4496,7 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator(
             $this->getIlluminateArrayTranslator(),
             ['name' => 'taylor'],
-            ['name' => new class() implements Rule {
+            ['name' => new class implements Rule {
                 public function passes(string $attribute, mixed $value): bool
                 {
                     return $value === 'taylor';
@@ -4515,7 +4515,7 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator(
             $this->getIlluminateArrayTranslator(),
             ['name' => 'adam'],
-            ['name' => [new class() implements Rule {
+            ['name' => [new class implements Rule {
                 public function passes(string $attribute, mixed $value): bool
                 {
                     return $value === 'taylor';
@@ -4563,7 +4563,7 @@ class ValidationValidatorTest extends TestCase
             $this->getIlluminateArrayTranslator(),
             ['name' => 'taylor', 'states' => ['AR', 'TX'], 'number' => 9],
             [
-                'states.*' => new class() implements Rule {
+                'states.*' => new class implements Rule {
                     public function passes(string $attribute, mixed $value): bool
                     {
                         return in_array($value, ['AK', 'HI']);
@@ -4600,7 +4600,7 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator(
             $this->getIlluminateArrayTranslator(),
             ['name' => 42],
-            ['name' => new class() implements Rule {
+            ['name' => new class implements Rule {
                 public function passes(string $attribute, mixed $value): bool
                 {
                     return $value === 'taylor';
@@ -4621,7 +4621,7 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator(
             $this->getIlluminateArrayTranslator(),
             ['name' => 42],
-            ['name' => [new class() implements Rule {
+            ['name' => [new class implements Rule {
                 public function passes(string $attribute, mixed $value): bool
                 {
                     return $value === 'taylor';
@@ -4646,7 +4646,7 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator(
             $this->getIlluminateArrayTranslator(),
             ['name' => ''],
-            ['name' => $rule = new class() implements ImplicitRule {
+            ['name' => $rule = new class implements ImplicitRule {
                 public $called = false;
 
                 public function passes(string $attribute, mixed $value): bool
