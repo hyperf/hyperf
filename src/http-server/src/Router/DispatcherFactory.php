@@ -117,7 +117,7 @@ class DispatcherFactory
         $prefix = $this->getPrefix($className, $annotation->prefix);
         $router = $this->getRouter($annotation->server);
 
-        $autoMethods = ['GET', 'POST', 'HEAD'];
+        $autoMethods = $annotation->defaultMethods ?? ['GET', 'POST', 'HEAD'];
         $defaultAction = '/index';
         foreach ($methods as $method) {
             $options = $annotation->options;
