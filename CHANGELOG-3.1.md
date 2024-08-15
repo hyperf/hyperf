@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#6971](https://github.com/hyperf/hyperf/pull/6971) Added partitioned support for Cookie.
 - [#6990](https://github.com/hyperf/hyperf/pull/6990) Added support for retrieving the current system time with milliseconds for `Hyperf\Support\Traits\InteractsWithTime`.
 - [#6998](https://github.com/hyperf/hyperf/pull/6998) Added default methods for `#[AutoController]`. (You can add method `options` which used to support cors middleware)
 
