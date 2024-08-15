@@ -32,7 +32,7 @@ class ContainerStub
         $container = Mockery::mock(Container::class);
         ApplicationContext::setContainer($container);
 
-        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(new class() {
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(new class {
             public function dispatch()
             {
                 return true;

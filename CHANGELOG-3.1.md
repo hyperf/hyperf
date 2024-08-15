@@ -1,4 +1,24 @@
-# v3.1.33 - TBD
+# v3.1.36 - TBD
+
+## Added
+
+- [#6990](https://github.com/hyperf/hyperf/pull/6990) Added support for retrieving the current system time with milliseconds for `Hyperf\Support\Traits\InteractsWithTime`.
+- [#6998](https://github.com/hyperf/hyperf/pull/6998) Added default methods for `#[AutoController]`. (You can add method `options` which used to support cors middleware)
+
+# v3.1.35 - 2024-08-08
+
+## Fixed
+
+- [#6987](https://github.com/hyperf/hyperf/pull/6987) Fixed bug that the root path of swagger server cannot work.
+
+# v3.1.34 - 2024-08-01
+
+## Added
+
+- [#6978](https://github.com/hyperf/hyperf/pull/6978) Support static method for `#[AsCommand]`.
+- [#6979](https://github.com/hyperf/hyperf/pull/6979) Added command `queue:dynamic-reload`.
+
+# v3.1.33 - 2024-07-25
 
 ## Optimized
 
