@@ -1,4 +1,10 @@
-# v3.1.35 - TBD
+# v3.1.36 - TBD
+
+## Added
+
+- [#6998](https://github.com/hyperf/hyperf/pull/6998) Added default methods for `#[AutoController]`. (You can add method `options` which used to support cors middleware)
+
+# v3.1.35 - 2024-08-08
 
 ## Added
 
