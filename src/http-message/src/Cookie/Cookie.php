@@ -52,7 +52,8 @@ class Cookie implements Stringable
         protected bool $secure = false,
         protected bool $httpOnly = true,
         protected bool $raw = false,
-        ?string $sameSite = null
+        ?string $sameSite = null,
+        protected bool $partitioned = false
     ) {
         // from PHP source code
         if (preg_match("/[=,; \t\r\n\013\014]/", $name)) {
@@ -130,6 +131,10 @@ class Cookie implements Stringable
             $str .= '; samesite=' . $this->getSameSite();
         }
 
+        if ($this->isPartitioned()) {
+            $str .= '; partitioned';
+        }
+
         return $str;
     }
 
@@ -146,6 +151,7 @@ class Cookie implements Stringable
             'httponly' => false,
             'raw' => ! $decode,
             'samesite' => null,
+            'partitioned' => false,
         ];
         foreach (explode(';', $cookie) as $part) {
             if (! str_contains($part, '=')) {
@@ -183,7 +189,8 @@ class Cookie implements Stringable
             $data['secure'],
             $data['httponly'],
             $data['raw'],
-            $data['samesite']
+            $data['samesite'],
+            $data['partitioned']
         );
     }
 
@@ -273,5 +280,13 @@ class Cookie implements Stringable
     public function getSameSite(): ?string
     {
         return $this->sameSite;
+    }
+
+    /**
+     * Checks whether the cookie should be tied to the top-level site in cross-site context.
+     */
+    public function isPartitioned(): bool
+    {
+        return $this->partitioned;
     }
 }
