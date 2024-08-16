@@ -65,7 +65,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
                 $value = $key;
             }
 
-            $string .= ' ' . $key . '="' . str_replace('"', '\\"', trim($value)) . '"';
+            $string .= ' ' . $key . '="' . str_replace('"', '\"', trim($value)) . '"';
         }
 
         return trim($string);

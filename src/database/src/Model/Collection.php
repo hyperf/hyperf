@@ -14,6 +14,7 @@ namespace Hyperf\Database\Model;
 
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection as BaseCollection;
+use Hyperf\Collection\Enumerable;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\UnCompressInterface;
@@ -339,7 +340,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param callable(TModel, TKey): TMapValue $callback
      * @return BaseCollection<TKey, TMapValue>|static<TKey, TMapValue>
      */
-    public function map(callable $callback): BaseCollection|static
+    public function map(callable $callback): Enumerable
     {
         $result = parent::map($callback);
 
@@ -561,7 +562,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param array<array-key, string>|string $value
      * @return BaseCollection<int, mixed>
      */
-    public function pluck(array|string $value, ?string $key = null): BaseCollection
+    public function pluck(array|string $value, ?string $key = null): Enumerable
     {
         return $this->toBase()->pluck($value, $key);
     }
@@ -571,7 +572,7 @@ class Collection extends BaseCollection implements CompressInterface
      *
      * @return BaseCollection<int, TKey>
      */
-    public function keys(): BaseCollection
+    public function keys(): Enumerable
     {
         return $this->toBase()->keys();
     }
@@ -584,7 +585,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param Arrayable<array-key, TZipValue>|iterable<array-key, TZipValue> ...$items
      * @return BaseCollection<int, BaseCollection<int, TModel|TZipValue>>
      */
-    public function zip($items): BaseCollection
+    public function zip($items): Enumerable
     {
         return call_user_func_array([$this->toBase(), 'zip'], func_get_args());
     }
@@ -594,7 +595,7 @@ class Collection extends BaseCollection implements CompressInterface
      *
      * @return BaseCollection<int, mixed>
      */
-    public function collapse(): BaseCollection
+    public function collapse(): Enumerable
     {
         return $this->toBase()->collapse();
     }
@@ -605,7 +606,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param int $depth
      * @return BaseCollection<int, mixed>
      */
-    public function flatten($depth = INF): BaseCollection
+    public function flatten($depth = INF): Enumerable
     {
         return $this->toBase()->flatten($depth);
     }
@@ -615,7 +616,7 @@ class Collection extends BaseCollection implements CompressInterface
      *
      * @return BaseCollection<TModel, TKey>
      */
-    public function flip(): BaseCollection
+    public function flip(): Enumerable
     {
         return $this->toBase()->flip();
     }
@@ -628,7 +629,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @param TPadValue $value
      * @return BaseCollection<int, TModel|TPadValue>
      */
-    public function pad(int $size, $value): BaseCollection
+    public function pad(int $size, $value): Enumerable
     {
         return $this->toBase()->pad($size, $value);
     }
@@ -675,7 +676,7 @@ class Collection extends BaseCollection implements CompressInterface
 
         $models = $models->pluck($name);
 
-        if ($models->first() instanceof BaseCollection) {
+        if ($models->first() instanceof Enumerable) {
             $models = $models->collapse();
         }
 

@@ -34,7 +34,7 @@ class TappableTest extends TestCase
 
     public function testTappableClassWithInvokableClass()
     {
-        $name = TappableClass::make()->tap(new class() {
+        $name = TappableClass::make()->tap(new class {
             public function __invoke($tappable)
             {
                 $tappable->setName('MyName');
@@ -48,7 +48,7 @@ class TappableTest extends TestCase
     {
         $this->expectException('Error');
 
-        $name = TappableClass::make()->tap(new class() {
+        $name = TappableClass::make()->tap(new class {
             public function setName($tappable)
             {
                 $tappable->setName('MyName');

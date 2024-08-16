@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace HyperfTest\Collection;
 
+use ArrayObject;
 use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Resolver\ResolverDispatcher;
 use Monolog\Handler\StreamHandler;
@@ -684,5 +686,147 @@ class ArrTest extends TestCase
         [$keys, $values] = Arr::divide([null => ['one' => 1, 2 => 'second'], 1 => 'one']);
         $this->assertEquals([null, 1], $keys);
         $this->assertEquals([['one' => 1, 2 => 'second'], 'one'], $values);
+    }
+
+    public function testDot(): void
+    {
+        $array = [];
+        $expected = [];
+        $this->assertEquals($expected, Arr::dot($array));
+        $array = ['key1' => 'value1', 'key2' => 'value2'];
+        $expected = ['key1' => 'value1', 'key2' => 'value2'];
+        $this->assertEquals($expected, Arr::dot($array));
+        $array = ['key1' => 'value1', 'nested' => ['key2' => 'value2']];
+        $expected = ['key1' => 'value1', 'nested.key2' => 'value2'];
+        $this->assertEquals($expected, Arr::dot($array));
+        $array = ['level1' => ['level2' => ['level3' => 'value3']]];
+        $expected = ['level1.level2.level3' => 'value3'];
+        $this->assertEquals($expected, Arr::dot($array));
+        $array = ['key1' => 'value1', 'nested' => ['key2' => 123, 'key3' => true]];
+        $expected = ['key1' => 'value1', 'nested.key2' => 123, 'nested.key3' => true];
+        $this->assertEquals($expected, Arr::dot($array));
+        $array = ['key1' => null, 'nested' => ['key2' => 'value2', 'key3' => null]];
+        $expected = ['key1' => null, 'nested.key2' => 'value2', 'nested.key3' => null];
+        $this->assertEquals($expected, Arr::dot($array));
+        $array = ['key1' => 'value1', 'nested' => ['key2' => 'value2']];
+        $prepend = 'prefix_';
+        $expected = ['prefix_key1' => 'value1', 'prefix_nested.key2' => 'value2'];
+        $this->assertEquals($expected, Arr::dot($array, $prepend));
+    }
+
+    public function testExists(): void
+    {
+        $array = ['key1' => 'value1', 'key2' => 'value2'];
+        $this->assertTrue(Arr::exists($array, 'key1'));
+        $this->assertFalse(Arr::exists($array, 'key3'));
+        $arrayAccess = new ArrayObject(['key1' => 'value1', 'key2' => 'value2']);
+        $this->assertTrue(Arr::exists($arrayAccess, 'key1'));
+        $this->assertFalse(Arr::exists($arrayAccess, 'key3'));
+        $array = [];
+        $this->assertFalse(Arr::exists($array, 'key1'));
+        $arrayAccess = new ArrayObject([]);
+        $this->assertFalse(Arr::exists($arrayAccess, 'key1'));
+        $array = [0 => 'value1', 1 => 'value2'];
+        $this->assertTrue(Arr::exists($array, 0));
+        $this->assertFalse(Arr::exists($array, 2));
+        $arrayAccess = new ArrayObject([0 => 'value1', 1 => 'value2']);
+        $this->assertTrue(Arr::exists($arrayAccess, 0));
+        $this->assertFalse(Arr::exists($arrayAccess, 2));
+        $array = ['key1' => 'value1', 'key2' => 'value2'];
+        $this->assertTrue(Arr::exists($array, 'key1'));
+        $this->assertFalse(Arr::exists($array, 'nonexistent'));
+    }
+
+    public function testFirst(): void
+    {
+        $array = [1, 2, 3];
+        $this->assertEquals('default', Arr::first([], null, 'default'));
+        $this->assertEquals(1, Arr::first($array));
+        $callback = static function ($value) {
+            return $value > 1;
+        };
+        $this->assertEquals(2, Arr::first($array, $callback));
+        $callback = static function ($value) {
+            return $value > 3;
+        };
+        $default = 'default';
+        $this->assertEquals('default', Arr::first($array, $callback, $default));
+        $closure = static function ($value) {
+            return $value === 2;
+        };
+        $this->assertEquals(2, Arr::first($array, $closure));
+    }
+
+    public function testLast(): void
+    {
+        $this->assertEquals('default', Arr::last([], null, 'default'));
+        $this->assertEquals(3, Arr::last([1, 2, 3]));
+        $callback = static function ($value) {
+            return $value % 2 === 0;
+        };
+        $this->assertEquals(4, Arr::last([1, 2, 3, 4], $callback));
+        $callback = static function ($value) {
+            return $value % 2 === 0;
+        };
+        $this->assertEquals('default', Arr::last([1, 3, 5], $callback, 'default'));
+        $closure = static function ($value) {
+            return $value === 4; // 寻找特定的值4
+        };
+        $this->assertEquals(4, Arr::last([1, 2, 3, 4], $closure));
+    }
+
+    public function testFlatten(): void
+    {
+        $this->assertEquals(['item1', 'item2', 'item3'], Arr::flatten(['item1', 'item2', 'item3']));
+        $this->assertEquals(['item1', 'item2', 'item3', 'item4', 'item5'], Arr::flatten(['item1', ['item2', 'item3'], ['item4', ['item5']]]));
+        $this->assertEquals(['item1', 'item2', ['item3', 'item4'], 'item5'], Arr::flatten(['item1', ['item2', ['item3', 'item4']], ['item5']], 1));
+        $this->assertEquals(['item1', 'item2', 'item3', 'item4'], Arr::flatten(['item1', 'item2', Collection::make(['item3', 'item4'])]));
+        $this->assertEquals(['item1', 'item2', 'item3'], Arr::flatten(['item1', Collection::make(['item2', 'item3'])]));
+    }
+
+    public function testPluck(): void
+    {
+        $array = [
+            ['name' => 'John', 'age' => 30],
+            ['name' => 'Jane', 'age' => 25],
+        ];
+        $value = 'name';
+        $expected = ['John', 'Jane'];
+        $this->assertEquals($expected, Arr::pluck($array, $value));
+        $array = [
+            ['id' => 1, 'name' => 'John'],
+            ['id' => 2, 'name' => 'Jane'],
+        ];
+        $value = 'name';
+        $key = 'id';
+        $expected = [1 => 'John', 2 => 'Jane'];
+        $this->assertEquals($expected, Arr::pluck($array, $value, $key));
+        $array = [
+            ['user' => ['name' => 'John']],
+            ['user' => ['name' => 'Jane']],
+        ];
+        $value = 'user.name';
+        $expected = ['John', 'Jane'];
+        $this->assertEquals($expected, Arr::pluck($array, $value));
+        $array = [
+            ['name' => 'John', 'age' => 30],
+            ['name' => 'Jane', 'age' => 25],
+        ];
+        $value = 'age';
+        $expected = [30, 25];
+        $this->assertEquals($expected, Arr::pluck($array, $value));
+        $array = [
+            ['user' => ['name' => 'John', 'age' => 30]],
+            ['user' => ['name' => 'Jane', 'age' => 25]],
+        ];
+        $this->assertEquals([30, 25], Arr::pluck($array, ['user', 'age']));
+        $array = [
+            ['id' => 1, 'user' => ['name' => 'John']],
+            ['id' => 2, 'user' => ['name' => 'Jane']],
+        ];
+        $value = 'user.name';
+        $key = ['id'];
+        $expected = [1 => 'John', 2 => 'Jane'];
+        $this->assertEquals($expected, Arr::pluck($array, $value, $key));
     }
 }

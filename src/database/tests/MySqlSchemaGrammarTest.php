@@ -1085,6 +1085,12 @@ class MySqlSchemaGrammarTest extends TestCase
         $this->assertSame('drop view `alpha`,`beta`,`gamma`', $statement);
     }
 
+    public function testCompileTables(): void
+    {
+        $statement = $this->getGrammar()->compileTables('foo');
+        $this->assertSame("select table_name as `name`, (data_length + index_length) as `size`, table_comment as `comment`, engine as `engine`, table_collation as `collation` from information_schema.tables where table_schema = 'foo' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED') order by table_name", $statement);
+    }
+
     public function testGrammarsAreMacroable()
     {
         // compileReplace macro.

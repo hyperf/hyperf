@@ -13,9 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use Hyperf\Support\Composer;
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\Enum_;
-use PhpParser\Node\Stmt\Interface_;
+use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
@@ -64,7 +62,7 @@ class Ast
             if ($stmt instanceof Namespace_ && $stmt->name) {
                 $namespace = $stmt->name->toString();
                 foreach ($stmt->stmts as $node) {
-                    if (($node instanceof Class_ || $node instanceof Interface_ || $node instanceof Enum_) && $node->name) {
+                    if (($node instanceof ClassLike) && $node->name) {
                         $className = $node->name->toString();
                         break;
                     }

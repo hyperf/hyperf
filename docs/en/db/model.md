@@ -557,9 +557,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 
-/**
- * @Listener()
- */
+#[Listener]
 class SupportMySQLBitListener implements ListenerInterface
 {
     public function listen(): array

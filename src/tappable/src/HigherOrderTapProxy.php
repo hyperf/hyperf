@@ -12,19 +12,22 @@ declare(strict_types=1);
 
 namespace Hyperf\Tappable;
 
+/**
+ * @template TValue
+ */
 class HigherOrderTapProxy
 {
     /**
      * The target being tapped.
      *
-     * @var mixed
+     * @var TValue
      */
     public $target;
 
     /**
      * Create a new tap proxy instance.
      *
-     * @param mixed $target
+     * @param TValue of object $target
      */
     public function __construct($target)
     {
@@ -36,7 +39,7 @@ class HigherOrderTapProxy
      *
      * @param string $method
      * @param array $parameters
-     * @return mixed
+     * @return TValue
      */
     public function __call($method, $parameters)
     {

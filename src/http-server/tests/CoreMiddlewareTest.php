@@ -87,7 +87,7 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // Arrayable
-        $response = $reflectionMethod->invoke($middleware, new class() implements Arrayable {
+        $response = $reflectionMethod->invoke($middleware, new class implements Arrayable {
             public function toArray(): array
             {
                 return ['foo' => 'bar'];
@@ -98,7 +98,7 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // Jsonable
-        $response = $reflectionMethod->invoke($middleware, new class() implements Jsonable {
+        $response = $reflectionMethod->invoke($middleware, new class implements Jsonable {
             public function __toString(): string
             {
                 return json_encode(['foo' => 'bar'], JSON_UNESCAPED_UNICODE);
@@ -109,7 +109,7 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // __toString
-        $response = $reflectionMethod->invoke($middleware, new class() {
+        $response = $reflectionMethod->invoke($middleware, new class {
             public function __toString(): string
             {
                 return 'This is a string';

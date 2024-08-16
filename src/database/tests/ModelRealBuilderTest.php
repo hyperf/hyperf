@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
+use Exception;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
@@ -24,9 +25,11 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
+use Hyperf\Database\Exception\QueryException;
 use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Register;
 use Hyperf\Database\MySqlBitConnection;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Database\Query\Expression;
@@ -172,6 +175,15 @@ class ModelRealBuilderTest extends TestCase
         }
     }
 
+    public function testOrderByModelBuilder()
+    {
+        $this->getContainer();
+
+        $sql = User::query()->orderBy(User::query()->select('id')->limit(1))->toSql();
+
+        $this->assertSame('select * from `user` order by (select `id` from `user` limit 1) asc', $sql);
+    }
+
     public function testForPageAfterId()
     {
         $this->getContainer();
@@ -184,6 +196,24 @@ class ModelRealBuilderTest extends TestCase
             ['select * from `user` where `id` > ? order by `id` asc limit 2', [0]],
             ['select * from `user` order by `id` asc limit 2', []],
             ['select * from `user` where `id` > ? order by `id` asc limit 2', [1]],
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
+            }
+        }
+    }
+
+    public function testUserWhereBit()
+    {
+        $this->getContainer();
+
+        $query = User::query()->whereBit('gender', 1);
+        $res = $query->get();
+        $this->assertTrue($res->count() > 0);
+
+        $sqls = [
+            ['select * from `user` where gender & ? = ?', [1, 1]],
         ];
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
@@ -434,6 +464,38 @@ class ModelRealBuilderTest extends TestCase
         $this->assertIsArray($logs);
         $this->assertCount(1, $logs);
         $this->assertSame('select * from `test` where `user_id` = 1', $logs[0]['raw_query']);
+    }
+
+    public function testMySQLSetNull()
+    {
+        $container = $this->getContainer();
+        /** @var Connection $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->statement('CREATE TABLE `test` (
+            `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            `user_id` bigint(20) unsigned NOT NULL,
+            `uid` bigint(20) unsigned NOT NULL,
+            `version` bigint(20) unsigned NOT NULL,
+            `str_value` varchar(32) NULL DEFAULT NULL,
+            `int_value` bigint(20) unsigned NULL DEFAULT NULL,
+            `created_at` datetime DEFAULT NULL,
+            `updated_at` datetime DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY (`user_id`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
+        $conn->enableQueryLog();
+        $model = new TestModel();
+        $model->user_id = 1;
+        $model->uid = 1;
+        $model->version = 1;
+        $model->str_value = null;
+        $model->int_value = null;
+        $model->save();
+
+        $model = TestModel::query()->where('user_id', 1)->first();
+        $this->assertNull($model->str_value);
+        $this->assertNull($model->int_value);
     }
 
     public function testRewriteSetKeysForSaveQuery()
@@ -1270,6 +1332,38 @@ class ModelRealBuilderTest extends TestCase
         Schema::dropIfExists('lazy_users');
     }
 
+    public function testUpdateOrFail(): void
+    {
+        $container = $this->getContainer();
+        Register::setConnectionResolver($container->get(ConnectionResolverInterface::class));
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        Schema::create('update_or_fail', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 5);
+            $table->timestamps();
+        });
+        $model = UpdateOrFail::create([
+            'name' => Str::random(5),
+        ]);
+
+        try {
+            $model->updateOrFail([
+                'name' => Str::random(6),
+            ]);
+        } catch (Exception $e) {
+            $this->assertInstanceOf(QueryException::class, $e);
+        }
+
+        $this->assertFalse((new UpdateOrFail())->updateOrFail([]));
+        $name = Str::random(4);
+        $model->updateOrFail([
+            'name' => $name,
+        ]);
+        $this->assertSame($name, $model->name);
+        Schema::drop('update_or_fail');
+    }
+
     protected function getContainer()
     {
         $dispatcher = Mockery::mock(EventDispatcherInterface::class);
@@ -1288,4 +1382,11 @@ class ModelRealBuilderTest extends TestCase
 class LazyUserModel extends Model
 {
     protected ?string $table = 'lazy_users';
+}
+
+class UpdateOrFail extends Model
+{
+    protected ?string $table = 'update_or_fail';
+
+    protected array $guarded = [];
 }

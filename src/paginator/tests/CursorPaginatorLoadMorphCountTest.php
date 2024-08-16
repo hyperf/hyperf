@@ -31,14 +31,14 @@ class CursorPaginatorLoadMorphCountTest extends TestCase
     public function testCollectionLoadMorphCountCanChainOnThePaginator(): void
     {
         $relations = [
-            'App\\User' => 'photos',
-            'App\\Company' => ['employees', 'calendars'],
+            'App\User' => 'photos',
+            'App\Company' => ['employees', 'calendars'],
         ];
 
         $items = m::mock(Collection::class);
         $items->expects('loadMorphCount')->with('parentable', $relations);
 
-        $p = (new class() extends AbstractCursorPaginator {
+        $p = (new class extends AbstractCursorPaginator {
             public function __toString()
             {
                 return '';

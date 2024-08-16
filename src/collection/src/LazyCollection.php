@@ -37,8 +37,6 @@ use Traversable;
  */
 class LazyCollection implements Enumerable
 {
-    use Macroable;
-
     /**
      * @use EnumeratesValues<TKey, TValue>
      */
@@ -196,7 +194,7 @@ class LazyCollection implements Enumerable
      *
      * @return static<int, mixed>
      */
-    public function collapse()
+    public function collapse(): Enumerable
     {
         return new static(function () {
             foreach ($this as $values) {
@@ -477,7 +475,7 @@ class LazyCollection implements Enumerable
      *
      * @return static<int, mixed>
      */
-    public function flatten(float|int $depth = INF)
+    public function flatten(float|int $depth = INF): Enumerable
     {
         $instance = new static(function () use ($depth) {
             foreach ($this as $item) {
@@ -499,7 +497,7 @@ class LazyCollection implements Enumerable
      *
      * @return static<TValue, TKey>
      */
-    public function flip(): self|static
+    public function flip(): Enumerable
     {
         return new static(function () {
             foreach ($this as $key => $value) {
@@ -538,7 +536,7 @@ class LazyCollection implements Enumerable
      * @param array|(callable(TValue, TKey): array-key)|string $groupBy
      * @return static<array-key, static<array-key, TValue>>
      */
-    public function groupBy($groupBy, bool $preserveKeys = false)
+    public function groupBy($groupBy, bool $preserveKeys = false): Enumerable
     {
         return $this->passthru('groupBy', func_get_args());
     }
@@ -768,7 +766,7 @@ class LazyCollection implements Enumerable
      * @param callable(TValue, TKey): TMapValue $callback
      * @return static<TKey, TMapValue>
      */
-    public function map(callable $callback): self|static
+    public function map(callable $callback): Enumerable
     {
         return new static(function () use ($callback) {
             foreach ($this as $key => $value) {
@@ -788,7 +786,7 @@ class LazyCollection implements Enumerable
      * @param callable(TValue, TKey): array<TMapToDictionaryKey, TMapToDictionaryValue> $callback
      * @return static<TMapToDictionaryKey, array<int, TMapToDictionaryValue>>
      */
-    public function mapToDictionary(callable $callback): self|static
+    public function mapToDictionary(callable $callback): Enumerable
     {
         return $this->passthru('mapToDictionary', func_get_args());
     }
@@ -804,7 +802,7 @@ class LazyCollection implements Enumerable
      * @param callable(TValue, TKey): array<TMapWithKeysKey, TMapWithKeysValue> $callback
      * @return static<TMapWithKeysKey, TMapWithKeysValue>
      */
-    public function mapWithKeys(callable $callback): self|static
+    public function mapWithKeys(callable $callback): Enumerable
     {
         return new static(function () use ($callback) {
             foreach ($this as $key => $value) {
@@ -1072,6 +1070,64 @@ class LazyCollection implements Enumerable
     }
 
     /**
+     * Get the item before the given item.
+     *
+     * @param (callable(TValue,TKey): bool)|TValue $value
+     * @return null|TValue
+     */
+    public function before(mixed $value, bool $strict = false): mixed
+    {
+        $previous = null;
+
+        /** @var (callable(TValue,TKey): bool) $predicate */
+        $predicate = $this->useAsCallable($value)
+            ? $value
+            : function ($item) use ($value, $strict) {
+                return $strict ? $item === $value : $item == $value;
+            };
+
+        foreach ($this as $key => $item) {
+            if ($predicate($item, $key)) {
+                return $previous;
+            }
+
+            $previous = $item;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the item after the given item.
+     *
+     * @param (callable(TValue,TKey): bool)|TValue $value
+     * @return null|TValue
+     */
+    public function after(mixed $value, bool $strict = false): mixed
+    {
+        $found = false;
+
+        /** @var (callable(TValue,TKey): bool) $predicate */
+        $predicate = $this->useAsCallable($value)
+            ? $value
+            : function ($item) use ($value, $strict) {
+                return $strict ? $item === $value : $item == $value;
+            };
+
+        foreach ($this as $key => $item) {
+            if ($found) {
+                return $item;
+            }
+
+            if ($predicate($item, $key)) {
+                $found = true;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Shuffle the items in the collection.
      *
      * @return Collection
@@ -1294,7 +1350,7 @@ class LazyCollection implements Enumerable
      */
     public function splitIn(int $numberOfGroups)
     {
-        return $this->chunk(ceil($this->count() / $numberOfGroups));
+        return $this->chunk((int) ceil($this->count() / $numberOfGroups));
     }
 
     /**
@@ -1603,7 +1659,7 @@ class LazyCollection implements Enumerable
      * @param Arrayable<array-key, TZipValue>|iterable<array-key, TZipValue> ...$items
      * @return static<int, static<int, TValue|TZipValue>>
      */
-    public function zip($items): self|static
+    public function zip($items): Enumerable
     {
         $iterables = func_get_args();
 
@@ -1628,7 +1684,7 @@ class LazyCollection implements Enumerable
      * @param TPadValue $value
      * @return static<int, TPadValue|TValue>
      */
-    public function pad(int $size, $value): self|static
+    public function pad(int $size, $value): Enumerable
     {
         if ($size < 0) {
             return $this->passthru('pad', func_get_args());

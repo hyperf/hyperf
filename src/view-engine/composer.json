@@ -1,24 +1,24 @@
 {
     "name": "hyperf/view-engine",
-    "type": "library",
+    "description": "",
     "license": "MIT",
+    "type": "library",
     "keywords": [
         "php",
         "hyperf",
         "view",
         "engine"
     ],
-    "description": "",
     "require": {
         "php": ">=8.1",
         "ext-json": "*",
-        "hyperf/collection": "~3.1.0",
+        "hyperf/collection": "~3.1.23",
         "hyperf/config": "~3.1.0",
         "hyperf/di": "~3.1.0",
         "hyperf/event": "~3.1.0",
         "hyperf/macroable": "~3.1.0",
-        "hyperf/tappable": "~3.1.0",
         "hyperf/support": "~3.1.0",
+        "hyperf/tappable": "~3.1.0",
         "hyperf/utils": "~3.1.0",
         "hyperf/view": "~3.1.0"
     },

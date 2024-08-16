@@ -1,4 +1,144 @@
-# v3.1.25 - TBD
+# v3.1.37 - TBD
+
+# v3.1.36 -  2024-08-15
+
+## Added
+
+- [#6971](https://github.com/hyperf/hyperf/pull/6971) Added partitioned support for Cookie.
+- [#6990](https://github.com/hyperf/hyperf/pull/6990) Added support for retrieving the current system time with milliseconds for `Hyperf\Support\Traits\InteractsWithTime`.
+- [#6998](https://github.com/hyperf/hyperf/pull/6998) Added default methods for `#[AutoController]`. (You can add method `options` which used to support cors middleware)
+
+# v3.1.35 - 2024-08-08
+
+## Fixed
+
+- [#6987](https://github.com/hyperf/hyperf/pull/6987) Fixed bug that the root path of swagger server cannot work.
+
+# v3.1.34 - 2024-08-01
+
+## Added
+
+- [#6978](https://github.com/hyperf/hyperf/pull/6978) Support static method for `#[AsCommand]`.
+- [#6979](https://github.com/hyperf/hyperf/pull/6979) Added command `queue:dynamic-reload`.
+
+# v3.1.33 - 2024-07-25
+
+## Optimized
+
+- [#6962](https://github.com/hyperf/hyperf/pull/6962) Optimized error message of command exceptions.
+- [#6963](https://github.com/hyperf/hyperf/pull/6963) Optimized code for `Model/JsonResource::toJson`.
+
+## Fixed
+
+- [#6954](https://github.com/hyperf/hyperf/pull/6954) Fixed bug that the connection cannot reconnect to the server in a situation where there was a failover and exchange of read and write hosts.
+- [#6961](https://github.com/hyperf/hyperf/pull/6961) Fixed bug that `websocket sender` not support `Swow`.
+
+# v3.1.32 - 2024-07-18
+
+## Fixed
+
+- [#6949](https://github.com/hyperf/hyperf/pull/6949) Fixed bug that restart failed when don't have `.env`.
+- [#6953](https://github.com/hyperf/hyperf/pull/6953) Fixed bug that socketio-server cannot work for swow engine.
+
+## Optimized
+
+- [#6946](https://github.com/hyperf/hyperf/pull/6946) Removed Swoole Atomic dependency and useless restart counter in watcher.
+
+## Added
+
+- [#6950](https://github.com/hyperf/hyperf/pull/6950) Support `where bit functions and operators` for `database`.
+
+# v3.1.31 - 2024-07-11
+
+## Added
+
+- [#6936](https://github.com/hyperf/hyperf/pull/6936) Support to reload `.env` when using `hyperf/watcher`.
+
+# v3.1.30 - 2024-07-05
+
+## Fixed
+
+- [#6925](https://github.com/hyperf/hyperf/pull/6925) Fixed bug that `sortByMany` don't reset indexes for `Collection`. But it will be return the same result like `sortBy` in `v3.2`.
+
+# v3.1.29 - 2024-07-04
+
+## Fixed
+
+- [#6925](https://github.com/hyperf/hyperf/pull/6925) Fixed bug that `sortByMany` cannot support options like `sortBy`.
+
+## Added
+
+- [#6896](https://github.com/hyperf/hyperf/pull/6896) Added `SftpAdapter` for `hyperf/filesystem`.
+- [#6917](https://github.com/hyperf/hyperf/pull/6917) Added `Str::chopStart` and `Str::chopEnd`.
+
+# v3.1.28 - 2024-06-27
+
+## Fixed
+
+- [#6900](https://github.com/hyperf/hyperf/pull/6900) Fixed bug that `LengthAwarePaginator::addQuery()` cannot support array `$values`.
+- [#6909](https://github.com/hyperf/hyperf/pull/6909) Fixed bug that `Aop` doesn't work on `Trait`.
+
+## Optimized
+
+- [#6903](https://github.com/hyperf/hyperf/pull/6903) Optimized code for `config-nacos`.
+
+## Added
+
+- [#6885](https://github.com/hyperf/hyperf/pull/6885) Added validation rule `prohibiti`.
+- [#6891](https://github.com/hyperf/hyperf/pull/6891) Support `cache.*.options.pool` to select redis instance for `hyperf/cache`.
+- [#6895](https://github.com/hyperf/hyperf/pull/6895) Support to collect enum annotations.
+
+# v3.1.27 -  2024-06-20
+
+## Added
+
+- [#6864](https://github.com/hyperf/hyperf/pull/6864) Added methods `getViews` and `hasView` into `Hyperf\Database\Schema\Schema`.
+- [#6866](https://github.com/hyperf/hyperf/pull/6866) Added method `Hyperf\Database\Concerns\BuildsQueries::lazy`.
+- [#6869](https://github.com/hyperf/hyperf/pull/6869) Added methods `before` and `after` into `Collection`.
+- [#6876](https://github.com/hyperf/hyperf/pull/6876) Added method `Hyperf\Database\Concerns\Builder::eachById`.
+- [#6878](https://github.com/hyperf/hyperf/pull/6878) Added methods `whereMorphRelation` and `orWhereMorphRelation` into `Hyperf\Database\Model\Concerns\QueriesRelationships`.
+- [#6883](https://github.com/hyperf/hyperf/pull/6883) Added methods `getIndexes` `hasIndex` and `getIndexListing` into `Hyperf\Database\Schema\Builder`.
+- [#6884](https://github.com/hyperf/hyperf/pull/6884) Added method `Hyperf\Database\Model\Model::updateOrFail`.
+- [#6897](https://github.com/hyperf/hyperf/pull/6897) [#6899](https://github.com/hyperf/hyperf/pull/6899) Added events `BeforeLongLangConsumerCreated` and `AfterConsumerConfigCreated` into `Hyperf\Kafka\ConsumerManager`.
+
+## Optimized
+
+- [#6829](https://github.com/hyperf/hyperf/pull/6829) Optimized the format of command error logs.
+- [#6868](https://github.com/hyperf/hyperf/pull/6868) Support type `Closure|Expression|ModelBuilder|static|string` of `$column` for `QueryBuilder::orderBy()`.
+- [#6870](https://github.com/hyperf/hyperf/pull/6870) Updated default path for factories in Model Factory construct method.
+- [#6874](https://github.com/hyperf/hyperf/pull/6874) Using `Scanner` instead of hard code for `hyperf/watcher` component.
+
+# v3.1.26 - 2024-06-13
+
+## Fixed
+
+- [#6848](https://github.com/hyperf/hyperf/pull/6848) Fixed bug that `LazyCollection::splitIn()` cannot work caused by type hint.
+
+## Added
+
+- [#6845](https://github.com/hyperf/hyperf/pull/6845) Added method `Hyperf\Database\Schema::getTables()`.
+- [#6846](https://github.com/hyperf/hyperf/pull/6846) Added methods `chunkById` and `chunkByIdDesc` into `Hyperf\Database\Concerns\BuildsQueries`.
+- [#6851](https://github.com/hyperf/hyperf/pull/6851) Added methods `orDoesntHaveMorph` and `orHasMorph` into `Hyperf\Database\Model\Concerns`.
+- [#6858](https://github.com/hyperf/hyperf/pull/6858) Added methods `makeHiddenIf` and `makeVisibleIf` into `Hyperf\Database\Model\Concerns\HidesAttributes`.
+
+## Optimized
+
+- [#6855](https://github.com/hyperf/hyperf/pull/6855) Optimized BuildsQueries to use `Conditionable` instead of `when` and `unless`.
+- [#6856](https://github.com/hyperf/hyperf/pull/6856) Optimized `Hyperf\Scout\Builder` to use `Conditionable` instead of `when` and `unless`.
+- [#6860](https://github.com/hyperf/hyperf/pull/6860) Use `Hyperf\Collection\Enumerable` instead of `Hyperf\ViewEngine\Contract\Enumerable`.
+
+# v3.1.25.1 - 2024-06-07
+
+## Added
+
+- [#6837](https://github.com/hyperf/hyperf/pull/6837) Added method `Model\Concerns\QueriesRelationships::withWhereHas()`.
+- [#6844](https://github.com/hyperf/hyperf/pull/6844) Added methods `whereRelation` and `orWhereRelation` into `Hyperf\Database\Model\Concerns\QueriesRelationships`.
+
+## Optimized
+
+- [#6843](https://github.com/hyperf/hyperf/pull/6843) [#6847](https://github.com/hyperf/hyperf/pull/6847) Updated return type hints in `Collection` and `LazyCollection`.
+
+# v3.1.25 - 2024-06-06
 
 ## Added
 
@@ -17,6 +157,7 @@
 - [#6813](https://github.com/hyperf/hyperf/pull/6813) Fixed bug that cannot read the messages from non-lower keys for `Hyperf\Constants\Annotation\Message`.
 - [#6818](https://github.com/hyperf/hyperf/pull/6818) Fixed bug that `updateOrInsert` cannot work when the input is empty.
 - [#6828](https://github.com/hyperf/hyperf/pull/6828) Fixed bug that `AOP` cannot work on `__construct`.
+- [#6836](https://github.com/hyperf/hyperf/pull/6836) Fixed bug that `SetCookie::fromString` cannot not work by invalid types.
 
 # v3.1.24 - 2024-05-30
 

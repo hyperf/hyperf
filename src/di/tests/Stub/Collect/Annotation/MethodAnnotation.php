@@ -10,17 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\GraphQL\Annotation;
+namespace HyperfTest\Di\Stub\Collect\Annotation;
 
 use Attribute;
-use Hyperf\Di\Annotation\AnnotationInterface;
+use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
-class Logged extends \TheCodingMachine\GraphQLite\Annotations\Logged implements AnnotationInterface
+class MethodAnnotation extends AbstractAnnotation
 {
-    use AnnotationTrait;
 }

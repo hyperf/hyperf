@@ -20,8 +20,10 @@ use Hyperf\Support\Exception\InvalidArgumentException;
 use Hyperf\Support\Filesystem\FileNotFoundException;
 use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\Watcher\Driver\DriverInterface;
+use Hyperf\Watcher\Event\BeforeServerRestart;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
@@ -109,6 +111,8 @@ class Watcher
             $pid = $this->filesystem->get($file);
             try {
                 $this->output->writeln('Stop server...');
+                $this->container->get(EventDispatcherInterface::class)
+                    ->dispatch(new BeforeServerRestart($pid));
                 if (posix_kill((int) $pid, 0)) {
                     posix_kill((int) $pid, SIGTERM);
                 }

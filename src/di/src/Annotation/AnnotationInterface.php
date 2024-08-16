@@ -22,6 +22,11 @@ interface AnnotationInterface
     /**
      * Collect the annotation metadata to a container that you want.
      */
+    public function collectClassConstant(string $className, ?string $target): void;
+
+    /**
+     * Collect the annotation metadata to a container that you want.
+     */
     public function collectMethod(string $className, ?string $target): void;
 
     /**

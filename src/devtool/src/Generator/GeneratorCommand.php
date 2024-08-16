@@ -80,7 +80,7 @@ abstract class GeneratorCommand extends Command
      */
     protected function qualifyClass(string $name): string
     {
-        $name = ltrim($name, '\\/');
+        $name = ltrim($name, '\/');
 
         $name = str_replace('/', '\\', $name);
 

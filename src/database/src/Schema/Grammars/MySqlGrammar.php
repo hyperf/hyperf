@@ -40,6 +40,33 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine the tables.
+     */
+    public function compileTables(string $database): string
+    {
+        return sprintf(
+            'select table_name as `name`, (data_length + index_length) as `size`, '
+            . 'table_comment as `comment`, engine as `engine`, table_collation as `collation` '
+            . "from information_schema.tables where table_schema = %s and table_type in ('BASE TABLE', 'SYSTEM VERSIONED') "
+            . 'order by table_name',
+            $this->quoteString($database)
+        );
+    }
+
+    /**
+     * Compile the query to determine the views.
+     */
+    public function compileViews(string $database): string
+    {
+        return sprintf(
+            'select table_name as `name`, view_definition as `definition` '
+            . 'from information_schema.views where table_schema = %s '
+            . 'order by table_name',
+            $this->quoteString($database)
+        );
+    }
+
+    /**
      * Compile the query to determine the list of columns.
      */
     public function compileColumnListing(): string
@@ -343,6 +370,21 @@ class MySqlGrammar extends Grammar
     public function compileGetAllTables()
     {
         return 'SHOW FULL TABLES WHERE table_type = \'BASE TABLE\'';
+    }
+
+    /**
+     * Compile the query to determine the indexes.
+     */
+    public function compileIndexes(string $database, string $table): string
+    {
+        return sprintf(
+            'select index_name as `name`, group_concat(column_name order by seq_in_index) as `columns`, '
+            . 'index_type as `type`, not non_unique as `unique` '
+            . 'from information_schema.statistics where table_schema = %s and table_name = %s '
+            . 'group by index_name, index_type, non_unique',
+            $this->quoteString($database),
+            $this->quoteString($table)
+        );
     }
 
     /**

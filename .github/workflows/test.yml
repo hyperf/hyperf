@@ -4,7 +4,7 @@ on:
   push:
   pull_request:
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 14 * * *'
 
 jobs:
   cs-fix:
@@ -26,8 +26,12 @@ jobs:
           extensions: redis, pdo, pdo_mysql, bcmath, ${{ matrix.swoole }}
       - name: Setup Packages
         run: composer update -oW
+      - name: Check Composer Json
+        run: |
+          composer normalize --dry-run --no-update-lock
+          find ./src -name composer.json -exec composer normalize --dry-run --no-update-lock {} \;
       - name: Run CS Fix
-        run: vendor/bin/php-cs-fixer fix src --dry-run --diff
+        run: vendor/bin/php-cs-fixer fix $1 --dry-run --diff
   tests:
     needs: cs-fix
     name: Test on PHP${{ matrix.php-version }} Swoole-${{ matrix.sw-version }}
@@ -36,7 +40,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         php-version: [ '8.3', '8.2', '8.1' ]
-        sw-version: [ 'v5.0.3', 'v5.1.2', 'master' ]
+        sw-version: [ 'v5.0.3', 'v5.1.3', 'v6.0.0-alpha', 'master' ]
         exclude:
           - php-version: '8.3'
             sw-version: 'v5.0.3'

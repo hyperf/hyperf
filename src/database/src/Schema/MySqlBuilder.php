@@ -104,6 +104,44 @@ class MySqlBuilder extends Builder
     }
 
     /**
+     * Get the indexes for a given table.
+     */
+    public function getIndexes(string $table): array
+    {
+        $table = $this->connection->getTablePrefix() . $table;
+
+        return $this->connection->getPostProcessor()->processIndexes(
+            $this->connection->selectFromWriteConnection(
+                $this->grammar->compileIndexes($this->connection->getDatabaseName(), $table)
+            )
+        );
+    }
+
+    /**
+     * Get the tables that belong to the database.
+     */
+    public function getTables(): array
+    {
+        return $this->connection->getPostProcessor()->processTables(
+            $this->connection->selectFromWriteConnection(
+                $this->grammar->compileTables($this->connection->getDatabaseName())
+            )
+        );
+    }
+
+    /**
+     * Get the views for the database.
+     */
+    public function getViews(): array
+    {
+        return $this->connection->getPostProcessor()->processViews(
+            $this->connection->selectFromWriteConnection(
+                $this->grammar->compileViews($this->connection->getDatabaseName())
+            )
+        );
+    }
+
+    /**
      * Drop all tables from the database.
      */
     public function dropAllTables(): void

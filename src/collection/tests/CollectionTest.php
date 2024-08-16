@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Collection;
 
 use Exception;
+use Hyperf\Codec\Json;
 use Hyperf\Collection\Collection;
 use Hyperf\Collection\ItemNotFoundException;
 use Hyperf\Collection\LazyCollection;
@@ -978,5 +979,359 @@ class CollectionTest extends TestCase
         $this->assertSame('taylor', $data->get('name'));
         $this->assertSame('foo', $data->get('email'));
         $this->assertSame('male', $data->get('gender'));
+    }
+
+    #[DataProvider('collectionClassProvider')]
+    public function testBeforeReturnsItemBeforeTheGivenItem($collection)
+    {
+        $c = new $collection([1, 2, 3, 4, 5, 2, 5, 'name' => 'taylor', 'framework' => 'laravel']);
+
+        $this->assertEquals(1, $c->before(2));
+        $this->assertEquals(1, $c->before('2'));
+        $this->assertEquals(5, $c->before('taylor'));
+        $this->assertSame('taylor', $c->before('laravel'));
+        $this->assertEquals(4, $c->before(function ($value) {
+            return $value > 4;
+        }));
+        $this->assertEquals(5, $c->before(function ($value) {
+            return ! is_numeric($value);
+        }));
+    }
+
+    #[DataProvider('collectionClassProvider')]
+    public function testBeforeInStrictMode($collection)
+    {
+        $c = new $collection([false, 0, 1, [], '']);
+        $this->assertNull($c->before('false', true));
+        $this->assertNull($c->before('1', true));
+        $this->assertNull($c->before(false, true));
+        $this->assertEquals(false, $c->before(0, true));
+        $this->assertEquals(0, $c->before(1, true));
+        $this->assertEquals(1, $c->before([], true));
+        $this->assertEquals([], $c->before('', true));
+    }
+
+    #[DataProvider('collectionClassProvider')]
+    public function testBeforeReturnsNullWhenItemIsNotFound($collection)
+    {
+        $c = new $collection([1, 2, 3, 4, 5, 'foo' => 'bar']);
+
+        $this->assertNull($c->before(6));
+        $this->assertNull($c->before('foo'));
+        $this->assertNull($c->before(function ($value) {
+            return $value < 1 && is_numeric($value);
+        }));
+        $this->assertNull($c->before(function ($value) {
+            return $value === 'nope';
+        }));
+    }
+
+    #[DataProvider('collectionClassProvider')]
+    public function testBeforeReturnsNullWhenItemOnTheFirstitem($collection)
+    {
+        $c = new $collection([1, 2, 3, 4, 5, 'foo' => 'bar']);
+
+        $this->assertNull($c->before(1));
+        $this->assertNull($c->before(function ($value) {
+            return $value < 2 && is_numeric($value);
+        }));
+
+        $c = new $collection(['foo' => 'bar', 1, 2, 3, 4, 5]);
+        $this->assertNull($c->before('bar'));
+    }
+
+    #[DataProvider('collectionClassProvider')]
+    public function testAfterReturnsItemAfterTheGivenItem($collection)
+    {
+        $c = new $collection([1, 2, 3, 4, 2, 5, 'name' => 'taylor', 'framework' => 'laravel']);
+
+        $this->assertEquals(2, $c->after(1));
+        $this->assertEquals(3, $c->after(2));
+        $this->assertEquals(4, $c->after(3));
+        $this->assertEquals(2, $c->after(4));
+        $this->assertEquals('taylor', $c->after(5));
+        $this->assertEquals('laravel', $c->after('taylor'));
+
+        $this->assertEquals(4, $c->after(function ($value) {
+            return $value > 2;
+        }));
+        $this->assertEquals('laravel', $c->after(function ($value) {
+            return ! is_numeric($value);
+        }));
+    }
+
+    #[DataProvider('collectionClassProvider')]
+    public function testAfterInStrictMode($collection)
+    {
+        $c = new $collection([false, 0, 1, [], '']);
+
+        $this->assertNull($c->after('false', true));
+        $this->assertNull($c->after('1', true));
+        $this->assertNull($c->after('', true));
+        $this->assertEquals(0, $c->after(false, true));
+        $this->assertEquals([], $c->after(1, true));
+        $this->assertEquals('', $c->after([], true));
+    }
+
+    #[DataProvider('collectionClassProvider')]
+    public function testAfterReturnsNullWhenItemIsNotFound($collection)
+    {
+        $c = new $collection([1, 2, 3, 4, 5, 'foo' => 'bar']);
+
+        $this->assertNull($c->after(6));
+        $this->assertNull($c->after('foo'));
+        $this->assertNull($c->after(function ($value) {
+            return $value < 1 && is_numeric($value);
+        }));
+        $this->assertNull($c->after(function ($value) {
+            return $value === 'nope';
+        }));
+    }
+
+    #[DataProvider('collectionClassProvider')]
+    public function testAfterReturnsNullWhenItemOnTheLastItem($collection)
+    {
+        $c = new $collection([1, 2, 3, 4, 5, 'foo' => 'bar']);
+
+        $this->assertNull($c->after('bar'));
+        $this->assertNull($c->after(function ($value) {
+            return $value > 4 && ! is_numeric($value);
+        }));
+
+        $c = new $collection(['foo' => 'bar', 1, 2, 3, 4, 5]);
+        $this->assertNull($c->after(5));
+    }
+
+    #[DataProvider('collectionClassProvider')]
+    public function testSortBy($collection)
+    {
+        $data = (new $collection(
+            [
+                ['id' => 5, 'name' => 'e'],
+                ['id' => 4, 'name' => 'd'],
+                ['id' => 3, 'name' => 'c'],
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 1, 'name' => 'a'],
+            ]
+        ))->sortBy('id');
+        $this->assertEquals(json_encode([
+            4 => ['id' => 1, 'name' => 'a'],
+            3 => ['id' => 2, 'name' => 'b'],
+            2 => ['id' => 3, 'name' => 'c'],
+            1 => ['id' => 4, 'name' => 'd'],
+            0 => ['id' => 5, 'name' => 'e'],
+        ]), (string) $data);
+
+        $this->assertEquals(json_encode([
+            ['id' => 1, 'name' => 'a'],
+            ['id' => 2, 'name' => 'b'],
+            ['id' => 3, 'name' => 'c'],
+            ['id' => 4, 'name' => 'd'],
+            ['id' => 5, 'name' => 'e'],
+        ]), (string) $data->values());
+        $dataMany = (new $collection(
+            [
+                ['id' => 5, 'name' => 'e'],
+                ['id' => 4, 'name' => 'd'],
+                ['id' => 3, 'name' => 'c'],
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 1, 'name' => 'a'],
+            ]
+        ))->sortBy(['id', 'asc']);
+        $this->assertEquals((string) $data->values(), (string) $dataMany);
+
+        $data = (new $collection(
+            [
+                ['id' => 5, 'name' => '5a'],
+                ['id' => 4, 'name' => '4b'],
+                ['id' => 3, 'name' => 'c3'],
+                ['id' => 2, 'name' => '2d'],
+                ['id' => 1, 'name' => '1e'],
+            ]
+        ))->sortBy('name', SORT_NUMERIC);
+        $this->assertEquals(json_encode([
+            2 => ['id' => 3, 'name' => 'c3'],
+            4 => ['id' => 1, 'name' => '1e'],
+            3 => ['id' => 2, 'name' => '2d'],
+            1 => ['id' => 4, 'name' => '4b'],
+            0 => ['id' => 5, 'name' => '5a'],
+        ]), (string) $data);
+        $dataMany = (new $collection(
+            [
+                ['id' => 5, 'name' => '5a'],
+                ['id' => 4, 'name' => '4b'],
+                ['id' => 3, 'name' => 'c3'],
+                ['id' => 2, 'name' => '2d'],
+                ['id' => 1, 'name' => '1e'],
+            ]
+        ))->sortBy([['name', 'asc']], SORT_NUMERIC);
+        $this->assertEquals((string) $data->values(), (string) $dataMany);
+
+        $data = (new $collection(
+            [
+                ['id' => 5, 'name' => '5a'],
+                ['id' => 4, 'name' => '4b'],
+                ['id' => 3, 'name' => 'c3'],
+                ['id' => 2, 'name' => '2d'],
+                ['id' => 1, 'name' => '1e'],
+            ]
+        ))->sortBy('name', SORT_STRING);
+        $this->assertEquals(json_encode([
+            4 => ['id' => 1, 'name' => '1e'],
+            3 => ['id' => 2, 'name' => '2d'],
+            1 => ['id' => 4, 'name' => '4b'],
+            0 => ['id' => 5, 'name' => '5a'],
+            2 => ['id' => 3, 'name' => 'c3'],
+        ]), (string) $data);
+        $dataMany = (new $collection(
+            [
+                ['id' => 5, 'name' => '5a'],
+                ['id' => 4, 'name' => '4b'],
+                ['id' => 3, 'name' => 'c3'],
+                ['id' => 2, 'name' => '2d'],
+                ['id' => 1, 'name' => '1e'],
+            ]
+        ))->sortBy([['name', 'asc']], SORT_STRING);
+        $this->assertEquals((string) $data->values(), (string) $dataMany);
+
+        $data = (new $collection(
+            [
+                ['id' => 5, 'name' => 'a10'],
+                ['id' => 4, 'name' => 'a4'],
+                ['id' => 3, 'name' => 'a3'],
+                ['id' => 2, 'name' => 'a2'],
+                ['id' => 1, 'name' => 'a1'],
+            ]
+        ))->sortBy('name', SORT_NATURAL);
+        $this->assertEquals(json_encode([
+            4 => ['id' => 1, 'name' => 'a1'],
+            3 => ['id' => 2, 'name' => 'a2'],
+            2 => ['id' => 3, 'name' => 'a3'],
+            1 => ['id' => 4, 'name' => 'a4'],
+            0 => ['id' => 5, 'name' => 'a10'],
+        ]), (string) $data);
+        $dataMany = (new $collection(
+            [
+                ['id' => 5, 'name' => 'a10'],
+                ['id' => 4, 'name' => 'a4'],
+                ['id' => 3, 'name' => 'a3'],
+                ['id' => 2, 'name' => 'a2'],
+                ['id' => 1, 'name' => 'a1'],
+            ]
+        ))->sortBy([['name', 'asc']], SORT_NATURAL);
+        $this->assertEquals((string) $data->values(), (string) $dataMany);
+
+        setlocale(LC_COLLATE, 'en_US.utf8');
+        $data = (new $collection(
+            [
+                ['id' => 5, 'name' => 'A'],
+                ['id' => 4, 'name' => 'a'],
+                ['id' => 3, 'name' => 'B'],
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 1, 'name' => 'c'],
+            ]
+        ))->sortBy('name', SORT_LOCALE_STRING);
+        $this->assertEquals(json_encode([
+            1 => ['id' => 4, 'name' => 'a'],
+            0 => ['id' => 5, 'name' => 'A'],
+            3 => ['id' => 2, 'name' => 'b'],
+            2 => ['id' => 3, 'name' => 'B'],
+            4 => ['id' => 1, 'name' => 'c'],
+        ]), (string) $data);
+        $dataMany = (new $collection(
+            [
+                ['id' => 5, 'name' => 'A'],
+                ['id' => 4, 'name' => 'a'],
+                ['id' => 3, 'name' => 'B'],
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 1, 'name' => 'c'],
+            ]
+        ))->sortBy([['name', 'asc']], SORT_LOCALE_STRING);
+        $this->assertEquals((string) $data->values(), (string) $dataMany);
+
+        $data = (new $collection(
+            [
+                ['id' => 1, 'name' => 'a'],
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 3, 'name' => 'c'],
+                ['id' => 4, 'name' => 'd'],
+                ['id' => 5, 'name' => 'e'],
+            ]
+        ))->sortByDesc('id');
+        $this->assertEquals(json_encode([
+            4 => ['id' => 5, 'name' => 'e'],
+            3 => ['id' => 4, 'name' => 'd'],
+            2 => ['id' => 3, 'name' => 'c'],
+            1 => ['id' => 2, 'name' => 'b'],
+            0 => ['id' => 1, 'name' => 'a'],
+        ]), (string) $data);
+        $this->assertEquals(json_encode([
+            ['id' => 5, 'name' => 'e'],
+            ['id' => 4, 'name' => 'd'],
+            ['id' => 3, 'name' => 'c'],
+            ['id' => 2, 'name' => 'b'],
+            ['id' => 1, 'name' => 'a'],
+        ]), (string) $data->values());
+        $dataMany = (new $collection(
+            [
+                ['id' => 1, 'name' => 'a'],
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 3, 'name' => 'c'],
+                ['id' => 4, 'name' => 'd'],
+                ['id' => 5, 'name' => 'e'],
+            ]
+        ))->sortByDesc(['id']);
+        $this->assertEquals((string) $data->values(), (string) $dataMany);
+
+        $dataMany = (new $collection(
+            [
+                'a' => ['id' => 1, 'name' => 'a'],
+                'b' => ['id' => 2, 'name' => 'b'],
+                'c' => ['id' => 3, 'name' => 'c'],
+                'd' => ['id' => 4, 'name' => 'd'],
+                'e' => ['id' => 5, 'name' => 'e'],
+            ]
+        ))->sortByDesc(['id']);
+        $this->assertEquals(Json::encode([
+            'e' => ['id' => 5, 'name' => 'e'],
+            'd' => ['id' => 4, 'name' => 'd'],
+            'c' => ['id' => 3, 'name' => 'c'],
+            'b' => ['id' => 2, 'name' => 'b'],
+            'a' => ['id' => 1, 'name' => 'a'],
+        ]), (string) $dataMany);
+
+        $dataMany = (new $collection(
+            [
+                'e' => ['id' => 5, 'name' => 'e'],
+                'd' => ['id' => 4, 'name' => 'd'],
+                'c' => ['id' => 3, 'name' => 'c'],
+                'b' => ['id' => 2, 'name' => 'b'],
+                'a' => ['id' => 1, 'name' => 'a'],
+            ]
+        ))->sortBy(['id']);
+        $this->assertEquals(Json::encode([
+            'a' => ['id' => 1, 'name' => 'a'],
+            'b' => ['id' => 2, 'name' => 'b'],
+            'c' => ['id' => 3, 'name' => 'c'],
+            'd' => ['id' => 4, 'name' => 'd'],
+            'e' => ['id' => 5, 'name' => 'e'],
+        ]), (string) $dataMany);
+
+        $dataMany = (new $collection(
+            [
+                'e' => ['id' => 5, 'name' => 'e'],
+                'd' => ['id' => 4, 'name' => 'd'],
+                'c' => ['id' => 3, 'name' => 'c'],
+                'b' => ['id' => 2, 'name' => 'b'],
+                'a' => ['id' => 1, 'name' => 'a'],
+            ]
+        ))->sortBy('id');
+        $this->assertEquals(Json::encode([
+            'a' => ['id' => 1, 'name' => 'a'],
+            'b' => ['id' => 2, 'name' => 'b'],
+            'c' => ['id' => 3, 'name' => 'c'],
+            'd' => ['id' => 4, 'name' => 'd'],
+            'e' => ['id' => 5, 'name' => 'e'],
+        ]), (string) $dataMany);
     }
 }

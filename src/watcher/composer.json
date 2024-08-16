@@ -1,13 +1,13 @@
 {
     "name": "hyperf/watcher",
-    "type": "library",
+    "description": "Hot reload watcher for Hyperf",
     "license": "MIT",
+    "type": "library",
     "keywords": [
         "dev",
         "php",
         "hyperf"
     ],
-    "description": "Hot reload watcher for Hyperf",
     "require": {
         "php": ">=8.1",
         "ext-posix": "*",
@@ -18,12 +18,12 @@
         "hyperf/support": "~3.1.0"
     },
     "autoload": {
-        "files": [
-            "src/Functions.php"
-        ],
         "psr-4": {
             "Hyperf\\Watcher\\": "src/"
-        }
+        },
+        "files": [
+            "src/Functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
