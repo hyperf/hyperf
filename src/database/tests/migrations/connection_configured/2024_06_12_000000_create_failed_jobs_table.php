@@ -13,7 +13,7 @@ use Hyperf\Database\Migrations\Migration;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 
-return new class() extends Migration {
+return new class extends Migration {
     /**
      * The database connection that should be used by the migration.
      */
