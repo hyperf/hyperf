@@ -1,5 +1,9 @@
 # v3.1.37 - TBD
 
+## Optimized
+
+- [#6839](https://github.com/hyperf/hyperf/pull/6839) Use `anonymous classes` to avoid the duplicated class name for database migrations.
+
 # v3.1.36 -  2024-08-15
 
 ## Added
