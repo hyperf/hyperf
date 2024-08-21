@@ -1,5 +1,9 @@
 # v3.1.37 - TBD
 
+## Added
+
+- [#7015](https://github.com/hyperf/hyperf/pull/7015) Added methods `whereNone` and `orWhereNone` to `Hyperf\Database\Query\Builder`.
+
 ## Optimized
 
 - [#6839](https://github.com/hyperf/hyperf/pull/6839) Use `anonymous classes` to avoid the duplicated class name for database migrations.
