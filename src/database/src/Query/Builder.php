@@ -1798,6 +1798,24 @@ class Builder
     }
 
     /**
+     * Add a "where not" clause to the query for multiple columns where none of the conditions should be true.
+     * @param Expression[]|string[] $columns
+     */
+    public function whereNone(array $columns, mixed $operator = null, mixed $value = null, string $boolean = 'and'): static
+    {
+        return $this->whereAny($columns, $operator, $value, $boolean . ' not');
+    }
+
+    /**
+     * Add an "or where not" clause to the query for multiple columns where none of the conditions should be true.
+     * @param Expression[]|string[] $columns
+     */
+    public function orWhereNone(array $columns, mixed $operator = null, mixed $value = null): static
+    {
+        return $this->whereNone($columns, $operator, $value, 'or');
+    }
+
+    /**
      * Add a "group by" clause to the query.
      *
      * @param array|string ...$groups
