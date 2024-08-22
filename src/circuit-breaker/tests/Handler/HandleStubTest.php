@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace HyperfTest\CircuitBreaker\Handler;
 
-use Exception;
 use Hyperf\CircuitBreaker\Annotation\CircuitBreaker;
 use Hyperf\CircuitBreaker\Attempt;
 use Hyperf\CircuitBreaker\CircuitBreakerFactory;
 use Hyperf\CircuitBreaker\Exception\BadFallbackException;
 use Hyperf\CircuitBreaker\LoggerInterface;
+use Hyperf\CircuitBreaker\State;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use HyperfTest\CircuitBreaker\Stub\HandleStub;
@@ -30,9 +30,15 @@ use PHPUnit\Framework\TestCase;
  */
 class HandleStubTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        m::close();
+    }
+
     public function testHandleReturnsProcessedResult()
     {
         $container = m::mock(ContainerInterface::class);
+        $container->allows('make')->with(State::class)->andReturn(new State());
         $proceedingJoinPoint = m::mock(ProceedingJoinPoint::class);
         $annotation = new CircuitBreaker();
         $breaker = new \Hyperf\CircuitBreaker\CircuitBreaker($container, 'TestClass::testMethod');
@@ -55,8 +61,7 @@ class HandleStubTest extends TestCase
     public function testHandleFallbacksWhenStateIsOpen()
     {
         $container = m::mock(ContainerInterface::class);
-
-        $container->allows('get')->once()->with(Attempt::class)->andReturn(new Attempt());
+        $container->allows('make')->with(State::class)->andReturn(new State());
         $proceedingJoinPoint = m::mock(ProceedingJoinPoint::class);
         $annotation = new CircuitBreaker();
         $breaker = new \Hyperf\CircuitBreaker\CircuitBreaker($container, 'TestClass::testMethod');
@@ -78,8 +83,10 @@ class HandleStubTest extends TestCase
     public function testHandleAttemptsCallWhenStateIsHalfOpen()
     {
         $container = m::mock(ContainerInterface::class);
-
-        $container->allows('get')->once()->with(Attempt::class)->andReturn(new Attempt());
+        $container->allows('make')->with(State::class)->andReturn(new State());
+        $attempt = m::mock(Attempt::class);
+        $attempt->allows('attempt')->once()->andReturn(true);
+        $container->allows('get')->once()->with(Attempt::class)->andReturn($attempt);
         $proceedingJoinPoint = m::mock(ProceedingJoinPoint::class);
         $annotation = new CircuitBreaker();
         $breaker = new \Hyperf\CircuitBreaker\CircuitBreaker($container, 'TestClass::testMethod');
@@ -92,6 +99,7 @@ class HandleStubTest extends TestCase
         $factory->allows('get')->with('TestClass::testMethod')->andReturn($breaker);
         $proceedingJoinPoint->className = 'TestClass';
         $proceedingJoinPoint->methodName = 'testMethod';
+        $breaker->halfOpen();
 
         $handler = new HandleStub($container);
         $result = $handler->handle($proceedingJoinPoint, $annotation);
@@ -102,13 +110,15 @@ class HandleStubTest extends TestCase
     public function testHandleFallbacksWhenAttemptFails()
     {
         $container = m::mock(ContainerInterface::class);
-        $container->allows('get')->once()->with(Attempt::class)->andReturn(new Attempt());
+        $container->allows('make')->with(State::class)->andReturn(new State());
+        $attempt = m::mock(Attempt::class);
+        $attempt->allows('attempt')->once()->andReturn(false);
+        $container->allows('get')->once()->with(Attempt::class)->andReturn($attempt);
         $proceedingJoinPoint = m::mock(ProceedingJoinPoint::class);
         $annotation = new CircuitBreaker();
         $breaker = new \Hyperf\CircuitBreaker\CircuitBreaker($container, 'TestClass::testMethod');
         $factory = m::mock(CircuitBreakerFactory::class);
         $logger = m::mock(LoggerInterface::class);
-        $logger->allows('debug')->once();
         $container->allows('get')->once()->with(CircuitBreakerFactory::class)->andReturn($factory);
         $container->allows('has')->once()->with(LoggerInterface::class)->andReturn(true);
         $container->allows('get')->once()->with(LoggerInterface::class)->andReturn($logger);
@@ -117,12 +127,8 @@ class HandleStubTest extends TestCase
         $breaker->incrFailCounter();
         $proceedingJoinPoint->className = 'TestClass';
         $proceedingJoinPoint->methodName = 'testMethod';
-
         $handler = new HandleStub($container);
-        try {
-            $handler->handle($proceedingJoinPoint, $annotation);
-        } catch (Exception $e) {
-            $this->assertSame(BadFallbackException::class, get_class($e));
-        }
+        $this->expectException(BadFallbackException::class);
+        $handler->handle($proceedingJoinPoint, $annotation);
     }
 }
