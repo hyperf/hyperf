@@ -76,7 +76,6 @@ class HandleStubTest extends TestCase
         $proceedingJoinPoint->methodName = 'testMethod';
         $handler = new HandleStub($container);
         $result = $handler->handle($proceedingJoinPoint, $annotation);
-
         $this->assertSame($result, 'processed');
     }
 
