@@ -1,5 +1,9 @@
 # v3.1.38 - TBD
 
+## Added
+
+- [#7016](https://github.com/hyperf/hyperf/pull/7016) Added reorder method to clear and set sorting for `QueryBuilder`.
+
 # v3.1.37 - 2024-08-22
 
 ## Added

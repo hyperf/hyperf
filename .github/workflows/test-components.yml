@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v5.1.3'
+  SW_VERSION: 'v5.1.4'
 jobs:
   database:
     name: Test for Database
