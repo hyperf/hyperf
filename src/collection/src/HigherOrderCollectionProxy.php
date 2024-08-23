@@ -16,7 +16,7 @@ namespace Hyperf\Collection;
  * @template TKey of array-key
  * @template TValue
  *
- * @mixin Collection
+ * @mixin Enumerable
  * @mixin TValue
  */
 class HigherOrderCollectionProxy
