@@ -38,7 +38,7 @@ class HandleStubTest extends TestCase
     public function testHandleReturnsProcessedResult()
     {
         $container = m::mock(ContainerInterface::class);
-        $container->allows('make')->with(State::class)->andReturn(new State());
+        $container->allows('make')->with(State::class, [])->andReturn(new State());
         $proceedingJoinPoint = m::mock(ProceedingJoinPoint::class);
         $annotation = new CircuitBreaker();
         $breaker = new \Hyperf\CircuitBreaker\CircuitBreaker($container, 'TestClass::testMethod');
@@ -61,7 +61,7 @@ class HandleStubTest extends TestCase
     public function testHandleFallbacksWhenStateIsOpen()
     {
         $container = m::mock(ContainerInterface::class);
-        $container->allows('make')->with(State::class)->andReturn(new State());
+        $container->allows('make')->with(State::class, [])->andReturn(new State());
         $proceedingJoinPoint = m::mock(ProceedingJoinPoint::class);
         $annotation = new CircuitBreaker();
         $breaker = new \Hyperf\CircuitBreaker\CircuitBreaker($container, 'TestClass::testMethod');
@@ -82,7 +82,7 @@ class HandleStubTest extends TestCase
     public function testHandleAttemptsCallWhenStateIsHalfOpen()
     {
         $container = m::mock(ContainerInterface::class);
-        $container->allows('make')->with(State::class)->andReturn(new State());
+        $container->allows('make')->with(State::class, [])->andReturn(new State());
         $attempt = m::mock(Attempt::class);
         $attempt->allows('attempt')->once()->andReturn(true);
         $container->allows('get')->once()->with(Attempt::class)->andReturn($attempt);
@@ -109,7 +109,7 @@ class HandleStubTest extends TestCase
     public function testHandleFallbacksWhenAttemptFails()
     {
         $container = m::mock(ContainerInterface::class);
-        $container->allows('make')->with(State::class)->andReturn(new State());
+        $container->allows('make')->with(State::class, [])->andReturn(new State());
         $attempt = m::mock(Attempt::class);
         $attempt->allows('attempt')->once()->andReturn(false);
         $container->allows('get')->once()->with(Attempt::class)->andReturn($attempt);
