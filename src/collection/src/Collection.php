@@ -49,7 +49,7 @@ class Collection implements Enumerable, ArrayAccess
 
     /**
      * Create a new collection.
-     * @param null|Arrayable<TKey,TValue>|iterable<TKey,TValue> $items
+     * @param null|Arrayable<TKey,TValue>|iterable<TKey,TValue>|Jsonable|JsonSerializable $items
      */
     public function __construct($items = [])
     {
@@ -57,7 +57,7 @@ class Collection implements Enumerable, ArrayAccess
     }
 
     /**
-     * @param null|Arrayable<TKey,TValue>|iterable<TKey, TValue> $items
+     * @param null|Arrayable<TKey,TValue>|iterable<TKey, TValue>|Jsonable|JsonSerializable $items
      * @return static<TKey, TValue>
      */
     public function fill($items = [])
