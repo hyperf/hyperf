@@ -28,6 +28,11 @@ use Psr\Container\ContainerInterface;
  */
 class BreakerAnnotationAspectTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        m::close();
+    }
+
     public function testProcess()
     {
         $container = m::mock(ContainerInterface::class);
