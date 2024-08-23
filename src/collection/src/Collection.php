@@ -37,7 +37,11 @@ use Traversable;
  */
 class Collection implements Enumerable, ArrayAccess
 {
+    /**
+     * @use EnumeratesValues<TKey, TValue>
+     */
     use EnumeratesValues;
+
     use Macroable;
 
     /**
