@@ -17,6 +17,7 @@ use ArrayIterator;
 use Closure;
 use Hyperf\Collection\Traits\EnumeratesValues;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\CanBeEscapedWhenCastToString;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Stringable\Stringable;
@@ -55,7 +56,7 @@ use Traversable;
  * @property HigherOrderCollectionProxy $sum
  * @property HigherOrderCollectionProxy $unique
  */
-class Collection implements Enumerable, ArrayAccess
+class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerable
 {
     use EnumeratesValues;
     use Macroable;
