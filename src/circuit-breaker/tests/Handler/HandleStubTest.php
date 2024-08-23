@@ -18,11 +18,13 @@ use Hyperf\CircuitBreaker\CircuitBreakerFactory;
 use Hyperf\CircuitBreaker\Exception\BadFallbackException;
 use Hyperf\CircuitBreaker\LoggerInterface;
 use Hyperf\CircuitBreaker\State;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use HyperfTest\CircuitBreaker\Stub\HandleStub;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
@@ -30,14 +32,25 @@ use PHPUnit\Framework\TestCase;
  */
 class HandleStubTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        $container = m::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+    }
+
     protected function tearDown(): void
     {
+        $reflection = new ReflectionClass(ApplicationContext::class);
+        $reflection->setStaticPropertyValue('container', null);
         m::close();
     }
 
     public function testHandleReturnsProcessedResult()
     {
-        $container = m::mock(ContainerInterface::class);
+        /**
+         * @var ContainerInterface&m\MockInterface $container
+         */
+        $container = ApplicationContext::getContainer();
         $container->allows('make')->with(State::class, [])->andReturn(new State());
         $proceedingJoinPoint = m::mock(ProceedingJoinPoint::class);
         $annotation = new CircuitBreaker();
@@ -60,7 +73,10 @@ class HandleStubTest extends TestCase
 
     public function testHandleFallbacksWhenStateIsOpen()
     {
-        $container = m::mock(ContainerInterface::class);
+        /**
+         * @var ContainerInterface|m\MockInterface $container
+         */
+        $container = ApplicationContext::getContainer();
         $container->allows('make')->with(State::class, [])->andReturn(new State());
         $proceedingJoinPoint = m::mock(ProceedingJoinPoint::class);
         $annotation = new CircuitBreaker();
@@ -81,7 +97,10 @@ class HandleStubTest extends TestCase
 
     public function testHandleAttemptsCallWhenStateIsHalfOpen()
     {
-        $container = m::mock(ContainerInterface::class);
+        /**
+         * @var ContainerInterface|m\MockInterface $container
+         */
+        $container = ApplicationContext::getContainer();
         $container->allows('make')->with(State::class, [])->andReturn(new State());
         $attempt = m::mock(Attempt::class);
         $attempt->allows('attempt')->once()->andReturn(true);
@@ -108,7 +127,10 @@ class HandleStubTest extends TestCase
 
     public function testHandleFallbacksWhenAttemptFails()
     {
-        $container = m::mock(ContainerInterface::class);
+        /**
+         * @var ContainerInterface|m\MockInterface $container
+         */
+        $container = ApplicationContext::getContainer();
         $container->allows('make')->with(State::class, [])->andReturn(new State());
         $attempt = m::mock(Attempt::class);
         $attempt->allows('attempt')->once()->andReturn(false);
