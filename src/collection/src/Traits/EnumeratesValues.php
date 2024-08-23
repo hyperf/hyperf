@@ -35,38 +35,37 @@ use function Hyperf\Support\value;
 
 /**
  * @template TKey of array-key
- * @template TTimesValue
- *
  * @template TValue
- * @property HigherOrderCollectionProxy $average
- * @property HigherOrderCollectionProxy $avg
- * @property HigherOrderCollectionProxy $contains
- * @property HigherOrderCollectionProxy $doesntContain
- * @property HigherOrderCollectionProxy $each
- * @property HigherOrderCollectionProxy $every
- * @property HigherOrderCollectionProxy $filter
- * @property HigherOrderCollectionProxy $first
- * @property HigherOrderCollectionProxy $flatMap
- * @property HigherOrderCollectionProxy $groupBy
- * @property HigherOrderCollectionProxy $keyBy
- * @property HigherOrderCollectionProxy $map
- * @property HigherOrderCollectionProxy $max
- * @property HigherOrderCollectionProxy $min
- * @property HigherOrderCollectionProxy $partition
- * @property HigherOrderCollectionProxy $percentage
- * @property HigherOrderCollectionProxy $reject
- * @property HigherOrderCollectionProxy $skipUntil
- * @property HigherOrderCollectionProxy $skipWhile
- * @property HigherOrderCollectionProxy $some
- * @property HigherOrderCollectionProxy $sortBy
- * @property HigherOrderCollectionProxy $sortByDesc
- * @property HigherOrderCollectionProxy $sum
- * @property HigherOrderCollectionProxy $takeUntil
- * @property HigherOrderCollectionProxy $takeWhile
- * @property HigherOrderCollectionProxy $unique
- * @property HigherOrderCollectionProxy $unless
- * @property HigherOrderCollectionProxy $until
- * @property HigherOrderCollectionProxy $when
+ *
+ * @property HigherOrderCollectionProxy<TKey, TValue> $average
+ * @property HigherOrderCollectionProxy<TKey, TValue> $avg
+ * @property HigherOrderCollectionProxy<TKey, TValue> $contains
+ * @property HigherOrderCollectionProxy<TKey, TValue> $doesntContain
+ * @property HigherOrderCollectionProxy<TKey, TValue> $each
+ * @property HigherOrderCollectionProxy<TKey, TValue> $every
+ * @property HigherOrderCollectionProxy<TKey, TValue> $filter
+ * @property HigherOrderCollectionProxy<TKey, TValue> $first
+ * @property HigherOrderCollectionProxy<TKey, TValue> $flatMap
+ * @property HigherOrderCollectionProxy<TKey, TValue> $groupBy
+ * @property HigherOrderCollectionProxy<TKey, TValue> $keyBy
+ * @property HigherOrderCollectionProxy<TKey, TValue> $map
+ * @property HigherOrderCollectionProxy<TKey, TValue> $max
+ * @property HigherOrderCollectionProxy<TKey, TValue> $min
+ * @property HigherOrderCollectionProxy<TKey, TValue> $partition
+ * @property HigherOrderCollectionProxy<TKey, TValue> $percentage
+ * @property HigherOrderCollectionProxy<TKey, TValue> $reject
+ * @property HigherOrderCollectionProxy<TKey, TValue> $skipUntil
+ * @property HigherOrderCollectionProxy<TKey, TValue> $skipWhile
+ * @property HigherOrderCollectionProxy<TKey, TValue> $some
+ * @property HigherOrderCollectionProxy<TKey, TValue> $sortBy
+ * @property HigherOrderCollectionProxy<TKey, TValue> $sortByDesc
+ * @property HigherOrderCollectionProxy<TKey, TValue> $sum
+ * @property HigherOrderCollectionProxy<TKey, TValue> $takeUntil
+ * @property HigherOrderCollectionProxy<TKey, TValue> $takeWhile
+ * @property HigherOrderCollectionProxy<TKey, TValue> $unique
+ * @property HigherOrderCollectionProxy<TKey, TValue> $unless
+ * @property HigherOrderCollectionProxy<TKey, TValue> $until
+ * @property HigherOrderCollectionProxy<TKey, TValue> $when
  */
 trait EnumeratesValues
 {
@@ -194,6 +193,7 @@ trait EnumeratesValues
 
     /**
      * Create a new collection by invoking the callback a given amount of times.
+     * @template TTimesValue
      *
      * @param null|(callable(int): TTimesValue) $callback
      * @return static<int, TTimesValue>
