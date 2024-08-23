@@ -2118,6 +2118,25 @@ class Builder
     }
 
     /**
+     * Remove all existing orders and optionally add a new order.
+     *
+     * @param Closure|Expression|ModelBuilder|static|string $column
+     */
+    public function reorder(mixed $column = null, string $direction = 'asc'): static
+    {
+        $this->orders = null;
+        $this->unionOrders = null;
+        $this->bindings['order'] = [];
+        $this->bindings['unionOrder'] = [];
+
+        if ($column) {
+            return $this->orderBy($column, $direction);
+        }
+
+        return $this;
+    }
+
+    /**
      * Add a union statement to the query.
      *
      * @param Builder|Closure $query
