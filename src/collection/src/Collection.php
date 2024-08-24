@@ -31,33 +31,17 @@ use Traversable;
  *
  * @template TKey of array-key
  * @template TValue
- * @template TTimesValue
+ *
  * @implements ArrayAccess<TKey, TValue>
  * @implements Enumerable<TKey, TValue>
- *
- * @property HigherOrderCollectionProxy $average
- * @property HigherOrderCollectionProxy $avg
- * @property HigherOrderCollectionProxy $contains
- * @property HigherOrderCollectionProxy $each
- * @property HigherOrderCollectionProxy $every
- * @property HigherOrderCollectionProxy $filter
- * @property HigherOrderCollectionProxy $first
- * @property HigherOrderCollectionProxy $flatMap
- * @property HigherOrderCollectionProxy $groupBy
- * @property HigherOrderCollectionProxy $keyBy
- * @property HigherOrderCollectionProxy $map
- * @property HigherOrderCollectionProxy $max
- * @property HigherOrderCollectionProxy $min
- * @property HigherOrderCollectionProxy $partition
- * @property HigherOrderCollectionProxy $reject
- * @property HigherOrderCollectionProxy $sortBy
- * @property HigherOrderCollectionProxy $sortByDesc
- * @property HigherOrderCollectionProxy $sum
- * @property HigherOrderCollectionProxy $unique
  */
 class Collection implements Enumerable, ArrayAccess
 {
+    /**
+     * @use EnumeratesValues<TKey, TValue>
+     */
     use EnumeratesValues;
+
     use Macroable;
 
     /**
@@ -69,7 +53,7 @@ class Collection implements Enumerable, ArrayAccess
 
     /**
      * Create a new collection.
-     * @param null|iterable<TKey,TValue>|Jsonable|JsonSerializable $items
+     * @param null|Arrayable<TKey,TValue>|iterable<TKey,TValue>|Jsonable|JsonSerializable $items
      */
     public function __construct($items = [])
     {
@@ -77,7 +61,7 @@ class Collection implements Enumerable, ArrayAccess
     }
 
     /**
-     * @param null|iterable<TKey,TValue>|Jsonable|JsonSerializable $items
+     * @param null|Arrayable<TKey,TValue>|iterable<TKey, TValue>|Jsonable|JsonSerializable $items
      * @return static<TKey, TValue>
      */
     public function fill($items = [])
@@ -1013,7 +997,7 @@ class Collection implements Enumerable, ArrayAccess
     /**
      * Create chunks representing a "sliding window" view of the items in the collection.
      *
-     * @return static<int, TTimesValue>
+     * @return static<int, static>
      */
     public function sliding(int $size = 2, int $step = 1): static
     {

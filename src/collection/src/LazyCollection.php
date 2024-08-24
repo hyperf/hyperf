@@ -29,7 +29,6 @@ use Traversable;
 
 /**
  * @template TKey of array-key
- *
  * @template TValue
  *
  * @implements Enumerable<TKey, TValue>
