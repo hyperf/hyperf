@@ -350,6 +350,14 @@ abstract class Relation
     }
 
     /**
+     * Get the alias associated with a custom polymorphic class.
+     */
+    public static function getMorphAlias(string $className): string
+    {
+        return array_search($className, static::$morphMap, strict: true) ?: $className;
+    }
+
+    /**
      * Get all of the primary keys for an array of models.
      *
      * @param string $key

@@ -2075,6 +2075,18 @@ class ModelTest extends TestCase
         $this->assertTrue(Str::isUuid($model->newUniqueId()));
     }
 
+    public function testGetMorphAlias()
+    {
+        Relation::morphMap(['user' => ModelStub::class]);
+
+        try {
+            $this->assertSame('user', Relation::getMorphAlias(ModelStub::class));
+            $this->assertSame('Does\Not\Exist', Relation::getMorphAlias('Does\Not\Exist'));
+        } finally {
+            Relation::morphMap([], false);
+        }
+    }
+
     protected function getContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
