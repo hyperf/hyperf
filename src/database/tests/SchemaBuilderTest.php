@@ -62,6 +62,23 @@ class SchemaBuilderTest extends TestCase
         Schema::drop('baz');
     }
 
+    public function testWhenTableHasColumn(): void
+    {
+        Schema::create('foo', static function (Blueprint $table) {
+            $table->comment('This is a comment');
+            $table->increments('id');
+        });
+        Schema::whenTableDoesntHaveColumn('foo', 'name', static function (Blueprint $table) {
+            $table->string('name');
+        });
+        $this->assertTrue(Schema::hasColumn('foo', 'name'));
+        Schema::whenTableHasColumn('foo', 'name', static function (Blueprint $table) {
+            $table->dropColumn('name');
+        });
+        $this->assertFalse(Schema::hasColumn('foo', 'name'));
+        Schema::drop('foo');
+    }
+
     public function testViews(): void
     {
         Schema::create('view_1', static function (Blueprint $table) {
