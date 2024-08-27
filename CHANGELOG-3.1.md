@@ -3,6 +3,7 @@
 ## Added
 
 - [#7016](https://github.com/hyperf/hyperf/pull/7016) Added reorder method to clear and set sorting for `QueryBuilder`.
+- [#7023](https://github.com/hyperf/hyperf/pull/7023) Added `Hyperf\Contract\CanBeEscapedWhenCastToString` and fixed some static detection.
 
 # v3.1.37 - 2024-08-22
 
