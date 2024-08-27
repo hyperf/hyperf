@@ -17,6 +17,7 @@ use ArrayIterator;
 use Closure;
 use Hyperf\Collection\Traits\EnumeratesValues;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\CanBeEscapedWhenCastToString;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Stringable\Stringable;
@@ -35,7 +36,7 @@ use Traversable;
  * @implements ArrayAccess<TKey, TValue>
  * @implements Enumerable<TKey, TValue>
  */
-class Collection implements Enumerable, ArrayAccess
+class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerable
 {
     /**
      * @use EnumeratesValues<TKey, TValue>

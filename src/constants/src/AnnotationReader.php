@@ -53,14 +53,12 @@ class AnnotationReader
     {
         $pattern = '/@(\w+)\("(.+)"\)/U';
         if (preg_match_all($pattern, $doc, $result)) {
-            if (isset($result[1], $result[2])) {
-                $keys = $result[1];
-                $values = $result[2];
+            $keys = $result[1];
+            $values = $result[2];
 
-                foreach ($keys as $i => $key) {
-                    if (isset($values[$i])) {
-                        $previous[Str::lower($key)] = $values[$i];
-                    }
+            foreach ($keys as $i => $key) {
+                if (isset($values[$i])) {
+                    $previous[Str::lower($key)] = $values[$i];
                 }
             }
         }
