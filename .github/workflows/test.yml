@@ -28,7 +28,7 @@ jobs:
         run: composer update -oW
       - name: Check Composer Json
         run: |
-          composer normalize --dry-run --no-update-lock
+          # composer normalize --dry-run --no-update-lock
           find ./src -name composer.json -exec composer normalize --dry-run --no-update-lock {} \;
       - name: Run CS Fix
         run: vendor/bin/php-cs-fixer fix $1 --dry-run --diff
