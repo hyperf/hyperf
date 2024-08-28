@@ -38,7 +38,7 @@ class ConsoleLogger extends SymfonyConsoleLogger implements StdoutLoggerInterfac
                     return OutputInterface::VERBOSITY_VERY_VERBOSE;
                 }
 
-                if ($arg === '-vvv') {
+                if (str_starts_with($arg, '-vvv')) {
                     return OutputInterface::VERBOSITY_DEBUG;
                 }
             }
