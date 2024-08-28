@@ -25,25 +25,13 @@ class ConsoleLogger extends SymfonyConsoleLogger implements StdoutLoggerInterfac
             $argv = $_SERVER['argv'] ?? [];
             $argv = is_string($argv) ? explode(' ', $argv) : $argv;
 
-            foreach ($argv as $arg) {
-                if ($arg === '-q' || $arg === '-quiet') {
-                    return OutputInterface::VERBOSITY_QUIET;
-                }
-
-                if ($arg === '-v') {
-                    return OutputInterface::VERBOSITY_VERBOSE;
-                }
-
-                if ($arg === '-vv') {
-                    return OutputInterface::VERBOSITY_VERY_VERBOSE;
-                }
-
-                if ($arg === '-vvv') {
-                    return OutputInterface::VERBOSITY_DEBUG;
-                }
-            }
-
-            return OutputInterface::VERBOSITY_NORMAL;
+            return match (true) {
+                in_array('--quiet', $argv), in_array('-q', $argv) => OutputInterface::VERBOSITY_QUIET,
+                in_array('-vvv', $argv) => OutputInterface::VERBOSITY_DEBUG,
+                in_array('-vv', $argv) => OutputInterface::VERBOSITY_VERY_VERBOSE,
+                in_array('-v', $argv) => OutputInterface::VERBOSITY_VERBOSE,
+                default => OutputInterface::VERBOSITY_NORMAL,
+            };
         };
         $output = $output ?? new ConsoleOutput($verbosity());
 
