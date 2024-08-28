@@ -21,19 +21,20 @@ class ConsoleLogger extends SymfonyConsoleLogger implements StdoutLoggerInterfac
 {
     public function __construct(?OutputInterface $output = null, array $verbosityLevelMap = [], array $formatLevelMap = [])
     {
-        $verbosity = function (): int {
-            $argv = $_SERVER['argv'] ?? [];
-            $argv = is_string($argv) ? explode(' ', $argv) : $argv;
+        $output = $output ?? new ConsoleOutput(
+            (function (): int {
+                $argv = $_SERVER['argv'] ?? [];
+                $argv = is_string($argv) ? explode(' ', $argv) : $argv;
 
-            return match (true) {
-                in_array('--quiet', $argv), in_array('-q', $argv) => OutputInterface::VERBOSITY_QUIET,
-                in_array('-vvv', $argv) => OutputInterface::VERBOSITY_DEBUG,
-                in_array('-vv', $argv) => OutputInterface::VERBOSITY_VERY_VERBOSE,
-                in_array('-v', $argv) => OutputInterface::VERBOSITY_VERBOSE,
-                default => OutputInterface::VERBOSITY_NORMAL,
-            };
-        };
-        $output = $output ?? new ConsoleOutput($verbosity());
+                return match (true) {
+                    in_array('--quiet', $argv), in_array('-q', $argv) => OutputInterface::VERBOSITY_QUIET,
+                    in_array('-vvv', $argv) => OutputInterface::VERBOSITY_DEBUG,
+                    in_array('-vv', $argv) => OutputInterface::VERBOSITY_VERY_VERBOSE,
+                    in_array('-v', $argv) => OutputInterface::VERBOSITY_VERBOSE,
+                    default => OutputInterface::VERBOSITY_NORMAL,
+                };
+            })()
+        );
 
         parent::__construct($output, $verbosityLevelMap, $formatLevelMap);
     }
