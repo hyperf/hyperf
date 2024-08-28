@@ -26,6 +26,10 @@ class ConsoleLogger extends SymfonyConsoleLogger implements StdoutLoggerInterfac
             $argv = is_string($argv) ? explode(' ', $argv) : $argv;
 
             foreach ($argv as $arg) {
+                if ($arg === '-q' || $arg === '-quiet') {
+                    return OutputInterface::VERBOSITY_QUIET;
+                }
+
                 if ($arg === '-v') {
                     return OutputInterface::VERBOSITY_VERBOSE;
                 }
@@ -36,10 +40,6 @@ class ConsoleLogger extends SymfonyConsoleLogger implements StdoutLoggerInterfac
 
                 if ($arg === '-vvv') {
                     return OutputInterface::VERBOSITY_DEBUG;
-                }
-
-                if ($arg === '-q' || $arg === '-quiet') {
-                    return OutputInterface::VERBOSITY_QUIET;
                 }
             }
 
