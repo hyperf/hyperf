@@ -39,8 +39,6 @@ class Option
 
     protected int $scanInterval = 2000;
 
-    protected array $args = ['-v', '-vv', '-vvv', '-q', '--quiet'];
-
     public function __construct(array $options = [], array $dir = [], array $file = [], protected bool $restart = true)
     {
         isset($options['driver']) && $this->driver = $options['driver'];
@@ -50,7 +48,6 @@ class Option
         isset($options['watch']['file']) && $this->watchFile = (array) $options['watch']['file'];
         isset($options['watch']['scan_interval']) && $this->scanInterval = (int) $options['watch']['scan_interval'];
         isset($options['ext']) && $this->ext = (array) $options['ext'];
-        isset($options['args']) && $this->args = (array) $options['args'];
 
         $this->watchDir = array_unique(array_merge($this->watchDir, $dir));
         $this->watchFile = array_unique(array_merge($this->watchFile, $file));
@@ -68,8 +65,7 @@ class Option
 
     public function getCommand(): string
     {
-        $args = array_intersect($this->args, $_SERVER['argv'] ?? []);
-        return $this->command . ' ' . implode(' ', $args);
+        return $this->command;
     }
 
     public function getWatchDir(): array
