@@ -34,6 +34,8 @@ use Hyperf\Database\ConnectionResolverInterface;
  * @method static bool hasIndex(string $table, array|string $index, ?string $type = null)
  * @method static bool hasColumn(string $table, string $column)
  * @method static bool hasColumns(string $table, array $columns)
+ * @method static void whenTableHasColumn(string $table, string $column, \Closure $callback)
+ * @method static void whenTableDoesntHaveColumn(string $table, string $column, \Closure $callback)
  * @method static string getColumnType(string $table, string $column)
  * @method static void table(string $table, \Closure $callback)
  * @method static void create(string $table, \Closure $callback))

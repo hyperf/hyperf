@@ -115,6 +115,26 @@ class Builder
     }
 
     /**
+     * Execute a table builder callback if the given table has a given column.
+     */
+    public function whenTableHasColumn(string $table, string $column, Closure $callback): void
+    {
+        if ($this->hasColumn($table, $column)) {
+            $this->table($table, fn (Blueprint $table) => $callback($table));
+        }
+    }
+
+    /**
+     * Execute a table builder callback if the given table doesn't have a given column.
+     */
+    public function whenTableDoesntHaveColumn(string $table, string $column, Closure $callback): void
+    {
+        if (! $this->hasColumn($table, $column)) {
+            $this->table($table, fn (Blueprint $table) => $callback($table));
+        }
+    }
+
+    /**
      * Get the tables that belong to the database.
      */
     public function getTables(): array
