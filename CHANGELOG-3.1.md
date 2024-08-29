@@ -4,6 +4,10 @@
 
 - [#7033](https://github.com/hyperf/hyperf/pull/7033) Improved `ConsoleLogger` to support running in watcher.
 
+## Added
+
+- [#7024](https://github.com/hyperf/hyperf/pull/7024) Added methods `whenTableHasColumn` and `whenTableDoesntHaveColumn` to `Hyperf\Database\Schema\Schema`.
+
 # v3.1.38 - 2024-08-29
 
 ## Added
