@@ -125,13 +125,18 @@ class Watcher
             $this->channel->pop();
             $this->output->writeln('Start server ...');
 
-            $descriptorspec = [
+            $descriptorSpec = [
                 0 => STDIN,
                 1 => STDOUT,
                 2 => STDERR,
             ];
 
-            proc_open($this->option->getBin() . ' ' . BASE_PATH . '/' . $this->option->getCommand(), $descriptorspec, $pipes);
+            proc_open(
+                $this->option->getBin() . ' ' . BASE_PATH . '/' . $this->option->getCommand(),
+                $descriptorSpec,
+                $pipes,
+                env_vars: $_ENV
+            );
 
             $this->output->writeln('Stop server success.');
             $this->channel->push(1);

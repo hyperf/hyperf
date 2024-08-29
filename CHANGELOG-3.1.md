@@ -1,8 +1,16 @@
-# v3.1.38 - TBD
+# v3.1.39 - TBD
+
+## Optimized
+
+- [#7033](https://github.com/hyperf/hyperf/pull/7033) Improved `ConsoleLogger` to support running in watcher.
+
+# v3.1.38 - 2024-08-29
 
 ## Added
 
 - [#7016](https://github.com/hyperf/hyperf/pull/7016) Added reorder method to clear and set sorting for `QueryBuilder`.
+- [#7023](https://github.com/hyperf/hyperf/pull/7023) Added `Hyperf\Contract\CanBeEscapedWhenCastToString` and fixed some static detection.
+- [#7028](https://github.com/hyperf/hyperf/pull/7028) Added `Hyperf\Framework\Logger\ConsoleLogger`.
 
 # v3.1.37 - 2024-08-22
 
