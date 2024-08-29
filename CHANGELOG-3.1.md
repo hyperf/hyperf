@@ -1,5 +1,9 @@
 # v3.1.39 - TBD
 
+## Optimized
+
+- [#7033](https://github.com/hyperf/hyperf/pull/7033) Improved `ConsoleLogger` to support running in watcher.
+
 # v3.1.38 - 2024-08-29
 
 ## Added

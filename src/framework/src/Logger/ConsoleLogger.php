@@ -31,7 +31,13 @@ class ConsoleLogger extends SymfonyConsoleLogger implements StdoutLoggerInterfac
                     in_array('-vvv', $argv) => OutputInterface::VERBOSITY_DEBUG,
                     in_array('-vv', $argv) => OutputInterface::VERBOSITY_VERY_VERBOSE,
                     in_array('-v', $argv) => OutputInterface::VERBOSITY_VERBOSE,
-                    default => OutputInterface::VERBOSITY_NORMAL,
+                    default => match ((int) getenv('SHELL_VERBOSITY')) {
+                        -1 => OutputInterface::VERBOSITY_QUIET,
+                        1 => OutputInterface::VERBOSITY_VERBOSE,
+                        2 => OutputInterface::VERBOSITY_VERY_VERBOSE,
+                        3 => OutputInterface::VERBOSITY_DEBUG,
+                        default => OutputInterface::VERBOSITY_NORMAL,
+                    },
                 };
             })()
         );
