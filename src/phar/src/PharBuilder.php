@@ -330,7 +330,7 @@ EOD;
         $this->replaceConfigFactoryReadPaths($targetPhar, $vendorPath);
 
         $this->logger->info('Adding main file "' . $main . '"');
-        $stubContents = file_get_contents($main);
+        $stubContents = preg_replace('/declare\s*\(\s*strict_types\s*=\s*1\s*\);/i', '', file_get_contents($main));
         $targetPhar->addFromString($main, strtr($stubContents, ['<?php' => $this->getMountLinkCode()]));
 
         $this->logger->info('Setting stub');
