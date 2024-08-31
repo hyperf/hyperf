@@ -30,7 +30,6 @@ class UnshiftCodeStringVisitor extends NodeVisitorAbstract
     public function beforeTraverse(array $nodes)
     {
         $stmt = $this->astParser->parse($this->code);
-        $isUnshift = false;
         foreach ($nodes as $i => $node) {
             if ($node instanceof Node\Stmt\Declare_) {
                 array_splice($nodes, $i + 1, 0, $stmt);
@@ -38,12 +37,10 @@ class UnshiftCodeStringVisitor extends NodeVisitorAbstract
             }
         }
 
-        if (! $isUnshift) {
-            foreach ($nodes as $i => $node) {
-                if (! $node instanceof Node\Stmt\InlineHTML) {
-                    array_splice($nodes, $i, 0, $stmt);
-                    return $nodes;
-                }
+        foreach ($nodes as $i => $node) {
+            if (! $node instanceof Node\Stmt\InlineHTML) {
+                array_splice($nodes, $i, 0, $stmt);
+                return $nodes;
             }
         }
 
