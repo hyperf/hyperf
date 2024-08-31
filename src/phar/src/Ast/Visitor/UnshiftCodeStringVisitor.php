@@ -34,7 +34,7 @@ class UnshiftCodeStringVisitor extends NodeVisitorAbstract
         foreach ($nodes as $i => $node) {
             if ($node instanceof Node\Stmt\Declare_) {
                 array_splice($nodes, $i + 1, 0, $stmt);
-                $isUnshift = true;
+                return $nodes;
             }
         }
 
@@ -42,14 +42,12 @@ class UnshiftCodeStringVisitor extends NodeVisitorAbstract
             foreach ($nodes as $i => $node) {
                 if (! $node instanceof Node\Stmt\InlineHTML) {
                     array_splice($nodes, $i, 0, $stmt);
-                    $isUnshift = true;
+                    return $nodes;
                 }
             }
         }
 
-        if (! $isUnshift) {
-            array_unshift($nodes, $stmt[0]);
-        }
+        array_unshift($nodes, $stmt[0]);
 
         return $nodes;
     }
