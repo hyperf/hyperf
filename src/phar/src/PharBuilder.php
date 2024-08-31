@@ -17,6 +17,7 @@ use GlobIterator;
 use Hyperf\Phar\Ast\Ast;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigFactoryVisitor;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigVisitor;
+use Hyperf\Phar\Ast\Visitor\UnshiftCodeStringVisitor;
 use InvalidArgumentException;
 use JsonException;
 use Phar;
@@ -330,8 +331,7 @@ EOD;
         $this->replaceConfigFactoryReadPaths($targetPhar, $vendorPath);
 
         $this->logger->info('Adding main file "' . $main . '"');
-        $stubContents = file_get_contents($main);
-        $targetPhar->addFromString($main, strtr($stubContents, ['<?php' => $this->getMountLinkCode()]));
+        $this->rewriteMainWithMountLinkCode($targetPhar, $main);
 
         $this->logger->info('Setting stub');
         // Add the default stub.
@@ -382,6 +382,13 @@ EOD;
         $code = file_get_contents($absPath);
         $code = (new Ast())->parse($code, [new RewriteConfigFactoryVisitor()]);
         $targetPhar->addFromString('vendor/' . $configPath, $code);
+    }
+
+    protected function rewriteMainWithMountLinkCode(TargetPhar $targetPhar, string $mainPath): void
+    {
+        $code = file_get_contents($mainPath);
+        $code = (new Ast())->parse($code, [new UnshiftCodeStringVisitor($this->getMountLinkCode())]);
+        $targetPhar->addFromString($mainPath, $code);
     }
 
     /**

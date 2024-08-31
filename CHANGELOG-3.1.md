@@ -1,5 +1,9 @@
 # v3.1.39 - TBD
 
+## Fixed
+
+- [#7034](https://github.com/hyperf/hyperf/pull/7034) Fixed bug that the mount code will break the main file with `declare` when using `phar:build`.
+
 ## Optimized
 
 - [#7033](https://github.com/hyperf/hyperf/pull/7033) Improved `ConsoleLogger` to support running in watcher.
