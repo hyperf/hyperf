@@ -2,17 +2,21 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Anyon.
+ * This file is part of Hyperf.
  *
- * @Link https://thinkadmin.top
- * @Contact Anyon<zoujingli@qq.com>
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Phar;
 
+use Stringable;
 use Symfony\Component\Finder\Finder;
+use Traversable;
 
-class TargetPhar implements \Stringable
+class TargetPhar implements Stringable
 {
     public function __construct(private readonly CustomPhar $phar, private readonly PharBuilder $pharBuilder)
     {
@@ -59,7 +63,7 @@ class TargetPhar implements \Stringable
     /**
      * Add folder resources to the Phar package.
      */
-    public function buildFromIterator(\Traversable $iterator): void
+    public function buildFromIterator(Traversable $iterator): void
     {
         /* @phpstan-ignore-next-line */
         $this->phar->buildFromIterator($iterator, $this->pharBuilder->getPackage()->getDirectory());

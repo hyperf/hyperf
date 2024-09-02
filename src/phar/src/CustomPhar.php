@@ -2,19 +2,28 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Anyon.
+ * This file is part of Hyperf.
  *
- * @Link https://thinkadmin.top
- * @Contact Anyon<zoujingli@qq.com>
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Phar;
 
-class CustomPhar extends \Phar
+use FilesystemIterator;
+use Phar;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RuntimeException;
+use SplFileInfo;
+
+class CustomPhar extends Phar
 {
     private string $tempDir;
 
-    public function __construct(string $filename, int $flags = \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS, ?string $alias = null)
+    public function __construct(string $filename, int $flags = FilesystemIterator::SKIP_DOTS | FilesystemIterator::UNIX_PATHS, ?string $alias = null)
     {
         parent::__construct($filename, $flags, $alias);
         $this->tempDir = sys_get_temp_dir() . '/phar_cache_' . uniqid();
@@ -45,7 +54,7 @@ class CustomPhar extends \Phar
     public function buildFromIterator($iterator, ?string $baseDirectory = null): array
     {
         foreach ($iterator as $fileInfo) {
-            /** @var \SplFileInfo $fileInfo */
+            /** @var SplFileInfo $fileInfo */
             $relativePath = $baseDirectory ? str_replace(rtrim($baseDirectory, '/\\') . '/', '', $fileInfo->getRealPath()) : $fileInfo->getFilename();
             $this->addFile($fileInfo->getRealPath(), $relativePath);
         }
@@ -66,16 +75,16 @@ class CustomPhar extends \Phar
      */
     private function recursiveCopy(string $source, string $destination, ?string $pattern = null): void
     {
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($source, \FilesystemIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::SELF_FIRST
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($source, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST
         );
 
         foreach ($iterator as $item) {
             $targetPath = $destination . '/' . substr($item->getRealPath(), strlen($source) + 1);
             if ($item->isDir()) {
                 $this->createDirectory($targetPath);
-            } elseif (!$pattern || preg_match($pattern, $item->getFilename())) {
+            } elseif (! $pattern || preg_match($pattern, $item->getFilename())) {
                 copy($item->getRealPath(), $targetPath);
             }
         }
@@ -86,8 +95,8 @@ class CustomPhar extends \Phar
      */
     private function createDirectory(string $dir): void
     {
-        if (!is_dir($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
-            throw new \RuntimeException("Directory {$dir} was not created");
+        if (! is_dir($dir) && ! mkdir($dir, 0777, true) && ! is_dir($dir)) {
+            throw new RuntimeException("Directory {$dir} was not created");
         }
     }
 
@@ -96,9 +105,9 @@ class CustomPhar extends \Phar
      */
     private function clearTempDir(): void
     {
-        $files = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($this->tempDir, \FilesystemIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($this->tempDir, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
         );
 
         foreach ($files as $fileinfo) {

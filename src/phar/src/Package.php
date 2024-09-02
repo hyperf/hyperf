@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Anyon.
+ * This file is part of Hyperf.
  *
- * @Link https://thinkadmin.top
- * @Contact Anyon<zoujingli@qq.com>
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Phar;
@@ -81,7 +83,7 @@ class Package
         $bundle = new Bundle();
         $dir = $this->getDirectory();
         $vendorPath = $this->getVendorPath();
-        if (empty($this->package['autoload']) && !is_dir($dir . $vendorPath)) {
+        if (empty($this->package['autoload']) && ! is_dir($dir . $vendorPath)) {
             return $bundle;
         }
         if ($finder == null) {

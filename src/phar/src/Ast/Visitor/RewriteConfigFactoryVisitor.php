@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Anyon.
+ * This file is part of Hyperf.
  *
- * @Link https://thinkadmin.top
- * @Contact Anyon<zoujingli@qq.com>
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace Hyperf\Phar\Ast\Visitor;
@@ -39,12 +41,12 @@ class ConfigFactory{
     public function leaveNode(Node $node)
     {
         if ($node instanceof Node\Stmt\Class_) {
-            if (is_array($node->stmts) && !empty($node->stmts)) {
+            if (is_array($node->stmts) && ! empty($node->stmts)) {
                 foreach ($node->stmts as $key => $method) {
                     if ($method instanceof Node\Stmt\ClassMethod) {
                         if ($method->name->name == 'readPaths') {
                             $result = $this->createReplaceFunc();
-                            if (!empty($result)) {
+                            if (! empty($result)) {
                                 $node->stmts[$key] = $result;
                             }
                         }
@@ -65,7 +67,7 @@ class ConfigFactory{
         }
         foreach ($stmts as $node) {
             /* @phpstan-ignore-next-line */
-            if (isset($node->stmts) && is_array($node->stmts) && !empty($node->stmts)) {
+            if (isset($node->stmts) && is_array($node->stmts) && ! empty($node->stmts)) {
                 foreach ($node->stmts as $val) {
                     return $val;
                 }
