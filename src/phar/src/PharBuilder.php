@@ -2,29 +2,21 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * This file is part of Anyon.
  *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ * @Link https://thinkadmin.top
+ * @Contact Anyon<zoujingli@qq.com>
  */
 
 namespace Hyperf\Phar;
 
-use FilesystemIterator;
-use GlobIterator;
 use Hyperf\Phar\Ast\Ast;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigFactoryVisitor;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigVisitor;
 use Hyperf\Phar\Ast\Visitor\UnshiftCodeStringVisitor;
-use InvalidArgumentException;
-use JsonException;
 use Phar;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 use Symfony\Component\Finder\Finder;
-use UnexpectedValueException;
 
 class PharBuilder
 {
@@ -55,7 +47,7 @@ class PharBuilder
             }
             $this->target = $target . '.phar';
         }
-        return (string) $this->target;
+        return (string)$this->target;
     }
 
     /**
@@ -85,8 +77,8 @@ class PharBuilder
     {
         if ($this->main === null) {
             foreach ($this->package->getBins() as $path) {
-                if (! file_exists($this->package->getDirectory() . $path)) {
-                    throw new UnexpectedValueException('Bin file "' . $path . '" does not exist');
+                if (!file_exists($this->package->getDirectory() . $path)) {
+                    throw new \UnexpectedValueException('Bin file "' . $path . '" does not exist');
                 }
                 $this->main = $path;
                 break;
@@ -188,8 +180,8 @@ class PharBuilder
     public function getPathLocalToBase(string $path): ?string
     {
         $root = $this->package->getDirectory();
-        if (! str_starts_with($path, $root)) {
-            throw new UnexpectedValueException('Path "' . $path . '" is not within base project path "' . $root . '"');
+        if (!str_starts_with($path, $root)) {
+            throw new \UnexpectedValueException('Path "' . $path . '" is not within base project path "' . $root . '"');
         }
         $basePath = substr($path, strlen($root));
         return empty($basePath) ? null : $this->canonicalize($basePath);
@@ -230,14 +222,14 @@ EOD;
     /**
      * Compile the code into the Phar file.
      */
-    public function build()
+    public function build(): void
     {
         $this->logger->info('Creating phar <info>' . $this->getTarget() . '</info>');
         $time = microtime(true);
 
         $vendorPath = $this->package->getVendorAbsolutePath();
-        if (! is_dir($vendorPath)) {
-            throw new RuntimeException(sprintf('Directory %s not properly installed, did you run "composer install" ?', $vendorPath));
+        if (!is_dir($vendorPath)) {
+            throw new \RuntimeException(sprintf('Directory %s not properly installed, did you run "composer install" ?', $vendorPath));
         }
 
         // Get file path which could be written for phar.
@@ -248,7 +240,7 @@ EOD;
 
         $main = $this->getMain();
 
-        $targetPhar = new TargetPhar(new Phar($tmp), $this);
+        $targetPhar = new TargetPhar(new CustomPhar($tmp), $this);
         $this->logger->info('Adding main package "' . $this->package->getName() . '"');
         $finder = Finder::create()
             ->files()
@@ -289,7 +281,7 @@ EOD;
         }
 
         // Add .env file.
-        if (! in_array('.env', $this->getMount()) && is_file($this->package->getDirectory() . '.env')) {
+        if (!in_array('.env', $this->getMount()) && is_file($this->package->getDirectory() . '.env')) {
             $this->logger->info('Adding .env file');
             $targetPhar->addFile($this->package->getDirectory() . '.env');
         }
@@ -297,7 +289,7 @@ EOD;
         // Add vendor/bin files.
         if (is_dir($vendorPath . 'bin/')) {
             $this->logger->info('Adding vendor/bin files');
-            $binIterator = new GlobIterator($vendorPath . 'bin/*');
+            $binIterator = new \GlobIterator($vendorPath . 'bin/*');
             while ($binIterator->valid()) {
                 $targetPhar->addFile($binIterator->getPathname());
                 $binIterator->next();
@@ -309,7 +301,7 @@ EOD;
         $targetPhar->addFile($vendorPath . 'autoload.php');
 
         // Add composer autoload files.
-        $targetPhar->buildFromIterator(new GlobIterator($vendorPath . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME));
+        $targetPhar->buildFromIterator(new \GlobIterator($vendorPath . 'composer/*.*', \FilesystemIterator::KEY_AS_FILENAME));
 
         // Add composer dependencies.
         foreach ($this->getPackagesDependencies() as $package) {
@@ -333,8 +325,10 @@ EOD;
         $this->logger->info('Adding main file "' . $main . '"');
         $this->rewriteMainWithMountLinkCode($targetPhar, $main);
 
+        $this->logger->info('Packaging all cache files into the PHAR archive.');
+        $targetPhar->save();
+
         $this->logger->info('Setting stub');
-        // Add the default stub.
         $targetPhar->setStub($targetPhar->createDefaultStub($main));
         $this->logger->info('Setting default stub <info>' . $main . '</info>.');
 
@@ -345,7 +339,7 @@ EOD;
         }
 
         if (rename($tmp, $target) === false) {
-            throw new UnexpectedValueException(sprintf('Unable to rename temporary phar archive to %s', $target));
+            throw new \UnexpectedValueException(sprintf('Unable to rename temporary phar archive to %s', $target));
         }
 
         $time = max(microtime(true) - $time, 0);
@@ -357,11 +351,11 @@ EOD;
     /**
      * Find the scan_cacheable configuration and force it to open.
      */
-    protected function enableScanCacheable(TargetPhar $targetPhar)
+    protected function enableScanCacheable(TargetPhar $targetPhar): void
     {
         $configPath = 'config/config.php';
         $absPath = $this->package->getDirectory() . $configPath;
-        if (! file_exists($absPath)) {
+        if (!file_exists($absPath)) {
             return;
         }
         $code = file_get_contents($absPath);
@@ -372,11 +366,11 @@ EOD;
     /**
      * Replace the method in the Config component to get the true path to the configuration file.
      */
-    protected function replaceConfigFactoryReadPaths(TargetPhar $targetPhar, string $vendorPath)
+    protected function replaceConfigFactoryReadPaths(TargetPhar $targetPhar, string $vendorPath): void
     {
         $configPath = 'hyperf/config/src/ConfigFactory.php';
         $absPath = $vendorPath . $configPath;
-        if (! file_exists($absPath)) {
+        if (!file_exists($absPath)) {
             return;
         }
         $code = file_get_contents($absPath);
@@ -398,8 +392,8 @@ EOD;
     {
         try {
             $result = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
-            throw new InvalidArgumentException(sprintf('Unable to parse given path %s', $path), $e->getCode(), $e);
+        } catch (\JsonException $e) {
+            throw new \InvalidArgumentException(sprintf('Unable to parse given path %s', $path), $e->getCode(), $e);
         }
 
         return $result;
@@ -407,11 +401,9 @@ EOD;
 
     /**
      * Get file size.
-     *
-     * @param PharBuilder|string $path
      */
-    private function getSize($path): string
+    private function getSize(PharBuilder|string $path): string
     {
-        return round(filesize((string) $path) / 1024, 1) . ' KiB';
+        return round(filesize((string)$path) / 1024, 1) . ' KiB';
     }
 }

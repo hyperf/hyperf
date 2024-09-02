@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * This file is part of Anyon.
  *
  * @link     https://www.hyperf.io
  * @document https://hyperf.wiki
@@ -13,11 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Phar;
 
 use Hyperf\Command\Command as HyperfCommand;
-use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputOption;
-use UnexpectedValueException;
 
 class BuildCommand extends HyperfCommand
 {
@@ -26,7 +23,7 @@ class BuildCommand extends HyperfCommand
         parent::__construct('phar:build');
     }
 
-    public function configure()
+    public function configure(): void
     {
         $this->setDescription('Pack your project into a Phar package.')
             ->addOption('name', '', InputOption::VALUE_OPTIONAL, 'This is the name of the Phar package, and if it is not passed in, the project name is used by default')
@@ -36,7 +33,7 @@ class BuildCommand extends HyperfCommand
             ->addOption('mount', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The mount path or dir.');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $this->assertWritable();
         $name = $this->input->getOption('name');
@@ -49,13 +46,13 @@ class BuildCommand extends HyperfCommand
             $path = BASE_PATH;
         }
         $builder = $this->getPharBuilder($path);
-        if (! empty($bin)) {
+        if (!empty($bin)) {
             $builder->setMain($bin);
         }
-        if (! empty($name)) {
+        if (!empty($name)) {
             $builder->setTarget($name);
         }
-        if (! empty($version)) {
+        if (!empty($version)) {
             $builder->setVersion($version);
         }
         if (count($mount) > 0) {
@@ -68,10 +65,10 @@ class BuildCommand extends HyperfCommand
     /**
      * check readonly.
      */
-    public function assertWritable()
+    public function assertWritable(): void
     {
         if (ini_get('phar.readonly') === '1') {
-            throw new UnexpectedValueException('Your configuration disabled writing phar files (phar.readonly = On), please update your configuration');
+            throw new \UnexpectedValueException('Your configuration disabled writing phar files (phar.readonly = On), please update your configuration');
         }
     }
 
@@ -80,14 +77,13 @@ class BuildCommand extends HyperfCommand
         if (is_dir($path)) {
             $path = rtrim($path, '/') . '/composer.json';
         }
-        if (! is_file($path)) {
-            throw new InvalidArgumentException(sprintf('The given path %s is not a readable file', $path));
+        if (!is_file($path)) {
+            throw new \InvalidArgumentException(sprintf('The given path %s is not a readable file', $path));
         }
         $pharBuilder = new PharBuilder($path, $this->container->get(LoggerInterface::class));
-
         $vendorPath = $pharBuilder->getPackage()->getVendorAbsolutePath();
-        if (! is_dir($vendorPath)) {
-            throw new RuntimeException('The project has not been initialized, please manually execute the command `composer install` to install the dependencies');
+        if (!is_dir($vendorPath)) {
+            throw new \RuntimeException('The project has not been initialized, please manually execute the command `composer install` to install the dependencies');
         }
         return $pharBuilder;
     }
