@@ -1,7 +1,7 @@
 # v3.1.40 - TBD
 
 ## Fixed
-- [#7050](https://github.com/hyperf/hyperf/pull/7051) Fixed bug that `--database` option does not work for `migrate` command.
+- [#7051](https://github.com/hyperf/hyperf/pull/7051) Fixed bug that `--database` option does not work for `migrate` command.
 
 # v3.1.39 - 2024-09-05
 
