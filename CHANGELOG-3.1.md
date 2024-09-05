@@ -9,6 +9,7 @@
 
 - [#7033](https://github.com/hyperf/hyperf/pull/7033) Improved `ConsoleLogger` to support running in watcher.
 - [#7040](https://github.com/hyperf/hyperf/pull/7040) Improved packaging speed for command `phar:build`. 
+- [#7044](https://github.com/hyperf/hyperf/pull/7044) Optimized the argument `table` like `database.table` for `gen:model` which can be used to generate another database models.
 
 ## Added
 
