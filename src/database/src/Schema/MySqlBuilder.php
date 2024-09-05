@@ -85,17 +85,14 @@ class MySqlBuilder extends Builder
 
     /**
      * Get the column type listing for a given table.
-     *
-     * @param string $table
-     * @return array
      */
-    public function getColumnTypeListing($table)
+    public function getColumnTypeListing(string $table, ?string $database = null): array
     {
         $table = $this->connection->getTablePrefix() . $table;
 
         $results = $this->connection->select(
             $this->grammar->compileColumnListing(),
-            [$this->connection->getDatabaseName(), $table]
+            [$database ?? $this->connection->getDatabaseName(), $table]
         );
 
         /** @var MySqlProcessor $processor */
