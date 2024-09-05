@@ -3,10 +3,12 @@
 ## Fixed
 
 - [#7034](https://github.com/hyperf/hyperf/pull/7034) Fixed bug that the mount code will break the main file with `declare` when using `phar:build`.
+- [#7043](https://github.com/hyperf/hyperf/pull/7043) Fixed bug that `jsonrpc-http` cannot support `swow`.
 
 ## Optimized
 
 - [#7033](https://github.com/hyperf/hyperf/pull/7033) Improved `ConsoleLogger` to support running in watcher.
+- [#7040](https://github.com/hyperf/hyperf/pull/7040) Improved packaging speed for command `phar:build`. 
 
 ## Added
 
