@@ -45,11 +45,11 @@ CODETEMPLATE;
         $expected = <<<'CODETEMPLATE'
 <?php
 
-public function hope(bool $a) : int
+public function hope(bool $a): int
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
-public function it(ConfigInterface $a) : void
+public function it(ConfigInterface $a): void
 {
     $this->__call(__FUNCTION__, func_get_args());
 }
@@ -57,7 +57,7 @@ public function works(bool $a, float $b = 1)
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
-public function fluent() : \foo\foo
+public function fluent(): \foo\foo
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
@@ -100,19 +100,19 @@ CODETEMPLATE;
         $expected = <<<'CODETEMPLATE'
 <?php
 
-public function hope(bool $a) : int
+public function hope(bool $a): int
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
-public function it(ConfigInterface $a) : void
+public function it(ConfigInterface $a): void
 {
     $this->__call(__FUNCTION__, func_get_args());
 }
-public function works(bool $a, float $b = 1) : int
+public function works(bool $a, float $b = 1): int
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
-public function fluent() : \foo\foo
+public function fluent(): \foo\foo
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }

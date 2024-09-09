@@ -98,11 +98,11 @@ class PathStub
     {
         $this->__handlePropertyHandler(__CLASS__);
     }
-    public function file() : string
+    public function file(): string
     {
         return \'' . $path . '\';
     }
-    public function dir() : string
+    public function dir(): string
     {
         return \'' . $dir . '\';
     }
@@ -172,7 +172,7 @@ abstract class Abs
     {
         \$this->__handlePropertyHandler(__CLASS__);
     }
-    public function abs() : string
+    public function abs(): string
     {
         \$__function__ = __FUNCTION__;
         \$__method__ = __METHOD__;
@@ -180,7 +180,7 @@ abstract class Abs
             return 'abs';
         });
     }
-    public abstract function absabs() : string;
+    public abstract function absabs(): string;
 }", $code);
 
         $code = $ast->proxy(Chi::class);
@@ -198,7 +198,7 @@ class Chi extends Abs
         }
         $this->__handlePropertyHandler(__CLASS__);
     }
-    public function absabs() : string
+    public function absabs(): string
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
@@ -281,14 +281,14 @@ class Bar4
     {
         $this->__handlePropertyHandler(__CLASS__);
     }
-    public function toMethodString() : string
+    public function toMethodString(): string
     {
         return __METHOD__;
     }
     /**
      * To test method parameters (with type declaration in use).
      */
-    public function toRewriteMethodString1(int $count) : string
+    public function toRewriteMethodString1(int $count): string
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
@@ -299,7 +299,7 @@ class Bar4
     /**
      * To test passing by references.
      */
-    public function toRewriteMethodString2(int &$count) : string
+    public function toRewriteMethodString2(int &$count): string
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
@@ -310,7 +310,7 @@ class Bar4
     /**
      * To test variadic parameters (without type declaration).
      */
-    public function toRewriteMethodString3(...$params) : string
+    public function toRewriteMethodString3(...$params): string
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
@@ -321,7 +321,7 @@ class Bar4
     /**
      * To test variadic parameters with type declaration.
      */
-    public function toRewriteMethodString4(int &$count, string ...$params) : string
+    public function toRewriteMethodString4(int &$count, string ...$params): string
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
@@ -359,7 +359,7 @@ class Bar3 extends Bar
         }
         $this->__handlePropertyHandler(__CLASS__);
     }
-    public function getId() : int
+    public function getId(): int
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
@@ -376,7 +376,7 @@ namespace HyperfTest\Di\Stub\Ast;
 trait FooTrait
 {
     use \Hyperf\Di\Aop\ProxyTrait;
-    public function getString() : string
+    public function getString(): string
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
@@ -392,7 +392,7 @@ namespace HyperfTest\Di\Stub\Ast;
 
 interface BarInterface
 {
-    public function toArray() : array;
+    public function toArray(): array;
 }', $code);
     }
 
