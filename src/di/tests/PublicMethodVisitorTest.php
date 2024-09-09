@@ -16,6 +16,7 @@ use Hyperf\CodeParser\PhpParser;
 use Hyperf\Di\LazyLoader\PublicMethodVisitor;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -61,7 +62,7 @@ public function fluent() : \foo\foo
     return $this->__call(__FUNCTION__, func_get_args());
 }
 CODETEMPLATE;
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory())->createForVersion(PhpVersion::fromString('8.0'));
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
         $visitor = new PublicMethodVisitor(...$this->getStmt($ast));
@@ -116,7 +117,7 @@ public function fluent() : \foo\foo
     return $this->__call(__FUNCTION__, func_get_args());
 }
 CODETEMPLATE;
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory())->createForVersion(PhpVersion::fromString('8.0'));
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
         $visitor = new PublicMethodVisitor(...$this->getStmt($ast));

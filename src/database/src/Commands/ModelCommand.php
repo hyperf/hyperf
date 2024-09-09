@@ -28,6 +28,7 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\CloningVisitor;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
 use Psr\Container\ContainerInterface;
@@ -67,7 +68,7 @@ class ModelCommand extends Command
                 'startTokenPos', 'endTokenPos',
             ],
         ]);
-        $this->astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, $this->lexer);
+        $this->astParser = (new ParserFactory())->createForVersion(PhpVersion::fromString('8.0'), $this->lexer);
         $this->printer = new Standard();
 
         return parent::run($input, $output);
