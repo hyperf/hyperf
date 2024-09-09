@@ -28,6 +28,7 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\CloningVisitor;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
 use Psr\Container\ContainerInterface;
@@ -60,14 +61,8 @@ class ModelCommand extends Command
     {
         $this->resolver = $this->container->get(ConnectionResolverInterface::class);
         $this->config = $this->container->get(ConfigInterface::class);
-        $this->lexer = new Emulative([
-            'usedAttributes' => [
-                'comments',
-                'startLine', 'endLine',
-                'startTokenPos', 'endTokenPos',
-            ],
-        ]);
-        $this->astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, $this->lexer);
+        $this->lexer = new Emulative(PhpVersion::getNewestSupported());
+        $this->astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $this->printer = new Standard();
 
         return parent::run($input, $output);

@@ -60,7 +60,7 @@ class ConfigFactory{
     public function createReplaceFunc()
     {
         $parserFactory = new ParserFactory();
-        $astParser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $astParser = $parserFactory->createForNewestSupportedVersion();
         $stmts = $astParser->parse($this->replaceFunc);
         if (empty($stmts)) {
             return null;

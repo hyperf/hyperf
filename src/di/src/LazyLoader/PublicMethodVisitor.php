@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\LazyLoader;
 
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
@@ -75,7 +76,7 @@ class PublicMethodVisitor extends NodeVisitorAbstract
             $node->stmts = [
                 $methodCall,
             ];
-            $node->flags &= ~Class_::MODIFIER_ABSTRACT;
+            $node->flags &= ~Modifiers::ABSTRACT;
         }
         return null;
     }

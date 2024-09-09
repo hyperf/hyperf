@@ -14,6 +14,7 @@ namespace Hyperf\IDEHelper\Visitor;
 
 use Hyperf\CodeParser\PhpParser;
 use Hyperf\IDEHelper\Metadata;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 use ReflectionClass;
@@ -55,7 +56,7 @@ class AnnotationIDEVisitor extends NodeVisitorAbstract
                     }
                     $class->stmts = [
                         new Node\Stmt\ClassMethod('__construct', [
-                            'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC,
+                            'flags' => Modifiers::PUBLIC,
                             'params' => $properties,
                         ]),
                     ];

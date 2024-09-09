@@ -26,9 +26,9 @@ class Future
      */
     private $encode;
 
-    private string $id;
+    private string $id = '';
 
-    private bool $sent;
+    private bool $sent = false;
 
     /**
      * @param int $flag deprecated it will be removed in v3.2 or v4.0
@@ -44,9 +44,7 @@ class Future
         private int $flag = 0,
         private ?FrameInterface $frame = null
     ) {
-        $this->id = '';
         $this->encode = $encode;
-        $this->sent = false;
     }
 
     public function __destruct()

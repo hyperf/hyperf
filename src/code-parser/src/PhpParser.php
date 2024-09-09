@@ -15,6 +15,9 @@ namespace Hyperf\CodeParser;
 use Hyperf\CodeParser\Exception\InvalidArgumentException;
 use Hyperf\Collection\Arr;
 use PhpParser\Node;
+use PhpParser\Node\ArrayItem;
+use PhpParser\Node\Scalar\Float_;
+use PhpParser\Node\Scalar\Int_;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use ReflectionClass;
@@ -47,7 +50,7 @@ class PhpParser
     public function __construct()
     {
         $parserFactory = new ParserFactory();
-        $this->parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $this->parser = $parserFactory->createForNewestSupportedVersion();
     }
 
     public static function getInstance(): PhpParser
@@ -119,17 +122,17 @@ class PhpParser
                 foreach ($value as $i => $item) {
                     $key = null;
                     if (! $isList) {
-                        $key = is_int($i) ? new Node\Scalar\LNumber($i) : new Node\Scalar\String_($i);
+                        $key = is_int($i) ? new Int_($i) : new Node\Scalar\String_($i);
                     }
-                    $result[] = new Node\Expr\ArrayItem($this->getExprFromValue($item), $key);
+                    $result[] = new ArrayItem($this->getExprFromValue($item), $key);
                 }
                 return new Node\Expr\Array_($result, [
                     'kind' => Node\Expr\Array_::KIND_SHORT,
                 ]);
             }, $value),
             'string' => new Node\Scalar\String_($value),
-            'integer' => new Node\Scalar\LNumber($value),
-            'double' => new Node\Scalar\DNumber($value),
+            'integer' => new Int_($value),
+            'double' => new Float_($value),
             'NULL' => new Node\Expr\ConstFetch(new Node\Name('null')),
             'boolean' => new Node\Expr\ConstFetch(new Node\Name($value ? 'true' : 'false')),
             'object' => $this->getExprFromObject($value),
@@ -186,7 +189,9 @@ class PhpParser
         $name = $reflection->getName();
 
         if ($reflection->allowsNull() && $name !== 'mixed') {
-            return new Node\NullableType($this->getTypeFromString($name));
+            return new Node\NullableType(
+                new Node\Name($this->getTypeFromString($name))
+            );
         }
 
         if (! in_array($name, static::TYPES)) {

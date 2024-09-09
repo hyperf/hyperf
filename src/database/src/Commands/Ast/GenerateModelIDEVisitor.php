@@ -19,8 +19,10 @@ use Hyperf\Database\Model\Builder;
 use Hyperf\Stringable\Str;
 use PhpParser\BuilderFactory;
 use PhpParser\Comment\Doc;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\PropertyItem;
 use ReflectionClass;
 use ReflectionParameter;
 use ReflectionUnionType;
@@ -72,15 +74,15 @@ class GenerateModelIDEVisitor extends AbstractVisitor
     public function afterTraverse(array $nodes)
     {
         $builder = new Node\Stmt\Property(
-            Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_STATIC,
-            [new Node\Stmt\PropertyProperty('builder')]
+            Modifiers::PUBLIC | Modifiers::STATIC,
+            [new PropertyItem('builder')]
         );
         $builder->setDocComment(new Doc($this->propertyDoc()));
         $this->class->stmts[] = $builder;
         foreach ($this->data->getColumns() as $column) {
             $name = Str::camel('where_' . $column['column_name']);
             $method = new Node\Stmt\ClassMethod($name, [
-                'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_STATIC,
+                'flags' => Modifiers::PUBLIC | Modifiers::STATIC,
                 'params' => [new Node\Param(new Node\Expr\Variable('value'))],
             ]);
             $method->setDocComment(new Doc($this->methodDoc()));
@@ -129,7 +131,7 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                 );
             }
             $method = new Node\Stmt\ClassMethod($name, [
-                'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_STATIC,
+                'flags' => Modifiers::PUBLIC | Modifiers::STATIC,
                 'params' => $params,
             ]);
             $method->setDocComment(new Doc($this->scopeDoc($name)));

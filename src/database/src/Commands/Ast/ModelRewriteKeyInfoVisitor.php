@@ -16,8 +16,10 @@ use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
 use Hyperf\Stringable\Str;
 use InvalidArgumentException;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\PropertyItem;
 use PhpParser\NodeTraverser;
 use ReflectionClass;
 
@@ -111,9 +113,9 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
         if ($node) {
             $node->props[0]->default = $this->getExpr($property, $propertyValue);
         } else {
-            $prop = new Node\Stmt\PropertyProperty($property, $this->getExpr($property, $propertyValue));
+            $prop = new PropertyItem($property, $this->getExpr($property, $propertyValue));
             $node = new Node\Stmt\Property(
-                $property == 'incrementing' ? Node\Stmt\Class_::MODIFIER_PUBLIC : Node\Stmt\Class_::MODIFIER_PROTECTED,
+                $property == 'incrementing' ? Modifiers::PUBLIC : Modifiers::PROTECTED,
                 [$prop]
             );
             $node->type = match ($property) {

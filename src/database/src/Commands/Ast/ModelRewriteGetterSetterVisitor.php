@@ -16,6 +16,7 @@ use Hyperf\CodeParser\PhpParser;
 use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Stringable\Str;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 
 use function Hyperf\Support\getter;
@@ -90,7 +91,7 @@ class ModelRewriteGetterSetterVisitor extends AbstractVisitor
 
     protected function createGetter(string $method, string $name): Node\Stmt\ClassMethod
     {
-        $node = new Node\Stmt\ClassMethod($method, ['flags' => Node\Stmt\Class_::MODIFIER_PUBLIC]);
+        $node = new Node\Stmt\ClassMethod($method, ['flags' => Modifiers::PUBLIC]);
         $node->stmts[] = new Node\Stmt\Return_(
             new Node\Expr\PropertyFetch(
                 new Node\Expr\Variable('this'),
@@ -104,7 +105,7 @@ class ModelRewriteGetterSetterVisitor extends AbstractVisitor
     protected function createSetter(string $method, string $name): Node\Stmt\ClassMethod
     {
         $node = new Node\Stmt\ClassMethod($method, [
-            'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC,
+            'flags' => Modifiers::PUBLIC,
             'params' => [new Node\Param(new Node\Expr\Variable($name))],
         ]);
         $node->stmts[] = new Node\Stmt\Expression(

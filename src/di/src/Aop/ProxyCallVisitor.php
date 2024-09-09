@@ -13,10 +13,11 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use Hyperf\Support\Composer;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\ClosureUse;
 use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
@@ -181,8 +182,8 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             new Arg(new Closure([
                 'params' => $this->filterModifier($node->getParams()),
                 'uses' => [
-                    new Variable('__function__'),
-                    new Variable('__method__'),
+                    new ClosureUse(new Variable('__function__')),
+                    new ClosureUse(new Variable('__method__')),
                 ],
                 'stmts' => $node->stmts,
             ])),
@@ -205,7 +206,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     {
         return array_map(function (Node\Param $param) {
             $tempParam = clone $param;
-            $tempParam->flags &= ~Class_::VISIBILITY_MODIFIER_MASK & ~Class_::MODIFIER_READONLY;
+            $tempParam->flags &= ~Modifiers::VISIBILITY_MASK & ~Modifiers::READONLY;
             return $tempParam;
         }, $params);
     }
@@ -217,7 +218,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     {
         if (empty($params)) {
             return new Array_([
-                new ArrayItem(
+                new Node\ArrayItem(
                     key: new String_('keys'),
                     value: new Array_([], ['kind' => Array_::KIND_SHORT]),
                 ),
@@ -225,19 +226,19 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         }
         // ['param1', 'param2', ...]
         $methodParamsList = new Array_(
-            array_map(fn (Node\Param $param) => new ArrayItem(new String_($param->var->name)), $params),
+            array_map(fn (Node\Param $param) => new Node\ArrayItem(new String_($param->var->name)), $params),
             ['kind' => Array_::KIND_SHORT]
         );
         return new Array_([
-            new ArrayItem(
+            new Node\ArrayItem(
                 key: new String_('order'),
                 value: $methodParamsList,
             ),
-            new ArrayItem(
+            new Node\ArrayItem(
                 key: new String_('keys'),
                 value: new FuncCall(new Name('compact'), [new Arg($methodParamsList)])
             ),
-            new ArrayItem(
+            new Node\ArrayItem(
                 key: new String_('variadic'),
                 value: $this->getVariadicParamName($params),
             )], ['kind' => Array_::KIND_SHORT]);

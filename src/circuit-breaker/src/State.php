@@ -20,11 +20,10 @@ class State
 
     public const OPEN = 2;
 
-    protected int $state;
+    protected int $state = self::CLOSE;
 
     public function __construct()
     {
-        $this->state = self::CLOSE;
     }
 
     public function open()

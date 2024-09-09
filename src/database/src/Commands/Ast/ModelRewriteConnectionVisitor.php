@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Commands\Ast;
 
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\PropertyItem;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use ReflectionClass;
@@ -62,8 +64,8 @@ class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
                     continue;
                 }
                 foreach ($class->stmts as $property) {
-                    $flags = Node\Stmt\Class_::MODIFIER_PROTECTED;
-                    $prop = new Node\Stmt\PropertyProperty('connection', new Node\Scalar\String_($this->connection));
+                    $flags = Modifiers::PROTECTED;
+                    $prop = new PropertyItem('connection', new Node\Scalar\String_($this->connection));
                     $class->stmts[] = new Node\Stmt\Property($flags, [$prop]);
                     return null;
                 }

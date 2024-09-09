@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Phar\Ast\Visitor;
 
 use PhpParser\Node;
+use PhpParser\Node\ArrayItem;
 use PhpParser\NodeVisitorAbstract;
 
 class RewriteConfigVisitor extends NodeVisitorAbstract
@@ -46,7 +47,7 @@ class RewriteConfigVisitor extends NodeVisitorAbstract
     protected function createScanArg(): Node\Arg
     {
         $array = new Node\Expr\Array_();
-        $array->items[] = new Node\Expr\ArrayItem(
+        $array->items[] = new ArrayItem(
             new Node\Expr\ConstFetch(new Node\Name('true')),
             new Node\Scalar\String_('scan_cacheable')
         );

@@ -16,6 +16,7 @@ use Hyperf\Collection\Collection;
 use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\Stringable\Str;
 use PhpParser\Node;
+use PhpParser\Node\UseItem;
 use PhpParser\NodeTraverser;
 use ReflectionClass;
 
@@ -85,7 +86,7 @@ class ModelRewriteSoftDeletesVisitor extends AbstractVisitor
         }
 
         if (is_null($node)) {
-            $use = new Node\Stmt\UseUse(new Node\Name(SoftDeletes::class));
+            $use = new UseItem(new Node\Name(SoftDeletes::class));
             $node = new Node\Stmt\Use_([$use]);
         }
 

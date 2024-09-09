@@ -16,6 +16,7 @@ use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\UseItem;
 
 class ModelRewriteInheritanceVisitor extends AbstractVisitor
 {
@@ -41,7 +42,7 @@ class ModelRewriteInheritanceVisitor extends AbstractVisitor
             return null;
         }
 
-        $use = new Node\Stmt\UseUse(
+        $use = new UseItem(
             new Node\Name($this->parentClass),
             $this->option->getInheritance()
         );
@@ -68,7 +69,7 @@ class ModelRewriteInheritanceVisitor extends AbstractVisitor
                     $node->extends->parts = [$inheritance];
                 }
                 return $node;
-            case $node instanceof Node\Stmt\UseUse:
+            case $node instanceof UseItem:
                 $class = implode('\\', $node->name->parts);
                 $alias = is_object($node->alias) ? $node->alias->name : null;
                 if ($class == $this->parentClass) {

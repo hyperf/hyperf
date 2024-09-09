@@ -18,6 +18,7 @@ use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Schema\Column;
 use Hyperf\Stringable\Str;
 use InvalidArgumentException;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
@@ -39,7 +40,7 @@ class CreateMigrationVisitor extends NodeVisitorAbstract
                 $class->name = new Node\Identifier(Str::studly('create_' . Str::snake($this->table) . '_table'));
                 $upStmt = new Node\Stmt\ClassMethod('up', [
                     'returnType' => new Node\Identifier('void'),
-                    'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_FINAL,
+                    'flags' => Modifiers::PUBLIC | Modifiers::FINAL,
                     'stmts' => [
                         new Node\Stmt\Expression(
                             new Node\Expr\StaticCall(
@@ -80,7 +81,7 @@ class CreateMigrationVisitor extends NodeVisitorAbstract
                 ]);
                 $downStmt = new Node\Stmt\ClassMethod('down', [
                     'returnType' => new Node\Identifier('void'),
-                    'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_FINAL,
+                    'flags' => Modifiers::PUBLIC | Modifiers::FINAL,
                     'stmts' => [
                         new Node\Stmt\Expression(
                             new Node\Expr\StaticCall(

@@ -25,14 +25,10 @@ use Throwable;
 
 class IpcSubject implements MessageBusInterface
 {
-    private bool $isSubscribed;
+    private bool $isSubscribed = false;
 
-    public function __construct(
-        protected Subject $subject,
-        protected ?BroadcasterInterface $broadcaster = null,
-        protected int $channelId = 1
-    ) {
-        $this->isSubscribed = false;
+    public function __construct(protected Subject $subject, protected ?BroadcasterInterface $broadcaster = null, protected int $channelId = 1)
+    {
     }
 
     public function __call($method, $arguments)

@@ -16,8 +16,10 @@ use Hyperf\Collection\Collection;
 use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Model;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\PropertyItem;
 use PhpParser\NodeTraverser;
 use ReflectionClass;
 
@@ -92,8 +94,8 @@ class ModelRewriteTimestampsVisitor extends AbstractVisitor
         if ($node) {
             $node->props[0]->default = $expr;
         } else {
-            $prop = new Node\Stmt\PropertyProperty('timestamps', $expr);
-            $node = new Node\Stmt\Property(Node\Stmt\Class_::MODIFIER_PUBLIC, [$prop]);
+            $prop = new PropertyItem('timestamps', $expr);
+            $node = new Node\Stmt\Property(Modifiers::PUBLIC, [$prop]);
             $node->type = new Identifier('bool');
         }
 

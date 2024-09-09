@@ -16,7 +16,10 @@ use Hyperf\Database\Connection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Schema\Column;
 use Hyperf\Stringable\Str;
+use PhpParser\Modifiers;
 use PhpParser\Node;
+use PhpParser\Node\ArrayItem;
+use PhpParser\Node\PropertyItem;
 use PhpParser\NodeVisitorAbstract;
 use ReflectionClass;
 
@@ -60,7 +63,7 @@ class ModelSchemaVisitor extends NodeVisitorAbstract
     {
         $items = [];
         foreach ($this->columns as $column) {
-            $items[] = new Node\Expr\ArrayItem(
+            $items[] = new ArrayItem(
                 new Node\Expr\PropertyFetch(
                     new Node\Expr\Variable('this'),
                     new Node\Identifier(Str::camel($column->getName())),
@@ -70,7 +73,7 @@ class ModelSchemaVisitor extends NodeVisitorAbstract
         }
 
         return new Node\Stmt\ClassMethod(new Node\Identifier('jsonSerialize'), [
-            'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC,
+            'flags' => Modifiers::PUBLIC,
             'returnType' => new Node\Identifier('mixed'),
             'stmts' => [new Node\Stmt\Return_(new Node\Expr\Array_($items, [
                 'kind' => Node\Expr\Array_::KIND_SHORT,
@@ -81,7 +84,7 @@ class ModelSchemaVisitor extends NodeVisitorAbstract
     public function buildConstructor(): Node\Stmt\ClassMethod
     {
         $method = new Node\Stmt\ClassMethod(new Node\Identifier('__construct'), [
-            'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC,
+            'flags' => Modifiers::PUBLIC,
             'params' => [
                 new Node\Param(
                     type: new Node\Identifier('\\' . $this->ref->getName()),
@@ -114,9 +117,9 @@ class ModelSchemaVisitor extends NodeVisitorAbstract
         /** @var Column $column */
         foreach ($this->columns as $column) {
             $result[] = new Node\Stmt\Property(
-                Node\Stmt\Class_::MODIFIER_PUBLIC,
+                Modifiers::PUBLIC,
                 [
-                    new Node\Stmt\PropertyProperty(
+                    new PropertyItem(
                         new Node\VarLikeIdentifier(Str::camel($column->getName()))
                     ),
                 ],

@@ -35,6 +35,9 @@ use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Stringable\Str;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
+use PhpParser\Node\ArrayItem;
+use PhpParser\Node\PropertyItem;
+use PhpParser\Node\UseItem;
 use PhpParser\NodeVisitorAbstract;
 use ReflectionClass;
 use ReflectionMethod;
@@ -86,13 +89,13 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         switch ($node) {
-            case $node instanceof Node\Stmt\UseUse:
+            case $node instanceof UseItem:
                 $parts = $node->name->getParts();
                 $class = implode('\\', $parts);
                 $alias = $node->alias?->name ?? array_pop($parts);
                 $this->uses[$class] = $alias;
                 return $node;
-            case $node instanceof Node\Stmt\PropertyProperty:
+            case $node instanceof PropertyItem:
                 if ((string) $node->name === 'fillable' && $this->option->isRefreshFillable()) {
                     $node = $this->rewriteFillable($node);
                 } elseif ((string) $node->name === 'casts') {
@@ -107,11 +110,11 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         return null;
     }
 
-    protected function rewriteFillable(Node\Stmt\PropertyProperty $node): Node\Stmt\PropertyProperty
+    protected function rewriteFillable(PropertyItem $node): PropertyItem
     {
         $items = [];
         foreach ($this->columns as $column) {
-            $items[] = new Node\Expr\ArrayItem(new Node\Scalar\String_($column['column_name']));
+            $items[] = new ArrayItem(new Node\Scalar\String_($column['column_name']));
         }
 
         $node->default = new Node\Expr\Array_($items, [
@@ -120,7 +123,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         return $node;
     }
 
-    protected function rewriteCasts(Node\Stmt\PropertyProperty $node): Node\Stmt\PropertyProperty
+    protected function rewriteCasts(PropertyItem $node): PropertyItem
     {
         $items = [];
         $keys = [];
@@ -150,7 +153,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 continue;
             }
             if ($type || $type = $this->formatDatabaseType($column['data_type'])) {
-                $items[] = new Node\Expr\ArrayItem(
+                $items[] = new ArrayItem(
                     new Node\Scalar\String_($type),
                     new Node\Scalar\String_($name)
                 );

@@ -69,7 +69,7 @@ declare (strict_types=1);
             }
         }
 
-        $astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $stms = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserExtEmpty.php'));
         $traverser = new NodeTraverser();
         $visitor = new ModelUpdateVisitor(UserExtEmpty::class, $columns, ContainerStub::getModelOption());
@@ -125,7 +125,7 @@ class UserExtEmpty extends Model
                 $columns[$i]['cast'] = 'datetime';
             }
         }
-        $astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $stms = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserEnum.php'));
         $traverser = new NodeTraverser();
         $visitor = new ModelUpdateVisitor(UserEnum::class, $columns, ContainerStub::getModelOption()->setForceCasts(false));
