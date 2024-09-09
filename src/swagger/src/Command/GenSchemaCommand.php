@@ -18,6 +18,7 @@ use Hyperf\Swagger\Command\Ast\ModelSchemaVisitor;
 use PhpParser\Lexer\Emulative;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
@@ -91,7 +92,7 @@ class GenSchemaCommand extends HyperfCommand
                 'startTokenPos', 'endTokenPos',
             ],
         ]);
-        $parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, $lexer);
+        $parser = (new ParserFactory())->createForVersion(PhpVersion::fromString('8.0'));
         $printer = new Standard();
 
         $traverser = new NodeTraverser();
