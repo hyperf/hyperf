@@ -60,7 +60,7 @@ class ModelSchemaVisitor extends NodeVisitorAbstract
     {
         $items = [];
         foreach ($this->columns as $column) {
-            $items[] = new Node\Expr\ArrayItem(
+            $items[] = new Node\ArrayItem(
                 new Node\Expr\PropertyFetch(
                     new Node\Expr\Variable('this'),
                     new Node\Identifier(Str::camel($column->getName())),
@@ -116,7 +116,7 @@ class ModelSchemaVisitor extends NodeVisitorAbstract
             $result[] = new Node\Stmt\Property(
                 Node\Stmt\Class_::MODIFIER_PUBLIC,
                 [
-                    new Node\Stmt\PropertyProperty(
+                    new Node\PropertyItem(
                         new Node\VarLikeIdentifier(Str::camel($column->getName()))
                     ),
                 ],

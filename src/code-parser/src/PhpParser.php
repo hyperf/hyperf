@@ -120,17 +120,17 @@ class PhpParser
                 foreach ($value as $i => $item) {
                     $key = null;
                     if (! $isList) {
-                        $key = is_int($i) ? new Node\Scalar\LNumber($i) : new Node\Scalar\String_($i);
+                        $key = is_int($i) ? new Node\Scalar\Int_($i) : new Node\Scalar\String_($i);
                     }
-                    $result[] = new Node\Expr\ArrayItem($this->getExprFromValue($item), $key);
+                    $result[] = new Node\ArrayItem($this->getExprFromValue($item), $key);
                 }
                 return new Node\Expr\Array_($result, [
                     'kind' => Node\Expr\Array_::KIND_SHORT,
                 ]);
             }, $value),
             'string' => new Node\Scalar\String_($value),
-            'integer' => new Node\Scalar\LNumber($value),
-            'double' => new Node\Scalar\DNumber($value),
+            'integer' => new Node\Scalar\Int_($value),
+            'double' => new Node\Scalar\Float_($value),
             'NULL' => new Node\Expr\ConstFetch(new Node\Name('null')),
             'boolean' => new Node\Expr\ConstFetch(new Node\Name($value ? 'true' : 'false')),
             'object' => $this->getExprFromObject($value),

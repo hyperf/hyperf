@@ -85,13 +85,7 @@ class GenSchemaCommand extends HyperfCommand
             return;
         }
 
-        $lexer = new Emulative([
-            'usedAttributes' => [
-                'comments',
-                'startLine', 'endLine',
-                'startTokenPos', 'endTokenPos',
-            ],
-        ]);
+        $lexer = new Emulative(PhpVersion::fromString('8.0'));
         $parser = (new ParserFactory())->createForVersion(PhpVersion::fromString('8.0'));
         $printer = new Standard();
 
