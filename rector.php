@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 use Rector\CodeQuality\Rector\Class_\InlineConstructorDefaultToPropertyRector;
 use Rector\Config\RectorConfig;
+use Rector\PhpParser\Set\PhpParserSetList;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -23,6 +24,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     // define sets of rules
     $rectorConfig->sets([
-        PHPUnitSetList::PHPUNIT_100,
+        // PHPUnitSetList::PHPUNIT_100,
+        PhpParserSetList::PHP_PARSER_50,
     ]);
 };
