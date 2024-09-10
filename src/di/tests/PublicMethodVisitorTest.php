@@ -56,7 +56,7 @@ public function works(bool $a, float $b = 1)
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
-public function fluent() : \foo\foo
+public function fluent(): \foo\foo
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
