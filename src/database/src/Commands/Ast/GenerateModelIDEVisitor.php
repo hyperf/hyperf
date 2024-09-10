@@ -127,7 +127,7 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                 $params[] = new Node\Param(
                     $argName,
                     $argDefaultValue ?? null,
-                    $argType ?? null
+                    new Node\NullableType($argType ?? null)
                 );
             }
             $method = new Node\Stmt\ClassMethod($name, [
