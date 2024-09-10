@@ -119,8 +119,8 @@ namespace HyperfTest\Di\Stub;
 
 class Par2 extends Par
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     function __construct(?\HyperfTest\Di\Stub\Foo $foo)
     {
         if (method_exists(parent::class, \'__construct\')) {
@@ -141,8 +141,8 @@ namespace HyperfTest\Di\Stub;
 
 class FooEnumStruct
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function __construct(public FooEnum $enum = FooEnum::DEFAULT)
     {
         $this->__handlePropertyHandler(__CLASS__);
@@ -166,8 +166,8 @@ namespace HyperfTest\\Di\\Stub\\Ast;
 
 abstract class Abs
 {
-    use \\Hyperf\\Di\\Aop\\ProxyTrait;
     use \\Hyperf\\Di\\Aop\\PropertyHandlerTrait;
+    use \\Hyperf\\Di\\Aop\\ProxyTrait;
     function __construct()
     {
         \$this->__handlePropertyHandler(__CLASS__);
@@ -176,11 +176,11 @@ abstract class Abs
     {
         \$__function__ = __FUNCTION__;
         \$__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, ['keys' => []], function () use(\$__function__, \$__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, ['keys' => []], function () use (\$__function__, \$__method__) {
             return 'abs';
         });
     }
-    public abstract function absabs(): string;
+    abstract public function absabs(): string;
 }", $code);
 
         $code = $ast->proxy(Chi::class);
@@ -189,8 +189,8 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class Chi extends Abs
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     function __construct()
     {
         if (method_exists(parent::class, \'__construct\')) {
@@ -202,7 +202,7 @@ class Chi extends Abs
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'keys\' => []], function () use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'keys\' => []], function () use ($__function__, $__method__) {
             return \'chi\';
         });
     }
@@ -218,8 +218,8 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class Bar2 extends Bar
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function __construct(int $id)
     {
         $this->__handlePropertyHandler(__CLASS__);
@@ -241,9 +241,9 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class Bar5
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
-    public function getBar() : Bar
+    use \Hyperf\Di\Aop\ProxyTrait;
+    public function getBar(): Bar
     {
         return new class extends Bar
         {
@@ -275,8 +275,8 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class Bar4
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     function __construct()
     {
         $this->__handlePropertyHandler(__CLASS__);
@@ -292,7 +292,7 @@ class Bar4
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'count\'], \'keys\' => compact([\'count\']), \'variadic\' => \'\'], function (int $count) use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'count\'], \'keys\' => compact([\'count\']), \'variadic\' => \'\'], function (int $count) use ($__function__, $__method__) {
             return $__method__;
         });
     }
@@ -303,7 +303,7 @@ class Bar4
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'count\'], \'keys\' => compact([\'count\']), \'variadic\' => \'\'], function (int &$count) use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'count\'], \'keys\' => compact([\'count\']), \'variadic\' => \'\'], function (int &$count) use ($__function__, $__method__) {
             return $__method__;
         });
     }
@@ -325,7 +325,7 @@ class Bar4
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'count\', \'params\'], \'keys\' => compact([\'count\', \'params\']), \'variadic\' => \'params\'], function (int &$count, string ...$params) use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'count\', \'params\'], \'keys\' => compact([\'count\', \'params\']), \'variadic\' => \'params\'], function (int &$count, string ...$params) use ($__function__, $__method__) {
             return $__method__;
         });
     }
@@ -350,8 +350,8 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class Bar3 extends Bar
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     function __construct(int $id)
     {
         if (method_exists(parent::class, \'__construct\')) {
@@ -363,7 +363,7 @@ class Bar3 extends Bar
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'keys\' => []], function () use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'keys\' => []], function () use ($__function__, $__method__) {
             return parent::getId();
         });
     }
@@ -380,7 +380,7 @@ trait FooTrait
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__TRAIT__, __FUNCTION__, [\'keys\' => []], function () use($__function__, $__method__) {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, [\'keys\' => []], function () use ($__function__, $__method__) {
             return uniqid();
         });
     }
@@ -418,7 +418,7 @@ class FooConstruct
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'name\', \'age\', \'id\'], \'keys\' => compact([\'name\', \'age\', \'id\']), \'variadic\' => \'\'], function (string $name, int $age = 18, ?int $id = null) use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'name\', \'age\', \'id\'], \'keys\' => compact([\'name\', \'age\', \'id\']), \'variadic\' => \'\'], function (string $name, int $age = 18, ?int $id = null) use ($__function__, $__method__) {
             $this->__handlePropertyHandler(__CLASS__);
         });
     }
