@@ -314,7 +314,7 @@ class Bar4
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'params\'], \'keys\' => compact([\'params\']), \'variadic\' => \'params\'], function (...$params) use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'params\'], \'keys\' => compact([\'params\']), \'variadic\' => \'params\'], function (...$params) use ($__function__, $__method__) {
             return $__method__;
         });
     }
