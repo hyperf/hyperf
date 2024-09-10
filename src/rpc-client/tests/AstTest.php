@@ -48,7 +48,7 @@ namespace HyperfTest\RpcClient\Stub;
 
 class ParClient extends \Hyperf\RpcClient\Proxy\AbstractProxyService implements ParInterface
 {
-    public function getName() : string
+    public function getName(): string
     {
         return $this->client->__call(__FUNCTION__, func_get_args());
     }
@@ -61,11 +61,11 @@ namespace HyperfTest\RpcClient\Stub;
 
 class FooClient extends \Hyperf\RpcClient\Proxy\AbstractProxyService implements FooInterface
 {
-    public function getId() : int
+    public function getId(): int
     {
         return $this->client->__call(__FUNCTION__, func_get_args());
     }
-    public function getName() : string
+    public function getName(): string
     {
         return $this->client->__call(__FUNCTION__, func_get_args());
     }

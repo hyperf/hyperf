@@ -55,7 +55,7 @@ class ConfigFactory
         \$merged = array_merge_recursive(ProviderConfig::load(), \$config, ...\$autoloadConfig);
         return new Config(\$merged);
     }
-    private function readConfig(string \$configPath) : array
+    private function readConfig(string \$configPath): array
     {
         \$config = [];
         if (file_exists(\$configPath) && is_readable(\$configPath)) {
