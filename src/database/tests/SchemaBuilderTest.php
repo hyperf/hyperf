@@ -64,7 +64,7 @@ class SchemaBuilderTest extends TestCase
 
     public function testGetForeignKeys()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('users_copy', function (Blueprint $table) {
             $table->id();
         });
 
@@ -77,7 +77,7 @@ class SchemaBuilderTest extends TestCase
         $this->assertCount(1, $foreignKeys);
         $this->assertTrue(collect($foreignKeys)->contains(
             fn ($foreign) => $foreign['columns'] === ['user_id']
-                && $foreign['foreign_table'] === 'users' && $foreign['foreign_columns'] === ['id']
+                && $foreign['foreign_table'] === 'users_copy' && $foreign['foreign_columns'] === ['id']
                 && $foreign['on_update'] === 'cascade' && $foreign['on_delete'] === 'set null'
         ));
     }
