@@ -200,13 +200,10 @@ class MySqlBuilder extends Builder
 
     /**
      * Get the foreign keys for a given table.
-     *
-     * @param  string  $table
-     * @return array
      */
     public function getForeignKeys(string $table): array
     {
-        $table = $this->connection->getTablePrefix().$table;
+        $table = $this->connection->getTablePrefix() . $table;
 
         return $this->connection->getPostProcessor()->processForeignKeys(
             $this->connection->selectFromWriteConnection(
