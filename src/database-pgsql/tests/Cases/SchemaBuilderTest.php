@@ -224,11 +224,11 @@ class SchemaBuilderTest extends TestCase
             $table->id();
         });
 
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('posts_copy', function (Blueprint $table) {
             $table->foreignId('user_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
         });
 
-        $foreignKeys = Schema::getForeignKeys('posts');
+        $foreignKeys = Schema::getForeignKeys('posts_copy');
 
         $this->assertCount(1, $foreignKeys);
         $this->assertTrue(collect($foreignKeys)->contains(
