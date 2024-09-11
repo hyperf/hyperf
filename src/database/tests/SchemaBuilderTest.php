@@ -69,7 +69,7 @@ class SchemaBuilderTest extends TestCase
         });
 
         Schema::create('posts_copy', function (Blueprint $table) {
-            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users_copy')->cascadeOnUpdate()->nullOnDelete();
         });
 
         $foreignKeys = Schema::getForeignKeys('posts_copy');
