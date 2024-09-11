@@ -80,6 +80,8 @@ class SchemaBuilderTest extends TestCase
                 && $foreign['foreign_table'] === 'users_copy' && $foreign['foreign_columns'] === ['id']
                 && $foreign['on_update'] === 'cascade' && $foreign['on_delete'] === 'set null'
         ));
+        Schema::drop('posts_copy');
+        Schema::drop('users_copy');
     }
 
     public function testGetCompoundForeignKeys()
@@ -107,6 +109,8 @@ class SchemaBuilderTest extends TestCase
                 && $foreign['foreign_table'] === 'parent'
                 && $foreign['foreign_columns'] === ['b', 'a']
         ));
+        Schema::drop('child');
+        Schema::drop('parent');
     }
 
     public function testWhenTableHasColumn(): void
