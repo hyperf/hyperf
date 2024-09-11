@@ -657,6 +657,19 @@ class Blueprint
     }
 
     /**
+     * Create a new unsigned big integer (8-byte) column on the table.
+     */
+    public function foreignId(string $column): ForeignIdColumnDefinition
+    {
+        return $this->addColumnDefinition(new ForeignIdColumnDefinition($this, [
+            'type' => 'bigInteger',
+            'name' => $column,
+            'autoIncrement' => false,
+            'unsigned' => true,
+        ]));
+    }
+
+    /**
      * Create a new unsigned tiny integer (1-byte) column on the table.
      *
      * @param string $column
