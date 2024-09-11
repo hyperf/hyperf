@@ -62,6 +62,53 @@ class SchemaBuilderTest extends TestCase
         Schema::drop('baz');
     }
 
+    public function testGetForeignKeys()
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+        });
+
+        Schema::create('posts', function (Blueprint $table) {
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+        });
+
+        $foreignKeys = Schema::getForeignKeys('posts');
+
+        $this->assertCount(1, $foreignKeys);
+        $this->assertTrue(collect($foreignKeys)->contains(
+            fn ($foreign) => $foreign['columns'] === ['user_id']
+                && $foreign['foreign_table'] === 'users' && $foreign['foreign_columns'] === ['id']
+                && $foreign['on_update'] === 'cascade' && $foreign['on_delete'] === 'set null'
+        ));
+    }
+
+    public function testGetCompoundForeignKeys()
+    {
+        Schema::create('parent', function (Blueprint $table) {
+            $table->id();
+            $table->integer('a');
+            $table->integer('b');
+
+            $table->unique(['b', 'a']);
+        });
+
+        Schema::create('child', function (Blueprint $table) {
+            $table->integer('c');
+            $table->integer('d');
+
+            $table->foreign(['d', 'c'], 'test_fk')->references(['b', 'a'])->on('parent');
+        });
+
+        $foreignKeys = Schema::getForeignKeys('child');
+
+        $this->assertCount(1, $foreignKeys);
+        $this->assertTrue(collect($foreignKeys)->contains(
+            fn ($foreign) => $foreign['columns'] === ['d', 'c']
+                && $foreign['foreign_table'] === 'parent'
+                && $foreign['foreign_columns'] === ['b', 'a']
+        ));
+    }
+
     public function testWhenTableHasColumn(): void
     {
         Schema::create('foo', static function (Blueprint $table) {

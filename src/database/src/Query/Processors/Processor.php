@@ -108,4 +108,12 @@ class Processor
             ];
         }, $results);
     }
+
+    /**
+     * Process the results of a foreign keys query.
+     */
+    public function processForeignKeys(array $results): array
+    {
+        return $results;
+    }
 }
