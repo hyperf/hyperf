@@ -8,6 +8,10 @@
 
 - [#7053](https://github.com/hyperf/hyperf/pull/7053) Convert `$value` and `$pattern` to string for `Str::is()`.
 
+## Added
+
+- [#7059](https://github.com/hyperf/hyperf/pull/7059) Added `Hyperf\Database\Schema\Schema::getForeignKeys()`.
+
 # v3.1.39 - 2024-09-05
 
 ## Fixed
