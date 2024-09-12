@@ -219,7 +219,7 @@ class PostgresBuilder extends Builder
      */
     public function getForeignKeys(string $table): array
     {
-        [, $schema, $table] = $this->parseSchemaAndTable($table);
+        [$schema, $table] = $this->parseSchemaAndTable($table);
 
         $table = $this->connection->getTablePrefix() . $table;
 
