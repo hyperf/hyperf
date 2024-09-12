@@ -333,6 +333,15 @@ class StrTest extends TestCase
         $this->assertTrue(Str::isMatch(['/^[a-zA-Z,!]+$/', '/^(.*(.*(.*)))/'], 'Hello, Hyperf!'));
     }
 
+    public function testIs()
+    {
+        $this->assertTrue(Str::is('Hello/*', 'Hello/Hyperf'));
+        $this->assertFalse(Str::is('Hyperf', 'hyperf'));
+        $this->assertFalse(Str::is('', 0));
+        $this->assertFalse(Str::is([null], 0));
+        $this->assertTrue(Str::is([null], null));
+    }
+
     public function testCamel()
     {
         $this->assertSame('helloWorld', Str::camel('HelloWorld'));
