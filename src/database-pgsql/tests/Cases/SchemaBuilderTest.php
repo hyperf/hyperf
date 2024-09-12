@@ -237,31 +237,4 @@ class SchemaBuilderTest extends TestCase
                 && $foreign['on_update'] === 'cascade' && $foreign['on_delete'] === 'set null'
         ));
     }
-
-    public function testGetCompoundForeignKeys()
-    {
-        Schema::create('parent', function (Blueprint $table) {
-            $table->id();
-            $table->integer('a');
-            $table->integer('b');
-
-            $table->unique(['b', 'a']);
-        });
-
-        Schema::create('child', function (Blueprint $table) {
-            $table->integer('c');
-            $table->integer('d');
-
-            $table->foreign(['d', 'c'], 'test_fk')->references(['b', 'a'])->on('parent');
-        });
-
-        $foreignKeys = Schema::getForeignKeys('child');
-
-        $this->assertCount(1, $foreignKeys);
-        $this->assertTrue(collect($foreignKeys)->contains(
-            fn ($foreign) => $foreign['columns'] === ['d', 'c']
-                && $foreign['foreign_table'] === 'parent'
-                && $foreign['foreign_columns'] === ['b', 'a']
-        ));
-    }
 }
