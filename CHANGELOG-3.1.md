@@ -1,5 +1,13 @@
 # v3.1.40 - TBD
 
+## Fixed
+
+- [#7051](https://github.com/hyperf/hyperf/pull/7051) Fixed bug that `--database` option does not work for `migrate` command.
+
+## Optimized
+
+- [#7053](https://github.com/hyperf/hyperf/pull/7053) Convert `$value` and `$pattern` to string for `Str::is()`.
+
 # v3.1.39 - 2024-09-05
 
 ## Fixed
