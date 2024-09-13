@@ -16,6 +16,7 @@ use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Logger\Logger;
 use Hyperf\Logger\LoggerFactory;
 use HyperfTest\Logger\Stub\BarProcessor;
 use HyperfTest\Logger\Stub\FooHandler;
@@ -24,7 +25,7 @@ use Mockery;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\TestHandler;
-use Monolog\Logger;
+use Monolog\Level;
 use Monolog\LogRecord;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -57,7 +58,7 @@ class LoggerFactoryTest extends TestCase
         ApplicationContext::setContainer($container);
         $factory = $container->get(LoggerFactory::class);
         $logger = $factory->get('hyperf');
-        $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
+        $this->assertInstanceOf(Logger::class, $logger);
     }
 
     public function testInvokeLoggerFromFactoryByString()
@@ -66,7 +67,7 @@ class LoggerFactoryTest extends TestCase
         ApplicationContext::setContainer($container);
         $factory = $container->get(LoggerFactory::class);
         $logger = $factory->get(group: 'string');
-        $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
+        $this->assertInstanceOf(Logger::class, $logger);
     }
 
     public function testHandlerConfig()
@@ -74,7 +75,7 @@ class LoggerFactoryTest extends TestCase
         $container = $this->mockContainer();
         $factory = $container->get(LoggerFactory::class);
         $logger = $factory->get('hyperf', 'default');
-        $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
+        $this->assertInstanceOf(Logger::class, $logger);
         $reflectionClass = new ReflectionClass($logger);
         $handlersProperty = $reflectionClass->getProperty('handlers');
         $handlers = $handlersProperty->getValue($logger);
@@ -87,7 +88,7 @@ class LoggerFactoryTest extends TestCase
         $container = $this->mockContainer();
         $factory = $container->get(LoggerFactory::class);
         $logger = $factory->get('hyperf', 'default-handlers');
-        $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
+        $this->assertInstanceOf(Logger::class, $logger);
         $reflectionClass = new ReflectionClass($logger);
         $handlersProperty = $reflectionClass->getProperty('handlers');
         $handlers = $handlersProperty->getValue($logger);
@@ -101,7 +102,7 @@ class LoggerFactoryTest extends TestCase
         $container = $this->mockContainer();
         $factory = $container->get(LoggerFactory::class);
         $logger = $factory->get('hyperf');
-        $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
+        $this->assertInstanceOf(Logger::class, $logger);
         $reflectionClass = new ReflectionClass($logger);
         $handlersProperty = $reflectionClass->getProperty('handlers');
         $handlers = $handlersProperty->getValue($logger);
@@ -109,7 +110,7 @@ class LoggerFactoryTest extends TestCase
         $this->assertInstanceOf(StreamHandler::class, $handlers[0]);
 
         $logger = $factory->get('hyperf', 'default-handlers');
-        $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
+        $this->assertInstanceOf(Logger::class, $logger);
         $reflectionClass = new ReflectionClass($logger);
         $handlersProperty = $reflectionClass->getProperty('handlers');
         $handlers = $handlersProperty->getValue($logger);
@@ -180,7 +181,7 @@ class LoggerFactoryTest extends TestCase
                         'class' => StreamHandler::class,
                         'constructor' => [
                             'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                            'level' => Logger::DEBUG,
+                            'level' => Level::Debug,
                         ],
                     ],
                     'formatter' => [
@@ -195,7 +196,7 @@ class LoggerFactoryTest extends TestCase
                             'class' => StreamHandler::class,
                             'constructor' => [
                                 'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                                'level' => Logger::DEBUG,
+                                'level' => Level::Debug,
                             ],
                             'formatter' => [
                                 'class' => LineFormatter::class,
@@ -204,7 +205,7 @@ class LoggerFactoryTest extends TestCase
                         [
                             'class' => TestHandler::class,
                             'constructor' => [
-                                'level' => Logger::DEBUG,
+                                'level' => Level::Debug,
                             ],
                             'formatter' => [
                                 'class' => LineFormatter::class,
@@ -222,7 +223,7 @@ class LoggerFactoryTest extends TestCase
                             'class' => FooHandler::class,
                             'constructor' => [
                                 'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                                'level' => Logger::DEBUG,
+                                'level' => Level::Debug,
                             ],
                             'formatter' => [
                                 'class' => LineFormatter::class,
@@ -251,7 +252,7 @@ class LoggerFactoryTest extends TestCase
                             'class' => FooHandler::class,
                             'constructor' => [
                                 'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                                'level' => Logger::DEBUG,
+                                'level' => Level::Debug,
                             ],
                             'formatter' => [
                                 'class' => LineFormatter::class,
