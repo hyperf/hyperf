@@ -1,5 +1,9 @@
 # v3.1.41 - TBD
 
+## Added
+
+- [#7064](https://github.com/hyperf/hyperf/pull/7064) Support db type `enum` for `DoctrineConnection`.
+
 # v3.1.40 - 2024-09-12
 
 ## Fixed
