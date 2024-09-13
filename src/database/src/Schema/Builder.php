@@ -238,6 +238,10 @@ class Builder
         $type = is_null($type) ? $type : strtolower($type);
 
         foreach ($this->getIndexes($table) as $value) {
+            /**
+             * fix $value type stdClass.
+             */
+            $value = (array) $value;
             $typeMatches = is_null($type)
                 || ($type === 'primary' && $value['primary'])
                 || ($type === 'unique' && $value['unique'])
