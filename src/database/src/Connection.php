@@ -626,12 +626,11 @@ class Connection implements ConnectionInterface
                 'dbname' => $this->getConfig('database'),
                 'driver' => null,
             ], $driver);
-            /*
-             * fix Uncaught Doctrine\DBAL\Exception: Unknown database type enum requested
-             * @link https://github.com/doctrine/dbal/issues/3819
-             */
+
+            // @link https://github.com/doctrine/dbal/issues/3819
             $this->doctrineConnection->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
         }
+
         return $this->doctrineConnection;
     }
 
