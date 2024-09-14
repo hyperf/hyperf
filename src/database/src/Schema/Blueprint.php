@@ -121,6 +121,22 @@ class Blueprint
     }
 
     /**
+     * Specify the character set that should be used for the table.
+     */
+    public function charset(string $charset): void
+    {
+        $this->charset = $charset;
+    }
+
+    /**
+     * Specify the collation that should be used for the table.
+     */
+    public function collation(string $collation): void
+    {
+        $this->collation = $collation;
+    }
+
+    /**
      * Get the raw SQL statements for the blueprint.
      *
      * @return array
