@@ -616,6 +616,16 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Create the column definition for a tiny text type.
+     *
+     * @return string
+     */
+    protected function typeTinyText(Fluent $column)
+    {
+        return 'tinyText';
+    }
+
+    /**
      * Create the column definition for a text type.
      *
      * @return string

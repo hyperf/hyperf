@@ -541,6 +541,16 @@ class MySqlSchemaGrammarTest extends TestCase
         $this->assertSame('alter table `users` add `foo` varchar(100) null default CURRENT TIMESTAMP', $statements[0]);
     }
 
+    public function testAddTinyText()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->tinyText('foo');
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table `users` add `foo` tinytext not null', $statements[0]);
+    }
+
     public function testAddingText()
     {
         $blueprint = new Blueprint('users');
