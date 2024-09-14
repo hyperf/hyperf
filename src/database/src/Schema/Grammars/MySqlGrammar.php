@@ -622,7 +622,7 @@ class MySqlGrammar extends Grammar
      */
     protected function typeTinyText(Fluent $column)
     {
-        return 'tinyText';
+        return 'tinytext';
     }
 
     /**
