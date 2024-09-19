@@ -334,8 +334,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                     continue;
                 }
 
-                $type = $this->getReturnType($method, true);
-                $this->setProperty($key, $type, true, true, '', false);
+                if ($type = $this->getReturnType($method, true)) {
+                    $this->setProperty($key, $type, true, true, '', false);
+                }
             }
         }
     }
