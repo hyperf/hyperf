@@ -84,34 +84,34 @@ class SchemaBuilderTest extends TestCase
         Schema::drop('users_copy');
     }
 
-    // public function testGetCompoundForeignKeys()
-    // {
-    //     Schema::create('parent', function (Blueprint $table) {
-    //         $table->id();
-    //         $table->integer('a');
-    //         $table->integer('b');
-    //
-    //         $table->unique(['b', 'a']);
-    //     });
-    //
-    //     Schema::create('child', function (Blueprint $table) {
-    //         $table->integer('c');
-    //         $table->integer('d');
-    //
-    //         $table->foreign(['d', 'c'], 'test_fk')->references(['b', 'a'])->on('parent');
-    //     });
-    //
-    //     $foreignKeys = Schema::getForeignKeys('child');
-    //
-    //     $this->assertCount(1, $foreignKeys);
-    //     $this->assertTrue(collect($foreignKeys)->contains(
-    //         fn ($foreign) => $foreign['columns'] === ['d', 'c']
-    //             && $foreign['foreign_table'] === 'parent'
-    //             && $foreign['foreign_columns'] === ['b', 'a']
-    //     ));
-    //     Schema::drop('child');
-    //     Schema::drop('parent');
-    // }
+    public function testGetCompoundForeignKeys()
+    {
+        Schema::create('tb_parent', function (Blueprint $table) {
+            $table->id();
+            $table->integer('a');
+            $table->integer('b');
+
+            $table->unique(['b', 'a']);
+        });
+
+        Schema::create('tb_child', function (Blueprint $table) {
+            $table->integer('c');
+            $table->integer('d');
+
+            $table->foreign(['d', 'c'], 'test_fk')->references(['b', 'a'])->on('tb_parent');
+        });
+
+        $foreignKeys = Schema::getForeignKeys('tb_child');
+
+        $this->assertCount(1, $foreignKeys);
+        $this->assertTrue(collect($foreignKeys)->contains(
+            fn ($foreign) => $foreign['columns'] === ['d', 'c']
+                && $foreign['foreign_table'] === 'tb_parent'
+                && $foreign['foreign_columns'] === ['b', 'a']
+        ));
+        Schema::drop('tb_child');
+        Schema::drop('tb_parent');
+    }
 
     public function testWhenTableHasColumn(): void
     {
