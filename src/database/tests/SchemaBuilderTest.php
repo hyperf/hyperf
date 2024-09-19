@@ -62,27 +62,27 @@ class SchemaBuilderTest extends TestCase
         Schema::drop('baz');
     }
 
-    // public function testGetForeignKeys()
-    // {
-    //     Schema::create('users_copy', function (Blueprint $table) {
-    //         $table->id();
-    //     });
-    //
-    //     Schema::create('posts_copy', function (Blueprint $table) {
-    //         $table->foreignId('user_id')->nullable()->constrained('users_copy')->cascadeOnUpdate()->nullOnDelete();
-    //     });
-    //
-    //     $foreignKeys = Schema::getForeignKeys('posts_copy');
-    //
-    //     $this->assertCount(1, $foreignKeys);
-    //     $this->assertTrue(collect($foreignKeys)->contains(
-    //         fn ($foreign) => $foreign['columns'] === ['user_id']
-    //             && $foreign['foreign_table'] === 'users_copy' && $foreign['foreign_columns'] === ['id']
-    //             && $foreign['on_update'] === 'cascade' && $foreign['on_delete'] === 'set null'
-    //     ));
-    //     Schema::drop('posts_copy');
-    //     Schema::drop('users_copy');
-    // }
+    public function testGetForeignKeys()
+    {
+        Schema::create('users_copy', function (Blueprint $table) {
+            $table->id();
+        });
+
+        Schema::create('posts_copy', function (Blueprint $table) {
+            $table->foreignId('user_id')->nullable()->constrained('users_copy')->cascadeOnUpdate()->nullOnDelete();
+        });
+
+        $foreignKeys = Schema::getForeignKeys('posts_copy');
+
+        $this->assertCount(1, $foreignKeys);
+        $this->assertTrue(collect($foreignKeys)->contains(
+            fn ($foreign) => $foreign['columns'] === ['user_id']
+                && $foreign['foreign_table'] === 'users_copy' && $foreign['foreign_columns'] === ['id']
+                && $foreign['on_update'] === 'cascade' && $foreign['on_delete'] === 'set null'
+        ));
+        Schema::drop('posts_copy');
+        Schema::drop('users_copy');
+    }
 
     // public function testGetCompoundForeignKeys()
     // {
