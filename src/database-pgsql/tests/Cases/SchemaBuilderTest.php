@@ -37,13 +37,6 @@ class SchemaBuilderTest extends TestCase
         $container->allows('get')->with(Db::class)->andReturns(new Db($container));
     }
 
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        $ref = new ReflectionClass(ApplicationContext::class);
-        $ref->setStaticPropertyValue('container', null);
-    }
-
     public function testGetTables(): void
     {
         Schema::create('foo', static function (Blueprint $table) {

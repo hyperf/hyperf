@@ -40,13 +40,6 @@ class SchemaBuilderTest extends TestCase
         Register::setConnectionResolver($connectionResolverInterface);
     }
 
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        $ref = new ReflectionClass(ApplicationContext::class);
-        $ref->setStaticPropertyValue('container', null);
-    }
-
     public function testGetTables(): void
     {
         Schema::create('foo', static function (Blueprint $table) {
