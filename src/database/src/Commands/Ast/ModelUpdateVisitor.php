@@ -334,8 +334,14 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                     continue;
                 }
 
-                if ($type = $this->getReturnType($method, true)) {
-                    $this->setProperty($key, $type, true, true, '', false);
+                if ($type = $method->getReturnType()) {
+                    $typeName = '\\' . ltrim($type->getName(), '\\');
+                    // TODO: Support after some days.
+                    // if (PhpDocReader::getInstance()->isPrimitiveType($typeName)) {
+                    //     $typeName = $type->getName();
+                    // }
+                    // Get return type which defined in `CastsAttributes::get()`.
+                    $this->setProperty($key, [$typeName], true, true, '', true);
                 }
             }
         }
