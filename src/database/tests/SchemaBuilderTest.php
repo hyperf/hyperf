@@ -12,13 +12,16 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use HyperfTest\Database\Stubs\ContainerStub;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 use function Hyperf\Collection\collect;
 
@@ -35,6 +38,13 @@ class SchemaBuilderTest extends TestCase
         $container->allows('get')->with(Db::class)->andReturns($db);
         $connectionResolverInterface = $container->get(ConnectionResolverInterface::class);
         Register::setConnectionResolver($connectionResolverInterface);
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        $ref = new ReflectionClass(ApplicationContext::class);
+        $ref->setStaticPropertyValue('container', null);
     }
 
     public function testGetTables(): void
