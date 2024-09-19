@@ -130,9 +130,9 @@ class ConnectionTest extends TestCase
         ];
 
         $closes = [
-            function ($connection) {
+            function (Connection $connection) {
                 $connection->close();
-            }, function ($connection) {
+            }, function (Connection $connection) {
                 $connection->reconnect();
             },
         ];

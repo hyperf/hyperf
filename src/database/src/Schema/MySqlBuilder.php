@@ -199,6 +199,20 @@ class MySqlBuilder extends Builder
     }
 
     /**
+     * Get the foreign keys for a given table.
+     */
+    public function getForeignKeys(string $table): array
+    {
+        $table = $this->connection->getTablePrefix() . $table;
+
+        return $this->connection->getPostProcessor()->processForeignKeys(
+            $this->connection->selectFromWriteConnection(
+                $this->grammar->compileForeignKeys($this->connection->getDatabaseName(), $table)
+            )
+        );
+    }
+
+    /**
      * Get all the view names for the database.
      *
      * @return array
