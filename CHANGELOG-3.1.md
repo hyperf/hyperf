@@ -4,6 +4,7 @@
 
 - [#7059](https://github.com/hyperf/hyperf/pull/7059) Added `Hyperf\Database\Schema\Schema::getForeignKeys()`.
 - [#7064](https://github.com/hyperf/hyperf/pull/7064) Support db type `enum` for `DoctrineConnection`.
+- [#7077](https://github.com/hyperf/hyperf/pull/7077) Added `ModelUpdateVisitor::getReturnType` method.
 
 # v3.1.40 - 2024-09-12
 
