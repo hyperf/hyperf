@@ -3,6 +3,7 @@
 ## Added
 
 - [#7059](https://github.com/hyperf/hyperf/pull/7059) Added `Hyperf\Database\Schema\Schema::getForeignKeys()`.
+- [#7063](https://github.com/hyperf/hyperf/pull/7063) Added methods `nullableUuidMorphs` `uuidMorphs` and `nullableNumericMorphs` to `Hyperf\Database\Schema\Blueprint`.
 - [#7064](https://github.com/hyperf/hyperf/pull/7064) Support db type `enum` for `DoctrineConnection`.
 - [#7077](https://github.com/hyperf/hyperf/pull/7077) Added `ModelUpdateVisitor::getReturnType` method.
 

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Connection;
+use Hyperf\Database\Model\Register;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\ForeignIdColumnDefinition;
@@ -32,6 +33,7 @@ class MySqlSchemaGrammarTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+        Register::unsetConnectionResolver();
     }
 
     public function testBasicCreateTable()
@@ -1192,7 +1194,7 @@ class MySqlSchemaGrammarTest extends TestCase
         return new MySqlGrammar();
     }
 
-    protected function getConnection()
+    protected function getConnection(): Connection
     {
         return m::mock(new Connection(m::mock(PDO::class)));
     }
