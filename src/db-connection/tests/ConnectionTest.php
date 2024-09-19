@@ -17,6 +17,7 @@ use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Exception\QueryException;
+use Hyperf\Database\Model\Register;
 use Hyperf\DbConnection\Connection;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Support\Reflection\ClassInvoker;
@@ -41,6 +42,7 @@ class ConnectionTest extends TestCase
     {
         Mockery::close();
         Context::set('database.connection.default', null);
+        Register::unsetConnectionResolver();
     }
 
     public function testResolveConnection()
