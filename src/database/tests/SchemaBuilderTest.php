@@ -37,6 +37,11 @@ class SchemaBuilderTest extends TestCase
         Register::setConnectionResolver($connectionResolverInterface);
     }
 
+    protected function tearDown(): void
+    {
+        Register::unsetConnectionResolver();
+    }
+
     public function testGetTables(): void
     {
         Schema::create('foo', static function (Blueprint $table) {
