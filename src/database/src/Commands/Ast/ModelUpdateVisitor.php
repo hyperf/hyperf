@@ -259,7 +259,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 // Magic get<name>Attribute
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
-                    $type = PhpDocReader::getInstance()->getReturnType($method, true);
+                    $type = $this->getReturnType($method, true);
                     $this->setProperty($name, $type, true, false, '', false, 1);
                 }
                 continue;
@@ -437,5 +437,10 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         /** @var Model $model */
         $model = new $className();
         return '\\' . get_class($model->newCollection());
+    }
+
+    protected function getReturnType(ReflectionMethod $method, bool $withoutNamespace = false): array
+    {
+        return PhpDocReader::getInstance()->getReturnType($method, $withoutNamespace);
     }
 }
