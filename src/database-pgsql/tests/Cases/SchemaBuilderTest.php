@@ -217,4 +217,24 @@ class SchemaBuilderTest extends TestCase
         $this->assertTrue(collect($indexes)->contains(fn ($index) => $index['columns'] === ['id'] && $index['primary']));
         $this->assertTrue(collect($indexes)->contains('name', 'articles_body_title_fulltext'));
     }
+
+    public function testGetForeignKeys()
+    {
+        Schema::create('users_copy', function (Blueprint $table) {
+            $table->id();
+        });
+
+        Schema::create('posts_copy', function (Blueprint $table) {
+            $table->foreignId('user_id')->nullable()->constrained('users_copy')->cascadeOnUpdate()->nullOnDelete();
+        });
+
+        $foreignKeys = Schema::getForeignKeys('posts_copy');
+
+        $this->assertCount(1, $foreignKeys);
+        $this->assertTrue(collect($foreignKeys)->contains(
+            fn ($foreign) => $foreign['columns'] === ['user_id']
+                && $foreign['foreign_table'] === 'users_copy' && $foreign['foreign_columns'] === ['id']
+                && $foreign['on_update'] === 'cascade' && $foreign['on_delete'] === 'set null'
+        ));
+    }
 }

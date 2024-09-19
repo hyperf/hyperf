@@ -37,6 +37,11 @@ class SchemaBuilderTest extends TestCase
         Register::setConnectionResolver($connectionResolverInterface);
     }
 
+    protected function tearDown(): void
+    {
+        Register::unsetConnectionResolver();
+    }
+
     public function testGetTables(): void
     {
         Schema::create('foo', static function (Blueprint $table) {
@@ -60,6 +65,57 @@ class SchemaBuilderTest extends TestCase
         Schema::drop('foo');
         Schema::drop('bar');
         Schema::drop('baz');
+    }
+
+    public function testGetForeignKeys()
+    {
+        Schema::create('users_copy', function (Blueprint $table) {
+            $table->id();
+        });
+
+        Schema::create('posts_copy', function (Blueprint $table) {
+            $table->foreignId('user_id')->nullable()->constrained('users_copy')->cascadeOnUpdate()->nullOnDelete();
+        });
+
+        $foreignKeys = Schema::getForeignKeys('posts_copy');
+
+        $this->assertCount(1, $foreignKeys);
+        $this->assertTrue(collect($foreignKeys)->contains(
+            fn ($foreign) => $foreign['columns'] === ['user_id']
+                && $foreign['foreign_table'] === 'users_copy' && $foreign['foreign_columns'] === ['id']
+                && $foreign['on_update'] === 'cascade' && $foreign['on_delete'] === 'set null'
+        ));
+        Schema::drop('posts_copy');
+        Schema::drop('users_copy');
+    }
+
+    public function testGetCompoundForeignKeys()
+    {
+        Schema::create('tb_parent', function (Blueprint $table) {
+            $table->id();
+            $table->integer('a');
+            $table->integer('b');
+
+            $table->unique(['b', 'a']);
+        });
+
+        Schema::create('tb_child', function (Blueprint $table) {
+            $table->integer('c');
+            $table->integer('d');
+
+            $table->foreign(['d', 'c'], 'test_fk')->references(['b', 'a'])->on('tb_parent');
+        });
+
+        $foreignKeys = Schema::getForeignKeys('tb_child');
+
+        $this->assertCount(1, $foreignKeys);
+        $this->assertTrue(collect($foreignKeys)->contains(
+            fn ($foreign) => $foreign['columns'] === ['d', 'c']
+                && $foreign['foreign_table'] === 'tb_parent'
+                && $foreign['foreign_columns'] === ['b', 'a']
+        ));
+        Schema::drop('tb_child');
+        Schema::drop('tb_parent');
     }
 
     public function testWhenTableHasColumn(): void
