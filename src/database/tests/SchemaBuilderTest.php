@@ -12,16 +12,13 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database;
 
-use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use HyperfTest\Database\Stubs\ContainerStub;
-use Mockery;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 use function Hyperf\Collection\collect;
 

@@ -12,15 +12,12 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database\PgSQL\Cases;
 
-use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
-use Mockery;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 use function Hyperf\Collection\collect;
 
