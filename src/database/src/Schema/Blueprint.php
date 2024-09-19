@@ -449,7 +449,13 @@ class Blueprint
      */
     public function foreign($columns, $name = null)
     {
-        return $this->indexCommand('foreign', $columns, $name);
+        $command = new ForeignKeyDefinition(
+            $this->indexCommand('foreign', $columns, $name)->getAttributes()
+        );
+
+        $this->commands[count($this->commands) - 1] = $command;
+
+        return $command;
     }
 
     /**
@@ -654,6 +660,19 @@ class Blueprint
     public function unsignedInteger($column, $autoIncrement = false)
     {
         return $this->integer($column, $autoIncrement, true);
+    }
+
+    /**
+     * Create a new unsigned big integer (8-byte) column on the table.
+     */
+    public function foreignId(string $column): ForeignIdColumnDefinition
+    {
+        return $this->addColumnDefinition(new ForeignIdColumnDefinition($this, [
+            'type' => 'bigInteger',
+            'name' => $column,
+            'autoIncrement' => false,
+            'unsigned' => true,
+        ]));
     }
 
     /**
