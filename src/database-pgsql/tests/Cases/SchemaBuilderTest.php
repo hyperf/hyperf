@@ -17,8 +17,10 @@ use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
+use Mockery;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 use function Hyperf\Collection\collect;
 
@@ -37,9 +39,9 @@ class SchemaBuilderTest extends TestCase
 
     protected function tearDown(): void
     {
-        \Mockery::close();
-        $ref = new \ReflectionClass(ApplicationContext::class);
-        $ref->setStaticPropertyValue('container',null);
+        Mockery::close();
+        $ref = new ReflectionClass(ApplicationContext::class);
+        $ref->setStaticPropertyValue('container', null);
     }
 
     public function testGetTables(): void
