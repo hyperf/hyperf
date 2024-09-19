@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database\PgSQL\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
@@ -32,6 +33,13 @@ class SchemaBuilderTest extends TestCase
     {
         $container = ContainerStub::getContainer();
         $container->allows('get')->with(Db::class)->andReturns(new Db($container));
+    }
+
+    protected function tearDown(): void
+    {
+        \Mockery::close();
+        $ref = new \ReflectionClass(ApplicationContext::class);
+        $ref->setStaticPropertyValue('container',null);
     }
 
     public function testGetTables(): void

@@ -34,6 +34,7 @@ class ContainerStub
 {
     public static function mockContainer()
     {
+        Mockery::close();
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
 
