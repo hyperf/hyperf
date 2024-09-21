@@ -291,7 +291,7 @@ class MySqlGrammar extends Grammar
      *
      * @param array $values
      */
-    protected function compileUpdateColumns($values): string
+    protected function compileUpdateColumns(Builder $query, $values): string
     {
         return collect($values)->map(function ($value, $key) {
             if ($this->isJsonSelector($key)) {
