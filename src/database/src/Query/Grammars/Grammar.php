@@ -211,20 +211,6 @@ class Grammar extends BaseGrammar
     }
 
     /**
-     * Compile the columns for an update statement.
-     *
-     * @param  Builder  $query
-     * @param  array  $values
-     * @return string
-     */
-    protected function compileUpdateColumns(Builder $query, array $values): string
-    {
-        return collect($values)->map(function ($value, $key) {
-            return $this->wrap($key) . ' = ' . $this->parameter($value);
-        })->implode(', ');
-    }
-
-    /**
      * Compile an "upsert" statement into SQL.
      *
      * @throws RuntimeException
@@ -381,6 +367,16 @@ class Grammar extends BaseGrammar
     public function compileJoinLateral(JoinLateralClause $join, string $expression): string
     {
         throw new RuntimeException('This database engine does not support lateral joins.');
+    }
+
+    /**
+     * Compile the columns for an update statement.
+     */
+    protected function compileUpdateColumns(Builder $query, array $values): string
+    {
+        return collect($values)->map(function ($value, $key) {
+            return $this->wrap($key) . ' = ' . $this->parameter($value);
+        })->implode(', ');
     }
 
     /**
