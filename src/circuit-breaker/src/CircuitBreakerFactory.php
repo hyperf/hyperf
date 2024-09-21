@@ -12,18 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\CircuitBreaker;
 
-use Psr\Container\ContainerInterface;
-
 class CircuitBreakerFactory
 {
     /**
      * @var CircuitBreakerInterface[]
      */
     protected array $breakers = [];
-
-    public function __construct(protected ContainerInterface $container)
-    {
-    }
 
     public function get(string $name): ?CircuitBreakerInterface
     {

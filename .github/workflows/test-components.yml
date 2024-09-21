@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v5.1.3'
+  SW_VERSION: 'v5.1.4'
 jobs:
   database:
     name: Test for Database
@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         php-version: [ '8.3', '8.2', '8.1' ]
-        mysql-version: [ '5.7', '8.0' ]
+        mysql-version: [ '5.7', '8.0', '8.4' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -36,7 +36,12 @@ jobs:
         run: ./.travis/requirement.install.sh
       - name: Setup Services
         run: |
+          if [ ${{ matrix.mysql-version }} == '8.4' ]
+          then
+          docker run --name mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:${{ matrix.mysql-version }} --bind-address=0.0.0.0
+          else
           docker run --name mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:${{ matrix.mysql-version }} --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
+          fi
           sleep 20
       - name: Setup Mysql
         run: export TRAVIS_BUILD_DIR=$(pwd) && bash ./.travis/setup.mysql.sh

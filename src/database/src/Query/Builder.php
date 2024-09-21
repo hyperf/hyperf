@@ -1798,12 +1798,30 @@ class Builder
     }
 
     /**
+     * Add a "where not" clause to the query for multiple columns where none of the conditions should be true.
+     * @param Expression[]|string[] $columns
+     */
+    public function whereNone(array $columns, mixed $operator = null, mixed $value = null, string $boolean = 'and'): static
+    {
+        return $this->whereAny($columns, $operator, $value, $boolean . ' not');
+    }
+
+    /**
+     * Add an "or where not" clause to the query for multiple columns where none of the conditions should be true.
+     * @param Expression[]|string[] $columns
+     */
+    public function orWhereNone(array $columns, mixed $operator = null, mixed $value = null): static
+    {
+        return $this->whereNone($columns, $operator, $value, 'or');
+    }
+
+    /**
      * Add a "group by" clause to the query.
      *
-     * @param array|string ...$groups
+     * @param array|Expression|string ...$groups
      * @return $this
      */
-    public function groupBy(...$groups)
+    public function groupBy(...$groups): static
     {
         foreach ($groups as $group) {
             $this->groups = array_merge((array) $this->groups, Arr::wrap($group));
@@ -2097,6 +2115,25 @@ class Builder
         }
 
         return $this->orderBy($column, 'asc')->limit($perPage);
+    }
+
+    /**
+     * Remove all existing orders and optionally add a new order.
+     *
+     * @param Closure|Expression|ModelBuilder|static|string $column
+     */
+    public function reorder(mixed $column = null, string $direction = 'asc'): static
+    {
+        $this->orders = null;
+        $this->unionOrders = null;
+        $this->bindings['order'] = [];
+        $this->bindings['unionOrder'] = [];
+
+        if ($column) {
+            return $this->orderBy($column, $direction);
+        }
+
+        return $this;
     }
 
     /**

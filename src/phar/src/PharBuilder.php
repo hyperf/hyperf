@@ -17,6 +17,7 @@ use GlobIterator;
 use Hyperf\Phar\Ast\Ast;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigFactoryVisitor;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigVisitor;
+use Hyperf\Phar\Ast\Visitor\UnshiftCodeStringVisitor;
 use InvalidArgumentException;
 use JsonException;
 use Phar;
@@ -229,7 +230,7 @@ EOD;
     /**
      * Compile the code into the Phar file.
      */
-    public function build()
+    public function build(): void
     {
         $this->logger->info('Creating phar <info>' . $this->getTarget() . '</info>');
         $time = microtime(true);
@@ -247,7 +248,7 @@ EOD;
 
         $main = $this->getMain();
 
-        $targetPhar = new TargetPhar(new Phar($tmp), $this);
+        $targetPhar = new TargetPhar(new CustomPhar($tmp), $this);
         $this->logger->info('Adding main package "' . $this->package->getName() . '"');
         $finder = Finder::create()
             ->files()
@@ -330,11 +331,12 @@ EOD;
         $this->replaceConfigFactoryReadPaths($targetPhar, $vendorPath);
 
         $this->logger->info('Adding main file "' . $main . '"');
-        $stubContents = file_get_contents($main);
-        $targetPhar->addFromString($main, strtr($stubContents, ['<?php' => $this->getMountLinkCode()]));
+        $this->rewriteMainWithMountLinkCode($targetPhar, $main);
+
+        $this->logger->info('Packaging all cache files into the PHAR archive.');
+        $targetPhar->save();
 
         $this->logger->info('Setting stub');
-        // Add the default stub.
         $targetPhar->setStub($targetPhar->createDefaultStub($main));
         $this->logger->info('Setting default stub <info>' . $main . '</info>.');
 
@@ -357,7 +359,7 @@ EOD;
     /**
      * Find the scan_cacheable configuration and force it to open.
      */
-    protected function enableScanCacheable(TargetPhar $targetPhar)
+    protected function enableScanCacheable(TargetPhar $targetPhar): void
     {
         $configPath = 'config/config.php';
         $absPath = $this->package->getDirectory() . $configPath;
@@ -372,7 +374,7 @@ EOD;
     /**
      * Replace the method in the Config component to get the true path to the configuration file.
      */
-    protected function replaceConfigFactoryReadPaths(TargetPhar $targetPhar, string $vendorPath)
+    protected function replaceConfigFactoryReadPaths(TargetPhar $targetPhar, string $vendorPath): void
     {
         $configPath = 'hyperf/config/src/ConfigFactory.php';
         $absPath = $vendorPath . $configPath;
@@ -382,6 +384,13 @@ EOD;
         $code = file_get_contents($absPath);
         $code = (new Ast())->parse($code, [new RewriteConfigFactoryVisitor()]);
         $targetPhar->addFromString('vendor/' . $configPath, $code);
+    }
+
+    protected function rewriteMainWithMountLinkCode(TargetPhar $targetPhar, string $mainPath): void
+    {
+        $code = file_get_contents($mainPath);
+        $code = (new Ast())->parse($code, [new UnshiftCodeStringVisitor($this->getMountLinkCode())]);
+        $targetPhar->addFromString($mainPath, $code);
     }
 
     /**
@@ -400,10 +409,8 @@ EOD;
 
     /**
      * Get file size.
-     *
-     * @param PharBuilder|string $path
      */
-    private function getSize($path): string
+    private function getSize(PharBuilder|string $path): string
     {
         return round(filesize((string) $path) / 1024, 1) . ' KiB';
     }

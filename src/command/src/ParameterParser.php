@@ -73,20 +73,8 @@ class ParameterParser
         }
 
         $definitions = $this->closureDefinitionCollector->getParameters($closure);
-        $options = [];
 
-        foreach ($definitions as $definition) {
-            $type = $definition->getName();
-            if (! in_array($type, ['int', 'float', 'string', 'bool'])) {
-                continue;
-            }
-            $name = $definition->getMeta('name');
-            $mode = $definition->allowsNull() ? InputOption::VALUE_OPTIONAL : InputOption::VALUE_REQUIRED;
-            $default = $definition->getMeta('defaultValue');
-            $options[] = new InputOption($name, null, $mode, '', $default, []);
-        }
-
-        return $options;
+        return $this->extractedOptions($definitions);
     }
 
     /**
@@ -99,6 +87,12 @@ class ParameterParser
         }
 
         $definitions = $this->methodDefinitionCollector->getParameters($class, $method);
+
+        return $this->extractedOptions($definitions);
+    }
+
+    public function extractedOptions(array $definitions): array
+    {
         $options = [];
 
         foreach ($definitions as $definition) {

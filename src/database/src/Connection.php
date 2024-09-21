@@ -626,6 +626,9 @@ class Connection implements ConnectionInterface
                 'dbname' => $this->getConfig('database'),
                 'driver' => null,
             ], $driver);
+
+            // @link https://github.com/doctrine/dbal/issues/3819
+            $this->doctrineConnection->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
         }
 
         return $this->doctrineConnection;
@@ -1213,7 +1216,7 @@ class Connection implements ConnectionInterface
      * Fire an event for this connection.
      *
      * @param string $event
-     * @return null|array
+     * @return null|object
      */
     protected function fireConnectionEvent($event)
     {

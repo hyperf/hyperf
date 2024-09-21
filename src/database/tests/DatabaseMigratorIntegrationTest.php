@@ -60,8 +60,10 @@ class DatabaseMigratorIntegrationTest extends TestCase
         ];
 
         $connection = $connector->make($dbConfig);
+        $connection2 = $connector->make(array_merge($dbConfig, ['database' => 'hyperf2']));
+        $connection3 = $connector->make(array_merge($dbConfig, ['database' => 'hyperf3']));
 
-        $resolver = new ConnectionResolver(['default' => $connection]);
+        $resolver = new ConnectionResolver(['default' => $connection, 'mysql2' => $connection2, 'mysql3' => $connection3]);
 
         $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
 
@@ -101,6 +103,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `sex` enum('0','1','2') COLLATE utf8_unicode_ci NOT NULL,
   `remember_token` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -112,6 +115,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
   `name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `sex` enum('0','1','2') COLLATE utf8mb3_unicode_ci NOT NULL,
   `remember_token` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -297,6 +301,23 @@ class DatabaseMigratorIntegrationTest extends TestCase
         );
 
         $builder->drop('test_change_types');
+    }
+
+    public function testMigrationsCanEachDefineConnection()
+    {
+        $schema = new Schema();
+
+        $ran = $this->migrator->run([__DIR__ . '/migrations/connection_configured']);
+        $this->assertFalse($schema->hasTable('failed_jobs'));
+        $this->assertFalse($schema->hasTable('jobs'));
+        $this->assertFalse($schema->connection('mysql2')->getSchemaBuilder()->hasTable('failed_jobs'));
+        $this->assertFalse($schema->connection('mysql2')->getSchemaBuilder()->hasTable('jobs'));
+        $this->assertTrue($schema->connection('mysql3')->getSchemaBuilder()->hasTable('failed_jobs'));
+        $this->assertTrue($schema->connection('mysql3')->getSchemaBuilder()->hasTable('jobs'));
+        $this->migrator->rollback([__DIR__ . '/migrations/connection_configured']);
+
+        $this->assertTrue(Str::contains($ran[0], 'failed_jobs'));
+        $this->assertTrue(Str::contains($ran[1], 'jobs'));
     }
 
     protected function getConnection(): Connection
