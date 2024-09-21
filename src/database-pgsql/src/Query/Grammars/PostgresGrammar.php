@@ -368,7 +368,7 @@ class PostgresGrammar extends Grammar
      *
      * @return string
      */
-    protected function compileUpdateColumns(Builder $query, array $values)
+    protected function compileUpdateColumns(Builder $query, array $values): string
     {
         return collect($values)->map(function ($value, $key) {
             $column = last(explode('.', $key));
