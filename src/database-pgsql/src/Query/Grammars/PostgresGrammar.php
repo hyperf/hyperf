@@ -365,8 +365,6 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile the columns for an update statement.
-     *
-     * @return string
      */
     protected function compileUpdateColumns(Builder $query, array $values): string
     {
