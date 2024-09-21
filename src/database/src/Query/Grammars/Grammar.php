@@ -191,9 +191,7 @@ class Grammar extends BaseGrammar
         // Each one of the columns in the update statements needs to be wrapped in the
         // keyword identifiers, also a place-holder needs to be created for each of
         // the values in the list of bindings so we can make the sets statements.
-        $columns = collect($values)->map(function ($value, $key) {
-            return $this->wrap($key) . ' = ' . $this->parameter($value);
-        })->implode(', ');
+        $columns = $this->compileUpdateColumns($query, $values);
 
         // If the query has any "join" clauses, we will setup the joins on the builder
         // and compile them so we can attach them to this update, as update queries
@@ -210,6 +208,20 @@ class Grammar extends BaseGrammar
         $wheres = $this->compileWheres($query);
 
         return trim("update {$table}{$joins} set {$columns} {$wheres}");
+    }
+
+    /**
+     * Compile the columns for an update statement.
+     *
+     * @param  Builder  $query
+     * @param  array  $values
+     * @return string
+     */
+    protected function compileUpdateColumns(Builder $query, array $values): string
+    {
+        return collect($values)->map(function ($value, $key) {
+            return $this->wrap($key) . ' = ' . $this->parameter($value);
+        })->implode(', ');
     }
 
     /**
