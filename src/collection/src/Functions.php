@@ -88,8 +88,11 @@ function data_get($target, $key, $default = null)
             return value($default);
         }
     }
-
-    return $target;
+    return match ($target) {
+        'true','false' => boolval($target),
+        'null','undefined' => null,
+        default => $target,
+    };
 }
 
 /**
