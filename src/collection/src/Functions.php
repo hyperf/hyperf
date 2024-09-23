@@ -55,7 +55,7 @@ function data_get($target, $key, $default = null)
         return $target;
     }
 
-    $key = is_array($key) ? $key : explode('.', strval($key));
+    $key = is_array($key) ? $key : explode('.', (string) $key);
 
     foreach ($key as $i => $segment) {
         unset($key[$i]);
