@@ -1,4 +1,10 @@
-# v3.1.41 - TBD
+# v3.1.42 - TBD
+
+## Fixed
+
+- [#7081](https://github.com/hyperf/hyperf/pull/7081) Fixed bug that `data_get` cannot support `int` key. 
+
+# v3.1.41 - 2024-09-19
 
 ## Added
 
