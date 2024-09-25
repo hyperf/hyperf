@@ -1008,6 +1008,7 @@ class StrTest extends TestCase
             ')
         );
         $this->assertSame("\xE9 ", Str::ltrim(" \xE9 "));
+
         $ltrimDefaultChars = [' ', "\n", "\r", "\t", "\v", "\0"];
 
         foreach ($ltrimDefaultChars as $char) {
