@@ -70,7 +70,7 @@ class PostgresGrammar extends Grammar
      *
      * @param mixed $values
      */
-    public function compileUpdate(Builder $query, $values): string
+    public function compileUpdate(Builder $query, array $values): string
     {
         $table = $this->wrapTable($query->from);
 
