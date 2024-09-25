@@ -6,8 +6,4 @@ on:
 
 jobs:
   run:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: superbrothers/close-pull-request@v3
-        with:
-          comment: "Hi, this is a READ-ONLY repository, please submit your PR on the https://github.com/hyperf/hyperf repository.<br><br> This Pull Request will close automatically.<br><br> Thanks! "
+    uses: hyperf/.github/.github/workflows/close-pull-request.yml@main
