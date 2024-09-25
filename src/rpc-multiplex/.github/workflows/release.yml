@@ -8,4 +8,4 @@ name: Release
 
 jobs:
   release:
-    uses: hyperf/.github/.github/workflows/release.yml@main
+    uses: hyperf/.github/.github/workflows/release.yml@master
