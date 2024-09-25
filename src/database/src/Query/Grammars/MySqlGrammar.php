@@ -288,10 +288,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile all of the columns for an update statement.
-     *
-     * @param array $values
      */
-    protected function compileUpdateColumns(Builder $query, $values): string
+    protected function compileUpdateColumns(Builder $query, array $values): string
     {
         return collect($values)->map(function ($value, $key) {
             if ($this->isJsonSelector($key)) {
