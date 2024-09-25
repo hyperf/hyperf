@@ -1,5 +1,9 @@
 # v3.1.43 - TBD
 
+## Optimized
+
+- [#7082](https://github.com/hyperf/hyperf/pull/7082) Optimized the code of `Hyperf\Database\Query\Grammars\Grammar::compileUpdate`.
+
 # v3.1.42 - 2024-09-25
 
 ## Fixed
