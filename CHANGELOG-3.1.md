@@ -1,4 +1,22 @@
-# v3.1.41 - TBD
+# v3.1.43 - TBD
+
+# v3.1.42 - 2024-09-25
+
+## Fixed
+
+- [#7081](https://github.com/hyperf/hyperf/pull/7081) Fixed bug that `data_get` cannot support `int` key. 
+
+## Optimized
+
+- [#7088](https://github.com/hyperf/hyperf/pull/7088) Optimized github actions for all components.
+
+# v3.1.41 - 2024-09-19
+
+## Added
+
+- [#7059](https://github.com/hyperf/hyperf/pull/7059) Added `Hyperf\Database\Schema\Schema::getForeignKeys()`.
+- [#7064](https://github.com/hyperf/hyperf/pull/7064) Support db type `enum` for `DoctrineConnection`.
+- [#7077](https://github.com/hyperf/hyperf/pull/7077) Added `ModelUpdateVisitor::getReturnType` method.
 
 # v3.1.40 - 2024-09-12
 
