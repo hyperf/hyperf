@@ -383,6 +383,14 @@ class CollectionTest extends TestCase
         $this->assertEquals(['a', 'b', 'c'], $c->replace(null)->all());
     }
 
+    public function testDateGetWithInteger()
+    {
+        $data = ['id' => 1, 2 => 2];
+
+        $this->assertSame(1, \Hyperf\Collection\data_get($data, 'id'));
+        $this->assertSame(2, \Hyperf\Collection\data_get($data, 2));
+    }
+
     public function testReplaceArray(): void
     {
         $c = new Collection(['a', 'b', 'c']);
