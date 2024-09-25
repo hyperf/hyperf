@@ -6,4 +6,4 @@ on:
 
 jobs:
   run:
-    uses: hyperf/.github/.github/workflows/close-pull-request.yml@main
+    uses: hyperf/.github/.github/workflows/close-pull-request.yml@master
