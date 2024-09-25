@@ -980,7 +980,7 @@ class StrTest extends TestCase
 
         $this->assertSame("\xE9", Str::trim(" \xE9 "));
 
-        $trimDefaultChars = [' ', "\n", "\r", "\t", "\v", "\0"];
+        $trimDefaultChars = [' ', "\n", "\r", "\t", "\v"];
 
         foreach ($trimDefaultChars as $char) {
             $this->assertSame('', Str::trim(" {$char} "));
@@ -1009,7 +1009,7 @@ class StrTest extends TestCase
         );
         $this->assertSame("\xE9 ", Str::ltrim(" \xE9 "));
 
-        $ltrimDefaultChars = [' ', "\n", "\r", "\t", "\v", "\0"];
+        $ltrimDefaultChars = [' ', "\n", "\r", "\t", "\v"];
 
         foreach ($ltrimDefaultChars as $char) {
             $this->assertSame('', Str::ltrim(" {$char} "));
@@ -1039,7 +1039,7 @@ class StrTest extends TestCase
 
         $this->assertSame(" \xE9", Str::rtrim(" \xE9 "));
 
-        $rtrimDefaultChars = [' ', "\n", "\r", "\t", "\v", "\0"];
+        $rtrimDefaultChars = [' ', "\n", "\r", "\t", "\v"];
 
         foreach ($rtrimDefaultChars as $char) {
             $this->assertSame('', Str::rtrim(" {$char} "));
