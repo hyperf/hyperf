@@ -24,7 +24,6 @@ use Mockery;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\TestHandler;
-use Monolog\Level;
 use Monolog\Logger;
 use Monolog\LogRecord;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -181,7 +180,7 @@ class LoggerFactoryTest extends TestCase
                         'class' => StreamHandler::class,
                         'constructor' => [
                             'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                            'level' => Level::Debug,
+                            'level' => Logger::DEBUG,
                         ],
                     ],
                     'formatter' => [
