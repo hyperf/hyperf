@@ -147,6 +147,7 @@ class ConnectionTest extends TestCase
                     $connection = new ConnectionStub($container, $pool, $config);
                     $connection->setPdo(new PDOStub('', '', '', []));
 
+                    Context::set(PDOStub::class . '::destruct', 0);
                     $callable($connection);
                     $this->assertSame(0, Context::get(PDOStub::class . '::destruct', 0));
                     $closure($connection);
