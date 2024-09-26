@@ -17,6 +17,7 @@ use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Exception\QueryException;
+use Hyperf\Database\Model\Register;
 use Hyperf\DbConnection\Connection;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Support\Reflection\ClassInvoker;
@@ -41,6 +42,8 @@ class ConnectionTest extends TestCase
     {
         Mockery::close();
         Context::set('database.connection.default', null);
+        Register::unsetConnectionResolver();
+        Register::unsetEventDispatcher();
     }
 
     public function testResolveConnection()
@@ -117,6 +120,8 @@ class ConnectionTest extends TestCase
 
     public function testPdoDontDestruct()
     {
+        sleep(5);
+
         $container = ContainerStub::mockContainer();
         $pool = $container->get(PoolFactory::class)->getPool('default');
         $config = $container->get(ConfigInterface::class)->get('databases.default');

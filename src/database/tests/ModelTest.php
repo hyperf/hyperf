@@ -91,15 +91,11 @@ class ModelTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
-
         Carbon::setTestNow(Carbon::now());
     }
 
     protected function tearDown(): void
     {
-        parent::tearDown();
-
         Mockery::close();
         Carbon::setTestNow(null);
 
