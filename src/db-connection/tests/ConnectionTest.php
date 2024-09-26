@@ -149,15 +149,10 @@ class ConnectionTest extends TestCase
                 foreach ($closes as $closure) {
                     $connection = new ConnectionStub($container, $pool, $config);
                     $connection->setPdo(new PDOStub('', '', '', []));
-                    var_dump(Coroutine::id() . ' 1 ' . Context::get(PDOStub::class . '::destruct', 0));
                     $callable($connection);
-                    var_dump(Coroutine::id() . ' 2 ' . Context::get(PDOStub::class . '::destruct', 0));
                     $this->assertSame($count, Context::get(PDOStub::class . '::destruct', 0));
-                    var_dump(Coroutine::id() . ' 3 ' . Context::get(PDOStub::class . '::destruct', 0));
                     $closure($connection);
-                    var_dump(Coroutine::id() . ' 4 ' . Context::get(PDOStub::class . '::destruct', 0));
                     $this->assertSame(++$count, Context::get(PDOStub::class . '::destruct', 0));
-                    var_dump(Coroutine::id() . ' 5 ' . Context::get(PDOStub::class . '::destruct', 0));
                 }
             }
         }, 10);

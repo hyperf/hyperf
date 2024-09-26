@@ -40,8 +40,6 @@ if (PHP_VERSION_ID >= 80300) {
         {
             $key = PDOStub::class . '::destruct';
             $count = Context::get($key, 0);
-            var_dump(Coroutine::id() . ' ' . spl_object_hash($this));
-            var_dump(Coroutine::id() . ' __destruct_' . $count);
             Context::set($key, $count + 1);
         }
 
@@ -78,8 +76,6 @@ if (PHP_VERSION_ID >= 80300) {
         {
             $key = PDOStub::class . '::destruct';
             $count = Context::get($key, 0);
-            var_dump(Coroutine::id() . ' ' . spl_object_hash($this));
-            var_dump(Coroutine::id() . ' __destruct_' . $count);
             Context::set($key, $count + 1);
         }
 
