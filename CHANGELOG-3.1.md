@@ -1,8 +1,62 @@
-# v3.1.38 - TBD
+# v3.1.43 - TBD
+
+## Optimized
+
+- [#7082](https://github.com/hyperf/hyperf/pull/7082) Optimized the code of `Hyperf\Database\Query\Grammars\Grammar::compileUpdate`.
+- [#7084](https://github.com/hyperf/hyperf/pull/7084) Optimized the code of `Hyperf\Watcher\Ast\RewriteClassNameVisitor::leaveNode`.
+
+# v3.1.42 - 2024-09-25
+
+## Fixed
+
+- [#7081](https://github.com/hyperf/hyperf/pull/7081) Fixed bug that `data_get` cannot support `int` key. 
+
+## Optimized
+
+- [#7088](https://github.com/hyperf/hyperf/pull/7088) Optimized github actions for all components.
+
+# v3.1.41 - 2024-09-19
+
+## Added
+
+- [#7059](https://github.com/hyperf/hyperf/pull/7059) Added `Hyperf\Database\Schema\Schema::getForeignKeys()`.
+- [#7064](https://github.com/hyperf/hyperf/pull/7064) Support db type `enum` for `DoctrineConnection`.
+- [#7077](https://github.com/hyperf/hyperf/pull/7077) Added `ModelUpdateVisitor::getReturnType` method.
+
+# v3.1.40 - 2024-09-12
+
+## Fixed
+
+- [#7051](https://github.com/hyperf/hyperf/pull/7051) Fixed bug that `--database` option does not work for `migrate` command.
+
+## Optimized
+
+- [#7053](https://github.com/hyperf/hyperf/pull/7053) Convert `$value` and `$pattern` to string for `Str::is()`.
+
+# v3.1.39 - 2024-09-05
+
+## Fixed
+
+- [#7034](https://github.com/hyperf/hyperf/pull/7034) Fixed bug that the mount code will break the main file with `declare` when using `phar:build`.
+- [#7043](https://github.com/hyperf/hyperf/pull/7043) Fixed bug that `jsonrpc-http` cannot support `swow`.
+
+## Optimized
+
+- [#7033](https://github.com/hyperf/hyperf/pull/7033) Improved `ConsoleLogger` to support running in watcher.
+- [#7040](https://github.com/hyperf/hyperf/pull/7040) Improved packaging speed for command `phar:build`. 
+- [#7044](https://github.com/hyperf/hyperf/pull/7044) Optimized the argument `table` like `database.table` for `gen:model` which can be used to generate another database models.
+
+## Added
+
+- [#7024](https://github.com/hyperf/hyperf/pull/7024) Added methods `whenTableHasColumn` and `whenTableDoesntHaveColumn` to `Hyperf\Database\Schema\Schema`.
+
+# v3.1.38 - 2024-08-29
 
 ## Added
 
 - [#7016](https://github.com/hyperf/hyperf/pull/7016) Added reorder method to clear and set sorting for `QueryBuilder`.
+- [#7023](https://github.com/hyperf/hyperf/pull/7023) Added `Hyperf\Contract\CanBeEscapedWhenCastToString` and fixed some static detection.
+- [#7028](https://github.com/hyperf/hyperf/pull/7028) Added `Hyperf\Framework\Logger\ConsoleLogger`.
 
 # v3.1.37 - 2024-08-22
 

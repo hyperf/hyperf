@@ -215,12 +215,23 @@ class PostgresBuilder extends Builder
     }
 
     /**
-     * Get the column type listing for a given table.
-     *
-     * @param string $table
-     * @return array
+     * Get the foreign keys for a given table.
      */
-    public function getColumnTypeListing($table)
+    public function getForeignKeys(string $table): array
+    {
+        [$schema, $table] = $this->parseSchemaAndTable($table);
+
+        $table = $this->connection->getTablePrefix() . $table;
+
+        return $this->connection->getPostProcessor()->processForeignKeys(
+            $this->connection->selectFromWriteConnection($this->grammar->compileForeignKeys($schema, $table))
+        );
+    }
+
+    /**
+     * Get the column type listing for a given table.
+     */
+    public function getColumnTypeListing(string $table, ?string $database = null): array
     {
         [$schema, $table] = $this->parseSchemaAndTable($table);
 
@@ -228,7 +239,7 @@ class PostgresBuilder extends Builder
 
         $results = $this->connection->select(
             $this->grammar->compileColumnListing(),
-            [$this->connection->getDatabaseName(), $schema, $table]
+            [$database ?? $this->connection->getDatabaseName(), $schema, $table]
         );
 
         /** @var PostgresProcessor $processor */

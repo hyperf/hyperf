@@ -81,6 +81,23 @@ class SchemaBuilderTest extends TestCase
         Schema::drop('view_1');
     }
 
+    public function testWhenTableHasColumn(): void
+    {
+        Schema::create('foo', static function (Blueprint $table) {
+            $table->comment('This is a comment');
+            $table->increments('id');
+        });
+        Schema::whenTableDoesntHaveColumn('foo', 'name', static function (Blueprint $table) {
+            $table->string('name');
+        });
+        $this->assertTrue(Schema::hasColumn('foo', 'name'));
+        Schema::whenTableHasColumn('foo', 'name', static function (Blueprint $table) {
+            $table->dropColumn('name');
+        });
+        $this->assertFalse(Schema::hasColumn('foo', 'name'));
+        Schema::drop('foo');
+    }
+
     public function testColumn(): void
     {
         Schema::create('column_1', static function (Blueprint $table) {
@@ -199,5 +216,25 @@ class SchemaBuilderTest extends TestCase
         $this->assertCount(2, $indexes);
         $this->assertTrue(collect($indexes)->contains(fn ($index) => $index['columns'] === ['id'] && $index['primary']));
         $this->assertTrue(collect($indexes)->contains('name', 'articles_body_title_fulltext'));
+    }
+
+    public function testGetForeignKeys()
+    {
+        Schema::create('users_copy', function (Blueprint $table) {
+            $table->id();
+        });
+
+        Schema::create('posts_copy', function (Blueprint $table) {
+            $table->foreignId('user_id')->nullable()->constrained('users_copy')->cascadeOnUpdate()->nullOnDelete();
+        });
+
+        $foreignKeys = Schema::getForeignKeys('posts_copy');
+
+        $this->assertCount(1, $foreignKeys);
+        $this->assertTrue(collect($foreignKeys)->contains(
+            fn ($foreign) => $foreign['columns'] === ['user_id']
+                && $foreign['foreign_table'] === 'users_copy' && $foreign['foreign_columns'] === ['id']
+                && $foreign['on_update'] === 'cascade' && $foreign['on_delete'] === 'set null'
+        ));
     }
 }
