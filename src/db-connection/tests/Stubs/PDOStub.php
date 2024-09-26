@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace HyperfTest\DbConnection\Stubs;
 
 use Hyperf\Context\Context;
-use Hyperf\Coroutine\Coroutine;
 use PDO;
 
 class PDOStub extends PDO
