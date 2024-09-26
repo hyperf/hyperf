@@ -15,6 +15,7 @@ namespace HyperfTest\DbConnection;
 use Exception;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Exception\QueryException;
 use Hyperf\Database\Model\Register;
@@ -120,7 +121,7 @@ class ConnectionTest extends TestCase
 
     public function testPdoDontDestruct()
     {
-        \Hyperf\Coroutine\wait(function () {
+        (new Waiter())->wait(function () {
             $container = ContainerStub::mockContainer();
             $pool = $container->get(PoolFactory::class)->getPool('default');
             $config = $container->get(ConfigInterface::class)->get('databases.default');
@@ -152,7 +153,7 @@ class ConnectionTest extends TestCase
                     $this->assertSame(1, Context::get(PDOStub::class . '::destruct', 0));
                 }
             }
-        });
+        }, 10);
     }
 
     public function testConnectionSticky()
