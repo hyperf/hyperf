@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\DbConnection\Stubs;
 
 use Hyperf\Context\Context;
+use Hyperf\Coroutine\Coroutine;
 use PDO;
 
 class PDOStub extends PDO
@@ -39,8 +40,8 @@ class PDOStub extends PDO
     {
         $key = PDOStub::class . '::destruct';
         $count = Context::get($key, 0);
-        var_dump(spl_object_hash($this));
-        var_dump('__destruct_' . $count);
+        var_dump(Coroutine::id() . ' ' . spl_object_hash($this));
+        var_dump(Coroutine::id() . ' __destruct_' . $count);
         Context::set($key, $count + 1);
     }
 

@@ -15,6 +15,7 @@ namespace HyperfTest\DbConnection;
 use Exception;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Coroutine\Waiter;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Exception\QueryException;
@@ -150,10 +151,10 @@ class ConnectionTest extends TestCase
                     $connection->setPdo(new PDOStub('', '', '', []));
                     $callable($connection);
                     $this->assertSame($count, Context::get(PDOStub::class . '::destruct', 0));
-                    var_dump($count);
+                    var_dump(Coroutine::id() . ' b' . $count);
                     $closure($connection);
                     $this->assertSame(++$count, Context::get(PDOStub::class . '::destruct', 0));
-                    var_dump($count);
+                    var_dump(Coroutine::id() . ' e' . $count);
                 }
             }
         }, 10);
