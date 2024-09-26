@@ -120,40 +120,39 @@ class ConnectionTest extends TestCase
 
     public function testPdoDontDestruct()
     {
-        sleep(5);
+        \Hyperf\Coroutine\wait(function () {
+            $container = ContainerStub::mockContainer();
+            $pool = $container->get(PoolFactory::class)->getPool('default');
+            $config = $container->get(ConfigInterface::class)->get('databases.default');
 
-        $container = ContainerStub::mockContainer();
-        $pool = $container->get(PoolFactory::class)->getPool('default');
-        $config = $container->get(ConfigInterface::class)->get('databases.default');
+            $callables = [
+                function ($connection) {
+                    $connection->selectOne('SELECT 1;');
+                }, function ($connection) {
+                    $connection->table('user')->leftJoin('user_ext', 'user.id', '=', 'user_ext.id')->get();
+                },
+            ];
 
-        $callables = [
-            function ($connection) {
-                $connection->selectOne('SELECT 1;');
-            }, function ($connection) {
-                $connection->table('user')->leftJoin('user_ext', 'user.id', '=', 'user_ext.id')->get();
-            },
-        ];
+            $closes = [
+                function (Connection $connection) {
+                    $connection->close();
+                }, function (Connection $connection) {
+                    $connection->reconnect();
+                },
+            ];
 
-        $closes = [
-            function (Connection $connection) {
-                $connection->close();
-            }, function (Connection $connection) {
-                $connection->reconnect();
-            },
-        ];
+            foreach ($callables as $callable) {
+                foreach ($closes as $closure) {
+                    $connection = new ConnectionStub($container, $pool, $config);
+                    $connection->setPdo(new PDOStub('', '', '', []));
 
-        foreach ($callables as $callable) {
-            foreach ($closes as $closure) {
-                $connection = new ConnectionStub($container, $pool, $config);
-                $connection->setPdo(new PDOStub('', '', '', []));
-
-                PDOStub::$destruct = 0;
-                $callable($connection);
-                $this->assertSame(0, PDOStub::$destruct);
-                $closure($connection);
-                $this->assertSame(1, PDOStub::$destruct);
+                    $callable($connection);
+                    $this->assertSame(0, Context::get(PDOStub::class . '::destruct', 0));
+                    $closure($connection);
+                    $this->assertSame(1, Context::get(PDOStub::class . '::destruct', 0));
+                }
             }
-        }
+        });
     }
 
     public function testConnectionSticky()

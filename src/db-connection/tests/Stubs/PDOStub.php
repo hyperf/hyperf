@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\DbConnection\Stubs;
 
+use Hyperf\Context\Context;
 use PDO;
 
 class PDOStub extends PDO
@@ -36,7 +37,7 @@ class PDOStub extends PDO
 
     public function __destruct()
     {
-        ++self::$destruct;
+        Context::set(PDOStub::class . '::destruct', Context::get(PDOStub::class . '::destruct', 0) + 1);
     }
 
     public function prepare($statement, $driver_options = null)
