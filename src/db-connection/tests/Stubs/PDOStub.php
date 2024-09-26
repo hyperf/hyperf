@@ -78,12 +78,12 @@ if (PHP_VERSION_ID >= 80300) {
             Context::set($key, $count + 1);
         }
 
-        public function prepare($statement, $driver_options = null)
+        public function prepare($statement, $driver_options = null): bool|PDOStatementStubPHP8
         {
             return new PDOStatementStubPHP8($statement);
         }
 
-        public function exec($statement)
+        public function exec($statement): bool|int
         {
             return 0;
         }

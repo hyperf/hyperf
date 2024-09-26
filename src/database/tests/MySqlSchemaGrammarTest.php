@@ -1194,7 +1194,7 @@ class MySqlSchemaGrammarTest extends TestCase
         return new MySqlGrammar();
     }
 
-    protected function getConnection(): Connection
+    protected function getConnection()
     {
         return m::mock(new Connection(m::mock(PDO::class)));
     }
