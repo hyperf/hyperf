@@ -3,6 +3,7 @@
 ## Optimized
 
 - [#7082](https://github.com/hyperf/hyperf/pull/7082) Optimized the code of `Hyperf\Database\Query\Grammars\Grammar::compileUpdate`.
+- [#7084](https://github.com/hyperf/hyperf/pull/7084) Optimized the code of `Hyperf\Watcher\Ast\RewriteClassNameVisitor::leaveNode`.
 
 # v3.1.42 - 2024-09-25
 
