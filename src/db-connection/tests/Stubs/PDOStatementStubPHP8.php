@@ -24,98 +24,98 @@ class PDOStatementStubPHP8 extends PDOStatement
         $this->statement = $statement;
     }
 
-    public function execute($input_parameters = null)
+    public function execute($input_parameters = null): bool
     {
         return true;
     }
 
-    public function fetch($fetch_style = null, $cursor_orientation = PDO::FETCH_ORI_NEXT, $cursor_offset = 0)
+    public function fetch($fetch_style = null, $cursor_orientation = PDO::FETCH_ORI_NEXT, $cursor_offset = 0): mixed
     {
-        parent::fetch($fetch_style, $cursor_orientation, $cursor_offset);
+        return parent::fetch($fetch_style, $cursor_orientation, $cursor_offset);
     }
 
-    public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null)
+    public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null): bool
     {
-        parent::bindParam($parameter, $variable, $data_type, $length, $driver_options);
+        return parent::bindParam($parameter, $variable, $data_type, $length, $driver_options);
     }
 
-    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null)
+    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null): bool
     {
-        parent::bindColumn($column, $param, $type, $maxlen, $driverdata);
+        return parent::bindColumn($column, $param, $type, $maxlen, $driverdata);
     }
 
-    public function bindValue($parameter, $value, $data_type = PDO::PARAM_STR)
+    public function bindValue($parameter, $value, $data_type = PDO::PARAM_STR): bool
     {
-        parent::bindValue($parameter, $value, $data_type);
+        return parent::bindValue($parameter, $value, $data_type);
     }
 
-    public function rowCount()
+    public function rowCount(): int
     {
-        parent::rowCount();
+        return parent::rowCount();
     }
 
-    public function fetchColumn($column_number = 0)
+    public function fetchColumn($column_number = 0): mixed
     {
-        parent::fetchColumn($column_number);
+        return parent::fetchColumn($column_number);
     }
 
-    public function fetchAll(int $mode = PDO::FETCH_BOTH, mixed ...$args)
+    public function fetchAll(int $mode = PDO::FETCH_BOTH, mixed ...$args): array
     {
         return [];
     }
 
-    public function fetchObject($class_name = 'stdClass', $ctor_args = null)
+    public function fetchObject($class_name = 'stdClass', $ctor_args = null): object
     {
-        parent::fetchObject($class_name, $ctor_args);
+        return parent::fetchObject($class_name, $ctor_args);
     }
 
-    public function errorCode()
+    public function errorCode(): ?string
     {
-        parent::errorCode();
+        return parent::errorCode();
     }
 
-    public function errorInfo()
+    public function errorInfo(): array
     {
-        parent::errorInfo();
+        return parent::errorInfo();
     }
 
-    public function setAttribute($attribute, $value)
+    public function setAttribute($attribute, $value): bool
     {
-        parent::setAttribute($attribute, $value);
+        return parent::setAttribute($attribute, $value);
     }
 
-    public function getAttribute($attribute)
+    public function getAttribute($attribute): mixed
     {
-        parent::getAttribute($attribute);
+        return parent::getAttribute($attribute);
     }
 
-    public function columnCount()
+    public function columnCount(): int
     {
-        parent::columnCount();
+        return parent::columnCount();
     }
 
-    public function getColumnMeta($column)
+    public function getColumnMeta($column): array
     {
-        parent::getColumnMeta($column);
+        return parent::getColumnMeta($column);
     }
 
-    public function setFetchMode(int $mode, mixed ...$args)
+    public function setFetchMode($mode, $className = null, ...$params)
     {
         return true;
     }
 
-    public function nextRowset()
+    public function nextRowset(): bool
     {
-        parent::nextRowset();
+        return parent::nextRowset();
     }
 
-    public function closeCursor()
+    public function closeCursor(): bool
     {
-        parent::closeCursor();
+        return parent::closeCursor();
     }
 
-    public function debugDumpParams()
+    public function debugDumpParams(): ?bool
     {
-        parent::debugDumpParams();
+        return parent::debugDumpParams();
     }
 }
