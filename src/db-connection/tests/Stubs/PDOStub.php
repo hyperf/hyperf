@@ -39,6 +39,8 @@ class PDOStub extends PDO
     {
         $key = PDOStub::class . '::destruct';
         $count = Context::get($key, 0);
+        var_dump(spl_object_hash($this));
+        var_dump('__destruct_' . $count);
         Context::set($key, $count + 1);
     }
 

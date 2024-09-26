@@ -150,8 +150,10 @@ class ConnectionTest extends TestCase
                     $connection->setPdo(new PDOStub('', '', '', []));
                     $callable($connection);
                     $this->assertSame($count, Context::get(PDOStub::class . '::destruct', 0));
+                    var_dump($count);
                     $closure($connection);
                     $this->assertSame(++$count, Context::get(PDOStub::class . '::destruct', 0));
+                    var_dump($count);
                 }
             }
         }, 10);
