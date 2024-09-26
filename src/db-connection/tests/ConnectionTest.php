@@ -157,7 +157,7 @@ class ConnectionTest extends TestCase
                     $closure($connection);
                     var_dump(Coroutine::id() . ' 4 ' . Context::get(PDOStub::class . '::destruct', 0));
                     $this->assertSame(++$count, Context::get(PDOStub::class . '::destruct', 0));
-                    var_dump(Coroutine::id() . ' 3 ' . Context::get(PDOStub::class . '::destruct', 0));
+                    var_dump(Coroutine::id() . ' 5 ' . Context::get(PDOStub::class . '::destruct', 0));
                 }
             }
         }, 10);
