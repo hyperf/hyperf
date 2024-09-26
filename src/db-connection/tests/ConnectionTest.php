@@ -15,7 +15,6 @@ namespace HyperfTest\DbConnection;
 use Exception;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Coroutine\Coroutine;
 use Hyperf\Coroutine\Waiter;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Exception\QueryException;
