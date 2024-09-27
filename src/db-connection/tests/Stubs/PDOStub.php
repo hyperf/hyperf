@@ -14,78 +14,42 @@ namespace HyperfTest\DbConnection\Stubs;
 
 use Hyperf\Context\Context;
 use PDO;
-use PDOStatement;
+use ReturnTypeWillChange;
 
-if (PHP_VERSION_ID >= 80300) {
-    class PDOStub extends PDO
+class PDOStub extends PDO
+{
+    public $dsn;
+
+    public $username;
+
+    public $passwd;
+
+    public $options;
+
+    public function __construct($dsn, $username, $passwd, $options)
     {
-        public $dsn;
-
-        public $username;
-
-        public $passwd;
-
-        public $options;
-
-        public function __construct($dsn, $username, $passwd, $options)
-        {
-            $this->dsn = $dsn;
-            $this->username = $username;
-            $this->passwd = $passwd;
-            $this->options = $options;
-        }
-
-        public function __destruct()
-        {
-            $key = PDOStub::class . '::destruct';
-            $count = Context::get($key, 0);
-            Context::set($key, $count + 1);
-        }
-
-        public function prepare($statement, $driver_options = null): false|PDOStatement
-        {
-            return new PDOStatementStubPHP8($statement);
-        }
-
-        public function exec($statement): false|int
-        {
-            return 0;
-        }
+        $this->dsn = $dsn;
+        $this->username = $username;
+        $this->passwd = $passwd;
+        $this->options = $options;
     }
-} else {
-    class PDOStub extends PDO
+
+    public function __destruct()
     {
-        public $dsn;
+        $key = PDOStub::class . '::destruct';
+        $count = Context::get($key, 0);
+        Context::set($key, $count + 1);
+    }
 
-        public $username;
+    #[ReturnTypeWillChange]
+    public function prepare($statement, $driver_options = null): bool|PDOStatementStubPHP8
+    {
+        return new PDOStatementStubPHP8($statement);
+    }
 
-        public $passwd;
-
-        public $options;
-
-        public function __construct($dsn, $username, $passwd, $options)
-        {
-            $this->dsn = $dsn;
-            $this->username = $username;
-            $this->passwd = $passwd;
-            $this->options = $options;
-        }
-
-        public function __destruct()
-        {
-            $key = PDOStub::class . '::destruct';
-            $count = Context::get($key, 0);
-            Context::set($key, $count + 1);
-        }
-
-        public function prepare($statement, $driver_options = null): bool|PDOStatementStubPHP8
-        {
-            return new PDOStatementStubPHP8($statement);
-        }
-
-        public function exec($statement): bool|int
-        {
-            return 0;
-        }
+    #[ReturnTypeWillChange]
+    public function exec($statement): bool|int
+    {
+        return 0;
     }
 }

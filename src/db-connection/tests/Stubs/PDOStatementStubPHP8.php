@@ -14,6 +14,7 @@ namespace HyperfTest\DbConnection\Stubs;
 
 use PDO;
 use PDOStatement;
+use ReturnTypeWillChange;
 
 class PDOStatementStubPHP8 extends PDOStatement
 {
@@ -64,7 +65,8 @@ class PDOStatementStubPHP8 extends PDOStatement
         return [];
     }
 
-    public function fetchObject($class_name = 'stdClass', $ctor_args = null): object
+    #[ReturnTypeWillChange]
+    public function fetchObject($class_name = 'stdClass', $ctor_args = null): bool|object
     {
         return parent::fetchObject($class_name, $ctor_args);
     }
@@ -94,6 +96,7 @@ class PDOStatementStubPHP8 extends PDOStatement
         return parent::columnCount();
     }
 
+    #[ReturnTypeWillChange]
     public function getColumnMeta($column): array
     {
         return parent::getColumnMeta($column);
