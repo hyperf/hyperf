@@ -14,6 +14,7 @@ namespace HyperfTest\DbConnection\Stubs;
 
 use PDO;
 use PDOStatement;
+use ReturnTypeWillChange;
 
 class PDOStatementStubPHP8 extends PDOStatement
 {
@@ -24,39 +25,39 @@ class PDOStatementStubPHP8 extends PDOStatement
         $this->statement = $statement;
     }
 
-    public function execute($input_parameters = null): bool
+    public function execute($params = null): bool
     {
         return true;
     }
 
     public function fetch($fetch_style = null, $cursor_orientation = PDO::FETCH_ORI_NEXT, $cursor_offset = 0): mixed
     {
-        return parent::fetch($fetch_style, $cursor_orientation, $cursor_offset);
+        return null;
     }
 
     public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null): bool
     {
-        return parent::bindParam($parameter, $variable, $data_type, $length, $driver_options);
+        return true;
     }
 
     public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null): bool
     {
-        return parent::bindColumn($column, $param, $type, $maxlen, $driverdata);
+        return true;
     }
 
     public function bindValue($parameter, $value, $data_type = PDO::PARAM_STR): bool
     {
-        return parent::bindValue($parameter, $value, $data_type);
+        return true;
     }
 
     public function rowCount(): int
     {
-        return parent::rowCount();
+        return 0;
     }
 
     public function fetchColumn($column_number = 0): mixed
     {
-        return parent::fetchColumn($column_number);
+        return false;
     }
 
     public function fetchAll(int $mode = PDO::FETCH_BOTH, mixed ...$args): array
@@ -64,39 +65,41 @@ class PDOStatementStubPHP8 extends PDOStatement
         return [];
     }
 
-    public function fetchObject($class_name = 'stdClass', $ctor_args = null): object
+    #[ReturnTypeWillChange]
+    public function fetchObject($class_name = 'stdClass', $ctor_args = null): bool|object
     {
-        return parent::fetchObject($class_name, $ctor_args);
+        return false;
     }
 
     public function errorCode(): ?string
     {
-        return parent::errorCode();
+        return null;
     }
 
     public function errorInfo(): array
     {
-        return parent::errorInfo();
+        return [];
     }
 
     public function setAttribute($attribute, $value): bool
     {
-        return parent::setAttribute($attribute, $value);
+        return true;
     }
 
     public function getAttribute($attribute): mixed
     {
-        return parent::getAttribute($attribute);
+        return '';
     }
 
     public function columnCount(): int
     {
-        return parent::columnCount();
+        return 0;
     }
 
+    #[ReturnTypeWillChange]
     public function getColumnMeta($column): array
     {
-        return parent::getColumnMeta($column);
+        return [];
     }
 
     public function setFetchMode($mode, $className = null, ...$params)
@@ -106,16 +109,16 @@ class PDOStatementStubPHP8 extends PDOStatement
 
     public function nextRowset(): bool
     {
-        return parent::nextRowset();
+        return true;
     }
 
     public function closeCursor(): bool
     {
-        return parent::closeCursor();
+        return true;
     }
 
     public function debugDumpParams(): ?bool
     {
-        return parent::debugDumpParams();
+        return null;
     }
 }

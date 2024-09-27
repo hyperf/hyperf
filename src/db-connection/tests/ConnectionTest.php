@@ -127,9 +127,9 @@ class ConnectionTest extends TestCase
             $config = $container->get(ConfigInterface::class)->get('databases.default');
 
             $callables = [
-                function ($connection) {
+                function (Connection $connection) {
                     $connection->selectOne('SELECT 1;');
-                }, function ($connection) {
+                }, function (Connection $connection) {
                     $connection->table('user')->leftJoin('user_ext', 'user.id', '=', 'user_ext.id')->get();
                 },
             ];
@@ -148,9 +148,13 @@ class ConnectionTest extends TestCase
                 foreach ($closes as $closure) {
                     $connection = new ConnectionStub($container, $pool, $config);
                     $connection->setPdo(new PDOStub('', '', '', []));
+                    var_dump('before_callable ' . Context::get(PDOStub::class . '::destruct', 0));
                     $callable($connection);
+                    var_dump('after_callable ' . Context::get(PDOStub::class . '::destruct', 0));
                     $this->assertSame($count, Context::get(PDOStub::class . '::destruct', 0));
+                    var_dump('before_closure ' . Context::get(PDOStub::class . '::destruct', 0));
                     $closure($connection);
+                    var_dump('after_closure ' . Context::get(PDOStub::class . '::destruct', 0));
                     $this->assertSame(++$count, Context::get(PDOStub::class . '::destruct', 0));
                 }
             }
