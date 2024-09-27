@@ -127,9 +127,9 @@ class ConnectionTest extends TestCase
             $config = $container->get(ConfigInterface::class)->get('databases.default');
 
             $callables = [
-                function ($connection) {
+                function (Connection $connection) {
                     $connection->selectOne('SELECT 1;');
-                }, function ($connection) {
+                }, function (Connection $connection) {
                     $connection->table('user')->leftJoin('user_ext', 'user.id', '=', 'user_ext.id')->get();
                 },
             ];

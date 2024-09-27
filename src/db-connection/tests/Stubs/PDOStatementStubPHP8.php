@@ -47,7 +47,7 @@ class PDOStatementStubPHP8 extends PDOStatement
 
     public function bindValue($parameter, $value, $data_type = PDO::PARAM_STR): bool
     {
-        return parent::bindValue($parameter, $value, $data_type);
+        return true;
     }
 
     public function rowCount(): int
