@@ -1,8 +1,23 @@
-# v3.1.42 - TBD
+# v3.1.43 - TBD
+
+## Optimized
+
+- [#7082](https://github.com/hyperf/hyperf/pull/7082) Optimized the code of `Hyperf\Database\Query\Grammars\Grammar::compileUpdate()`.
+- [#7084](https://github.com/hyperf/hyperf/pull/7084) Optimized the code of `Hyperf\Watcher\Ast\RewriteClassNameVisitor::leaveNode()`.
+
+## Added
+
+- [#7025](https://github.com/hyperf/hyperf/pull/7025) Added `Hyperf\Database\Model\Relations\Relation::getMorphAlias()`.
+
+# v3.1.42 - 2024-09-25
 
 ## Fixed
 
 - [#7081](https://github.com/hyperf/hyperf/pull/7081) Fixed bug that `data_get` cannot support `int` key. 
+
+## Optimized
+
+- [#7088](https://github.com/hyperf/hyperf/pull/7088) Optimized github actions for all components.
 
 # v3.1.41 - 2024-09-19
 
