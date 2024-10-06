@@ -4,6 +4,7 @@
 
 - [#7082](https://github.com/hyperf/hyperf/pull/7082) Optimized the code of `Hyperf\Database\Query\Grammars\Grammar::compileUpdate()`.
 - [#7084](https://github.com/hyperf/hyperf/pull/7084) Optimized the code of `Hyperf\Watcher\Ast\RewriteClassNameVisitor::leaveNode()`.
+- [#7105](https://github.com/hyperf/hyperf/pull/7105) Removed `env_vars` to keep the child process environment variables consistent with the parent process.
 
 ## Added
 
