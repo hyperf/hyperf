@@ -1,0 +1,17 @@
+name: Mirror to CNB Repo
+
+on: [ push, delete, create ]
+
+jobs:
+  git-mirror:
+    if: github.repository == 'hyperf/hyperf'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push Mirror
+        if: github.repository_owner == 'hyperf'
+        env:
+          SOURCE_REPO: 'https://github.com/hyperf/hyperf.git'
+          DESTINATION_REPO: 'https://cnb:${{ secrets.CNB_TOKEN }}@cnb.cool/Hyperf/hyperf.git'
+        run: |
+          git clone --mirror "$SOURCE_REPO" && cd `basename "$SOURCE_REPO"`
+          git push --mirror $DESTINATION_REPO
