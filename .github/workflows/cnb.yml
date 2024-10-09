@@ -14,4 +14,7 @@ jobs:
           DESTINATION_REPO: 'https://cnb:${{ secrets.CNB_TOKEN }}@cnb.cool/Hyperf/hyperf.git'
         run: |
           git clone --mirror "$SOURCE_REPO" && cd `basename "$SOURCE_REPO"`
-          git push --mirror $DESTINATION_REPO
+          git remote set-url --push origin "$DESTINATION_REPO"
+          git fetch -p origin
+          git for-each-ref --format 'delete %(refname)' refs/pull | git update-ref --stdin
+          git push --mirror
