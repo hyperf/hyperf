@@ -49,7 +49,7 @@ class CacheAheadAspect extends AbstractAspect
                 $driver->set(
                     $key,
                     [
-                        'expired_time' => $now + $annotation->ttl - $annotation->aheadSeconds,
+                        'expired_time' => $now + $ttl - $annotation->aheadSeconds,
                         'data' => $result,
                     ],
                     $ttl
