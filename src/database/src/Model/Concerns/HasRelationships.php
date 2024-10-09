@@ -14,6 +14,7 @@ namespace Hyperf\Database\Model\Concerns;
 
 use Closure;
 use Hyperf\Collection\Arr;
+use Hyperf\Database\Exception\ClassMorphViolationException;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
@@ -562,6 +563,10 @@ trait HasRelationships
 
         if (! empty($morphMap) && in_array(static::class, $morphMap)) {
             return array_search(static::class, $morphMap, true);
+        }
+
+        if (Relation::requiresMorphMap()) {
+            throw new ClassMorphViolationException($this);
         }
 
         return static::class;
