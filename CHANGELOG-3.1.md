@@ -14,6 +14,7 @@
 ## Added
 
 - [#7025](https://github.com/hyperf/hyperf/pull/7025) Added `Hyperf\Database\Model\Relations\Relation::getMorphAlias()`.
+- [#7071](https://github.com/hyperf/hyperf/pull/7071) Added `Hyperf\Database\Schema\Blueprint::tinyText()`.
 
 # v3.1.42 - 2024-09-25
 
@@ -31,7 +32,6 @@
 
 - [#7059](https://github.com/hyperf/hyperf/pull/7059) Added `Hyperf\Database\Schema\Schema::getForeignKeys()`.
 - [#7064](https://github.com/hyperf/hyperf/pull/7064) Support db type `enum` for `DoctrineConnection`.
-- [#7071](https://github.com/hyperf/hyperf/pull/7071) Added `Hyperf\Database\Schema\Blueprint::tinyText()`.
 - [#7077](https://github.com/hyperf/hyperf/pull/7077) Added `ModelUpdateVisitor::getReturnType` method.
 
 # v3.1.40 - 2024-09-12
