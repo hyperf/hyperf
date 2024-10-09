@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#7068](https://github.com/hyperf/hyperf/pull/7068) Fixed bug `Str::trim` cannot support the default rules "\n\r\t\v" for `trim/ltrim/rtim`.
+- [#7109](https://github.com/hyperf/hyperf/pull/7109) Fixed bug that `CacheAHead` cannot use the default ttl.
 
 ## Optimized
 
