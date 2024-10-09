@@ -61,7 +61,7 @@ abstract class Client
         try {
             // Create an HTTP Client by $clientFactory closure.
             $clientFactory = $this->clientFactory;
-            $client = $clientFactory($options);
+            $client = $clientFactory();
             if (! $client instanceof ClientInterface) {
                 throw new ClientException(sprintf('The client factory should create a %s instance.', ClientInterface::class));
             }
