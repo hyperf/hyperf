@@ -1,8 +1,32 @@
-# v3.1.41 - TBD
+# v3.1.43 - TBD
+
+## Optimized
+
+- [#7082](https://github.com/hyperf/hyperf/pull/7082) Optimized the code of `Hyperf\Database\Query\Grammars\Grammar::compileUpdate()`.
+- [#7084](https://github.com/hyperf/hyperf/pull/7084) Optimized the code of `Hyperf\Watcher\Ast\RewriteClassNameVisitor::leaveNode()`.
+- [#7105](https://github.com/hyperf/hyperf/pull/7105) Removed `env_vars` to keep the child process environment variables consistent with the parent process.
 
 ## Added
 
+- [#7025](https://github.com/hyperf/hyperf/pull/7025) Added `Hyperf\Database\Model\Relations\Relation::getMorphAlias()`.
+
+# v3.1.42 - 2024-09-25
+
+## Fixed
+
+- [#7081](https://github.com/hyperf/hyperf/pull/7081) Fixed bug that `data_get` cannot support `int` key. 
+
+## Optimized
+
+- [#7088](https://github.com/hyperf/hyperf/pull/7088) Optimized github actions for all components.
+
+# v3.1.41 - 2024-09-19
+
+## Added
+
+- [#7059](https://github.com/hyperf/hyperf/pull/7059) Added `Hyperf\Database\Schema\Schema::getForeignKeys()`.
 - [#7064](https://github.com/hyperf/hyperf/pull/7064) Support db type `enum` for `DoctrineConnection`.
+- [#7077](https://github.com/hyperf/hyperf/pull/7077) Added `ModelUpdateVisitor::getReturnType` method.
 
 # v3.1.40 - 2024-09-12
 

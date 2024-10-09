@@ -354,6 +354,18 @@ class Builder
     }
 
     /**
+     * Get the foreign keys for a given table.
+     */
+    public function getForeignKeys(string $table): array
+    {
+        $table = $this->connection->getTablePrefix() . $table;
+
+        return $this->connection->getPostProcessor()->processForeignKeys(
+            $this->connection->selectFromWriteConnection($this->grammar->compileForeignKeys($table))
+        );
+    }
+
+    /**
      * Get the database connection instance.
      *
      * @return Connection

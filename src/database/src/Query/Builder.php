@@ -1818,10 +1818,10 @@ class Builder
     /**
      * Add a "group by" clause to the query.
      *
-     * @param array|string ...$groups
+     * @param array|Expression|string ...$groups
      * @return $this
      */
-    public function groupBy(...$groups)
+    public function groupBy(...$groups): static
     {
         foreach ($groups as $group) {
             $this->groups = array_merge((array) $this->groups, Arr::wrap($group));
