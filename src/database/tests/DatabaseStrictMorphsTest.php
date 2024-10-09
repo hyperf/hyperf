@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Exception\ClassMorphViolationException;
+use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Model\Relations\Relation;
-use HyperfTest\Database\Stubs\Model\TestModel;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -53,11 +53,11 @@ class DatabaseStrictMorphsTest extends TestCase
         $model = new TestModel();
 
         Relation::morphMap([
-            'test' => TestModel::class,
+            'foo' => TestModel::class,
         ]);
 
         $morphName = $model->getMorphClass();
-        $this->assertSame('test', $morphName);
+        $this->assertSame('foo', $morphName);
     }
 
     public function testMapsCanBeEnforcedInOneMethod()
@@ -76,6 +76,7 @@ class DatabaseStrictMorphsTest extends TestCase
 
     public function testMapIgnoreGenericPivotClass()
     {
+        $this->expectNotToPerformAssertions();
         $pivotModel = new Pivot();
 
         $pivotModel->getMorphClass();
@@ -85,8 +86,16 @@ class DatabaseStrictMorphsTest extends TestCase
     {
         $this->expectException(ClassMorphViolationException::class);
 
-        $pivotModel = new Pivot();
+        $pivotModel = new TestPivotModel();
 
         $pivotModel->getMorphClass();
     }
+}
+
+class TestModel extends Model
+{
+}
+
+class TestPivotModel extends Pivot
+{
 }
