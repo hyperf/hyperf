@@ -1,5 +1,9 @@
 # v3.1.43 - TBD
 
+## Fixed
+
+- [#7068](https://github.com/hyperf/hyperf/pull/7068) Fixed bug `Str::trim` cannot support the default rules "\n\r\t\v" for `trim/ltrim/rtim`.
+
 ## Optimized
 
 - [#7082](https://github.com/hyperf/hyperf/pull/7082) Optimized the code of `Hyperf\Database\Query\Grammars\Grammar::compileUpdate()`.
