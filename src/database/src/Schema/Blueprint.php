@@ -553,6 +553,17 @@ class Blueprint
     }
 
     /**
+     * Create a new tiny text column on the table.
+     *
+     * @param string $column
+     * @return ColumnDefinition
+     */
+    public function tinyText($column)
+    {
+        return $this->addColumn('tinyText', $column);
+    }
+
+    /**
      * Create a new text column on the table.
      *
      * @param string $column
