@@ -23,8 +23,10 @@ use Hyperf\DbConnection\Connection;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\DbConnection\Stubs\ConnectionStub;
+use HyperfTest\DbConnection\Stubs\ConnectionStub2;
 use HyperfTest\DbConnection\Stubs\ContainerStub;
 use HyperfTest\DbConnection\Stubs\PDOStub;
+use HyperfTest\DbConnection\Stubs\PDOStub2;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -142,20 +144,16 @@ class ConnectionTest extends TestCase
                 },
             ];
 
-            Context::set(PDOStub::class . '::destruct', 0);
+            Context::set(PDOStub2::class . '::destruct', 0);
             $count = 0;
             foreach ($callables as $callable) {
                 foreach ($closes as $closure) {
-                    $connection = new ConnectionStub($container, $pool, $config);
-                    $connection->setPdo(new PDOStub('', '', '', []));
-                    var_dump('before_callable ' . Context::get(PDOStub::class . '::destruct', 0));
+                    $connection = new ConnectionStub2($container, $pool, $config);
+                    $connection->setPdo(new PDOStub2('', '', '', []));
                     $callable($connection);
-                    var_dump('after_callable ' . Context::get(PDOStub::class . '::destruct', 0));
-                    $this->assertSame($count, Context::get(PDOStub::class . '::destruct', 0));
-                    var_dump('before_closure ' . Context::get(PDOStub::class . '::destruct', 0));
+                    $this->assertSame($count, Context::get(PDOStub2::class . '::destruct', 0));
                     $closure($connection);
-                    var_dump('after_closure ' . Context::get(PDOStub::class . '::destruct', 0));
-                    $this->assertSame(++$count, Context::get(PDOStub::class . '::destruct', 0));
+                    $this->assertSame(++$count, Context::get(PDOStub2::class . '::destruct', 0));
                 }
             }
         }, 10);
