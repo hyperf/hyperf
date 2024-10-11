@@ -3,6 +3,7 @@
 ## Added
 
 - [#7063](https://github.com/hyperf/hyperf/pull/7063) Added methods `nullableUuidMorphs` `uuidMorphs` and `nullableNumericMorphs` to `Hyperf\Database\Schema\Blueprint`.
+- [#7070](https://github.com/hyperf/hyperf/pull/7070) Added `Blueprint::charset()` and `Blueprint::collation()`.
 - [#7071](https://github.com/hyperf/hyperf/pull/7071) Added `Hyperf\Database\Schema\Blueprint::tinyText()`.
 
 # v3.1.43 - 2024-10-10
@@ -38,7 +39,6 @@
 
 - [#7059](https://github.com/hyperf/hyperf/pull/7059) Added `Hyperf\Database\Schema\Schema::getForeignKeys()`.
 - [#7064](https://github.com/hyperf/hyperf/pull/7064) Support db type `enum` for `DoctrineConnection`.
-- [#7070](https://github.com/hyperf/hyperf/pull/7070) Added `Blueprint::charset()` and `Blueprint::collation()`.
 - [#7077](https://github.com/hyperf/hyperf/pull/7077) Added `ModelUpdateVisitor::getReturnType` method.
 
 # v3.1.40 - 2024-09-12
