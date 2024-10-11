@@ -61,6 +61,7 @@ class PDOStatementStubPHP8 extends PDOStatement
         return [];
     }
 
+    #[ReturnTypeWillChange]
     public function setFetchMode($mode, $className = null, ...$params)
     {
         return true;

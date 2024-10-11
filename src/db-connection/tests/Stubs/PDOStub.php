@@ -14,6 +14,7 @@ namespace HyperfTest\DbConnection\Stubs;
 
 use Hyperf\Context\Context;
 use PDO;
+use PDOStatement;
 use ReturnTypeWillChange;
 
 class PDOStub extends PDO
@@ -42,13 +43,13 @@ class PDOStub extends PDO
     }
 
     #[ReturnTypeWillChange]
-    public function prepare(string $query, array $options = [])
+    public function prepare(string $query, array $options = []): bool|PDOStatement
     {
         return new PDOStatementStubPHP8($query);
     }
 
     #[ReturnTypeWillChange]
-    public function exec($statement): false|int
+    public function exec(string $statement): bool|int
     {
         return 0;
     }
