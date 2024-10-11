@@ -28,7 +28,7 @@ class PDOStub extends PDO
     {
         $debug = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         $data = [
-            $debug[1] ?? null, $debug[2] ?? null, $debug[3] ?? null,
+            $debug[0] ?? null, $debug[1] ?? null, $debug[2] ?? null, $debug[3] ?? null,
         ];
         var_dump(Json::encode($data));
         $key = PDOStub::class . '::destruct';
