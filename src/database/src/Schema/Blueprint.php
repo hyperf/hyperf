@@ -569,6 +569,17 @@ class Blueprint
     }
 
     /**
+     * Create a new tiny text column on the table.
+     *
+     * @param string $column
+     * @return ColumnDefinition
+     */
+    public function tinyText($column)
+    {
+        return $this->addColumn('tinyText', $column);
+    }
+
+    /**
      * Create a new text column on the table.
      *
      * @param string $column
@@ -1170,6 +1181,42 @@ class Blueprint
         $this->string("{$name}_type");
 
         $this->unsignedBigInteger("{$name}_id");
+
+        $this->index(["{$name}_type", "{$name}_id"], $indexName);
+    }
+
+    /**
+     * Add nullable columns for a polymorphic table using numeric IDs (incremental).
+     */
+    public function nullableNumericMorphs(string $name, ?string $indexName = null): void
+    {
+        $this->string("{$name}_type")->nullable();
+
+        $this->unsignedBigInteger("{$name}_id")->nullable();
+
+        $this->index(["{$name}_type", "{$name}_id"], $indexName);
+    }
+
+    /**
+     * Add the proper columns for a polymorphic table using UUIDs.
+     */
+    public function uuidMorphs(string $name, ?string $indexName = null): void
+    {
+        $this->string("{$name}_type");
+
+        $this->uuid("{$name}_id");
+
+        $this->index(["{$name}_type", "{$name}_id"], $indexName);
+    }
+
+    /**
+     * Add nullable columns for a polymorphic table using UUIDs.
+     */
+    public function nullableUuidMorphs(string $name, ?string $indexName = null): void
+    {
+        $this->string("{$name}_type")->nullable();
+
+        $this->uuid("{$name}_id")->nullable();
 
         $this->index(["{$name}_type", "{$name}_id"], $indexName);
     }
