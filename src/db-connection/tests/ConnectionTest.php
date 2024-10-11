@@ -146,7 +146,18 @@ class ConnectionTest extends TestCase
             $count = 0;
             foreach ($callables as $callable) {
                 foreach ($closes as $closure) {
-                    $connection = new ConnectionStub($container, $pool, $config);
+                    $connection = new class($container, $pool, $config) extends ConnectionStub {
+                        /**
+                         * Refresh pdo and readPdo for current connection.
+                         */
+                        protected function refresh(\Hyperf\Database\Connection $connection)
+                        {
+                            $connection->disconnect();
+                            $connection->setPdo(new PDOStub('', '', '', []));
+                            $connection->setReadPdo(new PDOStub('', '', '', []));
+                            var_dump('refresh');
+                        }
+                    };
                     $connection->setPdo(new PDOStub('', '', '', []));
                     $callable($connection);
                     $this->assertSame($count, Context::get(PDOStub::class . '::destruct', 0));
