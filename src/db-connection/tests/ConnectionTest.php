@@ -23,8 +23,10 @@ use Hyperf\DbConnection\Connection;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\DbConnection\Stubs\ConnectionStub;
+use HyperfTest\DbConnection\Stubs\ConnectionStub2;
 use HyperfTest\DbConnection\Stubs\ContainerStub;
 use HyperfTest\DbConnection\Stubs\PDOStub;
+use HyperfTest\DbConnection\Stubs\PDOStub2;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -127,9 +129,9 @@ class ConnectionTest extends TestCase
             $config = $container->get(ConfigInterface::class)->get('databases.default');
 
             $callables = [
-                function ($connection) {
+                function (Connection $connection) {
                     $connection->selectOne('SELECT 1;');
-                }, function ($connection) {
+                }, function (Connection $connection) {
                     $connection->table('user')->leftJoin('user_ext', 'user.id', '=', 'user_ext.id')->get();
                 },
             ];
@@ -142,16 +144,16 @@ class ConnectionTest extends TestCase
                 },
             ];
 
-            Context::set(PDOStub::class . '::destruct', 0);
+            Context::set(PDOStub2::class . '::destruct', 0);
             $count = 0;
             foreach ($callables as $callable) {
                 foreach ($closes as $closure) {
-                    $connection = new ConnectionStub($container, $pool, $config);
-                    $connection->setPdo(new PDOStub('', '', '', []));
+                    $connection = new ConnectionStub2($container, $pool, $config);
+                    $connection->setPdo(new PDOStub2('', '', '', []));
                     $callable($connection);
-                    $this->assertSame($count, Context::get(PDOStub::class . '::destruct', 0));
+                    $this->assertSame($count, Context::get(PDOStub2::class . '::destruct', 0));
                     $closure($connection);
-                    $this->assertSame(++$count, Context::get(PDOStub::class . '::destruct', 0));
+                    $this->assertSame(++$count, Context::get(PDOStub2::class . '::destruct', 0));
                 }
             }
         }, 10);
