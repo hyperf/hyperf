@@ -73,7 +73,7 @@ class NsqConnection extends KeepaliveConnection
 
         return $socket;
     }
-    
+
     protected function heartbeat(): void
     {
         $heartbeatSecounds = $this->getHeartbeatSeconds();
@@ -88,7 +88,7 @@ class NsqConnection extends KeepaliveConnection
             }
         });
     }
-    
+
     /**
      * @param Socket $connection
      */
