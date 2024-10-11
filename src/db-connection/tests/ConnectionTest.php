@@ -144,16 +144,16 @@ class ConnectionTest extends TestCase
                 },
             ];
 
-            Context::set(PDOStub::class . '::destruct', 0);
+            Context::set(PDOStub2::class . '::destruct', 0);
             $count = 0;
             foreach ($callables as $callable) {
                 foreach ($closes as $closure) {
                     $connection = new ConnectionStub2($container, $pool, $config);
                     $connection->setPdo(new PDOStub2('', '', '', []));
                     $callable($connection);
-                    $this->assertSame($count, Context::get(PDOStub::class . '::destruct', 0));
+                    $this->assertSame($count, Context::get(PDOStub2::class . '::destruct', 0));
                     $closure($connection);
-                    $this->assertSame(++$count, Context::get(PDOStub::class . '::destruct', 0));
+                    $this->assertSame(++$count, Context::get(PDOStub2::class . '::destruct', 0));
                 }
             }
         }, 10);

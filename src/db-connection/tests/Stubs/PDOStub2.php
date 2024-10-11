@@ -25,7 +25,7 @@ class PDOStub2 extends PDO
 
     public function __destruct()
     {
-        $key = PDOStub::class . '::destruct';
+        $key = PDOStub2::class . '::destruct';
         $count = Context::get($key, 0);
         Context::set($key, $count + 1);
     }
