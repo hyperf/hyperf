@@ -1194,8 +1194,6 @@ class Connection implements ConnectionInterface
     protected function tryAgainIfCausedByLostConnection(QueryException $e, string $query, array $bindings, Closure $callback)
     {
         if ($this->causedByLostConnection($e->getPrevious())) {
-            // TESTING_TESTING
-            var_dump((string) $e);
             $this->reconnect();
 
             return $this->runQueryCallback($query, $bindings, $callback);

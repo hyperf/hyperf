@@ -19,20 +19,8 @@ use ReturnTypeWillChange;
 
 class PDOStub extends PDO
 {
-    public $dsn;
-
-    public $username;
-
-    public $passwd;
-
-    public $options;
-
-    public function __construct($dsn, $username, $passwd, $options)
+    public function __construct(public string $dsn, public ?string $username = null, public ?string $password = null, public ?array $options = null)
     {
-        $this->dsn = $dsn;
-        $this->username = $username;
-        $this->passwd = $passwd;
-        $this->options = $options;
     }
 
     public function __destruct()
