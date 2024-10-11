@@ -25,6 +25,7 @@ class PDOStub extends PDO
 
     public function __destruct()
     {
+        var_dump(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[1] ?? null);
         $key = PDOStub::class . '::destruct';
         $count = Context::get($key, 0);
         Context::set($key, $count + 1);
