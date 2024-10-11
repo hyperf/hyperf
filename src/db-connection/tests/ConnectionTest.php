@@ -23,8 +23,10 @@ use Hyperf\DbConnection\Connection;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\DbConnection\Stubs\ConnectionStub;
+use HyperfTest\DbConnection\Stubs\ConnectionStub2;
 use HyperfTest\DbConnection\Stubs\ContainerStub;
 use HyperfTest\DbConnection\Stubs\PDOStub;
+use HyperfTest\DbConnection\Stubs\PDOStub2;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -146,8 +148,8 @@ class ConnectionTest extends TestCase
             $count = 0;
             foreach ($callables as $callable) {
                 foreach ($closes as $closure) {
-                    $connection = new ConnectionStub($container, $pool, $config);
-                    $connection->setPdo(new PDOStub('', '', '', []));
+                    $connection = new ConnectionStub2($container, $pool, $config);
+                    $connection->setPdo(new PDOStub2('', '', '', []));
                     $callable($connection);
                     $this->assertSame($count, Context::get(PDOStub::class . '::destruct', 0));
                     $closure($connection);
