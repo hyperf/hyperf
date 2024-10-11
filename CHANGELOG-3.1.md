@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#7063](https://github.com/hyperf/hyperf/pull/7063) Added methods `nullableUuidMorphs` `uuidMorphs` and `nullableNumericMorphs` to `Hyperf\Database\Schema\Blueprint`.
 - [#7071](https://github.com/hyperf/hyperf/pull/7071) Added `Hyperf\Database\Schema\Blueprint::tinyText()`.
 
 # v3.1.43 - 2024-10-10
@@ -20,7 +21,6 @@
 ## Added
 
 - [#7025](https://github.com/hyperf/hyperf/pull/7025) Added `Hyperf\Database\Model\Relations\Relation::getMorphAlias()`.
-- [#7063](https://github.com/hyperf/hyperf/pull/7063) Added methods `nullableUuidMorphs` `uuidMorphs` and `nullableNumericMorphs` to `Hyperf\Database\Schema\Blueprint`.
 
 # v3.1.42 - 2024-09-25
 
