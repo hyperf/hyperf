@@ -292,7 +292,7 @@ return [
                 'class' => Handler\StreamHandler::class,
                 'constructor' => [
                     'stream' => BASE_PATH . '/runtime/logs/hyperf-debug.log',
-                    'level' => Level::Debug,
+                    'level' => Level::Info,
                 ],
                 'formatter' => [
                     'class' => Formatter\JsonFormatter::class,
@@ -345,7 +345,7 @@ return [
             'class' => Handler\StreamHandler::class,
             'constructor' => [
                 'stream' => BASE_PATH . '/runtime/logs/hyperf-debug.log',
-                'level' => Level::Debug,
+                'level' => Level::Info,
             ],
         ],
         'formatter' => [

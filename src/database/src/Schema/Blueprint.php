@@ -121,6 +121,22 @@ class Blueprint
     }
 
     /**
+     * Specify the character set that should be used for the table.
+     */
+    public function charset(string $charset): void
+    {
+        $this->charset = $charset;
+    }
+
+    /**
+     * Specify the collation that should be used for the table.
+     */
+    public function collation(string $collation): void
+    {
+        $this->collation = $collation;
+    }
+
+    /**
      * Get the raw SQL statements for the blueprint.
      *
      * @return array
@@ -550,6 +566,17 @@ class Blueprint
         $length = $length ?: Builder::$defaultStringLength;
 
         return $this->addColumn('string', $column, compact('length'));
+    }
+
+    /**
+     * Create a new tiny text column on the table.
+     *
+     * @param string $column
+     * @return ColumnDefinition
+     */
+    public function tinyText($column)
+    {
+        return $this->addColumn('tinyText', $column);
     }
 
     /**
@@ -1154,6 +1181,42 @@ class Blueprint
         $this->string("{$name}_type");
 
         $this->unsignedBigInteger("{$name}_id");
+
+        $this->index(["{$name}_type", "{$name}_id"], $indexName);
+    }
+
+    /**
+     * Add nullable columns for a polymorphic table using numeric IDs (incremental).
+     */
+    public function nullableNumericMorphs(string $name, ?string $indexName = null): void
+    {
+        $this->string("{$name}_type")->nullable();
+
+        $this->unsignedBigInteger("{$name}_id")->nullable();
+
+        $this->index(["{$name}_type", "{$name}_id"], $indexName);
+    }
+
+    /**
+     * Add the proper columns for a polymorphic table using UUIDs.
+     */
+    public function uuidMorphs(string $name, ?string $indexName = null): void
+    {
+        $this->string("{$name}_type");
+
+        $this->uuid("{$name}_id");
+
+        $this->index(["{$name}_type", "{$name}_id"], $indexName);
+    }
+
+    /**
+     * Add nullable columns for a polymorphic table using UUIDs.
+     */
+    public function nullableUuidMorphs(string $name, ?string $indexName = null): void
+    {
+        $this->string("{$name}_type")->nullable();
+
+        $this->uuid("{$name}_id")->nullable();
 
         $this->index(["{$name}_type", "{$name}_id"], $indexName);
     }
