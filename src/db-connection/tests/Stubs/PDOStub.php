@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace HyperfTest\DbConnection\Stubs;
 
-use Hyperf\Codec\Json;
-use Hyperf\Context\Context;
 use PDO;
 use PDOStatement;
 use ReturnTypeWillChange;
