@@ -3,6 +3,7 @@
 ## Added
 
 - [#7063](https://github.com/hyperf/hyperf/pull/7063) Added methods `nullableUuidMorphs` `uuidMorphs` and `nullableNumericMorphs` to `Hyperf\Database\Schema\Blueprint`.
+- [#7070](https://github.com/hyperf/hyperf/pull/7070) Added `Blueprint::charset()` and `Blueprint::collation()`.
 - [#7071](https://github.com/hyperf/hyperf/pull/7071) Added `Hyperf\Database\Schema\Blueprint::tinyText()`.
 
 # v3.1.43 - 2024-10-10
