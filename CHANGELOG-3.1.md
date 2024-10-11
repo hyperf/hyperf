@@ -1,5 +1,9 @@
 # v3.1.44 - TBD
 
+## Added
+
+- [#7071](https://github.com/hyperf/hyperf/pull/7071) Added `Hyperf\Database\Schema\Blueprint::tinyText()`.
+
 # v3.1.43 - 2024-10-10
 
 ## Fixed
