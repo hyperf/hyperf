@@ -189,7 +189,6 @@ abstract class Grammar
      */
     protected function wrapSegments($segments): string
     {
-        var_dump($segments);
         return collect($segments)->map(function ($segment, $key) use ($segments) {
             return $key == 0 && count($segments) > 1
                 ? $this->wrapTable($segment)
