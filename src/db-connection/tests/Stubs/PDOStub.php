@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\DbConnection\Stubs;
 
+use Hyperf\Codec\Json;
 use Hyperf\Context\Context;
 use PDO;
 use PDOStatement;
@@ -25,7 +26,11 @@ class PDOStub extends PDO
 
     public function __destruct()
     {
-        var_dump(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[1] ?? null);
+        $debug = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $data = [
+            $debug[1] ?? null, $debug[2] ?? null, $debug[3] ?? null,
+        ];
+        var_dump(Json::encode($data));
         $key = PDOStub::class . '::destruct';
         $count = Context::get($key, 0);
         Context::set($key, $count + 1);
