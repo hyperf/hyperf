@@ -18,4 +18,4 @@ jobs:
           # git fetch -p origin
           # git for-each-ref --format 'delete %(refname)' refs/pull | git update-ref --stdin
           # git push --mirror
-          git push --prune "$DESTINATION_REPO" "refs/heads/*:refs/heads/*" "refs/tags/*:refs/tags/*"
+          git push -f --prune "$DESTINATION_REPO" "refs/heads/*:refs/heads/*" "refs/tags/*:refs/tags/*"
