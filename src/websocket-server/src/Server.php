@@ -149,6 +149,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
             if (empty($class)) {
                 $this->logger->warning('WebSocket handshake failed, because the class does not exists.');
+                WsContext::release($fd);
                 return;
             }
 
