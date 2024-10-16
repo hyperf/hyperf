@@ -1341,5 +1341,16 @@ class CollectionTest extends TestCase
             'd' => ['id' => 4, 'name' => 'd'],
             'e' => ['id' => 5, 'name' => 'e'],
         ]), (string) $dataMany);
+
+        $dataManyNull = (new $collection(
+            [
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 1, 'name' => null],
+            ]
+        ))->sortBy([['id', 'desc'], ['name', 'desc']], SORT_NATURAL);
+        $this->assertEquals(json_encode([
+            ['id' => 2, 'name' => 'b'],
+            ['id' => 1, 'name' => null],
+        ]), json_encode($dataManyNull));
     }
 }
