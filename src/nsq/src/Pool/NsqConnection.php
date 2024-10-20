@@ -74,6 +74,21 @@ class NsqConnection extends KeepaliveConnection
         return $socket;
     }
 
+    protected function heartbeat(): void
+    {
+        $heartbeatSecounds = $this->getHeartbeatSeconds();
+        if ($heartbeatSecounds <= 0) {
+            return;
+        }
+        Timer::tick((int) $this->getHeartbeatSeconds() * 1000, function () {
+            if ($this->isTimeout()) {
+                $this->call(function ($connect) {
+                    $connect->send($this->builder->buildNop());
+                }, false);
+            }
+        });
+    }
+
     /**
      * @param Socket $connection
      */
