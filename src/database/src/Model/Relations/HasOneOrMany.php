@@ -12,9 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Relations;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\Stringable\Str;
 use Traversable;
 
 use function Hyperf\Tappable\tap;
@@ -391,7 +393,11 @@ abstract class HasOneOrMany extends Relation
         $foreign = $this->getForeignKeyName();
 
         return $results->mapToDictionary(function ($result) use ($foreign) {
-            return [$result->{$foreign} => $result];
+            $key = $result->{$foreign};
+            if (Str::contains($foreign, '->')) {
+                $key = Arr::get($result->attributesToArray(), Str::replace('->', '.', $foreign));
+            }
+            return [$key => $result];
         })->all();
     }
 
