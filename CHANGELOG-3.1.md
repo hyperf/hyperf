@@ -7,6 +7,10 @@
 - [#7071](https://github.com/hyperf/hyperf/pull/7071) Added `Hyperf\Database\Schema\Blueprint::tinyText()`.
 - [#7110](https://github.com/hyperf/hyperf/pull/7110) Added support for disallowing class morphs.
 
+## Fixed
+
+- [#7124](https://github.com/hyperf/hyperf/pull/7124) Fixed bug that `sortByMany` value is null when using `SORT_NATURAL`.
+
 # v3.1.43 - 2024-10-10
 
 ## Fixed
