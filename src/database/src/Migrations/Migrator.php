@@ -32,7 +32,7 @@ class Migrator
      *
      * @var string
      */
-    protected $connection;
+    protected $connection = 'default';
 
     /**
      * The paths to all of the migration files.
