@@ -230,11 +230,8 @@ use Hyperf\WebSocketServer\Sender;
 #[AutoController]
 class ServerController
 {
-    /**
-     * @var Sender
-     */
     #[Inject]
-    protected $sender;
+    protected Sender $sender;
 
     public function close(int $fd)
     {
