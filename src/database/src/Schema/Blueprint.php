@@ -409,8 +409,9 @@ class Blueprint
      * @param array|string $columns
      * @param string $name
      * @param null|string $algorithm
+     * @return Fluent
      */
-    public function unique($columns, $name = null, $algorithm = null): Fluent
+    public function unique($columns, $name = null, $algorithm = null)
     {
         return $this->indexCommand('unique', $columns, $name, $algorithm);
     }
@@ -473,8 +474,9 @@ class Blueprint
      * Create a new auto-incrementing integer (4-byte) column on the table.
      *
      * @param string $column
+     * @return ColumnDefinition
      */
-    public function integerIncrements($column): ColumnDefinition
+    public function integerIncrements($column)
     {
         return $this->unsignedInteger($column, true);
     }
@@ -483,8 +485,9 @@ class Blueprint
      * Create a new auto-incrementing tiny integer (1-byte) column on the table.
      *
      * @param string $column
+     * @return ColumnDefinition
      */
-    public function tinyIncrements($column): ColumnDefinition
+    public function tinyIncrements($column)
     {
         return $this->unsignedTinyInteger($column, true);
     }
