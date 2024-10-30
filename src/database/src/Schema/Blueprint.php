@@ -50,10 +50,8 @@ class Blueprint
 
     /**
      * The column to add new columns after.
-     *
-     * @var ?string
      */
-    public ?string $after;
+    public string $after;
 
     /**
      * The comment of the table.
@@ -1585,7 +1583,7 @@ class Blueprint
         if ($this->after) {
             $definition->after($this->after);
 
-            $this->after = $definition->name;
+            $this->after = (string) $definition->name;
         }
 
         return $definition;
