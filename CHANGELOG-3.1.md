@@ -1,5 +1,9 @@
 # v3.1.45 - TBD
 
+## Fixed
+
+- [#7133](https://github.com/hyperf/hyperf/pull/7133) Fixed bug that the connection of migrations cannot work excepted.
+
 # v3.1.44 - 2024-10-24
 
 ## Added
