@@ -15,10 +15,10 @@ composer require hyperf/async-queue
 > 暫時只支持 `Redis Driver` 驅動。
 
 |       配置       |   類型    |                   默認值                    |                  備註                   |
-|:----------------:|:---------:|:-------------------------------------------:|:---------------------------------------:|
+| :--------------: | :-------: | :-----------------------------------------: | :-------------------------------------: |
 |      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   無                    |
 |     channel      |  string   |                    queue                    |                隊列前綴                 |
-|    redis.pool    |  string   |                    default                  |                redis 連接池              |
+|    redis.pool    |  string   |                   default                   |              redis 連接池               |
 |     timeout      |    int    |                      2                      |           pop 消息的超時時間            |
 |  retry_seconds   | int,array |                      5                      |           失敗後重新嘗試間隔            |
 |  handle_timeout  |    int    |                     10                      |            消息處理超時時間             |
@@ -376,11 +376,8 @@ use Hyperf\HttpServer\Annotation\AutoController;
 #[AutoController]
 class QueueController extends AbstractController
 {
-    /**
-     * @var QueueService
-     */
     #[Inject]
-    protected $service;
+    protected QueueService $service;
 
     /**
      * 註解模式投遞消息
@@ -427,7 +424,7 @@ php bin/hyperf.php queue:flush {queue_name} -Q {channel_name}
 ## 事件
 
 |   事件名稱   |        觸發時機         |                         備註                         |
-|:------------:|:-----------------------:|:----------------------------------------------------:|
+| :----------: | :---------------------: | :--------------------------------------------------: |
 | BeforeHandle |     處理消息前觸發      |                                                      |
 | AfterHandle  |     處理消息後觸發      |                                                      |
 | FailedHandle |   處理消息失敗後觸發    |                                                      |
@@ -470,7 +467,7 @@ return [
 任務執行流轉流程主要包括以下幾個隊列:
 
 |  隊列名  |                   備註                    |
-|:--------:|:-----------------------------------------:|
+| :------: | :---------------------------------------: |
 | waiting  |              等待消費的隊列               |
 | reserved |              正在消費的隊列               |
 | delayed  |              延遲消費的隊列               |

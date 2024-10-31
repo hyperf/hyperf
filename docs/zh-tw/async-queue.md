@@ -15,10 +15,10 @@ composer require hyperf/async-queue
 > 暫時只支援 `Redis Driver` 驅動。
 
 |       配置       |   型別    |                   預設值                    |                  備註                   |
-|:----------------:|:---------:|:-------------------------------------------:|:---------------------------------------:|
+| :--------------: | :-------: | :-----------------------------------------: | :-------------------------------------: |
 |      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   無                    |
 |     channel      |  string   |                    queue                    |                佇列字首                 |
-|    redis.pool    |  string   |                    default                  |                redis 連線池              |
+|    redis.pool    |  string   |                   default                   |              redis 連線池               |
 |     timeout      |    int    |                      2                      |           pop 訊息的超時時間            |
 |  retry_seconds   | int,array |                      5                      |           失敗後重新嘗試間隔            |
 |  handle_timeout  |    int    |                     10                      |            訊息處理超時時間             |
@@ -376,11 +376,8 @@ use Hyperf\HttpServer\Annotation\AutoController;
 #[AutoController]
 class QueueController extends AbstractController
 {
-    /**
-     * @var QueueService
-     */
     #[Inject]
-    protected $service;
+    protected QueueService $service;
 
     /**
      * 註解模式投遞訊息
@@ -426,12 +423,12 @@ php bin/hyperf.php queue:flush {queue_name} -Q {channel_name}
 
 ## 事件
 
-|   事件名稱   |        觸發時機         |                         備註                         |
-|:------------:|:-----------------------:|:----------------------------------------------------:|
-| BeforeHandle |     處理訊息前觸發      |                                                      |
-| AfterHandle  |     處理訊息後觸發      |                                                      |
-| FailedHandle |   處理訊息失敗後觸發    |                                                      |
-| RetryHandle  |   重試處理訊息前觸發    |                                                      |
+|   事件名稱   |        觸發時機         |                          備註                          |
+| :----------: | :---------------------: | :----------------------------------------------------: |
+| BeforeHandle |     處理訊息前觸發      |                                                        |
+| AfterHandle  |     處理訊息後觸發      |                                                        |
+| FailedHandle |   處理訊息失敗後觸發    |                                                        |
+| RetryHandle  |   重試處理訊息前觸發    |                                                        |
 | QueueLength  | 每處理 500 個訊息後觸發 | 使用者可以監聽此事件，判斷失敗或超時佇列是否有訊息積壓 |
 
 ### QueueLengthListener
@@ -470,7 +467,7 @@ return [
 任務執行流轉流程主要包括以下幾個佇列:
 
 |  佇列名  |                   備註                    |
-|:--------:|:-----------------------------------------:|
+| :------: | :---------------------------------------: |
 | waiting  |              等待消費的佇列               |
 | reserved |              正在消費的佇列               |
 | delayed  |              延遲消費的佇列               |
