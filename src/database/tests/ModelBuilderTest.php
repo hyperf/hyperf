@@ -88,7 +88,7 @@ class ModelBuilderTest extends TestCase
 
     public function testFindOrMethod()
     {
-        $builder = Mockery::mock(Builder::class.'[first]', [$this->getMockQueryBuilder()]);
+        $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
         $model = $this->getMockModel();
         $model->shouldReceive('getKeyType')->andReturn('int');
         $builder->setModel($model);
@@ -105,7 +105,7 @@ class ModelBuilderTest extends TestCase
 
     public function testFindOrMethodWithMany()
     {
-        $builder = Mockery::mock(Builder::class.'[get]', [$this->getMockQueryBuilder()]);
+        $builder = Mockery::mock(Builder::class . '[get]', [$this->getMockQueryBuilder()]);
         $model1 = $this->getMockModel();
         $model2 = $this->getMockModel();
         $model1->shouldReceive('getKeyType')->andReturn('int');
@@ -133,7 +133,7 @@ class ModelBuilderTest extends TestCase
 
     public function testFindOrMethodWithManyUsingCollection()
     {
-        $builder = Mockery::mock(Builder::class.'[get]', [$this->getMockQueryBuilder()]);
+        $builder = Mockery::mock(Builder::class . '[get]', [$this->getMockQueryBuilder()]);
         $model1 = $this->getMockModel();
         $model2 = $this->getMockModel();
         $model1->shouldReceive('getKeyType')->andReturn('int');
@@ -141,8 +141,8 @@ class ModelBuilderTest extends TestCase
         $builder->setModel($model1);
         $arg1 = Collection::make([1, 2]);
         $arg2 = Collection::make([1, 2, 3]);
-        $builder->getQuery()->shouldReceive('whereIn')->with('foo_table.foo',$arg1 )->twice();
-        $builder->getQuery()->shouldReceive('whereIn')->with('foo_table.foo',$arg2)->once();
+        $builder->getQuery()->shouldReceive('whereIn')->with('foo_table.foo', $arg1)->twice();
+        $builder->getQuery()->shouldReceive('whereIn')->with('foo_table.foo', $arg2)->once();
         $builder->shouldReceive('get')->andReturn(new Collection([$model1, $model2]))->once();
         $builder->shouldReceive('get')->with(['column'])->andReturn(new Collection([$model1, $model2]))->once();
         $builder->shouldReceive('get')->andReturn(null)->once();
