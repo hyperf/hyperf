@@ -492,16 +492,15 @@ class Builder
      *
      * @template TValue
      *
-     * @param  mixed  $id
-     * @param  (\Closure(): TValue)|list<string>|string  $columns
-     * @param  (\Closure(): TValue)|null  $callback
+     * @param (Closure(): TValue)|list<string>|string $columns
+     * @param null|(Closure(): TValue) $callback
      * @return (
      *     $id is (Arrayable<array-key, mixed>|array)
      *     ? Collection<int, TModel>
      *     : TModel|TValue
      * )
      */
-    public function findOr(mixed $id,array|string|Closure $columns = ['*'], ?Closure $callback = null): mixed
+    public function findOr(mixed $id, array|Closure|string $columns = ['*'], ?Closure $callback = null): mixed
     {
         if ($columns instanceof Closure) {
             $callback = $columns;
