@@ -1,5 +1,9 @@
 # v3.1.45 - TBD
 
+## Added
+
+- [#7141](https://github.com/hyperf/hyperf/pull/7141) Added method `Hyperf\Collection\Arr::shuffleAssoc`.
+
 ## Fixed
 
 - [#7133](https://github.com/hyperf/hyperf/pull/7133) Fixed bug that the connection of migrations cannot work excepted.

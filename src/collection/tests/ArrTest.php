@@ -228,6 +228,81 @@ class ArrTest extends TestCase
         );
     }
 
+    public function testShuffleAssoc(): void
+    {
+        $source = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
+
+        $shuffled = Arr::shuffleAssoc($source);
+
+        $this->assertNotSame($source, $shuffled);
+        $this->assertSameSize($source, $shuffled);
+        $this->assertSameSize($source, array_intersect_assoc($source, $shuffled));
+
+        $source = ['a', 'b', 'c', 'd'];
+
+        $shuffled = Arr::shuffleAssoc($source);
+
+        $this->assertNotSame($source, $shuffled);
+        $this->assertSameSize($source, $shuffled);
+        $this->assertSameSize($source, array_intersect_assoc($source, $shuffled));
+
+        $source = [1, 2, 3, 4];
+
+        $shuffled = Arr::shuffleAssoc($source);
+
+        $this->assertNotSame($source, $shuffled);
+        $this->assertSameSize($source, $shuffled);
+        $this->assertSameSize($source, array_intersect_assoc($source, $shuffled));
+    }
+
+    public function testShuffleAssocWithSeed(): void
+    {
+        $source = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
+
+        $this->assertSame(
+            Arr::shuffleAssoc($source, 1234),
+            Arr::shuffleAssoc($source, 1234)
+        );
+        $this->assertNotSame(
+            Arr::shuffleAssoc($source),
+            Arr::shuffleAssoc($source)
+        );
+        $this->assertNotSame(
+            $source,
+            Arr::shuffleAssoc($source, 1234)
+        );
+
+        $source = ['a', 'b', 'c', 'd'];
+
+        $this->assertSame(
+            Arr::shuffleAssoc($source, 1234),
+            Arr::shuffleAssoc($source, 1234)
+        );
+        $this->assertNotSame(
+            Arr::shuffleAssoc($source),
+            Arr::shuffleAssoc($source)
+        );
+        $this->assertNotSame(
+            $source,
+            Arr::shuffleAssoc($source, 1234)
+        );
+
+        $source = [1, 2, 3, 4];
+
+        $this->assertSame(
+            Arr::shuffleAssoc($source, 1234),
+            Arr::shuffleAssoc($source, 1234)
+        );
+        $this->assertNotSame(
+            Arr::shuffleAssoc($source),
+            Arr::shuffleAssoc($source)
+        );
+        $this->assertNotSame(
+            $source,
+            Arr::shuffleAssoc($source, 1234)
+        );
+    }
+
     public function testEmptyShuffle(): void
     {
         $this->assertEquals([], Arr::shuffle([]));
