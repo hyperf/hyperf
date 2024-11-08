@@ -456,6 +456,22 @@ class ModelCollectionTest extends TestCase
         $this->assertEquals(['hidden', 'visible'], $c[0]->getHidden());
     }
 
+    public function testSetVisibleReplacesVisibleOnEntireCollection()
+    {
+        $c = new Collection([new TestEloquentCollectionModel()]);
+        $c = $c->setVisible(['hidden']);
+
+        $this->assertEquals(['hidden'], $c[0]->getVisible());
+    }
+
+    public function testSetHiddenReplacesHiddenOnEntireCollection()
+    {
+        $c = new Collection([new TestEloquentCollectionModel()]);
+        $c = $c->setHidden(['visible']);
+
+        $this->assertEquals(['visible'], $c[0]->getHidden());
+    }
+
     public function testMakeVisibleRemovesHiddenFromEntireCollection()
     {
         $c = new Collection([new TestEloquentCollectionModel()]);
