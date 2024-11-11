@@ -1298,6 +1298,38 @@ trait ValidatesAttributes
     }
 
     /**
+     * Indicate that an attribute should be excluded when another attribute has a given value.
+     *
+     * @param mixed $value
+     */
+    public function validateExcludeIf(string $attribute, $value, array $parameters): bool
+    {
+        $this->requireParameterCount(2, $parameters, 'exclude_if');
+
+        if (! Arr::has($this->data, $parameters[0])) {
+            return true;
+        }
+
+        [$values, $other] = $this->parseDependentRuleParameters($parameters);
+
+        return ! in_array($other, $values, is_bool($other) || is_null($other));
+    }
+
+    /**
+     * Indicate that an attribute should be excluded when another attribute does not have a given value.
+     *
+     * @param mixed $value
+     */
+    public function validateExcludeUnless(string $attribute, $value, array $parameters): bool
+    {
+        $this->requireParameterCount(2, $parameters, 'exclude_unless');
+
+        [$values, $other] = $this->parseDependentRuleParameters($parameters);
+
+        return in_array($other, $values, is_bool($other) || is_null($other));
+    }
+
+    /**
      * Validate that an attribute exists when another attribute does not have a given value.
      *
      * @param mixed $value
@@ -1312,6 +1344,22 @@ trait ValidatesAttributes
 
         if (! in_array($data, $values)) {
             return $this->validateRequired($attribute, $value);
+        }
+
+        return true;
+    }
+
+    /**
+     * Indicate that an attribute should be excluded when another attribute is missing.
+     *
+     * @param mixed $value
+     */
+    public function validateExcludeWithout(string $attribute, $value, array $parameters): bool
+    {
+        $this->requireParameterCount(1, $parameters, 'exclude_without');
+
+        if ($this->anyFailingRequired($parameters)) {
+            return false;
         }
 
         return true;

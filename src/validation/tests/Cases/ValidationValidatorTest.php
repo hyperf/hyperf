@@ -4948,6 +4948,48 @@ class ValidationValidatorTest extends TestCase
         );
     }
 
+    public function testValidateExcludeIf()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'bar', 'baz' => 'qux'], ['foo' => 'required', 'baz' => 'exclude_if:foo,bar']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => 'bar', 'baz' => 'qux'], ['foo' => 'required', 'baz' => 'exclude_if:foo,baz']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => true, 'baz' => 'qux'], ['foo' => 'required', 'baz' => 'exclude_if:foo,true']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => true, 'baz' => 'qux'], ['foo' => 'required', 'baz' => 'exclude_if:foo,false']);
+        $this->assertTrue($v->passes());
+    }
+
+    public function testValidateExcludeUnless()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'bar', 'baz' => 'qux'], ['foo' => 'required', 'baz' => 'exclude_unless:foo,bar,baz']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => 'bar', 'baz' => 'qux'], ['foo' => 'required', 'baz' => 'exclude_unless:foo,baz,qux']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => 1, 'baz' => 'qux'], ['foo' => 'required', 'baz' => 'exclude_unless:foo,1,2']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => 1, 'baz' => 'qux'], ['foo' => 'required', 'baz' => 'exclude_unless:foo,2,3']);
+        $this->assertFalse($v->passes());
+    }
+
+    public function testValidateExcludeWithout()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'bar', 'baz' => 'qux'], ['foo' => 'required', 'baz' => 'exclude_without:foo']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['baz' => 'qux'], ['foo' => 'required', 'baz' => 'exclude_without:foo']);
+        $this->assertFalse($v->passes());
+    }
+
     protected function getTranslator()
     {
         return m::mock(TranslatorContract::class);
