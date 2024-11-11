@@ -239,8 +239,8 @@
 
 ## Added
 
-- [#6809](https://github.com/hyperf/hyperf/pull/6809) Added cursor paginator for `hyperf/database`.
 - [#7148](https://github.com/hyperf/hyperf/pull/7148) Added `exclude` rule for `hyperf/validation`.
+- [#6809](https://github.com/hyperf/hyperf/pull/6809) Added cursor paginator for `hyperf/database`.
 - [#6811](https://github.com/hyperf/hyperf/pull/6811) Added `list` rule for `hyperf/validation`.
 - [#6814](https://github.com/hyperf/hyperf/pull/6814) Added method `Model::query()->touch()` which used to update timestamps.
 - [#6815](https://github.com/hyperf/hyperf/pull/6815) Added method `Hyperf\Database\Model\Builder::qualifyColumns()`.
