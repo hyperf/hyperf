@@ -1298,6 +1298,14 @@ trait ValidatesAttributes
     }
 
     /**
+     * Indicate that an attribute is excluded.
+     */
+    public function validateExclude(): bool
+    {
+        return false;
+    }
+
+    /**
      * Indicate that an attribute should be excluded when another attribute has a given value.
      *
      * @param mixed $value
@@ -1347,6 +1355,22 @@ trait ValidatesAttributes
         }
 
         return true;
+    }
+
+    /**
+     * Indicate that an attribute should be excluded when another attribute presents.
+     *
+     * @param mixed $value
+     */
+    public function validateExcludeWith(string $attribute, $value, array $parameters): bool
+    {
+        $this->requireParameterCount(1, $parameters, 'exclude_with');
+
+        if (! Arr::has($this->data, $parameters[0])) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
