@@ -424,7 +424,7 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['email' => null], ['email' => 'email']);
         $this->assertFalse($v->passes());
         $v->messages()->setFormat(':message');
-        $this->assertEquals(' is not a valid email', $v->messages()->first('email'));
+        $this->assertEquals('empty is not a valid email', $v->messages()->first('email'));
     }
 
     public function testDisplayableValuesAreReplaced()
