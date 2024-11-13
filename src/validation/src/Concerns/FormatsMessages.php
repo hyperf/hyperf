@@ -94,10 +94,22 @@ trait FormatsMessages
             return $this->customValues[$attribute][$value];
         }
 
+        if (is_array($value)) {
+            return 'array';
+        }
+
         $key = "validation.values.{$attribute}.{$value}";
 
         if (($line = $this->translator->trans($key)) !== $key) {
             return $line;
+        }
+
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
+        if (is_null($value)) {
+            return 'empty';
         }
 
         return (string) $value;
