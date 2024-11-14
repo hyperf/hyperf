@@ -287,7 +287,10 @@ class ArrTest extends TestCase
             Arr::shuffleAssoc($source, 1234)
         );
 
-        $source = [1, 2, 3, 4];
+        $source = [];
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[] = $i;
+        }
 
         $this->assertSame(
             Arr::shuffleAssoc($source, 1234),
