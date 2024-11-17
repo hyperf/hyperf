@@ -199,6 +199,22 @@ class Blueprint
     }
 
     /**
+     * Specify the storage engine that should be used for the table.
+     */
+    public function engine(string $engine): void
+    {
+        $this->engine = $engine;
+    }
+
+    /**
+     * Specify that the InnoDB storage engine should be used for the table (MySQL only).
+     */
+    public function innoDb(): void
+    {
+        $this->engine('InnoDB');
+    }
+
+    /**
      * Set the table comment.
      */
     public function comment(string $comment)
