@@ -1,4 +1,12 @@
-# v3.1.45 - TBD
+# v3.1.46 - TBD
+
+## Added
+
+- [#7148](https://github.com/hyperf/hyperf/pull/7148) Added `exclude` rules for `hyperf/validation`.
+- [#7150](https://github.com/hyperf/hyperf/pull/7150) Added missing methods (`accepted_if`, `ascii`, `date_equals`...) to validation messages.
+- [#7156](https://github.com/hyperf/hyperf/pull/7156) Added method `Hyperf\Database\Schema\Blueprint::engine()`.
+
+# v3.1.45 - 2024-11-14
 
 ## Added
 

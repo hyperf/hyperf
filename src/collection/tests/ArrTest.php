@@ -230,7 +230,11 @@ class ArrTest extends TestCase
 
     public function testShuffleAssoc(): void
     {
-        $source = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
+        $source = [];
+        $value = 'a';
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[$value++] = $i;
+        }
 
         $shuffled = Arr::shuffleAssoc($source);
 
@@ -238,7 +242,11 @@ class ArrTest extends TestCase
         $this->assertSameSize($source, $shuffled);
         $this->assertSameSize($source, array_intersect_assoc($source, $shuffled));
 
-        $source = ['a', 'b', 'c', 'd'];
+        $source = [];
+        $value = 'a';
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[] = $value++;
+        }
 
         $shuffled = Arr::shuffleAssoc($source);
 
@@ -246,7 +254,10 @@ class ArrTest extends TestCase
         $this->assertSameSize($source, $shuffled);
         $this->assertSameSize($source, array_intersect_assoc($source, $shuffled));
 
-        $source = [1, 2, 3, 4];
+        $source = [];
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[] = $i;
+        }
 
         $shuffled = Arr::shuffleAssoc($source);
 
@@ -257,7 +268,11 @@ class ArrTest extends TestCase
 
     public function testShuffleAssocWithSeed(): void
     {
-        $source = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
+        $source = [];
+        $value = 'a';
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[$value++] = $i;
+        }
 
         $this->assertSame(
             Arr::shuffleAssoc($source, 1234),
@@ -272,7 +287,11 @@ class ArrTest extends TestCase
             Arr::shuffleAssoc($source, 1234)
         );
 
-        $source = ['a', 'b', 'c', 'd'];
+        $source = [];
+        $value = 'a';
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[] = $value++;
+        }
 
         $this->assertSame(
             Arr::shuffleAssoc($source, 1234),
@@ -287,7 +306,10 @@ class ArrTest extends TestCase
             Arr::shuffleAssoc($source, 1234)
         );
 
-        $source = [1, 2, 3, 4];
+        $source = [];
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[] = $i;
+        }
 
         $this->assertSame(
             Arr::shuffleAssoc($source, 1234),
