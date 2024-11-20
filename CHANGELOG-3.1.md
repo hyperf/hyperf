@@ -1,4 +1,13 @@
-# v3.1.45 - TBD
+# v3.1.46 - TBD
+
+# v3.1.45 - 2024-11-14
+
+## Added
+
+- [#7141](https://github.com/hyperf/hyperf/pull/7141) Added method `Hyperf\Collection\Arr::shuffleAssoc`.
+- [#7143](https://github.com/hyperf/hyperf/pull/7143) Added method `Hyperf\Database\Model\Builder::findOr`.
+- [#7147](https://github.com/hyperf/hyperf/pull/7147) Added `setVisible` and `setHidden` into `Model\Collection`.
+- [#7149](https://github.com/hyperf/hyperf/pull/7149) Support to define `servers` and `info` for `swagger`.
 
 ## Fixed
 
