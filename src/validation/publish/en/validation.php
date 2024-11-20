@@ -111,6 +111,11 @@ return [
     'required_with_all' => 'The :attribute field is required when :values is present.',
     'required_without' => 'The :attribute field is required when :values is not present.',
     'required_without_all' => 'The :attribute field is required when none of :values are present.',
+    'exclude' => 'The :attribute field is excluded.',
+    'exclude_if' => 'The :attribute field is excluded when :other is :value.',
+    'exclude_unless' => 'The :attribute field is excluded unless :other is in :values.',
+    'exclude_with' => 'The :attribute field is excluded when :values is present.',
+    'exclude_without' => 'The :attribute field is excluded when :values is not present.',
     'same' => 'The :attribute and :other must match.',
     'size' => [
         'numeric' => 'The :attribute must be :size.',
