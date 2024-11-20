@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#7148](https://github.com/hyperf/hyperf/pull/7148) Added `exclude` rule for `hyperf/validation`.
+- [#7148](https://github.com/hyperf/hyperf/pull/7148) Added `exclude` rules for `hyperf/validation`.
 
 # v3.1.45 - 2024-11-14
 
