@@ -82,16 +82,17 @@ use Throwable;
 
 class BusinessException extends ServerException
 {
-    public function __construct(int|ErrorCode $code = 0, string $message = null, Throwable $previous = null)
+    public function __construct(ErrorCode|int $code = 0, ?string $message = null, ?Throwable $previous = null)
     {
         if (is_null($message)) {
-            if($code instanceof ErrorCode){
+            if ($code instanceof ErrorCode) {
                 $message = $code->getMessage();
-                $code = $code->value;
-            } else{
+            } else {
                 $message = ErrorCode::getMessage($code);
             }
         }
+
+        $code = $code instanceof ErrorCode ? $code->value : $code;
 
         parent::__construct($message, $code, $previous);
     }
