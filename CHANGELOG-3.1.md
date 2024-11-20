@@ -3,6 +3,7 @@
 ## Added
 
 - [#7148](https://github.com/hyperf/hyperf/pull/7148) Added `exclude` rules for `hyperf/validation`.
+- [#7150](https://github.com/hyperf/hyperf/pull/7150) Added missing methods (`accepted_if`, `ascii`, `date_equals`...) to validation messages.
 
 # v3.1.45 - 2024-11-14
 

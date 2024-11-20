@@ -2009,4 +2009,15 @@ trait ValidatesAttributes
             $this->numericRules[] = $rule;
         }
     }
+
+    /**
+     * Trim the value if it is a string.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function trim($value)
+    {
+        return is_string($value) ? trim($value) : $value;
+    }
 }

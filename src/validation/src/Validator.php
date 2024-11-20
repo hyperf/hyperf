@@ -136,18 +136,19 @@ class Validator implements ValidatorContract
      * The validation rules that imply the field is required.
      */
     protected array $implicitRules = [
-        'Required', 'Filled', 'RequiredWith', 'RequiredWithAll', 'RequiredWithout',
-        'RequiredWithoutAll', 'RequiredIf', 'RequiredUnless', 'Accepted', 'Present',
+        'Required', 'Filled', 'Missing', 'MissingIf', 'MissingUnless', 'MissingWith',
+        'MissingWithAll', 'RequiredWith', 'RequiredWithAll', 'RequiredWithout', 'RequiredWithoutAll',
+        'RequiredIf', 'RequiredUnless', 'Accepted', 'AcceptedIf', 'Declined', 'DeclinedIf', 'Present',
     ];
 
     /**
      * The validation rules which depend on other fields as parameters.
      */
     protected array $dependentRules = [
-        'RequiredWith', 'RequiredWithAll', 'RequiredWithout', 'RequiredWithoutAll',
-        'RequiredIf', 'RequiredUnless', 'Confirmed', 'Same', 'Different', 'Unique',
-        'Before', 'After', 'BeforeOrEqual', 'AfterOrEqual', 'Gt', 'Lt', 'Gte', 'Lte',
-        'Prohibits', 'ExcludeIf', 'ExcludeUnless', 'ExcludeWith', 'ExcludeWithout',
+        'AcceptedIf', 'DeclinedIf', 'RequiredWith', 'RequiredWithAll', 'RequiredWithout',
+        'RequiredWithoutAll', 'RequiredIf', 'RequiredUnless', 'Confirmed', 'Same', 'Different',
+        'Unique', 'Before', 'After', 'BeforeOrEqual', 'AfterOrEqual', 'Gt', 'Lt', 'Gte', 'Lte',
+        'Prohibits', 'ExcludeIf', 'ExcludeUnless', 'ExcludeWith', 'ExcludeWithout', 'MissingIf', 'MissingUnless', 'MissingWith', 'MissingWithAll',
     ];
 
     /**
