@@ -37,10 +37,12 @@ trait RunTestsInCoroutine
         /* @phpstan-ignore-next-line */
         \Swoole\Coroutine\run(function () use (&$testResult, &$exception, $arguments) {
             try {
+                $this->invokeBeforeHookMethods();
                 $testResult = $this->{$this->realTestName}(...$arguments);
             } catch (Throwable $e) {
                 $exception = $e;
             } finally {
+                $this->invokeAfterHookMethods();
                 Timer::clearAll();
                 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
             }
@@ -61,5 +63,19 @@ trait RunTestsInCoroutine
         }
 
         return parent::runTest();
+    }
+
+    private function invokeBeforeHookMethods(): void
+    {
+        if (method_exists($this, 'beforeTestInCoroutine')) {
+            call_user_func([$this, 'beforeTestInCoroutine']);
+        }
+    }
+
+    private function invokeAfterHookMethods(): void
+    {
+        if (method_exists($this, 'afterTestInCoroutine')) {
+            call_user_func([$this, 'afterTestInCoroutine']);
+        }
     }
 }
