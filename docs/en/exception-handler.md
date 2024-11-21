@@ -1,4 +1,4 @@
-# Excepiton Handler
+# Exception Handler
 
 In `Hyperf`, all the business code excute on `Worker Process`. In this case, once any request has an exception that has not been caught, the corresponding `Worker Process` will be interrupted and exited, which is unacceptable for the service. Catch exceptions and output reasonable error content is also more friendly to the client. We can define different `ExceptionHandlers` for each `server`, and once there are exceptions that are not caught in the process, they will be passed to the registered `ExceptionHandler` for processing.
 
