@@ -6,12 +6,12 @@ namespace Hyperf\WebSocketClient\Constant;
 
 class Opcode
 {
-    public const CONTINUATION = 0b0000; // 0x0, 0
-    public const TEXT = 0b0001;       // 0x1, 1
-    public const BINARY = 0b0010;      // 0x2, 2
-    public const CLOSE = 0b1000;      // 0x8, 8
-    public const PING = 0b1001;       // 0x9, 9
-    public const PONG = 0b1010;       // 0xA, 10
+    public const CONTINUATION = 0x0; // 0b0000, 0
+    public const TEXT = 0x1;       // 0b0001 , 1
+    public const BINARY = 0x2 ;      // 0b0010 , 2
+    public const CLOSE = 0x8 ;      // 0b1000 , 8
+    public const PING =  0x9 ;       // 0b1001, 9
+    public const PONG = 0xA;       // 0b1010 , 10
 
     public static function getOpcodeDefinition(int $opcode): string
     {
