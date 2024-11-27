@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database\Stubs\Model;
 
 use Carbon\Carbon;
+use Hyperf\Database\Model\Collection;
 
 /**
  * @property int $id
@@ -21,7 +22,7 @@ use Carbon\Carbon;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Book $book
- * @property Book[]|\Hyperf\Database\Model\Collection $books
+ * @property Book[]|Collection $books
  */
 class User extends Model
 {
