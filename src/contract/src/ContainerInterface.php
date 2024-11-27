@@ -25,10 +25,13 @@ interface ContainerInterface extends PsrContainerInterface
      * For example if the entry is a class then a new instance will be created each time.
      * This method makes the container behave like a factory.
      *
-     * @param string $name entry name or a class name
-     * @param array $parameters Optional parameters to use to build the entry. Use this to force specific parameters
-     *                          to specific values. Parameters not defined in this array will be resolved using
-     *                          the container.
+     * @template TClass
+     *
+     * @param class-string<TClass>|string $name entry name or a class name
+     * @param array $parameters Optional parameters to use to build the entry. Use this to force specific parameters to specific values. Parameters not defined in this array will be resolved using the container.
+     *
+     * @return ($name is class-string<TClass> ? TClass : mixed)
+     *
      * @throws ContainerExceptionInterface&Throwable the name parameter must be of type string
      * @throws NotFoundExceptionInterface&Throwable no entry found for the given name
      */

@@ -83,6 +83,28 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine the foreign keys.
+     */
+    public function compileForeignKeys(string $database, string $table): string
+    {
+        return sprintf(
+            'select kc.constraint_name as `name`, '
+            . 'group_concat(kc.column_name order by kc.ordinal_position) as `columns`, '
+            . 'kc.referenced_table_schema as `foreign_schema`, '
+            . 'kc.referenced_table_name as `foreign_table`, '
+            . 'group_concat(kc.referenced_column_name order by kc.ordinal_position) as `foreign_columns`, '
+            . 'rc.update_rule as `on_update`, '
+            . 'rc.delete_rule as `on_delete` '
+            . 'from information_schema.key_column_usage kc join information_schema.referential_constraints rc '
+            . 'on kc.constraint_schema = rc.constraint_schema and kc.constraint_name = rc.constraint_name '
+            . 'where kc.table_schema = %s and kc.table_name = %s and kc.referenced_table_name is not null '
+            . 'group by kc.constraint_name, kc.referenced_table_schema, kc.referenced_table_name, rc.update_rule, rc.delete_rule',
+            $this->quoteString($database),
+            $this->quoteString($table)
+        );
+    }
+
+    /**
      * Compile a create database command.
      */
     public function compileCreateDatabase(string $name, Connection $connection): string
@@ -373,6 +395,21 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine the indexes.
+     */
+    public function compileIndexes(string $database, string $table): string
+    {
+        return sprintf(
+            'select index_name as `name`, group_concat(column_name order by seq_in_index) as `columns`, '
+            . 'index_type as `type`, not non_unique as `unique` '
+            . 'from information_schema.statistics where table_schema = %s and table_name = %s '
+            . 'group by index_name, index_type, non_unique',
+            $this->quoteString($database),
+            $this->quoteString($table)
+        );
+    }
+
+    /**
      * Compile the SQL needed to retrieve all view names.
      *
      * @return string
@@ -598,6 +635,16 @@ class MySqlGrammar extends Grammar
     protected function typeString(Fluent $column)
     {
         return "varchar({$column->length})";
+    }
+
+    /**
+     * Create the column definition for a tiny text type.
+     *
+     * @return string
+     */
+    protected function typeTinyText(Fluent $column)
+    {
+        return 'tinytext';
     }
 
     /**

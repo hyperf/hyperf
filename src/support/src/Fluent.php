@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Support;
 
 use ArrayAccess;
+use Closure;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use JsonSerializable;
@@ -20,20 +21,26 @@ use JsonSerializable;
 /**
  * Most of the methods in this file come from illuminate/support,
  * thanks Laravel Team provide such a useful class.
+ *
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @implements \Hyperf\Contract\Arrayable<TKey, TValue>
+ * @implements \ArrayAccess<TKey, TValue>
  */
 class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
     /**
      * All the attributes set on the fluent instance.
      *
-     * @var array
+     * @var array<TKey, TValue>
      */
     protected $attributes = [];
 
     /**
      * Create a new fluent instance.
      *
-     * @param array|object $attributes
+     * @param iterable<TKey, TValue> $attributes
      */
     public function __construct($attributes = [])
     {
@@ -45,7 +52,7 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     /**
      * Handle dynamic calls to the fluent instance to set attributes.
      *
-     * @param string $method
+     * @param TKey $method
      * @param array $parameters
      * @return $this
      */
@@ -59,7 +66,8 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     /**
      * Dynamically retrieve the value of an attribute.
      *
-     * @param string $key
+     * @param TKey $key
+     * @return null|TValue
      */
     public function __get($key)
     {
@@ -69,8 +77,8 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     /**
      * Dynamically set the value of an attribute.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param TKey $key
+     * @param TValue $value
      */
     public function __set($key, $value)
     {
@@ -80,7 +88,7 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     /**
      * Dynamically check if an attribute is set.
      *
-     * @param string $key
+     * @param TKey $key
      * @return bool
      */
     public function __isset($key)
@@ -91,7 +99,7 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     /**
      * Dynamically unset an attribute.
      *
-     * @param string $key
+     * @param TKey $key
      */
     public function __unset($key)
     {
@@ -106,8 +114,11 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     /**
      * Get an attribute from the fluent instance.
      *
-     * @param string $key
-     * @param null|mixed $default
+     * @template TGetDefault
+     *
+     * @param TKey $key
+     * @param (Closure(): TGetDefault)|TGetDefault $default
+     * @return TGetDefault|TValue
      */
     public function get($key, $default = null)
     {
@@ -121,7 +132,7 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     /**
      * Get the attributes from the fluent instance.
      *
-     * @return array
+     * @return array<TKey, TValue>
      */
     public function getAttributes()
     {
@@ -130,6 +141,8 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 
     /**
      * Convert the fluent instance to an array.
+     *
+     * @return array<TKey, TValue>
      */
     public function toArray(): array
     {
@@ -138,6 +151,8 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 
     /**
      * Convert the object into something JSON serializable.
+     *
+     * @return array<TKey, TValue>
      */
     public function jsonSerialize(): mixed
     {
@@ -157,6 +172,8 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 
     /**
      * Determine if the given offset exists.
+     *
+     * @param TKey $offset
      */
     public function offsetExists(mixed $offset): bool
     {
@@ -165,6 +182,9 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 
     /**
      * Get the value for a given offset.
+     *
+     * @param TKey $offset
+     * @return null|TValue
      */
     public function offsetGet(mixed $offset): mixed
     {
@@ -173,6 +193,9 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 
     /**
      * Set the value at the given offset.
+     *
+     * @param TKey $offset
+     * @param TValue $value
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
@@ -181,6 +204,8 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 
     /**
      * Unset the value at the given offset.
+     *
+     * @param TKey $offset
      */
     public function offsetUnset(mixed $offset): void
     {

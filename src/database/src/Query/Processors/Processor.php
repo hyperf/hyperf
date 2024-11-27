@@ -86,6 +86,14 @@ class Processor
     }
 
     /**
+     * Process the results of an indexes query.
+     */
+    public function processIndexes(array $results): array
+    {
+        return $results;
+    }
+
+    /**
      * Process the results of a views query.
      */
     public function processViews(array $results): array
@@ -99,5 +107,13 @@ class Processor
                 'definition' => $result->definition,
             ];
         }, $results);
+    }
+
+    /**
+     * Process the results of a foreign keys query.
+     */
+    public function processForeignKeys(array $results): array
+    {
+        return $results;
     }
 }

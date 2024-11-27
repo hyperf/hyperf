@@ -522,6 +522,22 @@ class Collection extends BaseCollection implements CompressInterface
     }
 
     /**
+     * Set the visible attributes across the entire collection.
+     */
+    public function setVisible(array $visible): static
+    {
+        return $this->each->setVisible($visible);
+    }
+
+    /**
+     * Set the hidden attributes across the entire collection.
+     */
+    public function setHidden(array $hidden): static
+    {
+        return $this->each->setHidden($hidden);
+    }
+
+    /**
      * Append an attribute across the entire collection.
      *
      * @param array|string $attributes

@@ -167,7 +167,7 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
      *
      * @param null|array|string $key
      */
-    public function appends($key, ?string $value = null): static
+    public function appends($key, null|array|string $value = null): static
     {
         if (is_null($key)) {
             return $this;
@@ -471,7 +471,7 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
     /**
      * Add a query string value to the paginator.
      */
-    protected function addQuery(string $key, string $value): static
+    protected function addQuery(string $key, array|string $value): static
     {
         if ($key !== $this->pageName) {
             $this->query[$key] = $value;

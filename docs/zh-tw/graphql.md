@@ -27,11 +27,8 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 #[Controller]
 class GraphQLController
 {
-    /**
-     * @var Schema
-     */
     #[Inject]
-    protected $schema;
+    protected Schema $schema;
 
     #[PostMapping(path: "/graphql")]
     public function test(RequestInterface $request)

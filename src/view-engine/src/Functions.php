@@ -21,7 +21,7 @@ use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\ViewInterface;
 use Psr\Http\Message\ResponseInterface;
 
-if (! function_exists('Hyperf\\ViewEngine\\view')) {
+if (! function_exists('Hyperf\ViewEngine\view')) {
     /**
      * Get the evaluated view contents for the given view.
      *

@@ -60,7 +60,7 @@ class LoggerTest extends TestCase
     public function testLoggingLoopDetection()
     {
         $logger = new Logger('test', [
-            $handler = new class() extends TestHandler {
+            $handler = new class extends TestHandler {
                 protected function write(array|LogRecord $record): void
                 {
                     usleep(1);

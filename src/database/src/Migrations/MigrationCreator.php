@@ -52,7 +52,7 @@ class MigrationCreator
 
         $this->files->put(
             $path = $this->getPath($name, $path),
-            $this->populateStub($name, $stub, $table)
+            $this->populateStub($stub, $table)
         );
 
         // Next, we will fire any hooks that are supposed to fire after a migration is
@@ -127,10 +127,8 @@ class MigrationCreator
     /**
      * Populate the place-holders in the migration stub.
      */
-    protected function populateStub(string $name, string $stub, ?string $table): string
+    protected function populateStub(string $stub, ?string $table): string
     {
-        $stub = str_replace('DummyClass', $this->getClassName($name), $stub);
-
         // Here we will replace the table place-holders with the table specified by
         // the developer, which is useful for quickly creating a tables creation
         // or update migration from the console instead of typing it manually.

@@ -857,6 +857,35 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals('select * from "users" order by "name" desc', $builder->toSql());
     }
 
+    public function testReorder()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->orderBy('name');
+        $this->assertSame('select * from "users" order by "name" asc', $builder->toSql());
+        $builder->reorder();
+        $this->assertSame('select * from "users"', $builder->toSql());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->orderBy('name');
+        $this->assertSame('select * from "users" order by "name" asc', $builder->toSql());
+        $builder->reorder('email', 'desc');
+        $this->assertSame('select * from "users" order by "email" desc', $builder->toSql());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('first');
+        $builder->union($this->getBuilder()->select('*')->from('second'));
+        $builder->orderBy('name');
+        $this->assertSame('select * from "first" union select * from "second" order by "name" asc', $builder->toSql());
+        $builder->reorder();
+        $this->assertSame('select * from "first" union select * from "second"', $builder->toSql());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->orderByRaw('?', [true]);
+        $this->assertEquals([true], $builder->getBindings());
+        $builder->reorder();
+        $this->assertEquals([], $builder->getBindings());
+    }
+
     public function testHavings()
     {
         $builder = $this->getBuilder();
@@ -3004,6 +3033,60 @@ class QueryBuilderTest extends TestCase
             ->where('last_seen_at', '>', '1520652582');
         $this->assertEquals('select * from (select max(last_seen_at) as last_seen_at from "sessions") as "last_seen_at" where "last_seen_at" > ?', $builder->toSql());
         $this->assertEquals(['1520652582'], $builder->getBindings());
+    }
+
+    public function testBitWheres()
+    {
+        $type = 16;
+        $flags = 32;
+        $builder = $this->getBuilder();
+        $clone = $builder->clone();
+
+        $builder->select('*')->from('users')->whereBit('type', $type);
+        $this->assertEquals('select * from "users" where type & ? = ?', $builder->toSql());
+        $builder->select('*')->from('users')->orWhereBit('flags', $flags);
+        $this->assertEquals('select * from "users" where type & ? = ? or flags & ? = ?', $builder->toSql());
+
+        $clone->select('*')->from('users')->whereBitNot('type', $type);
+        $this->assertEquals('select * from "users" where type & ? != ?', $clone->toSql());
+        $clone->select('*')->from('users')->orWhereBitNot('flags', $flags);
+        $this->assertEquals('select * from "users" where type & ? != ? or flags & ? != ?', $clone->toSql());
+    }
+
+    public function testBitWheresOr()
+    {
+        $type = 16;
+        $flags = 32;
+        $builder = $this->getBuilder();
+        $clone = $builder->clone();
+
+        $builder->select('*')->from('users')->whereBitOr('type', $type);
+        $this->assertEquals('select * from "users" where type | ? = ?', $builder->toSql());
+        $builder->select('*')->from('users')->orWhereBitOr('flags', $flags);
+        $this->assertEquals('select * from "users" where type | ? = ? or flags | ? = ?', $builder->toSql());
+
+        $clone->select('*')->from('users')->whereBitOrNot('type', $type);
+        $this->assertEquals('select * from "users" where type | ? != ?', $clone->toSql());
+        $clone->select('*')->from('users')->orWhereBitOrNot('flags', $flags);
+        $this->assertEquals('select * from "users" where type | ? != ? or flags | ? != ?', $clone->toSql());
+    }
+
+    public function testBitWheresXor()
+    {
+        $type = 16;
+        $flags = 32;
+        $builder = $this->getBuilder();
+        $clone = $builder->clone();
+
+        $builder->select('*')->from('users')->whereBitXor('type', $type);
+        $this->assertEquals('select * from "users" where type ^ ? = ?', $builder->toSql());
+        $builder->select('*')->from('users')->orWhereBitXor('flags', $flags);
+        $this->assertEquals('select * from "users" where type ^ ? = ? or flags ^ ? = ?', $builder->toSql());
+
+        $clone->select('*')->from('users')->whereBitXorNot('type', $type);
+        $this->assertEquals('select * from "users" where type ^ ? != ?', $clone->toSql());
+        $clone->select('*')->from('users')->orWhereBitXorNot('flags', $flags);
+        $this->assertEquals('select * from "users" where type ^ ? != ? or flags ^ ? != ?', $clone->toSql());
     }
 
     public function testClone()

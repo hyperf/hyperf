@@ -21,7 +21,7 @@ return [
             'class' => \Monolog\Handler\StreamHandler::class,
             'constructor' => [
                 'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                'level' => \Monolog\Logger::DEBUG,
+                'level' => \Monolog\Level::Debug,
             ],
         ],
         'formatter' => [
@@ -211,7 +211,7 @@ return [
             'class' => \Monolog\Handler\StreamHandler::class,
             'constructor' => [
                 'stream' => 'php://stdout',
-                'level' => \Monolog\Logger::INFO,
+                'level' => \Monolog\Level::Info,
             ],
         ],
         'formatter' => $formatter,
@@ -239,7 +239,7 @@ return [
             'class' => Monolog\Handler\RotatingFileHandler::class,
             'constructor' => [
                 'filename' => BASE_PATH . '/runtime/logs/hyperf.log',
-                'level' => Monolog\Logger::DEBUG,
+                'level' => Monolog\Level::Debug,
             ],
         ],
         'formatter' => [
@@ -268,7 +268,7 @@ declare(strict_types=1);
 
 use Monolog\Handler;
 use Monolog\Formatter;
-use Monolog\Logger;
+use Monolog\Level;
 
 return [
     'default' => [
@@ -277,7 +277,7 @@ return [
                 'class' => Handler\StreamHandler::class,
                 'constructor' => [
                     'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                    'level' => Logger::INFO,
+                    'level' => Level::Info,
                 ],
                 'formatter' => [
                     'class' => Formatter\LineFormatter::class,
@@ -292,7 +292,7 @@ return [
                 'class' => Handler\StreamHandler::class,
                 'constructor' => [
                     'stream' => BASE_PATH . '/runtime/logs/hyperf-debug.log',
-                    'level' => Logger::DEBUG,
+                    'level' => Level::Info,
                 ],
                 'formatter' => [
                     'class' => Formatter\JsonFormatter::class,
@@ -315,7 +315,7 @@ declare(strict_types=1);
 
 use Monolog\Handler;
 use Monolog\Formatter;
-use Monolog\Logger;
+use Monolog\Level;
 
 return [
     'default' => [
@@ -327,7 +327,7 @@ return [
             'class' => Handler\StreamHandler::class,
             'constructor' => [
                 'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                'level' => Logger::INFO,
+                'level' => Level::Info,
             ],
         ],
         'formatter' => [
@@ -345,7 +345,7 @@ return [
             'class' => Handler\StreamHandler::class,
             'constructor' => [
                 'stream' => BASE_PATH . '/runtime/logs/hyperf-debug.log',
-                'level' => Logger::DEBUG,
+                'level' => Level::Info,
             ],
         ],
         'formatter' => [

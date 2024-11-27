@@ -20,6 +20,7 @@ use Exception;
 use Generator;
 use Hyperf\Collection\Traits\EnumeratesValues;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\CanBeEscapedWhenCastToString;
 use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
 use Iterator;
@@ -29,13 +30,12 @@ use Traversable;
 
 /**
  * @template TKey of array-key
- *
  * @template TValue
  *
  * @implements Enumerable<TKey, TValue>
  * /
  */
-class LazyCollection implements Enumerable
+class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
 {
     /**
      * @use EnumeratesValues<TKey, TValue>

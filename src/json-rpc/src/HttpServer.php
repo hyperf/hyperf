@@ -12,12 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\JsonRpc;
 
-use Hyperf\Context\RequestContext;
-use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
-use Hyperf\HttpMessage\Server\Request as Psr7Request;
-use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Server;
@@ -28,6 +24,8 @@ use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
 use function Hyperf\Support\make;
 
@@ -69,9 +67,12 @@ class HttpServer extends Server
 
     protected function initRequestAndResponse($request, $response): array
     {
-        ResponseContext::set($psr7Response = new Psr7Response());
-        // Initialize PSR-7 Request and Response objects.
-        $psr7Request = Psr7Request::loadFromSwooleRequest($request);
+        /**
+         * @var ServerRequestPlusInterface $psr7Request
+         * @var ResponsePlusInterface $psr7Response
+         */
+        [$psr7Request, $psr7Response] = parent::initRequestAndResponse($request, $response);
+
         if (! $this->isHealthCheck($psr7Request)) {
             if (! str_contains($psr7Request->getHeaderLine('content-type'), 'application/json')) {
                 $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, ResponseBuilder::PARSE_ERROR);
@@ -82,6 +83,7 @@ class HttpServer extends Server
                 $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, ResponseBuilder::INVALID_REQUEST);
             }
         }
+
         $psr7Request = $psr7Request->setUri($psr7Request->getUri()->withPath($content['method'] ?? '/'))
             ->setParsedBody($content['params'] ?? null)
             ->setAttribute('data', $content ?? [])
@@ -89,8 +91,6 @@ class HttpServer extends Server
 
         $this->getContext()->setData($content['context'] ?? []);
 
-        RequestContext::set($psr7Request);
-        ResponseContext::set($psr7Response);
         return [$psr7Request, $psr7Response];
     }
 

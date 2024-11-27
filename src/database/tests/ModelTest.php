@@ -91,15 +91,11 @@ class ModelTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
-
         Carbon::setTestNow(Carbon::now());
     }
 
     protected function tearDown(): void
     {
-        parent::tearDown();
-
         Mockery::close();
         Carbon::setTestNow(null);
 
@@ -1791,7 +1787,7 @@ class ModelTest extends TestCase
 
     public function testGetOriginalIncrementWithExtra()
     {
-        $model = new class() extends ModelCastingStub {
+        $model = new class extends ModelCastingStub {
             public function newBaseQueryBuilder()
             {
                 $connection = Mockery::mock(Connection::class);
@@ -2073,6 +2069,18 @@ class ModelTest extends TestCase
         $model = new ModelStubWithUuid();
 
         $this->assertTrue(Str::isUuid($model->newUniqueId()));
+    }
+
+    public function testGetMorphAlias()
+    {
+        Relation::morphMap(['user' => ModelStub::class]);
+
+        try {
+            $this->assertSame('user', Relation::getMorphAlias(ModelStub::class));
+            $this->assertSame('Does\Not\Exist', Relation::getMorphAlias('Does\Not\Exist'));
+        } finally {
+            Relation::morphMap([], false);
+        }
     }
 
     protected function getContainer()

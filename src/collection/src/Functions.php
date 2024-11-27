@@ -44,18 +44,15 @@ function data_fill(&$target, $key, $value)
 /**
  * Get an item from an array or object using "dot" notation.
  *
- * @param mixed $target
  * @param null|array|int|string $key
- * @param mixed $default
- * @return mixed
  */
-function data_get($target, $key, $default = null)
+function data_get(mixed $target, mixed $key, mixed $default = null): mixed
 {
     if (is_null($key)) {
         return $target;
     }
 
-    $key = is_array($key) ? $key : explode('.', $key);
+    $key = is_array($key) ? $key : explode('.', (string) $key);
 
     foreach ($key as $i => $segment) {
         unset($key[$i]);
@@ -213,9 +210,12 @@ function last($array)
 
 /**
  * Return the default value of the given value.
+ * @template TValue
+ * @template TReturn
  *
+ * @param (Closure():TReturn)|TValue $value
  * @param mixed ...$args
- * @return mixed
+ * @return ($value is Closure ? TReturn : TValue)
  */
 function value(mixed $value, ...$args)
 {

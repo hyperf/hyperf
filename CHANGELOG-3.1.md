@@ -1,10 +1,227 @@
-# v3.1.27 - TBD
+# v3.1.47 - TBD
+
+# v3.1.46 - 2024-11-21
+
+## Added
+
+- [#7148](https://github.com/hyperf/hyperf/pull/7148) Added `exclude` rules for `hyperf/validation`.
+- [#7150](https://github.com/hyperf/hyperf/pull/7150) Added missing methods (`accepted_if`, `ascii`, `date_equals`...) to validation messages.
+- [#7151](https://github.com/hyperf/hyperf/pull/7151) Added hooks `beforeTestInCoroutine` and `afterTestInCoroutine` for `Hyperf\Testing\Concerns\RunTestsInCoroutine::runTestsInCoroutine()`.
+- [#7156](https://github.com/hyperf/hyperf/pull/7156) Added method `Hyperf\Database\Schema\Blueprint::engine()`.
+
+# v3.1.45 - 2024-11-14
+
+## Added
+
+- [#7141](https://github.com/hyperf/hyperf/pull/7141) Added method `Hyperf\Collection\Arr::shuffleAssoc`.
+- [#7143](https://github.com/hyperf/hyperf/pull/7143) Added method `Hyperf\Database\Model\Builder::findOr`.
+- [#7147](https://github.com/hyperf/hyperf/pull/7147) Added `setVisible` and `setHidden` into `Model\Collection`.
+- [#7149](https://github.com/hyperf/hyperf/pull/7149) Support to define `servers` and `info` for `swagger`.
+
+## Fixed
+
+- [#7133](https://github.com/hyperf/hyperf/pull/7133) Fixed bug that the connection of migrations cannot work excepted.
+
+# v3.1.44 - 2024-10-24
+
+## Added
+
+- [#7063](https://github.com/hyperf/hyperf/pull/7063) Added methods `nullableUuidMorphs` `uuidMorphs` and `nullableNumericMorphs` to `Hyperf\Database\Schema\Blueprint`.
+- [#7070](https://github.com/hyperf/hyperf/pull/7070) Added `Blueprint::charset()` and `Blueprint::collation()`.
+- [#7071](https://github.com/hyperf/hyperf/pull/7071) Added `Hyperf\Database\Schema\Blueprint::tinyText()`.
+- [#7110](https://github.com/hyperf/hyperf/pull/7110) Added support for disallowing class morphs.
+
+## Fixed
+
+- [#7124](https://github.com/hyperf/hyperf/pull/7124) Fixed bug that `sortByMany` value is null when using `SORT_NATURAL`.
+
+# v3.1.43 - 2024-10-10
+
+## Fixed
+
+- [#7068](https://github.com/hyperf/hyperf/pull/7068) Fixed bug `Str::trim` cannot support the default rules "\n\r\t\v" for `trim/ltrim/rtim`.
+- [#7109](https://github.com/hyperf/hyperf/pull/7109) Fixed bug that `CacheAHead` cannot use the default ttl.
+
+## Optimized
+
+- [#7082](https://github.com/hyperf/hyperf/pull/7082) Optimized the code of `Hyperf\Database\Query\Grammars\Grammar::compileUpdate()`.
+- [#7084](https://github.com/hyperf/hyperf/pull/7084) Optimized the code of `Hyperf\Watcher\Ast\RewriteClassNameVisitor::leaveNode()`.
+- [#7105](https://github.com/hyperf/hyperf/pull/7105) Removed `env_vars` to keep the child process environment variables consistent with the parent process.
+
+## Added
+
+- [#7025](https://github.com/hyperf/hyperf/pull/7025) Added `Hyperf\Database\Model\Relations\Relation::getMorphAlias()`.
+
+# v3.1.42 - 2024-09-25
+
+## Fixed
+
+- [#7081](https://github.com/hyperf/hyperf/pull/7081) Fixed bug that `data_get` cannot support `int` key. 
+
+## Optimized
+
+- [#7088](https://github.com/hyperf/hyperf/pull/7088) Optimized github actions for all components.
+
+# v3.1.41 - 2024-09-19
+
+## Added
+
+- [#7059](https://github.com/hyperf/hyperf/pull/7059) Added `Hyperf\Database\Schema\Schema::getForeignKeys()`.
+- [#7064](https://github.com/hyperf/hyperf/pull/7064) Support db type `enum` for `DoctrineConnection`.
+- [#7077](https://github.com/hyperf/hyperf/pull/7077) Added `ModelUpdateVisitor::getReturnType` method.
+
+# v3.1.40 - 2024-09-12
+
+## Fixed
+
+- [#7051](https://github.com/hyperf/hyperf/pull/7051) Fixed bug that `--database` option does not work for `migrate` command.
+
+## Optimized
+
+- [#7053](https://github.com/hyperf/hyperf/pull/7053) Convert `$value` and `$pattern` to string for `Str::is()`.
+
+# v3.1.39 - 2024-09-05
+
+## Fixed
+
+- [#7034](https://github.com/hyperf/hyperf/pull/7034) Fixed bug that the mount code will break the main file with `declare` when using `phar:build`.
+- [#7043](https://github.com/hyperf/hyperf/pull/7043) Fixed bug that `jsonrpc-http` cannot support `swow`.
+
+## Optimized
+
+- [#7033](https://github.com/hyperf/hyperf/pull/7033) Improved `ConsoleLogger` to support running in watcher.
+- [#7040](https://github.com/hyperf/hyperf/pull/7040) Improved packaging speed for command `phar:build`. 
+- [#7044](https://github.com/hyperf/hyperf/pull/7044) Optimized the argument `table` like `database.table` for `gen:model` which can be used to generate another database models.
+
+## Added
+
+- [#7024](https://github.com/hyperf/hyperf/pull/7024) Added methods `whenTableHasColumn` and `whenTableDoesntHaveColumn` to `Hyperf\Database\Schema\Schema`.
+
+# v3.1.38 - 2024-08-29
+
+## Added
+
+- [#7016](https://github.com/hyperf/hyperf/pull/7016) Added reorder method to clear and set sorting for `QueryBuilder`.
+- [#7023](https://github.com/hyperf/hyperf/pull/7023) Added `Hyperf\Contract\CanBeEscapedWhenCastToString` and fixed some static detection.
+- [#7028](https://github.com/hyperf/hyperf/pull/7028) Added `Hyperf\Framework\Logger\ConsoleLogger`.
+
+# v3.1.37 - 2024-08-22
+
+## Added
+
+- [#7015](https://github.com/hyperf/hyperf/pull/7015) Added methods `whereNone` and `orWhereNone` to `Hyperf\Database\Query\Builder`.
+
+## Optimized
+
+- [#6839](https://github.com/hyperf/hyperf/pull/6839) Use `anonymous classes` to avoid the duplicated class name for database migrations.
+
+# v3.1.36 - 2024-08-15
+
+## Added
+
+- [#6971](https://github.com/hyperf/hyperf/pull/6971) Added partitioned support for Cookie.
+- [#6990](https://github.com/hyperf/hyperf/pull/6990) Added support for retrieving the current system time with milliseconds for `Hyperf\Support\Traits\InteractsWithTime`.
+- [#6998](https://github.com/hyperf/hyperf/pull/6998) Added default methods for `#[AutoController]`. (You can add method `options` which used to support cors middleware)
+
+# v3.1.35 - 2024-08-08
+
+## Fixed
+
+- [#6987](https://github.com/hyperf/hyperf/pull/6987) Fixed bug that the root path of swagger server cannot work.
+
+# v3.1.34 - 2024-08-01
+
+## Added
+
+- [#6978](https://github.com/hyperf/hyperf/pull/6978) Support static method for `#[AsCommand]`.
+- [#6979](https://github.com/hyperf/hyperf/pull/6979) Added command `queue:dynamic-reload`.
+
+# v3.1.33 - 2024-07-25
+
+## Optimized
+
+- [#6962](https://github.com/hyperf/hyperf/pull/6962) Optimized error message of command exceptions.
+- [#6963](https://github.com/hyperf/hyperf/pull/6963) Optimized code for `Model/JsonResource::toJson`.
+
+## Fixed
+
+- [#6954](https://github.com/hyperf/hyperf/pull/6954) Fixed bug that the connection cannot reconnect to the server in a situation where there was a failover and exchange of read and write hosts.
+- [#6961](https://github.com/hyperf/hyperf/pull/6961) Fixed bug that `websocket sender` not support `Swow`.
+
+# v3.1.32 - 2024-07-18
+
+## Fixed
+
+- [#6949](https://github.com/hyperf/hyperf/pull/6949) Fixed bug that restart failed when don't have `.env`.
+- [#6953](https://github.com/hyperf/hyperf/pull/6953) Fixed bug that socketio-server cannot work for swow engine.
+
+## Optimized
+
+- [#6946](https://github.com/hyperf/hyperf/pull/6946) Removed Swoole Atomic dependency and useless restart counter in watcher.
+
+## Added
+
+- [#6950](https://github.com/hyperf/hyperf/pull/6950) Support `where bit functions and operators` for `database`.
+
+# v3.1.31 - 2024-07-11
+
+## Added
+
+- [#6936](https://github.com/hyperf/hyperf/pull/6936) Support to reload `.env` when using `hyperf/watcher`.
+
+# v3.1.30 - 2024-07-05
+
+## Fixed
+
+- [#6925](https://github.com/hyperf/hyperf/pull/6925) Fixed bug that `sortByMany` don't reset indexes for `Collection`. But it will be return the same result like `sortBy` in `v3.2`.
+
+# v3.1.29 - 2024-07-04
+
+## Fixed
+
+- [#6925](https://github.com/hyperf/hyperf/pull/6925) Fixed bug that `sortByMany` cannot support options like `sortBy`.
+
+## Added
+
+- [#6896](https://github.com/hyperf/hyperf/pull/6896) Added `SftpAdapter` for `hyperf/filesystem`.
+- [#6917](https://github.com/hyperf/hyperf/pull/6917) Added `Str::chopStart` and `Str::chopEnd`.
+
+# v3.1.28 - 2024-06-27
+
+## Fixed
+
+- [#6900](https://github.com/hyperf/hyperf/pull/6900) Fixed bug that `LengthAwarePaginator::addQuery()` cannot support array `$values`.
+- [#6909](https://github.com/hyperf/hyperf/pull/6909) Fixed bug that `Aop` doesn't work on `Trait`.
+
+## Optimized
+
+- [#6903](https://github.com/hyperf/hyperf/pull/6903) Optimized code for `config-nacos`.
+
+## Added
+
+- [#6885](https://github.com/hyperf/hyperf/pull/6885) Added validation rule `prohibiti`.
+- [#6891](https://github.com/hyperf/hyperf/pull/6891) Support `cache.*.options.pool` to select redis instance for `hyperf/cache`.
+- [#6895](https://github.com/hyperf/hyperf/pull/6895) Support to collect enum annotations.
+
+# v3.1.27 -  2024-06-20
 
 ## Added
 
 - [#6864](https://github.com/hyperf/hyperf/pull/6864) Added methods `getViews` and `hasView` into `Hyperf\Database\Schema\Schema`.
 - [#6866](https://github.com/hyperf/hyperf/pull/6866) Added method `Hyperf\Database\Concerns\BuildsQueries::lazy`.
 - [#6869](https://github.com/hyperf/hyperf/pull/6869) Added methods `before` and `after` into `Collection`.
+- [#6876](https://github.com/hyperf/hyperf/pull/6876) Added method `Hyperf\Database\Concerns\Builder::eachById`.
+- [#6878](https://github.com/hyperf/hyperf/pull/6878) Added methods `whereMorphRelation` and `orWhereMorphRelation` into `Hyperf\Database\Model\Concerns\QueriesRelationships`.
+- [#6883](https://github.com/hyperf/hyperf/pull/6883) Added methods `getIndexes` `hasIndex` and `getIndexListing` into `Hyperf\Database\Schema\Builder`.
+- [#6884](https://github.com/hyperf/hyperf/pull/6884) Added method `Hyperf\Database\Model\Model::updateOrFail`.
+- [#6897](https://github.com/hyperf/hyperf/pull/6897) [#6899](https://github.com/hyperf/hyperf/pull/6899) Added events `BeforeLongLangConsumerCreated` and `AfterConsumerConfigCreated` into `Hyperf\Kafka\ConsumerManager`.
+
+## Optimized
+
+- [#6829](https://github.com/hyperf/hyperf/pull/6829) Optimized the format of command error logs.
+- [#6868](https://github.com/hyperf/hyperf/pull/6868) Support type `Closure|Expression|ModelBuilder|static|string` of `$column` for `QueryBuilder::orderBy()`.
+- [#6870](https://github.com/hyperf/hyperf/pull/6870) Updated default path for factories in Model Factory construct method.
+- [#6874](https://github.com/hyperf/hyperf/pull/6874) Using `Scanner` instead of hard code for `hyperf/watcher` component.
 
 # v3.1.26 - 2024-06-13
 

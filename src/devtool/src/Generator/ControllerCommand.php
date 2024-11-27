@@ -36,6 +36,6 @@ class ControllerCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Controller';
+        return $this->getConfig()['namespace'] ?? 'App\Controller';
     }
 }

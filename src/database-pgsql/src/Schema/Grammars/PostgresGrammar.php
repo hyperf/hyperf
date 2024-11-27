@@ -121,6 +121,28 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine the indexes.
+     */
+    public function compileIndexes(string $schema, string $table): string
+    {
+        return sprintf(
+            "select ic.relname as name, string_agg(a.attname, ',' order by indseq.ord) as columns, "
+            . 'am.amname as "type", i.indisunique as "unique", i.indisprimary as "primary" '
+            . 'from pg_index i '
+            . 'join pg_class tc on tc.oid = i.indrelid '
+            . 'join pg_namespace tn on tn.oid = tc.relnamespace '
+            . 'join pg_class ic on ic.oid = i.indexrelid '
+            . 'join pg_am am on am.oid = ic.relam '
+            . 'join lateral unnest(i.indkey) with ordinality as indseq(num, ord) on true '
+            . 'left join pg_attribute a on a.attrelid = i.indrelid and a.attnum = indseq.num '
+            . 'where tc.relname = %s and tn.nspname = %s '
+            . 'group by ic.relname, am.amname, i.indisunique, i.indisprimary',
+            $this->quoteString($table),
+            $this->quoteString($schema)
+        );
+    }
+
+    /**
      * Compile a create table command.
      */
     public function compileCreate(Blueprint $blueprint, Fluent $command): array
@@ -485,6 +507,32 @@ class PostgresGrammar extends Grammar
     public function typeMultiLineString(Fluent $column)
     {
         return $this->formatPostGisType('multilinestring', $column);
+    }
+
+    /**
+     * Compile the query to determine the foreign keys.
+     */
+    public function compileForeignKeys(string $schema, string $table): string
+    {
+        return sprintf(
+            'select c.conname as name, '
+            . "string_agg(la.attname, ',' order by conseq.ord) as columns, "
+            . 'fn.nspname as foreign_schema, fc.relname as foreign_table, '
+            . "string_agg(fa.attname, ',' order by conseq.ord) as foreign_columns, "
+            . 'c.confupdtype as on_update, c.confdeltype as on_delete '
+            . 'from pg_constraint c '
+            . 'join pg_class tc on c.conrelid = tc.oid '
+            . 'join pg_namespace tn on tn.oid = tc.relnamespace '
+            . 'join pg_class fc on c.confrelid = fc.oid '
+            . 'join pg_namespace fn on fn.oid = fc.relnamespace '
+            . 'join lateral unnest(c.conkey) with ordinality as conseq(num, ord) on true '
+            . 'join pg_attribute la on la.attrelid = c.conrelid and la.attnum = conseq.num '
+            . 'join pg_attribute fa on fa.attrelid = c.confrelid and fa.attnum = c.confkey[conseq.ord] '
+            . "where c.contype = 'f' and tc.relname = %s and tn.nspname = %s "
+            . 'group by c.conname, fn.nspname, fc.relname, c.confupdtype, c.confdeltype',
+            $this->quoteString($table),
+            $this->quoteString($schema)
+        );
     }
 
     /**

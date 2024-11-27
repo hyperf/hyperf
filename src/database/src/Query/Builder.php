@@ -1519,6 +1519,112 @@ class Builder
     }
 
     /**
+     * Add an "where Bit Functions and Operators" clause to the query.
+     */
+    public function whereBit(string $key, mixed $operator = 'and', mixed $value = null, string $boolean = 'and', bool $not = false): static
+    {
+        $type = $not ? '!=' : '=';
+        [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
+        $operator = match ($operator) {
+            '|', 'or' => '|',
+            '^', 'xor' => '^',
+            default => '&'
+        };
+        return $this->whereRaw(sprintf('%s %s ? %s ?', $key, $operator, $type), [$value, $value], $boolean);
+    }
+
+    /**
+     * Add an "where Bit Not Functions and Operators" clause to the query.
+     */
+    public function whereBitNot(string $key, mixed $operator = 'and', mixed $value = null, string $boolean = 'and'): static
+    {
+        [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
+        return $this->whereBit($key, $operator, $value, $boolean, true);
+    }
+
+    /**
+     * Add an "or where Bit Functions and Operators" clause to the query.
+     */
+    public function orWhereBit(string $key, mixed $operator = 'and', mixed $value = null, bool $not = false): static
+    {
+        [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
+        return $this->whereBit($key, $operator, $value, 'or', $not);
+    }
+
+    /**
+     * Add an "or where Bit Not Functions and Operators" clause to the query.
+     */
+    public function orWhereBitNot(string $key, mixed $operator = 'and', mixed $value = null): static
+    {
+        [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
+        return $this->orWhereBit($key, $operator, $value, true);
+    }
+
+    /**
+     * Add an "where Bit Or Functions and Operators" clause to the query.
+     */
+    public function whereBitOr(string $key, mixed $value = null, bool $not = false): static
+    {
+        return $this->whereBit($key, 'or', $value, 'and', $not);
+    }
+
+    /**
+     * Add an "where Bit Or Not Functions and Operators" clause to the query.
+     */
+    public function whereBitOrNot(string $key, mixed $value = null): static
+    {
+        return $this->orWhereBit($key, 'or', $value, true);
+    }
+
+    /**
+     * Add an "or where Bit Or Functions and Operators" clause to the query.
+     */
+    public function orWhereBitOr(string $key, mixed $value = null, bool $not = false): static
+    {
+        return $this->orWhereBit($key, 'or', $value, $not);
+    }
+
+    /**
+     * Add an "or where Bit Or Functions and Operators" clause to the query.
+     */
+    public function orWhereBitOrNot(string $key, mixed $value = null): static
+    {
+        return $this->orWhereBitOr($key, $value, true);
+    }
+
+    /**
+     * Add an "where Bit Xor Functions and Operators" clause to the query.
+     */
+    public function whereBitXor(string $key, mixed $value = null, bool $not = false): static
+    {
+        return $this->whereBit($key, 'xor', $value, 'and', $not);
+    }
+
+    /**
+     * Add an "where Bit Xor Not Functions and Operators" clause to the query.
+     */
+    public function whereBitXorNot(string $key, mixed $value = null): static
+    {
+        return $this->whereBitXor($key, $value, true);
+    }
+
+    /**
+     * Add an "or where Bit Xor Functions and Operators" clause to the query.
+     */
+    public function orWhereBitXor(string $key, mixed $value = null, bool $not = false): static
+    {
+        return $this->orWhereBit($key, 'xor', $value, $not);
+    }
+
+    /**
+     * Add an "or where Bit Xor Not Functions and Operators" clause to the query.
+     */
+    public function orWhereBitXorNot(string $key, mixed $value = null): static
+    {
+        return $this->orWhereBitXor($key, $value, true);
+    }
+
+    /**
      * Add a "where JSON length" clause to the query.
      *
      * @param string $column
@@ -1692,12 +1798,30 @@ class Builder
     }
 
     /**
+     * Add a "where not" clause to the query for multiple columns where none of the conditions should be true.
+     * @param Expression[]|string[] $columns
+     */
+    public function whereNone(array $columns, mixed $operator = null, mixed $value = null, string $boolean = 'and'): static
+    {
+        return $this->whereAny($columns, $operator, $value, $boolean . ' not');
+    }
+
+    /**
+     * Add an "or where not" clause to the query for multiple columns where none of the conditions should be true.
+     * @param Expression[]|string[] $columns
+     */
+    public function orWhereNone(array $columns, mixed $operator = null, mixed $value = null): static
+    {
+        return $this->whereNone($columns, $operator, $value, 'or');
+    }
+
+    /**
      * Add a "group by" clause to the query.
      *
-     * @param array|string ...$groups
+     * @param array|Expression|string ...$groups
      * @return $this
      */
-    public function groupBy(...$groups)
+    public function groupBy(...$groups): static
     {
         foreach ($groups as $group) {
             $this->groups = array_merge((array) $this->groups, Arr::wrap($group));
@@ -1806,12 +1930,19 @@ class Builder
     /**
      * Add an "order by" clause to the query.
      *
-     * @param string $column
-     * @param string $direction
+     * @param Closure|Expression|ModelBuilder|static|string $column
      * @return $this
      */
-    public function orderBy($column, $direction = 'asc')
+    public function orderBy(mixed $column, string $direction = 'asc'): static
     {
+        if ($this->isQueryable($column)) {
+            [$query, $bindings] = $this->createSub($column);
+
+            $column = new Expression('(' . $query . ')');
+
+            $this->addBinding($bindings, $this->unions ? 'unionOrder' : 'order');
+        }
+
         $this->{$this->unions ? 'unionOrders' : 'orders'}[] = [
             'column' => $column,
             'direction' => strtolower($direction) === 'asc' ? 'asc' : 'desc',
@@ -1984,6 +2115,25 @@ class Builder
         }
 
         return $this->orderBy($column, 'asc')->limit($perPage);
+    }
+
+    /**
+     * Remove all existing orders and optionally add a new order.
+     *
+     * @param Closure|Expression|ModelBuilder|static|string $column
+     */
+    public function reorder(mixed $column = null, string $direction = 'asc'): static
+    {
+        $this->orders = null;
+        $this->unionOrders = null;
+        $this->bindings['order'] = [];
+        $this->bindings['unionOrder'] = [];
+
+        if ($column) {
+            return $this->orderBy($column, $direction);
+        }
+
+        return $this;
     }
 
     /**

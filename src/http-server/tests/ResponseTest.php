@@ -117,7 +117,7 @@ class ResponseTest extends TestCase
         ]));
 
         // Arrayable
-        $arrayable = new class() implements Arrayable {
+        $arrayable = new class implements Arrayable {
             public function toArray(): array
             {
                 return [

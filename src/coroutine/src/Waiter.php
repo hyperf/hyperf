@@ -30,7 +30,11 @@ class Waiter
     }
 
     /**
+     * @template TReturn
+     *
+     * @param Closure():TReturn $closure
      * @param null|float $timeout seconds
+     * @return TReturn
      */
     public function wait(Closure $closure, ?float $timeout = null)
     {

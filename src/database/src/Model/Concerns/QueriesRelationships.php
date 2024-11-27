@@ -405,6 +405,26 @@ trait QueriesRelationships
     }
 
     /**
+     * Add a polymorphic relationship condition to the query with a where clause.
+     */
+    public function whereMorphRelation(MorphTo|string $relation, array|string $types, array|Closure|Expression|string $column, mixed $operator = null, mixed $value = null): Builder|static
+    {
+        return $this->whereHasMorph($relation, $types, function ($query) use ($column, $operator, $value) {
+            $query->where($column, $operator, $value);
+        });
+    }
+
+    /**
+     * Add a polymorphic relationship condition to the query with an "or where" clause.
+     */
+    public function orWhereMorphRelation(MorphTo|string $relation, array|string $types, array|Closure|Expression|string $column, mixed $operator = null, mixed $value = null): Builder|static
+    {
+        return $this->orWhereHasMorph($relation, $types, function ($query) use ($column, $operator, $value) {
+            $query->where($column, $operator, $value);
+        });
+    }
+
+    /**
      * Add a polymorphic relationship count / exists condition to the query.
      *
      * @param string $relation

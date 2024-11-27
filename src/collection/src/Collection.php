@@ -17,6 +17,7 @@ use ArrayIterator;
 use Closure;
 use Hyperf\Collection\Traits\EnumeratesValues;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\CanBeEscapedWhenCastToString;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Stringable\Stringable;
@@ -31,33 +32,17 @@ use Traversable;
  *
  * @template TKey of array-key
  * @template TValue
- * @template TTimesValue
+ *
  * @implements ArrayAccess<TKey, TValue>
  * @implements Enumerable<TKey, TValue>
- *
- * @property HigherOrderCollectionProxy $average
- * @property HigherOrderCollectionProxy $avg
- * @property HigherOrderCollectionProxy $contains
- * @property HigherOrderCollectionProxy $each
- * @property HigherOrderCollectionProxy $every
- * @property HigherOrderCollectionProxy $filter
- * @property HigherOrderCollectionProxy $first
- * @property HigherOrderCollectionProxy $flatMap
- * @property HigherOrderCollectionProxy $groupBy
- * @property HigherOrderCollectionProxy $keyBy
- * @property HigherOrderCollectionProxy $map
- * @property HigherOrderCollectionProxy $max
- * @property HigherOrderCollectionProxy $min
- * @property HigherOrderCollectionProxy $partition
- * @property HigherOrderCollectionProxy $reject
- * @property HigherOrderCollectionProxy $sortBy
- * @property HigherOrderCollectionProxy $sortByDesc
- * @property HigherOrderCollectionProxy $sum
- * @property HigherOrderCollectionProxy $unique
  */
-class Collection implements Enumerable, ArrayAccess
+class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerable
 {
+    /**
+     * @use EnumeratesValues<TKey, TValue>
+     */
     use EnumeratesValues;
+
     use Macroable;
 
     /**
@@ -69,7 +54,7 @@ class Collection implements Enumerable, ArrayAccess
 
     /**
      * Create a new collection.
-     * @param null|iterable<TKey,TValue>|Jsonable|JsonSerializable $items
+     * @param null|Arrayable<TKey,TValue>|iterable<TKey,TValue>|Jsonable|JsonSerializable $items
      */
     public function __construct($items = [])
     {
@@ -77,7 +62,7 @@ class Collection implements Enumerable, ArrayAccess
     }
 
     /**
-     * @param null|iterable<TKey,TValue>|Jsonable|JsonSerializable $items
+     * @param null|Arrayable<TKey,TValue>|iterable<TKey, TValue>|Jsonable|JsonSerializable $items
      * @return static<TKey, TValue>
      */
     public function fill($items = [])
@@ -1013,7 +998,7 @@ class Collection implements Enumerable, ArrayAccess
     /**
      * Create chunks representing a "sliding window" view of the items in the collection.
      *
-     * @return static<int, TTimesValue>
+     * @return static<int, static>
      */
     public function sliding(int $size = 2, int $step = 1): static
     {
@@ -1088,7 +1073,7 @@ class Collection implements Enumerable, ArrayAccess
     public function sortBy($callback, int $options = SORT_REGULAR, bool $descending = false): static
     {
         if (is_array($callback) && ! is_callable($callback)) {
-            return $this->sortByMany($callback);
+            return $this->sortByMany($callback, $options);
         }
 
         $results = [];
@@ -1112,11 +1097,21 @@ class Collection implements Enumerable, ArrayAccess
     /**
      * Sort the collection in descending order using the given callback.
      *
-     * @param (callable(TValue, TKey): mixed)|string $callback
+     * @param array|(callable(TValue, TKey): mixed)|string $callback
      * @return static<TKey, TValue>
      */
     public function sortByDesc($callback, int $options = SORT_REGULAR): static
     {
+        if (is_array($callback) && ! is_callable($callback)) {
+            foreach ($callback as $index => $key) {
+                $comparison = Arr::wrap($key);
+
+                $comparison[1] = 'desc';
+
+                $callback[$index] = $comparison;
+            }
+        }
+
         return $this->sortBy($callback, $options, true);
     }
 
@@ -1589,11 +1584,11 @@ class Collection implements Enumerable, ArrayAccess
      *
      * @return static
      */
-    protected function sortByMany(array $comparisons = [])
+    protected function sortByMany(array $comparisons = [], int $options = SORT_REGULAR)
     {
         $items = $this->items;
 
-        usort($items, function ($a, $b) use ($comparisons) {
+        uasort($items, function ($a, $b) use ($comparisons, $options) {
             foreach ($comparisons as $comparison) {
                 $comparison = Arr::wrap($comparison);
 
@@ -1611,7 +1606,21 @@ class Collection implements Enumerable, ArrayAccess
                         $values = array_reverse($values);
                     }
 
-                    $result = $values[0] <=> $values[1];
+                    if (($options & SORT_FLAG_CASE) === SORT_FLAG_CASE) {
+                        if (($options & SORT_NATURAL) === SORT_NATURAL) {
+                            $result = strnatcasecmp($values[0], $values[1]);
+                        } else {
+                            $result = strcasecmp($values[0], $values[1]);
+                        }
+                    } else {
+                        $result = match ($options) {
+                            SORT_NUMERIC => intval($values[0]) <=> intval($values[1]),
+                            SORT_STRING => strcmp($values[0], $values[1]),
+                            SORT_NATURAL => strnatcmp((string) $values[0], (string) $values[1]),
+                            SORT_LOCALE_STRING => strcoll($values[0], $values[1]),
+                            default => $values[0] <=> $values[1],
+                        };
+                    }
                 }
 
                 if ($result === 0) {
@@ -1621,6 +1630,11 @@ class Collection implements Enumerable, ArrayAccess
                 return $result;
             }
         });
+
+        // TODO: The code will be removed in v3.2
+        if (array_is_list($this->items)) {
+            $items = array_values($items);
+        }
 
         return new static($items);
     }
