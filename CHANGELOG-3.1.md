@@ -1,5 +1,9 @@
 # v3.1.47 - TBD
 
+## Fixed
+
+- [#7176](https://github.com/hyperf/hyperf/pull/7176) Fixed bug that cookies cannot work when using `swow`.
+
 # v3.1.46 - 2024-11-21
 
 ## Added
