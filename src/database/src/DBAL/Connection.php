@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\DBAL;
 
+use Doctrine\DBAL\Driver\Connection as ServerInfoAwareConnection;
 use Doctrine\DBAL\Driver\PDO\Exception;
 use Doctrine\DBAL\Driver\PDO\Result;
 use Doctrine\DBAL\Driver\PDO\Statement;
 use Doctrine\DBAL\Driver\Result as ResultInterface;
-use Doctrine\DBAL\Driver\Connection as ServerInfoAwareConnection;
 use Doctrine\DBAL\Driver\Statement as StatementInterface;
 use PDO;
 use PDOException;
@@ -82,13 +82,12 @@ class Connection implements ServerInfoAwareConnection
     /**
      * Get the last insert ID.
      *
-     * @return int|string
      * @throws Exception
      */
     public function lastInsertId(): int|string
     {
         try {
-                return $this->connection->lastInsertId();
+            return $this->connection->lastInsertId();
         } catch (PDOException $exception) {
             throw Exception::new($exception);
         }
@@ -107,7 +106,7 @@ class Connection implements ServerInfoAwareConnection
      */
     public function commit(): void
     {
-         $this->connection->commit();
+        $this->connection->commit();
     }
 
     /**
@@ -120,9 +119,6 @@ class Connection implements ServerInfoAwareConnection
 
     /**
      * Wrap quotes around the given input.
-     *
-     * @param string $value
-     * @return string
      */
     public function quote(string $value): string
     {
@@ -131,8 +127,6 @@ class Connection implements ServerInfoAwareConnection
 
     /**
      * Get the server version for the connection.
-     *
-     * @return string
      */
     public function getServerVersion(): string
     {
@@ -147,6 +141,11 @@ class Connection implements ServerInfoAwareConnection
         return $this->connection;
     }
 
+    public function getNativeConnection()
+    {
+        return $this->connection;
+    }
+
     /**
      * Create a new statement instance.
      */
@@ -154,10 +153,4 @@ class Connection implements ServerInfoAwareConnection
     {
         return new Statement($stmt);
     }
-
-    public function getNativeConnection()
-    {
-        return $this->connection;
-    }
-
 }

@@ -14,7 +14,6 @@ namespace Hyperf\Database\Schema\Grammars;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
 use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\DBAL\Types\Type;
