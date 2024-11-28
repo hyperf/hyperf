@@ -601,14 +601,9 @@ class Connection implements ConnectionInterface
      *
      * @return AbstractSchemaManager
      */
-    public function getDoctrineSchemaManager()
+    public function getDoctrineSchemaManager(): AbstractSchemaManager
     {
-        $connection = $this->getDoctrineConnection();
-
-        return $this->getDoctrineDriver()->getSchemaManager(
-            $connection,
-            $connection->getDatabasePlatform()
-        );
+        return$this->getDoctrineConnection()->createSchemaManager();
     }
 
     /**
