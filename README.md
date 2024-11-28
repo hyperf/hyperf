@@ -60,10 +60,6 @@ If you discover a security vulnerability within Hyperf, please send an e-mail to
 This project exists thanks to all the people who contribute. [[Contribute](https://github.com/hyperf/hyperf/graphs/contributors)].
 <a href="https://github.com/hyperf/hyperf/graphs/contributors"><img src="https://opencollective.com/hyperf/contributors.svg?width=890&button=false" /></a>
 
-# Code Contributor over time
-
-[![Code Contributor over time](https://contributor-overtime-api.apiseven.com/contributors-svg?chart=contributorOverTime&repo=hyperf/hyperf)](https://www.apiseven.com/en/contributor-graph?chart=contributorOverTime&repo=hyperf/hyperf)
-
 # Financial Contributors
 
 Become a financial contributor and help us sustain our community. [[Contribute](https://hyperf.wiki/#/en/donate)]

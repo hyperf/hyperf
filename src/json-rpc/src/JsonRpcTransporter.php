@@ -102,7 +102,7 @@ class JsonRpcTransporter implements TransporterInterface
     }
 
     /**
-     * @param \Hyperf\LoadBalancer\Node[] $nodes
+     * @param Node[] $nodes
      */
     public function setNodes(array $nodes): self
     {

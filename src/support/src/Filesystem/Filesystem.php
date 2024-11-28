@@ -18,6 +18,7 @@ use Hyperf\Coroutine\Coroutine;
 use Hyperf\Coroutine\Locker;
 use Hyperf\Macroable\Macroable;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Most of the methods in this file come from illuminate/filesystem,
@@ -360,7 +361,7 @@ class Filesystem
     /**
      * Get an array of all files in a directory.
      *
-     * @return \Symfony\Component\Finder\SplFileInfo[]
+     * @return SplFileInfo[]
      */
     public function files(string $directory, bool $hidden = false): array
     {
@@ -372,7 +373,7 @@ class Filesystem
 
     /**
      * Get all of the files from the given directory (recursive).
-     * @return \Symfony\Component\Finder\SplFileInfo[]
+     * @return SplFileInfo[]
      */
     public function allFiles(string $directory, bool $hidden = false): array
     {

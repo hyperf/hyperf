@@ -83,7 +83,7 @@ class Blueprint
     /**
      * The columns that should be added to the table.
      *
-     * @var \Hyperf\Database\Schema\ColumnDefinition[]
+     * @var ColumnDefinition[]
      */
     protected $columns = [];
 
@@ -1316,7 +1316,7 @@ class Blueprint
     /**
      * Get the columns on the blueprint.
      *
-     * @return \Hyperf\Database\Schema\ColumnDefinition[]
+     * @return ColumnDefinition[]
      */
     public function getColumns()
     {
@@ -1336,7 +1336,7 @@ class Blueprint
     /**
      * Get the columns on the blueprint that should be added.
      *
-     * @return \Hyperf\Database\Schema\ColumnDefinition[]
+     * @return ColumnDefinition[]
      */
     public function getAddedColumns()
     {
@@ -1348,7 +1348,7 @@ class Blueprint
     /**
      * Get the columns on the blueprint that should be changed.
      *
-     * @return \Hyperf\Database\Schema\ColumnDefinition[]
+     * @return ColumnDefinition[]
      */
     public function getChangedColumns()
     {

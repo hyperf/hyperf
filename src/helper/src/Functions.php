@@ -10,6 +10,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 use Hyperf\Collection\Collection;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Support\Optional;
 
 if (! function_exists('value')) {
     /**
@@ -79,7 +81,7 @@ if (! function_exists('collect')) {
      * @template TKey of array-key
      * @template TValue
      *
-     * @param null|\Hyperf\Contract\Arrayable<TKey, TValue>|iterable<TKey, TValue> $value
+     * @param null|Arrayable<TKey, TValue>|iterable<TKey, TValue> $value
      * @return Collection<TKey, TValue>
      */
     function collect($value = null)
@@ -289,7 +291,7 @@ if (! function_exists('optional')) {
      *
      * @param TValue $value
      * @param null|(callable(TValue):TReturn) $callback
-     * @return ($callback is null ? \Hyperf\Support\Optional<TValue> : ($value is null ? null : TReturn))
+     * @return ($callback is null ? Optional<TValue> : ($value is null ? null : TReturn))
      */
     function optional($value = null, ?callable $callback = null)
     {

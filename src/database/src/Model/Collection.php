@@ -66,7 +66,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationships onto the collection.
      *
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      * @return $this
      */
     public function load($relations)
@@ -87,7 +87,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of aggregations over relationship's column onto the collection.
      *
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      */
     public function loadAggregate(array|string $relations, string $column, ?string $function = null): static
     {
@@ -121,7 +121,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship's max column values onto the collection.
      *
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      */
     public function loadMax(array $relations, string $column): static
     {
@@ -131,7 +131,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship's min column values onto the collection.
      *
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      */
     public function loadMin(array $relations, string $column): static
     {
@@ -141,7 +141,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship's column summations onto the collection.
      *
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      */
     public function loadSum(array|string $relations, string $column): static
     {
@@ -151,7 +151,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship's average column values onto the collection.
      *
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      */
     public function loadAvg(array|string $relations, string $column): static
     {
@@ -161,7 +161,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship counts onto the collection.
      *
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      * @return $this
      */
     public function loadCount($relations)
@@ -193,7 +193,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationships onto the collection if they are not already eager loaded.
      *
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      * @return $this
      */
     public function loadMissing($relations)
@@ -229,7 +229,7 @@ class Collection extends BaseCollection implements CompressInterface
      * Load a set of relationships onto the mixed relationship collection.
      *
      * @param string $relation
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
+     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
      * @return $this
      */
     public function loadMorph($relation, $relations)
@@ -253,7 +253,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship counts onto the mixed relationship collection.
      *
-     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string> $relations
+     * @param array<array-key, (callable(Builder): mixed)|string> $relations
      * @return $this
      */
     public function loadMorphCount(string $relation, array $relations)
