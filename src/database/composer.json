@@ -16,7 +16,6 @@
     },
     "require": {
         "php": ">=8.1",
-        "carbonphp/carbon-doctrine-types": "^2.1",
         "hyperf/code-parser": "~3.1.0",
         "hyperf/collection": "~3.1.23",
         "hyperf/conditionable": "~3.1.0",
@@ -51,5 +50,8 @@
         "branch-alias": {
             "dev-master": "3.1-dev"
         }
+    },
+    "require-dev": {
+        "carbonphp/carbon-doctrine-types": "^2.1"
     }
 }
