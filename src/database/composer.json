@@ -16,6 +16,7 @@
     },
     "require": {
         "php": ">=8.1",
+        "carbonphp/carbon-doctrine-types": "^2.1",
         "hyperf/code-parser": "~3.1.0",
         "hyperf/collection": "~3.1.23",
         "hyperf/conditionable": "~3.1.0",
@@ -25,8 +26,7 @@
         "hyperf/utils": "~3.1.0",
         "nesbot/carbon": "^2.0",
         "psr/container": "^1.0 || ^2.0",
-        "psr/event-dispatcher": "^1.0",
-        "carbonphp/carbon-doctrine-types": "^2.1"
+        "psr/event-dispatcher": "^1.0"
     },
     "suggest": {
         "doctrine/dbal": "Required to rename columns (^3.0).",
