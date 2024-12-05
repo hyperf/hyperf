@@ -1,5 +1,9 @@
 # v3.1.48 - TBD
 
+## Fixed
+
+- [#7188](https://github.com/hyperf/hyperf/pull/7188) Fixed bug that `Hyperf\HttpMessage\Server\ResponsePlusProxy` cannot support another responses without `getCookies`.
+
 # v3.1.47 - 2024-11-28
 
 ## Fixed
