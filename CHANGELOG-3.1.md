@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#6964](https://github.com/hyperf/hyperf/pull/6964) Added JSON output option to describe:routes.
+- [#6964](https://github.com/hyperf/hyperf/pull/6964) Added JSON output option to `describe:routes`.
 
 ## Optimized
 
