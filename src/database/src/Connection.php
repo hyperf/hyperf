@@ -1099,6 +1099,7 @@ class Connection implements ConnectionInterface
     /**
      * Run a SQL statement and log its execution context.
      *
+     * @throws UniqueConstraintViolationException
      * @throws QueryException
      */
     protected function run(string $query, array $bindings, Closure $callback)
@@ -1141,6 +1142,7 @@ class Connection implements ConnectionInterface
     /**
      * Run a SQL statement.
      *
+     * @throws UniqueConstraintViolationException
      * @throws QueryException
      */
     protected function runQueryCallback(string $query, array $bindings, Closure $callback)
@@ -1207,6 +1209,7 @@ class Connection implements ConnectionInterface
     /**
      * Handle a query exception that occurred during query execution.
      *
+     * @throws UniqueConstraintViolationException
      * @throws QueryException
      */
     protected function tryAgainIfCausedByLostConnection(QueryException $e, string $query, array $bindings, Closure $callback)
