@@ -26,6 +26,7 @@ use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Exception\QueryException;
+use Hyperf\Database\Exception\UniqueConstraintViolationException;
 use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Model\Model;
@@ -420,6 +421,12 @@ class ModelRealBuilderTest extends TestCase
 
         $res = TestModel::query()->insert(['user_id' => 1, 'uid' => 1]);
         $this->assertTrue($res);
+
+        try {
+            $res = TestModel::query()->insert(['user_id' => 1, 'uid' => 1]);
+        } catch (UniqueConstraintViolationException $exception) {
+            $this->assertTrue(true);
+        }
 
         $model = TestModel::query()->find(1);
         $this->assertSame(1, $model->uid);
