@@ -425,7 +425,9 @@ class ModelRealBuilderTest extends TestCase
         try {
             $res = TestModel::query()->insert(['user_id' => 1, 'uid' => 1]);
         } catch (UniqueConstraintViolationException $exception) {
-            $this->assertTrue(true);
+            // check if the exception is instance of QueryException
+            $this->assertInstanceOf(QueryException::class, $exception);
+            $this->assertSame('Duplicate entry 1 for key \'user_id\'', $exception->getMessage());
         }
 
         $model = TestModel::query()->find(1);
