@@ -4,6 +4,10 @@
 
 - [#7188](https://github.com/hyperf/hyperf/pull/7188) Fixed bug that `Hyperf\HttpMessage\Server\ResponsePlusProxy` cannot support another responses without `getCookies`.
 
+## Added
+
+- [#7192](https://github.com/hyperf/hyperf/pull/7192) Added `Hyperf\Database\Model\Collection::findOrFail()`.
+
 # v3.1.47 - 2024-11-28
 
 ## Fixed
