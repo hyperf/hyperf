@@ -3,6 +3,7 @@
 ## Optimized
 
 - [#7194](https://github.com/hyperf/hyperf/pull/7194) Optimized the database exception to implement unique constraint error detection.
+- [#7187](https://github.com/hyperf/hyperf/pull/7187) Allow request IP retrieval during tests via server parameters.
 
 ## Fixed
 
