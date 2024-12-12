@@ -49,7 +49,11 @@ class ResponsePlusProxy implements ResponsePlusInterface, Stringable
 
     public function getCookies()
     {
-        return $this->__call('getCookies', []);
+        if (method_exists($this->response, 'getCookies')) {
+            return $this->response->getCookies();
+        }
+
+        return [];
     }
 
     public function getProtocolVersion(): string
