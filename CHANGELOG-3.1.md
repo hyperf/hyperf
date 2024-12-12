@@ -1,5 +1,7 @@
 # v3.1.48 - TBD
 
+# v3.1.48 - 2024-12-12
+
 ## Optimized
 
 - [#7194](https://github.com/hyperf/hyperf/pull/7194) Optimized the database exception to implement unique constraint error detection.
