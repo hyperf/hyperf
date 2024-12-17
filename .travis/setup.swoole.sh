@@ -10,7 +10,9 @@ if [ $? -eq 1 ]; then
     sudo mv pie.phar /usr/local/bin/pie
 
     # Upgrade dependencies
-    sudo apt-get clean && sudo apt-get update && sudo apt-get upgrade -f
+    sudo apt-get clean
+    sudo apt-get update
+    sudo apt-get upgrade -f
     sudo apt-get install libcurl4-openssl-dev libc-ares-dev libpq-dev
 
     # Install Swoole
