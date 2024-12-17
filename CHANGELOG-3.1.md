@@ -1,5 +1,9 @@
 # v3.1.48 - TBD
 
+## Optimized
+
+- [#7209](https://github.com/hyperf/hyperf/pull/7209) Optimized collection usage in `getUrlRange` method.
+
 # v3.1.48 - 2024-12-12
 
 ## Optimized
