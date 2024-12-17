@@ -58,6 +58,7 @@ jobs:
           sudo apt-get clean
           sudo apt-get update
           sudo apt-get upgrade -f
+          sudo apt-get install libcurl4-openssl-dev libc-ares-dev libpq-dev
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
