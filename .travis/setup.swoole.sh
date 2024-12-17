@@ -16,7 +16,7 @@ if [ $? -eq 1 ]; then
     sudo apt-get install libcurl4-openssl-dev libc-ares-dev libpq-dev
 
     # Install Swoole
-    pie install swoole:${SW_VERSION} --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql --enable-brotli
+    pie install swoole/swoole:${SW_VERSION} --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql --enable-brotli
 
     # Add extension to php.ini
     sudo sh -c "echo extension=swoole > /etc/php/${PHP_VERSION}/cli/conf.d/swoole.ini"
