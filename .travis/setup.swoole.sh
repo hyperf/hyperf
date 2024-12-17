@@ -6,8 +6,8 @@ if [ $? -eq 1 ]; then
 
     # Install PIE
     wget https://github.com/php/pie/releases/download/0.2.0/pie.phar
-    chmod +x pie.phar
-    mv pie.phar /usr/local/bin/pie
+    sudo chmod +x pie.phar
+    sudo mv pie.phar /usr/local/bin/pie
 
     # Upgrade dependencies
     sudo apt-get clean
