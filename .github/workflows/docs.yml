@@ -2,9 +2,8 @@ name: Translate docs
 
 on:
   push:
-    branches:
-      - release-*
-      - docs-*
+    paths: 
+      - 'docs/**'
 
 jobs:
   translate:
