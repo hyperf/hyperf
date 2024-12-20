@@ -4,7 +4,7 @@
 
 ## Added
 
-- [#7219](https://github.com/hyperf/hyperf/pull/) Add case sensitivity option to pattern matching.
+- [#7219](https://github.com/hyperf/hyperf/pull/) Added case sensitivity option to `Hyperf\Stringable\Str::is()`.
 
 ## Optimized
 
