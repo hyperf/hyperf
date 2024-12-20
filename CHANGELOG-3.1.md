@@ -1,5 +1,9 @@
 # v3.1.50 - TBD
 
+## Removed
+
+- [#7189](https://github.com/hyperf/hyperf/pull/7189) Removed abandoned `laminas/laminas-mime` package.
+
 # v3.1.49 - 2024-12-17
 
 ## Optimized
