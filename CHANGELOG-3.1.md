@@ -2,6 +2,10 @@
 
 # v3.1.49 - 2024-12-17
 
+## Added
+
+- [#7219](https://github.com/hyperf/hyperf/pull/) Add case sensitivity option to pattern matching.
+
 ## Optimized
 
 - [#7206](https://github.com/hyperf/hyperf/pull/7206) Support `swoole` version `6.0`.
