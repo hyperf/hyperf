@@ -89,7 +89,7 @@ class Composer
         return '';
     }
 
-    public static function getMergedExtra(?string $key = null)
+    public static function getMergedExtra(?string $key = null): array
     {
         if (! self::$extra) {
             self::getLockContent();
