@@ -1,5 +1,9 @@
 # v3.1.50 - TBD
 
+## Added
+
+- [#7224](https://github.com/hyperf/hyperf/pull/7224) Added `Hyperf\Coroutine\Mutex`.
+
 # v3.1.49 - 2024-12-17
 
 ## Optimized
