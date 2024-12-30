@@ -29,9 +29,9 @@ class SafeCaller
      * @template TDefault
      *
      * @param Closure(): TReturn $closure
-     * @param (Closure(): TDefault)|null $default
-     * @return TReturn|($default is Closure? TDefault : null)
-     */  
++    * @param null|(Closure(): TDefault) $default
++    * @return ($default is Closure? TDefault : null)|TReturn
+     */
     public function call(Closure $closure, ?Closure $default = null, string $level = LogLevel::CRITICAL): mixed
     {
         try {
