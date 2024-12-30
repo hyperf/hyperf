@@ -4,6 +4,10 @@
 
 - [#7224](https://github.com/hyperf/hyperf/pull/7224) Added `Hyperf\Coroutine\Mutex`.
 
+## Optimized
+
+- [#7227](https://github.com/hyperf/hyperf/pull/7227) Improves phpstan docs for `Hyperf\Support\SafeCaller`.
+
 # v3.1.49 - 2024-12-17
 
 ## Optimized
