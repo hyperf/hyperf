@@ -36,6 +36,7 @@ class AsyncQueueAspect extends AbstractAspect
     {
         $env = $this->container->get(Environment::class);
         if ($env->isAsyncQueue()) {
+            $env->setAsyncQueue(false);
             $proceedingJoinPoint->process();
             return;
         }
