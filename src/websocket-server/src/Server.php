@@ -202,7 +202,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         $instance = $this->container->get($fdObj->class);
 
         if (! $instance instanceof OnMessageInterface) {
-            $this->logger->warning(get_class($instance)." is not instanceof " . OnMessageInterface::class);
+            $this->logger->warning($instance::class . " is not instanceof " . OnMessageInterface::class);
             return;
         }
 
