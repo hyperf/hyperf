@@ -24,6 +24,7 @@ use Hyperf\Engine\Channel;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Channel\Frame;
 use PhpAmqpLib\Connection\AbstractConnection;
+use PhpAmqpLib\Connection\AMQPConnectionConfig;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Wire\AMQPWriter;
@@ -68,13 +69,14 @@ class AMQPConnection extends AbstractConnection
         ?AbstractIO $io = null,
         int $heartbeat = 0,
         int $connection_timeout = 0,
-        float $channel_rpc_timeout = 0.0
+        float $channel_rpc_timeout = 0.0,
+        ?AMQPConnectionConfig $config = null
     ) {
         $this->channelManager = new ChannelManager(16);
         $this->channelManager->get(0, true);
         $this->chan = $this->channelManager->make(65535);
 
-        parent::__construct($user, $password, $vhost, $insist, $login_method, $login_response, $locale, $io, $heartbeat, $connection_timeout, $channel_rpc_timeout);
+        parent::__construct($user, $password, $vhost, $insist, $login_method, $login_response, $locale, $io, $heartbeat, $connection_timeout, $channel_rpc_timeout, $config);
 
         $this->pool = new Channel(static::CHANNEL_POOL_LENGTH);
         $this->confirmPool = new Channel(static::CONFIRM_CHANNEL_POOL_LENGTH);
