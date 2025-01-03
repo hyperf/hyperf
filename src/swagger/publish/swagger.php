@@ -22,4 +22,19 @@ return [
     'processors' => [
         // users can append their own processors here
     ],
+    'server' => [
+        'http' => [
+            'servers' => [
+                [
+                    'url' => 'http://127.0.0.1:9501',
+                    'description' => 'Test Server',
+                ],
+            ],
+            'info' => [
+                'title' => 'Sample API',
+                'description' => 'This is a sample API using OpenAPI 3.0 specification',
+                'version' => '1.0.0',
+            ],
+        ],
+    ],
 ];

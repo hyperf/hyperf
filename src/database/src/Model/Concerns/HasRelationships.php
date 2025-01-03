@@ -14,6 +14,7 @@ namespace Hyperf\Database\Model\Concerns;
 
 use Closure;
 use Hyperf\Collection\Arr;
+use Hyperf\Database\Exception\ClassMorphViolationException;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
@@ -27,6 +28,7 @@ use Hyperf\Database\Model\Relations\MorphMany;
 use Hyperf\Database\Model\Relations\MorphOne;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\MorphToMany;
+use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
@@ -562,6 +564,14 @@ trait HasRelationships
 
         if (! empty($morphMap) && in_array(static::class, $morphMap)) {
             return array_search(static::class, $morphMap, true);
+        }
+
+        if (static::class === Pivot::class) {
+            return static::class;
+        }
+
+        if (Relation::requiresMorphMap()) {
+            throw new ClassMorphViolationException($this);
         }
 
         return static::class;

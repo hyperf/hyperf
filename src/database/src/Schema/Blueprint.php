@@ -83,7 +83,7 @@ class Blueprint
     /**
      * The columns that should be added to the table.
      *
-     * @var \Hyperf\Database\Schema\ColumnDefinition[]
+     * @var ColumnDefinition[]
      */
     protected $columns = [];
 
@@ -118,6 +118,22 @@ class Blueprint
         foreach ($this->toSql($connection, $grammar) as $statement) {
             $connection->statement($statement);
         }
+    }
+
+    /**
+     * Specify the character set that should be used for the table.
+     */
+    public function charset(string $charset): void
+    {
+        $this->charset = $charset;
+    }
+
+    /**
+     * Specify the collation that should be used for the table.
+     */
+    public function collation(string $collation): void
+    {
+        $this->collation = $collation;
     }
 
     /**
@@ -180,6 +196,22 @@ class Blueprint
     public function create()
     {
         return $this->addCommand('create');
+    }
+
+    /**
+     * Specify the storage engine that should be used for the table.
+     */
+    public function engine(string $engine): void
+    {
+        $this->engine = $engine;
+    }
+
+    /**
+     * Specify that the InnoDB storage engine should be used for the table (MySQL only).
+     */
+    public function innoDb(): void
+    {
+        $this->engine('InnoDB');
     }
 
     /**
@@ -550,6 +582,17 @@ class Blueprint
         $length = $length ?: Builder::$defaultStringLength;
 
         return $this->addColumn('string', $column, compact('length'));
+    }
+
+    /**
+     * Create a new tiny text column on the table.
+     *
+     * @param string $column
+     * @return ColumnDefinition
+     */
+    public function tinyText($column)
+    {
+        return $this->addColumn('tinyText', $column);
     }
 
     /**
@@ -1159,6 +1202,42 @@ class Blueprint
     }
 
     /**
+     * Add nullable columns for a polymorphic table using numeric IDs (incremental).
+     */
+    public function nullableNumericMorphs(string $name, ?string $indexName = null): void
+    {
+        $this->string("{$name}_type")->nullable();
+
+        $this->unsignedBigInteger("{$name}_id")->nullable();
+
+        $this->index(["{$name}_type", "{$name}_id"], $indexName);
+    }
+
+    /**
+     * Add the proper columns for a polymorphic table using UUIDs.
+     */
+    public function uuidMorphs(string $name, ?string $indexName = null): void
+    {
+        $this->string("{$name}_type");
+
+        $this->uuid("{$name}_id");
+
+        $this->index(["{$name}_type", "{$name}_id"], $indexName);
+    }
+
+    /**
+     * Add nullable columns for a polymorphic table using UUIDs.
+     */
+    public function nullableUuidMorphs(string $name, ?string $indexName = null): void
+    {
+        $this->string("{$name}_type")->nullable();
+
+        $this->uuid("{$name}_id")->nullable();
+
+        $this->index(["{$name}_type", "{$name}_id"], $indexName);
+    }
+
+    /**
      * Add nullable columns for a polymorphic table.
      *
      * @param string $name
@@ -1237,7 +1316,7 @@ class Blueprint
     /**
      * Get the columns on the blueprint.
      *
-     * @return \Hyperf\Database\Schema\ColumnDefinition[]
+     * @return ColumnDefinition[]
      */
     public function getColumns()
     {
@@ -1257,7 +1336,7 @@ class Blueprint
     /**
      * Get the columns on the blueprint that should be added.
      *
-     * @return \Hyperf\Database\Schema\ColumnDefinition[]
+     * @return ColumnDefinition[]
      */
     public function getAddedColumns()
     {
@@ -1269,7 +1348,7 @@ class Blueprint
     /**
      * Get the columns on the blueprint that should be changed.
      *
-     * @return \Hyperf\Database\Schema\ColumnDefinition[]
+     * @return ColumnDefinition[]
      */
     public function getChangedColumns()
     {

@@ -237,11 +237,8 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 
 class IndexController extends AbstractController
 {
-    /**
-     * @var MetricFactoryInterface
-     */
     #[Inject]
-    private $metricFactory;
+    private MetricFactoryInterface $metricFactory;
 
     public function create(Order $order)
     {

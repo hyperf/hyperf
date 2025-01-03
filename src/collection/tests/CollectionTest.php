@@ -383,6 +383,14 @@ class CollectionTest extends TestCase
         $this->assertEquals(['a', 'b', 'c'], $c->replace(null)->all());
     }
 
+    public function testDateGetWithInteger()
+    {
+        $data = ['id' => 1, 2 => 2];
+
+        $this->assertSame(1, \Hyperf\Collection\data_get($data, 'id'));
+        $this->assertSame(2, \Hyperf\Collection\data_get($data, 2));
+    }
+
     public function testReplaceArray(): void
     {
         $c = new Collection(['a', 'b', 'c']);
@@ -1333,5 +1341,16 @@ class CollectionTest extends TestCase
             'd' => ['id' => 4, 'name' => 'd'],
             'e' => ['id' => 5, 'name' => 'e'],
         ]), (string) $dataMany);
+
+        $dataManyNull = (new $collection(
+            [
+                ['id' => 2, 'name' => 'b'],
+                ['id' => 1, 'name' => null],
+            ]
+        ))->sortBy([['id', 'desc'], ['name', 'desc']], SORT_NATURAL);
+        $this->assertEquals(json_encode([
+            ['id' => 2, 'name' => 'b'],
+            ['id' => 1, 'name' => null],
+        ]), json_encode($dataManyNull));
     }
 }

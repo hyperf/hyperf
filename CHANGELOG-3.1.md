@@ -1,4 +1,102 @@
-# v3.1.42 - TBD
+# v3.1.50 - TBD
+
+## Added
+
+- [#7224](https://github.com/hyperf/hyperf/pull/7224) Added `Hyperf\Coroutine\Mutex`.
+
+## Optimized
+
+- [#7227](https://github.com/hyperf/hyperf/pull/7227) Improves phpstan docs for `Hyperf\Support\SafeCaller`.
+
+# v3.1.49 - 2024-12-17
+
+## Optimized
+
+- [#7206](https://github.com/hyperf/hyperf/pull/7206) Support `swoole` version `6.0`.
+- [#7209](https://github.com/hyperf/hyperf/pull/7209) Optimized collection usage in `getUrlRange` method.
+
+# v3.1.48 - 2024-12-12
+
+## Optimized
+
+- [#7194](https://github.com/hyperf/hyperf/pull/7194) Optimized the database exception to implement unique constraint error detection.
+- [#7187](https://github.com/hyperf/hyperf/pull/7187) Allow request IP retrieval during tests via server parameters.
+
+## Fixed
+
+- [#7188](https://github.com/hyperf/hyperf/pull/7188) Fixed bug that `Hyperf\HttpMessage\Server\ResponsePlusProxy` cannot support another responses without `getCookies`.
+
+## Added
+
+- [#7192](https://github.com/hyperf/hyperf/pull/7192) Added `Hyperf\Database\Model\Collection::findOrFail()`.
+
+# v3.1.47 - 2024-11-28
+
+## Fixed
+
+- [#7176](https://github.com/hyperf/hyperf/pull/7176) Fixed bug that cookies cannot work when using `swow`.
+
+# v3.1.46 - 2024-11-21
+
+## Added
+
+- [#7148](https://github.com/hyperf/hyperf/pull/7148) Added `exclude` rules for `hyperf/validation`.
+- [#7150](https://github.com/hyperf/hyperf/pull/7150) Added missing methods (`accepted_if`, `ascii`, `date_equals`...) to validation messages.
+- [#7151](https://github.com/hyperf/hyperf/pull/7151) Added hooks `beforeTestInCoroutine` and `afterTestInCoroutine` for `Hyperf\Testing\Concerns\RunTestsInCoroutine::runTestsInCoroutine()`.
+- [#7156](https://github.com/hyperf/hyperf/pull/7156) Added method `Hyperf\Database\Schema\Blueprint::engine()`.
+
+# v3.1.45 - 2024-11-14
+
+## Added
+
+- [#7141](https://github.com/hyperf/hyperf/pull/7141) Added method `Hyperf\Collection\Arr::shuffleAssoc`.
+- [#7143](https://github.com/hyperf/hyperf/pull/7143) Added method `Hyperf\Database\Model\Builder::findOr`.
+- [#7147](https://github.com/hyperf/hyperf/pull/7147) Added `setVisible` and `setHidden` into `Model\Collection`.
+- [#7149](https://github.com/hyperf/hyperf/pull/7149) Support to define `servers` and `info` for `swagger`.
+
+## Fixed
+
+- [#7133](https://github.com/hyperf/hyperf/pull/7133) Fixed bug that the connection of migrations cannot work excepted.
+
+# v3.1.44 - 2024-10-24
+
+## Added
+
+- [#7063](https://github.com/hyperf/hyperf/pull/7063) Added methods `nullableUuidMorphs` `uuidMorphs` and `nullableNumericMorphs` to `Hyperf\Database\Schema\Blueprint`.
+- [#7070](https://github.com/hyperf/hyperf/pull/7070) Added `Blueprint::charset()` and `Blueprint::collation()`.
+- [#7071](https://github.com/hyperf/hyperf/pull/7071) Added `Hyperf\Database\Schema\Blueprint::tinyText()`.
+- [#7110](https://github.com/hyperf/hyperf/pull/7110) Added support for disallowing class morphs.
+
+## Fixed
+
+- [#7124](https://github.com/hyperf/hyperf/pull/7124) Fixed bug that `sortByMany` value is null when using `SORT_NATURAL`.
+
+# v3.1.43 - 2024-10-10
+
+## Fixed
+
+- [#7068](https://github.com/hyperf/hyperf/pull/7068) Fixed bug `Str::trim` cannot support the default rules "\n\r\t\v" for `trim/ltrim/rtim`.
+- [#7109](https://github.com/hyperf/hyperf/pull/7109) Fixed bug that `CacheAHead` cannot use the default ttl.
+
+## Optimized
+
+- [#7082](https://github.com/hyperf/hyperf/pull/7082) Optimized the code of `Hyperf\Database\Query\Grammars\Grammar::compileUpdate()`.
+- [#7084](https://github.com/hyperf/hyperf/pull/7084) Optimized the code of `Hyperf\Watcher\Ast\RewriteClassNameVisitor::leaveNode()`.
+- [#7105](https://github.com/hyperf/hyperf/pull/7105) Removed `env_vars` to keep the child process environment variables consistent with the parent process.
+
+## Added
+
+- [#7025](https://github.com/hyperf/hyperf/pull/7025) Added `Hyperf\Database\Model\Relations\Relation::getMorphAlias()`.
+
+# v3.1.42 - 2024-09-25
+
+## Fixed
+
+- [#7081](https://github.com/hyperf/hyperf/pull/7081) Fixed bug that `data_get` cannot support `int` key. 
+
+## Optimized
+
+- [#7088](https://github.com/hyperf/hyperf/pull/7088) Optimized github actions for all components.
 
 # v3.1.41 - 2024-09-19
 

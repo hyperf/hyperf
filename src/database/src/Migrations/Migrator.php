@@ -32,7 +32,7 @@ class Migrator
      *
      * @var string
      */
-    protected $connection;
+    protected $connection = 'default';
 
     /**
      * The paths to all of the migration files.
@@ -245,7 +245,7 @@ class Migrator
      */
     public function resolveConnection(string $connection)
     {
-        return $this->resolver->connection($this->connection ?: $connection);
+        return $this->resolver->connection($connection ?: $this->connection);
     }
 
     /**
@@ -457,7 +457,7 @@ class Migrator
         $callback = function () use ($migration, $method) {
             if (method_exists($migration, $method)) {
                 $defaultConnection = $this->resolver->getDefaultConnection();
-                $this->resolver->setDefaultConnection($this->connection ?: $migration->getConnection());
+                $this->resolver->setDefaultConnection($migration->getConnection() ?: $this->connection);
 
                 $migration->{$method}();
 

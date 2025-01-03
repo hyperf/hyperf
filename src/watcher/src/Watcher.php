@@ -132,10 +132,9 @@ class Watcher
             ];
 
             proc_open(
-                $this->option->getBin() . ' ' . BASE_PATH . '/' . $this->option->getCommand(),
-                $descriptorSpec,
-                $pipes,
-                env_vars: $_ENV
+                command: $this->option->getBin() . ' ' . BASE_PATH . '/' . $this->option->getCommand(),
+                descriptor_spec: $descriptorSpec,
+                pipes: $pipes
             );
 
             $this->output->writeln('Stop server success.');

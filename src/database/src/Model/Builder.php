@@ -39,6 +39,7 @@ use function Hyperf\Collection\collect;
 use function Hyperf\Tappable\tap;
 
 /**
+ * @template TModel of Model
  * @mixin \Hyperf\Database\Query\Builder
  */
 class Builder
@@ -487,6 +488,34 @@ class Builder
     }
 
     /**
+     * Find a model by its primary key or call a callback.
+     *
+     * @template TValue
+     *
+     * @param (Closure(): TValue)|list<string>|string $columns
+     * @param null|(Closure(): TValue) $callback
+     * @return (
+     *     $id is (Arrayable<array-key, mixed>|array)
+     *     ? Collection<int, TModel>
+     *     : TModel|TValue
+     * )
+     */
+    public function findOr(mixed $id, array|Closure|string $columns = ['*'], ?Closure $callback = null): mixed
+    {
+        if ($columns instanceof Closure) {
+            $callback = $columns;
+
+            $columns = ['*'];
+        }
+
+        if (! is_null($model = $this->find($id, $columns))) {
+            return $model;
+        }
+
+        return $callback();
+    }
+
+    /**
      * Find a model by its primary key or return fresh model instance.
      *
      * @param array $columns
@@ -628,7 +657,7 @@ class Builder
      * Get the hydrated models without eager loading.
      *
      * @param array $columns
-     * @return \Hyperf\Database\Model\Model[]|static[]
+     * @return Model[]|static[]
      */
     public function getModels($columns = ['*'])
     {
@@ -833,7 +862,7 @@ class Builder
     /**
      * Save a new model and return the instance.
      *
-     * @return $this|\Hyperf\Database\Model\Model
+     * @return $this|Model
      */
     public function create(array $attributes = [])
     {
@@ -845,7 +874,7 @@ class Builder
     /**
      * Save a new model and return the instance. Allow mass-assignment.
      *
-     * @return $this|\Hyperf\Database\Model\Model
+     * @return $this|Model
      */
     public function forceCreate(array $attributes)
     {

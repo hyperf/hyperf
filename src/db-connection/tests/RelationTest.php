@@ -32,6 +32,7 @@ class RelationTest extends TestCase
     {
         Mockery::close();
         Context::set('database.connection.default', null);
+        Register::unsetConnectionResolver();
     }
 
     public function testPivot()

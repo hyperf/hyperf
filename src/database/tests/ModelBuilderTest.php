@@ -86,6 +86,81 @@ class ModelBuilderTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testFindOrMethod()
+    {
+        $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
+        $model = $this->getMockModel();
+        $model->shouldReceive('getKeyType')->andReturn('int');
+        $builder->setModel($model);
+        $builder->getQuery()->shouldReceive('where')->with('foo_table.foo', '=', 1)->twice();
+        $builder->getQuery()->shouldReceive('where')->with('foo_table.foo', '=', 2)->once();
+        $builder->shouldReceive('first')->andReturn($model)->once();
+        $builder->shouldReceive('first')->with(['column'])->andReturn($model)->once();
+        $builder->shouldReceive('first')->andReturn(null)->once();
+
+        $this->assertSame($model, $builder->findOr(1, fn () => 'callback result'));
+        $this->assertSame($model, $builder->findOr(1, ['column'], fn () => 'callback result'));
+        $this->assertSame('callback result', $builder->findOr(2, fn () => 'callback result'));
+    }
+
+    public function testFindOrMethodWithMany()
+    {
+        $builder = Mockery::mock(Builder::class . '[get]', [$this->getMockQueryBuilder()]);
+        $model1 = $this->getMockModel();
+        $model2 = $this->getMockModel();
+        $model1->shouldReceive('getKeyType')->andReturn('int');
+        $model2->shouldReceive('getKeyType')->andReturn('int');
+        $builder->setModel($model1);
+        $builder->getQuery()->shouldReceive('whereIn')->with('foo_table.foo', [1, 2])->twice();
+        $builder->getQuery()->shouldReceive('whereIn')->with('foo_table.foo', [1, 2, 3])->once();
+        $builder->shouldReceive('get')->andReturn(new Collection([$model1, $model2]))->once();
+        $builder->shouldReceive('get')->with(['column'])->andReturn(new Collection([$model1, $model2]))->once();
+        $builder->shouldReceive('get')->andReturn(null)->once();
+
+        $result = $builder->findOr([1, 2], fn () => 'callback result');
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertSame($model1, $result[0]);
+        $this->assertSame($model2, $result[1]);
+
+        $result = $builder->findOr([1, 2], ['column'], fn () => 'callback result');
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertSame($model1, $result[0]);
+        $this->assertSame($model2, $result[1]);
+
+        $result = $builder->findOr([1, 2, 3], fn () => 'callback result');
+        $this->assertSame('callback result', $result);
+    }
+
+    public function testFindOrMethodWithManyUsingCollection()
+    {
+        $builder = Mockery::mock(Builder::class . '[get]', [$this->getMockQueryBuilder()]);
+        $model1 = $this->getMockModel();
+        $model2 = $this->getMockModel();
+        $model1->shouldReceive('getKeyType')->andReturn('int');
+        $model2->shouldReceive('getKeyType')->andReturn('int');
+        $builder->setModel($model1);
+        $arg1 = Collection::make([1, 2]);
+        $arg2 = Collection::make([1, 2, 3]);
+        $builder->getQuery()->shouldReceive('whereIn')->with('foo_table.foo', $arg1)->twice();
+        $builder->getQuery()->shouldReceive('whereIn')->with('foo_table.foo', $arg2)->once();
+        $builder->shouldReceive('get')->andReturn(new Collection([$model1, $model2]))->once();
+        $builder->shouldReceive('get')->with(['column'])->andReturn(new Collection([$model1, $model2]))->once();
+        $builder->shouldReceive('get')->andReturn(null)->once();
+
+        $result = $builder->findOr($arg1, fn () => 'callback result');
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertSame($model1, $result[0]);
+        $this->assertSame($model2, $result[1]);
+
+        $result = $builder->findOr($arg1, ['column'], fn () => 'callback result');
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertSame($model1, $result[0]);
+        $this->assertSame($model2, $result[1]);
+
+        $result = $builder->findOr($arg2, fn () => 'callback result');
+        $this->assertSame('callback result', $result);
+    }
+
     public function testFindOrNewMethodModelNotFound()
     {
         $model = $this->getMockModel();

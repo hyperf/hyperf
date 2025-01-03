@@ -41,8 +41,8 @@ class AllReply extends Message
      *                    Optional. Data for populating the Message object.
      *
      * @var string $message
-     * @var \HyperfTest\ResourceGrpc\Stubs\Grpc\HiUser[]|RepeatedField $users
-     *                                                                 }
+     * @var HiUser[]|RepeatedField $users
+     *                             }
      */
     public function __construct($data = null)
     {
@@ -83,7 +83,7 @@ class AllReply extends Message
 
     /**
      * Generated from protobuf field <code>repeated .HyperfTest.ResourceGrpc.Stubs.Grpc.HiUser users = 2;</code>.
-     * @param \HyperfTest\ResourceGrpc\Stubs\Grpc\HiUser[]|RepeatedField $var
+     * @param HiUser[]|RepeatedField $var
      * @return $this
      */
     public function setUsers($var)

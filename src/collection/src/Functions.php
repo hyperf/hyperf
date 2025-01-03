@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Collection;
 
 use Closure;
+use Hyperf\Contract\Arrayable;
 
 /**
  * Create a collection from the given value.
@@ -20,7 +21,7 @@ use Closure;
  * @template TKey of array-key
  * @template TValue
  *
- * @param null|\Hyperf\Contract\Arrayable<TKey, TValue>|iterable<TKey, TValue> $value
+ * @param null|Arrayable<TKey, TValue>|iterable<TKey, TValue> $value
  * @return Collection<TKey, TValue>
  */
 function collect($value = []): Collection
@@ -44,18 +45,15 @@ function data_fill(&$target, $key, $value)
 /**
  * Get an item from an array or object using "dot" notation.
  *
- * @param mixed $target
  * @param null|array|int|string $key
- * @param mixed $default
- * @return mixed
  */
-function data_get($target, $key, $default = null)
+function data_get(mixed $target, mixed $key, mixed $default = null): mixed
 {
     if (is_null($key)) {
         return $target;
     }
 
-    $key = is_array($key) ? $key : explode('.', $key);
+    $key = is_array($key) ? $key : explode('.', (string) $key);
 
     foreach ($key as $i => $segment) {
         unset($key[$i]);
