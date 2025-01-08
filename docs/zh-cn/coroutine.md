@@ -85,7 +85,7 @@ $db->connect($config, function ($db, $r) {
 
 ### 创建一个协程
 
-只需通过 `co(callable $callable)` 或 `go(callable $callable)` 函数或 `Hyperf\Coroutine\Coroutine::create(callable $callable)` 即可创建一个协程，协程内可以使用协程相关的方法和客户端。
+只需通过 `Hyperf\Coroutine\co(callable $callable)` 或 `Hyperf\Coroutine\go(callable $callable)` 函数或 `Hyperf\Coroutine\Coroutine::create(callable $callable)` 即可创建一个协程，协程内可以使用协程相关的方法和客户端。
 
 ### 判断当前是否处于协程环境内
 
