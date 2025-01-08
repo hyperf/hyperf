@@ -7,7 +7,7 @@
 ## Added
 
 - [#7224](https://github.com/hyperf/hyperf/pull/7224) Added `Hyperf\Coroutine\Mutex`.
-- [#7233](https://github.com/hyperf/hyperf/pull/7233/files) Support set AMQP Connection name.
+- [#7233](https://github.com/hyperf/hyperf/pull/7233) Added params `connection_name` which used to define amqp connection name.
 
 ## Optimized
 
