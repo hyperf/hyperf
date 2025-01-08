@@ -14,6 +14,10 @@
 
 # v3.1.49 - 2024-12-17
 
+## Added
+
+- [#7219](https://github.com/hyperf/hyperf/pull/) Added case sensitivity option to `Hyperf\Stringable\Str::is()`.
+
 ## Optimized
 
 - [#7206](https://github.com/hyperf/hyperf/pull/7206) Support `swoole` version `6.0`.
