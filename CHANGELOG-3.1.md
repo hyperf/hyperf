@@ -1,5 +1,9 @@
 # v3.1.51 - TBD
 
+## Added
+
+- [#7250](https://github.com/hyperf/hyperf/pull/7250) Added `Hyperf\AsyncQueue\Driver\Driver::getConfig()`.
+
 # v3.1.50 - 2025-01-09
 
 ## Fixed
