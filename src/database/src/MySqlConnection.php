@@ -50,8 +50,10 @@ class MySqlConnection extends Connection
 
     /**
      * Determine if the given database exception was caused by a unique constraint violation.
+     *
+     * @return bool
      */
-    protected function isUniqueConstraintError(Exception $exception): bool
+    protected function isUniqueConstraintError(Exception $exception)
     {
         return boolval(preg_match('#Integrity constraint violation: 1062#i', $exception->getMessage()));
     }

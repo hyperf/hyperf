@@ -670,7 +670,7 @@ class Builder
      * Get the hydrated models without eager loading.
      *
      * @param array $columns
-     * @return \Hyperf\Database\Model\Model[]|static[]
+     * @return Model[]|static[]
      */
     public function getModels($columns = ['*'])
     {
@@ -875,7 +875,7 @@ class Builder
     /**
      * Save a new model and return the instance.
      *
-     * @return $this|\Hyperf\Database\Model\Model
+     * @return $this|Model
      */
     public function create(array $attributes = [])
     {
@@ -887,7 +887,7 @@ class Builder
     /**
      * Save a new model and return the instance. Allow mass-assignment.
      *
-     * @return $this|\Hyperf\Database\Model\Model
+     * @return $this|Model
      */
     public function forceCreate(array $attributes)
     {

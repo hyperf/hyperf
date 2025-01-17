@@ -89,7 +89,7 @@ class Composer
         return '';
     }
 
-    public static function getMergedExtra(?string $key = null)
+    public static function getMergedExtra(?string $key = null): array
     {
         if (! self::$extra) {
             self::getLockContent();
@@ -101,16 +101,16 @@ class Composer
 
         $extra = [];
 
-        foreach (self::$extra as $project => $config) {
-            foreach ($config ?? [] as $configKey => $item) {
-                if ($key === $configKey && $item) {
-                    foreach ($item as $k => $v) {
-                        if (is_array($v)) {
-                            $extra[$k] = array_merge($extra[$k] ?? [], $v);
-                        } else {
-                            $extra[$k][] = $v;
-                        }
-                    }
+        foreach (self::$extra as $config) {
+            if (! isset($config[$key])) {
+                continue;
+            }
+
+            foreach ($config[$key] as $k => $v) {
+                if (is_array($v)) {
+                    $extra[$k] = array_merge($extra[$k] ?? [], $v);
+                } else {
+                    $extra[$k][] = $v;
                 }
             }
         }

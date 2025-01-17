@@ -68,11 +68,10 @@ class SQLiteConnection extends Connection
 
     /**
      * Determine if the given database exception was caused by a unique constraint violation.
-     * 
-     * @param \Exception $exception
+     *
      * @return bool
      */
-    protected function isUniqueConstraintError(Exception $exception): bool
+    protected function isUniqueConstraintError(Exception $exception)
     {
         return boolval(preg_match('#(column(s)? .* (is|are) not unique|UNIQUE constraint failed: .*)#i', $exception->getMessage()));
     }

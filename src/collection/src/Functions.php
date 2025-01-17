@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Collection;
 
 use Closure;
+use Hyperf\Contract\Arrayable;
 
 /**
  * Create a collection from the given value.
@@ -20,7 +21,7 @@ use Closure;
  * @template TKey of array-key
  * @template TValue
  *
- * @param null|\Hyperf\Contract\Arrayable<TKey, TValue>|iterable<TKey, TValue> $value
+ * @param null|Arrayable<TKey, TValue>|iterable<TKey, TValue> $value
  * @return Collection<TKey, TValue>
  */
 function collect($value = []): Collection

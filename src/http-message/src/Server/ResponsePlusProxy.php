@@ -47,6 +47,15 @@ class ResponsePlusProxy implements ResponsePlusInterface, Stringable
         throw new InvalidArgumentException(sprintf('The method %s is not supported.', $name));
     }
 
+    public function getCookies()
+    {
+        if (method_exists($this->response, 'getCookies')) {
+            return $this->response->getCookies();
+        }
+
+        return [];
+    }
+
     public function getProtocolVersion(): string
     {
         return $this->response->getProtocolVersion();
