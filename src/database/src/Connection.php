@@ -1180,17 +1180,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Determine if the given database exception was caused by a unique constraint violation.
-     * 
-     * @param Exception $exception
-     * @return bool
-     */
-    protected function isUniqueConstraintError(Exception $exception): bool
-    {
-        return false;
-    }
-
-    /**
      * Get the elapsed time since a given starting point.
      */
     protected function getElapsedTime(float $start): float
