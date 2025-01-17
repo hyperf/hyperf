@@ -85,6 +85,7 @@ class DatabaseIntegrationTest extends TestCase
     {
         foreach (['default', 'second_connection'] as $connection) {
             $this->schema($connection)->drop('users');
+            $this->schema($connection)->drop('unique_users');
             $this->schema($connection)->drop('friends');
             $this->schema($connection)->drop('posts');
         }
