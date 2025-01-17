@@ -24,6 +24,7 @@ use Hyperf\Contracts\Events\Dispatcher;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Exception\InvalidArgumentException;
 use Hyperf\Database\Exception\QueryException;
+use Hyperf\Database\Exception\UniqueConstraintViolationException;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Database\Query\Expression;
@@ -1146,6 +1147,13 @@ class Connection implements ConnectionInterface
         // lot more helpful to the developer instead of just the database's errors.
         catch (Exception $e) {
             ++$this->errorCount;
+
+            if ($this->isUniqueConstraintError($e)) {
+                throw new UniqueConstraintViolationException(
+                    $query, $this->prepareBindings($bindings), $e
+                );
+            }
+            
             throw new QueryException(
                 $query,
                 $this->prepareBindings($bindings),
@@ -1157,6 +1165,17 @@ class Connection implements ConnectionInterface
         }
 
         return $result;
+    }
+
+    /**
+     * Determine if the given database exception was caused by a unique constraint violation.
+     * 
+     * @param Exception $exception
+     * @return bool
+     */
+    protected function isUniqueConstraintError(Exception $exception): bool
+    {
+        return false;
     }
 
     /**

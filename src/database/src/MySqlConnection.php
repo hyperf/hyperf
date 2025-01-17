@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Database;
 
 use Doctrine\DBAL\Driver\PDO\MySQL\Driver;
+use Exception;
 use Hyperf\Database\DBAL\MySqlDriver;
 use Hyperf\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
@@ -45,6 +46,14 @@ class MySqlConnection extends Connection
                 $value
             );
         }
+    }
+
+    /**
+     * Determine if the given database exception was caused by a unique constraint violation.
+     */
+    protected function isUniqueConstraintError(Exception $exception): bool
+    {
+        return boolval(preg_match('#Integrity constraint violation: 1062#i', $exception->getMessage()));
     }
 
     /**
