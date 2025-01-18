@@ -406,10 +406,7 @@ class BelongsToMany extends Relation
 
     /**
      * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
-     * 
-     * @param array $attributes
-     * @param array $values
-     * @param array $joining
+     *
      * @param bool $touch
      * @return Model
      */

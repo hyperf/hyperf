@@ -166,9 +166,7 @@ abstract class HasOneOrMany extends Relation
 
     /**
      * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
-     * 
-     * @param array $attributes
-     * @param array $values
+     *
      * @return Model
      */
     public function createOrFirst(array $attributes = [], array $values = [])

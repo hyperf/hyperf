@@ -562,14 +562,14 @@ class Builder
 
     /**
      * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
-     * 
+     *
      * @return Model|static
      */
     public function createOrFirst(array $attributes = [], array $values = [])
     {
         try {
             return $this->create(array_merge($attributes, $values));
-        } catch(UniqueConstraintViolationException $exception) {
+        } catch (UniqueConstraintViolationException $exception) {
             return $this->where($attributes)->first();
         }
     }
