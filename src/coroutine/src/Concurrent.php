@@ -87,4 +87,11 @@ class Concurrent
             }
         });
     }
+
+    public function wait(): void
+    {
+        while (! $this->channel->isEmpty()) {
+            usleep(100);
+        }
+    }
 }
