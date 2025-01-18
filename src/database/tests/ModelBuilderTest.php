@@ -368,7 +368,7 @@ class ModelBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->getQuery()->shouldReceive('pluck')->with('name', '')->andReturn(new BaseCollection(['bar', 'baz']));
         $builder->setModel($this->getMockModel());
-        $builder->getModel()->shouldReceive('hasGetMutator')->with('name')->andReturn(true);
+        $builder->getModel()->shouldReceive('hasAnyGetMutator')->with('name')->andReturn(true);
         $builder->getModel()->shouldReceive('newFromBuilder')->with(['name' => 'bar'])->andReturn(new ModelBuilderTestPluckStub(['name' => 'bar']));
         $builder->getModel()->shouldReceive('newFromBuilder')->with(['name' => 'baz'])->andReturn(new ModelBuilderTestPluckStub(['name' => 'baz']));
 
@@ -380,7 +380,7 @@ class ModelBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->getQuery()->shouldReceive('pluck')->with('name', '')->andReturn(new BaseCollection(['bar', 'baz']));
         $builder->setModel($this->getMockModel());
-        $builder->getModel()->shouldReceive('hasGetMutator')->with('name')->andReturn(false);
+        $builder->getModel()->shouldReceive('hasAnyGetMutator')->with('name')->andReturn(false);
         $builder->getModel()->shouldReceive('hasCast')->with('name')->andReturn(true);
         $builder->getModel()->shouldReceive('newFromBuilder')->with(['name' => 'bar'])->andReturn(new ModelBuilderTestPluckStub(['name' => 'bar']));
         $builder->getModel()->shouldReceive('newFromBuilder')->with(['name' => 'baz'])->andReturn(new ModelBuilderTestPluckStub(['name' => 'baz']));
@@ -393,7 +393,7 @@ class ModelBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->getQuery()->shouldReceive('pluck')->with('created_at', '')->andReturn(new BaseCollection(['2010-01-01 00:00:00', '2011-01-01 00:00:00']));
         $builder->setModel($this->getMockModel());
-        $builder->getModel()->shouldReceive('hasGetMutator')->with('created_at')->andReturn(false);
+        $builder->getModel()->shouldReceive('hasAnyGetMutator')->with('created_at')->andReturn(false);
         $builder->getModel()->shouldReceive('hasCast')->with('created_at')->andReturn(false);
         $builder->getModel()->shouldReceive('getDates')->andReturn(['created_at']);
         $builder->getModel()->shouldReceive('newFromBuilder')->with(['created_at' => '2010-01-01 00:00:00'])->andReturn(new ModelBuilderTestPluckDatesStub(['created_at' => '2010-01-01 00:00:00']));
@@ -408,7 +408,7 @@ class ModelBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->getQuery()->shouldReceive('pluck')->with('name', '')->andReturn(new BaseCollection(['bar', 'baz']));
         $builder->setModel($this->getMockModel());
-        $builder->getModel()->shouldReceive('hasGetMutator')->with('name')->andReturn(false);
+        $builder->getModel()->shouldReceive('hasAnyGetMutator')->with('name')->andReturn(false);
         $builder->getModel()->shouldReceive('hasCast')->with('name')->andReturn(false);
         $builder->getModel()->shouldReceive('getDates')->andReturn(['created_at']);
 
