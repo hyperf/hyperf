@@ -236,7 +236,7 @@ class DatabaseModelCustomCastingTest extends TestCase
         $this->assertSame(['name' => 'Nano', 'gender' => 1], Arr::only($attributes, ['name', 'gender']));
 
         $this->assertSame(['name' => 'Nano'], $model->getDirty());
-        $this->assertSame(2, UserInfoCaster::$setCount);
+        $this->assertSame(4, UserInfoCaster::$setCount);
         $this->assertSame(0, UserInfoCaster::$getCount);
     }
 

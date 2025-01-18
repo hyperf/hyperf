@@ -470,7 +470,7 @@ trait HasAttributes
 
     public function syncAttributes(): static
     {
-        $this->mergeAttributesFromClassCasts();
+        $this->mergeAttributesFromCachedCasts();
         return $this;
     }
 
