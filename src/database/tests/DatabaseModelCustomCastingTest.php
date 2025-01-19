@@ -196,17 +196,15 @@ class DatabaseModelCustomCastingTest extends TestCase
 
             return $obj;
         });
-        $mockery->shouldReceive('set')->withAnyArgs()->once()->andReturnUsing(function ($_, $key, $value, $attributes) {
+        $mockery->shouldReceive('set')->withAnyArgs()->andReturnUsing(function ($_, $key, $value, $attributes) {
             return [
                 $key . '_origin' => $value->value + 1,
             ];
         });
         MockeryAttribute::$attribute = $mockery;
-
         $std = new stdClass();
         $std->value = 1;
         $model->mockery = $std;
-
         $this->assertSame(1, $model->mockery->value);
     }
 

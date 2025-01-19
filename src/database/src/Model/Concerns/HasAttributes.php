@@ -303,7 +303,8 @@ trait HasAttributes
         // the model, such as "json_encoding" an listing of data for storage.
         if ($this->hasSetMutator($key)) {
             return $this->setMutatedAttributeValue($key, $value);
-        }elseif ($this->hasAttributeSetMutator($key)) {
+        }
+        if ($this->hasAttributeSetMutator($key)) {
             return $this->setAttributeMarkedMutatedAttributeValue($key, $value);
         }
 
@@ -469,7 +470,6 @@ trait HasAttributes
 
     public function syncAttributes(): static
     {
-        $this->mergeAttributesFromCachedCasts();
         return $this;
     }
 
@@ -1644,7 +1644,8 @@ trait HasAttributes
         // retrieval from the model to a form that is more useful for usage.
         if ($this->hasGetMutator($key)) {
             return $this->mutateAttribute($key, $value);
-        }elseif ($this->hasAttributeGetMutator($key)) {
+        }
+        if ($this->hasAttributeGetMutator($key)) {
             return $this->mutateAttributeMarkedAttribute($key, $value);
         }
 
