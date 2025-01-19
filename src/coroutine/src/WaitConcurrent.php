@@ -28,7 +28,6 @@ class WaitConcurrent extends Concurrent
 
     public function create(callable $callable): void
     {
-        $this->channel->push(true);
         $this->waitGroup->add();
 
         $callable = function () use ($callable) {
