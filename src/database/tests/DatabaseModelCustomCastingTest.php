@@ -234,9 +234,8 @@ class DatabaseModelCustomCastingTest extends TestCase
         $user->name = 'Nano';
         $attributes = $model->getAttributes();
         $this->assertSame(['name' => 'Nano', 'gender' => 1], Arr::only($attributes, ['name', 'gender']));
-
         $this->assertSame(['name' => 'Nano'], $model->getDirty());
-        $this->assertSame(4, UserInfoCaster::$setCount);
+        $this->assertSame(5, UserInfoCaster::$setCount);
         $this->assertSame(0, UserInfoCaster::$getCount);
     }
 
@@ -459,4 +458,14 @@ class UserInfo extends CastsValue
     protected array $items = [
         'role_id' => 0,
     ];
+
+    public function __set($name, $value)
+    {
+        $this->items[$name] = $value;
+    }
+
+    public function __unset($name)
+    {
+        unset($this->items[$name]);
+    }
 }
