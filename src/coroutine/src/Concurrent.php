@@ -27,9 +27,12 @@ class Concurrent
 {
     protected Channel $channel;
 
+    protected WaitGroup $waitGroup;
+
     public function __construct(protected int $limit)
     {
         $this->channel = new Channel($limit);
+        $this->waitGroup = new WaitGroup();
     }
 
     public function __call($name, $arguments)
@@ -69,6 +72,7 @@ class Concurrent
     public function create(callable $callable): void
     {
         $this->channel->push(true);
+        $this->waitGroup->add();
 
         Coroutine::create(function () use ($callable) {
             try {
@@ -84,14 +88,13 @@ class Concurrent
                 }
             } finally {
                 $this->channel->pop();
+                $this->waitGroup->done();
             }
         });
     }
 
-    public function wait(): void
+    public function wait(float $timeout = -1): bool
     {
-        while (! $this->channel->isEmpty()) {
-            usleep(100);
-        }
+        return $this->waitGroup->wait($timeout);
     }
 }
