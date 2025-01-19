@@ -18,23 +18,23 @@ namespace Hyperf\Coroutine;
  */
 class WaitConcurrent extends Concurrent
 {
-    protected WaitGroup $waitGroup;
+    protected WaitGroup $wg;
 
     public function __construct(protected int $limit)
     {
         parent::__construct($limit);
-        $this->waitGroup = new WaitGroup();
+        $this->wg = new WaitGroup();
     }
 
     public function create(callable $callable): void
     {
-        $this->waitGroup->add();
+        $this->wg->add();
 
         $callable = function () use ($callable) {
             try {
                 $callable();
             } finally {
-                $this->waitGroup->done();
+                $this->wg->done();
             }
         };
 
@@ -43,6 +43,6 @@ class WaitConcurrent extends Concurrent
 
     public function wait(float $timeout = -1): bool
     {
-        return $this->waitGroup->wait($timeout);
+        return $this->wg->wait($timeout);
     }
 }
