@@ -36,18 +36,17 @@ class Redis
     {
         // Get a connection from coroutine context or connection pool.
         $hasContextConnection = Context::has($this->getContextKey());
-        $connection = $this->getConnection($hasContextConnection);
-        $eventDispatcher = $connection->getEventDispatcher();
+        $redisConnection = $this->getConnection($hasContextConnection);
         // Record the start time of the command.
         $start = (float) microtime(true);
 
         try {
-            $connection = $connection->getConnection();
+            $connection = $redisConnection->getConnection();
             // Execute the command with the arguments.
             $result = $connection->{$name}(...$arguments);
             $time = round((microtime(true) - $start) * 1000, 2);
             // Dispatch the command executed event.
-            $eventDispatcher?->dispatch(new Event\CommandExecuted($name, $arguments, $time, $connection, $this->poolName));
+            $redisConnection->getEventDispatcher()?->dispatch(new Event\CommandExecuted($name, $arguments, $time, $redisConnection, $this->poolName));
         } finally {
             // Release connection.
             if (! $hasContextConnection) {
