@@ -89,6 +89,9 @@ class RedisConnectionTest extends TestCase
                 'heartbeat' => -1,
                 'max_idle_time' => 1,
             ],
+            'event' => [
+                'enable' => false,
+            ],
         ], $config);
     }
 
