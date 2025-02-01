@@ -85,13 +85,13 @@ jobs:
       - name: Setup Flysystem(v1.0) Adapters
         if: ${{ matrix.version == '^1.0' }}
         run: |
-          composer require aws/aws-sdk-php:3.337.3 -W
           composer require xxtime/flysystem-aliyun-oss -W
           composer require "overtrue/flysystem-cos:^3.0" -W
           composer require "overtrue/flysystem-qiniu:^1.0" -W
       - name: Setup Flysystem(v2.0) Adapters
         if: ${{ matrix.version == '^2.0' }}
         run: |
+          composer require aws/aws-sdk-php:3.337.3 -W
           composer require hyperf/flysystem-oss -W
           composer require "league/flysystem-ftp:^3.0" -W
           composer require "overtrue/flysystem-cos:^4.0" -W
