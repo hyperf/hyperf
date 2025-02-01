@@ -81,6 +81,9 @@ class RedisConnectionTest extends TestCase
             'context' => [
                 'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
             ],
+            'event' => [
+                'enable' => false,
+            ],
             'pool' => [
                 'min_connections' => 1,
                 'max_connections' => 30,
@@ -88,9 +91,6 @@ class RedisConnectionTest extends TestCase
                 'wait_timeout' => 3.0,
                 'heartbeat' => -1,
                 'max_idle_time' => 1,
-            ],
-            'event' => [
-                'enable' => false,
             ],
         ], $config);
     }
