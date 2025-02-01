@@ -176,9 +176,9 @@ class CollectionTest extends TestCase
         $this->assertFalse($col->hasAny('third'));
         $this->assertTrue($col->hasAny(['first', 'second']));
         $this->assertTrue($col->hasAny(['first', 'fourth']));
+        $this->assertTrue($col->hasAny('null'));
         $this->assertFalse($col->hasAny(['third', 'fourth']));
         $this->assertFalse($col->hasAny('third', 'fourth'));
-        $this->assertFalse($col->hasAny('null'));
         $this->assertFalse($col->hasAny([]));
     }
 
