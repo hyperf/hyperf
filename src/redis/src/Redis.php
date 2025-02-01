@@ -15,7 +15,6 @@ namespace Hyperf\Redis;
 use Hyperf\Context\Context;
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Pool\PoolFactory;
-use Psr\EventDispatcher\EventDispatcherInterface;
 
 use function Hyperf\Coroutine\defer;
 
@@ -29,8 +28,6 @@ class Redis
 
     protected string $poolName = 'default';
 
-    protected ?EventDispatcherInterface $eventDispatcher = null;
-
     public function __construct(protected PoolFactory $factory)
     {
     }
@@ -40,6 +37,7 @@ class Redis
         // Get a connection from coroutine context or connection pool.
         $hasContextConnection = Context::has($this->getContextKey());
         $connection = $this->getConnection($hasContextConnection);
+        $eventDispatcher = $connection->getEventDispatcher();
         // Record the start time of the command.
         $start = (float) microtime(true);
 
@@ -49,7 +47,7 @@ class Redis
             $result = $connection->{$name}(...$arguments);
             $time = round((microtime(true) - $start) * 1000, 2);
             // Dispatch the command executed event.
-            $this->eventDispatcher?->dispatch(new Event\CommandExecuted($name, $arguments, $time, $connection, $this->poolName));
+            $eventDispatcher?->dispatch(new Event\CommandExecuted($name, $arguments, $time, $connection, $this->poolName));
         } finally {
             // Release connection.
             if (! $hasContextConnection) {
@@ -71,11 +69,6 @@ class Redis
         }
 
         return $result;
-    }
-
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): void
-    {
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
