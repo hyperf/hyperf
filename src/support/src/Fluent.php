@@ -134,6 +134,8 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     /**
      * Get an attribute from the fluent instance.
      *
+     * @template TGetDefault
+     *
      * @param TKey $key
      * @param (Closure(): TGetDefault)|TGetDefault $default
      * @return TGetDefault|TValue

@@ -344,7 +344,7 @@ trait InteractsWithData
      * Retrieve data from the instance as a collection.
      *
      * @param null|array|string $key
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function collect($key = null)
     {
