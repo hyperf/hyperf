@@ -17,6 +17,7 @@ use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
+use Hyperf\Macroable\Macroable;
 use JsonSerializable;
 
 use function Hyperf\Collection\data_get;
@@ -35,6 +36,9 @@ use function Hyperf\Collection\data_set;
 class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
     use Traits\InteractsWithData;
+    use Macroable{
+        __call as macroCall;
+    }
 
     /**
      * All the attributes set on the fluent instance.
@@ -50,9 +54,7 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      */
     public function __construct($attributes = [])
     {
-        foreach ($attributes as $key => $value) {
-            $this->attributes[$key] = $value;
-        }
+        $this->fill($attributes);
     }
 
     /**
@@ -64,6 +66,10 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      */
     public function __call($method, $parameters)
     {
+        if (static::hasMacro($method)) {
+            return $this->macroCall($method, $parameters);
+        }
+
         $this->attributes[$method] = count($parameters) > 0 ? $parameters[0] : true;
 
         return $this;
@@ -159,6 +165,21 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     public function set($key, $value)
     {
         data_set($this->attributes, $key, $value);
+
+        return $this;
+    }
+
+    /**
+     * Fill the fluent instance with an array of attributes.
+     *
+     * @param iterable<TKey, TValue> $attributes
+     * @return $this
+     */
+    public function fill($attributes)
+    {
+        foreach ($attributes as $key => $value) {
+            $this->attributes[$key] = $value;
+        }
 
         return $this;
     }
