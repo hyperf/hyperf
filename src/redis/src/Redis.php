@@ -45,7 +45,9 @@ class Redis
             $result = $connection->getConnection()->{$name}(...$arguments);
             $time = round((microtime(true) - $start) * 1000, 2);
             // Dispatch the command executed event.
-            $connection->getEventDispatcher()?->dispatch(new Event\CommandExecuted($name, $arguments, $time, $connection, $this->poolName));
+            $connection->getEventDispatcher()?->dispatch(
+                new Event\CommandExecuted($name, $arguments, $time, $connection, $this->poolName)
+            );
         } finally {
             // Release connection.
             if (! $hasContextConnection) {
