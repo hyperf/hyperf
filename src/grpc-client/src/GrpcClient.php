@@ -88,6 +88,13 @@ class GrpcClient
     private $recvChannelMap = [];
 
     /**
+     * The channel for the recv coroutine waiting for next send complete.
+     *
+     * @var Channel
+     */
+    private $recvWaitChannel;
+
+    /**
      * @var int
      */
     private $waitStatus = Status::WAIT_PENDDING;
@@ -114,6 +121,7 @@ class GrpcClient
     public function __construct(ChannelPool $channelPool)
     {
         $this->channelPool = $channelPool;
+        $this->recvWaitChannel = $channelPool->get();
     }
 
     public function set(string $hostname, array $options = [])
@@ -168,7 +176,7 @@ class GrpcClient
         if ($this->waitStatus) {
             $shouldKill = true;
         } else {
-            $shouldKill = ! $this->getHttpClient()->connect();
+            $shouldKill = $this->isConnected();
         }
         if ($shouldKill) {
             // Set `connected` of http client to `false`
@@ -187,6 +195,7 @@ class GrpcClient
             }
             $this->recvChannelMap = [];
         }
+        $this->releaseRecvWaitChannel();
         return $shouldKill;
     }
 
@@ -253,6 +262,7 @@ class GrpcClient
             $streamId = $this->sendResultChannel->pop();
         } else {
             $streamId = $this->getHttpClient()->send($request);
+            $this->recvWaitChannel->push(true);
         }
         if ($streamId === false) {
             throw new GrpcClientException('Failed to send the request to server', StatusCode::INTERNAL);
@@ -310,6 +320,7 @@ class GrpcClient
             return $this->yield($yield);
         }
         $this->getHttpClient()->close();
+        $this->releaseRecvWaitChannel();
         $result = $this->sendYield ? $this->sendChannel->push(0) : true;
         if ($result === true) {
             $this->yield($yield);
@@ -335,7 +346,7 @@ class GrpcClient
         Coroutine::create(function () {
             $this->recvCoroutineId = Coroutine::id();
             // Start the receive loop
-            while (true) {
+            while ($this->recvWaitChannel->pop()) {
                 $response = $this->getHttpClient()->recv();
                 if ($response !== false) {
                     $streamId = $response->streamId;
@@ -397,6 +408,7 @@ class GrpcClient
                 }
                 if ($data instanceof Request) {
                     $result = $this->getHttpClient()->send($data);
+                    $this->recvWaitChannel->push(true);
                 } else {
                     $result = $this->getHttpClient()->write(...$data);
                 }
@@ -411,5 +423,16 @@ class GrpcClient
         $httpClient = new SwooleHttp2Client($this->host, $this->port, $this->ssl);
         $httpClient->set($this->options);
         return $httpClient;
+    }
+
+    private function releaseRecvWaitChannel()
+    {
+        if (!empty($this->recvWaitChannel)) {
+            while ($this->recvWaitChannel->stats()['consumer_num'] !== 0) {
+                $this->recvWaitChannel->push(false);
+            }
+            $this->channelPool->release($this->recvWaitChannel);
+            $this->recvWaitChannel = null;
+        }
     }
 }

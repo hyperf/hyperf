@@ -132,7 +132,7 @@ class StreamingCall
         // server ended the stream
         if ($recv->pipeline === false) {
             $this->streamId = 0;
-            return[null, 0, $recv];
+            return [null, 0, $recv];
         }
 
         return Parser::parseResponse($recv, $this->deserialize);
