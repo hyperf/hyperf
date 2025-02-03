@@ -18,8 +18,6 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
@@ -40,11 +38,17 @@ class BootProcessListener implements ListenerInterface
      */
     protected $client;
 
+    /**
+     * @var Coroutine\Timer
+     */
+    protected $timer;
+
     public function __construct(ContainerInterface $container)
     {
         $this->config = $container->get(ConfigInterface::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->client = $container->get(ClientInterface::class);
+        $this->timer = $container->get(Coroutine\Timer::class);
     }
 
     public function listen(): array
@@ -66,26 +70,19 @@ class BootProcessListener implements ListenerInterface
             $this->updateConfig($config);
         }
 
-        if (! $this->config->get('aliyun_acm.use_standalone_process', true)) {
-            Coroutine::create(function () {
-                $interval = $this->config->get('aliyun_acm.interval', 5);
-                retry(INF, function () use ($interval) {
-                    $prevConfig = [];
-                    while (true) {
-                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
-                        $workerExited = $coordinator->yield($interval);
-                        if ($workerExited) {
-                            break;
-                        }
-                        $config = $this->client->pull();
-                        if ($config !== $prevConfig) {
-                            $this->updateConfig($config);
-                        }
-                        $prevConfig = $config;
-                    }
-                }, $interval * 1000);
-            });
+        if ($this->config->get('aliyun_acm.use_standalone_process', true)) {
+            return;
         }
+
+        $interval = $this->config->get('aliyun_acm.interval', 5);
+        $prevConfig = [];
+        $this->timer->tick($interval, function () use (&$prevConfig) {
+            $config = $this->client->pull();
+            if ($config !== $prevConfig) {
+                $this->updateConfig($config);
+            }
+            $prevConfig = $config;
+        });
     }
 
     protected function updateConfig(array $config)
