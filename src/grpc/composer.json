@@ -16,7 +16,7 @@
         "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "google/common-protos": "^3.2 || ^4.4",
         "google/protobuf": "^3.6.1"
     },

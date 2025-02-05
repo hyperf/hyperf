@@ -9,7 +9,7 @@
         "etcd"
     ],
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "hyperf/guzzle": "~3.1.0",
         "hyperf/support": "~3.1.0",
         "hyperf/utils": "~3.1.0",

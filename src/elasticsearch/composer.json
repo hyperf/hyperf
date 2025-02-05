@@ -9,7 +9,7 @@
         "elasticsearch"
     ],
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "elasticsearch/elasticsearch": "^7.0",
         "hyperf/guzzle": "~3.1.0"
     },

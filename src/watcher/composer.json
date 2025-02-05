@@ -9,7 +9,7 @@
         "hyperf"
     ],
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "ext-posix": "*",
         "hyperf/codec": "~3.1.0",
         "hyperf/command": "~3.1.0",

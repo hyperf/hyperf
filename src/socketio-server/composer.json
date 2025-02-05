@@ -8,7 +8,7 @@
         "hyperf"
     ],
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "ext-json": "*",
         "ext-redis": "*",
         "hyperf/codec": "~3.1.0",

@@ -9,7 +9,7 @@
         "nacos"
     ],
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "guzzlehttp/guzzle": "^6.5 || ^7.0",
         "hyperf/codec": "~3.1.0",
         "hyperf/contract": "~3.1.0",

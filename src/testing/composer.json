@@ -10,7 +10,7 @@
         "testing"
     ],
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "hyperf/codec": "~3.1.0",
         "hyperf/collection": "~3.1.0",
         "hyperf/contract": "~3.1.0",
