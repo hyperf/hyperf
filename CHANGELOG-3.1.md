@@ -5,6 +5,10 @@
 - [#7250](https://github.com/hyperf/hyperf/pull/7250) Added `Hyperf\AsyncQueue\Driver\Driver::getConfig()`.
 - [#7263](https://github.com/hyperf/hyperf/pull/7263) Added `Hyperf\Coroutine\WaitConcurrent`.
 
+## Optimized
+
+- [#7258](https://github.com/hyperf/hyperf/pull/7258) Optimized code for reading package data from `composer.lock`.
+
 # v3.1.50 - 2025-01-09
 
 ## Fixed
