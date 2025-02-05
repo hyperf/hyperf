@@ -16,20 +16,20 @@
         "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "doctrine/inflector": "^2.0",
-        "hyperf/code-parser": "~3.1.0",
-        "hyperf/codec": "~3.1.0",
-        "hyperf/collection": "~3.1.0",
-        "hyperf/context": "~3.1.0",
-        "hyperf/contract": "~3.1.0",
-        "hyperf/coordinator": "~3.1.0",
-        "hyperf/coroutine": "~3.1.0",
+        "hyperf/code-parser": "~3.2.0",
+        "hyperf/codec": "~3.2.0",
+        "hyperf/collection": "~3.2.0",
+        "hyperf/context": "~3.2.0",
+        "hyperf/contract": "~3.2.0",
+        "hyperf/coordinator": "~3.2.0",
+        "hyperf/coroutine": "~3.2.0",
         "hyperf/engine": "^2.0",
-        "hyperf/macroable": "~3.1.0",
-        "hyperf/serializer": "~3.1.0",
-        "hyperf/stringable": "~3.1.0",
-        "hyperf/support": "~3.1.0"
+        "hyperf/macroable": "~3.2.0",
+        "hyperf/serializer": "~3.2.0",
+        "hyperf/stringable": "~3.2.0",
+        "hyperf/support": "~3.2.0"
     },
     "config": {
         "sort-packages": true

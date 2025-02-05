@@ -16,12 +16,12 @@
         "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
-        "php": ">=8.1",
-        "hyperf/contract": "~3.1.0",
-        "hyperf/framework": "~3.1.0",
-        "hyperf/serializer": "~3.1.0",
-        "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0",
+        "php": ">=8.2",
+        "hyperf/contract": "~3.2.0",
+        "hyperf/framework": "~3.2.0",
+        "hyperf/serializer": "~3.2.0",
+        "hyperf/support": "~3.2.0",
+        "hyperf/utils": "~3.2.0",
         "psr/container": "^1.0 || ^2.0",
         "psr/event-dispatcher": "^1.0",
         "symfony/property-access": "^5.0 || ^6.0",

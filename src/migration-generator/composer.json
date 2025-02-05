@@ -17,9 +17,9 @@
         "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
-        "php": ">=8.1",
-        "hyperf/command": "~3.1.0",
-        "hyperf/database": "~3.1.0"
+        "php": ">=8.2",
+        "hyperf/command": "~3.2.0",
+        "hyperf/database": "~3.2.0"
     },
     "autoload": {
         "psr-4": {

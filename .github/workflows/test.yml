@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php: [ '8.1' ]
+        php: [ '8.2' ]
         swoole: [ 'swoole' ]
     steps:
       - name: Checkout
@@ -29,7 +29,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
           tools: php-cs-fixer
           extensions: redis, pdo, pdo_mysql, bcmath, ${{ matrix.swoole }}
       - name: Setup Packages
@@ -47,11 +47,8 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php-version: [ '8.3', '8.2', '8.1' ]
-        sw-version: [ 'v5.0.3', 'v5.1.6', 'v6.0.0', 'master' ]
-        exclude:
-          - php-version: '8.3'
-            sw-version: 'v5.0.3'
+        php-version: [ '8.4', '8.3', '8.2' ]
+        sw-version: [ 'v6.0.0', 'master' ]
       max-parallel: 20
       fail-fast: false
     env:

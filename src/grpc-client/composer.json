@@ -17,13 +17,13 @@
         "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
-        "php": ">=8.1",
-        "hyperf/code-parser": "~3.1.0",
-        "hyperf/context": "~3.1.0",
-        "hyperf/contract": "~3.1.0",
-        "hyperf/coroutine": "~3.1.0",
-        "hyperf/event": "~3.1.0",
-        "hyperf/grpc": "~3.1.0",
+        "php": ">=8.2",
+        "hyperf/code-parser": "~3.2.0",
+        "hyperf/context": "~3.2.0",
+        "hyperf/contract": "~3.2.0",
+        "hyperf/coroutine": "~3.2.0",
+        "hyperf/event": "~3.2.0",
+        "hyperf/grpc": "~3.2.0",
         "jean85/pretty-package-versions": "^1.2 || ^2.0"
     },
     "suggest": {

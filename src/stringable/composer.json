@@ -16,12 +16,12 @@
         "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "ext-mbstring": "*",
-        "hyperf/collection": "~3.1.0",
-        "hyperf/conditionable": "~3.1.0",
-        "hyperf/macroable": "~3.1.0",
-        "hyperf/tappable": "~3.1.0"
+        "hyperf/collection": "~3.2.0",
+        "hyperf/conditionable": "~3.2.0",
+        "hyperf/macroable": "~3.2.0",
+        "hyperf/tappable": "~3.2.0"
     },
     "suggest": {
         "doctrine/inflector": "Required to use plural and singular methods.(^2.0|^3.0)",

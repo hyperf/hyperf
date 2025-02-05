@@ -8,14 +8,14 @@
         "hyperf"
     ],
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "ext-json": "*",
         "ext-redis": "*",
-        "hyperf/codec": "~3.1.0",
-        "hyperf/collection": "~3.1.0",
-        "hyperf/di": "~3.1.0",
-        "hyperf/redis": "~3.1.0",
-        "hyperf/websocket-server": "~3.1.0",
+        "hyperf/codec": "~3.2.0",
+        "hyperf/collection": "~3.2.0",
+        "hyperf/di": "~3.2.0",
+        "hyperf/redis": "~3.2.0",
+        "hyperf/websocket-server": "~3.2.0",
         "psr/container": "^1.0 || ^2.0"
     },
     "conflict": {
