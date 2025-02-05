@@ -19,10 +19,10 @@
     },
     "require": {
         "php": ">=8.2",
-        "hyperf/config-center": "~3.1.0",
-        "hyperf/contract": "~3.1.0",
-        "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0",
+        "hyperf/config-center": "~3.2.0",
+        "hyperf/contract": "~3.2.0",
+        "hyperf/support": "~3.2.0",
+        "hyperf/utils": "~3.2.0",
         "psr/container": "^1.0 || ^2.0"
     },
     "suggest": {

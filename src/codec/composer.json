@@ -19,7 +19,7 @@
         "php": ">=8.2",
         "ext-json": "*",
         "ext-xml": "*",
-        "hyperf/contract": "~3.1.0"
+        "hyperf/contract": "~3.2.0"
     },
     "suggest": {
         "ext-igbinary": "Required to use IgbinarySerializerPacker."

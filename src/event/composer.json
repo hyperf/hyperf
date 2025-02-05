@@ -17,8 +17,8 @@
     },
     "require": {
         "php": ">=8.2",
-        "hyperf/contract": "~3.1.0",
-        "hyperf/stdlib": "~3.1.0",
+        "hyperf/contract": "~3.2.0",
+        "hyperf/stdlib": "~3.2.0",
         "psr/event-dispatcher": "^1.0"
     },
     "suggest": {

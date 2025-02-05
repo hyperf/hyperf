@@ -17,8 +17,8 @@
     },
     "require": {
         "php": ">=8.2",
-        "hyperf/context": "~3.1.0",
-        "hyperf/contract": "~3.1.0",
+        "hyperf/context": "~3.2.0",
+        "hyperf/contract": "~3.2.0",
         "hyperf/engine": "^2.0"
     },
     "autoload": {
