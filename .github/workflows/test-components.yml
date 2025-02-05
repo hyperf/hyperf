@@ -23,7 +23,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.3', '8.2', '8.1' ]
+        php-version: [ '8.4', '8.3', '8.2' ]
         carbon-version: [ '^2.0', '^3.0' ]
       max-parallel: 2
       fail-fast: false
