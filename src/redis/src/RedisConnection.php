@@ -161,10 +161,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $this->connection = $redis;
         $this->lastUseTime = microtime(true);
 
-        if (
-            $this->config['event']['enable'] ?? false
-            && $this->container->has(EventDispatcherInterface::class)
-        ) {
+        if (($this->config['event']['enable'] ?? false) && $this->container->has(EventDispatcherInterface::class)) {
             $this->eventDispatcher = $this->container->get(EventDispatcherInterface::class);
         }
 
