@@ -193,7 +193,7 @@ Hello, {!! $name !!}.
 
 #### HTML 實體編碼
 
-預設情況下，`Blade` 將會對 `HTML` 實體進行雙重編碼。如果您想要禁用此舉，您可以監聽 `BootApplication` 事件，並呼叫 `Blade::withoutDoubleEncoding` 方法：
+預設情況下，`Blade` 將會對 `HTML` 實體進行雙重編碼。如果您想要停用此舉，您可以監聽 `BootApplication` 事件，並呼叫 `Blade::withoutDoubleEncoding` 方法：
 
 ```php
 <?php

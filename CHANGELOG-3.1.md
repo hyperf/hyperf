@@ -1,4 +1,83 @@
-# v3.1.45 - TBD
+# v3.1.51 - TBD
+
+## Added
+
+- [#7250](https://github.com/hyperf/hyperf/pull/7250) Added `Hyperf\AsyncQueue\Driver\Driver::getConfig()`.
+- [#7255](https://github.com/hyperf/hyperf/pull/7255) Added `createOrFirst()` and `createOrRestore()` into `Hyperf\Database\Model\Builder`.
+- [#7259](https://github.com/hyperf/hyperf/pull/7259) Added `existsOr` and `doesntExistOr` into `Hyperf\Database\Query\Builder`.
+- [#7260](https://github.com/hyperf/hyperf/pull/7260) Added `Hyperf\Database\Query\Builder::sole()`.
+- [#7261](https://github.com/hyperf/hyperf/pull/7261) Added `Hyperf\Database\Model\Model::discardChanges()`.
+- [#7263](https://github.com/hyperf/hyperf/pull/7263) Added `Hyperf\Coroutine\WaitConcurrent`.
+
+## Optimized
+
+- [#7258](https://github.com/hyperf/hyperf/pull/7258) Optimized code for reading package data from `composer.lock`.
+
+# v3.1.50 - 2025-01-09
+
+## Fixed
+
+- [#7231](https://github.com/hyperf/hyperf/pull/7231) Fixed fatal exception "Object of class ... could not be converted to string" when using invalid websocket message handler.
+
+## Added
+
+- [#7224](https://github.com/hyperf/hyperf/pull/7224) Added `Hyperf\Coroutine\Mutex`.
+- [#7233](https://github.com/hyperf/hyperf/pull/7233) Added params `connection_name` which used to define amqp connection name.
+
+## Optimized
+
+- [#7223](https://github.com/hyperf/hyperf/pull/7223) Optimized code for reading extra data from `composer.lock`.
+- [#7227](https://github.com/hyperf/hyperf/pull/7227) Improves phpstan docs for `Hyperf\Support\SafeCaller`.
+
+# v3.1.49 - 2024-12-17
+
+## Added
+
+- [#7219](https://github.com/hyperf/hyperf/pull/) Added case sensitivity option to `Hyperf\Stringable\Str::is()`.
+
+## Optimized
+
+- [#7206](https://github.com/hyperf/hyperf/pull/7206) Support `swoole` version `6.0`.
+- [#7209](https://github.com/hyperf/hyperf/pull/7209) Optimized collection usage in `getUrlRange` method.
+
+# v3.1.48 - 2024-12-12
+
+## Optimized
+
+- [#7194](https://github.com/hyperf/hyperf/pull/7194) Optimized the database exception to implement unique constraint error detection.
+- [#7187](https://github.com/hyperf/hyperf/pull/7187) Allow request IP retrieval during tests via server parameters.
+
+## Fixed
+
+- [#7188](https://github.com/hyperf/hyperf/pull/7188) Fixed bug that `Hyperf\HttpMessage\Server\ResponsePlusProxy` cannot support another responses without `getCookies`.
+
+## Added
+
+- [#7192](https://github.com/hyperf/hyperf/pull/7192) Added `Hyperf\Database\Model\Collection::findOrFail()`.
+
+# v3.1.47 - 2024-11-28
+
+## Fixed
+
+- [#7176](https://github.com/hyperf/hyperf/pull/7176) Fixed bug that cookies cannot work when using `swow`.
+
+# v3.1.46 - 2024-11-21
+
+## Added
+
+- [#7148](https://github.com/hyperf/hyperf/pull/7148) Added `exclude` rules for `hyperf/validation`.
+- [#7150](https://github.com/hyperf/hyperf/pull/7150) Added missing methods (`accepted_if`, `ascii`, `date_equals`...) to validation messages.
+- [#7151](https://github.com/hyperf/hyperf/pull/7151) Added hooks `beforeTestInCoroutine` and `afterTestInCoroutine` for `Hyperf\Testing\Concerns\RunTestsInCoroutine::runTestsInCoroutine()`.
+- [#7156](https://github.com/hyperf/hyperf/pull/7156) Added method `Hyperf\Database\Schema\Blueprint::engine()`.
+
+# v3.1.45 - 2024-11-14
+
+## Added
+
+- [#7141](https://github.com/hyperf/hyperf/pull/7141) Added method `Hyperf\Collection\Arr::shuffleAssoc`.
+- [#7143](https://github.com/hyperf/hyperf/pull/7143) Added method `Hyperf\Database\Model\Builder::findOr`.
+- [#7147](https://github.com/hyperf/hyperf/pull/7147) Added `setVisible` and `setHidden` into `Model\Collection`.
+- [#7149](https://github.com/hyperf/hyperf/pull/7149) Support to define `servers` and `info` for `swagger`.
 
 ## Fixed
 

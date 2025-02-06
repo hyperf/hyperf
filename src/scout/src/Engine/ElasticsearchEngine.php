@@ -18,6 +18,7 @@ use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
+use Hyperf\Scout\Searchable;
 use Hyperf\Scout\SearchableInterface;
 use Throwable;
 
@@ -49,7 +50,7 @@ class ElasticsearchEngine extends Engine
      * Update the given model in the index.
      *
      * @phpstan-ignore-next-line
-     * @param Collection<int, \Hyperf\Database\Model\Model&\Hyperf\Scout\Searchable> $models
+     * @param Collection<int, Model&Searchable> $models
      */
     public function update($models): void
     {
@@ -81,7 +82,7 @@ class ElasticsearchEngine extends Engine
      * Remove the given model from the index.
      *
      * @phpstan-ignore-next-line
-     * @param Collection<int, \Hyperf\Database\Model\Model&\Hyperf\Scout\Searchable> $models
+     * @param Collection<int, Model&Searchable> $models
      */
     public function delete($models): void
     {

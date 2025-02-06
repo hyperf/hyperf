@@ -35,7 +35,7 @@ composer require hyperf/constants
 An enumeration class can be generated quickly with the `gen:constant` command.
 
 ```bash
-php bin/hyperf.php gen:constant ErrorCode
+php bin/hyperf.php gen:constant ErrorCode --type enum
 ```
 
 ```php
@@ -45,25 +45,24 @@ declare(strict_types=1);
 
 namespace App\Constants;
 
-use Hyperf\Constants\AbstractConstants;
 use Hyperf\Constants\Annotation\Constants;
+use Hyperf\Constants\Annotation\Message;
+use Hyperf\Constants\EnumConstantsTrait;
 
 #[Constants]
-class ErrorCode extends AbstractConstants
+enum ErrorCode: int
 {
-    /**
-     * @Message("Server Error!")
-     */
-    const SERVER_ERROR = 500;
+    use EnumConstantsTrait;
 
-    /**
-     * @Message("System parameter error")
-     */
-    const SYSTEM_INVALID = 700;
+    #[Message("Server Error!")]
+    case SERVER_ERROR = 500;
+
+    #[Message("System parameter error")]
+    case SYSTEM_INVALID = 700;
 }
 ```
 
-User can use `ErrorCode::getMessage(ErrorCode::SERVER_ERROR)` to get the corresponding error message.
+User can use `ErrorCode::SERVER_ERROR->getMessage()` to get the corresponding error message.
 
 ### Define exception class
 
@@ -82,11 +81,17 @@ use Throwable;
 
 class BusinessException extends ServerException
 {
-    public function __construct(int $code = 0, string $message = null, Throwable $previous = null)
+    public function __construct(ErrorCode|int $code = 0, ?string $message = null, ?Throwable $previous = null)
     {
         if (is_null($message)) {
-            $message = ErrorCode::getMessage($code);
+            if ($code instanceof ErrorCode) {
+                $message = $code->getMessage();
+            } else {
+                $message = ErrorCode::getMessage($code);
+            }
         }
+
+        $code = $code instanceof ErrorCode ? $code->value : $code;
 
         parent::__construct($message, $code, $previous);
     }
@@ -118,27 +123,25 @@ class IndexController extends AbstractController
 
 ### Variable parameter
 
-When using `ErrorCode::getMessage(ErrorCode::SERVER_ERROR)` to get the corresponding error message, we can also pass in variable parameters to combine error messages. For example the following
+When using `ErrorCode::SERVER_ERROR->getMessage()` to get the corresponding error message, we can also pass in variable parameters to combine error messages. For example the following
 
 ```php
 <?php
 
-use Hyperf\Constants\AbstractConstants;
 use Hyperf\Constants\Annotation\Constants;
+use Hyperf\Constants\Annotation\Message;
+use Hyperf\Constants\EnumConstantsTrait;
 
 #[Constants]
-class ErrorCode extends AbstractConstants
+enum ErrorCode: int
 {
-    /**
-     * @Message("Params %s is invalid.")
-     */
-    const PARAMS_INVALID = 1000;
+    use EnumConstantsTrait;
+
+    #[Message("Params %s is invalid.")]
+    case PARAMS_INVALID = 1000;
 }
 
-$message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, ['user_id']);
-
-// 1.2 Below version The following methods can be used, but will be removed in version 1.2
-$message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, 'user_id');
+$message = ErrorCode::PARAMS_INVALID->getMessage(['user_id']);
 ```
 
 ### Globalization
@@ -162,17 +165,18 @@ return [
     'params.invalid' => 'Params :param is invalid.',
 ];
 
-use Hyperf\Constants\AbstractConstants;
 use Hyperf\Constants\Annotation\Constants;
+use Hyperf\Constants\Annotation\Message;
+use Hyperf\Constants\EnumConstantsTrait;
 
 #[Constants]
-class ErrorCode extends AbstractConstants
+enum ErrorCode: int
 {
-    /**
-     * @Message("params.invalid")
-     */
-    const PARAMS_INVALID = 1000;
+    use EnumConstantsTrait;
+
+    #[Message("params.invalid")]
+    case PARAMS_INVALID = 1000;
 }
 
-$message = ErrorCode::getMessage(ErrorCode::SERVER_ERROR, ['param' => 'user_id']);
+$message = ErrorCode::SERVER_ERROR->getMessage(['param' => 'user_id']);
 ```
