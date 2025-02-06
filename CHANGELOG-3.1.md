@@ -9,6 +9,7 @@
 - [#7261](https://github.com/hyperf/hyperf/pull/7261) Added `Hyperf\Database\Model\Model::discardChanges()`.
 - [#7262](https://github.com/hyperf/hyperf/pull/7262) Added `Hyperf\Database\Model\Model::hasAppended()`.
 - [#7263](https://github.com/hyperf/hyperf/pull/7263) Added `Hyperf\Coroutine\WaitConcurrent`.
+- [#7269](https://github.com/hyperf/hyperf/pull/7269) Added `Hyperf\Redis\Event\CommandExecuted`.
 
 ## Optimized
 
