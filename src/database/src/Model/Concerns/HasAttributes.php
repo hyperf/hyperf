@@ -522,6 +522,16 @@ trait HasAttributes
     }
 
     /**
+     * Discard attribute changes and reset the attributes to their original state.
+     */
+    public function discardChanges(): static
+    {
+        [$this->attributes, $this->changes] = [$this->original, []];
+
+        return $this;
+    }
+
+    /**
      * Sync multiple original attribute with their current values.
      *
      * @param array|string $attributes
@@ -675,6 +685,14 @@ trait HasAttributes
         $this->appends = $appends;
 
         return $this;
+    }
+
+    /**
+     * Return whether the accessor attribute has been appended.
+     */
+    public function hasAppended(string $attribute): bool
+    {
+        return in_array($attribute, $this->appends);
     }
 
     /**
