@@ -43,7 +43,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 'stmts' => $node->stmts,
                 'extends' => new Node\Name\FullyQualified(AbstractProxyService::class),
                 'implements' => [
-                    $node->name,
+                    new Node\Name\FullyQualified($node->name->toString()),
                 ],
             ]);
         }
