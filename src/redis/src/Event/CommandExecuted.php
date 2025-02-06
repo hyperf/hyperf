@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Redis\Event;
 
 use Hyperf\Redis\RedisConnection;
+use Throwable;
 
 class CommandExecuted
 {
@@ -24,7 +25,9 @@ class CommandExecuted
         public array $parameters,
         public ?float $time,
         public RedisConnection $connection,
-        public string $connectionName
+        public string $connectionName,
+        public mixed $result,
+        public ?Throwable $throwable,
     ) {
     }
 }
