@@ -1,5 +1,7 @@
 #!/usr/bin/env php
 <?php
+
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -13,6 +15,7 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 use PhpParser\PrettyPrinter\Standard;
 
 require_once 'vendor/autoload.php';
@@ -114,16 +117,16 @@ Swoole\\Coroutine::set([
 
     protected function getTimerClearAll(): array
     {
-        return $this->parser->parse('<?php Swoole\\Timer::clearAll();');
+        return $this->parser->parse('<?php Swoole\Timer::clearAll();');
     }
 
     protected function getCoordinatorResume(): array
     {
-        return $this->parser->parse('<?php Hyperf\\Coordinator\\CoordinatorManager::until(Hyperf\\Coordinator\\Constants::WORKER_EXIT)->resume();');
+        return $this->parser->parse('<?php Hyperf\Coordinator\CoordinatorManager::until(Hyperf\Coordinator\Constants::WORKER_EXIT)->resume();');
     }
 }
 
-$parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+$parser = (new ParserFactory())->createForVersion(PhpVersion::fromString('7.0'));
 $printer = new Standard();
 $traverser = new NodeTraverser();
 

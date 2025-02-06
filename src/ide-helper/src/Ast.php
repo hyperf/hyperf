@@ -17,6 +17,7 @@ use Doctrine\Common\Annotations\Reader;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
 use ReflectionClass;
@@ -32,7 +33,7 @@ class Ast
     public function __construct()
     {
         $parserFactory = new ParserFactory();
-        $this->parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $this->parser = $parserFactory->createForVersion(PhpVersion::fromString('7.0'));
         $this->printer = new Standard();
         $this->reader = new AnnotationReader();
     }

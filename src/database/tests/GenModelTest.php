@@ -22,6 +22,7 @@ use HyperfTest\Database\Stubs\Model\UserExtEmpty;
 use Mockery;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -69,7 +70,7 @@ declare (strict_types=1);
             }
         }
 
-        $astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $astParser = (new ParserFactory())->createForVersion(PhpVersion::fromString('7.0'));
         $stms = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserExtEmpty.php'));
         $traverser = new NodeTraverser();
         $visitor = new ModelUpdateVisitor(UserExtEmpty::class, $columns, ContainerStub::getModelOption());
@@ -125,7 +126,7 @@ class UserExtEmpty extends Model
                 $columns[$i]['cast'] = 'datetime';
             }
         }
-        $astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $astParser = (new ParserFactory())->createForVersion(PhpVersion::fromString('7.0'));
         $stms = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserEnum.php'));
         $traverser = new NodeTraverser();
         $visitor = new ModelUpdateVisitor(UserEnum::class, $columns, ContainerStub::getModelOption()->setForceCasts(false));

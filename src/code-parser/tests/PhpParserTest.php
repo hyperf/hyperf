@@ -19,6 +19,7 @@ use HyperfTest\CodeParser\Stub\UnionTypeFoo;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +35,7 @@ class PhpParserTest extends TestCase
     public function testGetAstFromReflectionParameter()
     {
         $parserFactory = new ParserFactory();
-        $parser7 = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $parser7 = $parserFactory->createForVersion(PhpVersion::fromString('7.0'));
 
         $stmts = $parser7->parse(file_get_contents(__DIR__ . '/Stub/Bar.php'));
         /** @var ClassMethod $classMethod */
