@@ -94,7 +94,7 @@ final class ArraySubset extends Constraint
      */
     public function toString(): string
     {
-        return 'has the subset ' . $this->exporter()->export($this->subset);
+        return 'has the subset ' . $this->valueToTypeStringFragment($this->subset);
     }
 
     /**

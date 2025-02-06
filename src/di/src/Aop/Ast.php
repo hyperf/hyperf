@@ -18,6 +18,7 @@ use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
 
@@ -30,7 +31,7 @@ class Ast
     public function __construct()
     {
         $parserFactory = new ParserFactory();
-        $this->astParser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $this->astParser = $parserFactory->createForVersion(PhpVersion::fromString('7.0'));
         $this->printer = new Standard();
     }
 

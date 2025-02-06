@@ -16,6 +16,7 @@ use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 
 class UnshiftCodeStringVisitor extends NodeVisitorAbstract
 {
@@ -24,7 +25,7 @@ class UnshiftCodeStringVisitor extends NodeVisitorAbstract
     public function __construct(public string $code)
     {
         $parserFactory = new ParserFactory();
-        $this->astParser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $this->astParser = $parserFactory->createForVersion(PhpVersion::fromString('7.0'));
     }
 
     public function beforeTraverse(array $nodes): ?array

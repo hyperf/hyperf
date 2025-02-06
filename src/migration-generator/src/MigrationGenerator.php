@@ -26,6 +26,7 @@ use InvalidArgumentException;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -47,7 +48,7 @@ class MigrationGenerator
         protected ConfigInterface $config,
         protected ?OutputInterface $output = null,
     ) {
-        $this->astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $this->astParser = (new ParserFactory())->createForVersion(PhpVersion::fromString('7.0'));
         $this->printer = new Standard();
         $this->files = make(Filesystem::class);
     }

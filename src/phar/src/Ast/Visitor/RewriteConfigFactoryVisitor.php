@@ -15,6 +15,7 @@ namespace Hyperf\Phar\Ast\Visitor;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 
 class RewriteConfigFactoryVisitor extends NodeVisitorAbstract
 {
@@ -60,7 +61,7 @@ class ConfigFactory{
     public function createReplaceFunc()
     {
         $parserFactory = new ParserFactory();
-        $astParser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $astParser = $parserFactory->createForVersion(PhpVersion::fromString('7.0'));
         $stmts = $astParser->parse($this->replaceFunc);
         if (empty($stmts)) {
             return null;

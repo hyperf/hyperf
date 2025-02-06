@@ -17,6 +17,7 @@ use Hyperf\Collection\Arr;
 use PhpParser\Node;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
@@ -47,7 +48,7 @@ class PhpParser
     public function __construct()
     {
         $parserFactory = new ParserFactory();
-        $this->parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $this->parser = $parserFactory->createForVersion(PhpVersion::fromString('7.0'));
     }
 
     public static function getInstance(): PhpParser
