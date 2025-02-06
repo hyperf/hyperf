@@ -16,6 +16,7 @@
 ## Optimized
 
 - [#7258](https://github.com/hyperf/hyperf/pull/7258) Optimized code for reading package data from `composer.lock`.
+- [#7276](https://github.com/hyperf/hyperf/pull/7276) Replaced `get_called_class` with `static::class`.
 
 # v3.1.50 - 2025-01-09
 
