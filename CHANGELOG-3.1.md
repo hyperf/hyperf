@@ -11,6 +11,7 @@
 - [#7263](https://github.com/hyperf/hyperf/pull/7263) Added `Hyperf\Coroutine\WaitConcurrent`.
 - [#7265](https://github.com/hyperf/hyperf/pull/7265) Added `Hyperf\Command\Concerns\Prohibitable`.
 - [#7269](https://github.com/hyperf/hyperf/pull/7269) Added `Hyperf\Redis\Event\CommandExecuted`.
+- [#7273](https://github.com/hyperf/hyperf/pull/7273) Support to open the newly created files for editor `cursor` automatically.
 
 ## Optimized
 
