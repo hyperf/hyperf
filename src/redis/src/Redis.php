@@ -41,8 +41,10 @@ class Redis
         $start = (float) microtime(true);
 
         try {
+            /** @var RedisConnection $connection */
+            $connection = $connection->getConnection();
             // Execute the command with the arguments.
-            $result = $connection->getConnection()->{$name}(...$arguments);
+            $result = $connection->{$name}(...$arguments);
             $time = round((microtime(true) - $start) * 1000, 2);
             // Dispatch the command executed event.
             $connection->getEventDispatcher()?->dispatch(
