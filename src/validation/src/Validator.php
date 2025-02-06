@@ -53,6 +53,11 @@ class Validator implements ValidatorContract
     public array $customValues = [];
 
     /**
+     * Indicates that unvalidated array keys should be excluded, even if the parent array was validated.
+     */
+    public bool $excludeUnvalidatedArrayKeys = false;
+
+    /**
      * All the custom validator extensions.
      */
     public array $extensions = [];
@@ -76,6 +81,11 @@ class Validator implements ValidatorContract
      * The failed validation rules.
      */
     protected array $failedRules = [];
+
+    /**
+     * Attributes that should be excluded from the validated data.
+     */
+    protected array $excludeAttributes = [];
 
     /**
      * The message bag instance.
@@ -126,19 +136,25 @@ class Validator implements ValidatorContract
      * The validation rules that imply the field is required.
      */
     protected array $implicitRules = [
-        'Required', 'Filled', 'RequiredWith', 'RequiredWithAll', 'RequiredWithout',
-        'RequiredWithoutAll', 'RequiredIf', 'RequiredUnless', 'Accepted', 'Present',
+        'Required', 'Filled', 'Missing', 'MissingIf', 'MissingUnless', 'MissingWith',
+        'MissingWithAll', 'RequiredWith', 'RequiredWithAll', 'RequiredWithout', 'RequiredWithoutAll',
+        'RequiredIf', 'RequiredUnless', 'Accepted', 'AcceptedIf', 'Declined', 'DeclinedIf', 'Present',
     ];
 
     /**
      * The validation rules which depend on other fields as parameters.
      */
     protected array $dependentRules = [
-        'RequiredWith', 'RequiredWithAll', 'RequiredWithout', 'RequiredWithoutAll',
-        'RequiredIf', 'RequiredUnless', 'Confirmed', 'Same', 'Different', 'Unique',
-        'Before', 'After', 'BeforeOrEqual', 'AfterOrEqual', 'Gt', 'Lt', 'Gte', 'Lte',
-        'Prohibits',
+        'AcceptedIf', 'DeclinedIf', 'RequiredWith', 'RequiredWithAll', 'RequiredWithout',
+        'RequiredWithoutAll', 'RequiredIf', 'RequiredUnless', 'Confirmed', 'Same', 'Different',
+        'Unique', 'Before', 'After', 'BeforeOrEqual', 'AfterOrEqual', 'Gt', 'Lt', 'Gte', 'Lte',
+        'Prohibits', 'ExcludeIf', 'ExcludeUnless', 'ExcludeWith', 'ExcludeWithout', 'MissingIf', 'MissingUnless', 'MissingWith', 'MissingWithAll',
     ];
+
+    /**
+     * The validation rules that can exclude an attribute.
+     */
+    protected array $excludeRules = ['Exclude', 'ExcludeIf', 'ExcludeUnless', 'ExcludeWith', 'ExcludeWithout'];
 
     /**
      * The size related validation rules.
@@ -242,8 +258,18 @@ class Validator implements ValidatorContract
         foreach ($this->rules as $attribute => $rules) {
             $attribute = str_replace('\.', '->', $attribute);
 
+            if ($this->shouldBeExcluded($attribute)) {
+                $this->removeAttribute($attribute);
+
+                continue;
+            }
+
             foreach ($rules as $rule) {
                 $this->validateAttribute($attribute, $rule);
+
+                if ($this->shouldBeExcluded($attribute)) {
+                    break;
+                }
 
                 if ($this->shouldStopValidating($attribute)) {
                     break;
@@ -298,8 +324,15 @@ class Validator implements ValidatorContract
 
         $missingValue = Str::random(10);
 
-        foreach (array_keys($this->getRules()) as $key) {
+        foreach ($this->getRules() as $key => $rules) {
             $value = data_get($this->getData(), $key, $missingValue);
+
+            if ($this->excludeUnvalidatedArrayKeys
+                && (in_array('array', $rules) || in_array('list', $rules))
+                && $value !== null
+                && ! empty(preg_grep('/^' . preg_quote($key, '/') . '\.+/', array_keys($this->getRules())))) {
+                continue;
+            }
 
             if ($value !== $missingValue) {
                 Arr::set($results, $key, $value);
@@ -312,10 +345,15 @@ class Validator implements ValidatorContract
     /**
      * Add a failed rule and error message to the collection.
      */
-    public function addFailure(string $attribute, string $rule, array $parameters = [])
+    public function addFailure(string $attribute, string $rule, array $parameters = []): void
     {
         if (! $this->messages) {
             $this->passes();
+        }
+
+        if (in_array($rule, $this->excludeRules)) {
+            $this->excludeAttribute($attribute);
+            return;
         }
 
         $this->messages->add($attribute, $this->makeReplacements(
@@ -721,6 +759,31 @@ class Validator implements ValidatorContract
     }
 
     /**
+     * Determine if the attribute should be excluded.
+     */
+    protected function shouldBeExcluded(string $attribute): bool
+    {
+        foreach ($this->excludeAttributes as $excludeAttribute) {
+            if ($attribute === $excludeAttribute
+                || Str::startsWith($attribute, $excludeAttribute . '.')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Add the given attribute to the list of excluded attributes.
+     */
+    protected function excludeAttribute(string $attribute): void
+    {
+        $this->excludeAttributes[] = $attribute;
+
+        $this->excludeAttributes = array_unique($this->excludeAttributes);
+    }
+
+    /**
      * Validate a given attribute against a rule.
      *
      * @param object|string $rule
@@ -832,6 +895,10 @@ class Validator implements ValidatorContract
      */
     protected function isValidatable($rule, string $attribute, $value): bool
     {
+        if (in_array($rule, $this->excludeRules)) {
+            return true;
+        }
+
         return $this->presentOrRuleIsImplicit($rule, $attribute, $value)
             && $this->passesOptionalCheck($attribute)
             && $this->isNotNullIfMarkedAsNullable($rule, $attribute)

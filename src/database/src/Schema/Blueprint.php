@@ -83,7 +83,7 @@ class Blueprint
     /**
      * The columns that should be added to the table.
      *
-     * @var \Hyperf\Database\Schema\ColumnDefinition[]
+     * @var ColumnDefinition[]
      */
     protected $columns = [];
 
@@ -196,6 +196,22 @@ class Blueprint
     public function create()
     {
         return $this->addCommand('create');
+    }
+
+    /**
+     * Specify the storage engine that should be used for the table.
+     */
+    public function engine(string $engine): void
+    {
+        $this->engine = $engine;
+    }
+
+    /**
+     * Specify that the InnoDB storage engine should be used for the table (MySQL only).
+     */
+    public function innoDb(): void
+    {
+        $this->engine('InnoDB');
     }
 
     /**
@@ -1300,7 +1316,7 @@ class Blueprint
     /**
      * Get the columns on the blueprint.
      *
-     * @return \Hyperf\Database\Schema\ColumnDefinition[]
+     * @return ColumnDefinition[]
      */
     public function getColumns()
     {
@@ -1320,7 +1336,7 @@ class Blueprint
     /**
      * Get the columns on the blueprint that should be added.
      *
-     * @return \Hyperf\Database\Schema\ColumnDefinition[]
+     * @return ColumnDefinition[]
      */
     public function getAddedColumns()
     {
@@ -1332,7 +1348,7 @@ class Blueprint
     /**
      * Get the columns on the blueprint that should be changed.
      *
-     * @return \Hyperf\Database\Schema\ColumnDefinition[]
+     * @return ColumnDefinition[]
      */
     public function getChangedColumns()
     {
