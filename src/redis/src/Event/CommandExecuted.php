@@ -19,6 +19,7 @@ class CommandExecuted
 {
     /**
      * Create a new event instance.
+     * @param float $time duration in milliseconds
      */
     public function __construct(
         public string $command,
