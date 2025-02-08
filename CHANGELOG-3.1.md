@@ -1,5 +1,9 @@
 # v3.1.52 - TBD
 
+## Added
+
+- [#7286](https://github.com/hyperf/hyperf/pull/7286) Added `Hyperf\Coroutine\Coroutine::list()`.
+
 # v3.1.51 - 2025-02-06
 
 ## Added
