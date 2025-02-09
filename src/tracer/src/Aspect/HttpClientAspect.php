@@ -13,14 +13,18 @@ declare(strict_types=1);
 namespace Hyperf\Tracer\Aspect;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\TransferStats;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Tracer\TracerContext;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
+
+use function is_callable;
 
 use const OpenTracing\Formats\TEXT_MAP;
 
@@ -29,8 +33,7 @@ class HttpClientAspect extends AbstractAspect
     use SpanStarter;
 
     public array $classes = [
-        Client::class . '::request',
-        Client::class . '::requestAsync',
+        Client::class . '::transfer',
     ];
 
     public function __construct(private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
@@ -45,18 +48,21 @@ class HttpClientAspect extends AbstractAspect
         if ($this->switchManager->isEnable('guzzle') === false) {
             return $proceedingJoinPoint->process();
         }
+
         $options = $proceedingJoinPoint->arguments['keys']['options'];
-        if (isset($options['no_aspect']) && $options['no_aspect'] === true) {
+
+        if (($options['no_aspect'] ?? false) === true) {
             return $proceedingJoinPoint->process();
         }
-        // Disable the aspect for the requestAsync method.
-        if ($proceedingJoinPoint->methodName == 'request') {
-            $options['no_aspect'] = true;
-        }
+
         $arguments = $proceedingJoinPoint->arguments;
-        $method = $arguments['keys']['method'] ?? 'Null';
-        $uri = $arguments['keys']['uri'] ?? 'Null';
+        /** @var RequestInterface $request */
+        $request = $arguments['keys']['request'];
+        $method = $request->getMethod();
+        $uri = $request->getUri()->__toString();
         $key = "HTTP Request [{$method}] {$uri}";
+
+        // Start a new span
         $span = $this->startSpan($key);
         $span->setTag('source', $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
         if ($this->spanTagManager->has('http_client', 'http.url')) {
@@ -65,30 +71,43 @@ class HttpClientAspect extends AbstractAspect
         if ($this->spanTagManager->has('http_client', 'http.method')) {
             $span->setTag($this->spanTagManager->get('http_client', 'http.method'), $method);
         }
-        $appendHeaders = [];
+
         // Injects the context into the wire
+        $appendHeaders = [];
         TracerContext::getTracer()->inject(
             $span->getContext(),
             TEXT_MAP,
             $appendHeaders
         );
         $options['headers'] = array_replace($options['headers'] ?? [], $appendHeaders);
-        $proceedingJoinPoint->arguments['keys']['options'] = $options;
 
-        try {
-            $result = $proceedingJoinPoint->process();
-            if ($result instanceof ResponseInterface) {
-                $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), (string) $result->getStatusCode());
+        // Inject the span into the options
+        $onStats = $options['on_stats'] ?? null;
+        $options['on_stats'] = function (TransferStats $stats) use ($span, $onStats) {
+            $response = $stats->getResponse();
+
+            if ($response instanceof ResponseInterface) {
+                $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), (string) $response->getStatusCode());
             }
-        } catch (Throwable $e) {
-            if ($this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($e)) {
+
+            if (
+                ($e = $stats->getHandlerErrorData()) instanceof Throwable
+                && $this->switchManager->isEnable('exception')
+                && ! $this->switchManager->isIgnoreException($e)
+            ) {
                 $span->setTag('error', true);
                 $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
             }
-            throw $e;
-        } finally {
+
             $span->finish();
-        }
-        return $result;
+
+            if (is_callable($onStats)) {
+                $onStats($stats);
+            }
+        };
+
+        $proceedingJoinPoint->arguments['keys']['options'] = $options;
+
+        return $proceedingJoinPoint->process();
     }
 }
