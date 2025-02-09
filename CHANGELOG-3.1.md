@@ -1,5 +1,7 @@
 # v3.1.52 - TBD
 
+- [#7289](https://github.com/hyperf/hyperf/pull/7289) Refactor `HttpClientAspect` to use `transfer` method and enhance error handling.
+
 # v3.1.51 - 2025-02-06
 
 ## Added
