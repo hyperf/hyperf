@@ -121,8 +121,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
 
         /**
          * @template TValue of array-key
-         * @phpstan-ignore-next-line
-         * @var static<TValue, float|int> $counts
+         * @var static<TValue, int> $counts
          */
         $counts = new self();
         $collection->each(function ($value) use ($counts) {
