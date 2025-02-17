@@ -57,4 +57,9 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
 
         return $this;
     }
+
+    public function getQueueName(): string
+    {
+        return 'default';
+    }
 }

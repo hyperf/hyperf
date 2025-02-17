@@ -21,7 +21,7 @@ function dispatch(JobInterface $job, ?int $delay = null, ?int $maxAttempts = nul
         $job->setMaxAttempts($maxAttempts);
     }
 
-    $queue ??= (fn () => $this->queue ?? 'default')->call($job);
+    $queue ??= $job->getQueueName();
 
     return ApplicationContext::getContainer()
         ->get(DriverFactory::class)
