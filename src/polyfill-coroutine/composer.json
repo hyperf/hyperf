@@ -17,7 +17,7 @@
     },
     "require": {
         "php": ">=8.2",
-        "hyperf/coroutine": "~3.1.0"
+        "hyperf/coroutine": "~3.2.0"
     },
     "autoload": {
         "files": [
