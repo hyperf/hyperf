@@ -575,7 +575,7 @@ class Builder
     {
         try {
             return $this->create(array_merge($attributes, $values));
-        } catch (UniqueConstraintViolationException $exception) {
+        } catch (UniqueConstraintViolationException $e) {
             return $this->where($attributes)->first() ?? throw $e;
         }
     }
