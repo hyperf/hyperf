@@ -563,9 +563,7 @@ class Builder
             return $instance;
         }
 
-        return tap($this->newModelInstance($attributes + $values), function ($instance) {
-            $instance->save();
-        });
+        return $this->createOrFirst($attributes, $values);
     }
 
     /**
@@ -578,7 +576,7 @@ class Builder
         try {
             return $this->create(array_merge($attributes, $values));
         } catch (UniqueConstraintViolationException $exception) {
-            return $this->where($attributes)->first();
+            return $this->where($attributes)->first() ?? throw $e;
         }
     }
 
