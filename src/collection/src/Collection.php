@@ -122,11 +122,11 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
         /**
          * @template TValue of array-key
          * @phpstan-ignore-next-line
-         * @var static<TValue, int> $counts
+         * @var static<TValue, float|int> $counts
          */
         $counts = new self();
         $collection->each(function ($value) use ($counts) {
-            $counts[$value] = isset($counts[$value]) ? $counts[$value] + 1 : 1;
+            $counts->offsetSet($value, isset($counts[$value]) ? $counts[$value] + 1 : 1);
         });
         $sorted = $counts->sort();
         $highestValue = $sorted->last();
