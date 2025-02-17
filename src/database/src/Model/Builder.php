@@ -563,7 +563,9 @@ class Builder
             return $instance;
         }
 
-        return $this->createOrFirst($attributes, $values);
+        return tap($this->newModelInstance($attributes + $values), function ($instance) {
+            $instance->save();
+        });
     }
 
     /**
