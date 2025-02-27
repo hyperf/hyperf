@@ -75,7 +75,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
     public function beforeTraverse(array $nodes)
     {
-        $this->methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes);
+        $this->methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes, true);
         sort($this->methods);
 
         $this->initPropertiesFromMethods();

@@ -3,6 +3,7 @@
 ## Added
 
 - [#7200](https://github.com/hyperf/hyperf/pull/7200) Added `Hyperf\Database\Connection::scalar()` which used to retrieve the first column of the first row from a query.
+- [#7279](https://github.com/hyperf/hyperf/pull/7279) Support to generate comments from `trait` when using `gen:model`.
 - [#7286](https://github.com/hyperf/hyperf/pull/7286) Added `Hyperf\Coroutine\Coroutine::list()`.
 
 # v3.1.51 - 2025-02-06
