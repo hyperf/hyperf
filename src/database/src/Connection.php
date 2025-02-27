@@ -1186,13 +1186,15 @@ class Connection implements ConnectionInterface
                 throw new UniqueConstraintViolationException(
                     $query,
                     $this->prepareBindings($bindings),
-                    $e
+                    $e,
+                    $this->getName(),
                 );
             }
             throw new QueryException(
                 $query,
                 $this->prepareBindings($bindings),
-                $e
+                $e,
+                $this->getName()
             );
         } catch (Throwable $throwable) {
             ++$this->errorCount;
