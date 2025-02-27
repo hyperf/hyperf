@@ -27,10 +27,10 @@ class QueryException extends PDOException
      * @param array $bindings the bindings for the query
      */
     public function __construct(
-        public ?string $connectionName,
         protected string $sql,
         protected array $bindings,
-        Exception $previous
+        Exception $previous,
+        public ?string $connectionName = null,
     ) {
         parent::__construct('', 0, $previous);
 
