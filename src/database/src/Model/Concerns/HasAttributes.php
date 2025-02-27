@@ -650,13 +650,11 @@ trait HasAttributes
         }
 
         if ($this->isDateAttribute($key)) {
-            return $this->fromDateTime($current) ===
-                $this->fromDateTime($original);
+            return $this->fromDateTime($current) === $this->fromDateTime($original);
         }
 
         if ($this->hasCast($key, static::$primitiveCastTypes)) {
-            return $this->castAttribute($key, $current) ===
-                $this->castAttribute($key, $original);
+            return $this->castAttribute($key, $current) === $this->castAttribute($key, $original);
         }
 
         return is_numeric($current) && is_numeric($original)
@@ -1148,8 +1146,7 @@ trait HasAttributes
      */
     protected function getArrayAttributeByKey(string $key)
     {
-        return isset($this->attributes[$key]) ?
-            $this->fromJson($this->attributes[$key]) : [];
+        return isset($this->attributes[$key]) ? $this->fromJson($this->attributes[$key]) : [];
     }
 
     /**

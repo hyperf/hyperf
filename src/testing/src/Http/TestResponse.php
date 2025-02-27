@@ -392,8 +392,8 @@ class TestResponse implements ArrayAccess
         $jsonErrors = Arr::get($this->json(), $responseKey) ?? [];
 
         $errorMessage = $jsonErrors
-                ? 'Response has the following JSON validation errors:' .
-                        PHP_EOL . PHP_EOL . json_encode($jsonErrors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL
+                ? 'Response has the following JSON validation errors:'
+                        . PHP_EOL . PHP_EOL . json_encode($jsonErrors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL
                 : 'Response does not have JSON validation errors.';
 
         foreach ($errors as $key => $value) {
@@ -439,8 +439,8 @@ class TestResponse implements ArrayAccess
         $jsonErrors = Arr::get($this->json(), $responseKey) ?? [];
 
         $errorMessage = $jsonErrors
-            ? 'Response has the following JSON validation errors:' .
-            PHP_EOL . PHP_EOL . json_encode($jsonErrors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL
+            ? 'Response has the following JSON validation errors:'
+            . PHP_EOL . PHP_EOL . json_encode($jsonErrors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL
             : 'Response does not have JSON validation errors.';
 
         PHPUnit::assertArrayHasKey(
@@ -479,8 +479,8 @@ class TestResponse implements ArrayAccess
 
         if (is_null($keys) && count($errors) > 0) {
             PHPUnit::fail(
-                'Response has unexpected validation errors: ' . PHP_EOL . PHP_EOL .
-                json_encode($errors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+                'Response has unexpected validation errors: ' . PHP_EOL . PHP_EOL
+                . json_encode($errors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
             );
         }
 
