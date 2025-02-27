@@ -1,4 +1,55 @@
-# v3.1.48 - TBD
+# v3.1.52 - TBD
+
+## Added
+
+- [#7286](https://github.com/hyperf/hyperf/pull/7286) Added `Hyperf\Coroutine\Coroutine::list()`.
+
+# v3.1.51 - 2025-02-06
+
+## Added
+
+- [#7250](https://github.com/hyperf/hyperf/pull/7250) Added `Hyperf\AsyncQueue\Driver\Driver::getConfig()`.
+- [#7255](https://github.com/hyperf/hyperf/pull/7255) Added `createOrFirst()` and `createOrRestore()` into `Hyperf\Database\Model\Builder`.
+- [#7259](https://github.com/hyperf/hyperf/pull/7259) Added `existsOr` and `doesntExistOr` into `Hyperf\Database\Query\Builder`.
+- [#7260](https://github.com/hyperf/hyperf/pull/7260) Added `Hyperf\Database\Query\Builder::sole()`.
+- [#7261](https://github.com/hyperf/hyperf/pull/7261) Added `Hyperf\Database\Model\Model::discardChanges()`.
+- [#7262](https://github.com/hyperf/hyperf/pull/7262) Added `Hyperf\Database\Model\Model::hasAppended()`.
+- [#7263](https://github.com/hyperf/hyperf/pull/7263) Added `Hyperf\Coroutine\WaitConcurrent`.
+- [#7265](https://github.com/hyperf/hyperf/pull/7265) Added `Hyperf\Command\Concerns\Prohibitable`.
+- [#7269](https://github.com/hyperf/hyperf/pull/7269) Added `Hyperf\Redis\Event\CommandExecuted`.
+- [#7273](https://github.com/hyperf/hyperf/pull/7273) Support to open the newly created files for editor `cursor` automatically.
+
+## Optimized
+
+- [#7258](https://github.com/hyperf/hyperf/pull/7258) Optimized code for reading package data from `composer.lock`.
+- [#7276](https://github.com/hyperf/hyperf/pull/7276) Replaced `get_called_class` with `static::class`.
+
+# v3.1.50 - 2025-01-09
+
+## Fixed
+
+- [#7231](https://github.com/hyperf/hyperf/pull/7231) Fixed fatal exception "Object of class ... could not be converted to string" when using invalid websocket message handler.
+
+## Added
+
+- [#7224](https://github.com/hyperf/hyperf/pull/7224) Added `Hyperf\Coroutine\Mutex`.
+- [#7233](https://github.com/hyperf/hyperf/pull/7233) Added params `connection_name` which used to define amqp connection name.
+
+## Optimized
+
+- [#7223](https://github.com/hyperf/hyperf/pull/7223) Optimized code for reading extra data from `composer.lock`.
+- [#7227](https://github.com/hyperf/hyperf/pull/7227) Improves phpstan docs for `Hyperf\Support\SafeCaller`.
+
+# v3.1.49 - 2024-12-17
+
+## Added
+
+- [#7219](https://github.com/hyperf/hyperf/pull/) Added case sensitivity option to `Hyperf\Stringable\Str::is()`.
+
+## Optimized
+
+- [#7206](https://github.com/hyperf/hyperf/pull/7206) Support `swoole` version `6.0`.
+- [#7209](https://github.com/hyperf/hyperf/pull/7209) Optimized collection usage in `getUrlRange` method.
 
 # v3.1.48 - 2024-12-12
 

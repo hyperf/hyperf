@@ -81,6 +81,9 @@ class RedisConnectionTest extends TestCase
             'context' => [
                 'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
             ],
+            'event' => [
+                'enable' => false,
+            ],
             'pool' => [
                 'min_connections' => 1,
                 'max_connections' => 30,

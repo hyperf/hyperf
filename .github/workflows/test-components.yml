@@ -2,7 +2,15 @@ name: Test for Hyperf Components
 
 on:
   push:
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**.md"
   pull_request:
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**.md"
   schedule:
     - cron: '0 2 * * *'
 env:

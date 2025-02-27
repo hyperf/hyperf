@@ -45,5 +45,8 @@ return [
         'options' => [
             'prefix' => env('REDIS_PREFIX', ''),
         ],
+        'event' => [
+            'enable' => (bool) env('REDIS_EVENT_ENABLE', false),
+        ],
     ],
 ];
