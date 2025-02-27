@@ -11,4 +11,5 @@
 ## Added
 
 - [#6538](https://github.com/hyperf/hyperf/pull/6538) Support to specify the queue name based on the `job`.
-- [#7198](https://github.com/hyperf/hyperf/pull/7198) Added connection name to `QueryException`
+- [#7198](https://github.com/hyperf/hyperf/pull/7198) Added connection name to `QueryException`.
+- [#7202](https://github.com/hyperf/hyperf/pull/7202) Added support for elasticsearch `8.x`.
