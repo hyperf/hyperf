@@ -140,7 +140,7 @@ class PhpParser
     /**
      * @return Node\Stmt\ClassMethod[]
      */
-    public function getAllMethodsFromStmts(array $stmts): array
+    public function getAllMethodsFromStmts(array $stmts, bool $withTrait = false): array
     {
         $methods = [];
         foreach ($stmts as $namespace) {
@@ -148,13 +148,43 @@ class PhpParser
                 continue;
             }
 
+            /** @var string[] $uses */
+            $uses = [];
+
             foreach ($namespace->stmts as $class) {
-                if (! $class instanceof Node\Stmt\Class_ && ! $class instanceof Node\Stmt\Interface_) {
+                if ($class instanceof Node\Stmt\Use_) {
+                    foreach ($class->uses as $use) {
+                        $uses[$use->name->getLast()] = $use->name->toString();
+                    }
+                    continue;
+                }
+
+                if (! $class instanceof Node\Stmt\Class_ && ! $class instanceof Node\Stmt\Interface_ && ! $class instanceof Node\Stmt\Trait_) {
                     continue;
                 }
 
                 foreach ($class->getMethods() as $method) {
                     $methods[] = $method;
+                }
+
+                if ($withTrait) {
+                    foreach ($class->stmts as $stmt) {
+                        if ($stmt instanceof Node\Stmt\TraitUse) {
+                            foreach ($stmt->traits as $trait) {
+                                if (isset($uses[$trait->getFirst()])) {
+                                    $traitName = $uses[$trait->getFirst()] . substr($trait->toString(), strlen($trait->getFirst()));
+                                } else {
+                                    if (count($trait->getParts()) == 1) {
+                                        $traitName = $namespace->name->toString() . '\\' . $trait->toString();
+                                    } else {
+                                        $traitName = $trait->toString();
+                                    }
+                                }
+                                $traitNodes = $this->parser->parse(file_get_contents((new ReflectionClass($traitName))->getFileName()));
+                                $methods = array_merge($methods, $this->getAllMethodsFromStmts($traitNodes, true));
+                            }
+                        }
+                    }
                 }
             }
         }
