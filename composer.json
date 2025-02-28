@@ -90,7 +90,7 @@
         "symfony/serializer": "^5.0 || ^6.0",
         "symfony/uid": "^5.0 || ^6.0",
         "symfony/var-dumper": "^5.0 || ^6.0",
-        "thecodingmachine/graphqlite": "^8.0",
+        "thecodingmachine/graphqlite": "^7.0",
         "twig/twig": "^3.0",
         "vlucas/phpdotenv": "^5.0",
         "zircote/swagger-php": "^4.6"
