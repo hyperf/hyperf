@@ -15,7 +15,7 @@ namespace Hyperf\Elasticsearch;
 use Elasticsearch\ClientBuilder;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Guzzle\ClientFactory;
-use Hyperf\Guzzle\RingPHP\CoroutineHandler;
+use Hyperf\Guzzle\CoroutineHandler;
 use RuntimeException;
 
 class ClientBuilderFactory
