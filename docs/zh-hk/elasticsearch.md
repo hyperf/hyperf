@@ -30,7 +30,7 @@ $info = $client->info();
 <?php
 
 use Elasticsearch\ClientBuilder;
-use Hyperf\Guzzle\RingPHP\PoolHandler;
+use Hyperf\Guzzle\PoolHandler;
 use Swoole\Coroutine;
 
 $builder = ClientBuilder::create();
