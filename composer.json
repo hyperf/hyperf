@@ -44,6 +44,7 @@
         "google/protobuf": "^3.6.1",
         "grpc/grpc": "^1.15",
         "guzzlehttp/guzzle": "^6.3 || ^7.0",
+        "guzzlehttp/ringphp": "~1.0",
         "hyperf/engine": "^2.13",
         "hyperf/token-bucket": "^2.0",
         "influxdb/influxdb-php": "^1.15.0",
