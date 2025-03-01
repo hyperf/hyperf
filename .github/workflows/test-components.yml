@@ -229,7 +229,8 @@ jobs:
           composer remove league/flysystem --dev -W
           composer remove aws/aws-sdk-php --dev -W
           composer remove influxdb/influxdb-php --dev -W
-          # composer remove guzzlehttp/guzzle --dev -W
+          composer remove elasticsearch/elasticsearch --dev -W
+          composer remove guzzlehttp/guzzle --dev -W
           composer remove jcchavezs/zipkin-opentracing -W --dev
           composer require "psr/http-message:${{ matrix.version }}" -W
           composer update -oW
