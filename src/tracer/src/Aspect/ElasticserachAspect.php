@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer\Aspect;
 
-use Elasticsearch\Client;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
@@ -25,19 +24,19 @@ class ElasticserachAspect extends AbstractAspect
     use SpanStarter;
 
     public array $classes = [
-        Client::class . '::bulk',
-        Client::class . '::count',
-        Client::class . '::create',
-        Client::class . '::get',
-        Client::class . '::getSource',
-        Client::class . '::index',
-        Client::class . '::mget',
-        Client::class . '::msearch',
-        Client::class . '::scroll',
-        Client::class . '::search',
-        Client::class . '::update',
-        Client::class . '::updateByQuery',
-        Client::class . '::search',
+        'Elasticsearch\Client::bulk',
+        'Elasticsearch\Client::count',
+        'Elasticsearch\Client::create',
+        'Elasticsearch\Client::get',
+        'Elasticsearch\Client::getSource',
+        'Elasticsearch\Client::index',
+        'Elasticsearch\Client::mget',
+        'Elasticsearch\Client::msearch',
+        'Elasticsearch\Client::scroll',
+        'Elasticsearch\Client::search',
+        'Elasticsearch\Client::update',
+        'Elasticsearch\Client::updateByQuery',
+        'Elasticsearch\Client::search',
     ];
 
     public function __construct(private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
