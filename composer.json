@@ -34,7 +34,7 @@
         "doctrine/inflector": "^2.0",
         "doctrine/instantiator": "^1.0",
         "egulias/email-validator": "^3.0",
-        "elasticsearch/elasticsearch": "^7.0",
+        "elasticsearch/elasticsearch": "^7.0 || ^8.0",
         "ergebnis/composer-normalize": "^2.43",
         "fakerphp/faker": "^1.23",
         "fig/http-message-util": "^1.1.2",
@@ -439,7 +439,8 @@
     "bin": [],
     "config": {
         "allow-plugins": {
-            "ergebnis/composer-normalize": true
+            "ergebnis/composer-normalize": true,
+            "php-http/discovery": true
         },
         "optimize-autoloader": true,
         "sort-packages": true

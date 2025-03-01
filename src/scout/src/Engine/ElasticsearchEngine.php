@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Scout\Engine;
 
+use Elastic\Elasticsearch\Client as Elastic;
 use Elasticsearch\Client;
-use Elasticsearch\Client as Elastic;
 use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
@@ -39,9 +39,9 @@ class ElasticsearchEngine extends Engine
     /**
      * Create a new engine instance.
      *
-     * @param Elastic $elastic elastic where the instance of Elastic|\Elasticsearch\Client is stored
+     * @param Client|Elastic $elastic elastic where the instance of Elastic|\Elasticsearch\Client is stored
      */
-    public function __construct(protected Client $elastic, ?string $index = null)
+    public function __construct(protected $elastic, ?string $index = null)
     {
         $this->index = $this->initIndex($elastic, $index);
     }
@@ -193,7 +193,10 @@ class ElasticsearchEngine extends Engine
             ->unsearchable();
     }
 
-    protected function initIndex(Client $client, ?string $index): ?string
+    /**
+     * @param Client|Elastic $client
+     */
+    protected function initIndex($client, ?string $index): ?string
     {
         if (! static::$version) {
             try {
