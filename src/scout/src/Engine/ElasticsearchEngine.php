@@ -73,7 +73,7 @@ class ElasticsearchEngine extends Engine
                 'doc_as_upsert' => true,
             ];
         });
-        $this->elastic->bulk($params);
+        $this->elastic->bulk($params); // @phpstan-ignore method.notFound
     }
 
     /**
@@ -101,7 +101,7 @@ class ElasticsearchEngine extends Engine
             }
             $params['body'][] = ['delete' => $delete];
         });
-        $this->elastic->bulk($params);
+        $this->elastic->bulk($params); // @phpstan-ignore method.notFound
     }
 
     /**
@@ -198,7 +198,7 @@ class ElasticsearchEngine extends Engine
     {
         if (! static::$version) {
             try {
-                static::$version = $client->info()['version']['number'];
+                static::$version = $client->info()['version']['number']; // @phpstan-ignore method.notFound
             } catch (Throwable $exception) {
                 static::$version = '0.0.0';
             }
@@ -257,7 +257,7 @@ class ElasticsearchEngine extends Engine
                 $params
             );
         }
-        return $this->elastic->search($params);
+        return $this->elastic->search($params); // @phpstan-ignore method.notFound
     }
 
     /**
