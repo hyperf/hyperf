@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Tracer\Aspect;
 
-use Elasticsearch\Client;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
@@ -25,19 +24,33 @@ class ElasticserachAspect extends AbstractAspect
     use SpanStarter;
 
     public array $classes = [
-        Client::class . '::bulk',
-        Client::class . '::count',
-        Client::class . '::create',
-        Client::class . '::get',
-        Client::class . '::getSource',
-        Client::class . '::index',
-        Client::class . '::mget',
-        Client::class . '::msearch',
-        Client::class . '::scroll',
-        Client::class . '::search',
-        Client::class . '::update',
-        Client::class . '::updateByQuery',
-        Client::class . '::search',
+        'Elasticsearch\Client::bulk',
+        'Elasticsearch\Client::count',
+        'Elasticsearch\Client::create',
+        'Elasticsearch\Client::get',
+        'Elasticsearch\Client::getSource',
+        'Elasticsearch\Client::index',
+        'Elasticsearch\Client::mget',
+        'Elasticsearch\Client::msearch',
+        'Elasticsearch\Client::scroll',
+        'Elasticsearch\Client::search',
+        'Elasticsearch\Client::update',
+        'Elasticsearch\Client::updateByQuery',
+        'Elasticsearch\Client::search',
+        // 8.x
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::bulk',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::count',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::create',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::get',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::getSource',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::index',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::mget',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::msearch',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::scroll',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::search',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::update',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::updateByQuery',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::search',
     ];
 
     public function __construct(private SwitchManager $switchManager, private SpanTagManager $spanTagManager)

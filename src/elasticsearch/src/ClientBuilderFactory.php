@@ -12,42 +12,29 @@ declare(strict_types=1);
 
 namespace Hyperf\Elasticsearch;
 
-use Elasticsearch\ClientBuilder;
-use Hyperf\Coroutine\Coroutine;
-use Hyperf\Guzzle\ClientFactory;
-use Hyperf\Guzzle\RingPHP\CoroutineHandler;
-use RuntimeException;
+use Elastic\Elasticsearch\ClientBuilder;
+use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
+use Psr\Container\ContainerInterface;
 
 class ClientBuilderFactory
 {
-    public function __construct(protected ?ClientFactory $guzzleClientFactory = null)
+    protected ?GuzzleClientFactory $guzzleClientFactory = null;
+
+    public function __construct(protected ContainerInterface $container)
     {
+        if ($container->has(GuzzleClientFactory::class)) {
+            $this->guzzleClientFactory = $container->get(GuzzleClientFactory::class);
+        }
     }
 
-    /**
-     * @return ClientBuilder|\Elastic\Elasticsearch\ClientBuilder
-     */
-    public function create() // @phpstan-ignore class.notFound
+    public function create(): ClientBuilder
     {
-        if (class_exists('Elastic\Elasticsearch\ClientBuilder')) {
-            $builder = \Elastic\Elasticsearch\ClientBuilder::create();
-            $this->guzzleClientFactory && $builder->setHttpClient(
-                $this->guzzleClientFactory->create()
-            );
+        $builder = ClientBuilder::create();
 
-            return $builder;
-        }
+        $this->guzzleClientFactory && $builder->setHttpClient(
+            $this->guzzleClientFactory->create()
+        );
 
-        if (class_exists('Elasticsearch\ClientBuilder')) {
-            $builder = ClientBuilder::create();
-            if (Coroutine::inCoroutine()) {
-                $builder->setHandler(new CoroutineHandler());
-            }
-
-            return $builder;
-        }
-
-        // Will not be here
-        throw new RuntimeException('The "elasticsearch/elasticsearch" package is required to use ClientBuilder, Please run "composer require elasticsearch/elasticsearch".');
+        return $builder;
     }
 }
