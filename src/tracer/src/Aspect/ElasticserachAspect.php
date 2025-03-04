@@ -37,6 +37,20 @@ class ElasticserachAspect extends AbstractAspect
         'Elasticsearch\Client::update',
         'Elasticsearch\Client::updateByQuery',
         'Elasticsearch\Client::search',
+        // 8.x
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::bulk',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::count',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::create',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::get',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::getSource',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::index',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::mget',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::msearch',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::scroll',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::search',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::update',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::updateByQuery',
+        'Elastic\Elasticsearch\Traits\ClientEndpointsTrait::search',
     ];
 
     public function __construct(private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
