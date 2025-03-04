@@ -37,11 +37,18 @@ class ElasticsearchEngine extends Engine
     protected ?string $index = null;
 
     /**
+     * The Elasticsearch client instance.
+     * @var Client
+     */
+    protected ClientInterface $elastic;
+
+    /**
      * Create a new engine instance.
      */
-    public function __construct(protected Client|ClientInterface $elastic, ?string $index = null) // @phpstan-ignore class.notFound
+    public function __construct(ClientInterface $elastic, ?string $index = null)
     {
-        $this->index = $this->initIndex($elastic, $index);
+        $this->elastic = $elastic; // @phpstan-ignore-line
+        $this->index = $this->initIndex($index);
     }
 
     /**
@@ -73,7 +80,7 @@ class ElasticsearchEngine extends Engine
                 'doc_as_upsert' => true,
             ];
         });
-        $this->elastic->bulk($params); // @phpstan-ignore method.notFound
+        $this->elastic->bulk($params);
     }
 
     /**
@@ -101,7 +108,7 @@ class ElasticsearchEngine extends Engine
             }
             $params['body'][] = ['delete' => $delete];
         });
-        $this->elastic->bulk($params); // @phpstan-ignore method.notFound
+        $this->elastic->bulk($params);
     }
 
     /**
@@ -194,11 +201,11 @@ class ElasticsearchEngine extends Engine
     /**
      * Undocumented function.
      */
-    protected function initIndex(Client|ClientInterface $client, ?string $index): ?string
+    protected function initIndex(?string $index): ?string
     {
         if (! static::$version) {
             try {
-                static::$version = $client->info()['version']['number']; // @phpstan-ignore method.notFound
+                static::$version = $this->elastic->info()['version']['number'];
             } catch (Throwable $exception) {
                 static::$version = '0.0.0';
             }
@@ -257,7 +264,7 @@ class ElasticsearchEngine extends Engine
                 $params
             );
         }
-        return $this->elastic->search($params); // @phpstan-ignore method.notFound
+        return $this->elastic->search($params);
     }
 
     /**
