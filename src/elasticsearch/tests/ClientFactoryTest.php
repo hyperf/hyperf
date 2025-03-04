@@ -31,12 +31,22 @@ class ClientFactoryTest extends TestCase
 
         $client = $clientFactory->create();
 
-        $this->assertInstanceOf(ClientBuilder::class, $client);
+        if (class_exists('Elasticsearch\ClientBuilder')) {
+            $this->assertInstanceOf(ClientBuilder::class, $client);
+        }
+        if (class_exists('Elastic\Elasticsearch\ClientBuilder')) {
+            $this->assertInstanceOf(\Elastic\Elasticsearch\ClientBuilder::class, $client);
+        }
     }
 
     public function testHostNotReached()
     {
-        $this->expectException(NoNodesAvailableException::class);
+        if (class_exists('Elasticsearch\Common\Exceptions\NoNodesAvailableException')) {
+            $this->expectException(NoNodesAvailableException::class);
+        }
+        if (class_exists('Elastic\Elasticsearch\Common\Exceptions\NoNodesAvailableException')) {
+            $this->expectException(\Elastic\Elasticsearch\Common\Exceptions\NoNodesAvailableException::class);
+        }
 
         $clientFactory = new ClientBuilderFactory();
 
