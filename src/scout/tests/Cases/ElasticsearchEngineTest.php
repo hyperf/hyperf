@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Scout\Cases;
 
+use Elastic\Elasticsearch\ClientInterface;
 use Elasticsearch\Client;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
@@ -115,14 +116,14 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testBuilderCallbackCanManipulateSearchParametersToElasticsearch()
     {
-        /** @var Client|MockInterface $client */
-        $client = Mockery::mock(Client::class);
+        /** @var Client|ClientInterface|MockInterface $client */
+        $client = $this->mockClient();
         $client->shouldReceive('search')->with(['modified_by_callback']);
         $engine = new ElasticsearchEngine($client, 'scout');
         $builder = new Builder(
             new ElasticsearchEngineTestModel(),
             'huayra',
-            function (Client $client, $query, $params) {
+            function ($client, $query, $params) {
                 $this->assertNotEmpty($params);
                 $this->assertEquals('huayra', $query);
                 $params = ['modified_by_callback'];
