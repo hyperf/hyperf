@@ -12,11 +12,13 @@ declare(strict_types=1);
 
 namespace HyperfTest\Elasticsearch;
 
-use Elasticsearch\ClientBuilder;
-use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
+use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Transport\Exception\NoNodeAvailableException;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
+use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -27,28 +29,22 @@ class ClientFactoryTest extends TestCase
 {
     public function testClientBuilderFactoryCreate()
     {
-        $clientFactory = new ClientBuilderFactory();
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->andReturn(false);
+        $clientFactory = new ClientBuilderFactory($container);
 
         $client = $clientFactory->create();
 
-        if (class_exists('Elasticsearch\ClientBuilder')) {
-            $this->assertInstanceOf(ClientBuilder::class, $client);
-        }
-        if (class_exists('Elastic\Elasticsearch\ClientBuilder')) {
-            $this->assertInstanceOf(\Elastic\Elasticsearch\ClientBuilder::class, $client);
-        }
+        $this->assertInstanceOf(ClientBuilder::class, $client);
     }
 
     public function testHostNotReached()
     {
-        if (class_exists('Elasticsearch\Common\Exceptions\NoNodesAvailableException')) {
-            $this->expectException(NoNodesAvailableException::class);
-        }
-        if (class_exists('Elastic\Elasticsearch\Common\Exceptions\NoNodesAvailableException')) {
-            $this->expectException(\Elastic\Elasticsearch\Common\Exceptions\NoNodesAvailableException::class);
-        }
+        $this->expectException(NoNodeAvailableException::class);
 
-        $clientFactory = new ClientBuilderFactory();
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->andReturn(false);
+        $clientFactory = new ClientBuilderFactory($container);
 
         $client = $clientFactory->create()->setHosts(['http://127.0.0.1:9201'])->build();
 

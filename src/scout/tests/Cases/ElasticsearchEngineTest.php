@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace HyperfTest\Scout\Cases;
 
 use Elastic\Elasticsearch\ClientInterface;
-use Elasticsearch\Client;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
@@ -192,12 +191,6 @@ class ElasticsearchEngineTest extends TestCase
 
     private function mockClient()
     {
-        if (class_exists('Elasticsearch\Client')) {
-            return Mockery::mock('Elasticsearch\Client');
-        }
-        if (class_exists('Elastic\Elasticsearch\Client')) {
-            return Mockery::mock('Elastic\Elasticsearch\ClientInterface');
-        }
-        return null;
+        return Mockery::mock(ClientInterface::class);
     }
 }
