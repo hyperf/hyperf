@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Scout\Engine;
 
-use Elastic\Elasticsearch\Client as Elastic;
+use Elastic\Elasticsearch\ClientInterface as Elastic;
 use Elasticsearch\Client;
 use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;

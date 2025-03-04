@@ -46,7 +46,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testUpdateAddsObjectsToIndex()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = $this->mockClient();
         $client->shouldReceive('bulk')->with([
             'body' => [
                 [
@@ -68,7 +68,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testDeleteRemovesObjectsToIndex()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = $this->mockClient();
         $client->shouldReceive('bulk')->with([
             'body' => [
                 [
@@ -86,7 +86,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testSearchSendsCorrectParametersToElasticsearch()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = $this->mockClient();
         $client->shouldReceive('search')->with([
             'index' => 'scout',
             'type' => 'table',
@@ -150,7 +150,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testMapCorrectlyMapsResultsToModels()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = $this->mockClient();
         $engine = new ElasticsearchEngine($client, 'scout');
         $builder = Mockery::mock(Builder::class);
         $model = Mockery::mock(Model::class);
@@ -172,7 +172,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testGetTotalCount()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = $this->mockClient();
         $engine = new ElasticsearchEngine($client, 'scout');
         $this->assertSame(1, $engine->getTotalCount([
             'hits' => [
@@ -187,5 +187,16 @@ class ElasticsearchEngineTest extends TestCase
                 ],
             ],
         ]));
+    }
+
+    private function mockClient()
+    {
+        if (class_exists('Elasticsearch\Client')) {
+            return Mockery::mock('Elasticsearch\Client');
+        }
+        if (class_exists('Elastic\Elasticsearch\Client')) {
+            return Mockery::mock('Elastic\Elasticsearch\ClientInterface');
+        }
+        return null;
     }
 }

@@ -29,10 +29,7 @@
     "autoload": {
         "psr-4": {
             "Hyperf\\Scout\\": "src/"
-        },
-        "files": [
-            "src/classmap.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
