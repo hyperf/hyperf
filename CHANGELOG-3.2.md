@@ -3,6 +3,7 @@
 ## Dependencies Upgrade
 
 - Upgrade the php version to `>=8.2`
+- Upgrade the `elasticsearch/elasticsearch` version to `>=8.0`
 
 ## Removed
 
