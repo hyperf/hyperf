@@ -964,7 +964,7 @@ trait EnumeratesValues
      *
      * @return string
      */
-    public function toJson(int $options = 0)
+    public function toJson(int $options = 0): string
     {
         return json_encode($this->jsonSerialize(), $options);
     }
