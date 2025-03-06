@@ -418,9 +418,6 @@ class Arr
     /**
      * Partition the array into two arrays using the given callback.
      *
-     * @template TKey of array-key
-     * @template TValue of mixed
-     *
      * @param iterable<TKey, TValue> $array
      * @return array<int<0, 1>, array<TKey, TValue>>
      */
