@@ -15,6 +15,7 @@
 - [#7198](https://github.com/hyperf/hyperf/pull/7198) Added connection name to `QueryException`.
 - [#7202](https://github.com/hyperf/hyperf/pull/7202) Added support for elasticsearch `8.x`.
 - [#7214](https://github.com/hyperf/hyperf/pull/7214) Improve `Hyperf\Support\Fluent`.
+- [#6761](https://github.com/hyperf/hyperf/pull/6761) Add `toJson` method to `Hyperf\Contract\Jsonable`.
 
 ## Changed
 
