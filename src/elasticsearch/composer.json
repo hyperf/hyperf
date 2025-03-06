@@ -10,8 +10,11 @@
     ],
     "require": {
         "php": ">=8.2",
-        "elasticsearch/elasticsearch": "^7.0",
+        "elasticsearch/elasticsearch": "^8.0",
         "hyperf/guzzle": "~3.2.0"
+    },
+    "suggest": {
+        "ezimuel/ringphp": "Guzzle RingPHP adapter to allow for custom handling of requests and responses when require elasticsearch/elasticsearch 7.x.(^1.1.2)"
     },
     "autoload": {
         "psr-4": {

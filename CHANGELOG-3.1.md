@@ -1,9 +1,33 @@
-# v3.1.51 - TBD
+# v3.1.53 - TBD
+
+# v3.1.52 - 2025-02-27
+
+## Added
+
+- [#7200](https://github.com/hyperf/hyperf/pull/7200) Added `Hyperf\Database\Connection::scalar()` which used to retrieve the first column of the first row from a query.
+- [#7279](https://github.com/hyperf/hyperf/pull/7279) Support to generate comments from `trait` when using `gen:model`.
+- [#7286](https://github.com/hyperf/hyperf/pull/7286) Added `Hyperf\Coroutine\Coroutine::list()`.
+- [#7291](https://github.com/hyperf/hyperf/pull/7291) Support to throw exception when read `null` from `Model::createOrFirst`.
+
+# v3.1.51 - 2025-02-06
 
 ## Added
 
 - [#7250](https://github.com/hyperf/hyperf/pull/7250) Added `Hyperf\AsyncQueue\Driver\Driver::getConfig()`.
+- [#7255](https://github.com/hyperf/hyperf/pull/7255) Added `createOrFirst()` and `createOrRestore()` into `Hyperf\Database\Model\Builder`.
+- [#7259](https://github.com/hyperf/hyperf/pull/7259) Added `existsOr` and `doesntExistOr` into `Hyperf\Database\Query\Builder`.
+- [#7260](https://github.com/hyperf/hyperf/pull/7260) Added `Hyperf\Database\Query\Builder::sole()`.
+- [#7261](https://github.com/hyperf/hyperf/pull/7261) Added `Hyperf\Database\Model\Model::discardChanges()`.
+- [#7262](https://github.com/hyperf/hyperf/pull/7262) Added `Hyperf\Database\Model\Model::hasAppended()`.
 - [#7263](https://github.com/hyperf/hyperf/pull/7263) Added `Hyperf\Coroutine\WaitConcurrent`.
+- [#7265](https://github.com/hyperf/hyperf/pull/7265) Added `Hyperf\Command\Concerns\Prohibitable`.
+- [#7269](https://github.com/hyperf/hyperf/pull/7269) Added `Hyperf\Redis\Event\CommandExecuted`.
+- [#7273](https://github.com/hyperf/hyperf/pull/7273) Support to open the newly created files for editor `cursor` automatically.
+
+## Optimized
+
+- [#7258](https://github.com/hyperf/hyperf/pull/7258) Optimized code for reading package data from `composer.lock`.
+- [#7276](https://github.com/hyperf/hyperf/pull/7276) Replaced `get_called_class` with `static::class`.
 
 # v3.1.50 - 2025-01-09
 

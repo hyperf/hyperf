@@ -34,8 +34,9 @@
         "doctrine/inflector": "^2.0",
         "doctrine/instantiator": "^1.0",
         "egulias/email-validator": "^3.0",
-        "elasticsearch/elasticsearch": "^7.0",
+        "elasticsearch/elasticsearch": "^8.0",
         "ergebnis/composer-normalize": "^2.43",
+        "ezimuel/ringphp": "^1.1.2",
         "fakerphp/faker": "^1.23",
         "fig/http-message-util": "^1.1.2",
         "filp/whoops": "^2.7",
@@ -44,7 +45,7 @@
         "google/protobuf": "^3.6.1",
         "grpc/grpc": "^1.15",
         "guzzlehttp/guzzle": "^6.3 || ^7.0",
-        "hyperf/engine": "^2.11",
+        "hyperf/engine": "^2.13",
         "hyperf/token-bucket": "^2.0",
         "influxdb/influxdb-php": "^1.15.0",
         "ircmaxell/random-lib": "^1.2",
@@ -439,7 +440,8 @@
     "bin": [],
     "config": {
         "allow-plugins": {
-            "ergebnis/composer-normalize": true
+            "ergebnis/composer-normalize": true,
+            "php-http/discovery": true
         },
         "optimize-autoloader": true,
         "sort-packages": true

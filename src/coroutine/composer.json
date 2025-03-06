@@ -19,7 +19,7 @@
         "php": ">=8.2",
         "hyperf/context": "~3.2.0",
         "hyperf/contract": "~3.2.0",
-        "hyperf/engine": "^2.0"
+        "hyperf/engine": "^2.13.0"
     },
     "autoload": {
         "psr-4": {
