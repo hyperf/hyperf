@@ -277,6 +277,17 @@ class DatabaseQueryBuilderTest extends TestCase
             ->when(fn (Builder $query) => false, $callback)
             ->where('email', 'foo');
         $this->assertSame('select * from "users" where "email" = ?', $builder->toSql());
+
+        $sub = $this->getBuilder();
+        $sub->select('created_at')->from('users')->where('created_at', '=', time())->latest('created_at')->limit(1);
+
+        $builder = $this->getBuilder();
+        $builder->select('*')
+            ->from('users')
+            ->where('created_at', $sub)
+            ->where('email', 'foo');
+
+        $this->assertSame('select * from "users" where "created_at" = (select "created_at" from "users" where "created_at" = ? order by "created_at" desc limit 1) and "email" = ?', $builder->toSql());
     }
 
     public function testWhenCallbackWithReturn(): void
