@@ -1630,11 +1630,6 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
             }
         });
 
-        // TODO: The code will be removed in v3.2
-        if (array_is_list($this->items)) {
-            $items = array_values($items);
-        }
-
         return new static($items);
     }
 
