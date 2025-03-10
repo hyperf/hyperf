@@ -3323,17 +3323,12 @@ class Builder
         // Once we have the query instance we can simply execute it so it can add all
         // of the sub-select's conditions to itself, and then we can cache it off
         // in the array of where clauses for the "main" parent query instance.
-        if ($callback instanceof self) {
-            $query = $callback;
-        }
-
-        if ($callback instanceof ModelBuilder) {
-            $query = $callback->getQuery();
-        }
-
         if ($callback instanceof Closure) {
             $callback($query = $this->forSubQuery());
+        } else {
+            $query = $callback instanceof ModelBuilder ? $callback->toBase() : $callback;
         }
+
         $this->wheres[] = compact('type', 'column', 'operator', 'query', 'boolean');
 
         $this->addBinding($query->getBindings(), 'where');
