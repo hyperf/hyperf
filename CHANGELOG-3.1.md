@@ -1,5 +1,9 @@
 # v3.1.53 - TBD
 
+## Fixed
+
+- [#7309](https://github.com/hyperf/hyperf/pull/7309) Fixed bug that testing client cannot support json without `POST`.
+
 # v3.1.52 - 2025-02-27
 
 ## Added
