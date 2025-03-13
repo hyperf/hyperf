@@ -29,7 +29,7 @@
     },
     "suggest": {
         "doctrine/dbal": "Required to rename columns (^3.0).",
-        "hyperf/paginator": "Required to paginate the result set (~3.1.0).",
+        "hyperf/paginator": "Required to paginate the result set (~3.2.0).",
         "nikic/php-parser": "Required to use ModelCommand. (^4.0)",
         "php-di/phpdoc-reader": "Required to use ModelCommand. (^2.2)"
     },

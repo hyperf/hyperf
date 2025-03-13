@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Scout\Engine;
 
-use Elasticsearch\Client;
-use Elasticsearch\Client as Elastic;
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientInterface;
 use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
@@ -37,13 +37,18 @@ class ElasticsearchEngine extends Engine
     protected ?string $index = null;
 
     /**
-     * Create a new engine instance.
-     *
-     * @param Elastic $elastic elastic where the instance of Elastic|\Elasticsearch\Client is stored
+     * The Elasticsearch client instance.
+     * @var Client
      */
-    public function __construct(protected Client $elastic, ?string $index = null)
+    protected ClientInterface $elastic;
+
+    /**
+     * Create a new engine instance.
+     */
+    public function __construct(ClientInterface $elastic, ?string $index = null)
     {
-        $this->index = $this->initIndex($elastic, $index);
+        $this->elastic = $elastic; // @phpstan-ignore-line
+        $this->index = $this->initIndex($index);
     }
 
     /**
@@ -193,11 +198,14 @@ class ElasticsearchEngine extends Engine
             ->unsearchable();
     }
 
-    protected function initIndex(Client $client, ?string $index): ?string
+    /**
+     * Undocumented function.
+     */
+    protected function initIndex(?string $index): ?string
     {
         if (! static::$version) {
             try {
-                static::$version = $client->info()['version']['number'];
+                static::$version = $this->elastic->info()['version']['number'];
             } catch (Throwable $exception) {
                 static::$version = '0.0.0';
             }
