@@ -26,4 +26,6 @@ interface JobInterface
     public function setMaxAttempts(int $maxAttempts): static;
 
     public function getMaxAttempts(): int;
+
+    public function getQueueName(): string;
 }

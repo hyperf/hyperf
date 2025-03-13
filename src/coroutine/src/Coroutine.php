@@ -119,6 +119,14 @@ class Coroutine
         return Co::exists($id);
     }
 
+    /**
+     * @return iterable<int>
+     */
+    public static function list(): iterable
+    {
+        return Co::list();
+    }
+
     private static function printLog(Throwable $throwable): void
     {
         if (ApplicationContext::hasContainer()) {

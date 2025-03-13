@@ -2059,10 +2059,13 @@ class Builder
     public function limit($value)
     {
         $property = $this->unions ? 'unionLimit' : 'limit';
+        $value = (int) $value;
 
-        if ($value >= 0) {
-            $this->{$property} = $value;
+        if ($value < 0) {
+            throw new InvalidArgumentException('Limit cannot be negative.');
         }
+
+        $this->{$property} = $value;
 
         return $this;
     }
@@ -2459,6 +2462,22 @@ class Builder
     public function doesntExist()
     {
         return ! $this->exists();
+    }
+
+    /**
+     * Execute the given callback if no rows exist for the current query.
+     */
+    public function existsOr(Closure $callback): mixed
+    {
+        return $this->exists() ? true : $callback();
+    }
+
+    /**
+     * Execute the given callback if rows exist for the current query.
+     */
+    public function doesntExistOr(Closure $callback): mixed
+    {
+        return $this->doesntExist() ? true : $callback();
     }
 
     /**
