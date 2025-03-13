@@ -763,7 +763,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @param int $count
      * @return null|static<int, TValue>|TValue
      */
-    public function pop($count = 1)
+    public function pop(int $count = 1)
     {
         if ($count < 1) {
             return new static();
@@ -984,7 +984,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      *
      * @throws InvalidArgumentException
      */
-    public function shift($count = 1)
+    public function shift(int $count = 1)
     {
         if ($count < 0) {
             throw new InvalidArgumentException('Number of shifted items may not be less than zero.');
