@@ -760,10 +760,26 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
 
     /**
      * Get and remove the last item from the collection.
+     * @return null|static<int, TValue>|TValue
      */
-    public function pop()
+    public function pop(int $count = 1)
     {
-        return array_pop($this->items);
+        if ($count === 1) {
+            return array_pop($this->items);
+        }
+
+        if ($count < 1) {
+            throw new InvalidArgumentException('Number of items may not be less than one.');
+        }
+
+        $results = [];
+
+        $count = min($count, $this->count());
+        for ($i = 0; $i < $count; ++$i) {
+            $results[] = array_pop($this->items);
+        }
+
+        return new static($results);
     }
 
     /**
@@ -957,11 +973,28 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     /**
      * Get and remove the first item from the collection.
      *
-     * @return null|TValue
+     * @return null|static<int, TValue>|TValue
+     *
+     * @throws InvalidArgumentException
      */
-    public function shift()
+    public function shift(int $count = 1)
     {
-        return array_shift($this->items);
+        if ($count === 1) {
+            return array_shift($this->items);
+        }
+
+        if ($count < 1) {
+            throw new InvalidArgumentException('Number of shifted items may not be less than one.');
+        }
+
+        $results = [];
+
+        $count = min($count, $this->count());
+        for ($i = 0; $i < $count; ++$i) {
+            $results[] = array_shift($this->items);
+        }
+
+        return new static($results);
     }
 
     /**

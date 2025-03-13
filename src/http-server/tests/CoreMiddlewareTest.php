@@ -103,6 +103,11 @@ class CoreMiddlewareTest extends TestCase
             {
                 return json_encode(['foo' => 'bar'], JSON_UNESCAPED_UNICODE);
             }
+
+            public function toJson($options = 0): string
+            {
+                return json_encode(['foo' => 'bar'], $options);
+            }
         }, $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame(json_encode(['foo' => 'bar']), (string) $response->getBody());
