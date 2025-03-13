@@ -421,7 +421,7 @@ class Arr
      * @param iterable<TKey, TValue> $array
      * @return array<int<0, 1>, array<TKey, TValue>>
      */
-    public static function partition($array, callable $callback): array
+    public static function partition(iterable $array, callable $callback): array
     {
         $passed = [];
         $failed = [];
@@ -439,11 +439,8 @@ class Arr
 
     /**
      * Filter the array using the negation of the given callback.
-     *
-     * @param array $array
-     * @return array
      */
-    public static function reject($array, callable $callback)
+    public static function reject(array $array, callable $callback): array
     {
         return static::where($array, fn ($value, $key) => ! $callback($value, $key));
     }
