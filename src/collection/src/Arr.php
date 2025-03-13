@@ -416,6 +416,36 @@ class Arr
     }
 
     /**
+     * Partition the array into two arrays using the given callback.
+     *
+     * @param iterable<TKey, TValue> $array
+     * @return array<int<0, 1>, array<TKey, TValue>>
+     */
+    public static function partition(iterable $array, callable $callback): array
+    {
+        $passed = [];
+        $failed = [];
+
+        foreach ($array as $key => $item) {
+            if ($callback($item, $key)) {
+                $passed[$key] = $item;
+            } else {
+                $failed[$key] = $item;
+            }
+        }
+
+        return [$passed, $failed];
+    }
+
+    /**
+     * Filter the array using the negation of the given callback.
+     */
+    public static function reject(array $array, callable $callback): array
+    {
+        return static::where($array, fn ($value, $key) => ! $callback($value, $key));
+    }
+
+    /**
      * Get one or a specified number of random values from an array.
      *
      * @throws InvalidArgumentException

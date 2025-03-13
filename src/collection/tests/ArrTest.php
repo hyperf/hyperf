@@ -926,4 +926,41 @@ class ArrTest extends TestCase
         $expected = [1 => 'John', 2 => 'Jane'];
         $this->assertEquals($expected, Arr::pluck($array, $value, $key));
     }
+
+    public function testReject()
+    {
+        $array = [1, 2, 3, 4, 5, 6];
+
+        // Test rejection behavior (removing even numbers)
+        $result = Arr::reject($array, function ($value) {
+            return $value % 2 === 0;
+        });
+
+        $this->assertEquals([
+            0 => 1,
+            2 => 3,
+            4 => 5,
+        ], $result);
+
+        // Test key preservation with associative array
+        $assocArray = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
+
+        $result = Arr::reject($assocArray, function ($value) {
+            return $value > 2;
+        });
+
+        $this->assertEquals([
+            'a' => 1,
+            'b' => 2,
+        ], $result);
+    }
+
+    public function testPartition()
+    {
+        $array = ['John', 'Jane', 'Greg'];
+
+        $result = Arr::partition($array, fn (string $value) => str_contains($value, 'J'));
+
+        $this->assertEquals([[0 => 'John', 1 => 'Jane'], [2 => 'Greg']], $result);
+    }
 }
