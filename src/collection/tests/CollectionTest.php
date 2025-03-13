@@ -1393,14 +1393,11 @@ class CollectionTest extends TestCase
 
         $data = new Collection(['foo', 'bar', 'baz']);
 
-        $this->assertEquals(new Collection([]), $data->shift(0));
         $this->assertEquals(collect(['foo', 'bar', 'baz']), $data);
 
         $this->expectException('InvalidArgumentException');
-        (new Collection(['foo', 'bar', 'baz']))->shift(-1);
-
-        $this->expectException('InvalidArgumentException');
-        (new Collection(['foo', 'bar', 'baz']))->shift(-2);
+        $count = rand(-2, 0);
+        $this->assertEquals(new Collection([]), $data->shift($count));
     }
 
     public function testShiftReturnsNullOnEmptyCollection()

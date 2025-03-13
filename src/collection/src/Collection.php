@@ -760,28 +760,22 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
 
     /**
      * Get and remove the last item from the collection.
-     * @param int $count
      * @return null|static<int, TValue>|TValue
      */
     public function pop(int $count = 1)
     {
-        if ($count < 1) {
-            return new static();
-        }
-
         if ($count === 1) {
             return array_pop($this->items);
         }
 
-        if ($this->isEmpty()) {
-            return new static();
+        if ($count < 1) {
+            throw new InvalidArgumentException('Number of items may not be less than one.');
         }
 
         $results = [];
 
-        $collectionCount = $this->count();
-
-        foreach (range(1, min($count, $collectionCount)) as $item) {
+        $count = min($count, $this->count());
+        for ($i = 0; $i < $count; ++$i) {
             $results[] = array_pop($this->items);
         }
 
@@ -979,34 +973,24 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     /**
      * Get and remove the first item from the collection.
      *
-     * @param int $count
      * @return null|static<int, TValue>|TValue
      *
      * @throws InvalidArgumentException
      */
     public function shift(int $count = 1)
     {
-        if ($count < 0) {
-            throw new InvalidArgumentException('Number of shifted items may not be less than zero.');
-        }
-
-        if ($this->isEmpty()) {
-            return null;
-        }
-
-        if ($count === 0) {
-            return new static();
-        }
-
         if ($count === 1) {
             return array_shift($this->items);
         }
 
+        if ($count < 1) {
+            throw new InvalidArgumentException('Number of shifted items may not be less than one.');
+        }
+
         $results = [];
 
-        $collectionCount = $this->count();
-
-        foreach (range(1, min($count, $collectionCount)) as $item) {
+        $count = min($count, $this->count());
+        for ($i = 0; $i < $count; ++$i) {
             $results[] = array_shift($this->items);
         }
 
