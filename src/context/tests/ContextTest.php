@@ -222,4 +222,144 @@ class ContextTest extends TestCase
             $this->assertSame($res, $value);
         });
     }
+
+    public function testIncrementInNonCoroutineEnvironment()
+    {
+        $id = 'test.increment.non.coroutine';
+        Context::destroy($id);
+
+        // 测试初始递增
+        $result = Context::increment($id);
+        $this->assertSame(1, $result);
+
+        // 测试再次递增
+        $result = Context::increment($id);
+        $this->assertSame(2, $result);
+
+        // 测试指定步长递增
+        $result = Context::increment($id, 3);
+        $this->assertSame(5, $result);
+    }
+
+    public function testDecrementInNonCoroutineEnvironment()
+    {
+        $id = 'test.decrement.non.coroutine';
+        Context::destroy($id);
+
+        // 测试不存在的键递减
+        $result = Context::decrement($id);
+        $this->assertSame(-1, $result);
+
+        // 测试已存在的键递减
+        $result = Context::decrement($id);
+        $this->assertSame(-2, $result);
+
+        // 测试指定步长递减
+        $result = Context::decrement($id, 3);
+        $this->assertSame(-5, $result);
+    }
+
+    public function testIncrementInCoroutineEnvironment()
+    {
+        (new Waiter())->wait(function () {
+            // 测试初始递增
+            $id = 'test.co.increment';
+            $result = Context::increment($id);
+            $this->assertSame(1, $result);
+
+            // 测试再次递增
+            $result = Context::increment($id);
+            $this->assertSame(2, $result);
+
+            // 测试指定步长递增
+            $result = Context::increment($id, 3);
+            $this->assertSame(5, $result);
+        });
+    }
+
+    public function testDecrementInCoroutineEnvironment()
+    {
+        (new Waiter())->wait(function () {
+            // 测试初始递减
+            $id = 'test.co.decrement';
+            $result = Context::decrement($id);
+            $this->assertSame(-1, $result);
+
+            // 测试再次递减
+            $result = Context::decrement($id);
+            $this->assertSame(-2, $result);
+
+            // 测试指定步长递减
+            $result = Context::decrement($id, 3);
+            $this->assertSame(-5, $result);
+        });
+    }
+
+    public function testIncrementWithSpecificCoroutineId()
+    {
+        $cid = Coroutine::id();
+        $id = 'test.specific.increment';
+        Context::set($id, 1);
+        (new Waiter())->wait(function () use ($id, $cid) {
+            $result = Context::increment($id, 1, $cid);
+            $this->assertSame(2, $result);
+        });
+    }
+
+    public function testDecrementWithSpecificCoroutineId()
+    {
+        $cid = Coroutine::id();
+        $id = 'test.specific.decrement';
+        Context::set($id, 3);
+        (new Waiter())->wait(function () use ($id, $cid) {
+            // 测试特定协程ID的递减
+            $result = Context::decrement($id, 2, $cid);
+            $this->assertSame(1, $result);
+        });
+    }
+
+    public function testMacro()
+    {
+        Context::macro('macroTest', function (string $value) {
+            return 'macro-' . $value;
+        });
+
+        $this->assertTrue(Context::hasMacro('macroTest'));
+        $this->assertFalse(Context::hasMacro('notExistMacro'));
+        $this->assertSame('macro-test', Context::macroTest('test'));
+    }
+
+    public function testMacroWithCoroutine()
+    {
+        Context::macro('macroCoroutine', function (string $value) {
+            return 'coroutine-' . $value;
+        });
+
+        (new Waiter())->wait(function () {
+            $this->assertTrue(Context::hasMacro('macroCoroutine'));
+            $this->assertSame('coroutine-test', Context::macroCoroutine('test'));
+        });
+    }
+
+    public function testMixin()
+    {
+        Context::mixin(new Stub\ContextMixin());
+
+        $this->assertTrue(Context::hasMacro('mixinMethod'));
+        $this->assertTrue(Context::hasMacro('protectedMixinMethod'));
+        $this->assertSame('mixin-test', Context::mixinMethod('test'));
+        $this->assertSame('protected-test', Context::protectedMixinMethod('test'));
+    }
+
+    public function testMixinWithoutReplace()
+    {
+        Context::macro('mixinMethod', function (string $value) {
+            return 'original-' . $value;
+        });
+
+        Context::mixin(new Stub\ContextMixin(), false);
+
+        $this->assertSame('original-test', Context::mixinMethod('test'));
+        $this->assertSame('protected-test', Context::protectedMixinMethod('test'));
+    }
 }
