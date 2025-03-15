@@ -37,11 +37,6 @@ use function Hyperf\Coroutine\parallel;
 #[CoversNothing]
 class ContextTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-    }
-
     public function testOverride()
     {
         Context::set('override.id', 1);
