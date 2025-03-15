@@ -317,4 +317,49 @@ class ContextTest extends TestCase
             $this->assertSame(1, $result);
         });
     }
+
+    public function testMacro()
+    {
+        Context::macro('macroTest', function (string $value) {
+            return 'macro-' . $value;
+        });
+
+        $this->assertTrue(Context::hasMacro('macroTest'));
+        $this->assertFalse(Context::hasMacro('notExistMacro'));
+        $this->assertSame('macro-test', Context::macroTest('test'));
+    }
+
+    public function testMacroWithCoroutine()
+    {
+        Context::macro('macroCoroutine', function (string $value) {
+            return 'coroutine-' . $value;
+        });
+
+        (new Waiter())->wait(function () {
+            $this->assertTrue(Context::hasMacro('macroCoroutine'));
+            $this->assertSame('coroutine-test', Context::macroCoroutine('test'));
+        });
+    }
+
+    public function testMixin()
+    {
+        Context::mixin(new Stub\ContextMixin());
+
+        $this->assertTrue(Context::hasMacro('mixinMethod'));
+        $this->assertTrue(Context::hasMacro('protectedMixinMethod'));
+        $this->assertSame('mixin-test', Context::mixinMethod('test'));
+        $this->assertSame('protected-test', Context::protectedMixinMethod('test'));
+    }
+
+    public function testMixinWithoutReplace()
+    {
+        Context::macro('mixinMethod', function (string $value) {
+            return 'original-' . $value;
+        });
+
+        Context::mixin(new Stub\ContextMixin(), false);
+
+        $this->assertSame('original-test', Context::mixinMethod('test'));
+        $this->assertSame('protected-test', Context::protectedMixinMethod('test'));
+    }
 }
