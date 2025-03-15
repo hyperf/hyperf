@@ -1,5 +1,9 @@
 # v3.1.53 - TBD
 
+## Added
+
+- [#7311](https://github.com/hyperf/hyperf/pull/7311) Added `$formatCommand` property to `Hyperf\Redis\Event\CommandExecuted`.
+
 ## Fixed
 
 - [#7309](https://github.com/hyperf/hyperf/pull/7309) Fixed bug that testing client cannot support json without `POST`.
