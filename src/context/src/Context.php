@@ -144,6 +144,24 @@ class Context
         return self::get($id, null, $coroutineId);
     }
 
+    public static function increment(string $id, int $step = 1, ?int $coroutineId = null): int
+    {
+        return static::override(
+            $id,
+            fn ($value) => (int) $value + $step,
+            $coroutineId
+        );
+    }
+
+    public static function decrement(string $id, int $step = 1, ?int $coroutineId = null): int
+    {
+        return static::override(
+            $id,
+            fn ($value) => (int) $value - $step,
+            $coroutineId
+        );
+    }
+
     /**
      * @return null|array<TKey, TValue>|ArrayObject<TKey, TValue>
      */
