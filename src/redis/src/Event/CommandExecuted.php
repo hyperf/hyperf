@@ -15,6 +15,11 @@ namespace Hyperf\Redis\Event;
 use Hyperf\Redis\RedisConnection;
 use Throwable;
 
+use function Hyperf\Collection\collect;
+
+/**
+ * @property string $formatCommand
+ */
 class CommandExecuted
 {
     /**
@@ -30,5 +35,31 @@ class CommandExecuted
         public mixed $result,
         public ?Throwable $throwable,
     ) {
+    }
+
+    public function __get($name)
+    {
+        if ($name === 'formatCommand') {
+            return $this->formatCommand($this->command, $this->parameters);
+        }
+    }
+
+    private function formatCommand(string $command, array $parameters): string
+    {
+        $parameters = collect($parameters)->map(function ($parameter) {
+            if (is_array($parameter)) {
+                return collect($parameter)->map(function ($value, $key) {
+                    if (is_array($value)) {
+                        return sprintf('%s %s', $key, json_encode($value));
+                    }
+
+                    return is_int($key) ? $value : sprintf('%s %s', $key, $value);
+                })->implode(' ');
+            }
+
+            return $parameter;
+        })->implode(' ');
+
+        return sprintf('%s %s', $command, $parameters);
     }
 }
