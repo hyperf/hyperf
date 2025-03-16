@@ -672,7 +672,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return in_array(strtolower($value->getClientOriginalExtension()), $parameters);
+        return in_array(strtolower($value->getExtension()), $parameters);
     }
 
     /**
