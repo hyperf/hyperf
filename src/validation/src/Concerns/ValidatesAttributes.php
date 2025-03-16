@@ -660,7 +660,7 @@ trait ValidatesAttributes
      * Validate the extension of a file upload attribute is in a set of defined extensions.
      *
      * @param mixed $value
-     * @param array<int, int|string>  $parameters
+     * @param array<int, int|string> $parameters
      */
     public function validateExtensions(string $attribute, $value, array $parameters): bool
     {
