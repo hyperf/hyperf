@@ -41,6 +41,7 @@ return [
     ],
     'boolean' => 'The :attribute field must be true or false.',
     'confirmed' => 'The :attribute confirmation does not match.',
+    'contains' => 'The :attribute is missing a required value.',
     'date' => 'The :attribute is not a valid date.',
     'date_equals' => 'The :attribute must be a date equal to :date.',
     'date_format' => 'The :attribute does not match the format :format.',
@@ -56,7 +57,9 @@ return [
     'doesnt_start_with' => 'The :attribute must not start with one of the following: :values.',
     'email' => 'The :attribute must be a valid email address.',
     'ends_with' => 'The :attribute must end with one of the following: :values.',
+    'enum' => 'The selected :attribute is invalid.',
     'exists' => 'The selected :attribute is invalid.',
+    'extensions' => 'The :attribute must have one of the following extensions: :values.',
     'file' => 'The :attribute must be a file.',
     'filled' => 'The :attribute field is required.',
     'gt' => [
@@ -71,6 +74,7 @@ return [
         'string' => 'The :attribute must be great than or equal to :value characters',
         'array' => 'The :attribute must be great than or equal to :value items',
     ],
+    'hex_color' => 'The :attribute must be a valid hexadecimal color.',
     'image' => 'The :attribute must be an image.',
     'in' => 'The selected :attribute is invalid.',
     'in_array' => 'The :attribute field does not exist in :other.',
@@ -93,6 +97,7 @@ return [
         'string' => 'The :attribute must be less than or equal to :value characters',
         'array' => 'The :attribute must be less than or equal to :value items',
     ],
+    'mac_address' => 'The :attribute must be a valid MAC address.',
     'max' => [
         'numeric' => 'The :attribute may not be greater than :max.',
         'file' => 'The :attribute may not be greater than :max kilobytes.',

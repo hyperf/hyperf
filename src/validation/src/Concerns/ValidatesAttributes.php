@@ -323,6 +323,27 @@ trait ValidatesAttributes
     }
 
     /**
+     * Validate an attribute contains a list of values.
+     *
+     * @param mixed $value
+     * @param array<int, int|string> $parameters
+     */
+    public function validateContains(string $attribute, $value, array $parameters): bool
+    {
+        if (! is_array($value)) {
+            return false;
+        }
+
+        foreach ($parameters as $parameter) {
+            if (! in_array($parameter, $value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Validate that an attribute is a valid date.
      *
      * @param mixed $value
@@ -636,6 +657,25 @@ trait ValidatesAttributes
     }
 
     /**
+     * Validate the extension of a file upload attribute is in a set of defined extensions.
+     *
+     * @param mixed $value
+     * @param array<int, int|string> $parameters
+     */
+    public function validateExtensions(string $attribute, $value, array $parameters): bool
+    {
+        if (! $this->isValidFileInstance($value)) {
+            return false;
+        }
+
+        if ($this->shouldBlockPhpUpload($value, $parameters)) {
+            return false;
+        }
+
+        return in_array(strtolower($value->getExtension()), $parameters);
+    }
+
+    /**
      * Validate the given value is a valid file.
      *
      * @param mixed $value
@@ -789,6 +829,16 @@ trait ValidatesAttributes
     public function validateUppercase(string $attribute, mixed $value, array $parameters): bool
     {
         return Str::upper($value) === $value;
+    }
+
+    /**
+     * Validate that an attribute is a valid HEX color.
+     *
+     * @param mixed $value
+     */
+    public function validateHexColor(string $attribute, $value): bool
+    {
+        return preg_match('/^#(?:(?:[0-9a-f]{3}){1,2}|(?:[0-9a-f]{4}){1,2})$/i', $value) === 1;
     }
 
     /**

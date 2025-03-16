@@ -95,6 +95,14 @@ trait ReplacesAttributes
     }
 
     /**
+     * Replace all place-holders for the extensions rule.
+     */
+    protected function replaceExtensions(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        return str_replace(':values', implode(', ', $parameters), $message);
+    }
+
+    /**
      * Replace all place-holders for the min rule.
      */
     protected function replaceMin(string $message, string $attribute, string $rule, array $parameters): string

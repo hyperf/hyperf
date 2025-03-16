@@ -133,6 +133,52 @@ class ValidationFileRuleTest extends TestCase
         );
     }
 
+    public function testSingleExtension()
+    {
+        $this->fails(
+            File::default()->extensions('png'),
+            (new FileFactory())->createWithContent('foo', file_get_contents(__DIR__ . '/fixtures/image.png')),
+            ['validation.extensions']
+        );
+
+        $this->fails(
+            File::default()->extensions('png'),
+            (new FileFactory())->createWithContent('foo.jpg', file_get_contents(__DIR__ . '/fixtures/image.png')),
+            ['validation.extensions']
+        );
+
+        $this->fails(
+            File::default()->extensions('jpeg'),
+            (new FileFactory())->createWithContent('foo.jpg', file_get_contents(__DIR__ . '/fixtures/image.png')),
+            ['validation.extensions']
+        );
+
+        $this->passes(
+            File::default()->extensions('png'),
+            (new FileFactory())->createWithContent('foo.png', file_get_contents(__DIR__ . '/fixtures/image.png')),
+        );
+    }
+
+    public function testMultipleExtensions()
+    {
+        $this->fails(
+            File::default()->extensions(['png', 'jpeg', 'jpg']),
+            (new FileFactory())->createWithContent('foo', file_get_contents(__DIR__ . '/fixtures/image.png')),
+            ['validation.extensions']
+        );
+
+        $this->fails(
+            File::default()->extensions(['png', 'jpeg']),
+            (new FileFactory())->createWithContent('foo.jpg', file_get_contents(__DIR__ . '/fixtures/image.png')),
+            ['validation.extensions']
+        );
+
+        $this->passes(
+            File::default()->extensions(['png', 'jpeg', 'jpg']),
+            (new FileFactory())->createWithContent('foo.png', file_get_contents(__DIR__ . '/fixtures/image.png')),
+        );
+    }
+
     public function testImage()
     {
         $this->fails(
