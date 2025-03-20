@@ -612,17 +612,11 @@ class Arr
             $array = static::where($array, $callback);
         }
 
-        $count = count($array);
-
-        if ($count === 0) {
-            throw new ItemNotFoundException();
-        }
-
-        if ($count > 1) {
-            throw new MultipleItemsFoundException($count);
-        }
-
-        return static::first($array);
+        return match (count($array)) {
+            0 => throw new ItemNotFoundException(),
+            1 => static::first($array),
+            default => throw new MultipleItemsFoundException(count($array)),
+        };
     }
 
     /**
