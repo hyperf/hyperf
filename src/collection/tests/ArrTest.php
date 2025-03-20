@@ -15,6 +15,8 @@ namespace HyperfTest\Collection;
 use ArrayObject;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
+use Hyperf\Collection\ItemNotFoundException;
+use Hyperf\Collection\MultipleItemsFoundException;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Resolver\ResolverDispatcher;
 use Monolog\Handler\StreamHandler;
@@ -962,5 +964,34 @@ class ArrTest extends TestCase
         $result = Arr::partition($array, fn (string $value) => str_contains($value, 'J'));
 
         $this->assertEquals([[0 => 'John', 1 => 'Jane'], [2 => 'Greg']], $result);
+    }
+
+    public function testSoleReturnsFirstItemInCollectionIfOnlyOneExists()
+    {
+        $this->assertSame('foo', Arr::sole(['foo']));
+
+        $array = [
+            ['name' => 'foo'],
+            ['name' => 'bar'],
+        ];
+
+        $this->assertSame(
+            ['name' => 'foo'],
+            Arr::sole($array, fn (array $value) => $value['name'] === 'foo')
+        );
+    }
+
+    public function testSoleThrowsExceptionIfNoItemsExist()
+    {
+        $this->expectException(ItemNotFoundException::class);
+
+        Arr::sole(['foo'], fn (string $value) => $value === 'baz');
+    }
+
+    public function testSoleThrowsExceptionIfMoreThanOneItemExists()
+    {
+        $this->expectExceptionObject(new MultipleItemsFoundException(2));
+
+        Arr::sole(['baz', 'foo', 'baz'], fn (string $value) => $value === 'baz');
     }
 }
