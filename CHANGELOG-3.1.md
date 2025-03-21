@@ -3,6 +3,9 @@
 ## Fixed
 
 - [#7309](https://github.com/hyperf/hyperf/pull/7309) Fixed bug that testing client cannot support json without `POST`.
+
+## Added
+
 - [#7314](https://github.com/hyperf/hyperf/pull/7314) Enable `schema` Configuration for `hyperf/db` with `pgsql`.
 
 # v3.1.52 - 2025-02-27
