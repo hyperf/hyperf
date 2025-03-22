@@ -61,7 +61,7 @@ public function fluent() : \foo\foo
     return $this->__call(__FUNCTION__, func_get_args());
 }
 CODETEMPLATE;
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
         $visitor = new PublicMethodVisitor(...$this->getStmt($ast));
@@ -82,7 +82,7 @@ use bar\ConfigInterface;
 class foo {
     public function __construct() {}
     public function __get($name) {}
-    
+
 	abstract public function hope(bool $a): int;
 
 	public function it(ConfigInterface $a): void{
@@ -116,7 +116,7 @@ public function fluent() : \foo\foo
     return $this->__call(__FUNCTION__, func_get_args());
 }
 CODETEMPLATE;
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
         $visitor = new PublicMethodVisitor(...$this->getStmt($ast));

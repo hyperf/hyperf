@@ -31,8 +31,7 @@ class Ast
 
     public function __construct()
     {
-        $parserFactory = new ParserFactory();
-        $this->parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $this->parser = (new ParserFactory())->createForNewestSupportedVersion();
         $this->printer = new Standard();
         $this->reader = new AnnotationReader();
     }

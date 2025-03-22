@@ -15,7 +15,6 @@ namespace Hyperf\Swagger\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Database\Model\Model;
 use Hyperf\Swagger\Command\Ast\ModelSchemaVisitor;
-use PhpParser\Lexer\Emulative;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
@@ -84,14 +83,7 @@ class GenSchemaCommand extends HyperfCommand
             return;
         }
 
-        $lexer = new Emulative([
-            'usedAttributes' => [
-                'comments',
-                'startLine', 'endLine',
-                'startTokenPos', 'endTokenPos',
-            ],
-        ]);
-        $parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, $lexer);
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
         $printer = new Standard();
 
         $traverser = new NodeTraverser();

@@ -16,7 +16,6 @@ use Hyperf\Database\Commands\Ast\GenerateModelIDEVisitor;
 use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
 use HyperfTest\Database\Stubs\Model\TestGenerateIdeModel;
-use PhpParser\Lexer\Emulative;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
@@ -30,14 +29,7 @@ class ModelGenerateTest extends TestCase
 {
     public function setUp(): void
     {
-        $this->lexer = new Emulative([
-            'usedAttributes' => [
-                'comments',
-                'startLine', 'endLine',
-                'startTokenPos', 'endTokenPos',
-            ],
-        ]);
-        $this->astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, $this->lexer);
+        $this->astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $this->printer = new Standard();
     }
 

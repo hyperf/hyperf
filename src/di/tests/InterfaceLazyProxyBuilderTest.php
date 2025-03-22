@@ -38,7 +38,7 @@ namespace foo;
 use bar\ConfigInterface;
 interface foo {
 	abstract public function hope(bool $a): int;
-	
+
 	public function it(ConfigInterface $a): void;
 
 	public function works(bool $a, float $b = 1): int;
@@ -76,7 +76,7 @@ CODETEMPLATE;
         $builder = new InterfaceLazyProxyBuilder();
         $builder->addClassBoilerplate('Lazy\SomeClass', 'App\SomeInterface');
         $builder->addClassRelationship();
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
         $visitor = new PublicMethodVisitor(...$this->getStmt($ast));

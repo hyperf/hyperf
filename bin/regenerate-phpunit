@@ -103,7 +103,7 @@ class RunInCoroutineVisitor extends NodeVisitorAbstract
 
     protected function getCoroutineSetter(): array
     {
-        return $this->parser->parse("<?php 
+        return $this->parser->parse("<?php
 Swoole\\Coroutine::set([
     'hook_flags' => SWOOLE_HOOK_ALL,
     'exit_condition' => function() {
@@ -123,7 +123,7 @@ Swoole\\Coroutine::set([
     }
 }
 
-$parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+$parser = (new ParserFactory())->createForNewestSupportedVersion();
 $printer = new Standard();
 $traverser = new NodeTraverser();
 
