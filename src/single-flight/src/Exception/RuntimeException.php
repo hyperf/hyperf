@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
+namespace Hyperf\SingleFlight\Exception;
+
+class RuntimeException extends \RuntimeException
+{
+    protected $message = 'An exception occurred while waiting the shared result';
+}
