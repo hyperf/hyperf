@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\SingleFlight\Aspect;
 
 use Hyperf\Coroutine\Coroutine;
-use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
@@ -32,7 +31,7 @@ class SingleFlightAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        if (! $this->shouldHijacked($proceedingJoinPoint)) {
+        if (! $this->shouldHijack($proceedingJoinPoint)) {
             return $proceedingJoinPoint->process();
         }
 
@@ -41,20 +40,20 @@ class SingleFlightAspect extends AbstractAspect
         return $this->shareCall($barrierKey, $proceedingJoinPoint);
     }
 
-    private function shouldHijacked(ProceedingJoinPoint $proceedingJoinPoint): bool
+    private function shouldHijack(ProceedingJoinPoint $proceedingJoinPoint): bool
     {
         if (! Coroutine::inCoroutine()) {
             return false;
         }
 
-        $annotation = $this->methodAnnotation($proceedingJoinPoint->className, $proceedingJoinPoint->methodName, SingleFlight::class);
+        $annotation = $this->singleFlightAnnotation($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
 
         return (bool) $annotation?->value;
     }
 
-    private function methodAnnotation(string $class, string $method, string $annotation): ?AbstractAnnotation
+    private function singleFlightAnnotation(string $class, string $method): ?SingleFlight
     {
-        return AnnotationCollector::getClassMethodAnnotation($class, $method)[$annotation] ?? null;
+        return AnnotationCollector::getClassMethodAnnotation($class, $method)[SingleFlight::class] ?? null;
     }
 
     /**
@@ -66,7 +65,7 @@ class SingleFlightAspect extends AbstractAspect
         $class = $proceedingJoinPoint->className;
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
-        $annotation = $this->methodAnnotation($class, $method, SingleFlight::class);
+        $annotation = $this->singleFlightAnnotation($class, $method);
         if ($annotation === null) {
             throw new AnnotationException("Annotation SingleFlight couldn't be collected successfully.");
         }
