@@ -16,6 +16,7 @@ use Hyperf\Engine\Channel;
 use Hyperf\SingleFlight\Exception\RuntimeException;
 use Hyperf\Support\Traits\Container;
 use Throwable;
+
 use function Hyperf\Support\call;
 
 class Barrier
@@ -27,7 +28,7 @@ class Barrier
      */
     public static function yield(string $barrierKey, callable $processor)
     {
-        if (!self::has($barrierKey)) {
+        if (! self::has($barrierKey)) {
             $chan = new Channel(1);
             self::set($barrierKey, $chan);
             try {

@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 /**
  * This file is part of Hyperf.
  *
@@ -20,6 +19,10 @@ use Hyperf\SingleFlight\Aspect\SingleFlightAspect;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class AspectTest extends TestCase
 {
     protected function tearDown(): void

@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 /**
  * This file is part of Hyperf.
  *
@@ -17,8 +16,13 @@ use Hyperf\Coroutine\WaitGroup;
 use Hyperf\SingleFlight\Barrier;
 use Hyperf\SingleFlight\Exception\RuntimeException;
 use PHPUnit\Framework\TestCase;
+
 use function Hyperf\Coroutine\go;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class BarrierTest extends TestCase
 {
     public function testBarrier()
@@ -63,7 +67,7 @@ class BarrierTest extends TestCase
                 Barrier::yield($barrierKey, static function () {
                     // ensure that other two coroutines can be scheduled at the same time
                     usleep(100);
-                    throw new \RuntimeException("from 1");
+                    throw new \RuntimeException('from 1');
                 });
             } catch (\RuntimeException $e) {
                 if ($e instanceof RuntimeException) {
@@ -80,7 +84,7 @@ class BarrierTest extends TestCase
             try {
                 Barrier::yield($barrierKey, static function () {
                     usleep(100);
-                    throw new \RuntimeException("from 2");
+                    throw new \RuntimeException('from 2');
                 });
             } catch (\RuntimeException $e) {
                 if ($e instanceof RuntimeException) {
@@ -97,7 +101,7 @@ class BarrierTest extends TestCase
             try {
                 Barrier::yield($barrierKey, static function () {
                     usleep(100);
-                    throw new \RuntimeException("from 3");
+                    throw new \RuntimeException('from 3');
                 });
             } catch (\RuntimeException $e) {
                 if ($e instanceof RuntimeException) {

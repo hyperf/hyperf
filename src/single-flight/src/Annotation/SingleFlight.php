@@ -20,7 +20,6 @@ class SingleFlight extends AbstractAnnotation
 {
     public function __construct(
         public ?string $value = null
-    )
-    {
+    ) {
     }
 }

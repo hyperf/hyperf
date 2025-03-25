@@ -20,6 +20,7 @@ use Hyperf\Di\Exception\AnnotationException;
 use Hyperf\SingleFlight\Annotation\SingleFlight;
 use Hyperf\SingleFlight\Barrier;
 use Hyperf\Stringable\Str;
+
 use function Hyperf\Collection\data_get;
 
 class SingleFlightAspect extends AbstractAspect
@@ -31,7 +32,7 @@ class SingleFlightAspect extends AbstractAspect
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $proxied = $this->shouldHijacked();
-        if (!$proxied) {
+        if (! $proxied) {
             return $proceedingJoinPoint->process();
         }
 
@@ -46,9 +47,7 @@ class SingleFlightAspect extends AbstractAspect
     }
 
     /**
-     * Generate barrier key
-     * @param ProceedingJoinPoint $proceedingJoinPoint
-     * @return string
+     * Generate barrier key.
      * @throws AnnotationException
      */
     private function barrierKey(ProceedingJoinPoint $proceedingJoinPoint): string
@@ -67,7 +66,7 @@ class SingleFlightAspect extends AbstractAspect
             if ($matches) {
                 foreach ($matches as $search) {
                     $k = str_replace(['#{', '}'], '', $search);
-                    $value = Str::replaceFirst($search, (string)data_get($arguments, $k), $value);
+                    $value = Str::replaceFirst($search, (string) data_get($arguments, $k), $value);
                 }
             }
         } else {
@@ -79,6 +78,6 @@ class SingleFlightAspect extends AbstractAspect
 
     private function shareCall(string $barrierKey, ProceedingJoinPoint $proceedingJoinPoint)
     {
-        return Barrier::yield($barrierKey, static fn() => $proceedingJoinPoint->process());
+        return Barrier::yield($barrierKey, static fn () => $proceedingJoinPoint->process());
     }
 }

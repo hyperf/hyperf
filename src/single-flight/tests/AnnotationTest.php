@@ -15,6 +15,10 @@ namespace HyperfTest\SingleFlight;
 use Hyperf\SingleFlight\Annotation\SingleFlight;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class AnnotationTest extends TestCase
 {
     public function testSingleFlight()

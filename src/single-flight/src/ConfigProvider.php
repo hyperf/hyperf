@@ -28,7 +28,7 @@ class ConfigProvider
             ],
             'aspects' => [
                 SingleFlightAspect::class,
-            ]
+            ],
         ];
     }
 }
