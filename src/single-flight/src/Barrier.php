@@ -49,7 +49,7 @@ class Barrier
 
         $ret = self::get($barrierKey)->pop();
         if ($ret instanceof Throwable) {
-            throw new RuntimeException(previous: $ret);
+            throw new RuntimeException(message: 'An exception occurred while waiting for the shared result', previous: $ret);
         }
         return $ret;
     }

@@ -14,5 +14,4 @@ namespace Hyperf\SingleFlight\Exception;
 
 class RuntimeException extends \RuntimeException
 {
-    protected $message = 'An exception occurred while waiting the shared result';
 }
