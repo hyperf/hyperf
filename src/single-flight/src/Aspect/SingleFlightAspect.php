@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\SingleFlight\Aspect;
 
 use Hyperf\Coroutine\Coroutine;
+use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
@@ -31,8 +32,7 @@ class SingleFlightAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $proxied = $this->shouldHijacked();
-        if (! $proxied) {
+        if (! $this->shouldHijacked($proceedingJoinPoint)) {
             return $proceedingJoinPoint->process();
         }
 
@@ -41,9 +41,20 @@ class SingleFlightAspect extends AbstractAspect
         return $this->shareCall($barrierKey, $proceedingJoinPoint);
     }
 
-    private function shouldHijacked(): bool
+    private function shouldHijacked(ProceedingJoinPoint $proceedingJoinPoint): bool
     {
-        return Coroutine::inCoroutine();
+        if (! Coroutine::inCoroutine()) {
+            return false;
+        }
+
+        $annotation = $this->methodAnnotation($proceedingJoinPoint->className, $proceedingJoinPoint->methodName, SingleFlight::class);
+
+        return (bool) $annotation?->value;
+    }
+
+    private function methodAnnotation(string $class, string $method, string $annotation): ?AbstractAnnotation
+    {
+        return AnnotationCollector::getClassMethodAnnotation($class, $method)[$annotation] ?? null;
     }
 
     /**
@@ -52,10 +63,10 @@ class SingleFlightAspect extends AbstractAspect
      */
     private function barrierKey(ProceedingJoinPoint $proceedingJoinPoint): string
     {
-        $className = $proceedingJoinPoint->className;
+        $class = $proceedingJoinPoint->className;
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
-        $annotation = AnnotationCollector::getClassMethodAnnotation($className, $method)[SingleFlight::class] ?? null;
+        $annotation = $this->methodAnnotation($class, $method, SingleFlight::class);
         if ($annotation === null) {
             throw new AnnotationException("Annotation SingleFlight couldn't be collected successfully.");
         }

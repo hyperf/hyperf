@@ -26,7 +26,7 @@ class Barrier
     /**
      * @throws Throwable
      */
-    public static function yield(string $barrierKey, callable $processor)
+    public static function yield(string $barrierKey, callable $processor): mixed
     {
         if (! self::has($barrierKey)) {
             $chan = new Channel(1);
