@@ -12,12 +12,11 @@ declare(strict_types=1);
 
 namespace HyperfTest\SingleFlight;
 
-use Hyperf\Coroutine\WaitGroup;
 use Hyperf\SingleFlight\Barrier;
 use Hyperf\SingleFlight\Exception\RuntimeException;
 use PHPUnit\Framework\TestCase;
 
-use function Hyperf\Coroutine\go;
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
@@ -27,93 +26,51 @@ class BarrierTest extends TestCase
 {
     public function testBarrier()
     {
-        $ret = [];
         $barrierKey = uniqid();
-        $wg = new WaitGroup(3);
-        go(function () use (&$ret, $wg, $barrierKey) {
-            $ret[] = Barrier::yield($barrierKey, static function () {
-                // ensure that other two coroutines can be scheduled at the same time
-                usleep(100);
-                return 1;
-            });
-            $wg->done();
-        });
-        go(function () use (&$ret, $wg, $barrierKey) {
-            $ret[] = Barrier::yield($barrierKey, static function () {
-                usleep(100);
-                return 2;
-            });
-            $wg->done();
-        });
-        go(function () use (&$ret, $wg, $barrierKey) {
-            $ret[] = Barrier::yield($barrierKey, static function () {
-                usleep(100);
-                return 3;
-            });
-            $wg->done();
-        });
-        $wg->wait();
+        $ret = [];
+        $callables = [];
+        $range = range(1, 100);
+        foreach ($range as $v) {
+            $callables[] = static function () use ($barrierKey, $v, &$ret) {
+                $ret[] = Barrier::yield($barrierKey, static function () use ($v) {
+                    // ensure that other coroutines can be scheduled at the same time
+                    usleep(1000);
+                    return $v;
+                });
+            };
+        }
+        parallel($callables, count($callables));
+
+        $this->assertCount(count($range), $ret);
         $this->assertCount(1, array_unique($ret));
     }
 
     public function testBarrierWithException()
     {
-        $ret = [];
         $barrierKey = uniqid();
-        $wg = new WaitGroup();
-        go(function () use (&$ret, $wg, $barrierKey) {
-            $wg->add();
-            try {
-                Barrier::yield($barrierKey, static function () {
-                    // ensure that other two coroutines can be scheduled at the same time
-                    usleep(100);
-                    throw new \RuntimeException('from 1');
-                });
-            } catch (\RuntimeException $e) {
-                if ($e instanceof RuntimeException) {
-                    $ret[] = $e->getPrevious()->getMessage();
-                } else {
-                    $ret[] = $e->getMessage();
+        $ret = [];
+        $callables = [];
+        $range = range(1, 100);
+        foreach (range(1, 100) as $v) {
+            $callables[] = static function () use ($barrierKey, $v, &$ret) {
+                try {
+                    Barrier::yield($barrierKey, static function () use ($v) {
+                        // ensure that other coroutines can be scheduled at the same time
+                        usleep(1000);
+                        throw new \RuntimeException('from ' . $v);
+                    });
+                } catch (\RuntimeException $e) {
+                    if ($e instanceof RuntimeException) {
+                        $ret[] = $e->getPrevious()->getMessage();
+                    } else {
+                        $ret[] = $e->getMessage();
+                    }
                 }
-            } finally {
-                $wg->done();
-            }
-        });
-        go(function () use (&$ret, $wg, $barrierKey) {
-            $wg->add();
-            try {
-                Barrier::yield($barrierKey, static function () {
-                    usleep(100);
-                    throw new \RuntimeException('from 2');
-                });
-            } catch (\RuntimeException $e) {
-                if ($e instanceof RuntimeException) {
-                    $ret[] = $e->getPrevious()->getMessage();
-                } else {
-                    $ret[] = $e->getMessage();
-                }
-            } finally {
-                $wg->done();
-            }
-        });
-        go(function () use (&$ret, $wg, $barrierKey) {
-            $wg->add();
-            try {
-                Barrier::yield($barrierKey, static function () {
-                    usleep(100);
-                    throw new \RuntimeException('from 3');
-                });
-            } catch (\RuntimeException $e) {
-                if ($e instanceof RuntimeException) {
-                    $ret[] = $e->getPrevious()->getMessage();
-                } else {
-                    $ret[] = $e->getMessage();
-                }
-            } finally {
-                $wg->done();
-            }
-        });
-        $wg->wait();
+            };
+        }
+        parallel($callables, count($callables));
+
+        $this->assertCount(count($range), $ret);
         $this->assertCount(1, array_unique($ret));
     }
 }
