@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
+use JetBrains\PhpStorm\ArrayShape;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
@@ -30,7 +31,8 @@ abstract class AbstractCallableDefinitionCollector extends MetadataCollector
                 $parameter->getType(),
                 $parameter->allowsNull(),
                 $parameter->isDefaultValueAvailable(),
-                $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null
+                $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
+                $parameter->getAttributes()
             );
         }
         return $definitions;
@@ -38,8 +40,9 @@ abstract class AbstractCallableDefinitionCollector extends MetadataCollector
 
     /**
      * @param mixed $defaultValue
+     * @param \ReflectionAttribute[] $attributes
      */
-    protected function createType(string $name, ?\ReflectionType $type, bool $allowsNull, bool $hasDefault = false, $defaultValue = null): ReflectionType
+    protected function createType(string $name, ?\ReflectionType $type, bool $allowsNull, bool $hasDefault = false, mixed $defaultValue = null, array $attributes = []): ReflectionType
     {
         // TODO: Support ReflectionUnionType.
         $typeName = match (true) {
@@ -51,6 +54,7 @@ abstract class AbstractCallableDefinitionCollector extends MetadataCollector
             'defaultValueAvailable' => $hasDefault,
             'defaultValue' => $defaultValue,
             'name' => $name,
+            'attributes' => $attributes,
         ]);
     }
 }
