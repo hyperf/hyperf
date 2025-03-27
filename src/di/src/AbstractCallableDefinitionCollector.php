@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
-use JetBrains\PhpStorm\ArrayShape;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
