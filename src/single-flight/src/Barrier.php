@@ -14,6 +14,7 @@ namespace Hyperf\SingleFlight;
 
 use Hyperf\Engine\Channel;
 use Hyperf\SingleFlight\Exception\RuntimeException;
+use Hyperf\SingleFlight\Exception\TimeoutException;
 use Hyperf\Support\Traits\Container;
 use Throwable;
 
@@ -26,7 +27,7 @@ class Barrier
     /**
      * @throws Throwable
      */
-    public static function yield(string $barrierKey, callable $processor): mixed
+    public static function yield(string $barrierKey, callable $processor, float $timeout = -1): mixed
     {
         if (! self::has($barrierKey)) {
             $chan = new Channel(1);
@@ -47,7 +48,10 @@ class Barrier
             }
         }
 
-        $ret = self::get($barrierKey)->pop();
+        $ret = self::get($barrierKey)->pop($timeout);
+        if ($ret === false && self::get($barrierKey)->isTimeout()) {
+            throw new TimeoutException(message: 'Exceeded maximum waiting time for result');
+        }
         if ($ret instanceof Throwable) {
             throw new RuntimeException(message: 'An exception occurred while waiting for the shared result', previous: $ret);
         }

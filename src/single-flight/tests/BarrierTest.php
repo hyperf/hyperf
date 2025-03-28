@@ -14,7 +14,9 @@ namespace HyperfTest\SingleFlight;
 
 use Hyperf\SingleFlight\Barrier;
 use Hyperf\SingleFlight\Exception\RuntimeException;
+use Hyperf\SingleFlight\Exception\TimeoutException;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 use function Hyperf\Coroutine\parallel;
 
@@ -45,7 +47,7 @@ class BarrierTest extends TestCase
         $this->assertCount(1, array_unique($ret));
     }
 
-    public function testBarrierWithException()
+    public function testBarrierWithRuntimeException()
     {
         $barrierKey = uniqid();
         $ret = [];
@@ -72,5 +74,36 @@ class BarrierTest extends TestCase
 
         $this->assertCount(count($range), $ret);
         $this->assertCount(1, array_unique($ret));
+    }
+
+    public function testBarrierWithTimeoutException()
+    {
+        $barrierKey = uniqid();
+        $ret = [];
+        $callables = [];
+        $range = range(1, 100);
+        foreach (range(1, 100) as $v) {
+            $callables[] = static function () use ($barrierKey, $v, &$ret) {
+                try {
+                    Barrier::yield($barrierKey, static function () use ($v, &$ret) {
+                        // ensure that other coroutines can be scheduled at the same time
+                        usleep(700 * 1000);
+                        $ret[] = $v;
+                        return $v;
+                    }, 0.6);
+                } catch (Throwable $e) {
+                    if ($e instanceof TimeoutException) {
+                        $ret[] = $e->getMessage();
+                    }
+                }
+            };
+        }
+        parallel($callables, count($callables));
+
+        $this->assertCount(count($range), $ret);
+        $this->assertCount(2, array_unique($ret));
+
+        $iRet = array_filter($ret, static fn ($v) => is_int($v));
+        $this->assertCount(1, $iRet);
     }
 }

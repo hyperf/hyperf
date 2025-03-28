@@ -19,7 +19,8 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 class SingleFlight extends AbstractAnnotation
 {
     public function __construct(
-        public ?string $value = null
+        public ?string $value = null,
+        public float $timeout = -1
     ) {
     }
 }

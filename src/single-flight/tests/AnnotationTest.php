@@ -26,5 +26,10 @@ class AnnotationTest extends TestCase
         $value = '#{arg1}_#{arg2}';
         $annotation = new SingleFlight($value);
         $this->assertSame($value, $annotation->value);
+        $this->assertSame(-1.0, $annotation->timeout);
+
+        $timeout = 1.23;
+        $annotation = new SingleFlight(timeout: $timeout);
+        $this->assertSame($timeout, $annotation->timeout);
     }
 }

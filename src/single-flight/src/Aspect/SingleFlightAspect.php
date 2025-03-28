@@ -88,6 +88,13 @@ class SingleFlightAspect extends AbstractAspect
 
     private function shareCall(string $barrierKey, ProceedingJoinPoint $proceedingJoinPoint)
     {
-        return Barrier::yield($barrierKey, static fn () => $proceedingJoinPoint->process());
+        $class = $proceedingJoinPoint->className;
+        $method = $proceedingJoinPoint->methodName;
+        $annotation = $this->singleFlightAnnotation($class, $method);
+        if ($annotation === null) {
+            throw new AnnotationException("Annotation SingleFlight couldn't be collected successfully.");
+        }
+
+        return Barrier::yield($barrierKey, static fn () => $proceedingJoinPoint->process(), $annotation->timeout);
     }
 }
