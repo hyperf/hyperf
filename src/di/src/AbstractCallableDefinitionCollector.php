@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
+use ReflectionAttribute;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
@@ -38,8 +39,7 @@ abstract class AbstractCallableDefinitionCollector extends MetadataCollector
     }
 
     /**
-     * @param mixed $defaultValue
-     * @param \ReflectionAttribute[] $attributes
+     * @param ReflectionAttribute[] $attributes
      */
     protected function createType(string $name, ?\ReflectionType $type, bool $allowsNull, bool $hasDefault = false, mixed $defaultValue = null, array $attributes = []): ReflectionType
     {
