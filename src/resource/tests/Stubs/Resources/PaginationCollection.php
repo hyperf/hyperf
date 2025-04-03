@@ -16,7 +16,7 @@ use Hyperf\Resource\Json\ResourceCollection;
 
 class PaginationCollection extends ResourceCollection
 {
-    public function paginationInformation(): array
+    public function paginationInformation(array $paginated, array $default): array
     {
         return [];
     }
