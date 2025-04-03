@@ -3,7 +3,7 @@
 ## Fixed
 
 - [#7309](https://github.com/hyperf/hyperf/pull/7309) Fixed bug that testing client cannot support json without `POST`.
-- [#7318](https://github.com/hyperf/hyperf/pull/7318) Fixed websocket-client mapping lose when recv close frame.
+- [#7318](https://github.com/hyperf/hyperf/pull/7318) Fixed bug that close frame will be lost for websocket-client.
 - [#7329](https://github.com/hyperf/hyperf/pull/7329) Fixed bug that the type of `$connection` is not correct when creating models.
 
 ## Added
