@@ -7,6 +7,7 @@
 
 ## Added
 
+- [#7311](https://github.com/hyperf/hyperf/pull/7311) Added `Hyperf\Redis\Event\CommandExecuted::getFormatCommand()`.
 - [#7314](https://github.com/hyperf/hyperf/pull/7314) Enable `schema` Configuration for `hyperf/db` with `pgsql`.
 
 # v3.1.52 - 2025-02-27
