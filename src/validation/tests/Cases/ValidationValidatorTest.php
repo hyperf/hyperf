@@ -1069,6 +1069,49 @@ class ValidationValidatorTest extends TestCase
         $this->assertEquals('The value of foo.2 does not exist in bar.*.', $v->messages()->first('foo.2'));
     }
 
+    public function testValidateHexColor()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['color' => '#FFF'], ['color' => 'hex_color']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['color' => '#FFFF'], ['color' => 'hex_color']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['color' => '#FFFFFF'], ['color' => 'hex_color']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['color' => '#FF000080'], ['color' => 'hex_color']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['color' => '#FF000080'], ['color' => 'hex_color']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['color' => '#00FF0080'], ['color' => 'hex_color']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['color' => '#GGG'], ['color' => 'hex_color']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['color' => '#GGGG'], ['color' => 'hex_color']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['color' => '#123AB'], ['color' => 'hex_color']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['color' => '#GGGGGG'], ['color' => 'hex_color']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['color' => '#GGGGGGG'], ['color' => 'hex_color']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['color' => '#FFGG00FF'], ['color' => 'hex_color']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['color' => '#00FF008X'], ['color' => 'hex_color']);
+        $this->assertFalse($v->passes());
+    }
+
     public function testValidateConfirmed()
     {
         $trans = $this->getIlluminateArrayTranslator();
@@ -1308,6 +1351,9 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['foo' => 'no'], ['foo' => 'Accepted']);
         $this->assertFalse($v->passes());
 
+        $v = new Validator($trans, ['foo' => 'off'], ['foo' => 'Accepted']);
+        $this->assertFalse($v->passes());
+
         $v = new Validator($trans, ['foo' => null], ['foo' => 'Accepted']);
         $this->assertFalse($v->passes());
 
@@ -1315,6 +1361,9 @@ class ValidationValidatorTest extends TestCase
         $this->assertFalse($v->passes());
 
         $v = new Validator($trans, ['foo' => 0], ['foo' => 'Accepted']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => '0'], ['foo' => 'Accepted']);
         $this->assertFalse($v->passes());
 
         $v = new Validator($trans, ['foo' => false], ['foo' => 'Accepted']);
@@ -2444,6 +2493,29 @@ class ValidationValidatorTest extends TestCase
         $this->assertEquals(2, $v->messages()->first('items'));
     }
 
+    public function testValidateContains()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+
+        $v = new Validator($trans, ['name' => 0], ['name' => 'contains:bar']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['name' => ['foo', 'bar']], ['name' => 'contains:baz']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['name' => ['foo', 'bar']], ['name' => 'contains:baz,buzz']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['name' => ['foo', 'bar']], ['name' => 'contains:foo,buzz']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['name' => ['foo', 'bar']], ['name' => 'contains:foo']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['name' => ['foo', 'bar']], ['name' => 'contains:foo,bar']);
+        $this->assertTrue($v->passes());
+    }
+
     public function testValidateIn()
     {
         $trans = $this->getIlluminateArrayTranslator();
@@ -2730,6 +2802,49 @@ class ValidationValidatorTest extends TestCase
 
         $v = new Validator($trans, ['ip' => '::1'], ['ip' => 'Ipv4']);
         $this->assertTrue($v->fails());
+    }
+
+    public function testValidateMacAddress()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['mac' => 'foo'], ['mac' => 'mac_address']);
+        $this->assertFalse($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['mac' => '01-23-45-67-89-ab'], ['mac' => 'mac_address']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['mac' => '01-23-45-67-89-AB'], ['mac' => 'mac_address']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['mac' => '01-23-45-67-89-aB'], ['mac' => 'mac_address']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['mac' => '01:23:45:67:89:ab'], ['mac' => 'mac_address']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['mac' => '01:23:45:67:89:AB'], ['mac' => 'mac_address']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['mac' => '01:23:45:67:89:aB'], ['mac' => 'mac_address']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['mac' => '01:23:45-67:89:aB'], ['mac' => 'mac_address']);
+        $this->assertFalse($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['mac' => 'xx:23:45:67:89:aB'], ['mac' => 'mac_address']);
+        $this->assertFalse($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['mac' => '0123.4567.89ab'], ['mac' => 'mac_address']);
+        $this->assertTrue($v->passes());
     }
 
     public function testValidateEmail()
@@ -3227,6 +3342,36 @@ class ValidationValidatorTest extends TestCase
         $file->expects($this->any())->method('getMimeType')->will($this->returnValue('pdf'));
         $file->expects($this->any())->method('isValid')->will($this->returnValue(true));
         $v = new Validator($trans, ['x' => $file2], ['x' => 'mimes:pdf']);
+        $this->assertFalse($v->passes());
+    }
+
+    public function testValidateExtension()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $uploadedFile = [__FILE__, 0, 0];
+
+        $file = $this->getMockBuilder(UploadedFile::class)->onlyMethods(['getExtension', 'isValid'])->setConstructorArgs($uploadedFile)->getMock();
+        $file->expects($this->any())->method('getExtension')->willReturn('pdf');
+        $file->expects($this->any())->method('isValid')->willReturn(true);
+        $v = new Validator($trans, ['x' => $file], ['x' => 'extensions:pdf']);
+        $this->assertTrue($v->passes());
+
+        $file = $this->getMockBuilder(UploadedFile::class)->onlyMethods(['getExtension', 'isValid'])->setConstructorArgs($uploadedFile)->getMock();
+        $file->expects($this->any())->method('getExtension')->willReturn('jpg');
+        $file->expects($this->any())->method('isValid')->willReturn(true);
+        $v = new Validator($trans, ['x' => $file], ['x' => 'extensions:jpg']);
+        $this->assertTrue($v->passes());
+
+        $file = $this->getMockBuilder(UploadedFile::class)->onlyMethods(['getExtension', 'isValid'])->setConstructorArgs($uploadedFile)->getMock();
+        $file->expects($this->any())->method('getExtension')->willReturn('jpg');
+        $file->expects($this->any())->method('isValid')->willReturn(true);
+        $v = new Validator($trans, ['x' => $file], ['x' => 'extensions:jpeg,jpg']);
+        $this->assertTrue($v->passes());
+
+        $file = $this->getMockBuilder(UploadedFile::class)->onlyMethods(['getExtension', 'isValid'])->setConstructorArgs($uploadedFile)->getMock();
+        $file->expects($this->any())->method('getExtension')->willReturn('jpg');
+        $file->expects($this->any())->method('isValid')->willReturn(true);
+        $v = new Validator($trans, ['x' => $file], ['x' => 'extensions:jpeg']);
         $this->assertFalse($v->passes());
     }
 

@@ -4,10 +4,15 @@
 
 - [#7309](https://github.com/hyperf/hyperf/pull/7309) Fixed bug that testing client cannot support json without `POST`.
 - [#7328](https://github.com/hyperf/hyperf/pull/7328) Fix primary key creation for MySQL with sql_require_primary_key enabled.
+- [#7318](https://github.com/hyperf/hyperf/pull/7318) Fixed bug that close frame will be lost for websocket-client.
+- [#7329](https://github.com/hyperf/hyperf/pull/7329) Fixed bug that the type of `$connection` is not correct when creating models.
 
 ## Added
 
+- [#7311](https://github.com/hyperf/hyperf/pull/7311) Added `Hyperf\Redis\Event\CommandExecuted::getFormatCommand()`.
+- [#7313](https://github.com/hyperf/hyperf/pull/7313) Added validation rules `contains`, `extensions` and `hex_color`.
 - [#7314](https://github.com/hyperf/hyperf/pull/7314) Enable `schema` Configuration for `hyperf/db` with `pgsql`.
+- [#7325](https://github.com/hyperf/hyperf/pull/7325) Added metadata `attributes` into `Hyperf\Di\ReflectionType`.
 
 # v3.1.52 - 2025-02-27
 
