@@ -17,9 +17,6 @@ use Throwable;
 
 use function Hyperf\Collection\collect;
 
-/**
- * @property string $formatCommand
- */
 class CommandExecuted
 {
     /**
@@ -37,16 +34,9 @@ class CommandExecuted
     ) {
     }
 
-    public function __get($name)
+    public function getFormatCommand(): string
     {
-        if ($name === 'formatCommand') {
-            return $this->formatCommand($this->command, $this->parameters);
-        }
-    }
-
-    private function formatCommand(string $command, array $parameters): string
-    {
-        $parameters = collect($parameters)->map(function ($parameter) {
+        $parameters = collect($this->parameters)->map(function ($parameter) {
             if (is_array($parameter)) {
                 return collect($parameter)->map(function ($value, $key) {
                     if (is_array($value)) {
@@ -60,6 +50,6 @@ class CommandExecuted
             return $parameter;
         })->implode(' ');
 
-        return sprintf('%s %s', $command, $parameters);
+        return sprintf('%s %s', $this->command, $parameters);
     }
 }

@@ -75,7 +75,7 @@ class CommandExecutedTest extends TestCase
             null
         );
 
-        $this->assertSame('GET key1', $event->formatCommand);
+        $this->assertSame('GET key1', $event->getFormatCommand());
     }
 
     public function testFormatCommandWithArrayParameters()
@@ -93,7 +93,7 @@ class CommandExecutedTest extends TestCase
             null
         );
 
-        $this->assertSame('HMSET hash1 field1 value1 field2 value2', $event->formatCommand);
+        $this->assertSame('HMSET hash1 field1 value1 field2 value2', $event->getFormatCommand());
     }
 
     public function testFormatCommandWithNestedArrayParameters()
@@ -117,7 +117,7 @@ class CommandExecutedTest extends TestCase
             null
         );
 
-        $this->assertSame('COMPLEX key1 field1 {"subfield1":"value1"} field2 value2', $event->formatCommand);
+        $this->assertSame('COMPLEX key1 field1 {"subfield1":"value1"} field2 value2', $event->getFormatCommand());
     }
 
     public function testWithThrowable()
