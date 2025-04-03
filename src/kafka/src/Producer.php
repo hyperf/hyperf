@@ -39,7 +39,12 @@ class Producer
 
     public function send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): void
     {
-        $this->sendAsync($topic, $value, $key, $headers, $partitionIndex)->wait();
+        try {
+            $this->sendAsync($topic, $value, $key, $headers, $partitionIndex)->wait();
+        } catch (Throwable $e) {
+            $this->close();
+            throw $e;
+        }
     }
 
     public function sendAsync(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): Promise
@@ -64,7 +69,13 @@ class Producer
 
     public function sendBatch(array $messages): void
     {
-        $this->sendBatchAsync($messages)->wait();
+        try {
+            $this->sendBatchAsync($messages)->wait();
+        } catch (Throwable $e) {
+            $this->close();
+            throw $e;
+        }
+
     }
 
     /**
@@ -93,6 +104,7 @@ class Producer
     public function close(): void
     {
         $this->chan?->close();
+        $this->chan = null;
         $this->producer?->close();
     }
 
