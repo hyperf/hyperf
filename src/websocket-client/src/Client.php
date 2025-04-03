@@ -16,6 +16,7 @@ use Hyperf\HttpMessage\Server\Response;
 use Hyperf\WebSocketClient\Exception\ConnectException;
 use Psr\Http\Message\UriInterface;
 use Swoole\Coroutine;
+use Swoole\WebSocket\CloseFrame as SwCloseFrame;
 use Swoole\WebSocket\Frame as SwFrame;
 
 class Client
@@ -63,11 +64,12 @@ class Client
     public function recv(float $timeout = -1)
     {
         $ret = $this->client->recv($timeout);
-        if ($ret instanceof SwFrame) {
-            return new Frame($ret);
-        }
 
-        return $ret;
+        return match (true) {
+            $ret instanceof SwCloseFrame => new CloseFrame($ret),
+            $ret instanceof SwFrame => new Frame($ret),
+            default => $ret,
+        };
     }
 
     /**
