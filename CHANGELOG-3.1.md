@@ -5,6 +5,7 @@
 ## Fixed
 
 - [#7309](https://github.com/hyperf/hyperf/pull/7309) Fixed bug that testing client cannot support json without `POST`.
+- [#7328](https://github.com/hyperf/hyperf/pull/7328) Fix primary key creation for MySQL with sql_require_primary_key enabled.
 - [#7318](https://github.com/hyperf/hyperf/pull/7318) Fixed bug that close frame will be lost for websocket-client.
 - [#7329](https://github.com/hyperf/hyperf/pull/7329) Fixed bug that the type of `$connection` is not correct when creating models.
 
