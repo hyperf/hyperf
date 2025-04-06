@@ -76,7 +76,6 @@ class Producer
             $this->close();
             throw $e;
         }
-
     }
 
     /**
