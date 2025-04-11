@@ -161,7 +161,7 @@ class ModelCommand extends Command
         $columns = $this->formatColumns($builder->getColumnTypeListing($pureTable, $databaseName));
         if (empty($columns)) {
             $this->output?->error(
-                sprintf('Query columns empty, maybe is table `%s` does not exist.You can check it in database.', $table)
+                sprintf('Query columns are empty, maybe the table `%s` does not exist. You can check it in the database.', $table)
             );
         }
 
