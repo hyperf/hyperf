@@ -204,7 +204,6 @@
         "hyperf/websocket-client": "*",
         "hyperf/websocket-server": "*"
     },
-    "suggest": {},
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
@@ -437,7 +436,6 @@
             "UserService\\": "src/grpc-client/tests/UserService/"
         }
     },
-    "bin": [],
     "config": {
         "allow-plugins": {
             "ergebnis/composer-normalize": true
