@@ -4,6 +4,10 @@
 
 - [#7343](https://github.com/hyperf/hyperf/pull/7343) Added `Hyperf\Coroutine\Barrier`.
 
+## Fixed
+
+- [#7328](https://github.com/hyperf/hyperf/pull/7328) Fix primary key creation for MySQL with sql_require_primary_key enabled.
+
 # v3.1.53 - 2025-04-03
 
 ## Fixed
