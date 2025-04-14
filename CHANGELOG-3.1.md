@@ -1,5 +1,9 @@
 # v3.1.54 - TBD
 
+## Added
+
+- [#7343](https://github.com/hyperf/hyperf/pull/7343) Added `Hyperf\Coroutine\Barrier`.
+
 # v3.1.53 - 2025-04-03
 
 ## Fixed
