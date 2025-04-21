@@ -298,7 +298,7 @@ trait MessageTrait
      */
     public function getHeaderField(string $name, string $wantedPart = '0', string $firstName = '0')
     {
-        $this->splitHeaderField($this->getHeaderLine($name), $wantedPart, $firstName);
+        return $this->splitHeaderField($this->getHeaderLine($name), $wantedPart, $firstName);
     }
 
     public function getContentType(): string
