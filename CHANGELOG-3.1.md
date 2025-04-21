@@ -1,14 +1,79 @@
-# v3.1.50 - TBD
+# v3.1.54 - TBD
+
+## Added
+
+- [#7343](https://github.com/hyperf/hyperf/pull/7343) Added `Hyperf\Coroutine\Barrier`.
+
+## Fixed
+
+- [#7328](https://github.com/hyperf/hyperf/pull/7328) Fix primary key creation for MySQL with sql_require_primary_key enabled.
+
+# v3.1.53 - 2025-04-03
+
+## Fixed
+
+- [#7309](https://github.com/hyperf/hyperf/pull/7309) Fixed bug that testing client cannot support json without `POST`.
+- [#7318](https://github.com/hyperf/hyperf/pull/7318) Fixed bug that close frame will be lost for websocket-client.
+- [#7329](https://github.com/hyperf/hyperf/pull/7329) Fixed bug that the type of `$connection` is not correct when creating models.
+
+## Added
+
+- [#7311](https://github.com/hyperf/hyperf/pull/7311) Added `Hyperf\Redis\Event\CommandExecuted::getFormatCommand()`.
+- [#7313](https://github.com/hyperf/hyperf/pull/7313) Added validation rules `contains`, `extensions` and `hex_color`.
+- [#7314](https://github.com/hyperf/hyperf/pull/7314) Enable `schema` Configuration for `hyperf/db` with `pgsql`.
+- [#7325](https://github.com/hyperf/hyperf/pull/7325) Added metadata `attributes` into `Hyperf\Di\ReflectionType`.
+- [#7332](https://github.com/hyperf/hyperf/pull/7332) Added `Hyperf\Memory\LockManager::exists()`.
+
+# v3.1.52 - 2025-02-27
+
+## Added
+
+- [#7200](https://github.com/hyperf/hyperf/pull/7200) Added `Hyperf\Database\Connection::scalar()` which used to retrieve the first column of the first row from a query.
+- [#7279](https://github.com/hyperf/hyperf/pull/7279) Support to generate comments from `trait` when using `gen:model`.
+- [#7286](https://github.com/hyperf/hyperf/pull/7286) Added `Hyperf\Coroutine\Coroutine::list()`.
+- [#7291](https://github.com/hyperf/hyperf/pull/7291) Support to throw exception when read `null` from `Model::createOrFirst`.
+
+# v3.1.51 - 2025-02-06
+
+## Added
+
+- [#7250](https://github.com/hyperf/hyperf/pull/7250) Added `Hyperf\AsyncQueue\Driver\Driver::getConfig()`.
+- [#7255](https://github.com/hyperf/hyperf/pull/7255) Added `createOrFirst()` and `createOrRestore()` into `Hyperf\Database\Model\Builder`.
+- [#7259](https://github.com/hyperf/hyperf/pull/7259) Added `existsOr` and `doesntExistOr` into `Hyperf\Database\Query\Builder`.
+- [#7260](https://github.com/hyperf/hyperf/pull/7260) Added `Hyperf\Database\Query\Builder::sole()`.
+- [#7261](https://github.com/hyperf/hyperf/pull/7261) Added `Hyperf\Database\Model\Model::discardChanges()`.
+- [#7262](https://github.com/hyperf/hyperf/pull/7262) Added `Hyperf\Database\Model\Model::hasAppended()`.
+- [#7263](https://github.com/hyperf/hyperf/pull/7263) Added `Hyperf\Coroutine\WaitConcurrent`.
+- [#7265](https://github.com/hyperf/hyperf/pull/7265) Added `Hyperf\Command\Concerns\Prohibitable`.
+- [#7269](https://github.com/hyperf/hyperf/pull/7269) Added `Hyperf\Redis\Event\CommandExecuted`.
+- [#7273](https://github.com/hyperf/hyperf/pull/7273) Support to open the newly created files for editor `cursor` automatically.
+
+## Optimized
+
+- [#7258](https://github.com/hyperf/hyperf/pull/7258) Optimized code for reading package data from `composer.lock`.
+- [#7276](https://github.com/hyperf/hyperf/pull/7276) Replaced `get_called_class` with `static::class`.
+
+# v3.1.50 - 2025-01-09
+
+## Fixed
+
+- [#7231](https://github.com/hyperf/hyperf/pull/7231) Fixed fatal exception "Object of class ... could not be converted to string" when using invalid websocket message handler.
 
 ## Added
 
 - [#7224](https://github.com/hyperf/hyperf/pull/7224) Added `Hyperf\Coroutine\Mutex`.
+- [#7233](https://github.com/hyperf/hyperf/pull/7233) Added params `connection_name` which used to define amqp connection name.
 
 ## Optimized
 
+- [#7223](https://github.com/hyperf/hyperf/pull/7223) Optimized code for reading extra data from `composer.lock`.
 - [#7227](https://github.com/hyperf/hyperf/pull/7227) Improves phpstan docs for `Hyperf\Support\SafeCaller`.
 
 # v3.1.49 - 2024-12-17
+
+## Added
+
+- [#7219](https://github.com/hyperf/hyperf/pull/) Added case sensitivity option to `Hyperf\Stringable\Str::is()`.
 
 ## Optimized
 

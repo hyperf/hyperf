@@ -475,7 +475,7 @@ class IndexController extends AbstractController
 
 ```
 
-你可以使用資源基類的 `withoutWrapping` 方法來禁用頂層資源的包裹。
+你可以使用資源基類的 `withoutWrapping` 方法來停用頂層資源的包裹。
 
 ```php
 <?php
@@ -494,7 +494,7 @@ class IndexController extends AbstractController
 
 ```
 
-> withoutWrapping 方法只會禁用頂層資源的包裹，不會刪除你手動新增到資源集合中的 data 鍵。而且只會在當前的資源或資源集合中生效，不影響全域性。
+> withoutWrapping 方法只會停用頂層資源的包裹，不會刪除你手動新增到資源集合中的 data 鍵。而且只會在當前的資源或資源集合中生效，不影響全域性。
 
 #### 包裹巢狀資源
 

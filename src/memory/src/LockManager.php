@@ -45,6 +45,14 @@ class LockManager
     }
 
     /**
+     * Check if a lock with the given identifier exists in the container.
+     */
+    public static function exists(string $identifier): bool
+    {
+        return isset(static::$container[$identifier]);
+    }
+
+    /**
      * Remove the Lock by the identifier from container after used,
      * otherwise will occur memory leaks.
      */
