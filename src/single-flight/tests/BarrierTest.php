@@ -53,7 +53,7 @@ class BarrierTest extends TestCase
         $ret = [];
         $callables = [];
         $range = range(1, 100);
-        foreach (range(1, 100) as $v) {
+        foreach ($range as $v) {
             $callables[] = static function () use ($barrierKey, $v, &$ret) {
                 try {
                     Barrier::yield($barrierKey, static function () use ($v) {
@@ -82,7 +82,7 @@ class BarrierTest extends TestCase
         $ret = [];
         $callables = [];
         $range = range(1, 100);
-        foreach (range(1, 100) as $v) {
+        foreach ($range as $v) {
             $callables[] = static function () use ($barrierKey, $v, &$ret) {
                 try {
                     Barrier::yield($barrierKey, static function () use ($v, &$ret) {
