@@ -17,18 +17,26 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Di\Exception\AnnotationException;
-use Hyperf\SingleFlight\Annotation\SingleFlight;
-use Hyperf\SingleFlight\Barrier;
+use Hyperf\Di\Exception\Exception;
+use Hyperf\SingleFlight\Annotation\SingleFlight as SingleFlightAnnotation;
+use Hyperf\SingleFlight\Exception\SingleFlightException;
+use Hyperf\SingleFlight\SingleFlight;
 use Hyperf\Stringable\Str;
+use Throwable;
 
 use function Hyperf\Collection\data_get;
 
 class SingleFlightAspect extends AbstractAspect
 {
     public array $annotations = [
-        SingleFlight::class,
+        SingleFlightAnnotation::class,
     ];
 
+    /**
+     * @throws Exception
+     * @throws AnnotationException
+     * @throws Throwable
+     */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         if (! $this->shouldHijack($proceedingJoinPoint)) {
@@ -51,9 +59,9 @@ class SingleFlightAspect extends AbstractAspect
         return (bool) $annotation?->value;
     }
 
-    private function singleFlightAnnotation(string $class, string $method): ?SingleFlight
+    private function singleFlightAnnotation(string $class, string $method): ?SingleFlightAnnotation
     {
-        return AnnotationCollector::getClassMethodAnnotation($class, $method)[SingleFlight::class] ?? null;
+        return AnnotationCollector::getClassMethodAnnotation($class, $method)[SingleFlightAnnotation::class] ?? null;
     }
 
     /**
@@ -86,6 +94,11 @@ class SingleFlightAspect extends AbstractAspect
         return $value;
     }
 
+    /**
+     * @throws SingleFlightException
+     * @throws AnnotationException
+     * @throws Throwable
+     */
     private function shareCall(string $barrierKey, ProceedingJoinPoint $proceedingJoinPoint)
     {
         $class = $proceedingJoinPoint->className;
@@ -95,6 +108,6 @@ class SingleFlightAspect extends AbstractAspect
             throw new AnnotationException("Annotation SingleFlight couldn't be collected successfully.");
         }
 
-        return Barrier::yield($barrierKey, static fn () => $proceedingJoinPoint->process(), $annotation->timeout);
+        return SingleFlight::do($barrierKey, static fn () => $proceedingJoinPoint->process(), $annotation->timeout);
     }
 }

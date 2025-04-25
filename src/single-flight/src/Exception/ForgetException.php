@@ -12,6 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\SingleFlight\Exception;
 
-class RuntimeException extends SingleFlightException
+class ForgetException extends SingleFlightException
 {
 }
