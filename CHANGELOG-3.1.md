@@ -2,11 +2,13 @@
 
 ## Added
 
+- [#7316](https://github.com/hyperf/hyperf/pull/7316) Support to rewrite function `paginationInformation` for `resource`.
 - [#7343](https://github.com/hyperf/hyperf/pull/7343) Added `Hyperf\Coroutine\Barrier`.
 
 ## Fixed
 
 - [#7328](https://github.com/hyperf/hyperf/pull/7328) Fix primary key creation for MySQL with sql_require_primary_key enabled.
+- [#7334](https://github.com/hyperf/hyperf/pull/7334) Fixed bug that kafka producer cannot reconnect to server when the internet broken.
 
 # v3.1.53 - 2025-04-03
 
@@ -23,10 +25,6 @@
 - [#7314](https://github.com/hyperf/hyperf/pull/7314) Enable `schema` Configuration for `hyperf/db` with `pgsql`.
 - [#7325](https://github.com/hyperf/hyperf/pull/7325) Added metadata `attributes` into `Hyperf\Di\ReflectionType`.
 - [#7332](https://github.com/hyperf/hyperf/pull/7332) Added `Hyperf\Memory\LockManager::exists()`.
-
-## Added
-
-- [#7316](https://github.com/hyperf/hyperf/pull/7316) Support to rewrite function `paginationInformation` for `resource`.
 
 # v3.1.52 - 2025-02-27
 
