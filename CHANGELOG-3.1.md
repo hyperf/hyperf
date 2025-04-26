@@ -24,6 +24,10 @@
 - [#7325](https://github.com/hyperf/hyperf/pull/7325) Added metadata `attributes` into `Hyperf\Di\ReflectionType`.
 - [#7332](https://github.com/hyperf/hyperf/pull/7332) Added `Hyperf\Memory\LockManager::exists()`.
 
+## Added
+
+- [#7316](https://github.com/hyperf/hyperf/pull/7316) Support to rewrite function `paginationInformation` for `resource`.
+
 # v3.1.52 - 2025-02-27
 
 ## Added
