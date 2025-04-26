@@ -13,8 +13,9 @@ declare(strict_types=1);
 namespace HyperfTest\Resource\Stubs\Resources;
 
 use Hyperf\Resource\Json\ResourceCollection;
+use Hyperf\Resource\Response\PaginationInformationInterface;
 
-class PaginationCollection extends ResourceCollection
+class PaginationCollection extends ResourceCollection implements PaginationInformationInterface
 {
     public function paginationInformation(array $paginated, array $default): array
     {

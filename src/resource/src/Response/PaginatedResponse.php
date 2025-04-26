@@ -46,7 +46,7 @@ class PaginatedResponse extends Response
             'meta' => $this->meta($paginated),
         ];
 
-        if (method_exists($this->resource, 'paginationInformation')) {
+        if ($this->resource instanceof PaginationInformationInterface) {
             return $this->resource->paginationInformation($paginated, $default);
         }
 
