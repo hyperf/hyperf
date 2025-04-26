@@ -4,6 +4,10 @@
 
 - [#7309](https://github.com/hyperf/hyperf/pull/7309) Fixed bug that testing client cannot support json without `POST`.
 
+## Added
+
+- [#7316](https://github.com/hyperf/hyperf/pull/7316) Support to rewrite function `paginationInformation` for `resource`.
+
 # v3.1.52 - 2025-02-27
 
 ## Added
