@@ -65,6 +65,9 @@ class Caller
     public function wait(float $timeout = -1): mixed
     {
         if ($this->done) {
+            if ($this->result instanceof SingleFlightException) {
+                throw $this->result;
+            }
             return $this->result;
         }
 
