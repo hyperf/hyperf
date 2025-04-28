@@ -45,16 +45,14 @@ class Caller
         try {
             $this->result = call($processor);
             $this->done = true;
-            while ($this->channel->stats()['consumer_num'] > 0) {
-                $this->channel->push(1);
-            }
+            $this->resumeWaiters();
+
             return $this->result;
         } catch (Throwable $th) {
             $this->result = new RuntimeException(message: "An exception occurred while sharing the result on {$this->barrierKey}", previous: $th);
             $this->done = true;
-            while ($this->channel->stats()['consumer_num'] > 0) {
-                $this->channel->push(1);
-            }
+            $this->resumeWaiters();
+
             throw $this->result;
         }
     }
@@ -93,12 +91,12 @@ class Caller
         if ($this->forgotten) {
             return;
         }
+
         $this->forgotten = true;
         $this->result = new ForgetException("SingleFlight {$this->barrierKey} has been forgotten while waiting for the result");
         $this->done = true;
-        while ($this->channel->stats()['consumer_num'] > 0) {
-            $this->channel->push(1);
-        }
+
+        $this->resumeWaiters();
     }
 
     public function waiters(): int
@@ -109,5 +107,10 @@ class Caller
     public function isForgotten(): bool
     {
         return $this->forgotten;
+    }
+
+    private function resumeWaiters(): void
+    {
+        $this->channel->close();
     }
 }

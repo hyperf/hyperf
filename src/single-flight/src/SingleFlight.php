@@ -38,11 +38,8 @@ class SingleFlight
             }
         }
 
-        /** @var Caller $caller */
-        $caller = self::get($barrierKey);
-
         try {
-            return $caller->wait($timeout);
+            return self::get($barrierKey)->wait($timeout);
         } catch (SingleFlightException $exception) {
             if ($exception instanceof ForgetException) {
                 return self::do($barrierKey, $processor, $timeout);
