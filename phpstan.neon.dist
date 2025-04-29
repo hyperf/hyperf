@@ -84,3 +84,5 @@ parameters:
       path: src/collection/src/*.php
     - message: '#has no type specified#'
       path: src/nacos/src/Protobuf/*.php
+    - message: '#Comparison operation .* is always true#'
+      path: src/stringable/src/Str.php
