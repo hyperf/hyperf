@@ -2,7 +2,7 @@
 
 ## Added
 
-- []() Added method `getClient` for `websocket-client`.
+- [#7366](https://github.com/hyperf/hyperf/pull/7366) Added method `getClient` for `websocket-client`.
 
 
 # v3.1.54 - 2025-04-27
