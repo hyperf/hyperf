@@ -1,5 +1,10 @@
 # v3.1.55 - TBD
 
+## Added
+
+- []() Added method `getClient` for `websocket-client`.
+
+
 # v3.1.54 - 2025-04-27
 
 ## Added
