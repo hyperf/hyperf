@@ -12,20 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Database\PgSQL\DBAL;
 
 use Doctrine\DBAL\Driver\AbstractPostgreSQLDriver;
-use InvalidArgumentException;
-use Swoole\Coroutine\PostgreSQL;
+use Hyperf\Database\DBAL\Concerns\ConnectsToDatabase;
 
 class PostgresDriver extends AbstractPostgreSQLDriver
 {
-    /**
-     * Create a new database connection.
-     */
-    public function connect(array $params)
-    {
-        if (! isset($params['pdo']) || ! $params['pdo'] instanceof PostgreSQL) {
-            throw new InvalidArgumentException('The "pdo" property must be required.');
-        }
-
-        return new Connection($params['pdo']);
-    }
+    use ConnectsToDatabase;
 }
