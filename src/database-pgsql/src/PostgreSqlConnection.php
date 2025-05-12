@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\PgSQL;
 
 use Hyperf\Database\Connection;
-use Hyperf\Database\PgSQL\DBAL\PostgresDriver;
+use Hyperf\Database\PgSQL\DBAL\PostgresPdoDriver;
 use Hyperf\Database\PgSQL\Query\Grammars\PostgresGrammar as QueryGrammar;
 use Hyperf\Database\PgSQL\Query\Processors\PostgresProcessor;
 use Hyperf\Database\PgSQL\Schema\Grammars\PostgresGrammar as SchemaGrammar;
@@ -76,8 +76,8 @@ class PostgreSqlConnection extends Connection
     /**
      * Get the Doctrine DBAL driver.
      */
-    protected function getDoctrineDriver(): PostgresDriver
+    protected function getDoctrineDriver(): PostgresPdoDriver
     {
-        return new PostgresDriver();
+        return new PostgresPdoDriver();
     }
 }
