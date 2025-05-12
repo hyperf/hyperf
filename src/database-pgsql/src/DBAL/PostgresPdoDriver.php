@@ -1,12 +1,5 @@
 <?php
 
-namespace Hyperf\Database\PgSQL\DBAL;
-
-class PostgresPdoDriver
-{
-
-}
-
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
