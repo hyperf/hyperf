@@ -1,5 +1,9 @@
 # v3.1.55 - TBD
 
+## Added
+
+- [#7366](https://github.com/hyperf/hyperf/pull/7366) Added `getClient` method to `websocket-client` component.
+
 # v3.1.54 - 2025-04-27
 
 ## Added
