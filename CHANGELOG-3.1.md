@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#7365](https://github.com/hyperf/hyperf/pull/7365) Support callable config type for `logger` . 
+- [#7365](https://github.com/hyperf/hyperf/pull/7365) Support callable config type for `hyperf/logger`. 
 
 ## Fixed
 
