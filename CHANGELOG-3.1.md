@@ -4,6 +4,11 @@
 
 - [#7365](https://github.com/hyperf/hyperf/pull/7365) Support callable config type for `logger` . 
 
+## Fixed
+
+- [#7363](https://github.com/hyperf/hyperf/pull/7363) Fixed doc blocks for `Hyperf\HttpServer\Router\RouteCollector`.
+- [#7379](https://github.com/hyperf/hyperf/pull/7379) Fixed bug that pdo connector with pgsql cannot work when using migration.
+
 # v3.1.54 - 2025-04-27
 
 ## Added
