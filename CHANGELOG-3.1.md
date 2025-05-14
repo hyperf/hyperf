@@ -1,5 +1,10 @@
 # v3.1.55 - TBD
 
+## Fixed
+
+- [#7379](https://github.com/hyperf/hyperf/pull/7379) Fixed bug that pdo connector with pgsql cannot work when using migration.
+- [#7363](https://github.com/hyperf/hyperf/pull/7363) Fixed doc blocks for `Hyperf\HttpServer\Router\RouteCollector`.
+
 # v3.1.54 - 2025-04-27
 
 ## Added
