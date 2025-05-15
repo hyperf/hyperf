@@ -3,6 +3,7 @@
 ## Added
 
 - [#7365](https://github.com/hyperf/hyperf/pull/7365) Support callable config type for `hyperf/logger`. 
+- [#7381](https://github.com/hyperf/hyperf/pull/7381) Added `Hyperf\Database\PgSQL\Query\Grammars\PostgresGrammar\compileJsonOverlaps`.
 
 ## Fixed
 
