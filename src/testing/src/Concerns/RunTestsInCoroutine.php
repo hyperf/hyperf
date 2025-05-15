@@ -62,6 +62,7 @@ trait RunTestsInCoroutine
             parent::setName('runTestsInCoroutine');
         }
 
+        /* @phpstan-ignore-next-line */
         return parent::runTest();
     }
 

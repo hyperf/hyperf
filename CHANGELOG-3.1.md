@@ -1,4 +1,25 @@
-# v3.1.54 - TBD
+# v3.1.55 - TBD
+
+## Added
+
+- [#7365](https://github.com/hyperf/hyperf/pull/7365) Support callable config type for `hyperf/logger`. 
+
+## Fixed
+
+- [#7363](https://github.com/hyperf/hyperf/pull/7363) Fixed doc blocks for `Hyperf\HttpServer\Router\RouteCollector`.
+- [#7379](https://github.com/hyperf/hyperf/pull/7379) Fixed bug that pdo connector with pgsql cannot work when using migration.
+
+# v3.1.54 - 2025-04-27
+
+## Added
+
+- [#7316](https://github.com/hyperf/hyperf/pull/7316) Support to rewrite function `paginationInformation` for `resource`.
+- [#7343](https://github.com/hyperf/hyperf/pull/7343) Added `Hyperf\Coroutine\Barrier`.
+
+## Fixed
+
+- [#7328](https://github.com/hyperf/hyperf/pull/7328) Fix primary key creation for MySQL with sql_require_primary_key enabled.
+- [#7334](https://github.com/hyperf/hyperf/pull/7334) Fixed bug that kafka producer cannot reconnect to server when the internet broken.
 
 # v3.1.53 - 2025-04-03
 
