@@ -45,7 +45,7 @@
         "google/protobuf": "^3.6.1",
         "grpc/grpc": "^1.15",
         "guzzlehttp/guzzle": "^6.3 || ^7.0",
-        "hyperf/engine": "^2.13",
+        "hyperf/engine": "^2.14",
         "hyperf/token-bucket": "^2.0",
         "influxdb/influxdb-php": "^1.15.0",
         "ircmaxell/random-lib": "^1.2",
@@ -204,7 +204,6 @@
         "hyperf/websocket-client": "*",
         "hyperf/websocket-server": "*"
     },
-    "suggest": {},
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
@@ -437,7 +436,6 @@
             "UserService\\": "src/grpc-client/tests/UserService/"
         }
     },
-    "bin": [],
     "config": {
         "allow-plugins": {
             "ergebnis/composer-normalize": true,

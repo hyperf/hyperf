@@ -44,6 +44,9 @@ class LoggerFactory
         }
 
         $config = $config[$group];
+        if (is_callable($config)) {
+            $config = $config($name);
+        }
         $handlers = $this->handlers($config);
         $processors = $this->processors($config);
 
