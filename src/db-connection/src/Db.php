@@ -52,8 +52,10 @@ class Db
 
     public function __call($name, $arguments)
     {
-        if ($name === 'connection' || $name === 'setDefaultConnection') {
+        if ($name === 'connection') {
             return $this->__connection(...$arguments);
+        } else if ($name === 'setDefaultConnection') {
+            return $this->__setDefaultConnection(...$arguments);
         }
         return $this->__connection()->{$name}(...$arguments);
     }
@@ -63,6 +65,8 @@ class Db
         $db = ApplicationContext::getContainer()->get(Db::class);
         if ($name === 'connection') {
             return $db->__connection(...$arguments);
+        } else if ($name === 'setDefaultConnection') {
+            return $db->__setDefaultConnection(...$arguments);
         }
         return $db->__connection()->{$name}(...$arguments);
     }
@@ -71,6 +75,12 @@ class Db
     {
         $resolver = $this->container->get(ConnectionResolverInterface::class);
         return $resolver->connection($name);
+    }
+
+    private function __setDefaultConnection(?string $name = null): ConnectionInterface
+    {
+        $resolver = $this->container->get(ConnectionResolverInterface::class);
+        return $resolver->setDefaultConnection($name);
     }
 
     public static function beforeExecuting(Closure $closure): void
