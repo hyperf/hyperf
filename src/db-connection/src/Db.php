@@ -77,10 +77,10 @@ class Db
         return $resolver->connection($name);
     }
 
-    private function __setDefaultConnection(?string $name = null): ConnectionInterface
+    private function __setDefaultConnection(?string $name = null): void
     {
         $resolver = $this->container->get(ConnectionResolverInterface::class);
-        return $resolver->setDefaultConnection($name);
+        $resolver->setDefaultConnection($name);
     }
 
     public static function beforeExecuting(Closure $closure): void
