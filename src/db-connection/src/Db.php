@@ -52,7 +52,7 @@ class Db
 
     public function __call($name, $arguments)
     {
-        if ($name === 'connection') {
+        if ($name === 'connection' || $name === 'setDefaultConnection') {
             return $this->__connection(...$arguments);
         }
         return $this->__connection()->{$name}(...$arguments);
