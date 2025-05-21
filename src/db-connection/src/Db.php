@@ -55,7 +55,7 @@ class Db
         if ($name === 'connection') {
             return $this->__connection(...$arguments);
         } else if ($name === 'setDefaultConnection') {
-            return $this->__setDefaultConnection(...$arguments);
+            $this->__setDefaultConnection(...$arguments);
         }
         return $this->__connection()->{$name}(...$arguments);
     }
@@ -66,7 +66,7 @@ class Db
         if ($name === 'connection') {
             return $db->__connection(...$arguments);
         } else if ($name === 'setDefaultConnection') {
-            return $db->__setDefaultConnection(...$arguments);
+            $db->__setDefaultConnection(...$arguments);
         }
         return $db->__connection()->{$name}(...$arguments);
     }
