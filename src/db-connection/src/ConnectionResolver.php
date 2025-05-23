@@ -82,14 +82,14 @@ class ConnectionResolver implements ConnectionResolverInterface
     /**
      * Set the default connection name.
      */
-    public function setDefaultConnection(string $name): void
+    public function setDefaultConnection(string $name, bool $scopeCoroutine = false): void
     {
-        $this->default = $name;
-    }
+        if ($scopeCoroutine) {
+            Context::set($this->getDefaultConnectionContextKey(), $name);
+            return;
+        }
 
-    public function setDefaultConnectionForCoroutine(string $name): void
-    {
-        Context::set($this->getDefaultConnectionContextKey(), $name);
+        $this->default = $name;
     }
 
     /**
