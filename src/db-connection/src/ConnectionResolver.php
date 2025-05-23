@@ -76,7 +76,7 @@ class ConnectionResolver implements ConnectionResolverInterface
      */
     public function getDefaultConnection(): string
     {
-        return $this->default;
+        return Context::get($this->getDefaultConnectionContextKey()) ?? $this->default;
     }
 
     /**
@@ -87,6 +87,11 @@ class ConnectionResolver implements ConnectionResolverInterface
         $this->default = $name;
     }
 
+    public function setDefaultConnectionForCoroutine(string $name): void
+    {
+        Context::set($this->getDefaultConnectionContextKey(), $name);
+    }
+
     /**
      * The key to identify the connection object in coroutine context.
      * @param mixed $name
@@ -94,5 +99,10 @@ class ConnectionResolver implements ConnectionResolverInterface
     private function getContextKey($name): string
     {
         return sprintf('database.connection.%s', $name);
+    }
+
+    private function getDefaultConnectionContextKey(): string
+    {
+        return 'database.connection.default';
     }
 }

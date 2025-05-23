@@ -43,6 +43,7 @@ use Psr\Container\ContainerInterface;
  * @method static int transactionLevel()
  * @method static array pretend(Closure $callback)
  * @method static ConnectionInterface connection(?string $pool = null)
+ * @method static void setDefaultConnectionForCoroutine(string $name)
  */
 class Db
 {
@@ -54,8 +55,9 @@ class Db
     {
         if ($name === 'connection') {
             return $this->__connection(...$arguments);
-        } else if ($name === 'setDefaultConnection') {
-            $this->__setDefaultConnection(...$arguments);
+        }
+        if ($name === 'setDefaultConnectionForCoroutine') {
+            $this->__setDefaultConnectionForCoroutine(...$arguments);
             return;
         }
         return $this->__connection()->{$name}(...$arguments);
@@ -66,8 +68,9 @@ class Db
         $db = ApplicationContext::getContainer()->get(Db::class);
         if ($name === 'connection') {
             return $db->__connection(...$arguments);
-        } else if ($name === 'setDefaultConnection') {
-            $db->__setDefaultConnection(...$arguments);
+        }
+        if ($name === 'setDefaultConnectionForCoroutine') {
+            $db->__setDefaultConnectionForCoroutine(...$arguments);
             return;
         }
         return $db->__connection()->{$name}(...$arguments);
@@ -79,10 +82,10 @@ class Db
         return $resolver->connection($name);
     }
 
-    private function __setDefaultConnection(?string $name = null): void
+    private function __setDefaultConnectionForCoroutine(?string $name = null): void
     {
         $resolver = $this->container->get(ConnectionResolverInterface::class);
-        $resolver->setDefaultConnection($name);
+        $resolver->setDefaultConnectionForCoroutine($name); // @phpstan-ignore method.notFound
     }
 
     public static function beforeExecuting(Closure $closure): void
