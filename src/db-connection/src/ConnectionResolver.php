@@ -103,6 +103,6 @@ class ConnectionResolver implements ConnectionResolverInterface
 
     private function getDefaultConnectionContextKey(): string
     {
-        return 'database.connection.default';
+        return 'database.connection.default.key';
     }
 }
