@@ -75,9 +75,9 @@ final class ClosureCommand extends Command
         return $this;
     }
 
-    public function coroutine(): self
+    public function coroutine(bool $coroutine): self
     {
-        $this->coroutine = true;
+        $this->coroutine = $coroutine;
 
         return $this;
     }
