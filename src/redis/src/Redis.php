@@ -69,11 +69,16 @@ class Redis
                     if ($name === 'select' && $db = $arguments[0]) {
                         $connection->setDatabase((int) $db);
                     }
+                    // Store the context key on the connection object
+                    $connection->setContextKey($this->getContextKey());
                     // Should storage the connection to coroutine context, then use defer() to release the connection.
                     Context::set($this->getContextKey(), $connection);
                     defer(function () use ($connection) {
-                        Context::set($this->getContextKey(), null);
-                        $connection->release();
+                        // Only release if not explicitly released by MultiExec trait
+                        if (Context::has($this->getContextKey())) {
+                            Context::set($this->getContextKey(), null);
+                            $connection->release();
+                        }
                     });
                 } else {
                     // Release the connection after command executed.
