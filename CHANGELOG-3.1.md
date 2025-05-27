@@ -1,5 +1,9 @@
 # v3.1.56 - TBD
 
+## Added
+
+- [#7392](https://github.com/hyperf/hyperf/pull/7392) Added `coroutine` option to `AsCommand` and `ClosureCommand`.
+
 # v3.1.55 - 2025-05-15
 
 ## Added
