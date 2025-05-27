@@ -57,6 +57,22 @@ trait MultiExec
     {
         $transaction = $this->__call('multi', []);
 
-        return is_null($callback) ? $transaction : tap($transaction, $callback)->exec();
+        if (is_null($callback)) {
+            return $transaction;
+        }
+
+        try {
+            // Execute the transaction and get the result
+            $result = tap($transaction, $callback)->exec();
+            return $result;
+        } finally {
+            // Release connection explicitly
+            $contextKey = $this->getContextKey();
+            $connection = Context::get($contextKey);
+            if ($connection) {
+                Context::set($contextKey, null);
+                $connection->release();
+            }
+        }
     }
 }
