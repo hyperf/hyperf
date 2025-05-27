@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Redis\Traits;
 
+use Hyperf\Context\Context;
 use Redis;
 use RedisCluster;
 
@@ -28,7 +29,23 @@ trait MultiExec
     {
         $pipeline = $this->__call('pipeline', []);
 
-        return is_null($callback) ? $pipeline : tap($pipeline, $callback)->exec();
+        if (is_null($callback)) {
+            return $pipeline;
+        }
+
+        try {
+            // Execute the pipeline and get the result
+            $result = tap($pipeline, $callback)->exec();
+            return $result;
+        } finally {
+            // Release connection explicitly
+            $contextKey = $this->getContextKey();
+            $connection = Context::get($contextKey);
+            if ($connection) {
+                Context::set($contextKey, null);
+                $connection->release();
+            }
+        }
     }
 
     /**
