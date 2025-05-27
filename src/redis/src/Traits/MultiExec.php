@@ -35,8 +35,7 @@ trait MultiExec
 
         try {
             // Execute the pipeline and get the result
-            $result = tap($pipeline, $callback)->exec();
-            return $result;
+            return tap($pipeline, $callback)->exec();
         } finally {
             // Release connection explicitly
             $contextKey = $this->getContextKey();
@@ -63,8 +62,7 @@ trait MultiExec
 
         try {
             // Execute the transaction and get the result
-            $result = tap($transaction, $callback)->exec();
-            return $result;
+            return tap($transaction, $callback)->exec();
         } finally {
             // Release connection explicitly
             $contextKey = $this->getContextKey();

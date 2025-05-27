@@ -196,6 +196,16 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $this->database = $database;
     }
 
+    public function setContextKey(string $key): void
+    {
+        $this->contextKey = $key;
+    }
+
+    public function getContextKey(): ?string
+    {
+        return $this->contextKey;
+    }
+
     protected function createRedisCluster(): RedisCluster
     {
         try {
@@ -330,15 +340,5 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
             $logger->log($level, $message);
         }
-    }
-
-    public function setContextKey(string $key): void
-    {
-        $this->contextKey = $key;
-    }
-
-    public function getContextKey(): ?string
-    {
-        return $this->contextKey;
     }
 }
