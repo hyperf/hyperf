@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ServiceGovernance\Listener;
 
-use Hyperf\Consul\Exception\ServerException;
+use Exception;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
@@ -92,13 +92,10 @@ class RegisterServiceListener implements ListenerInterface
                     }
                 }
                 $continue = false;
-            } catch (ServerException $throwable) {
-                if (strpos($throwable->getMessage(), 'Connection failed') !== false) {
-                    $this->logger->warning('Cannot register service, connection of service center failed, re-register after 10 seconds.');
-                    sleep(10);
-                } else {
-                    throw $throwable;
-                }
+            } catch (Exception $throwable) {
+                $this->logger->error('Cannot register service, connection of service center failed, re-register after 10 seconds.');
+                $this->logger->error((string) $throwable);
+                sleep(10);
             }
         }
     }
