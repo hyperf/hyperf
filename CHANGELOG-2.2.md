@@ -1,4 +1,6 @@
-# v2.2.41 - TBD
+# v2.2.42 - TBD
+
+- [](https://github.com/hyperf/hyperf/pull/7009) Fixed bug that `socketio-server` cannot support php `7.x`.
 
 # v2.2.40 - 2023-06-19
 
