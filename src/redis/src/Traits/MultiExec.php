@@ -34,16 +34,9 @@ trait MultiExec
         }
 
         try {
-            // Execute the pipeline and get the result
             return tap($pipeline, $callback)->exec();
         } finally {
-            // Release connection explicitly
-            $contextKey = $this->getContextKey();
-            $connection = Context::get($contextKey);
-            if ($connection) {
-                Context::set($contextKey, null);
-                $connection->release();
-            }
+            $this->releaseMultiExecConnection();
         }
     }
 
@@ -61,16 +54,23 @@ trait MultiExec
         }
 
         try {
-            // Execute the transaction and get the result
             return tap($transaction, $callback)->exec();
         } finally {
-            // Release connection explicitly
-            $contextKey = $this->getContextKey();
-            $connection = Context::get($contextKey);
-            if ($connection) {
-                Context::set($contextKey, null);
-                $connection->release();
-            }
+            $this->releaseMultiExecConnection();
+        }
+    }
+
+    /**
+     * Release connection after multi-exec operations.
+     */
+    private function releaseMultiExecConnection(): void
+    {
+        $contextKey = $this->getContextKey();
+        $connection = Context::get($contextKey);
+
+        if ($connection) {
+            Context::set($contextKey, null);
+            $connection->release();
         }
     }
 }
