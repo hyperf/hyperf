@@ -158,9 +158,12 @@ class ModelCommand extends Command
         $table = Str::replaceFirst($option->getPrefix(), '', $table);
         $pureTable = Str::after($table, '.');
         $databaseName = Str::contains($table, '.') ? Str::before($table, '.') : null;
-        $connection   = $this->resolver->connection($option->getPool());
-        $driver       = $connection->getConfig('driver');
-        $columns      = $this->formatColumns($builder->getColumnTypeListing($driver === 'pgsql' ? $table : $pureTable, $databaseName));
+        $driver = $this->resolver->connection($option->getPool())->getConfig('driver');
+        $columns = match ($driver) {
+            'pgsql' => $this->formatColumns($builder->getColumnTypeListing($table, $databaseName)),
+            default => $this->formatColumns($builder->getColumnTypeListing($pureTable, $databaseName)),
+        };
+
         if (empty($columns)) {
             $this->output?->error(
                 sprintf('Query columns are empty, maybe the table `%s` does not exist. You can check it in the database.', $table)

@@ -109,7 +109,7 @@ class PostgresGrammar extends Grammar
      */
     public function compileColumnListing(): string
     {
-        $sql = <<<SQL
+        return <<<'SQL'
 SELECT
     a.attname AS column_name,
     CASE
@@ -149,7 +149,6 @@ WHERE
     a.attnum > 0 AND NOT a.attisdropped
 ORDER BY a.attnum
 SQL;
-        return $sql;
     }
 
     /**

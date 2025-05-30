@@ -27,7 +27,7 @@ class PostgresSqlSwooleExtGrammar extends PostgresGrammar
      */
     public function compileColumnListing(): string
     {
-        $sql = <<<SQL
+        return <<<'SQL'
         SELECT
             a.attname AS column_name,
             CASE
@@ -67,7 +67,6 @@ class PostgresSqlSwooleExtGrammar extends PostgresGrammar
             a.attnum > 0 AND NOT a.attisdropped
         ORDER BY a.attnum
         SQL;
-                return $sql;
     }
 
     /**
