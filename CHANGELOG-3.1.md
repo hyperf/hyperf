@@ -1,5 +1,9 @@
 # v3.1.56 - TBD
 
+## Fixed
+
+- [#7400](https://github.com/hyperf/hyperf/pull/7400) Fixed bug that `gen:model` cannot work when using `pgsql`.
+
 # v3.1.55 - 2025-05-15
 
 ## Added

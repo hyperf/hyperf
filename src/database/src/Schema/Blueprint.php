@@ -1492,6 +1492,11 @@ class Blueprint
         $this->addFluentIndexes();
 
         $this->addFluentCommands($grammar);
+
+        // Add table comment command for PostgreSQL if table has comment and is being created
+        if ($this->creating() && ! empty($this->comment) && in_array('TableComment', $grammar->getFluentCommands())) {
+            $this->addCommand('tableComment', ['value' => $this->comment]);
+        }
     }
 
     /**
