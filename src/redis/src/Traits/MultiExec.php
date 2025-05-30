@@ -61,7 +61,7 @@ trait MultiExec
     }
 
     /**
-     * Release connection after multi-exec operations.
+     * Release connection after multi-exec callback.
      */
     private function releaseMultiExecConnection(): void
     {
