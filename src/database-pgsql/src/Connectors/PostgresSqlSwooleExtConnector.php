@@ -55,7 +55,7 @@ class PostgresSqlSwooleExtConnector implements ConnectorInterface
             $config['database'],
             $config['username'],
             $config['password']
-        ));
+        ), $config['pool']['connect_timeout']);
 
         if ($result === false) {
             throw new Exception($connection->error ?? 'Create connection failed, Please check the database configuration.');
