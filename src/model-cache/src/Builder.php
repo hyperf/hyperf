@@ -47,10 +47,8 @@ class Builder extends ModelBuilder
 
         $result = $closure();
 
-        // Manager is responsible for clearing the cache of the affected models.
         $manager = ApplicationContext::getContainer()->get(Manager::class);
 
-        // Remove all cache entries for the models that were just modified.
         $manager->destroy($ids, get_class($this->model));
 
         return $result;
