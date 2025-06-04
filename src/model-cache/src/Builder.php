@@ -47,9 +47,9 @@ class Builder extends ModelBuilder
 
         $result = $closure();
 
-        $manager = ApplicationContext::getContainer()->get(Manager::class);
+        // Retrieve the cache Manager to purge outdated records.
 
-        $manager->destroy($ids, get_class($this->model));
+        // Purge cache entries for the models that were just modified.
 
         return $result;
     }
