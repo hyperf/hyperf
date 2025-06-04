@@ -66,6 +66,11 @@ class RedisProxyTest extends TestCase
         $redis = $this->getRedis();
         $redis->del($key);
 
+        $redis->zAdd($key, microtime(true) * 1000 + 2, 'test');
+        usleep(100);
+        $res = $redis->zRangeByScore($key, '0', (string) (microtime(true) * 1000));
+        $this->assertEmpty($res);
+
         $redis->zAdd($key, microtime(true) * 1000 + 1, 'test');
         usleep(500);
         $res = $redis->zRangeByScore($key, '0', (string) (microtime(true) * 1000));
