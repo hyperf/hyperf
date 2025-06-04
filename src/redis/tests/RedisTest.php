@@ -48,10 +48,6 @@ use function Hyperf\Coroutine\parallel;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class RedisTest extends TestCase
 {
     protected bool $isOlderThan6 = false;
