@@ -373,17 +373,20 @@ class RedisProxyTest extends TestCase
             ],
         ]));
         
-        $pool = new RedisPool($container, 'default');
+        // Set up ALL expectations BEFORE creating pool
         $frequency = Mockery::mock(LowFrequencyInterface::class);
         $frequency->shouldReceive('isLowFrequency')->andReturn(false);
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
-        $container->shouldReceive('make')->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
         $container->shouldReceive('make')->with(Channel::class, ['size' => $maxConnections])->andReturn(new Channel($maxConnections));
         $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new PoolOption(...array_values($args));
         });
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
         $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
+        
+        // NOW create the pool after all expectations are ready
+        $pool = new RedisPool($container, 'default');
+        $container->shouldReceive('make')->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
 
         ApplicationContext::setContainer($container);
 
