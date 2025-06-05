@@ -60,6 +60,23 @@ class RedisProxyTest extends TestCase
         $this->assertSame('yyy', $this->getRedis()->get('test:test'));
     }
 
+    public function testZSetAddAnd()
+    {
+        $key = 'test:zset:add:remove';
+        $redis = $this->getRedis();
+        $redis->del($key);
+
+        $redis->zAdd($key, microtime(true) * 1000 + 2, 'test');
+        usleep(1000);
+        $res = $redis->zRangeByScore($key, '0', (string) (microtime(true) * 1000));
+        $this->assertEmpty($res);
+
+        // $redis->zAdd($key, microtime(true) * 1000 + 1, 'test');
+        // usleep(500);
+        // $res = $redis->zRangeByScore($key, '0', (string) (microtime(true) * 1000));
+        // $this->assertEmpty($res);
+    }
+
     public function testHyperLogLog()
     {
         $redis = $this->getRedis();
