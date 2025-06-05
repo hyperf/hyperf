@@ -11,7 +11,6 @@
         "php": ">=8.1",
         "hyperf/contract": "~3.1.0",
         "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0",
         "psr/container": "^1.0 || ^2.0",
         "reactivex/rxphp": "^2.0"
     },

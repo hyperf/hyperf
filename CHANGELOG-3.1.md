@@ -12,6 +12,9 @@
 - [#7392](https://github.com/hyperf/hyperf/pull/7392) Added `coroutine` option to `AsCommand` and `ClosureCommand`.
 - [#7404](https://github.com/hyperf/hyperf/pull/7404) Added param `runAsync` for `CacheAHead`.
 
+## Optimize
+- [#7411](https://github.com/hyperf/hyperf/pull/7410) Remove `Hyperf\Utils` Component.
+
 # v3.1.55 - 2025-05-15
 
 ## Added

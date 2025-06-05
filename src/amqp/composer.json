@@ -23,7 +23,6 @@
         "hyperf/pool": "~3.1.0",
         "hyperf/process": "~3.1.0",
         "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0",
         "php-amqplib/php-amqplib": "^3.5",
         "psr/container": "^1.0 || ^2.0",
         "psr/event-dispatcher": "^1.0",
