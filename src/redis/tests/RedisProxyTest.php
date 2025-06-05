@@ -354,7 +354,8 @@ class RedisProxyTest extends TestCase
     private function getRedis($options = [], int $maxConnections = 30)
     {
         $container = Mockery::mock(Container::class);
-        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        
+        // Set up ALL mocks FIRST, before creating any objects
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
                 'default' => [
@@ -374,17 +375,26 @@ class RedisProxyTest extends TestCase
                 ],
             ],
         ]));
-        $pool = new RedisPool($container, 'default');
+        
         $frequency = Mockery::mock(LowFrequencyInterface::class);
         $frequency->shouldReceive('isLowFrequency')->andReturn(false);
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
-        $container->shouldReceive('make')->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
-        $container->shouldReceive('make')->with(Channel::class, ['size' => $maxConnections])->andReturn(new Channel($maxConnections));
+        
+        // Set up Channel mock to accept any size parameter
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            return new Channel($args['size'] ?? 30);
+        });
+        
         $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new PoolOption(...array_values($args));
         });
+        
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
         $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
+        
+        // NOW create the pool, after all mocks are set up
+        $pool = new RedisPool($container, 'default');
+        $container->shouldReceive('make')->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
 
         ApplicationContext::setContainer($container);
 
