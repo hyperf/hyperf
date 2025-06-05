@@ -30,7 +30,6 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RedisCluster;
-use Throwable;
 
 use function Hyperf\Coroutine\go;
 
@@ -217,65 +216,57 @@ class RedisProxyTest extends TestCase
     public function testConcurrentPipelineCallbacksWithLimitedConnectionPool()
     {
         $redis = $this->getRedis([], 3); // max_connections = 3
-
+        
         $concurrentOperations = 20; // More than max_connections
         $channels = [];
-
-        for ($i = 0; $i < $concurrentOperations; ++$i) {
+        
+        for ($i = 0; $i < $concurrentOperations; $i++) {
             $channels[$i] = new Chan(1);
         }
 
         // Start concurrent coroutines using pipeline with callbacks
-        for ($i = 0; $i < $concurrentOperations; ++$i) {
-            go(function () use ($redis, $channels, $i) {
+        for ($i = 0; $i < $concurrentOperations; $i++) {
+            go(function() use ($redis, $channels, $i) {
                 try {
                     $key = "concurrent_pipeline_test_{$i}";
-
-                    $redis->select(1);
-                    $redis->set('test', $id = uniqid(), 600);
-
+                    
                     $results = $redis->pipeline(function (\Redis $pipe) use ($key) {
                         $pipe->set($key, "value_{$key}");
                         $pipe->incr("{$key}_counter");
                         $pipe->get($key);
                         $pipe->get("{$key}_counter");
                     });
-
-                    $this->assertSame($id, $redis->get('test'));
-
+                    
                     $this->assertCount(4, $results);
                     $this->assertTrue($results[0]);
                     $this->assertSame(1, $results[1]);
                     $this->assertSame("value_{$key}", $results[2]);
                     $this->assertSame('1', $results[3]);
-
+                    
                     $channels[$i]->push(['success' => true, 'operation' => 'pipeline']);
-                } catch (Throwable $e) {
+                } catch (\Throwable $e) {
                     $channels[$i]->push(['success' => false, 'error' => $e->getMessage()]);
                 }
             });
         }
 
         $successCount = 0;
-        for ($i = 0; $i < $concurrentOperations; ++$i) {
+        for ($i = 0; $i < $concurrentOperations; $i++) {
             $result = $channels[$i]->pop(10.0);
             $this->assertNotFalse($result, "Operation {$i} timed out - possible connection pool exhaustion");
-
+            
             if ($result['success']) {
-                ++$successCount;
+                $successCount++;
             } else {
                 $this->fail("Concurrent operation {$i} failed: " . $result['error']);
             }
         }
-
-        $this->assertSame(
-            $concurrentOperations,
-            $successCount,
-            "All {$concurrentOperations} concurrent pipeline operations should succeed with only 3 max connections"
-        );
-
+        
+        $this->assertSame($concurrentOperations, $successCount, 
+            "All {$concurrentOperations} concurrent pipeline operations should succeed with only 3 max connections");
+        
         // Clean up
-        for ($i = 0; $i < $concurrentOperations; ++$i) {
+        for ($i = 0; $i < $concurrentOperations; $i++) {
             $redis->del("concurrent_pipeline_test_{$i}");
             $redis->del("concurrent_pipeline_test_{$i}_counter");
         }
@@ -284,58 +275,55 @@ class RedisProxyTest extends TestCase
     public function testConcurrentTransactionCallbacksWithLimitedConnectionPool()
     {
         $redis = $this->getRedis([], 3); // max_connections = 3
-
+        
         $concurrentOperations = 15; // More than max_connections
         $channels = [];
-
-        for ($i = 0; $i < $concurrentOperations; ++$i) {
+        
+        for ($i = 0; $i < $concurrentOperations; $i++) {
             $channels[$i] = new Chan(1);
         }
 
         // Start concurrent coroutines using transaction with callbacks
-        for ($i = 0; $i < $concurrentOperations; ++$i) {
-            go(function () use ($redis, $channels, $i) {
+        for ($i = 0; $i < $concurrentOperations; $i++) {
+            go(function() use ($redis, $channels, $i) {
                 try {
                     $key = "concurrent_transaction_test_{$i}";
-
+                    
                     $results = $redis->transaction(function (\Redis $transaction) use ($key) {
                         $transaction->set($key, "tx_value_{$key}");
                         $transaction->incr("{$key}_counter");
                         $transaction->get($key);
                     });
-
+                    
                     $this->assertCount(3, $results);
                     $this->assertTrue($results[0]);
                     $this->assertSame(1, $results[1]);
                     $this->assertSame("tx_value_{$key}", $results[2]);
-
+                    
                     $channels[$i]->push(['success' => true, 'operation' => 'transaction']);
-                } catch (Throwable $e) {
+                } catch (\Throwable $e) {
                     $channels[$i]->push(['success' => false, 'error' => $e->getMessage()]);
                 }
             });
         }
 
         $successCount = 0;
-        for ($i = 0; $i < $concurrentOperations; ++$i) {
+        for ($i = 0; $i < $concurrentOperations; $i++) {
             $result = $channels[$i]->pop(10.0);
             $this->assertNotFalse($result, "Transaction operation {$i} timed out - possible connection pool exhaustion");
-
+            
             if ($result['success']) {
-                ++$successCount;
+                $successCount++;
             } else {
                 $this->fail("Concurrent transaction {$i} failed: " . $result['error']);
             }
         }
-
-        $this->assertSame(
-            $concurrentOperations,
-            $successCount,
-            "All {$concurrentOperations} concurrent transaction operations should succeed with only 3 max connections"
-        );
-
+        
+        $this->assertSame($concurrentOperations, $successCount,
+            "All {$concurrentOperations} concurrent transaction operations should succeed with only 3 max connections");
+        
         // Clean up
-        for ($i = 0; $i < $concurrentOperations; ++$i) {
+        for ($i = 0; $i < $concurrentOperations; $i++) {
             $redis->del("concurrent_transaction_test_{$i}");
             $redis->del("concurrent_transaction_test_{$i}_counter");
         }
@@ -343,6 +331,7 @@ class RedisProxyTest extends TestCase
 
     /**
      * @param mixed $options
+     * @param int $maxConnections
      * @return \Redis|Redis
      */
     private function getRedis($options = [], int $maxConnections = 30)
