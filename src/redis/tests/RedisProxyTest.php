@@ -360,7 +360,7 @@ class RedisProxyTest extends TestCase
         $frequency->shouldReceive('isLowFrequency')->andReturn(false);
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
         $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new Channel($args['size'] ?? 30);
+            return new Channel($args['size']);
         });
         $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new PoolOption(...array_values($args));
