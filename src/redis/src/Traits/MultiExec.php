@@ -27,9 +27,6 @@ trait MultiExec
      */
     public function pipeline(?callable $callback = null)
     {
-        $contextKey = $this->getContextKey();
-        $hadContextConnection = Context::has($contextKey);
-
         $pipeline = $this->__call('pipeline', []);
 
         if (is_null($callback)) {
@@ -39,9 +36,7 @@ trait MultiExec
         try {
             return tap($pipeline, $callback)->exec();
         } finally {
-            if (! $hadContextConnection) {
-                $this->releaseMultiExecConnection();
-            }
+            $this->releaseMultiExecConnection();
         }
     }
 
@@ -52,9 +47,6 @@ trait MultiExec
      */
     public function transaction(?callable $callback = null)
     {
-        $contextKey = $this->getContextKey();
-        $hadContextConnection = Context::has($contextKey);
-
         $transaction = $this->__call('multi', []);
 
         if (is_null($callback)) {
@@ -64,9 +56,7 @@ trait MultiExec
         try {
             return tap($transaction, $callback)->exec();
         } finally {
-            if (! $hadContextConnection) {
-                $this->releaseMultiExecConnection();
-            }
+            $this->releaseMultiExecConnection();
         }
     }
 
