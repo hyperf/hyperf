@@ -13,7 +13,7 @@
 - [#7404](https://github.com/hyperf/hyperf/pull/7404) Added param `runAsync` for `CacheAHead`.
 
 ## Optimize
-- [#7411](https://github.com/hyperf/hyperf/pull/7410) Remove `Hyperf\Utils` Component.
+- [#7411](https://github.com/hyperf/hyperf/pull/7411) Remove `Hyperf\Utils` Component.
 
 # v3.1.55 - 2025-05-15
 
