@@ -65,19 +65,15 @@ class Redis
 
             // Release connection.
             if (! $hasContextConnection) {
-                if ($this->shouldUseSameConnection($name)) {
+                if ($this->shouldUseSameConnection($name, $arguments)) {
                     if ($name === 'select' && $db = $arguments[0]) {
                         $connection->setDatabase((int) $db);
                     }
-                    // Store context key on connection object
-                    $connection->setContextKey($this->getContextKey());
                     // Should storage the connection to coroutine context, then use defer() to release the connection.
                     Context::set($this->getContextKey(), $connection);
                     defer(function () use ($connection) {
-                        if (Context::has($this->getContextKey())) {
-                            Context::set($this->getContextKey(), null);
-                            $connection->release();
-                        }
+                        Context::set($this->getContextKey(), null);
+                        $connection->release();
                     });
                 } else {
                     // Release the connection after command executed.
@@ -93,13 +89,13 @@ class Redis
      * Define the commands that need same connection to execute.
      * When these commands executed, the connection will storage to coroutine context.
      */
-    private function shouldUseSameConnection(string $methodName): bool
+    private function shouldUseSameConnection(string $methodName, array $arguments = []): bool
     {
-        return in_array($methodName, [
-            'multi',
-            'pipeline',
-            'select',
-        ]);
+        if ($methodName === 'select') {
+            return true;
+        }
+
+        return in_array($methodName, ['multi', 'pipeline']) && ! isset($arguments[0]);
     }
 
     /**

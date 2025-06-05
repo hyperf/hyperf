@@ -39,8 +39,6 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
     protected ?EventDispatcherInterface $eventDispatcher = null;
 
-    protected ?string $contextKey = null;
-
     protected array $config = [
         'host' => 'localhost',
         'port' => 6379,
@@ -191,29 +189,9 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         }
     }
 
-    public function getConfig(): array
-    {
-        return $this->config;
-    }
-
     public function setDatabase(?int $database): void
     {
         $this->database = $database;
-    }
-
-    public function getDatabase(): ?int
-    {
-        return $this->database;
-    }
-
-    public function setContextKey(string $key): void
-    {
-        $this->contextKey = $key;
-    }
-
-    public function getContextKey(): ?string
-    {
-        return $this->contextKey;
     }
 
     protected function createRedisCluster(): RedisCluster
