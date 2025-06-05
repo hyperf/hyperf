@@ -191,9 +191,19 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         }
     }
 
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
     public function setDatabase(?int $database): void
     {
         $this->database = $database;
+    }
+
+    public function getDatabase(): ?int
+    {
+        return $this->database;
     }
 
     public function setContextKey(string $key): void

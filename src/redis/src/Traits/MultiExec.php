@@ -69,8 +69,11 @@ trait MultiExec
         $connection = Context::get($contextKey);
 
         if ($connection) {
-            Context::set($contextKey, null);
-            $connection->release();
+            // Only release if we're on the default database
+            if (! $connection->getDatabase() || $connection->getDatabase() === $connection->getConfig()['db']) {
+                Context::set($contextKey, null);
+                $connection->release();
+            }
         }
     }
 }
