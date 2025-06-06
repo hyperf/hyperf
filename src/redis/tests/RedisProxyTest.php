@@ -260,6 +260,9 @@ class RedisProxyTest extends TestCase
                         $pipe->get("{$key}_counter");
                     });
 
+                    // Simulate work after callback
+                    sleep(1); 
+
                     $this->assertCount(4, $results);
                     $this->assertTrue($results[0]);
                     $this->assertSame(1, $results[1]);
@@ -302,7 +305,7 @@ class RedisProxyTest extends TestCase
     {
         $redis = $this->getRedis([], 3); // max_connections = 3
 
-        $concurrentOperations = 15; // More than max_connections
+        $concurrentOperations = 20; // More than max_connections
         $channels = [];
 
         for ($i = 0; $i < $concurrentOperations; ++$i) {
@@ -320,6 +323,9 @@ class RedisProxyTest extends TestCase
                         $transaction->incr("{$key}_counter");
                         $transaction->get($key);
                     });
+
+                    // Simulate work after callback
+                    sleep(1);
 
                     $this->assertCount(3, $results);
                     $this->assertTrue($results[0]);
