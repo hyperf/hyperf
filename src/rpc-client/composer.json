@@ -20,6 +20,9 @@
     "require": {
         "php": ">=8.1",
         "hyperf/code-parser": "~3.1.0",
+        "hyperf/collection": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/coroutine": "~3.1.0",
         "hyperf/load-balancer": "~3.1.0",
         "hyperf/rpc": "~3.1.0",
         "hyperf/support": "~3.1.0",

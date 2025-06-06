@@ -18,6 +18,8 @@
     "require": {
         "php": ">=8.1",
         "ext-redis": "^5.0 || ^6.0",
+        "hyperf/collection": "~3.1.0",
+        "hyperf/context": "~3.1.0",
         "hyperf/contract": "~3.1.0",
         "hyperf/pool": "~3.1.0",
         "hyperf/support": "~3.1.0",

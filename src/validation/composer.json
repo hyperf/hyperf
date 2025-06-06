@@ -12,6 +12,7 @@
         "egulias/email-validator": "^3.0",
         "hyperf/collection": "~3.1.0",
         "hyperf/conditionable": "~3.1.0",
+        "hyperf/context": "~3.1.0",
         "hyperf/contract": "~3.1.0",
         "hyperf/di": "~3.1.0",
         "hyperf/framework": "~3.1.0",

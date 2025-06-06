@@ -17,6 +17,8 @@
     },
     "require": {
         "php": ">=8.1",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/coroutine": "~3.1.0",
         "hyperf/support": "~3.1.0",
         "hyperf/tappable": "~3.1.0",
         "hyperf/token-bucket": "^2.0",
