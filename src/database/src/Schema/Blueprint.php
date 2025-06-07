@@ -160,8 +160,7 @@ class Blueprint
             $method = 'compile' . ucfirst($command->name);
 
             if (method_exists($grammar, $method)) {
-                $sql = $grammar->{$method}($this, $command, $connection);
-                if (! is_null($sql) && ! empty($sql)) {
+                if (! empty($sql = $grammar->{$method}($this, $command, $connection))) {
                     $statements = array_merge($statements, (array) $sql);
                 }
             }
