@@ -82,7 +82,6 @@ class Container implements HyperfContainerInterface
     }
 
     /**
-     * @internal
      * @param mixed $definition
      */
     public function define(string $name, $definition): void
