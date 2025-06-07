@@ -13,7 +13,12 @@
         "ext-redis": "*",
         "hyperf/codec": "~3.1.0",
         "hyperf/collection": "~3.1.0",
+        "hyperf/context": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/coordinator": "~3.1.0",
+        "hyperf/coroutine": "~3.1.0",
         "hyperf/di": "~3.1.0",
+        "hyperf/engine": "~3.1.0",
         "hyperf/redis": "~3.1.0",
         "hyperf/websocket-server": "~3.1.0",
         "psr/container": "^1.0 || ^2.0"
