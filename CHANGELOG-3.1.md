@@ -1,8 +1,16 @@
-# v3.1.56 - TBD
+# v3.1.57 - TBD
+
+# v3.1.56 - 2025-06-05
 
 ## Fixed
 
 - [#7400](https://github.com/hyperf/hyperf/pull/7400) Fixed bug that `gen:model` cannot work when using `pgsql`.
+- [#7410](https://github.com/hyperf/hyperf/pull/7410) Fixed bug that `setMultiple` cannot work for memory cache driver.
+
+## Added
+
+- [#7392](https://github.com/hyperf/hyperf/pull/7392) Added `coroutine` option to `AsCommand` and `ClosureCommand`.
+- [#7404](https://github.com/hyperf/hyperf/pull/7404) Added param `runAsync` for `CacheAHead`.
 
 # v3.1.55 - 2025-05-15
 
