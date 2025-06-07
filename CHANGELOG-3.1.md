@@ -1,5 +1,9 @@
 # v3.1.57 - TBD
 
+## Fixed
+
+- [#7414](https://github.com/hyperf/hyperf/pull/7414) Fixed bug that sqlite migration does not work.
+
 ## Optimized
 
 - [#7411](https://github.com/hyperf/hyperf/pull/7411) Remove `Hyperf\Utils` Component.
