@@ -100,9 +100,9 @@ composer require hyperf/grpc-server
 `routes.php` 文件(參考 [路由](zh-hk/router.md))：
 
 ```php
-Router::addServer('grpc'，function () {
-    Router::addGroup('/grpc.hi'，function () {
-        Router::post('/sayHello'，'App\Controller\HiController@sayHello');
+Router::addServer('grpc', function () {
+    Router::addGroup('/grpc.Hi', function () {
+        Router::post('/SayHello', 'App\Controller\HiController@sayHello');
     });
 });
 ```
