@@ -65,7 +65,7 @@ class Redis
 
             // Release connection.
             if (! $hasContextConnection) {
-                if ($this->shouldUseSameConnection($name)) {
+                if ($this->shouldUseSameConnection($name, $arguments)) {
                     if ($name === 'select' && $db = $arguments[0]) {
                         $connection->setDatabase((int) $db);
                     }
@@ -89,13 +89,13 @@ class Redis
      * Define the commands that need same connection to execute.
      * When these commands executed, the connection will storage to coroutine context.
      */
-    private function shouldUseSameConnection(string $methodName): bool
+    private function shouldUseSameConnection(string $methodName, array $arguments = []): bool
     {
-        return in_array($methodName, [
-            'multi',
-            'pipeline',
-            'select',
-        ]);
+        if ($methodName === 'select') {
+            return true;
+        }
+
+        return in_array($methodName, ['multi', 'pipeline']) && ! isset($arguments[0]);
     }
 
     /**
