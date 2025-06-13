@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server;
 
 use Hyperf\Server\Entry\EventDispatcher;
@@ -19,46 +20,28 @@ use Psr\Log\LoggerInterface;
 
 class ServerFactory
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ?LoggerInterface $logger = null;
 
-    /**
-     * @var null|LoggerInterface
-     */
-    protected $logger;
+    protected ?EventDispatcherInterface $eventDispatcher = null;
 
-    /**
-     * @var null|EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected ?ServerInterface $server = null;
 
-    /**
-     * @var ServerInterface
-     */
-    protected $server;
+    protected ?ServerConfig $config = null;
 
-    /**
-     * @var null|ServerConfig
-     */
-    protected $config;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
-    public function configure(array $config)
+    public function configure(array $config): void
     {
         $this->config = new ServerConfig($config);
 
         $this->getServer()->init($this->config);
     }
 
-    public function start()
+    public function start(): void
     {
-        return $this->getServer()->start();
+        $this->getServer()->start();
     }
 
     public function getServer(): ServerInterface
@@ -75,7 +58,7 @@ class ServerFactory
         return $this->server;
     }
 
-    public function setServer(Server $server): self
+    public function setServer(Server $server): static
     {
         $this->server = $server;
         return $this;
@@ -89,7 +72,7 @@ class ServerFactory
         return $this->getDefaultEventDispatcher();
     }
 
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): self
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): static
     {
         $this->eventDispatcher = $eventDispatcher;
         return $this;
@@ -103,18 +86,23 @@ class ServerFactory
         return $this->getDefaultLogger();
     }
 
-    public function setLogger(LoggerInterface $logger): self
+    public function setLogger(LoggerInterface $logger): static
     {
         $this->logger = $logger;
         return $this;
     }
 
-    private function getDefaultEventDispatcher(): EventDispatcher
+    public function getConfig(): ?ServerConfig
+    {
+        return $this->config;
+    }
+
+    private function getDefaultEventDispatcher(): EventDispatcherInterface
     {
         return new EventDispatcher();
     }
 
-    private function getDefaultLogger(): Logger
+    private function getDefaultLogger(): LoggerInterface
     {
         return new Logger();
     }

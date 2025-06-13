@@ -9,20 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
 #[Command]
 class AmqpProducerCommand extends GeneratorCommand
 {
     public function __construct()
     {
         parent::__construct('gen:amqp-producer');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new amqp producer class');
+
+        parent::configure();
     }
 
     protected function getStub(): string
@@ -32,6 +36,6 @@ class AmqpProducerCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Amqp\\Producer';
+        return $this->getConfig()['namespace'] ?? 'App\Amqp\Producer';
     }
 }

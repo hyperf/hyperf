@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nsq;
 
 class Message
@@ -16,22 +17,13 @@ class Message
     /**
      * @var string nanosecond
      */
-    protected $timestamp;
+    protected string $timestamp;
 
-    /**
-     * @var int
-     */
-    protected $attempts;
+    protected int $attempts;
 
-    /**
-     * @var string
-     */
-    protected $messageId;
+    protected string $messageId;
 
-    /**
-     * @var string
-     */
-    protected $body;
+    protected string $body;
 
     public function __construct(string $payload)
     {

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue\Driver;
 
 use Hyperf\AsyncQueue\JobInterface;
@@ -32,17 +33,13 @@ interface DriverInterface
 
     /**
      * Ack a job.
-     *
-     * @param mixed $data
      */
-    public function ack($data): bool;
+    public function ack(mixed $data): bool;
 
     /**
      * Push a job to failed queue.
-     *
-     * @param mixed $data
      */
-    public function fail($data): bool;
+    public function fail(mixed $data): bool;
 
     /**
      * Consume jobs from a queue.
@@ -52,12 +49,12 @@ interface DriverInterface
     /**
      * Reload failed message into waiting queue.
      */
-    public function reload(string $queue = null): int;
+    public function reload(?string $queue = null): int;
 
     /**
      * Delete all failed message from failed queue.
      */
-    public function flush(string $queue = null): bool;
+    public function flush(?string $queue = null): bool;
 
     /**
      * Return info for current queue.

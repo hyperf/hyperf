@@ -46,10 +46,7 @@ use App\Service\UserService;
 
 class IndexController
 {
-    /**
-     * @var UserService
-     */
-    private $userService;
+    private UserService $userService;
     
     // 通过在构造函数的参数上声明参数类型完成自动注入
     public function __construct(UserService $userService)
@@ -68,8 +65,7 @@ class IndexController
 
 > 注意使用构造函数注入时，调用方也就是 `IndexController` 必须是由 DI 创建的对象才能完成自动注入，而 Controller 默认是由 DI 创建的，所以可以直接使用构造函数注入
 
-当您希望定义一个可选的依赖项时，可以通过给参数定义为 `nullable` 或将参数的默认值定义为 `null`，即表示该参数如果在 DI 容器中没有找到或无法创建对应的对象时，不抛出异常而是直接使用 `null` 来注入。*(该功能仅在
-1.1.0 或更高版本可用)*
+当您希望定义一个可选的依赖项时，可以通过给参数定义为 `nullable` 或将参数的默认值定义为 `null`，即表示该参数如果在 DI 容器中没有找到或无法创建对应的对象时，不抛出异常而是直接使用 `null` 来注入。
 
 ```php
 <?php
@@ -79,10 +75,7 @@ use App\Service\UserService;
 
 class IndexController
 {
-    /**
-     * @var null|UserService
-     */
-    private $userService;
+    private ?UserService $userService;
     
     // 通过设置参数为 nullable，表明该参数为一个可选参数
     public function __construct(?UserService $userService)
@@ -102,7 +95,7 @@ class IndexController
 }
 ```
 
-#### 通过 `@Inject` 注解注入
+#### 通过 `#[Inject]` 注解注入
 
 ```php
 <?php
@@ -113,13 +106,9 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
-    /**
-     * 通过 `@Inject` 注解注入由 `@var` 注解声明的属性类型对象
-     * 
-     * @Inject 
-     * @var UserService
-     */
-    private $userService;
+
+    #[Inject]
+    private UserService $userService;
     
     public function index()
     {
@@ -130,13 +119,13 @@ class IndexController
 }
 ```
 
-> 通过 `@Inject` 注解注入可作用于 DI 创建的（单例）对象，也可作用于通过 `new` 关键词创建的对象；
+> 通过 `#[Inject]` 注解注入可作用于 DI 创建的（单例）对象，也可作用于通过 `new` 关键词创建的对象；
 
-> 使用 `@Inject` 注解时需 `use Hyperf\Di\Annotation\Inject;` 命名空间；
+> 使用 `#[Inject]` 注解时需 `use Hyperf\Di\Annotation\Inject;` 命名空间；
 
 ##### Required 参数
 
-`@Inject` 注解存在一个 `required` 参数，默认值为 `true`，当将该参数定义为 `false` 时，则表明该成员属性为一个可选依赖，当对应 `@var` 的对象不存在于 DI
+`#[Inject]` 注解存在一个 `required` 参数，默认值为 `true`，当将该参数定义为 `false` 时，则表明该成员属性为一个可选依赖，当对应 `@var` 的对象不存在于 DI
 容器或不可创建时，将不会抛出异常而是注入一个 `null`，如下：
 
 ```php
@@ -149,13 +138,11 @@ use Hyperf\Di\Annotation\Inject;
 class IndexController
 {
     /**
-     * 通过 `@Inject` 注解注入由 `@var` 注解声明的属性类型对象
+     * 通过 `#[Inject]` 注解注入由注解声明的属性类型对象
      * 当 UserService 不存在于 DI 容器内或不可创建时，则注入 null
-     * 
-     * @Inject(required=false) 
-     * @var UserService
      */
-    private $userService;
+    #[Inject(required: false)]
+    private ?UserService $userService;
     
     public function index()
     {
@@ -222,11 +209,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
-    /**
-     * @Inject 
-     * @var UserServiceInterface
-     */
-    private $userService;
+    #[Inject]
+    private UserServiceInterface $userService;
     
     public function index()
     {
@@ -253,8 +237,8 @@ use Psr\Container\ContainerInterface;
 
 class UserServiceFactory
 {
-    // 实现一个 __invoke() 方法来完成对象的生产，方法参数会自动注入一个当前的容器实例
-    public function __invoke(ContainerInterface $container)
+    // 实现一个 __invoke() 方法来完成对象的生产，方法参数会自动注入一个当前的容器实例和一个参数数组
+    public function __invoke(ContainerInterface $container, array $parameters = [])
     {
         $config = $container->get(ConfigInterface::class);
         // 我们假设对应的配置的 key 为 cache.enable
@@ -272,11 +256,7 @@ namespace App\Service;
 
 class UserService implements UserServiceInterface
 {
-    
-    /**
-     * @var bool
-     */
-    private $enableCache;
+    private bool $enableCache;
     
     public function __construct(bool $enableCache)
     {
@@ -302,7 +282,7 @@ return [
 
 这样在注入 `UserServiceInterface` 的时候容器就会交由 `UserServiceFactory` 来创建对象了。
 
-> 当然在该场景中可以通过 `@Value` 注解来更便捷的注入配置而无需构建工厂类，此仅为举例
+> 当然在该场景中可以通过 `#[Value]` 注解来更便捷的注入配置而无需构建工厂类，此仅为举例
 
 ### 懒加载
 
@@ -320,7 +300,7 @@ Hyperf 的长生命周期依赖注入在项目启动时完成。这意味着长�
 
 另一个方案是使用 PHP 中常用的惰性代理模式，注入一个代理对象，在使用时再实例化目标对象。Hyperf DI 组件设计了懒加载注入功能。
 
-添加 `config/autoload/lazy_loader.php` 文件并绑定懒加载关系：
+添加 `config/lazy_loader.php` 文件并绑定懒加载关系：
 
 ```php
 <?php
@@ -347,17 +327,18 @@ class Foo{
 }
 ````
 
-您还可以通过注解 `@Inject(lazy=true)` 注入懒加载代理。通过注解实现懒加载不用创建配置文件。
+您还可以通过注解 `#[Inject(lazy: true)]` 注入懒加载代理。通过注解实现懒加载不用创建配置文件。
 
 ```php
 use Hyperf\Di\Annotation\Inject;
 use App\Service\UserServiceInterface;
 
-class Foo{
+class Foo
+{
     /**
-     * @Inject(lazy=true)
      * @var UserServiceInterface
      */
+    #[Inject(lazy: true)]
     public $service;
 }
 ````
@@ -381,6 +362,36 @@ isset($proxy->someProperty);
 unset($proxy->someProperty);
 ```
 
+### 绑定权重
+
+自 v3.0.17 版本开始，增加了权重功能。可以按照权重，注入权重最大的对象。例如下述两份 `ConfigProvider` 配置
+
+```php
+<?php
+use FooInterface;
+use Foo;
+
+return [
+    'dependencies' => [
+        FooInterface::class => new PriorityDefinition(Foo::class, 1),
+    ]
+];
+```
+
+```php
+<?php
+use FooInterface;
+use Foo2;
+
+return [
+    'dependencies' => [
+        FooInterface::class => Foo2::class,
+    ]
+];
+```
+
+当不使用 `PriorityDefinition` 时，权重为 0。所以被绑定到 `FooInterface` 是 `Foo`。
+
 ## 短生命周期对象
 
 通过 `new` 关键词创建的对象毫无疑问的短生命周期的，那么如果希望创建一个短生命周期的对象但又希望使用 `构造函数依赖自动注入功能`
@@ -395,7 +406,7 @@ $userService = make(UserService::class, ['enableCache' => true]);
 ## 获取容器对象
 
 有些时候我们可能希望去实现一些更动态的需求时，会希望可以直接获取到 `容器(Container)` 对象，在绝大部分情况下，框架的入口类（比如命令类、控制器、RPC 服务提供者等）都是由 `容器(Container)`
-创建并维护的，也就意味着您所写的绝大部分业务代码都是在 `容器(Container)` 的管理作用之下的，也就意味着在绝大部分情况下您都可以通过在 `构造函数(Constructor)` 声明或通过 `@Inject`
+创建并维护的，也就意味着您所写的绝大部分业务代码都是在 `容器(Container)` 的管理作用之下的，也就意味着在绝大部分情况下您都可以通过在 `构造函数(Constructor)` 声明或通过 `#[Inject]`
 注解注入 `Psr\Container\ContainerInterface` 接口类都能够获得 `Hyperf\Di\Container` 容器对象，我们通过代码来演示一下：
 
 ```php
@@ -407,10 +418,7 @@ use Psr\Container\ContainerInterface;
 
 class IndexController
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
     
     // 通过在构造函数的参数上声明参数类型完成自动注入
     public function __construct(ContainerInterface $container)
@@ -421,10 +429,34 @@ class IndexController
 ```   
 
 在某些更极端动态的情况下，或者非 `容器(Container)` 的管理作用之下时，想要获取到 `容器(Container)`
-对象还可以通过 `\Hyperf\Utils\ApplicationContext::getContaienr()` 方法来获得 `容器(Container)` 对象。
+对象还可以通过 `\Hyperf\Context\ApplicationContext::getContainer()` 方法来获得 `容器(Container)` 对象。
 
 ```php
-$container = \Hyperf\Utils\ApplicationContext::getContainer();
+$container = \Hyperf\Context\ApplicationContext::getContainer();
+```
+
+## 扫描适配器
+
+默认使用 `Hyperf\Di\ScanHandler\PcntlScanHandler`.
+
+- Hyperf\Di\ScanHandler\PcntlScanHandler
+
+使用 Pcntl fork 子进程扫描注解，只支持 Linux 环境
+
+- Hyperf\Di\ScanHandler\NullScanHandler
+
+不进行注解扫描操作
+
+- Hyperf\Di\ScanHandler\ProcScanHandler
+
+使用 proc_open 创建子进程扫描注解，支持 Linux 和 Windows(Swow)
+
+### 更换扫描适配器
+
+我们只需要主动修改 `bin/hyperf.php` 文件中 `Hyperf\Di\ClassLoader::init()` 代码段即可更换适配器。
+
+```php
+Hyperf\Di\ClassLoader::init(handler: new Hyperf\Di\ScanHandler\ProcScanHandler());
 ```
 
 ## 注意事项
@@ -432,11 +464,11 @@ $container = \Hyperf\Utils\ApplicationContext::getContainer();
 ### 容器仅管理长生命周期的对象
 
 换种方式理解就是容器内管理的对象**都是单例**，这样的设计对于长生命周期的应用来说会更加的高效，减少了大量无意义的对象创建和销毁，这样的设计也就意味着所有需要交由 DI 容器管理的对象**均不能包含** `状态` 值。   
-`状态` 可直接理解为会随着请求而变化的值，事实上在 [协程](zh-cn/coroutine.md) 编程中，这些状态值也是应该存放于 `协程上下文` 中的，即 `Hyperf\Utils\Context`。
+`状态` 可直接理解为会随着请求而变化的值，事实上在 [协程](zh-cn/coroutine.md) 编程中，这些状态值也是应该存放于 `协程上下文` 中的，即 `Hyperf\Context\Context`。
 
-### @Inject 注入覆盖顺序
+### #[Inject] 注入覆盖顺序
 
-`@Inject` 覆盖顺序为子类覆盖 `Trait` 覆盖 父类，即 下述 `Origin` 的 `foo` 变量为本身注入的 `Foo1`。
+`#[Inject]` 覆盖顺序为子类覆盖 `Trait` 覆盖 父类，即 下述 `Origin` 的 `foo` 变量为本身注入的 `Foo1`。
 
 同理，假如 `Origin` 不存在变量 `$foo` 时，`$foo` 会被第一个 `Trait` 完成注入，注入类 `Foo2`。
 
@@ -446,25 +478,27 @@ use Hyperf\Di\Annotation\Inject;
 class ParentClass
 {
     /**
-     * @Inject
      * @var Foo4 
      */
+    #[Inject]
     protected $foo;
 }
 
-trait Foo1{
+trait Foo1
+{
     /**
-     * @Inject
      * @var Foo2 
      */
+    #[Inject]
     protected $foo;
 }
 
-trait Foo2{
+trait Foo2
+{
     /**
-     * @Inject
      * @var Foo3
      */
+    #[Inject]
     protected $foo;
 }
 
@@ -472,10 +506,11 @@ class Origin extends ParentClass
 {
     use Foo1;
     use Foo2;
+
     /**
-     * @Inject
      * @var Foo1
      */
+    #[Inject]
     protected $foo;
 }
 ```

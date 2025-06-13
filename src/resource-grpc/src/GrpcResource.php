@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ResourceGrpc;
 
 use Hyperf\Resource\Json\JsonResource;
+
+use function Hyperf\Tappable\tap;
 
 class GrpcResource extends JsonResource
 {

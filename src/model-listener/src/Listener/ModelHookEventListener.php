@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ModelListener\Listener;
 
 use Hyperf\Database\Model\Events\Event;
@@ -26,7 +27,7 @@ class ModelHookEventListener implements ListenerInterface
     /**
      * @param Event $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $event->handle();
     }

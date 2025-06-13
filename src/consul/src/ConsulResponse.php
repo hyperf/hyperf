@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Consul;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Consul\Exception\ServerException;
-use Hyperf\Utils\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -23,14 +24,8 @@ use Psr\Http\Message\StreamInterface;
  */
 class ConsulResponse
 {
-    /**
-     * @var ResponseInterface
-     */
-    private $response;
-
-    public function __construct(ResponseInterface $response)
+    public function __construct(private ResponseInterface $response)
     {
-        $this->response = $response;
     }
 
     public function __call($name, $arguments)
@@ -38,9 +33,9 @@ class ConsulResponse
         return $this->response->{$name}(...$arguments);
     }
 
-    public function json(string $key = null, $default = null)
+    public function json(?string $key = null, $default = null)
     {
-        if ($this->response->getHeaderLine('Content-Type') !== 'application/json') {
+        if ($this->response->getHeaderLine('content-type') !== 'application/json') {
             throw new ServerException('The Content-Type of response is not equal application/json');
         }
         $data = json_decode((string) $this->response->getBody(), true);

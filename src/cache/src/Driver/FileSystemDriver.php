@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Cache\Driver;
 
 use Hyperf\Cache\Collector\FileStorage;
 use Hyperf\Cache\Exception\CacheException;
 use Hyperf\Cache\Exception\InvalidArgumentException;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 use Psr\Container\ContainerInterface;
 
 class FileSystemDriver extends Driver
@@ -46,7 +47,7 @@ class FileSystemDriver extends Driver
         return $this->getPrefix() . $key . '.cache';
     }
 
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
         $file = $this->getCacheKey($key);
         if (! file_exists($file)) {
@@ -78,7 +79,7 @@ class FileSystemDriver extends Driver
         return [true, $obj->getData()];
     }
 
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
         $seconds = $this->secondsUntil($ttl);
         $file = $this->getCacheKey($key);
@@ -89,7 +90,7 @@ class FileSystemDriver extends Driver
         return (bool) $result;
     }
 
-    public function delete($key)
+    public function delete($key): bool
     {
         $file = $this->getCacheKey($key);
         if (file_exists($file)) {
@@ -102,26 +103,26 @@ class FileSystemDriver extends Driver
         return true;
     }
 
-    public function clear()
+    public function clear(): bool
     {
         return $this->clearPrefix('');
     }
 
-    public function getMultiple($keys, $default = null)
+    public function getMultiple($keys, $default = null): iterable
     {
         if (! is_array($keys)) {
             throw new InvalidArgumentException('The keys is invalid!');
         }
 
         $result = [];
-        foreach ($keys as $i => $key) {
+        foreach ($keys as $key) {
             $result[$key] = $this->get($key, $default);
         }
 
         return $result;
     }
 
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple($values, $ttl = null): bool
     {
         if (! is_array($values)) {
             throw new InvalidArgumentException('The values is invalid!');
@@ -134,20 +135,20 @@ class FileSystemDriver extends Driver
         return true;
     }
 
-    public function deleteMultiple($keys)
+    public function deleteMultiple($keys): bool
     {
         if (! is_array($keys)) {
             throw new InvalidArgumentException('The keys is invalid!');
         }
 
-        foreach ($keys as $index => $key) {
+        foreach ($keys as $key) {
             $this->delete($key);
         }
 
         return true;
     }
 
-    public function has($key)
+    public function has($key): bool
     {
         $file = $this->getCacheKey($key);
 

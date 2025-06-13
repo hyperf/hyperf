@@ -9,40 +9,34 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Resource\Response;
 
+use Hyperf\Codec\Json;
+use Hyperf\Collection\Collection;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Database\Model\Model;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Context;
 use Psr\Http\Message\ResponseInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
 class Response
 {
     /**
-     * The underlying resource.
-     *
-     * @var mixed
-     */
-    public $resource;
-
-    /**
      * Create a new resource response.
      *
-     * @param mixed $resource
+     * @param mixed $resource the underlying resource
      */
-    public function __construct($resource)
+    public function __construct(public mixed $resource)
     {
-        $this->resource = $resource;
     }
 
     public function toResponse(): ResponseInterface
     {
         return $this->response()
-            ->withStatus($this->calculateStatus())
-            ->withAddedHeader('content-type', 'application/json; charset=utf-8')
-            ->withBody(new SwooleStream(Json::encode($this->wrap(
+            ->setStatus($this->calculateStatus())
+            ->addHeader('content-type', 'application/json; charset=utf-8')
+            ->setBody(new SwooleStream(Json::encode($this->wrap(
                 $this->resource->resolve(),
                 $this->resource->with(),
                 $this->resource->additional
@@ -51,10 +45,8 @@ class Response
 
     /**
      * Wrap the given data if necessary.
-     *
-     * @param array|Collection $data
      */
-    protected function wrap($data, array $with = [], array $additional = []): array
+    protected function wrap(array|Collection $data, array $with = [], array $additional = []): array
     {
         if ($data instanceof Collection) {
             $data = $data->all();
@@ -103,8 +95,8 @@ class Response
         && $this->resource->resource->wasRecentlyCreated ? 201 : 200;
     }
 
-    protected function response(): ResponseInterface
+    protected function response(): ResponsePlusInterface
     {
-        return Context::get(ResponseInterface::class);
+        return ResponseContext::get();
     }
 }

@@ -9,30 +9,25 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Str;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
+use Hyperf\Stringable\Str;
+use InvalidArgumentException;
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
 use PhpParser\NodeTraverser;
+use ReflectionClass;
 
 class ModelRewriteKeyInfoVisitor extends AbstractVisitor
 {
-    /**
-     * @var bool
-     */
-    protected $hasPrimaryKey = false;
+    protected bool $hasPrimaryKey = false;
 
-    /**
-     * @var bool
-     */
-    protected $hasKeyType = false;
+    protected bool $hasKeyType = false;
 
-    /**
-     * @var bool
-     */
-    protected $hasIncrementing = false;
+    protected bool $hasIncrementing = false;
 
     public function leaveNode(Node $node)
     {
@@ -58,6 +53,8 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
                 }
                 return $node;
         }
+
+        return null;
     }
 
     public function afterTraverse(array $nodes)
@@ -89,29 +86,40 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
                 }
             }
         }
+
+        return null;
     }
 
-    protected function rewrite($property = 'primaryKey', ?Node\Stmt\Property $node = null): ?Node\Stmt\Property
+    protected function rewrite(string $property, ?Node\Stmt\Property $node = null): ?Node\Stmt\Property
     {
         $data = $this->getKeyInfo();
         if ($data === null) {
             return $node;
         }
 
-        [$primaryKey, $keyType, $incrementing] = $data;
+        $propertyValue = match ($property) {
+            'primaryKey' => $data[0],
+            'keyType' => $data[1],
+            'incrementing' => $data[2],
+            default => throw new InvalidArgumentException("property {$property} is invalid.")
+        };
 
-        if ($this->shouldRemoveProperty($property, ${$property})) {
+        if ($this->shouldRemoveProperty($property, $propertyValue)) {
             return null;
         }
 
         if ($node) {
-            $node->props[0]->default = $this->getExpr($property, ${$property});
+            $node->props[0]->default = $this->getExpr($property, $propertyValue);
         } else {
-            $prop = new Node\Stmt\PropertyProperty($property, $this->getExpr($property, ${$property}));
+            $prop = new Node\Stmt\PropertyProperty($property, $this->getExpr($property, $propertyValue));
             $node = new Node\Stmt\Property(
                 $property == 'incrementing' ? Node\Stmt\Class_::MODIFIER_PUBLIC : Node\Stmt\Class_::MODIFIER_PROTECTED,
                 [$prop]
             );
+            $node->type = match ($property) {
+                'incrementing' => new Identifier('bool'),
+                default => new Identifier('string'),
+            };
         }
 
         return $node;
@@ -119,7 +127,6 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
 
     /**
      * @param bool|string $value
-     * @return Node\Scalar
      */
     protected function getExpr(string $property, $value): Node\Expr
     {
@@ -147,7 +154,7 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
 
     protected function shouldRemoveProperty($property, $value): bool
     {
-        $ref = new \ReflectionClass($this->data->getClass());
+        $ref = new ReflectionClass($this->data->getClass());
 
         if (! $ref->getParentClass()) {
             return false;

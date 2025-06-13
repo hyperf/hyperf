@@ -9,16 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Retry;
 
-use Hyperf\Utils\Backoff;
+use Hyperf\Support\Backoff;
 
 class BackoffStrategy implements SleepStrategyInterface
 {
-    /**
-     * @var Backoff
-     */
-    private $backoff;
+    private Backoff $backoff;
 
     public function __construct(int $base)
     {

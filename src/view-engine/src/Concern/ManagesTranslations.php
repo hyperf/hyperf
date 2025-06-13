@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Concern;
 
 use Hyperf\ViewEngine\Blade;
@@ -17,17 +18,13 @@ trait ManagesTranslations
 {
     /**
      * The translation replacements for the translation being rendered.
-     *
-     * @var array
      */
-    protected $translationReplacements = [];
+    protected array $translationReplacements = [];
 
     /**
      * Start a translation block.
-     *
-     * @param array $replacements
      */
-    public function startTranslation($replacements = [])
+    public function startTranslation(array $replacements = [])
     {
         ob_start();
 

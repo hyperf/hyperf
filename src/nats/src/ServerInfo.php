@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nats;
 
 /**
@@ -18,80 +19,58 @@ class ServerInfo
 {
     /**
      * Server unique ID.
-     *
-     * @var string
      */
-    private $serverID;
+    private string $serverID;
 
     /**
      * Server hostname.
-     *
-     * @var string
      */
-    private $host;
+    private string $host;
 
     /**
      * Server port.
-     *
-     * @var int
      */
-    private $port;
+    private int $port;
 
     /**
      * Server version number.
-     *
-     * @var string
      */
-    private $version;
+    private string $version;
 
     /**
      * Server Golang version.
-     *
-     * @var string
      */
-    private $goVersion;
+    private string $goVersion;
 
     /**
      * Is authorization required?
-     *
-     * @var bool
      */
-    private $authRequired;
+    private bool $authRequired;
 
     /**
      * Is TLS required?
-     *
-     * @var bool
      */
-    private $TLSRequired;
+    private bool $TLSRequired;
 
     /**
      * Should TLS be verified?
-     *
-     * @var bool
      */
-    private $TLSVerify;
+    private bool $TLSVerify;
 
     /**
      * Is SSL required?
-     *
-     * @var bool
      */
-    private $SSLRequired;
+    private bool $SSLRequired;
 
     /**
      * Max payload size.
-     *
-     * @var int
      */
-    private $maxPayload;
+    private int $maxPayload;
 
     /**
      * Connection URL list.
-     *
-     * @var array
      */
-    private $connectURLs;
+    private array $connectURLs;
 
     /**
      * ServerInfo constructor.
@@ -123,7 +102,7 @@ class ServerInfo
      *
      * @return string server ID
      */
-    public function getServerID()
+    public function getServerID(): string
     {
         return $this->serverID;
     }
@@ -133,7 +112,7 @@ class ServerInfo
      *
      * @param string $serverID server ID
      */
-    public function setServerID($serverID)
+    public function setServerID(string $serverID): void
     {
         $this->serverID = $serverID;
     }
@@ -143,7 +122,7 @@ class ServerInfo
      *
      * @return string server host
      */
-    public function getHost()
+    public function getHost(): string
     {
         return $this->host;
     }
@@ -153,7 +132,7 @@ class ServerInfo
      *
      * @param string $host server host
      */
-    public function setHost($host)
+    public function setHost(string $host): void
     {
         $this->host = $host;
     }
@@ -163,7 +142,7 @@ class ServerInfo
      *
      * @return int server port number
      */
-    public function getPort()
+    public function getPort(): int
     {
         return $this->port;
     }
@@ -173,7 +152,7 @@ class ServerInfo
      *
      * @param int $port server port number
      */
-    public function setPort($port)
+    public function setPort(int $port): void
     {
         $this->port = $port;
     }
@@ -183,7 +162,7 @@ class ServerInfo
      *
      * @return string server version number
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->version;
     }
@@ -193,7 +172,7 @@ class ServerInfo
      *
      * @param string $version server version number
      */
-    public function setVersion($version)
+    public function setVersion(string $version): void
     {
         $this->version = $version;
     }
@@ -203,7 +182,7 @@ class ServerInfo
      *
      * @return string go version number
      */
-    public function getGoVersion()
+    public function getGoVersion(): string
     {
         return $this->goVersion;
     }
@@ -213,7 +192,7 @@ class ServerInfo
      *
      * @param string $goVersion go version number
      */
-    public function setGoVersion($goVersion)
+    public function setGoVersion(string $goVersion): void
     {
         $this->goVersion = $goVersion;
     }
@@ -223,7 +202,7 @@ class ServerInfo
      *
      * @return bool if auth is required
      */
-    public function isAuthRequired()
+    public function isAuthRequired(): bool
     {
         return $this->authRequired;
     }
@@ -233,7 +212,7 @@ class ServerInfo
      *
      * @param bool $authRequired if auth is required
      */
-    public function setAuthRequired($authRequired)
+    public function setAuthRequired(bool $authRequired): void
     {
         $this->authRequired = $authRequired;
     }
@@ -243,7 +222,7 @@ class ServerInfo
      *
      * @return bool if TLS is required
      */
-    public function isTLSRequired()
+    public function isTLSRequired(): bool
     {
         return $this->TLSRequired;
     }
@@ -253,7 +232,7 @@ class ServerInfo
      *
      * @param bool $TLSRequired if TLS is required
      */
-    public function setTLSRequired($TLSRequired)
+    public function setTLSRequired(bool $TLSRequired): void
     {
         $this->TLSRequired = $TLSRequired;
     }
@@ -263,7 +242,7 @@ class ServerInfo
      *
      * @return bool if TLS certificate is verified
      */
-    public function isTLSVerify()
+    public function isTLSVerify(): bool
     {
         return $this->TLSVerify;
     }
@@ -273,7 +252,7 @@ class ServerInfo
      *
      * @param bool $TLSVerify if TLS certificate is verified
      */
-    public function setTLSVerify($TLSVerify)
+    public function setTLSVerify(bool $TLSVerify): void
     {
         $this->TLSVerify = $TLSVerify;
     }
@@ -283,7 +262,7 @@ class ServerInfo
      *
      * @return bool if SSL is required
      */
-    public function isSSLRequired()
+    public function isSSLRequired(): bool
     {
         return $this->SSLRequired;
     }
@@ -293,7 +272,7 @@ class ServerInfo
      *
      * @param bool $SSLRequired if SSL is required
      */
-    public function setSSLRequired($SSLRequired)
+    public function setSSLRequired(bool $SSLRequired): void
     {
         $this->SSLRequired = $SSLRequired;
     }
@@ -303,7 +282,7 @@ class ServerInfo
      *
      * @return int size in bytes
      */
-    public function getMaxPayload()
+    public function getMaxPayload(): int
     {
         return $this->maxPayload;
     }
@@ -313,7 +292,7 @@ class ServerInfo
      *
      * @param int $maxPayload size in bytes
      */
-    public function setMaxPayload($maxPayload)
+    public function setMaxPayload(int $maxPayload): void
     {
         $this->maxPayload = $maxPayload;
     }
@@ -323,7 +302,7 @@ class ServerInfo
      *
      * @return array list of server connection urls
      */
-    public function getConnectURLs()
+    public function getConnectURLs(): array
     {
         return $this->connectURLs;
     }
@@ -333,7 +312,7 @@ class ServerInfo
      *
      * @param array $connectURLs list of server connection urls
      */
-    public function setConnectURLs(array $connectURLs)
+    public function setConnectURLs(array $connectURLs): void
     {
         $this->connectURLs = $connectURLs;
     }

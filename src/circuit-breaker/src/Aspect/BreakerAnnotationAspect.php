@@ -9,40 +9,30 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\CircuitBreaker\Aspect;
 
 use Hyperf\CircuitBreaker\Annotation\CircuitBreaker;
 use Hyperf\CircuitBreaker\Handler\HandlerInterface;
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Aspect
- */
 class BreakerAnnotationAspect extends AbstractAspect
 {
-    public $annotations = [
+    public array $annotations = [
         CircuitBreaker::class,
     ];
 
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
-        /** @var null|CircuitBreaker $annotation */
-        $annotation = $metadata->method[CircuitBreaker::class] ?? null;
-
-        if (! $annotation) {
-            return $proceedingJoinPoint->process();
-        }
+        /** @var CircuitBreaker $annotation */
+        $annotation = $metadata->method[CircuitBreaker::class];
 
         $handlerClass = $annotation->handler;
 

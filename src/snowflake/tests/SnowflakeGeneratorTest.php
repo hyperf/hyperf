@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Snowflake;
 
 use Hyperf\Snowflake\Configuration;
@@ -16,12 +17,14 @@ use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
 use Hyperf\Snowflake\Meta;
 use Hyperf\Snowflake\MetaGenerator\RandomMilliSecondMetaGenerator;
 use Hyperf\Snowflake\MetaGeneratorInterface;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class SnowflakeGeneratorTest extends TestCase
 {
     public function testGenerateReturnInt()
@@ -59,7 +62,7 @@ class SnowflakeGeneratorTest extends TestCase
         $generator = new SnowflakeIdGenerator($metaGenerator);
 
         $meta = $generator->degenerate(PHP_INT_MAX);
-        $days = intval(($meta->getTimeInterval()) / (3600 * 24 * 1000));
+        $days = intval($meta->getTimeInterval() / (3600 * 24 * 1000));
         $this->assertSame(25451, $days); // 70 years.
     }
 }

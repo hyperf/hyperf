@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX\Contract;
 
 use Hyperf\ReactiveX\IpcMessageWrapper;
 
 interface BroadcasterInterface
 {
-    public function broadcast(IpcMessageWrapper $message);
+    public function broadcast(IpcMessageWrapper $message): void;
 }

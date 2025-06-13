@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Migrations;
 
 class TableGuesser
@@ -30,13 +31,13 @@ class TableGuesser
     {
         foreach (self::CREATE_PATTERNS as $pattern) {
             if (preg_match($pattern, $migration, $matches)) {
-                return [$matches[1], $create = true];
+                return [$matches[1], true];
             }
         }
 
         foreach (self::CHANGE_PATTERNS as $pattern) {
             if (preg_match($pattern, $migration, $matches)) {
-                return [$matches[2], $create = false];
+                return [$matches[2], false];
             }
         }
         return ['', false];

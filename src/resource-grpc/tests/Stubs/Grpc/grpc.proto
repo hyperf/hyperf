@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package HyperfTest.ResourceGrpc.Stubs.Grpc;
 
-service hi {
-    rpc sayHello (HiUser) returns (HiReply) {
+service Hi {
+    rpc SayHello (HiUser) returns (HiReply) {
     }
 }
 

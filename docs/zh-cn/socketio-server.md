@@ -41,17 +41,15 @@ use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\Annotation\SocketIONamespace;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
-use Hyperf\Utils\Codec\Json;
+use Hyperf\Codec\Json;
 
-/**
- * @SocketIONamespace("/")
- */
+#[SocketIONamespace("/")]
 class WebSocketController extends BaseNamespace
 {
     /**
-     * @Event("event")
      * @param string $data
      */
+    #[Event("event")]
     public function onEvent(Socket $socket, $data)
     {
         // 应答
@@ -59,9 +57,9 @@ class WebSocketController extends BaseNamespace
     }
 
     /**
-     * @Event("join-room")
      * @param string $data
      */
+    #[Event("join-room")]
     public function onJoinRoom(Socket $socket, $data)
     {
         // 将当前用户加入房间
@@ -73,9 +71,9 @@ class WebSocketController extends BaseNamespace
     }
 
     /**
-     * @Event("say")
      * @param string $data
      */
+    #[Event("say")]
     public function onSay(Socket $socket, $data)
     {
         $data = Json::decode($data);
@@ -94,7 +92,7 @@ class WebSocketController extends BaseNamespace
 由于服务端只实现了 WebSocket 通讯，所以客户端要加上 `{transports:["websocket"]}` 。
 
 ```html
-<script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
 <script>
     var socket = io('ws://127.0.0.1:9502', { transports: ["websocket"] });
     socket.on('connect', data => {
@@ -116,9 +114,7 @@ class WebSocketController extends BaseNamespace
 
 ```php
 <?php
-/**
- * @Event("SomeEvent")
- */
+#[Event("SomeEvent")]
 function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
 
   // sending to the client
@@ -156,7 +152,7 @@ function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
 
 ```php
 <?php
-$io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
+$io = \Hyperf\Context\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
 
 // sending to all clients in 'game' room, including sender
 // 向 game 房间内的所有连接推送 bigger-announcement 事件。
@@ -193,8 +189,8 @@ $io->of('/foo')->emit();
 
 /**
  * class内使用也等价
- * @SocketIONamespace("/foo")
  */
+#[SocketIONamespace("/foo")]
 class FooNamespace extends BaseNamespace {
     public function onEvent(){
         $this->emit(); 
@@ -209,7 +205,7 @@ class FooNamespace extends BaseNamespace {
 
 Socket.io 通过自定义命名空间实现多路复用。（注意：不是 PHP 的命名空间）
 
-1. 可以通过 `@SocketIONamespace("/xxx")` 将控制器映射为 xxx 的命名空间，
+1. 可以通过 `#[SocketIONamespace("/xxx")]` 将控制器映射为 xxx 的命名空间，
 
 2. 也可通过
 
@@ -313,7 +309,7 @@ class WebSocketController extends BaseNamespace
 }
 ```
 
-2. 可以在控制器上添加 `@Event()` 注解，以方法名作为事件名来分发。此时应注意其他公有方法可能会和事件名冲突。
+2. 可以在控制器上添加 `#[Event]` 注解，以方法名作为事件名来分发。此时应注意其他公有方法可能会和事件名冲突。
 
 ```php
 <?php
@@ -326,10 +322,8 @@ use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 
-/**
- * @SocketIONamespace("/")
- * @Event()
- */
+#[SocketIONamespace("/")]
+#[Event]
 class WebSocketController extends BaseNamespace
 {
     public function echo(Socket $socket, $data)
@@ -414,10 +408,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class WebSocketAuthMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {

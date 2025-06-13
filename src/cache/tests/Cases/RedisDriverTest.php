@@ -9,11 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Cache\Cases;
 
+use DateInterval;
 use Hyperf\Cache\CacheManager;
+use Hyperf\Cache\Driver\KeyCollectorInterface;
 use Hyperf\Cache\Driver\RedisDriver;
+use Hyperf\Codec\Packer\PhpSerializerPacker;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
@@ -26,17 +31,19 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Packer\PhpSerializerPacker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Cache\Stub\Foo;
 use HyperfTest\Cache\Stub\SerializeRedisDriver;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RedisDriverTest extends TestCase
 {
     protected function tearDown(): void
@@ -83,10 +90,10 @@ class RedisDriverTest extends TestCase
         $this->assertTrue($bool);
         $this->assertSame('yyy', $result);
 
-        $redis = $container->get(\Redis::class);
+        $redis = $container->get(Redis::class);
         $this->assertSame(1, $redis->ttl('c:xxx'));
 
-        $dv = new \DateInterval('PT5S');
+        $dv = new DateInterval('PT5S');
         $driver->set('xxx', 'yyy', $dv);
         $this->assertSame(5, $redis->ttl('c:xxx'));
     }
@@ -127,6 +134,36 @@ class RedisDriverTest extends TestCase
         $this->assertNotNull($driver->get('xxx3'));
     }
 
+    public function testKeys()
+    {
+        $container = $this->getContainer();
+        $driver = $container->get(CacheManager::class)->getDriver();
+
+        $this->assertInstanceOf(KeyCollectorInterface::class, $driver);
+        $collector = 'test:keys:' . uniqid();
+        $driver->addKey($collector, '1');
+        $driver->addKey($collector, '2');
+        $this->assertSame(['1', '2'], $driver->keys($collector));
+
+        $collector = 'test:keys:' . uniqid();
+        $this->assertSame([], $driver->keys($collector));
+    }
+
+    public function testOptionsPool()
+    {
+        $container = $this->getContainer();
+        $driver = $container->get(CacheManager::class)->getDriver();
+
+        $redis = (new ClassInvoker($driver))->redis;
+        $this->assertInstanceOf(RedisProxy::class, $redis);
+
+        $this->assertSame('default', (new ClassInvoker($redis))->poolName);
+
+        $driver = $container->get(CacheManager::class)->getDriver('default2');
+        $redis = (new ClassInvoker($driver))->redis;
+        $this->assertSame('serialize', (new ClassInvoker($redis))->poolName);
+    }
+
     protected function getContainer()
     {
         $container = Mockery::mock(Container::class);
@@ -141,6 +178,14 @@ class RedisDriverTest extends TestCase
                     'driver' => SerializeRedisDriver::class,
                     'packer' => PhpSerializerPacker::class,
                     'prefix' => 'c:',
+                ],
+                'default2' => [
+                    'driver' => RedisDriver::class,
+                    'packer' => PhpSerializerPacker::class,
+                    'prefix' => 'c:',
+                    'options' => [
+                        'pool' => 'serialize',
+                    ],
                 ],
             ],
             'redis' => [
@@ -184,6 +229,9 @@ class RedisDriverTest extends TestCase
             ],
         ]);
 
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
+
         $logger = Mockery::mock(StdoutLoggerInterface::class);
         $logger->shouldReceive(Mockery::any())->andReturn(null);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
@@ -206,7 +254,7 @@ class RedisDriverTest extends TestCase
         });
 
         $poolFactory = new PoolFactory($container);
-        $container->shouldReceive('get')->with(\Redis::class)->andReturn(new Redis($poolFactory));
+        $container->shouldReceive('get')->with(Redis::class)->andReturn(new Redis($poolFactory));
 
         $container->shouldReceive('make')->with(RedisProxy::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($poolFactory) {
             return new RedisProxy($poolFactory, $args['pool']);

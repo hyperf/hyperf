@@ -9,44 +9,25 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Etcd;
 
 use GuzzleHttp\HandlerStack;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Guzzle\HandlerStackFactory;
-use Hyperf\Utils\Coroutine;
 
 abstract class Client
 {
-    /**
-     * @var string
-     */
-    protected $baseUri;
-
-    /**
-     * @var string
-     */
-    protected $version;
-
-    /**
-     * @var array
-     */
-    protected $options = [];
+    protected string $baseUri;
 
     /**
      * @var HandlerStack[]
      */
-    protected $stacks = [];
+    protected array $stacks = [];
 
-    /**
-     * @var HandlerStackFactory
-     */
-    protected $factory;
-
-    public function __construct(string $uri, string $version, array $options, HandlerStackFactory $factory)
+    public function __construct(string $uri, string $version, protected array $options, protected HandlerStackFactory $factory)
     {
-        $this->options = $options;
         $this->baseUri = sprintf('%s/%s/', $uri, $version);
-        $this->factory = $factory;
     }
 
     protected function getDefaultHandler()

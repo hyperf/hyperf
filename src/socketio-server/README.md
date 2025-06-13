@@ -38,7 +38,7 @@ use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\Annotation\SocketIONamespace;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
-use Hyperf\Utils\Codec\Json;
+use Hyperf\Codec\Json;
 
 /**
  * @SocketIONamespace("/")
@@ -91,7 +91,7 @@ class WebSocketController extends BaseNamespace
 由于服务端只实现了WebSocket通讯，所以客户端要加上 `{transports:["websocket"]}` 。
 
 ```html
-<script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
 <script>
     var socket = io('ws://127.0.0.1:9502', { transports: ["websocket"] });
     socket.on('connect', data => {
@@ -132,7 +132,7 @@ function onConnect(\Hyperf\SocketIOServer\Socket $socket){
   // sending without compression
   $socket->compress(false)->emit('uncompressed', "that's rough");
 
-  $io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
+  $io = \Hyperf\Context\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
 
   // sending to all clients in 'game' room, including sender
   $io->in('game')->emit('big-announcement', 'the game will start soon');

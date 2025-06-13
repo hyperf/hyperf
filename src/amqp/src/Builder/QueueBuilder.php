@@ -9,15 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Builder;
+
+use PhpAmqpLib\Wire\AMQPTable;
 
 class QueueBuilder extends Builder
 {
-    protected $queue;
+    protected ?string $queue = null;
 
-    protected $exclusive = false;
+    protected bool $exclusive = false;
 
-    protected $arguments = [
+    protected AMQPTable|array $arguments = [
         'x-ha-policy' => ['S', 'all'],
     ];
 

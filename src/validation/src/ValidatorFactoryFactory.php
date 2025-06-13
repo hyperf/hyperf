@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
 use Hyperf\Contract\TranslatorInterface;
@@ -18,13 +19,15 @@ use Hyperf\Validation\Event\ValidatorFactoryResolved;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+use function Hyperf\Support\make;
+
 class ValidatorFactoryFactory
 {
     public function __invoke(ContainerInterface $container)
     {
         $translator = $container->get(TranslatorInterface::class);
 
-        /** @var \Hyperf\Validation\ValidatorFactory $validatorFactory */
+        /** @var ValidatorFactory $validatorFactory */
         $validatorFactory = make(ValidatorFactory::class, compact('translator', 'container'));
 
         if ($container->has(ConnectionResolverInterface::class) && $container->has(PresenceVerifierInterface::class)) {

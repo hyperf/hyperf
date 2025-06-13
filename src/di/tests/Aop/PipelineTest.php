@@ -9,20 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\Aop;
 
 use Hyperf\Di\Aop\Pipeline;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\Testing\Debug;
 use HyperfTest\Di\Stub\Aspect\NoProcessAspect;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use WeakReference;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class PipelineTest extends TestCase
 {
     protected function tearDown(): void
@@ -30,7 +33,7 @@ class PipelineTest extends TestCase
         Mockery::close();
     }
 
-    public function testRefcountForPipelineCarry()
+    public function testWeakReferenceForPipelineCarry()
     {
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('get')->with(NoProcessAspect::class)->andReturn(new NoProcessAspect());
@@ -45,6 +48,9 @@ class PipelineTest extends TestCase
         });
 
         $this->assertTrue($res);
-        $this->assertEquals('2', Debug::getRefCount($pipeline));
+        $wr = WeakReference::create($pipeline);
+        $wr->get();
+        unset($pipeline);
+        $this->assertNull($wr->get());
     }
 }

@@ -9,14 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\GrpcClient;
 
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Coroutine\Channel\Pool as ChannelPool;
 use Hyperf\Di\Container;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\GrpcClient\StreamingCall;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\ChannelPool;
 use HyperfTest\GrpcClient\Stub\RouteGuideClient;
+use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Routeguide\Point;
 use Routeguide\Rectangle;
@@ -27,11 +30,12 @@ use Routeguide\RouteSummary;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RouteGuideClientTest extends TestCase
 {
     protected function setUp(): void
     {
-        $container = \Mockery::mock(Container::class);
+        $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ChannelPool::class)->andReturn(new ChannelPool());
         $container->shouldReceive('has')->andReturn(false);
         ApplicationContext::setContainer($container);
@@ -44,7 +48,7 @@ class RouteGuideClientTest extends TestCase
         $point = new Point();
         $point->setLatitude(407838351);
         $point->setLongitude(-746143763);
-        [$feature,] = $client->getFeature($point);
+        [$feature] = $client->getFeature($point);
         $this->assertEquals('Patriots Path, Mendham, NJ 07945, USA', $feature->getName());
     }
 
@@ -67,7 +71,7 @@ class RouteGuideClientTest extends TestCase
         /** @var StreamingCall $call */
         $call = $client->listFeatures();
         $call->send($rect);
-        [$feature,] = $call->recv();
+        [$feature] = $call->recv();
         $this->assertEquals('Patriots Path, Mendham, NJ 07945, USA', $feature->getName());
         [$feature,, $response] = $call->recv();
         $this->assertEquals('101 New Jersey 10, Whippany, NJ 07981, USA', $feature->getName());
@@ -97,7 +101,7 @@ class RouteGuideClientTest extends TestCase
         $call->push($second);
         $call->end();
         /** @var RouteSummary $summary */
-        [$summary,] = $call->recv();
+        [$summary] = $call->recv();
         $this->assertEquals(2, $summary->getPointCount());
     }
 
@@ -129,12 +133,12 @@ class RouteGuideClientTest extends TestCase
         $call->recv(1);
         $call->push($firstNote);
         /** @var RouteNote $note */
-        [$note,] = $call->recv();
+        [$note] = $call->recv();
         $this->assertEquals($first->getLatitude(), $note->getLocation()->getLatitude());
 
         $call->push($secondNote);
         $call->push($secondNote);
-        [$note,] = $call->recv();
+        [$note] = $call->recv();
         $this->assertEquals($second->getLatitude(), $note->getLocation()->getLatitude());
     }
 }

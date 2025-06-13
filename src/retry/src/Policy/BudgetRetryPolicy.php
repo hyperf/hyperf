@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Retry\Policy;
 
 use Hyperf\Retry\RetryBudgetInterface;
@@ -16,11 +17,8 @@ use Hyperf\Retry\RetryContext;
 
 class BudgetRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
-    private $budget;
-
-    public function __construct(RetryBudgetInterface $retryBudget)
+    public function __construct(private RetryBudgetInterface $retryBudget)
     {
-        $this->budget = $retryBudget;
     }
 
     public function canRetry(RetryContext &$retryContext): bool
@@ -28,7 +26,7 @@ class BudgetRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
         if ($retryContext->isFirstTry()) {
             return true;
         }
-        if ($this->budget->consume(true)) {
+        if ($this->retryBudget->consume(true)) {
             return true;
         }
         $retryContext['retryExhausted'] = true;
@@ -37,12 +35,12 @@ class BudgetRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 
     public function beforeRetry(RetryContext &$retryContext): void
     {
-        $this->budget->consume();
+        $this->retryBudget->consume();
     }
 
     public function start(RetryContext $parentRetryContext): RetryContext
     {
-        $this->budget->produce();
+        $this->retryBudget->produce();
         return $parentRetryContext;
     }
 }

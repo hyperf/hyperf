@@ -9,14 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Contract;
 
 interface EngineInterface
 {
     /**
      * Get the evaluated contents of the view.
-     *
-     * @return string
      */
-    public function get(string $path, array $data = []);
+    public function get(string $path, array $data = []): string;
 }

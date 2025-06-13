@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -21,15 +22,9 @@ use Psr\Container\ContainerInterface;
 
 class InitProcessTitleListener implements ListenerInterface
 {
-    /**
-     * @var string
-     */
-    protected $name = '';
+    protected string $name = '';
 
-    /**
-     * @var string
-     */
-    protected $dot = '.';
+    protected string $dot = '.';
 
     public function __construct(ContainerInterface $container)
     {
@@ -50,7 +45,7 @@ class InitProcessTitleListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $array = [];
         if ($this->name !== '') {
@@ -64,11 +59,10 @@ class InitProcessTitleListener implements ListenerInterface
         } elseif ($event instanceof AfterWorkerStart) {
             if ($event->server->taskworker) {
                 $array[] = 'TaskWorker';
-                $array[] = $event->workerId;
             } else {
                 $array[] = 'Worker';
-                $array[] = $event->workerId;
             }
+            $array[] = $event->workerId;
         } elseif ($event instanceof BeforeProcessHandle) {
             $array[] = $event->process->name;
             $array[] = $event->index;
@@ -88,8 +82,6 @@ class InitProcessTitleListener implements ListenerInterface
 
     protected function isSupportedOS(): bool
     {
-        return ! in_array(PHP_OS, [
-            'Darwin',
-        ]);
+        return PHP_OS != 'Darwin';
     }
 }

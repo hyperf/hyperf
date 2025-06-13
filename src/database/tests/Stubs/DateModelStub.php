@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\Stubs;
 
 class DateModelStub extends ModelStub
 {
-    public function getDates()
+    public function getDates(): array
     {
         return ['created_at', 'updated_at'];
     }

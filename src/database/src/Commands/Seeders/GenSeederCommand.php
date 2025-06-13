@@ -9,31 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Seeders;
 
 use Hyperf\Database\Seeders\SeederCreator;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 class GenSeederCommand extends BaseCommand
 {
     /**
-     * The seeder creator instance.
-     *
-     * @var \Hyperf\Database\Seeders\SeederCreator
-     */
-    protected $creator;
-
-    /**
      * Create a new seeder generator command instance.
      */
-    public function __construct(SeederCreator $creator)
+    public function __construct(protected SeederCreator $creator)
     {
         parent::__construct('gen:seeder');
         $this->setDescription('Create a new seeder class');
-
-        $this->creator = $creator;
     }
 
     /**

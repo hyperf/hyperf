@@ -9,20 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Retry\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Retry\BackoffStrategy;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class BackoffRetryFalsy extends RetryFalsy
 {
-    public $base = 100;
-
-    public $sleepStrategyClass = BackoffStrategy::class;
+    public function __construct(public int $base = 100, public string $sleepStrategyClass = BackoffStrategy::class)
+    {
+    }
 }

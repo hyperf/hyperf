@@ -9,15 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Retry;
 
-use Hyperf\Utils\Fluent;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Support\Fluent;
+use Throwable;
 
 /**
  * @property mixed $lastResult
- * @property null|\Throwable $lastThrowable
+ * @property null|Throwable $lastThrowable
  * @property null|bool $retryExhausted
- * @property null|StrategyInterface $strategy
+ * @property null|SleepStrategyInterface $strategy
  * @property null|float $startTime
  * @property null|int $attempt
  * @property null|ProceedingJoinPoint $proceedingJoinPoint

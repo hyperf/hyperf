@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigCenter\Listener;
 
 use Hyperf\Command\Event\BeforeHandle;
@@ -29,7 +30,7 @@ class CreateMessageFetcherLoopListener extends OnPipeMessageListener
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $mode = strtolower($this->config->get('config_center.mode', Mode::PROCESS));
         if ($mode === Mode::COROUTINE) {

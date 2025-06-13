@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Testing\Stub;
 
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Context\Context;
+use Hyperf\Coroutine\Coroutine;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 class FooController
 {
@@ -24,7 +26,7 @@ class FooController
 
     public function exception()
     {
-        throw new \RuntimeException('Server Error', 500);
+        throw new RuntimeException('Server Error', 500);
     }
 
     public function id()
@@ -32,8 +34,16 @@ class FooController
         return ['code' => 0, 'data' => Coroutine::id()];
     }
 
+    public function context()
+    {
+        return [
+            'request_id' => Context::getOrSet('request_id', uniqid()),
+        ];
+    }
+
     public function request()
     {
+        /** @var ServerRequestInterface $request */
         $request = Context::get(ServerRequestInterface::class);
         $uri = $request->getUri();
         return [
@@ -45,6 +55,7 @@ class FooController
                 'query' => $uri->getQuery(),
             ],
             'params' => $request->getQueryParams(),
+            'cookies' => $request->getCookieParams(),
         ];
     }
 }

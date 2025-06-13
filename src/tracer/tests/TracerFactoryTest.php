@@ -9,20 +9,34 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Tracer;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
+use Hyperf\Tracer\Adapter\JaegerTracerFactory;
+use Hyperf\Tracer\Adapter\NoOpTracerFactory;
+use Hyperf\Tracer\Adapter\Reporter\HttpClientFactory;
+use Hyperf\Tracer\Adapter\Reporter\ReporterFactory;
+use Hyperf\Tracer\Adapter\ZipkinTracerFactory;
 use Hyperf\Tracer\TracerFactory;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
+use OpenTracing\NoopTracer;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Zipkin\Reporters\Http;
 use Zipkin\Samplers\BinarySampler;
+use ZipkinOpenTracing\Tracer;
+
+use function Hyperf\Support\env;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TracerFactoryTest extends TestCase
 {
     protected function tearDown(): void
@@ -53,7 +67,7 @@ class TracerFactoryTest extends TestCase
         $container = $this->getContainer($config);
         $factory = new TracerFactory();
 
-        $this->assertInstanceOf(\ZipkinOpenTracing\Tracer::class, $factory($container));
+        $this->assertInstanceOf(Tracer::class, $factory($container));
     }
 
     public function testZipkinFactory()
@@ -65,7 +79,7 @@ class TracerFactoryTest extends TestCase
                 ],
                 'tracer' => [
                     'zipkin' => [
-                        'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
+                        'driver' => ZipkinTracerFactory::class,
                         'app' => [
                             'name' => 'skeleton',
                             // Hyperf will detect the system info automatically as the value if ipv4, ipv6, port is null
@@ -78,10 +92,13 @@ class TracerFactoryTest extends TestCase
                         'sampler' => BinarySampler::createAsAlwaysSample(),
                     ],
                     'jaeger' => [
-                        'driver' => \Hyperf\Tracer\Adapter\JaegerTracerFactory::class,
+                        'driver' => JaegerTracerFactory::class,
                         'name' => 'skeleton',
                         'options' => [
                         ],
+                    ],
+                    'noop' => [
+                        'driver' => NoOpTracerFactory::class,
                     ],
                 ],
             ],
@@ -89,7 +106,7 @@ class TracerFactoryTest extends TestCase
         $container = $this->getContainer($config);
         $factory = new TracerFactory();
 
-        $this->assertInstanceOf(\ZipkinOpenTracing\Tracer::class, $factory($container));
+        $this->assertInstanceOf(Tracer::class, $factory($container));
     }
 
     public function testJaegerFactory()
@@ -101,7 +118,7 @@ class TracerFactoryTest extends TestCase
                 ],
                 'tracer' => [
                     'zipkin' => [
-                        'driver' => \Hyperf\Tracer\Adapter\ZipkinTracerFactory::class,
+                        'driver' => ZipkinTracerFactory::class,
                         'app' => [
                             'name' => 'skeleton',
                             // Hyperf will detect the system info automatically as the value if ipv4, ipv6, port is null
@@ -114,10 +131,13 @@ class TracerFactoryTest extends TestCase
                         'sampler' => BinarySampler::createAsAlwaysSample(),
                     ],
                     'jaeger' => [
-                        'driver' => \Hyperf\Tracer\Adapter\JaegerTracerFactory::class,
+                        'driver' => JaegerTracerFactory::class,
                         'name' => 'skeleton',
                         'options' => [
                         ],
+                    ],
+                    'noop' => [
+                        'driver' => NoOpTracerFactory::class,
                     ],
                 ],
             ],
@@ -128,19 +148,64 @@ class TracerFactoryTest extends TestCase
         $this->assertInstanceOf(\Jaeger\Tracer::class, $factory($container));
     }
 
+    public function testNoOpFactory()
+    {
+        $config = new Config([
+            'opentracing' => [
+                'default' => 'noop',
+                'enable' => [
+                ],
+                'tracer' => [
+                    'zipkin' => [
+                        'driver' => ZipkinTracerFactory::class,
+                        'app' => [
+                            'name' => 'skeleton',
+                            // Hyperf will detect the system info automatically as the value if ipv4, ipv6, port is null
+                            'ipv4' => '127.0.0.1',
+                            'ipv6' => null,
+                            'port' => 9501,
+                        ],
+                        'options' => [
+                        ],
+                        'sampler' => BinarySampler::createAsAlwaysSample(),
+                    ],
+                    'jaeger' => [
+                        'driver' => JaegerTracerFactory::class,
+                        'name' => 'skeleton',
+                        'options' => [
+                        ],
+                    ],
+                    'noop' => [
+                        'driver' => NoOpTracerFactory::class,
+                    ],
+                ],
+            ],
+        ]);
+        $container = $this->getContainer($config);
+        $factory = new TracerFactory();
+
+        $this->assertInstanceOf(NoopTracer::class, $factory($container));
+    }
+
     protected function getContainer($config)
     {
         $container = Mockery::mock(Container::class);
-        $client = Mockery::mock(\Hyperf\Tracer\Adapter\HttpClientFactory::class);
+        $client = Mockery::mock(HttpClientFactory::class);
+        $reporter = Mockery::mock(ReporterFactory::class);
+        $reporter->shouldReceive('make')
+            ->andReturn(new Http([], $client));
 
         $container->shouldReceive('get')
-            ->with(\Hyperf\Tracer\Adapter\ZipkinTracerFactory::class)
-            ->andReturn(new \Hyperf\Tracer\Adapter\ZipkinTracerFactory($config, $client));
+            ->with(ZipkinTracerFactory::class)
+            ->andReturn(new ZipkinTracerFactory($config, $reporter));
         $container->shouldReceive('get')
-            ->with(\Hyperf\Tracer\Adapter\JaegerTracerFactory::class)
-            ->andReturn(new \Hyperf\Tracer\Adapter\JaegerTracerFactory($config));
+            ->with(JaegerTracerFactory::class)
+            ->andReturn(new JaegerTracerFactory($config));
         $container->shouldReceive('get')
-            ->with(\Hyperf\Contract\ConfigInterface::class)
+            ->with(NoOpTracerFactory::class)
+            ->andReturn(new NoOpTracerFactory());
+        $container->shouldReceive('get')
+            ->with(ConfigInterface::class)
             ->andReturn($config);
 
         ApplicationContext::setContainer($container);

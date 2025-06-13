@@ -9,28 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Cache\Listener;
 
 use Hyperf\Cache\Annotation\Cacheable;
 use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
-use Hyperf\Cache\Driver\DriverInterface;
 use Hyperf\Cache\Driver\KeyCollectorInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 
 class DeleteListener implements ListenerInterface
 {
-    /**
-     * @var CacheManager
-     */
-    protected $manager;
-
-    protected $annotationManager;
-
-    public function __construct(CacheManager $manager, AnnotationManager $annotationManager)
+    public function __construct(protected CacheManager $manager, protected AnnotationManager $annotationManager)
     {
-        $this->manager = $manager;
-        $this->annotationManager = $annotationManager;
     }
 
     public function listen(): array
@@ -43,7 +34,7 @@ class DeleteListener implements ListenerInterface
     /**
      * @param DeleteEvent $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $className = $event->getClassName();
         $method = $event->getMethod();
@@ -51,7 +42,6 @@ class DeleteListener implements ListenerInterface
 
         [$key, , $group, $annotation] = $this->annotationManager->getCacheableValue($className, $method, $arguments);
 
-        /** @var DriverInterface $driver */
         $driver = $this->manager->getDriver($group);
         $driver->delete($key);
 

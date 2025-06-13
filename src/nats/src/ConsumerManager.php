@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nats;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
@@ -23,26 +24,21 @@ use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Throwable;
+
+use function Hyperf\Support\make;
 
 class ConsumerManager
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function run()
     {
+        /** @var array<string, ConsumerAnnotation> $classes */
         $classes = AnnotationCollector::getClassesByAnnotation(ConsumerAnnotation::class);
-        /**
-         * @var string $class
-         * @var ConsumerAnnotation $annotation
-         */
+
         foreach ($classes as $class => $annotation) {
             $instance = make($class);
             if (! $instance instanceof AbstractConsumer) {
@@ -55,7 +51,7 @@ class ConsumerManager
 
             $nums = $annotation->nums;
             $process = $this->createProcess($instance);
-            $process->nums = (int) $nums;
+            $process->nums = $nums;
             $process->name = $instance->getName() . '-' . $instance->getSubject();
             ProcessManager::register($process);
         }
@@ -64,26 +60,13 @@ class ConsumerManager
     private function createProcess(AbstractConsumer $consumer): AbstractProcess
     {
         return new class($this->container, $consumer) extends AbstractProcess {
-            /**
-             * @var AbstractConsumer
-             */
-            private $consumer;
+            private Driver\DriverInterface $subscriber;
 
-            /**
-             * @var Driver\DriverInterface
-             */
-            private $subscriber;
+            private ?EventDispatcherInterface $dispatcher = null;
 
-            /**
-             * @var null|EventDispatcherInterface
-             */
-            private $dispatcher;
-
-            public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
+            public function __construct(ContainerInterface $container, private AbstractConsumer $consumer)
             {
                 parent::__construct($container);
-                $this->consumer = $consumer;
-
                 $pool = $this->consumer->getPool();
                 $this->subscriber = $this->container->get(DriverFactory::class)->get($pool);
                 if ($container->has(EventDispatcherInterface::class)) {
@@ -94,22 +77,22 @@ class ConsumerManager
             public function handle(): void
             {
                 while (true) {
-                    $this->dispatcher && $this->dispatcher->dispatch(new BeforeSubscribe($this->consumer));
+                    $this->dispatcher?->dispatch(new BeforeSubscribe($this->consumer));
                     $this->subscriber->subscribe(
                         $this->consumer->getSubject(),
                         $this->consumer->getQueue(),
                         function ($data) {
                             try {
-                                $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
+                                $this->dispatcher?->dispatch(new BeforeConsume($this->consumer, $data));
                                 $this->consumer->consume($data);
-                                $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data));
-                            } catch (\Throwable $throwable) {
-                                $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
+                                $this->dispatcher?->dispatch(new AfterConsume($this->consumer, $data));
+                            } catch (Throwable $throwable) {
+                                $this->dispatcher?->dispatch(new FailToConsume($this->consumer, $data, $throwable));
                             }
                         }
                     );
 
-                    $this->dispatcher && $this->dispatcher->dispatch(new AfterSubscribe($this->consumer));
+                    $this->dispatcher?->dispatch(new AfterSubscribe($this->consumer));
                     usleep(1000);
                 }
             }

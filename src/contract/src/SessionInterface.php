@@ -9,15 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Contract;
+
+use RuntimeException;
 
 interface SessionInterface
 {
     /**
      * Starts the session storage.
      *
-     * @throws \RuntimeException if session fails to start
      * @return bool True if session started
+     * @throws RuntimeException if session fails to start
      */
     public function start(): bool;
 

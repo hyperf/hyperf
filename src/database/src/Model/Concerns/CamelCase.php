@@ -9,23 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Concerns;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\StrCache;
 
 trait CamelCase
 {
     public function getAttribute($key)
     {
-        return parent::getAttribute($key) ?? parent::getAttribute(Str::snake($key));
+        return parent::getAttribute($key) ?? parent::getAttribute(StrCache::snake($key));
     }
 
     public function setAttribute($key, $value)
     {
-        return parent::setAttribute(Str::snake($key), $value);
+        return parent::setAttribute(StrCache::snake($key), $value);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $array = [];
         foreach ($this->toArray() as $key => $value) {
@@ -34,7 +35,7 @@ trait CamelCase
         return $array;
     }
 
-    public function getFillable()
+    public function getFillable(): array
     {
         $fillable = [];
         foreach (parent::getFillable() as $key) {
@@ -59,6 +60,6 @@ trait CamelCase
 
     protected function keyTransform($key)
     {
-        return Str::camel($key);
+        return StrCache::camel($key);
     }
 }

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcServer\Router;
 
 /**
@@ -17,15 +18,9 @@ namespace Hyperf\RpcServer\Router;
  */
 class Router
 {
-    /**
-     * @var string
-     */
-    protected static $serverName = 'rpc';
+    protected static string $serverName = 'rpc';
 
-    /**
-     * @var DispatcherFactory
-     */
-    protected static $factory;
+    protected static ?DispatcherFactory $factory = null;
 
     public static function __callStatic($name, $arguments)
     {
@@ -37,7 +32,7 @@ class Router
     {
         $temp = $serverName;
         static::$serverName = $serverName;
-        call($callback);
+        $callback();
         static::$serverName = $temp;
         unset($temp);
     }

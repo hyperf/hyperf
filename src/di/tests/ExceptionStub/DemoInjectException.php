@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\ExceptionStub;
 
 use Hyperf\Di\Annotation\Inject;
@@ -19,9 +20,9 @@ use Hyperf\Di\Annotation\Inject;
 class DemoInjectException
 {
     /**
-     * @Inject(required=true)
      * @var Demo1
      */
+    #[Inject(required: true)]
     private $demo;
 
     public function getDemo()

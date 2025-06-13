@@ -9,13 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\LazyLoader;
 
 class InterfaceLazyProxyBuilder extends AbstractLazyProxyBuilder
 {
     public function addClassRelationship(): AbstractLazyProxyBuilder
     {
-        if (strpos($this->originalClassName, '\\') !== 0) {
+        if (! str_starts_with($this->originalClassName, '\\')) {
             $originalClassName = '\\' . $this->originalClassName;
         } else {
             $originalClassName = $this->originalClassName;

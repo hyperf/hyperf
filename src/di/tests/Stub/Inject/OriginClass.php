@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\Stub\Inject;
 
 use Hyperf\Di\Annotation\Inject;
@@ -18,7 +19,6 @@ class OriginClass extends ParentClass
     use FooTrait;
 
     /**
-     * @Inject
      * @var Tar
      */
     #[Inject]

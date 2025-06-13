@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Session\Middleware;
 
 use Carbon\Carbon;
@@ -24,20 +25,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class SessionMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var SessionManager
-     */
-    private $sessionManager;
-
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(SessionManager $sessionManager, ConfigInterface $config)
+    public function __construct(private SessionManager $sessionManager, private ConfigInterface $config)
     {
-        $this->sessionManager = $sessionManager;
-        $this->config = $config;
     }
 
     /**
@@ -112,11 +101,12 @@ class SessionMiddleware implements MiddlewareInterface
         $uri = $request->getUri();
         $path = '/';
         $secure = strtolower($uri->getScheme()) === 'https';
-        $httpOnly = true;
 
         $domain = $this->config->get('session.options.domain') ?? $uri->getHost();
 
-        $cookie = new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, $httpOnly);
+        $sameSite = $this->config->get('session.options.cookie_same_site');
+
+        $cookie = new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, true, false, $sameSite);
         if (! method_exists($response, 'withCookie')) {
             return $response->withHeader('Set-Cookie', (string) $cookie);
         }

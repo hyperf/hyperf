@@ -9,18 +9,29 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Seeders;
 
 use Hyperf\Command\Command;
+use Hyperf\Database\Seeders\Seed;
 
+/**
+ * @property Seed $seed
+ */
 abstract class BaseCommand extends Command
 {
+    protected function getSeederPaths(): array
+    {
+        return array_merge(
+            $this->seed->paths(),
+            [$this->getSeederPath()]
+        );
+    }
+
     /**
      * Get seeder path (either specified by '--path' option or default location).
-     *
-     * @return string
      */
-    protected function getSeederPath()
+    protected function getSeederPath(): string
     {
         if (! is_null($targetPath = $this->input->getOption('path'))) {
             return ! $this->usingRealPath()
@@ -33,10 +44,8 @@ abstract class BaseCommand extends Command
 
     /**
      * Determine if the given path(s) are pre-resolved "real" paths.
-     *
-     * @return bool
      */
-    protected function usingRealPath()
+    protected function usingRealPath(): bool
     {
         return $this->input->hasOption('realpath') && $this->input->getOption('realpath');
     }

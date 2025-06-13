@@ -9,20 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Command\Event;
 
 use Hyperf\Command\Command;
 
 abstract class Event
 {
-    /**
-     * @var Command
-     */
-    protected $command;
-
-    public function __construct(Command $command)
+    public function __construct(protected Command $command)
     {
-        $this->command = $command;
     }
 
     public function getCommand(): Command

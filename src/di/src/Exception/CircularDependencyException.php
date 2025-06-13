@@ -9,19 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Exception;
 
-class CircularDependencyException extends \RuntimeException
-{
-    /**
-     * @var array
-     */
-    protected $list = [];
+use RuntimeException;
 
-    /**
-     * @var bool
-     */
-    protected $sealed = false;
+class CircularDependencyException extends RuntimeException
+{
+    protected array $list = [];
+
+    protected bool $sealed = false;
 
     public function addDefinitionName(string $name)
     {

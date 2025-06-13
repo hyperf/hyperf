@@ -9,19 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\GrpcClient;
 
 use Grpc\UserReply;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Coroutine\Channel\Pool as ChannelPool;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Parallel;
 use Hyperf\Di\Container;
 use Hyperf\Grpc\Parser;
 use Hyperf\GrpcClient\BaseClient;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\ChannelPool;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Parallel;
 use HyperfTest\GrpcClient\Stub\HiClient;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Http\Server;
 use TypeError;
@@ -30,6 +32,7 @@ use TypeError;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class BaseClientTest extends TestCase
 {
     public static $server;
@@ -138,7 +141,7 @@ class BaseClientTest extends TestCase
 
     protected function getContainer()
     {
-        $container = \Mockery::mock(Container::class);
+        $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ChannelPool::class)->andReturn(new ChannelPool());
         $container->shouldReceive('has')->andReturn(false);
         ApplicationContext::setContainer($container);

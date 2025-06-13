@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Amqp\Stub;
 
 use Hyperf\Amqp\Message\ConsumerMessage;
@@ -16,17 +17,17 @@ use Hyperf\Amqp\Result;
 
 class QosConsumer extends ConsumerMessage
 {
-    protected $exchange = 'qos';
+    protected string $exchange = 'qos';
 
-    protected $queue = 'qos.rk.queue';
+    protected ?string $queue = 'qos.rk.queue';
 
-    protected $routingKey = 'qos.rk';
+    protected array|string $routingKey = 'qos.rk';
 
-    protected $qos = [
+    protected ?array $qos = [
         'prefetch_count' => 10,
     ];
 
-    public function consume($data): string
+    public function consume($data): Result
     {
         return Result::ACK;
     }

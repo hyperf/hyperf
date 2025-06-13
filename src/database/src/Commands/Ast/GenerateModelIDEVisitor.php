@@ -9,43 +9,35 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
+use Hyperf\CodeParser\PhpParser;
 use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Builder;
-use Hyperf\Utils\CodeGen\PhpParser;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PhpParser\BuilderFactory;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
+use ReflectionClass;
+use ReflectionParameter;
+use ReflectionUnionType;
 
 class GenerateModelIDEVisitor extends AbstractVisitor
 {
-    /**
-     * @var array
-     */
-    protected $methods = [];
+    protected array $methods = [];
 
-    /**
-     * @var null|Node\Stmt\Namespace_
-     */
-    protected $namespace;
+    protected ?Node\Stmt\Namespace_ $namespace = null;
 
-    /**
-     * @var null|Node\Stmt\Class_
-     */
-    protected $class;
+    protected ?Node\Stmt\Class_ $class = null;
 
-    /**
-     * @var BuilderFactory
-     */
-    protected $factory;
+    protected BuilderFactory $factory;
 
-    /**
-     * @var string
-     */
-    protected $nsp = '';
+    protected string $nsp = '';
+
+    private string $originClassName = '';
 
     public function __construct(ModelOption $option, ModelData $data)
     {
@@ -68,10 +60,13 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         }
 
         if ($node instanceof Node\Stmt\Class_) {
+            $this->originClassName = $node->name->toString();
             $this->class = new Node\Stmt\Class_(
-                new Node\Identifier(self::toIDEClass($this->nsp . '\\' . $node->name->toString()))
+                new Identifier(self::toIDEClass($this->nsp . '\\' . $this->originClassName))
             );
         }
+
+        return null;
     }
 
     public function afterTraverse(array $nodes)
@@ -80,28 +75,22 @@ class GenerateModelIDEVisitor extends AbstractVisitor
             Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_STATIC,
             [new Node\Stmt\PropertyProperty('builder')]
         );
-        $doc = '/**' . PHP_EOL;
-        $doc .= ' * @var \Hyperf\Database\Model\Builder' . PHP_EOL;
-        $doc .= ' */';
-        $builder->setDocComment(new Doc($doc));
+        $builder->setDocComment(new Doc($this->propertyDoc()));
         $this->class->stmts[] = $builder;
-        $doc = '/**' . PHP_EOL;
-        $doc .= ' * @return \Hyperf\Database\Model\Builder|static' . PHP_EOL;
-        $doc .= ' */';
         foreach ($this->data->getColumns() as $column) {
             $name = Str::camel('where_' . $column['column_name']);
             $method = new Node\Stmt\ClassMethod($name, [
                 'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_STATIC,
                 'params' => [new Node\Param(new Node\Expr\Variable('value'))],
             ]);
-            $method->setDocComment(new Doc($doc));
+            $method->setDocComment(new Doc($this->methodDoc()));
             $method->stmts[] = new Node\Stmt\Return_(
                 new Node\Expr\MethodCall(
                     new Node\Expr\StaticPropertyFetch(
                         new Node\Name('static'),
                         new Node\VarLikeIdentifier('builder')
                     ),
-                    new Node\Identifier('dynamicWhere'),
+                    new Identifier('dynamicWhere'),
                     [
                         new Node\Arg(new Node\Scalar\String_($name)),
                         new Node\Arg(new Node\Expr\Variable('value')),
@@ -110,19 +99,24 @@ class GenerateModelIDEVisitor extends AbstractVisitor
             );
             $this->class->stmts[] = $method;
         }
-        $scopeDoc = '/**' . PHP_EOL;
-        $scopeDoc .= ' * @return \Hyperf\Database\Model\Builder|static' . PHP_EOL;
-        $scopeDoc .= ' */';
         foreach ($this->methods as $name => $call) {
             $params = [];
-            /** @var \ReflectionParameter $argument */
+            /** @var ReflectionParameter $argument */
             foreach ($call['arguments'] as $argument) {
                 $argName = new Node\Expr\Variable($argument->getName());
                 if ($argument->hasType()) {
-                    if ($argument->getType()->allowsNull()) {
-                        $argType = new Node\NullableType($argument->getType()->getName());
+                    $argumentType = $argument->getType();
+                    if ($argumentType instanceof ReflectionUnionType) {
+                        $unionTypeIdentifier = [];
+                        foreach ($argumentType->getTypes() as $type) {
+                            $unionTypeIdentifier[] = new Identifier($type->getName());
+                        }
+                        $argType = new Node\UnionType($unionTypeIdentifier);
                     } else {
-                        $argType = $argument->getType()->getName();
+                        $argType = $argumentType->getName();
+                        if ($argumentType->allowsNull()) {
+                            $argType = new Node\NullableType($argType);
+                        }
                     }
                 }
                 if ($argument->isDefaultValueAvailable()) {
@@ -138,7 +132,7 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                 'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_STATIC,
                 'params' => $params,
             ]);
-            $method->setDocComment(new Doc($scopeDoc));
+            $method->setDocComment(new Doc($this->scopeDoc($name)));
             $method->stmts[] = new Node\Stmt\Return_(
                 new Node\Expr\StaticPropertyFetch(
                     new Node\Name('static'),
@@ -156,6 +150,37 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         return str_replace('\\', '_', $class);
     }
 
+    protected function propertyDoc(): string
+    {
+        $propertyDoc = '/**' . PHP_EOL;
+        $propertyDoc .= ' * @var \Hyperf\Database\Model\Builder' . PHP_EOL;
+        $propertyDoc .= ' */';
+
+        return $propertyDoc;
+    }
+
+    protected function methodDoc(): string
+    {
+        $methodDoc = '/**' . PHP_EOL;
+        $methodDoc .= ' * @return \Hyperf\Database\Model\Builder|static' . PHP_EOL;
+        $methodDoc .= ' */';
+
+        return $methodDoc;
+    }
+
+    protected function scopeDoc($methodName): string
+    {
+        $scopeDoc = '/**' . PHP_EOL;
+        $scopeDoc .= ' * @return \Hyperf\Database\Model\Builder|static' . PHP_EOL;
+        $scopeDoc .= sprintf(
+            ' * @see %s::%s',
+            $this->nsp . '\\' . $this->originClassName,
+            'scope' . Str::studly($methodName)
+        ) . PHP_EOL;
+        $scopeDoc .= ' */';
+        return $scopeDoc;
+    }
+
     protected function setMethod(string $name, array $type = [], array $arguments = [])
     {
         $methods = array_change_key_case($this->methods, CASE_LOWER);
@@ -170,8 +195,8 @@ class GenerateModelIDEVisitor extends AbstractVisitor
     protected function initPropertiesFromMethods(array $nodes)
     {
         $methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes);
-        $reflection = new \ReflectionClass($this->data->getClass());
-        sort($methods);
+        $reflection = new ReflectionClass($this->data->getClass());
+        sort($methods); // 8.0 与 8.1 8.2 排序结果不一致
         foreach ($methods as $methodStmt) {
             $method = $reflection->getMethod($methodStmt->name->name);
             if (Str::startsWith($method->getName(), 'scope') && $method->getName() !== 'scopeQuery') {

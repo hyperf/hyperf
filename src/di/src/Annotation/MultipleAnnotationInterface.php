@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\Exception\AnnotationException;
@@ -20,7 +21,7 @@ interface MultipleAnnotationInterface extends AnnotationInterface
     /**
      * @throws AnnotationException
      */
-    public function insert(AnnotationInterface $annotation);
+    public function insert(AnnotationInterface $annotation): static;
 
     /**
      * @return AnnotationInterface[]

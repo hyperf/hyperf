@@ -9,13 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\View\Engine;
 
 use League\Plates\Engine;
 
 class PlatesEngine implements EngineInterface
 {
-    public function render($template, $data, $config): string
+    public function render(string $template, array $data, array $config): string
     {
         $plates = new Engine($config['view_path'], $config['file_extension'] ?? 'php');
 

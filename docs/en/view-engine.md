@@ -121,9 +121,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Annotation\AutoController;
 use function Hyperf\ViewEngine\view;
 
-/**
- * @AutoController(prefix="view")
- */
+#[AutoController(prefix: "view")]
 class ViewController extends AbstractController
 {
     public function child()
@@ -210,9 +208,7 @@ use Hyperf\Framework\Event\BootApplication;
 use Hyperf\ViewEngine\Blade;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
+#[Listener]
 class BladeWithoutDoubleEncodingListener implements ListenerInterface
 {
     /**
@@ -811,7 +807,7 @@ If the component is in a subdirectory of the `components` directory, you can use
 
 #### Anonymous component data and attributes
 
-Since anonymous components do not have any associated classes, you may want to distinguish which data should be passed to the component as variables and which properties should be stored in [property package](#管理Attribute).
+Since anonymous components do not have any associated classes, you may want to distinguish which data should be passed to the component as variables and which properties should be stored in [property package](#Manage Attribute).
 
 You can use the @props directive at the top level of the Blade template of the component to specify which properties should be used as data variables. All other properties in the component will be provided in the form of a property bag. If you want to specify a default value for a certain data variable, you can use the attribute name as the array key and the default value as the array value:
 
@@ -876,11 +872,11 @@ After installing the extension package, you can override the view in the extensi
 
 ## Optional middleware
 
--Hyperf\ViewEngine\Http\Middleware\ShareErrorsFromSession::class
+- Hyperf\ViewEngine\Http\Middleware\ShareErrorsFromSession::class
 
 Automatically share the `errors` in the `session` to the view, relying on the `hyperf/session` component
 
--Hyperf\ViewEngine\Http\Middleware\ValidationExceptionHandle::class
+- Hyperf\ViewEngine\Http\Middleware\ValidationExceptionHandle::class
 
 Automatically catch exceptions in `validation` and add them to `session`, relying on `hyperf/session` and `hyperf/validation` components
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Nacos\Cases;
 
 use Hyperf\Nacos\Application;
@@ -19,11 +20,13 @@ use Hyperf\Nacos\Provider\InstanceProvider;
 use Hyperf\Nacos\Provider\OperatorProvider;
 use Hyperf\Nacos\Provider\ServiceProvider;
 use HyperfTest\Nacos\AbstractTestCase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ApplicationTest extends AbstractTestCase
 {
     public function testApplication()

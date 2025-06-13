@@ -9,19 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer\Annotation;
 
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"ALL"})
- */
 #[Attribute]
 class Middlewares extends AbstractAnnotation
 {
-    public function __construct($middlewares)
+    public function __construct(array $middlewares = [])
     {
     }
 }

@@ -9,31 +9,22 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Signal\Handler;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Process\ProcessManager;
-use Hyperf\Server\ServerManager;
 use Hyperf\Signal\SignalHandlerInterface;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 
 class CoroutineServerStopHandler implements SignalHandlerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ConfigInterface $config;
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
     }
 
@@ -49,10 +40,5 @@ class CoroutineServerStopHandler implements SignalHandlerInterface
     {
         ProcessManager::setRunning(false);
         CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
-
-        foreach (ServerManager::list() as [$type, $server]) {
-            // 循环关闭开启的服务
-            $server->shutdown();
-        }
     }
 }

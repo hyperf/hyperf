@@ -9,66 +9,56 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer;
 
 use Closure;
 use FastRoute\Dispatcher;
+use Hyperf\Codec\Json;
+use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
+use Hyperf\Context\ResponseContext;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
+use Hyperf\Di\ReflectionType;
 use Hyperf\HttpMessage\Exception\MethodNotAllowedHttpException;
 use Hyperf\HttpMessage\Exception\NotFoundHttpException;
 use Hyperf\HttpMessage\Exception\ServerErrorHttpException;
+use Hyperf\HttpMessage\Server\ResponsePlusProxy;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Server\Exception\ServerException;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
 /**
- * Core middleware of Hyperf, main responsibility is use to handle route info
+ * Core middleware of Hyperf, main responsibility is used to handle route info
  * and then delegate to the specified handler (which is Controller) to handle the request,
  * generate a response object and delegate to next middleware (Because this middleware is the
  * core middleware, then the next middleware also means it's the previous middlewares object) .
  */
 class CoreMiddleware implements CoreMiddlewareInterface
 {
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
+    protected Dispatcher $dispatcher;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    private MethodDefinitionCollectorInterface $methodDefinitionCollector;
 
-    /**
-     * @var MethodDefinitionCollectorInterface
-     */
-    private $methodDefinitionCollector;
+    private ?ClosureDefinitionCollectorInterface $closureDefinitionCollector = null;
 
-    /**
-     * @var null|ClosureDefinitionCollectorInterface
-     */
-    private $closureDefinitionCollector;
+    private NormalizerInterface $normalizer;
 
-    /**
-     * @var NormalizerInterface
-     */
-    private $normalizer;
-
-    public function __construct(ContainerInterface $container, string $serverName)
+    public function __construct(protected ContainerInterface $container, private string $serverName)
     {
-        $this->container = $container;
         $this->dispatcher = $this->createDispatcher($serverName);
         $this->normalizer = $this->container->get(NormalizerInterface::class);
         $this->methodDefinitionCollector = $this->container->get(MethodDefinitionCollectorInterface::class);
@@ -81,9 +71,9 @@ class CoreMiddleware implements CoreMiddlewareInterface
     {
         $routes = $this->dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
 
-        $dispatched = new Dispatched($routes);
+        $dispatched = new Dispatched($routes, $this->serverName);
 
-        return Context::set(ServerRequestInterface::class, $request->withAttribute(Dispatched::class, $dispatched));
+        return RequestContext::set($request)->setAttribute(Dispatched::class, $dispatched);
     }
 
     /**
@@ -92,7 +82,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $request = Context::set(ServerRequestInterface::class, $request);
+        $request = RequestContext::set($request);
 
         /** @var Dispatched $dispatched */
         $dispatched = $request->getAttribute(Dispatched::class);
@@ -101,22 +91,18 @@ class CoreMiddleware implements CoreMiddlewareInterface
             throw new ServerException(sprintf('The dispatched object is not a %s object.', Dispatched::class));
         }
 
-        $response = null;
-        switch ($dispatched->status) {
-            case Dispatcher::NOT_FOUND:
-                $response = $this->handleNotFound($request);
-                break;
-            case Dispatcher::METHOD_NOT_ALLOWED:
-                $response = $this->handleMethodNotAllowed($dispatched->params, $request);
-                break;
-            case Dispatcher::FOUND:
-                $response = $this->handleFound($dispatched, $request);
-                break;
-        }
-        if (! $response instanceof ResponseInterface) {
+        $response = match ($dispatched->status) {
+            Dispatcher::NOT_FOUND => $this->handleNotFound($request),
+            Dispatcher::METHOD_NOT_ALLOWED => $this->handleMethodNotAllowed($dispatched->params, $request),
+            Dispatcher::FOUND => $this->handleFound($dispatched, $request),
+            default => null,
+        };
+
+        if (! $response instanceof ResponsePlusInterface) {
             $response = $this->transferToResponse($response, $request);
         }
-        return $response->withAddedHeader('Server', 'Hyperf');
+
+        return $response->addHeader('Server', 'Hyperf');
     }
 
     public function getMethodDefinitionCollector(): MethodDefinitionCollectorInterface
@@ -145,11 +131,12 @@ class CoreMiddleware implements CoreMiddlewareInterface
      *
      * @return array|Arrayable|mixed|ResponseInterface|string
      */
-    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request)
+    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): mixed
     {
         if ($dispatched->handler->callback instanceof Closure) {
             $parameters = $this->parseClosureParameters($dispatched->handler->callback, $dispatched->params);
-            $response = call($dispatched->handler->callback, $parameters);
+            $callback = $dispatched->handler->callback;
+            $response = $callback(...$parameters);
         } else {
             [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
             $controllerInstance = $this->container->get($controller);
@@ -165,78 +152,82 @@ class CoreMiddleware implements CoreMiddlewareInterface
 
     /**
      * Handle the response when cannot found any routes.
-     *
-     * @return array|Arrayable|mixed|ResponseInterface|string
      */
-    protected function handleNotFound(ServerRequestInterface $request)
+    protected function handleNotFound(ServerRequestInterface $request): mixed
     {
         throw new NotFoundHttpException();
     }
 
     /**
      * Handle the response when the routes found but doesn't match any available methods.
-     *
-     * @return array|Arrayable|mixed|ResponseInterface|string
      */
-    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request)
+    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request): mixed
     {
         throw new MethodNotAllowedHttpException('Allow: ' . implode(', ', $methods));
     }
 
-    /**
-     * @param array|string $handler
-     */
-    protected function prepareHandler($handler): array
+    protected function prepareHandler(array|string $handler): array
     {
         if (is_string($handler)) {
-            if (strpos($handler, '@') !== false) {
+            if (str_contains($handler, '@')) {
                 return explode('@', $handler);
             }
-            return explode('::', $handler);
+            if (str_contains($handler, '::')) {
+                return explode('::', $handler);
+            }
+            return [$handler, '__invoke'];
         }
         if (is_array($handler) && isset($handler[0], $handler[1])) {
             return $handler;
         }
-        throw new \RuntimeException('Handler not exist.');
+        throw new RuntimeException('Handler not exist.');
     }
 
     /**
      * Transfer the non-standard response content to a standard response object.
      *
-     * @param null|array|Arrayable|Jsonable|string $response
+     * @param null|array|Arrayable|Jsonable|ResponseInterface|string $response
      */
-    protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
+    protected function transferToResponse($response, ServerRequestInterface $request): ResponsePlusInterface
     {
         if (is_string($response)) {
-            return $this->response()->withAddedHeader('content-type', 'text/plain')->withBody(new SwooleStream($response));
+            return $this->response()->addHeader('content-type', 'text/plain')->setBody(new SwooleStream($response));
+        }
+
+        if ($response instanceof ResponseInterface) {
+            return new ResponsePlusProxy($response);
         }
 
         if (is_array($response) || $response instanceof Arrayable) {
             return $this->response()
-                ->withAddedHeader('content-type', 'application/json')
-                ->withBody(new SwooleStream(Json::encode($response)));
+                ->addHeader('content-type', 'application/json')
+                ->setBody(new SwooleStream(Json::encode($response)));
         }
 
         if ($response instanceof Jsonable) {
             return $this->response()
-                ->withAddedHeader('content-type', 'application/json')
-                ->withBody(new SwooleStream((string) $response));
+                ->addHeader('content-type', 'application/json')
+                ->setBody(new SwooleStream((string) $response));
         }
 
-        return $this->response()->withAddedHeader('content-type', 'text/plain')->withBody(new SwooleStream((string) $response));
+        if ($this->response()->hasHeader('content-type')) {
+            return $this->response()->setBody(new SwooleStream((string) $response));
+        }
+
+        return $this->response()->addHeader('content-type', 'text/plain')->setBody(new SwooleStream((string) $response));
     }
 
     /**
      * Get response instance from context.
      */
-    protected function response(): ResponseInterface
+    protected function response(): ResponsePlusInterface
     {
-        return Context::get(ResponseInterface::class);
+        return ResponseContext::get();
     }
 
     /**
      * Parse the parameters of method definitions, and then bind the specified arguments or
-     * get the value from DI container, combine to a argument array that should be injected
+     * get the value from DI container, combine to an argument array that should be injected
      * and return the array.
      */
     protected function parseMethodParameters(string $controller, string $action, array $arguments): array
@@ -247,7 +238,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
 
     /**
      * Parse the parameters of closure definitions, and then bind the specified arguments or
-     * get the value from DI container, combine to a argument array that should be injected
+     * get the value from DI container, combine to an argument array that should be injected
      * and return the array.
      */
     protected function parseClosureParameters(Closure $closure, array $arguments): array
@@ -259,20 +250,23 @@ class CoreMiddleware implements CoreMiddlewareInterface
         return $this->getInjections($definitions, 'Closure', $arguments);
     }
 
+    /**
+     * @param ReflectionType[] $definitions
+     */
     private function getInjections(array $definitions, string $callableName, array $arguments): array
     {
         $injections = [];
-        foreach ($definitions ?? [] as $pos => $definition) {
+        foreach ($definitions as $pos => $definition) {
             $value = $arguments[$pos] ?? $arguments[$definition->getMeta('name')] ?? null;
             if ($value === null) {
                 if ($definition->getMeta('defaultValueAvailable')) {
                     $injections[] = $definition->getMeta('defaultValue');
-                } elseif ($definition->allowsNull()) {
-                    $injections[] = null;
                 } elseif ($this->container->has($definition->getName())) {
                     $injections[] = $this->container->get($definition->getName());
+                } elseif ($definition->allowsNull()) {
+                    $injections[] = null;
                 } else {
-                    throw new \InvalidArgumentException("Parameter '{$definition->getMeta('name')}' "
+                    throw new InvalidArgumentException("Parameter '{$definition->getMeta('name')}' "
                         . "of {$callableName} should not be null");
                 }
             } else {

@@ -9,44 +9,39 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Paginator;
 
-use ArrayAccess;
 use Countable;
+use Hyperf\Collection\Collection;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
+use RuntimeException;
 
-class LengthAwarePaginator extends AbstractPaginator implements Arrayable, ArrayAccess, Countable, IteratorAggregate, JsonSerializable, Jsonable, LengthAwarePaginatorInterface
+class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Countable, IteratorAggregate, JsonSerializable, Jsonable, LengthAwarePaginatorInterface
 {
     /**
      * The total number of items before slicing.
-     *
-     * @var int
      */
-    protected $total;
+    protected int $total;
 
     /**
      * The last available page.
-     *
-     * @var int
      */
-    protected $lastPage;
+    protected int $lastPage;
 
     /**
      * Create a new paginator instance.
      *
-     * @param mixed $items
-     * @param int $total
-     * @param int $perPage
-     * @param null|int $currentPage
      * @param array $options (path, query, fragment, pageName)
      */
-    public function __construct($items, $total, $perPage, $currentPage = 1, array $options = [])
+    public function __construct(mixed $items, int $total, int $perPage, ?int $currentPage = 1, array $options = [])
     {
+        $this->options = $options;
+
         foreach ($options as $key => $value) {
             $this->{$key} = $value;
         }
@@ -78,7 +73,7 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
     public function render(?string $view = null, array $data = []): string
     {
         if ($view) {
-            throw new \RuntimeException('WIP.');
+            throw new RuntimeException('WIP.');
         }
         return json_encode(array_merge($data, $this->items()), 0);
     }
@@ -143,7 +138,7 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
     /**
      * Convert the object into something JSON serializable.
      */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }
@@ -163,7 +158,7 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
     {
         $currentPage = $currentPage ?: static::resolveCurrentPage($pageName);
 
-        return $this->isValidPageNumber($currentPage) ? (int) $currentPage : 1;
+        return $this->isValidPageNumber($currentPage) ? $currentPage : 1;
     }
 
     /**

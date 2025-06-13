@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
 use Closure;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\StrCache;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Psr\Container\ContainerInterface;
@@ -22,56 +23,42 @@ use Psr\Container\ContainerInterface;
 class ValidatorFactory implements ValidatorFactoryInterface
 {
     /**
-     * The Translator implementation.
-     *
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * The Presence Verifier implementation.
      *
-     * @var \Hyperf\Validation\Contract\PresenceVerifierInterface
+     * @var PresenceVerifierInterface
      */
     protected $verifier;
 
     /**
-     * The IoC container instance.
-     *
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * All of the custom validator extensions.
+     * All the custom validator extensions.
      *
      * @var array
      */
     protected $extensions = [];
 
     /**
-     * All of the custom implicit validator extensions.
+     * All the custom implicit validator extensions.
      *
      * @var array
      */
     protected $implicitExtensions = [];
 
     /**
-     * All of the custom dependent validator extensions.
+     * All the custom dependent validator extensions.
      *
      * @var array
      */
     protected $dependentExtensions = [];
 
     /**
-     * All of the custom validator message replacers.
+     * All the custom validator message replacers.
      *
      * @var array
      */
     protected $replacers = [];
 
     /**
-     * All of the fallback messages for custom rules.
+     * All the fallback messages for custom rules.
      *
      * @var array
      */
@@ -80,17 +67,17 @@ class ValidatorFactory implements ValidatorFactoryInterface
     /**
      * The Validator resolver instance.
      *
-     * @var \Closure
+     * @var Closure
      */
     protected $resolver;
 
     /**
      * Create a new Validator factory instance.
      */
-    public function __construct(TranslatorInterface $translator, ContainerInterface $container = null)
-    {
-        $this->container = $container;
-        $this->translator = $translator;
+    public function __construct(
+        protected TranslatorInterface $translator,
+        protected ?ContainerInterface $container = null
+    ) {
     }
 
     /**
@@ -127,7 +114,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
     /**
      * Validate the given data against the provided rules.
      *
-     * @throws \Hyperf\Validation\ValidationException
+     * @throws ValidationException
      */
     public function validate(array $data, array $rules, array $messages = [], array $customAttributes = []): array
     {
@@ -136,52 +123,44 @@ class ValidatorFactory implements ValidatorFactoryInterface
 
     /**
      * Register a custom validator extension.
-     *
-     * @param \Closure|string $extension
      */
-    public function extend(string $rule, $extension, ?string $message = null)
+    public function extend(string $rule, Closure|string $extension, ?string $message = null)
     {
         $this->extensions[$rule] = $extension;
 
         if ($message) {
-            $this->fallbackMessages[Str::snake($rule)] = $message;
+            $this->fallbackMessages[StrCache::snake($rule)] = $message;
         }
     }
 
     /**
      * Register a custom implicit validator extension.
-     *
-     * @param \Closure|string $extension
      */
-    public function extendImplicit(string $rule, $extension, ?string $message = null)
+    public function extendImplicit(string $rule, Closure|string $extension, ?string $message = null)
     {
         $this->implicitExtensions[$rule] = $extension;
 
         if ($message) {
-            $this->fallbackMessages[Str::snake($rule)] = $message;
+            $this->fallbackMessages[StrCache::snake($rule)] = $message;
         }
     }
 
     /**
      * Register a custom dependent validator extension.
-     *
-     * @param \Closure|string $extension
      */
-    public function extendDependent(string $rule, $extension, ?string $message = null)
+    public function extendDependent(string $rule, Closure|string $extension, ?string $message = null)
     {
         $this->dependentExtensions[$rule] = $extension;
 
         if ($message) {
-            $this->fallbackMessages[Str::snake($rule)] = $message;
+            $this->fallbackMessages[StrCache::snake($rule)] = $message;
         }
     }
 
     /**
      * Register a custom validator message replacer.
-     *
-     * @param \Closure|string $replacer
      */
-    public function replacer(string $rule, $replacer)
+    public function replacer(string $rule, Closure|string $replacer)
     {
         $this->replacers[$rule] = $replacer;
     }

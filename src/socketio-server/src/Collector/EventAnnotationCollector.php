@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer\Collector;
 
 use Hyperf\Di\MetadataCollector;
@@ -16,10 +17,7 @@ use Hyperf\SocketIOServer\Annotation\Event;
 
 class EventAnnotationCollector extends MetadataCollector
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
     public static function collectEvent(string $class, string $method, Event $value): void
     {

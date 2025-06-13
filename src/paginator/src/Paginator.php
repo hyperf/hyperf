@@ -9,24 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Paginator;
 
-use ArrayAccess;
 use Countable;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Collection\Collection;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
+use RuntimeException;
 
-class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Countable, IteratorAggregate, JsonSerializable, Jsonable
+class Paginator extends AbstractPaginator implements Arrayable, Countable, IteratorAggregate, JsonSerializable, Jsonable
 {
     /**
      * Determine if there are more items in the data source.
-     *
-     * @return bool
      */
-    protected $hasMore;
+    protected bool $hasMore;
 
     /**
      * Create a new paginator instance.
@@ -36,6 +35,8 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
      */
     public function __construct($items, int $perPage, ?int $currentPage = null, array $options = [])
     {
+        $this->options = $options;
+
         foreach ($options as $key => $value) {
             $this->{$key} = $value;
         }
@@ -69,7 +70,7 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
     public function render(?string $view = null, array $data = []): string
     {
         if ($view) {
-            throw new \RuntimeException('WIP.');
+            throw new RuntimeException('WIP.');
         }
         return json_encode($data, 0);
     }
@@ -113,7 +114,7 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
     /**
      * Convert the object into something JSON serializable.
      */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }
@@ -133,7 +134,7 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
     {
         $currentPage = $currentPage ?: static::resolveCurrentPage();
 
-        return $this->isValidPageNumber($currentPage) ? (int) $currentPage : 1;
+        return $this->isValidPageNumber($currentPage) ? $currentPage : 1;
     }
 
     /**

@@ -9,15 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\Stubs;
 
 use Hyperf\Database\Model\Model;
 
 class ModelWithoutRelationStub extends Model
 {
-    public $with = ['foo'];
+    public array $with = ['foo'];
 
-    protected $guarded = [];
+    protected array $guarded = [];
 
     public function getEagerLoads()
     {

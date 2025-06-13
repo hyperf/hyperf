@@ -9,37 +9,38 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SuperGlobals;
 
 use ArrayAccess;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
+use Hyperf\Contract\Arrayable;
 use Hyperf\SuperGlobals\Exception\ContainerNotFoundException;
-use Hyperf\SuperGlobals\Exception\RequestNotFoundException;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Contracts\Arrayable;
 use JsonSerializable;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable
 {
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }
 
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         $data = $this->toArray();
         return isset($data[$offset]);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->toArray()[$offset] ?? null;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         Context::override(ServerRequestInterface::class, function (ServerRequestInterface $request) use ($offset, $value) {
             $data = $this->toArray();
@@ -48,7 +49,7 @@ abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable
         });
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         Context::override(ServerRequestInterface::class, function (ServerRequestInterface $request) use ($offset) {
             $data = $this->toArray();
@@ -68,12 +69,7 @@ abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable
 
     protected function getRequest(): ServerRequestInterface
     {
-        $request = Context::get(ServerRequestInterface::class);
-        if (! $request instanceof ServerRequestInterface) {
-            throw new RequestNotFoundException(sprintf('%s is not found.', ServerRequestInterface::class));
-        }
-
-        return $request;
+        return RequestContext::get();
     }
 
     protected function hasRequest(): bool

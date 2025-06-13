@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ServiceGovernanceConsul;
 
 use Hyperf\Consul\Agent;
+use Hyperf\Consul\Client;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Guzzle\ClientFactory;
 use Psr\Container\ContainerInterface;
@@ -25,7 +27,7 @@ class ConsulAgentFactory
             $token = $config->get('services.drivers.consul.token', '');
             $options = [
                 'timeout' => 2,
-                'base_uri' => $config->get('services.drivers.consul.uri', Agent::DEFAULT_URI),
+                'base_uri' => $config->get('services.drivers.consul.uri', Client::DEFAULT_URI),
             ];
 
             if (! empty($token)) {

@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\RpcMultiplex\Cases;
 
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * Class AbstractTestCase.
@@ -26,9 +28,8 @@ abstract class AbstractTestCase extends TestCase
 
     protected function invoke($class, string $method)
     {
-        $ref = new \ReflectionClass($class);
+        $ref = new ReflectionClass($class);
         $method = $ref->getMethod($method);
-        $method->setAccessible(true);
         return $method->invoke($method);
     }
 }

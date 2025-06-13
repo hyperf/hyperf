@@ -9,41 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Listener;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Stringable\Str;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
-use OpenTracing\Tracer;
 
 class DbQueryExecutedListener implements ListenerInterface
 {
     use SpanStarter;
 
-    /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    /**
-     * @var SwitchManager
-     */
-    private $switchManager;
-
-    /**
-     * @var SpanTagManager
-     */
-    private $spanTagManager;
-
-    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
+    public function __construct(private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
-        $this->tracer = $tracer;
-        $this->switchManager = $switchManager;
-        $this->spanTagManager = $spanTagManager;
     }
 
     public function listen(): array
@@ -56,14 +38,14 @@ class DbQueryExecutedListener implements ListenerInterface
     /**
      * @param QueryExecuted $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($this->switchManager->isEnable('db') === false) {
             return;
         }
         $sql = $event->sql;
         if (! Arr::isAssoc($event->bindings)) {
-            foreach ($event->bindings as $key => $value) {
+            foreach ($event->bindings as $value) {
                 $sql = Str::replaceFirst('?', "'{$value}'", $sql);
             }
         }

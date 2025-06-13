@@ -27,7 +27,7 @@ php bin/hyperf.php gen:command FooCommand
 
 ### 定義命令
 
-定義該命令類所對應的命令有兩種形式，一種是通過 `$name` 屬性定義，另一種是通過構造函數傳參來定義，我們通過代碼示例來演示一下，假設我們希望定義該命令類的命令為 `foo:hello`：
+定義該命令類所對應的命令有三種形式，第一種是通過 `$name` 屬性定義，第二種是通過構造函數傳參來定義，最後一種是通過註解來定義，我們通過代碼示例來演示一下，假設我們希望定義該命令類的命令為 `foo:hello`：
 
 #### `$name` 屬性定義：
 
@@ -41,17 +41,13 @@ namespace App\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     /**
      * 執行的命令行
-     *
-     * @var string
      */
-    protected $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 }
 ```
 
@@ -67,15 +63,32 @@ namespace App\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     public function __construct()
     {
         parent::__construct('foo:hello');
     }
+}
+```
+
+#### 註解定義：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Command\Annotation\Command;
+
+#[Command(name: "foo:hello")]
+class FooCommand extends HyperfCommand
+{
+
 }
 ```
 
@@ -93,17 +106,13 @@ namespace App\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     /**
      * 執行的命令行
-     *
-     * @var string
      */
-    protected $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 
     public function handle()
     {
@@ -132,17 +141,13 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Symfony\Component\Console\Input\InputArgument;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     /**
      * 執行的命令行
-     *
-     * @var string
      */
-    protected $name = 'foo:hello';
+    protected ?string $name = 'foo:hello';
 
     public function handle()
     {
@@ -168,30 +173,35 @@ class FooCommand extends HyperfCommand
 
 ### 設置 Help
 
-```
+```php
 public function configure()
 {
     parent::configure();
     $this->setHelp('Hyperf 自定義命令演示');
 }
 
+```
+```bash
 $ php bin/hyperf.php demo:command --help
+# 輸出
 ...
 Help:
   Hyperf 自定義命令演示
-
 ```
+
 
 ### 設置 Description
 
-```
+```php
 public function configure()
 {
     parent::configure();
     $this->setDescription('Hyperf Demo Command');
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command --help
+# 輸出
 ...
 Description:
   Hyperf Demo Command
@@ -200,14 +210,16 @@ Description:
 
 ### 設置 Usage
 
-```
+```php
 public function configure()
 {
     parent::configure();
     $this->addUsage('--name 演示代碼');
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command --help
+# 輸出
 ...
 Usage:
   demo:command
@@ -226,7 +238,7 @@ Usage:
 
 #### 可選類型
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -237,19 +249,22 @@ public function handle()
 {
     $this->line($this->input->getArgument('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# 輸出
 ...
 Hyperf
 
 $ php bin/hyperf.php demo:command Swoole
+# 輸出
 ...
 Swoole
 ```
 
 #### 數組類型
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -260,8 +275,10 @@ public function handle()
 {
     var_dump($this->input->getArgument('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command Hyperf Swoole
+# 輸出
 ...
 array(2) {
   [0]=>
@@ -284,7 +301,7 @@ array(2) {
 
 #### 是否傳入可選項
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -295,14 +312,18 @@ public function handle()
 {
     var_dump($this->input->getOption('opt'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# 輸出
 bool(false)
 
 $ php bin/hyperf.php demo:command -o
+# 輸出
 bool(true)
 
 $ php bin/hyperf.php demo:command --opt
+# 輸出
 bool(true)
 ```
 
@@ -310,7 +331,7 @@ bool(true)
 
 `VALUE_OPTIONAL` 在單獨使用上與 `VALUE_REQUIRED` 並無二致
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -321,11 +342,14 @@ public function handle()
 {
     var_dump($this->input->getOption('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# 輸出
 string(6) "Hyperf"
 
 $ php bin/hyperf.php demo:command --name Swoole
+# 輸出
 string(6) "Swoole"
 ```
 
@@ -333,7 +357,7 @@ string(6) "Swoole"
 
 `VALUE_IS_ARRAY` 和 `VALUE_OPTIONAL` 配合使用，可以達到傳入多個 `Option` 的效果。
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -344,12 +368,15 @@ public function handle()
 {
     var_dump($this->input->getOption('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# 輸出
 array(0) {
 }
 
 $ php bin/hyperf.php demo:command --name Hyperf --name Swoole
+# 輸出
 array(2) {
   [0]=>
   string(6) "Hyperf"
@@ -387,17 +414,12 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Command
- */
+#[Command]
 class DebugCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
-    protected $signature = 'test:test {id : user_id} {--name= : user_name}';
+    protected ?string $signature = 'test:test {id : user_id} {--name= : user_name}';
 
     public function __construct(ContainerInterface $container)
     {
@@ -422,7 +444,7 @@ class DebugCommand extends HyperfCommand
 
 # 運行命令
 
-!> 注意：在運行命令時，默認不會觸發事件分發，可通過添加 `--enable-event-dispatcher` 參數來開啟。
+!> 注意：在運行命令時，默認會觸發事件分發，可通過添加 `--disable-event-dispatcher` 參數來關閉。
 
 ## 命令行中運行
 
@@ -443,15 +465,10 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -487,7 +504,7 @@ $input = new ArrayInput($params);
 $output = new NullOutput();
 
 /** @var \Psr\Container\ContainerInterface $container */
-$container = \Hyperf\Utils\ApplicationContext::getContainer();
+$container = \Hyperf\Context\ApplicationContext::getContainer();
 
 /** @var \Symfony\Component\Console\Application $application */
 $application = $container->get(\Hyperf\Contract\ApplicationInterface::class);
@@ -498,4 +515,77 @@ $exitCode = $application->run($input, $output);
 
 // 第二種方式: 會暴露異常, 需要自己捕捉和處理運行中的異常, 否則會阻止程序的返回
 $exitCode = $application->find($command)->run($input, $output);
+```
+
+## 閉包命令
+
+您可以在 `config\console.php` 中快速定義命令。
+
+```php
+use Hyperf\Command\Console;
+
+Console::command('hello', function () {
+    $this->comment('Hello, Hyperf!');
+})->describe('This is a demo closure command.');
+```
+
+為閉包命令定義計劃任務。
+
+```php
+use Hyperf\Command\Console;
+
+Console::command('foo', function () {
+    $this->comment('Hello, Foo!');
+})->describe('This is a demo closure command.')->cron('* * * * *');
+
+Console::command('bar', function () {
+    $this->comment('Hello, Bar!');
+})->describe('This is another demo closure command.')->cron('* * * * *', callback: fn($cron) => $cron->setSingleton(true));
+```
+
+## AsCommand
+
+您可以通過 `AsCommand` 註解來將一個類轉換為命令。
+
+```php
+<?php
+
+namespace App\Service;
+
+use Hyperf\Command\Annotation\AsCommand;
+use Hyperf\Command\Concerns\InteractsWithIO;
+
+#[AsCommand(signature: 'foo:bar1', handle: 'bar1', description: 'The description of foo:bar1 command.')]
+#[AsCommand(signature: 'foo', description: 'The description of foo command.')]
+class FooService
+{
+    use InteractsWithIO;
+
+    #[AsCommand(signature: 'foo:bar {--bar=1 : Bar Value}', description: 'The description of foo:bar command.')]
+    public function bar($bar)
+    {
+        $this->output?->info('Bar Value: ' . $bar);
+
+        return $bar;
+    }
+
+    public function bar1()
+    {
+        $this->output?->info(__METHOD__);
+    }
+
+    public function handle()
+    {
+        $this->output?->info(__METHOD__);
+    }
+}
+```
+
+```shell
+$ php bin/hyperf.php
+
+...
+foo
+  foo:bar                   The description of foo:bar command.
+  foo:bar1                  The description of foo:bar1 command.
 ```

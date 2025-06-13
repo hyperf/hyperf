@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Signal\Stub;
 
+use Hyperf\Context\Context;
 use Hyperf\Signal\SignalHandlerInterface;
-use Hyperf\Utils\Context;
 
 class SignalHandler2Stub implements SignalHandlerInterface
 {

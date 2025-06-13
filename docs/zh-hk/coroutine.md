@@ -2,7 +2,7 @@
 
 ## 概念
 
-Hyperf 是運行於 `Swoole 4` 的協程和 `Swow` 協程之上的，這也是 Hyperf 能提供高性能的其中一個很大的因素。
+Hyperf 是運行於 `Swoole 5` 的協程和 `Swow` 協程之上的，這也是 Hyperf 能提供高性能的其中一個很大的因素。
 
 ### PHP-FPM 的運作模式
 
@@ -48,9 +48,9 @@ $db->connect($config, function ($db, $r) {
 
 ### 協程是什麼？
 
-我們已經知道了協程可以很好的解決異步非阻塞系統的開發問題，那麼協程本身到底是什麼呢？從定義上來説，*協程是一種輕量級的線程，由用户代碼來調度和管理，而不是由操作系統內核來進行調度，也就是在用户態進行*。可以直接的理解為就是一個非標準的線程實現，但什麼時候切換由用户自己來實現，而不是由操作系統分配 `CPU` 時間決定。具體來説，`Swoole` 的每個 `Worker 進程` 會存在一個協程調度器來調度協程，協程切換的時機就是遇到 `I/O` 操作或代碼顯性切換時，進程內以單線程的形式運行協程，也就意味着一個進程內同一時間只會有一個協程在運行且切換時機明確，也就無需處理像多線程編程下的各種同步鎖的問題。   
-單個協程內的代碼運行仍是串行的，放在一個 HTTP 協程服務上來理解就是每一個請求是一個協程，舉個例子，假設為請求 A 創建了 `協程 A`，為 `請求 B` 創建了 `協程 B`，那麼在處理 `協程 A` 的時候代碼跑到了查詢 `MySQL` 的語句上，這個時候 `協程 A` 則會觸發協程切換，`協程 A` 就繼續等待 `I/O` 設備返回結果，那麼此時就會切換到 `協程 B`，開始處理 `協程 B` 的邏輯，當又遇到了一個 `I/O` 操作便又觸發協程切換，再回過來從 `協程 A` 剛才切走的地方繼續執行，如此反覆，遇到 `I/O` 操作就切換到另一個協程去繼續執行而非一直阻塞等待。   
-這裏可以發現一個問題就是，*`協程 A` 的 `MySQL` 查詢操作必須得是一個異步非阻塞的操作，否則會由於阻塞導致協程調度器沒法切換到另一個協程繼續執行*，這個也是要在協程編程下需要規避的問題之一。
+我們已經知道了協程可以很好的解決異步非阻塞系統的開發問題，那麼協程本身到底是什麼呢？從定義上來説，**協程是一種輕量級的線程，由用户代碼來調度和管理，而不是由操作系統內核來進行調度，也就是在用户態進行**。可以直接的理解為就是一個非標準的線程實現，但什麼時候切換由用户自己來實現，而不是由操作系統分配 `CPU` 時間決定。具體來説，`Swoole` 的每個 `Worker 進程` 會存在一個協程調度器來調度協程，協程切換的時機就是遇到 `I/O` 操作或代碼顯性切換時，進程內以單線程的形式運行協程，也就意味着一個進程內同一時間只會有一個協程在運行且切換時機明確，也就無需處理像多線程編程下的各種同步鎖的問題。   
+單個協程內的代碼運行仍是串行的，放在一個 HTTP 協程服務上來理解就是每一個請求是一個協程，舉個例子，假設為 `請求 A` 創建了 `協程 A`，為 `請求 B` 創建了 `協程 B`，那麼在處理 `協程 A` 的時候代碼跑到了查詢 `MySQL` 的語句上，這個時候 `協程 A` 則會觸發協程切換，`協程 A` 就繼續等待 `I/O` 設備返回結果，那麼此時就會切換到 `協程 B`，開始處理 `協程 B` 的邏輯，當又遇到了一個 `I/O` 操作便又觸發協程切換，再回過來從 `協程 A` 剛才切走的地方繼續執行，如此反覆，遇到 `I/O` 操作就切換到另一個協程去繼續執行而非一直阻塞等待。   
+這裏可以發現一個問題就是：**在 `協程 A` 中的 `MySQL` 查詢操作必須得是一個異步非阻塞的操作，否則會由於阻塞導致協程調度器沒法切換到另一個協程繼續執行**，這個也是要在協程編程下需要規避的問題之一。
 
 ### 協程與普通線程有哪些區別？
 
@@ -60,7 +60,7 @@ $db->connect($config, function ($db, $r) {
 
 ### 不能存在阻塞代碼
 
-協程內代碼的阻塞會導致協程調度器無法切換到另一個協程繼續執行代碼，所以我們絕不能在協程內存在阻塞代碼，假設我們啟動了 `4` 個 `Worker` 來處理 `HTTP` 請求（通常啟動的 `Worker` 數量與 `CPU` 核心數一致或 `2` 倍），如果代碼中存在阻塞，暫且理論的認為每個請求都會阻塞 `1` 秒，那麼系統的 `QPS` 也將退化為 `4/s` ，這無疑就是退化成了與 `PHP-FPM` 類似的情況，所以我們絕對不能在協程中存在阻塞代碼。   
+協程內代碼的阻塞會導致協程調度器無法切換到另一個協程繼續執行代碼，所以我們絕不能在協程內存在阻塞代碼，假設我們啓動了 `4` 個 `Worker` 來處理 `HTTP` 請求（通常啓動的 `Worker` 數量與 `CPU` 核心數一致或 `2` 倍），如果代碼中存在阻塞，暫且理論的認為每個請求都會阻塞 `1` 秒，那麼系統的 `QPS` 也將退化為 `4/s` ，這無疑就是退化成了與 `PHP-FPM` 類似的情況，所以我們絕對不能在協程中存在阻塞代碼。   
 
 那麼到底哪些是阻塞代碼呢？我們可以簡單的認為絕大多數你所熟知的非 `Swoole` 提供的異步函數的 `MySQL`、`Redis`、`Memcache`、`MongoDB`、`HTTP`、`Socket`等客户端，文件操作、`sleep/usleep` 等均為阻塞函數，這幾乎涵蓋了所有日常操作，那麼要如何解決呢？`Swoole` 提供了 `MySQL`、`PostgreSQL`、`Redis`、`HTTP`、`Socket` 的協程客户端可以使用，同時 `Swoole 4.1` 之後提供了一鍵協程化的方法 `\Swoole\Runtime::enableCoroutine()`，只需在使用協程前運行這一行代碼，`Swoole` 會將 所有使用 `php_stream` 進行 `socket` 操作均變成協程調度的異步 `I/O`，可以理解為除了 `curl` 絕大部分原生的操作都可以適用，關於此部分可查閲 [Swoole 文檔](https://wiki.swoole.com/#/runtime) 獲得更具體的信息。  
 
@@ -74,8 +74,8 @@ $db->connect($config, function ($db, $r) {
 對於全局變量，均是跟隨着一個 `請求(Request)` 而產生的，而 `Hyperf` 的 `請求(Request)/響應(Response)` 是由 [hyperf/http-message](https://github.com/hyperf/http-message) 通過實現 [PSR-7](https://www.php-fig.org/psr/psr-7/) 處理的，故所有的全局變量均可以在 `請求(Request)` 對象中得到相關的值；   
 
 對於 `global` 變量和 `static` 變量，在 `PHP-FPM` 模式下，本質都是存活於一個請求生命週期內的，而在 `Hyperf` 內因為是 `CLI` 應用，會存在 `全局週期` 和 `請求週期(協程週期)` 兩種長生命週期。   
-- 全局週期，我們只需要創建一個靜態變量供全局調用即可，靜態變量意味着在服務啟動後，任意協程和代碼邏輯均共享此靜態變量內的數據，也就意味着存放的數據不能是特別服務於某一個請求或某一個協程；
-- 協程週期，由於 `Hyperf` 會為每個請求自動創建一個協程來處理，那麼一個協程週期在此也可以理解為一個請求週期，在協程內，所有的狀態數據均應存放於 `Hyperf\Utils\Context` 類中，通過該類的 `get`、`set` 來讀取和存儲任意結構的數據，這個 `Context(協程上下文)` 類在執行任意協程時讀取或存儲的數據都是僅限對應的協程的，同時在協程結束時也會自動銷燬相關的上下文數據。
+- 全局週期，我們只需要創建一個靜態變量供全局調用即可，靜態變量意味着在服務啓動後，任意協程和代碼邏輯均共享此靜態變量內的數據，也就意味着存放的數據不能是特別服務於某一個請求或某一個協程；
+- 協程週期，由於 `Hyperf` 會為每個請求自動創建一個協程來處理，那麼一個協程週期在此也可以理解為一個請求週期，在協程內，所有的狀態數據均應存放於 `Hyperf\Context\Context` 類中，通過該類的 `get`、`set` 來讀取和存儲任意結構的數據，這個 `Context(協程上下文)` 類在執行任意協程時讀取或存儲的數據都是僅限對應的協程的，同時在協程結束時也會自動銷燬相關的上下文數據。
 
 ### 最大協程數限制
 
@@ -85,15 +85,15 @@ $db->connect($config, function ($db, $r) {
 
 ### 創建一個協程
 
-只需通過 `co(callable $callable)` 或 `go(callable $callable)` 函數或 `Hyperf\Utils\Coroutine::create(callable $callable)` 即可創建一個協程，協程內可以使用協程相關的方法和客户端。
+只需通過 `Hyperf\Coroutine\co(callable $callable)` 或 `Hyperf\Coroutine\go(callable $callable)` 函數或 `Hyperf\Coroutine\Coroutine::create(callable $callable)` 即可創建一個協程，協程內可以使用協程相關的方法和客户端。
 
 ### 判斷當前是否處於協程環境內
 
-在一些情況下我們希望判斷一些當前是否運行於協程環境內，對於一些兼容協程環境與非協程環境的代碼來説會作為一個判斷的依據，我們可以通過 `Hyperf\Utils\Coroutine::inCoroutine(): bool` 方法來得到結果。
+在一些情況下我們希望判斷一些當前是否運行於協程環境內，對於一些兼容協程環境與非協程環境的代碼來説會作為一個判斷的依據，我們可以通過 `Hyperf\Coroutine\Coroutine::inCoroutine(): bool` 方法來得到結果。
 
 ### 獲得當前協程的 ID
 
-在一些情況下，我們需要根據 `協程 ID` 去做一些邏輯，比如 `協程上下文` 之類的邏輯，可以通過 `Hyperf\Utils\Coroutine::id(): int` 獲得當前的 `協程 ID`，如不處於協程環境下，會返回 `-1`。
+在一些情況下，我們需要根據 `協程 ID` 去做一些邏輯，比如 `協程上下文` 之類的邏輯，可以通過 `Hyperf\Coroutine\Coroutine::id(): int` 獲得當前的 `協程 ID`，如不處於協程環境下，會返回 `-1`。
 
 ### Channel 通道
 
@@ -128,7 +128,7 @@ co(function () {
 
 ```php
 <?php
-$wg = new \Hyperf\Utils\WaitGroup();
+$wg = new \Hyperf\Coroutine\WaitGroup();
 // 計數器加二
 $wg->add(2);
 // 創建協程 A
@@ -155,9 +155,9 @@ $wg->wait();
 
 ```php
 <?php
-use Hyperf\Utils\Exception\ParallelExecutionException;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Parallel;
+use Hyperf\Coroutine\Exception\ParallelExecutionException;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Parallel;
 
 $parallel = new Parallel();
 $parallel->add(function () {
@@ -177,14 +177,14 @@ try{
     // $e->getThrowables() 獲取協程中出現的異常。
 }
 ```
-> 注意 `Hyperf\Utils\Exception\ParallelExecutionException` 異常僅在 1.1.6 版本和更新的版本下會拋出
+> 注意 `Hyperf\Coroutine\Exception\ParallelExecutionException` 異常僅在 1.1.6 版本和更新的版本下會拋出
 
 通過上面的代碼我們可以看到僅花了 `1` 秒就得到了兩個不同的協程的 `ID`，在調用 `add(callable $callable)` 的時候 `Parallel` 類會為之自動創建一個協程，並加入到 `WaitGroup` 的調度去。    
 不僅如此，我們還可以通過 `parallel(array $callables)` 函數進行更進一步的簡化上面的代碼，達到同樣的目的，下面為簡化後的代碼。
 
 ```php
 <?php
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 
 // 傳遞的數組參數您也可以帶上 key 便於區分子協程，返回的結果也會根據 key 返回對應的結果
 $result = parallel([
@@ -203,12 +203,12 @@ $result = parallel([
 
 #### 限制 Parallel 最大同時運行的協程數
 
-當我們添加到 `Parallel` 裏的任務有很多時，假設都是一些請求任務，那麼一瞬間發出全部請求很有可能會導致對端服務因為一瞬間接收到了大量的請求而處理不過來，有宕機的風險，所以需要對對端進行適當的保護，但我們又希望可以通過 `Parallel` 機制來加速這些請求的耗時，那麼可以通過在實例化 `Parallel` 對象時傳遞第一個參數，來設置最大運行的協程數，比如我們希望最大設置的協程數為 `5` ，也就意味着 `Parallel` 裏最多隻會有 `5` 個協程在運行，只有當 `5` 個裏有協程完成結束後，後續的協程才會繼續啟動，直至所有協程完成任務，示例代碼如下：
+當我們添加到 `Parallel` 裏的任務有很多時，假設都是一些請求任務，那麼一瞬間發出全部請求很有可能會導致對端服務因為一瞬間接收到了大量的請求而處理不過來，有宕機的風險，所以需要對對端進行適當的保護，但我們又希望可以通過 `Parallel` 機制來加速這些請求的耗時，那麼可以通過在實例化 `Parallel` 對象時傳遞第一個參數，來設置最大運行的協程數，比如我們希望最大設置的協程數為 `5` ，也就意味着 `Parallel` 裏最多隻會有 `5` 個協程在運行，只有當 `5` 個裏有協程完成結束後，後續的協程才會繼續啓動，直至所有協程完成任務，示例代碼如下：
 
 ```php
-use Hyperf\Utils\Exception\ParallelExecutionException;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Parallel;
+use Hyperf\Coroutine\Exception\ParallelExecutionException;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Coroutine\Parallel;
 
 $parallel = new Parallel(5);
 for ($i = 0; $i < 20; $i++) {
@@ -228,14 +228,14 @@ try{
 
 ### Concurrent 協程運行控制
 
-`Hyperf\Utils\Coroutine\Concurrent` 基於 `Swoole\Coroutine\Channel` 實現，用來控制一個代碼塊內同時運行的最大協程數量的特性。
+`Hyperf\Coroutine\Concurrent` 基於 `Swoole\Coroutine\Channel` 實現，用來控制一個代碼塊內同時運行的最大協程數量的特性。
 
 以下樣例，當同時執行 `10` 個子協程時，會在循環中阻塞，但只會阻塞當前協程，直到釋放出一個位置後，循環繼續執行下一個子協程。
 
 ```php
 <?php
 
-use Hyperf\Utils\Coroutine\Concurrent;
+use Hyperf\Coroutine\Concurrent;
 
 $concurrent = new Concurrent(10);
 
@@ -248,54 +248,54 @@ for ($i = 0; $i < 15; ++$i) {
 
 ### 協程上下文
 
-由於同一個進程內協程間是內存共享的，但協程的執行/切換是非順序的，也就意味着我們很難掌控當前的協程是哪一個*(事實上可以，但通常沒人這麼幹)*，所以我們需要在發生協程切換時能夠同時切換對應的上下文。   
-在 `Hyperf` 裏實現協程的上下文管理將非常簡單，基於 `Hyperf\Utils\Context` 類的 `set(string $id, $value)`、`get(string $id, $default = null)`、`has(string $id)`、`override(string $id, \Closure $closure)` 靜態方法即可完成上下文數據的管理，通過這些方法設置和獲取的值，都僅限於當前的協程，在協程結束時，對應的上下文也會自動跟隨釋放掉，無需手動管理，無需擔憂內存泄漏的風險。
+由於同一個進程內協程間是內存共享的，但協程的執行/切換是非順序的，也就意味着我們很難掌控當前的協程是哪一個**（事實上可以，但通常沒人這麼幹）**，所以我們需要在發生協程切換時能夠同時切換對應的上下文。
+在 `Hyperf` 裏實現協程的上下文管理將非常簡單，基於 `Hyperf\Context\Context` 類的 `set(string $id, $value)`、`get(string $id, $default = null)`、`has(string $id)`、`override(string $id, \Closure $closure)` 靜態方法即可完成上下文數據的管理，通過這些方法設置和獲取的值，都僅限於當前的協程，在協程結束時，對應的上下文也會自動跟隨釋放掉，無需手動管理，無需擔憂內存泄漏的風險。
 
-#### Hyperf\Utils\Context::set()
+#### Hyperf\Context\Context::set()
 
 通過調用 `set(string $id, $value)` 方法儲存一個值到當前協程的上下文中，如下：
 
 ```php
 <?php
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 // 將 bar 字符串以 foo 為 key 儲存到當前協程上下文中
 $foo = Context::set('foo', 'bar');
 // set 方法會再將 value 作為方法的返回值返回回來，所以 $foo 的值為 bar
 ```
 
-#### Hyperf\Utils\Context::get()
+#### Hyperf\Context\Context::get()
 
 通過調用 `get(string $id, $default = null)` 方法可從當前協程的上下文中取出一個以 `$id` 為 `key` 儲存的值，如不存在則返回 `$default` ，如下：
 
 ```php
 <?php
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 // 從當前協程上下文中取出 key 為 foo 的值，如不存在則返回 bar 字符串
 $foo = Context::get('foo', 'bar');
 ```
 
-#### Hyperf\Utils\Context::has()
+#### Hyperf\Context\Context::has()
 
 通過調用 `has(string $id)` 方法可判斷當前協程的上下文中是否存在以 `$id` 為 `key` 儲存的值，如存在則返回 `true`，不存在則返回 `false`，如下：
 
 ```php
 <?php
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 // 從當前協程上下文中判斷 key 為 foo 的值是否存在
 $foo = Context::has('foo');
 ```
 
-#### Hyperf\Utils\Context::override()
+#### Hyperf\Context\Context::override()
 
 當我們需要做一些複雜的上下文處理，比如先判斷一個 `key` 是否存在，如果存在則取出 `value` 來再對 `value` 進行某些修改，然後再將 `value` 設置回上下文容器中，此時會有比較繁雜的判斷條件，可直接通過調用 `override` 方法來實現這個邏輯，如下：
 
 ```php
 <?php
 use Psr\Http\Message\ServerRequestInterface;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 // 從協程上下文取出 $request 對象並設置 key 為 foo 的 Header，然後再保存到協程上下文中
 $request = Context::override(ServerRequestInterface::class, function (ServerRequestInterface $request) {

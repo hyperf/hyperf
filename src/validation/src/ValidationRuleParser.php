@@ -9,43 +9,42 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
 use Closure;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Collection\Arr;
+use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use Hyperf\Validation\Contract\Rule as RuleContract;
 use Hyperf\Validation\Rules\Exists;
 use Hyperf\Validation\Rules\Unique;
+use stdClass;
+use Stringable;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Collection\head;
 
 class ValidationRuleParser
 {
     /**
-     * The data being validated.
-     *
-     * @var array
-     */
-    public $data;
-
-    /**
      * The implicit attributes.
-     *
-     * @var array
      */
-    public $implicitAttributes = [];
+    public array $implicitAttributes = [];
 
     /**
      * Create a new validation rule parser.
+     *
+     * @param array $data the data being validated
      */
-    public function __construct(array $data)
+    public function __construct(public array $data)
     {
-        $this->data = $data;
     }
 
     /**
      * Parse the human-friendly rules into a full rules array for the validator.
      *
-     * @return \stdClass
+     * @return stdClass
      */
     public function explode(array $rules)
     {
@@ -62,10 +61,9 @@ class ValidationRuleParser
     /**
      * Merge additional rules into a given attribute(s).
      *
-     * @param array|string $attribute
-     * @param array|string $rules
+     * @param array|string|Stringable $rules
      */
-    public function mergeRules(array $results, $attribute, $rules = []): array
+    public function mergeRules(array $results, array|string $attribute, mixed $rules = []): array
     {
         if (is_array($attribute)) {
             foreach ($attribute as $innerAttribute => $innerRules) {
@@ -87,7 +85,7 @@ class ValidationRuleParser
      *
      * @param array|string $rules
      */
-    public static function parse($rules): array
+    public static function parse(mixed $rules): array
     {
         if ($rules instanceof RuleContract) {
             return [$rules, []];
@@ -102,6 +100,34 @@ class ValidationRuleParser
         $rules[0] = static::normalizeRule($rules[0]);
 
         return $rules;
+    }
+
+    /**
+     * Expand the conditional rules in the given array of rules.
+     * @param mixed $rules
+     */
+    public static function filterConditionalRules($rules, array $data = []): array
+    {
+        return collect($rules)->mapWithKeys(function ($attributeRules, $attribute) use ($data) {
+            if (! is_array($attributeRules)
+                && ! $attributeRules instanceof ConditionalRules) {
+                return [$attribute => $attributeRules];
+            }
+
+            if ($attributeRules instanceof ConditionalRules) {
+                return [$attribute => $attributeRules->passes($data)
+                    ? array_filter($attributeRules->rules($data))
+                    : array_filter($attributeRules->defaultRules($data)), ];
+            }
+
+            return [$attribute => collect($attributeRules)->map(function ($rule) use ($data) {
+                if (! $rule instanceof ConditionalRules) {
+                    return [$rule];
+                }
+
+                return $rule->passes($data) ? $rule->rules($data) : $rule->defaultRules($data);
+            })->filter()->flatten(1)->values()->all()];
+        })->all();
     }
 
     /**
@@ -164,9 +190,9 @@ class ValidationRuleParser
     /**
      * Define a set of rules that apply to each element in an array attribute.
      *
-     * @param array|string $rules
+     * @param array|string|Stringable $rules
      */
-    protected function explodeWildcardRules(array $results, string $attribute, $rules): array
+    protected function explodeWildcardRules(array $results, string $attribute, mixed $rules): array
     {
         $pattern = str_replace('\*', '[^\.]*', preg_quote($attribute));
 
@@ -188,9 +214,9 @@ class ValidationRuleParser
     /**
      * Merge additional rules into a given attribute.
      *
-     * @param array|string $rules
+     * @param array|string|Stringable $rules
      */
-    protected function mergeRulesForAttribute(array $results, string $attribute, $rules): array
+    protected function mergeRulesForAttribute(array $results, string $attribute, mixed $rules): array
     {
         $merge = head($this->explodeRules([$rules]));
 
@@ -207,7 +233,7 @@ class ValidationRuleParser
      */
     protected static function parseArrayRule(array $rules): array
     {
-        return [Str::studly(trim((string) Arr::get($rules, 0))), array_slice($rules, 1)];
+        return [StrCache::studly(trim((string) Arr::get($rules, 0))), array_slice($rules, 1)];
     }
 
     /**
@@ -220,13 +246,13 @@ class ValidationRuleParser
         // The format for specifying validation rules and parameters follows an
         // easy {rule}:{parameters} formatting convention. For instance the
         // rule "Max:3" states that the value may only be three letters.
-        if (strpos($rules, ':') !== false) {
+        if (str_contains($rules, ':')) {
             [$rules, $parameter] = explode(':', $rules, 2);
 
             $parameters = static::parseParameters($rules, $parameter);
         }
 
-        return [Str::studly(trim($rules)), $parameters];
+        return [StrCache::studly(trim($rules)), $parameters];
     }
 
     /**
@@ -248,13 +274,10 @@ class ValidationRuleParser
      */
     protected static function normalizeRule(string $rule): string
     {
-        switch ($rule) {
-            case 'Int':
-                return 'Integer';
-            case 'Bool':
-                return 'Boolean';
-            default:
-                return $rule;
-        }
+        return match ($rule) {
+            'Int' => 'Integer',
+            'Bool' => 'Boolean',
+            default => $rule,
+        };
     }
 }

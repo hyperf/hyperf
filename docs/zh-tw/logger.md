@@ -4,7 +4,7 @@
 
 ## 安裝
 
-```
+```shell
 composer require hyperf/logger
 ```
 
@@ -21,7 +21,7 @@ return [
             'class' => \Monolog\Handler\StreamHandler::class,
             'constructor' => [
                 'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                'level' => \Monolog\Logger::DEBUG,
+                'level' => \Monolog\Level::Debug,
             ],
         ],
         'formatter' => [
@@ -45,16 +45,13 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Hyperf\Logger\LoggerFactory;
 
 class DemoService
 {
-    
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    protected $logger;
+
+    protected LoggerInterface $logger;
 
     public function __construct(LoggerFactory $loggerFactory)
     {
@@ -130,13 +127,15 @@ $log->alert('czl');
 
 ### 封裝 `Log` 類
 
-可能有些時候您更想保持大多數框架使用日誌的習慣，那麼您可以在 `App` 下建立一個 `Log` 類，並通過 `__callStatic` 魔術方法靜態方法呼叫實現對 `Logger` 的取用以及各個等級的日誌記錄，我們通過程式碼來演示一下：
+可能有些時候您更想保持大多數框架使用日誌的習慣，那麼您可以在 `App` 下建立一個 `Log` 類，並透過 `__callStatic` 魔術方法靜態方法呼叫實現對 `Logger` 的取用以及各個等級的日誌記錄，我們透過程式碼來演示一下：
+
+> 切記在使用時，不要讓 $name 跟 請求 掛鉤，比如把 $request_id 當 logger name 來使用，就會導致 Factory 中儲存請求級別的日誌物件，會導致嚴重的記憶體洩漏。
 
 ```php
 namespace App;
 
 use Hyperf\Logger\LoggerFactory;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 class Log
 {
@@ -147,13 +146,13 @@ class Log
 }
 ```
 
-預設使用 `Channel` 名為 `app` 來記錄日誌，您也可以通過使用 `Log::get($name)` 方法獲得不同 `Channel` 的 `Logger`, 強大的 `容器(Container)` 幫您解決了這一切
+預設使用 `Channel` 名為 `app` 來記錄日誌，您也可以透過使用 `Log::get($name)` 方法獲得不同 `Channel` 的 `Logger`, 強大的 `容器(Container)` 幫您解決了這一切
 
 ### stdout 日誌
 
-框架元件所輸出的日誌在預設情況下是由 `Hyperf\Contract\StdoutLoggerInterface` 介面的實現類 `Hyperf\Framework\Logger\StdoutLogger` 提供支援的，該實現類只是為了將相關的資訊通過 `print_r()` 輸出在 `標準輸出(stdout)`，即為啟動 `Hyperf` 的 `終端(Terminal)` 上，也就意味著其實並沒有使用到 `monolog` 的，那麼如果想要使用 `monolog` 來保持一致要怎麼處理呢？
+框架元件所輸出的日誌在預設情況下是由 `Hyperf\Contract\StdoutLoggerInterface` 介面的實現類 `Hyperf\Framework\Logger\StdoutLogger` 提供支援的，該實現類只是為了將相關的資訊透過 `print_r()` 輸出在 `標準輸出(stdout)`，即為啟動 `Hyperf` 的 `終端(Terminal)` 上，也就意味著其實並沒有使用到 `monolog` 的，那麼如果想要使用 `monolog` 來保持一致要怎麼處理呢？
 
-是的, 還是通過強大的 `容器(Container)`.
+是的, 還是透過強大的 `容器(Container)`.
 
 - 首先, 實現一個 `StdoutLoggerFactory` 類，關於 `Factory` 的用法可在 [依賴注入](zh-tw/di.md) 章節獲得更多詳細的說明。
 
@@ -212,7 +211,7 @@ return [
             'class' => \Monolog\Handler\StreamHandler::class,
             'constructor' => [
                 'stream' => 'php://stdout',
-                'level' => \Monolog\Logger::INFO,
+                'level' => \Monolog\Level::Info,
             ],
         ],
         'formatter' => $formatter,
@@ -227,7 +226,7 @@ return [
 
 ### 日誌檔案按日期輪轉
 
-如果您希望日誌檔案可以按照日期輪轉，可以通過 `Mongolog` 已經提供了的 `Monolog\Handler\RotatingFileHandler` 來實現，配置如下：
+如果您希望日誌檔案可以按照日期輪轉，可以透過 `Mongolog` 已經提供了的 `Monolog\Handler\RotatingFileHandler` 來實現，配置如下：
 
 修改 `config/autoload/logger.php` 配置檔案，將 `Handler` 改為 `Monolog\Handler\RotatingFileHandler::class`，並將 `stream` 欄位改為 `filename` 即可。
 
@@ -240,7 +239,7 @@ return [
             'class' => Monolog\Handler\RotatingFileHandler::class,
             'constructor' => [
                 'filename' => BASE_PATH . '/runtime/logs/hyperf.log',
-                'level' => Monolog\Logger::DEBUG,
+                'level' => Monolog\Level::Debug,
             ],
         ],
         'formatter' => [
@@ -255,7 +254,7 @@ return [
 ];
 ```
 
-如果您希望再進行更細粒度的日誌切割，也可通過繼承 `Monolog\Handler\RotatingFileHandler` 類並重新實現 `rotate()` 方法實現。
+如果您希望再進行更細粒度的日誌切割，也可透過繼承 `Monolog\Handler\RotatingFileHandler` 類並重新實現 `rotate()` 方法實現。
 
 ### 配置多個 `Handler`
 
@@ -269,7 +268,7 @@ declare(strict_types=1);
 
 use Monolog\Handler;
 use Monolog\Formatter;
-use Monolog\Logger;
+use Monolog\Level;
 
 return [
     'default' => [
@@ -278,7 +277,7 @@ return [
                 'class' => Handler\StreamHandler::class,
                 'constructor' => [
                     'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                    'level' => Logger::INFO,
+                    'level' => Level::Info,
                 ],
                 'formatter' => [
                     'class' => Formatter\LineFormatter::class,
@@ -293,7 +292,7 @@ return [
                 'class' => Handler\StreamHandler::class,
                 'constructor' => [
                     'stream' => BASE_PATH . '/runtime/logs/hyperf-debug.log',
-                    'level' => Logger::DEBUG,
+                    'level' => Level::Info,
                 ],
                 'formatter' => [
                     'class' => Formatter\JsonFormatter::class,
@@ -308,13 +307,119 @@ return [
 ];
 ```
 
-結果如下
+或
+
+```php
+
+declare(strict_types=1);
+
+use Monolog\Handler;
+use Monolog\Formatter;
+use Monolog\Level;
+
+return [
+    'default' => [
+        'handlers' => ['single', 'daily'],
+    ],
+
+    'single' => [
+        'handler' => [
+            'class' => Handler\StreamHandler::class,
+            'constructor' => [
+                'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                'level' => Level::Info,
+            ],
+        ],
+        'formatter' => [
+            'class' => Formatter\LineFormatter::class,
+            'constructor' => [
+                'format' => null,
+                'dateFormat' => null,
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
+
+    'daily' => [
+        'handler' => [
+            'class' => Handler\StreamHandler::class,
+            'constructor' => [
+                'stream' => BASE_PATH . '/runtime/logs/hyperf-debug.log',
+                'level' => Level::Info,
+            ],
+        ],
+        'formatter' => [
+            'class' => Formatter\JsonFormatter::class,
+            'constructor' => [
+                'batchMode' => Formatter\JsonFormatter::BATCH_MODE_JSON,
+                'appendNewline' => true,
+            ],
+        ],
+    ],
+];
 
 ```
+
+結果如下
+
+```shell
 ==> runtime/logs/hyperf.log <==
 [2019-11-08 11:11:35] hyperf.INFO: 5dc4dce791690 [] []
 
 ==> runtime/logs/hyperf-debug.log <==
 {"message":"5dc4dce791690","context":[],"level":200,"level_name":"INFO","channel":"hyperf","datetime":{"date":"2019-11-08 11:11:35.597153","timezone_type":3,"timezone":"Asia/Shanghai"},"extra":[]}
 {"message":"xxxx","context":[],"level":100,"level_name":"DEBUG","channel":"hyperf","datetime":{"date":"2019-11-08 11:11:35.597635","timezone_type":3,"timezone":"Asia/Shanghai"},"extra":[]}
+```
+
+
+### 統一請求級別日誌
+
+有時候，我們需要將同一個請求的日誌關聯起來，所以我們可以實現一個 Processor
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Kernel\Log;
+
+use Hyperf\Context\Context;
+use Hyperf\Coroutine\Coroutine;
+use Monolog\LogRecord;
+use Monolog\Processor\ProcessorInterface;
+
+class AppendRequestIdProcessor implements ProcessorInterface
+{
+    public const REQUEST_ID = 'log.request.id';
+
+    public function __invoke(array|LogRecord $record)
+    {
+        $record['extra']['request_id'] = Context::getOrSet(self::REQUEST_ID, uniqid());
+        $record['extra']['coroutine_id'] = Coroutine::id();
+        return $record;
+    }
+}
+
+```
+
+然後配置到我們的 `logger.php` 配置中
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use App\Kernel\Log;
+
+return [
+    'default' => [
+        // 刪除其他配置
+        'processors' => [
+            [
+                'class' => Log\AppendRequestIdProcessor::class,
+            ],
+        ],
+    ],
+];
+
 ```

@@ -9,13 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer\Room;
 
 interface EphemeralInterface
 {
     /**
-     * @return EphemeralInterface
-     *
      * Set the ttl in milliseconds for a sid. Should be called during
      * starting up.
      */

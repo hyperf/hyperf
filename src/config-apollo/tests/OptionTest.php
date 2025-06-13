@@ -9,15 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ConfigApollo;
 
 use Hyperf\ConfigApollo\Option;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- * @covers \Hyperf\ConfigApollo\Option
+ * @coversNothing
  */
+#[CoversClass(Option::class)]
 class OptionTest extends TestCase
 {
     public function testBuildUrl()

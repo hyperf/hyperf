@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Scout;
 
 /**
@@ -40,15 +41,11 @@ interface SearchableInterface
 
     /**
      * Get the index name for the model.
-     *
-     * @return string
      */
-    public function searchableAs();
+    public function searchableAs(): string;
 
     /**
      * Determine if the model should be searchable.
-     *
-     * @return bool
      */
-    public function shouldBeSearchable();
+    public function shouldBeSearchable(): bool;
 }

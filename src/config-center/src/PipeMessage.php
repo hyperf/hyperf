@@ -9,20 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigCenter;
 
 use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
 
 class PipeMessage implements PipeMessageInterface
 {
-    /**
-     * @var array
-     */
-    protected $data = [];
-
-    public function __construct(array $data)
+    public function __construct(protected array $data)
     {
-        $this->data = $data;
     }
 
     public function getData(): array

@@ -9,43 +9,37 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ModelCache;
 
+use DateInterval;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Collector\TableCollector;
+use Hyperf\ModelCache\Handler\DefaultValueInterface;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+
+use function Hyperf\Support\make;
 
 class Manager
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * @var HandlerInterface[]
      */
-    protected $handlers = [];
+    protected array $handlers = [];
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var TableCollector
-     */
-    protected $collector;
+    protected TableCollector $collector;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->collector = $container->get(TableCollector::class);
 
@@ -67,13 +61,12 @@ class Manager
 
     /**
      * Fetch a model from cache.
-     * @param mixed $id
+     * @param int|string $id
+     * @param class-string<Model> $class
      */
     public function findFromCache($id, string $class): ?Model
     {
-        /** @var Model $instance */
         $instance = new $class();
-
         $name = $instance->getConnectionName();
         $primaryKey = $instance->getKeyName();
 
@@ -86,20 +79,20 @@ class Manager
                 );
             }
 
-            // Fetch it from database, because it not exist in cache handler.
-            if (is_null($data)) {
+            // Fetch it from database, because it not exists in cache handler.
+            if ($data === null) {
                 $model = $instance->newQuery()->where($primaryKey, '=', $id)->first();
                 if ($model) {
                     $ttl = $this->getCacheTTL($instance, $handler);
                     $handler->set($key, $this->formatModel($model), $ttl);
                 } else {
                     $ttl = $handler->getConfig()->getEmptyModelTtl();
-                    $handler->set($key, [], $ttl);
+                    $handler->set($key, $this->defaultValue($handler, $id), $ttl);
                 }
                 return $model;
             }
 
-            // It not exist in cache handler and database.
+            // It not exists in cache handler and database.
             return null;
         }
 
@@ -109,6 +102,8 @@ class Manager
 
     /**
      * Fetch many models from cache.
+     * @param array<int|string> $ids
+     * @param class-string<Model> $class
      */
     public function findManyFromCache(array $ids, string $class): Collection
     {
@@ -116,9 +111,7 @@ class Manager
             return new Collection([]);
         }
 
-        /** @var Model $instance */
         $instance = new $class();
-
         $name = $instance->getConnectionName();
         $primaryKey = $instance->getKeyName();
 
@@ -130,8 +123,16 @@ class Manager
             $data = $handler->getMultiple($keys);
             $items = [];
             $fetchIds = [];
-            foreach ($data ?? [] as $item) {
+            foreach ($data as $item) {
+                if ($handler instanceof DefaultValueInterface && $handler->isDefaultValue($item)) {
+                    $fetchIds[] = $handler->getPrimaryValue($item);
+                    continue;
+                }
+
                 if (isset($item[$primaryKey])) {
+                    if ($handler instanceof DefaultValueInterface) {
+                        $item = $handler->clearDefaultValue($item);
+                    }
                     $items[] = $item;
                     $fetchIds[] = $item[$primaryKey];
                 }
@@ -140,13 +141,18 @@ class Manager
             // Get ids that not exist in cache handler.
             $targetIds = array_diff($ids, $fetchIds);
             if ($targetIds) {
+                /** @var Collection<int, Model> $models */
                 $models = $instance->newQuery()->whereIn($primaryKey, $targetIds)->get();
+                $dictionary = $models->getDictionary();
                 $ttl = $this->getCacheTTL($instance, $handler);
-                /** @var Model $model */
-                foreach ($models as $model) {
-                    $id = $model->getKey();
+                $emptyTtl = $handler->getConfig()->getEmptyModelTtl();
+                foreach ($targetIds as $id) {
                     $key = $this->getCacheKey($id, $instance, $handler->getConfig());
-                    $handler->set($key, $this->formatModel($model), $ttl);
+                    if ($model = $dictionary[$id] ?? null) {
+                        $handler->set($key, $this->formatModel($model), $ttl);
+                    } else {
+                        $handler->set($key, $this->defaultValue($handler, $id), $emptyTtl);
+                    }
                 }
 
                 $items = array_merge($items, $this->formatModels($models));
@@ -173,14 +179,13 @@ class Manager
 
     /**
      * Destroy the models for the given IDs from cache.
-     * @param mixed $ids
+     * @param class-string<Model> $class
      */
-    public function destroy($ids, string $class): bool
+    public function destroy(iterable $ids, string $class): bool
     {
-        /** @var Model $instance */
         $instance = new $class();
-
         $name = $instance->getConnectionName();
+
         if ($handler = $this->handlers[$name] ?? null) {
             $keys = [];
             foreach ($ids as $id) {
@@ -198,13 +203,13 @@ class Manager
      * @param mixed $id
      * @param mixed $column
      * @param mixed $amount
+     * @param class-string<Model> $class
      */
     public function increment($id, $column, $amount, string $class): bool
     {
-        /** @var Model $instance */
         $instance = new $class();
-
         $name = $instance->getConnectionName();
+
         if ($handler = $this->handlers[$name] ?? null) {
             $key = $this->getCacheKey($id, $instance, $handler->getConfig());
             if ($handler->has($key)) {
@@ -218,10 +223,22 @@ class Manager
         return false;
     }
 
-    /**
-     * @return \DateInterval|int
-     */
-    protected function getCacheTTL(Model $instance, HandlerInterface $handler)
+    public function formatModel(Model $model): array
+    {
+        return $model->getAttributes();
+    }
+
+    public function formatModels($models): array
+    {
+        $result = [];
+        foreach ($models as $model) {
+            $result[] = $this->formatModel($model);
+        }
+
+        return $result;
+    }
+
+    protected function getCacheTTL(Model $instance, HandlerInterface $handler): DateInterval|int
     {
         if ($instance instanceof CacheableInterface) {
             return $instance->getCacheTTL() ?? $handler->getConfig()->getTtl();
@@ -244,21 +261,6 @@ class Manager
         );
     }
 
-    protected function formatModel(Model $model): array
-    {
-        return $model->getAttributes();
-    }
-
-    protected function formatModels($models): array
-    {
-        $result = [];
-        foreach ($models as $model) {
-            $result[] = $this->formatModel($model);
-        }
-
-        return $result;
-    }
-
     protected function getAttributes(Config $config, Model $model, array $data)
     {
         if (! $config->isUseDefaultValue()) {
@@ -276,5 +278,14 @@ class Manager
     protected function getPrefix(string $connection): string
     {
         return (string) $this->container->get(ConfigInterface::class)->get('databases.' . $connection . '.prefix');
+    }
+
+    protected function defaultValue(mixed $handler, mixed $primaryValue): array
+    {
+        if ($handler instanceof DefaultValueInterface) {
+            return $handler->defaultValue($primaryValue);
+        }
+
+        return [];
     }
 }

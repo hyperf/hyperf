@@ -9,66 +9,49 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer\Room;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
+use Hyperf\Engine\WebSocket\Frame;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Server\Exception\RuntimeException;
-use Hyperf\SocketIOServer\Emitter\Flagger;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coroutine;
 use Hyperf\WebSocketServer\Sender;
-use Mix\Redis\Subscribe\Subscriber;
+use Mix\Redis\Subscriber\Subscriber;
 use Redis;
+use Throwable;
+
+use function Hyperf\Collection\data_get;
+use function Hyperf\Support\make;
+use function Hyperf\Support\retry;
 
 class RedisAdapter implements AdapterInterface, EphemeralInterface
 {
-    use Flagger;
+    protected string $redisPrefix = 'ws';
 
-    protected $redisPrefix = 'ws';
+    protected int $retryInterval = 1000;
 
-    protected $retryInterval = 1000;
+    protected int $cleanUpExpiredInterval = 30000;
 
-    protected $cleanUpExpiredInterval = 30000;
-
-    protected $connection = 'default';
-
-    /**
-     * @var NamespaceInterface
-     */
-    protected $nsp;
+    protected string $connection = 'default';
 
     /**
      * @var \Hyperf\Redis\Redis|Redis|RedisProxy
      */
     protected $redis;
 
-    /**
-     * @var SidProviderInterface
-     */
-    protected $sidProvider;
+    protected int $ttl = 0;
 
-    /**
-     * @var Sender
-     */
-    protected $sender;
-
-    /**
-     * @var int time to live
-     */
-    protected $ttl = 0;
-
-    public function __construct(RedisFactory $redis, Sender $sender, NamespaceInterface $nsp, SidProviderInterface $sidProvider)
+    public function __construct(RedisFactory $redis, protected Sender $sender, protected NamespaceInterface $nsp, protected SidProviderInterface $sidProvider)
     {
-        $this->sender = $sender;
-        $this->nsp = $nsp;
         $this->redis = $redis->get($this->connection);
-        $this->sidProvider = $sidProvider;
     }
 
     public function add(string $sid, string ...$rooms)
@@ -154,14 +137,13 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
             CoordinatorManager::until(Constants::WORKER_START)->yield();
             retry(PHP_INT_MAX, function () {
                 try {
-                    $sub = make(Subscriber::class);
-                    if ($sub) {
-                        $this->mixSubscribe($sub);
+                    if (class_exists(Subscriber::class)) {
+                        $this->mixSubscribe();
                     } else {
                         // Fallback to PhpRedis, which has a very bad blocking subscribe model.
                         $this->phpRedisSubscribe();
                     }
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     $container = ApplicationContext::getContainer();
                     if ($container->has(StdoutLoggerInterface::class)) {
                         $logger = $container->get(StdoutLoggerInterface::class);
@@ -212,9 +194,9 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
             foreach ($sids as $sid) {
                 $this->del($sid);
             }
-        }
 
-        $this->redis->zRem($this->getExpireKey(), ...$sids);
+            $this->redis->zRem($this->getExpireKey(), ...$sids);
+        }
     }
 
     public function setTtl(int $ms): EphemeralInterface
@@ -313,26 +295,19 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
 
     private function tryPush(string $sid, string $packet, array &$pushed, array $opts): void
     {
-        $compress = data_get($opts, 'flag.compress', false);
-        $wsFlag = $this->guessFlags((bool) $compress);
         $except = data_get($opts, 'except', []);
         $fd = $this->getFd($sid);
         if (in_array($sid, $except)) {
             return;
         }
         if ($this->isLocal($sid) && ! isset($pushed[$fd])) {
-            $this->sender->push(
-                $fd,
-                $packet,
-                SWOOLE_WEBSOCKET_OPCODE_TEXT,
-                $wsFlag
-            );
+            $this->sender->pushFrame($fd, new Frame(payloadData: $packet));
             $pushed[$fd] = true;
             $this->shouldClose($opts) && $this->close($fd);
         }
     }
 
-    private function formatThrowable(\Throwable $throwable): string
+    private function formatThrowable(Throwable $throwable): string
     {
         return (string) $throwable;
     }
@@ -340,19 +315,28 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
     private function phpRedisSubscribe()
     {
         $redis = $this->redis;
-        /** @var string $callback */
         $callback = function ($redis, $chan, $msg) {
             Coroutine::create(function () use ($msg) {
                 [$packet, $opts] = unserialize($msg);
                 $this->doBroadcast($packet, $opts);
             });
         };
-        // cast to string because PHPStan asked so.
+        /* @phpstan-ignore-next-line */
         $redis->subscribe([$this->getChannelKey()], $callback);
     }
 
-    private function mixSubscribe(Subscriber $sub)
+    private function mixSubscribe()
     {
+        $sub = make(Subscriber::class, [
+            'host' => $this->redis->getHost(),
+            'port' => $this->redis->getPort(),
+            'password' => $this->redis->getAuth() ?: '',
+            'timeout' => 5,
+        ]);
+        $prefix = $this->redis->getOption(Redis::OPT_PREFIX);
+        if ($prefix) {
+            $sub->prefix = (string) $prefix;
+        }
         $sub->subscribe($this->getChannelKey());
         $chan = $sub->channel();
         Coroutine::create(function () use ($sub) {
@@ -361,7 +345,7 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
         });
         while (true) {
             $data = $chan->pop();
-            if (empty($data)) { // 手动close与redis异常断开都会导致返回false
+            if (empty($data)) { // Both manual closure and abnormal disconnections from Redis result in returning false.
                 if (! $sub->closed) {
                     throw new RuntimeException('Redis subscriber disconnected from Redis.');
                 }

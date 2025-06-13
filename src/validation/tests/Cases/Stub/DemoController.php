@@ -9,10 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases\Stub;
 
 class DemoController
 {
+    public function __invoke(DemoRequest $request)
+    {
+        return $request->all();
+    }
+
     public function signUp(DemoRequest $request)
     {
         return $request->all();

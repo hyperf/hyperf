@@ -9,18 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\Annotation;
 
 use Hyperf\Di\Annotation\AspectLoader;
 use Hyperf\Di\Annotation\Inject;
 use HyperfTest\Di\Stub\Aspect\Debug1Aspect;
 use HyperfTest\Di\Stub\Aspect\DebugLoaderAspect;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class AspectLoaderTest extends TestCase
 {
     public function testLoad()

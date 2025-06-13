@@ -9,30 +9,35 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ModelCache;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Schema\Column;
 use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\ModelCache;
 use Hyperf\ModelCache\Handler\HandlerInterface;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\ModelCache\Stub\ManagerStub;
 use HyperfTest\ModelCache\Stub\ModelStub;
 use HyperfTest\ModelCache\Stub\NonHandler;
 use HyperfTest\ModelCache\Stub\StdoutLogger;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+
+use function Hyperf\Coroutine\parallel;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ManagerTest extends TestCase
 {
     protected function tearDown(): void
@@ -84,7 +89,7 @@ class ManagerTest extends TestCase
 
         $model = new ModelStub();
         $this->assertSame(1000, $manager->getCacheTTL($model, $handler));
-        $model = new class() extends ModelStub implements ModelCache\CacheableInterface {
+        $model = new class extends ModelStub implements ModelCache\CacheableInterface {
             use ModelCache\Cacheable;
 
             public function getCacheTTL(): ?int
@@ -139,8 +144,8 @@ class ManagerTest extends TestCase
 
         $manager = new ClassInvoker(new ManagerStub($container));
         $handler = $manager->handlers['default'];
-        $model = new class() extends ModelStub {
-            protected $table = 'model';
+        $model = new class extends ModelStub {
+            protected ?string $table = 'model';
         };
         $data = $manager->getAttributes($handler->getConfig(), $model, ['id' => 1]);
 

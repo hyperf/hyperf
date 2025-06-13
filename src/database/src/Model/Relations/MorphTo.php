@@ -9,12 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use BadMethodCallException;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Collection\head;
 
 class MorphTo extends BelongsTo
 {
@@ -28,7 +32,7 @@ class MorphTo extends BelongsTo
     /**
      * The models whose relations are being eager loaded.
      *
-     * @var \Hyperf\Database\Model\Collection
+     * @var Collection
      */
     protected $models;
 
@@ -130,7 +134,7 @@ class MorphTo extends BelongsTo
      * Create a new model instance by type.
      *
      * @param string $type
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function createModelByType($type)
     {
@@ -153,8 +157,8 @@ class MorphTo extends BelongsTo
     /**
      * Associate the model instance to the given parent.
      *
-     * @param \Hyperf\Database\Model\Model $model
-     * @return \Hyperf\Database\Model\Model
+     * @param Model $model
+     * @return Model
      */
     public function associate($model)
     {
@@ -174,7 +178,7 @@ class MorphTo extends BelongsTo
     /**
      * Dissociate previously associated model from the given parent.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function dissociate()
     {
@@ -246,7 +250,7 @@ class MorphTo extends BelongsTo
      * Get all of the relation results for a type.
      *
      * @param string $type
-     * @return \Hyperf\Database\Model\Collection
+     * @return Collection
      */
     protected function getResultsByType($type)
     {
@@ -303,7 +307,7 @@ class MorphTo extends BelongsTo
     /**
      * Replay stored macro calls on the actual related instance.
      *
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     protected function replayMacros(Builder $query)
     {

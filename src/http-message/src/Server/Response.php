@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpMessage\Server;
 
+use Hyperf\Engine\Contract\Http\Writable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Server\Chunk\Chunkable;
 use Hyperf\HttpMessage\Server\Chunk\HasChunk;
@@ -20,25 +22,16 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
 {
     use HasChunk;
 
-    /**
-     * @var array
-     */
-    protected $cookies = [];
+    protected array $cookies = [];
 
-    /**
-     * @var array
-     */
-    protected $trailers = [];
+    protected array $trailers = [];
 
-    /**
-     * @var null|ConnectionInterface
-     */
-    protected $connection;
+    protected ?Writable $connection = null;
 
     /**
      * Returns an instance with body content.
      */
-    public function withContent(string $content): self
+    public function withContent(string $content): static
     {
         $new = clone $this;
         $new->stream = new SwooleStream($content);
@@ -48,11 +41,20 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
     /**
      * Returns an instance with specified cookies.
      */
-    public function withCookie(Cookie $cookie): self
+    public function withCookie(Cookie $cookie): static
     {
         $clone = clone $this;
         $clone->cookies[$cookie->getDomain()][$cookie->getPath()][$cookie->getName()] = $cookie;
         return $clone;
+    }
+
+    /**
+     * Returns an instance with specified cookies.
+     */
+    public function setCookie(Cookie $cookie): static
+    {
+        $this->cookies[$cookie->getDomain()][$cookie->getPath()][$cookie->getName()] = $cookie;
+        return $this;
     }
 
     /**
@@ -67,7 +69,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
      * Returns an instance with specified trailer.
      * @param string $value
      */
-    public function withTrailer(string $key, $value): self
+    public function withTrailer(string $key, mixed $value): static
     {
         $new = clone $this;
         $new->trailers[$key] = $value;
@@ -77,7 +79,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
     /**
      * Retrieves a specified trailer value, returns null if the value does not exists.
      */
-    public function getTrailer(string $key)
+    public function getTrailer(string $key): mixed
     {
         return $this->trailers[$key] ?? null;
     }
@@ -90,13 +92,13 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
         return $this->trailers;
     }
 
-    public function setConnection(ConnectionInterface $connection)
+    public function setConnection(Writable $connection)
     {
         $this->connection = $connection;
         return $this;
     }
 
-    public function getConnection(): ?ConnectionInterface
+    public function getConnection(): ?Writable
     {
         return $this->connection;
     }

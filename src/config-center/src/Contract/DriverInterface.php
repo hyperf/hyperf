@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigCenter\Contract;
 
 interface DriverInterface
 {
-    public function fetchConfig();
+    public function fetchConfig(): void;
 
     public function createMessageFetcherLoop(): void;
 

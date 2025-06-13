@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Contract;
 
 use Swoole\Http\Request;
@@ -16,5 +17,9 @@ use Swoole\Http\Response;
 
 interface OnHandShakeInterface
 {
-    public function onHandShake(Request $request, Response $response): void;
+    /**
+     * @param Request $request
+     * @param Response $response
+     */
+    public function onHandShake($request, $response): void;
 }

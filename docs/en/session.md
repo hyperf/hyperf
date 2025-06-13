@@ -53,14 +53,12 @@ The session object can be accessed by injecting `Hyperf\Contract\SessionInterfac
 namespace App\Controller;
 
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\Contract\SessionInterface;
 
 class IndexController
 {
-    /**
-     * @Inject()
-     * @var \Hyperf\Contract\SessionInterface
-     */
-    private $session;
+    #[Inject]
+    private SessionInterface $session;
 
     public function index()
     {

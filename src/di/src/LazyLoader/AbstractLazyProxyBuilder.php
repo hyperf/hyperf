@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\LazyLoader;
 
 use PhpParser\BuilderFactory;
@@ -16,6 +17,8 @@ use PhpParser\Node;
 use PhpParser\Node\Const_;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassConst;
+
+use function Hyperf\Support\class_basename;
 
 abstract class AbstractLazyProxyBuilder
 {
@@ -27,25 +30,17 @@ abstract class AbstractLazyProxyBuilder
 
     /**
      * The BuilderFactory.
-     * @var BuilderFactory
      */
-    public $factory;
+    public BuilderFactory $factory;
 
     /**
      * Class Namespace.
-     * @var string
      */
-    protected $namespace;
+    protected ?string $namespace = null;
 
-    /**
-     * @var string
-     */
-    protected $proxyClassName;
+    protected ?string $proxyClassName = null;
 
-    /**
-     * @var string
-     */
-    protected $originalClassName;
+    protected ?string $originalClassName = null;
 
     public function __construct()
     {
@@ -63,7 +58,7 @@ abstract class AbstractLazyProxyBuilder
         $this->originalClassName = $originalClassName;
         $this->builder = $this->factory->class(class_basename($proxyClassName))
             ->addStmt(new ClassConst([new Const_('PROXY_TARGET', new String_($originalClassName))]))
-            ->addStmt($this->factory->useTrait('\\Hyperf\\Di\\LazyLoader\\LazyProxyTrait'))
+            ->addStmt($this->factory->useTrait('\Hyperf\Di\LazyLoader\LazyProxyTrait'))
             ->setDocComment("/**
                               * Be careful: This is a lazy proxy, not the real {$originalClassName} from container.
                               *

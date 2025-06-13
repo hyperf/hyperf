@@ -4,7 +4,7 @@ The `hyperf/logger` component is implemented based on [psr/logger](https://githu
 
 ## Installation
 
-```
+```shell
 composer require hyperf/logger
 ```
 
@@ -21,7 +21,7 @@ return [
             'class' => \Monolog\Handler\StreamHandler::class,
             'constructor' => [
                 'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                'level' => \Monolog\Logger::DEBUG,
+                'level' => \Monolog\Level::Debug,
             ],
         ],
         'formatter' => [
@@ -45,16 +45,12 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Hyperf\Logger\LoggerFactory;
 
 class DemoService
 {
-    
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     public function __construct(LoggerFactory $loggerFactory)
     {
@@ -132,11 +128,13 @@ $log->alert('czl');
 
 Sometimes, you may wish to keep the habit of logging in most frameworks. Then you can create a `Log` class under `App`, and call the magic static method `__callStatic` to access to `Logger` and each Level of logging. Let’s demonstrate through code:
 
+> Remember not to make a relation with name and request, such as linking $request_id as a logger name, it can cause request level log objects to be stored in the factory, leading to serious memory leak.
+
 ```php
 namespace App;
 
 use Hyperf\Logger\Logger;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 
 class Log
@@ -214,7 +212,7 @@ return [
             'class' => \Monolog\Handler\StreamHandler::class,
             'constructor' => [
                 'stream' => 'php://stdout',
-                'level' => \Monolog\Logger::INFO,
+                'level' => \Monolog\Level::Info,
             ],
         ],
         'formatter' => $formatter,
@@ -242,7 +240,7 @@ return [
             'class' => Monolog\Handler\RotatingFileHandler::class,
             'constructor' => [
                 'filename' => BASE_PATH . '/runtime/logs/hyperf.log',
-                'level' => Monolog\Logger::DEBUG,
+                'level' => Monolog\Level::Debug,
             ],
         ],
         'formatter' => [
@@ -272,7 +270,7 @@ declare(strict_types=1);
 
 use Monolog\Handler;
 use Monolog\Formatter;
-use Monolog\Logger;
+use Monolog\Level;
 
 return [
     'default' => [
@@ -281,7 +279,7 @@ return [
                 'class' => Handler\StreamHandler::class,
                 'constructor' => [
                     'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                    'level' => Logger::INFO,
+                    'level' => Level::Info,
                 ],
                 'formatter' => [
                     'class' => Formatter\LineFormatter::class,
@@ -296,7 +294,7 @@ return [
                 'class' => Handler\StreamHandler::class,
                 'constructor' => [
                     'stream' => BASE_PATH . '/runtime/logs/hyperf-debug.log',
-                    'level' => Logger::DEBUG,
+                    'level' => Level::Info,
                 ],
                 'formatter' => [
                     'class' => Formatter\JsonFormatter::class,
@@ -312,9 +310,62 @@ return [
 
 ```
 
-The result is as follows
+Or
+
+```php
+
+declare(strict_types=1);
+
+use Monolog\Handler;
+use Monolog\Formatter;
+use Monolog\Level;
+
+return [
+    'default' => [
+        'handlers' => ['single', 'daily'],
+    ],
+
+    'single' => [
+        'handler' => [
+            'class' => Handler\StreamHandler::class,
+            'constructor' => [
+                'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                'level' => Level::Info,
+            ],
+        ],
+        'formatter' => [
+            'class' => Formatter\LineFormatter::class,
+            'constructor' => [
+                'format' => null,
+                'dateFormat' => null,
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
+
+    'daily' => [
+        'handler' => [
+            'class' => Handler\StreamHandler::class,
+            'constructor' => [
+                'stream' => BASE_PATH . '/runtime/logs/hyperf-debug.log',
+                'level' => Level::Info,
+            ],
+        ],
+        'formatter' => [
+            'class' => Formatter\JsonFormatter::class,
+            'constructor' => [
+                'batchMode' => Formatter\JsonFormatter::BATCH_MODE_JSON,
+                'appendNewline' => true,
+            ],
+        ],
+    ],
+];
 
 ```
+
+The result is as follows
+
+```shell
 ==> runtime/logs/hyperf.log <==
 [2019-11-08 11:11:35] hyperf.INFO: 5dc4dce791690 [] []
 

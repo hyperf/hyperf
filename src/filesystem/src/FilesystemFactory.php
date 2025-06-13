@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Filesystem;
 
 use Hyperf\Contract\ConfigInterface;
@@ -21,20 +22,8 @@ use Psr\Container\ContainerInterface;
 
 class FilesystemFactory
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container, private ConfigInterface $config)
     {
-        $this->container = $container;
-        $this->config = $container->get(ConfigInterface::class);
     }
 
     public function get($adapterName): Filesystem

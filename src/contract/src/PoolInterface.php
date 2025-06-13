@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Contract;
 
 interface PoolInterface
@@ -27,4 +28,6 @@ interface PoolInterface
      * Close and clear the connection pool.
      */
     public function flush(): void;
+
+    public function getOption(): PoolOptionInterface;
 }

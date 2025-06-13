@@ -9,31 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Message\MessageInterface;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 class Builder
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    protected $poolFactory;
-
-    /**
-     * @var ConnectionFactory
-     */
-    protected $factory;
-
-    public function __construct(ContainerInterface $container, ConnectionFactory $factory)
+    public function __construct(protected ContainerInterface $container, protected ConnectionFactory $factory)
     {
-        $this->container = $container;
-        $this->factory = $factory;
     }
 
     /**
@@ -51,8 +39,18 @@ class Builder
         try {
             $builder = $message->getExchangeBuilder();
 
-            $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
-        } catch (\Throwable $exception) {
+            $channel->exchange_declare(
+                $builder->getExchange(),
+                $builder->getTypeString(),
+                $builder->isPassive(),
+                $builder->isDurable(),
+                $builder->isAutoDelete(),
+                $builder->isInternal(),
+                $builder->isNowait(),
+                $builder->getArguments(),
+                $builder->getTicket()
+            );
+        } catch (Throwable $exception) {
             if ($releaseToChannel && isset($channel)) {
                 $channel->close();
             }

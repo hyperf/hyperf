@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ResourceGrpc;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Resource\Json\ResourceCollection;
-use Hyperf\Utils\Collection;
 
 class GrpcResourceCollection extends ResourceCollection
 {

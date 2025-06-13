@@ -9,13 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Server\Stub;
 
 use Hyperf\Process\AbstractProcess;
 
 class DemoProcess extends AbstractProcess
 {
-    public $name = 'test.demo';
+    public string $name = 'test.demo';
 
     public function handle(): void
     {

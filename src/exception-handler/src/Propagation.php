@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ExceptionHandler;
 
-use Hyperf\Utils\Traits\StaticInstance;
+use Hyperf\Support\Traits\StaticInstance;
 
 class Propagation
 {
@@ -19,10 +20,8 @@ class Propagation
 
     /**
      * Determine if the exception should propagate to next handler.
-     *
-     * @var bool
      */
-    protected $propagationStopped = false;
+    protected bool $propagationStopped = false;
 
     public function isPropagationStopped(): bool
     {

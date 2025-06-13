@@ -66,14 +66,12 @@ use Hyperf\Nsq\Annotation\Consumer;
 use Hyperf\Nsq\Message;
 use Hyperf\Nsq\Result;
 
-/**
- * @Consumer(
- *     topic="hyperf", 
- *     channel="hyperf", 
- *     name ="DemoNsqConsumer", 
- *     nums=1
- * )
- */
+#[Consumer(
+    topic: "hyperf", 
+    channel: "hyperf", 
+    name: "DemoNsqConsumer", 
+    nums: 1
+)]
 class DemoNsqConsumer extends AbstractConsumer
 {
     public function consume(Message $payload): string 
@@ -87,7 +85,7 @@ class DemoNsqConsumer extends AbstractConsumer
 
 ### Disable self-starting of the comsumer process
 
-By default, after using the `@Consumer` annotation definition, the framework will automatically create a child process to start the consumer at startup, and will automatically re-pull it after the child process exits abnormally. However, if some debugging work is carried out in the development stage, it may be inconvenient to debug due to the automatic consumption of consumers.
+By default, after using the `#[Consumer]` annotation definition, the framework will automatically create a child process to start the consumer at startup, and will automatically re-pull it after the child process exits abnormally. However, if some debugging work is carried out in the development stage, it may be inconvenient to debug due to the automatic consumption of consumers.
 
 In this situation, you could control the self-start of the consumption process through two forms to disable the feature, global shutdown and partial shutdown.
 
@@ -112,14 +110,12 @@ use Hyperf\Nsq\Message;
 use Hyperf\Nsq\Result;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Consumer(
- *     topic="demo_topic", 
- *     channel="demo_channel", 
- *     name ="DemoConsumer", 
- *     nums=1
- * )
- */
+#[Consumer(
+    topic: "demo_topic", 
+    channel: "demo_channel", 
+    name: "DemoConsumer", 
+    nums: 1
+)]
 class DemoConsumer extends AbstractConsumer
 {
     public function __construct(ContainerInterface $container)
@@ -156,9 +152,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Nsq\Nsq;
 
-/**
- * @Command
- */
+#[Command]
 class NsqCommand extends HyperfCommand
 {
     protected $name = 'nsq:pub';
@@ -191,9 +185,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Nsq\Nsq;
 
-/**
- * @Command
- */
+#[Command]
 class NsqCommand extends HyperfCommand
 {
     protected $name = 'nsq:pub';
@@ -230,9 +222,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Nsq\Nsq;
 
-/**
- * @Command
- */
+#[Command]
 class NsqCommand extends HyperfCommand
 {
     protected $name = 'nsq:pub';
@@ -261,7 +251,7 @@ For example, when you need to delete a `Topic`, you could execute the following 
 
 ```php
 <?php
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Nsq\Nsqd\Topic;
 
 $container = ApplicationContext::getContainer();
@@ -272,8 +262,8 @@ $client->delete('hyperf.test');
 ```
 
 - `Hyperf\Nsq\Api\Topic` class corresponds to `topic` related API;
-- `Hyperf\Nsq\Api\Channle` class corresponds to `channel` related API；
-- `Hyperf\Nsq\Api\Api` class corresponds to `ping`、`stats`、`config`、`debug` related API；
+- `Hyperf\Nsq\Api\Channle` class corresponds to `channel` related API;
+- `Hyperf\Nsq\Api\Api` class corresponds to `ping`、`stats`、`config`、`debug` related API;
 
 ## NSQ Protocol
 

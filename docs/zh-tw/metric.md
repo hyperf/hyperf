@@ -4,15 +4,17 @@
 
 ## 安裝
 
-### 通過 Composer 安裝元件
+### 透過 Composer 安裝元件
 
 ```bash
 composer require hyperf/metric
 ```
 
-[hyperf/metric](https://github.com/hyperf/metric) 元件預設安裝了 [Prometheus](https://prometheus.io/) 相關依賴。如果要使用 [StatsD](https://github.com/statsd/statsd) 或 [InfluxDB](http://influxdb.com)，還需要執行下面的命令安裝對應的依賴：
+Metric 支援 [Prometheus](https://prometheus.io/)、[StatsD](https://github.com/statsd/statsd) 和 [InfluxDB](http://influxdb.com)，可以執行下面的命令安裝對應的依賴：
 
 ```bash
+# Prometheus
+composer require promphp/prometheus_client_php
 # StatsD 所需依賴
 composer require domnikl/statsd
 # InfluxDB 所需依賴 
@@ -83,7 +85,7 @@ return [
 ];
 ```
 
-Prometheus 有兩種工作模式，爬模式與推模式（通過 Prometheus Pushgateway ），本元件均可支援。
+Prometheus 有兩種工作模式，爬模式與推模式（透過 Prometheus Pushgateway ），本元件均可支援。
 
 使用爬模式（Prometheus 官方推薦）時需設定：
 
@@ -93,7 +95,7 @@ Prometheus 有兩種工作模式，爬模式與推模式（通過 Prometheus Pus
 
 並配置爬取地址 `scrape_host`、爬取埠 `scrape_port`、爬取路徑 `scrape_path`。Prometheus 可以在對應配置下以 HTTP 訪問形式拉取全部指標。
 
-> 注意：爬模式下，必須啟用獨立程序，即 use_standalone_process = true。
+> 注意：非同步風格下，爬模式必須啟用獨立程序，即 `use_standalone_process = true`。
 
 使用推模式時需設定：
 
@@ -108,7 +110,7 @@ Prometheus 有兩種工作模式，爬模式與推模式（通過 Prometheus Pus
 ```php
 'mode' => Constants::CUSTOM_MODE
 ```
-例如，您可能希望通過自定義的路由上報指標，或希望將指標存入 Redis 中，由其他獨立服務負責指標的集中上報等。[自定義上報](#自定義上報)一節包含了相應的示例。
+例如，您可能希望透過自定義的路由上報指標，或希望將指標存入 Redis 中，由其他獨立服務負責指標的集中上報等。[自定義上報](#自定義上報)一節包含了相應的示例。
 
 #### 配置 StatsD
 
@@ -133,7 +135,7 @@ return [
 ];
 ```
 
-StatsD 目前只支援 UDP 模式，需要配置 UDP 地址 `udp_host`，UDP 埠 `udp_port`、是否批量推送 `enable_batch`（減少請求次數）、批量推送間隔 `push_interval` 以及取樣率 `sample_rate` 。
+StatsD 目前只支援 UDP 模式，需要配置 UDP 地址 `udp_host`，UDP 埠 `udp_port`、是否批次推送 `enable_batch`（減少請求次數）、批次推送間隔 `push_interval` 以及取樣率 `sample_rate` 。
 
 #### 配置 InfluxDB
 
@@ -159,7 +161,7 @@ return [
 ];
 ```
 
-InfluxDB 使用預設的 HTTP 模式，需要配置地址 `host`，UDP 埠 `port`、使用者名稱  `username`、密碼 `password`、`dbname` 資料表以及批量推送間隔 `push_interval`。
+InfluxDB 使用預設的 HTTP 模式，需要配置地址 `host`，UDP 埠 `port`、使用者名稱  `username`、密碼 `password`、`dbname` 資料表以及批次推送間隔 `push_interval`。
 
 ### 基本抽象
 
@@ -222,7 +224,7 @@ return [
 
 ### 自定義使用
 
-通過 HTTP 中介軟體遙測僅僅是本元件用途的冰山一角，您可以注入 `Hyperf\Metric\Contract\MetricFactoryInterface` 類來自行遙測業務資料。比如：建立的訂單數量、廣告的點選數量等。
+透過 HTTP 中介軟體遙測僅僅是本元件用途的冰山一角，您可以注入 `Hyperf\Metric\Contract\MetricFactoryInterface` 類來自行遙測業務資料。比如：建立的訂單數量、廣告的點選數量等。
 
 ```php
 <?php
@@ -232,15 +234,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Order;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 
 class IndexController extends AbstractController
 {
-    /**
-     * @Inject
-     * @var MetricFactoryInterface
-     */
-    private $metricFactory;
+    #[Inject]
+    private MetricFactoryInterface $metricFactory;
 
     public function create(Order $order)
     {
@@ -278,10 +278,7 @@ use Redis;
 
 class OnMetricFactoryReady implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -311,11 +308,11 @@ class OnMetricFactoryReady implements ListenerInterface
 }
 ```
 
-> 工程上講，直接從 Redis 查詢佇列長度不太合適，應該通過佇列驅動 `DriverInterface` 介面下的 `info()` 方法來獲取佇列長度。這裡只做簡易演示。您可以在本元件原始碼的`src/Listener` 資料夾下找到完整例子。
+> 工程上講，直接從 Redis 查詢佇列長度不太合適，應該透過佇列驅動 `DriverInterface` 介面下的 `info()` 方法來獲取佇列長度。這裡只做簡易演示。您可以在本元件原始碼的`src/Listener` 資料夾下找到完整例子。
 
 ### 註解
 
-您可以使用 `@Counter(name="stat_name_here")` 和 `@Histogram(name="stat_name_here")` 來統計切面的呼叫次數和執行時間。
+您可以使用 `#[Counter(name="stat_name_here")]` 和 `#[Histogram(name="stat_name_here")]` 來統計切面的呼叫次數和執行時間。
 
 關於註解的使用請參閱[註解章節](zh-tw/annotation)。
 
@@ -395,7 +392,7 @@ return [
 use Hyperf\HttpServer\Router\Router;
 
 Router::get('/metrics', function(){
-    $registry = Hyperf\Utils\ApplicationContext::getContainer()->get(Prometheus\CollectorRegistry::class);
+    $registry = Hyperf\Context\ApplicationContext::getContainer()->get(Prometheus\CollectorRegistry::class);
     $renderer = new Prometheus\RenderTextFormat();
     return $renderer->render($registry->getMetricFamilySamples());
 });

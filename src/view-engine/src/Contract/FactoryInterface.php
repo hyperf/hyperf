@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Contract;
 
 use Closure;
-use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Contract\Arrayable;
 
 interface FactoryInterface
 {
@@ -46,19 +47,13 @@ interface FactoryInterface
 
     /**
      * Register a view composer event.
-     *
-     * @param array|string $views
-     * @param Closure|string $callback
      */
-    public function composer($views, $callback);
+    public function composer(array|string $views, Closure|string $callback): array;
 
     /**
      * Register a view creator event.
-     *
-     * @param array|string $views
-     * @param Closure|string $callback
      */
-    public function creator($views, $callback);
+    public function creator(array|string $views, Closure|string $callback): array;
 
     /**
      * Add a new namespace to the loader.

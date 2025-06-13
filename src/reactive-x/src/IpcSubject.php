@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX;
 
 use Hyperf\Framework\Event\OnPipeMessage;
@@ -20,34 +21,17 @@ use Rx\Notification\OnCompletedNotification;
 use Rx\Notification\OnErrorNotification;
 use Rx\Notification\OnNextNotification;
 use Rx\Subject\Subject;
+use Throwable;
 
 class IpcSubject implements MessageBusInterface
 {
-    /**
-     * @var Subject
-     */
-    protected $subject;
+    private bool $isSubscribed;
 
-    /**
-     * @var BroadcasterInterface
-     */
-    protected $broadcaster;
-
-    /**
-     * @var int
-     */
-    protected $channelId;
-
-    /**
-     * @var bool
-     */
-    private $isSubscribed;
-
-    public function __construct(Subject $subject, BroadcasterInterface $broadcaster = null, int $channelId = 1)
-    {
-        $this->subject = $subject;
-        $this->broadcaster = $broadcaster;
-        $this->channelId = $channelId;
+    public function __construct(
+        protected Subject $subject,
+        protected ?BroadcasterInterface $broadcaster = null,
+        protected int $channelId = 1
+    ) {
         $this->isSubscribed = false;
     }
 
@@ -67,19 +51,14 @@ class IpcSubject implements MessageBusInterface
         }
         Observable::fromEvent(OnPipeMessage::class)
             ->merge(Observable::fromEvent(PipeMessage::class))
-            ->filter(function ($event) {
-                return $event->data instanceof IpcMessageWrapper
-                    && $event->data->channelId === $this->channelId;
-            })
-            ->map(function ($event) {
-                return $event->data->data;
-            })
+            ->filter(fn ($event) => $event->data instanceof IpcMessageWrapper && $event->data->channelId === $this->channelId)
+            ->map(fn ($event) => $event->data->data)
             ->dematerialize()
             ->subscribe($this->subject);
         $this->isSubscribed = true;
     }
 
-    public function subscribe($onNextOrObserver = null, callable $onError = null, callable $onCompleted = null): DisposableInterface
+    public function subscribe($onNextOrObserver = null, ?callable $onError = null, ?callable $onCompleted = null): DisposableInterface
     {
         $this->init();
         return $this->subject->subscribe($onNextOrObserver, $onError, $onCompleted);
@@ -88,7 +67,7 @@ class IpcSubject implements MessageBusInterface
     public function dispose()
     {
         $this->init();
-        return $this->subject->dispose();
+        $this->subject->dispose();
     }
 
     public function onNext($value)
@@ -101,7 +80,7 @@ class IpcSubject implements MessageBusInterface
         $this->subject->onNext($value);
     }
 
-    public function onError(\Throwable $exception)
+    public function onError(Throwable $exception)
     {
         $this->init();
         $this->broadcaster->broadcast(new IpcMessageWrapper(

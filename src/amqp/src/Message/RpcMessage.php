@@ -9,23 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\QueueBuilder;
 use Hyperf\Amqp\Packer\Packer;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 abstract class RpcMessage extends Message implements RpcMessageInterface
 {
-    /**
-     * @var string
-     */
-    protected $queue = '';
+    protected string $queue = '';
 
-    /**
-     * @var mixed
-     */
-    protected $payload;
+    protected mixed $payload;
 
     public function getQueueBuilder(): QueueBuilder
     {

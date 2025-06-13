@@ -10,15 +10,23 @@
     ],
     "homepage": "https://hyperf.io",
     "support": {
-        "docs": "https://hyperf.wiki",
         "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/command": "~2.2.0",
-        "zircote/swagger-php": "^3.0"
+        "php": ">=8.1",
+        "hyperf/codec": "~3.1.0",
+        "hyperf/command": "~3.1.0",
+        "hyperf/context": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/engine": "~3.1.0",
+        "hyperf/stringable": "~3.1.0",
+        "zircote/swagger-php": "^4.6"
+    },
+    "suggest": {
+        "hyperf/validation": "Required to use SwaggerRequest."
     },
     "autoload": {
         "psr-4": {
@@ -27,6 +35,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Swagger\\": "tests/"
         }
     },
     "config": {
@@ -34,7 +43,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Swagger\\ConfigProvider"

@@ -9,25 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpc\Contract;
+
+use Hyperf\Rpc\ErrorResponse;
+use Hyperf\Rpc\Request;
+use Hyperf\Rpc\Response;
 
 interface DataFormatterInterface
 {
-    /**
-     * @param array $data [$path, $params, $id]
-     * @return array
-     */
-    public function formatRequest($data);
+    public function formatRequest(Request $request): array;
 
-    /**
-     * @param array $data [$id, $result]
-     * @return array
-     */
-    public function formatResponse($data);
+    public function formatResponse(Response $response): array;
 
-    /**
-     * @param array $data [$id, $code, $message, $exception]
-     * @return array
-     */
-    public function formatErrorResponse($data);
+    public function formatErrorResponse(ErrorResponse $response): array;
 }

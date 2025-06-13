@@ -9,26 +9,61 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
+use Hyperf\Codec\Json;
+use Hyperf\Collection\Collection as BaseCollection;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\Fluent;
+use Hyperf\Database\Model\ModelNotFoundException;
+use Hyperf\Database\Model\Register;
+use Hyperf\Database\Schema\Schema;
+use Hyperf\Engine\Channel;
+use Hyperf\Support\Fluent;
+use HyperfTest\Database\Stubs\ContainerStub;
+use HyperfTest\Database\Stubs\Model\Book;
+use HyperfTest\Database\Stubs\ModelStub;
+use JsonSerializable;
 use LogicException;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use stdClass;
+
+use function Hyperf\Collection\collect;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelCollectionTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        $this->channel = new Channel(999);
+        $dispatcher = m::mock(EventDispatcherInterface::class);
+        $dispatcher->shouldReceive('dispatch')->with(m::any())->andReturnUsing(function ($event) {
+            $this->channel->push($event);
+        });
+        $container = ContainerStub::getContainer(function ($conn) use ($dispatcher) {
+            $conn->setEventDispatcher($dispatcher);
+        });
+        $connectionResolverInterface = $container->get(ConnectionResolverInterface::class);
+        Register::setConnectionResolver($connectionResolverInterface);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($dispatcher);
+        $this->createSchema();
+    }
+
     protected function tearDown(): void
     {
         m::close();
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('articles');
+        Schema::dropIfExists('comments');
     }
 
     public function testAddingItemsToCollection()
@@ -93,6 +128,23 @@ class ModelCollectionTest extends TestCase
         $this->assertTrue($c->contains($mockModel));
         $this->assertTrue($c->contains($mockModel2));
         $this->assertFalse($c->contains($mockModel3));
+    }
+
+    public function testCollectionAppends()
+    {
+        $m1 = new ModelStub();
+        $m2 = new ModelStub();
+
+        $col = new Collection([$m1, $m2]);
+
+        $this->assertSame([], $m1->toArray());
+        $this->assertSame([[], []], $col->toArray());
+
+        $col->append(['password']);
+
+        $this->assertSame(['password' => '******'], $m1->toArray());
+        $this->assertSame(['password' => '******'], $m2->toArray());
+        $this->assertSame([['password' => '******'], ['password' => '******']], $col->toArray());
     }
 
     public function testContainsIndicatesIfDifferentModelInArray()
@@ -188,6 +240,59 @@ class ModelCollectionTest extends TestCase
         $this->assertEquals([2, 3], $c->find([2, 3, 4])->pluck('id')->all());
     }
 
+    public function testFindOrFailFindsModelById()
+    {
+        $mockModel = m::mock(Model::class);
+        $mockModel->shouldReceive('getKey')->andReturn(1);
+        $c = new Collection([$mockModel]);
+
+        $this->assertSame($mockModel, $c->findOrFail(1));
+    }
+
+    public function testFindOrFailFindsManyModelsById()
+    {
+        $model1 = (new TestUserModel())->forceFill(['id' => 1]);
+        $model2 = (new TestUserModel())->forceFill(['id' => 2]);
+
+        $c = new Collection();
+        $this->assertInstanceOf(Collection::class, $c->findOrFail([]));
+        $this->assertCount(0, $c->findOrFail([]));
+
+        $c->push($model1);
+        $this->assertCount(1, $c->findOrFail([1]));
+        $this->assertEquals(1, $c->findOrFail([1])->first()->id);
+
+        $c->push($model2);
+        $this->assertCount(2, $c->findOrFail([1, 2]));
+
+        $this->expectException(ModelNotFoundException::class);
+        $this->expectExceptionMessage('No query results for model [HyperfTest\Database\TestUserModel] 3');
+
+        $c->findOrFail([1, 2, 3]);
+    }
+
+    public function testFindOrFailThrowsExceptionWithMessageWhenOtherModelsArePresent()
+    {
+        $model = (new TestUserModel())->forceFill(['id' => 1]);
+
+        $c = new Collection([$model]);
+
+        $this->expectException(ModelNotFoundException::class);
+        $this->expectExceptionMessage('No query results for model [HyperfTest\Database\TestUserModel] 2');
+
+        $c->findOrFail(2);
+    }
+
+    public function testFindOrFailThrowsExceptionWithoutMessageWhenOtherModelsAreNotPresent()
+    {
+        $c = new Collection();
+
+        $this->expectException(ModelNotFoundException::class);
+        $this->expectExceptionMessage('');
+
+        $c->findOrFail(1);
+    }
+
     public function testLoadMethodEagerLoadsGivenRelationships()
     {
         $c = $this->getMockBuilder(Collection::class)->onlyMethods(['first'])->setConstructorArgs([['foo']])->getMock();
@@ -258,7 +363,7 @@ class ModelCollectionTest extends TestCase
             return 'not-a-model';
         });
 
-        $this->assertEquals(BaseCollection::class, get_class($c));
+        $this->assertInstanceOf(BaseCollection::class, $c);
     }
 
     public function testMapWithKeys()
@@ -405,6 +510,22 @@ class ModelCollectionTest extends TestCase
         $this->assertEquals(['hidden', 'visible'], $c[0]->getHidden());
     }
 
+    public function testSetVisibleReplacesVisibleOnEntireCollection()
+    {
+        $c = new Collection([new TestEloquentCollectionModel()]);
+        $c = $c->setVisible(['hidden']);
+
+        $this->assertEquals(['hidden'], $c[0]->getVisible());
+    }
+
+    public function testSetHiddenReplacesHiddenOnEntireCollection()
+    {
+        $c = new Collection([new TestEloquentCollectionModel()]);
+        $c = $c->setHidden(['visible']);
+
+        $this->assertEquals(['visible'], $c[0]->getHidden());
+    }
+
     public function testMakeVisibleRemovesHiddenFromEntireCollection()
     {
         $c = new Collection([new TestEloquentCollectionModel()]);
@@ -417,12 +538,12 @@ class ModelCollectionTest extends TestCase
     {
         $a = new Collection([['foo' => 'bar'], ['foo' => 'baz']]);
         $b = new Collection(['a', 'b', 'c']);
-        $this->assertEquals(BaseCollection::class, get_class($a->pluck('foo')));
-        $this->assertEquals(BaseCollection::class, get_class($a->keys()));
-        $this->assertEquals(BaseCollection::class, get_class($a->collapse()));
-        $this->assertEquals(BaseCollection::class, get_class($a->flatten()));
-        $this->assertEquals(BaseCollection::class, get_class($a->zip(['a', 'b'], ['c', 'd'])));
-        $this->assertEquals(BaseCollection::class, get_class($b->flip()));
+        $this->assertInstanceOf(BaseCollection::class, $a->pluck('foo'));
+        $this->assertInstanceOf(BaseCollection::class, $a->keys());
+        $this->assertInstanceOf(BaseCollection::class, $a->collapse());
+        $this->assertInstanceOf(BaseCollection::class, $a->flatten());
+        $this->assertInstanceOf(BaseCollection::class, $a->zip(['a', 'b'], ['c', 'd']));
+        $this->assertInstanceOf(BaseCollection::class, $b->flip());
     }
 
     public function testMakeVisibleRemovesHiddenAndIncludesVisible()
@@ -447,16 +568,116 @@ class ModelCollectionTest extends TestCase
         $c = new Collection();
         $c->toQuery();
     }
+
+    public function testCollectionMapInto()
+    {
+        $container = ContainerStub::getContainer();
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturnNull();
+
+        $arr = [new Book(['id' => 1]), new Book(['id' => 2]), new Book(['id' => 3])];
+        $collection = new Collection($arr);
+        $col = $collection->mapInto(TestBookModelSchema::class);
+        $this->assertSame('[{"no":1},{"no":2},{"no":3}]', Json::encode($col));
+    }
+
+    protected function createSchema()
+    {
+        Schema::create('users', function ($table) {
+            $table->increments('id');
+            $table->string('email')->unique();
+        });
+
+        Schema::create('articles', function ($table) {
+            $table->increments('id');
+            $table->integer('user_id');
+            $table->string('title');
+        });
+
+        Schema::create('comments', function ($table) {
+            $table->increments('id');
+            $table->integer('article_id');
+            $table->string('content');
+        });
+    }
+
+    /**
+     * Helpers...
+     */
+    protected function seedData()
+    {
+        $user = TestUserModel::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
+
+        TestArticleModel::query()->insert([
+            ['user_id' => 1, 'title' => 'Another title'],
+            ['user_id' => 1, 'title' => 'Another title'],
+            ['user_id' => 1, 'title' => 'Another title'],
+        ]);
+
+        TestCommentModel::query()->insert([
+            ['article_id' => 1, 'content' => 'Another comment'],
+            ['article_id' => 2, 'content' => 'Another comment'],
+        ]);
+    }
+}
+
+class TestBookModelSchema implements JsonSerializable
+{
+    public function __construct(public Book $book)
+    {
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'no' => $this->book->id,
+        ];
+    }
 }
 
 class TestEloquentCollectionModel extends Model
 {
-    protected $visible = ['visible'];
+    protected array $visible = ['visible'];
 
-    protected $hidden = ['hidden'];
+    protected array $hidden = ['hidden'];
 
     public function getTestAttribute()
     {
         return 'test';
     }
+}
+
+class TestUserModel extends Model
+{
+    public bool $timestamps = false;
+
+    protected ?string $table = 'users';
+
+    protected array $guarded = [];
+
+    public function articles()
+    {
+        return $this->hasMany(TestArticleModel::class, 'user_id');
+    }
+}
+
+class TestArticleModel extends Model
+{
+    public bool $timestamps = false;
+
+    protected ?string $table = 'articles';
+
+    protected array $guarded = [];
+
+    public function comments()
+    {
+        return $this->hasMany(TestCommentModel::class, 'article_id');
+    }
+}
+class TestCommentModel extends Model
+{
+    public bool $timestamps = false;
+
+    protected ?string $table = 'comments';
+
+    protected array $guarded = [];
 }

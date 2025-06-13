@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Schema;
 
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 
 /**
  * @method ForeignKeyDefinition references(array|string $columns) Specify the referenced column(s)
@@ -23,4 +24,19 @@ use Hyperf\Utils\Fluent;
  */
 class ForeignKeyDefinition extends Fluent
 {
+    /**
+     * Indicate that updates should cascade.
+     */
+    public function cascadeOnUpdate(): static
+    {
+        return $this->onUpdate('cascade');
+    }
+
+    /**
+     * Indicate that deletes should set the foreign key value to null.
+     */
+    public function nullOnDelete(): static
+    {
+        return $this->onDelete('set null');
+    }
 }

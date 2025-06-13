@@ -10,22 +10,23 @@ composer require hyperf/amqp
 
 ## 預設配置
 
-|       配置       |  型別  |  預設值   |      備註      |
-|:----------------:|:------:|:---------:|:--------------:|
-|       host       | string | localhost |      Host      |
-|       port       |  int   |   5672    |     埠號     |
-|       user       | string |   guest   |     使用者名稱     |
-|     password     | string |   guest   |      密碼      |
-|      vhost       | string |     /     |     vhost      |
-| concurrent.limit |  int   |     0     | 同時消費的數量 |
+|       配置       |  型別  |  預設值   |    備註     |
+|:----------------:|:------:|:---------:|:---------:|
+|       host       | string | localhost |   Host    |
+|       port       |  int   |   5672    |    埠號    |
+|       user       | string |   guest   |    使用者名稱    |
+|     password     | string |   guest   |    密碼     |
+|      vhost       | string |     /     |   vhost   |
+| concurrent.limit |  int   |     0     | 同時消費的最大數量 |
 |       pool       | object |           |   連線池配置   |
 | pool.connections |  int   |     1     | 程序內保持的連線數 |
-|      params      | object |           |    基本配置    |
+|      params      | object |           |   基本配置    |
 
 ```php
 <?php
 
 return [
+    'enable' => true,
     'default' => [
         'host' => 'localhost',
         'port' => 5672,
@@ -44,9 +45,11 @@ return [
             'login_response' => null,
             'locale' => 'en_US',
             'connection_timeout' => 3.0,
+            // 儘量保持是 heartbeat 數值的兩倍
             'read_write_timeout' => 6.0,
             'context' => null,
             'keepalive' => false,
+            // 儘量保證每個訊息的消費時間小於心跳時間
             'heartbeat' => 3,
             'close_on_destruct' => false,
         ],
@@ -67,11 +70,11 @@ return [
 php bin/hyperf.php gen:amqp-producer DemoProducer
 ```
 
-在 DemoProducer 檔案中，我們可以修改 `@Producer` 註解對應的欄位來替換對應的 `exchange` 和 `routingKey`。
+在 DemoProducer 檔案中，我們可以修改 `#[Producer]` 註解對應的欄位來替換對應的 `exchange` 和 `routingKey`。
 其中 `payload` 就是最終投遞到訊息佇列中的資料，所以我們可以隨意改寫 `__construct` 方法，只要最後賦值 `payload` 即可。
 示例如下。
 
-> 使用 `@Producer` 註解時需 `use Hyperf\Amqp\Annotation\Producer;` 名稱空間；   
+> 使用 `#[Producer]` 註解時需 `use Hyperf\Amqp\Annotation\Producer;` 名稱空間；   
 
 ```php
 <?php
@@ -84,9 +87,7 @@ use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\Message\ProducerMessage;
 use App\Models\User;
 
-/**
- * @Producer(exchange="hyperf", routingKey="hyperf")
- */
+#[Producer(exchange: "hyperf", routingKey: "hyperf")]
 class DemoProducer extends ProducerMessage
 {
     public function __construct($id)
@@ -104,13 +105,13 @@ class DemoProducer extends ProducerMessage
 
 ```
 
-通過 DI Container 獲取 `Hyperf\Amqp\Producer` 例項，即可投遞訊息。以下例項直接使用 `ApplicationContext` 獲取 `Hyperf\Amqp\Producer` 其實並不合理，DI Container 具體使用請到 [依賴注入](zh-tw/di.md) 章節中檢視。
+透過 DI Container 獲取 `Hyperf\Amqp\Producer` 例項，即可投遞訊息。以下例項直接使用 `ApplicationContext` 獲取 `Hyperf\Amqp\Producer` 其實並不合理，DI Container 具體使用請到 [依賴注入](zh-tw/di.md) 章節中檢視。
 
 ```php
 <?php
 use Hyperf\Amqp\Producer;
 use App\Amqp\Producers\DemoProducer;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $message = new DemoProducer(1);
 $producer = ApplicationContext::getContainer()->get(Producer::class);
@@ -126,11 +127,11 @@ $result = $producer->produce($message);
 php bin/hyperf.php gen:amqp-consumer DemoConsumer
 ```
 
-在 DemoConsumer 檔案中，我們可以修改 `@Consumer` 註解對應的欄位來替換對應的 `exchange`、`routingKey` 和 `queue`。
+在 DemoConsumer 檔案中，我們可以修改 `#[Consumer]` 註解對應的欄位來替換對應的 `exchange`、`routingKey` 和 `queue`。
 其中 `$data` 就是解析後的訊息資料。
 示例如下。
 
-> 使用 `@Consumer` 註解時需 `use Hyperf\Amqp\Annotation\Consumer;` 名稱空間；   
+> 使用 `#[Consumer]` 註解時需 `use Hyperf\Amqp\Annotation\Consumer;` 名稱空間；   
 
 ```php
 <?php
@@ -144,12 +145,10 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1)
- */
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
 class DemoConsumer extends ConsumerMessage
 {
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         print_r($data);
         return Result::ACK;
@@ -159,10 +158,10 @@ class DemoConsumer extends ConsumerMessage
 
 ### 禁止消費程序自啟
 
-預設情況下，使用了 `@Consumer` 註解後，框架會自動建立子程序啟動消費者，並且會在子程序異常退出後，重新拉起。
+預設情況下，使用了 `#[Consumer]` 註解後，框架會自動建立子程序啟動消費者，並且會在子程序異常退出後，重新拉起。
 如果出於開發階段，進行消費者除錯時，可能會因為消費其他訊息而導致除錯不便。
 
-這種情況，只需要在 `@Consumer` 註解中配置 `enable=false` (預設為 `true` 跟隨服務啟動)或者在對應的消費者中重寫類方法 `isEnable()` 返回 `false` 即可
+這種情況，只需要在 `#[Consumer]` 註解中配置 `enable=false` (預設為 `true` 跟隨服務啟動)或者在對應的消費者中重寫類方法 `isEnable()` 返回 `false` 即可
 
 ```php
 <?php
@@ -176,12 +175,10 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1, enable=false)
- */
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1, enable: false)]
 class DemoConsumer extends ConsumerMessage
 {
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         print_r($data);
         return Result::ACK;
@@ -196,7 +193,16 @@ class DemoConsumer extends ConsumerMessage
 
 ### 設定最大消費數
 
-可以修改 `@Consumer` 註解中的 `maxConsumption` 屬性，設定此消費者最大處理的訊息數，達到指定消費數後，消費者程序會重啟。
+可以修改 `#[Consumer]` 註解中的 `maxConsumption` 屬性，設定此消費者最大處理的訊息數，達到指定消費數後，消費者程序會重啟。
+
+### 設定併發消費
+ 
+影響消費速率的引數有三個地方
+
+- 可以修改 `#[Consumer]` 註解 `nums` 開啟多個消費者
+- `ConsumerMessage` 基類下有一個屬性 `$qos`，可以透過重寫`$qos`中的 `prefetch_size` 或者 `prefetch_count` 的值控制每次從服務端拉取的訊息數量
+- 配置檔案中的 `concurrent.limit` 引數，控制消費協程的最大數量
+
 
 ### 消費結果
 
@@ -208,6 +214,65 @@ class DemoConsumer extends ConsumerMessage
 | \Hyperf\Amqp\Result::NACK    | 訊息沒有被正確消費掉，以 `basic_nack` 方法來響應                     |
 | \Hyperf\Amqp\Result::REQUEUE | 訊息沒有被正確消費掉，以 `basic_reject` 方法來響應，並使訊息重新入列 |
 | \Hyperf\Amqp\Result::DROP    | 訊息沒有被正確消費掉，以 `basic_reject` 方法來響應                   |
+
+### QOS 配置
+
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Consumers;
+
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
+
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
+class DemoConsumer extends ConsumerMessage
+{
+    protected ?array $qos = [
+        // AMQP 預設並沒有實現此配置。
+        'prefetch_size' => 0,
+        // 同一個消費者，最高同時可以處理的訊息數。
+        'prefetch_count' => 30,
+        // 因為 Hyperf 預設一個 Channel 只消費一個 佇列，所以 global 設定為 true/false 效果是一樣的。
+        'global' => false,
+    ];
+    
+    public function consumeMessage($data, AMQPMessage $message): Result
+    {
+        print_r($data);
+        return Result::ACK;
+    }
+}
+```
+
+### 根據環境自定義消費程序數量
+
+在 `#[Consumer]` 註解中，可以透過 `nums` 屬性來設定消費程序數量，如果需要根據不同環境來設定不同的消費程序數量，可以透過重寫 `getNums` 方法來實現，示例如下：
+
+```php
+#[Consumer(
+    exchange: 'hyperf',
+    routingKey: 'hyperf',
+    queue: 'hyperf',
+    name: 'hyperf',
+    nums: 1
+)]
+final class DemoConsumer extends ConsumerMessage
+{
+    public function getNums(): int
+    {
+        if (is_debug()) {
+            return 10;
+        }
+        return parent::getNums();
+    }
+}
+```
 
 ## 延時佇列
 
@@ -242,18 +307,16 @@ use Hyperf\Amqp\Message\ProducerDelayedMessageTrait;
 use Hyperf\Amqp\Message\ProducerMessage;
 use Hyperf\Amqp\Message\Type;
 
-/**
- * @Producer()
- */
+#[Producer]
 class DelayDirectProducer extends ProducerMessage
 {
     use ProducerDelayedMessageTrait;
 
-    protected $exchange = 'ext.hyperf.delay';
+    protected string $exchange = 'ext.hyperf.delay';
 
-    protected $type = Type::DIRECT;
+    protected Type|string $type = Type::DIRECT;
 
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
     public function __construct($data)
     {
@@ -261,6 +324,7 @@ class DelayDirectProducer extends ProducerMessage
     }
 }
 ```
+
 ### 消費者
 
 使用 `gen:amqp-consumer` 命令建立一個 `consumer`。
@@ -286,23 +350,21 @@ use Hyperf\Amqp\Message\Type;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(nums=1)
- */
+#[Consumer(nums: 1)]
 class DelayDirectConsumer extends ConsumerMessage
 {
     use ProducerDelayedMessageTrait;
     use ConsumerDelayedMessageTrait;
 
-    protected $exchange = 'ext.hyperf.delay';
+    protected string $exchange = 'ext.hyperf.delay';
     
-    protected $queue = 'queue.hyperf.delay';
+    protected string $queue = 'queue.hyperf.delay';
     
-    protected $type = Type::DIRECT; //Type::FANOUT;
+    protected Type|string $type = Type::DIRECT; //Type::FANOUT;
     
-    protected $routingKey = '';
+    protected array|string $routingKey = '';
 
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         var_dump($data, 'delay+direct consumeTime:' . (microtime(true)));
         return Result::ACK;
@@ -330,18 +392,13 @@ use App\Amqp\Producer\DelayDirectProducer;
 use Hyperf\Amqp\Producer;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Command
- */
+#[Command]
 class DelayCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -367,24 +424,24 @@ class DelayCommand extends HyperfCommand
         $message->setDelayMs(5000);
         $producer = ApplicationContext::getContainer()->get(Producer::class);
         $producer->produce($message);
-
     }
 }
 
 ```
+
 執行命令列生產訊息
+
 ```
 php bin/hyperf.php demo:command
 ```
 
-
 ## RPC 遠端過程呼叫
 
-除了典型的訊息佇列場景，我們還可以通過 AMQP 來實現 RPC 遠端過程呼叫，本元件也為這個實現提供了對應的支援。
+除了典型的訊息佇列場景，我們還可以透過 AMQP 來實現 RPC 遠端過程呼叫，本元件也為這個實現提供了對應的支援。
 
 ### 建立消費者
 
-RPC 使用的消費者，與典型訊息佇列場景的消費者實現基本無差，唯一的區別是需要通過呼叫 `reply` 方法返回資料給生產者。
+RPC 使用的消費者，與典型訊息佇列場景的消費者實現基本無差，唯一的區別是需要透過呼叫 `reply` 方法返回資料給生產者。
 
 ```php
 <?php
@@ -398,12 +455,10 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="rpc.reply", name="ReplyConsumer", nums=1, enable=true)
- */
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "rpc.reply", name: "ReplyConsumer", nums: 1, enable: true)]
 class ReplyConsumer extends ConsumerMessage
 {
-    public function consumeMessage($data, AMQPMessage $message): string
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         $data['message'] .= 'Reply:' . $data['message'];
 
@@ -416,13 +471,13 @@ class ReplyConsumer extends ConsumerMessage
 
 ### 發起 RPC 呼叫
 
-作為生成者發起一次 RPC 遠端過程呼叫也非常的簡單，只需通過依賴注入容器獲得 `Hyperf\Amqp\RpcClient` 物件並呼叫其中的 `call` 方法即可，返回的結果是消費者 reply 的資料，如下所示：
+作為生成者發起一次 RPC 遠端過程呼叫也非常的簡單，只需透過依賴注入容器獲得 `Hyperf\Amqp\RpcClient` 物件並呼叫其中的 `call` 方法即可，返回的結果是消費者 reply 的資料，如下所示：
 
 ```php
 <?php
 use Hyperf\Amqp\Message\DynamicRpcMessage;
 use Hyperf\Amqp\RpcClient;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $rpcClient = ApplicationContext::getContainer()->get(RpcClient::class);
 // 在 DynamicRpcMessage 上設定與 Consumer 一致的 Exchange 和 RoutingKey
@@ -437,7 +492,7 @@ $result = $rpcClient->call(new DynamicRpcMessage('hyperf', 'hyperf', ['message' 
 
 ### 抽象 RpcMessage
 
-上面的 RPC 呼叫過程是直接通過 `Hyperf\Amqp\Message\DynamicRpcMessage` 類來完成 Exchange 和 RoutingKey 的定義，並傳遞訊息資料，在生產專案的設計上，我們可以對 RpcMessage 進行一層抽象，以統一 Exchange 和 RoutingKey 的定義。   
+上面的 RPC 呼叫過程是直接透過 `Hyperf\Amqp\Message\DynamicRpcMessage` 類來完成 Exchange 和 RoutingKey 的定義，並傳遞訊息資料，在生產專案的設計上，我們可以對 RpcMessage 進行一層抽象，以統一 Exchange 和 RoutingKey 的定義。   
 
 我們可以建立對應的 RpcMessage 類如 `App\Amqp\FooRpcMessage` 如下：
 
@@ -448,9 +503,9 @@ use Hyperf\Amqp\Message\RpcMessage;
 class FooRpcMessage extends RpcMessage
 {
 
-    protected $exchange = 'hyperf';
+    protected string $exchange = 'hyperf';
 
-    protected $routingKey = 'hyperf';
+    protected array|string $routingKey = 'hyperf';
     
     public function __construct($data)
     {

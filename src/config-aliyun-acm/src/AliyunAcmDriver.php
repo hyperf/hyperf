@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigAliyunAcm;
 
 use Hyperf\ConfigCenter\AbstractDriver;
@@ -16,7 +17,7 @@ use Psr\Container\ContainerInterface;
 
 class AliyunAcmDriver extends AbstractDriver
 {
-    protected $driverName = 'aliyun_acm';
+    protected string $driverName = 'aliyun_acm';
 
     public function __construct(ContainerInterface $container)
     {

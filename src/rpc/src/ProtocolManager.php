@@ -9,33 +9,40 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpc;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\Str;
+use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\ArrayShape;
 
 class ProtocolManager
 {
-    /**
-     * @var \Hyperf\Contract\ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ConfigInterface $config)
+    public function __construct(private ConfigInterface $config)
     {
-        $this->config = $config;
     }
 
-    public function register(string $name, array $data)
-    {
-        return $this->config->set('protocols.' . $name, $data);
+    public function register(
+        string $name,
+        #[ArrayShape([
+            'packer' => 'string', // \Hyperf\RpcMultiplex\Packer\JsonPacker::class,
+            'transporter' => 'string', // \Hyperf\RpcMultiplex\Transporter::class,
+            'path-generator' => 'string', // \Hyperf\RpcMultiplex\PathGenerator::class,
+            'data-formatter' => 'string', // \Hyperf\RpcMultiplex\DataFormatter::class,
+            'normalizer' => 'string', // \Hyperf\JsonRpc\JsonRpcNormalizer::class,
+        ])]
+        array $data
+    ): void {
+        $this->config->set('protocols.' . $name, $data);
     }
 
-    public function registerOrAppend(string $name, array $data)
+    public function registerOrAppend(string $name, array $data): void
     {
         $key = 'protocols.' . $name;
-        return $this->config->set($key, array_merge($this->config->get($key, []), $data));
+        $this->config->set($key, array_merge($this->config->get($key, []), $data));
     }
 
     public function getProtocol(string $name): array
@@ -63,11 +70,20 @@ class ProtocolManager
         return $this->getTarget($name, 'data-formatter');
     }
 
-    private function getTarget(string $name, string $target)
+    public function getNormalizer(string $name): string
+    {
+        return $this->getTarget($name, 'normalizer', NormalizerInterface::class);
+    }
+
+    private function getTarget(string $name, string $target, ?string $default = null): string
     {
         $result = $this->config->get('protocols.' . Str::lower($name) . '.' . Str::lower($target));
         if (! is_string($result)) {
-            throw new InvalidArgumentException(sprintf('%s is not exists.', Str::studly($target, ' ')));
+            if ($default) {
+                return $default;
+            }
+
+            throw new InvalidArgumentException(sprintf('%s is not exists.', StrCache::studly($target, ' ')));
         }
         return $result;
     }

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue\Listener;
 
 use Hyperf\AsyncQueue\Event\QueueLength;
@@ -18,20 +19,14 @@ use Hyperf\Event\Contract\ListenerInterface;
 class ReloadChannelListener implements ListenerInterface
 {
     /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    /**
      * @var string[]
      */
     protected $channels = [
         'timeout',
     ];
 
-    public function __construct(StdoutLoggerInterface $logger)
+    public function __construct(protected StdoutLoggerInterface $logger)
     {
-        $this->logger = $logger;
     }
 
     public function listen(): array
@@ -44,7 +39,7 @@ class ReloadChannelListener implements ListenerInterface
     /**
      * @param QueueLength $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         if (! $event instanceof QueueLength) {
             return;

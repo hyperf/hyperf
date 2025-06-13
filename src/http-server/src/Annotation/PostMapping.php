@@ -9,16 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer\Annotation;
 
 use Attribute;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class PostMapping extends Mapping
 {
-    public $methods = ['POST'];
+    public function __construct(?string $path = null, array $options = [])
+    {
+        parent::__construct($path, ['POST'], $options);
+    }
 }

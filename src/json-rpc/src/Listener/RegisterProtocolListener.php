@@ -9,29 +9,25 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc\Listener;
 
+use Hyperf\Codec\Packer\JsonPacker;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\JsonRpc\DataFormatter;
 use Hyperf\JsonRpc\JsonRpcHttpTransporter;
+use Hyperf\JsonRpc\JsonRpcNormalizer;
 use Hyperf\JsonRpc\JsonRpcTransporter;
 use Hyperf\JsonRpc\Packer\JsonEofPacker;
 use Hyperf\JsonRpc\Packer\JsonLengthPacker;
 use Hyperf\JsonRpc\PathGenerator;
 use Hyperf\Rpc\ProtocolManager;
-use Hyperf\Utils\Packer\JsonPacker;
 
 class RegisterProtocolListener implements ListenerInterface
 {
-    /**
-     * @var ProtocolManager
-     */
-    private $protocolManager;
-
-    public function __construct(ProtocolManager $protocolManager)
+    public function __construct(private ProtocolManager $protocolManager)
     {
-        $this->protocolManager = $protocolManager;
     }
 
     public function listen(): array
@@ -45,13 +41,14 @@ class RegisterProtocolListener implements ListenerInterface
      * All official rpc protocols should register in here,
      * and the others non-official protocols should register in their own component via listener.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $this->protocolManager->register('jsonrpc', [
             'packer' => JsonEofPacker::class,
             'transporter' => JsonRpcTransporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,
+            'normalizer' => JsonRpcNormalizer::class,
         ]);
 
         $this->protocolManager->register('jsonrpc-tcp-length-check', [
@@ -59,6 +56,7 @@ class RegisterProtocolListener implements ListenerInterface
             'transporter' => JsonRpcTransporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,
+            'normalizer' => JsonRpcNormalizer::class,
         ]);
 
         $this->protocolManager->register('jsonrpc-http', [
@@ -66,6 +64,7 @@ class RegisterProtocolListener implements ListenerInterface
             'transporter' => JsonRpcHttpTransporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,
+            'normalizer' => JsonRpcNormalizer::class,
         ]);
     }
 }

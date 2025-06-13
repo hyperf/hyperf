@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer\Room;
 
 class MemoryRoom implements RoomInterface
 {
-    protected $container = [];
+    protected array $container = [];
 
     public function add(string $sid)
     {

@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Consul;
 
+use Closure;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\TransferException;
 use Hyperf\Consul\Exception\ClientException;
@@ -23,11 +25,11 @@ abstract class Client
     public const DEFAULT_URI = 'http://127.0.0.1:8500';
 
     /**
-     * Will execute this closure everytime when the consul client send a HTTP request,
+     * Will execute this closure everytime when the consul client send an HTTP request,
      * and the closure should return a GuzzleHttp\ClientInterface instance.
      * $clientFactory(array $options).
      *
-     * @var \Closure
+     * @var Closure
      */
     private $clientFactory;
 
@@ -36,7 +38,7 @@ abstract class Client
      */
     private $logger;
 
-    public function __construct(\Closure $clientFactory, LoggerInterface $logger = null)
+    public function __construct(Closure $clientFactory, ?LoggerInterface $logger = null)
     {
         $this->clientFactory = $clientFactory;
         $this->logger = $logger ?: new NullLogger();
@@ -57,7 +59,7 @@ abstract class Client
     {
         $this->logger->debug(sprintf('Consul Request [%s] %s', strtoupper($method), $url));
         try {
-            // Create a HTTP Client by $clientFactory closure.
+            // Create an HTTP Client by $clientFactory closure.
             $clientFactory = $this->clientFactory;
             $client = $clientFactory($options);
             if (! $client instanceof ClientInterface) {
@@ -67,13 +69,13 @@ abstract class Client
         } catch (TransferException $e) {
             $message = sprintf('Something went wrong when calling consul (%s).', $e->getMessage());
             $this->logger->error($message);
-            throw new ServerException($e->getMessage(), $e->getCode(), $e);
+            throw new ServerException($e->getMessage(), (int) $e->getCode(), $e);
         }
 
         if ($response->getStatusCode() >= 400) {
             $message = sprintf('Something went wrong when calling consul (%s - %s).', $response->getStatusCode(), $response->getReasonPhrase());
             $this->logger->error($message);
-            $message .= PHP_EOL . (string) $response->getBody();
+            $message .= PHP_EOL . $response->getBody();
             if ($response->getStatusCode() >= 500) {
                 throw new ServerException($message, $response->getStatusCode());
             }

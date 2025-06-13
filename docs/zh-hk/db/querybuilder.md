@@ -19,7 +19,7 @@ $users = Db::table('user')->get();
 $users = Db::table('user')->select('name', 'gender as user_gender')->get();
 ```
 
-`Db::select()` 方法會返回一個 array，而 `get` 方法會返回 `Hyperf\Utils\Collection`。其中元素是 `stdClass`，所以可以通過以下代碼返回各個元素的數據
+`Db::select()` 方法會返回一個 array，而 `get` 方法會返回 `Hyperf\Collection\Collection`。其中元素是 `stdClass`，所以可以通過以下代碼返回各個元素的數據
 
 ```php
 <?php
@@ -44,9 +44,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use PDO;
 
-/**
- * @Listener
- */
+#[Listener]
 class FetchModeListener implements ListenerInterface
 {
     public function listen(): array
@@ -384,6 +382,18 @@ $users = Db::table('users')->where('name', 'like', 'T%')->get();
 $users = Db::table('user')->where([
     ['status', '=', '1'],
     ['gender', '=', '1'],
+])->get();
+```
+
+你還可以使用閉包的方式創建查詢數組
+
+```php
+$users = Db::table('user')->where([
+    ['status', '=', '1'],
+    ['gender', '=', '1'],
+    [function ($query) {
+        $query->where('type', 3)->orWhere('type', 6);
+    }]
 ])->get();
 ```
 

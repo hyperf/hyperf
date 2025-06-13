@@ -7,9 +7,6 @@ namespace %NAMESPACE%;
 use Hyperf\Constants\AbstractConstants;
 use Hyperf\Constants\Annotation\Constants;
 
-/**
- * @Constants
- */
 #[Constants]
 class %CLASS% extends AbstractConstants
 {

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Amqp\Stub;
 
 use Hyperf\Amqp\Message\ConsumerMessage;
@@ -16,16 +17,16 @@ use Hyperf\Amqp\Result;
 
 class DemoConsumer extends ConsumerMessage
 {
-    protected $exchange = 'hyperf';
+    protected string $exchange = 'hyperf';
 
-    protected $routingKey = [
+    protected array|string $routingKey = [
         'hyperf1',
         'hyperf2',
     ];
 
-    protected $queue = 'hyperf';
+    protected ?string $queue = 'hyperf';
 
-    public function consume($data): string
+    public function consume($data): Result
     {
         return Result::ACK;
     }

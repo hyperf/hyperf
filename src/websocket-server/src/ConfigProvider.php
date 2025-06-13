@@ -9,7 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketServer;
+
+use Hyperf\WebSocketServer\Exception\WebSocketHandShakeException;
+
+// Will remove at v3.2
+class_alias(WebSocketHandShakeException::class, 'Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException');
 
 class ConfigProvider
 {
@@ -19,13 +25,6 @@ class ConfigProvider
             'listeners' => [
                 Listener\InitSenderListener::class,
                 Listener\OnPipeMessageListener::class,
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
             ],
         ];
     }

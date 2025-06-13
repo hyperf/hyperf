@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc;
 
 use GuzzleHttp\Client;
@@ -17,13 +18,13 @@ use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
+use RuntimeException;
+
+use function Hyperf\Support\value;
 
 class JsonRpcHttpTransporter implements TransporterInterface
 {
-    /**
-     * @var null|LoadBalancerInterface
-     */
-    private $loadBalancer;
+    private ?LoadBalancerInterface $loadBalancer = null;
 
     /**
      * If $loadBalancer is null, will select a node in $nodes to request,
@@ -31,31 +32,16 @@ class JsonRpcHttpTransporter implements TransporterInterface
      *
      * @var Node[]
      */
-    private $nodes = [];
+    private array $nodes = [];
 
-    /**
-     * @var float
-     */
-    private $connectTimeout = 5;
+    private float $connectTimeout = 5;
 
-    /**
-     * @var float
-     */
-    private $recvTimeout = 5;
+    private float $recvTimeout = 5;
 
-    /**
-     * @var \Hyperf\Guzzle\ClientFactory
-     */
-    private $clientFactory;
+    private array $clientOptions;
 
-    /**
-     * @var array
-     */
-    private $clientOptions;
-
-    public function __construct(ClientFactory $clientFactory, array $config = [])
+    public function __construct(private ClientFactory $clientFactory, array $config = [])
     {
-        $this->clientFactory = $clientFactory;
         if (! isset($config['recv_timeout'])) {
             $config['recv_timeout'] = $this->recvTimeout;
         }
@@ -68,10 +54,10 @@ class JsonRpcHttpTransporter implements TransporterInterface
     public function send(string $data)
     {
         $node = $this->getNode();
-        $uri = $node->host . ':' . $node->port;
+        $uri = $node->host . ':' . $node->port . $node->pathPrefix;
         $schema = value(function () use ($node) {
             $schema = 'http';
-            if (property_exists($node, 'schema')) {
+            if ($node->schema !== null) {
                 $schema = $node->schema;
             }
             if (! in_array($schema, ['http', 'https'])) {
@@ -91,14 +77,13 @@ class JsonRpcHttpTransporter implements TransporterInterface
         if ($response->getStatusCode() === 200) {
             return (string) $response->getBody();
         }
-        $this->loadBalancer->removeNode($node);
 
         return '';
     }
 
     public function recv()
     {
-        throw new \RuntimeException(__CLASS__ . ' does not support recv method.');
+        throw new RuntimeException(__CLASS__ . ' does not support recv method.');
     }
 
     public function getClient(): Client
@@ -122,7 +107,7 @@ class JsonRpcHttpTransporter implements TransporterInterface
     }
 
     /**
-     * @param \Hyperf\LoadBalancer\Node[] $nodes
+     * @param Node[] $nodes
      */
     public function setNodes(array $nodes): self
     {
@@ -138,11 +123,6 @@ class JsonRpcHttpTransporter implements TransporterInterface
     public function getClientOptions(): array
     {
         return $this->clientOptions;
-    }
-
-    private function getEof()
-    {
-        return "\r\n";
     }
 
     /**

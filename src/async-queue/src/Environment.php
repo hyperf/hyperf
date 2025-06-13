@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 class Environment
 {
@@ -20,7 +21,7 @@ class Environment
         return (bool) Context::get($this->getKey(), false);
     }
 
-    public function setAsyncQueue(bool $asyncQueue): self
+    public function setAsyncQueue(bool $asyncQueue): static
     {
         Context::set($this->getKey(), $asyncQueue);
         return $this;

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer;
 
 use Hyperf\HttpServer\Contract\RequestInterface;
@@ -22,15 +23,8 @@ class ConfigProvider
         return [
             'dependencies' => [
                 RequestInterface::class => Request::class,
-                ServerRequestInterface::class => Request::class,
                 ResponseInterface::class => Response::class,
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
+                ServerRequestInterface::class => Request::class,
             ],
         ];
     }

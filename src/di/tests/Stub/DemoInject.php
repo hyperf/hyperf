@@ -9,23 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\Stub;
 
 use Hyperf\Di\Annotation\Inject;
 
 class DemoInject
 {
-    /**
-     * @Inject
-     * @var Demo
-     */
-    private $demo;
+    #[Inject]
+    private Demo $demo;
 
-    /**
-     * @Inject(required=false)
-     * @var Demo1
-     */
-    private $demo1;
+    #[Inject(required: false)]
+    private ?Demo1 $demo1 = null;
 
     public function getDemo()
     {

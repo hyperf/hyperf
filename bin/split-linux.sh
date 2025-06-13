@@ -3,7 +3,7 @@
 set -e
 set -x
 
-CURRENT_BRANCH="master"
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 BASEPATH=$(cd `dirname $0`; cd ../src/; pwd)
 REPOS=$@
 
@@ -23,6 +23,9 @@ git pull origin $CURRENT_BRANCH
 if [[ $# -eq 0 ]]; then
     REPOS=$(ls $BASEPATH)
 fi
+
+remote github git@github.com:hyperf/.github.git
+split "src/.github" "git@github.com:hyperf/.github.git"
 
 for REPO in $REPOS ; do
     remote $REPO git@github.com:hyperf/$REPO.git

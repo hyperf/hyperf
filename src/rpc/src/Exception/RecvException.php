@@ -9,8 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpc\Exception;
 
-class RecvException extends \RuntimeException
+use RuntimeException;
+
+class RecvException extends RuntimeException
 {
 }

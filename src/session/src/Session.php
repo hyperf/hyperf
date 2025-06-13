@@ -9,52 +9,40 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Session;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\SessionInterface;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use SessionHandlerInterface;
 
+use function Hyperf\Collection\data_get;
+use function Hyperf\Collection\data_set;
+
 /**
- * This's a data class, please create an new instance for each requests.
+ * This is a data class, please create a new instance for each request.
  */
 class Session implements SessionInterface
 {
     use FlashTrait;
 
-    /**
-     * @var string
-     */
-    protected $id;
+    protected string $id;
 
-    protected $name;
-
-    /**
-     * @var array
-     */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
      * Session store started status.
-     *
-     * @var bool
      */
-    protected $started = false;
+    protected bool $started = false;
 
-    /**
-     * @var \SessionHandlerInterface
-     */
-    protected $handler;
-
-    public function __construct($name, SessionHandlerInterface $handler, $id = null)
+    public function __construct(protected string $name, protected SessionHandlerInterface $handler, $id = null)
     {
         if (! is_string($id) || ! $this->isValidId($id)) {
             $id = $this->generateSessionId();
         }
         $this->setId($id);
         $this->setName($name);
-        $this->handler = $handler;
     }
 
     /**
@@ -62,7 +50,7 @@ class Session implements SessionInterface
      */
     public function isValidId(string $id): bool
     {
-        return is_string($id) && ctype_alnum($id) && strlen($id) === 40;
+        return ctype_alnum($id) && strlen($id) === 40;
     }
 
     /**
@@ -319,7 +307,7 @@ class Session implements SessionInterface
     }
 
     /**
-     * Generate a new random sessoion ID.
+     * Generate a new random session ID.
      */
     protected function generateSessionId(): string
     {
@@ -342,7 +330,7 @@ class Session implements SessionInterface
         if ($data = $this->handler->read($this->getId())) {
             $data = @unserialize($this->prepareForUnserialize($data));
 
-            if ($data !== false && ! is_null($data) && is_array($data)) {
+            if ($data !== false && is_array($data)) {
                 return $data;
             }
         }
@@ -351,7 +339,7 @@ class Session implements SessionInterface
     }
 
     /**
-     * Prepare the raw string data from the session for unserialization.
+     * Prepare the raw string data from the session for serialization.
      */
     protected function prepareForUnserialize(string $data): string
     {

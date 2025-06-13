@@ -30,20 +30,15 @@ use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Logger\LoggerFactory;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Collection\Arr;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
-/**
- * @Listener
- */
+#[Listener]
 class DbQueryExecutedListener implements ListenerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(ContainerInterface $container)
     {
@@ -100,6 +95,7 @@ class DbQueryExecutedListener implements ListenerInterface
 |   restored   | 软删除数据恢复后 |    否    |                                  |
 |   deleting   |    数据删除时   |    是    |                                  |
 |   deleted    |    数据删除后   |    否    |                                  |
+| forceDeleting |  数据强制删除时  |    是    |                                  |
 | forceDeleted |  数据强制删除后  |    否    |                                  |
 
 针对某个模型的事件使用十分简单，只需要在模型中增加对应的方法即可。例如下方保存数据时，触发 `saving` 事件，主动覆写 `created_at` 字段。
@@ -164,9 +160,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\ModelCache\CacheableInterface;
 
-/**
- * @Listener
- */
+#[Listener]
 class DeleteCacheListener implements ListenerInterface
 {
     public function listen(): array
@@ -189,3 +183,40 @@ class DeleteCacheListener implements ListenerInterface
 }
 
 ```
+
+### 观察者
+
+得益于 [hyperf/model-listener](https://github.com/hyperf/blob/master/src/model-listener/) 组件，我们也可以使用 `Observer` 来监听模型事件。
+通过 [ModelListener](https://github.com/hyperf/hyperf/blob/master/src/model-listener/src/Annotation/ModelListener.php) 注解，我们可以很方便的定义一个观察者，示例代码如下：
+
+```php
+<?php
+use Hyperf\ModelListener\Annotation\ModelListener;
+use App\Model\User;
+use Hyperf\Database\Model\Events\Creating;
+use Hyperf\Database\Model\Events\Created;
+
+/**
+ * 定义一个 UserObserver 观察者，监听 User 模型的事件.
+ * 也可以监听多个模型，只需要在 models 属性中传入多个模型即可
+ * 需要注意，此类将会被自动注册到容器中成为单例
+ */
+#[ModelListener(models: [ User::class ])]
+class UserObserver
+{
+    public function creating(Creating $event)
+    {
+        $user = $event->getModel();
+        // 创建用户时触发
+    }
+    
+    public function created(Created $event)
+    {
+        $user = $event->getModel();
+        // 用户创建完成后触发
+    }
+    
+    //... 省略其他事件
+}
+```
+

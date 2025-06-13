@@ -13,7 +13,7 @@ Popular speaking, it is in Hyperf that you can intervene in the execution of any
 Compared to the AOP feature implemented by other frameworks, we have further simplified the usage of this function without a more division, there is only a universal form of "Around":
 
 - `Aspect` is a definition class that weaves into the code flow, including the definition of target to be involved, and the modification of the original method of the target.
-- `ProxyClass` ，Each of the involved target classes will eventually generate a proxy class to achieve the purpose of executing the `Aspect` method, rather than passing the original class.
+- `ProxyClass`, Each of the involved target classes will eventually generate a proxy class to achieve the purpose of executing the `Aspect` method, rather than passing the original class.
 
 ## Define Aspect
 
@@ -29,20 +29,18 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class FooAspect extends AbstractAspect
 {
     // The class to be cut in can be multiple, or can be identified by `::` to the specific method, or use * for fuzzy matching
-    public $classes = [
+    public array $classes = [
         SomeClass::class,
         'App\Service\SomeClass::someMethod',
         'App\Service\SomeClass::*Method',
     ];
     
     // The annotations to be cut into, means the classes that use these annotations to be cut into, can only cut into class annotations and class method annotations.
-    public $annotations = [
+    public array $annotations = [
         SomeAnnotation::class,
     ];
 
@@ -58,9 +56,9 @@ class FooAspect extends AbstractAspect
 }
 ```
 
-Each `Aspect` have to define `@Aspect` annotation or configure in `config/autoload/aspects.php` to enable.
+Each `Aspect` have to define `#[Aspect]` annotation or configure in `config/autoload/aspects.php` to enable.
 
-> Use `@Aspect` annotatin have to `use Hyperf\Di\Annotation\Aspect;` namespace;  
+> Use `#[Aspect]` annotatin have to `use Hyperf\Di\Annotation\Aspect;` namespace;  
 
 ## Cache of Proxy Class
 

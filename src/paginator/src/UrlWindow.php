@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Paginator;
 
 use Hyperf\Contract\LengthAwarePaginatorInterface;
@@ -16,15 +17,10 @@ use Hyperf\Contract\LengthAwarePaginatorInterface;
 class UrlWindow
 {
     /**
-     * The paginator implementation.
-     *
-     * @var AbstractPaginator|LengthAwarePaginatorInterface
+     * @param AbstractPaginator&LengthAwarePaginatorInterface $paginator
      */
-    protected $paginator;
-
-    public function __construct(LengthAwarePaginatorInterface $paginator)
+    public function __construct(protected LengthAwarePaginatorInterface $paginator)
     {
-        $this->paginator = $paginator;
     }
 
     /**

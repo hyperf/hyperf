@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace Grpc;
 
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\Internal\Message;
+use GPBMetadata\Grpc;
 
 /**
  * Generated from protobuf message <code>grpc.Info</code>.
  */
-class Info extends \Google\Protobuf\Internal\Message
+class Info extends Message
 {
     /**
      * Generated from protobuf field <code>int32 id = 1;</code>.
@@ -36,13 +38,13 @@ class Info extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *                    Optional. Data for populating the Message object.
      *
-     *     @var int $id
-     *     @var string $name
-     * }
+     * @var int $id
+     * @var string $name
+     *             }
      */
     public function __construct($data = null)
     {
-        \GPBMetadata\Grpc::initOnce();
+        Grpc::initOnce();
         parent::__construct($data);
     }
 

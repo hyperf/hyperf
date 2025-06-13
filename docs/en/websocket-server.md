@@ -48,6 +48,21 @@ Router::addServer('ws', function () {
 });
 ```
 
+## Configure Middleware
+
+In the `config/autoload/middlewares.php` file, add the middleware configuration of the Server of corresponding `ws`, where `ws` is the `name` of the WebSocket Server in `config/autoload/server.php`.
+
+
+```php
+<?php
+
+return [
+    'ws' => [
+        yourMiddleware::class
+    ]
+];
+```
+
 ## Create corresponding controller
 
 ```php
@@ -171,7 +186,7 @@ server {
     # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     # proxy_set_header Host $host;
     # proxy_http_version 1.1;
-    # 转发到多个 ws server
+    # Forward to multiple ws server
     proxy_pass http://io_nodes;
   }
 }
@@ -195,17 +210,13 @@ namespace App\Controller;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\WebSocketServer\Sender;
+use function Hyperf\Coroutine\go;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class ServerController
 {
-    /**
-     * @Inject
-     * @var Sender
-     */
-    protected $sender;
+    #[Inject]
+    protected Sender $sender;
 
     public function close(int $fd)
     {
@@ -226,3 +237,50 @@ class ServerController
 }
 
 ```
+
+
+## Handle Http Request in Websocket Server
+
+In addition to separating HTTP services and WebSocket services through ports, we can also listen for HTTP requests in WebSocket.
+
+Because `server.servers.*.callbacks` configuration items are all singleton，so we need define a new singleton config in `dependencies`.
+
+```php
+<?php
+return [
+    'HttpServer' => Hyperf\HttpServer\Server::class,
+];
+```
+
+Then modify the `callbacks` configuration in our `WebSocket` service. The following hides irrelevant configurations
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\Server\Event;
+use Hyperf\Server\Server;
+
+return [
+    'mode' => SWOOLE_BASE,
+    'servers' => [
+        [
+            'name' => 'ws',
+            'type' => Server::SERVER_WEBSOCKET,
+            'host' => '0.0.0.0',
+            'port' => 9502,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_REQUEST => ['HttpServer', 'onRequest'],
+                Event::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
+                Event::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
+                Event::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+            ],
+        ],
+    ],
+];
+
+```
+
+Finally, we can add `HTTP` routing in `ws`.

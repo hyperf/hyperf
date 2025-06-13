@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Kafka\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
@@ -22,14 +23,8 @@ use Psr\Container\ContainerInterface;
  */
 class BeforeMainServerStartListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     /**
@@ -43,7 +38,7 @@ class BeforeMainServerStartListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         // Init the consumer process.
         $this->container->get(ConsumerManager::class)->run();

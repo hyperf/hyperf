@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Resource;
 
 use Hyperf\Resource\Json\JsonResource;
@@ -18,13 +19,11 @@ class JsonEncodingException extends RuntimeException
 {
     /**
      * Create a new JSON encoding exception for the resource.
-     *
-     * @return static
      */
-    public static function forResource(JsonResource $resource, string $message)
+    public static function forResource(JsonResource $resource, string $message): static
     {
         $model = $resource->resource;
 
-        return new static('Error encoding resource [' . get_class($resource) . '] with model [' . get_class($model) . '] with ID [' . $model->getKey() . '] to JSON: ' . $message);
+        return new static('Error encoding resource [' . $resource::class . '] with model [' . $model::class . '] with ID [' . $model->getKey() . '] to JSON: ' . $message);
     }
 }

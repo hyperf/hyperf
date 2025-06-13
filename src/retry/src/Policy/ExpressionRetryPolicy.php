@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Retry\Policy;
 
 use Hyperf\Retry\RetryContext;
@@ -18,7 +19,7 @@ class ExpressionRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterf
     /**
      * @var callable
      */
-    private $callable;
+    private mixed $callable;
 
     public function __construct(callable $callable)
     {

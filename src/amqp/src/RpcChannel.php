@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp;
 
 use Hyperf\Engine\Channel;
@@ -17,40 +18,20 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 class RpcChannel
 {
-    /**
-     * @var AMQPChannel
-     */
-    protected $channel;
+    protected ?Channel $chan = null;
 
-    /**
-     * @var null|Channel
-     */
-    protected $chan;
+    protected string $correlationId;
 
-    /**
-     * @var string
-     */
-    protected $correlationId;
+    protected ?string $queue = null;
 
-    /**
-     * @var null|string
-     */
-    protected $queue;
-
-    public function __construct(AMQPChannel $channel)
+    public function __construct(protected AMQPChannel $channel)
     {
-        $this->channel = $channel;
         $this->correlationId = uniqid();
     }
 
-    /**
-     * @return static
-     */
-    public function open()
+    public function open(): static
     {
-        if ($this->chan) {
-            $this->chan->close();
-        }
+        $this->chan?->close();
         $this->chan = new Channel(1);
         return $this;
     }
@@ -75,28 +56,22 @@ class RpcChannel
         return $this->queue;
     }
 
-    public function setQueue(?string $queue): RpcChannel
+    public function setQueue(?string $queue): static
     {
         $this->queue = $queue;
         return $this;
     }
 
-    /**
-     * @return AMQPMessage|false
-     */
-    public function wait(int $timeout)
+    public function wait(int $timeout): AMQPMessage|bool
     {
         $this->channel->wait(null, false, $timeout);
 
         return $this->chan->pop(0.001);
     }
 
-    public function close()
+    public function close(): void
     {
-        if ($this->chan) {
-            $this->chan->close();
-        }
-
+        $this->chan?->close();
         $this->channel->close();
     }
 }

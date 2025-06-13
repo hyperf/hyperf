@@ -4,8 +4,8 @@ English | [中文](./README-CN.md)
 
 <p align="center">
   <a href="https://github.com/hyperf/hyperf/releases"><img src="https://poser.pugx.org/hyperf/hyperf/v/stable" alt="Stable Version"></a>
-  <a href="https://www.php.net"><img src="https://img.shields.io/badge/php-%3E=7.4-brightgreen.svg?maxAge=2592000" alt="Php Version"></a>
-  <a href="https://github.com/swoole/swoole-src"><img src="https://img.shields.io/badge/swoole-%3E=4.5-brightgreen.svg?maxAge=2592000" alt="Swoole Version"></a>
+  <a href="https://www.php.net"><img src="https://img.shields.io/badge/php-%3E=8.1-brightgreen.svg?maxAge=2592000" alt="Php Version"></a>
+  <a href="https://github.com/swoole/swoole-src"><img src="https://img.shields.io/badge/swoole-%3E=5.0-brightgreen.svg?maxAge=2592000" alt="Swoole Version"></a>
   <a href="https://github.com/hyperf/hyperf/blob/master/LICENSE"><img src="https://img.shields.io/github/license/hyperf/hyperf.svg?maxAge=2592000" alt="Hyperf License"></a>
 </p>
 <p align="center">
@@ -18,7 +18,7 @@ English | [中文](./README-CN.md)
 
 Hyperf is an extremely performant and flexible PHP CLI framework, powered by a state-of-the-art coroutine server and a large number of battle-tested components. Aside from decisively beating PHP-FPM frameworks in benchmarks, Hyperf is unique in its focus on flexibility and composition. Hyperf ships with an AOP-enabling (aspect-oriented programming) dependency injector to ensure components and classes are pluggable and meta-programmable. All of Hyperf's core components strictly follow [PSR](https://www.php-fig.org/psr) standards and can be used in other frameworks.
 
-Hyperf's architecture is built using a combination of `Coroutines`, `Dependency injection`, `Events`, `Annotations`, and `AOP`. In addition to providing `MySQL`, `Redis` and other common coroutine clients, `Hyperf` also provides coroutine compatible versions of `WebSocket server / client`, `JSON RPC server / client`, `gRPC server / client`, `Zipkin/Jaeger (OpenTracing) client`, `Guzzle HTTP client`, `Elasticsearch client`, `Consul client`, `ETCD client`, `AMQP component`, `Apollo configuration center`, `Aliyun ACM`, `ETCD configuration center`, `Token bucket algorithm-based limiter`, `Universal connection pool`, `Circuit breaker`, `Swagger`, `Swoole Tracker`, `Snowflake`, `Simply Redis MQ`, `RabbitMQ`, `NSQ`, `Nats`, `Seconds level crontab`, `Custom Processes`, etc. Therefore, developers can entirely avoid implementing coroutine compatible versions of these libraries.
+Hyperf's architecture is built using a combination of `Coroutines`, `Dependency injection`, `Events`, `Annotations`, and `AOP`. In addition to providing `MySQL`, `Redis` and other common coroutine clients, `Hyperf` also provides coroutine compatible versions of `WebSocket server / client`, `JSON RPC server / client`, `gRPC server / client`, `Zipkin/Jaeger (OpenTracing) client`, `Guzzle HTTP client`, `Elasticsearch client`, `Consul client`, `ETCD client`, `AMQP component`, `Apollo configuration center`, `Aliyun ACM`, `ETCD configuration center`, `Token bucket algorithm-based limiter`, `Universal connection pool`, `Circuit breaker`, `Swagger`, `Snowflake`, `Simply Redis MQ`, `RabbitMQ`, `NSQ`, `Nats`, `Seconds level crontab`, `Custom Processes`, etc. Therefore, developers can entirely avoid implementing coroutine compatible versions of these libraries.
 
 Rest assured, Hyperf is still a PHP framework. Hyperf provides all the packages you expect: `Middleware`, `Event Manager`, `Coroutine-optimized Eloquent ORM` (and Model Cache!), `Translation`, `Validation`, `View engine (Blade/Smarty/Twig/Plates/ThinkTemplate)` and more.
 
@@ -36,13 +36,20 @@ Flexibility: We believe our Dependency Injection component is best in class. Wit
 
 Via these traits, Hyperf has discovered the untapped potential in many fields: implementing Web servers, gateway servers, distributed middleware software, microservices architecture, game servers, and Internet-of-Things (IoT).
 
+# Operating environment
+
+- Linux, OS X or Cygwin, WSL, Windows
+- PHP 8.1+
+- Swoole 5.0+ or Swow 1.4+
+
 # Production ready
 
-Alongside our well-maintained, multilingual documentation, a large number of unit tests for each component ensure logical correctness. Before `Hyperf` was released to the public (2019-06-20), it was used privately for multiple services in series-C and series-B Internet companies, which have been running without incident for years in harsh production environments.
+Alongside our well-maintained, multilingual documentation, a large number of unit tests for each component ensure logical correctness. Before `Hyperf` was released to the public (2019-06-20), it had been privately used by some medium and large Internet companies for multiple services, which have been running without incident for years in harsh production environments.
 
-# Documentation
+# Official website and Documentation
 
-[https://hyperf.wiki](https://hyperf.wiki)
+Official website [https://hyperf.io](https://hyperf.io)   
+Documentation [https://hyperf.wiki](https://hyperf.wiki)
 
 # Security Vulnerabilities
 
@@ -52,10 +59,6 @@ If you discover a security vulnerability within Hyperf, please send an e-mail to
 
 This project exists thanks to all the people who contribute. [[Contribute](https://github.com/hyperf/hyperf/graphs/contributors)].
 <a href="https://github.com/hyperf/hyperf/graphs/contributors"><img src="https://opencollective.com/hyperf/contributors.svg?width=890&button=false" /></a>
-
-# Code Contributor over time
-
-[![Code Contributor over time](https://contributor-overtime-api.apiseven.com/contributors-svg?chart=contributorOverTime&repo=hyperf/hyperf)](https://www.apiseven.com/en/contributor-graph?chart=contributorOverTime&repo=hyperf/hyperf)
 
 # Financial Contributors
 
@@ -84,6 +87,7 @@ Transfer/sec:     18.83MB
 - 🧬 [Nano](https://github.com/hyperf/nano) is a zero-config, no skeleton, minimal Hyperf distribution that allows you to quickly build a Hyperf application with just a single PHP file.
 - ⚡️ [GoTask](https://github.com/hyperf/gotask) is a library to spawns a go process as a Swoole sidecar and establishes a bi-directional IPC to offload heavy-duties to Go. Think of it as a Swoole Taskworker in Go.
 - 🚀 [Jet](https://github.com/hyperf/jet) is a unification model RPC Client, built-in JSONRPC protocol, available to running in ALL PHP environments, including PHP-FPM and Swoole/Hyperf environments. 
+- 🧰 [Box](https://github.com/hyperf/box) is committed to helping improve the programming experience of Hyperf applications, managing the PHP environment and related dependencies, providing the ability to package Hyperf applications as binary programs, and also providing reverse proxy services for managing and deploying Hyperf applications.
 
 # Stargazers over time
 

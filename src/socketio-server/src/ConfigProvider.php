@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer;
 
 use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
@@ -19,10 +20,8 @@ use Hyperf\SocketIOServer\Listener\ServerIdListener;
 use Hyperf\SocketIOServer\Listener\StartSubscriberListener;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\Room\RedisAdapter;
-use Hyperf\SocketIOServer\Room\SubscriberFactory;
 use Hyperf\SocketIOServer\SidProvider\DistributedSidProvider;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
-use Mix\Redis\Subscribe\Subscriber;
 
 class ConfigProvider
 {
@@ -30,7 +29,6 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                Subscriber::class => SubscriberFactory::class,
                 AdapterInterface::class => RedisAdapter::class,
                 SidProviderInterface::class => DistributedSidProvider::class,
             ],

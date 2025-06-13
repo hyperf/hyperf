@@ -9,28 +9,39 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Scout\Cases;
 
+use Hyperf\Database\Model\Collection;
+use HyperfTest\Scout\Stub\ContainerStub;
 use HyperfTest\Scout\Stub\ModelStubForMakeAllSearchable;
 use HyperfTest\Scout\Stub\SearchableModel;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class SearchableTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        ContainerStub::mockContainer();
+    }
+
     protected function tearDown(): void
     {
         m::close();
         $this->assertTrue(true);
+        ContainerStub::unsetContainer();
     }
 
     public function testSearchableUsingUpdateIsCalledOnCollection()
     {
-        $collection = m::mock(\Hyperf\Database\Model\Collection::class);
+        $collection = m::mock(Collection::class);
         $collection->shouldReceive('isEmpty')->andReturn(false);
         $collection->shouldReceive('first->searchableUsing->update')->with($collection);
         $model = new SearchableModel();
@@ -39,7 +50,7 @@ class SearchableTest extends TestCase
 
     public function testSearchableUsingUpdateIsNotCalledOnEmptyCollection()
     {
-        $collection = m::mock(\Hyperf\Database\Model\Collection::class);
+        $collection = m::mock(Collection::class);
         $collection->shouldReceive('isEmpty')->andReturn(true);
         $collection->shouldNotReceive('first->searchableUsing->update');
         $model = new SearchableModel();
@@ -48,7 +59,7 @@ class SearchableTest extends TestCase
 
     public function testSearchableUsingDeleteIsCalledOnCollection()
     {
-        $collection = m::mock(\Hyperf\Database\Model\Collection::class);
+        $collection = m::mock(Collection::class);
         $collection->shouldReceive('isEmpty')->andReturn(false);
         $collection->shouldReceive('first->searchableUsing->delete')->with($collection);
         $model = new SearchableModel();
@@ -57,7 +68,7 @@ class SearchableTest extends TestCase
 
     public function testSearchableUsingDeleteIsNotCalledOnEmptyCollection()
     {
-        $collection = m::mock(\Hyperf\Database\Model\Collection::class);
+        $collection = m::mock(Collection::class);
         $collection->shouldReceive('isEmpty')->andReturn(true);
         $collection->shouldNotReceive('first->searchableUsing->delete');
         $model = new SearchableModel();

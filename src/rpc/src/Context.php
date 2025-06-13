@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpc;
 
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Context as ContextUtil;
+use Hyperf\Collection\Arr;
+use Hyperf\Context\Context as ContextUtil;
 
 class Context
 {

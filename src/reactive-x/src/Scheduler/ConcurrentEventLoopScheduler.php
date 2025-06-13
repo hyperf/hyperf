@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX\Scheduler;
 
-use Hyperf\Utils\Coroutine;
+use Hyperf\Coroutine\Coroutine;
 use Rx\Disposable\CallbackDisposable;
 use Rx\Disposable\CompositeDisposable;
 use Rx\Disposable\EmptyDisposable;
@@ -24,25 +25,16 @@ use Rx\Scheduler\VirtualTimeScheduler;
  */
 final class ConcurrentEventLoopScheduler extends VirtualTimeScheduler
 {
-    /**
-     * @var int
-     */
-    private $nextTimer = PHP_INT_MAX;
+    private int $nextTimer = PHP_INT_MAX;
 
-    /**
-     * @var bool
-     */
-    private $insideInvoke = false;
+    private bool $insideInvoke = false;
 
     /**
      * @var callable
      */
-    private $delayCallback;
+    private mixed $delayCallback;
 
-    /**
-     * @var DisposableInterface
-     */
-    private $currentTimer;
+    private DisposableInterface $currentTimer;
 
     /**
      * EventLoopScheduler constructor.
@@ -51,9 +43,7 @@ final class ConcurrentEventLoopScheduler extends VirtualTimeScheduler
     {
         $this->delayCallback = $timerCallableOrLoop;
         $this->currentTimer = new EmptyDisposable();
-        parent::__construct($this->now(), function ($a, $b) {
-            return $a - $b;
-        });
+        parent::__construct($this->now(), fn ($a, $b) => $a - $b);
     }
 
     public function scheduleAbsoluteWithState($state, int $dueTime, callable $action): DisposableInterface
@@ -98,9 +88,6 @@ final class ConcurrentEventLoopScheduler extends VirtualTimeScheduler
         $this->insideInvoke = false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function now(): int
     {
         return (int) floor(microtime(true) * 1000);

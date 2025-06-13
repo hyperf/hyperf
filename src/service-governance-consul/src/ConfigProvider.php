@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ServiceGovernanceConsul;
 
 use Hyperf\ServiceGovernanceConsul\Listener\RegisterDriverListener;
@@ -23,13 +24,6 @@ class ConfigProvider
             ],
             'listeners' => [
                 RegisterDriverListener::class,
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
             ],
         ];
     }

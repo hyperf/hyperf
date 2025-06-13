@@ -9,28 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\UnCompressInterface;
-use Hyperf\Utils\ApplicationContext;
 
 class AnnotationJob extends Job
 {
-    /**
-     * @var string
-     */
-    public $class;
+    public string $class;
 
-    /**
-     * @var string
-     */
-    public $method;
+    public string $method;
 
-    /**
-     * @var array
-     */
-    public $params = [];
+    public array $params = [];
 
     public function __construct(string $class, string $method, array $params, int $maxAttempts = 0)
     {
@@ -59,8 +51,7 @@ class AnnotationJob extends Job
             $params[$key] = $value;
         }
 
-        $env = $container->get(Environment::class);
-        $env->setAsyncQueue(true);
+        $container->get(Environment::class)->setAsyncQueue(true);
 
         $class->{$this->method}(...$params);
     }

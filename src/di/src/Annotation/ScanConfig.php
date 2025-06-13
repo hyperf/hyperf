@@ -9,77 +9,30 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Config\ProviderConfig;
 
+use function Hyperf\Support\value;
+
 class ScanConfig
 {
-    /**
-     * @var bool
-     */
-    private $cacheable;
+    private static ?ScanConfig $instance = null;
 
     /**
-     * @var string
+     * @param array $paths the paths should be scanned everytime
      */
-    private $configDir;
-
-    /**
-     * The paths should be scaned everytime.
-     *
-     * @var array
-     */
-    private $paths;
-
-    /**
-     * @var array
-     */
-    private $collectors;
-
-    /**
-     * @var array
-     */
-    private $ignoreAnnotations;
-
-    /**
-     * @var array
-     */
-    private $globalImports;
-
-    /**
-     * @var array
-     */
-    private $dependencies;
-
-    /**
-     * @var array
-     */
-    private $classMap;
-
-    /**
-     * @var null|ScanConfig
-     */
-    private static $instance;
-
     public function __construct(
-        bool $cacheable,
-        string $configDir,
-        array $paths = [],
-        array $dependencies = [],
-        array $ignoreAnnotations = [],
-        array $globalImports = [],
-        array $collectors = [],
-        array $classMap = []
+        private bool $cacheable,
+        private string $configDir,
+        private array $paths = [],
+        private array $dependencies = [],
+        private array $ignoreAnnotations = [],
+        private array $globalImports = [],
+        private array $collectors = [],
+        private array $classMap = []
     ) {
-        $this->cacheable = $cacheable;
-        $this->configDir = $configDir;
-        $this->paths = $paths;
-        $this->dependencies = $dependencies;
-        $this->ignoreAnnotations = $ignoreAnnotations;
-        $this->globalImports = $globalImports;
-        $this->collectors = $collectors;
-        $this->classMap = $classMap;
     }
 
     public function isCacheable(): bool
@@ -183,7 +136,7 @@ class ScanConfig
     private static function allocateConfigValue(array $content, array $config): array
     {
         if (! isset($content['scan'])) {
-            return [];
+            return $config;
         }
         foreach ($content['scan'] as $key => $value) {
             if (! isset($config[$key])) {

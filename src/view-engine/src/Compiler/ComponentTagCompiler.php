@@ -9,67 +9,49 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Compiler;
 
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Component\AnonymousComponent;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\FinderInterface;
 use InvalidArgumentException;
+use PhpToken;
 use ReflectionClass;
+
+use function Hyperf\Collection\collect;
 
 class ComponentTagCompiler
 {
     /**
      * The Blade compiler instance.
-     *
-     * @var BladeCompiler
      */
-    protected $blade;
-
-    /**
-     * The component class aliases.
-     *
-     * @var array
-     */
-    protected $aliases = [];
-
-    /**
-     * The component class namespaces.
-     *
-     * @var array
-     */
-    protected $namespaces = [];
+    protected BladeCompiler $blade;
 
     /**
      * The "bind:" attributes that have been compiled for the current component.
-     *
-     * @var array
      */
-    protected $boundAttributes = [];
+    protected array $boundAttributes = [];
 
-    /**
-     * @var array
-     */
-    protected $autoloadClasses = [];
+    protected array $autoloadClasses = [];
 
-    /**
-     * @var array
-     */
-    protected $autoloadComponents = [];
+    protected array $autoloadComponents = [];
 
     /**
      * Create new component tag compiler.
      *
-     * @param ?BladeCompiler $blade
-     * @param mixed $autoload
+     * @param array $aliases the component class aliases
+     * @param array $namespaces the component class namespaces
      */
-    public function __construct(array $aliases = [], array $namespaces = [], ?BladeCompiler $blade = null, $autoload = [])
-    {
-        $this->aliases = $aliases;
-        $this->namespaces = $namespaces;
+    public function __construct(
+        protected array $aliases = [],
+        protected array $namespaces = [],
+        ?BladeCompiler $blade = null,
+        array $autoload = []
+    ) {
         $this->autoloadClasses = $autoload['classes'] ?? [null];
         $this->autoloadComponents = $autoload['components'] ?? [null];
 
@@ -136,8 +118,6 @@ class ComponentTagCompiler
 
     /**
      * Guess the view or class name for the given component.
-     *
-     * @return string
      */
     public function guessComponentFromAutoload(FactoryInterface $viewFactory, string $component): ?string
     {
@@ -184,7 +164,7 @@ class ComponentTagCompiler
         $class = $this->formatClassName($component);
 
         if (! $prefix) {
-            $prefix = 'App\\View\\Component\\';
+            $prefix = 'App\View\Component\\';
         }
 
         return rtrim($prefix, '\\') . '\\' . $class;
@@ -195,9 +175,7 @@ class ComponentTagCompiler
      */
     public function formatClassName(string $component): string
     {
-        $componentPieces = array_map(function ($componentPiece) {
-            return ucfirst(Str::camel($componentPiece));
-        }, explode('.', $component));
+        $componentPieces = array_map(fn ($componentPiece) => ucfirst(Str::camel($componentPiece)), explode('.', $component));
 
         return implode('\\', $componentPieces);
     }
@@ -233,12 +211,10 @@ class ComponentTagCompiler
         $constructor = (new ReflectionClass($class))->getConstructor();
 
         $parameterNames = $constructor
-            ? collect($constructor->getParameters())->map->getName()->all()
+            ? collect($constructor->getParameters())->map->getName()->all() // @phpstan-ignore method.nonObject
             : [];
 
-        return collect($attributes)->partition(function ($value, $key) use ($parameterNames) {
-            return in_array(Str::camel($key), $parameterNames);
-        })->all();
+        return collect($attributes)->partition(fn ($value, $key) => in_array(Str::camel($key), $parameterNames))->all();
     }
 
     /**
@@ -378,9 +354,7 @@ class ComponentTagCompiler
 
         [$data, $attributes] = $this->partitionDataAndAttributes($class, $attributes);
 
-        $data = $data->mapWithKeys(function ($value, $key) {
-            return [Str::camel($key) => $value];
-        });
+        $data = $data->mapWithKeys(fn ($value, $key) => [Str::camel($key) => $value]);
 
         // If the component doesn't exists as a class we'll assume it's a class-less
         // component and pass the component as a view parameter to the data so it
@@ -405,7 +379,7 @@ class ComponentTagCompiler
      */
     protected function compileClosingTags(string $value): string
     {
-        return preg_replace('/<\\/\\s*x[-\\:][\\w\\-\\:\\.]*\\s*>/', ' @endcomponentClass ', $value);
+        return preg_replace('/<\/\s*x[-\:][\w\-\:\.]*\s*>/', ' @endcomponentClass ', $value);
     }
 
     /**
@@ -467,8 +441,8 @@ class ComponentTagCompiler
     protected function parseAttributeBag(string $attributeString): string
     {
         $pattern = '/
-            (?:^|\\s+)                                        # start of the string or whitespace between attributes
-            \\{\\{\\s*(\\$attributes(?:[^}]+?(?<!\\s))?)\\s*\\}\\} # exact match of attributes variable being echoed
+            (?:^|\s+)                                        # start of the string or whitespace between attributes
+            \{\{\s*(\$attributes(?:[^}]+?(?<!\s))?)\s*\}\} # exact match of attributes variable being echoed
         /x';
 
         return preg_replace($pattern, ' :attributes="$1"', $attributeString);
@@ -480,9 +454,9 @@ class ComponentTagCompiler
     protected function parseBindAttributes(string $attributeString): string
     {
         $pattern = '/
-            (?:^|\\s+)     # start of the string or whitespace between attributes
+            (?:^|\s+)     # start of the string or whitespace between attributes
             :             # attribute needs to start with a semicolon
-            ([\\w\\-:.@]+)  # match the actual attribute name
+            ([\w\-:.@]+)  # match the actual attribute name
             =             # only match attributes that have a value
         /xm';
 
@@ -509,14 +483,8 @@ class ComponentTagCompiler
      */
     protected function escapeSingleQuotesOutsideOfPhpBlocks(string $value): string
     {
-        return collect(token_get_all($value))->map(function ($token) {
-            if (! is_array($token)) {
-                return $token;
-            }
-
-            return $token[0] === T_INLINE_HTML
-                ? str_replace("'", "\\'", $token[1])
-                : $token[1];
+        return collect(PhpToken::tokenize($value))->map(function (PhpToken $token) {
+            return $token->id === T_INLINE_HTML ? str_replace("'", "\\'", $token->text) : $token->text;
         })->implode('');
     }
 
@@ -526,11 +494,9 @@ class ComponentTagCompiler
     protected function attributesToString(array $attributes, bool $escapeBound = true): string
     {
         return collect($attributes)
-            ->map(function (string $value, string $attribute) use ($escapeBound) {
-                return $escapeBound && isset($this->boundAttributes[$attribute]) && $value !== 'true' && ! is_numeric($value)
-                    ? "'{$attribute}' => \\Hyperf\\ViewEngine\\Compiler\\BladeCompiler::sanitizeComponentAttribute({$value})"
-                    : "'{$attribute}' => {$value}";
-            })
+            ->map(fn (string $value, string $attribute) => $escapeBound && isset($this->boundAttributes[$attribute]) && $value !== 'true' && ! is_numeric($value)
+                ? "'{$attribute}' => \\Hyperf\\ViewEngine\\Compiler\\BladeCompiler::sanitizeComponentAttribute({$value})"
+                : "'{$attribute}' => {$value}")
             ->implode(',');
     }
 }

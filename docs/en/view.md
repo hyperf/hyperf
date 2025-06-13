@@ -191,9 +191,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\View\RenderInterface;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class ViewController
 {
     public function index(RenderInterface $render)

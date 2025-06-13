@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpc\Contract;
 
 /**
  * This interface ONLY use for retrieve the packer from DI container,
- * Please DONOT implement this interface, should ALWAYS implement the
+ * Please DON'T implement this interface, should ALWAYS implement the
  * \Hyperf\Contract\PackerInterface interface.
  */
 interface PackerInterface extends \Hyperf\Contract\PackerInterface

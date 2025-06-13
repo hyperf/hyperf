@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\DbConnection;
 
 use Hyperf\Contract\ConnectionInterface;
@@ -21,43 +22,23 @@ use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
+use Throwable;
 
 class Connection extends BaseConnection implements ConnectionInterface, DbConnectionInterface
 {
     use DbConnection;
 
-    /**
-     * @var DbPool
-     */
-    protected $pool;
+    protected ?DbConnectionInterface $connection = null;
 
-    /**
-     * @var DbConnectionInterface
-     */
-    protected $connection;
+    protected ConnectionFactory $factory;
 
-    /**
-     * @var ConnectionFactory
-     */
-    protected $factory;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var array
-     */
-    protected $config;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    protected $transaction = false;
-
-    public function __construct(ContainerInterface $container, DbPool $pool, array $config)
+    public function __construct(ContainerInterface $container, DbPool $pool, protected array $config)
     {
         parent::__construct($container, $pool);
         $this->factory = $container->get(ConnectionFactory::class);
-        $this->config = $config;
         $this->logger = $container->get(StdoutLoggerInterface::class);
 
         $this->reconnect();
@@ -118,29 +99,35 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
         return true;
     }
 
+    public function isTransaction(): bool
+    {
+        return $this->transactionLevel() > 0;
+    }
+
     public function release(): void
     {
-        if ($this->connection instanceof \Hyperf\Database\Connection) {
-            // Reset $recordsModified property of connection to false before the connection release into the pool.
-            $this->connection->resetRecordsModified();
-        }
+        try {
+            if ($this->connection instanceof \Hyperf\Database\Connection) {
+                // Reset $recordsModified property of connection to false before the connection release into the pool.
+                $this->connection->resetRecordsModified();
+                if ($this->connection->getErrorCount() > 100) {
+                    // If the error count of connection is more than 100, we think it is a bad connection,
+                    // So we'll reset it at the next time
+                    $this->lastUseTime = 0.0;
+                }
+            }
 
-        if ($this->isTransaction()) {
-            $this->rollBack(0);
-            $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
+            if ($this->transactionLevel() > 0) {
+                $this->rollBack(0);
+                $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
+            }
+        } catch (Throwable $exception) {
+            $this->logger->error('Rollback connection failed, caused by ' . $exception);
+            // Ensure that the connection must be reset the next time after broken.
+            $this->lastUseTime = 0.0;
         }
 
         parent::release();
-    }
-
-    public function setTransaction(bool $transaction): void
-    {
-        $this->transaction = $transaction;
-    }
-
-    public function isTransaction(): bool
-    {
-        return $this->transaction;
     }
 
     /**

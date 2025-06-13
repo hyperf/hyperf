@@ -9,21 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Config;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\Arr;
+
+use function Hyperf\Collection\data_get;
+use function Hyperf\Collection\data_set;
 
 class Config implements ConfigInterface
 {
-    /**
-     * @var array
-     */
-    private $configs = [];
-
-    public function __construct(array $configs)
+    public function __construct(private array $configs)
     {
-        $this->configs = $configs;
     }
 
     /**
@@ -33,7 +31,7 @@ class Config implements ConfigInterface
      * @param mixed $default default value of the entry when does not found
      * @return mixed entry
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         return data_get($this->configs, $key, $default);
     }
@@ -43,9 +41,8 @@ class Config implements ConfigInterface
      * Returns false otherwise.
      *
      * @param string $key identifier of the entry to look for
-     * @return bool
      */
-    public function has(string $key)
+    public function has(string $key): bool
     {
         return Arr::has($this->configs, $key);
     }
@@ -56,7 +53,7 @@ class Config implements ConfigInterface
      * @param string $key identifier of the entry to set
      * @param mixed $value the value that save to container
      */
-    public function set(string $key, $value)
+    public function set(string $key, mixed $value): void
     {
         data_set($this->configs, $key, $value);
     }

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Definition;
 
 use Psr\Container\ContainerInterface;
@@ -17,26 +18,16 @@ class Reference implements DefinitionInterface, SelfResolvingDefinitionInterface
 {
     /**
      * Entry name.
-     *
-     * @var string
      */
-    private $name = '';
+    private string $name = '';
+
+    private bool $needProxy = false;
 
     /**
-     * Name of the target entry.
-     *
-     * @var string
+     * @param string $targetEntryName name of the target entry
      */
-    private $targetEntryName;
-
-    /**
-     * @var bool
-     */
-    private $needProxy = false;
-
-    public function __construct(string $targetEntryName)
+    public function __construct(private string $targetEntryName)
     {
-        $this->targetEntryName = $targetEntryName;
     }
 
     /**

@@ -9,32 +9,26 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\RpcMultiplex\Exception\NotSupportException;
-use Hyperf\Utils\Exception\ExceptionThrower;
+use Hyperf\Support\Exception\ExceptionThrower;
 use Multiplex\Exception\ChannelClosedException;
 use Multiplex\Exception\ClientConnectFailedException;
 use Psr\Container\ContainerInterface;
+use Throwable;
+
+use function Hyperf\Support\make;
+use function Hyperf\Support\retry;
 
 class Transporter implements TransporterInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected SocketFactory $factory;
 
-    /**
-     * @var SocketFactory
-     */
-    protected $factory;
-
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'connect_timeout' => 5.0,
         'settings' => [
             'package_max_length' => 1024 * 1024 * 2,
@@ -43,11 +37,11 @@ class Transporter implements TransporterInterface
         'retry_count' => 2,
         'retry_interval' => 0,
         'client_count' => 4,
+        'heartbeat' => 20,
     ];
 
-    public function __construct(ContainerInterface $container, array $config = [])
+    public function __construct(protected ContainerInterface $container, array $config = [])
     {
-        $this->container = $container;
         $this->config = array_replace_recursive($this->config, $config);
         $this->factory = make(SocketFactory::class, ['config' => $this->config]);
     }
@@ -59,7 +53,7 @@ class Transporter implements TransporterInterface
         $result = retry($retryCount, function () use ($data) {
             try {
                 return $this->factory->get()->request($data);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 if ($this->shouldBeRetry($exception)) {
                     throw $exception;
                 }
@@ -91,7 +85,7 @@ class Transporter implements TransporterInterface
         return $this;
     }
 
-    protected function shouldBeRetry(\Throwable $throwable): bool
+    protected function shouldBeRetry(Throwable $throwable): bool
     {
         return $throwable instanceof ClientConnectFailedException
             || $throwable instanceof ChannelClosedException;

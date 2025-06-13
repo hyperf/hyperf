@@ -9,15 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Process\Stub;
 
 use Hyperf\Process\AbstractProcess;
 
 class FooProcess extends AbstractProcess
 {
-    public $enableCoroutine = false;
+    public bool $enableCoroutine = false;
 
-    public $restartInterval = 0;
+    public int $restartInterval = 0;
 
     public static $handled = false;
 

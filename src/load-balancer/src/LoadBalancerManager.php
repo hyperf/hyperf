@@ -9,16 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\LoadBalancer;
 
 use InvalidArgumentException;
 
+use function Hyperf\Support\make;
+
 class LoadBalancerManager
 {
     /**
-     * @var array
+     * @var array<string, class-string<LoadBalancerInterface>>
      */
-    private $algorithms = [
+    private array $algorithms = [
         'random' => Random::class,
         'round-robin' => RoundRobin::class,
         'weighted-random' => WeightedRandom::class,
@@ -26,12 +29,13 @@ class LoadBalancerManager
     ];
 
     /**
-     * @var \Hyperf\LoadBalancer\LoadBalancerInterface[]
+     * @var array<string, LoadBalancerInterface>
      */
-    private $instances = [];
+    private array $instances = [];
 
     /**
      * Retrieve a class name of load balancer.
+     * @return class-string<LoadBalancerInterface>
      */
     public function get(string $name): string
     {
@@ -42,7 +46,7 @@ class LoadBalancerManager
     }
 
     /**
-     * Retrieve a class name of load balancer and create a object instance,
+     * Retrieve a class name of load balancer and create an object instance,
      * If $container object exists, then the class will create via container.
      *
      * @param string $key key of the load balancer instance
@@ -54,7 +58,7 @@ class LoadBalancerManager
             return $this->instances[$key];
         }
         $class = $this->get($algorithm);
-        if (function_exists('make')) {
+        if (function_exists('Hyperf\Support\make')) {
             $instance = make($class);
         } else {
             $instance = new $class();
@@ -64,7 +68,7 @@ class LoadBalancerManager
     }
 
     /**
-     * Determire if the algorithm is exists.
+     * Determine if the algorithm is exists.
      */
     public function has(string $name): bool
     {
@@ -73,8 +77,9 @@ class LoadBalancerManager
 
     /**
      * Override the algorithms.
+     * @param array<string, class-string<LoadBalancerInterface>> $algorithms
      */
-    public function set(array $algorithms): self
+    public function set(array $algorithms): static
     {
         foreach ($algorithms as $algorithm) {
             if (! class_exists($algorithm)) {
@@ -86,7 +91,8 @@ class LoadBalancerManager
     }
 
     /**
-     * Register a algorithm to the manager.
+     * Register an algorithm to the manager.
+     * @param class-string<LoadBalancerInterface> $algorithm
      */
     public function register(string $key, string $algorithm): self
     {

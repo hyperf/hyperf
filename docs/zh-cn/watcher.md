@@ -1,14 +1,12 @@
 # 热更新 Watcher
 
-自从 `2.0` 版本使用了 `BetterReflection` 来收集扫描目录内的 `语法树` 和 `反射数据`，导致扫描速度相较 `1.1` 慢了不少。
-
-> 首次启动，因为没有任何缓存，所以会比较慢，当二次启动时，会按照文件修改时间，进行动态收集，但因为仍需要实例化 `BetterReflection`，所以启动时间仍然比较长。
+> 首次启动，因为没有任何缓存，所以会比较慢，当二次启动时，会按照文件修改时间，进行动态收集，所以启动时间仍然比较长。
 
 `Watcher` 组件除了解决上述启动问题，还提供了文件修改后立马重启的功能。
 
 ## 安装
 
-```
+```bash
 composer require hyperf/watcher --dev
 ```
 
@@ -25,10 +23,11 @@ php bin/hyperf.php vendor:publish hyperf/watcher
 |      配置      |      默认值      |                           备注                            |
 | :------------: | :--------------: | :-------------------------------------------------------: |
 |     driver     | `ScanFileDriver` |                   默认定时扫描文件驱动                    |
-|      bin       |      `php`       | 用于启动服务的脚本 例如 `php -d swoole.use_shortname=Off` |
+|      bin       |   `PHP_BINARY`   | 用于启动服务的脚本 例如 `php -d swoole.use_shortname=Off` |
 |   watch.dir    | `app`, `config`  |                         监听目录                          |
 |   watch.file   |      `.env`      |                         监听文件                          |
 | watch.interval |      `2000`      |                      扫描间隔(毫秒)                       |
+|      ext       |  `.php`, `.env`  |                  监听目录下的文件扩展名                   |
 
 ## 支持驱动
 
@@ -76,5 +75,3 @@ php bin/hyperf.php server:watch
 
 - 暂时 Alpine Docker 环境下，稍微有点问题，后续会完善。
 - 删除文件和修改`.env`需要手动重启才能生效。
-- vendor 中的文件需要使用 classmap 形式自动加载才能被扫描。（即执行`composer dump-autoload -o`)
-

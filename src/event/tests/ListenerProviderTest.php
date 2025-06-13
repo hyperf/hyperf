@@ -9,18 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Event;
 
 use Hyperf\Event\ListenerProvider;
 use HyperfTest\Event\Event\Alpha;
 use HyperfTest\Event\Event\Beta;
 use HyperfTest\Event\Listener\AlphaListener;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ListenerProviderTest extends TestCase
 {
     public function testListenNotExistEvent()

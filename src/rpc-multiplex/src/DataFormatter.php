@@ -9,75 +9,75 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
+use Hyperf\Codec\Json;
 use Hyperf\Rpc\Context;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
+use Hyperf\Rpc\ErrorResponse;
+use Hyperf\Rpc\Request;
+use Hyperf\Rpc\Response;
 use Hyperf\RpcClient\Exception\RequestException;
 use Hyperf\RpcMultiplex\Contract\DataFetcherInterface;
-use Hyperf\Utils\Codec\Json;
+use Throwable;
 
 class DataFormatter implements DataFormatterInterface, DataFetcherInterface
 {
-    /**
-     * @var Context
-     */
-    protected $context;
+    protected Context $context;
 
     public function __construct(Context $context)
     {
         $this->context = $context;
     }
 
-    public function formatRequest($data)
+    public function formatRequest(Request $request): array
     {
-        [$path, $params, $id] = $data;
         return [
-            Constant::ID => $id,
-            Constant::PATH => $path,
-            Constant::DATA => $params,
+            Constant::ID => $request->getId(),
+            Constant::PATH => $request->getPath(),
+            Constant::DATA => $request->getParams(),
+            Constant::EXTRA => $request->getExtra(),
             Constant::CONTEXT => $this->context->getData(),
         ];
     }
 
-    public function formatResponse($data)
+    public function formatResponse(Response $response): array
     {
-        [$id, $result] = $data;
         return [
-            Constant::ID => $id,
-            Constant::RESULT => $result,
+            Constant::ID => $response->getId(),
+            Constant::RESULT => $response->getResult(),
             Constant::CONTEXT => $this->context->getData(),
         ];
     }
 
-    public function formatErrorResponse($data)
+    public function formatErrorResponse(ErrorResponse $response): array
     {
-        [$id, $code, $message, $data] = $data;
-
-        if (isset($data) && $data instanceof \Throwable) {
-            $data = [
-                'class' => get_class($data),
-                'code' => $data->getCode(),
-                'message' => $data->getMessage(),
+        $exception = $response->getException();
+        if ($exception instanceof Throwable) {
+            $exception = [
+                'class' => get_class($exception),
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage(),
             ];
         }
         return [
-            Constant::ID => $id ?? null,
+            Constant::ID => $response->getId(),
             Constant::ERROR => [
-                Constant::CODE => $code,
-                Constant::MESSAGE => $message,
-                Constant::DATA => $data,
+                Constant::CODE => $response->getCode(),
+                Constant::MESSAGE => $response->getMessage(),
+                Constant::DATA => $exception,
             ],
             Constant::CONTEXT => $this->context->getData(),
         ];
     }
 
-    public function fetch(array $data)
+    public function fetch(array $data): mixed
     {
-        if (array_key_exists(Constant::DATA, $data)) {
+        if (array_key_exists(Constant::RESULT, $data)) {
             $this->context->setData($data[Constant::CONTEXT] ?? []);
 
-            return $data[Constant::DATA];
+            return $data[Constant::RESULT];
         }
 
         if (array_key_exists(Constant::ERROR, $data)) {

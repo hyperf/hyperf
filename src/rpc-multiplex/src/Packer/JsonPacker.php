@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex\Packer;
 
+use Hyperf\Codec\Json;
 use Hyperf\Contract\PackerInterface;
-use Hyperf\Utils\Codec\Json;
 
 class JsonPacker implements PackerInterface
 {

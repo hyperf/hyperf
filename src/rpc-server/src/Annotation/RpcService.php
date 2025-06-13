@@ -9,35 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcServer\Annotation;
 
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class RpcService extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $name = '';
-
-    /**
-     * @var string
-     */
-    public $server = 'jsonrpc-http';
-
-    /**
-     * @var string
-     */
-    public $protocol = 'jsonrpc-http';
-
-    /**
-     * @var string
-     */
-    public $publishTo = '';
+    public function __construct(
+        public string $name = '',
+        public string $server = 'jsonrpc-http',
+        public string $protocol = 'jsonrpc-http',
+        public string $publishTo = ''
+    ) {
+    }
 }

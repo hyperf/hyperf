@@ -9,40 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Definition;
 
 use Hyperf\Di\ReflectionManager;
 
 class ObjectDefinition implements DefinitionInterface
 {
-    /**
-     * @var MethodInjection
-     */
-    protected $constructorInjection;
+    protected ?MethodInjection $constructorInjection = null;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private ?string $className;
 
-    /**
-     * @var null|string
-     */
-    private $className;
+    private bool $classExists = false;
 
-    /**
-     * @var bool
-     */
-    private $classExists = false;
+    private bool $instantiable = false;
 
-    /**
-     * @var bool
-     */
-    private $instantiable = false;
-
-    public function __construct(string $name, string $className = null)
+    public function __construct(private string $name, ?string $className = null)
     {
-        $this->name = $name;
         $this->setClassName($className ?? $name);
     }
 
@@ -62,7 +45,7 @@ class ObjectDefinition implements DefinitionInterface
         return $this;
     }
 
-    public function setClassName(string $className = null): void
+    public function setClassName(?string $className = null): void
     {
         $this->className = $className;
 
@@ -71,11 +54,7 @@ class ObjectDefinition implements DefinitionInterface
 
     public function getClassName(): string
     {
-        if ($this->className !== null) {
-            return $this->className;
-        }
-
-        return $this->name;
+        return $this->className ?? $this->name;
     }
 
     public function isClassExists(): bool
@@ -89,7 +68,7 @@ class ObjectDefinition implements DefinitionInterface
     }
 
     /**
-     * @return null|\Hyperf\Di\Definition\MethodInjection
+     * @return null|MethodInjection
      */
     public function getConstructorInjection()
     {

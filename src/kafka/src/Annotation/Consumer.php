@@ -9,50 +9,26 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Kafka\Annotation;
 
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Consumer extends AbstractAnnotation
 {
     /**
-     * @var string
+     * @param string|string[] $topic
      */
-    public $pool = 'default';
-
-    /**
-     * @var string|string[]
-     */
-    public $topic;
-
-    /**
-     * @var null|string
-     */
-    public $groupId;
-
-    /**
-     * @var null|string
-     */
-    public $memberId;
-
-    /**
-     * @var bool
-     */
-    public $autoCommit = true;
-
-    /**
-     * @var int
-     */
-    public $nums = 1;
-
-    /**
-     * @var bool
-     */
-    public $enable = true;
+    public function __construct(
+        public string $pool = 'default',
+        public array|string $topic = '',
+        public ?string $groupId = null,
+        public ?string $memberId = null,
+        public bool $autoCommit = true,
+        public int $nums = 1,
+        public bool $enable = true
+    ) {
+    }
 }

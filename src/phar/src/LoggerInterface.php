@@ -9,8 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Phar;
 
-interface LoggerInterface extends \Psr\Log\LoggerInterface
+use Psr\Log;
+
+interface LoggerInterface extends Log\LoggerInterface
 {
 }

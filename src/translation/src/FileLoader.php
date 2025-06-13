@@ -9,49 +9,36 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Translation;
 
 use Hyperf\Contract\TranslatorLoaderInterface;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
+use JsonException;
 use RuntimeException;
+
+use function Hyperf\Collection\collect;
 
 class FileLoader implements TranslatorLoaderInterface
 {
     /**
-     * The filesystem instance.
-     *
-     * @var Filesystem
-     */
-    protected $files;
-
-    /**
-     * The default path for the loader.
-     *
-     * @var string
-     */
-    protected $path;
-
-    /**
      * All of the registered paths to JSON translation files.
-     *
-     * @var array
      */
-    protected $jsonPaths = [];
+    protected array $jsonPaths = [];
 
     /**
      * All of the namespace hints.
-     *
-     * @var array
      */
-    protected $hints = [];
+    protected array $hints = [];
 
     /**
      * Create a new file loader instance.
+     *
+     * @param Filesystem $files the filesystem instance
+     * @param string $path the default path for the loader
      */
-    public function __construct(Filesystem $files, string $path)
+    public function __construct(protected Filesystem $files, protected string $path)
     {
-        $this->path = $path;
-        $this->files = $files;
     }
 
     /**
@@ -137,20 +124,23 @@ class FileLoader implements TranslatorLoaderInterface
     /**
      * Load a locale from the given JSON file path.
      *
-     * @throws \RuntimeException
+     * @return array
+     * @throws RuntimeException
      */
     protected function loadJsonPaths(string $locale): iterable
     {
         return collect(array_merge($this->jsonPaths, [$this->path]))
             ->reduce(function ($output, $path) use ($locale) {
                 if ($this->files->exists($full = "{$path}/{$locale}.json")) {
-                    $decoded = json_decode($this->files->get($full), true);
-
-                    if (is_null($decoded) || json_last_error() !== JSON_ERROR_NONE) {
+                    try {
+                        $decoded = json_decode($this->files->get($full), true, 512, JSON_THROW_ON_ERROR);
+                    } catch (JsonException $e) {
                         throw new RuntimeException("Translation file [{$full}] contains an invalid JSON structure.");
                     }
 
-                    $output = array_merge($output, $decoded);
+                    if (is_array($decoded)) {
+                        $output = array_merge($output, $decoded);
+                    }
                 }
 
                 return $output;

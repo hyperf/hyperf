@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ExceptionHandler\Listener;
 
 use ErrorException;
@@ -24,7 +25,7 @@ class ErrorExceptionHandler implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         set_error_handler(static function ($level, $message, $file = '', $line = 0): bool {
             if (error_reporting() & $level) {

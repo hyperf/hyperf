@@ -24,7 +24,7 @@ composer require hyperf/dag
 
 假設我們有一系列任務，拓撲結構如上圖所示，頂點代表任務，邊緣代表依賴關係。(A 完成後才能完成 B、C、D，B 完成後才能完成 H、E、F...)
 
-通過 `hyperf/dag` 可以使用如下方式構建 `DAG` 並執行。
+透過 `hyperf/dag` 可以使用如下方式構建 `DAG` 並執行。
 
 ```php
 <?php
@@ -111,7 +111,7 @@ assert($results[$b->key] === 2);
 \Hyperf\Dag\Vertex::make(function() { return 'hello'; }, "greeting");
 ```
 
-除了使用閉包函式定義任務外，還可以使用實現了 `\Hyperf\Dag\Runner` 介面的類來定義，並通過 `Vertex::of` 將其轉化為一個頂點。
+除了使用閉包函式定義任務外，還可以使用實現了 `\Hyperf\Dag\Runner` 介面的類來定義，並透過 `Vertex::of` 將其轉化為一個頂點。
 
 ```php
 class MyJob implements \Hyperf\Dag\Runner {

@@ -9,35 +9,31 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Adapter\Prometheus;
 
 use Hyperf\Metric\Contract\CounterInterface;
 use Prometheus\CollectorRegistry;
+use Prometheus\Exception\MetricsRegistrationException;
 
 class Counter implements CounterInterface
 {
-    /**
-     * @var \Prometheus\CollectorRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var \Prometheus\Counter
-     */
-    protected $counter;
+    protected \Prometheus\Counter $counter;
 
     /**
      * @var string[]
      */
-    protected $labelValues = [];
+    protected array $labelValues = [];
 
-    public function __construct(CollectorRegistry $registry, string $namespace, string $name, string $help, array $labelNames)
+    /**
+     * @throws MetricsRegistrationException
+     */
+    public function __construct(protected CollectorRegistry $registry, string $namespace, string $name, string $help, array $labelNames)
     {
-        $this->registry = $registry;
         $this->counter = $registry->getOrRegisterCounter($namespace, $name, $help, $labelNames);
     }
 
-    public function with(string ...$labelValues): CounterInterface
+    public function with(string ...$labelValues): static
     {
         $this->labelValues = $labelValues;
         return $this;

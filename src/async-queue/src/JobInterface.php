@@ -9,14 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue;
+
+use Throwable;
 
 interface JobInterface
 {
+    public function fail(Throwable $e): void;
+
     /**
      * Handle the job.
      */
     public function handle();
+
+    public function setMaxAttempts(int $maxAttempts): static;
 
     public function getMaxAttempts(): int;
 }

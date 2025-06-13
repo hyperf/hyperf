@@ -9,14 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Definition;
 
 class PropertyHandlerManager
 {
-    /**
-     * @var array
-     */
-    private static $container = [];
+    private static array $container = [];
 
     public static function register(string $annotation, callable $callback)
     {

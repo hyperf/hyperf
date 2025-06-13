@@ -9,30 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Model\SoftDeletes;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
+use ReflectionClass;
 
 class ModelRewriteSoftDeletesVisitor extends AbstractVisitor
 {
-    /**
-     * @var bool
-     */
-    protected $hasSoftDeletesUse = false;
+    protected bool $hasSoftDeletesUse = false;
 
-    /**
-     * @var bool
-     */
-    protected $hasSoftDeletesTraitUse = false;
+    protected bool $hasSoftDeletesTraitUse = false;
 
-    /**
-     * @var array
-     */
-    protected $columns = [];
+    protected array $columns = [];
 
     public function leaveNode(Node $node)
     {
@@ -56,6 +49,8 @@ class ModelRewriteSoftDeletesVisitor extends AbstractVisitor
                 }
                 return $node;
         }
+
+        return null;
     }
 
     public function afterTraverse(array $nodes)
@@ -79,6 +74,8 @@ class ModelRewriteSoftDeletesVisitor extends AbstractVisitor
                 }
             }
         }
+
+        return null;
     }
 
     protected function rewriteSoftDeletesUse(?Node\Stmt\Use_ $node = null): ?Node\Stmt\Use_
@@ -118,7 +115,7 @@ class ModelRewriteSoftDeletesVisitor extends AbstractVisitor
     protected function shouldRemovedSoftDeletes(): bool
     {
         $useSoftDeletes = $this->useSoftDeletes();
-        $ref = new \ReflectionClass($this->data->getClass());
+        $ref = new ReflectionClass($this->data->getClass());
 
         if (! $ref->getParentClass()) {
             return false;

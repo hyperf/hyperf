@@ -9,28 +9,30 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Compiler\Concern;
+
+use Hyperf\ViewEngine\Exception\ViewCompilationException;
 
 trait CompilesLoops
 {
     /**
      * Counter to keep track of nested forelse statements.
-     *
-     * @var int
      */
-    protected $forElseCounter = 0;
+    protected int $forElseCounter = 0;
 
     /**
      * Compile the for-else statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileForelse($expression)
+    protected function compileForelse(?string $expression): string
     {
         $empty = '$__empty_' . ++$this->forElseCounter;
 
-        preg_match('/\( *(.*) +as *(.*)\)$/is', $expression, $matches);
+        preg_match('/\( *(.+) +as +(.+)\)$/is', $expression ?? '', $matches);
+
+        if (count($matches) === 0) {
+            throw new ViewCompilationException('Malformed @forelse statement.');
+        }
 
         $iteratee = trim($matches[1]);
 
@@ -45,11 +47,8 @@ trait CompilesLoops
 
     /**
      * Compile the for-else-empty and empty statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileEmpty($expression)
+    protected function compileEmpty(?string $expression): string
     {
         if ($expression) {
             return "<?php if(empty{$expression}): ?>";
@@ -62,44 +61,39 @@ trait CompilesLoops
 
     /**
      * Compile the end-for-else statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndforelse()
+    protected function compileEndforelse(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the end-empty statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndEmpty()
+    protected function compileEndEmpty(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the for statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileFor($expression)
+    protected function compileFor(string $expression): string
     {
         return "<?php for{$expression}: ?>";
     }
 
     /**
      * Compile the for-each statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
+     * @throws ViewCompilationException
      */
-    protected function compileForeach($expression)
+    protected function compileForeach(?string $expression): string
     {
-        preg_match('/\( *(.*) +as *(.*)\)$/is', $expression, $matches);
+        preg_match('/\( *(.+) +as +(.*)\)$/is', $expression ?? '', $matches);
+
+        if (count($matches) === 0) {
+            throw new ViewCompilationException('Malformed @foreach statement.');
+        }
 
         $iteratee = trim($matches[1]);
 
@@ -114,11 +108,8 @@ trait CompilesLoops
 
     /**
      * Compile the break statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileBreak($expression)
+    protected function compileBreak(?string $expression): string
     {
         if ($expression) {
             preg_match('/\(\s*(-?\d+)\s*\)$/', $expression, $matches);
@@ -131,11 +122,8 @@ trait CompilesLoops
 
     /**
      * Compile the continue statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileContinue($expression)
+    protected function compileContinue(?string $expression): string
     {
         if ($expression) {
             preg_match('/\(\s*(-?\d+)\s*\)$/', $expression, $matches);
@@ -148,41 +136,32 @@ trait CompilesLoops
 
     /**
      * Compile the end-for statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndfor()
+    protected function compileEndfor(): string
     {
         return '<?php endfor; ?>';
     }
 
     /**
      * Compile the end-for-each statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndforeach()
+    protected function compileEndforeach(): string
     {
         return '<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>';
     }
 
     /**
      * Compile the while statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileWhile($expression)
+    protected function compileWhile(string $expression): string
     {
         return "<?php while{$expression}: ?>";
     }
 
     /**
      * Compile the end-while statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndwhile()
+    protected function compileEndwhile(): string
     {
         return '<?php endwhile; ?>';
     }

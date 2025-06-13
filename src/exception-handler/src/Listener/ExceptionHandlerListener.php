@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ExceptionHandler\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -16,25 +17,14 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\ExceptionHandler\Annotation\ExceptionHandler;
 use Hyperf\Framework\Event\BootApplication;
-use SplPriorityQueue;
+use Hyperf\Stdlib\SplPriorityQueue;
 
 class ExceptionHandlerListener implements ListenerInterface
 {
     public const HANDLER_KEY = 'exceptions.handler';
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    /**
-     * @var int
-     */
-    private $serial = PHP_INT_MAX;
-
-    public function __construct(ConfigInterface $config)
+    public function __construct(private ConfigInterface $config)
     {
-        $this->config = $config;
     }
 
     public function listen(): array
@@ -44,7 +34,7 @@ class ExceptionHandlerListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $queue = new SplPriorityQueue();
         $handlers = $this->config->get(self::HANDLER_KEY, []);
@@ -54,7 +44,7 @@ class ExceptionHandlerListener implements ListenerInterface
                     $handler = $priority;
                     $priority = 0;
                 }
-                $queue->insert([$server, $handler], [$priority, $this->serial--]);
+                $queue->insert([$server, $handler], $priority);
             }
         }
 
@@ -64,7 +54,7 @@ class ExceptionHandlerListener implements ListenerInterface
          * @var ExceptionHandler $annotation
          */
         foreach ($annotations as $handler => $annotation) {
-            $queue->insert([$annotation->server, $handler], [$annotation->priority, $this->serial--]);
+            $queue->insert([$annotation->server, $handler], $annotation->priority);
         }
 
         $this->config->set(self::HANDLER_KEY, $this->formatExceptionHandlers($queue));

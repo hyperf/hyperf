@@ -9,20 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
 #[Command]
 class ProcessCommand extends GeneratorCommand
 {
     public function __construct()
     {
         parent::__construct('gen:process');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new process class');
+
+        parent::configure();
     }
 
     protected function getStub(): string
@@ -32,6 +36,6 @@ class ProcessCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Process';
+        return $this->getConfig()['namespace'] ?? 'App\Process';
     }
 }

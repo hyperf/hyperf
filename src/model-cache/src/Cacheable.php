@@ -9,21 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ModelCache;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\ModelCache\Builder as ModelCacheBuilder;
-use Hyperf\Utils\ApplicationContext;
 
 trait Cacheable
 {
-    /**
-     * @var bool
-     */
-    protected $useCacheBuilder = false;
+    protected bool $useCacheBuilder = false;
 
     /**
      * Fetch a model from cache.
@@ -40,6 +38,7 @@ trait Cacheable
 
     /**
      * Fetch models from cache.
+     * @return Collection<int, self>
      */
     public static function findManyFromCache(array $ids): Collection
     {
@@ -57,11 +56,11 @@ trait Cacheable
     {
         $manager = $this->getContainer()->get(Manager::class);
 
-        return $manager->destroy([$this->getKey()], get_called_class());
+        return $manager->destroy([$this->getKey()], static::class);
     }
 
     /**
-     * Get the expire time for cache.
+     * Get the expired time for cache.
      */
     public function getCacheTTL(): ?int
     {
@@ -84,7 +83,7 @@ trait Cacheable
                 // Only increment a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);
-                $manager->increment($this->getKey(), $column, $amount, get_called_class());
+                $manager->increment($this->getKey(), $column, $amount, static::class);
             } else {
                 // Update other columns, when increment a column's value.
                 $this->deleteCache();
@@ -109,7 +108,7 @@ trait Cacheable
                 // Only decrement a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);
-                $manager->increment($this->getKey(), $column, -$amount, get_called_class());
+                $manager->increment($this->getKey(), $column, -$amount, static::class);
             } else {
                 // Update other columns, when decrement a column's value.
                 $this->deleteCache();
@@ -139,6 +138,7 @@ trait Cacheable
 
     /**
      * @param bool $cache Whether to delete the model cache when batch update
+     * @return Builder|static
      */
     public static function query(bool $cache = false): Builder
     {

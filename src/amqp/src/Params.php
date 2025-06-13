@@ -9,33 +9,32 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp;
 
 class Params
 {
-    protected $insist = false;
+    protected bool $insist = false;
 
-    protected $loginMethod = 'AMQPLAIN';
+    protected string $loginMethod = 'AMQPLAIN';
 
-    protected $loginResponse;
+    protected string $locale = 'en_US';
 
-    protected $locale = 'en_US';
+    protected int $connectionTimeout = 3;
 
-    protected $connectionTimeout = 3;
+    protected int $readWriteTimeout = 3;
 
-    protected $readWriteTimeout = 3;
+    protected bool $keepalive = false;
 
-    protected $context;
+    protected int $heartbeat = 0;
 
-    protected $keepalive = false;
+    protected bool $closeOnDestruct = true;
 
-    protected $heartbeat = 0;
+    protected float $channelRpcTimeout = 0.0;
 
-    protected $closeOnDestruct = true;
+    protected int $maxIdleChannels = 10;
 
-    protected $channelRpcTimeout = 0.0;
-
-    protected $maxIdleChannels = 10;
+    protected ?string $connectionName = null;
 
     public function __construct(array $data)
     {
@@ -45,10 +44,6 @@ class Params
 
         if (isset($data['login_method'])) {
             $this->setLoginMethod($data['login_method']);
-        }
-
-        if (isset($data['login_response'])) {
-            $this->setLoginResponse($data['login_response']);
         }
 
         if (isset($data['locale'])) {
@@ -61,10 +56,6 @@ class Params
 
         if (isset($data['read_write_timeout'])) {
             $this->setReadWriteTimeout((int) $data['read_write_timeout']);
-        }
-
-        if (isset($data['context'])) {
-            $this->setContext($data['context']);
         }
 
         if (isset($data['keepalive'])) {
@@ -86,6 +77,10 @@ class Params
         if (isset($data['max_idle_channels'])) {
             $this->setMaxIdleChannels((int) $data['max_idle_channels']);
         }
+
+        if (isset($data['connection_name'])) {
+            $this->setConnectionName($data['connection_name']);
+        }
     }
 
     public function isInsist(): bool
@@ -96,11 +91,6 @@ class Params
     public function getLoginMethod(): string
     {
         return $this->loginMethod;
-    }
-
-    public function getLoginResponse()
-    {
-        return $this->loginResponse;
     }
 
     public function getLocale(): string
@@ -118,11 +108,6 @@ class Params
         return $this->readWriteTimeout;
     }
 
-    public function getContext()
-    {
-        return $this->context;
-    }
-
     public function isKeepalive(): bool
     {
         return $this->keepalive;
@@ -138,55 +123,52 @@ class Params
         return $this->closeOnDestruct;
     }
 
-    public function setCloseOnDestruct(bool $closeOnDestruct)
+    public function setCloseOnDestruct(bool $closeOnDestruct): static
     {
         $this->closeOnDestruct = $closeOnDestruct;
         return $this;
     }
 
-    public function setInsist(bool $insist)
+    public function setInsist(bool $insist): static
     {
         $this->insist = $insist;
+        return $this;
     }
 
-    public function setLoginMethod(string $loginMethod)
+    public function setLoginMethod(string $loginMethod): static
     {
         $this->loginMethod = $loginMethod;
+        return $this;
     }
 
-    public function setLoginResponse($loginResponse)
-    {
-        $this->loginResponse = $loginResponse;
-    }
-
-    public function setLocale(string $locale)
+    public function setLocale(string $locale): static
     {
         $this->locale = $locale;
+        return $this;
     }
 
-    public function setConnectionTimeout(int $connectionTimeout)
+    public function setConnectionTimeout(int $connectionTimeout): static
     {
         $this->connectionTimeout = $connectionTimeout;
+        return $this;
     }
 
-    public function setReadWriteTimeout(int $readWriteTimeout)
+    public function setReadWriteTimeout(int $readWriteTimeout): static
     {
         $this->readWriteTimeout = $readWriteTimeout;
+        return $this;
     }
 
-    public function setContext($context)
-    {
-        $this->context = $context;
-    }
-
-    public function setKeepalive(bool $keepalive)
+    public function setKeepalive(bool $keepalive): static
     {
         $this->keepalive = $keepalive;
+        return $this;
     }
 
-    public function setHeartbeat(int $heartbeat)
+    public function setHeartbeat(int $heartbeat): static
     {
         $this->heartbeat = $heartbeat;
+        return $this;
     }
 
     public function getChannelRpcTimeout(): float
@@ -194,9 +176,10 @@ class Params
         return $this->channelRpcTimeout;
     }
 
-    public function setChannelRpcTimeout(float $channelRpcTimeout)
+    public function setChannelRpcTimeout(float $channelRpcTimeout): static
     {
         $this->channelRpcTimeout = $channelRpcTimeout;
+        return $this;
     }
 
     public function getMaxIdleChannels(): int
@@ -204,8 +187,20 @@ class Params
         return $this->maxIdleChannels;
     }
 
-    public function setMaxIdleChannels(int $maxIdleChannels)
+    public function setMaxIdleChannels(int $maxIdleChannels): static
     {
         $this->maxIdleChannels = $maxIdleChannels;
+        return $this;
+    }
+
+    public function getConnectionName(): ?string
+    {
+        return $this->connectionName;
+    }
+
+    public function setConnectionName(?string $connectionName): static
+    {
+        $this->connectionName = $connectionName;
+        return $this;
     }
 }

@@ -9,33 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcClient\Proxy;
 
-use Hyperf\Utils\CodeGen\PhpParser;
+use Hyperf\CodeParser\PhpParser;
+use InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\NodeVisitorAbstract;
 
+use function Hyperf\Support\value;
+
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
-    /**
-     * @var array
-     */
-    protected $nodes;
+    protected array $nodes = [];
 
-    /**
-     * @var string
-     */
-    private $classname;
-
-    /**
-     * @var string
-     */
-    private $namespace;
-
-    public function __construct(string $classname)
+    public function __construct(private string $classname, private array $parentStmts)
     {
-        $this->classname = $classname;
     }
 
     public function beforeTraverse(array $nodes)
@@ -45,18 +35,10 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return null;
     }
 
-    public function enterNode(Node $node)
-    {
-        if ($node instanceof Node\Stmt\Namespace_) {
-            $this->namespace = $node->name->toCodeString();
-        }
-        return null;
-    }
-
     public function leaveNode(Node $node)
     {
         if ($node instanceof Interface_) {
-            $node->stmts = $this->generateStmts($node);
+            $node->stmts = $this->generateStmts();
             return new Node\Stmt\Class_($this->classname, [
                 'stmts' => $node->stmts,
                 'extends' => new Node\Name\FullyQualified(AbstractProxyService::class),
@@ -68,20 +50,28 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return null;
     }
 
-    public function generateStmts(Interface_ $node): array
+    public function generateStmts(): array
     {
         $methods = PhpParser::getInstance()->getAllMethodsFromStmts($this->nodes);
         $stmts = [];
         foreach ($methods as $method) {
             $stmts[] = $this->overrideMethod($method);
         }
+
+        foreach ($this->parentStmts as $stmt) {
+            $methods = PhpParser::getInstance()->getAllMethodsFromStmts($stmt);
+            foreach ($methods as $method) {
+                $stmts[] = $this->overrideMethod($method);
+            }
+        }
+
         return $stmts;
     }
 
     protected function overrideMethod(Node\FunctionLike $stmt): Node\Stmt\ClassMethod
     {
         if (! $stmt instanceof Node\Stmt\ClassMethod) {
-            throw new \InvalidArgumentException('stmt must instanceof Node\Stmt\ClassMethod');
+            throw new InvalidArgumentException('stmt must instanceof Node\Stmt\ClassMethod');
         }
         $stmt->stmts = value(function () use ($stmt) {
             $methodCall = new Node\Expr\MethodCall(
@@ -97,6 +87,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             }
             return [new Node\Stmt\Expression($methodCall)];
         });
+
         return $stmt;
     }
 

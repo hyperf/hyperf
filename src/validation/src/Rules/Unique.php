@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Rules;
 
 use Hyperf\Database\Model\Model;
+use Stringable;
 
-class Unique
+class Unique implements Stringable
 {
     use DatabaseRule;
 
@@ -67,7 +69,7 @@ class Unique
     /**
      * Ignore the given model during the unique check.
      *
-     * @param \Hyperf\Database\Model\Model $model
+     * @param Model $model
      * @return $this
      */
     public function ignoreModel($model, ?string $idColumn = null)

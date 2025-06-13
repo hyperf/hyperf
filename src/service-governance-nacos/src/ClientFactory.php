@@ -9,16 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ServiceGovernanceNacos;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Config;
 use Psr\Container\ContainerInterface;
 
 class ClientFactory
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): Client
     {
         $config = $container->get(ConfigInterface::class)->get('services.drivers.nacos', []);
         if (! empty($config['uri'])) {
@@ -27,11 +27,16 @@ class ClientFactory
             $baseUri = sprintf('http://%s:%d', $config['host'] ?? '127.0.0.1', $config['port'] ?? 8848);
         }
 
-        return new Application(new Config([
+        return new Client(new Config([
             'base_uri' => $baseUri,
             'username' => $config['username'] ?? null,
             'password' => $config['password'] ?? null,
+            'access_key' => $config['access_key'] ?? null,
+            'access_secret' => $config['access_secret'] ?? null,
             'guzzle_config' => $config['guzzle']['config'] ?? null,
+            'host' => $config['host'] ?? null,
+            'port' => $config['port'] ?? null,
+            'grpc' => $config['grpc'] ?? [],
         ]));
     }
 }

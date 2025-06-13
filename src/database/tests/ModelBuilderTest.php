@@ -9,34 +9,44 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
+use BadMethodCallException;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Closure;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Exception\MultipleRecordsFoundException;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\ModelNotFoundException;
 use Hyperf\Database\Model\Register;
+use Hyperf\Database\Model\RelationNotFoundException;
 use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\Database\Query\Builder as BaseBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
-use Hyperf\Utils\Collection as BaseCollection;
 use HyperfTest\Database\Stubs\ModelStub;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PDO;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+
+use function Hyperf\Collection\collect;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelBuilderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
@@ -77,6 +87,81 @@ class ModelBuilderTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testFindOrMethod()
+    {
+        $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
+        $model = $this->getMockModel();
+        $model->shouldReceive('getKeyType')->andReturn('int');
+        $builder->setModel($model);
+        $builder->getQuery()->shouldReceive('where')->with('foo_table.foo', '=', 1)->twice();
+        $builder->getQuery()->shouldReceive('where')->with('foo_table.foo', '=', 2)->once();
+        $builder->shouldReceive('first')->andReturn($model)->once();
+        $builder->shouldReceive('first')->with(['column'])->andReturn($model)->once();
+        $builder->shouldReceive('first')->andReturn(null)->once();
+
+        $this->assertSame($model, $builder->findOr(1, fn () => 'callback result'));
+        $this->assertSame($model, $builder->findOr(1, ['column'], fn () => 'callback result'));
+        $this->assertSame('callback result', $builder->findOr(2, fn () => 'callback result'));
+    }
+
+    public function testFindOrMethodWithMany()
+    {
+        $builder = Mockery::mock(Builder::class . '[get]', [$this->getMockQueryBuilder()]);
+        $model1 = $this->getMockModel();
+        $model2 = $this->getMockModel();
+        $model1->shouldReceive('getKeyType')->andReturn('int');
+        $model2->shouldReceive('getKeyType')->andReturn('int');
+        $builder->setModel($model1);
+        $builder->getQuery()->shouldReceive('whereIn')->with('foo_table.foo', [1, 2])->twice();
+        $builder->getQuery()->shouldReceive('whereIn')->with('foo_table.foo', [1, 2, 3])->once();
+        $builder->shouldReceive('get')->andReturn(new Collection([$model1, $model2]))->once();
+        $builder->shouldReceive('get')->with(['column'])->andReturn(new Collection([$model1, $model2]))->once();
+        $builder->shouldReceive('get')->andReturn(null)->once();
+
+        $result = $builder->findOr([1, 2], fn () => 'callback result');
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertSame($model1, $result[0]);
+        $this->assertSame($model2, $result[1]);
+
+        $result = $builder->findOr([1, 2], ['column'], fn () => 'callback result');
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertSame($model1, $result[0]);
+        $this->assertSame($model2, $result[1]);
+
+        $result = $builder->findOr([1, 2, 3], fn () => 'callback result');
+        $this->assertSame('callback result', $result);
+    }
+
+    public function testFindOrMethodWithManyUsingCollection()
+    {
+        $builder = Mockery::mock(Builder::class . '[get]', [$this->getMockQueryBuilder()]);
+        $model1 = $this->getMockModel();
+        $model2 = $this->getMockModel();
+        $model1->shouldReceive('getKeyType')->andReturn('int');
+        $model2->shouldReceive('getKeyType')->andReturn('int');
+        $builder->setModel($model1);
+        $arg1 = Collection::make([1, 2]);
+        $arg2 = Collection::make([1, 2, 3]);
+        $builder->getQuery()->shouldReceive('whereIn')->with('foo_table.foo', $arg1)->twice();
+        $builder->getQuery()->shouldReceive('whereIn')->with('foo_table.foo', $arg2)->once();
+        $builder->shouldReceive('get')->andReturn(new Collection([$model1, $model2]))->once();
+        $builder->shouldReceive('get')->with(['column'])->andReturn(new Collection([$model1, $model2]))->once();
+        $builder->shouldReceive('get')->andReturn(null)->once();
+
+        $result = $builder->findOr($arg1, fn () => 'callback result');
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertSame($model1, $result[0]);
+        $this->assertSame($model2, $result[1]);
+
+        $result = $builder->findOr($arg1, ['column'], fn () => 'callback result');
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertSame($model1, $result[0]);
+        $this->assertSame($model2, $result[1]);
+
+        $result = $builder->findOr($arg2, fn () => 'callback result');
+        $this->assertSame('callback result', $result);
+    }
+
     public function testFindOrNewMethodModelNotFound()
     {
         $model = $this->getMockModel();
@@ -95,7 +180,7 @@ class ModelBuilderTest extends TestCase
 
     public function testFindOrFailMethodThrowsModelNotFoundException()
     {
-        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class);
+        $this->expectException(ModelNotFoundException::class);
 
         $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
         $builder->setModel($this->getMockModel());
@@ -106,7 +191,7 @@ class ModelBuilderTest extends TestCase
 
     public function testFindOrFailMethodWithManyThrowsModelNotFoundException()
     {
-        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class);
+        $this->expectException(ModelNotFoundException::class);
 
         $builder = Mockery::mock(Builder::class . '[get]', [$this->getMockQueryBuilder()]);
         $builder->setModel($this->getMockModel());
@@ -117,7 +202,7 @@ class ModelBuilderTest extends TestCase
 
     public function testFirstOrFailMethodThrowsModelNotFoundException()
     {
-        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class);
+        $this->expectException(ModelNotFoundException::class);
 
         $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
         $builder->setModel($this->getMockModel());
@@ -390,7 +475,8 @@ class ModelBuilderTest extends TestCase
         $builder->getModel()->shouldReceive('newFromBuilder')->with(['created_at' => '2010-01-01 00:00:00'])->andReturn(new ModelBuilderTestPluckDatesStub(['created_at' => '2010-01-01 00:00:00']));
         $builder->getModel()->shouldReceive('newFromBuilder')->with(['created_at' => '2011-01-01 00:00:00'])->andReturn(new ModelBuilderTestPluckDatesStub(['created_at' => '2011-01-01 00:00:00']));
 
-        $this->assertEquals(['date_2010-01-01 00:00:00', 'date_2011-01-01 00:00:00'], $builder->pluck('created_at')->all());
+        [$date1, $date2] = $builder->pluck('created_at')->all();
+        $this->assertEquals(['2010-01-01 00:00:00', '2011-01-01 00:00:00'], [$date1->toDateTimeString(), $date2->toDateTimeString()]);
     }
 
     public function testPluckWithoutModelGetterJustReturnsTheAttributesFoundInDatabase()
@@ -441,7 +527,7 @@ class ModelBuilderTest extends TestCase
 
     public function testMissingStaticMacrosThrowsProperException()
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Call to undefined method Hyperf\Database\Model\Builder::missingMacro()');
         Builder::missingMacro();
     }
@@ -529,7 +615,7 @@ class ModelBuilderTest extends TestCase
 
     public function testGetRelationThrowsException()
     {
-        $this->expectException(\Hyperf\Database\Model\RelationNotFoundException::class);
+        $this->expectException(RelationNotFoundException::class);
 
         $builder = $this->getBuilder();
         $builder->setModel($this->getMockModel());
@@ -590,8 +676,11 @@ class ModelBuilderTest extends TestCase
         $this->assertInstanceOf(Builder::class, $builder->foobar());
 
         $builder = $this->getBuilder();
-        $builder->getQuery()->shouldReceive('insert')->once()->with(['bar'])->andReturn('foo');
+        $builder->getQuery()->shouldReceive('insertOrIgnoreUsing')->once()->with(['bar'], 'baz')->andReturn(1);
+        $this->assertSame(1, $builder->insertOrIgnoreUsing(['bar'], 'baz'));
 
+        $builder = $this->getBuilder();
+        $builder->getQuery()->shouldReceive('insert')->once()->with(['bar'])->andReturn('foo');
         $this->assertEquals('foo', $builder->insert(['bar']));
     }
 
@@ -1171,6 +1260,283 @@ class ModelBuilderTest extends TestCase
         $builder->withCasts(['foo' => 'bar']);
     }
 
+    public function testMixin()
+    {
+        Builder::macro('testAbc', fn () => 'abc');
+        $this->assertEquals('abc', ModelStub::testAbc());
+
+        Builder::mixin(new UserMixin());
+
+        $this->assertInstanceOf(Builder::class, ModelStub::whereFoo());
+        $this->assertInstanceOf(Builder::class, ModelStub::whereBar());
+    }
+
+    public function testClone()
+    {
+        $builder = ModelStub::query();
+        $clone = $builder->clone();
+
+        $clone->select(['id']);
+
+        $this->assertNotEquals($builder->toSql(), $clone->toSql());
+        $this->assertSame('select * from "stub"', $builder->toSql());
+        $this->assertSame('select "id" from "stub"', $clone->toSql());
+    }
+
+    public function testToRawSql()
+    {
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('toRawSql')
+            ->andReturn('select * from "users" where "email" = \'foo\'');
+
+        $builder = new Builder($query);
+
+        $this->assertSame('select * from "users" where "email" = \'foo\'', $builder->toRawSql());
+    }
+
+    public function testWithAggregateAndSelfRelationConstrain()
+    {
+        ModelBuilderTestStub::resolveRelationUsing('children', function ($model) {
+            return $model->hasMany(ModelBuilderTestStub::class, 'parent_id', 'id')->where('enum_value', new stdClass());
+        });
+
+        ModelBuilderTestStub::resolveRelationUsing('customer', function ($model) {
+            return $model->belongsTo(ModelBuilderTestStub::class, 'customer_id');
+        });
+
+        $model = new ModelBuilderTestStub();
+        $this->mockConnectionForModel($model, '');
+        $relationHash = $model->children()->getRelationCountHash(false);
+        $relationHash2 = $model->customer()->getRelationCountHash(false);
+
+        $builder = $model->withCount('children');
+        $builder2 = $model->has('customer');
+
+        $this->assertSame(vsprintf('select "table".*, (select count(*) from "table" as "%s" where "table"."id" = "%s"."parent_id" and "enum_value" = ?) as "children_count" from "table"', [$relationHash, $relationHash]), $builder->toSql());
+        $this->assertSame(vsprintf('select * from "table" where exists (select * from "table" as "%s" where "%s"."id" = "table"."customer_id")', [$relationHash2, $relationHash2]), $builder2->toSql());
+    }
+
+    public function testTouch()
+    {
+        Carbon::setTestNow($now = '2017-10-10 10:10:10');
+
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
+        $query->from = 'foo_table';
+
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder->setModel($model);
+
+        $query->shouldReceive('update')->once()->with(['updated_at' => $now])->andReturn(2);
+
+        $result = $builder->touch();
+
+        $this->assertEquals(2, $result);
+    }
+
+    public function testSole()
+    {
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
+        $query->shouldReceive('take')->with(2)->andReturnSelf();
+        $result = [
+            'id' => 1,
+            'name' => 'Hyperf',
+        ];
+        $query->shouldReceive('get')->with(['*'])->andReturn(new Collection([$result]));
+        $query->from = 'foo_table';
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder->setModel($model);
+        $this->assertEquals($builder->sole()->toArray(), $result);
+    }
+
+    public function testSoleNotFound()
+    {
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
+        $query->shouldReceive('take')->with(2)->andReturnSelf();
+        $query->shouldReceive('get')->with(['1'])->andReturn(new Collection());
+        $query->from = 'foo_table';
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder->setModel($model);
+        $this->expectException(ModelNotFoundException::class);
+        $builder->sole(['1']);
+    }
+
+    public function testSoleMultipleRecordsFoundException()
+    {
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
+        $query->shouldReceive('take')->with(2)->andReturnSelf();
+        $result = [
+            'id' => 1,
+            'name' => 'Hyperf',
+        ];
+        $query->shouldReceive('get')->with(['*'])->andReturn(new Collection([$result, $result]));
+        $query->from = 'foo_table';
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder->setModel($model);
+        $this->expectException(MultipleRecordsFoundException::class);
+        $builder->sole();
+    }
+
+    public function testTouchWithCustomColumn()
+    {
+        Carbon::setTestNow($now = '2017-10-10 10:10:10');
+
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
+        $query->from = 'foo_table';
+
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder->setModel($model);
+
+        $query->shouldReceive('update')->once()->with(['published_at' => $now])->andReturn(2);
+
+        $result = $builder->touch('published_at');
+
+        $this->assertEquals(2, $result);
+    }
+
+    public function testTouchWithoutUpdatedAtColumn()
+    {
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('table')->andReturn('table');
+        $query->from = 'table';
+
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubWithoutTimestamp();
+        $builder->setModel($model);
+
+        $query->shouldNotReceive('update');
+
+        $result = $builder->touch();
+
+        $this->assertFalse($result);
+    }
+
+    public function testQualifyColumns()
+    {
+        $builder = new Builder(Mockery::mock(BaseBuilder::class));
+        $builder->shouldReceive('from')->with('foo_table');
+
+        $builder->setModel(new ModelBuilderTestStubStringPrimaryKey());
+
+        $this->assertEquals(['foo_table.column', 'foo_table.name'], $builder->qualifyColumns(['column', 'name']));
+    }
+
+    public function testValueOrFailMethodWithModelFound()
+    {
+        $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
+        $mockModel = new stdClass();
+        $mockModel->name = 'foo';
+        $builder->shouldReceive('first')->with(['name'])->andReturn($mockModel);
+        $builder->shouldReceive('first')->with(['test'])->andReturn(null);
+        $builder->setModel(new ModelBuilderTestStubStringPrimaryKey());
+        $this->assertSame('foo', $builder->valueOrFail('name'));
+        $this->expectException(ModelNotFoundException::class);
+        $builder->valueOrFail('test');
+    }
+
+    public function testLazyWithLastChunkComplete()
+    {
+        $builder = Mockery::mock(Builder::class . '[forPage,get]', [$this->getMockQueryBuilder()]);
+        $builder->getQuery()->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
+
+        $builder->shouldReceive('forPage')->once()->with(1, 2)->andReturnSelf();
+        $builder->shouldReceive('forPage')->once()->with(2, 2)->andReturnSelf();
+        $builder->shouldReceive('forPage')->once()->with(3, 2)->andReturnSelf();
+        $builder->shouldReceive('get')->times(3)->andReturn(
+            new Collection(['foo1', 'foo2']),
+            new Collection(['foo3', 'foo4']),
+            new Collection([])
+        );
+
+        $this->assertEquals(
+            ['foo1', 'foo2', 'foo3', 'foo4'],
+            $builder->lazy(2)->all()
+        );
+    }
+
+    public function testLazyWithLastChunkPartial()
+    {
+        $builder = Mockery::mock(Builder::class . '[forPage,get]', [$this->getMockQueryBuilder()]);
+        $builder->getQuery()->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
+
+        $builder->shouldReceive('forPage')->once()->with(1, 2)->andReturnSelf();
+        $builder->shouldReceive('forPage')->once()->with(2, 2)->andReturnSelf();
+        $builder->shouldReceive('get')->times(2)->andReturn(
+            new Collection(['foo1', 'foo2']),
+            new Collection(['foo3'])
+        );
+
+        $this->assertEquals(
+            ['foo1', 'foo2', 'foo3'],
+            $builder->lazy(2)->all()
+        );
+    }
+
+    public function testLazyIsLazy()
+    {
+        $builder = Mockery::mock(Builder::class . '[forPage,get]', [$this->getMockQueryBuilder()]);
+        $builder->getQuery()->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
+
+        $builder->shouldReceive('forPage')->once()->with(1, 2)->andReturnSelf();
+        $builder->shouldReceive('get')->once()->andReturn(new Collection(['foo1', 'foo2']));
+
+        $this->assertEquals(['foo1', 'foo2'], $builder->lazy(2)->take(2)->all());
+    }
+
+    public function testLazyByIdWithLastChunkComplete()
+    {
+        $builder = Mockery::mock(Builder::class . '[forPageAfterId,get]', [$this->getMockQueryBuilder()]);
+        $builder->getQuery()->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
+
+        $chunk1 = new Collection([(object) ['someIdField' => 1], (object) ['someIdField' => 2]]);
+        $chunk2 = new Collection([(object) ['someIdField' => 10], (object) ['someIdField' => 11]]);
+        $chunk3 = new Collection([]);
+        $builder->shouldReceive('forPageAfterId')->once()->with(2, 0, 'someIdField')->andReturnSelf();
+        $builder->shouldReceive('forPageAfterId')->once()->with(2, 2, 'someIdField')->andReturnSelf();
+        $builder->shouldReceive('forPageAfterId')->once()->with(2, 11, 'someIdField')->andReturnSelf();
+        $builder->shouldReceive('get')->times(3)->andReturn($chunk1, $chunk2, $chunk3);
+
+        $this->assertEquals(
+            [
+                (object) ['someIdField' => 1],
+                (object) ['someIdField' => 2],
+                (object) ['someIdField' => 10],
+                (object) ['someIdField' => 11],
+            ],
+            $builder->lazyById(2, 'someIdField')->all()
+        );
+    }
+
+    public function testLazyByIdWithLastChunkPartial()
+    {
+        $builder = Mockery::mock(Builder::class . '[forPageAfterId,get]', [$this->getMockQueryBuilder()]);
+        $builder->getQuery()->orders[] = ['column' => 'foobar', 'direction' => 'asc'];
+
+        $chunk1 = new Collection([(object) ['someIdField' => 1], (object) ['someIdField' => 2]]);
+        $chunk2 = new Collection([(object) ['someIdField' => 10]]);
+        $builder->shouldReceive('forPageAfterId')->once()->with(2, 0, 'someIdField')->andReturnSelf();
+        $builder->shouldReceive('forPageAfterId')->once()->with(2, 2, 'someIdField')->andReturnSelf();
+        $builder->shouldReceive('get')->times(2)->andReturn($chunk1, $chunk2);
+
+        $this->assertEquals(
+            [
+                (object) ['someIdField' => 1],
+                (object) ['someIdField' => 2],
+                (object) ['someIdField' => 10],
+            ],
+            $builder->lazyById(2, 'someIdField')->all()
+        );
+    }
+
     protected function mockConnectionForModel($model, $database)
     {
         $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';
@@ -1205,10 +1571,31 @@ class ModelBuilderTest extends TestCase
         return $query;
     }
 }
+class ModelBuilderTestStubStringPrimaryKey extends Model
+{
+    public bool $incrementing = false;
+
+    protected ?string $table = 'foo_table';
+
+    protected string $keyType = 'string';
+}
+
+class UserMixin
+{
+    public function whereFoo()
+    {
+        return fn () => $this;
+    }
+
+    public function whereBar()
+    {
+        return fn () => $this;
+    }
+}
 
 class ModelBuilderTestStub extends Model
 {
-    protected $table = 'table';
+    protected ?string $table = 'table';
 }
 
 class ModelBuilderTestScopeStub extends Model
@@ -1223,7 +1610,7 @@ class ModelBuilderTestNestedStub extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'table';
+    protected ?string $table = 'table';
 
     public function scopeEmpty($query)
     {
@@ -1233,7 +1620,7 @@ class ModelBuilderTestNestedStub extends Model
 
 class ModelBuilderTestPluckStub
 {
-    protected $attributes;
+    protected array $attributes;
 
     public function __construct($attributes)
     {
@@ -1248,16 +1635,16 @@ class ModelBuilderTestPluckStub
 
 class ModelBuilderTestPluckDatesStub extends Model
 {
-    protected $attributes;
+    protected array $attributes;
 
     public function __construct($attributes)
     {
         $this->attributes = $attributes;
     }
 
-    protected function asDateTime($value)
+    protected function asDateTime(mixed $value): CarbonInterface
     {
-        return 'date_' . $value;
+        return Carbon::make($value);
     }
 }
 
@@ -1298,7 +1685,7 @@ class ModelBuilderTestModelFarRelatedStub extends Model
 
 class ModelBuilderTestModelSelfRelatedStub extends Model
 {
-    protected $table = 'self_related_stubs';
+    protected ?string $table = 'self_related_stubs';
 
     public function parentFoo()
     {
@@ -1335,5 +1722,5 @@ class ModelBuilderTestStubWithoutTimestamp extends Model
 {
     public const UPDATED_AT = null;
 
-    protected $table = 'table';
+    protected ?string $table = 'table';
 }

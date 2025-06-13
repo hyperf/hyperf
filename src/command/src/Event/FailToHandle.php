@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Command\Event;
 
 use Hyperf\Command\Command;
@@ -16,16 +17,9 @@ use Throwable;
 
 class FailToHandle extends Event
 {
-    /**
-     * @var Throwable
-     */
-    protected $throwable;
-
-    public function __construct(Command $command, Throwable $throwable)
+    public function __construct(Command $command, protected Throwable $throwable)
     {
         parent::__construct($command);
-
-        $this->throwable = $throwable;
     }
 
     public function getThrowable(): Throwable

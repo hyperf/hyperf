@@ -9,30 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Pool\SimplePool;
 
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class PoolFactory
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * @var Pool[]
      */
-    protected $pools = [];
+    protected array $pools = [];
 
-    /**
-     * @var array
-     */
-    protected $configs;
+    protected array $configs = [];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function addConfig(Config $config)

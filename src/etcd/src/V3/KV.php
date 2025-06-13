@@ -9,11 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Etcd\V3;
 
 use GuzzleHttp;
 use Hyperf\Etcd\Client;
 use Hyperf\Etcd\KVInterface;
+
+use function Hyperf\Support\make;
 
 class KV extends Client implements KVInterface
 {

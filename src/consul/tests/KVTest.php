@@ -9,24 +9,28 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Consul;
 
+use Exception;
 use GuzzleHttp\Client;
 use Hyperf\Consul\ConsulResponse;
 use Hyperf\Consul\KV;
 use Hyperf\Consul\KVInterface;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Guzzle\ClientFactory;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
 /**
  * @internal
- * @covers \Hyperf\Consul\KV
+ * @coversNothing
  */
+#[CoversClass(KV::class)]
 class KVTest extends TestCase
 {
     private $kv;
@@ -95,7 +99,7 @@ class KVTest extends TestCase
         try {
             $this->kv->get('test/my/key');
             $this->fail('fail because the key does not exist anymore.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertInstanceOf('Hyperf\Consul\Exception\ServerException', $e);
             $this->assertStringContainsString('404 Not Found', $e->getMessage());
         }
@@ -117,7 +121,7 @@ class KVTest extends TestCase
             try {
                 $this->kv->get('test/my/key' . $i);
                 $this->fail('fail because the key does not exist anymore.');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->assertInstanceOf('Hyperf\Consul\Exception\ServerException', $e);
                 $this->assertStringContainsString('404 Not Found', $e->getMessage());
             }

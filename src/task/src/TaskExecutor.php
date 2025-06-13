@@ -9,39 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Task;
 
+use Hyperf\Serializer\ExceptionNormalizer;
 use Hyperf\Task\Exception\TaskException;
 use Hyperf\Task\Exception\TaskExecuteException;
-use Hyperf\Utils\Serializer\ExceptionNormalizer;
 use Swoole\Server;
+use Throwable;
 
 class TaskExecutor
 {
-    /**
-     * @var Server
-     */
-    protected $server;
+    protected ?Server $server = null;
 
-    /**
-     * @var ChannelFactory
-     */
-    protected $factory;
+    protected bool $isTaskEnvironment = true;
 
-    /**
-     * @var ExceptionNormalizer
-     */
-    protected $normalizer;
-
-    /**
-     * @var bool
-     */
-    protected $isTaskEnvironment = true;
-
-    public function __construct(ChannelFactory $factory, ExceptionNormalizer $normalizer)
+    public function __construct(protected ChannelFactory $factory, protected ExceptionNormalizer $normalizer)
     {
-        $this->factory = $factory;
-        $this->normalizer = $normalizer;
     }
 
     public function setServer(Server $server): void
@@ -67,7 +51,7 @@ class TaskExecutor
 
         if ($result instanceof Exception) {
             $exception = $this->normalizer->denormalize($result->attributes, $result->class);
-            if ($exception instanceof \Throwable) {
+            if ($exception instanceof Throwable) {
                 throw $exception;
             }
 

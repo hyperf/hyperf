@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nsq\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
@@ -22,14 +23,8 @@ use Psr\Container\ContainerInterface;
  */
 class BeforeMainServerStartListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     /**
@@ -47,7 +42,7 @@ class BeforeMainServerStartListener implements ListenerInterface
      * Handle the Event when the event is triggered, all listeners will
      * complete before the event is returned to the EventDispatcher.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         // Init the consumer process.
         $consumerManager = $this->container->get(ConsumerManager::class);

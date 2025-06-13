@@ -9,17 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Compiler\Concern;
 
 trait CompilesTranslations
 {
     /**
      * Compile the lang statements into valid PHP.
-     *
-     * @param null|string $expression
-     * @return string
      */
-    protected function compileLang($expression)
+    protected function compileLang(?string $expression): string
     {
         if (is_null($expression)) {
             return '<?php $__env->startTranslation(); ?>';
@@ -33,21 +31,16 @@ trait CompilesTranslations
 
     /**
      * Compile the end-lang statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndlang()
+    protected function compileEndlang(): string
     {
         return '<?php echo $__env->renderTranslation(); ?>';
     }
 
     /**
      * Compile the choice statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileChoice($expression)
+    protected function compileChoice(string $expression): string
     {
         return "<?php echo \\Hyperf\\ViewEngine\\T::translator()->choice{$expression}; ?>";
     }

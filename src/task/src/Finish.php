@@ -9,17 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Task;
 
 class Finish
 {
-    /**
-     * @var mixed
-     */
-    public $data;
-
-    public function __construct($data)
+    public function __construct(public mixed $data)
     {
-        $this->data = $data;
     }
 }

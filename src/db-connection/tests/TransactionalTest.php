@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\DbConnection;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Annotation\Transactional;
@@ -18,8 +20,8 @@ use Hyperf\DbConnection\Aspect\TransactionAspect;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -27,6 +29,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class TransactionalTest extends TestCase
 {
     protected function tearDown(): void
@@ -42,7 +45,7 @@ class TransactionalTest extends TestCase
         $resolver->shouldReceive('connection')->with('default')->once()->andReturn($conn = Mockery::mock(ConnectionInterface::class));
         $conn->shouldReceive('transaction')->with(Mockery::any(), 1)->once();
 
-        $transactional = new Transactional([]);
+        $transactional = new Transactional();
         $aspect = new TransactionAspect();
         $point = new ProceedingJoinPoint(static function () {
         }, 'Foo', 'bar', []);
@@ -64,10 +67,7 @@ class TransactionalTest extends TestCase
         $resolver->shouldReceive('connection')->with($pool)->once()->andReturn($conn = Mockery::mock(ConnectionInterface::class));
         $conn->shouldReceive('transaction')->with(Mockery::any(), $attempts)->once();
 
-        $transactional = new Transactional([
-            'connection' => $pool,
-            'attempts' => $attempts,
-        ]);
+        $transactional = new Transactional($pool, $attempts);
         $aspect = new TransactionAspect();
         $point = new ProceedingJoinPoint(static function () {
         }, 'Foo', 'bar', []);

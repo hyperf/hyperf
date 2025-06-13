@@ -9,46 +9,30 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Aop;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Support\Filesystem\Filesystem;
 
 class ProxyManager
 {
     /**
-     * The map to collect the classes whith paths.
-     *
-     * @var array
+     * The classes which be rewritten by proxy.
      */
-    protected $classMap = [];
+    protected array $proxies = [];
+
+    protected Filesystem $filesystem;
 
     /**
-     * The classes which be rewrited by proxy.
-     *
-     * @var array
+     * @param array $classMap the map to collect the classes with paths
+     * @param string $proxyDir the directory which the proxy file places in
      */
-    protected $proxies = [];
-
-    /**
-     * The directory which the proxy file places in.
-     *
-     * @var string
-     */
-    protected $proxyDir;
-
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
-
     public function __construct(
-        array $classMap = [],
-        string $proxyDir = ''
+        protected array $classMap = [],
+        protected string $proxyDir = ''
     ) {
-        $this->classMap = $classMap;
-        $this->proxyDir = $proxyDir;
         $this->filesystem = new Filesystem();
         $this->proxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap(
             $this->classMap
@@ -63,6 +47,20 @@ class ProxyManager
     public function getProxyDir(): string
     {
         return $this->proxyDir;
+    }
+
+    public function getAspectClasses(): array
+    {
+        $aspectClasses = [];
+        $classesAspects = AspectCollector::get('classes', []);
+        foreach ($classesAspects as $aspect => $rules) {
+            foreach ($rules as $rule) {
+                if (isset($this->proxies[$rule])) {
+                    $aspectClasses[$aspect][$rule] = $this->proxies[$rule];
+                }
+            }
+        }
+        return $aspectClasses;
     }
 
     protected function generateProxyFiles(array $proxies = []): array
@@ -98,7 +96,7 @@ class ProxyManager
         return $proxyFilePath;
     }
 
-    protected function isModified(string $className, string $proxyFilePath = null): bool
+    protected function isModified(string $className, ?string $proxyFilePath = null): bool
     {
         $proxyFilePath = $proxyFilePath ?? $this->getProxyFilePath($className);
         $time = $this->filesystem->lastModified($proxyFilePath);
@@ -117,10 +115,10 @@ class ProxyManager
 
     protected function isMatch(string $rule, string $target): bool
     {
-        if (strpos($rule, '::') !== false) {
-            [$rule,] = explode('::', $rule);
+        if (str_contains($rule, '::')) {
+            [$rule] = explode('::', $rule);
         }
-        if (strpos($rule, '*') === false && $rule === $target) {
+        if (! str_contains($rule, '*') && $rule === $target) {
             return true;
         }
         $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);

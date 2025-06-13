@@ -9,10 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
+use Closure;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Validation\Contract\Rule as RuleContract;
+use Hyperf\Validation\Rules\ArrayRule;
+use Hyperf\Validation\Rules\Enum;
+use Hyperf\Validation\Rules\ExcludeIf;
+use Hyperf\Validation\Rules\File;
+use Hyperf\Validation\Rules\ImageFile;
+use Hyperf\Validation\Rules\ProhibitedIf;
 
 class Rule
 {
@@ -36,10 +45,8 @@ class Rule
 
     /**
      * Get an in constraint builder instance.
-     *
-     * @param array|Arrayable|string $values
      */
-    public static function in($values): Rules\In
+    public static function in(mixed $values): Rules\In
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -50,10 +57,8 @@ class Rule
 
     /**
      * Get a not_in constraint builder instance.
-     *
-     * @param array|Arrayable|string $values
      */
-    public static function notIn($values): Rules\NotIn
+    public static function notIn(mixed $values): Rules\NotIn
     {
         if ($values instanceof Arrayable) {
             $values = $values->toArray();
@@ -64,10 +69,8 @@ class Rule
 
     /**
      * Get a required_if constraint builder instance.
-     *
-     * @param bool|callable $callback
      */
-    public static function requiredIf($callback): Rules\RequiredIf
+    public static function requiredIf(bool|callable $callback): Rules\RequiredIf
     {
         return new Rules\RequiredIf($callback);
     }
@@ -78,5 +81,70 @@ class Rule
     public static function unique(string $table, string $column = 'NULL'): Rules\Unique
     {
         return new Rules\Unique($table, $column);
+    }
+
+    public static function prohibitedIf($callback): ProhibitedIf
+    {
+        return new ProhibitedIf($callback);
+    }
+
+    public static function excludeIf($callback): ExcludeIf
+    {
+        return new ExcludeIf($callback);
+    }
+
+    /**
+     * Apply the given rules if the given condition is truthy.
+     */
+    public static function when(
+        bool|Closure $condition,
+        array|Closure|RuleContract|string $rules,
+        array|Closure|RuleContract|string $defaultRules = []
+    ): ConditionalRules {
+        return new ConditionalRules($condition, $rules, $defaultRules);
+    }
+
+    /**
+     * Apply the given rules if the given condition is falsy.
+     */
+    public static function unless(
+        bool|Closure $condition,
+        array|Closure|RuleContract|string $rules,
+        array|Closure|RuleContract|string $defaultRules = []
+    ): ConditionalRules {
+        return new ConditionalRules($condition, $defaultRules, $rules);
+    }
+
+    /**
+     * Get an array rule builder instance.
+     * @param null|mixed $keys
+     */
+    public static function array($keys = null): ArrayRule
+    {
+        return new ArrayRule(...func_get_args());
+    }
+
+    /**
+     * Get an enum rule builder instance.
+     */
+    public static function enum(string $type): Enum
+    {
+        return new Enum($type);
+    }
+
+    /**
+     * Get a file rule builder instance.
+     */
+    public static function file(): File
+    {
+        return new File();
+    }
+
+    /**
+     * Get an image file rule builder instance.
+     */
+    public static function imageFile(): File
+    {
+        return new ImageFile();
     }
 }

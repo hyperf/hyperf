@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\DBAL;
 
 use Doctrine\DBAL\Driver\PDO\Exception;
@@ -22,21 +23,15 @@ use PDO;
 use PDOException;
 use PDOStatement;
 
+use function assert;
+
 class Connection implements ServerInfoAwareConnection
 {
     /**
-     * The underlying PDO connection.
-     *
-     * @var PDO
-     */
-    protected $connection;
-
-    /**
      * Create a new PDO connection instance.
      */
-    public function __construct(PDO $connection)
+    public function __construct(protected PDO $connection)
     {
-        $this->connection = $connection;
     }
 
     /**
@@ -47,7 +42,7 @@ class Connection implements ServerInfoAwareConnection
         try {
             $result = $this->connection->exec($sql);
 
-            \assert($result !== false);
+            assert($result !== false);
 
             return $result;
         } catch (PDOException $exception) {
@@ -77,7 +72,7 @@ class Connection implements ServerInfoAwareConnection
         try {
             $stmt = $this->connection->query($sql);
 
-            \assert($stmt instanceof PDOStatement);
+            assert($stmt instanceof PDOStatement);
 
             return new Result($stmt);
         } catch (PDOException $exception) {

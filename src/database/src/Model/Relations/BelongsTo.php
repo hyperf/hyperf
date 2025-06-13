@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Database\Model\Builder;
@@ -171,8 +172,8 @@ class BelongsTo extends Relation
     /**
      * Associate the model instance to the given parent.
      *
-     * @param \Hyperf\Database\Model\Model|int|string $model
-     * @return \Hyperf\Database\Model\Model
+     * @param int|Model|string $model
+     * @return Model
      */
     public function associate($model)
     {
@@ -192,7 +193,7 @@ class BelongsTo extends Relation
     /**
      * Dissociate previously associated model from the given parent.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function dissociate()
     {
@@ -205,7 +206,7 @@ class BelongsTo extends Relation
      * Add the constraints for a relationship query.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -224,7 +225,7 @@ class BelongsTo extends Relation
      * Add the constraints for a relationship query on the same table.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -244,7 +245,7 @@ class BelongsTo extends Relation
     /**
      * Get the child of the relationship.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function getChild()
     {
@@ -355,7 +356,7 @@ class BelongsTo extends Relation
     /**
      * Make a new related instance for the given model.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     protected function newRelatedInstanceFor(Model $parent)
     {

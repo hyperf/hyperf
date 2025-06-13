@@ -8,7 +8,7 @@
 composer require hyperf/filesystem
 ```
 
-`League\Flysystem` 組件 `v1.0` 和 `v2.0` 版本變動較大，所以需要根據不同的版本，安裝對應的適配器
+`League\Flysystem` 組件 `v1.0`, `v2.0` 和 `v3.0` 版本變動較大，所以需要根據不同的版本，安裝對應的適配器
 
 - 阿里雲 OSS 適配器
 
@@ -18,7 +18,7 @@ composer require hyperf/filesystem
 composer require xxtime/flysystem-aliyun-oss
 ```
 
-`Flysystem v2.0` 版本
+`Flysystem v2.0` 和 `Flysystem v3.0` 版本
 
 ```shell
 composer require hyperf/flysystem-oss
@@ -54,6 +54,12 @@ composer require "overtrue/flysystem-qiniu:^1.0"
 composer require "overtrue/flysystem-qiniu:^2.0"
 ```
 
+`Flysystem v3.0` 版本
+
+```shell
+composer require "overtrue/flysystem-qiniu:^3.0"
+```
+
 - 內存適配器
 
 `Flysystem v1.0` 版本
@@ -82,6 +88,12 @@ composer require "overtrue/flysystem-cos:^3.0"
 
 ```shell
 composer require "overtrue/flysystem-cos:^4.0"
+```
+
+`Flysystem v3.0` 版本
+
+```shell
+composer require "overtrue/flysystem-cos:^5.0"
 ```
 
 安裝完成後，執行
@@ -182,7 +194,7 @@ class IndexController
 
 如果您希望通過 http 訪問上傳到本地的文件，請在 `config/autoload/server.php` 配置中增加以下配置。
 
-```
+```php
 return [
     'settings' => [
         ...
@@ -196,7 +208,7 @@ return [
 
 ## 注意事項
 
-1. S3 存儲請確認安裝 `hyperf/guzzle` 組件以提供協程化支持。阿里雲、七牛雲、騰訊云云存儲請[開啟 Curl Hook](/zh-hk/coroutine?id=swoole-runtime-hook-level)來使用協程。因 Curl Hook 的參數支持性問題，請使用 Swoole 4.4.13 以上版本。
+1. S3 存儲請確認安裝 `hyperf/guzzle` 組件以提供協程化支持。阿里雲、七牛雲、騰訊云云存儲請[開啓 Curl Hook](/zh-hk/coroutine?id=swoole-runtime-hook-level)來使用協程。因 Curl Hook 的參數支持性問題，請使用 Swoole 4.4.13 以上版本。
 2. minIO, ceph radosgw 等私有對象存儲方案均支持 S3 協議，可以使用 S3 適配器。
 3. 使用 Local 驅動時，根目錄是配置好的地址，而不是操作系統的根目錄。例如，Local 驅動 `root` 設置為 `/var/www`, 則本地磁盤上的 `/var/www/public/file.txt` 通過 flysystem API 訪問時應使用 `/public/file.txt` 或 `public/file.txt` 。
 4. 以阿里雲 OSS 為例，1 核 1 進程讀操作性能對比：
@@ -205,7 +217,7 @@ return [
 ab -k -c 10 -n 1000 http://127.0.0.1:9501/
 ```
 
-未開啟 CURL HOOK：
+未開啓 CURL HOOK：
 
 ```
 Concurrency Level:      10
@@ -221,7 +233,7 @@ Time per request:       202.902 [ms] (mean, across all concurrent requests)
 Transfer rate:          0.70 [Kbytes/sec] received
 ```
 
-開啟 CURL HOOK 後：
+開啓 CURL HOOK 後：
 
 ```
 Concurrency Level:      10

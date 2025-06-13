@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX\Observable;
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Rx\Disposable\EmptyDisposable;
 use Rx\DisposableInterface;
@@ -22,20 +23,8 @@ use Rx\SchedulerInterface;
 
 class EventObservable extends Observable
 {
-    /**
-     * @var string
-     */
-    private $eventName;
-
-    /**
-     * @var null|SchedulerInterface
-     */
-    private $scheduler;
-
-    public function __construct(string $eventName, ?SchedulerInterface $scheduler = null)
+    public function __construct(private string $eventName, private ?SchedulerInterface $scheduler = null)
     {
-        $this->eventName = $eventName;
-        $this->scheduler = $scheduler;
     }
 
     protected function _subscribe(ObserverInterface $observer): DisposableInterface

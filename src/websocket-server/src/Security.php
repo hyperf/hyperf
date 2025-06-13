@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketServer;
 
 class Security
@@ -19,9 +20,9 @@ class Security
 
     public const KEY = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 
-    public const SEC_WEBSOCKET_KEY = 'Sec-Websocket-Key';
+    public const SEC_WEBSOCKET_KEY = 'sec-websocket-key';
 
-    public const SEC_WEBSOCKET_PROTOCOL = 'Sec-WebSocket-Protocol';
+    public const SEC_WEBSOCKET_PROTOCOL = 'sec-webSocket-protocol';
 
     public function isInvalidSecurityKey(string $key): bool
     {

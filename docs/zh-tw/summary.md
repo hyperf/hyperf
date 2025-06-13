@@ -4,12 +4,13 @@
   * [線上交流](zh-tw/communication.md)
   * [捐獻及贊助](zh-tw/donate.md)
   * [參與開發](zh-tw/contribute.md)
+  * [企業服務](zh-tw/enterprise-service.md)
 
 * 版本管理
 
   * [版本計劃](zh-tw/release-planning.md)
   * [版本說明](zh-tw/versions.md)
-  * [版本更新記錄](zh-tw/changelog.md)
+  * [版本更新記錄](zh-tw/changelog/3.1.md)
 
 * 快速入門
 
@@ -17,7 +18,7 @@
   * [快速開始](zh-tw/quick-start/overview.md)
   * [常見問題](zh-tw/quick-start/questions.md)
   * [程式設計須知](zh-tw/quick-start/important.md)
-  * [視訊教程](https://course.swoole-cloud.com/videos/5/new?from=hyperf.io)
+  * [影片教程](https://space.bilibili.com/1176880220/channel/seriesdetail?sid=2121560)
 
 * 核心架構
 
@@ -65,6 +66,12 @@
   * [API 資源構造器](zh-tw/db/resource.md)
   * [模型全文檢索](zh-tw/scout.md)
 
+* Hyperf 生態
+
+  * [Nano](https://github.com/hyperf/nano)
+  * [GoTask](https://github.com/hyperf/gotask)
+  * [Box](zh-tw/eco/box.md)
+
 * 微服務
 
   * [架構理念](zh-tw/microservice.md)
@@ -78,6 +85,7 @@
   * [配置中心](zh-tw/config-center.md)
   * [呼叫鏈追蹤](zh-tw/tracer.md)
   * [服務監控](zh-tw/metric.md)
+  * [分散式事務](zh-tw/distributed-transaction.md)
   * [Snowflake](zh-tw/snowflake.md)
 
 * 網路服務
@@ -110,7 +118,7 @@
 
   * [連線池](zh-tw/pool.md)
   * [自定義程序](zh-tw/process.md)
-  * [輔助類](zh-tw/utils.md)
+  * [輔助類](zh-tw/support.md)
   * [定時任務](zh-tw/crontab.md)
   * [Task 機制](zh-tw/task.md)
   * [列舉類](zh-tw/constants.md)
@@ -118,10 +126,10 @@
   * [ReactiveX](zh-tw/reactive-x.md)
   * [Watcher](zh-tw/watcher.md)
   * [開發者工具](zh-tw/devtool.md)
-  * [Swoole Tracker](zh-tw/swoole-tracker.md)
   * [Phar 打包器](zh-tw/phar.md)
   * [DAG](zh-tw/dag.md)
   * [RPN - 逆波蘭表示法](zh-tw/rpn.md)
+  * [Swagger 文件](zh-tw/swagger.md)
 
 * 應用部署
 
@@ -141,9 +149,20 @@
   * [建立新的元件](zh-tw/component-guide/create.md)
   * [ConfigProvider 機制](zh-tw/component-guide/configprovider.md)
 
+* 歷史版本更新記錄
+
+  * [3.0 更新記錄](zh-tw/changelog/3.0.md)
+  * [2.2 更新記錄](zh-tw/changelog/2.2.md)
+  * [2.1 更新記錄](zh-tw/changelog/2.1.md)
+  * [2.0 更新記錄](zh-tw/changelog/2.0.md)
+  * [1.1 更新記錄](zh-tw/changelog/1.1.md)
+  * [1.0 更新記錄](zh-tw/changelog/1.0.md)
+
 * 版本升級指南
 
   * [1.1 升級指南](zh-tw/upgrade/1.1.md)
   * [2.0 升級指南](zh-tw/upgrade/2.0.md)
   * [2.1 升級指南](zh-tw/upgrade/2.1.md)
   * [2.2 升級指南](zh-tw/upgrade/2.2.md)
+  * [3.0 升級指南](zh-tw/upgrade/3.0.md)
+  * [3.1 升級指南](zh-tw/upgrade/3.1.md)

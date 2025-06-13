@@ -11,16 +11,15 @@
     ],
     "homepage": "https://hyperf.io",
     "support": {
-        "docs": "https://hyperf.wiki",
         "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/guzzle": "~2.2.0"
-    },
-    "suggest": {
+        "php": ">=8.1",
+        "guzzlehttp/guzzle": "^6.3 || ^7.0",
+        "hyperf/collection": "~3.1.0"
     },
     "autoload": {
         "psr-4": {
@@ -37,7 +36,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Consul\\ConfigProvider"

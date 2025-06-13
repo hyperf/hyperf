@@ -17,7 +17,7 @@ composer require hyperf/consul
 ```php
 use Hyperf\Consul\KV;
 use Hyperf\Guzzle\ClientFactory;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 $clientFactory = $container->get(ClientFactory::class);
@@ -39,7 +39,7 @@ $kv = new KV(function () use ($clientFactory, $consulServer) {
 ```php
 use Hyperf\Consul\KV;
 use Hyperf\Guzzle\ClientFactory;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 $clientFactory = $container->get(ClientFactory::class);

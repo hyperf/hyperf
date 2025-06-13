@@ -9,13 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpMessage\Server\Request;
 
 use Hyperf\HttpMessage\Server\RequestParserInterface;
+use InvalidArgumentException;
+
+use function Hyperf\Support\make;
 
 class Parser implements RequestParserInterface
 {
-    protected $parsers = [];
+    protected array $parsers = [];
 
     public function __construct()
     {
@@ -34,12 +38,12 @@ class Parser implements RequestParserInterface
     {
         $contentType = strtolower($contentType);
         if (! array_key_exists($contentType, $this->parsers)) {
-            throw new \InvalidArgumentException("The '{$contentType}' request parser is not defined.");
+            throw new InvalidArgumentException("The '{$contentType}' request parser is not defined.");
         }
 
         $parser = $this->parsers[$contentType];
         if (! $parser instanceof RequestParserInterface) {
-            throw new \InvalidArgumentException("The '{$contentType}' request parser is invalid. It must implement the Hyperf\\HttpMessage\\Server\\RequestParserInterface.");
+            throw new InvalidArgumentException("The '{$contentType}' request parser is invalid. It must implement the Hyperf\\HttpMessage\\Server\\RequestParserInterface.");
         }
 
         return $parser->parse($rawBody, $contentType);

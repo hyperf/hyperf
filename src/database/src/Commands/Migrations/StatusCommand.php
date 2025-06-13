@@ -9,43 +9,22 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Migrations;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Migrations\Migrator;
-use Hyperf\Utils\Collection;
 use Symfony\Component\Console\Input\InputOption;
 
 class StatusCommand extends BaseCommand
 {
     /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $name = 'migrate:status';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Show the status of each migration';
-
-    /**
-     * The migrator instance.
-     *
-     * @var \Hyperf\Database\Migrations\Migrator
-     */
-    protected $migrator;
-
-    /**
      * Create a new migration rollback command instance.
      */
-    public function __construct(Migrator $migrator)
+    public function __construct(protected Migrator $migrator)
     {
-        parent::__construct();
-
-        $this->migrator = $migrator;
+        parent::__construct('migrate:status');
+        $this->setDescription('Show the status of each migration');
     }
 
     /**
@@ -73,7 +52,7 @@ class StatusCommand extends BaseCommand
     /**
      * Get the status for the given ran migrations.
      *
-     * @return \Hyperf\Utils\Collection
+     * @return Collection
      */
     protected function getStatusFor(array $ran, array $batches)
     {

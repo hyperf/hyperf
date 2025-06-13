@@ -9,30 +9,27 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Component;
 
 use ArrayIterator;
 use Closure;
+use Hyperf\Collection\Enumerable;
 use Hyperf\ViewEngine\Contract\DeferringDisplayableValue;
-use Hyperf\ViewEngine\Contract\Enumerable;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use IteratorAggregate;
+use Stringable;
+use Traversable;
 
-class InvokableComponentVariable implements DeferringDisplayableValue, IteratorAggregate
+class InvokableComponentVariable implements DeferringDisplayableValue, IteratorAggregate, Stringable
 {
     /**
-     * The callable instance to resolve the variable value.
-     *
-     * @var Closure
-     */
-    protected $callable;
-
-    /**
      * Create a new variable instance.
+     *
+     * @param Closure $callable the callable instance to resolve the variable value
      */
-    public function __construct(Closure $callable)
+    public function __construct(protected Closure $callable)
     {
-        $this->callable = $callable;
     }
 
     /**
@@ -70,30 +67,24 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
 
     /**
      * Resolve the variable as a string.
-     *
-     * @return mixed
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->__invoke();
     }
 
     /**
      * Resolve the displayable value that the class is deferring.
-     *
-     * @return Htmlable|string
      */
-    public function resolveDisplayableValue()
+    public function resolveDisplayableValue(): Htmlable|string
     {
         return $this->__invoke();
     }
 
     /**
-     * Get an interator instance for the variable.
-     *
-     * @return ArrayIterator
+     * Get an iterator instance for the variable.
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         $result = $this->__invoke();
 

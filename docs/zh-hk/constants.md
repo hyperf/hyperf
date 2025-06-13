@@ -35,8 +35,10 @@ composer require hyperf/constants
 通過 `gen:constant` 命令可以快速的生成一個枚舉類。
 
 ```bash
-php bin/hyperf.php gen:constant ErrorCode
+php bin/hyperf.php gen:constant ErrorCode --type enum
 ```
+
+
 
 ```php
 <?php
@@ -45,27 +47,23 @@ declare(strict_types=1);
 
 namespace App\Constants;
 
-use Hyperf\Constants\AbstractConstants;
 use Hyperf\Constants\Annotation\Constants;
+use Hyperf\Constants\Annotation\Message;
+use Hyperf\Constants\EnumConstantsTrait;
 
-/**
- * @Constants
- */
-class ErrorCode extends AbstractConstants
+#[Constants]
+enum ErrorCode: int
 {
-    /**
-     * @Message("Server Error！")
-     */
-    const SERVER_ERROR = 500;
+    use EnumConstantsTrait
+    #[Message("Server Error！")]
+    case SERVER_ERROR = 500;
 
-    /**
-     * @Message("系統參數錯誤")
-     */
-    const SYSTEM_INVALID = 700;
+    #[Message("系統參數錯誤")]
+    case SYSTEM_INVALID = 700;
 }
 ```
 
-用户可以使用 `ErrorCode::getMessage(ErrorCode::SERVER_ERROR)` 來獲取對應錯誤信息。
+用户可以使用 `ErrorCode::SERVER_ERROR->getMessage()` 來獲取對應錯誤信息。
 
 ### 定義異常類
 
@@ -84,11 +82,17 @@ use Throwable;
 
 class BusinessException extends ServerException
 {
-    public function __construct(int $code = 0, string $message = null, Throwable $previous = null)
+    public function __construct(ErrorCode|int $code = 0, ?string $message = null, ?Throwable $previous = null)
     {
         if (is_null($message)) {
-            $message = ErrorCode::getMessage($code);
+            if ($code instanceof ErrorCode) {
+                $message = $code->getMessage();
+            } else {
+                $message = ErrorCode::getMessage($code);
+            }
         }
+
+        $code = $code instanceof ErrorCode ? $code->value : $code;
 
         parent::__construct($message, $code, $previous);
     }
@@ -120,34 +124,29 @@ class IndexController extends AbstractController
 
 ### 可變參數
 
-在使用 `ErrorCode::getMessage(ErrorCode::SERVER_ERROR)` 來獲取對應錯誤信息時，我們也可以傳入可變參數，進行錯誤信息組合。比如以下情況
+在使用 `ErrorCode::SERVER_ERROR->getMessage()` 來獲取對應錯誤信息時，我們也可以傳入可變參數，進行錯誤信息組合。比如以下情況
 
 ```php
 <?php
 
-use Hyperf\Constants\AbstractConstants;
-use Hyperf\Constants\Annotation\Constants;
 
-/**
- * @Constants
- */
-class ErrorCode extends AbstractConstants
+use Hyperf\Constants\Annotation\Constants;
+use Hyperf\Constants\Annotation\Message;
+use Hyperf\Constants\EnumConstantsTrait;
+
+#[Constants]
+enum ErrorCode: int
 {
-    /**
-     * @Message("Params %s is invalid.")
-     */
-    const PARAMS_INVALID = 1000;
+    use EnumConstantsTrait;
+    
+    #[Message("Params %s is invalid.")]
+    case PARAMS_INVALID = 1000;
 }
 
-$message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, ['user_id']);
-
-// 1.2 版本以下 可以使用以下方式，但會在 1.2 版本移除
-$message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, 'user_id');
+$message = ErrorCode::PARAMS_INVALID->getMessage(['user_id']);
 ```
 
 ### 國際化
-
-> 該功能僅在 v1.1.13 及往後的版本上可用
 
 要使 [hyperf/constants](https://github.com/hyperf/constants) 組件支持國際化，就必須要安裝 [hyperf/translation](https://github.com/hyperf/translation) 組件並配置好語言文件，如下：
 
@@ -166,19 +165,17 @@ return [
     'params.invalid' => 'Params :param is invalid.',
 ];
 
-use Hyperf\Constants\AbstractConstants;
 use Hyperf\Constants\Annotation\Constants;
+use Hyperf\Constants\Annotation\Message;
+use Hyperf\Constants\EnumConstantsTrait;
 
-/**
- * @Constants
- */
-class ErrorCode extends AbstractConstants
+#[Constants]
+enum ErrorCode: int
 {
-    /**
-     * @Message("params.invalid")
-     */
-    const PARAMS_INVALID = 1000;
+
+    #[Message("params.invalid")]
+    case PARAMS_INVALID = 1000;
 }
 
-$message = ErrorCode::getMessage(ErrorCode::SERVER_ERROR, ['param' => 'user_id']);
+$message = ErrorCode::SERVER_ERROR->getMessage(['param' => 'user_id']);
 ```

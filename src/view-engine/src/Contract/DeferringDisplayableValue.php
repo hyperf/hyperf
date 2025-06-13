@@ -9,14 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Contract;
 
 interface DeferringDisplayableValue
 {
     /**
      * Resolve the displayable value that the class is deferring.
-     *
-     * @return Htmlable|string
      */
-    public function resolveDisplayableValue();
+    public function resolveDisplayableValue(): Htmlable|string;
 }

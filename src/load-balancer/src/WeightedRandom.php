@@ -9,7 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\LoadBalancer;
+
+use Hyperf\LoadBalancer\Exception\NoNodesAvailableException;
 
 class WeightedRandom extends AbstractLoadBalancer
 {
@@ -21,7 +24,7 @@ class WeightedRandom extends AbstractLoadBalancer
         $totalWeight = 0;
         $isSameWeight = true;
         $lastWeight = null;
-        $nodes = $this->nodes ?? [];
+        $nodes = $this->nodes;
         foreach ($nodes as $node) {
             if (! $node instanceof Node) {
                 continue;
@@ -42,6 +45,11 @@ class WeightedRandom extends AbstractLoadBalancer
                 }
             }
         }
+
+        if (! $nodes) {
+            throw new NoNodesAvailableException('Cannot select any node from load balancer.');
+        }
+
         return $nodes[array_rand($nodes)];
     }
 }

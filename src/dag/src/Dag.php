@@ -9,60 +9,51 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Dag;
 
+use Hyperf\Coroutine\Concurrent;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Dag\Exception\InvalidArgumentException;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Coroutine\Concurrent;
 use SplStack;
+
+use function Hyperf\Support\call;
 
 class Dag implements Runner
 {
     /**
-     * @var array<string,Vertex>
+     * @var array<string, Vertex>
      */
-    protected $vertexes = [];
+    protected array $vertexes = [];
 
-    /**
-     * @var int
-     */
-    protected $concurrency = 10;
+    protected int $concurrency = 10;
 
-    /**
-     * @var int
-     */
-    protected $vertexNum;
+    protected ?int $vertexNum = null;
 
     /**
      * @var array<int,array>
      */
-    protected $circularDependences;
+    protected array $circularDependencies = [];
+
+    protected ?SplStack $stack = null;
 
     /**
-     * @var SplStack
+     * @var array<string, bool>
      */
-    protected $stack;
-
-    /**
-     * @var array<string,bool>
-     */
-    protected $isInStack;
+    protected array $isInStack = [];
 
     /**
      * @var array<string,int>
      */
-    protected $dfn;
+    protected array $dfn = [];
 
     /**
      * @var array<string,int>
      */
-    protected $low;
+    protected array $low = [];
 
-    /**
-     * @var int
-     */
-    protected $time;
+    protected ?int $time = null;
 
     /**
      * Add a vertex to the dag.
@@ -139,9 +130,9 @@ class Dag implements Runner
         return $this;
     }
 
-    public function checkCircularDependences(): array
+    public function checkCircularDependencies(): array
     {
-        $this->circularDependences = [];
+        $this->circularDependencies = [];
         $this->isInStack = [];
         $this->dfn = [];
         $this->low = [];
@@ -156,11 +147,11 @@ class Dag implements Runner
 
         foreach ($this->vertexes as $vertex) {
             if ($this->dfn[$vertex->key] === 0) {
-                $this->_checkCircularDependences($vertex);
+                $this->_checkCircularDependencies($vertex);
             }
         }
 
-        return $this->circularDependences;
+        return $this->circularDependencies;
     }
 
     private function scheduleChildren(Vertex $element, Channel $queue, array $visited): void
@@ -211,7 +202,7 @@ class Dag implements Runner
         return false;
     }
 
-    private function _checkCircularDependences(Vertex $vertexSrc)
+    private function _checkCircularDependencies(Vertex $vertexSrc)
     {
         $this->dfn[$vertexSrc->key] = $this->low[$vertexSrc->key] = $this->time++;
         $this->stack->push($vertexSrc->key);
@@ -220,7 +211,7 @@ class Dag implements Runner
         foreach ($this->vertexes as $vertexDst) {
             if ($this->isConnected($vertexSrc, $vertexDst)) {
                 if ($this->dfn[$vertexDst->key] == 0) {
-                    $this->_checkCircularDependences($vertexDst);
+                    $this->_checkCircularDependencies($vertexDst);
                     $this->low[$vertexSrc->key] = min($this->low[$vertexSrc->key], $this->low[$vertexDst->key]);
                 } elseif ($this->isInStack[$vertexDst->key]) {
                     $this->low[$vertexSrc->key] = min($this->low[$vertexSrc->key], $this->dfn[$vertexDst->key]);
@@ -241,7 +232,7 @@ class Dag implements Runner
             } while ($vertexKey != $vertexSrc->key);
 
             if (count($scc) > 1) {
-                $this->circularDependences[] = $scc;
+                $this->circularDependencies[] = $scc;
             }
         }
     }

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\Stub\Aspect;
 
 use Hyperf\Di\Aop\AbstractAspect;
@@ -16,7 +17,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class Debug3Aspect extends AbstractAspect
 {
-    public $classes = [
+    public array $classes = [
         'Debug3AspectFoo',
     ];
 

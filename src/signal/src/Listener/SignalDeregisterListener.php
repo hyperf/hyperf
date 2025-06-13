@@ -9,25 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Signal\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnWorkerExit;
 use Hyperf\Process\Event\AfterProcessHandle;
+use Hyperf\Server\Event\AllCoroutineServersClosed;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Signal\SignalManager;
 use Psr\Container\ContainerInterface;
 
 class SignalDeregisterListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
@@ -36,10 +32,11 @@ class SignalDeregisterListener implements ListenerInterface
             OnWorkerExit::class,
             AfterProcessHandle::class,
             CoroutineServerStop::class,
+            AllCoroutineServersClosed::class,
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $manager = $this->container->get(SignalManager::class);
         $manager->setStopped(true);

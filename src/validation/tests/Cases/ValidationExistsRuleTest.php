@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
@@ -22,11 +24,11 @@ use Hyperf\DbConnection\Model\Model;
 use Hyperf\Server\Entry\EventDispatcher;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Validation\DatabasePresenceVerifier;
 use Hyperf\Validation\Rules\Exists;
 use Hyperf\Validation\Validator;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -35,6 +37,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ValidationExistsRuleTest extends TestCase
 {
     /**
@@ -213,9 +216,9 @@ class ValidationExistsRuleTest extends TestCase
  */
 class DatabaseTestUser extends Model
 {
-    public $timestamps = false;
+    public bool $timestamps = false;
 
-    protected $table = 'users';
+    protected ?string $table = 'users';
 
-    protected $guarded = [];
+    protected array $guarded = [];
 }

@@ -9,26 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer\Annotation;
 
 use Attribute;
 use Hyperf\Di\Annotation\AbstractMultipleAnnotation;
+use Hyperf\HttpServer\PriorityMiddleware;
 
-/**
- * @Annotation
- * @Target({"ALL"})
- */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class Middleware extends AbstractMultipleAnnotation
 {
-    /**
-     * @var string
-     */
-    public $middleware = '';
+    public PriorityMiddleware $priorityMiddleware;
 
-    public function __construct(...$value)
+    public function __construct(public string $middleware = '', public int $priority = PriorityMiddleware::DEFAULT_PRIORITY)
     {
-        parent::__construct(...$value);
-        $this->bindMainProperty('middleware', $value);
+        $this->priorityMiddleware = new PriorityMiddleware($middleware, $priority);
     }
 }

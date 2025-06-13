@@ -9,19 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Retry\Policy;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Retry\RetryContext;
-use Hyperf\Utils\ApplicationContext;
+use Throwable;
 
 class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
     /**
      * @var callable|string
      */
-    private $fallback;
+    private mixed $fallback;
 
-    public function __construct($fallback)
+    public function __construct(callable|string $fallback)
     {
         $this->fallback = $fallback;
     }
@@ -53,7 +55,7 @@ class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterfac
 
         try {
             $retryContext['lastResult'] = call_user_func($fallback, ...$arguments);
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             $retryContext['lastThrowable'] = $throwable;
         }
         return false;

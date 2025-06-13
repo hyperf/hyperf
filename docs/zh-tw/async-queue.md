@@ -10,20 +10,20 @@ composer require hyperf/async-queue
 
 ## 配置
 
-配置檔案位於 `config/autoload/async_queue.php`，如檔案不存在可自行建立。
+配置檔案位於 `config/autoload/async_queue.php`，如該檔案不存在，可透過 `php bin/hyperf.php vendor:publish hyperf/async-queue` 命令來將釋出對應的配置檔案。
 
 > 暫時只支援 `Redis Driver` 驅動。
 
 |       配置       |   型別    |                   預設值                    |                  備註                   |
-|:----------------:|:---------:|:-------------------------------------------:|:---------------------------------------:|
+| :--------------: | :-------: | :-----------------------------------------: | :-------------------------------------: |
 |      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   無                    |
 |     channel      |  string   |                    queue                    |                佇列字首                 |
-|    redis.pool    |  string   |                    default                  |                redis 連線池              |
+|    redis.pool    |  string   |                   default                   |              redis 連線池               |
 |     timeout      |    int    |                      2                      |           pop 訊息的超時時間            |
 |  retry_seconds   | int,array |                      5                      |           失敗後重新嘗試間隔            |
 |  handle_timeout  |    int    |                     10                      |            訊息處理超時時間             |
 |    processes     |    int    |                      1                      |               消費程序數                |
-| concurrent.limit |    int    |                      1                      |             同時處理訊息數              |
+| concurrent.limit |    int    |                     10                      |             同時處理訊息數              |
 |   max_messages   |    int    |                      0                      | 程序重啟所需最大處理的訊息數 預設不重啟 |
 
 ```php
@@ -41,8 +41,9 @@ return [
         'handle_timeout' => 10,
         'processes' => 1,
         'concurrent' => [
-            'limit' => 5,
+            'limit' => 10,
         ],
+        'max_messages' => 0,
     ],
 ];
 
@@ -66,11 +67,11 @@ return [
 
 ## 工作原理
 
-`ConsumerProcess` 是非同步消費程序，會根據使用者建立的 `Job` 或者使用 `@AsyncQueueMessage` 的程式碼塊，執行消費邏輯。
-`Job` 和 `@AsyncQueueMessage` 都是需要投遞和執行的任務，即資料、消費邏輯都會在任務中定義。
+`ConsumerProcess` 是非同步消費程序，會根據使用者建立的 `Job` 或者使用 `#[AsyncQueueMessage]` 的程式碼塊，執行消費邏輯。
+`Job` 和 `#[AsyncQueueMessage]` 都是需要投遞和執行的任務，即資料、消費邏輯都會在任務中定義。
 
 - `Job` 類中成員變數即為待消費的資料，`handle()` 方法則為消費邏輯。
-- `@AsyncQueueMessage` 註解的方法，建構函式傳入的資料即為待消費的資料，方法體則為消費邏輯。
+- `#[AsyncQueueMessage]` 註解的方法，建構函式傳入的資料即為待消費的資料，方法體則為消費邏輯。
 
 ```mermaid
 graph LR;
@@ -109,11 +110,68 @@ namespace App\Process;
 use Hyperf\AsyncQueue\Process\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="async-queue")
- */
+#[Process(name: "async-queue")]
 class AsyncQueueConsumer extends ConsumerProcess
 {
+}
+```
+
+### 如何使用多個配置
+
+有的開發者會在特殊場景建立多個配置，比如某些訊息要優先處理，所以會放到更加清閒的隊列當中。例如以下配置
+
+```php
+<?php
+
+return [
+    'default' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'redis' => [
+            'pool' => 'default'
+        ],
+        'channel' => 'queue',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 5,
+        ],
+    ],
+    'fast' => [
+        'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
+        'redis' => [
+            'pool' => 'default'
+        ],
+        'channel' => '{queue:fast}',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+        'concurrent' => [
+            'limit' => 5,
+        ],
+    ],
+];
+
+```
+
+但是，我們預設的 `Hyperf\AsyncQueue\Process\ConsumerProcess` 只會處理 `default` 配置，所以我們需要建立一個新的 `Process`
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Process;
+
+use Hyperf\AsyncQueue\Process\ConsumerProcess;
+use Hyperf\Process\Annotation\Process;
+
+#[Process(name: "async-queue")]
+class AsyncQueueConsumer extends ConsumerProcess
+{
+    protected string $queue = 'fast';
 }
 ```
 
@@ -123,7 +181,7 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 這種模式會把物件直接序列化然後存到 `Redis` 等佇列中，所以為了保證序列化後的體積，儘量不要將 `Container`，`Config` 等設定為成員變數。
 
-比如以下 `Job` 的定義，是 **不可取** 的，同理 `@Inject` 也是如此。
+比如以下 `Job` 的定義，是 **不可取** 的，同理 `#[Inject]` 也是如此。
 
 > 因為 Job 會被序列化，所以成員變數不要包含 匿名函式 等 無法被序列化 的內容，如果不清楚哪些內容無法被序列化，儘量使用註解方式。
 
@@ -176,10 +234,8 @@ class ExampleJob extends Job
     
     /**
      * 任務執行失敗後的重試次數，即最大執行次數為 $maxAttempts+1 次
-     *
-     * @var int
      */
-    protected $maxAttempts = 2;
+    protected int $maxAttempts = 2;
 
     public function __construct($params)
     {
@@ -190,7 +246,7 @@ class ExampleJob extends Job
     public function handle()
     {
         // 根據引數處理具體邏輯
-        // 通過具體引數獲取模型等
+        // 透過具體引數獲取模型等
         // 這裡的邏輯會在 ConsumerProcess 程序中執行
         var_dump($this->params);
     }
@@ -212,10 +268,7 @@ use Hyperf\AsyncQueue\Driver\DriverInterface;
 
 class QueueService
 {
-    /**
-     * @var DriverInterface
-     */
-    protected $driver;
+    protected DriverInterface $driver;
 
     public function __construct(DriverFactory $driverFactory)
     {
@@ -252,16 +305,11 @@ use App\Service\QueueService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class QueueController extends AbstractController
 {
-    /**
-     * @Inject
-     * @var QueueService
-     */
-    protected $service;
+    #[Inject]
+    protected QueueService $service;
 
     /**
      * 傳統模式投遞訊息
@@ -299,9 +347,7 @@ use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
 
 class QueueService
 {
-    /**
-     * @AsyncQueueMessage
-     */
+    #[AsyncQueueMessage]
     public function example($params)
     {
         // 需要非同步執行的程式碼邏輯
@@ -327,16 +373,11 @@ use App\Service\QueueService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class QueueController extends AbstractController
 {
-    /**
-     * @Inject
-     * @var QueueService
-     */
-    protected $service;
+    #[Inject]
+    protected QueueService $service;
 
     /**
      * 註解模式投遞訊息
@@ -354,10 +395,36 @@ class QueueController extends AbstractController
 }
 ```
 
+### 預設指令碼
+
+Arguments:
+  - queue_name: 佇列配置名，預設為 default
+
+Options:
+  - channel_name: 佇列名，例如失敗佇列 failed, 超時佇列 timeout
+
+#### 展示當前佇列的訊息狀態
+
+```shell
+$ php bin/hyperf.php queue:info {queue_name}
+```
+
+#### 過載所有失敗/超時的訊息到待執行佇列
+
+```shell
+php bin/hyperf.php queue:reload {queue_name} -Q {channel_name}
+```
+
+#### 銷燬所有失敗/超時的訊息
+
+```shell
+php bin/hyperf.php queue:flush {queue_name} -Q {channel_name}
+```
+
 ## 事件
 
 |   事件名稱   |        觸發時機         |                         備註                         |
-|:------------:|:-----------------------:|:----------------------------------------------------:|
+| :----------: | :---------------------: | :--------------------------------------------------: |
 | BeforeHandle |     處理訊息前觸發      |                                                      |
 | AfterHandle  |     處理訊息後觸發      |                                                      |
 | FailedHandle |   處理訊息失敗後觸發    |                                                      |
@@ -400,7 +467,7 @@ return [
 任務執行流轉流程主要包括以下幾個佇列:
 
 |  佇列名  |                   備註                    |
-|:--------:|:-----------------------------------------:|
+| :------: | :---------------------------------------: |
 | waiting  |              等待消費的佇列               |
 | reserved |              正在消費的佇列               |
 | delayed  |              延遲消費的佇列               |
@@ -468,15 +535,10 @@ namespace App\Process;
 use Hyperf\AsyncQueue\Process\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process()
- */
+#[Process]
 class OtherConsumerProcess extends ConsumerProcess
 {
-    /**
-     * @var string
-     */
-    protected $queue = 'other';
+    protected string $queue = 'other';
 }
 ```
 
@@ -484,7 +546,7 @@ class OtherConsumerProcess extends ConsumerProcess
 
 ```php
 use Hyperf\AsyncQueue\Driver\DriverFactory;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $driver = ApplicationContext::getContainer()->get(DriverFactory::class)->get('other');
 return $driver->push(new ExampleJob());
@@ -492,17 +554,18 @@ return $driver->push(new ExampleJob());
 
 ## 安全關閉
 
-非同步佇列在終止時，如果正在進行消費邏輯，可能會導致出現錯誤。框架提供了 `DriverStopHandler` ，可以讓非同步佇列程序安全關閉。
+非同步佇列在終止時，如果正在進行消費邏輯，可能會導致出現錯誤。框架提供了 `ProcessStopHandler` ，可以讓非同步佇列程序安全關閉。
 
 > 當前訊號處理器並不適配於 CoroutineServer，如有需要請自行實現
 
 安裝訊號處理器
 
-```
+```shell
 composer require hyperf/signal
+composer require hyperf/process
 ```
 
-新增配置
+新增配置 `autoload/signal.php`
 
 ```php
 <?php
@@ -511,13 +574,12 @@ declare(strict_types=1);
 
 return [
     'handlers' => [
-        Hyperf\AsyncQueue\Signal\DriverStopHandler::class,
+        Hyperf\Process\Handler\ProcessStopHandler::class,
     ],
     'timeout' => 5.0,
 ];
 
 ```
-
 
 ## 非同步驅動之間的區別
 

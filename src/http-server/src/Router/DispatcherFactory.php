@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer\Router;
 
 use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
 use FastRoute\Dispatcher;
 use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteParser\Std;
+use Hyperf\Collection\Arr;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\MultipleAnnotationInterface;
 use Hyperf\Di\Exception\ConflictAnnotationException;
@@ -30,23 +32,23 @@ use Hyperf\HttpServer\Annotation\PatchMapping;
 use Hyperf\HttpServer\Annotation\PostMapping;
 use Hyperf\HttpServer\Annotation\PutMapping;
 use Hyperf\HttpServer\Annotation\RequestMapping;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\HttpServer\PriorityMiddleware;
+use Hyperf\Stringable\Str;
 use ReflectionMethod;
 
 class DispatcherFactory
 {
-    protected $routes = [BASE_PATH . '/config/routes.php'];
+    protected array $routes = [BASE_PATH . '/config/routes.php'];
 
     /**
      * @var RouteCollector[]
      */
-    protected $routers = [];
+    protected array $routers = [];
 
     /**
      * @var Dispatcher[]
      */
-    protected $dispatchers = [];
+    protected array $dispatchers = [];
 
     public function __construct()
     {
@@ -69,7 +71,7 @@ class DispatcherFactory
         Router::init($this);
         foreach ($this->routes as $route) {
             if (file_exists($route)) {
-                require_once $route;
+                require $route;
             }
         }
     }
@@ -105,6 +107,8 @@ class DispatcherFactory
 
     /**
      * Register route according to AutoController annotation.
+     * @param PriorityMiddleware[] $middlewares
+     * @throws ConflictAnnotationException
      */
     protected function handleAutoController(string $className, AutoController $annotation, array $middlewares = [], array $methodMetadata = []): void
     {
@@ -113,13 +117,13 @@ class DispatcherFactory
         $prefix = $this->getPrefix($className, $annotation->prefix);
         $router = $this->getRouter($annotation->server);
 
-        $autoMethods = ['GET', 'POST', 'HEAD'];
+        $autoMethods = $annotation->defaultMethods ?? ['GET', 'POST', 'HEAD'];
         $defaultAction = '/index';
         foreach ($methods as $method) {
             $options = $annotation->options;
             $path = $this->parsePath($prefix, $method);
             $methodName = $method->getName();
-            if (substr($methodName, 0, 2) === '__') {
+            if (str_starts_with($methodName, '__')) {
                 continue;
             }
 
@@ -130,7 +134,7 @@ class DispatcherFactory
             }
 
             // Rewrite by annotation @Middleware for Controller.
-            $options['middleware'] = array_unique($methodMiddlewares);
+            $options['middleware'] = $methodMiddlewares;
 
             $router->addRoute($autoMethods, $path, [$className, $methodName], $options);
 
@@ -144,6 +148,9 @@ class DispatcherFactory
     /**
      * Register route according to Controller and XxxMapping annotations.
      * Including RequestMapping, GetMapping, PostMapping, PutMapping, PatchMapping, DeleteMapping.
+     *
+     * @param PriorityMiddleware[] $middlewares
+     * @throws ConflictAnnotationException
      */
     protected function handleController(string $className, Controller $annotation, array $methodMetadata, array $middlewares = []): void
     {
@@ -171,24 +178,29 @@ class DispatcherFactory
             }
 
             // Rewrite by annotation @Middleware for Controller.
-            $options['middleware'] = array_unique($methodMiddlewares);
+            $options['middleware'] = $methodMiddlewares;
 
             foreach ($mappingAnnotations as $mappingAnnotation) {
                 /** @var Mapping $mapping */
                 if ($mapping = $values[$mappingAnnotation] ?? null) {
-                    if (! isset($mapping->path) || ! isset($mapping->methods) || ! isset($mapping->options)) {
+                    if (! isset($mapping->methods) || ! isset($mapping->options)) {
                         continue;
                     }
                     $methodOptions = Arr::merge($options, $mapping->options);
                     // Rewrite by annotation @Middleware for method.
                     $methodOptions['middleware'] = $options['middleware'];
-                    $path = $mapping->path;
 
-                    if ($path === '') {
+                    if (! isset($mapping->path)) {
+                        $path = $prefix . '/' . Str::snake($methodName);
+                    } elseif ($mapping->path === '') {
                         $path = $prefix;
-                    } elseif ($path[0] !== '/') {
-                        $path = $prefix . '/' . $path;
+                    } elseif ($mapping->path[0] !== '/') {
+                        $path = rtrim($prefix, '/') . '/' . $mapping->path;
+                    } else {
+                        $path = $mapping->path;
                     }
+
+                    // $methodOptions['middleware'] : MiddlewareData[]
                     $router->addRoute($mapping->methods, $path, [$className, $methodName], $methodOptions);
                 }
             }
@@ -198,7 +210,7 @@ class DispatcherFactory
     protected function getPrefix(string $className, string $prefix): string
     {
         if (! $prefix) {
-            $handledNamespace = Str::replaceFirst('Controller', '', Str::after($className, '\\Controller\\'));
+            $handledNamespace = Str::replaceFirst('Controller', '', Str::after($className, '\Controller\\'));
             $handledNamespace = str_replace('\\', '/', $handledNamespace);
             $prefix = Str::snake($handledNamespace);
             $prefix = str_replace('/_', '/', $prefix);
@@ -219,6 +231,10 @@ class DispatcherFactory
         return isset($item[Controller::class]);
     }
 
+    /**
+     * @return PriorityMiddleware[]
+     * @throws ConflictAnnotationException
+     */
     protected function handleMiddleware(array $metadata): array
     {
         /** @var null|Middlewares $middlewares */
@@ -236,8 +252,12 @@ class DispatcherFactory
             throw new ConflictAnnotationException('Could not use @Middlewares and @Middleware annotation at the same times at same level.');
         }
 
-        return array_map(function (Middleware $middleware) {
-            return $middleware->middleware;
-        }, $middlewares ? $middlewares->middlewares : $middleware);
+        $result = [];
+        $middlewares = $middlewares ? $middlewares->middlewares : $middleware;
+        /** @var Middleware $middleware */
+        foreach ($middlewares as $middleware) {
+            $result[] = $middleware->priorityMiddleware;
+        }
+        return $result;
     }
 }

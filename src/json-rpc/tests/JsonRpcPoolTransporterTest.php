@@ -9,10 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\JsonRpc;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
+use Hyperf\Engine\Contract\Socket\SocketFactoryInterface;
+use Hyperf\Engine\Socket\SocketFactory;
 use Hyperf\JsonRpc\Exception\ClientException;
 use Hyperf\JsonRpc\JsonRpcPoolTransporter;
 use Hyperf\JsonRpc\Packer\JsonLengthPacker;
@@ -22,15 +26,18 @@ use Hyperf\JsonRpc\Pool\RpcPool;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\JsonRpc\Stub\RpcPoolStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use stdClass;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class JsonRpcPoolTransporterTest extends TestCase
 {
     protected function tearDown(): void
@@ -147,7 +154,7 @@ class JsonRpcPoolTransporterTest extends TestCase
 
     public function testsplObjectHash()
     {
-        $class = new \stdClass();
+        $class = new stdClass();
         $class->id = 1;
         $hash = spl_object_hash($class);
 
@@ -163,6 +170,7 @@ class JsonRpcPoolTransporterTest extends TestCase
         ApplicationContext::setContainer($container);
 
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn(new PoolFactory($container));
         $container->shouldReceive('make')->with(RpcPool::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
             return new RpcPoolStub($container, $args['name'], $args['config']);
@@ -174,6 +182,7 @@ class JsonRpcPoolTransporterTest extends TestCase
         $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($_, $args) {
             return new Channel(10);
         });
+        $container->shouldReceive('get')->with(SocketFactoryInterface::class)->andReturn(new SocketFactory());
 
         return $container;
     }

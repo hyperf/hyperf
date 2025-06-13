@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcClient;
 
 use Hyperf\RpcClient\Listener\AddConsumerDefinitionListener;
@@ -20,13 +21,6 @@ class ConfigProvider
         return [
             'listeners' => [
                 AddConsumerDefinitionListener::class,
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
             ],
         ];
     }

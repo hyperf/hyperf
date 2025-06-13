@@ -9,19 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Annotation;
 
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Consumer extends AbstractAnnotation
 {
-    public function __construct($exchange, $routingKey, $queue, $name, $nums, $enable, $maxConsumption)
+    public function __construct(string $exchange = '', string $routingKey = '', string $queue = '', string $name = 'Consumer', int $nums = 1, ?bool $enable = null, int $maxConsumption = 0)
     {
     }
 }

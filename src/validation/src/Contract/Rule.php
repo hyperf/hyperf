@@ -9,21 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Contract;
 
 interface Rule
 {
     /**
      * Determine if the validation rule passes.
-     *
-     * @param mixed $value
      */
-    public function passes(string $attribute, $value): bool;
+    public function passes(string $attribute, mixed $value): bool;
 
     /**
      * Get the validation error message.
-     *
-     * @return array|string
      */
-    public function message();
+    public function message(): array|string;
 }

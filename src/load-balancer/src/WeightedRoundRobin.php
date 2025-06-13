@@ -9,27 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\LoadBalancer;
 
+use Hyperf\LoadBalancer\Exception\NoNodesAvailableException;
 use MathPHP\Algebra;
-use RuntimeException;
 
 class WeightedRoundRobin extends AbstractLoadBalancer
 {
-    /**
-     * @var int
-     */
-    private $lastNode = 0;
+    private int $lastNode = 0;
 
-    /**
-     * @var int
-     */
-    private $currentWeight = 0;
-
-    /**
-     * @var int
-     */
-    private $maxWeight = 0;
+    private int $currentWeight = 0;
 
     /**
      * Select an item via the load balancer.
@@ -38,15 +28,15 @@ class WeightedRoundRobin extends AbstractLoadBalancer
     {
         $count = count($this->nodes);
         if ($count <= 0) {
-            throw new RuntimeException('Nodes missing.');
+            throw new NoNodesAvailableException('Cannot select any node from load balancer.');
         }
-        $this->maxWeight = $this->maxWeight($this->nodes);
+        $maxWeight = $this->maxWeight($this->nodes);
         while (true) {
             $this->lastNode = ($this->lastNode + 1) % $count;
             if ($this->lastNode === 0) {
                 $this->currentWeight = $this->currentWeight - $this->gcd($this->nodes);
                 if ($this->currentWeight <= 0) {
-                    $this->currentWeight = $this->maxWeight;
+                    $this->currentWeight = $maxWeight;
                     if ($this->currentWeight == 0) {
                         // Degrade to random algorithm.
                         return $this->nodes[array_rand($this->nodes)];

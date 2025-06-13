@@ -9,21 +9,30 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Amqp;
 
 use Hyperf\Amqp\ConnectionFactory;
 use Hyperf\Amqp\Consumer;
-use Hyperf\Utils\Coroutine\Concurrent;
-use Hyperf\Utils\Exception\ChannelClosedException;
-use Hyperf\Utils\Reflection\ClassInvoker;
+use Hyperf\Coroutine\Concurrent;
+use Hyperf\Coroutine\Exception\ChannelClosedException;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Amqp\Stub\AMQPConnectionStub;
 use HyperfTest\Amqp\Stub\ContainerStub;
 use HyperfTest\Amqp\Stub\Delay2Consumer;
 use HyperfTest\Amqp\Stub\DelayConsumer;
 use Mockery;
+use PhpAmqpLib\Channel\Frame;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -34,9 +43,8 @@ class ConsumerTest extends TestCase
     {
         $container = ContainerStub::getContainer();
         $consumer = new Consumer($container, Mockery::mock(ConnectionFactory::class), Mockery::mock(LoggerInterface::class));
-        $ref = new \ReflectionClass($consumer);
+        $ref = new ReflectionClass($consumer);
         $method = $ref->getMethod('getConcurrent');
-        $method->setAccessible(true);
         /** @var Concurrent $concurrent */
         $concurrent = $method->invokeArgs($consumer, ['default']);
         $this->assertSame(10, $concurrent->getLimit());
@@ -51,8 +59,8 @@ class ConsumerTest extends TestCase
         $connection = new AMQPConnectionStub();
         $invoker = new ClassInvoker($connection);
         $chan = $invoker->channelManager->get(1, true);
-        $chan->push($id = uniqid());
-        $this->assertSame($id, $invoker->wait_channel(1));
+        $chan->push($frame = new Frame(1, 1, 0));
+        $this->assertSame($frame, $invoker->wait_channel(1));
 
         $this->expectException(ChannelClosedException::class);
         $chan->close();

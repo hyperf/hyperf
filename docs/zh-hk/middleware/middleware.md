@@ -63,11 +63,13 @@ Router::addGroup(
 ### 通過註解定義
 
 在通過註解定義路由時，您僅可通過註解的方式來定義中間件，對中間件的定義有兩個註解，分別為：   
-  - `@Middleware` 註解為定義單箇中間件時使用，在一個地方僅可定義一個該註解，不可重複定義
-  - `@Middlewares` 註解為定義多箇中間件時使用，在一個地方僅可定義一個該註解，然後通過在該註解內定義多個 `@Middleware` 註解實現多箇中間件的定義
+  - `#[Middleware]` 註解為定義單箇中間件時使用，在一個地方僅可定義一個該註解，不可重複定義
+  - `#[Middlewares]` 註解為定義多箇中間件時使用，在一個地方僅可定義一個該註解，然後通過在該註解內定義多個 `#[Middleware]` 註解實現多箇中間件的定義
 
-> 使用 `@Middleware` 註解時需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空間；   
-> 使用 `@Middlewares` 註解時需 `use Hyperf\HttpServer\Annotation\Middlewares;` 命名空間；
+> 使用 `#[Middleware]` 註解時需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空間；   
+> 使用 `#[Middlewares]` 註解時需 `use Hyperf\HttpServer\Annotation\Middlewares;` 命名空間；
+
+***注意：必須配合 `#[AutoController]` 或者 `#[Controller]` 使用***
 
 定義單箇中間件：
 
@@ -79,10 +81,8 @@ use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 
-/**
- * @AutoController()
- * @Middleware(FooMiddleware::class)
- */
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
 class IndexController
 {
     public function index()
@@ -92,7 +92,7 @@ class IndexController
 }
 ```
 
-定義多箇中間件：
+通過 `#[Middlewares]` 註解定義多箇中間件：
 
 ```php
 <?php
@@ -104,13 +104,8 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
-/**
- * @AutoController()
- * @Middlewares({
- *     @Middleware(FooMiddleware::class),
- *     @Middleware(BarMiddleware::class)
- * })
- */
+#[AutoController]
+#[Middlewares([FooMiddleware::class, BarMiddleware::class])]
 class IndexController
 {
     public function index()
@@ -119,7 +114,30 @@ class IndexController
     }
 }
 ```
-> 注意: 使用 `PHP8` 的 `Attributes` 語法時, 應簡化為`#[Middlewares(FooMiddleware::class, BarMiddleware::class)]`這種格式, 下同。
+
+通過 `#[Middleware]` 註解定義多箇中間件：
+
+```php
+<?php
+namespace App\Controller;
+
+use App\Middleware\BarMiddleware;
+use App\Middleware\FooMiddleware;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
+
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
+#[Middleware(BarMiddleware::class)]
+class IndexController
+{
+    public function index()
+    {
+        return 'Hello Hyperf.';
+    }
+}
+```
 
 #### 定義方法級別的中間件
 
@@ -136,26 +154,18 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
-/**
- * @AutoController()
- * @Middlewares({
- *     @Middleware(FooMiddleware::class)
- * })
- */
+#[AutoController]
+#[Middlewares([FooMiddleware::class])]
 class IndexController
 {
-    
-    /**
-     * @Middlewares({
-     *     @Middleware(BarMiddleware::class)
-     * })
-     */
+    #[Middleware(BarMiddleware::class)]
     public function index()
     {
         return 'Hello Hyperf.';
     }
 }
 ```
+
 #### 中間件相關的代碼
 
 生成中間件
@@ -181,20 +191,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class FooMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
+    protected RequestInterface $request;
 
-    /**
-     * @var HttpResponse
-     */
-    protected $response;
+    protected HttpResponse $response;
 
     public function __construct(ContainerInterface $container, HttpResponse $response, RequestInterface $request)
     {
@@ -228,6 +229,44 @@ class FooMiddleware implements MiddlewareInterface
 
 我們從上面可以瞭解到總共有 `3` 種級別的中間件，分別為 `全局中間件`、`類級別中間件`、`方法級別中間件`，如果都定義了這些中間件，執行順序為：`全局中間件 -> 類級別中間件 -> 方法級別中間件`。
 
+
+在`>=3.0.34`的版本中，新增了優先級的配置，可以在配置方法、路由中間件的時候改變中間件的執行順序，優先級越高，執行順序越靠前。
+
+```php
+// 全局中間件配置文件 middleware.php
+return [
+    'http' => [
+        YourMiddleware::class,
+        YourMiddlewareB::class => 3,
+    ],
+];
+```
+```php
+// 路由中間件配置
+Router::addGroup(
+    '/v2', function () {
+        Router::get('/index', [\App\Controller\IndexController::class, 'index']);
+    },
+    [
+        'middleware' => [
+            FooMiddleware::class,
+            FooMiddlewareB::class => 3,
+        ]
+    ]
+);
+```
+```php
+// 註解中間件配置
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
+#[Middleware(FooMiddlewareB::class, 3)]
+#[Middlewares([FooMiddlewareC::class => 1, BarMiddlewareD::class => 4])]
+class IndexController
+{
+    
+}
+```
+
 ## 全局更改請求和響應對象
 
 首先，在協程上下文內是有存儲最原始的 PSR-7 `請求對象` 和 `響應對象` 的，且根據 PSR-7 對相關對象所要求的 `不可變性(immutable)`，也就意味着我們在調用 `$response = $response->with***()` 所調用得到的 `$response`，並非為改寫原對象，而是一個 `Clone` 出來的新對象，也就意味着我們儲存在協程上下文內的 `請求對象` 和 `響應對象` 是不會改變的，那麼當我們在中間件內的某些邏輯改變了 `請求對象` 或 `響應對象`，而且我們希望對後續的 *非傳遞性的* 代碼再獲取改變後的 `請求對象` 或 `響應對象`，那麼我們便可以在改變對象後，將新的對象設置到上下文中，如代碼所示：
@@ -237,13 +276,13 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 // $request 和 $response 為修改後的對象
-$request = \Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
-$response = \Hyperf\Utils\Context::set(ResponseInterface::class, $response);
+$request = \Hyperf\Context\Context::set(ServerRequestInterface::class, $request);
+$response = \Hyperf\Context\Context::set(ResponseInterface::class, $response);
 ```
 
 ## 自定義 CoreMiddleWare 的行為
 
-默認情況下，Hyperf 在處理路由找不到或 HTTP 方法不允許時，即 HTTP 狀態碼為 `404` `405` 的時候，是由 `CoreMiddleware` 直接處理並返回對應的響應對象的，得益於 Hyperf 依賴注入的設計，您可以通過替換對象的方式來把 `CoreMiddleware` 指向由您自己實現的 `CoreMiddleware` 去。
+默認情況下，Hyperf 在處理路由找不到或 HTTP 方法不允許時，即 HTTP 狀態碼為 `404`、`405` 的時候，是由 `CoreMiddleware` 直接處理並返回對應的響應對象的，得益於 Hyperf 依賴注入的設計，您可以通過替換對象的方式來把 `CoreMiddleware` 指向由您自己實現的 `CoreMiddleware` 去。
 
 比如我們希望定義一個 `App\Middleware\CoreMiddleware` 類來重寫默認的行為，我們可以先定義一個 `App\Middleware\CoreMiddleware` 類如下，這裏我們僅以 HTTP Server 為例，其它 Server 也可採用同樣的做法來達到同樣的目的。
 
@@ -253,8 +292,8 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Contracts\Arrayable;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -308,7 +347,7 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -348,4 +387,48 @@ location / {
         return 204;
     }
 }
+```
+
+### 後置中間件
+
+通常情況下，我們都是最後執行
+
+```
+return $handler->handle($request);
+```
+
+所以，相當於是前置中間件，如果想要讓中間件邏輯後置，其實只需要更換一下執行順序即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+class OpenApiMiddleware implements MiddlewareInterface
+{
+    public function __construct(protected ContainerInterface $container)
+    {
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        // TODO: 前置操作
+        try{
+            $result = $handler->handle($request);
+        } finally {
+            // TODO: 後置操作
+        }
+        return $result;
+    }
+}
+
 ```

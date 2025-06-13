@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Contract;
 
 /**
@@ -17,7 +18,7 @@ namespace Hyperf\Metric\Contract;
  */
 interface CounterInterface
 {
-    public function with(string ...$labelValues): self;
+    public function with(string ...$labelValues): static;
 
     public function add(int $delta): void;
 }

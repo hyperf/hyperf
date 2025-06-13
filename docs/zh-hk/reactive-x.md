@@ -68,8 +68,8 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\ReactiveX\Observable;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Collection\Arr;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 
 class SqlListener implements ListenerInterface
@@ -92,19 +92,13 @@ class SqlListener implements ListenerInterface
     {
         Observable::fromEvent(QueryExecuted::class)
             ->filter(
-                function ($event) {
-                    return $event->time > 100;
-                }
+                fn ($event) => $event->time > 100
             )
             ->groupBy(
-                function ($event) {
-                    return $event->connectionName;
-                }
+                fn ($event) => $event->connectionName
             )
             ->flatMap(
-                function ($group) {
-                    return $group->throttle(1000);
-                }
+                fn ($group) => $group->throttle(1000)
             )
             ->map(
                 function ($event) {
@@ -117,9 +111,7 @@ class SqlListener implements ListenerInterface
                     return [$event->connectionName, $event->time, $sql];
                 }
             )->subscribe(
-                function ($message) {
-                    $this->logger->info(sprintf('slow log: [%s] [%s] %s', ...$message));
-                }
+                fn ($message) => $this->logger->info(sprintf('slow log: [%s] [%s] %s', ...$message))
             );
     }
 }
@@ -195,7 +187,7 @@ echo $result->pop(); // 2;
 
 所有的 HTTP 請求其實也是事件驅動的。所以 HTTP 請求路由也可以用 ReactiveX 來接管。
 
-> 由於我們要添加路由，所以務必要在 Server 啟動前執行，如在 `BootApplication` 事件監聽中。
+> 由於我們要添加路由，所以務必要在 Server 啓動前執行，如在 `BootApplication` 事件監聽中。
 
 假設我們有一個上傳路由，流量很大，需要在內存中緩衝，上傳十次以後再批量入庫。
 
@@ -282,10 +274,7 @@ use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    /**
-     * @var IpcSubject
-     */
-    private $subject;
+    private IpcSubject $subject;
 
     private $subscriber = [];
 
@@ -331,7 +320,7 @@ $bus->subscribe(function($message){
 });
 ```
 
-> 由於 ReactiveX 需要使用事件循環，請注意一定要在 Swoole Server 啟動之後再調用 ReactiveX 相關 API 。
+> 由於 ReactiveX 需要使用事件循環，請注意一定要在 Swoole Server 啓動之後再調用 ReactiveX 相關 API 。
 
 ## 參考資料
 

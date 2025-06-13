@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server\Event;
 
 use Swoole\Coroutine\Http\Server as HttpServer;
@@ -17,24 +18,9 @@ use Swoole\Coroutine\Server;
 class MainCoroutineServerStart
 {
     /**
-     * @var string
+     * @param HttpServer|mixed|Server $server
      */
-    public $name = '';
-
-    /**
-     * @var HttpServer|object|Server
-     */
-    public $server;
-
-    /**
-     * @var array
-     */
-    public $serverConfig;
-
-    public function __construct(string $name, $server, array $serverConfig)
+    public function __construct(public string $name, public mixed $server, public array $serverConfig)
     {
-        $this->name = $name;
-        $this->server = $server;
-        $this->serverConfig = $serverConfig;
     }
 }

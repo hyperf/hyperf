@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Aop;
 
 class AspectManager
 {
-    protected static $container;
+    protected static array $container = [];
 
     public static function get($class, $method)
     {

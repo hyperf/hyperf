@@ -9,13 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Logger\Stub;
+
+use Monolog\LogRecord;
 
 class BarProcessor
 {
-    public function __invoke(array $records)
+    public function __invoke(array|LogRecord $records)
     {
-        $records['bar'] = true;
+        $records['extra']['bar'] = true;
         return $records;
     }
 }

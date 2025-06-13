@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Cache\Driver;
 
 interface KeyCollectorInterface
@@ -17,5 +18,5 @@ interface KeyCollectorInterface
 
     public function keys(string $collector): array;
 
-    public function delKey(string $collector, ...$key): bool;
+    public function delKey(string $collector, string ...$key): bool;
 }

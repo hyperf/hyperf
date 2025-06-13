@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Pool\SimplePool;
 
 use Hyperf\Pool\Connection as AbstractConnection;
@@ -19,9 +20,9 @@ class Connection extends AbstractConnection
     /**
      * @var callable
      */
-    public $callback;
+    protected $callback;
 
-    public $connection;
+    protected mixed $connection = null;
 
     public function __construct(ContainerInterface $container, Pool $pool, callable $callback)
     {

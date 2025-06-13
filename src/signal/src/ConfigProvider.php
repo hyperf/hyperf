@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Signal;
 
 use Hyperf\Signal\Listener\SignalDeregisterListener;
@@ -19,13 +20,6 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'listeners' => [
                 SignalRegisterListener::class => PHP_INT_MAX,
                 SignalDeregisterListener::class,

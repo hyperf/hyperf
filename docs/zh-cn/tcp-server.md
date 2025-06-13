@@ -69,6 +69,11 @@ $ret = $client->recv(); // recv:Hello World.
 
 ## 使用 UDP 服务
 
+> Docker 默认使用 TCP 协议来通信，如果你需要使用 UDP 协议，你需要通过配置 Docker 网络来实现。  
+```shell
+docker run -p 9502:9502/udp <image-name>
+```
+
 ### 创建 UdpServer 类
 
 > 如果没有 OnPacketInterface 接口文件，则可以不实现此接口，运行结果与实现接口一致，只要保证配置正确即可。

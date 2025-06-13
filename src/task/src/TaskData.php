@@ -9,23 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Task;
 
 class TaskData
 {
-    /**
-     * @var int
-     */
-    public $taskId;
-
-    /**
-     * @var mixed
-     */
-    public $data;
-
-    public function __construct(int $taskId, $data)
+    public function __construct(public int $taskId, public mixed $data)
     {
-        $this->taskId = $taskId;
-        $this->data = $data;
     }
 }

@@ -9,89 +9,82 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Paginator;
 
+use ArrayAccess;
 use ArrayIterator;
 use Closure;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
 use Hyperf\Contract\PaginatorInterface;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Traits\ForwardsCalls;
+use Stringable;
 
-abstract class AbstractPaginator implements PaginatorInterface
+abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Stringable
 {
     use ForwardsCalls;
 
     /**
      * The number of links to display on each side of current page link.
-     *
-     * @var int
      */
-    public $onEachSide = 3;
+    public int $onEachSide = 3;
 
     /**
-     * All of the items being paginated.
-     *
-     * @var \Hyperf\Utils\Collection
+     * The paginator options.
      */
-    protected $items;
+    protected array $options = [];
+
+    /**
+     * All the items being paginated.
+     */
+    protected Collection $items;
 
     /**
      * The number of items to be shown per page.
-     *
-     * @var int
      */
-    protected $perPage;
+    protected int $perPage;
 
     /**
      * The current page being "viewed".
-     *
-     * @var int
      */
-    protected $currentPage;
+    protected int $currentPage;
 
     /**
      * The base path to assign to all URLs.
-     *
-     * @var string
      */
-    protected $path = '/';
+    protected string $path = '/';
 
     /**
      * The query parameters to add to all URLs.
-     *
-     * @var array
      */
-    protected $query = [];
+    protected array $query = [];
 
     /**
      * The URL fragment to add to all URLs.
-     *
-     * @var null|string
      */
-    protected $fragment;
+    protected ?string $fragment = null;
 
     /**
      * The query string variable used to store the page.
-     *
-     * @var string
      */
-    protected $pageName = 'page';
+    protected string $pageName = 'page';
 
     /**
      * The current path resolver callback.
-     *
-     * @var \Closure
      */
-    protected static $currentPathResolver;
+    protected static ?Closure $currentPathResolver = null;
 
     /**
      * The current page resolver callback.
-     *
-     * @var \Closure
      */
-    protected static $currentPageResolver;
+    protected static ?Closure $currentPageResolver = null;
+
+    /**
+     * The query string resolver callback.
+     */
+    protected static ?Closure $queryStringResolver = null;
 
     /**
      * Make dynamic calls into the collection.
@@ -106,7 +99,7 @@ abstract class AbstractPaginator implements PaginatorInterface
      */
     public function __toString(): string
     {
-        return (string) $this->render();
+        return $this->render();
     }
 
     /**
@@ -125,9 +118,9 @@ abstract class AbstractPaginator implements PaginatorInterface
      */
     public function getUrlRange(int $start, int $end): array
     {
-        return collect(range($start, $end))->mapWithKeys(function ($page) {
-            return [$page => $this->url($page)];
-        })->all();
+        return Collection::range($start, $end)
+            ->mapWithKeys(fn ($page) => [$page => $this->url($page)])
+            ->all();
     }
 
     /**
@@ -172,7 +165,7 @@ abstract class AbstractPaginator implements PaginatorInterface
      *
      * @param null|array|string $key
      */
-    public function appends($key, ?string $value = null): self
+    public function appends($key, null|array|string $value = null): static
     {
         if (is_null($key)) {
             return $this;
@@ -188,7 +181,7 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * Load a set of relationships onto the mixed relationship collection.
      */
-    public function loadMorph(string $relation, array $relations): self
+    public function loadMorph(string $relation, array $relations): static
     {
         $collection = $this->getCollection();
         if (method_exists($collection, 'loadMorph')) {
@@ -265,7 +258,7 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * Set the query string variable used to store the page.
      */
-    public function setPageName(string $name): self
+    public function setPageName(string $name): static
     {
         $this->pageName = $name;
 
@@ -275,7 +268,7 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * Set the base path to assign to all URLs.
      */
-    public function withPath(string $path): self
+    public function withPath(string $path): static
     {
         return $this->setPath($path);
     }
@@ -283,7 +276,7 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * Set the base path to assign to all URLs.
      */
-    public function setPath(string $path): self
+    public function setPath(string $path): static
     {
         $this->path = $path;
 
@@ -293,7 +286,7 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * Set the number of links to display on each side of current page link.
      */
-    public function onEachSide(int $count): self
+    public function onEachSide(int $count): static
     {
         $this->onEachSide = $count;
 
@@ -383,7 +376,7 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * Set the paginator's underlying collection.
      */
-    public function setCollection(Collection $collection): self
+    public function setCollection(Collection $collection): static
     {
         $this->items = $collection;
 
@@ -391,40 +384,66 @@ abstract class AbstractPaginator implements PaginatorInterface
     }
 
     /**
-     * Determine if the given item exists.
-     * @param mixed $key
+     * Get the paginator options.
      */
-    public function offsetExists($key): bool
+    public function getOptions(): array
     {
-        return $this->items->has($key);
+        return $this->options;
     }
 
-    /**
-     * Get the item at the given offset.
-     * @param mixed $key
-     */
-    public function offsetGet($key)
+    public function offsetExists(mixed $offset): bool
     {
-        return $this->items->get($key);
+        return $this->items->has($offset);
     }
 
-    /**
-     * Set the item at the given offset.
-     * @param mixed $key
-     * @param mixed $value
-     */
-    public function offsetSet($key, $value): void
+    public function offsetGet(mixed $offset): mixed
     {
-        $this->items->put($key, $value);
+        return $this->items->get($offset);
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        $this->items->put($offset, $value);
     }
 
     /**
      * Unset the item at the given key.
-     * @param mixed $key
      */
-    public function offsetUnset($key): void
+    public function offsetUnset(mixed $offset): void
     {
-        $this->items->forget($key);
+        $this->items->forget($offset);
+    }
+
+    /**
+     * Add all current query string values to the paginator.
+     */
+    public function withQueryString(): static
+    {
+        if (isset(static::$queryStringResolver)) {
+            return $this->appends(call_user_func(static::$queryStringResolver));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Resolve the query string or return the default value.
+     */
+    public static function resolveQueryString(null|array|string $default = null): string
+    {
+        if (isset(static::$queryStringResolver)) {
+            return (static::$queryStringResolver)();
+        }
+
+        return $default;
+    }
+
+    /**
+     * Set with query string resolver callback.
+     */
+    public static function queryStringResolver(Closure $resolver): void
+    {
+        static::$queryStringResolver = $resolver;
     }
 
     /**
@@ -438,7 +457,7 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * Add an array of query string values.
      */
-    protected function appendArray(array $keys): self
+    protected function appendArray(array $keys): static
     {
         foreach ($keys as $key => $value) {
             $this->addQuery($key, $value);
@@ -450,7 +469,7 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * Add a query string value to the paginator.
      */
-    protected function addQuery(string $key, string $value): self
+    protected function addQuery(string $key, array|string $value): static
     {
         if ($key !== $this->pageName) {
             $this->query[$key] = $value;

@@ -9,29 +9,22 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Migrations;
 
 use Hyperf\Command\Command;
-use Hyperf\Command\ConfirmableTrait;
+use Hyperf\Command\Concerns\Confirmable as ConfirmableTrait;
 use Symfony\Component\Console\Input\InputOption;
 
 class RefreshCommand extends Command
 {
     use ConfirmableTrait;
 
-    /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $name = 'migrate:refresh';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Reset and re-run all migrations';
+    public function __construct()
+    {
+        parent::__construct('migrate:refresh');
+        $this->setDescription('Reset and re-run all migrations');
+    }
 
     /**
      * Execute the console command.

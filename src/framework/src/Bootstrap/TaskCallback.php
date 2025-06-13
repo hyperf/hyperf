@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Framework\Bootstrap;
 
 use Hyperf\Contract\ConfigInterface;
@@ -19,20 +20,11 @@ use Swoole\Server\Task;
 
 class TaskCallback
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    protected bool $taskEnableCoroutine = false;
 
-    /**
-     * @var bool
-     */
-    protected $taskEnableCoroutine = false;
-
-    public function __construct(ConfigInterface $config, EventDispatcherInterface $eventDispatcher)
+    public function __construct(protected EventDispatcherInterface $dispatcher, ConfigInterface $config)
     {
-        $this->dispatcher = $eventDispatcher;
-        $this->taskEnableCoroutine = $config->get('server.settings.task_enable_coroutine', false);
+        $this->taskEnableCoroutine = (bool) $config->get('server.settings.task_enable_coroutine', false);
     }
 
     public function onTask(Server $server, ...$arguments)

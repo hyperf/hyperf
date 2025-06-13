@@ -9,14 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model;
 
 class GlobalScope
 {
     /**
      * The array of global scopes on the model.
-     *
-     * @var array
      */
-    public static $container = [];
+    public static array $container = [];
 }

@@ -9,21 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc;
 
 use Closure;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Rpc\Protocol;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Throwable;
 
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 {
-    /**
-     * @var ResponseBuilder
-     */
-    protected $responseBuilder;
+    protected ResponseBuilder $responseBuilder;
 
     public function __construct(ContainerInterface $container, Protocol $protocol, ResponseBuilder $builder, string $serverName)
     {
@@ -31,10 +31,11 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         $this->responseBuilder = $builder;
     }
 
-    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request)
+    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): mixed
     {
         if ($dispatched->handler->callback instanceof Closure) {
-            $response = call($dispatched->handler->callback);
+            $callback = $dispatched->handler->callback;
+            $response = $callback();
         } else {
             [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
             $controllerInstance = $this->container->get($controller);
@@ -45,13 +46,13 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 
             try {
                 $parameters = $this->parseMethodParameters($controller, $action, $request->getParsedBody());
-            } catch (\InvalidArgumentException $exception) {
+            } catch (InvalidArgumentException) {
                 return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INVALID_PARAMS);
             }
 
             try {
                 $response = $controllerInstance->{$action}(...$parameters);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $response = $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::SERVER_ERROR, $exception);
                 $this->responseBuilder->persistToContext($response);
 
@@ -61,17 +62,17 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         return $response;
     }
 
-    protected function handleNotFound(ServerRequestInterface $request)
+    protected function handleNotFound(ServerRequestInterface $request): mixed
     {
         return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::METHOD_NOT_FOUND);
     }
 
-    protected function handleMethodNotAllowed(array $routes, ServerRequestInterface $request)
+    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request): mixed
     {
         return $this->handleNotFound($request);
     }
 
-    protected function transferToResponse($response, ServerRequestInterface $request): ResponseInterface
+    protected function transferToResponse($response, ServerRequestInterface $request): ResponsePlusInterface
     {
         return $this->responseBuilder->buildResponse($request, $response);
     }

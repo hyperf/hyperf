@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Framework;
 
 use Hyperf\Contract\ApplicationInterface;
@@ -23,13 +24,6 @@ class ConfigProvider
             'dependencies' => [
                 ApplicationInterface::class => ApplicationFactory::class,
                 StdoutLoggerInterface::class => StdoutLogger::class,
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
             ],
         ];
     }

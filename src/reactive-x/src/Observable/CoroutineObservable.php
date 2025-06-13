@@ -9,33 +9,27 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX\Observable;
 
+use Hyperf\Coroutine\WaitGroup;
 use Rx\Disposable\EmptyDisposable;
 use Rx\DisposableInterface;
 use Rx\Observable;
 use Rx\ObserverInterface;
 use Rx\Scheduler;
 use Rx\SchedulerInterface;
-use Swoole\Coroutine;
-use Swoole\Coroutine\WaitGroup;
+use Throwable;
+
+use function Hyperf\Coroutine\go;
 
 class CoroutineObservable extends Observable
 {
     /**
-     * @var callable[]
+     * @param callable[] $callables
      */
-    private $callables;
-
-    /**
-     * @var SchedulerInterface
-     */
-    private $scheduler;
-
-    public function __construct($callables, ?SchedulerInterface $scheduler = null)
+    public function __construct(private array $callables, private ?SchedulerInterface $scheduler = null)
     {
-        $this->scheduler = $scheduler;
-        $this->callables = $callables;
     }
 
     protected function _subscribe(ObserverInterface $observer): DisposableInterface
@@ -43,17 +37,18 @@ class CoroutineObservable extends Observable
         if ($this->scheduler === null) {
             $this->scheduler = Scheduler::getDefault();
         }
-        coroutine::create(function () use ($observer) {
+
+        go(function () use ($observer) {
             $wg = new WaitGroup();
             $wg->add(count($this->callables));
             foreach ($this->callables as $callable) {
-                Coroutine::create(function () use ($observer, $callable, &$wg) {
+                go(function () use ($observer, $callable, &$wg) {
                     try {
                         $result = $callable();
                         $this->scheduler->schedule(function () use ($observer, $result) {
                             $observer->onNext($result);
                         });
-                    } catch (\Throwable $throwable) {
+                    } catch (Throwable $throwable) {
                         $this->scheduler->schedule(function () use ($observer, $throwable) {
                             $observer->onError($throwable);
                         });

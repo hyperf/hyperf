@@ -13,7 +13,7 @@
 ```php
 <?php
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use EasyWeChat\Factory;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
@@ -98,7 +98,7 @@ return $response->getContent();
 ```php
 <?php
 use Psr\SimpleCache\CacheInterface;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use EasyWeChat\Factory;
 
 $app = Factory::miniProgram([]);

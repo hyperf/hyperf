@@ -20,5 +20,6 @@ return [
         'session_name' => 'HYPERF_SESSION_ID',
         'domain' => null,
         'cookie_lifetime' => 5 * 60 * 60,
+        'cookie_same_site' => 'lax',
     ],
 ];

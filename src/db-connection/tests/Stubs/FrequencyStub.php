@@ -9,13 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\DbConnection\Stubs;
 
 use Hyperf\DbConnection\Frequency;
 
 class FrequencyStub extends Frequency
 {
-    protected $time = 2;
+    protected int $time = 2;
 
     public function getHits(): array
     {

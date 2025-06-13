@@ -9,47 +9,33 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\CircuitBreaker;
 
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class CircuitBreaker implements CircuitBreakerInterface
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected State $state;
 
-    /**
-     * @var State
-     */
-    protected $state;
-
-    /**
-     * @var float
-     */
-    protected $timestamp;
+    protected float $timestamp;
 
     /**
      * Failure count.
-     * @var int
      */
-    protected $failCounter;
+    protected int $failCounter;
 
     /**
      * Success count.
-     * @var int
      */
-    protected $successCounter;
+    protected int $successCounter;
 
-    public function __construct(ContainerInterface $container, string $name)
+    public function __construct(protected ContainerInterface $container, string $name)
     {
-        $this->container = $container;
         $this->name = $name;
         $this->state = make(State::class);
         $this->init();
@@ -62,9 +48,7 @@ class CircuitBreaker implements CircuitBreakerInterface
 
     public function attempt(): bool
     {
-        /** @var Attempt $attempt */
-        $attempt = $this->container->get(Attempt::class);
-        return $attempt->attempt();
+        return $this->container->get(Attempt::class)->attempt();
     }
 
     public function open(): void

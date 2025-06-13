@@ -9,17 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Redis;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Redis\Exception\InvalidRedisProxyException;
+
+use function Hyperf\Support\make;
 
 class RedisFactory
 {
     /**
      * @var RedisProxy[]
      */
-    protected $proxies;
+    protected array $proxies = [];
 
     public function __construct(ConfigInterface $config)
     {
@@ -30,10 +33,7 @@ class RedisFactory
         }
     }
 
-    /**
-     * @return RedisProxy
-     */
-    public function get(string $poolName)
+    public function get(string $poolName): RedisProxy
     {
         $proxy = $this->proxies[$poolName] ?? null;
         if (! $proxy instanceof RedisProxy) {

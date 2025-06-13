@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Framework;
 
 use Psr\EventDispatcher\EventDispatcherInterface as PsrDispatcherInterface;
@@ -30,7 +31,7 @@ if (interface_exists(EventDispatcherInterface::class)) {
             $this->psrDispatcher = $psrDispatcher;
         }
 
-        public function dispatch(object $event, string $eventName = null): object
+        public function dispatch(object $event, ?string $eventName = null): object
         {
             return $this->psrDispatcher->dispatch($event);
         }

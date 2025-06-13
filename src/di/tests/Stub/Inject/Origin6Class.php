@@ -9,17 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\Stub\Inject;
 
 use Hyperf\Di\Annotation\Inject;
 
 class Origin6Class extends Parent4Class
 {
-    /**
-     * @Inject
-     * @var Bar
-     */
-    private $bar;
+    #[Inject]
+    private Bar $bar;
 
     public function getBar()
     {

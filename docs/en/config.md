@@ -75,7 +75,7 @@ Configurations in the `config/config.php` and `config/autoload/server.php` and `
 
 ### Get configuration value
 
-The Config component provides three ways to get the configuration value, obtained through the `Hyperf\Config\Config` object, obtained via the `@Value` annotation, and obtained via the `config(string $key, $default)` function.
+The Config component provides three ways to get the configuration value, obtained through the `Hyperf\Config\Config` object, obtained via the `#[Value]` annotation, and obtained via the `config(string $key, $default)` function.
 
 #### Get configuration value by Config Object
 
@@ -86,21 +86,22 @@ This way requires you already have an instance of the `Config` object. The defau
  * @var \Hyperf\Contract\ConfigInterface
  */
 // Get the configuration corresponding to $key by get(string $key, $default): mixed method, the $key value can be positioned to the subordinate array by the . connector, and $default is the default value returned when the corresponding value does not exist.
-$config->get($key，$default);
+$config->get($key, $default);
 ```
 
-#### Get Configuration by `@Value` Annotation
+#### Get Configuration by `#[Value]` Annotation
 
 This way requires the object must be created by the [hyperf/di](https://github.com/hyperf/di) component. The details of the injection instance can be found in [Dependency Injection](en/di.md) chapter, in the example we assume that `IndexController` is an already defined `Controller` class, and the `Controller` class must be created by the `DI` container;
-The string in `@Value()` corresponds to the `$key` parameter in `$config->get($key)`. When the object instance is created, the corresponding configuration is automatically injected into the defined class property.
+The string in `#[Value()]` corresponds to the `$key` parameter in `$config->get($key)`. When the object instance is created, the corresponding configuration is automatically injected into the defined class property.
 
 ```php
+<?php
+use Hyperf\Config\Annotation\Value;
+
 class IndexController
 {
     
-    /**
-     * @Value("config.key")
-     */
+    #[Value(key: "config.key")]
     private $configValue;
     
     public function index()
@@ -113,7 +114,7 @@ class IndexController
 
 #### Get Configuration by config() function
 
-The corresponding configuration can be obtained from the `config(string $key, $default)` function anywhere, but this way of using it means [hyperf/config](https://github.com/hyperf/config) and [hyperf/utils](https://github.com/hyperf/utils) components are strongly dependent for your application.
+The corresponding configuration can be obtained from the `config(string $key, $default)` function anywhere, but this way of using it means [hyperf/config](https://github.com/hyperf/config) and [hyperf/support](https://github.com/hyperf/support) components are strongly dependent for your application.
 
 ### Determine if the configuration exists
 

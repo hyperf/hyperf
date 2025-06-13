@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketServer\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
@@ -18,14 +19,8 @@ use Psr\Container\ContainerInterface;
 
 class InitSenderListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     /**
@@ -38,7 +33,7 @@ class InitSenderListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($this->container->has(Sender::class)) {
             $sender = $this->container->get(Sender::class);

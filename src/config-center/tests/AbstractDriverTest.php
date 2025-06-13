@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ConfigCenter;
 
+use Hyperf\Codec\Json;
 use Hyperf\Config\Config;
 use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
 use Hyperf\ConfigCenter\DriverFactory;
@@ -18,16 +20,18 @@ use Hyperf\ConfigCenter\Mode;
 use Hyperf\ConfigCenter\PipeMessage;
 use Hyperf\ConfigEtcd\EtcdDriver;
 use Hyperf\ConfigNacos;
-use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class AbstractDriverTest extends TestCase
 {
     protected function tearDown(): void
@@ -37,9 +41,7 @@ class AbstractDriverTest extends TestCase
         CoordinatorManager::clear(Constants::WORKER_EXIT);
     }
 
-    /**
-     * @dataProvider getConfig
-     */
+    #[DataProvider('getConfig')]
     public function testCreateMessageFetcherLoopForCoroutineMode(Config $config)
     {
         ContainerStub::mockContainer($config);
@@ -52,9 +54,7 @@ class AbstractDriverTest extends TestCase
         $this->assertSame(['message' => 'Hello Hyperf', 'id' => 1], $config->get('test'));
     }
 
-    /**
-     * @dataProvider getConfigAndPipeMessage
-     */
+    #[DataProvider('getConfigAndPipeMessage')]
     public function testOnPipeMessage(Config $config, PipeMessageInterface $pipeMessage, array $assert)
     {
         ContainerStub::mockContainer($config);
@@ -66,37 +66,37 @@ class AbstractDriverTest extends TestCase
         $this->assertSame($assert, $config->get('test'));
     }
 
-    public function getConfig(): array
+    public static function getConfig(): array
     {
         return [
-            [$this->getEtcdConfig()],
-            [$this->getNacosConfig()],
+            [self::getEtcdConfig()],
+            [self::getNacosConfig()],
         ];
     }
 
-    public function getConfigAndPipeMessage()
+    public static function getConfigAndPipeMessage()
     {
         $assert = ['message' => 'Hello Hyperf', 'id' => 1];
         return [
             [
-                $this->getEtcdConfig(),
-                $this->getEtcdPipeMessage(),
+                self::getEtcdConfig(),
+                self::getEtcdPipeMessage(),
                 $assert,
             ],
             [
-                $this->getNacosConfig(),
-                $this->getNacosPipeMessage(),
+                self::getNacosConfig(),
+                self::getNacosPipeMessage(),
                 $assert,
             ],
             [
-                $this->getNacosConfig(ConfigNacos\Constants::CONFIG_MERGE_APPEND),
-                $this->getNacosPipeMessage(),
+                self::getNacosConfig(ConfigNacos\Constants::CONFIG_MERGE_APPEND),
+                self::getNacosPipeMessage(),
                 array_merge(['name' => 'Hyperf'], $assert),
             ],
         ];
     }
 
-    protected function getEtcdPipeMessage(): PipeMessage
+    protected static function getEtcdPipeMessage(): PipeMessage
     {
         return new PipeMessage([
             '/application/test' => [
@@ -106,14 +106,14 @@ class AbstractDriverTest extends TestCase
         ]);
     }
 
-    protected function getNacosPipeMessage(): PipeMessage
+    protected static function getNacosPipeMessage(): PipeMessage
     {
         return new PipeMessage([
             'test' => ['message' => 'Hello Hyperf', 'id' => 1],
         ]);
     }
 
-    protected function getNacosConfig($mergeMode = ConfigNacos\Constants::CONFIG_MERGE_OVERWRITE): Config
+    protected static function getNacosConfig($mergeMode = ConfigNacos\Constants::CONFIG_MERGE_OVERWRITE): Config
     {
         return new Config([
             'config_center' => [
@@ -133,7 +133,7 @@ class AbstractDriverTest extends TestCase
         ]);
     }
 
-    protected function getEtcdConfig(): Config
+    protected static function getEtcdConfig(): Config
     {
         return new Config([
             'config_center' => [

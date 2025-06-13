@@ -9,47 +9,27 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Cache\Aspect;
 
 use Hyperf\Cache\Annotation\FailCache;
 use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Throwable;
 
-/**
- * @Aspect
- */
 class FailCacheAspect extends AbstractAspect
 {
-    public $classes = [];
+    public array $classes = [];
 
-    public $annotations = [
+    public array $annotations = [
         FailCache::class,
     ];
 
-    /**
-     * @var CacheManager
-     */
-    protected $manager;
-
-    /**
-     * @var AnnotationManager
-     */
-    protected $annotationManager;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    private $logger;
-
-    public function __construct(CacheManager $manager, AnnotationManager $annotationManager, StdoutLoggerInterface $logger)
+    public function __construct(protected CacheManager $manager, protected AnnotationManager $annotationManager, private StdoutLoggerInterface $logger)
     {
-        $this->manager = $manager;
-        $this->annotationManager = $annotationManager;
-        $this->logger = $logger;
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
@@ -58,14 +38,18 @@ class FailCacheAspect extends AbstractAspect
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
 
-        [$key, $ttl, $group] = $this->annotationManager->getFailCacheValue($className, $method, $arguments);
+        /** @var FailCache $annotation */
+        [$key, $ttl, $group, $annotation] = $this->annotationManager->getFailCacheValue($className, $method, $arguments);
 
         $driver = $this->manager->getDriver($group);
 
         try {
             $result = $proceedingJoinPoint->process();
-            $driver->set($key, $result, $ttl);
-        } catch (\Throwable $throwable) {
+
+            if (! in_array($result, (array) $annotation->skipCacheResults, true)) {
+                $driver->set($key, $result, $ttl);
+            }
+        } catch (Throwable $throwable) {
             [$has, $result] = $driver->fetch($key);
             if (! $has) {
                 throw $throwable;

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Contract;
 
 use Swoole\Http\Response;
@@ -19,6 +20,7 @@ interface OnMessageInterface
 {
     /**
      * @param Response|Server $server
+     * @param Frame $frame
      */
-    public function onMessage($server, Frame $frame): void;
+    public function onMessage($server, $frame): void;
 }

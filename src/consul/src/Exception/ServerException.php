@@ -9,8 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Consul\Exception;
 
-class ServerException extends \RuntimeException implements ConsulException
+use RuntimeException;
+
+class ServerException extends RuntimeException implements ConsulException
 {
 }

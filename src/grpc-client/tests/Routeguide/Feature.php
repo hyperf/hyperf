@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Routeguide;
 
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\Internal\Message;
+use GPBMetadata\RouteGuide;
 
 /**
  * A feature names something at a given point.
@@ -21,7 +23,7 @@ use Google\Protobuf\Internal\GPBUtil;
  *
  * Generated from protobuf message <code>routeguide.Feature</code>
  */
-class Feature extends \Google\Protobuf\Internal\Message
+class Feature extends Message
 {
     /**
      * The name of the feature.
@@ -43,15 +45,15 @@ class Feature extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *                    Optional. Data for populating the Message object.
      *
-     *     @var string $name
-     *           The name of the feature
-     *     @var \Routeguide\Point $location
-     *           The point where the feature is detected.
-     * }
+     * @var string $name
+     *             The name of the feature
+     * @var Point $location
+     *            The point where the feature is detected.
+     *            }
      */
     public function __construct($data = null)
     {
-        \GPBMetadata\RouteGuide::initOnce();
+        RouteGuide::initOnce();
         parent::__construct($data);
     }
 
@@ -85,7 +87,7 @@ class Feature extends \Google\Protobuf\Internal\Message
      * The point where the feature is detected.
      *
      * Generated from protobuf field <code>.routeguide.Point location = 2;</code>
-     * @return \Routeguide\Point
+     * @return Point
      */
     public function getLocation()
     {
@@ -96,12 +98,12 @@ class Feature extends \Google\Protobuf\Internal\Message
      * The point where the feature is detected.
      *
      * Generated from protobuf field <code>.routeguide.Point location = 2;</code>
-     * @param \Routeguide\Point $var
+     * @param Point $var
      * @return $this
      */
     public function setLocation($var)
     {
-        GPBUtil::checkMessage($var, \Routeguide\Point::class);
+        GPBUtil::checkMessage($var, Point::class);
         $this->location = $var;
 
         return $this;

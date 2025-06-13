@@ -9,11 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Redis\Lua;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Redis\Exception\RedisNotFoundException;
+use Hyperf\Redis\Redis;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 abstract class Script implements ScriptInterface
 {
@@ -21,22 +24,16 @@ abstract class Script implements ScriptInterface
      * PHPRedis client or proxy client.
      * @var mixed|\Redis
      */
-    protected $redis;
+    protected mixed $redis;
 
-    /**
-     * @var null|string
-     */
-    protected $sha;
+    protected ?string $sha = null;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected ?LoggerInterface $logger = null;
 
     public function __construct(ContainerInterface $container)
     {
-        if ($container->has(\Redis::class)) {
-            $this->redis = $container->get(\Redis::class);
+        if ($container->has(Redis::class)) {
+            $this->redis = $container->get(Redis::class);
         }
 
         if ($container->has(StdoutLoggerInterface::class)) {
@@ -44,7 +41,7 @@ abstract class Script implements ScriptInterface
         }
     }
 
-    public function eval(array $arguments = [], $sha = true)
+    public function eval(array $arguments = [], $sha = true): mixed
     {
         if ($this->redis === null) {
             throw new RedisNotFoundException('Redis client is not found.');

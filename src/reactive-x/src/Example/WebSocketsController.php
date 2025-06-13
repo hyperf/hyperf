@@ -9,29 +9,25 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX\Example;
 
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
+use Hyperf\Engine\WebSocket\Frame;
+use Hyperf\Engine\WebSocket\Response as WsResponse;
 use Hyperf\ReactiveX\Contract\BroadcasterInterface;
 use Hyperf\ReactiveX\IpcSubject;
 use Rx\Subject\ReplaySubject;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
-use Swoole\WebSocket\Frame;
+
+use function Hyperf\Support\make;
 
 class WebSocketsController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    /**
-     * @var IpcSubject
-     */
-    private $subject;
+    private IpcSubject $subject;
 
-    /**
-     * @var array
-     */
-    private $subscriber = [];
+    private array $subscriber = [];
 
     public function __construct(BroadcasterInterface $broadcaster)
     {
@@ -39,7 +35,7 @@ class WebSocketsController implements OnMessageInterface, OnOpenInterface, OnClo
         $this->subject = new IpcSubject($relaySubject, $broadcaster, 1);
     }
 
-    public function onMessage($server, Frame $frame): void
+    public function onMessage($server, $frame): void
     {
         $this->subject->onNext($frame->data);
     }
@@ -49,14 +45,12 @@ class WebSocketsController implements OnMessageInterface, OnOpenInterface, OnClo
         $this->subscriber[$fd]->dispose();
     }
 
-    public function onOpen($server, Request $request): void
+    public function onOpen($server, $request): void
     {
         $this->subscriber[$request->fd] = $this->subject->subscribe(function ($data) use ($server, $request) {
-            if ($server instanceof Response) {
-                $server->push($data);
-            } else {
-                $server->push($request->fd, $data);
-            }
+            (new WsResponse($server))
+                ->init($request->fd)
+                ->push(new Frame(payloadData: (string) $data));
         });
     }
 }

@@ -9,34 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Framework\Bootstrap;
 
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Framework\Event\OtherWorkerStart;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server as SwooleServer;
 
 class WorkerStartCallback
 {
-    /**
-     * @var StdoutLoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    public function __construct(StdoutLoggerInterface $logger, EventDispatcherInterface $eventDispatcher)
+    public function __construct(protected EventDispatcherInterface $dispatcher, protected StdoutLoggerInterface $logger)
     {
-        $this->logger = $logger;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -44,12 +33,12 @@ class WorkerStartCallback
      */
     public function onWorkerStart(SwooleServer $server, int $workerId)
     {
-        $this->eventDispatcher->dispatch(new BeforeWorkerStart($server, $workerId));
+        $this->dispatcher->dispatch(new BeforeWorkerStart($server, $workerId));
 
         if ($workerId === 0) {
-            $this->eventDispatcher->dispatch(new MainWorkerStart($server, $workerId));
+            $this->dispatcher->dispatch(new MainWorkerStart($server, $workerId));
         } else {
-            $this->eventDispatcher->dispatch(new OtherWorkerStart($server, $workerId));
+            $this->dispatcher->dispatch(new OtherWorkerStart($server, $workerId));
         }
 
         if ($server->taskworker) {
@@ -58,7 +47,7 @@ class WorkerStartCallback
             $this->logger->info("Worker#{$workerId} started.");
         }
 
-        $this->eventDispatcher->dispatch(new AfterWorkerStart($server, $workerId));
+        $this->dispatcher->dispatch(new AfterWorkerStart($server, $workerId));
         CoordinatorManager::until(Constants::WORKER_START)->resume();
     }
 }

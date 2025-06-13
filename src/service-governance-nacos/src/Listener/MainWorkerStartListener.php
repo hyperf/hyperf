@@ -9,38 +9,29 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ServiceGovernanceNacos\Listener;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Server\Event\MainCoroutineServerStart;
-use Hyperf\ServiceGovernance\IPReaderInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+use Throwable;
 
 class MainWorkerStartListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected IPReaderInterface $ipReader;
 
-    /**
-     * @var IPReaderInterface
-     */
-    protected $ipReader;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->ipReader = $container->get(IPReaderInterface::class);
     }
@@ -53,7 +44,7 @@ class MainWorkerStartListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $config = $this->container->get(ConfigInterface::class);
 
@@ -146,7 +137,7 @@ class MainWorkerStartListener implements ListenerInterface
                     $this->logger->info(sprintf('Nacos instance %s:%d was updated successfully!', $ip, $port));
                 }
             }
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->logger->critical((string) $exception);
         }
     }

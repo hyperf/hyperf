@@ -9,20 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
 #[Command]
 class KafkaConsumerCommand extends GeneratorCommand
 {
     public function __construct()
     {
         parent::__construct('gen:kafka-consumer');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new kafka consumer class');
+
+        parent::configure();
     }
 
     protected function getStub(): string
@@ -32,6 +36,6 @@ class KafkaConsumerCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Kafka\\Consumer';
+        return $this->getConfig()['namespace'] ?? 'App\Kafka\Consumer';
     }
 }

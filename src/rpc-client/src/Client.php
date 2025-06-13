@@ -9,23 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcClient;
 
+use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use InvalidArgumentException;
 
 class Client
 {
-    /**
-     * @var null|PackerInterface
-     */
-    private $packer;
+    private ?PackerInterface $packer = null;
 
-    /**
-     * @var null|TransporterInterface
-     */
-    private $transporter;
+    private ?TransporterInterface $transporter = null;
+
+    private ?NormalizerInterface $normalizer = null;
 
     public function send($data)
     {
@@ -56,6 +54,17 @@ class Client
     public function setPacker(PackerInterface $packer): self
     {
         $this->packer = $packer;
+        return $this;
+    }
+
+    public function getNormalizer(): ?NormalizerInterface
+    {
+        return $this->normalizer;
+    }
+
+    public function setNormalizer(?NormalizerInterface $normalizer): self
+    {
+        $this->normalizer = $normalizer;
         return $this;
     }
 

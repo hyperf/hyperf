@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -19,6 +21,7 @@ use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
+use Hyperf\JsonRpc\Exception\BadRequestException;
 use Hyperf\JsonRpc\Exception\Handler\TcpExceptionHandler;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
@@ -27,30 +30,21 @@ use Hyperf\RpcServer\Server;
 use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Server\ServerManager;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Swoole\Server\Port;
+use Swow\Psr7\Message\ResponsePlusInterface;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
+
+use function Hyperf\Support\make;
 
 class TcpServer extends Server
 {
-    /**
-     * @var \Hyperf\JsonRpc\ResponseBuilder
-     */
-    protected $responseBuilder;
+    protected ?ResponseBuilder $responseBuilder = null;
 
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
+    protected ?PackerInterface $packer = null;
 
-    /**
-     * @var ProtocolManager
-     */
-    protected $protocolManager;
+    protected ProtocolManager $protocolManager;
 
-    /**
-     * @var array
-     */
-    protected $serverConfig;
+    protected array $serverConfig = [];
 
     public function __construct(
         ContainerInterface $container,
@@ -110,13 +104,12 @@ class TcpServer extends Server
         return new CoreMiddleware($this->container, $this->protocol, $this->responseBuilder, $this->serverName);
     }
 
-    protected function buildResponse(int $fd, $server): ResponseInterface
+    protected function buildResponse(int $fd, $server): ResponsePlusInterface
     {
-        $response = new Psr7Response();
-        return $response->withAttribute('fd', $fd)->withAttribute('server', $server);
+        return (new Psr7Response())->setAttribute('fd', $fd)->setAttribute('server', $server);
     }
 
-    protected function buildRequest(int $fd, int $reactorId, string $data): ServerRequestInterface
+    protected function buildRequest(int $fd, int $reactorId, string $data): ServerRequestPlusInterface
     {
         return $this->buildJsonRpcRequest($fd, $reactorId, $this->packer->unpack($data) ?? ['jsonrpc' => '2.0']);
     }
@@ -129,20 +122,21 @@ class TcpServer extends Server
         if (! isset($data['params'])) {
             $data['params'] = [];
         }
-        /** @var \Swoole\Server\Port $port */
-        [$type, $port] = ServerManager::get($this->serverName);
+        /** @var Port $port */
+        [, $port] = ServerManager::get($this->serverName);
 
-        $uri = (new Uri())->withPath($data['method'])->withHost($port->host)->withPort($port->port);
-        $request = (new Psr7Request('POST', $uri))->withAttribute('fd', $fd)
-            ->withAttribute('fromId', $reactorId)
-            ->withAttribute('data', $data)
-            ->withAttribute('request_id', $data['id'] ?? null)
-            ->withParsedBody($data['params'] ?? '');
+        $uri = (new Uri())->setPath($data['method'])->setHost($port->host)->setPort($port->port);
+        $request = (new Psr7Request('POST', $uri))->setAttribute('fd', $fd)
+            ->setAttribute('fromId', $reactorId)
+            ->setAttribute('data', $data)
+            ->setAttribute('request_id', $data['id'] ?? null)
+            ->setParsedBody($data['params']);
 
         $this->getContext()->setData($data['context'] ?? []);
 
         if (! isset($data['jsonrpc'])) {
-            return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INVALID_REQUEST);
+            ResponseContext::set($this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INVALID_REQUEST));
+            throw new BadRequestException();
         }
         return $request;
     }

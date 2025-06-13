@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\Stubs\Model;
 
+use Carbon\Carbon;
 use Hyperf\Database\Model\Concerns\CamelCase;
 
 /**
@@ -19,8 +21,8 @@ use Hyperf\Database\Model\Concerns\CamelCase;
  * @property string $floatNum
  * @property string $str
  * @property string $json
- * @property \Carbon\Carbon $createdAt
- * @property \Carbon\Carbon $updatedAt
+ * @property Carbon $createdAt
+ * @property Carbon $updatedAt
  */
 class UserExtCamel extends Model
 {
@@ -28,24 +30,18 @@ class UserExtCamel extends Model
 
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table = 'user_ext';
+    protected ?string $table = 'user_ext';
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = ['id', 'count', 'float_num', 'str', 'json', 'created_at', 'updated_at'];
+    protected array $fillable = ['id', 'count', 'float_num', 'str', 'json', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
-    protected $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'decimal:2', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+    protected array $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'decimal:2', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
 
     public function getUpdatedAtAttribute(): string
     {

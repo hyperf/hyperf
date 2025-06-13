@@ -9,35 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Socket;
 
 use Hyperf\Protocol\ProtocolPackerInterface;
 use Hyperf\Socket\Exception\SocketException;
-use Swoole\Coroutine\Socket as CoSocket;
+use Swoole\Coroutine;
 
 class Socket implements SocketInterface
 {
-    /**
-     * @var CoSocket
-     */
-    protected $socket;
-
-    /**
-     * @var ProtocolPackerInterface
-     */
-    protected $packer;
-
-    /**
-     * SOCK_STREAM | SOCK_DGRAM.
-     * @var int
-     */
-    protected $pipeType;
-
-    public function __construct(CoSocket $socket, ProtocolPackerInterface $packer, int $pipeType = SOCK_STREAM)
+    public function __construct(protected Coroutine\Socket $socket, protected ProtocolPackerInterface $packer, protected int $pipeType = SOCK_STREAM)
     {
-        $this->socket = $socket;
-        $this->packer = $packer;
-        $this->pipeType = $pipeType;
     }
 
     public function send($data, float $timeout = -1)

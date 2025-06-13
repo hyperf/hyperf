@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nacos\Provider;
 
 use GuzzleHttp\RequestOptions;
@@ -19,7 +20,7 @@ class AuthProvider extends AbstractProvider
 {
     public function login(string $username, string $password): ResponseInterface
     {
-        return $this->client()->request('POST', '/nacos/v1/auth/users/login', [
+        return $this->client()->request('POST', 'nacos/v1/auth/users/login', [
             RequestOptions::QUERY => [
                 'username' => $username,
             ],

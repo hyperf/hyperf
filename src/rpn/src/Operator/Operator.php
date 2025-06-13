@@ -9,10 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Rpn\Operator;
 
 abstract class Operator implements OperatorInterface
 {
+    use HasBindings;
+
     public function length(): ?int
     {
         return 2;

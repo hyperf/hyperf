@@ -9,25 +9,22 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Kafka;
 
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Support\make;
 
 class ProducerManager
 {
     /**
      * @var array<string, Producer>
      */
-    private $producers = [];
+    private array $producers = [];
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function getProducer(string $name = 'default'): Producer

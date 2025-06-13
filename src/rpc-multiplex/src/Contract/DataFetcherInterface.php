@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex\Contract;
 
 use Hyperf\RpcClient\Exception\RequestException;
@@ -17,7 +18,6 @@ interface DataFetcherInterface
 {
     /**
      * @throws RequestException
-     * @return mixed
      */
-    public function fetch(array $data);
+    public function fetch(array $data): mixed;
 }

@@ -9,14 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ModelCache\Stub;
 
+use Hyperf\Codec\Packer\PhpSerializerPacker;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Events\TransactionCommitted;
 use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Database\Model\Events\Saved;
@@ -41,16 +46,13 @@ use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Packer\PhpSerializerPacker;
-use Hyperf\Utils\Waiter;
 use Mockery;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LogLevel;
 
 class ContainerStub
 {
-    public static function mockContainer($ttl = 86400)
+    public static function mockContainer($ttl = 86400, ?callable $listenQueryExecuted = null)
     {
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(TableCollector::class)->andReturn(new TableCollector());
@@ -133,11 +135,16 @@ class ContainerStub
         $provider->on(TransactionCommitted::class, [new DeleteCacheInTransactionListener(), 'process']);
         $provider->on(Saved::class, [$listener, 'process']);
         $provider->on(Deleted::class, [$listener, 'process']);
+        if ($listenQueryExecuted) {
+            $provider->on(QueryExecuted::class, $listenQueryExecuted);
+        }
         $eventDispatcher = new EventDispatcher($provider, $logger);
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($eventDispatcher);
 
         $container->shouldReceive('get')->with('db.connector.mysql')->andReturn(new MySqlConnector());
         $container->shouldReceive('has')->andReturn(true);
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnTrue();
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn(new Frequency());
         $container->shouldReceive('make')->with(DbPool::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
             return new DbPool($container, $args['name']);

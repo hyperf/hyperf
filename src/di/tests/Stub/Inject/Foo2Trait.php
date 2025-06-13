@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\Stub\Inject;
 
 use Hyperf\Di\Annotation\Inject;
@@ -16,8 +17,8 @@ use Hyperf\Di\Annotation\Inject;
 trait Foo2Trait
 {
     /**
-     * @Inject
      * @var Tar
      */
+    #[Inject]
     protected $foo;
 }

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Filesystem;
 
 use League\Flysystem\Filesystem;
@@ -22,13 +23,6 @@ class ConfigProvider
                 Filesystem::class => FilesystemInvoker::class,
             ],
             'commands' => [
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
             ],
             'publish' => [
                 [

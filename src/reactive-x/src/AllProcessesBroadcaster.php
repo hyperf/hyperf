@@ -9,31 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ReactiveX;
 
 use Hyperf\ReactiveX\Contract\BroadcasterInterface;
 
 class AllProcessesBroadcaster implements BroadcasterInterface
 {
-    /**
-     * @var ServerBroadcaster
-     */
-    protected $serverBroadcaster;
-
-    /**
-     * @var UserProcessesBroadcaster
-     */
-    protected $userProcessesBroadcaster;
-
     public function __construct(
-        ServerBroadcaster $serverBroadcaster,
-        UserProcessesBroadcaster $userProcessesBroadcaster
+        protected ServerBroadcaster $serverBroadcaster,
+        protected UserProcessesBroadcaster $userProcessesBroadcaster
     ) {
-        $this->serverBroadcaster = $serverBroadcaster;
-        $this->userProcessesBroadcaster = $userProcessesBroadcaster;
     }
 
-    public function broadcast(IpcMessageWrapper $message)
+    public function broadcast(IpcMessageWrapper $message): void
     {
         $this->serverBroadcaster->broadcast($message);
         $this->userProcessesBroadcaster->broadcast($message);

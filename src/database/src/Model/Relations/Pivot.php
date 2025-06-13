@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Database\Model\Model;
@@ -20,8 +21,6 @@ class Pivot extends Model
 
     /**
      * The attributes that aren't mass assignable.
-     *
-     * @var array
      */
-    protected $guarded = [];
+    protected array $guarded = [];
 }

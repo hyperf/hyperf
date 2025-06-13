@@ -9,13 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Resource\Stubs\Resources;
 
 use Hyperf\Resource\Json\ResourceCollection;
 
 class PostCollectionResource extends ResourceCollection
 {
-    public $collects = PostResource::class;
+    public ?string $collects = PostResource::class;
 
     public function toArray(): array
     {

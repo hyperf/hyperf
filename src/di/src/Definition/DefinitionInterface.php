@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Definition;
 
-interface DefinitionInterface
+use Stringable;
+
+interface DefinitionInterface extends Stringable
 {
     /**
      * Definitions can be cast to string for debugging information.

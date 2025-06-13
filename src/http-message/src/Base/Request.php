@@ -9,39 +9,30 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpMessage\Base;
 
+use Hyperf\Engine\Http\Http;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
+use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use Stringable;
+use Swow\Psr7\Message\RequestPlusInterface;
 
-class Request implements RequestInterface
+class Request implements RequestInterface, RequestPlusInterface, Stringable
 {
     use MessageTrait;
 
-    /**
-     * @var array
-     */
-    protected $server = [];
+    protected array $server = [];
 
-    /**
-     * @var UriInterface
-     */
-    protected $uri;
+    protected UriInterface $uri;
 
-    /**
-     * Http Method.
-     *
-     * @var string
-     */
-    protected $method;
+    protected string $method;
 
-    /**
-     * @var string
-     */
-    protected $requestTarget;
+    protected ?string $requestTarget = null;
 
     /**
      * @param string $method HTTP method
@@ -52,9 +43,9 @@ class Request implements RequestInterface
      */
     public function __construct(
         string $method,
-        $uri,
+        string|UriInterface $uri,
         array $headers = [],
-        $body = null,
+        mixed $body = null,
         string $version = '1.1'
     ) {
         if (! $uri instanceof UriInterface) {
@@ -75,6 +66,11 @@ class Request implements RequestInterface
         }
     }
 
+    public function __toString(): string
+    {
+        return $this->toString();
+    }
+
     /**
      * Retrieves the message's request target.
      * Retrieves the message's request-target either as it will appear (for
@@ -85,10 +81,8 @@ class Request implements RequestInterface
      * withRequestTarget() below).
      * If no URI is available, and no request-target has been specifically
      * provided, this method MUST return the string "/".
-     *
-     * @return string
      */
-    public function getRequestTarget()
+    public function getRequestTarget(): string
     {
         if ($this->requestTarget !== null) {
             return $this->requestTarget;
@@ -117,13 +111,12 @@ class Request implements RequestInterface
      *
      * @see http://tools.ietf.org/html/rfc7230#section-5.3 (for the various
      *     request-target forms allowed in request messages)
-     * @param mixed $requestTarget
-     * @return static
+     * @param string $requestTarget
      */
-    public function withRequestTarget($requestTarget)
+    public function withRequestTarget(mixed $requestTarget): static
     {
         if (preg_match('#\s#', $requestTarget)) {
-            throw new \InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
+            throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
         }
 
         $new = clone $this;
@@ -136,7 +129,7 @@ class Request implements RequestInterface
      *
      * @return string returns the request method
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
@@ -151,15 +144,14 @@ class Request implements RequestInterface
      * changed request method.
      *
      * @param string $method case-sensitive method
-     * @throws \InvalidArgumentException for invalid HTTP methods
-     * @return static
+     * @throws InvalidArgumentException for invalid HTTP methods
      */
-    public function withMethod($method)
+    public function withMethod(mixed $method): static
     {
         $method = strtoupper($method);
         $methods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'HEAD'];
         if (! in_array($method, $methods)) {
-            throw new \InvalidArgumentException('Invalid Method');
+            throw new InvalidArgumentException('Invalid Method');
         }
         $new = clone $this;
         $new->method = $method;
@@ -185,7 +177,7 @@ class Request implements RequestInterface
      * default if the URI contains a host component. If the URI does not
      * contain a host component, any pre-existing Host header MUST be carried
      * over to the returned request.
-     * You can opt-in to preserving the original state of the Host header by
+     * You can opt in to preserving the original state of the Host header by
      * setting `$preserveHost` to `true`. When `$preserveHost` is set to
      * `true`, this method interacts with the Host header in the following ways:
      * - If the Host header is missing or empty, and the new URI contains
@@ -203,9 +195,8 @@ class Request implements RequestInterface
      * @see http://tools.ietf.org/html/rfc3986#section-4.3
      * @param UriInterface $uri new request URI to use
      * @param bool $preserveHost preserve the original state of the Host header
-     * @return static
      */
-    public function withUri(UriInterface $uri, $preserveHost = false): self
+    public function withUri(UriInterface $uri, $preserveHost = false): static
     {
         if ($uri === $this->uri) {
             return $this;
@@ -221,12 +212,55 @@ class Request implements RequestInterface
         return $new;
     }
 
+    public function setMethod(string $method): static
+    {
+        $method = strtoupper($method);
+        $methods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'HEAD'];
+        if (! in_array($method, $methods)) {
+            throw new InvalidArgumentException('Invalid Method');
+        }
+        $this->method = $method;
+        return $this;
+    }
+
+    public function setUri(string|UriInterface $uri, ?bool $preserveHost = null): static
+    {
+        $this->uri = $uri;
+
+        if (! $preserveHost) {
+            $this->updateHostFromUri();
+        }
+
+        return $this;
+    }
+
+    public function setRequestTarget(string $requestTarget): static
+    {
+        if (preg_match('#\s#', $requestTarget)) {
+            throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
+        }
+
+        $this->requestTarget = $requestTarget;
+        return $this;
+    }
+
+    public function toString(bool $withoutBody = false): string
+    {
+        return Http::packRequest(
+            $this->getMethod(),
+            $this->getUri()->getPath(),
+            $this->getStandardHeaders(),
+            $withoutBody ? '' : (string) $this->getBody(),
+            $this->getProtocolVersion()
+        );
+    }
+
     /**
      * Update Host Header according to Uri.
      *
      * @see http://tools.ietf.org/html/rfc7230#section-5.4
      */
-    private function updateHostFromUri()
+    private function updateHostFromUri(): void
     {
         $host = $this->uri->getHost();
 

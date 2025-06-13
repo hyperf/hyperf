@@ -9,31 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Synchronized;
-use Hyperf\Utils\Contracts\Arrayable;
 
 abstract class CastsValue implements Synchronized, Arrayable
 {
-    /**
-     * @var Model
-     */
-    protected $model;
+    protected array $items = [];
 
-    /**
-     * @var array
-     */
-    protected $items = [];
+    protected bool $isSynchronized = false;
 
-    /**
-     * @var bool
-     */
-    protected $isSynchronized = false;
-
-    public function __construct(Model $model, $items = [])
+    public function __construct(protected Model $model, array $items = [])
     {
-        $this->model = $model;
         $this->items = array_merge($this->items, $items);
     }
 

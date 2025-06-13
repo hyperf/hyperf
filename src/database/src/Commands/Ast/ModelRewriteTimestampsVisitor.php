@@ -9,26 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Model;
-use Hyperf\Utils\Collection;
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
 use PhpParser\NodeTraverser;
+use ReflectionClass;
 
 class ModelRewriteTimestampsVisitor extends AbstractVisitor
 {
-    /**
-     * @var Model
-     */
-    protected $class;
+    protected Model $class;
 
-    /**
-     * @var bool
-     */
-    protected $hasTimestamps = false;
+    protected bool $hasTimestamps = false;
 
     public function __construct(ModelOption $option, ModelData $data)
     {
@@ -50,6 +47,8 @@ class ModelRewriteTimestampsVisitor extends AbstractVisitor
                 }
                 return $node;
         }
+
+        return null;
     }
 
     public function afterTraverse(array $nodes)
@@ -78,6 +77,8 @@ class ModelRewriteTimestampsVisitor extends AbstractVisitor
                 }
             }
         }
+
+        return null;
     }
 
     protected function rewriteTimestamps(?Node\Stmt\Property $node = null): ?Node\Stmt\Property
@@ -93,6 +94,7 @@ class ModelRewriteTimestampsVisitor extends AbstractVisitor
         } else {
             $prop = new Node\Stmt\PropertyProperty('timestamps', $expr);
             $node = new Node\Stmt\Property(Node\Stmt\Class_::MODIFIER_PUBLIC, [$prop]);
+            $node->type = new Identifier('bool');
         }
 
         return $node;
@@ -110,7 +112,7 @@ class ModelRewriteTimestampsVisitor extends AbstractVisitor
     protected function shouldRemovedTimestamps(): bool
     {
         $useTimestamps = $this->usesTimestamps();
-        $ref = new \ReflectionClass(get_class($this->class));
+        $ref = new ReflectionClass(get_class($this->class));
 
         if (! $ref->getParentClass()) {
             return false;

@@ -6,25 +6,22 @@ Hyperf 对系统环境有一些要求，当您使用 Swoole 网络引擎驱动�
 
 [hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker) 项目内已经为您准备好了各种版本的 Dockerfile ，或直接基于已经构建好的 [hyperf/hyperf](https://hub.docker.com/r/hyperf/hyperf) 镜像来运行。   
 
-当您不想采用 Docker 来作为运行的环境基础时，您需要确保您的运行环境达到了以下的要求：   
+当您不想采用 Docker 来作为运行的环境基础时，也可以考虑使用 [Box](zh-cn/eco/box.md) 来作为运行的基础环境，如果您希望自行完成环境搭建，则您需要确保您的运行环境达到了以下的要求：   
 
- - PHP >= 7.4
+ - PHP >= 8.1
  - 以下任一网络引擎
-   - Swoole PHP 扩展 >= 4.5，并关闭了 `Short Name`
-   - Swow PHP 扩展 (Beta)
+   - [Swoole PHP 扩展](https://github.com/swoole/swoole-src) >= 5.0，并关闭了 `Short Name`
+   - [Swow PHP 扩展](https://github.com/swow/swow) >= 1.4
  - JSON PHP 扩展
- - Pcntl PHP 扩展
+ - Pcntl PHP 扩展（仅在 Swoole 引擎时）
  - OpenSSL PHP 扩展（如需要使用到 HTTPS）
  - PDO PHP 扩展 （如需要使用到 MySQL 客户端）
  - Redis PHP 扩展 （如需要使用到 Redis 客户端）
  - Protobuf PHP 扩展 （如需要使用到 gRPC 服务端或客户端）
 
-
 ## 安装 Hyperf
 
 Hyperf 使用 [Composer](https://getcomposer.org) 来管理项目的依赖，在使用 Hyperf 之前，请确保你的运行环境已经安装好了 Composer。
-
-> 安装过程中，对于自己不清楚的选项，请直接使用回车处理，避免因自动添加了部分监听器，但又没有正确配置时，导致服务无法启动的问题。
 
 ### 通过 `Composer` 创建项目
 
@@ -40,11 +37,13 @@ composer create-project hyperf/hyperf-skeleton
 composer create-project hyperf/swow-skeleton 
 ```
 
+> 安装过程中，对于自己不清楚的选项，请直接使用回车处理，避免因自动添加了部分监听器，但又没有正确配置时，导致服务无法启动的问题。
+
 ### Docker 下开发
 
 假设您的本机环境并不能达到 Hyperf 的环境要求，或对于环境配置不是那么熟悉，那么您可以通过以下方法来运行及开发 Hyperf 项目：
 
-- 启动镜像
+- 启动容器
 
 可以根据实际情况，映射到宿主机对应的目录，以下以 `/workspace/skeleton` 为例
 
@@ -53,24 +52,16 @@ composer create-project hyperf/swow-skeleton
 ```shell
 docker run --name hyperf \
 -v /workspace/skeleton:/data/project \
+-w /data/project \
 -p 9501:9501 -it \
 --privileged -u root \
 --entrypoint /bin/sh \
-hyperf/hyperf:7.4-alpine-v3.11-swoole
-```
-
-- 将 Composer 镜像设置为阿里云镜像，加速国内下载速度
-
-> 视情况而定
-
-```shell
-composer config -g repo.packagist composer https://mirrors.aliyun.com/composer
+hyperf/hyperf:8.1-alpine-v3.18-swoole
 ```
 
 - 创建项目
 
 ```shell
-cd /data/project
 composer create-project hyperf/hyperf-skeleton
 ```
 
@@ -90,7 +81,7 @@ php bin/hyperf.php start
 以下扩展（包括但不限于）都会造成一定的兼容性问题，不能与之共用或共存：
 
 - xhprof
-- xdebug
+- xdebug (当 PHP 版本 >= 8.1 且 Swoole 版本大于等于 5.0.2 时可用)
 - blackfire
 - trace
 - uopz

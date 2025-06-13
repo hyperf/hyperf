@@ -9,27 +9,32 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\Definition;
 
 use Hyperf\Di\Definition\DefinitionSource;
 use HyperfTest\Di\Stub\Bar;
+use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class DefinitionSourceTest extends TestCase
 {
     protected function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
     }
 
     public function testGetDefinition()
     {
         $source = new DefinitionSource([]);
-        $source->getDefinition(Bar::class);
+        $bar = $source->getDefinition(Bar::class);
         $this->assertSame(1, count($source->getDefinitions()));
+        $this->assertSame($bar, $source->getDefinition(Bar::class));
     }
 }

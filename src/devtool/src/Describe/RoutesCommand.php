@@ -9,38 +9,29 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool\Describe;
 
+use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
 use Hyperf\HttpServer\Router\RouteCollector;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[Command]
 class RoutesCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ContainerInterface $container, ConfigInterface $config)
+    public function __construct(private ContainerInterface $container, private ConfigInterface $config)
     {
         parent::__construct('describe:routes');
-        $this->container = $container;
-        $this->config = $config;
     }
 
     public function handle()
@@ -94,10 +85,8 @@ class RoutesCommand extends HyperfCommand
             $action = $handler->callback[0] . '::' . $handler->callback[1];
         } elseif (is_string($handler->callback)) {
             $action = $handler->callback;
-        } elseif (is_callable($handler->callback)) {
-            $action = 'Closure';
         } else {
-            $action = (string) $handler->callback;
+            $action = 'Closure';
         }
         $unique = "{$serverName}|{$uri}|{$action}";
         if (isset($data[$unique])) {
@@ -108,12 +97,14 @@ class RoutesCommand extends HyperfCommand
             $middlewares = $this->config->get('middlewares.' . $serverName, []);
 
             $middlewares = array_merge($middlewares, $registeredMiddlewares);
+            $middlewares = MiddlewareManager::sortMiddlewares($middlewares);
+
             $data[$unique] = [
                 'server' => $serverName,
                 'method' => [$method],
                 'uri' => $uri,
                 'action' => $action,
-                'middleware' => implode(PHP_EOL, array_unique($middlewares)),
+                'middleware' => implode(PHP_EOL, $middlewares),
             ];
         }
     }

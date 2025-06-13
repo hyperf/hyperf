@@ -9,18 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Attribute;
 
-/**
- * @Annotation
- * @Target({"PROPERTY"})
- */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Inject extends AbstractAnnotation
 {
-    public function __construct($value, $required, $lazy)
+    public function __construct(?string $value = null, bool $required = true, bool $lazy = false)
     {
     }
 }

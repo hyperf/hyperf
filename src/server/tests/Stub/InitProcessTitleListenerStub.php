@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Server\Stub;
 
+use Hyperf\Context\Context;
 use Hyperf\Server\Listener\InitProcessTitleListener;
-use Hyperf\Utils\Context;
 
 class InitProcessTitleListenerStub extends InitProcessTitleListener
 {

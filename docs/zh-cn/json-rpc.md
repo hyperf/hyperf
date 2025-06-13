@@ -29,7 +29,7 @@ composer require hyperf/rpc-client
 ### 定义服务提供者
 
 目前仅支持通过注解的形式来定义 `服务提供者(ServiceProvider)`，后续迭代会增加配置的形式。   
-我们可以直接通过 `@RpcService` 注解对一个类进行定义即可发布这个服务了：
+我们可以直接通过 `#[RpcService]` 注解对一个类进行定义即可发布这个服务了：
 
 ```php
 <?php
@@ -40,8 +40,8 @@ use Hyperf\RpcServer\Annotation\RpcService;
 
 /**
  * 注意，如希望通过服务中心来管理服务，需在注解内增加 publishTo 属性
- * @RpcService(name="CalculatorService", protocol="jsonrpc-http", server="jsonrpc-http")
  */
+#[RpcService(name: "CalculatorService", protocol: "jsonrpc-http", server: "jsonrpc-http")]
 class CalculatorService implements CalculatorServiceInterface
 {
     // 实现一个加法方法，这里简单的认为参数都是 int 类型
@@ -53,13 +53,13 @@ class CalculatorService implements CalculatorServiceInterface
 }
 ```
 
-`@RpcService` 共有 `4` 个参数：   
+`#[RpcService]` 共有 `4` 个参数：   
 `name` 属性为定义该服务的名称，这里定义一个全局唯一的名字即可，Hyperf 会根据该属性生成对应的 ID 注册到服务中心去；   
 `protocol` 属性为定义该服务暴露的协议，目前仅支持 `jsonrpc-http`, `jsonrpc`, `jsonrpc-tcp-length-check` ，分别对应于 HTTP 协议和 TCP 协议下的两种协议，默认值为 `jsonrpc-http`，这里的值对应在 `Hyperf\Rpc\ProtocolManager` 里面注册的协议的 `key`，它们本质上都是 JSON RPC 协议，区别在于数据格式化、数据打包、数据传输器等不同。   
 `server` 属性为绑定该服务类发布所要承载的 `Server`，默认值为 `jsonrpc-http`，该属性对应 `config/autoload/server.php` 文件内 `servers` 下所对应的 `name`，这里也就意味着我们需要定义一个对应的 `Server`；   
 `publishTo` 属性为定义该服务所要发布的服务中心，目前仅支持 `consul`、`nacos` 或为空，为空时代表不发布该服务到服务中心去，但也就意味着您需要手动处理服务发现的问题，要使用此功能需安装 [hyperf/service-governance](https://github.com/hyperf/service-governance) 组件及对应的驱动依赖，具体可参考 [服务注册](zh-cn/service-register.md) 章节；
 
-> 使用 `@RpcService` 注解需 `use Hyperf\RpcServer\Annotation\RpcService;` 命名空间。
+> 使用 `#[RpcService]` 注解需 `use Hyperf\RpcServer\Annotation\RpcService;` 命名空间。
 
 #### 定义 JSON RPC Server
 
@@ -192,7 +192,7 @@ return [
 ];
 ```
 
-配置完成后，在启动服务时，Hyperf 会自动地将 `@RpcService` 定义了 `publishTo` 属性为 `consul` 或 `nacos` 的服务注册到对应的服务中心去。
+配置完成后，在启动服务时，Hyperf 会自动地将 `#[RpcService]` 定义了 `publishTo` 属性为 `consul` 或 `nacos` 的服务注册到对应的服务中心去。
 
 > 目前仅支持 `jsonrpc` 和 `jsonrpc-http` 协议发布到服务中心去，其它协议尚未实现服务注册
 
@@ -247,6 +247,8 @@ return [
                 'retry_count' => 2,
                 // 重试间隔，毫秒
                 'retry_interval' => 100,
+                // 使用多路复用 RPC 时的心跳间隔，null 为不触发心跳
+                'heartbeat' => 30,
                 // 当使用 JsonRpcPoolTransporter 时会用到以下配置
                 'pool' => [
                     'min_connections' => 1,
@@ -281,15 +283,13 @@ class CalculatorServiceConsumer extends AbstractServiceClient implements Calcula
 {
     /**
      * 定义对应服务提供者的服务名称
-     * @var string 
      */
-    protected $serviceName = 'CalculatorService';
+    protected string $serviceName = 'CalculatorService';
     
     /**
      * 定义对应服务提供者的服务协议
-     * @var string 
      */
-    protected $protocol = 'jsonrpc-http';
+    protected string $protocol = 'jsonrpc-http';
 
     public function add(int $a, int $b): int
     {
@@ -394,8 +394,8 @@ return [
 当框架导入 `symfony/serializer (^5.0)` 和 `symfony/property-access (^5.0)` 后，并在 `dependencies.php` 中配置一下映射关系
 
 ```php
-use Hyperf\Utils\Serializer\SerializerFactory;
-use Hyperf\Utils\Serializer\Serializer;
+use Hyperf\Serializer\SerializerFactory;
+use Hyperf\Serializer\Serializer;
 
 return [
     Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
@@ -444,7 +444,7 @@ interface CalculatorServiceInterface
 ```php
 <?php
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use App\JsonRpc\CalculatorServiceInterface;
 use App\JsonRpc\MathValue;
 

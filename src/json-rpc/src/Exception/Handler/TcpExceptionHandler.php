@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc\Exception\Handler;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -19,20 +20,8 @@ use Throwable;
 
 class TcpExceptionHandler extends ExceptionHandler
 {
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var FormatterInterface
-     */
-    protected $formatter;
-
-    public function __construct(StdoutLoggerInterface $logger, FormatterInterface $formatter)
+    public function __construct(protected StdoutLoggerInterface $logger, protected FormatterInterface $formatter)
     {
-        $this->logger = $logger;
-        $this->formatter = $formatter;
     }
 
     public function handle(Throwable $throwable, ResponseInterface $response)

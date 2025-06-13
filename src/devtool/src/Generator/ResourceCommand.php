@@ -9,15 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Symfony\Component\Console\Input\InputOption;
 
-/**
- * @Command
- */
 #[Command]
 class ResourceCommand extends GeneratorCommand
 {
@@ -45,7 +43,7 @@ class ResourceCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Resource';
+        return $this->getConfig()['namespace'] ?? 'App\Resource';
     }
 
     protected function isCollection(): bool

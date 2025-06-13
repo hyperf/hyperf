@@ -9,60 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Schema;
 
 class Column
 {
-    /**
-     * @var string
-     */
-    protected $schema;
-
-    /**
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var int
-     */
-    protected $position;
-
-    /**
-     * @var mixed
-     */
-    protected $default;
-
-    /**
-     * @var bool
-     */
-    protected $isNullable;
-
-    /**
-     * @var string
-     */
-    protected $type;
-
-    /**
-     * @var string
-     */
-    protected $comment;
-
-    public function __construct(string $schema, string $table, string $name, int $position, $default, bool $isNullable, string $type, string $comment)
-    {
-        $this->schema = $schema;
-        $this->table = $table;
-        $this->name = $name;
-        $this->position = $position;
-        $this->default = $default;
-        $this->isNullable = $isNullable;
-        $this->type = $type;
-        $this->comment = $comment;
+    public function __construct(
+        protected string $schema,
+        protected string $table,
+        protected string $name,
+        protected int $position,
+        protected mixed $default,
+        protected bool $isNullable,
+        protected string $type,
+        protected string $comment
+    ) {
     }
 
     public function getSchema(): string
@@ -85,7 +46,7 @@ class Column
         return $this->position;
     }
 
-    public function getDefault()
+    public function getDefault(): mixed
     {
         return $this->default;
     }

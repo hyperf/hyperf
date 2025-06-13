@@ -13,7 +13,7 @@ Hyperf 為您提供了分佈式系統的外部化配置支持，默認適配了:
 隨着業務的發展，微服務架構的升級，服務的數量、應用的配置日益增多（各種微服務、各種服務器地址、各種參數），傳統的配置文件方式和數據庫的方式已經可能無法滿足開發人員對配置管理的要求，同時對於配置的管理可能還會牽涉到 ACL 權限管理、配置版本管理和回滾、格式驗證、配置灰度發佈、集羣配置隔離等問題，以及：
 
 - 安全性：配置跟隨源代碼保存在版本管理系統中，容易造成配置泄漏
-- 時效性：修改配置，需要每台服務器每個應用修改並重啟服務
+- 時效性：修改配置，需要每台服務器每個應用修改並重啓服務
 - 侷限性：無法支持動態調整，例如日誌開關、功能開關等   
 
 因此，我們可以通過一個配置中心以一種科學的管理方式來統一管理相關的配置。
@@ -50,6 +50,72 @@ composer require hyperf/config-etcd
 composer require hyperf/config-nacos
 ```
 
+#### gRPC 雙向流
+
+Nacos 傳統的配置中心，是基於短輪詢進行配置同步的，就會導致輪詢間隔內，服務無法拿到最新的配置。`Nacos V2` 版本增加了 gRPC 雙向流的支持，如果你想讓 Nacos 在發現配置變更後，及時推送給相關服務。
+
+可以按照以下步驟，開啓 gRPC 雙向流功能。
+
+- 首先，我們安裝必要的組件
+
+```shell
+composer require "hyperf/http2-client:3.1.*"
+composer require "hyperf/grpc:3.1.*"
+```
+
+- 修改配置項
+
+修改 `config_center.drivers.nacos.client.grpc.enable` 為 `true`，具體如下
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\ConfigApollo\PullMode;
+use Hyperf\ConfigCenter\Mode;
+
+return [
+    'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
+    'driver' => env('CONFIG_CENTER_DRIVER', 'nacos'),
+    'mode' => env('CONFIG_CENTER_MODE', Mode::PROCESS),
+    'drivers' => [
+        'nacos' => [
+            'driver' => Hyperf\ConfigNacos\NacosDriver::class,
+            'merge_mode' => Hyperf\ConfigNacos\Constants::CONFIG_MERGE_OVERWRITE,
+            'interval' => 3,
+            'default_key' => 'nacos_config',
+            'listener_config' => [
+                'nacos_config' => [
+                    'tenant' => 'tenant', // corresponding with service.namespaceId
+                    'data_id' => 'hyperf-service-config',
+                    'group' => 'DEFAULT_GROUP',
+                ],
+            ],
+            'client' => [
+                // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
+                // 'uri' => '',
+                'host' => '127.0.0.1',
+                'port' => 8848,
+                'username' => null,
+                'password' => null,
+                'guzzle' => [
+                    'config' => null,
+                ],
+                // Only support for nacos v2.
+                'grpc' => [
+                    'enable' => true,
+                    'heartbeat' => 10,
+                ],
+            ],
+        ],
+    ],
+];
+
+```
+
+- 接下里啓動服務即可
+
 ### 使用 Zookeeper 需安裝
 
 ```bash
@@ -68,7 +134,7 @@ declare(strict_types=1);
 use Hyperf\ConfigCenter\Mode;
 
 return [
-    // 是否開啟配置中心
+    // 是否開啓配置中心
     'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
     // 使用的驅動類型，對應同級別配置 drivers 下的 key
     'driver' => env('CONFIG_CENTER_DRIVER', 'apollo'),
@@ -92,7 +158,7 @@ return [
             // 嚴格模式，當為 false 時，拉取的配置值均為 string 類型，當為 true 時，拉取的配置值會轉化為原配置值的數據類型
             'strict_mode' => false,
             // 客户端IP
-            'client_ip' => \Hyperf\Utils\Network::ip(),
+            'client_ip' => \Hyperf\Support\Network::ip(),
             // 拉取配置超時時間
             'pullTimeout' => 10,
             // 拉取配置間隔
@@ -151,7 +217,7 @@ return [
         ],
         'etcd' => [
             'driver' => Hyperf\ConfigEtcd\EtcdDriver::class,
-            'packer' => Hyperf\Utils\Packer\JsonPacker::class,
+            'packer' => Hyperf\Codec\Packer\JsonPacker::class,
             // 需要同步的數據前綴
             'namespaces' => [
                 '/application',
@@ -184,12 +250,39 @@ return [
 
 如配置文件不存在可執行 `php bin/hyperf.php vendor:publish hyperf/config-center` 命令來生成。
 
-
 ## 配置更新的作用範圍
 
 在默認的功能實現下，是由一個 `ConfigFetcherProcess` 進程根據配置的 `interval` 來向 配置中心 Server 拉取對應 `namespace` 的配置，並通過 IPC 通訊將拉取到的新配置傳遞到各個 Worker 中，並更新到 `Hyperf\Contract\ConfigInterface` 對應的對象內。   
-需要注意的是，更新的配置只會更新 `Config` 對象，故僅限應用層或業務層的配置，不涉及框架層的配置改動，因為框架層的配置改動需要重啟服務，如果您有這樣的需求，也可以通過自行實現 `ConfigFetcherProcess` 來達到目的。
+需要注意的是，更新的配置只會更新 `Config` 對象，故僅限應用層或業務層的配置，不涉及框架層的配置改動，因為框架層的配置改動需要重啓服務，如果您有這樣的需求，也可以通過自行實現 `ConfigFetcherProcess` 來達到目的。
 
-## 注意事項
+## 配置更新事件
 
-在命令行模式時，默認不會觸發事件分發，導致無法正常獲取到相關配置，可通過添加 `--enable-event-dispatcher` 參數來開啟。
+配置中心運行期間，但配置發生變化會對應觸發 `Hyperf\ConfigCenter\Event\ConfigChanged` 事件，您可以進行對這些事件進行監聽以滿足您的需求。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\ConfigCenter\Event\ConfigChanged;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+
+#[Listener]
+class DbQueryExecutedListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            ConfigChanged::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        var_dump($event);
+    }
+}
+```

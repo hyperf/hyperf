@@ -68,8 +68,8 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\ReactiveX\Observable;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Collection\Arr;
+use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 
 class SqlListener implements ListenerInterface
@@ -92,19 +92,13 @@ class SqlListener implements ListenerInterface
     {
         Observable::fromEvent(QueryExecuted::class)
             ->filter(
-                function ($event) {
-                    return $event->time > 100;
-                }
+                fn ($event) => $event->time > 100
             )
             ->groupBy(
-                function ($event) {
-                    return $event->connectionName;
-                }
+                fn ($event) => $event->connectionName
             )
             ->flatMap(
-                function ($group) {
-                    return $group->throttle(1000);
-                }
+                fn ($group) => $group->throttle(1000)
             )
             ->map(
                 function ($event) {
@@ -117,9 +111,7 @@ class SqlListener implements ListenerInterface
                     return [$event->connectionName, $event->time, $sql];
                 }
             )->subscribe(
-                function ($message) {
-                    $this->logger->info(sprintf('slow log: [%s] [%s] %s', ...$message));
-                }
+                fn ($message) => $this->logger->info(sprintf('slow log: [%s] [%s] %s', ...$message))
             );
     }
 }
@@ -282,10 +274,7 @@ use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    /**
-     * @var IpcSubject
-     */
-    private $subject;
+    private IpcSubject $subject;
 
     private $subscriber = [];
 

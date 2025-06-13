@@ -9,24 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Compiler\Concern;
 
 trait CompilesJson
 {
     /**
      * The default JSON encoding options.
-     *
-     * @var int
      */
-    private $encodingOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
+    private int $encodingOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
 
     /**
      * Compile the JSON statement into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileJson($expression)
+    protected function compileJson(string $expression): string
     {
         $parts = explode(',', $this->stripParentheses($expression));
 

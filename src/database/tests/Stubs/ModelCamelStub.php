@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\Stubs;
 
 class ModelCamelStub extends ModelStub
 {
-    public static $snakeAttributes = false;
+    public static bool $snakeAttributes = false;
 }

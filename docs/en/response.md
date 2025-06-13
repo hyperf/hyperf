@@ -6,7 +6,7 @@ In Hyperf, you could get the response proxy object by injected `Hyperf\HttpServe
 
 ## Return JSON
 
-You could return a `Json` format content quickly by method `json($data)` of `Hyperf\HttpServer\Contract\ResponseInterface`, and also the `Content-Type` of response object will be set to `application/json`, `$data` accept an array or an object that implemented `Hyperf\Utils\Contracts\Arrayable` interface.
+You could return a `Json` format content quickly by method `json($data)` of `Hyperf\HttpServer\Contract\ResponseInterface`, and also the `Content-Type` of response object will be set to `application/json`, `$data` accept an array or an object that implemented `Hyperf\Contract\Arrayable` interface.
 
 ```php
 <?php
@@ -29,7 +29,7 @@ class IndexController
 
 ## Return XML
 
-You could return a `XML` format content quickly by method `xml($data)` of `Hyperf\HttpServer\Contract\ResponseInterface`, and also the `Content-Type` of response object will be set to `application/xml`, `$data` accept an array or an object that implemented `Hyperf\Utils\Contracts\Xmlable` interface.
+You could return a `XML` format content quickly by method `xml($data)` of `Hyperf\HttpServer\Contract\ResponseInterface`, and also the `Content-Type` of response object will be set to `application/xml`, `$data` accept an array or an object that implemented `Hyperf\Contract\Xmlable` interface.
 
 ```php
 <?php
@@ -78,7 +78,7 @@ Please refer to [View](zh-cn/view.md).
 
 `Hyperf\HttpServer\Contract\ResponseInterface` provides `redirect(string $toUrl, int $status = 302, string $schema = 'http')` method to return an `Psr7ResponseInterface` object which has already setup redirection status.
 
-`redirect`：   
+`redirect`:   
 
 |  Arguments  |  Type  | Default Value |                                                      Comment                                                      |
 |:------:|:------:|:------:|:--------------------------------------------------------------------------------------------------------------:|
@@ -132,7 +132,7 @@ class IndexController
 `Hyperf\HttpServer\Contract\ResponseInterface` provides `download(string $file, string $name = '')` method to return an `Psr7ResponseInterface` object which already setup the file download status.   
 If the request contains `if-match` or `if-none-match` header, Hyperf will also compare it with the `ETag` according to the protocol standard, and if they match, it will return a response with a `304` status code.
 
-`download`：   
+`download`:   
 
 | Arguments |  Type  | Default Value |                                Comment                                 |
 |:----:|:------:|:------:|:-------------------------------------------------------------------:|

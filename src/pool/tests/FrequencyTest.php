@@ -9,20 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Pool;
 
+use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\Pool;
-use Hyperf\Utils\Coroutine;
 use HyperfTest\Pool\Stub\ConstantFrequencyStub;
 use HyperfTest\Pool\Stub\FrequencyStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FrequencyTest extends TestCase
 {
     protected function tearDown(): void
@@ -56,11 +60,11 @@ class FrequencyTest extends TestCase
         $pool = Mockery::mock(Pool::class);
         $channel = new Channel(100);
         $pool->shouldReceive('flushOne')->andReturnUsing(function () use ($channel) {
-            $channel->push(true);
+            $channel->push(Mockery::mock(ConnectionInterface::class));
         });
 
         $stub = new ConstantFrequencyStub($pool);
-        Coroutine::sleep(0.002);
+        Coroutine::sleep(0.005);
         $stub->clear();
         $this->assertGreaterThan(0, $channel->length());
     }

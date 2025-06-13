@@ -9,19 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer\Collector;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\SocketIOServer\Exception\RouteNotFoundException;
 use Hyperf\SocketIOServer\NamespaceInterface;
-use Hyperf\Utils\ApplicationContext;
 
 class SocketIORouter extends MetadataCollector
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
     public static function addNamespace(string $nsp, string $className)
     {
@@ -29,7 +27,7 @@ class SocketIORouter extends MetadataCollector
         static::set('backward.' . $className, $nsp);
     }
 
-    public static function clear(string $key = null): void
+    public static function clear(?string $key = null): void
     {
         if ($key !== null) {
             parent::clear('backward.' . $key);
@@ -64,7 +62,7 @@ class SocketIORouter extends MetadataCollector
 
         $instance = ApplicationContext::getContainer()->get($class);
 
-        if (! ($instance instanceof NamespaceInterface)) {
+        if (! $instance instanceof NamespaceInterface) {
             throw new RouteNotFoundException("namespace {$nsp} must be an instance of NamespaceInterface");
         }
 

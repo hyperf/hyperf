@@ -9,23 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab;
 
 class CrontabManager
 {
     /**
-     * @var Crontab[]
+     * @var array<string, Crontab>
      */
-    protected $crontabs = [];
+    protected array $crontabs = [];
 
-    /**
-     * @var Parser
-     */
-    protected $parser;
-
-    public function __construct(Parser $parser)
+    public function __construct(protected Parser $parser)
     {
-        $this->parser = $parser;
     }
 
     public function register(Crontab $crontab): bool
@@ -37,32 +32,38 @@ class CrontabManager
         return true;
     }
 
+    /**
+     * @return Crontab[]
+     */
     public function parse(): array
     {
         $result = [];
         $crontabs = $this->getCrontabs();
         $last = time();
-        foreach ($crontabs ?? [] as $key => $crontab) {
+        foreach ($crontabs as $key => $crontab) {
             if (! $crontab instanceof Crontab) {
                 unset($this->crontabs[$key]);
                 continue;
             }
-            $time = $this->parser->parse($crontab->getRule(), $last);
+            $time = $this->parser->parse($crontab->getRule(), $last, $crontab->getTimezone());
             if ($time) {
                 foreach ($time as $t) {
-                    $result[] = clone $crontab->setExecuteTime($t);
+                    $result[] = (clone $crontab)->setExecuteTime($t);
                 }
             }
         }
         return $result;
     }
 
+    /**
+     * @return array<string, Crontab>
+     */
     public function getCrontabs(): array
     {
         return $this->crontabs;
     }
 
-    private function isValidCrontab(Crontab $crontab): bool
+    public function isValidCrontab(Crontab $crontab): bool
     {
         return $crontab->getName() && $crontab->getRule() && $crontab->getCallback() && $this->parser->isValid($crontab->getRule());
     }

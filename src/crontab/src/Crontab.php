@@ -9,73 +9,99 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
+use DateTimeZone;
+use Hyperf\Conditionable\Conditionable;
+use Hyperf\Engine\Channel;
 
 class Crontab
 {
-    /**
-     * @var null|string
-     */
-    protected $name;
+    use Conditionable;
+    use ManagesFrequencies;
 
-    /**
-     * @var string
-     */
-    protected $type = 'callback';
+    protected ?string $name = null;
 
-    /**
-     * @var null|string
-     */
-    protected $rule;
+    protected string $type = 'callback';
 
-    /**
-     * @var bool
-     */
-    protected $singleton = false;
+    protected ?string $rule = null;
 
-    /**
-     * @var string
-     */
-    protected $mutexPool = 'default';
+    protected bool $singleton = false;
 
-    /**
-     * @var int
-     */
-    protected $mutexExpires = 3600;
+    protected string $mutexPool = 'default';
 
-    /**
-     * @var bool
-     */
-    protected $onOneServer = false;
+    protected int $mutexExpires = 60;
 
-    /**
-     * @var mixed
-     */
-    protected $callback;
+    protected bool $onOneServer = false;
 
-    /**
-     * @var null|string
-     */
-    protected $memo;
+    protected mixed $callback = null;
 
-    /**
-     * @var null|\Carbon\Carbon
-     */
-    protected $executeTime;
+    protected ?string $memo = null;
 
-    /**
-     * @var bool
-     */
-    protected $enable = true;
+    protected ?Carbon $executeTime = null;
+
+    protected bool $enable = true;
+
+    protected null|DateTimeZone|string $timezone = null;
+
+    protected ?Channel $running = null;
+
+    protected array $environments = [];
+
+    protected array $options = [];
+
+    public function __clone()
+    {
+        $this->running = new Channel(1);
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            "\x00*\x00name" => $this->name,
+            "\x00*\x00type" => $this->type,
+            "\x00*\x00rule" => $this->rule,
+            "\x00*\x00singleton" => $this->singleton,
+            "\x00*\x00mutexPool" => $this->mutexPool,
+            "\x00*\x00mutexExpires" => $this->mutexExpires,
+            "\x00*\x00onOneServer" => $this->onOneServer,
+            "\x00*\x00callback" => $this->callback,
+            "\x00*\x00memo" => $this->memo,
+            "\x00*\x00executeTime" => $this->executeTime,
+            "\x00*\x00enable" => $this->enable,
+            "\x00*\x00timezone" => $this->timezone,
+            "\x00*\x00environments" => $this->environments,
+            "\x00*\x00options" => $this->options,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->name = $data["\x00*\x00name"] ?? $this->name;
+        $this->type = $data["\x00*\x00type"] ?? $this->type;
+        $this->rule = $data["\x00*\x00rule"] ?? $this->rule;
+        $this->singleton = $data["\x00*\x00singleton"] ?? $this->singleton;
+        $this->mutexPool = $data["\x00*\x00mutexPool"] ?? $this->mutexPool;
+        $this->mutexExpires = $data["\x00*\x00mutexExpires"] ?? $this->mutexExpires;
+        $this->onOneServer = $data["\x00*\x00onOneServer"] ?? $this->onOneServer;
+        $this->callback = $data["\x00*\x00callback"] ?? $this->callback;
+        $this->memo = $data["\x00*\x00memo"] ?? $this->memo;
+        $this->executeTime = $data["\x00*\x00executeTime"] ?? $this->executeTime;
+        $this->enable = $data["\x00*\x00enable"] ?? $this->enable;
+        $this->running = new Channel(1);
+        $this->timezone = $data["\x00*\x00timezone"] ?? $this->timezone;
+        $this->environments = $data["\x00*\x00environments"] ?? $this->environments;
+        $this->options = $data["\x00*\x00options"] ?? $this->options;
+    }
 
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(?string $name): Crontab
+    public function setName(?string $name): static
     {
         $this->name = $name;
         return $this;
@@ -86,7 +112,7 @@ class Crontab
         return $this->rule;
     }
 
-    public function setRule(?string $rule): Crontab
+    public function setRule(?string $rule): static
     {
         $this->rule = $rule;
         return $this;
@@ -97,7 +123,7 @@ class Crontab
         return $this->singleton;
     }
 
-    public function setSingleton(bool $singleton): Crontab
+    public function setSingleton(bool $singleton): static
     {
         $this->singleton = $singleton;
         return $this;
@@ -108,7 +134,7 @@ class Crontab
         return $this->mutexPool;
     }
 
-    public function setMutexPool(string $mutexPool): Crontab
+    public function setMutexPool(string $mutexPool): static
     {
         $this->mutexPool = $mutexPool;
         return $this;
@@ -119,7 +145,7 @@ class Crontab
         return $this->mutexExpires;
     }
 
-    public function setMutexExpires(int $mutexExpires): Crontab
+    public function setMutexExpires(int $mutexExpires): static
     {
         $this->mutexExpires = $mutexExpires;
         return $this;
@@ -130,18 +156,18 @@ class Crontab
         return $this->onOneServer;
     }
 
-    public function setOnOneServer(bool $onOneServer): Crontab
+    public function setOnOneServer(bool $onOneServer): static
     {
         $this->onOneServer = $onOneServer;
         return $this;
     }
 
-    public function getCallback()
+    public function getCallback(): mixed
     {
         return $this->callback;
     }
 
-    public function setCallback($callback): Crontab
+    public function setCallback(mixed $callback): static
     {
         $this->callback = $callback;
         return $this;
@@ -152,7 +178,7 @@ class Crontab
         return $this->memo;
     }
 
-    public function setMemo(?string $memo): Crontab
+    public function setMemo(?string $memo): static
     {
         $this->memo = $memo;
         return $this;
@@ -163,7 +189,7 @@ class Crontab
         return $this->type;
     }
 
-    public function setType(string $type): Crontab
+    public function setType(string $type): static
     {
         $this->type = $type;
         return $this;
@@ -174,7 +200,7 @@ class Crontab
         return $this->executeTime;
     }
 
-    public function setExecuteTime(Carbon $executeTime): Crontab
+    public function setExecuteTime(Carbon $executeTime): static
     {
         $this->executeTime = $executeTime;
         return $this;
@@ -185,9 +211,69 @@ class Crontab
         return $this->enable;
     }
 
-    public function setEnable(bool $enable): Crontab
+    public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
         return $this;
+    }
+
+    public function getTimezone(): null|DateTimeZone|string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(DateTimeZone|string $timezone): static
+    {
+        $this->timezone = $timezone;
+        return $this;
+    }
+
+    /**
+     * Limit the environments the command should run in.
+     *
+     * @param array|mixed $environments
+     * @return $this
+     */
+    public function setEnvironments($environments): static
+    {
+        $this->environments = is_array($environments) ? $environments : func_get_args();
+
+        return $this;
+    }
+
+    public function getEnvironments(): array
+    {
+        return $this->environments;
+    }
+
+    public function setOptions(array $options): static
+    {
+        $this->options = $options;
+        return $this;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    public function runsInEnvironment(string $environment): bool
+    {
+        return empty($this->environments) || in_array($environment, $this->environments, true);
+    }
+
+    public function complete(): void
+    {
+        $this->running?->close();
+    }
+
+    public function close(): void
+    {
+        $this->running?->close();
+    }
+
+    public function wait(): void
+    {
+        $this->running?->pop();
     }
 }

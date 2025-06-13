@@ -9,14 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Pool\SimplePool;
 
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Pool as AbstractPool;
 use Psr\Container\ContainerInterface;
 
+use function Hyperf\Support\make;
+
 class Pool extends AbstractPool
 {
+    /**
+     * @var callable
+     */
     protected $callback;
 
     public function __construct(ContainerInterface $container, callable $callback, array $option)

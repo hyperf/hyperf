@@ -9,7 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\JsonRpc\Stub;
+
+use Error;
+use InvalidArgumentException;
 
 class CalculatorService implements CalculatorServiceInterface
 {
@@ -26,7 +30,7 @@ class CalculatorService implements CalculatorServiceInterface
     public function divide($value, $divider)
     {
         if ($divider == 0) {
-            throw new \InvalidArgumentException('Expected non-zero value of divider');
+            throw new InvalidArgumentException('Expected non-zero value of divider');
         }
         return $value / $divider;
     }
@@ -38,7 +42,7 @@ class CalculatorService implements CalculatorServiceInterface
 
     public function error()
     {
-        throw new \Error('Not only a exception.');
+        throw new Error('Not only a exception.');
     }
 
     public function getString(): ?string

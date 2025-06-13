@@ -9,20 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\CircuitBreaker;
 
-use Psr\Container\ContainerInterface;
+namespace Hyperf\CircuitBreaker;
 
 class CircuitBreakerFactory
 {
-    protected $container;
-
-    protected $breakers = [];
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
+    /**
+     * @var CircuitBreakerInterface[]
+     */
+    protected array $breakers = [];
 
     public function get(string $name): ?CircuitBreakerInterface
     {

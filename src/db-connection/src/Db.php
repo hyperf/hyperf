@@ -9,19 +9,22 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\DbConnection;
 
+use Closure;
 use Generator;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Database\Connection as Conn;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
-use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 
 /**
  * DB Helper.
- * @method static Builder table(string $table)
+ * @method static Builder table(Expression|string $table)
  * @method static Expression raw($value)
  * @method static mixed selectOne(string $query, array $bindings = [], bool $useReadPdo = true)
  * @method static array select(string $query, array $bindings = [], bool $useReadPdo = true)
@@ -33,24 +36,18 @@ use Psr\Container\ContainerInterface;
  * @method static int affectingStatement(string $query, array $bindings = [])
  * @method static bool unprepared(string $query)
  * @method static array prepareBindings(array $bindings)
- * @method static mixed transaction(\Closure $callback, int $attempts = 1)
+ * @method static mixed transaction(Closure $callback, int $attempts = 1)
  * @method static void beginTransaction()
  * @method static void rollBack()
  * @method static void commit()
  * @method static int transactionLevel()
- * @method static array pretend(\Closure $callback)
- * @method static ConnectionInterface connection(string $pool)
+ * @method static array pretend(Closure $callback)
+ * @method static ConnectionInterface connection(?string $pool = null)
  */
 class Db
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function __call($name, $arguments)
@@ -70,9 +67,14 @@ class Db
         return $db->__connection()->{$name}(...$arguments);
     }
 
-    private function __connection($pool = 'default'): ConnectionInterface
+    private function __connection(?string $name = null): ConnectionInterface
     {
         $resolver = $this->container->get(ConnectionResolverInterface::class);
-        return $resolver->connection($pool);
+        return $resolver->connection($name);
+    }
+
+    public static function beforeExecuting(Closure $closure): void
+    {
+        Conn::beforeExecuting($closure);
     }
 }

@@ -9,25 +9,28 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Engine\Channel;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\Book;
 use HyperfTest\Database\Stubs\Model\Image;
 use HyperfTest\Database\Stubs\Model\User;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Coroutine\Channel;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ModelMorphEagerLoadingTest extends TestCase
 {
     /**

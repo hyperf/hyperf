@@ -9,23 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Snowflake;
 
 abstract class IdGenerator implements IdGeneratorInterface
 {
-    /**
-     * @var MetaGeneratorInterface
-     */
-    protected $metaGenerator;
+    protected ConfigurationInterface $config;
 
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $config;
-
-    public function __construct(MetaGeneratorInterface $metaGenerator)
+    public function __construct(protected MetaGeneratorInterface $metaGenerator)
     {
-        $this->metaGenerator = $metaGenerator;
         $this->config = $metaGenerator->getConfiguration();
     }
 

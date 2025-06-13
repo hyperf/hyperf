@@ -9,22 +9,25 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Di\LazyLoader\LazyProxyTrait;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Di\Stub\LazyLoad\BarLazyLoad;
 use HyperfTest\Di\Stub\LazyLoad\FooLazyLoad;
 use HyperfTest\Di\Stub\LazyProxy;
 use HyperfTest\Di\Stub\Proxied;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class LazyProxyTraitTest extends TestCase
 {
     public function testLaziness()
@@ -97,11 +100,11 @@ class LazyProxyTraitTest extends TestCase
 
     public function testLazyLoadWithMagicCall()
     {
-        $class1 = new class() extends FooLazyLoad {
+        $class1 = new class extends FooLazyLoad {
             use LazyProxyTrait;
         };
 
-        $class2 = new class() extends BarLazyLoad {
+        $class2 = new class extends BarLazyLoad {
             use LazyProxyTrait;
         };
 

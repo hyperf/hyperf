@@ -9,40 +9,30 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Migrations;
 
+use Hyperf\Database\Connection;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\ConnectionResolverInterface as Resolver;
+use Hyperf\Database\Query\Builder;
 
 class DatabaseMigrationRepository implements MigrationRepositoryInterface
 {
     /**
-     * The database connection resolver instance.
-     *
-     * @var \Hyperf\Database\ConnectionResolverInterface
-     */
-    protected $resolver;
-
-    /**
-     * The name of the migration table.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
      * The name of the database connection to use.
-     *
-     * @var string
      */
-    protected $connection;
+    protected ?string $connection = null;
 
     /**
      * Create a new database migration repository instance.
      */
-    public function __construct(Resolver $resolver, string $table)
+    /**
+     * @param Resolver $resolver the database connection resolver instance
+     * @param string $table the name of the migration table
+     */
+    public function __construct(protected Resolver $resolver, protected string $table)
     {
-        $this->table = $table;
-        $this->resolver = $resolver;
     }
 
     /**
@@ -173,7 +163,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Get the connection resolver instance.
      *
-     * @return \Hyperf\Database\ConnectionResolverInterface
+     * @return ConnectionResolverInterface
      */
     public function getConnectionResolver()
     {
@@ -183,7 +173,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Resolve the database connection instance.
      *
-     * @return \Hyperf\Database\Connection
+     * @return Connection
      */
     public function getConnection()
     {
@@ -192,10 +182,8 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
 
     /**
      * Set the information source to gather data.
-     *
-     * @param string $name
      */
-    public function setSource($name)
+    public function setSource(?string $name)
     {
         $this->connection = $name;
     }
@@ -203,7 +191,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Get a query builder for the migration table.
      *
-     * @return \Hyperf\Database\Query\Builder
+     * @return Builder
      */
     protected function table()
     {

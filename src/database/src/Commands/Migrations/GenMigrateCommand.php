@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Migrations;
 
 use Hyperf\Database\Migrations\MigrationCreator;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Throwable;
@@ -20,21 +21,12 @@ use Throwable;
 class GenMigrateCommand extends BaseCommand
 {
     /**
-     * The migration creator instance.
-     *
-     * @var \Hyperf\Database\Migrations\MigrationCreator
-     */
-    protected $creator;
-
-    /**
      * Create a new migration install command instance.
      */
-    public function __construct(MigrationCreator $creator)
+    public function __construct(protected MigrationCreator $creator)
     {
         parent::__construct('gen:migration');
         $this->setDescription('Generate a new migration file');
-
-        $this->creator = $creator;
     }
 
     /**

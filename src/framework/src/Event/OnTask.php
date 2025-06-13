@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Framework\Event;
 
 use Psr\EventDispatcher\StoppableEventInterface;
@@ -17,32 +18,13 @@ use Swoole\Server\Task;
 
 class OnTask implements StoppableEventInterface
 {
-    /**
-     * @var Server
-     */
-    public $server;
+    public mixed $result = null;
 
-    /**
-     * @var Task
-     */
-    public $task;
-
-    /**
-     * @var mixed
-     */
-    public $result;
-
-    public function __construct(Server $server, Task $task)
+    public function __construct(public Server $server, public Task $task)
     {
-        $this->server = $server;
-        $this->task = $task;
     }
 
-    /**
-     * @param mixed $result
-     * @return OnTask
-     */
-    public function setResult($result)
+    public function setResult(mixed $result): static
     {
         $this->result = $result;
         return $this;

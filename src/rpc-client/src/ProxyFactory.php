@@ -9,32 +9,25 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcClient;
 
+use Hyperf\Coroutine\Locker;
+use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\RpcClient\Proxy\Ast;
 use Hyperf\RpcClient\Proxy\CodeLoader;
-use Hyperf\Utils\Coroutine\Locker;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Traits\Container;
+use Hyperf\Support\Filesystem\Filesystem;
+use Hyperf\Support\Traits\Container;
 
 class ProxyFactory
 {
     use Container;
 
-    /**
-     * @var Ast
-     */
-    protected $ast;
+    protected Ast $ast;
 
-    /**
-     * @var \Hyperf\RpcClient\Proxy\CodeLoader
-     */
-    protected $codeLoader;
+    protected CodeLoader $codeLoader;
 
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
+    protected Filesystem $filesystem;
 
     public function __construct()
     {
@@ -54,7 +47,7 @@ class ProxyFactory
         }
 
         $proxyFileName = str_replace('\\', '_', $serviceClass);
-        $proxyClassName = $serviceClass . '_' . md5($this->codeLoader->getCodeByClassName($serviceClass));
+        $proxyClassName = $serviceClass . '_' . $this->codeLoader->getMd5ByClassName($serviceClass);
         $path = $dir . $proxyFileName . '.rpc-client.proxy.php';
 
         $key = md5($path);
@@ -75,6 +68,10 @@ class ProxyFactory
     {
         if (! $this->filesystem->exists($path)) {
             return true;
+        }
+
+        if (ScanConfig::instance('')->isCacheable()) {
+            return false;
         }
 
         $time = $this->filesystem->lastModified(

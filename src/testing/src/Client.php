@@ -9,8 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Testing;
 
+use Hyperf\Codec\Packer\JsonPacker;
+use Hyperf\Collection\Arr;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
@@ -23,42 +27,40 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Server;
+use Hyperf\Support\Filesystem\Filesystem;
 use Hyperf\Testing\HttpMessage\Upload\UploadedFile;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
+
+use function Hyperf\Collection\data_get;
+use function Hyperf\Coroutine\wait;
 
 class Client extends Server
 {
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
+    protected PackerInterface $packer;
 
-    /**
-     * @var float
-     */
-    protected $waitTimeout = 10.0;
+    protected float $waitTimeout = 10.0;
 
-    /**
-     * @var string
-     */
-    protected $baseUri = 'http://127.0.0.1/';
+    protected string $baseUri = 'http://127.0.0.1/';
 
-    public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
+    public function __construct(ContainerInterface $container, ?PackerInterface $packer = null, $server = 'http')
     {
-        parent::__construct($container, $container->get(HttpDispatcher::class), $container->get(ExceptionHandlerDispatcher::class), $container->get(ResponseEmitter::class));
+        parent::__construct(
+            $container,
+            $container->get(HttpDispatcher::class),
+            $container->get(ExceptionHandlerDispatcher::class),
+            $container->get(ResponseEmitter::class)
+        );
+
         $this->packer = $packer ?? new JsonPacker();
 
         $this->initCoreMiddleware($server);
         $this->initBaseUri($server);
     }
 
-    public function get($uri, $data = [], $headers = [])
+    public function get(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('GET', $uri, [
             'headers' => $headers,
@@ -68,7 +70,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function post($uri, $data = [], $headers = [])
+    public function post(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('POST', $uri, [
             'headers' => $headers,
@@ -78,7 +80,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function put($uri, $data = [], $headers = [])
+    public function put(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('PUT', $uri, [
             'headers' => $headers,
@@ -88,7 +90,17 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function delete($uri, $data = [], $headers = [])
+    public function patch(string $uri, array $data = [], array $headers = [])
+    {
+        $response = $this->request('PATCH', $uri, [
+            'headers' => $headers,
+            'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack((string) $response->getBody());
+    }
+
+    public function delete(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('DELETE', $uri, [
             'headers' => $headers,
@@ -98,7 +110,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function json($uri, $data = [], $headers = [])
+    public function json(string $uri, array $data = [], array $headers = [])
     {
         $headers['Content-Type'] = 'application/json';
         $response = $this->request('POST', $uri, [
@@ -108,7 +120,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function file($uri, $data = [], $headers = [])
+    public function file(string $uri, array $data = [], array $headers = [])
     {
         $multipart = [];
         if (Arr::isAssoc($data)) {
@@ -134,64 +146,23 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function request(string $method, string $path, array $options = [])
+    public function request(string $method, string $path, array $options = [], ?callable $callable = null)
     {
-        return wait(function () use ($method, $path, $options) {
-            return $this->execute($this->init($method, $path, $options));
+        return wait(function () use ($method, $path, $options, $callable) {
+            $callable && $callable();
+            return $this->execute($this->initRequest($method, $path, $options));
         }, $this->waitTimeout);
     }
 
-    public function sendRequest(ServerRequestInterface $psr7Request): ResponseInterface
+    public function sendRequest(ServerRequestInterface $psr7Request, ?callable $callable = null): ResponseInterface
     {
-        return wait(function () use ($psr7Request) {
+        return wait(function () use ($psr7Request, $callable) {
+            $callable && $callable();
             return $this->execute($psr7Request);
         }, $this->waitTimeout);
     }
 
-    protected function execute(ServerRequestInterface $psr7Request): ResponseInterface
-    {
-        $this->persistToContext($psr7Request, new Psr7Response());
-
-        $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
-        /** @var Dispatched $dispatched */
-        $dispatched = $psr7Request->getAttribute(Dispatched::class);
-        $middlewares = $this->middlewares;
-        if ($dispatched->isFound()) {
-            $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
-            $middlewares = array_merge($middlewares, $registeredMiddlewares);
-        }
-
-        try {
-            $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
-        } catch (\Throwable $throwable) {
-            // Delegate the exception to exception handler.
-            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
-        }
-
-        return $psr7Response;
-    }
-
-    protected function persistToContext(ServerRequestInterface $request, ResponseInterface $response)
-    {
-        Context::set(ServerRequestInterface::class, $request);
-        Context::set(ResponseInterface::class, $response);
-    }
-
-    protected function initBaseUri($server): void
-    {
-        if ($this->container->has(ConfigInterface::class)) {
-            $config = $this->container->get(ConfigInterface::class);
-            $servers = $config->get('server.servers', []);
-            foreach ($servers as $item) {
-                if ($item['name'] == $server) {
-                    $this->baseUri = sprintf('http://127.0.0.1:%d/', (int) $item['port']);
-                    break;
-                }
-            }
-        }
-    }
-
-    protected function init(string $method, string $path, array $options = []): ServerRequestInterface
+    public function initRequest(string $method, string $path, array $options = []): ServerRequestInterface
     {
         $query = $options['query'] ?? [];
         $params = $options['form_params'] ?? [];
@@ -213,7 +184,7 @@ class Client extends Server
         $uri = (new Uri($this->baseUri . ltrim($path, '/')))->withQuery(http_build_query($query));
 
         $content = http_build_query($params);
-        if ($method == 'POST' && data_get($headers, 'Content-Type') == 'application/json') {
+        if (data_get($headers, 'Content-Type') == 'application/json' && ! empty($json)) {
             $content = json_encode($json, JSON_UNESCAPED_UNICODE);
             $data = $json;
         }
@@ -221,9 +192,56 @@ class Client extends Server
         $body = new SwooleStream($content);
 
         $request = new Psr7Request($method, $uri, $headers, $body);
+        $request->setServerParams($this->getServerParams($method, $uri->getPath()));
+
         return $request->withQueryParams($query)
             ->withParsedBody($data)
             ->withUploadedFiles($this->normalizeFiles($multipart));
+    }
+
+    protected function execute(ServerRequestInterface $psr7Request): ResponseInterface
+    {
+        $this->persistToContext($psr7Request, new Psr7Response());
+
+        $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
+        /** @var Dispatched $dispatched */
+        $dispatched = $psr7Request->getAttribute(Dispatched::class);
+        $middlewares = $this->middlewares;
+        if ($dispatched->isFound()) {
+            $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+            $middlewares = array_merge($middlewares, $registeredMiddlewares);
+        }
+
+        $middlewares = MiddlewareManager::sortMiddlewares($middlewares);
+
+        try {
+            $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
+        } catch (Throwable $throwable) {
+            // Delegate the exception to exception handler.
+            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+        }
+
+        return $psr7Response;
+    }
+
+    protected function persistToContext(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        Context::set(ServerRequestInterface::class, $request);
+        Context::set(ResponseInterface::class, $response);
+    }
+
+    protected function initBaseUri(string $server): void
+    {
+        if ($this->container->has(ConfigInterface::class)) {
+            $config = $this->container->get(ConfigInterface::class);
+            $servers = $config->get('server.servers', []);
+            foreach ($servers as $item) {
+                if ($item['name'] == $server) {
+                    $this->baseUri = sprintf('http://127.0.0.1:%d/', (int) $item['port']);
+                    break;
+                }
+            }
+        }
     }
 
     protected function normalizeFiles(array $multipart): array
@@ -267,5 +285,21 @@ class Client extends Server
         }
 
         return $stream;
+    }
+
+    protected function getServerParams(string $method, string $uri): array
+    {
+        return [
+            'request_method' => $method,
+            'request_uri' => $uri,
+            'path_info' => $uri,
+            'request_time' => time(),
+            'request_time_float' => microtime(true),
+            'server_protocol' => 'HTTP/1.1',
+            'server_port' => 9501,
+            'remote_port' => 40005,
+            'remote_addr' => '127.0.0.1',
+            'master_time' => time(),
+        ];
     }
 }

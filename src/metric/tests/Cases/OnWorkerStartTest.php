@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Metric\Cases;
 
 use Hyperf\Config\Config;
@@ -18,6 +19,7 @@ use Hyperf\Metric\Adapter\Prometheus\MetricFactory as PrometheusFactory;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Listener\OnWorkerStart;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -25,6 +27,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class OnWorkerStartTest extends TestCase
 {
     protected function tearDown(): void
@@ -50,7 +53,7 @@ class OnWorkerStartTest extends TestCase
 
         $l = new OnWorkerStart($container);
 
-        $l->process(new class() {
+        $l->process(new class {
             public $workerId = 1;
         });
 
@@ -72,7 +75,7 @@ class OnWorkerStartTest extends TestCase
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(MetricFactoryInterface::class)->andReturn($factory);
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(
-            new class() {
+            new class {
                 public function dispatch()
                 {
                     return true;
@@ -80,10 +83,10 @@ class OnWorkerStartTest extends TestCase
             }
         )->once();
         $l = new OnWorkerStart($container);
-        $l->process(new class() {
+        $l->process(new class {
             public $workerId = 0;
         });
-        $l->process(new class() {
+        $l->process(new class {
             public $workerId = 1;
         });
         $this->assertTrue(true);
@@ -103,7 +106,7 @@ class OnWorkerStartTest extends TestCase
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(MetricFactoryInterface::class)->andReturn($factory);
         $l = new OnWorkerStart($container);
-        $l->process(new class() {
+        $l->process(new class {
             public $workerId = 0;
         });
         $this->assertTrue(true);

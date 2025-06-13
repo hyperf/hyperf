@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue\Event;
 
 use Hyperf\AsyncQueue\MessageInterface;
@@ -16,15 +17,9 @@ use Throwable;
 
 class FailedHandle extends Event
 {
-    /**
-     * @var Throwable
-     */
-    protected $throwable;
-
-    public function __construct(MessageInterface $message, Throwable $throwable)
+    public function __construct(MessageInterface $message, protected Throwable $throwable)
     {
         parent::__construct($message);
-        $this->throwable = $throwable;
     }
 
     public function getThrowable(): Throwable

@@ -9,31 +9,35 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ExceptionHandler\Handler;
 
+use Hyperf\Context\Context;
+use Hyperf\Context\RequestContext;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Str;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Hyperf\Stringable\Str;
+use Swow\Psr7\Message\ResponsePlusInterface;
 use Throwable;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Handler\XmlResponseHandler;
 use Whoops\Run;
+use Whoops\RunInterface;
+
+use function Hyperf\Support\env;
 
 class WhoopsExceptionHandler extends ExceptionHandler
 {
-    protected static $preference = [
+    protected static array $preference = [
         'text/html' => PrettyPageHandler::class,
         'application/json' => JsonResponseHandler::class,
         'application/xml' => XmlResponseHandler::class,
     ];
 
-    public function handle(Throwable $throwable, ResponseInterface $response)
+    public function handle(Throwable $throwable, ResponsePlusInterface $response)
     {
         $whoops = new Run();
         [$handler, $contentType] = $this->negotiateHandler();
@@ -41,12 +45,12 @@ class WhoopsExceptionHandler extends ExceptionHandler
         $whoops->pushHandler($handler);
         $whoops->allowQuit(false);
         ob_start();
-        $whoops->{Run::EXCEPTION_HANDLER}($throwable);
+        $whoops->{RunInterface::EXCEPTION_HANDLER}($throwable);
         $content = ob_get_clean();
         return $response
-            ->withStatus(500)
-            ->withHeader('Content-Type', $contentType)
-            ->withBody(new SwooleStream($content));
+            ->setStatus(500)
+            ->addHeader('Content-Type', $contentType)
+            ->setBody(new SwooleStream($content));
     }
 
     public function isValid(Throwable $throwable): bool
@@ -56,15 +60,14 @@ class WhoopsExceptionHandler extends ExceptionHandler
 
     protected function negotiateHandler()
     {
-        /** @var ServerRequestInterface $request */
-        $request = Context::get(ServerRequestInterface::class);
+        $request = RequestContext::get();
         $accepts = $request->getHeaderLine('accept');
         foreach (self::$preference as $contentType => $handler) {
             if (Str::contains($accepts, $contentType)) {
-                return [$this->setupHandler(new $handler()),  $contentType];
+                return [$this->setupHandler(new $handler()), $contentType];
             }
         }
-        return [new PlainTextHandler(),  'text/plain'];
+        return [new PlainTextHandler(), 'text/plain'];
     }
 
     protected function setupHandler($handler)
@@ -76,7 +79,7 @@ class WhoopsExceptionHandler extends ExceptionHandler
                 $handler->setApplicationRootPath(BASE_PATH);
             }
 
-            $request = Context::get(ServerRequestInterface::class);
+            $request = RequestContext::get();
             $handler->addDataTableCallback('PSR7 Query', [$request, 'getQueryParams']);
             $handler->addDataTableCallback('PSR7 Post', [$request, 'getParsedBody']);
             $handler->addDataTableCallback('PSR7 Server', [$request, 'getServerParams']);

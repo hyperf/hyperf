@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Event\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
@@ -33,7 +34,7 @@ class PriorityListener implements ListenerInterface
     /**
      * @param PriorityEvent $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         PriorityEvent::$result[] = $this->id;
     }

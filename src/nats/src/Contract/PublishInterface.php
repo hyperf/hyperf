@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nats\Contract;
 
 interface PublishInterface
 {
-    public function publish(string $subject, $payload = null, $inbox = null);
+    public function publish(string $subject, $payload = null, $inbox = null): void;
 }

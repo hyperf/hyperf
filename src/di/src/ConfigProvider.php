@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
@@ -25,11 +26,11 @@ class ConfigProvider
     {
         // Register AST visitors to the collector.
         if (! AstVisitorRegistry::exists(PropertyHandlerVisitor::class)) {
-            AstVisitorRegistry::insert(PropertyHandlerVisitor::class, PHP_INT_MAX / 2);
+            AstVisitorRegistry::insert(PropertyHandlerVisitor::class);
         }
 
         if (! AstVisitorRegistry::exists(ProxyCallVisitor::class)) {
-            AstVisitorRegistry::insert(ProxyCallVisitor::class, PHP_INT_MAX / 2);
+            AstVisitorRegistry::insert(ProxyCallVisitor::class);
         }
 
         // Register Property Handler.

@@ -9,19 +9,22 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Resource\Json;
 
 use ArrayAccess;
-use Hyperf\Database\Model\Model;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\HttpMessage\Server\ResponseProxyTrait;
 use Hyperf\Resource\Concerns\ConditionallyLoadsAttributes;
 use Hyperf\Resource\Concerns\DelegatesToResource;
 use Hyperf\Resource\JsonEncodingException;
 use Hyperf\Resource\Response\Response;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
+use JsonException;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
+
+use function Hyperf\Tappable\tap;
 
 class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable, ResponseInterface
 {
@@ -30,43 +33,29 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
     use ResponseProxyTrait;
 
     /**
-     * The resource instance.
-     *
-     * @var mixed
-     */
-    public $resource;
-
-    /**
      * The additional data that should be added to the top-level resource array.
-     *
-     * @var array
      */
-    public $with = [];
+    public array $with = [];
 
     /**
      * The additional meta data that should be added to the resource response.
      *
      * Added during response construction by the developer.
-     *
-     * @var array
      */
-    public $additional = [];
+    public array $additional = [];
 
     /**
      * The "data" wrapper that should be applied.
-     *
-     * @var null|string
      */
-    public $wrap = 'data';
+    public ?string $wrap = 'data';
 
     /**
      * Create a new resource instance.
      *
-     * @param mixed $resource
+     * @param mixed $resource the resource instance
      */
-    public function __construct($resource)
+    public function __construct(public mixed $resource)
     {
-        $this->resource = $resource;
     }
 
     public function __toString(): string
@@ -105,7 +94,7 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
     {
         $data = $this->toArray();
 
-        return $this->filter((array) $data);
+        return $this->filter($data);
     }
 
     /**
@@ -129,10 +118,10 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
      */
     public function toJson(int $options = 0): string
     {
-        $json = json_encode($this->jsonSerialize(), $options);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw JsonEncodingException::forResource($this, json_last_error_msg());
+        try {
+            $json = json_encode($this->jsonSerialize(), $options | JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw JsonEncodingException::forResource($this, $e->getMessage());
         }
 
         return $json;
@@ -180,10 +169,8 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
 
     /**
      * Prepare the resource for JSON serialization.
-     *
-     * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->resolve();
     }

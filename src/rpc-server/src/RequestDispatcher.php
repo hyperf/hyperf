@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcServer;
 
 use Hyperf\Dispatcher\HttpDispatcher;
@@ -20,14 +21,8 @@ use Psr\Http\Server\MiddlewareInterface;
 
 class RequestDispatcher extends HttpDispatcher
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function dispatch(...$params): ResponseInterface

@@ -9,12 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\HttpServer\Stub;
 
 class DemoController
 {
     public function __construct()
     {
+    }
+
+    public function __invoke()
+    {
+        return 'Action for an invokable controller.';
     }
 
     public function __return(...$args)

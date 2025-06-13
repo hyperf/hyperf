@@ -1,16 +1,24 @@
 # 自動化測試
 
-在 Hyperf 裡測試預設通過 `phpunit` 來實現，但由於 Hyperf 是一個協程框架，所以預設的 `phpunit` 並不能很好的工作，因此我們提供了一個 `co-phpunit` 指令碼來進行適配，您可直接呼叫指令碼或者使用對應的 composer 命令來執行。自動化測試沒有特定的元件，但是在 Hyperf 提供的骨架包裡都會有對應實現。
+在 Hyperf 裡測試預設透過 `phpunit` 來實現，並在 3.1 支援了基於 phpunit 的框架 `pest` [文件](https://pestphp.com/docs/installation)。
 
-```
-composer require hyperf/testing
+
+```shell
+composer require hyperf/testing --dev
+composer require pestphp/pest --dev
 ```
 
 ```json
 "scripts": {
+    "pest": "pest --colors=always",
     "test": "co-phpunit -c phpunit.xml --colors=always"
 },
 ```
+
+| package         | version |
+| --------------- | ------- |
+| phpunit/phpunit | ^10.1   |
+| pestphp/pest    | ^2.8  |
 
 ## Bootstrap
 
@@ -27,6 +35,7 @@ date_default_timezone_set('Asia/Shanghai');
 ! defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
 
+// 預設開啟 當使用 pest --parallel 特性或其他涉及到原生並行操作時需要註釋掉
 Swoole\Runtime::enableCoroutine(true);
 
 require BASE_PATH . '/vendor/autoload.php';
@@ -44,6 +53,11 @@ $container->get(Hyperf\Contract\ApplicationInterface::class);
 ```
 composer test
 ```
+
+## 注意事項
+
+- `hyperf/testing` 提供了 Trait [RunTestsInCoroutine](https://github.com/hyperf/hyperf/blob/master/src/testing/src/Concerns/RunTestsInCoroutine.php) 。只需在特定的 `Test` 中 use 此類即開啟協程環境
+- 當使用 pest 中的 --parallel 引數特性 時需要註釋掉 `test/bootstrap.php` 中的 `Swoole\Runtime::enableCoroutine(true)`
 
 ## 模擬 HTTP 請求
 
@@ -100,6 +114,23 @@ $result = $client->json('/user/0',[
 ]);
 ```
 
+### 使用 Cookies
+
+```php
+<?php
+
+use Hyperf\Testing\Client;
+use Hyperf\Codec\Json;
+
+$client = make(Client::class);
+
+$response = $client->sendRequest($client->initRequest('POST', '/request')->withCookieParams([
+    'X-CODE' => $id = uniqid(),
+]));
+
+$data = Json::decode((string) $response->getBody());
+```
+
 ## 示例
 
 讓我們寫個小 DEMO 來測試一下。
@@ -120,10 +151,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ExampleTest extends TestCase
 {
-    /**
-     * @var Client
-     */
-    protected $client;
+    protected Client $client;
 
     public function __construct($name = null, array $data = [], $dataName = '')
     {
@@ -174,7 +202,7 @@ class ExampleTest extends TestCase
 
 在 FPM 場景下，我們通常改完程式碼，然後開啟瀏覽器訪問對應介面，所以我們通常會需要兩個函式 `dd` 和 `dump`，但 `Hyperf` 跑在 `CLI` 模式下，就算提供了這兩個函式，也需要在 `CLI` 中重啟 `Server`，然後再到瀏覽器中呼叫對應介面檢視結果。這樣其實並沒有簡化流程，反而更麻煩了。
 
-接下來，我來介紹如何通過配合 `testing`，來快速除錯程式碼，順便完成單元測試。
+接下來，我來介紹如何透過配合 `testing`，來快速除錯程式碼，順便完成單元測試。
 
 假設我們在 `UserDao` 中實現了一個查詢使用者資訊的函式
 ```php
@@ -217,7 +245,7 @@ class UserTest extends HttpTestCase
 {
     public function testUserDaoFirst()
     {
-        $model = \Hyperf\Utils\ApplicationContext::getContainer()->get(UserDao::class)->first(1);
+        $model = \Hyperf\Context\ApplicationContext::getContainer()->get(UserDao::class)->first(1);
 
         var_dump($model);
 
@@ -240,7 +268,7 @@ composer test -- --filter=testUserDaoFirst
 
 如果在編寫測試時無法使用（或選擇不使用）實際的依賴元件(DOC)，可以用測試替身來代替。測試替身不需要和真正的依賴元件有完全一樣的的行為方式；他只需要提供和真正的元件同樣的 API 即可，這樣被測系統就會以為它是真正的元件！
 
-下面展示分別通過建構函式注入依賴、通過 `@Inject` 註釋注入依賴的測試替身
+下面展示分別透過建構函式注入依賴、透過 `#[Inject]` 註釋注入依賴的測試替身
 
 ### 建構函式注入依賴的測試替身
 
@@ -253,10 +281,7 @@ use App\Api\DemoApi;
 
 class DemoLogic
 {
-    /**
-     * @var DemoApi $demoApi
-     */
-    private $demoApi;
+    private DemoApi $demoApi;
 
     public function __construct(DemoApi $demoApi)
     {
@@ -333,7 +358,7 @@ class DemoLogicTest extends HttpTestCase
 }
 ```
 
-### 通過 Inject 註釋注入依賴的測試替身
+### 透過 Inject 註釋注入依賴的測試替身
 
 ```php
 <?php
@@ -345,11 +370,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class DemoLogic
 {
-    /**
-     * @var DemoApi $demoApi
-     * @Inject()
-     */
-    private $demoApi;
+    #[Inject]
+    private DemoApi $demoApi;
 
     public function test()
     {
@@ -384,7 +406,7 @@ namespace HyperfTest\Cases;
 use App\Api\DemoApi;
 use App\Logic\DemoLogic;
 use Hyperf\Di\Container;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use HyperfTest\HttpTestCase;
 use Mockery;
 
@@ -420,7 +442,7 @@ class DemoLogicTest extends HttpTestCase
             'status' => 11
         ]);
 
-        $container->getDefinitionSource()->addDefinition(DemoApi::class, function () use ($apiStub) {
+        $container->define(DemoApi::class, function () use ($apiStub) {
             return $apiStub;
         });
         
@@ -446,23 +468,38 @@ class DemoLogicTest extends HttpTestCase
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false">
+    <php>
+        <!-- other PHP.ini or environment variables -->
+        <ini name="memory_limit" value="-1" />
+    </php>
     <testsuites>
         <testsuite name="Tests">
+            // 需要執行單測的測試案例目錄
             <directory suffix="Test.php">./test</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        // 需要生成單元測試覆蓋率的檔案
-        <whitelist processUncoveredFilesFromWhitelist="false">
+    <coverage includeUncoveredFiles="true"
+              processUncoveredFiles="true"
+              pathCoverage="false"
+              ignoreDeprecatedCodeUnits="true"
+              disableCodeCoverageIgnore="false">
+        <include>
+            // 需要統計單元測試覆蓋率的檔案
             <directory suffix=".php">./app</directory>
-        </whitelist>
-    </filter>
-
+        </include>
+        <exclude>
+            // 生產單元測試覆蓋率時，需要忽略的檔案
+            <directory suffix=".php">./app/excludeFile</directory>
+        </exclude>
+        <report>
+            <html outputDirectory="test/cover/" lowUpperBound="50" highLowerBound="90"/>
+        </report>
+    </coverage>
     <logging>
-        <log type="coverage-html" target="cover/"/>
+        <junit outputFile="test/junit.xml"/>
     </logging>
-</phpunit>
 
+</phpunit>
 ```
 
 
@@ -471,6 +508,3 @@ class DemoLogicTest extends HttpTestCase
 ```shell
 phpdbg -dmemory_limit=1024M -qrr ./vendor/bin/co-phpunit -c phpunit.xml --colors=always
 ```
-
-
-

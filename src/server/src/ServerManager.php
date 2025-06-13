@@ -9,18 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server;
 
-use Hyperf\Utils\Traits\Container;
+use Hyperf\Support\Traits\Container;
 
 class ServerManager
 {
     use Container;
-
-    /**
-     * @var array
-     */
-    protected static $container = [];
 
     /**
      * @param array $value [$serverType, $server]

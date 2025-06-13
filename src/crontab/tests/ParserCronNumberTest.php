@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Crontab;
 
 use Hyperf\Crontab\Parser;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
@@ -19,23 +21,30 @@ use ReflectionMethod;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class ParserCronNumberTest extends TestCase
 {
+    protected $timezone;
+
     protected function setUp(): void
     {
+        $this->timezone = ini_get('date.timezone');
         ini_set('date.timezone', 'Asia/Shanghai');
     }
 
     protected function tearDown(): void
     {
-        ini_set('date.timezone', '');
+        ini_set('date.timezone', $this->timezone);
     }
 
     public function testParse()
     {
         $parser = new Parser();
         $reflectionMethod = new ReflectionMethod(Parser::class, 'parseSegment');
-        $reflectionMethod->setAccessible(true);
 
         $result = $reflectionMethod->invoke($parser, '*', 0, 59);
         $expected = [];
@@ -67,7 +76,6 @@ class ParserCronNumberTest extends TestCase
     {
         $parser = new Parser();
         $reflectionMethod = new ReflectionMethod(Parser::class, 'parseSegment');
-        $reflectionMethod->setAccessible(true);
 
         $result = $reflectionMethod->invoke($parser, '*', 0, 59, 12);
         $expected = [];

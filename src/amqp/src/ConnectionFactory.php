@@ -9,52 +9,49 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp;
 
-use Hyperf\Amqp\IO\SwooleIO;
+use Hyperf\Amqp\Exception\NotSupportedException;
+use Hyperf\Amqp\IO\IOFactory;
+use Hyperf\Amqp\IO\IOFactoryInterface;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Coroutine\Locker;
+use Hyperf\Coroutine\Locker;
 use InvalidArgumentException;
+use PhpAmqpLib\Connection\AMQPConnectionConfig;
+use PhpAmqpLib\Wire\IO\AbstractIO;
 use Psr\Container\ContainerInterface;
 
 class ConnectionFactory
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected ConfigInterface $config;
 
     /**
      * @var AMQPConnection[][]
      */
-    protected $connections = [];
+    protected array $connections = [];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $this->container->get(ConfigInterface::class);
     }
 
-    public function refresh(string $pool)
+    public function refresh(string $pool): void
     {
         $config = $this->getConfig($pool);
         $count = $config['pool']['connections'] ?? 1;
 
-        if (Locker::lock(static::class)) {
+        $key = $this->lockKey($pool, 'refresh');
+        if (Locker::lock($key)) {
             try {
                 for ($i = 0; $i < $count; ++$i) {
                     $connection = $this->make($config);
                     $this->connections[$pool][] = $connection;
                 }
             } finally {
-                Locker::unlock(static::class);
+                Locker::unlock($key);
             }
         }
     }
@@ -65,14 +62,15 @@ class ConnectionFactory
             $index = array_rand($this->connections[$pool]);
             $connection = $this->connections[$pool][$index];
             if (! $connection->isConnected()) {
-                if (Locker::lock(static::class . 'getConnection')) {
+                $key = $this->lockKey($pool, 'connection');
+                if (Locker::lock($key)) {
                     try {
                         unset($this->connections[$pool][$index]);
                         $connection->close();
                         $connection = $this->make($this->getConfig($pool));
                         $this->connections[$pool][] = $connection;
                     } finally {
-                        Locker::unlock(static::class . 'getConnection');
+                        Locker::unlock($key);
                     }
                 } else {
                     return $this->getConnection($pool);
@@ -88,19 +86,17 @@ class ConnectionFactory
 
     public function make(array $config): AMQPConnection
     {
-        $host = $config['host'] ?? 'localhost';
-        $port = $config['port'] ?? 5672;
         $user = $config['user'] ?? 'guest';
         $password = $config['password'] ?? 'guest';
         $vhost = $config['vhost'] ?? '/';
-
         $params = new Params(Arr::get($config, 'params', []));
-        $io = new SwooleIO(
-            $host,
-            $port,
-            $params->getConnectionTimeout(),
-            $params->getReadWriteTimeout(),
-        );
+        $io = $this->makeIO($config, $params);
+
+        $amqpConfig = null;
+        if (! empty($params->getConnectionName())) {
+            $amqpConfig = new AMQPConnectionConfig();
+            $amqpConfig->setConnectionName($params->getConnectionName());
+        }
 
         $connection = new AMQPConnection(
             $user,
@@ -108,12 +104,13 @@ class ConnectionFactory
             $vhost,
             $params->isInsist(),
             $params->getLoginMethod(),
-            $params->getLoginResponse(),
+            null,
             $params->getLocale(),
             $io,
             $params->getHeartbeat(),
             $params->getConnectionTimeout(),
-            $params->getChannelRpcTimeout()
+            $params->getChannelRpcTimeout(),
+            $amqpConfig
         );
 
         return $connection->setParams($params)
@@ -128,5 +125,26 @@ class ConnectionFactory
         }
 
         return $this->config->get($key);
+    }
+
+    private function makeIO(array $config, Params $params): AbstractIO
+    {
+        $callable = $config['io'] ?? IOFactory::class;
+
+        if (is_callable($callable)) {
+            return $callable($config, $params);
+        }
+
+        $ioFactory = $this->container->get((string) $callable);
+        if (! $ioFactory instanceof IOFactoryInterface) {
+            throw new NotSupportedException(sprintf('%s must instanceof %s', $callable, IOFactoryInterface::class));
+        }
+
+        return $ioFactory->create($config, $params);
+    }
+
+    private function lockKey(string $pool, string $position): string
+    {
+        return sprintf('%s:%s:%s', static::class, $pool, $position);
     }
 }

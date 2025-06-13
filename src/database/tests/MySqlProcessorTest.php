@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Connection;
@@ -18,12 +19,14 @@ use Hyperf\Database\Schema\Column;
 use Hyperf\Database\Schema\Grammars\MySqlGrammar;
 use Hyperf\Database\Schema\MySqlBuilder;
 use HyperfTest\Database\Stubs\ContainerStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class MySqlProcessorTest extends TestCase
 {
     public function testProcessColumnListing()

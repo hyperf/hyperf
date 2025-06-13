@@ -9,15 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\JsonRpc;
 
+use Hyperf\Codec\Packer\JsonPacker;
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
-use Hyperf\Di\Definition\ScanConfig;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\JsonRpc\DataFormatter;
@@ -29,15 +31,15 @@ use Hyperf\Rpc\IdGenerator\IdGeneratorInterface;
 use Hyperf\Rpc\IdGenerator\UniqidIdGenerator;
 use Hyperf\RpcClient\Exception\RequestException;
 use Hyperf\RpcClient\ProxyFactory;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Packer\JsonPacker;
-use Hyperf\Utils\Serializer\SerializerFactory;
-use Hyperf\Utils\Serializer\SymfonyNormalizer;
+use Hyperf\Serializer\SerializerFactory;
+use Hyperf\Serializer\SymfonyNormalizer;
 use HyperfTest\JsonRpc\Stub\CalculatorProxyServiceClient;
 use HyperfTest\JsonRpc\Stub\CalculatorServiceInterface;
 use HyperfTest\JsonRpc\Stub\IntegerValue;
+use Mockery;
 use Mockery\MockInterface;
 use Monolog\Handler\StreamHandler;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Serializer;
 
@@ -45,6 +47,7 @@ use Symfony\Component\Serializer\Serializer;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RpcServiceClientTest extends TestCase
 {
     protected function setUp(): void
@@ -266,7 +269,7 @@ class RpcServiceClientTest extends TestCase
 
     public function createContainer()
     {
-        $transporter = \Mockery::mock(JsonRpcTransporter::class);
+        $transporter = Mockery::mock(JsonRpcTransporter::class);
         $container = new Container(new DefinitionSource([
             NormalizerInterface::class => SymfonyNormalizer::class,
             Serializer::class => SerializerFactory::class,
@@ -301,7 +304,7 @@ class RpcServiceClientTest extends TestCase
                 return $transporter;
             },
             IdGeneratorInterface::class => UniqidIdGenerator::class,
-        ], new ScanConfig()));
+        ]));
         ApplicationContext::setContainer($container);
         return $container;
     }

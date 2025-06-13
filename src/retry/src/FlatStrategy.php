@@ -9,18 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Retry;
 
 class FlatStrategy implements SleepStrategyInterface
 {
-    /**
-     * @var int
-     */
-    private $base;
-
-    public function __construct(int $base)
+    public function __construct(private int $base)
     {
-        $this->base = $base;
     }
 
     public function sleep(): void

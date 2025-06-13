@@ -9,39 +9,61 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Schema\Grammars;
 
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Blueprint;
-use Hyperf\Utils\Fluent;
+use Hyperf\Support\Fluent;
 
 class MySqlGrammar extends Grammar
 {
     /**
      * The possible column modifiers.
-     *
-     * @var array
      */
-    protected $modifiers = [
+    protected array $modifiers = [
         'Unsigned', 'VirtualAs', 'StoredAs', 'Charset', 'Collate', 'Nullable',
         'Default', 'Increment', 'Comment', 'After', 'First', 'Srid',
     ];
 
     /**
      * The possible column serials.
-     *
-     * @var array
      */
-    protected $serials = ['bigInteger', 'integer', 'mediumInteger', 'smallInteger', 'tinyInteger'];
+    protected array $serials = ['bigInteger', 'integer', 'mediumInteger', 'smallInteger', 'tinyInteger'];
 
     /**
      * Compile the query to determine the list of tables.
-     *
-     * @return string
      */
-    public function compileTableExists()
+    public function compileTableExists(): string
     {
         return 'select * from information_schema.tables where table_schema = ? and table_name = ?';
+    }
+
+    /**
+     * Compile the query to determine the tables.
+     */
+    public function compileTables(string $database): string
+    {
+        return sprintf(
+            'select table_name as `name`, (data_length + index_length) as `size`, '
+            . 'table_comment as `comment`, engine as `engine`, table_collation as `collation` '
+            . "from information_schema.tables where table_schema = %s and table_type in ('BASE TABLE', 'SYSTEM VERSIONED') "
+            . 'order by table_name',
+            $this->quoteString($database)
+        );
+    }
+
+    /**
+     * Compile the query to determine the views.
+     */
+    public function compileViews(string $database): string
+    {
+        return sprintf(
+            'select table_name as `name`, view_definition as `definition` '
+            . 'from information_schema.views where table_schema = %s '
+            . 'order by table_name',
+            $this->quoteString($database)
+        );
     }
 
     /**
@@ -58,6 +80,62 @@ class MySqlGrammar extends Grammar
     public function compileColumns(): string
     {
         return 'select `table_schema`, `table_name`, `column_name`, `ordinal_position`, `column_default`, `is_nullable`, `data_type`, `column_comment` from information_schema.columns where `table_schema` = ? order by ORDINAL_POSITION';
+    }
+
+    /**
+     * Compile the query to determine the foreign keys.
+     */
+    public function compileForeignKeys(string $database, string $table): string
+    {
+        return sprintf(
+            'select kc.constraint_name as `name`, '
+            . 'group_concat(kc.column_name order by kc.ordinal_position) as `columns`, '
+            . 'kc.referenced_table_schema as `foreign_schema`, '
+            . 'kc.referenced_table_name as `foreign_table`, '
+            . 'group_concat(kc.referenced_column_name order by kc.ordinal_position) as `foreign_columns`, '
+            . 'rc.update_rule as `on_update`, '
+            . 'rc.delete_rule as `on_delete` '
+            . 'from information_schema.key_column_usage kc join information_schema.referential_constraints rc '
+            . 'on kc.constraint_schema = rc.constraint_schema and kc.constraint_name = rc.constraint_name '
+            . 'where kc.table_schema = %s and kc.table_name = %s and kc.referenced_table_name is not null '
+            . 'group by kc.constraint_name, kc.referenced_table_schema, kc.referenced_table_name, rc.update_rule, rc.delete_rule',
+            $this->quoteString($database),
+            $this->quoteString($table)
+        );
+    }
+
+    /**
+     * Compile a create database command.
+     */
+    public function compileCreateDatabase(string $name, Connection $connection): string
+    {
+        $charset = $connection->getConfig('charset');
+        $collation = $connection->getConfig('collation');
+
+        if (! $charset || ! $collation) {
+            return sprintf(
+                'create database %s',
+                $this->wrapValue($name),
+            );
+        }
+
+        return sprintf(
+            'create database %s default character set %s default collate %s',
+            $this->wrapValue($name),
+            $this->wrapValue($charset),
+            $this->wrapValue($collation),
+        );
+    }
+
+    /**
+     * Compile a drop database if exists command.
+     */
+    public function compileDropDatabaseIfExists(string $name): string
+    {
+        return sprintf(
+            'drop database if exists %s',
+            $this->wrapValue($name)
+        );
     }
 
     /**
@@ -91,7 +169,7 @@ class MySqlGrammar extends Grammar
             $blueprint
         );
 
-        // Finally we will append table comment.
+        // Finally, we will append table comment.
         return $this->compileCreateComment(
             $sql,
             $connection,
@@ -141,6 +219,14 @@ class MySqlGrammar extends Grammar
     public function compileIndex(Blueprint $blueprint, Fluent $command)
     {
         return $this->compileKey($blueprint, $command, 'index');
+    }
+
+    /**
+     * Compile a fulltext index key command.
+     */
+    public function compileFullText(Blueprint $blueprint, Fluent $command): string
+    {
+        return $this->compileKey($blueprint, $command, 'fulltext');
     }
 
     /**
@@ -217,6 +303,14 @@ class MySqlGrammar extends Grammar
         $index = $this->wrap($command->index);
 
         return "alter table {$this->wrapTable($blueprint)} drop index {$index}";
+    }
+
+    /**
+     * Compile a drop fulltext index command.
+     */
+    public function compileDropFullText(Blueprint $blueprint, Fluent $command): string
+    {
+        return $this->compileDropIndex($blueprint, $command);
     }
 
     /**
@@ -298,6 +392,21 @@ class MySqlGrammar extends Grammar
     public function compileGetAllTables()
     {
         return 'SHOW FULL TABLES WHERE table_type = \'BASE TABLE\'';
+    }
+
+    /**
+     * Compile the query to determine the indexes.
+     */
+    public function compileIndexes(string $database, string $table): string
+    {
+        return sprintf(
+            'select index_name as `name`, group_concat(column_name order by seq_in_index) as `columns`, '
+            . 'index_type as `type`, not non_unique as `unique` '
+            . 'from information_schema.statistics where table_schema = %s and table_name = %s '
+            . 'group by index_name, index_type, non_unique',
+            $this->quoteString($database),
+            $this->quoteString($table)
+        );
     }
 
     /**
@@ -413,18 +522,30 @@ class MySqlGrammar extends Grammar
     /**
      * Create the main create table clause.
      *
-     * @param \Hyperf\Database\Schema\Blueprint $blueprint
-     * @param \Hyperf\Utils\Fluent $command
-     * @param \Hyperf\Database\Connection $connection
+     * @param Blueprint $blueprint
+     * @param Fluent $command
+     * @param Connection $connection
      * @return string
      */
     protected function compileCreateTable($blueprint, $command, $connection)
     {
+        $tableStructure = $this->getColumns($blueprint);
+
+        if ($primaryKey = $this->getCommandByName($blueprint, 'primary')) {
+            $tableStructure[] = sprintf(
+                'primary key %s(%s)',
+                $primaryKey->algorithm ? 'using ' . $primaryKey->algorithm : '',
+                $this->columnize($primaryKey->columns)
+            );
+
+            $primaryKey->shouldBeSkipped = true;
+        }
+
         return sprintf(
             '%s table %s (%s)',
             $blueprint->temporary ? 'create temporary' : 'create',
             $this->wrapTable($blueprint),
-            implode(', ', $this->getColumns($blueprint))
+            implode(', ', $tableStructure)
         );
     }
 
@@ -526,6 +647,16 @@ class MySqlGrammar extends Grammar
     protected function typeString(Fluent $column)
     {
         return "varchar({$column->length})";
+    }
+
+    /**
+     * Create the column definition for a tiny text type.
+     *
+     * @return string
+     */
+    protected function typeTinyText(Fluent $column)
+    {
+        return 'tinytext';
     }
 
     /**
@@ -954,9 +1085,8 @@ class MySqlGrammar extends Grammar
      * Wrap a single string in keyword identifiers.
      *
      * @param string $value
-     * @return string
      */
-    protected function wrapValue($value)
+    protected function wrapValue($value): string
     {
         if ($value !== '*') {
             return '`' . str_replace('`', '``', $value) . '`';

@@ -9,20 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Event;
 
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 
 class ConsumeEvent
 {
-    /**
-     * @var ConsumerMessageInterface
-     */
-    protected $message;
-
-    public function __construct(ConsumerMessageInterface $message)
+    public function __construct(protected ConsumerMessageInterface $message)
     {
-        $this->message = $message;
     }
 
     public function getMessage(): ConsumerMessageInterface

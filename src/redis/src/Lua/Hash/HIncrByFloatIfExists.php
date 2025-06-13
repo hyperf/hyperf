@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Redis\Lua\Hash;
 
 use Hyperf\Redis\Lua\Script;
@@ -27,12 +28,11 @@ LUA;
 
     /**
      * @param null|float $data
-     * @return null|float
      */
-    public function format($data)
+    public function format($data): ?float
     {
         if (is_numeric($data)) {
-            return $data;
+            return (float) $data;
         }
         return null;
     }

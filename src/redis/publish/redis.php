@@ -9,6 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use function Hyperf\Support\env;
+
 return [
     'default' => [
         'host' => env('REDIS_HOST', 'localhost'),
@@ -18,6 +20,7 @@ return [
         'timeout' => 0.0,
         'reserved' => null,
         'retry_interval' => 0,
+        'read_timeout' => 0.0,
         'cluster' => [
             'enable' => (bool) env('REDIS_CLUSTER_ENABLE', false),
             'name' => null,
@@ -29,6 +32,7 @@ return [
             'nodes' => explode(';', env('REDIS_SENTINEL_NODE', '')),
             'persistent' => '',
             'read_timeout' => 0,
+            'auth' => env('REDIS_SENTINEL_PASSWORD', ''),
         ],
         'pool' => [
             'min_connections' => 1,
@@ -37,6 +41,12 @@ return [
             'wait_timeout' => 3.0,
             'heartbeat' => -1,
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
+        ],
+        'options' => [
+            'prefix' => env('REDIS_PREFIX', ''),
+        ],
+        'event' => [
+            'enable' => (bool) env('REDIS_EVENT_ENABLE', false),
         ],
     ],
 ];

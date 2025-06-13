@@ -9,40 +9,36 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Rules;
 
-class In
+use Hyperf\Validation\ValidationRuleParser;
+use Stringable;
+
+class In implements Stringable
 {
     /**
      * The name of the rule.
      */
-    protected $rule = 'in';
-
-    /**
-     * The accepted values.
-     *
-     * @var array
-     */
-    protected $values;
+    protected string $rule = 'in';
 
     /**
      * Create a new in rule instance.
+     *
+     * @param array $values the accepted values
      */
-    public function __construct(array $values)
+    public function __construct(protected array $values)
     {
-        $this->values = $values;
     }
 
     /**
      * Convert the rule to a validation string.
      *
-     * @see \Hyperf\Validation\ValidationRuleParser::parseParameters
+     * @see ValidationRuleParser::parseParameters
      */
     public function __toString(): string
     {
-        $values = array_map(function ($value) {
-            return '"' . str_replace('"', '""', (string) $value) . '"';
-        }, $this->values);
+        $values = array_map(fn ($value) => '"' . str_replace('"', '""', (string) $value) . '"', $this->values);
 
         return $this->rule . ':' . implode(',', $values);
     }

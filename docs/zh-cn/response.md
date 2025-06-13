@@ -6,7 +6,7 @@
 
 ## 返回 Json 格式
 
-`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `json($data)` 方法用于快速返回 `Json` 格式，并设置 `Content-Type` 为 `application/json`，`$data` 接受一个数组或为一个实现了 `Hyperf\Utils\Contracts\Arrayable` 接口的对象。
+`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `json($data)` 方法用于快速返回 `Json` 格式，并设置 `Content-Type` 为 `application/json`，`$data` 接受一个数组或为一个实现了 `Hyperf\Contract\Arrayable` 接口的对象。
 
 ```php
 <?php
@@ -29,7 +29,7 @@ class IndexController
 
 ## 返回 Xml 格式
 
-`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `xml($data)` 方法用于快速返回 `XML` 格式，并设置 `Content-Type` 为 `application/xml`，`$data` 接受一个数组或为一个实现了 `Hyperf\Utils\Contracts\Xmlable` 接口的对象。
+`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `xml($data)` 方法用于快速返回 `XML` 格式，并设置 `Content-Type` 为 `application/xml`，`$data` 接受一个数组或为一个实现了 `Hyperf\Contract\Xmlable` 接口的对象。
 
 ```php
 <?php

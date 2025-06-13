@@ -9,30 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue\Process;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\AsyncQueue\Driver\DriverInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\AbstractProcess;
 use Psr\Container\ContainerInterface;
 
 class ConsumerProcess extends AbstractProcess
 {
-    /**
-     * @var string
-     */
-    protected $queue = 'default';
+    protected string $queue = 'default';
 
-    /**
-     * @var DriverInterface
-     */
-    protected $driver;
+    protected DriverInterface $driver;
 
-    /**
-     * @var array
-     */
-    protected $config;
+    protected array $config;
 
     public function __construct(ContainerInterface $container)
     {
@@ -48,12 +39,6 @@ class ConsumerProcess extends AbstractProcess
 
     public function handle(): void
     {
-        if (! $this->driver instanceof DriverInterface) {
-            $logger = $this->container->get(StdoutLoggerInterface::class);
-            $logger->critical(sprintf('[CRITICAL] process %s is not work as expected, please check the config in [%s]', ConsumerProcess::class, 'config/autoload/queue.php'));
-            return;
-        }
-
         $this->driver->consume();
     }
 }

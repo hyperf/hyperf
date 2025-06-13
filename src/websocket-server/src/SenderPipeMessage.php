@@ -9,23 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketServer;
 
 class SenderPipeMessage
 {
-    /**
-     * @var string
-     */
-    public $name;
-
-    /**
-     * @var array
-     */
-    public $arguments;
-
-    public function __construct(string $name, array $arguments)
+    public function __construct(public string $name, public array $arguments)
     {
-        $this->name = $name;
-        $this->arguments = $arguments;
     }
 }

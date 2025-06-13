@@ -9,73 +9,51 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\QueueBuilder;
 use Hyperf\Amqp\Packer\Packer;
 use Hyperf\Amqp\Result;
-use Hyperf\Utils\ApplicationContext;
-use PhpAmqpLib\Channel\AMQPChannel;
+use Hyperf\Context\ApplicationContext;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
 
 abstract class ConsumerMessage extends Message implements ConsumerMessageInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    public $container;
+    public ?ContainerInterface $container = null;
 
-    /**
-     * @var string
-     */
-    protected $queue;
+    protected ?string $queue = null;
 
-    /**
-     * @var bool
-     */
-    protected $requeue = true;
+    protected bool $requeue = true;
 
-    /**
-     * @var array
-     */
-    protected $routingKey = [];
+    protected array|string $routingKey = [];
 
-    /**
-     * @var null|array
-     */
-    protected $qos = [
+    protected ?array $qos = [
         'prefetch_size' => 0,
         'prefetch_count' => 1,
         'global' => false,
     ];
 
-    /**
-     * @var bool
-     */
-    protected $enable = true;
+    protected bool $enable = true;
 
-    /**
-     * @var int
-     */
-    protected $maxConsumption = 0;
+    protected int $maxConsumption = 0;
 
-    /**
-     * @var float|int
-     */
-    protected $waitTimeout = 0;
+    protected float|int $waitTimeout = 0;
 
-    public function consumeMessage($data, AMQPMessage $message): string
+    protected int $nums = 1;
+
+    public function consumeMessage($data, AMQPMessage $message): Result
     {
         return $this->consume($data);
     }
 
-    public function consume($data): string
+    public function consume($data): Result
     {
         return Result::ACK;
     }
 
-    public function setQueue(string $queue): self
+    public function setQueue(string $queue): static
     {
         $this->queue = $queue;
         return $this;
@@ -83,7 +61,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
 
     public function getQueue(): string
     {
-        return $this->queue;
+        return (string) $this->queue;
     }
 
     public function isRequeue(): bool
@@ -119,7 +97,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this->enable;
     }
 
-    public function setEnable(bool $enable): self
+    public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
         return $this;
@@ -130,29 +108,50 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this->maxConsumption;
     }
 
-    public function setMaxConsumption(int $maxConsumption)
+    public function setMaxConsumption(int $maxConsumption): static
     {
         $this->maxConsumption = $maxConsumption;
         return $this;
     }
 
-    public function getWaitTimeout()
+    public function getWaitTimeout(): float|int
     {
         return $this->waitTimeout;
     }
 
-    public function setWaitTimeout($timeout)
+    public function setWaitTimeout(float|int $timeout): static
     {
         $this->waitTimeout = $timeout;
         return $this;
     }
 
-    protected function reply($data, AMQPMessage $message)
+    public function getNums(): int
+    {
+        return $this->nums;
+    }
+
+    public function setNums(int $nums): static
+    {
+        $this->nums = $nums;
+        return $this;
+    }
+
+    public function setContainer(ContainerInterface $container): static
+    {
+        $this->container = $container;
+        return $this;
+    }
+
+    public function getContainer(): ?ContainerInterface
+    {
+        return $this->container;
+    }
+
+    protected function reply(mixed $data, AMQPMessage $message): void
     {
         $packer = ApplicationContext::getContainer()->get(Packer::class);
 
-        /** @var AMQPChannel $channel */
-        $channel = $message->delivery_info['channel'];
+        $channel = $message->getChannel();
         $channel->basic_publish(
             new AMQPMessage($packer->pack($data), [
                 'correlation_id' => $message->get('correlation_id'),

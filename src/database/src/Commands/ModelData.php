@@ -9,26 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands;
 
 class ModelData
 {
-    /**
-     * @var array
-     */
-    protected $columns;
-
-    /**
-     * @var string
-     */
-    protected $class;
+    public function __construct(protected string $class, protected array $columns)
+    {
+    }
 
     public function getColumns(): array
     {
         return $this->columns;
     }
 
-    public function setColumns(array $columns): self
+    public function setColumns(array $columns): static
     {
         $this->columns = $columns;
         return $this;
@@ -39,7 +34,7 @@ class ModelData
         return $this->class;
     }
 
-    public function setClass(string $class): self
+    public function setClass(string $class): static
     {
         $this->class = $class;
         return $this;

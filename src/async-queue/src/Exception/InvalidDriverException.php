@@ -9,8 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\AsyncQueue\Exception;
 
-class InvalidDriverException extends \RuntimeException
+use RuntimeException;
+
+class InvalidDriverException extends RuntimeException
 {
 }

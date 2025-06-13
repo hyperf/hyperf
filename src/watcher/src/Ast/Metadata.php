@@ -9,24 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Watcher\Ast;
 
 class Metadata
 {
-    /**
-     * @var string
-     */
-    public $namespace;
+    public ?string $namespace = null;
 
-    /**
-     * @var string
-     */
-    public $className;
+    public ?string $className = null;
 
-    /**
-     * @var string
-     */
-    public $path;
+    public ?string $path = null;
 
     public function isClass(): bool
     {

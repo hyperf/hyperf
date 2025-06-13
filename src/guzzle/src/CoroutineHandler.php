@@ -9,11 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Guzzle;
 
+use Exception;
+use GuzzleHttp;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Promise\Create;
 use GuzzleHttp\Promise\FulfilledPromise;
+use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Utils;
@@ -25,7 +29,6 @@ use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
-use function GuzzleHttp\is_host_in_noproxy;
 
 /**
  * Http handler that uses Swoole/Swow Coroutine as a transport layer.
@@ -35,13 +38,13 @@ class CoroutineHandler
     /**
      * @see \GuzzleHttp\Psr7\Uri::$defaultPorts
      */
-    private static $defaultPorts = [
+    private static array $defaultPorts = [
         'http' => 80,
         'https' => 443,
     ];
 
     /**
-     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @return PromiseInterface
      */
     public function __invoke(RequestInterface $request, array $options)
     {
@@ -73,7 +76,7 @@ class CoroutineHandler
 
         try {
             $raw = $client->request($request->getMethod(), $path, $headers, (string) $request->getBody());
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $exception = new ConnectException($exception->getMessage(), $request, null, [
                 'errCode' => $exception->getCode(),
             ]);
@@ -90,7 +93,7 @@ class CoroutineHandler
         return new Client($host, $port, $ssl);
     }
 
-    protected function initHeaders(RequestInterface $request, $options): array
+    protected function initHeaders(RequestInterface $request, array $options): array
     {
         $headers = $request->getHeaders();
         $userInfo = $request->getUri()->getUserInfo();
@@ -109,7 +112,7 @@ class CoroutineHandler
         return $headers;
     }
 
-    protected function getSettings(RequestInterface $request, $options): array
+    protected function getSettings(RequestInterface $request, array $options): array
     {
         $settings = [];
         if (isset($options['delay']) && $options['delay'] > 0) {
@@ -118,16 +121,15 @@ class CoroutineHandler
 
         // 验证服务端证书
         if (isset($options['verify'])) {
-            if ($options['verify'] === false) {
-                $settings['ssl_verify_peer'] = false;
-            } else {
-                $settings['ssl_verify_peer'] = false;
+            $settings['ssl_verify_peer'] = false;
+            if ($options['verify'] !== false) {
+                $settings['ssl_verify_peer'] = true;
                 $settings['ssl_allow_self_signed'] = true;
                 $settings['ssl_host_name'] = $request->getUri()->getHost();
                 if (is_string($options['verify'])) {
                     // Throw an error if the file/folder/link path is not valid or doesn't exist.
                     if (! file_exists($options['verify'])) {
-                        throw new \InvalidArgumentException("SSL CA bundle not found: {$options['verify']}");
+                        throw new InvalidArgumentException("SSL CA bundle not found: {$options['verify']}");
                     }
                     // If it's a directory or a link to a directory use CURLOPT_CAPATH.
                     // If not, it's probably a file, or a link to a file, so use CURLOPT_CAINFO.
@@ -153,7 +155,7 @@ class CoroutineHandler
                 $scheme = $request->getUri()->getScheme();
                 if (isset($options['proxy'][$scheme])) {
                     $host = $request->getUri()->getHost();
-                    if (! isset($options['proxy']['no']) || ! is_host_in_noproxy($host, $options['proxy']['no'])) {
+                    if (! isset($options['proxy']['no']) || ! GuzzleHttp\Utils::isHostInNoProxy($host, $options['proxy']['no'])) {
                         $uri = new Uri($options['proxy'][$scheme]);
                     }
                 }
@@ -236,7 +238,7 @@ class CoroutineHandler
     }
 
     /**
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function getPort(UriInterface $uri): int
     {

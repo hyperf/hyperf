@@ -9,15 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\SocketIOServer\Cases;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
-use Hyperf\Di\Definition\ScanConfig;
 use Hyperf\Framework\Logger\StdoutLogger;
+use Hyperf\SocketIOServer\Atomic;
 use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\Room\MemoryAdapter;
@@ -26,10 +28,8 @@ use Hyperf\SocketIOServer\Room\RoomInterface;
 use Hyperf\SocketIOServer\SidProvider\LocalSidProvider;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\SocketIOServer\SocketIO;
-use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Swoole\Atomic;
 use Swoole\Timer;
 
 /**
@@ -46,7 +46,7 @@ abstract class AbstractTestCase extends TestCase
     protected function getContainer()
     {
         ! defined('BASE_PATH') && define('BASE_PATH', '.');
-        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $container = new Container(new DefinitionSource([]));
         $container->define(StdoutLoggerInterface::class, StdoutLogger::class);
         $container->define(RoomInterface::class, MemoryRoom::class);
         $container->define(AdapterInterface::class, MemoryAdapter::class);

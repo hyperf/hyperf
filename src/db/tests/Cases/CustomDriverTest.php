@@ -9,25 +9,29 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\DB\Cases;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\DB\Pool\Pool;
 use Hyperf\DB\Pool\PoolFactory;
-use Hyperf\Utils\ApplicationContext;
+use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Psr\Container\ContainerInterface;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CustomDriverTest extends AbstractTestCase
 {
     public function testCustomDriver()
     {
-        $container = \Mockery::mock(ContainerInterface::class);
+        $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'db' => [

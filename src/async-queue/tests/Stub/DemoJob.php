@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\AsyncQueue\Stub;
 
 use Hyperf\AsyncQueue\Job;
@@ -19,7 +20,7 @@ class DemoJob extends Job
 
     public $model;
 
-    protected $maxAttempts = 1;
+    protected int $maxAttempts = 1;
 
     public function __construct($id, $model = null)
     {

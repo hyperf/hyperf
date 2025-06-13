@@ -9,12 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di;
+
+use ReflectionAttribute;
+use ReflectionNamedType;
+use ReflectionParameter;
+use ReflectionUnionType;
 
 abstract class AbstractCallableDefinitionCollector extends MetadataCollector
 {
     /**
-     * @param array<\ReflectionParameter> $parameters
+     * @param array<ReflectionParameter> $parameters
      */
     protected function getDefinitionsFromParameters(array $parameters): array
     {
@@ -25,21 +31,29 @@ abstract class AbstractCallableDefinitionCollector extends MetadataCollector
                 $parameter->getType(),
                 $parameter->allowsNull(),
                 $parameter->isDefaultValueAvailable(),
-                $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null
+                $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
+                $parameter->getAttributes()
             );
         }
         return $definitions;
     }
 
     /**
-     * @param mixed $defaultValue
+     * @param ReflectionAttribute[] $attributes
      */
-    protected function createType(string $name, ?\ReflectionType $type, bool $allowsNull, bool $hasDefault = false, $defaultValue = null): ReflectionType
+    protected function createType(string $name, ?\ReflectionType $type, bool $allowsNull, bool $hasDefault = false, mixed $defaultValue = null, array $attributes = []): ReflectionType
     {
-        return new ReflectionType($type ? $type->getName() : 'mixed', $allowsNull, [
+        // TODO: Support ReflectionUnionType.
+        $typeName = match (true) {
+            $type instanceof ReflectionNamedType => $type->getName(),
+            $type instanceof ReflectionUnionType => $type->getTypes()[0]->getName(),
+            default => 'mixed'
+        };
+        return new ReflectionType($typeName, $allowsNull, [
             'defaultValueAvailable' => $hasDefault,
             'defaultValue' => $defaultValue,
             'name' => $name,
+            'attributes' => $attributes,
         ]);
     }
 }

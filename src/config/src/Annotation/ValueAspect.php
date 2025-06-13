@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Config\Annotation;
 
 use Hyperf\Di\Aop\AbstractAspect;
@@ -16,7 +17,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class ValueAspect extends AbstractAspect
 {
-    public $annotations = [
+    public array $annotations = [
         Value::class,
     ];
 

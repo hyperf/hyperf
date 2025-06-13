@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database\Stubs;
 
 class DifferentConnectionModelStub extends ModelStub
 {
-    public $connection = 'different_connection';
+    public ?string $connection = 'different_connection';
 }

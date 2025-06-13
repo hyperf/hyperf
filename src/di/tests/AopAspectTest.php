@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
 use Hyperf\Di\Annotation\Aspect as AspectAnnotation;
@@ -21,12 +22,14 @@ use HyperfTest\Di\Stub\DemoAnnotation;
 use HyperfTest\Di\Stub\Foo;
 use HyperfTest\Di\Stub\Foo2Aspect;
 use HyperfTest\Di\Stub\FooAspect;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class AopAspectTest extends TestCase
 {
     protected function tearDown(): void

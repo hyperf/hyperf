@@ -1,0 +1,43 @@
+{
+    "name": "hyperf/carbon",
+    "description": "A Carbon for Hyperf",
+    "license": "MIT",
+    "type": "library",
+    "keywords": [
+        "php",
+        "swoole",
+        "carbon"
+    ],
+    "require": {
+        "php": ">=8.1",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/event": "~3.1.0",
+        "hyperf/framework": "~3.1.0",
+        "nesbot/carbon": "^2.0"
+    },
+    "suggest": {
+        "ramsey/uuid": "Required to use \\Ramsey\\Uuid\\Uuid (^4.7).",
+        "symfony/uid": "Required to use \\Symfony\\Component\\Uid\\Ulid (^7.0)."
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Carbon\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Carbon\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Carbon\\ConfigProvider"
+        }
+    }
+}

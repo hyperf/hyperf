@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ConfigCenter\Listener;
 
 use Hyperf\Config\Config;
@@ -20,12 +21,14 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\Event\PipeMessage as UserProcessPipeMessage;
 use HyperfTest\ConfigCenter\ContainerStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class OnPipeMessageListenerTest extends TestCase
 {
     protected function tearDown(): void

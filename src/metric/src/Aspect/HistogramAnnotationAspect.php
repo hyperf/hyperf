@@ -9,29 +9,27 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Di\Aop\AroundInterface;
+use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Di\Exception\Exception;
 use Hyperf\Metric\Annotation\Histogram;
 use Hyperf\Metric\Timer;
 
-/**
- * @Aspect
- */
-class HistogramAnnotationAspect implements AroundInterface
+class HistogramAnnotationAspect extends AbstractAspect
 {
-    public $classes = [];
+    public array $classes = [];
 
-    public $annotations = [
+    public array $annotations = [
         Histogram::class,
     ];
 
     /**
-     * @return mixed return the value from process method of ProceedingJoinPoint, or the value that you handled
+     * @throws Exception
      */
-    public function process(ProceedingJoinPoint $proceedingJoinPoint)
+    public function process(ProceedingJoinPoint $proceedingJoinPoint): mixed
     {
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
         $source = $this->fromCamelCase($proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
@@ -41,13 +39,15 @@ class HistogramAnnotationAspect implements AroundInterface
         } else {
             $name = $source;
         }
-        $timer = new Timer(
+
+        new Timer(
             $name,
             [
                 'class' => $proceedingJoinPoint->className,
                 'method' => $proceedingJoinPoint->methodName,
             ]
         );
+
         return $proceedingJoinPoint->process();
     }
 

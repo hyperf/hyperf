@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcServer;
 
 use Closure;
 use FastRoute\Dispatcher;
+use Hyperf\Contract\NormalizerInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Rpc\Protocol;
@@ -20,15 +22,11 @@ use Hyperf\RpcServer\Router\DispatcherFactory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * {@inheritdoc}
- */
+use function Hyperf\Support\make;
+
 class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
 {
-    /**
-     * @var Protocol
-     */
-    protected $protocol;
+    protected Protocol $protocol;
 
     public function __construct(ContainerInterface $container, Protocol $protocol, string $serverName)
     {
@@ -36,9 +34,11 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
         parent::__construct($container, $serverName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function getNormalizer(): NormalizerInterface
+    {
+        return $this->protocol->getNormalizer();
+    }
+
     protected function createDispatcher(string $serverName): Dispatcher
     {
         $factory = make(DispatcherFactory::class, [
@@ -47,10 +47,11 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
         return $factory->getDispatcher($serverName);
     }
 
-    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request)
+    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): mixed
     {
         if ($dispatched->handler->callback instanceof Closure) {
-            $response = call($dispatched->handler->callback);
+            $callback = $dispatched->handler->callback;
+            $response = $callback();
         } else {
             [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
             $controllerInstance = $this->container->get($controller);

@@ -9,32 +9,31 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab\Mutex;
 
+use Hyperf\Collection\Arr;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Timer;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Redis\RedisFactory;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coroutine;
 
 class RedisServerMutex implements ServerMutex
 {
     /**
-     * @var RedisFactory
+     * The unique name for node, like mac address.
      */
-    private $redisFactory;
+    private ?string $macAddress;
 
-    /**
-     * @var null|string
-     */
-    private $macAddress;
+    private Timer $timer;
 
-    public function __construct(RedisFactory $redisFactory)
+    public function __construct(private RedisFactory $redisFactory)
     {
-        $this->redisFactory = $redisFactory;
-
         $this->macAddress = $this->getMacAddress();
+        $this->timer = new Timer();
     }
 
     /**
@@ -49,14 +48,20 @@ class RedisServerMutex implements ServerMutex
         $redis = $this->redisFactory->get($crontab->getMutexPool());
         $mutexName = $this->getMutexName($crontab);
 
-        $result = (bool) $redis->set($mutexName, $this->macAddress, ['NX', 'EX' => $crontab->getMutexExpires()]);
+        $result = $redis->set($mutexName, $this->macAddress, ['NX', 'EX' => $crontab->getMutexExpires()]);
 
-        if ($result === true) {
-            Coroutine::create(function () use ($crontab, $redis, $mutexName) {
-                $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($crontab->getMutexExpires());
-                $exited && $redis->del($mutexName);
+        if ($result) {
+            $this->timer->tick(1, function () use ($mutexName, $redis) {
+                if ($redis->expire($mutexName, $redis->ttl($mutexName) + 1) === false) {
+                    return Timer::STOP;
+                }
             });
-            return $result;
+
+            Coroutine::create(function () use ($redis, $mutexName) {
+                CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
+                $redis->del($mutexName);
+            });
+            return true;
         }
 
         return $redis->get($mutexName) === $this->macAddress;
@@ -79,12 +84,25 @@ class RedisServerMutex implements ServerMutex
 
     protected function getMacAddress(): ?string
     {
+        if ($node = $this->getServerNode()) {
+            return $node->getName();
+        }
+
         $macAddresses = swoole_get_local_mac();
 
         foreach (Arr::wrap($macAddresses) as $name => $address) {
             if ($address && $address !== '00:00:00:00:00:00') {
                 return $name . ':' . str_replace(':', '', $address);
             }
+        }
+
+        return null;
+    }
+
+    protected function getServerNode(): ?ServerNodeInterface
+    {
+        if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(ServerNodeInterface::class)) {
+            return ApplicationContext::getContainer()->get(ServerNodeInterface::class);
         }
 
         return null;

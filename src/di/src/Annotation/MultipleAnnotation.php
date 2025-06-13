@@ -9,21 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\Exception\AnnotationException;
 
 class MultipleAnnotation implements MultipleAnnotationInterface
 {
-    /**
-     * @var AnnotationInterface[]
-     */
-    protected $annotations = [];
+    protected array $annotations = [];
 
-    /**
-     * @var string
-     */
-    protected $className;
+    protected string $className;
 
     public function __construct(AnnotationInterface $annotation)
     {
@@ -45,7 +40,7 @@ class MultipleAnnotation implements MultipleAnnotationInterface
         return $this->className;
     }
 
-    public function insert(AnnotationInterface $annotation)
+    public function insert(AnnotationInterface $annotation): static
     {
         if (! $annotation instanceof $this->className) {
             throw new AnnotationException(get_class($annotation) . ' must instanceof ' . $this->className);
@@ -63,6 +58,11 @@ class MultipleAnnotation implements MultipleAnnotationInterface
     public function collectClass(string $className): void
     {
         throw new AnnotationException('MultipleAnnotation[' . $this->className() . '] does not support collectClass()');
+    }
+
+    public function collectClassConstant(string $className, ?string $target): void
+    {
+        throw new AnnotationException('MultipleAnnotation[' . $this->className() . '] does not support collectClassConstant()');
     }
 
     public function collectMethod(string $className, ?string $target): void

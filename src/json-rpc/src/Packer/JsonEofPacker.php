@@ -9,16 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc\Packer;
 
 use Hyperf\Contract\PackerInterface;
 
 class JsonEofPacker implements PackerInterface
 {
-    /**
-     * @var string
-     */
-    protected $eof;
+    protected string $eof;
 
     public function __construct(array $options = [])
     {

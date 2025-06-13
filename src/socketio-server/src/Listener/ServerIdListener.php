@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
+use Hyperf\Server\Event\MainCoroutineServerStart;
+use Hyperf\SocketIOServer\Atomic;
 use Hyperf\SocketIOServer\SocketIO;
-use Swoole\Atomic;
 
 class ServerIdListener implements ListenerInterface
 {
@@ -22,10 +24,11 @@ class ServerIdListener implements ListenerInterface
     {
         return [
             BeforeMainServerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         SocketIO::$serverId = uniqid();
         SocketIO::$messageId = new Atomic();

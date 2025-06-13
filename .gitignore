@@ -3,6 +3,8 @@
 .project
 *.patch
 .idea/
+.vscode/
+.fleet/
 .git/
 runtime/
 codeCoverage/
@@ -13,3 +15,7 @@ vendor/
 *.lock
 node_modules/*
 *.cache
+.bashrc
+/phpstan.neon
+/phpunit.xml
+!/src/support/tests/envs/**/*.env

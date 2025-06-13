@@ -9,26 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer\Router;
 
 use FastRoute\Dispatcher;
 
 class Dispatched
 {
-    /**
-     * @var int
-     */
-    public $status;
+    public int $status;
 
-    /**
-     * @var null|Handler
-     */
-    public $handler;
+    public ?Handler $handler = null;
 
-    /**
-     * @var array
-     */
-    public $params = [];
+    public array $params = [];
 
     /**
      * Dispatches against the provided HTTP method verb and URI.
@@ -39,7 +31,7 @@ class Dispatched
      *     [Dispatcher::METHOD_NOT_ALLOWED, ['GET', 'OTHER_ALLOWED_METHODS']]
      *     [Dispatcher::FOUND, $handler, ['varName' => 'value', ...]]
      */
-    public function __construct(array $array)
+    public function __construct(array $array, public ?string $serverName = null)
     {
         $this->status = $array[0];
         switch ($this->status) {
@@ -56,5 +48,10 @@ class Dispatched
     public function isFound(): bool
     {
         return $this->status === Dispatcher::FOUND;
+    }
+
+    public function isNotFound(): bool
+    {
+        return $this->status === Dispatcher::NOT_FOUND;
     }
 }

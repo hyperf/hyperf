@@ -9,19 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
 use Exception;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Aop\Ast;
-use Hyperf\Di\ClassLoader;
 use Hyperf\Di\Exception\AnnotationException;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Di\ScanHandler\NullScanHandler;
 use HyperfTest\Di\ExceptionStub\DemoInjectException;
 use HyperfTest\Di\Stub\AnnotationCollector;
 use HyperfTest\Di\Stub\AspectCollector;
@@ -46,12 +47,15 @@ use HyperfTest\Di\Stub\Inject\Parent4Class;
 use HyperfTest\Di\Stub\Inject\ParentClass;
 use HyperfTest\Di\Stub\Inject\Tar;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class InjectTest extends TestCase
 {
     protected function tearDown(): void
@@ -62,9 +66,7 @@ class InjectTest extends TestCase
         ReflectionManager::clear();
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[Group('NonCoroutine')]
     public function testInject()
     {
         $this->getContainer();
@@ -75,9 +77,7 @@ class InjectTest extends TestCase
         $this->assertSame(null, $demoInject->getDemo1());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[Group('NonCoroutine')]
     public function testInjectWithTraitAndParent()
     {
         $this->getContainer();
@@ -95,9 +95,7 @@ class InjectTest extends TestCase
         $this->assertInstanceOf(Tar::class, $origin->getFoo());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[Group('NonCoroutine')]
     public function testInjectTraitAndParent()
     {
         $this->markTestSkipped('@var does not works as expect.');
@@ -116,9 +114,7 @@ class InjectTest extends TestCase
         $this->assertInstanceOf(Bar::class, $origin->getFoo());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[Group('NonCoroutine')]
     public function testInjectParent()
     {
         $this->getContainer();
@@ -136,9 +132,7 @@ class InjectTest extends TestCase
         $this->assertInstanceOf(Foo::class, $origin->getFoo());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[Group('NonCoroutine')]
     public function testInject2Trait()
     {
         $this->markTestSkipped('@var does not works as expect.');
@@ -158,9 +152,7 @@ class InjectTest extends TestCase
         $this->assertInstanceOf(Tar::class, $origin->getFoo());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[Group('NonCoroutine')]
     public function testInjectTraitNesting()
     {
         $this->getContainer();
@@ -180,9 +172,7 @@ class InjectTest extends TestCase
         $this->assertSame('foo3', $origin->getValue());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[Group('NonCoroutine')]
     public function testInjectParentParent()
     {
         $this->getContainer();
@@ -199,9 +189,7 @@ class InjectTest extends TestCase
         $this->assertInstanceOf(Foo::class, $origin->getFoo());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[Group('NonCoroutine')]
     public function testInjectParentNoRunParent()
     {
         $this->getContainer();
@@ -218,9 +206,7 @@ class InjectTest extends TestCase
         $this->assertInstanceOf(Foo::class, $origin->getFoo());
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[Group('NonCoroutine')]
     public function testInjectParentPrivateProperty()
     {
         $this->getContainer();
@@ -241,10 +227,10 @@ class InjectTest extends TestCase
     public function testInjectException()
     {
         try {
-            $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
+            $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
             $reader = new AnnotationReader();
             $scanner->collect($reader, ReflectionManager::reflectClass(DemoInjectException::class));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertSame('The @var annotation on HyperfTest\Di\ExceptionStub\DemoInjectException::demo contains a non existent class "Demo1". Did you maybe forget to add a "use" statement for this annotation?', $e->getMessage());
             $this->assertSame(true, $e instanceof AnnotationException);
         }
@@ -270,7 +256,7 @@ class InjectTest extends TestCase
             throw new Exception('The process fork failed');
         }
         if ($pid === 0) {
-            $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
+            $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
             $reader = new AnnotationReader();
 
             if (empty($classes)) {

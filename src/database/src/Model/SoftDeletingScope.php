@@ -9,22 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model;
+
+use function Hyperf\Tappable\tap;
 
 class SoftDeletingScope implements Scope
 {
     /**
-     * All of the extensions to be added to the builder.
-     *
-     * @var array
+     * All the extensions to be added to the builder.
      */
-    protected $extensions = ['Restore', 'WithTrashed', 'WithoutTrashed', 'OnlyTrashed'];
+    protected array $extensions = ['Restore', 'RestoreOrCreate', 'CreateOrRestore', 'WithTrashed', 'WithoutTrashed', 'OnlyTrashed'];
 
     /**
      * Apply the scope to a given Model query builder.
-     *
-     * @param \Hyperf\Database\Model\Builder $builder
-     * @param \Hyperf\Database\Model\Model $model
      */
     public function apply(Builder $builder, Model $model)
     {
@@ -33,8 +31,6 @@ class SoftDeletingScope implements Scope
 
     /**
      * Extend the query builder with the needed functions.
-     *
-     * @param \Hyperf\Database\Model\Builder $builder
      */
     public function extend(Builder $builder)
     {
@@ -54,7 +50,6 @@ class SoftDeletingScope implements Scope
     /**
      * Get the "deleted at" column for the builder.
      *
-     * @param \Hyperf\Database\Model\Builder $builder
      * @return string
      */
     protected function getDeletedAtColumn(Builder $builder)
@@ -68,8 +63,6 @@ class SoftDeletingScope implements Scope
 
     /**
      * Add the restore extension to the builder.
-     *
-     * @param \Hyperf\Database\Model\Builder $builder
      */
     protected function addRestore(Builder $builder)
     {
@@ -81,9 +74,35 @@ class SoftDeletingScope implements Scope
     }
 
     /**
+     * Add the restore-or-create extension to the builder.
+     */
+    protected function addRestoreOrCreate(Builder $builder)
+    {
+        $builder->macro('restoreOrCreate', function (Builder $builder, array $attributes = [], array $values = []) {
+            $builder->withTrashed();
+
+            return tap($builder->firstOrCreate($attributes, $values), function ($instance) {
+                $instance->restore();
+            });
+        });
+    }
+
+    /**
+     * Add the create-or-restore extension to the builder.
+     */
+    protected function addCreateOrRestore(Builder $builder)
+    {
+        $builder->macro('createOrRestore', function (Builder $builder, array $attributes = [], array $values = []) {
+            $builder->withTrashed();
+
+            return tap($builder->createOrFirst($attributes, $values), function ($instance) {
+                $instance->restore();
+            });
+        });
+    }
+
+    /**
      * Add the with-trashed extension to the builder.
-     *
-     * @param \Hyperf\Database\Model\Builder $builder
      */
     protected function addWithTrashed(Builder $builder)
     {
@@ -98,8 +117,6 @@ class SoftDeletingScope implements Scope
 
     /**
      * Add the without-trashed extension to the builder.
-     *
-     * @param \Hyperf\Database\Model\Builder $builder
      */
     protected function addWithoutTrashed(Builder $builder)
     {
@@ -116,8 +133,6 @@ class SoftDeletingScope implements Scope
 
     /**
      * Add the only-trashed extension to the builder.
-     *
-     * @param \Hyperf\Database\Model\Builder $builder
      */
     protected function addOnlyTrashed(Builder $builder)
     {

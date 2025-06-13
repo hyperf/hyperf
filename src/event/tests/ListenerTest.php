@@ -9,32 +9,36 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Event;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Annotation\Listener as ListenerAnnotation;
 use Hyperf\Event\EventDispatcher;
+use Hyperf\Event\ListenerData;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\Event\ListenerProviderFactory;
+use Hyperf\Stdlib\SplPriorityQueue;
 use HyperfTest\Event\Event\Alpha;
 use HyperfTest\Event\Event\Beta;
 use HyperfTest\Event\Listener\AlphaListener;
 use HyperfTest\Event\Listener\BetaListener;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
-use SplPriorityQueue;
 
 /**
  * @internal
- * @covers \Hyperf\Event\Annotation\Listener
- * @covers \Hyperf\Event\EventDispatcher
- * @covers \Hyperf\Event\ListenerProvider
- * @covers \Hyperf\Event\ListenerProviderFactory
+ * @coversNothing
  */
+#[CoversClass(ListenerAnnotation::class)]
+#[CoversClass(EventDispatcher::class)]
+#[CoversClass(ListenerProvider::class)]
+#[CoversClass(ListenerProviderFactory::class)]
 class ListenerTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
@@ -81,7 +85,7 @@ class ListenerTest extends TestCase
         $this->assertInstanceOf(ListenerProviderInterface::class, $listenerProvider);
     }
 
-    public function testListnerInvokeByFactoryWithConfig()
+    public function testListenerInvokeByFactoryWithConfig()
     {
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
@@ -113,7 +117,7 @@ class ListenerTest extends TestCase
         $this->assertSame(2, $betaListener->value);
     }
 
-    public function testListnerInvokeByFactoryWithAnnotationConfig()
+    public function testListenerInvokeByFactoryWithAnnotationConfig()
     {
         $listenerAnnotation = new ListenerAnnotation();
         $listenerAnnotation->collectClass(AlphaListener::class, ListenerAnnotation::class);
@@ -147,26 +151,10 @@ class ListenerTest extends TestCase
 
     public function testListenerAnnotationWithPriority()
     {
-        // Default value.
         $listenerAnnotation = new ListenerAnnotation();
-        $this->assertSame(1, $listenerAnnotation->priority);
-        // With a integer.
+        $this->assertSame(ListenerData::DEFAULT_PRIORITY, $listenerAnnotation->priority);
+
         $listenerAnnotation = new ListenerAnnotation(2);
-        $this->assertSame(1, $listenerAnnotation->priority);
-        // Define the priority.
-        $listenerAnnotation = new ListenerAnnotation([
-            'priority' => 2,
-        ]);
         $this->assertSame(2, $listenerAnnotation->priority);
-        // String number
-        $listenerAnnotation = new ListenerAnnotation([
-            'priority' => '2',
-        ]);
-        $this->assertSame(2, $listenerAnnotation->priority);
-        // Non-number
-        $listenerAnnotation = new ListenerAnnotation([
-            'priority' => 'string',
-        ]);
-        $this->assertSame(1, $listenerAnnotation->priority);
     }
 }

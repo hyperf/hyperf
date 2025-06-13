@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Phar\Ast;
 
 use PhpParser\NodeTraverser;
@@ -19,15 +20,9 @@ use PhpParser\PrettyPrinterAbstract;
 
 class Ast
 {
-    /**
-     * @var Parser
-     */
-    private $astParser;
+    private Parser $astParser;
 
-    /**
-     * @var PrettyPrinterAbstract
-     */
-    private $printer;
+    private PrettyPrinterAbstract $printer;
 
     public function __construct()
     {

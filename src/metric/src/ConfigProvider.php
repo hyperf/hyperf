@@ -9,12 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric;
 
 use Domnikl\Statsd\Connection;
 use Domnikl\Statsd\Connection\UdpSocket;
+use Hyperf\Metric\Adapter\RemoteProxy\MetricCollectorFactory;
+use Hyperf\Metric\Aspect\CounterAnnotationAspect;
+use Hyperf\Metric\Aspect\HistogramAnnotationAspect;
+use Hyperf\Metric\Contract\MetricCollectorInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
+use Hyperf\Metric\Listener\MetricBufferWatcher;
 use Hyperf\Metric\Listener\OnBeforeHandle;
+use Hyperf\Metric\Listener\OnCoroutineServerStart;
 use Hyperf\Metric\Listener\OnMetricFactoryReady;
 use Hyperf\Metric\Listener\OnPipeMessage;
 use Hyperf\Metric\Listener\OnWorkerStart;
@@ -34,13 +41,11 @@ class ConfigProvider
                 Adapter::class => InMemory::class,
                 Connection::class => UdpSocket::class,
                 DriverInterface::class => Guzzle::class,
+                MetricCollectorInterface::class => MetricCollectorFactory::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
+            'aspects' => [
+                CounterAnnotationAspect::class,
+                HistogramAnnotationAspect::class,
             ],
             'publish' => [
                 [
@@ -55,6 +60,8 @@ class ConfigProvider
                 OnMetricFactoryReady::class,
                 OnBeforeHandle::class,
                 OnWorkerStart::class,
+                OnCoroutineServerStart::class,
+                MetricBufferWatcher::class,
             ],
             'processes' => [
                 MetricProcess::class,

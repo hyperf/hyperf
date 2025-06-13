@@ -9,22 +9,33 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Schema;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
-use Hyperf\Utils\ApplicationContext;
 
 /**
  * @method static bool hasTable(string $table)
+ * @method static bool createDatabase(string $name)
+ * @method static bool hasView(string $name)
+ * @method static array getViews()
+ * @method static bool dropDatabaseIfExists(string $name)
  * @method static array getColumnListing(string $table)
  * @method static array getColumnTypeListing(string $table)
  * @method static void dropAllTables()
  * @method static void dropAllViews()
  * @method static array getAllTables()
+ * @method static array getTables()
  * @method static array getAllViews()
+ * @method static array getIndexes(string $table)
+ * @method static array getIndexListing(string $table)
+ * @method static bool hasIndex(string $table, array|string $index, ?string $type = null)
  * @method static bool hasColumn(string $table, string $column)
  * @method static bool hasColumns(string $table, array $columns)
+ * @method static void whenTableHasColumn(string $table, string $column, \Closure $callback)
+ * @method static void whenTableDoesntHaveColumn(string $table, string $column, \Closure $callback)
  * @method static string getColumnType(string $table, string $column)
  * @method static void table(string $table, \Closure $callback)
  * @method static void create(string $table, \Closure $callback))
@@ -36,6 +47,7 @@ use Hyperf\Utils\ApplicationContext;
  * @method static \Hyperf\Database\Connection getConnection()
  * @method static Builder setConnection(\Hyperf\Database\Connection $connection)
  * @method static void blueprintResolver(\Closure $resolver)
+ * @method static array getForeignKeys(string $table)
  */
 class Schema
 {

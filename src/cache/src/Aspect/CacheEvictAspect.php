@@ -9,39 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Cache\Aspect;
 
 use Hyperf\Cache\Annotation\CacheEvict;
 use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Cache\Driver\KeyCollectorInterface;
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-/**
- * @Aspect
- */
 class CacheEvictAspect extends AbstractAspect
 {
-    public $annotations = [
+    public array $annotations = [
         CacheEvict::class,
     ];
 
-    /**
-     * @var CacheManager
-     */
-    protected $manager;
-
-    /**
-     * @var AnnotationManager
-     */
-    protected $annotationManager;
-
-    public function __construct(CacheManager $manager, AnnotationManager $annotationManager)
+    public function __construct(protected CacheManager $manager, protected AnnotationManager $annotationManager)
     {
-        $this->manager = $manager;
-        $this->annotationManager = $annotationManager;
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)

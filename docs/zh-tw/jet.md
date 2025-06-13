@@ -14,9 +14,9 @@ composer require hyperf/jet
 
 ## 註冊協議
 
-> 註冊協議不是必須的一個步驟，但您可以通過 ProtocolManager 管理所有的協議。
+> 註冊協議不是必須的一個步驟，但您可以透過 ProtocolManager 管理所有的協議。
 
-您可以通過 `Hyperf\Jet\ProtocolManager` 類來註冊管理任意的協議，每個協議會包含 Transporter, Packer, DataFormatter and PathGenerator 幾個基本的元件，您可以註冊一個 JSONRPC 協議，如下：
+您可以透過 `Hyperf\Jet\ProtocolManager` 類來註冊管理任意的協議，每個協議會包含 Transporter, Packer, DataFormatter and PathGenerator 幾個基本的元件，您可以註冊一個 JSONRPC 協議，如下：
 
 ```php
 <?php
@@ -37,9 +37,9 @@ ProtocolManager::register($protocol = 'jsonrpc', [
 
 ## 註冊服務
 
-> 註冊服務不是必須的一個步驟，但您可以通過 ServiceManager 管理所有的服務。
+> 註冊服務不是必須的一個步驟，但您可以透過 ServiceManager 管理所有的服務。
 
-在您往 `Hyperf\Jet\ProtocolManager` 註冊了一個協議之後，您可以通過 `Hyperf\Jet\ServiceManager` 將協議繫結到任意的服務上，如下：
+在您往 `Hyperf\Jet\ProtocolManager` 註冊了一個協議之後，您可以透過 `Hyperf\Jet\ServiceManager` 將協議繫結到任意的服務上，如下：
 
 ```php
 <?php
@@ -55,9 +55,9 @@ ServiceManager::register($service = 'CalculatorService', $protocol = 'jsonrpc', 
 
 ## 呼叫 RPC 方法
 
-### 通過 ClientFactory 呼叫
+### 透過 ClientFactory 呼叫
 
-在您註冊完協議與服務之後，您可以通過 `Hyperf/Jet/ClientFactory` 來獲得您的服務的客戶端，如下所示：
+在您註冊完協議與服務之後，您可以透過 `Hyperf/Jet/ClientFactory` 來獲得您的服務的客戶端，如下所示：
 
 ```php
 <?php
@@ -67,7 +67,7 @@ $clientFactory = new ClientFactory();
 $client = $clientFactory->create($service = 'CalculatorService', $protocol = 'jsonrpc');
 ```
 
-當您擁有 client 物件後，您可以通過該物件呼叫任意的遠端方法，如下：
+當您擁有 client 物件後，您可以透過該物件呼叫任意的遠端方法，如下：
 
 ```php
 // 呼叫遠端方法 `add` 並帶上引數 `1` 和 `2`
@@ -77,7 +77,7 @@ $result = $client->add(1, 2);
 
 當您呼叫一個不存在的遠端方法時，客戶端會丟擲一個 `Hyperf\Jet\Exception\ServerException` 異常。
 
-### 通過自定義客戶端呼叫
+### 透過自定義客戶端呼叫
 
 您可以建立一個 `Hyperf\Jet\AbstractClient` 的子類作為自定義的客戶端類，來完成遠端方法的呼叫，比如，您希望定義一個 `CalculatorService` 服務的 `jsonrpc` 協議的客戶端類，您可以先定義一個 `CalculatorService` 類，如下所示：
 
@@ -105,16 +105,16 @@ class CalculatorService extends AbstractClient
         ?DataFormatterInterface $dataFormatter = null,
         ?PathGeneratorInterface $pathGenerator = null
     ) {
-        // 這裡指定 transporter，您仍然可以通過 ProtocolManager 來獲得 transporter 或從建構函式傳遞
+        // 這裡指定 transporter，您仍然可以透過 ProtocolManager 來獲得 transporter 或從建構函式傳遞
         $transporter = new StreamSocketTransporter('127.0.0.1', 9503);
-        // 這裡指定 packer，您仍然可以通過 ProtocolManager 來獲得 packer 或從建構函式傳遞
+        // 這裡指定 packer，您仍然可以透過 ProtocolManager 來獲得 packer 或從建構函式傳遞
         $packer = new JsonEofPacker();
         parent::__construct($service, $transporter, $packer, $dataFormatter, $pathGenerator);
     }
 }
 ```
 
-現在，您可以通過該類來直接呼叫遠端方法了，如下所示：
+現在，您可以透過該類來直接呼叫遠端方法了，如下所示：
 
 ```php
 // 呼叫遠端方法 `add` 並帶上引數 `1` 和 `2`

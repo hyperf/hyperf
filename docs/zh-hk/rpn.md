@@ -1,10 +1,8 @@
 # RPN - 逆波蘭表示法
 
-![PHPUnit](https://github.com/hyperf/rpn-incubator/workflows/PHPUnit/badge.svg)
-
 `RPN` 是一種是由波蘭數學家揚·武卡謝維奇 1920 年引入的數學表達式方式，在逆波蘭記法中，所有操作符置於操作數的後面，因此也被稱為後綴表示法。逆波蘭記法不需要括號來標識操作符的優先級。
 
-```
+```bash
 composer require hyperf/rpn
 ```
 

@@ -9,54 +9,48 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Scout\Engine;
 
 use Elasticsearch\Client;
 use Elasticsearch\Client as Elastic;
+use Hyperf\Collection\Collection as BaseCollection;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
+use Hyperf\Scout\Searchable;
 use Hyperf\Scout\SearchableInterface;
-use Hyperf\Utils\Collection as BaseCollection;
+use Throwable;
+
+use function Hyperf\Collection\collect;
 
 class ElasticsearchEngine extends Engine
 {
     /**
      * Elastic server version.
-     *
-     * @var string
      */
-    public static $version;
+    public static ?string $version = null;
 
     /**
      * Index where the models will be saved.
-     *
-     * @var null|string
      */
-    protected $index;
-
-    /**
-     * Elastic where the instance of Elastic|\Elasticsearch\Client is stored.
-     *
-     * @var object
-     */
-    protected $elastic;
+    protected ?string $index = null;
 
     /**
      * Create a new engine instance.
+     *
+     * @param Elastic $elastic elastic where the instance of Elastic|\Elasticsearch\Client is stored
      */
-    public function __construct(Client $client, ?string $index = null)
+    public function __construct(protected Client $elastic, ?string $index = null)
     {
-        $this->elastic = $client;
-        if ($index) {
-            $this->index = $this->initIndex($client, $index);
-        }
+        $this->index = $this->initIndex($elastic, $index);
     }
 
     /**
      * Update the given model in the index.
      *
-     * @param Collection<int, \Hyperf\Scout\Searchable&\Hyperf\Database\Model\Model> $models
+     * @phpstan-ignore-next-line
+     * @param Collection<int, Model&Searchable> $models
      */
     public function update($models): void
     {
@@ -72,6 +66,7 @@ class ElasticsearchEngine extends Engine
                 $update = [
                     '_id' => $model->getKey(),
                     '_index' => $model->searchableAs(),
+                    ...$this->appendType(),
                 ];
             }
             $params['body'][] = ['update' => $update];
@@ -86,7 +81,8 @@ class ElasticsearchEngine extends Engine
     /**
      * Remove the given model from the index.
      *
-     * @param Collection<int, \Hyperf\Scout\Searchable&\Hyperf\Database\Model\Model> $models
+     * @phpstan-ignore-next-line
+     * @param Collection<int, Model&Searchable> $models
      */
     public function delete($models): void
     {
@@ -102,6 +98,7 @@ class ElasticsearchEngine extends Engine
                 $delete = [
                     '_id' => $model->getKey(),
                     '_index' => $model->searchableAs(),
+                    ...$this->appendType(),
                 ];
             }
             $params['body'][] = ['delete' => $delete];
@@ -186,7 +183,7 @@ class ElasticsearchEngine extends Engine
     }
 
     /**
-     * Flush all of the model's records from the engine.
+     * Flush all the model's records from the engine.
      */
     public function flush(Model $model): void
     {
@@ -196,12 +193,12 @@ class ElasticsearchEngine extends Engine
             ->unsearchable();
     }
 
-    protected function initIndex(Client $client, string $index): ?string
+    protected function initIndex(Client $client, ?string $index): ?string
     {
         if (! static::$version) {
             try {
                 static::$version = $client->info()['version']['number'];
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 static::$version = '0.0.0';
             }
         }
@@ -291,5 +288,16 @@ class ElasticsearchEngine extends Engine
         return collect($builder->orders)->map(function ($order) {
             return [$order['column'] => $order['direction']];
         })->toArray();
+    }
+
+    protected function appendType(): array
+    {
+        if (version_compare(static::$version, '7.0.0', '<')) {
+            return [
+                '_type' => 'doc',
+            ];
+        }
+
+        return [];
     }
 }

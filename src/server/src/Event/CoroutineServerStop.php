@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server\Event;
 
 use Swoole\Coroutine\Server;
@@ -16,18 +17,9 @@ use Swoole\Coroutine\Server;
 class CoroutineServerStop
 {
     /**
-     * @var string
+     * @param mixed|Server $server
      */
-    public $name = '';
-
-    /**
-     * @var object|Server
-     */
-    public $server;
-
-    public function __construct(string $name, $server)
+    public function __construct(public string $name, public mixed $server)
     {
-        $this->name = $name;
-        $this->server = $server;
     }
 }

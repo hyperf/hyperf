@@ -9,8 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Process\Exception;
 
-class ServerInvalidException extends \RuntimeException
+use RuntimeException;
+
+class ServerInvalidException extends RuntimeException
 {
 }

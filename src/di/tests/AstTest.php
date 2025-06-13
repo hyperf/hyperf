@@ -9,25 +9,39 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\ReflectionManager;
 use HyperfTest\Di\Stub\AspectCollector;
+use HyperfTest\Di\Stub\Ast\Abs;
+use HyperfTest\Di\Stub\Ast\AbsAspect;
+use HyperfTest\Di\Stub\Ast\Bar;
 use HyperfTest\Di\Stub\Ast\Bar2;
 use HyperfTest\Di\Stub\Ast\Bar3;
 use HyperfTest\Di\Stub\Ast\Bar4;
 use HyperfTest\Di\Stub\Ast\Bar5;
 use HyperfTest\Di\Stub\Ast\BarAspect;
 use HyperfTest\Di\Stub\Ast\BarInterface;
+use HyperfTest\Di\Stub\Ast\Chi;
 use HyperfTest\Di\Stub\Ast\Foo;
+use HyperfTest\Di\Stub\Ast\FooConstruct;
+use HyperfTest\Di\Stub\Ast\FooEnum;
 use HyperfTest\Di\Stub\Ast\FooTrait;
+use HyperfTest\Di\Stub\FooAspect;
+use HyperfTest\Di\Stub\FooEnumStruct;
+use HyperfTest\Di\Stub\Par2;
+use HyperfTest\Di\Stub\PathStub;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class AstTest extends TestCase
 {
     protected $license = '<?php
@@ -62,6 +76,135 @@ class Foo
     function __construct()
     {
         $this->__handlePropertyHandler(__CLASS__);
+    }
+}', $code);
+    }
+
+    public function testMagicConstDirAndFile()
+    {
+        $ast = new Ast();
+        $code = $ast->proxy(PathStub::class);
+        $path = (new PathStub())->file();
+        $dir = (new PathStub())->dir();
+
+        $this->assertSame($this->license . '
+namespace HyperfTest\Di\Stub;
+
+class PathStub
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    function __construct()
+    {
+        $this->__handlePropertyHandler(__CLASS__);
+    }
+    public function file() : string
+    {
+        return \'' . $path . '\';
+    }
+    public function dir() : string
+    {
+        return \'' . $dir . '\';
+    }
+}', $code);
+    }
+
+    public function testParentWith()
+    {
+        $ast = new Ast();
+        $code = $ast->proxy(Par2::class);
+
+        $this->assertSame($this->license . '
+namespace HyperfTest\Di\Stub;
+
+class Par2 extends Par
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    function __construct(?\HyperfTest\Di\Stub\Foo $foo)
+    {
+        if (method_exists(parent::class, \'__construct\')) {
+            parent::__construct(...func_get_args());
+        }
+        $this->__handlePropertyHandler(__CLASS__);
+    }
+}', $code);
+    }
+
+    public function testAstProxyForEnum()
+    {
+        $ast = new Ast();
+        $code = $ast->proxy(FooEnumStruct::class);
+
+        $this->assertEquals($this->license . '
+namespace HyperfTest\Di\Stub;
+
+class FooEnumStruct
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    public function __construct(public FooEnum $enum = FooEnum::DEFAULT)
+    {
+        $this->__handlePropertyHandler(__CLASS__);
+    }
+}', $code);
+    }
+
+    public function testAbstractMethod()
+    {
+        $aspect = AbsAspect::class;
+        AspectCollector::setAround($aspect, [
+            Chi::class,
+            Abs::class,
+        ], []);
+
+        $ast = new Ast();
+        $code = $ast->proxy(Abs::class);
+
+        $this->assertSame($this->license . "
+namespace HyperfTest\\Di\\Stub\\Ast;
+
+abstract class Abs
+{
+    use \\Hyperf\\Di\\Aop\\ProxyTrait;
+    use \\Hyperf\\Di\\Aop\\PropertyHandlerTrait;
+    function __construct()
+    {
+        \$this->__handlePropertyHandler(__CLASS__);
+    }
+    public function abs() : string
+    {
+        \$__function__ = __FUNCTION__;
+        \$__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, ['keys' => []], function () use(\$__function__, \$__method__) {
+            return 'abs';
+        });
+    }
+    public abstract function absabs() : string;
+}", $code);
+
+        $code = $ast->proxy(Chi::class);
+        $this->assertSame($this->license . '
+namespace HyperfTest\Di\Stub\Ast;
+
+class Chi extends Abs
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    function __construct()
+    {
+        if (method_exists(parent::class, \'__construct\')) {
+            parent::__construct(...func_get_args());
+        }
+        $this->__handlePropertyHandler(__CLASS__);
+    }
+    public function absabs() : string
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'keys\' => []], function () use($__function__, $__method__) {
+            return \'chi\';
+        });
     }
 }', $code);
     }
@@ -149,7 +292,7 @@ class Bar4
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function (int $count) use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'count\'], \'keys\' => compact([\'count\']), \'variadic\' => \'\'], function (int $count) use($__function__, $__method__) {
             return $__method__;
         });
     }
@@ -160,7 +303,7 @@ class Bar4
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function (int &$count) use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'count\'], \'keys\' => compact([\'count\']), \'variadic\' => \'\'], function (int &$count) use($__function__, $__method__) {
             return $__method__;
         });
     }
@@ -171,7 +314,7 @@ class Bar4
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function ($params) use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'params\'], \'keys\' => compact([\'params\']), \'variadic\' => \'params\'], function (...$params) use($__function__, $__method__) {
             return $__method__;
         });
     }
@@ -182,7 +325,7 @@ class Bar4
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function (int &$count, $params) use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'count\', \'params\'], \'keys\' => compact([\'count\', \'params\']), \'variadic\' => \'params\'], function (int &$count, string ...$params) use($__function__, $__method__) {
             return $__method__;
         });
     }
@@ -220,45 +363,28 @@ class Bar3 extends Bar
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'keys\' => []], function () use($__function__, $__method__) {
             return parent::getId();
         });
     }
 }', $code);
 
         $code = $ast->proxy(FooTrait::class);
-        if (version_compare(PHP_VERSION, '7.3.0', '>=')) {
-            $this->assertSame($this->license . '
-namespace HyperfTest\\Di\\Stub\\Ast;
+        $this->assertSame($this->license . '
+namespace HyperfTest\Di\Stub\Ast;
 
 trait FooTrait
 {
-    use \\Hyperf\\Di\\Aop\\ProxyTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function getString() : string
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, [\'keys\' => []], function () use($__function__, $__method__) {
             return uniqid();
         });
     }
 }', $code);
-        } else {
-            $this->assertSame($this->license . '
-namespace HyperfTest\\Di\\Stub\\Ast;
-
-trait FooTrait
-{
-    public function getString() : string
-    {
-        $__function__ = __FUNCTION__;
-        $__method__ = __METHOD__;
-        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
-            return uniqid();
-        });
-    }
-}', $code);
-        }
 
         $code = $ast->proxy(BarInterface::class);
         $this->assertSame($this->license . '
@@ -268,5 +394,64 @@ interface BarInterface
 {
     public function toArray() : array;
 }', $code);
+    }
+
+    public function testRewriteConstructor()
+    {
+        $aspect = FooAspect::class;
+
+        AspectCollector::setAround($aspect, [
+            FooConstruct::class . '::__construct',
+        ], []);
+
+        $ast = new Ast();
+        $code = $ast->proxy(FooConstruct::class);
+
+        $this->assertEquals($this->license . '
+namespace HyperfTest\Di\Stub\Ast;
+
+class FooConstruct
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    public function __construct(public readonly string $name, protected readonly int $age = 18, private ?int $id = null)
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, [\'order\' => [\'name\', \'age\', \'id\'], \'keys\' => compact([\'name\', \'age\', \'id\']), \'variadic\' => \'\'], function (string $name, int $age = 18, ?int $id = null) use($__function__, $__method__) {
+            $this->__handlePropertyHandler(__CLASS__);
+        });
+    }
+}', $code);
+    }
+
+    public function testParseClassByStmtsMethods()
+    {
+        $parser = new Ast();
+        $testCases = [
+            [
+                'class' => Bar::class,
+                'expected' => 'HyperfTest\Di\Stub\Ast\Bar',
+            ],
+            [
+                'class' => FooTrait::class,
+                'expected' => 'HyperfTest\Di\Stub\Ast\FooTrait',
+            ],
+            [
+                'class' => BarInterface::class,
+                'expected' => 'HyperfTest\Di\Stub\Ast\BarInterface',
+            ],
+            [
+                'class' => FooEnum::class,
+                'expected' => 'HyperfTest\Di\Stub\Ast\FooEnum',
+            ],
+        ];
+
+        foreach ($testCases as $testCase) {
+            $reflector = new ReflectionClass($testCase['class']);
+            $fileName = $reflector->getFileName();
+            $stmts = $parser->parse(file_get_contents($fileName));
+            $this->assertEquals($testCase['expected'], $parser->parseClassByStmts($stmts));
+        }
     }
 }

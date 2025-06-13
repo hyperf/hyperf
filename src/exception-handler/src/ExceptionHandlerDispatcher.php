@@ -9,24 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ExceptionHandler;
 
+use Hyperf\Context\ResponseContext;
 use Hyperf\Dispatcher\AbstractDispatcher;
-use Hyperf\Utils\Context;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 class ExceptionHandlerDispatcher extends AbstractDispatcher
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function dispatch(...$params)
@@ -36,11 +31,11 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
          * @param string[] $handlers
          */
         [$throwable, $handlers] = $params;
-        $response = Context::get(ResponseInterface::class);
+        $response = ResponseContext::get();
 
         foreach ($handlers as $handler) {
             if (! $this->container->has($handler)) {
-                throw new \InvalidArgumentException(sprintf('Invalid exception handler %s.', $handler));
+                throw new InvalidArgumentException(sprintf('Invalid exception handler %s.', $handler));
             }
             $handlerInstance = $this->container->get($handler);
             if (! $handlerInstance instanceof ExceptionHandler || ! $handlerInstance->isValid($throwable)) {

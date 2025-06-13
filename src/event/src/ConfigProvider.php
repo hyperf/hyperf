@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Event;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -22,13 +23,6 @@ class ConfigProvider
             'dependencies' => [
                 ListenerProviderInterface::class => ListenerProviderFactory::class,
                 EventDispatcherInterface::class => EventDispatcherFactory::class,
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
             ],
         ];
     }

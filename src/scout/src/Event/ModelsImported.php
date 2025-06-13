@@ -9,24 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Scout\Event;
 
 use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Model;
 
 class ModelsImported
 {
     /**
-     * The model collection.
-     *
-     * @param Collection<int, \Hyperf\Scout\Searchable&\Hyperf\Database\Model\Model>
+     * @param Collection<int, Model> $models
      */
-    public $models;
-
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(Collection $models)
+    public function __construct(public Collection $models)
     {
-        $this->models = $models;
     }
 }

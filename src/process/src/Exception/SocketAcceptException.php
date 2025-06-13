@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Process\Exception;
 
-class SocketAcceptException extends \RuntimeException
+use RuntimeException;
+
+class SocketAcceptException extends RuntimeException
 {
     public function isTimeout(): bool
     {

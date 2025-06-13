@@ -64,11 +64,8 @@ use Hyperf\Contract\TranslatorInterface;
 
 class FooController
 {
-    /**
-     * @Inject
-     * @var TranslatorInterface
-     */
-    private $translator;
+    #[Inject]
+    private TranslatorInterface $translator;
     
     public function index()
     {
@@ -92,11 +89,8 @@ use Hyperf\Contract\TranslatorInterface;
 
 class FooController
 {
-    /**
-     * @Inject
-     * @var TranslatorInterface
-     */
-    private $translator;
+    #[Inject]
+    private TranslatorInterface $translator;
     
     public function index()
     {
@@ -138,7 +132,7 @@ echo __('messages.welcome', ['name' => 'Hyperf']);
 
 ```php
 'welcome' => 'Welcome, :NAME', // Welcome, HYPERF
-'goodbye' => 'Goodbye, :Name', // Goodbye, HYPERF
+'goodbye' => 'Goodbye, :Name', // Goodbye, Hyperf
 ```
 
 # 处理复数

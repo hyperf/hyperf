@@ -9,13 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Validation\Cases\Stub;
 
 use Hyperf\Validation\Request\FormRequest;
 
 class FooSceneRequest extends FormRequest
 {
-    public $scenes = [
+    public array $scenes = [
         'save' => ['mobile', 'name'],
         'info' => ['mobile'],
     ];

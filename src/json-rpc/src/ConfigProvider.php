@@ -9,11 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc;
 
 use Hyperf\JsonRpc\Listener\RegisterProtocolListener;
 use Hyperf\JsonRpc\Listener\RegisterServiceListener;
 use Hyperf\ServiceGovernance\ServiceManager;
+
+use function Hyperf\Support\value;
 
 class ConfigProvider
 {
@@ -31,13 +34,6 @@ class ConfigProvider
                     }
                     return null;
                 }),
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
             ],
         ];
     }

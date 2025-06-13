@@ -9,11 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Request;
 
+use Hyperf\Collection\Arr;
+use Hyperf\Context\Context;
+use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\HttpServer\Request;
-use Hyperf\Utils\Context;
 use Hyperf\Validation\Contract\ValidatesWhenResolved;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface as ValidationFactory;
 use Hyperf\Validation\UnauthorizedException;
@@ -27,25 +30,14 @@ class FormRequest extends Request implements ValidatesWhenResolved
     use ValidatesWhenResolvedTrait;
 
     /**
-     * The container instance.
-     *
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * The key to be used for the view error bag.
-     *
-     * @var string
      */
-    protected $errorBag = 'default';
+    protected string $errorBag = 'default';
 
     /**
      * The scenes defined by developer.
-     *
-     * @var array
      */
-    protected $scenes = [];
+    protected array $scenes = [];
 
     /**
      * The input keys that should not be flashed on redirect.
@@ -54,15 +46,11 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected $dontFlash = ['password', 'password_confirmation'];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->setContainer($container);
     }
 
-    /**
-     * @return $this
-     */
-    public function scene(string $scene)
+    public function scene(string $scene): static
     {
         Context::set($this->getContextValidatorKey('scene'), $scene);
         return $this;
@@ -78,10 +66,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     public function response(): ResponseInterface
     {
-        /** @var ResponseInterface $response */
-        $response = Context::get(ResponseInterface::class);
-
-        return $response->withStatus(422);
+        return ResponseContext::get()->withStatus(422);
     }
 
     /**
@@ -110,14 +95,17 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * Set the container implementation.
-     *
-     * @return $this
      */
-    public function setContainer(ContainerInterface $container)
+    public function setContainer(ContainerInterface $container): static
     {
         $this->container = $container;
 
         return $this;
+    }
+
+    public function rules(): array
+    {
+        return [];
     }
 
     /**
@@ -212,18 +200,12 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Get scene rules.
      */
-    protected function getRules()
+    protected function getRules(): array
     {
-        $rules = call_user_func_array([$this, 'rules'], []);
+        $rules = $this->rules();
         $scene = $this->getScene();
         if ($scene && isset($this->scenes[$scene]) && is_array($this->scenes[$scene])) {
-            $newRules = [];
-            foreach ($this->scenes[$scene] as $field) {
-                if (array_key_exists($field, $rules)) {
-                    $newRules[$field] = $rules[$field];
-                }
-            }
-            return $newRules;
+            return Arr::only($rules, $this->scenes[$scene]);
         }
         return $rules;
     }

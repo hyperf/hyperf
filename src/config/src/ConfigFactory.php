@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Config;
 
+use Hyperf\Collection\Arr;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Finder\Finder;
 
@@ -18,9 +20,9 @@ class ConfigFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $configPath = BASE_PATH . '/config/';
-        $config = $this->readConfig($configPath . 'config.php');
-        $autoloadConfig = $this->readPaths([BASE_PATH . '/config/autoload']);
+        $configPath = BASE_PATH . '/config';
+        $config = $this->readConfig($configPath . '/config.php');
+        $autoloadConfig = $this->readPaths([$configPath . '/autoload']);
         $merged = array_merge_recursive(ProviderConfig::load(), $config, ...$autoloadConfig);
         return new Config($merged);
     }
@@ -34,15 +36,19 @@ class ConfigFactory
         return is_array($config) ? $config : [];
     }
 
-    private function readPaths(array $paths)
+    private function readPaths(array $paths): array
     {
         $configs = [];
         $finder = new Finder();
         $finder->files()->in($paths)->name('*.php');
         foreach ($finder as $file) {
-            $configs[] = [
-                $file->getBasename('.php') => require $file->getRealPath(),
-            ];
+            $config = [];
+            $key = implode('.', array_filter([
+                str_replace('/', '.', $file->getRelativePath()),
+                $file->getBasename('.php'),
+            ]));
+            Arr::set($config, $key, require $file->getRealPath());
+            $configs[] = $config;
         }
         return $configs;
     }

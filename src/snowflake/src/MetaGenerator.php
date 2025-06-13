@@ -9,28 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Snowflake;
 
 use Hyperf\Snowflake\Exception\SnowflakeException;
 
 abstract class MetaGenerator implements MetaGeneratorInterface
 {
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
+    protected int $sequence = 0;
 
-    protected $sequence = 0;
+    protected int $lastTimestamp = 0;
 
-    protected $lastTimestamp = 0;
-
-    protected $beginTimestamp = 0;
-
-    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp)
+    public function __construct(protected ConfigurationInterface $configuration, protected int $beginTimestamp)
     {
-        $this->configuration = $configuration;
         $this->lastTimestamp = $this->getTimestamp();
-        $this->beginTimestamp = $beginTimestamp;
     }
 
     public function generate(): Meta

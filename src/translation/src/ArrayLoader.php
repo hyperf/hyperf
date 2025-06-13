@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Translation;
 
 use Hyperf\Contract\TranslatorLoaderInterface;
@@ -17,10 +18,8 @@ class ArrayLoader implements TranslatorLoaderInterface
 {
     /**
      * All of the translation messages.
-     *
-     * @var array
      */
-    protected $messages = [];
+    protected array $messages = [];
 
     /**
      * Load the messages for the given locale.

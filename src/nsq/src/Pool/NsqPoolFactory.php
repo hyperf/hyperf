@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nsq\Pool;
 
 use Hyperf\Di\Container;
@@ -17,18 +18,12 @@ use Psr\Container\ContainerInterface;
 class NsqPoolFactory
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * @var NsqPool[]
      */
-    protected $pools = [];
+    protected array $pools = [];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function getPool(string $name): NsqPool

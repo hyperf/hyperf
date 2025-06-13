@@ -9,11 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcMultiplex;
 
 class Constant
 {
     public const PROTOCOL_DEFAULT = 'multiplex.default';
+
+    public const PROTOCOL_PHP_SERIALIZE = 'multiplex.php_serialize';
 
     public const REQUEST_ID = 'request_id';
 
@@ -26,6 +29,8 @@ class Constant
     public const RESULT = 'result';
 
     public const CONTEXT = 'context';
+
+    public const EXTRA = 'extra';
 
     public const ERROR = 'error';
 

@@ -9,19 +9,29 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Session;
 
+use Hyperf\Engine\Channel;
 use Hyperf\Session\Handler\FileHandler;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
+use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class FileHandlerTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Mockery::close();
+    }
+
     public function testReadAndWrite()
     {
         $handler = new FileHandler(new Filesystem(), $path = '/tmp', 10);
@@ -68,5 +78,29 @@ class FileHandlerTest extends TestCase
         sleep(1);
         $handler->gc(1);
         $this->assertFileDoesNotExist($path . '/' . $id);
+    }
+
+    public function testReadAfterRewritten()
+    {
+        $fs = Mockery::mock(Filesystem::class . '[lastModified]');
+        $chan = new Channel(1);
+        $fs->shouldReceive('lastModified')->withAnyArgs()->once()->andReturnUsing(function (string $path) {
+            return 0;
+        });
+        $fs->shouldReceive('lastModified')->withAnyArgs()->once()->andReturnUsing(function (string $path) use ($chan) {
+            $t = filemtime($path);
+            $chan->push($t);
+            return $t;
+        });
+        $handler = new FileHandler($fs, __DIR__ . '/runtime/session', 1);
+        $id = Str::random(40);
+        $handler->write($id, 'foo');
+        $this->assertEmpty($handler->read($id));
+        $time = time();
+        sleep(1);
+        $handler->write($id, 'foo');
+        $this->assertSame('foo', $handler->read($id));
+
+        $this->assertTrue($chan->pop(5) > $time);
     }
 }

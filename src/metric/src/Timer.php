@@ -9,39 +9,27 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric;
 
 use Hyperf\Metric\Contract\MetricFactoryInterface;
+
+use function Hyperf\Support\make;
 
 /**
  * Syntax sugar class to handle time.
  */
 class Timer
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected float $time;
+
+    private bool $ended = false;
 
     /**
-     * @var array<string,string>
+     * @param array<string, string> $labels
      */
-    protected $labels;
-
-    /**
-     * @var float
-     */
-    protected $time;
-
-    /**
-     * @var bool
-     */
-    private $ended = false;
-
-    public function __construct(string $name, ?array $default = [])
+    public function __construct(protected string $name, protected ?array $labels = [])
     {
-        $this->name = $name;
-        $this->labels = $default;
         $this->time = microtime(true);
     }
 
@@ -65,7 +53,7 @@ class Timer
             ->with(...array_values($this->labels));
         $d = (float) microtime(true) - $this->time;
         if ($d < 0) {
-            $d = (float) 0;
+            $d = 0.0;
         }
         $histogram->put($d);
         $this->ended = true;

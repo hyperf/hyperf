@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server\Listener;
 
+use Hyperf\Context\Context;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Server\Event\CoroutineServerStart;
-use Hyperf\Utils\Context;
 
 class StoreServerNameListener implements ListenerInterface
 {
@@ -27,7 +28,7 @@ class StoreServerNameListener implements ListenerInterface
     /**
      * @param CoroutineServerStart $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $serverName = $event->name;
         if (! $serverName) {

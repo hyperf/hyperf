@@ -1,6 +1,15 @@
 #!/usr/bin/env php
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 use Symfony\Component\Finder\Finder;
 
 foreach ([__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', __DIR__ . '/vendor/autoload.php'] as $file) {
@@ -10,10 +19,29 @@ foreach ([__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', 
     }
 }
 
+$options = $argv;
+// ./bin/composer-json-fixer --version=~3.1.0
+$version = '';
+foreach ($options as $option) {
+    if (str_starts_with($option, '--') && $option = substr($option, 2)) {
+        [$key, $value] = explode('=', $option, 2);
+        match ($key) {
+            'version' => $version = $value,
+            default => null,
+        };
+    }
+}
+
 $files = Finder::create()
     ->in(__DIR__ . '/../src')
+    ->exclude(['helper', 'polyfill-coroutine'])
     ->name('composer.json')
     ->files();
+
+$packages = [];
+foreach ($files as $file) {
+    $packages[] = 'hyperf/' . basename(dirname($file->getRealPath()));
+}
 
 $require = [];
 $autoload = [];
@@ -21,10 +49,26 @@ $autoloadFiles = [];
 $autoloadDev = [];
 $configProviders = [];
 $replaces = [];
-foreach ($files as $file) {
+foreach ($files as $fileInfo) {
+    $file = $fileInfo->getRealPath();
     $component = basename(dirname($file));
     $composerJson = json_decode(file_get_contents($file), true);
-    if(isset($composerJson['name']) && str_starts_with($composerJson['name'], 'hyperf')){
+    if ($version) {
+        $json = json_decode(file_get_contents($file));
+        foreach ($json->require ?? [] as $key => $item) {
+            if (in_array($key, $packages)) {
+                $json->require->{$key} = $version;
+            }
+        }
+
+        unset($json->{"require-dev"});
+
+        file_put_contents(
+            $fileInfo->getRealPath(),
+            json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL
+        );
+    }
+    if (isset($composerJson['name']) && str_starts_with($composerJson['name'], 'hyperf')) {
         $replaces[$composerJson['name']] = '*';
     }
 
@@ -41,14 +85,14 @@ foreach ($files as $file) {
     }
     foreach ($composerJson['autoload-dev']['psr-4'] ?? [] as $ns => $dir) {
         $value = "src/{$component}/" . trim($dir, '/') . '/';
-        if(isset($autoloadDev[$ns])){
+        if (isset($autoloadDev[$ns])) {
             $autoloadDev[$ns] = [$value, ...(array) $autoloadDev[$ns]];
-        }else{
+        } else {
             $autoloadDev[$ns] = $value;
         }
     }
     if (isset($composerJson['extra']['hyperf']['config'])) {
-        $configProviders = array_merge($configProviders, (array)$composerJson['extra']['hyperf']['config']);
+        $configProviders = array_merge($configProviders, (array) $composerJson['extra']['hyperf']['config']);
     }
 }
 

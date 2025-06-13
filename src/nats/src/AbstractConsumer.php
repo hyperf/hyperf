@@ -9,45 +9,25 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nats;
 
 use Psr\Container\ContainerInterface;
 
 abstract class AbstractConsumer
 {
-    /**
-     * @var string
-     */
-    public $pool = 'default';
+    public string $pool = 'default';
 
-    /**
-     * @var string
-     */
-    protected $subject = '';
+    protected string $subject = '';
 
-    /**
-     * @var string
-     */
-    protected $queue = '';
+    protected string $queue = '';
 
-    /**
-     * @var string
-     */
-    protected $name = 'NatsConsumer';
+    protected string $name = 'NatsConsumer';
 
-    /**
-     * @var int
-     */
-    protected $nums = 1;
+    protected int $nums = 1;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     abstract public function consume(Message $payload);
@@ -57,7 +37,7 @@ abstract class AbstractConsumer
         return $this->subject;
     }
 
-    public function setSubject(string $subject): self
+    public function setSubject(string $subject): static
     {
         $this->subject = $subject;
         return $this;
@@ -68,7 +48,7 @@ abstract class AbstractConsumer
         return $this->queue;
     }
 
-    public function setQueue(string $queue): self
+    public function setQueue(string $queue): static
     {
         $this->queue = $queue;
         return $this;
@@ -79,7 +59,7 @@ abstract class AbstractConsumer
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
         return $this;
@@ -90,7 +70,7 @@ abstract class AbstractConsumer
         return $this->nums;
     }
 
-    public function setNums(int $nums): self
+    public function setNums(int $nums): static
     {
         $this->nums = $nums;
         return $this;
@@ -101,7 +81,7 @@ abstract class AbstractConsumer
         return $this->pool;
     }
 
-    public function setPool(string $pool): self
+    public function setPool(string $pool): static
     {
         $this->pool = $pool;
         return $this;

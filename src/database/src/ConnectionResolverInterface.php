@@ -9,29 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database;
 
 interface ConnectionResolverInterface
 {
     /**
      * Get a database connection instance.
-     *
-     * @param string $name
-     * @return ConnectionInterface
      */
-    public function connection($name = null);
+    public function connection(?string $name = null): ConnectionInterface;
 
     /**
      * Get the default connection name.
-     *
-     * @return string
      */
-    public function getDefaultConnection();
+    public function getDefaultConnection(): string;
 
     /**
      * Set the default connection name.
-     *
-     * @param string $name
      */
-    public function setDefaultConnection($name);
+    public function setDefaultConnection(string $name): void;
 }

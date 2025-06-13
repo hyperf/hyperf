@@ -9,22 +9,33 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
 use BadMethodCallException;
+use Closure;
+use Hyperf\Collection\Arr;
+use Hyperf\Contract\MessageBag as MessageBagContract;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface as ValidatorContract;
 use Hyperf\HttpMessage\Upload\UploadedFile;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Contracts\MessageBag as MessageBagContract;
-use Hyperf\Utils\Fluent;
-use Hyperf\Utils\MessageBag;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Stringable\StrCache;
+use Hyperf\Support\Fluent;
+use Hyperf\Support\MessageBag;
+use Hyperf\Validation\Contract\DataAwareRule;
 use Hyperf\Validation\Contract\ImplicitRule;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Contract\Rule as RuleContract;
+use Hyperf\Validation\Contract\ValidatorAwareRule;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+use Stringable;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Collection\data_get;
+use function Hyperf\Support\make;
+use function Hyperf\Tappable\tap;
 
 class Validator implements ValidatorContract
 {
@@ -32,190 +43,145 @@ class Validator implements ValidatorContract
     use Concerns\ValidatesAttributes;
 
     /**
-     * The array of custom error messages.
-     *
-     * @var array
-     */
-    public $customMessages = [];
-
-    /**
      * The array of fallback error messages.
-     *
-     * @var array
      */
-    public $fallbackMessages = [];
-
-    /**
-     * The array of custom attribute names.
-     *
-     * @var array
-     */
-    public $customAttributes = [];
+    public array $fallbackMessages = [];
 
     /**
      * The array of custom displayable values.
-     *
-     * @var array
      */
-    public $customValues = [];
+    public array $customValues = [];
 
     /**
-     * All of the custom validator extensions.
-     *
-     * @var array
+     * Indicates that unvalidated array keys should be excluded, even if the parent array was validated.
      */
-    public $extensions = [];
+    public bool $excludeUnvalidatedArrayKeys = false;
 
     /**
-     * All of the custom replacer extensions.
-     *
-     * @var array
+     * All the custom validator extensions.
      */
-    public $replacers = [];
+    public array $extensions = [];
 
     /**
-     * The Translator implementation.
-     *
-     * @var TranslatorInterface
+     * All the custom replacer extensions.
      */
-    protected $translator;
+    public array $replacers = [];
 
     /**
      * The container instance.
-     *
-     * @var ContainerInterface
      */
-    protected $container;
+    protected ?ContainerInterface $container = null;
 
     /**
      * The Presence Verifier implementation.
-     *
-     * @var \Hyperf\Validation\Contract\PresenceVerifierInterface
      */
-    protected $presenceVerifier;
+    protected ?PresenceVerifierInterface $presenceVerifier = null;
 
     /**
      * The failed validation rules.
-     *
-     * @var array
      */
-    protected $failedRules = [];
+    protected array $failedRules = [];
+
+    /**
+     * Attributes that should be excluded from the validated data.
+     */
+    protected array $excludeAttributes = [];
 
     /**
      * The message bag instance.
-     *
-     * @var MessageBag
      */
-    protected $messages;
+    protected ?MessageBag $messages = null;
 
     /**
      * The data under validation.
-     *
-     * @var array
      */
-    protected $data;
-
-    /**
-     * The initial rules provided.
-     *
-     * @var array
-     */
-    protected $initialRules;
+    protected array $data;
 
     /**
      * The rules to be applied to the data.
-     *
-     * @var array
      */
-    protected $rules;
+    protected array $rules = [];
 
     /**
      * The current rule that is validating.
      *
-     * @var string
+     * @var string|Stringable
      */
-    protected $currentRule;
+    protected mixed $currentRule;
 
     /**
      * The array of wildcard attributes with their asterisks expanded.
-     *
-     * @var array
      */
-    protected $implicitAttributes = [];
+    protected array $implicitAttributes = [];
 
     /**
      * The cached data for the "distinct" rule.
-     *
-     * @var array
      */
-    protected $distinctValues = [];
+    protected array $distinctValues = [];
 
     /**
-     * All of the registered "after" callbacks.
-     *
-     * @var array
+     * All the registered "after" callbacks.
      */
-    protected $after = [];
+    protected array $after = [];
 
     /**
      * The validation rules that may be applied to files.
-     *
-     * @var array
      */
-    protected $fileRules = [
-        'File', 'Image', 'Mimes', 'Mimetypes', 'Min',
-        'Max', 'Size', 'Between', 'Dimensions',
+    protected array $fileRules = [
+        'Between', 'Dimensions', 'Extensions', 'File', 'Image',
+        'Max', 'Mimes', 'Mimetypes', 'Min', 'Size',
     ];
 
     /**
      * The validation rules that imply the field is required.
-     *
-     * @var array
      */
-    protected $implicitRules = [
-        'Required', 'Filled', 'RequiredWith', 'RequiredWithAll', 'RequiredWithout',
-        'RequiredWithoutAll', 'RequiredIf', 'RequiredUnless', 'Accepted', 'Present',
+    protected array $implicitRules = [
+        'Required', 'Filled', 'Missing', 'MissingIf', 'MissingUnless', 'MissingWith',
+        'MissingWithAll', 'RequiredWith', 'RequiredWithAll', 'RequiredWithout', 'RequiredWithoutAll',
+        'RequiredIf', 'RequiredUnless', 'Accepted', 'AcceptedIf', 'Declined', 'DeclinedIf', 'Present',
     ];
 
     /**
      * The validation rules which depend on other fields as parameters.
-     *
-     * @var array
      */
-    protected $dependentRules = [
-        'RequiredWith', 'RequiredWithAll', 'RequiredWithout', 'RequiredWithoutAll',
-        'RequiredIf', 'RequiredUnless', 'Confirmed', 'Same', 'Different', 'Unique',
-        'Before', 'After', 'BeforeOrEqual', 'AfterOrEqual', 'Gt', 'Lt', 'Gte', 'Lte',
+    protected array $dependentRules = [
+        'AcceptedIf', 'DeclinedIf', 'RequiredWith', 'RequiredWithAll', 'RequiredWithout',
+        'RequiredWithoutAll', 'RequiredIf', 'RequiredUnless', 'Confirmed', 'Same', 'Different',
+        'Unique', 'Before', 'After', 'BeforeOrEqual', 'AfterOrEqual', 'Gt', 'Lt', 'Gte', 'Lte',
+        'Prohibits', 'ExcludeIf', 'ExcludeUnless', 'ExcludeWith', 'ExcludeWithout', 'MissingIf', 'MissingUnless', 'MissingWith', 'MissingWithAll',
     ];
 
     /**
-     * The size related validation rules.
-     *
-     * @var array
+     * The validation rules that can exclude an attribute.
      */
-    protected $sizeRules = ['Size', 'Between', 'Min', 'Max', 'Gt', 'Lt', 'Gte', 'Lte'];
+    protected array $excludeRules = ['Exclude', 'ExcludeIf', 'ExcludeUnless', 'ExcludeWith', 'ExcludeWithout'];
+
+    /**
+     * The size related validation rules.
+     */
+    protected array $sizeRules = ['Size', 'Between', 'Min', 'Max', 'Gt', 'Lt', 'Gte', 'Lte'];
 
     /**
      * The numeric related validation rules.
-     *
-     * @var array
      */
-    protected $numericRules = ['Numeric', 'Integer'];
+    protected array $numericRules = ['Numeric', 'Integer', 'Decimal'];
 
+    /**
+     * @param TranslatorInterface $translator the Translator implementation
+     * @param array $initialRules the initial rules provided
+     * @param array $customMessages the array of custom error messages
+     * @param array $customAttributes the array of custom attribute names
+     */
     public function __construct(
-        TranslatorInterface $translator,
+        protected TranslatorInterface $translator,
         array $data,
-        array $rules,
-        array $messages = [],
-        array $customAttributes = []
+        protected array $initialRules,
+        public array $customMessages = [],
+        public array $customAttributes = []
     ) {
-        $this->initialRules = $rules;
-        $this->translator = $translator;
-        $this->customMessages = $messages;
         $this->data = $this->parseData($data);
-        $this->customAttributes = $customAttributes;
 
-        $this->setRules($rules);
+        $this->setRules($initialRules);
     }
 
     /**
@@ -223,11 +189,11 @@ class Validator implements ValidatorContract
      *
      * @param mixed $method
      * @param mixed $parameters
-     * @throws \BadMethodCallException when method does not exist
+     * @throws BadMethodCallException when method does not exist
      */
     public function __call($method, $parameters)
     {
-        $rule = Str::snake(substr($method, 8));
+        $rule = StrCache::snake(substr($method, 8));
 
         if (isset($this->extensions[$rule])) {
             return $this->callExtension($rule, $parameters);
@@ -272,9 +238,7 @@ class Validator implements ValidatorContract
      */
     public function after($callback): self
     {
-        $this->after[] = function () use ($callback) {
-            return call_user_func_array($callback, [$this]);
-        };
+        $this->after[] = fn () => call_user_func_array($callback, [$this]);
 
         return $this;
     }
@@ -294,8 +258,18 @@ class Validator implements ValidatorContract
         foreach ($this->rules as $attribute => $rules) {
             $attribute = str_replace('\.', '->', $attribute);
 
+            if ($this->shouldBeExcluded($attribute)) {
+                $this->removeAttribute($attribute);
+
+                continue;
+            }
+
             foreach ($rules as $rule) {
                 $this->validateAttribute($attribute, $rule);
+
+                if ($this->shouldBeExcluded($attribute)) {
+                    break;
+                }
 
                 if ($this->shouldStopValidating($attribute)) {
                     break;
@@ -324,7 +298,7 @@ class Validator implements ValidatorContract
     /**
      * Run the validator's rules against its data.
      *
-     * @throws \Hyperf\Validation\ValidationException if validate fails
+     * @throws ValidationException if validate fails
      */
     public function validate(): array
     {
@@ -338,7 +312,7 @@ class Validator implements ValidatorContract
     /**
      * Get the attributes and values that were validated.
      *
-     * @throws \Hyperf\Validation\ValidationException if invalid
+     * @throws ValidationException if invalid
      */
     public function validated(): array
     {
@@ -350,8 +324,15 @@ class Validator implements ValidatorContract
 
         $missingValue = Str::random(10);
 
-        foreach (array_keys($this->getRules()) as $key) {
+        foreach ($this->getRules() as $key => $rules) {
             $value = data_get($this->getData(), $key, $missingValue);
+
+            if ($this->excludeUnvalidatedArrayKeys
+                && (in_array('array', $rules) || in_array('list', $rules))
+                && $value !== null
+                && ! empty(preg_grep('/^' . preg_quote($key, '/') . '\.+/', array_keys($this->getRules())))) {
+                continue;
+            }
 
             if ($value !== $missingValue) {
                 Arr::set($results, $key, $value);
@@ -364,10 +345,15 @@ class Validator implements ValidatorContract
     /**
      * Add a failed rule and error message to the collection.
      */
-    public function addFailure(string $attribute, string $rule, array $parameters = [])
+    public function addFailure(string $attribute, string $rule, array $parameters = []): void
     {
         if (! $this->messages) {
             $this->passes();
+        }
+
+        if (in_array($rule, $this->excludeRules)) {
+            $this->excludeAttribute($attribute);
+            return;
         }
 
         $this->messages->add($attribute, $this->makeReplacements(
@@ -451,9 +437,9 @@ class Validator implements ValidatorContract
     /**
      * Determine if the given attribute has a rule in the given set.
      *
-     * @param array|string $rules
+     * @param array|string|Stringable $rules
      */
-    public function hasRule(string $attribute, $rules): bool
+    public function hasRule(string $attribute, mixed $rules): bool
     {
         return ! is_null($this->getRule($attribute, $rules));
     }
@@ -555,7 +541,7 @@ class Validator implements ValidatorContract
     public function addExtensions(array $extensions)
     {
         if ($extensions) {
-            $keys = array_map('\Hyperf\Utils\Str::snake', array_keys($extensions));
+            $keys = array_map('\Hyperf\Stringable\StrCache::snake', array_keys($extensions));
 
             $extensions = array_combine($keys, array_values($extensions));
         }
@@ -571,7 +557,7 @@ class Validator implements ValidatorContract
         $this->addExtensions($extensions);
 
         foreach ($extensions as $rule => $extension) {
-            $this->implicitRules[] = Str::studly($rule);
+            $this->implicitRules[] = StrCache::studly($rule);
         }
     }
 
@@ -583,42 +569,36 @@ class Validator implements ValidatorContract
         $this->addExtensions($extensions);
 
         foreach ($extensions as $rule => $extension) {
-            $this->dependentRules[] = Str::studly($rule);
+            $this->dependentRules[] = StrCache::studly($rule);
         }
     }
 
     /**
      * Register a custom validator extension.
-     *
-     * @param \Closure|string $extension
      */
-    public function addExtension(string $rule, $extension)
+    public function addExtension(string $rule, Closure|string $extension)
     {
-        $this->extensions[Str::snake($rule)] = $extension;
+        $this->extensions[StrCache::snake($rule)] = $extension;
     }
 
     /**
      * Register a custom implicit validator extension.
-     *
-     * @param \Closure|string $extension
      */
-    public function addImplicitExtension(string $rule, $extension)
+    public function addImplicitExtension(string $rule, Closure|string $extension)
     {
         $this->addExtension($rule, $extension);
 
-        $this->implicitRules[] = Str::studly($rule);
+        $this->implicitRules[] = StrCache::studly($rule);
     }
 
     /**
      * Register a custom dependent validator extension.
-     *
-     * @param \Closure|string $extension
      */
-    public function addDependentExtension(string $rule, $extension)
+    public function addDependentExtension(string $rule, Closure|string $extension)
     {
         $this->addExtension($rule, $extension);
 
-        $this->dependentRules[] = Str::studly($rule);
+        $this->dependentRules[] = StrCache::studly($rule);
     }
 
     /**
@@ -627,7 +607,7 @@ class Validator implements ValidatorContract
     public function addReplacers(array $replacers)
     {
         if ($replacers) {
-            $keys = array_map('\Hyperf\Utils\Str::snake', array_keys($replacers));
+            $keys = array_map('\Hyperf\Stringable\StrCache::snake', array_keys($replacers));
 
             $replacers = array_combine($keys, array_values($replacers));
         }
@@ -637,12 +617,10 @@ class Validator implements ValidatorContract
 
     /**
      * Register a custom validator message replacer.
-     *
-     * @param \Closure|string $replacer
      */
-    public function addReplacer(string $rule, $replacer)
+    public function addReplacer(string $rule, Closure|string $replacer)
     {
-        $this->replacers[Str::snake($rule)] = $replacer;
+        $this->replacers[StrCache::snake($rule)] = $replacer;
     }
 
     /**
@@ -706,7 +684,7 @@ class Validator implements ValidatorContract
     /**
      * Get the Presence Verifier implementation.
      *
-     *@throws \RuntimeException
+     * @throws RuntimeException
      */
     public function getPresenceVerifier(): PresenceVerifierInterface
     {
@@ -720,7 +698,7 @@ class Validator implements ValidatorContract
     /**
      * Get the Presence Verifier implementation.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function getPresenceVerifierFor(?string $connection): PresenceVerifierInterface
     {
@@ -759,6 +737,50 @@ class Validator implements ValidatorContract
     public function setContainer(ContainerInterface $container)
     {
         $this->container = $container;
+    }
+
+    /**
+     * Get the value of a given attribute.
+     */
+    public function getValue(string $attribute)
+    {
+        return Arr::get($this->data, $attribute);
+    }
+
+    /**
+     * Set the value of a given attribute.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     */
+    public function setValue($attribute, $value)
+    {
+        Arr::set($this->data, $attribute, $value);
+    }
+
+    /**
+     * Determine if the attribute should be excluded.
+     */
+    protected function shouldBeExcluded(string $attribute): bool
+    {
+        foreach ($this->excludeAttributes as $excludeAttribute) {
+            if ($attribute === $excludeAttribute
+                || Str::startsWith($attribute, $excludeAttribute . '.')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Add the given attribute to the list of excluded attributes.
+     */
+    protected function excludeAttribute(string $attribute): void
+    {
+        $this->excludeAttributes[] = $attribute;
+
+        $this->excludeAttributes = array_unique($this->excludeAttributes);
     }
 
     /**
@@ -862,9 +884,7 @@ class Validator implements ValidatorContract
      */
     protected function replaceAsterisksInParameters(array $parameters, array $keys): array
     {
-        return array_map(function ($field) use ($keys) {
-            return vsprintf(str_replace('*', '%s', $field), $keys);
-        }, $parameters);
+        return array_map(fn ($field) => vsprintf(str_replace('*', '%s', $field), $keys), $parameters);
     }
 
     /**
@@ -875,6 +895,10 @@ class Validator implements ValidatorContract
      */
     protected function isValidatable($rule, string $attribute, $value): bool
     {
+        if (in_array($rule, $this->excludeRules)) {
+            return true;
+        }
+
         return $this->presentOrRuleIsImplicit($rule, $attribute, $value)
             && $this->passesOptionalCheck($attribute)
             && $this->isNotNullIfMarkedAsNullable($rule, $attribute)
@@ -955,16 +979,24 @@ class Validator implements ValidatorContract
      */
     protected function validateUsingCustomRule(string $attribute, $value, RuleContract $rule)
     {
-        if (! $rule->passes($attribute, $value)) {
-            $this->failedRules[$attribute][get_class($rule)] = [];
+        if ($rule instanceof ValidatorAwareRule) {
+            $rule->setValidator($this);
+        }
 
-            $messages = $rule->message() ? (array) $rule->message() : [get_class($rule)];
+        if ($rule instanceof DataAwareRule) {
+            $rule->setData($this->data);
+        }
+
+        if (! $rule->passes($attribute, $value)) {
+            $this->failedRules[$attribute][$rule::class] = [];
+
+            $messages = $rule->message() ? (array) $rule->message() : [$rule::class];
 
             foreach ($messages as $message) {
                 $this->messages->add($attribute, $this->makeReplacements(
                     $message,
                     $attribute,
-                    get_class($rule),
+                    $rule::class,
                     []
                 ));
             }
@@ -998,17 +1030,15 @@ class Validator implements ValidatorContract
      */
     protected function attributesThatHaveMessages(): array
     {
-        return collect($this->messages()->toArray())->map(function ($message, $key) {
-            return explode('.', $key)[0];
-        })->unique()->flip()->all();
+        return collect($this->messages()->toArray())->map(fn ($message, $key) => explode('.', $key)[0])->unique()->flip()->all();
     }
 
     /**
      * Get a rule and its parameters for a given attribute.
      *
-     * @param array|string $rules
+     * @param array|string|Stringable $rules
      */
-    protected function getRule(string $attribute, $rules): ?array
+    protected function getRule(string $attribute, mixed $rules): ?array
     {
         if (! array_key_exists($attribute, $this->rules)) {
             return null;
@@ -1024,14 +1054,6 @@ class Validator implements ValidatorContract
             }
         }
         return null;
-    }
-
-    /**
-     * Get the value of a given attribute.
-     */
-    protected function getValue(string $attribute)
-    {
-        return Arr::get($this->data, $attribute);
     }
 
     /**

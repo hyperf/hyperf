@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\LazyLoader;
 
-use Hyperf\Utils\CodeGen\PhpParser;
-use Hyperf\Utils\Coroutine\Locker as CoLocker;
-use Hyperf\Utils\Str;
+use Hyperf\CodeParser\PhpParser;
+use Hyperf\Coroutine\Locker as CoLocker;
+use Hyperf\Stringable\Str;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\PrettyPrinter\Standard;
@@ -25,28 +26,19 @@ class LazyLoader
 
     /**
      * Indicates if a loader has been registered.
-     *
-     * @var bool
      */
-    protected $registered = false;
+    protected bool $registered = false;
 
     /**
      * The singleton instance of the loader.
-     *
-     * @var null|LazyLoader
      */
-    protected static $instance;
+    protected static ?LazyLoader $instance = null;
 
     /**
-     * The Configuration object.
-     *
-     * @var array
+     * @param array $config the Configuration object
      */
-    protected $config;
-
-    private function __construct(array $config)
+    private function __construct(protected array $config)
     {
-        $this->config = $config;
         $this->register();
     }
 
@@ -74,7 +66,7 @@ class LazyLoader
      */
     public function load(string $proxy)
     {
-        if (array_key_exists($proxy, $this->config) || $this->startsWith($proxy, 'HyperfLazy\\')) {
+        if (array_key_exists($proxy, $this->config) || str_starts_with($proxy, 'HyperfLazy\\')) {
             $this->loadProxy($proxy);
             return true;
         }
@@ -155,13 +147,8 @@ class LazyLoader
         spl_autoload_register($load, true, true);
     }
 
-    private function startsWith($haystack, $needle): bool
-    {
-        return substr($haystack, 0, strlen($needle)) === (string) $needle;
-    }
-
     /**
-     * These conditions are really hard to proxy via inheritence.
+     * These conditions are really hard to proxy via inheritance.
      * Luckily these conditions are very rarely met.
      *
      * TODO: implement some of them.

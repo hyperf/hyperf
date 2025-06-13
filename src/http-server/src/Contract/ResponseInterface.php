@@ -9,13 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer\Contract;
 
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
+use Hyperf\Contract\Xmlable;
 use Hyperf\HttpMessage\Cookie\Cookie;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
-use Hyperf\Utils\Contracts\Xmlable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use Stringable;
 
 interface ResponseInterface
 {
@@ -32,13 +34,18 @@ interface ResponseInterface
      * @param array|Arrayable|Xmlable $data
      * @param string $root the name of the root node
      */
-    public function xml($data, string $root = 'root'): PsrResponseInterface;
+    public function xml($data, string $root = 'root', string $charset = 'utf-8'): PsrResponseInterface;
 
     /**
      * Format data to a string and return data with Content-Type:text/plain header.
-     * @param mixed $data
+     * @param mixed|Stringable $data
      */
-    public function raw($data): PsrResponseInterface;
+    public function raw($data, string $charset = 'utf-8'): PsrResponseInterface;
+
+    /**
+     * return data with content-type:text/html header.
+     */
+    public function html(string $html, string $charset = 'utf-8'): PsrResponseInterface;
 
     /**
      * Redirect to a URL.

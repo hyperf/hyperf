@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Event;
 
 use Hyperf\Metric\Contract\MetricFactoryInterface;
@@ -16,13 +17,9 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 class MetricFactoryReady
 {
     /**
-     * A ready to use factory.
-     * @var MetricFactoryInterface
+     * @param MetricFactoryInterface $factory a ready to use factory
      */
-    public $factory;
-
-    public function __construct(MetricFactoryInterface $factory)
+    public function __construct(public MetricFactoryInterface $factory)
     {
-        $this->factory = $factory;
     }
 }

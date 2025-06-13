@@ -9,34 +9,34 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ViewEngine\Component;
 
 use ArrayAccess;
 use ArrayIterator;
+use Hyperf\Collection\Arr;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\HtmlString;
+use Hyperf\ViewEngine\T;
 use IteratorAggregate;
+use Traversable;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Support\value;
 
 class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
 {
     use Macroable;
 
     /**
-     * The raw array of attributes.
-     *
-     * @var array
-     */
-    protected $attributes = [];
-
-    /**
      * Create a new component attribute bag instance.
+     *
+     * @param array $attributes the raw array of attributes
      */
-    public function __construct(array $attributes = [])
+    public function __construct(protected array $attributes = [])
     {
-        $this->attributes = $attributes;
     }
 
     /**
@@ -51,10 +51,8 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
 
     /**
      * Implode the attributes into a single HTML ready string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $string = '';
 
@@ -67,7 +65,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
                 $value = $key;
             }
 
-            $string .= ' ' . $key . '="' . str_replace('"', '\\"', trim($value)) . '"';
+            $string .= ' ' . $key . '="' . str_replace('"', '\"', trim($value)) . '"';
         }
 
         return trim($string);
@@ -166,9 +164,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      */
     public function whereStartsWith($string)
     {
-        return $this->filter(function ($value, $key) use ($string) {
-            return Str::startsWith($key, $string);
-        });
+        return $this->filter(fn ($value, $key) => Str::startsWith($key, $string));
     }
 
     /**
@@ -179,9 +175,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      */
     public function whereDoesntStartWith($string)
     {
-        return $this->reject(function ($value, $key) use ($string) {
-            return Str::startsWith($key, $string);
-        });
+        return $this->reject(fn ($value, $key) => Str::startsWith($key, $string));
     }
 
     /**
@@ -229,7 +223,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
                 return $value;
             }
 
-            return \Hyperf\ViewEngine\T::e($value);
+            return T::e($value);
         }, $attributeDefaults);
 
         foreach ($this->attributes as $key => $value) {
@@ -268,7 +262,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
 
             unset($attributes['attributes']);
 
-            $attributes = $parentBag->merge($attributes);
+            $attributes = $parentBag->merge($attributes)->getAttributes();
         }
 
         $this->attributes = $attributes;
@@ -294,43 +288,32 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
 
     /**
      * Determine if the given offset exists.
-     *
-     * @param string $offset
-     * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->attributes[$offset]);
     }
 
     /**
      * Get the value at the given offset.
-     *
-     * @param string $offset
-     * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
 
     /**
      * Set the value at a given offset.
-     *
-     * @param string $offset
-     * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->attributes[$offset] = $value;
     }
 
     /**
      * Remove the value at the given offset.
-     *
-     * @param string $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->attributes[$offset]);
     }
@@ -340,7 +323,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      *
      * @return ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->attributes);
     }

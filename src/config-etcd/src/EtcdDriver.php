@@ -9,25 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigEtcd;
 
+use Hyperf\Codec\Packer\JsonPacker;
 use Hyperf\ConfigCenter\AbstractDriver;
-use Hyperf\Utils\Packer\JsonPacker;
+use Hyperf\Contract\PackerInterface;
 use Psr\Container\ContainerInterface;
 
 class EtcdDriver extends AbstractDriver
 {
-    /**
-     * @var JsonPacker
-     */
-    protected $packer;
+    protected PackerInterface $packer;
 
-    /**
-     * @var array
-     */
-    protected $mapping;
+    protected array $mapping = [];
 
-    protected $driverName = 'etcd';
+    protected string $driverName = 'etcd';
 
     public function __construct(ContainerInterface $container)
     {
@@ -37,7 +33,7 @@ class EtcdDriver extends AbstractDriver
         $this->packer = $container->get($this->config->get('config_center.drivers.etcd.packer', JsonPacker::class));
     }
 
-    protected function updateConfig(array $config)
+    protected function updateConfig(array $config): void
     {
         $configurations = $this->format($config);
         foreach ($configurations as $kv) {

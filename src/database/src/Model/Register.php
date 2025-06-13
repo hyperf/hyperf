@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model;
 
 use Hyperf\Database\ConnectionInterface;
@@ -31,21 +32,16 @@ class Register
 
     /**
      * Resolve a connection instance.
-     *
-     * @param null|string $connection
-     * @return ConnectionInterface
      */
-    public static function resolveConnection($connection = null)
+    public static function resolveConnection(?string $connection = null): ConnectionInterface
     {
         return static::$resolver->connection($connection);
     }
 
     /**
      * Get the connection resolver instance.
-     *
-     * @return ConnectionResolverInterface
      */
-    public static function getConnectionResolver()
+    public static function getConnectionResolver(): ?ConnectionResolverInterface
     {
         return static::$resolver;
     }
@@ -61,7 +57,7 @@ class Register
     /**
      * Unset the connection resolver for models.
      */
-    public static function unsetConnectionResolver()
+    public static function unsetConnectionResolver(): void
     {
         static::$resolver = null;
     }
@@ -85,7 +81,7 @@ class Register
     /**
      * Unset the event dispatcher for models.
      */
-    public static function unsetEventDispatcher()
+    public static function unsetEventDispatcher(): void
     {
         static::$dispatcher = null;
     }

@@ -9,14 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
+use Hyperf\Kafka\Event\AfterConsumerConfigCreated;
 use Hyperf\Kafka\Event\BeforeConsume;
+use Hyperf\Kafka\Event\BeforeLongLangConsumerCreated;
 use Hyperf\Kafka\Event\FailToConsume;
 use Hyperf\Kafka\Exception\InvalidConsumeResultException;
 use Hyperf\Process\AbstractProcess;
@@ -25,26 +31,21 @@ use longlang\phpkafka\Client\SwooleClient;
 use longlang\phpkafka\Consumer\ConsumeMessage;
 use longlang\phpkafka\Consumer\Consumer as LongLangConsumer;
 use longlang\phpkafka\Consumer\ConsumerConfig;
-use longlang\phpkafka\Exception\KafkaErrorException;
 use longlang\phpkafka\Socket\SwooleSocket;
+use longlang\phpkafka\Timer\SwooleTimer;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Throwable;
+
+use function Hyperf\Coroutine\wait;
+use function Hyperf\Support\make;
 
 class ConsumerManager
 {
-    /**
-     * @var LongLangConsumer
-     */
-    protected $consumer;
+    protected LongLangConsumer $consumer;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function run()
@@ -57,7 +58,8 @@ class ConsumerManager
          */
         foreach ($classes as $class => $annotation) {
             $instance = make($class);
-            if (! $instance instanceof AbstractConsumer || ! $annotation->enable) {
+
+            if (! $instance instanceof AbstractConsumer || ! $instance->isEnable($annotation->enable)) {
                 continue;
             }
 
@@ -77,30 +79,15 @@ class ConsumerManager
     protected function createProcess(AbstractConsumer $consumer): AbstractProcess
     {
         return new class($this->container, $consumer) extends AbstractProcess {
-            /**
-             * @var AbstractConsumer
-             */
-            private $consumer;
+            private AbstractConsumer $consumer;
 
-            /**
-             * @var ConfigInterface
-             */
-            private $config;
+            private ConfigInterface $config;
 
-            /**
-             * @var null|EventDispatcherInterface
-             */
-            private $dispatcher;
+            private ?EventDispatcherInterface $dispatcher;
 
-            /**
-             * @var StdoutLoggerInterface
-             */
-            protected $stdoutLogger;
+            protected StdoutLoggerInterface $stdoutLogger;
 
-            /**
-             * @var Producer
-             */
-            protected $producer;
+            protected Producer $producer;
 
             public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
             {
@@ -114,53 +101,78 @@ class ConsumerManager
                 }
             }
 
+            public function isEnable($server): bool
+            {
+                return $this->config->get(sprintf('kafka.%s.enable', $this->consumer->getPool()), true);
+            }
+
             public function handle(): void
             {
                 $consumerConfig = $this->getConsumerConfig();
                 $consumer = $this->consumer;
+                $this->dispatcher?->dispatch(new BeforeLongLangConsumerCreated($consumer, $consumerConfig));
                 $longLangConsumer = new LongLangConsumer(
                     $consumerConfig,
                     function (ConsumeMessage $message) use ($consumer, $consumerConfig) {
-                        $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($consumer, $message));
+                        $config = $this->getConfig();
+                        wait(function () use ($consumer, $consumerConfig, $message) {
+                            $this->dispatcher?->dispatch(new BeforeConsume($consumer, $message));
 
-                        $result = $consumer->consume($message);
-
-                        if (! $consumerConfig->getAutoCommit()) {
-                            if (! is_string($result)) {
-                                throw new InvalidConsumeResultException('The result is invalid.');
+                            try {
+                                $result = $consumer->consume($message);
+                            } catch (Throwable $exception) {
+                                $this->dispatcher?->dispatch(new FailToConsume($consumer, $message, $exception));
+                                throw $exception;
                             }
 
-                            if ($result === Result::ACK) {
-                                $message->getConsumer()->ack($message);
+                            if (! $consumerConfig->getAutoCommit()) {
+                                if (! is_string($result)) {
+                                    throw new InvalidConsumeResultException('The result is invalid.');
+                                }
+
+                                if ($result === Result::ACK) {
+                                    $message->getConsumer()->ack($message);
+                                }
+
+                                if ($result === Result::REQUEUE) {
+                                    $this->producer->send($message->getTopic(), $message->getValue(), $message->getKey(), $message->getHeaders());
+                                }
                             }
 
-                            if ($result === Result::REQUEUE) {
-                                $this->producer->send($message->getTopic(), $message->getValue(), $message->getKey(), $message->getHeaders());
-                            }
-                        }
-
-                        $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($consumer, $message, $result));
+                            $this->dispatcher?->dispatch(new AfterConsume($consumer, $message, $result));
+                        }, $config['consume_timeout'] ?? -1);
                     }
                 );
 
-                retry(
-                    3,
-                    function () use ($longLangConsumer) {
-                        try {
-                            $longLangConsumer->start();
-                        } catch (KafkaErrorException $exception) {
-                            $this->stdoutLogger->error($exception->getMessage());
+                // stop consumer when worker exit
+                Coroutine::create(function () use ($longLangConsumer) {
+                    CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
+                    $longLangConsumer->stop();
+                });
 
-                            $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, [], $exception));
-                        }
-                    },
-                    10
-                );
+                while (true) {
+                    try {
+                        $longLangConsumer->start();
+                    } catch (Throwable $exception) {
+                        $this->stdoutLogger->warning((string) $exception);
+                    }
+
+                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(10)) {
+                        break;
+                    }
+                }
+
+                $longLangConsumer->close();
+            }
+
+            public function getConfig(): array
+            {
+                return $this->config->get('kafka.' . $this->consumer->getPool());
             }
 
             public function getConsumerConfig(): ConsumerConfig
             {
-                $config = $this->config->get('kafka.' . $this->consumer->getPool());
+                $config = $this->getConfig();
                 $consumerConfig = new ConsumerConfig();
                 $consumerConfig->setAutoCommit($this->consumer->isAutoCommit());
                 $consumerConfig->setRackId($config['rack_id']);
@@ -168,13 +180,14 @@ class ConsumerManager
                 $consumerConfig->setTopic($this->consumer->getTopic());
                 $consumerConfig->setRebalanceTimeout($config['rebalance_timeout']);
                 $consumerConfig->setSendTimeout($config['send_timeout']);
-                $consumerConfig->setGroupId($this->consumer->getGroupId());
+                $consumerConfig->setGroupId($this->consumer->getGroupId() ?? uniqid('hyperf-kafka-'));
                 $consumerConfig->setGroupInstanceId(sprintf('%s-%s', $this->consumer->getGroupId(), uniqid()));
                 $consumerConfig->setMemberId($this->consumer->getMemberId() ?: '');
                 $consumerConfig->setInterval($config['interval']);
                 $consumerConfig->setBootstrapServers($config['bootstrap_servers']);
-                $consumerConfig->setSocket(SwooleSocket::class);
-                $consumerConfig->setClient(SwooleClient::class);
+                $consumerConfig->setClient($config['client'] ?? SwooleClient::class);
+                $consumerConfig->setSocket($config['socket'] ?? SwooleSocket::class);
+                $consumerConfig->setTimer($config['timer'] ?? SwooleTimer::class);
                 $consumerConfig->setMaxWriteAttempts($config['max_write_attempts']);
                 $consumerConfig->setClientId(sprintf('%s-%s', $config['client_id'] ?: 'Hyperf', uniqid()));
                 $consumerConfig->setRecvTimeout($config['recv_timeout']);
@@ -188,6 +201,10 @@ class ConsumerManager
                 $consumerConfig->setPartitionAssignmentStrategy($config['partition_assignment_strategy']);
                 ! empty($config['sasl']) && $consumerConfig->setSasl($config['sasl']);
                 ! empty($config['ssl']) && $consumerConfig->setSsl($config['ssl']);
+                is_callable($config['exception_callback'] ?? null) && $consumerConfig->setExceptionCallback($config['exception_callback']);
+
+                $this->dispatcher?->dispatch(new AfterConsumerConfigCreated($consumerConfig));
+
                 return $consumerConfig;
             }
         };

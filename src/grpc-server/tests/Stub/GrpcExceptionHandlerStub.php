@@ -9,14 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\GrpcServer\Stub;
 
 use Hyperf\GrpcServer\Exception\Handler\GrpcExceptionHandler;
-use Psr\Http\Message\ResponseInterface;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
 class GrpcExceptionHandlerStub extends GrpcExceptionHandler
 {
-    public function transferToResponse($code, $message, ResponseInterface $response): ResponseInterface
+    public function transferToResponse($code, $message, ResponsePlusInterface $response): ResponsePlusInterface
     {
         return parent::transferToResponse($code, $message, $response);
     }

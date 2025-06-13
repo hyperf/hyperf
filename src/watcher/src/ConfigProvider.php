@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Watcher;
 
 use Hyperf\Watcher\Command\WatchCommand;
+use Hyperf\Watcher\Listener\ReloadDotenvListener;
 
 class ConfigProvider
 {
@@ -23,19 +25,15 @@ class ConfigProvider
             'commands' => [
                 WatchCommand::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
+            'listeners' => [
+                ReloadDotenvListener::class,
             ],
             'publish' => [
                 [
                     'id' => 'config',
                     'description' => 'The config for watcher.',
                     'source' => __DIR__ . '/../publish/watcher.php',
-                    'destination' => BASE_PATH . '/config/autoload/watcher.php',
+                    'destination' => BASE_PATH . '/.watcher.php',
                 ],
             ],
         ];

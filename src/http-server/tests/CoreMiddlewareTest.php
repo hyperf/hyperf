@@ -9,9 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\HttpServer;
 
 use FastRoute\Dispatcher;
+use Hyperf\Context\Context;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
@@ -26,21 +30,27 @@ use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
-use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Serializer\SimpleNormalizer;
 use HyperfTest\HttpServer\Stub\CoreMiddlewareStub;
 use HyperfTest\HttpServer\Stub\DemoController;
 use HyperfTest\HttpServer\Stub\FooController;
 use HyperfTest\HttpServer\Stub\SetHeaderMiddleware;
+use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionClass;
 use ReflectionMethod;
+use Swow\Psr7\Message\ResponsePlusInterface;
 
+/**
+ * @internal
+ * @coversNothing
+ */
+#[CoversNothing]
 /**
  * @internal
  * @coversNothing
@@ -61,7 +71,6 @@ class CoreMiddlewareTest extends TestCase
     {
         $middleware = new CoreMiddlewareStub($container = $this->getContainer(), 'http');
         $reflectionMethod = new ReflectionMethod(CoreMiddleware::class, 'transferToResponse');
-        $reflectionMethod->setAccessible(true);
         $request = Mockery::mock(ServerRequestInterface::class);
         /** @var ResponseInterface $response */
 
@@ -78,7 +87,7 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // Arrayable
-        $response = $reflectionMethod->invoke($middleware, new class() implements Arrayable {
+        $response = $reflectionMethod->invoke($middleware, new class implements Arrayable {
             public function toArray(): array
             {
                 return ['foo' => 'bar'];
@@ -89,7 +98,7 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // Jsonable
-        $response = $reflectionMethod->invoke($middleware, new class() implements Jsonable {
+        $response = $reflectionMethod->invoke($middleware, new class implements Jsonable {
             public function __toString(): string
             {
                 return json_encode(['foo' => 'bar'], JSON_UNESCAPED_UNICODE);
@@ -100,7 +109,7 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // __toString
-        $response = $reflectionMethod->invoke($middleware, new class() {
+        $response = $reflectionMethod->invoke($middleware, new class {
             public function __toString(): string
             {
                 return 'This is a string';
@@ -111,7 +120,7 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('text/plain', $response->getHeaderLine('content-type'));
 
         // Json encode failed
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Type is not supported');
         $response = $reflectionMethod->invoke($middleware, ['id' => fopen(BASE_PATH . '/.gitignore', 'r+')], $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -168,9 +177,9 @@ class CoreMiddlewareTest extends TestCase
             return Context::get(ServerRequestInterface::class)->getHeaders();
         });
 
-        $response = Mockery::mock(ResponseInterface::class);
-        $response->shouldReceive('withAddedHeader')->andReturn($response);
-        $response->shouldReceive('withBody')->with(Mockery::any())->andReturnUsing(function ($stream) use ($response, $id) {
+        $response = Mockery::mock(ResponsePlusInterface::class);
+        $response->shouldReceive('addHeader')->andReturn($response);
+        $response->shouldReceive('setBody')->with(Mockery::any())->andReturnUsing(function ($stream) use ($response, $id) {
             $this->assertInstanceOf(SwooleStream::class, $stream);
             /* @var SwooleStream $stream */
             $this->assertSame(json_encode(['DEBUG' => [$id]]), (string) $stream);
@@ -191,9 +200,8 @@ class CoreMiddlewareTest extends TestCase
         $container = $this->getContainer();
         $container->shouldReceive('get')->with(DemoController::class)->andReturn(new DemoController());
         $middleware = new CoreMiddleware($container, 'http');
-        $ref = new \ReflectionClass($middleware);
+        $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('handleFound');
-        $method->setAccessible(true);
 
         $handler = new Handler([DemoController::class, 'demo'], '/');
         $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
@@ -201,14 +209,27 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('Hello World.', $res);
     }
 
+    public function testHandleFoundWithInvokable()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(DemoController::class)->andReturn(new DemoController());
+        $middleware = new CoreMiddleware($container, 'http');
+        $ref = new ReflectionClass($middleware);
+        $method = $ref->getMethod('handleFound');
+
+        $handler = new Handler(DemoController::class, '/');
+        $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
+        $res = $method->invokeArgs($middleware, [$dispatched, Mockery::mock(ServerRequestInterface::class)]);
+        $this->assertSame('Action for an invokable controller.', $res);
+    }
+
     public function testHandleFoundWithNamespace()
     {
         $container = $this->getContainer();
         $container->shouldReceive('get')->with(DemoController::class)->andReturn(new FooController());
         $middleware = new CoreMiddleware($container, 'http');
-        $ref = new \ReflectionClass($middleware);
+        $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('handleFound');
-        $method->setAccessible(true);
 
         $this->expectException(ServerErrorHttpException::class);
         $this->expectExceptionMessage('Method of class does not exist.');

@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace %NAMESPACE%;
+
+use Hyperf\Constants\Annotation\Constants;
+use Hyperf\Constants\Annotation\Message;
+use Hyperf\Constants\EnumConstantsTrait;
+
+#[Constants]
+enum %CLASS%: int
+{
+    use EnumConstantsTrait;
+
+    #[Message("Server Error!")]
+    case SERVER_ERROR = 500;
+}

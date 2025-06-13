@@ -9,42 +9,27 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Adapter\RemoteProxy;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Metric\Contract\CounterInterface;
-use Hyperf\Process\ProcessCollector;
+use Hyperf\Metric\Contract\MetricCollectorInterface;
 
 class Counter implements CounterInterface
 {
     /**
-     * @var string
-     */
-    protected const TARGET_PROCESS_NAME = 'metric';
-
-    /**
-     * @var string
-     */
-    public $name;
-
-    public $labelNames = [];
-
-    /**
      * @var string[]
      */
-    public $labelValues = [];
+    public array $labelValues = [];
 
-    /**
-     * @var int
-     */
-    public $delta;
+    public ?int $delta = null;
 
-    public function __construct(string $name, array $labelNames)
+    public function __construct(public string $name, public array $labelNames)
     {
-        $this->name = $name;
-        $this->labelNames = $labelNames;
     }
 
-    public function with(string ...$labelValues): CounterInterface
+    public function with(string ...$labelValues): static
     {
         $this->labelValues = $labelValues;
         return $this;
@@ -53,7 +38,9 @@ class Counter implements CounterInterface
     public function add(int $delta): void
     {
         $this->delta = $delta;
-        $process = ProcessCollector::get(static::TARGET_PROCESS_NAME)[0];
-        $process->write(serialize($this));
+
+        ApplicationContext::getContainer()
+            ->get(MetricCollectorInterface::class)
+            ->add($this);
     }
 }

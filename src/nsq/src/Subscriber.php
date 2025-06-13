@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nsq;
 
-use Hyperf\Utils\Codec\Json;
-use Swoole\Coroutine\Socket;
+use Hyperf\Codec\Json;
+use Hyperf\Engine\Contract\SocketInterface;
 
 class Subscriber
 {
@@ -22,34 +23,19 @@ class Subscriber
 
     public const TYPE_MESSAGE = 2;
 
-    /**
-     * @var \Swoole\Coroutine\Socket
-     */
-    protected $socket;
+    protected int $size = 0;
 
-    /**
-     * @var int
-     */
-    protected $size;
+    protected string $type = '';
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $payload = '';
 
-    /**
-     * @var string
-     */
-    protected $payload;
-
-    public function __construct(Socket $socket)
+    public function __construct(protected SocketInterface $socket)
     {
-        $this->socket = $socket;
     }
 
     public function recv()
     {
-        $data = $this->socket->recv(8);
+        $data = $this->socket->recvAll(8);
         $this->size = (int) sprintf('%u', unpack('N', substr($data, 0, 4))[1]);
         $this->type = sprintf('%u', unpack('N', substr($data, 4, 4))[1]);
         $length = $this->size - 4;
@@ -58,7 +44,7 @@ class Subscriber
             if ($len <= 0) {
                 break;
             }
-            $data .= $this->socket->recv($len);
+            $data .= $this->socket->recvAll($len);
         }
         $this->payload = Packer::unpackString($data);
         return $this;

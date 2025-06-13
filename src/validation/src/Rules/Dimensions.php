@@ -9,23 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Rules;
 
-class Dimensions
+use Stringable;
+
+class Dimensions implements Stringable
 {
     /**
-     * The constraints for the dimensions rule.
-     *
-     * @var array
-     */
-    protected $constraints = [];
-
-    /**
      * Create a new dimensions rule instance.
+     *
+     * @param array $constraints the constraints for the dimensions rule
      */
-    public function __construct(array $constraints = [])
+    public function __construct(protected array $constraints = [])
     {
-        $this->constraints = $constraints;
     }
 
     /**
@@ -44,10 +41,8 @@ class Dimensions
 
     /**
      * Set the "width" constraint.
-     *
-     * @return $this
      */
-    public function width(int $value)
+    public function width(int $value): static
     {
         $this->constraints['width'] = $value;
 
@@ -56,10 +51,8 @@ class Dimensions
 
     /**
      * Set the "height" constraint.
-     *
-     * @return $this
      */
-    public function height(int $value)
+    public function height(int $value): static
     {
         $this->constraints['height'] = $value;
 
@@ -68,10 +61,8 @@ class Dimensions
 
     /**
      * Set the "min width" constraint.
-     *
-     * @return $this
      */
-    public function minWidth(int $value)
+    public function minWidth(int $value): static
     {
         $this->constraints['min_width'] = $value;
 
@@ -80,10 +71,8 @@ class Dimensions
 
     /**
      * Set the "min height" constraint.
-     *
-     * @return $this
      */
-    public function minHeight(int $value)
+    public function minHeight(int $value): static
     {
         $this->constraints['min_height'] = $value;
 
@@ -92,10 +81,8 @@ class Dimensions
 
     /**
      * Set the "max width" constraint.
-     *
-     * @return $this
      */
-    public function maxWidth(int $value)
+    public function maxWidth(int $value): static
     {
         $this->constraints['max_width'] = $value;
 
@@ -104,10 +91,8 @@ class Dimensions
 
     /**
      * Set the "max height" constraint.
-     *
-     * @return $this
      */
-    public function maxHeight(int $value)
+    public function maxHeight(int $value): static
     {
         $this->constraints['max_height'] = $value;
 
@@ -116,10 +101,8 @@ class Dimensions
 
     /**
      * Set the "ratio" constraint.
-     *
-     * @return $this
      */
-    public function ratio(float $value)
+    public function ratio(float $value): static
     {
         $this->constraints['ratio'] = $value;
 

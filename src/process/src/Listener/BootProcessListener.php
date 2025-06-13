@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Process\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -23,20 +24,8 @@ use Psr\Container\ContainerInterface;
 
 class BootProcessListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ContainerInterface $container, ConfigInterface $config)
+    public function __construct(private ContainerInterface $container, private ConfigInterface $config)
     {
-        $this->container = $container;
-        $this->config = $config;
     }
 
     /**
@@ -54,7 +43,7 @@ class BootProcessListener implements ListenerInterface
      * Handle the Event when the event is triggered, all listeners will
      * complete before the event is returned to the EventDispatcher.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         /** @var BeforeMainServerStart $event */
         $server = $event->server;
@@ -63,6 +52,8 @@ class BootProcessListener implements ListenerInterface
         $serverProcesses = $serverConfig['processes'] ?? [];
         $processes = $this->config->get('processes', []);
         $annotationProcesses = $this->getAnnotationProcesses();
+
+        ProcessManager::setRunning(true);
 
         // Retrieve the processes have been registered.
         $processes = array_merge($serverProcesses, $processes, ProcessManager::all(), array_keys($annotationProcesses));

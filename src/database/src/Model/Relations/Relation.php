@@ -9,16 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations;
 
 use Closure;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Traits\ForwardsCalls;
+use Hyperf\Support\Traits\ForwardsCalls;
+
+use function Hyperf\Collection\collect;
+use function Hyperf\Collection\last;
 
 /**
  * @mixin \Hyperf\Database\Model\Builder
@@ -37,23 +41,28 @@ abstract class Relation
     public static $morphMap = [];
 
     /**
+     * Prevents morph relationships without a morph map.
+     */
+    protected static bool $requireMorphMap = false;
+
+    /**
      * The Model query builder instance.
      *
-     * @var \Hyperf\Database\Model\Builder
+     * @var Builder
      */
     protected $query;
 
     /**
      * The parent model instance.
      *
-     * @var \Hyperf\Database\Model\Model
+     * @var Model
      */
     protected $parent;
 
     /**
      * The related model instance.
      *
-     * @var \Hyperf\Database\Model\Model
+     * @var Model
      */
     protected $related;
 
@@ -151,7 +160,7 @@ abstract class Relation
     /**
      * Get the relationship for eager loading.
      *
-     * @return \Hyperf\Database\Model\Collection
+     * @return Collection
      */
     public function getEager()
     {
@@ -162,7 +171,7 @@ abstract class Relation
      * Execute the query as a "select" statement.
      *
      * @param array $columns
-     * @return \Hyperf\Database\Model\Collection
+     * @return Collection
      */
     public function get($columns = ['*'])
     {
@@ -196,7 +205,7 @@ abstract class Relation
     /**
      * Add the constraints for a relationship count query.
      *
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceCountQuery(Builder $query, Builder $parentQuery)
     {
@@ -213,7 +222,7 @@ abstract class Relation
      * Essentially, these queries compare on column names like whereColumn.
      *
      * @param array|mixed $columns
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -227,7 +236,7 @@ abstract class Relation
     /**
      * Get the underlying query for the relation.
      *
-     * @return \Hyperf\Database\Model\Builder
+     * @return Builder
      */
     public function getQuery()
     {
@@ -247,7 +256,7 @@ abstract class Relation
     /**
      * Get the parent model of the relation.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function getParent()
     {
@@ -267,7 +276,7 @@ abstract class Relation
     /**
      * Get the related model of the relation.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     public function getRelated()
     {
@@ -310,7 +319,7 @@ abstract class Relation
      * @param bool $merge
      * @return array
      */
-    public static function morphMap(array $map = null, $merge = true)
+    public static function morphMap(?array $map = null, $merge = true)
     {
         $map = static::buildMorphMapFromModels($map);
 
@@ -343,6 +352,40 @@ abstract class Relation
     public function getRelationCountHash(bool $incrementJoinCount = true)
     {
         return 'hyperf_reserved_' . ($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
+    }
+
+    /**
+     * Get the alias associated with a custom polymorphic class.
+     */
+    public static function getMorphAlias(string $className): string
+    {
+        return array_search($className, static::$morphMap, strict: true) ?: $className;
+    }
+
+    /**
+     * Prevent polymorphic relationships from being used without model mappings.
+     */
+    public static function requireMorphMap(bool $requireMorphMap = true): void
+    {
+        static::$requireMorphMap = $requireMorphMap;
+    }
+
+    /**
+     * Determine if polymorphic relationships require explicit model mapping.
+     */
+    public static function requiresMorphMap(): bool
+    {
+        return static::$requireMorphMap;
+    }
+
+    /**
+     * Define the morph map for polymorphic relations and require all morphed models to be explicitly mapped.
+     */
+    public static function enforceMorphMap(?array $map, bool $merge = true): array
+    {
+        static::requireMorphMap();
+
+        return static::morphMap($map, $merge);
     }
 
     /**
@@ -379,7 +422,7 @@ abstract class Relation
      * @param null|string[] $models
      * @return null|array
      */
-    protected static function buildMorphMapFromModels(array $models = null)
+    protected static function buildMorphMapFromModels(?array $models = null)
     {
         if (is_null($models) || Arr::isAssoc($models)) {
             return $models;

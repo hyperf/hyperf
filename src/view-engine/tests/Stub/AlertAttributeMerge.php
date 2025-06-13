@@ -9,25 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ViewEngine\Stub;
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\ViewEngine\Component\Component;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 
 class AlertAttributeMerge extends Component
 {
-    public $message;
-
-    public $type;
-
-    public function __construct($message, $type)
+    public function __construct(public $message, public $type)
     {
-        $this->message = $message;
-        $this->type = $type;
     }
 
-    public function render()
+    public function render(): mixed
     {
         $factory = ApplicationContext::getContainer()
             ->get(FactoryInterface::class);

@@ -9,29 +9,25 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Resolver;
 
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\MethodInjection;
 use Hyperf\Di\Exception\InvalidDefinitionException;
+use ReflectionException;
 use ReflectionMethod;
 use ReflectionParameter;
 
 class ParameterResolver
 {
-    /**
-     * @var ResolverInterface
-     */
-    private $definitionResolver;
-
-    public function __construct(ResolverInterface $definitionResolver)
+    public function __construct(private ResolverInterface $definitionResolver)
     {
-        $this->definitionResolver = $definitionResolver;
     }
 
     public function resolveParameters(
-        MethodInjection $definition = null,
-        ReflectionMethod $method = null,
+        ?MethodInjection $definition = null,
+        ?ReflectionMethod $method = null,
         array $parameters = []
     ): array {
         $args = [];
@@ -79,7 +75,7 @@ class ParameterResolver
     {
         try {
             return $parameter->getDefaultValue();
-        } catch (\ReflectionException $e) {
+        } catch (ReflectionException) {
             throw new InvalidDefinitionException(sprintf(
                 'The parameter "%s" of %s has no type defined or guessable. It has a default value, '
                 . 'but the default value can\'t be read through Reflection because it is a PHP internal class.',

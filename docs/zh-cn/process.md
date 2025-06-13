@@ -38,7 +38,7 @@ return [
 
 ### 通过注解注册
 
-只需在自定义进程类上定义 `@Process` 注解，Hyperf 会收集并自动完成注册工作：
+只需在自定义进程类上定义 `#[Process]` 注解，Hyperf 会收集并自动完成注册工作：
 
 ```php
 <?php
@@ -49,9 +49,7 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="foo_process")
- */
+#[Process(name: "foo_process")]
 class FooProcess extends AbstractProcess
 {
     public function handle(): void
@@ -61,7 +59,7 @@ class FooProcess extends AbstractProcess
 }
 ```
 
-> 使用 `@Process` 注解时需 `use Hyperf\Process\Annotation\Process;` 命名空间；   
+> 使用 `#[Process]` 注解时需 `use Hyperf\Process\Annotation\Process;` 命名空间；   
 
 ## 为进程启动加上条件
 
@@ -76,9 +74,7 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="foo_process")
- */
+#[Process(name: "foo_process")]
 class FooProcess extends AbstractProcess
 {
     public function handle(): void
@@ -96,7 +92,7 @@ class FooProcess extends AbstractProcess
 
 ## 设置自定义进程
 
-自定义进程存在一些可设置的参数，均可以通过 在子类上重写参数对应的属性 或 在 `@Process` 注解内定义对应的属性 两种方式来进行定义。
+自定义进程存在一些可设置的参数，均可以通过 在子类上重写参数对应的属性 或 在 `#[Process]` 注解内定义对应的属性 两种方式来进行定义。
 
 ```php
 <?php
@@ -107,40 +103,33 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="user-process"，redirectStdinStdout=false, pipeType=2, enableCoroutine=true)
- */
+#[Process(name: "user-process", redirectStdinStdout: false, pipeType: 2, enableCoroutine: true)]
 class FooProcess extends AbstractProcess
 {
     /**
      * 进程数量
-     * @var int
      */
-    public $nums = 1;
+    public int $nums = 1;
 
     /**
      * 进程名称
-     * @var string
      */
-    public $name = 'user-process';
+    public string $name = 'user-process';
 
     /**
      * 重定向自定义进程的标准输入和输出
-     * @var bool
      */
-    public $redirectStdinStdout = false;
+    public bool $redirectStdinStdout = false;
 
     /**
      * 管道类型
-     * @var int
      */
-    public $pipeType = 2;
+    public int $pipeType = 2;
 
     /**
      * 是否启用协程
-     * @var bool
      */
-    public $enableCoroutine = true;
+    public bool $enableCoroutine = true;
 }
 ```
 
@@ -158,9 +147,7 @@ use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 use Hyperf\Contract\StdoutLoggerInterface;
 
-/**
- * @Process(name="demo_process")
- */
+#[Process(name: "demo_process")]
 class DemoProcess extends AbstractProcess
 {
     public function handle(): void
@@ -175,6 +162,35 @@ class DemoProcess extends AbstractProcess
                 $logger->warning('The num of failed queue is ' . $count);
             }
 
+            sleep(1);
+        }
+    }
+}
+```
+
+如果使用了异步 IO，没办法将逻辑写到循环里时，可以尝试以下写法
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\Process;
+
+use Hyperf\Process\AbstractProcess;
+use Hyperf\Process\Annotation\Process;
+use Swoole\Timer;
+
+#[Process(name: "demo_process")]
+class DemoProcess extends AbstractProcess
+{
+    public function handle(): void
+    {
+        Timer::tick(1000, function(){
+            var_dump(1);
+            // Do something...
+        });
+
+        while (true) {
             sleep(1);
         }
     }

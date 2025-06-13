@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\Database\Commands\ModelData;
@@ -17,19 +18,7 @@ use PhpParser\NodeVisitorAbstract;
 
 abstract class AbstractVisitor extends NodeVisitorAbstract
 {
-    /**
-     * @var ModelOption
-     */
-    protected $option;
-
-    /**
-     * @var ModelData
-     */
-    protected $data;
-
-    public function __construct(ModelOption $option, ModelData $data)
+    public function __construct(protected ModelOption $option, protected ModelData $data)
     {
-        $this->option = $option;
-        $this->data = $data;
     }
 }

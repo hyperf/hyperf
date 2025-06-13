@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Server;
 
 use Psr\Container\ContainerInterface;
@@ -29,7 +30,7 @@ interface ServerInterface
 
     public function init(ServerConfig $config): ServerInterface;
 
-    public function start();
+    public function start(): void;
 
     /**
      * @return SwooleCoServer|SwooleServer

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\Database\Commands\ModelData;
@@ -18,22 +19,16 @@ use PhpParser\Node\Identifier;
 
 class ModelRewriteInheritanceVisitor extends AbstractVisitor
 {
-    /**
-     * @var null|string
-     */
-    protected $parentClass;
+    protected ?string $parentClass = null;
 
-    /**
-     * @var bool
-     */
-    protected $shouldAddUseUse = true;
+    protected bool $shouldAddUseUse = true;
 
     public function __construct(ModelOption $option, ModelData $data)
     {
         parent::__construct($option, $data);
 
         if (! empty($option->getUses())) {
-            preg_match_all('/\s*([a-z0-9\\\\]+)(as)?([a-z0-9]+)?;?\s*/is', $option->getUses(), $match);
+            preg_match_all('/\s*([a-z0-9\\\]+)(as)?([a-z0-9]+)?;?\s*/is', $option->getUses(), $match);
             if (isset($match[1][0])) {
                 $this->parentClass = $match[1][0];
             }
@@ -86,5 +81,7 @@ class ModelRewriteInheritanceVisitor extends AbstractVisitor
                 }
                 return $node;
         }
+
+        return null;
     }
 }

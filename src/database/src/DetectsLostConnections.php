@@ -9,19 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database;
 
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Throwable;
 
 trait DetectsLostConnections
 {
     /**
      * Determine if the given exception was caused by a lost connection.
-     *
-     * @return bool
      */
-    protected function causedByLostConnection(Throwable $e)
+    protected function causedByLostConnection(Throwable $e): bool
     {
         $message = $e->getMessage();
 
@@ -45,6 +44,17 @@ trait DetectsLostConnections
             'Name or service not known',
             'ORA-03114',
             'Packets out of order. Expected',
+            'Broken pipe',
+            'Error reading result',
+            // PDO::prepare(): Send of 77 bytes failed with errno=110 Operation timed out
+            // SSL: Handshake timed out
+            // SSL: Operation timed out
+            // SSL: Connection timed out
+            // SQLSTATE[HY000] [2002] Connection timed out
+            'timed out',
+            // PDOStatement::execute(): Premature end of data
+            'Premature end of data',
+            'running with the --read-only option so it cannot execute this statement',
         ]);
     }
 }

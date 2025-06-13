@@ -9,24 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Process;
 
 use Hyperf\Contract\ProcessInterface;
+use RuntimeException;
 
 class ProcessManager
 {
-    /**
-     * @var array
-     */
-    protected static $processes = [];
+    protected static array $processes = [];
 
-    /**
-     * @var bool
-     */
-    protected static $running = true;
+    protected static bool $running = false;
 
     public static function register(ProcessInterface $process): void
     {
+        if (static::$running) {
+            throw new RuntimeException('Processes is running, please register before BeforeMainServerStart or MainCoroutineServerStart dispatched.');
+        }
+
         static::$processes[] = $process;
     }
 

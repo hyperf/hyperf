@@ -12,8 +12,9 @@ composer require hyperf/cache
 |  配置  |                  預設值                  |         備註          |
 |:------:|:----------------------------------------:|:---------------------:|
 | driver |  Hyperf\Cache\Driver\RedisDriver  | 快取驅動，預設為 Redis |
-| packer | Hyperf\Utils\Packer\PhpSerializer |        打包器         |
+| packer | Hyperf\Codec\Packer\PhpSerializerPacker |        打包器         |
 | prefix |                   c:                   |       快取字首        |
+| skip_cache_results |       []                   |       指定的結果不被快取   |
 
 ```php
 <?php
@@ -21,8 +22,9 @@ composer require hyperf/cache
 return [
     'default' => [
         'driver' => Hyperf\Cache\Driver\RedisDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+        'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
         'prefix' => 'c:',
+        'skip_cache_results' => [],
     ],
 ];
 ```
@@ -44,8 +46,6 @@ $cache = $container->get(\Psr\SimpleCache\CacheInterface::class);
 元件提供 `Hyperf\Cache\Annotation\Cacheable` 註解，作用於類方法，可以配置對應的快取字首、失效時間、監聽器和快取組。
 例如，UserService 提供一個 user 方法，可以查詢對應 id 的使用者資訊。當加上 `Hyperf\Cache\Annotation\Cacheable` 註解後，會自動生成對應的 Redis 快取，key 值為 `user:id` ，超時時間為 `9000` 秒。首次查詢時，會從資料庫中查，後面查詢時，會從快取中查。
 
-> 快取註解基於 [aop](zh-tw/aop.md) 和 [di](zh-tw/di.md)，所以只有在 `Container` 中獲取到的物件例項才有效，比如通過 `$container->get` 和 `make` 方法所獲得的物件，直接 `new` 出來的物件無法使用。
-
 ```php
 <?php
 
@@ -56,9 +56,7 @@ use Hyperf\Cache\Annotation\Cacheable;
 
 class UserService
 {
-    /**
-     * @Cacheable(prefix="user", ttl=9000, listener="user-update")
-     */
+    #[Cacheable(prefix: "user", ttl: 9000, listener: "user-update")]
     public function user($id)
     {
         $user = User::query()->where('id',$id)->first();
@@ -72,9 +70,13 @@ class UserService
 }
 ```
 
-### 清理 `@Cacheable` 生成的快取
+### 清理 `#[Cacheable]` 生成的快取
 
-當然，如果我們資料庫中的資料改變了，如何刪除快取呢？這裡就需要用到後面的監聽器。下面新建一個 Service 提供一方法，來幫我們處理快取。
+我們提供了 `CachePut` 和 `CacheEvict` 兩個註解，來實現更新快取和清除快取操作。
+
+當然，我們也可以透過事件來刪除快取。下面新建一個 Service 提供一方法，來幫我們處理快取。
+
+> 不過我們更加推薦使用者使用註解處理，而非監聽器
 
 ```php
 <?php
@@ -89,11 +91,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class SystemService
 {
-    /**
-     * @Inject
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    #[Inject]
+    protected EventDispatcherInterface $dispatcher;
 
     public function flushCache($userId)
     {
@@ -117,9 +116,8 @@ use Hyperf\Cache\Annotation\Cacheable;
 
 class DemoService
 {
-    /**
-     * @Cacheable(prefix="cache", value="_#{id}", listener="user-update")
-     */
+
+    #[Cacheable(prefix: "cache", value: "_#{id}", listener: "user-update")]
     public function getCache(int $id)
     {
         return $id . '_' . uniqid();
@@ -142,11 +140,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class SystemService
 {
-    /**
-     * @Inject
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    #[Inject]
+    protected EventDispatcherInterface $dispatcher;
 
     public function flushCache($userId)
     {
@@ -164,38 +159,83 @@ class SystemService
 例如以下配置，快取字首為 `user`, 超時時間為 `7200`, 刪除事件名為 `USER_CACHE`。生成對應快取 KEY 為 `c:user:1`。
 
 ```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
 use App\Models\User;
 use Hyperf\Cache\Annotation\Cacheable;
 
-/**
- * @Cacheable(prefix="user", ttl=7200, listener="USER_CACHE")
- */
-public function user(int $id): array
+class UserService
 {
-    $user = User::query()->find($id);
+    #[Cacheable(prefix: "user", ttl: 7200, listener: "USER_CACHE")]
+    public function user(int $id): array
+    {
+        $user = User::query()->find($id);
 
-    return [
-        'user' => $user->toArray(),
-        'uuid' => $this->unique(),
-    ];
+        return [
+            'user' => $user->toArray(),
+            'uuid' => $this->unique(),
+        ];
+    }
 }
 ```
 
 當設定 `value` 後，框架會根據設定的規則，進行快取 `KEY` 鍵命名。如下例項，當 `$user->id = 1` 時，快取 `KEY` 為 `c:userBook:_1`
 
+> 此配置也同樣支援下述其他型別快取註解
+
 ```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
 use App\Models\User;
 use Hyperf\Cache\Annotation\Cacheable;
 
-/**
- * @Cacheable(prefix="userBook", ttl=6666, value="_#{user.id}")
- */
-public function userBook(User $user): array
+class UserBookService
 {
-    return [
-        'book' => $user->book->toArray(),
-        'uuid' => $this->unique(),
-    ];
+    #[Cacheable(prefix: "userBook", ttl: 6666, value: "_#{user.id}")]
+    public function userBook(User $user): array
+    {
+        return [
+            'book' => $user->book->toArray(),
+            'uuid' => $this->unique(),
+        ];
+    }
+}
+```
+
+### CacheAhead
+
+例如以下配置，快取字首為 `user`, 超時時間為 `7200`, 生成對應快取 KEY 為 `c:user:1`，並且在 7200 - 600 秒的時候，每 10 秒進行一次快取初始化，直到首次成功。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use App\Models\User;
+use Hyperf\Cache\Annotation\CacheAhead;
+
+class UserService
+{
+    #[CacheAhead(prefix: "user", ttl: 7200, aheadSeconds: 600, lockSeconds: 10)]
+    public function user(int $id): array
+    {
+        $user = User::query()->find($id);
+
+        return [
+            'user' => $user->toArray(),
+            'uuid' => $this->unique(),
+        ];
+    }
 }
 ```
 
@@ -204,22 +244,29 @@ public function userBook(User $user): array
 `CachePut` 不同於 `Cacheable`，它每次呼叫都會執行函式體，然後再對快取進行重寫。所以當我們想更新快取時，可以呼叫相關方法。
 
 ```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
 use App\Models\User;
 use Hyperf\Cache\Annotation\CachePut;
 
-/**
- * @CachePut(prefix="user", ttl=3601)
- */
-public function updateUser(int $id)
+class UserService
 {
-    $user = User::query()->find($id);
-    $user->name = 'HyperfDoc';
-    $user->save();
+    #[CachePut(prefix: "user", ttl: 3601)]
+    public function updateUser(int $id)
+    {
+        $user = User::query()->find($id);
+        $user->name = 'HyperfDoc';
+        $user->save();
 
-    return [
-        'user' => $user->toArray(),
-        'uuid' => $this->unique(),
-    ];
+        return [
+            'user' => $user->toArray(),
+            'uuid' => $this->unique(),
+        ];
+    }
 }
 ```
 
@@ -228,14 +275,21 @@ public function updateUser(int $id)
 CacheEvict 更容易理解了，當執行方法體後，會主動清理快取。
 
 ```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
 use Hyperf\Cache\Annotation\CacheEvict;
 
-/**
- * @CacheEvict(prefix="userBook", value="_#{id}")
- */
-public function updateUserBook(int $id)
+class UserBookService
 {
-    return true;
+    #[CacheEvict(prefix: "userBook", value: "_#{id}")]
+    public function updateUserBook(int $id)
+    {
+        return true;
+    }
 }
 ```
 
@@ -245,6 +299,22 @@ public function updateUserBook(int $id)
 
 `Hyperf\Cache\Driver\RedisDriver` 會把快取資料存放到 `Redis` 中，需要使用者配置相應的 `Redis 配置`。此方式為預設方式。
 
+### 程序記憶體驅動
+
+如果您需要將資料快取到記憶體中，可以嘗試此驅動。
+
+配置如下：
+
+```php
+<?php
+
+return [
+    'memory' => [
+        'driver' => Hyperf\Cache\Driver\MemoryDriver::class,
+    ],
+];
+```
+
 ### 協程記憶體驅動
 
 如果您需要將資料快取到 `Context` 中，可以嘗試此驅動。例如以下應用場景 `Demo::get` 會在多個地方呼叫多次，但是又不想每次都到 `Redis` 中進行查詢。
@@ -253,16 +323,14 @@ public function updateUserBook(int $id)
 <?php
 use Hyperf\Cache\Annotation\Cacheable;
 
-class Demo {
-    
+class Demo
+{    
     public function get($userId, $id)
     {
         return $this->getArray($userId)[$id] ?? 0;
     }
 
-    /**
-     * @Cacheable(prefix="test", group="co")
-     */
+    #[Cacheable(prefix: "test", group: "co")]
     public function getArray(int $userId): array
     {
         return $this->redis->hGetAll($userId);
@@ -278,8 +346,7 @@ class Demo {
 return [
     'co' => [
         'driver' => Hyperf\Cache\Driver\CoroutineMemoryDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
+        'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
     ],
 ];
 ```
-

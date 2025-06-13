@@ -9,18 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di;
 
 class MetadataCacheCollector
 {
-    /**
-     * @var array
-     */
-    protected $collectors = [];
-
-    public function __construct(array $collectors)
+    public function __construct(protected array $collectors)
     {
-        $this->collectors = $collectors;
     }
 
     public function addCollector(string $collector)
@@ -41,7 +36,7 @@ class MetadataCacheCollector
         $metadata = [];
         foreach ($this->collectors as $collector) {
             if (is_string($collector) && method_exists($collector, 'serialize')) {
-                $metadata[$collector] = call([$collector, 'serialize']);
+                $metadata[$collector] = $collector::serialize();
             }
         }
 
@@ -54,7 +49,7 @@ class MetadataCacheCollector
         $collectors = [];
         foreach ($metadatas as $collector => $metadata) {
             if (method_exists($collector, 'deserialize')) {
-                call([$collector, 'deserialize'], [$metadata]);
+                $collector::deserialize($metadata);
                 $collectors[] = $collector;
             }
         }

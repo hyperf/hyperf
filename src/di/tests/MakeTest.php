@@ -9,32 +9,39 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
-use Hyperf\Di\Definition\ScanConfig;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Di\Stub\Bar;
 use HyperfTest\Di\Stub\Demo;
 use HyperfTest\Di\Stub\Foo;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+
+use function Hyperf\Support\make;
 
 /**
  * @internal
- * @covers \Hyperf\Di\Container
+ * @coversNothing
+ */
+#[CoversClass(Container::class)]
+/**
+ * @internal
+ * @coversNothing
  */
 class MakeTest extends TestCase
 {
     protected function setUp(): void
     {
-        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $container = new Container(new DefinitionSource([]));
         ApplicationContext::setContainer($container);
     }
 
     public function testMakeFunction()
     {
-        $this->assertTrue(function_exists('make'));
         $this->assertInstanceOf(Foo::class, $foo = make(Foo::class, [
             'string' => '123',
             'int' => 234,
@@ -49,7 +56,6 @@ class MakeTest extends TestCase
 
     public function testMakeIndexedParameters()
     {
-        $this->assertTrue(function_exists('make'));
         $this->assertInstanceOf(Foo::class, $foo = make(Foo::class, ['123', 'int' => 234]));
         $this->assertSame('123', $foo->string);
         $this->assertSame(234, $foo->int);

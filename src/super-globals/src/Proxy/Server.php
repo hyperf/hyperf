@@ -9,23 +9,21 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SuperGlobals\Proxy;
 
+use Hyperf\Stringable\Str;
 use Hyperf\SuperGlobals\Exception\InvalidOperationException;
 use Hyperf\SuperGlobals\Proxy;
-use Hyperf\Utils\Str;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Server extends Proxy
 {
-    /**
-     * @var array
-     */
-    protected $default;
-
-    public function __construct(array $default)
+    public function __construct(protected array|Server $default)
     {
-        $this->default = $default;
+        if ($default instanceof Server) {
+            $this->default = $default->toArray();
+        }
     }
 
     public function toArray(): array

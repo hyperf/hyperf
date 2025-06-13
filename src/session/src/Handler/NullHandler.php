@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Session\Handler;
 
 use SessionHandlerInterface;
@@ -19,9 +20,8 @@ class NullHandler implements SessionHandlerInterface
      * Close the session.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.close.php
-     * @return bool
      */
-    public function close()
+    public function close(): bool
     {
         return true;
     }
@@ -30,10 +30,9 @@ class NullHandler implements SessionHandlerInterface
      * Destroy a session.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.destroy.php
-     * @param string $session_id the session ID being destroyed
-     * @return bool
+     * @param string $id the session ID being destroyed
      */
-    public function destroy($session_id)
+    public function destroy(string $id): bool
     {
         return true;
     }
@@ -42,23 +41,20 @@ class NullHandler implements SessionHandlerInterface
      * Cleanup old sessions.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.gc.php
-     * @param int $maxlifetime
-     * @return bool
      */
-    public function gc($maxlifetime)
+    public function gc(int $max_lifetime): false|int
     {
-        return true;
+        return 0;
     }
 
     /**
      * Initialize session.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.open.php
-     * @param string $save_path the path where to store/retrieve the session
+     * @param string $path the path where to store/retrieve the session
      * @param string $name the session name
-     * @return bool
      */
-    public function open($save_path, $name)
+    public function open(string $path, string $name): bool
     {
         return true;
     }
@@ -67,10 +63,10 @@ class NullHandler implements SessionHandlerInterface
      * Read session data.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.read.php
-     * @param string $session_id the session id to read data for
+     * @param string $id the session id to read data for
      * @return string
      */
-    public function read($session_id)
+    public function read(string $id): false|string
     {
         return '';
     }
@@ -79,11 +75,9 @@ class NullHandler implements SessionHandlerInterface
      * Write session data.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.write.php
-     * @param string $session_id the session id
-     * @param string $session_data
-     * @return bool
+     * @param string $id the session id
      */
-    public function write($session_id, $session_data)
+    public function write(string $id, string $data): bool
     {
         return true;
     }

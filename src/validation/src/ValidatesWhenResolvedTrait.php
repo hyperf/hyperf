@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
 use Hyperf\Contract\ValidatorInterface;
@@ -55,7 +56,7 @@ trait ValidatesWhenResolvedTrait
     /**
      * Handle a failed validation attempt.
      *
-     * @throws \Hyperf\Validation\ValidationException
+     * @throws ValidationException
      */
     protected function failedValidation(ValidatorInterface $validator)
     {
@@ -77,7 +78,7 @@ trait ValidatesWhenResolvedTrait
     /**
      * Handle a failed authorization attempt.
      *
-     * @throws \Hyperf\Validation\UnauthorizedException
+     * @throws UnauthorizedException
      */
     protected function failedAuthorization()
     {

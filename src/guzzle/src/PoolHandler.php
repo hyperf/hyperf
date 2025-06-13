@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Guzzle;
 
+use Exception;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Promise\Create;
 use GuzzleHttp\Promise\FulfilledPromise;
@@ -20,20 +22,8 @@ use Psr\Http\Message\UriInterface;
 
 class PoolHandler extends CoroutineHandler
 {
-    /**
-     * @var PoolFactory
-     */
-    protected $factory;
-
-    /**
-     * @var array
-     */
-    protected $option;
-
-    public function __construct(PoolFactory $factory, array $option = [])
+    public function __construct(protected PoolFactory $factory, protected array $option = [])
     {
-        $this->factory = $factory;
-        $this->option = $option;
     }
 
     public function __invoke(RequestInterface $request, array $options)
@@ -60,7 +50,7 @@ class PoolHandler extends CoroutineHandler
         }, $this->option);
 
         $connection = $pool->get();
-
+        $response = null;
         try {
             $client = $connection->getConnection();
             $headers = $this->initHeaders($request, $options);
@@ -73,7 +63,7 @@ class PoolHandler extends CoroutineHandler
 
             try {
                 $raw = $client->request($request->getMethod(), $path, $headers, (string) $request->getBody());
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $connection->close();
                 $exception = new ConnectException($exception->getMessage(), $request, null, [
                     'errCode' => $exception->getCode(),

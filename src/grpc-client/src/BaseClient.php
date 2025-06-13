@@ -9,15 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\GrpcClient;
 
 use Google\Protobuf\Internal\Message;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Coroutine\Channel\Pool as ChannelPool;
 use Hyperf\Grpc\Parser;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\ChannelPool;
 use InvalidArgumentException;
+use Swoole\Http2\Response;
+
+use function Hyperf\Support\retry;
 
 /**
  * @method int send(Request $request)
@@ -26,52 +30,21 @@ use InvalidArgumentException;
  */
 class BaseClient
 {
-    /**
-     * @var null|GrpcClient
-     */
-    private $grpcClient;
+    private ?GrpcClient $grpcClient = null;
 
-    /**
-     * @var array
-     */
-    private $options;
+    private bool $initialized = false;
 
-    /**
-     * @var string
-     */
-    private $hostname;
-
-    /**
-     * @var bool
-     */
-    private $initialized = false;
-
-    public function __construct(string $hostname, array $options = [])
+    public function __construct(private string $hostname, private array $options = [])
     {
-        $this->hostname = $hostname;
-        $this->options = $options;
     }
 
     public function __destruct()
     {
-        if ($this->grpcClient) {
-            $this->grpcClient->close(false);
-        }
-    }
-
-    public function __get($name)
-    {
-        if (! $this->initialized) {
-            $this->init();
-        }
-        return $this->_getGrpcClient()->{$name};
+        $this->grpcClient?->close(false);
     }
 
     public function __call($name, $arguments)
     {
-        if (! $this->initialized) {
-            $this->init();
-        }
         return $this->_getGrpcClient()->{$name}(...$arguments);
     }
 
@@ -80,6 +53,7 @@ class BaseClient
         if (! $this->initialized) {
             $this->init();
         }
+        $this->start();
         return $this->grpcClient;
     }
 
@@ -90,8 +64,8 @@ class BaseClient
      * @param string $method The name of the method to call
      * @param Message $argument The argument to the method
      * @param callable $deserialize A function that deserializes the response
+     * @return array|Message[]|Response[]
      * @throws GrpcClientException
-     * @return array|\Google\Protobuf\Internal\Message[]|\swoole_http2_response[]
      */
     protected function _simpleRequest(
         string $method,
@@ -187,27 +161,27 @@ class BaseClient
     private function start()
     {
         $client = $this->grpcClient;
-        return $client->isRunning() || $client->start();
+        if (! ($client->isRunning() || $client->start())) {
+            $message = sprintf(
+                'Grpc client start failed with error code %d when connect to %s',
+                $client->getErrCode(),
+                $this->hostname
+            );
+            throw new GrpcClientException($message, StatusCode::INTERNAL);
+        }
+        return true;
     }
 
     private function init()
     {
         if (! empty($this->options['client'])) {
-            if (! ($this->options['client'] instanceof GrpcClient)) {
+            if (! $this->options['client'] instanceof GrpcClient) {
                 throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
             }
             $this->grpcClient = $this->options['client'];
         } else {
             $this->grpcClient = new GrpcClient(ApplicationContext::getContainer()->get(ChannelPool::class));
             $this->grpcClient->set($this->hostname, $this->options);
-        }
-        if (! $this->start()) {
-            $message = sprintf(
-                'Grpc client start failed with error code %d when connect to %s',
-                $this->grpcClient->getErrCode(),
-                $this->hostname
-            );
-            throw new GrpcClientException($message, StatusCode::INTERNAL);
         }
 
         $this->initialized = true;

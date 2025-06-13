@@ -9,23 +9,25 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ServiceGovernance\Listener;
 
 use GuzzleHttp\Psr7\Response;
 use Hyperf\Config\Config;
 use Hyperf\Consul\ConsulResponse;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Logger\Logger;
 use Hyperf\ServiceGovernance\DriverManager;
-use Hyperf\ServiceGovernance\IPReader;
-use Hyperf\ServiceGovernance\IPReaderInterface;
 use Hyperf\ServiceGovernance\Listener\RegisterServiceListener;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Hyperf\ServiceGovernanceConsul\ConsulAgent;
 use Hyperf\ServiceGovernanceConsul\ConsulDriver;
+use Hyperf\Support\IPReader;
 use Mockery;
 use Monolog\Handler\StreamHandler;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -33,6 +35,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class RegisterServiceListenerTest extends TestCase
 {
     public function testRegisterOnceForTheSameService()
@@ -49,18 +52,18 @@ class RegisterServiceListenerTest extends TestCase
             }))
             ->andReturn(new ConsulResponse(new Response(200, ['content-type' => 'application/json'])));
         $serviceManager = $container->get(ServiceManager::class);
-        $serviceManager->register('Foo\\FooService', 'Foo/FooService/foo', [
+        $serviceManager->register('Foo\FooService', 'Foo/FooService/foo', [
             'publishTo' => 'consul',
             'server' => 'jsonrpc-http',
             'protocol' => 'jsonrpc-http',
         ]);
-        $serviceManager->register('Foo\\FooService', 'Foo/FooService/bar', [
+        $serviceManager->register('Foo\FooService', 'Foo/FooService/bar', [
             'publishTo' => 'consul',
             'server' => 'jsonrpc-http',
             'protocol' => 'jsonrpc-http',
         ]);
         $listener->process((object) []);
-        $this->assertEquals('Foo\\FooService', $serviceDefinition['Name']);
+        $this->assertEquals('Foo\FooService', $serviceDefinition['Name']);
         $this->assertEquals(['Protocol' => 'jsonrpc-http'], $serviceDefinition['Meta']);
         $this->assertArrayHasKey('Check', $serviceDefinition);
         $this->assertArrayHasKey('HTTP', $serviceDefinition['Check']);
@@ -80,34 +83,34 @@ class RegisterServiceListenerTest extends TestCase
             }))
             ->andReturn(new ConsulResponse(new Response(200, ['content-type' => 'application/json'])));
         $serviceManager = $container->get(ServiceManager::class);
-        $serviceManager->register('Foo\\FooService', 'Foo/FooService/foo', [
+        $serviceManager->register('Foo\FooService', 'Foo/FooService/foo', [
             'publishTo' => 'consul',
             'server' => 'jsonrpc-http',
             'protocol' => 'jsonrpc-http',
         ]);
-        $serviceManager->register('Foo\\FooService', 'Foo/FooService/foo', [
+        $serviceManager->register('Foo\FooService', 'Foo/FooService/foo', [
             'publishTo' => 'consul',
             'server' => 'jsonrpc',
             'protocol' => 'jsonrpc',
         ]);
-        $serviceManager->register('Foo\\FooService', 'Foo/FooService/foo', [
+        $serviceManager->register('Foo\FooService', 'Foo/FooService/foo', [
             'publishTo' => 'consul',
             'server' => 'jsonrpc2',
             'protocol' => 'jsonrpc-tcp-length-check',
         ]);
         $listener->process((object) []);
 
-        $this->assertEquals('Foo\\FooService', $serviceDefinition[0]['Name']);
+        $this->assertEquals('Foo\FooService', $serviceDefinition[0]['Name']);
         $this->assertEquals(['Protocol' => 'jsonrpc-http'], $serviceDefinition[0]['Meta']);
         $this->assertArrayHasKey('Check', $serviceDefinition[0]);
         $this->assertArrayHasKey('HTTP', $serviceDefinition[0]['Check']);
 
-        $this->assertEquals('Foo\\FooService', $serviceDefinition[1]['Name']);
+        $this->assertEquals('Foo\FooService', $serviceDefinition[1]['Name']);
         $this->assertEquals(['Protocol' => 'jsonrpc'], $serviceDefinition[1]['Meta']);
         $this->assertArrayHasKey('Check', $serviceDefinition[1]);
         $this->assertArrayHasKey('TCP', $serviceDefinition[1]['Check']);
 
-        $this->assertEquals('Foo\\FooService', $serviceDefinition[2]['Name']);
+        $this->assertEquals('Foo\FooService', $serviceDefinition[2]['Name']);
         $this->assertEquals(['Protocol' => 'jsonrpc-tcp-length-check'], $serviceDefinition[2]['Meta']);
         $this->assertArrayHasKey('Check', $serviceDefinition[2]);
         $this->assertArrayHasKey('TCP', $serviceDefinition[2]['Check']);

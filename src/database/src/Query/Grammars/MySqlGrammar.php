@@ -9,31 +9,34 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Query\Grammars;
 
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Query\IndexHint;
+use Hyperf\Database\Query\JoinLateralClause;
 use Hyperf\Database\Query\JsonExpression;
-use Hyperf\Utils\Arr;
+use Hyperf\Stringable\Str;
+
+use function Hyperf\Collection\collect;
 
 class MySqlGrammar extends Grammar
 {
     /**
      * The grammar specific operators.
-     *
-     * @var array
      */
-    protected $operators = ['sounds like'];
+    protected array $operators = ['sounds like'];
 
     /**
      * The components that make up a select clause.
-     *
-     * @var array
      */
-    protected $selectComponents = [
+    protected array $selectComponents = [
         'aggregate',
         'columns',
         'from',
         'joins',
+        'indexHint',
         'wheres',
         'groups',
         'havings',
@@ -45,10 +48,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile a select query into SQL.
-     *
-     * @return string
      */
-    public function compileSelect(Builder $query)
+    public function compileSelect(Builder $query): string
     {
         if ($query->unions && $query->aggregate) {
             return $this->compileUnionAggregate($query);
@@ -72,30 +73,34 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile an insert ignore statement using a subquery into SQL.
+     */
+    public function compileInsertOrIgnoreUsing(Builder $query, array $columns, string $sql): string
+    {
+        return Str::replaceFirst('insert', 'insert ignore', $this->compileInsertUsing($query, $columns, $sql));
+    }
+
+    /**
      * Compile the random statement into SQL.
      *
      * @param string $seed
-     * @return string
      */
-    public function compileRandom($seed)
+    public function compileRandom($seed): string
     {
         return 'RAND(' . $seed . ')';
     }
 
     /**
      * Compile an update statement into SQL.
-     *
-     * @param array $values
-     * @return string
      */
-    public function compileUpdate(Builder $query, $values)
+    public function compileUpdate(Builder $query, array $values): string
     {
         $table = $this->wrapTable($query->from);
 
         // Each one of the columns in the update statements needs to be wrapped in the
         // keyword identifiers, also a place-holder needs to be created for each of
         // the values in the list of bindings so we can make the sets statements.
-        $columns = $this->compileUpdateColumns($values);
+        $columns = $this->compileUpdateColumns($query, $values);
 
         // If the query has any "join" clauses, we will setup the joins on the builder
         // and compile them so we can attach them to this update, as update queries
@@ -131,13 +136,39 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile an "upsert" statement into SQL.
+     */
+    public function compileUpsert(Builder $query, array $values, array $uniqueBy, array $update): string
+    {
+        $useUpsertAlias = $query->connection->getConfig('use_upsert_alias');
+
+        $sql = $this->compileInsert($query, $values);
+
+        if ($useUpsertAlias) {
+            $sql .= ' as hyperf_upsert_alias';
+        }
+
+        $sql .= ' on duplicate key update ';
+
+        $columns = collect($update)->map(function ($value, $key) use ($useUpsertAlias) {
+            if (! is_numeric($key)) {
+                return $this->wrap($key) . ' = ' . $this->parameter($value);
+            }
+
+            return $useUpsertAlias
+                ? $this->wrap($value) . ' = ' . $this->wrap('hyperf_upsert_alias') . '.' . $this->wrap($value)
+                : $this->wrap($value) . ' = values(' . $this->wrap($value) . ')';
+        })->implode(', ');
+
+        return $sql . $columns;
+    }
+
+    /**
      * Prepare the bindings for an update statement.
      *
      * Booleans, integers, and doubles are inserted into JSON updates as raw values.
-     *
-     * @return array
      */
-    public function prepareBindingsForUpdate(array $bindings, array $values)
+    public function prepareBindingsForUpdate(array $bindings, array $values): array
     {
         $values = collect($values)->reject(function ($value, $column) {
             return $this->isJsonSelector($column) && is_bool($value);
@@ -147,11 +178,17 @@ class MySqlGrammar extends Grammar
     }
 
     /**
-     * Compile a delete statement into SQL.
-     *
-     * @return string
+     * Compile a "lateral join" clause.
      */
-    public function compileDelete(Builder $query)
+    public function compileJoinLateral(JoinLateralClause $join, string $expression): string
+    {
+        return trim("{$join->type} join lateral {$expression} on true");
+    }
+
+    /**
+     * Compile a delete statement into SQL.
+     */
+    public function compileDelete(Builder $query): string
     {
         $table = $this->wrapTable($query->from);
 
@@ -164,10 +201,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Prepare the bindings for a delete statement.
-     *
-     * @return array
      */
-    public function prepareBindingsForDelete(array $bindings)
+    public function prepareBindingsForDelete(array $bindings): array
     {
         $cleanBindings = Arr::except($bindings, ['join', 'select']);
 
@@ -177,17 +212,38 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile the index hints for the query.
+     */
+    protected function compileIndexHint(Builder $query, IndexHint $indexHint): string
+    {
+        return match ($indexHint->type) {
+            'hint' => "use index ({$indexHint->index})",
+            'force' => "force index ({$indexHint->index})",
+            default => "ignore index ({$indexHint->index})",
+        };
+    }
+
+    /**
      * Compile a "JSON contains" statement into SQL.
      *
      * @param string $column
      * @param string $value
-     * @return string
      */
-    protected function compileJsonContains($column, $value)
+    protected function compileJsonContains($column, $value): string
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($column);
 
         return 'json_contains(' . $field . ', ' . $value . $path . ')';
+    }
+
+    /**
+     * Compile a "JSON overlaps" statement into SQL.
+     */
+    protected function compileJsonOverlaps(string $column, string $value): string
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        return 'json_overlaps(' . $field . ', ' . $value . $path . ')';
     }
 
     /**
@@ -196,9 +252,8 @@ class MySqlGrammar extends Grammar
      * @param string $column
      * @param string $operator
      * @param string $value
-     * @return string
      */
-    protected function compileJsonLength($column, $operator, $value)
+    protected function compileJsonLength($column, $operator, $value): string
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($column);
 
@@ -207,10 +262,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile a single union statement.
-     *
-     * @return string
      */
-    protected function compileUnion(array $union)
+    protected function compileUnion(array $union): string
     {
         $conjunction = $union['all'] ? ' union all ' : ' union ';
 
@@ -221,9 +274,8 @@ class MySqlGrammar extends Grammar
      * Compile the lock into SQL.
      *
      * @param bool|string $value
-     * @return string
      */
-    protected function compileLock(Builder $query, $value)
+    protected function compileLock(Builder $query, $value): string
     {
         if (! is_string($value)) {
             return $value ? 'for update' : 'lock in share mode';
@@ -234,11 +286,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile all of the columns for an update statement.
-     *
-     * @param array $values
-     * @return string
      */
-    protected function compileUpdateColumns($values)
+    protected function compileUpdateColumns(Builder $query, array $values): string
     {
         return collect($values)->map(function ($value, $key) {
             if ($this->isJsonSelector($key)) {
@@ -253,9 +302,8 @@ class MySqlGrammar extends Grammar
      * Prepares a JSON column being updated using the JSON_SET function.
      *
      * @param string $key
-     * @return string
      */
-    protected function compileJsonUpdateColumn($key, JsonExpression $value)
+    protected function compileJsonUpdateColumn($key, JsonExpression $value): string
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($key);
 
@@ -265,12 +313,11 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a delete query that does not use joins.
      *
-     * @param \Hyperf\Database\Query\Builder $query
+     * @param Builder $query
      * @param string $table
      * @param array $where
-     * @return string
      */
-    protected function compileDeleteWithoutJoins($query, $table, $where)
+    protected function compileDeleteWithoutJoins($query, $table, $where): string
     {
         $sql = trim("delete from {$table} {$where}");
 
@@ -291,12 +338,11 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a delete query that uses joins.
      *
-     * @param \Hyperf\Database\Query\Builder $query
+     * @param Builder $query
      * @param string $table
      * @param array $where
-     * @return string
      */
-    protected function compileDeleteWithJoins($query, $table, $where)
+    protected function compileDeleteWithJoins($query, $table, $where): string
     {
         $joins = ' ' . $this->compileJoins($query, $query->joins);
 
@@ -310,9 +356,8 @@ class MySqlGrammar extends Grammar
      * Wrap a single string in keyword identifiers.
      *
      * @param string $value
-     * @return string
      */
-    protected function wrapValue($value)
+    protected function wrapValue($value): string
     {
         return $value === '*' ? $value : '`' . str_replace('`', '``', $value) . '`';
     }
@@ -321,12 +366,44 @@ class MySqlGrammar extends Grammar
      * Wrap the given JSON selector.
      *
      * @param string $value
-     * @return string
      */
-    protected function wrapJsonSelector($value)
+    protected function wrapJsonSelector($value): string
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($value);
 
         return 'json_unquote(json_extract(' . $field . $path . '))';
+    }
+
+    /**
+     * Wrap the given JSON selector for boolean values.
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function wrapJsonBooleanSelector($value)
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($value);
+
+        return 'json_extract(' . $field . $path . ')';
+    }
+
+    /**
+     * Compile a "where fulltext" clause.
+     */
+    protected function whereFullText(Builder $query, array $where): string
+    {
+        $columns = $this->columnize($where['columns']);
+
+        $value = $this->parameter($where['value']);
+
+        $mode = ($where['options']['mode'] ?? []) === 'boolean'
+            ? ' in boolean mode'
+            : ' in natural language mode';
+
+        $expanded = ($where['options']['expanded'] ?? []) && ($where['options']['mode'] ?? []) !== 'boolean'
+            ? ' with query expansion'
+            : '';
+
+        return "match ({$columns}) against (" . $value . "{$mode}{$expanded})";
     }
 }

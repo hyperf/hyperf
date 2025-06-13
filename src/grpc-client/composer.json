@@ -11,16 +11,24 @@
     ],
     "homepage": "https://hyperf.io",
     "support": {
-        "docs": "https://hyperf.wiki",
         "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/grpc": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
-        "jean85/pretty-package-versions": "^1.2|^2.0"
+        "php": ">=8.1",
+        "hyperf/code-parser": "~3.1.0",
+        "hyperf/context": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/coroutine": "~3.1.0",
+        "hyperf/engine": "~3.1.0",
+        "hyperf/event": "~3.1.0",
+        "hyperf/grpc": "~3.1.0",
+        "jean85/pretty-package-versions": "^1.2 || ^2.0"
+    },
+    "suggest": {
+        "hyperf/load-balancer": "Use LoadBalancer for GrpcTransporter.(~3.1.0)"
     },
     "autoload": {
         "psr-4": {
@@ -29,10 +37,11 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\GrpcClient\\": "tests/",
             "GPBMetadata\\": "tests/GPBMetadata",
             "Grpc\\": "tests/Grpc",
-            "Routeguide\\": "tests/Routeguide"
+            "HyperfTest\\GrpcClient\\": "tests/",
+            "Routeguide\\": "tests/Routeguide",
+            "UserService\\": "tests/UserService"
         }
     },
     "config": {
@@ -40,7 +49,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\GrpcClient\\ConfigProvider"

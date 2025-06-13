@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Phar;
 
 use FilesystemIterator;
@@ -16,7 +17,9 @@ use GlobIterator;
 use Hyperf\Phar\Ast\Ast;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigFactoryVisitor;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigVisitor;
+use Hyperf\Phar\Ast\Visitor\UnshiftCodeStringVisitor;
 use InvalidArgumentException;
+use JsonException;
 use Phar;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -25,39 +28,18 @@ use UnexpectedValueException;
 
 class PharBuilder
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    private Package $package;
 
-    /**
-     * @var Package
-     */
-    private $package;
+    private null|string|TargetPhar $target = null;
 
-    /**
-     * @var null|string|TargetPhar
-     */
-    private $target;
+    private array $mount = [];
 
-    /**
-     * @var array
-     */
-    private $mount = [];
+    private ?string $version = null;
 
-    /**
-     * @var string
-     */
-    private $version;
+    private ?string $main = null;
 
-    /**
-     * @var string
-     */
-    private $main;
-
-    public function __construct(string $path, LoggerInterface $logger)
+    public function __construct(string $path, private LoggerInterface $logger)
     {
-        $this->logger = $logger;
         $this->package = new Package($this->loadJson($path), dirname(realpath($path)));
     }
 
@@ -78,10 +60,9 @@ class PharBuilder
 
     /**
      * Set the Phar package name.
-     * @param string|TargetPhar $target
      * @return $this
      */
-    public function setTarget($target)
+    public function setTarget(string|TargetPhar $target): static
     {
         if (is_dir($target)) {
             $this->target = null;
@@ -91,10 +72,7 @@ class PharBuilder
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function setVersion(string $version)
+    public function setVersion(string $version): static
     {
         $this->version = $version;
         return $this;
@@ -123,9 +101,8 @@ class PharBuilder
 
     /**
      * Set the default startup file.
-     * @return $this
      */
-    public function setMain(string $main)
+    public function setMain(string $main): static
     {
         $this->main = $main;
         return $this;
@@ -139,10 +116,7 @@ class PharBuilder
         return $this->package;
     }
 
-    /**
-     * @return $this
-     */
-    public function setMount(array $mount = [])
+    public function setMount(array $mount = []): static
     {
         foreach ($mount as $item) {
             $items = explode(':', $item);
@@ -171,13 +145,13 @@ class PharBuilder
         if (is_file($vendorPath . 'composer/installed.json')) {
             $installed = $this->loadJson($vendorPath . 'composer/installed.json');
             $installedPackages = $installed;
-            // Adapte Composer 2.0
+            // Adapt Composer 2.0
             if (isset($installed['packages'])) {
                 $installedPackages = $installed['packages'];
             }
             // Package all of these dependent components into the packages
             foreach ($installedPackages as $package) {
-                // support custom install path
+                // support custom installation path
                 $dir = 'composer/' . ($package['install-path'] ?? '../' . $package['name']) . '/';
 
                 if (isset($package['target-dir'])) {
@@ -192,7 +166,7 @@ class PharBuilder
     }
 
     /**
-     * Gets the canonicalize path, like realpath.
+     * Gets the canonical path, like realpath.
      * @param mixed $address
      */
     public function canonicalize($address)
@@ -200,8 +174,8 @@ class PharBuilder
         $address = explode('/', $address);
         $keys = array_keys($address, '..');
 
-        foreach ($keys as $keypos => $key) {
-            array_splice($address, $key - ($keypos * 2 + 1), 2);
+        foreach ($keys as $pos => $key) {
+            array_splice($address, $key - ($pos * 2 + 1), 2);
         }
 
         $address = implode('/', $address);
@@ -214,7 +188,7 @@ class PharBuilder
     public function getPathLocalToBase(string $path): ?string
     {
         $root = $this->package->getDirectory();
-        if (strpos($path, $root) !== 0) {
+        if (! str_starts_with($path, $root)) {
             throw new UnexpectedValueException('Path "' . $path . '" is not within base project path "' . $root . '"');
         }
         $basePath = substr($path, strlen($root));
@@ -256,7 +230,7 @@ EOD;
     /**
      * Compile the code into the Phar file.
      */
-    public function build()
+    public function build(): void
     {
         $this->logger->info('Creating phar <info>' . $this->getTarget() . '</info>');
         $time = microtime(true);
@@ -274,7 +248,7 @@ EOD;
 
         $main = $this->getMain();
 
-        $targetPhar = new TargetPhar(new Phar($tmp), $this);
+        $targetPhar = new TargetPhar(new CustomPhar($tmp), $this);
         $this->logger->info('Adding main package "' . $this->package->getName() . '"');
         $finder = Finder::create()
             ->files()
@@ -293,7 +267,7 @@ EOD;
 
         $targetPhar->addBundle($this->package->bundle($finder));
 
-        // Force to turn on ScanCacheable.
+        // Force turning on ScanCacheable.
         $this->enableScanCacheable($targetPhar);
 
         // Load the Runtime folder separately
@@ -337,7 +311,7 @@ EOD;
         // Add composer autoload files.
         $targetPhar->buildFromIterator(new GlobIterator($vendorPath . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME));
 
-        // Add composer depenedencies.
+        // Add composer dependencies.
         foreach ($this->getPackagesDependencies() as $package) {
             $this->logger->info('Adding dependency "' . $package->getName() . '" from "' . $this->getPathLocalToBase($package->getDirectory()) . '"');
             // support package symlink
@@ -357,11 +331,12 @@ EOD;
         $this->replaceConfigFactoryReadPaths($targetPhar, $vendorPath);
 
         $this->logger->info('Adding main file "' . $main . '"');
-        $stubContents = file_get_contents($main);
-        $targetPhar->addFromString($main, strtr($stubContents, ['<?php' => $this->getMountLinkCode()]));
+        $this->rewriteMainWithMountLinkCode($targetPhar, $main);
+
+        $this->logger->info('Packaging all cache files into the PHAR archive.');
+        $targetPhar->save();
 
         $this->logger->info('Setting stub');
-        // Add the default stub.
         $targetPhar->setStub($targetPhar->createDefaultStub($main));
         $this->logger->info('Setting default stub <info>' . $main . '</info>.');
 
@@ -384,7 +359,7 @@ EOD;
     /**
      * Find the scan_cacheable configuration and force it to open.
      */
-    protected function enableScanCacheable(TargetPhar $targetPhar)
+    protected function enableScanCacheable(TargetPhar $targetPhar): void
     {
         $configPath = 'config/config.php';
         $absPath = $this->package->getDirectory() . $configPath;
@@ -399,7 +374,7 @@ EOD;
     /**
      * Replace the method in the Config component to get the true path to the configuration file.
      */
-    protected function replaceConfigFactoryReadPaths(TargetPhar $targetPhar, string $vendorPath)
+    protected function replaceConfigFactoryReadPaths(TargetPhar $targetPhar, string $vendorPath): void
     {
         $configPath = 'hyperf/config/src/ConfigFactory.php';
         $absPath = $vendorPath . $configPath;
@@ -411,24 +386,31 @@ EOD;
         $targetPhar->addFromString('vendor/' . $configPath, $code);
     }
 
+    protected function rewriteMainWithMountLinkCode(TargetPhar $targetPhar, string $mainPath): void
+    {
+        $code = file_get_contents($mainPath);
+        $code = (new Ast())->parse($code, [new UnshiftCodeStringVisitor($this->getMountLinkCode())]);
+        $targetPhar->addFromString($mainPath, $code);
+    }
+
     /**
      * Load the configuration.
      */
     private function loadJson(string $path): array
     {
-        $result = json_decode(file_get_contents($path), true);
-        if ($result === null) {
-            throw new InvalidArgumentException(sprintf('Unable to parse given path %s', $path), json_last_error());
+        try {
+            $result = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw new InvalidArgumentException(sprintf('Unable to parse given path %s', $path), $e->getCode(), $e);
         }
+
         return $result;
     }
 
     /**
      * Get file size.
-     *
-     * @param PharBuilder|string $path
      */
-    private function getSize($path): string
+    private function getSize(PharBuilder|string $path): string
     {
         return round(filesize((string) $path) / 1024, 1) . ' KiB';
     }

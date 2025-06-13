@@ -9,30 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di;
 
 class ReflectionType
 {
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var bool
-     */
-    private $allowsNull;
-
-    /**
-     * @var array
-     */
-    private $metadata;
-
-    public function __construct(string $name, bool $allowsNull = false, array $metadata = [])
+    public function __construct(private string $name, private bool $allowsNull = false, private array $metadata = [])
     {
-        $this->name = $name;
-        $this->allowsNull = $allowsNull;
-        $this->metadata = $metadata;
     }
 
     public function getName(): string

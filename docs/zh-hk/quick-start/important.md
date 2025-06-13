@@ -14,15 +14,73 @@
 
 > 官方的 Dockerfile 已經完成了以下操作。
 
-線上代碼部署時，請務必開啟 `scan_cacheable`。
+線上代碼部署時，請務必開啓 `scan_cacheable`。
 
-開啟此配置後，首次掃描時會生成代理類和註解緩存，再次啟動時，則可以直接使用緩存，極大優化內存使用率和啟動速度。因為跳過了掃描階段，所以會依賴 `Composer Class Map`，故我們必須要執行 `--optimize-autoloader` 優化索引。
+開啓此配置後，首次掃描時會生成代理類和註解緩存，再次啓動時，則可以直接使用緩存，極大優化內存使用率和啓動速度。因為跳過了掃描階段，所以會依賴 `Composer Class Map`，故我們必須要執行 `--optimize-autoloader` 優化索引。
 
-綜上，線上更新代碼，重啟項目前，需要執行以下命令
+綜上，線上更新代碼，重啓項目前，需要執行以下命令
 
 ```bash
 # 優化 Composer 索引
 composer dump-autoload -o
 # 生成代理類和註解緩存
 php bin/hyperf.php
+```
+
+
+## 避免在魔術方法中切換協程
+
+> __call __callStatic 除外
+
+儘量避免在 `__get` `__set` 和 `__isset` 中切換協程，因為可能會出現不符合預期的情況
+
+```php
+<?php
+
+require_once 'vendor/autoload.php';
+
+use function Hyperf\Coroutine\go;
+
+Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL]);
+
+class Foo
+{
+    public function __get(string $name)
+    {
+        sleep(1);
+        return $name;
+    }
+
+    public function __set(string $name, mixed $value)
+    {
+        sleep(1);
+        var_dump($name, $value);
+    }
+
+    public function __isset(string $name): bool
+    {
+        sleep(1);
+        var_dump($name);
+        return true;
+    }
+}
+
+$foo = new Foo();
+go(static function () use ($foo) {
+    var_dump(isset($foo->xxx));
+});
+
+go(static function () use ($foo) {
+    var_dump(isset($foo->xxx));
+});
+
+\Swoole\Event::wait();
+```
+
+當我們執行上述代碼時，會返回以下結果
+
+```shell
+bool(false)
+string(3) "xxx"
+bool(true)
 ```

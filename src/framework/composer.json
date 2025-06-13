@@ -12,26 +12,27 @@
     ],
     "homepage": "https://hyperf.io",
     "support": {
-        "docs": "https://hyperf.wiki",
         "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
+        "source": "https://github.com/hyperf/hyperf",
+        "docs": "https://hyperf.wiki",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.1",
         "fig/http-message-util": "^1.1.2",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
-        "psr/container": "^1.0|^2.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/coordinator": "~3.1.0",
+        "hyperf/coroutine": "~3.1.0",
+        "psr/container": "^1.0 || ^2.0",
         "psr/event-dispatcher": "^1.0",
-        "psr/log": "^1.0|^2.0|^3.0"
+        "psr/log": "^1.0 || ^2.0 || ^3.0"
     },
     "suggest": {
         "ext-swoole": "Required to use swoole engine.",
+        "hyperf/command": "Required to use Command annotation.",
         "hyperf/di": "Required to use Command annotation.",
         "hyperf/dispatcher": "Required to use BootApplication event.",
-        "hyperf/command": "Required to use Command annotation.",
-        "symfony/event-dispatcher": "Required to use symfony event dispatcher (^5.0)."
+        "symfony/event-dispatcher": "Required to use symfony event dispatcher (^5.0|^6.0)."
     },
     "autoload": {
         "psr-4": {
@@ -48,7 +49,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Framework\\ConfigProvider"

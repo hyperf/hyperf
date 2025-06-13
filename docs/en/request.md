@@ -26,9 +26,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
     public function info(RequestInterface $request)
@@ -44,9 +42,7 @@ If you want to obtain routing parameters through controller method parameters, y
 
 ```php
 // Route definition using annotation method
-/**
- * @GetMapping(path="/user/{id:\d+}")
- */
+#[GetMapping(path: "/user/{id:\d+}")]
 
 // Route definition using configuration method
 use Hyperf\HttpServer\Router\Router;
@@ -64,9 +60,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
     public function info(RequestInterface $request, int $id)
@@ -86,9 +80,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
     public function info(RequestInterface $request)

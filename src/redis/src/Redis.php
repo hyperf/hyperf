@@ -9,32 +9,28 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Redis;
 
+use Hyperf\Context\Context;
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Pool\PoolFactory;
-use Hyperf\Utils\Context;
+use Throwable;
+
+use function Hyperf\Coroutine\defer;
 
 /**
  * @mixin \Redis
  */
 class Redis
 {
-    use ScanCaller;
+    use Traits\ScanCaller;
+    use Traits\MultiExec;
 
-    /**
-     * @var PoolFactory
-     */
-    protected $factory;
+    protected string $poolName = 'default';
 
-    /**
-     * @var string
-     */
-    protected $poolName = 'default';
-
-    public function __construct(PoolFactory $factory)
+    public function __construct(protected PoolFactory $factory)
     {
-        $this->factory = $factory;
     }
 
     public function __call($name, $arguments)
@@ -42,12 +38,31 @@ class Redis
         // Get a connection from coroutine context or connection pool.
         $hasContextConnection = Context::has($this->getContextKey());
         $connection = $this->getConnection($hasContextConnection);
+        // Record the start time of the command.
+        $start = (float) microtime(true);
 
         try {
+            /** @var RedisConnection $connection */
             $connection = $connection->getConnection();
             // Execute the command with the arguments.
             $result = $connection->{$name}(...$arguments);
+        } catch (Throwable $exception) {
+            throw $exception;
         } finally {
+            $time = round((microtime(true) - $start) * 1000, 2);
+            // Dispatch the command executed event.
+            $connection->getEventDispatcher()?->dispatch(
+                new Event\CommandExecuted(
+                    $name,
+                    $arguments,
+                    $time,
+                    $connection,
+                    $this->poolName,
+                    $result ?? null,
+                    $exception ?? null,
+                )
+            );
+
             // Release connection.
             if (! $hasContextConnection) {
                 if ($this->shouldUseSameConnection($name)) {
@@ -71,7 +86,7 @@ class Redis
     }
 
     /**
-     * Define the commands that needs same connection to execute.
+     * Define the commands that need same connection to execute.
      * When these commands executed, the connection will storage to coroutine context.
      */
     private function shouldUseSameConnection(string $methodName): bool

@@ -9,85 +9,61 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Scout;
 
 use Closure;
+use Hyperf\Collection\Collection as BaseCollection;
+use Hyperf\Conditionable\Conditionable;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\Collection as BaseCollection;
+
+use function Hyperf\Tappable\tap;
 
 class Builder
 {
     use Macroable;
-
-    /**
-     * The model instance.
-     *
-     * @var Model|SearchableInterface
-     */
-    public $model;
-
-    /**
-     * The query expression.
-     *
-     * @var string
-     */
-    public $query;
-
-    /**
-     * Optional callback before search execution.
-     *
-     * @var null|Closure
-     */
-    public $callback;
+    use Conditionable;
 
     /**
      * Optional callback before model query execution.
-     *
-     * @var null|Closure
      */
-    public $queryCallback;
+    public ?Closure $queryCallback = null;
 
     /**
      * The custom index specified for the search.
-     *
-     * @var string
      */
-    public $index;
+    public ?string $index = null;
 
     /**
      * The "where" constraints added to the query.
-     *
-     * @var array
      */
-    public $wheres = [];
+    public array $wheres = [];
 
     /**
      * The "limit" that should be applied to the search.
-     *
-     * @var int
      */
-    public $limit;
+    public int $limit = 0;
 
     /**
      * The "order" that should be applied to the search.
-     *
-     * @var array
      */
-    public $orders = [];
+    public array $orders = [];
 
     /**
      * Create a new search builder instance.
      */
-    public function __construct(Model $model, string $query, ?Closure $callback = null, ?bool $softDelete = false)
+    /**
+     * @param Model&SearchableInterface $model
+     * @param string $query the query expression
+     * @param null|Closure $callback optional callback before search execution
+     */
+    public function __construct(public Model $model, public string $query, public ?Closure $callback = null, ?bool $softDelete = false)
     {
-        $this->model = $model;
-        $this->query = $query;
-        $this->callback = $callback;
         if ($softDelete) {
             $this->wheres['__soft_deleted'] = 0;
         }
@@ -106,9 +82,8 @@ class Builder
      * Add a constraint to the search query.
      *
      * @param mixed $value
-     * @return $this
      */
-    public function where(string $field, $value): Builder
+    public function where(string $field, $value): static
     {
         $this->wheres[$field] = $value;
         return $this;
@@ -116,10 +91,8 @@ class Builder
 
     /**
      * Include soft deleted records in the results.
-     *
-     * @return $this
      */
-    public function withTrashed(): Builder
+    public function withTrashed(): static
     {
         unset($this->wheres['__soft_deleted']);
         return $this;
@@ -127,10 +100,8 @@ class Builder
 
     /**
      * Include only soft deleted records in the results.
-     *
-     * @return $this
      */
-    public function onlyTrashed(): Builder
+    public function onlyTrashed(): static
     {
         return tap($this->withTrashed(), function () {
             $this->wheres['__soft_deleted'] = 1;
@@ -139,10 +110,8 @@ class Builder
 
     /**
      * Set the "limit" for the search query.
-     *
-     * @return $this
      */
-    public function take(int $limit): Builder
+    public function take(int $limit): static
     {
         $this->limit = $limit;
         return $this;
@@ -151,7 +120,7 @@ class Builder
     /**
      * Add an "order" for the search query.
      */
-    public function orderBy(string $column, ?string $direction = 'asc'): Builder
+    public function orderBy(string $column, ?string $direction = 'asc'): static
     {
         $this->orders[] = [
             'column' => $column,
@@ -161,24 +130,9 @@ class Builder
     }
 
     /**
-     * Apply the callback's query changes if the given "value" is true.
-     * @param mixed $value
-     */
-    public function when($value, callable $callback, ?callable $default = null): Builder
-    {
-        if ($value) {
-            return $callback($this, $value) ?: $this;
-        }
-        if ($default) {
-            return $default($this, $value) ?: $this;
-        }
-        return $this;
-    }
-
-    /**
      * Pass the query to a given callback.
      */
-    public function tap(Closure $callback): Builder
+    public function tap(Closure $callback): static
     {
         return $this->when(true, $callback);
     }
@@ -186,7 +140,7 @@ class Builder
     /**
      * Set the callback that should have an opportunity to modify the database query.
      */
-    public function query(Closure $callback): Builder
+    public function query(Closure $callback): static
     {
         $this->queryCallback = $callback;
         return $this;

@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ModelListener\Stub;
 
 use Hyperf\Database\Model\Model;
 
 class ModelStub extends Model
 {
-    protected $fillable = ['id'];
+    protected array $fillable = ['id'];
 }

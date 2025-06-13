@@ -9,46 +9,30 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Migrations;
 
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolverInterface as Resolver;
 use Hyperf\Database\Schema\Grammars\Grammar;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
+use Hyperf\Support\Filesystem\Filesystem;
+use ReflectionClass;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
+
+use function Hyperf\Collection\collect;
 
 class Migrator
 {
-    /**
-     * The migration repository implementation.
-     *
-     * @var \Hyperf\Database\Migrations\MigrationRepositoryInterface
-     */
-    protected $repository;
-
-    /**
-     * The filesystem instance.
-     *
-     * @var \Hyperf\Utils\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
-     * The connection resolver instance.
-     *
-     * @var \Hyperf\Database\ConnectionResolverInterface
-     */
-    protected $resolver;
-
     /**
      * The name of the default connection.
      *
      * @var string
      */
-    protected $connection;
+    protected $connection = 'default';
 
     /**
      * The paths to all of the migration files.
@@ -68,25 +52,19 @@ class Migrator
      * Create a new migrator instance.
      */
     public function __construct(
-        MigrationRepositoryInterface $repository,
-        Resolver $resolver,
-        Filesystem $files
+        protected MigrationRepositoryInterface $repository,
+        protected Resolver $resolver,
+        protected Filesystem $files
     ) {
-        $this->files = $files;
-        $this->resolver = $resolver;
-        $this->repository = $repository;
     }
 
     /**
      * Run the pending migrations at a given path.
      *
-     * @param array|string $paths
-     * @throws \Throwable
+     * @throws Throwable
      */
-    public function run($paths = [], array $options = []): array
+    public function run(array|string $paths = [], array $options = []): array
     {
-        $this->notes = [];
-
         // Once we grab all of the migration files for the path, we will compare them
         // against the migrations that have already been run for this package then
         // run each of the outstanding migrations against a database connection.
@@ -108,7 +86,7 @@ class Migrator
     /**
      * Run an array of migrations.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function runPending(array $migrations, array $options = []): void
     {
@@ -145,13 +123,10 @@ class Migrator
     /**
      * Rollback the last migration operation.
      *
-     * @param array|string $paths
-     * @throws \Throwable
+     * @throws Throwable
      */
-    public function rollback($paths = [], array $options = []): array
+    public function rollback(array|string $paths = [], array $options = []): array
     {
-        $this->notes = [];
-
         // We want to pull in the last batch of migrations that ran on the previous
         // migration operation. We'll then reverse those migrations and run each
         // of them "down" to reverse the last migration "operation" which ran.
@@ -168,13 +143,9 @@ class Migrator
 
     /**
      * Rolls all of the currently applied migrations back.
-     *
-     * @param array|string $paths
      */
-    public function reset($paths = [], bool $pretend = false): array
+    public function reset(array|string $paths = [], bool $pretend = false): array
     {
-        $this->notes = [];
-
         // Next, we will reverse the migration list so we can run them back in the
         // correct order for resetting this database. This will allow us to get
         // the database back into its "empty" state ready for the migrations.
@@ -194,17 +165,15 @@ class Migrator
      */
     public function resolve(string $file): object
     {
-        $class = Str::studly(implode('_', array_slice(explode('_', $file), 4)));
+        $class = $this->getMigrationClass($file);
 
         return new $class();
     }
 
     /**
      * Get all of the migration files in a given path.
-     *
-     * @param array|string $paths
      */
-    public function getMigrationFiles($paths): array
+    public function getMigrationFiles(array|string $paths): array
     {
         return Collection::make($paths)->flatMap(function ($path) {
             return Str::endsWith($path, '.php') ? [$path] : $this->files->glob($path . '/*_*.php');
@@ -262,9 +231,7 @@ class Migrator
      */
     public function setConnection(string $name): void
     {
-        if (! is_null($name)) {
-            $this->resolver->setDefaultConnection($name);
-        }
+        $this->resolver->setDefaultConnection($name);
 
         $this->repository->setSource($name);
 
@@ -318,6 +285,27 @@ class Migrator
     }
 
     /**
+     * Resolve a migration instance from migration path.
+     */
+    protected function resolvePath(string $path): object
+    {
+        $class = $this->getMigrationClass($this->getMigrationName($path));
+        if (class_exists($class)) {
+            return new $class();
+        }
+
+        return $this->files->getRequire($path);
+    }
+
+    /**
+     * Generate migration class name based on migration name.
+     */
+    protected function getMigrationClass(string $migrationName): string
+    {
+        return Str::studly(implode('_', array_slice(explode('_', $migrationName), 4)));
+    }
+
+    /**
      * Get the migration files that have not yet run.
      */
     protected function pendingMigrations(array $files, array $ran): array
@@ -331,16 +319,15 @@ class Migrator
     /**
      * Run "up" a migration instance.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function runUp(string $file, int $batch, bool $pretend): void
     {
         // First we will resolve a "real" instance of the migration class from this
         // migration file name. Once we have the instances we can run the actual
         // command such as "up" or "down", or we can just simulate the action.
-        $migration = $this->resolve(
-            $name = $this->getMigrationName($file)
-        );
+        $migration = $this->resolvePath($file);
+        $name = $this->getMigrationName($file);
 
         if ($pretend) {
             $this->pretendToRun($migration, 'up');
@@ -375,7 +362,7 @@ class Migrator
      * Rollback the given migrations.
      *
      * @param array|string $paths
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function rollbackMigrations(array $migrations, $paths, array $options): array
     {
@@ -429,16 +416,15 @@ class Migrator
     /**
      * Run "down" a migration instance.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function runDown(string $file, object $migration, bool $pretend): void
     {
         // First we will get the file name of the migration so we can resolve out an
         // instance of the migration. Once we get an instance we can either run a
         // pretend execution of the migration or we can run the real migration.
-        $instance = $this->resolve(
-            $name = $this->getMigrationName($file)
-        );
+        $instance = $this->resolvePath($file);
+        $name = $this->getMigrationName($file);
 
         $this->note("<comment>Rolling back:</comment> {$name}");
 
@@ -460,7 +446,7 @@ class Migrator
     /**
      * Run a migration inside a transaction if the database supports it.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function runMigration(object $migration, string $method): void
     {
@@ -480,9 +466,9 @@ class Migrator
         };
 
         $this->getSchemaGrammar($connection)->supportsSchemaTransactions()
-            && $migration->withinTransaction
-                    ? $connection->transaction($callback)
-                    : $callback();
+        && $migration->withinTransaction
+            ? $connection->transaction($callback)
+            : $callback();
     }
 
     /**
@@ -492,6 +478,11 @@ class Migrator
     {
         foreach ($this->getQueries($migration, $method) as $query) {
             $name = get_class($migration);
+
+            $reflectionClass = new ReflectionClass($migration);
+            if ($reflectionClass->isAnonymous()) {
+                $name = $this->getMigrationName($reflectionClass->getFileName());
+            }
 
             $this->note("<info>{$name}:</info> {$query['query']}");
         }
@@ -523,24 +514,14 @@ class Migrator
      */
     protected function getSchemaGrammar($connection): Grammar
     {
-        if (is_null($grammar = $connection->getSchemaGrammar())) {
-            $connection->useDefaultSchemaGrammar();
-
-            $grammar = $connection->getSchemaGrammar();
-        }
-
-        return $grammar;
+        return $connection->getSchemaGrammar();
     }
 
     /**
      * Write a note to the conosle's output.
-     *
-     * @param string $message
      */
-    protected function note($message)
+    protected function note(string $message): void
     {
-        if ($this->output) {
-            $this->output->writeln($message);
-        }
+        $this->output?->writeln($message);
     }
 }

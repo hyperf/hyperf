@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Model\Relations\Concerns;
 
+use Closure;
 use Hyperf\Database\Model\Model;
 
 trait SupportsDefaultModels
@@ -20,14 +22,14 @@ trait SupportsDefaultModels
      *
      * Alternatively, may be a Closure or array.
      *
-     * @var array|bool|\Closure
+     * @var array|bool|Closure
      */
     protected $withDefault;
 
     /**
      * Return a new model instance in case the relationship does not exist.
      *
-     * @param array|bool|\Closure $callback
+     * @param array|bool|Closure $callback
      * @return $this
      */
     public function withDefault($callback = true)
@@ -40,14 +42,14 @@ trait SupportsDefaultModels
     /**
      * Make a new related instance for the given model.
      *
-     * @return \Hyperf\Database\Model\Model
+     * @return Model
      */
     abstract protected function newRelatedInstanceFor(Model $parent);
 
     /**
      * Get the default value for this relation.
      *
-     * @return null|\Hyperf\Database\Model\Model
+     * @return null|Model
      */
     protected function getDefaultFor(Model $parent)
     {

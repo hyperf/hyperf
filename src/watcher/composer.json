@@ -1,23 +1,34 @@
 {
     "name": "hyperf/watcher",
-    "type": "library",
+    "description": "Hot reload watcher for Hyperf",
     "license": "MIT",
+    "type": "library",
     "keywords": [
+        "dev",
         "php",
         "hyperf"
     ],
-    "description": "Hot reload watcher for Hyperf",
     "require": {
-        "php": ">=7.2",
-        "ext-swoole": ">=4.5",
-        "hyperf/command": "~2.2.0",
-        "hyperf/di": "~2.2.0",
-        "hyperf/framework": "~2.2.0"
+        "php": ">=8.1",
+        "ext-posix": "*",
+        "hyperf/codec": "~3.1.0",
+        "hyperf/command": "~3.1.0",
+        "hyperf/contract": "~3.1.0",
+        "hyperf/coordinator": "~3.1.0",
+        "hyperf/coroutine": "~3.1.0",
+        "hyperf/di": "~3.1.0",
+        "hyperf/engine": "~3.1.0",
+        "hyperf/framework": "~3.1.0",
+        "hyperf/stringable": "~3.1.0",
+        "hyperf/support": "~3.1.0"
     },
     "autoload": {
         "psr-4": {
             "Hyperf\\Watcher\\": "src/"
-        }
+        },
+        "files": [
+            "src/Functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -29,7 +40,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Watcher\\ConfigProvider"

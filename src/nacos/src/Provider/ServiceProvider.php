@@ -9,26 +9,28 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nacos\Provider;
 
 use GuzzleHttp\RequestOptions;
 use Hyperf\Nacos\AbstractProvider;
+use JetBrains\PhpStorm\ArrayShape;
 use Psr\Http\Message\ResponseInterface;
 
 class ServiceProvider extends AbstractProvider
 {
-    /**
-     * @param $optional = [
-     *     'groupName' => '',
-     *     'namespaceId' => '',
-     *     'protectThreshold' => 0.99,
-     *     'metadata' => '',
-     *     'selector' => '', // json字符串
-     * ]
-     */
-    public function create(string $serviceName, array $optional = []): ResponseInterface
-    {
-        return $this->request('POST', '/nacos/v1/ns/service', [
+    public function create(
+        string $serviceName,
+        #[ArrayShape([
+            'groupName' => '',
+            'namespaceId' => '',
+            'protectThreshold' => 0.99,
+            'metadata' => '',
+            'selector' => '', // json字符串
+        ])]
+        array $optional = []
+    ): ResponseInterface {
+        return $this->request('POST', 'nacos/v1/ns/service', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
             ])),
@@ -37,7 +39,7 @@ class ServiceProvider extends AbstractProvider
 
     public function delete(string $serviceName, ?string $groupName = null, ?string $namespaceId = null): ResponseInterface
     {
-        return $this->request('DELETE', '/nacos/v1/ns/service', [
+        return $this->request('DELETE', 'nacos/v1/ns/service', [
             RequestOptions::QUERY => $this->filter([
                 'serviceName' => $serviceName,
                 'groupName' => $groupName,
@@ -46,18 +48,18 @@ class ServiceProvider extends AbstractProvider
         ]);
     }
 
-    /**
-     * @param $optional = [
-     *     'groupName' => '',
-     *     'namespaceId' => '',
-     *     'protectThreshold' => 0.99,
-     *     'metadata' => '',
-     *     'selector' => '', // json字符串
-     * ]
-     */
-    public function update(string $serviceName, array $optional = []): ResponseInterface
-    {
-        return $this->request('PUT', '/nacos/v1/ns/service', [
+    public function update(
+        string $serviceName,
+        #[ArrayShape([
+            'groupName' => '',
+            'namespaceId' => '',
+            'protectThreshold' => 0.99,
+            'metadata' => '',
+            'selector' => '', // json字符串
+        ])]
+        array $optional = []
+    ): ResponseInterface {
+        return $this->request('PUT', 'nacos/v1/ns/service', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
             ])),
@@ -66,7 +68,7 @@ class ServiceProvider extends AbstractProvider
 
     public function detail(string $serviceName, ?string $groupName = null, ?string $namespaceId = null): ResponseInterface
     {
-        return $this->request('GET', '/nacos/v1/ns/service', [
+        return $this->request('GET', 'nacos/v1/ns/service', [
             RequestOptions::QUERY => $this->filter([
                 'serviceName' => $serviceName,
                 'groupName' => $groupName,
@@ -77,7 +79,7 @@ class ServiceProvider extends AbstractProvider
 
     public function list(int $pageNo, int $pageSize, ?string $groupName = null, ?string $namespaceId = null): ResponseInterface
     {
-        return $this->request('GET', '/nacos/v1/ns/service/list', [
+        return $this->request('GET', 'nacos/v1/ns/service/list', [
             RequestOptions::QUERY => $this->filter([
                 'pageNo' => $pageNo,
                 'pageSize' => $pageSize,

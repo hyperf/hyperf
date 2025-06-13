@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Cache\Collector;
 
-use Hyperf\Utils\Collection;
-use Hyperf\Utils\Traits\StaticInstance;
+use Hyperf\Collection\Collection;
+use Hyperf\Support\Traits\StaticInstance;
 
 class CoroutineMemoryKey extends Collection
 {

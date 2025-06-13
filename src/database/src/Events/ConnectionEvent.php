@@ -9,7 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Database\Events;
+
+use Hyperf\Database\Connection;
+use Hyperf\Database\ConnectionInterface;
 
 abstract class ConnectionEvent
 {
@@ -21,20 +25,12 @@ abstract class ConnectionEvent
     public $connectionName;
 
     /**
-     * The database connection instance.
-     *
-     * @var \Hyperf\Database\Connection
-     */
-    public $connection;
-
-    /**
      * Create a new event instance.
      *
-     * @param \Hyperf\Database\Connection $connection
+     * @param Connection&ConnectionInterface $connection
      */
-    public function __construct($connection)
+    public function __construct(public ConnectionInterface $connection)
     {
-        $this->connection = $connection;
         $this->connectionName = $connection->getName();
     }
 }

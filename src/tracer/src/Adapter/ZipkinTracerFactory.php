@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Adapter;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Tracer\Adapter\Reporter\ReporterFactory;
 use Hyperf\Tracer\Contract\NamedFactoryInterface;
 use Zipkin\Endpoint;
 use Zipkin\Reporters\Http;
@@ -21,35 +23,20 @@ use ZipkinOpenTracing\Tracer;
 
 class ZipkinTracerFactory implements NamedFactoryInterface
 {
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private string $prefix = 'opentracing.tracer.';
 
-    /**
-     * @var HttpClientFactory
-     */
-    private $clientFactory;
+    private string $name = '';
 
-    /**
-     * @var string
-     */
-    private $prefix = 'opentracing.zipkin.';
-
-    public function __construct(ConfigInterface $config, HttpClientFactory $clientFactory)
+    public function __construct(private ConfigInterface $config, private ReporterFactory $reportFactory)
     {
-        $this->config = $config;
-        $this->clientFactory = $clientFactory;
     }
 
     public function make(string $name): \OpenTracing\Tracer
     {
-        if (! empty($name)) {
-            $this->prefix = "opentracing.tracer.{$name}.";
-        }
-        [$app, $options, $sampler] = $this->parseConfig();
+        $this->name = $name;
+        [$app, $sampler, $reporterOption] = $this->parseConfig();
         $endpoint = Endpoint::create($app['name'], $app['ipv4'], $app['ipv6'], $app['port']);
-        $reporter = new Http($options, $this->clientFactory);
+        $reporter = $this->reportFactory->make($reporterOption);
         $tracing = TracingBuilder::create()
             ->havingLocalEndpoint($endpoint)
             ->havingSampler($sampler)
@@ -61,6 +48,7 @@ class ZipkinTracerFactory implements NamedFactoryInterface
     private function parseConfig(): array
     {
         // @TODO Detect the ipv4, ipv6, port from server object or system info automatically.
+        $reporter = (string) $this->getConfig('reporter', 'http');
         return [
             $this->getConfig('app', [
                 'name' => 'skeleton',
@@ -68,15 +56,23 @@ class ZipkinTracerFactory implements NamedFactoryInterface
                 'ipv6' => null,
                 'port' => 9501,
             ]),
-            $this->getConfig('options', [
-                'timeout' => 1,
-            ]),
             $this->getConfig('sampler', BinarySampler::createAsAlwaysSample()),
+            $this->getConfig('reporters.' . $reporter, [
+                'class' => Http::class,
+                'constructor' => [
+                    'options' => $this->getConfig('options', []),
+                ],
+            ]),
         ];
     }
 
     private function getConfig(string $key, $default)
     {
-        return $this->config->get($this->prefix . $key, $default);
+        return $this->config->get($this->getPrefix() . $key, $default);
+    }
+
+    private function getPrefix(): string
+    {
+        return rtrim($this->prefix . $this->name, '.') . '.';
     }
 }

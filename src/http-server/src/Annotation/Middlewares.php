@@ -9,32 +9,29 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpServer\Annotation;
 
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
+use Hyperf\HttpServer\PriorityMiddleware;
 
-/**
- * @Annotation
- * @Target({"ALL"})
- */
 #[Attribute]
 class Middlewares extends AbstractAnnotation
 {
     /**
      * @var Middleware[]
      */
-    public $middlewares = [];
+    public array $middlewares = [];
 
-    public function __construct(...$value)
+    public function __construct(array $middlewares = [])
     {
-        if (is_string($value[0])) {
-            $middlewares = [];
-            foreach ($value as $middlewareName) {
-                $middlewares[] = new Middleware($middlewareName);
+        foreach ($middlewares as $middleware => $priority) {
+            if (is_int($middleware)) {
+                [$middleware, $priority] = [$priority, PriorityMiddleware::DEFAULT_PRIORITY];
             }
-            $value = ['value' => $middlewares];
+
+            $this->middlewares[] = $middleware instanceof Middlewares ? $middleware->middlewares : new Middleware((string) $middleware, (int) $priority);
         }
-        $this->bindMainProperty('middlewares', $value);
     }
 }

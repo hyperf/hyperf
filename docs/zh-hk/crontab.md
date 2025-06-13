@@ -10,7 +10,7 @@ composer require hyperf/crontab
 
 # 使用
 
-## 啟動任務調度器進程
+## 啓動任務調度器進程
 
 在使用定時任務組件之前，需要先在 `config/autoload/processes.php` 內註冊一下 `Hyperf\Crontab\Process\CrontabDispatcherProcess` 自定義進程，如下：
 
@@ -22,13 +22,13 @@ return [
 ];
 ```
 
-這樣服務啟動時會啟動一個自定義進程，用於對定時任務的解析和調度分發。   
-同時，您還需要將 `config/autoload/crontab.php` 內的 `enable` 配置設置為 `true`，表示開啟定時任務功能，如配置文件不存在可自行創建，配置如下：
+這樣服務啓動時會啓動一個自定義進程，用於對定時任務的解析和調度分發。   
+同時，您還需要將 `config/autoload/crontab.php` 內的 `enable` 配置設置為 `true`，表示開啓定時任務功能，如配置文件不存在可自行創建，配置如下：
 
 ```php
 <?php
 return [
-    // 是否開啟定時任務
+    // 是否開啓定時任務
     'enable' => true,
 ];
 ```
@@ -56,14 +56,32 @@ return [
             'fooArgument' => 'barValue',
             // (optional) options
             '--message-limit' => 1,
-        ]),
+            // 記住要加上，否則會導致主進程退出
+            '--disable-event-dispatcher' => true,
+        ])->setEnvironments(['develop', 'production']),
+        // Closure 類型定時任務 (僅在 Coroutine style server 中支持)
+        (new Crontab())->setType('closure')->setName('Closure')->setRule('* * * * *')->setCallback(function () {
+            var_dump(date('Y-m-d H:i:s'));
+        })->setEnvironments('production'),
     ],
 ];
 ```
 
+3.1 之後新增了新的配置方式，你可以通過 `config/crontabs.php` 來定義定時任務，如配置文件不存在可自行創建：
+
+```php
+<?php
+// config/crontabs.php
+use Hyperf\Crontab\Schedule;
+
+Schedule::command('foo:bar')->setName('foo-bar')->setRule('* * * * *');
+Schedule::call([Foo::class, 'bar'])->setName('foo-bar')->setRule('* * * * *');
+Schedule::call(fn() => (new Foo)->bar())->setName('foo-bar')->setRule('* * * * *');
+```
+
 ### 通過註解定義
 
-通過 `@Crontab` 註解可以快速完成對一個任務的定義，以下的定義示例與配置文件定義所達到的目的都是一樣的。定義一個名為 `Foo` 每分鐘執行一次 `App\Task\FooTask::execute()` 的定時任務。
+通過 `#[Crontab]` 註解可以快速完成對一個任務的定義，以下的定義示例與配置文件定義所達到的目的都是一樣的。定義一個名為 `Foo` 每分鐘執行一次 `App\Task\FooTask::execute()` 的定時任務。
 
 ```php
 <?php
@@ -73,25 +91,18 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab;
 use Hyperf\Di\Annotation\Inject;
 
-/**
- * @Crontab(name="Foo", rule="* * * * *", callback="execute", memo="這是一個示例的定時任務")
- */
+#[Crontab(name: "Foo", rule: "* * * * *", callback: "execute", memo: "這是一個示例的定時任務")]
 class FooTask
 {
-    /**
-     * @Inject()
-     * @var \Hyperf\Contract\StdoutLoggerInterface
-     */
-    private $logger;
+    #[Inject]
+    private StdoutLoggerInterface $logger;
 
     public function execute()
     {
         $this->logger->info(date('Y-m-d H:i:s', time()));
     }
-    
-    /**
-     * @Crontab(rule="* * * * * *", memo="foo")
-     */
+
+    #[Crontab(rule: "* * * * *", memo: "foo")]
     public function foo()
     {
         var_dump('foo');
@@ -149,9 +160,7 @@ namespace App\Crontab;
 use Carbon\Carbon;
 use Hyperf\Crontab\Annotation\Crontab;
 
-/**
- * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable="isEnable", memo="這是一個示例的定時任務")
- */
+#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: "isEnable", memo: "這是一個示例的定時任務")]
 class EchoCrontab
 {
     public function execute()
@@ -190,9 +199,7 @@ namespace App\Crontab;
 use Carbon\Carbon;
 use Hyperf\Crontab\Annotation\Crontab;
 
-/**
- * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable={EnableChecker::class, "isEnable"}, memo="這是一個示例的定時任務")
- */
+#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: [EnableChecker::class, "isEnable"], memo: "這是一個示例的定時任務")]
 class EchoCrontab
 {
     public function execute()
@@ -207,6 +214,10 @@ class EchoCrontab
 }
 
 ```
+
+#### environments
+
+設置定時任務的環境，如果不設置，則會全部環境都生效。支持傳入 array 和 string。
 
 ### 調度分發策略
 
@@ -251,8 +262,8 @@ return [
 
 ## 運行定時任務
 
-當您完成上述的配置後，以及定義了定時任務後，只需要直接啟動 `Server`，定時任務便會一同啟動。   
-在您啟動後，即便您定義了足夠短週期的定時任務，定時任務也不會馬上開始執行，所有定時任務都會等到下一個分鐘週期時才會開始執行，比如您啟動的時候是 `10 時 11 分 12 秒`，那麼定時任務會在 `10 時 12 分 00 秒` 才會正式開始執行。
+當您完成上述的配置後，以及定義了定時任務後，只需要直接啓動 `Server`，定時任務便會一同啓動。   
+在您啓動後，即便您定義了足夠短週期的定時任務，定時任務也不會馬上開始執行，所有定時任務都會等到下一個分鐘週期時才會開始執行，比如您啓動的時候是 `10 時 11 分 12 秒`，那麼定時任務會在 `10 時 12 分 00 秒` 才會正式開始執行。
 
 ### FailToExecute 事件
 

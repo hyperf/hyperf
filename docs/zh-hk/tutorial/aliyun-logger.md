@@ -93,7 +93,7 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 
 字段索引屬性
 
-| 字段名稱 | 類型  |  別名   | 中文分詞 | 開啟統計 |
+| 字段名稱 | 類型  |  別名   | 中文分詞 | 開啓統計 |
 | :------: | :---: | :-----: | :------: | :------: |
 |   name   | text  |  name   |  false   |   true   |
 |  level   | text  |  level  |  false   |   true   |

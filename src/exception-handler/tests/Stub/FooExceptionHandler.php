@@ -9,10 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ExceptionHandler\Stub;
 
+use Hyperf\Context\Context;
 use Hyperf\ExceptionHandler\ExceptionHandler;
-use Hyperf\Utils\Context;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 

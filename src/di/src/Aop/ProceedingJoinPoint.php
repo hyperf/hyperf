@@ -9,51 +9,28 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Aop;
 
 use Closure;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Exception\Exception;
 use Hyperf\Di\ReflectionManager;
+use ReflectionFunction;
+use ReflectionMethod;
 
 class ProceedingJoinPoint
 {
-    /**
-     * @var string
-     */
-    public $className;
+    public mixed $result;
 
-    /**
-     * @var string
-     */
-    public $methodName;
+    public ?Closure $pipe = null;
 
-    /**
-     * @var mixed[]
-     */
-    public $arguments;
-
-    /**
-     * @var mixed
-     */
-    public $result;
-
-    /**
-     * @var Closure
-     */
-    public $originalMethod;
-
-    /**
-     * @var null|Closure
-     */
-    public $pipe;
-
-    public function __construct(Closure $originalMethod, string $className, string $methodName, array $arguments)
-    {
-        $this->originalMethod = $originalMethod;
-        $this->className = $className;
-        $this->methodName = $methodName;
-        $this->arguments = $arguments;
+    public function __construct(
+        public Closure $originalMethod,
+        public string $className,
+        public string $methodName,
+        public array $arguments
+    ) {
     }
 
     /**
@@ -76,11 +53,7 @@ class ProceedingJoinPoint
     {
         $this->pipe = null;
         $closure = $this->originalMethod;
-        if (count($this->arguments['keys']) > 1) {
-            $arguments = $this->getArguments();
-        } else {
-            $arguments = array_values($this->arguments['keys']);
-        }
+        $arguments = $this->getArguments();
         return $closure(...$arguments);
     }
 
@@ -90,18 +63,22 @@ class ProceedingJoinPoint
         return new AnnotationMetadata($metadata['_c'] ?? [], $metadata['_m'][$this->methodName] ?? []);
     }
 
-    public function getArguments()
+    public function getArguments(): array
     {
-        return value(function () {
-            $result = [];
-            foreach ($this->arguments['order'] ?? [] as $order) {
-                $result[] = $this->arguments['keys'][$order];
-            }
-            return $result;
-        });
+        $result = [];
+        foreach ($this->arguments['order'] ?? [] as $order) {
+            $result[] = $this->arguments['keys'][$order];
+        }
+
+        // Variable arguments are always placed at the end.
+        if (isset($this->arguments['variadic'], $order) && $order === $this->arguments['variadic']) {
+            $variadic = array_pop($result);
+            $result = array_merge($result, $variadic);
+        }
+        return $result;
     }
 
-    public function getReflectMethod(): \ReflectionMethod
+    public function getReflectMethod(): ReflectionMethod
     {
         return ReflectionManager::reflectMethod(
             $this->className,
@@ -111,7 +88,7 @@ class ProceedingJoinPoint
 
     public function getInstance(): ?object
     {
-        $ref = new \ReflectionFunction($this->originalMethod);
+        $ref = new ReflectionFunction($this->originalMethod);
 
         return $ref->getClosureThis();
     }

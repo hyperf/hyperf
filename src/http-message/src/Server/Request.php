@@ -9,73 +9,54 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\HttpMessage\Server;
 
+use Hyperf\Context\ApplicationContext;
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Server\Request\Parser;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
-use Hyperf\Utils\ApplicationContext;
-use Psr\Http\Message\RequestInterface;
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
+use Swoole;
+use Swow\Psr7\Message\ServerRequestPlusInterface;
 
-class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestInterface
+class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestInterface, ServerRequestPlusInterface
 {
-    /**
-     * @var \Swoole\Http\Request
-     */
-    protected $swooleRequest;
+    protected ?Swoole\Http\Request $swooleRequest = null;
 
-    /**
-     * @var null|RequestParserInterface
-     */
-    protected static $parser;
+    protected static ?RequestParserInterface $parser = null;
 
-    /**
-     * @var array
-     */
-    private $attributes = [];
+    private array $attributes = [];
 
-    /**
-     * @var array
-     */
-    private $cookieParams = [];
+    private array $cookieParams = [];
 
     /**
      * @var null|array|object
      */
     private $parsedBody;
 
-    /**
-     * @var array
-     */
-    private $queryParams = [];
+    private array $queryParams = [];
 
-    /**
-     * @var array
-     */
-    private $serverParams = [];
+    private array $serverParams = [];
 
-    /**
-     * @var array
-     */
-    private $uploadedFiles = [];
+    private array $uploadedFiles = [];
 
     /**
      * the body of parser.
-     *
-     * @var mixed
      */
-    private $bodyParams;
+    private mixed $bodyParams;
 
     /**
      * Load a swoole request, and transfer to a psr-7 request object.
      *
-     * @return \Hyperf\HttpMessage\Server\Request
+     * @return Request
      */
-    public static function loadFromSwooleRequest(\Swoole\Http\Request $swooleRequest)
+    public static function loadFromSwooleRequest(Swoole\Http\Request $swooleRequest)
     {
         $server = $swooleRequest->server;
         $method = $server['request_method'] ?? 'GET';
@@ -98,20 +79,16 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * Retrieves data related to the incoming request environment,
      * typically derived from PHP's $_SERVER superglobal. The data IS NOT
      * REQUIRED to originate from $_SERVER.
-     *
-     * @return array
      */
-    public function getServerParams()
+    public function getServerParams(): array
     {
         return $this->serverParams;
     }
 
     /**
      * Return an instance with the specified server params.
-     *
-     * @return static
      */
-    public function withServerParams(array $serverParams)
+    public function withServerParams(array $serverParams): static
     {
         $clone = clone $this;
         $clone->serverParams = $serverParams;
@@ -141,9 +118,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * updated cookie values.
      *
      * @param array $cookies array of key/value pairs representing cookies
-     * @return static
      */
-    public function withCookieParams(array $cookies)
+    public function withCookieParams(array $cookies): static
     {
         $clone = clone $this;
         $clone->cookieParams = $cookies;
@@ -168,10 +144,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @param string $name the name of param
      * @param mixed $value the value of param
-     *
-     * @return static
      */
-    public function addQueryParam(string $name, $value)
+    public function addQueryParam(string $name, mixed $value): static
     {
         $clone = clone $this;
         $clone->queryParams[$name] = $value;
@@ -196,9 +170,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @param array $query array of query string arguments, typically from
      *                     $_GET
-     * @return static
      */
-    public function withQueryParams(array $query)
+    public function withQueryParams(array $query): static
     {
         $clone = clone $this;
         $clone->queryParams = $query;
@@ -215,7 +188,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * @return array an array tree of UploadedFileInterface instances; an empty
      *               array MUST be returned if no data is present
      */
-    public function getUploadedFiles()
+    public function getUploadedFiles(): array
     {
         return $this->uploadedFiles;
     }
@@ -227,10 +200,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * updated body parameters.
      *
      * @param array $uploadedFiles an array tree of UploadedFileInterface instances
-     * @throws \InvalidArgumentException if an invalid structure is provided
-     * @return static
+     * @throws InvalidArgumentException if an invalid structure is provided
      */
-    public function withUploadedFiles(array $uploadedFiles)
+    public function withUploadedFiles(array $uploadedFiles): static
     {
         $clone = clone $this;
         $clone->uploadedFiles = $uploadedFiles;
@@ -250,7 +222,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * @return null|array|object The deserialized body parameters, if any.
      *                           These will typically be an array or object.
      */
-    public function getParsedBody()
+    public function getParsedBody(): null|array|object
     {
         return $this->parsedBody;
     }
@@ -260,10 +232,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @param string $name the name of param
      * @param mixed $value the value of param
-     *
-     * @return static
      */
-    public function addParserBody(string $name, $value)
+    public function addParserBody(string $name, mixed $value): static
     {
         if (is_array($this->parsedBody)) {
             $clone = clone $this;
@@ -276,10 +246,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
     /**
      * return parser result of body.
-     *
-     * @return mixed
      */
-    public function getBodyParams()
+    public function getBodyParams(): mixed
     {
         return $this->bodyParams;
     }
@@ -303,11 +271,10 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @param null|array|object $data The deserialized body data. This will
      *                                typically be in an array or object.
-     * @throws \InvalidArgumentException if an unsupported argument type is
-     *                                   provided
-     * @return static
+     * @throws InvalidArgumentException if an unsupported argument type is
+     *                                  provided
      */
-    public function withParsedBody($data)
+    public function withParsedBody($data): static
     {
         $clone = clone $this;
         $clone->parsedBody = $data;
@@ -316,12 +283,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
     /**
      * init body params from parser result.
-     *
-     * @param mixed $data
-     *
-     * @return static
      */
-    public function withBodyParams($data)
+    public function withBodyParams(mixed $data): static
     {
         $clone = clone $this;
         $clone->bodyParams = $data;
@@ -338,7 +301,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @return array attributes derived from the request
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -353,10 +316,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @param string $name the attribute name
      * @param mixed $default default value to return if the attribute does not exist
-     * @return mixed
      * @see getAttributes()
      */
-    public function getAttribute($name, $default = null)
+    public function getAttribute(mixed $name, mixed $default = null): mixed
     {
         return array_key_exists($name, $this->attributes) ? $this->attributes[$name] : $default;
     }
@@ -371,10 +333,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @param string $name the attribute name
      * @param mixed $value the value of the attribute
-     * @return static
      * @see getAttributes()
      */
-    public function withAttribute($name, $value)
+    public function withAttribute(mixed $name, mixed $value): static
     {
         $clone = clone $this;
         $clone->attributes[$name] = $value;
@@ -390,10 +351,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * the attribute.
      *
      * @param string $name the attribute name
-     * @return static
      * @see getAttributes()
      */
-    public function withoutAttribute($name)
+    public function withoutAttribute($name): static
     {
         if (array_key_exists($name, $this->attributes) === false) {
             return $this;
@@ -407,10 +367,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
     /**
      * Get the URL (no query string) for the request.
-     *
-     * @return string
      */
-    public function url()
+    public function url(): string
     {
         return rtrim(preg_replace('/\?.*/', '', (string) $this->getUri()), '/');
     }
@@ -427,10 +385,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
     /**
      * Determine if the request is the result of an ajax call.
-     *
-     * @return bool
      */
-    public function isAjax()
+    public function isAjax(): bool
     {
         return $this->isXmlHttpRequest();
     }
@@ -445,26 +401,70 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @return bool true if the request is an XMLHttpRequest, false otherwise
      */
-    public function isXmlHttpRequest()
+    public function isXmlHttpRequest(): bool
     {
         return $this->getHeaderLine('X-Requested-With') == 'XMLHttpRequest';
     }
 
-    public function getSwooleRequest(): \Swoole\Http\Request
+    public function getSwooleRequest(): Swoole\Http\Request
     {
         return $this->swooleRequest;
     }
 
-    /**
-     * @return $this
-     */
-    public function setSwooleRequest(\Swoole\Http\Request $swooleRequest)
+    public function setSwooleRequest(Swoole\Http\Request $swooleRequest): static
     {
         $this->swooleRequest = $swooleRequest;
         return $this;
     }
 
-    protected static function normalizeParsedBody(array $data = [], ?RequestInterface $request = null)
+    public function setServerParams(array $serverParams): static
+    {
+        $this->serverParams = $serverParams;
+        return $this;
+    }
+
+    public function setQueryParams(array $query): static
+    {
+        $this->queryParams = $query;
+        return $this;
+    }
+
+    public function setCookieParams(array $cookies): static
+    {
+        $this->cookieParams = $cookies;
+        return $this;
+    }
+
+    public function setParsedBody(null|array|object $data): static
+    {
+        $this->parsedBody = $data;
+        return $this;
+    }
+
+    public function setUploadedFiles(array $uploadedFiles): static
+    {
+        $this->uploadedFiles = $uploadedFiles;
+        return $this;
+    }
+
+    public function setAttribute(string $name, mixed $value): static
+    {
+        $this->attributes[$name] = $value;
+        return $this;
+    }
+
+    public function unsetAttribute(string $name): static
+    {
+        if (array_key_exists($name, $this->attributes) === false) {
+            return $this;
+        }
+
+        unset($this->attributes[$name]);
+
+        return $this;
+    }
+
+    protected static function normalizeParsedBody(array $data = [], ?ServerRequestInterface $request = null): array
     {
         if (! $request) {
             return $data;
@@ -483,8 +483,10 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
             if ($parser->has($contentType) && $content = (string) $request->getBody()) {
                 $data = $parser->parse($content, $contentType);
             }
-        } catch (\InvalidArgumentException $exception) {
-            throw new BadRequestHttpException($exception->getMessage());
+        } catch (InvalidArgumentException $exception) {
+            throw new BadRequestHttpException($exception->getMessage(), request: $request);
+        } catch (BadRequestHttpException $exception) {
+            throw $exception->setRequest($request);
         }
 
         return $data;
@@ -509,10 +511,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * Return an UploadedFile instance array.
      *
      * @param array $files A array which respect $_FILES structure
-     * @throws \InvalidArgumentException for unrecognized values
-     * @return array
+     * @throws InvalidArgumentException for unrecognized values
      */
-    private static function normalizeFiles(array $files)
+    private static function normalizeFiles(array $files): array
     {
         $normalized = [];
 
@@ -523,7 +524,6 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
                 $normalized[$key] = self::createUploadedFileFromSpec($value);
             } elseif (is_array($value)) {
                 $normalized[$key] = self::normalizeFiles($value);
-                continue;
             } else {
                 throw new BadRequestHttpException('Invalid value in files specification');
             }
@@ -538,9 +538,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * delegate to normalizeNestedFileSpec() and return that return value.
      *
      * @param array $value $_FILES struct
-     * @return array|UploadedFileInterface
      */
-    private static function createUploadedFileFromSpec(array $value)
+    private static function createUploadedFileFromSpec(array $value): array|UploadedFileInterface
     {
         if (is_array($value['tmp_name'])) {
             return self::normalizeNestedFileSpec($value);
@@ -556,7 +555,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @return UploadedFileInterface[]
      */
-    private static function normalizeNestedFileSpec(array $files = [])
+    private static function normalizeNestedFileSpec(array $files = []): array
     {
         $normalizedFiles = [];
 
@@ -576,10 +575,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
     /**
      * Get a Uri populated with values from $swooleRequest->server.
-     * @throws \InvalidArgumentException
-     * @return \Psr\Http\Message\UriInterface
+     * @throws InvalidArgumentException
      */
-    private static function getUriFromGlobals(\Swoole\Http\Request $swooleRequest)
+    private static function getUriFromGlobals(Swoole\Http\Request $swooleRequest): UriInterface
     {
         $server = $swooleRequest->server;
         $header = $swooleRequest->header;
@@ -588,11 +586,11 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
         $hasPort = false;
         if (isset($server['http_host'])) {
-            $hostHeaderParts = explode(':', $server['http_host']);
-            $uri = $uri->withHost($hostHeaderParts[0]);
-            if (isset($hostHeaderParts[1])) {
+            [$host, $port] = self::parseHost($server['http_host']);
+            $uri = $uri->withHost($host);
+            if (isset($port)) {
                 $hasPort = true;
-                $uri = $uri->withPort($hostHeaderParts[1]);
+                $uri = $uri->withPort($port);
             }
         } elseif (isset($server['server_name'])) {
             $uri = $uri->withHost($server['server_name']);
@@ -600,13 +598,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
             $uri = $uri->withHost($server['server_addr']);
         } elseif (isset($header['host'])) {
             $hasPort = true;
-            if (\strpos($header['host'], ':')) {
-                [$host, $port] = explode(':', $header['host'], 2);
-                if ($port != $uri->getDefaultPort()) {
-                    $uri = $uri->withPort($port);
-                }
-            } else {
-                $host = $header['host'];
+            [$host, $port] = self::parseHost($header['host']);
+            if (isset($port) && $port !== $uri->getDefaultPort()) {
+                $uri = $uri->withPort($port);
             }
 
             $uri = $uri->withHost($host);
@@ -631,5 +625,18 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         }
 
         return $uri;
+    }
+
+    /**
+     * Get host parts, support ipv6.
+     */
+    private static function parseHost(string $httpHost): array
+    {
+        $parts = parse_url('//' . $httpHost);
+        if (! isset($parts['host'])) {
+            throw new InvalidArgumentException('Invalid host: ' . $httpHost);
+        }
+
+        return [$parts['host'], $parts['port'] ?? null];
     }
 }

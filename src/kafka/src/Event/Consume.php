@@ -9,27 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Kafka\Event;
 
 use Hyperf\Kafka\AbstractConsumer;
 
 abstract class Consume extends Event
 {
-    /**
-     * @var mixed
-     */
-    protected $data;
-
-    public function __construct(AbstractConsumer $consumer, $data)
+    public function __construct(AbstractConsumer $consumer, protected mixed $data)
     {
         parent::__construct($consumer);
-        $this->data = $data;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }

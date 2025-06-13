@@ -9,12 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\AsyncQueue\Stub;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
+use Hyperf\Redis\RedisProxy;
 
-class Redis
+class Redis extends RedisProxy
 {
+    public function __construct()
+    {
+    }
+
     public function lPush($key, ...$values)
     {
         Context::set('test.async-queue.lpush.key', $key);

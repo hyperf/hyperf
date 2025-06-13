@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\Stub\Inject;
 
 use Hyperf\Di\Annotation\Inject;
@@ -17,11 +18,8 @@ trait Foo3Trait
 {
     use FooTrait;
 
-    /**
-     * @Inject
-     * @var Bar
-     */
-    protected $bar;
+    #[Inject]
+    protected Bar $bar;
 
     public function getValue()
     {

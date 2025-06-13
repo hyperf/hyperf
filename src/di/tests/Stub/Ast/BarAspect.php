@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\Stub\Ast;
 
 use Hyperf\Di\Aop\AbstractAspect;
@@ -17,7 +18,7 @@ use Stub\Ast\FooTrait;
 
 class BarAspect extends AbstractAspect
 {
-    public $classes = [
+    public array $classes = [
         Bar3::class,
         FooTrait::class,
     ];

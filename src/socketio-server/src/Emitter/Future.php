@@ -9,83 +9,43 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer\Emitter;
 
+use Hyperf\Engine\Channel;
+use Hyperf\Engine\Contract\WebSocket\FrameInterface;
+use Hyperf\Engine\WebSocket\Frame;
+use Hyperf\Engine\WebSocket\Opcode;
 use Hyperf\SocketIOServer\SocketIO;
 use Hyperf\WebSocketServer\Sender;
-use Swoole\Coroutine\Channel;
 
 class Future
 {
-    /**
-     * @var Sender
-     */
-    private $sender;
-
-    /**
-     * @var int
-     */
-    private $fd;
-
-    /**
-     * @var array
-     */
-    private $data;
-
-    /**
-     * @var bool|int
-     */
-    private $flag;
-
-    /**
-     * @var int
-     */
-    private $opcode;
-
-    /**
-     * @var string
-     */
-    private $event;
-
     /**
      * @var callable
      */
     private $encode;
 
-    /**
-     * @var string
-     */
-    private $id;
+    private string $id;
+
+    private bool $sent;
 
     /**
-     * @var SocketIO
+     * @param int $flag deprecated it will be removed in v3.2 or v4.0
      */
-    private $socketIO;
-
-    /**
-     * @var bool
-     */
-    private $sent;
-
     public function __construct(
-        SocketIO $socketIO,
-        Sender $sender,
-        int $fd,
-        string $event,
-        array $data,
+        private SocketIO $socketIO,
+        private Sender $sender,
+        private int $fd,
+        private string $event,
+        private array $data,
         callable $encode,
-        int $opcode,
-        int $flag
+        private int $opcode = Opcode::TEXT,
+        private int $flag = 0,
+        private ?FrameInterface $frame = null
     ) {
-        $this->socketIO = $socketIO;
-        $this->sender = $sender;
-        $this->fd = $fd;
         $this->id = '';
-        $this->event = $event;
-        $this->data = $data;
         $this->encode = $encode;
-        $this->opcode = $opcode;
-        $this->flag = $flag;
         $this->sent = false;
     }
 
@@ -117,6 +77,10 @@ class Future
         }
         $message = ($this->encode)($this->id, $this->event, $this->data);
         $this->sent = true;
-        $this->sender->push($this->fd, $message, $this->opcode, $this->flag);
+        if ($this->frame) {
+            $this->sender->pushFrame($this->fd, $this->frame->setPayloadData($message));
+        } else {
+            $this->sender->pushFrame($this->fd, new Frame(opcode: $this->opcode, payloadData: $message));
+        }
     }
 }

@@ -9,17 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Snowflake;
 
 class Configuration implements ConfigurationInterface
 {
-    protected $millisecondBits = 41;
+    protected int $millisecondBits = 41;
 
-    protected $dataCenterIdBits = 5;
+    protected int $dataCenterIdBits = 5;
 
-    protected $workerIdBits = 5;
+    protected int $workerIdBits = 5;
 
-    protected $sequenceBits = 12;
+    protected int $sequenceBits = 12;
 
     public function maxWorkerId(): int
     {

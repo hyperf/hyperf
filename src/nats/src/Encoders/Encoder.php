@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nats\Encoders;
 
 /**
@@ -20,17 +21,13 @@ interface Encoder
      * Encodes a message.
      *
      * @param string $payload message to decode
-     *
-     * @return mixed
      */
-    public function encode($payload);
+    public function encode(mixed $payload): string;
 
     /**
      * Decodes a message.
      *
      * @param string $payload message to decode
-     *
-     * @return mixed
      */
-    public function decode($payload);
+    public function decode(string $payload): mixed;
 }

@@ -9,22 +9,27 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Event;
 
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class AfterConsume extends ConsumeEvent
 {
-    protected $result;
-
-    public function __construct(ConsumerMessageInterface $message, string $result)
+    public function __construct(ConsumerMessageInterface $message, protected Result $result, protected AMQPMessage $amqpMessage)
     {
         parent::__construct($message);
-        $this->result = $result;
     }
 
-    public function getResult(): string
+    public function getResult(): Result
     {
         return $this->result;
+    }
+
+    public function getAMQPMessage(): AMQPMessage
+    {
+        return $this->amqpMessage;
     }
 }

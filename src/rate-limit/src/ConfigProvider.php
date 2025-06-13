@@ -9,19 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RateLimit;
+
+use Hyperf\RateLimit\Aspect\RateLimitAnnotationAspect;
 
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
+            'aspects' => [
+                RateLimitAnnotationAspect::class,
             ],
             'publish' => [
                 [

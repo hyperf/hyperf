@@ -9,20 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Retry\Policy;
 
 use Hyperf\Retry\RetryContext;
 
 class TimeoutRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
-    /**
-     * @var float
-     */
-    private $timeout;
-
-    public function __construct($timeout)
+    public function __construct(private float $timeout)
     {
-        $this->timeout = $timeout;
     }
 
     public function canRetry(RetryContext &$retryContext): bool

@@ -9,26 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer\Annotation;
 
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
+use ReflectionMethod;
 
-/**
- * @Annotation
- * @Target({"CLASS", "METHOD"})
- */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Event extends AbstractAnnotation
 {
-    public $event = 'event';
-
-    public function __construct(...$value)
+    public function __construct(public string $event = 'event')
     {
-        parent::__construct(...$value);
-        $this->bindMainProperty('event', $value);
     }
 
     public function collectMethod(string $className, ?string $target): void
@@ -39,10 +33,10 @@ class Event extends AbstractAnnotation
 
     public function collectClass(string $className): void
     {
-        $methods = ReflectionManager::reflectClass($className)->getMethods(\ReflectionMethod::IS_PUBLIC);
+        $methods = ReflectionManager::reflectClass($className)->getMethods(ReflectionMethod::IS_PUBLIC);
         foreach ($methods as $method) {
             $target = $method->getName();
-            EventAnnotationCollector::collectEvent($className, $target, new Event(['value' => $target]));
+            EventAnnotationCollector::collectEvent($className, $target, new Event($target));
         }
         parent::collectClass($className);
     }

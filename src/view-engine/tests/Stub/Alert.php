@@ -9,22 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\ViewEngine\Stub;
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\ViewEngine\Component\Component;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 
 class Alert extends Component
 {
-    public $message;
-
-    public function __construct($message)
+    public function __construct(public $message)
     {
-        $this->message = $message;
     }
 
-    public function render()
+    public function render(): mixed
     {
         $factory = ApplicationContext::getContainer()
             ->get(FactoryInterface::class);

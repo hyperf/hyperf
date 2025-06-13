@@ -9,42 +9,32 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\SocketIOServer\Room;
 
-use Hyperf\SocketIOServer\Emitter\Flagger;
+use Hyperf\Engine\WebSocket\Frame;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\WebSocketServer\Sender;
 
+use function Hyperf\Collection\data_get;
+use function Hyperf\Support\make;
+
 class MemoryAdapter implements AdapterInterface
 {
-    use Flagger;
+    protected array $rooms = [];
 
-    protected $rooms = [];
+    protected array $sids = [];
 
-    protected $sids = [];
-
-    /**
-     * @var SidProviderInterface
-     */
-    private $sidProvider;
-
-    /**
-     * @var Sender
-     */
-    private $sender;
-
-    public function __construct(Sender $sender, SidProviderInterface $sidProvider)
+    public function __construct(private Sender $sender, private SidProviderInterface $sidProvider)
     {
-        $this->sender = $sender;
-        $this->sidProvider = $sidProvider;
     }
 
     public function add(string $sid, string ...$rooms)
     {
-        $this->sids[$sid] = $this->sids[$sid] ?? [];
+        $this->sids[$sid] ??= [];
         foreach ($rooms as $room) {
             $this->sids[$sid][$room] = true;
-            $this->rooms[$room] = $this->rooms[$room] ?? make(MemoryRoom::class);
+            $this->rooms[$room] ??= make(MemoryRoom::class);
             $this->rooms[$room]->add($sid);
         }
     }
@@ -77,9 +67,6 @@ class MemoryAdapter implements AdapterInterface
     {
         $rooms = data_get($opts, 'rooms', []);
         $except = data_get($opts, 'except', []);
-        $volatile = data_get($opts, 'flag.volatile', false);
-        $compress = data_get($opts, 'flag.compress', false);
-        $wsFlag = $this->guessFlags((bool) $compress);
         $pushed = [];
         if (! empty($rooms)) {
             foreach ($rooms as $room) {
@@ -93,12 +80,7 @@ class MemoryAdapter implements AdapterInterface
                         continue;
                     }
                     $fd = $this->sidProvider->getFd($sid);
-                    $this->sender->push(
-                        $fd,
-                        $packet,
-                        SWOOLE_WEBSOCKET_OPCODE_TEXT,
-                        $wsFlag
-                    );
+                    $this->sender->pushFrame($fd, new Frame(payloadData: $packet));
                     $pushed[$fd] = true;
                 }
             }
@@ -109,7 +91,7 @@ class MemoryAdapter implements AdapterInterface
                     continue;
                 }
                 $fd = $this->sidProvider->getFd($sid);
-                $this->sender->push($fd, $packet, SWOOLE_WEBSOCKET_OPCODE_TEXT, $wsFlag);
+                $this->sender->pushFrame($fd, new Frame(payloadData: $packet));
             }
         }
     }

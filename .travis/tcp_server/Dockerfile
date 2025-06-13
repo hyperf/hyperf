@@ -5,7 +5,7 @@
 # @contact  group@hyperf.io
 # @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
 
-FROM hyperf/hyperf:7.4-alpine-v3.12-swoole
+FROM hyperf/hyperf:8.0-alpine-v3.15-swoole
 LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MIT" app.name="ky_meditation"
 
 ##
@@ -25,7 +25,7 @@ RUN set -ex \
     && php -m \
     && php --ri swoole \
     #  ---------- some config ----------
-    && cd /etc/php7 \
+    && cd /etc/php8 \
     # - config PHP
     && { \
         echo "upload_max_filesize=128M"; \

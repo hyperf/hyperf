@@ -9,24 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Kafka\Event;
 
 use Hyperf\Kafka\AbstractConsumer;
+use Throwable;
 
 class FailToConsume extends Consume
 {
-    /**
-     * @var \Throwable
-     */
-    protected $throwable;
-
-    public function __construct(AbstractConsumer $consumer, $data, \Throwable $throwable)
+    public function __construct(AbstractConsumer $consumer, $data, protected Throwable $throwable)
     {
         parent::__construct($consumer, $data);
-        $this->throwable = $throwable;
     }
 
-    public function getThrowable(): \Throwable
+    public function getThrowable(): Throwable
     {
         return $this->throwable;
     }

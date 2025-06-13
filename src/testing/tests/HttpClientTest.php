@@ -9,17 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace tests;
 
 use Hyperf\Testing\HttpClient;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Coroutine\run;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class HttpClientTest extends TestCase
 {
     protected function tearDown(): void
@@ -27,9 +33,7 @@ class HttpClientTest extends TestCase
         Mockery::close();
     }
 
-    /**
-     * @group NonCoroutine
-     */
+    #[Group('NonCoroutine')]
     public function testJsonRequest()
     {
         run(function () {

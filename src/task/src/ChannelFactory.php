@@ -9,14 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Task;
 
+use Hyperf\Engine\Channel;
 use Hyperf\Task\Exception\TaskExecuteTimeoutException;
-use Swoole\Coroutine\Channel;
 
 class ChannelFactory
 {
-    protected $channels = [];
+    protected array $channels = [];
 
     public function get(int $taskId): ?Channel
     {

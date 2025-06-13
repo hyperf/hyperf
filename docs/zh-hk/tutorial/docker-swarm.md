@@ -5,19 +5,26 @@
 ## 安裝 Docker
 
 ```
-curl -sSL https://get.daocloud.io/docker | sh
-# curl -sSL https://get.docker.com/ | sh
+curl -sSL https://get.docker.com/ | sh
 ```
 
 修改文件 `/lib/systemd/system/docker.service`，允許使用 `TCP` 連接 `Docker`
 
+> 只需要追加後面的 -H tcp://0.0.0.0:2375 即可
+
 ```
-ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
+ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock -H tcp://0.0.0.0:2375
+```
+
+如果不是使用的 `root` 賬户，可以通過以下命令，讓每次執行 `docker` 時，不需要增加 `sudo`
+
+```
+usermod -aG docker $USER
 ```
 
 ### 配置倉庫鏡像地址
 
-基於跨國線路訪問速度過慢等問題，我們可以為 Docker 配置倉庫鏡像地址，來改善這些網絡問題，如 [阿里雲(Aliyun) Docker 鏡像加速器](https://help.aliyun.com/document_detail/60750.html)，我們可以申請一個 `Docker` 加速器，然後配置到服務器上的 `/etc/docker/daemon.json` 文件，添加以下內容，然後重啟 `Docker`，下面的地址請填寫您自己獲得的加速器地址。
+基於跨國線路訪問速度過慢等問題，我們可以為 Docker 配置倉庫鏡像地址，來改善這些網絡問題，如 [阿里雲(Aliyun) Docker 鏡像加速器](https://help.aliyun.com/document_detail/60750.html)，我們可以申請一個 `Docker` 加速器，然後配置到服務器上的 `/etc/docker/daemon.json` 文件，添加以下內容，然後重啓 `Docker`，下面的地址請填寫您自己獲得的加速器地址。
 
 ```json
 {"registry-mirrors": ["https://xxxxx.mirror.aliyuncs.com"]}
@@ -37,19 +44,21 @@ $ vim /etc/ssh/sshd_config
 # 默認 Port 改為 2222
 Port 2222
 
-# 重啟服務
+# 重啓服務
 $ systemctl restart sshd.service
 ```
 
 重新登錄機器
 
 ```
-ssh -p 2222 root@host 
+ssh -p 2222 root@host
 ```
 
 #### 安裝 Gitlab
 
-我們來通過 Docker 啟動一個 Gitlab 服務，如下：
+我們來通過 Docker 啓動一個 Gitlab 服務，如下：
+
+> hostname 一定要加，如果沒有域名可以直接填外網地址
 
 ```
 sudo docker run -d --hostname gitlab.xxx.cn \
@@ -60,7 +69,11 @@ sudo docker run -d --hostname gitlab.xxx.cn \
 gitlab/gitlab-ce:latest
 ```
 
-首次登錄 `Gitlab` 需要重置密碼，默認用户名為 `root`。
+默認用户名為 `root`，初始密碼通過以下方式獲得
+
+```shell
+docker exec gitlab cat /etc/gitlab/initial_root_password
+```
 
 ### 安裝 gitlab-runner
 
@@ -87,7 +100,7 @@ $ yum install gitlab-runner
 通過 `gitlab-runner register --clone-url http://your-ip/` 命令來將 gitlab-runner 註冊到 Gitlab 上，注意要替換 `your-ip` 為您的 Gitlab 的內網 IP，如下：
 
 ```
-$ gitlab-runner register --clone-url http://your-ip/
+$ sudo gitlab-runner register --clone-url http://your-ip/
 
 Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com/):
 http://gitlab.xxx.cc/
@@ -108,6 +121,23 @@ $ vim /etc/gitlab-runner/config.toml
 concurrent = 5
 ```
 
+### 為 gitlab-runner 增加權限
+
+- 免 sudo 執行 docker 的權限
+
+```shell
+sudo usermod -aG docker gitlab-runner
+```
+
+- 鏡像倉庫的權限
+
+```shell
+su gitlab-runner
+docker login -u username your-docker-repository
+```
+
+###
+
 ### 修改郵箱
 
 如果需要 `Gitlab` 發送郵件（比如用户創建的郵件等），可以嘗試修改 `/srv/gitlab/config/gitlab.rb`
@@ -127,24 +157,57 @@ gitlab_rails['smtp_domain'] = "exmail.qq.com"
 
 ## 初始化 Swarm 集羣
 
-登錄另外一台機器，初始化集羣
+### 登錄另外一台機器，初始化集羣
 
 ```
 $ docker swarm init
 ```
 
-創建自定義 Overlay 網絡
+### 創建自定義 Overlay 網絡
 
-```
+以下提供三種方式創建網段，只需要執行其一即可
+
+1. 直接創建自定義 Overlay 網絡
+
+```shell
 docker network create \
 --driver overlay \
---subnet 12.0.0.0/8 \
+--subnet 10.0.0.1/8 \
 --opt encrypted \
 --attachable \
 default-network
 ```
 
-加入集羣
+2. 有時可能因為網段衝突，導致 stack 啓動失敗，可以嘗試修改 `--subnet`，不過這種方式，當前網段就只支持 65535 個 ip
+
+```shell
+docker network create \
+--driver overlay \
+--subnet 10.1.0.1/16 \
+--opt encrypted \
+--attachable \
+default-network
+```
+
+3. 當然，因為大多數是 ingress 網絡默認的網段與我們新建的網段衝突，所以我們可以刪掉 ingress 網絡，然後重新創建一個
+
+```shell
+docker network rm ingress
+docker network create --ingress --subnet 192.168.0.1/16 --driver overlay ingress
+```
+
+然後再創建 `--subnet` 為 `10.0.0.1/8` 的 `network`
+
+```shell
+docker network create \
+--driver overlay \
+--subnet 10.0.0.1/8 \
+--opt encrypted \
+--attachable \
+default-network
+```
+
+### 加入集羣
 
 ```
 # 顯示manager節點的TOKEN
@@ -158,11 +221,11 @@ $ docker swarm join-token worker
 $ docker swarm join --token <token> ip:2377
 ```
 
-然後配置發佈用的 gitlab-runner
+### 配置發佈用的 gitlab-runner
 
 > 其他與 builder 一致，但是 tag 卻不能一樣。線上環境可以設置為 tags，測試環境設置為 test
 
-## 安裝其他應用 
+## 安裝其他應用
 
 以下以 `Mysql` 為例，直接使用上述 `network`，支持容器內使用 name 互調。
 
@@ -185,10 +248,31 @@ docker service create \
     portainer/portainer
 ```
 
+### 備份 Portainer 的數據
+
+> portainer_container 為對應的容器名，按實際情況填寫
+
+```
+docker run -it --volumes-from portainer_container -v $(pwd):/backup --name backup --rm nginx tar -cf /backup/data.tar /data/
+```
+
+### 恢復 Portainer 的數據
+
+首先使用創建命令，重新創建 portainer 服務
+
+然後使用以下方法，將備份重載到容器中
+
+```
+docker run -it --volumes-from portainer_container -v $(pwd):/backup --name importer --rm nginx bash
+cd /backup
+tar xf data.tar -C /
+```
+
+最後只需要重啓容器即可
+
 ## 創建一個 Demo 項目
 
 登錄 Gitlab 創建一個 Demo 項目。並導入我們的項目 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton)
-
 
 ## 配置鏡像倉庫
 
@@ -294,7 +378,7 @@ docker run -d --name kong-database \
   postgres:9.6
 ```
 
-### 安裝網關 
+### 安裝網關
 
 初始化數據庫
 
@@ -308,7 +392,7 @@ docker run --rm \
   kong:latest kong migrations bootstrap
 ```
 
-啟動
+啓動
 
 ```
 docker run -d --name kong \
@@ -367,7 +451,7 @@ docker run --rm -i -v $basepath/.env:/opt/www/.env \
 - 指定 TLinux 源
 
 ```
-tee /etc/yum.repos.d/CentOS-TLinux.repo <<-'EOF' 
+tee /etc/yum.repos.d/CentOS-TLinux.repo <<-'EOF'
 [Tlinux]
 name=Tlinux for redhat/centos $releasever - $basearch
 failovermethod=priority
@@ -392,7 +476,7 @@ grub2-set-default 0
 grub2-mkconfig -o /boot/grub2/grub.cfg
 ```
 
-- 重啟機器
+- 重啓機器
 
 ```
 reboot
@@ -426,7 +510,7 @@ $ git version
 $ yum install gitlab-runner
 ```
 
-### Service 重啟後，內網出現偶發的，容器無法觸達的問題，比如多次在其他容器，訪問此服務的接口，會出現 Connection refused
+### Service 重啓後，內網出現偶發的，容器無法觸達的問題，比如多次在其他容器，訪問此服務的接口，會出現 Connection refused
 
 這是由於 IP 不夠用導致，可以修改網段，增加可用 IP
 
@@ -435,7 +519,7 @@ $ yum install gitlab-runner
 ```
 docker network create \
 --driver overlay \
---subnet 12.0.0.0/8 \
+--subnet 10.0.0.0/8 \
 --opt encrypted \
 --attachable \
 default-network
@@ -462,5 +546,192 @@ docker service update --network-rm old-network service_name
 這是因為 Portainer 修改後，不能作用於已經創建的服務，所以手動更新即可
 
 ```
-docker service update --with-registry-auth service_name   
+docker service update --with-registry-auth service_name
+```
+
+
+## 附錄
+
+### 只安裝 Docker Swarm
+
+如果你只需要安裝並使用 Docker Swarm，可以根據以下文檔進行操作。
+
+假設我們有三台機器 A B C，我們默認將 A 作為 Leader
+
+#### 安裝 Docker
+
+三台機器都按照以下方式安裝 Docker
+
+```
+curl -sSL https://get.docker.com/ | sh
+```
+
+修改文件 `/lib/systemd/system/docker.service`，允許使用 `TCP` 連接 `Docker`
+
+> 只需要追加後面的 -H tcp://0.0.0.0:2375 即可
+
+```
+ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock -H tcp://0.0.0.0:2375
+```
+
+如果不是使用的 `root` 賬户，可以通過以下命令，讓每次執行 `docker` 時，不需要增加 `sudo`
+
+```
+usermod -aG docker $USER
+```
+
+#### 初始化 Docker Swarm
+
+進入 A 機器，執行初始化命令
+
+```
+$ docker swarm init
+```
+
+因為大多數 ingress 網絡默認的網段與我們新建的網段衝突，所以我們刪掉 ingress 網絡，然後重新創建一個
+
+```shell
+docker network rm ingress
+docker network create --ingress --subnet 192.168.0.1/16 --driver overlay ingress
+```
+
+然後再創建 `--subnet` 為 `10.0.0.1/8` 的 `network`
+
+```shell
+docker network create \
+--driver overlay \
+--subnet 10.0.0.1/8 \
+--opt encrypted \
+--attachable \
+default-network
+```
+
+執行展示加入集羣的命令
+
+> 因為我們只有三台機器，所以儘量都聲明為 manager
+
+```
+$ docker swarm join-token manager
+```
+
+若後期需要加入新的 worker 節點，則執行以下命令得到對應的腳本
+
+```
+$ docker swarm join-token worker
+```
+
+#### 將另外兩台節點加入到集羣
+
+到 B C 兩台機器中執行剛剛生成的命令
+
+```shell
+docker swarm join --token xxxx <ip>:2377
+```
+
+回到 A 機器，執行命令查看是否已經成功加入
+
+```shell
+docker node ls
+```
+
+如果能看到 B 和 C 的節點，則代表加入成功
+
+#### 使用雲服務的鏡像服務
+
+這裏不詳細説明如何使用了，請自己去對應雲服務進行操作
+
+本文檔默認開發者已經成功開通了對應的鏡像服務，之後的文檔全部默認使用阿里雲的上海節點來講述
+
+[阿里雲](https://cr.console.aliyun.com/cn-shanghai/instances)
+
+#### 登錄鏡像
+
+三台機器 A B C 全部執行登錄操作
+
+```shell
+docker login --username=xxxx registry.cn-shanghai.aliyuncs.com
+```
+
+#### 打包鏡像
+
+這裏可以在任何一台機器進行打包，也可以在開發環境打包（非上述三台機器的環境下，需要執行 docker login 進行登錄）
+
+```shell
+docker build . -t registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+docker push registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+```
+
+#### 製作 stack yml 文件
+
+回到 A 機器上，到 /opt/www/your_project 目錄下，編輯 deploy.yml 文件
+
+```shell
+version: '3.7'
+services:
+  your_project:
+    image: registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+    ports:
+      - "9501:9501"
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      update_config:
+        parallelism: 2
+        delay: 5s
+        order: start-first
+    networks:
+      - default-network
+    configs:
+      - source: your_project_v1.1
+        target: /opt/www/.env
+configs:
+  your_project_v1.1:
+    file: /opt/www/your_project/.env
+networks:
+  default-network:
+    external: true
+```
+
+編輯 .env 文件，完成配置，注意，不要使用 127.0.0.1 鏈接 MySQL 等服務
+
+#### 啓動服務
+
+```shell
+docker pull registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+docker stack deploy -c /opt/www/your_project/deploy.yml --with-registry-auth your_project
+```
+
+查看是否正常啓動，執行下述三個指令，都應該存在對應的數據
+
+```shell
+docker stack ls
+docker service ls
+docker ps
+```
+
+#### 測試服務是否可用
+
+到三台機器上，全部進行 curl 測試，如果都能返回對應數據，代表服務啓動成功
+
+```shell
+curl http://127.0.0.1:9501/
+```
+
+#### 更新服務
+
+開發機打包，並推送到鏡像倉庫中
+
+```shell
+docker build . -t registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+docker push registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+```
+
+會到 A 機器，進行重啓
+
+```shell
+docker pull registry.cn-shanghai.aliyuncs.com/your_namespace/your_project:latest
+docker stack deploy -c /opt/www/your_project/deploy.yml --with-registry-auth your_project
 ```

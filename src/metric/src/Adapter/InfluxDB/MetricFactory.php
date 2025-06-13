@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Metric\Adapter\InfluxDB;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
 use Hyperf\Metric\Adapter\Prometheus\Counter;
 use Hyperf\Metric\Adapter\Prometheus\Gauge;
@@ -20,9 +23,7 @@ use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\StrCache;
 use InfluxDB\Client;
 use InfluxDB\Database;
 use InfluxDB\Database\RetentionPolicy;
@@ -31,33 +32,17 @@ use InfluxDB\Point;
 use Prometheus\CollectorRegistry;
 use Prometheus\Sample;
 
+use function Hyperf\Support\make;
+
 class MetricFactory implements MetricFactoryInterface
 {
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private string $name;
 
-    /**
-     * @var CollectorRegistry
-     */
-    private $registry;
-
-    /**
-     * @var guzzleClientFactory
-     */
-    private $guzzleClientFactory;
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    public function __construct(ConfigInterface $config, CollectorRegistry $registry, GuzzleClientFactory $guzzleClientFactory)
-    {
-        $this->config = $config;
-        $this->registry = $registry;
-        $this->guzzleClientFactory = $guzzleClientFactory;
+    public function __construct(
+        private ConfigInterface $config,
+        private CollectorRegistry $registry,
+        private GuzzleClientFactory $guzzleClientFactory
+    ) {
         $this->name = $this->config->get('metric.default');
     }
 
@@ -145,6 +130,6 @@ class MetricFactory implements MetricFactoryInterface
     private function getNamespace(): string
     {
         $name = $this->config->get("metric.metric.{$this->name}.namespace");
-        return preg_replace('#[^a-zA-Z0-9:_]#', '_', Str::snake($name));
+        return preg_replace('#[^a-zA-Z0-9:_]#', '_', StrCache::snake($name));
     }
 }

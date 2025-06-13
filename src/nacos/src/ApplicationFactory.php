@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nacos;
 
 use Hyperf\Contract\ConfigInterface;
@@ -29,7 +30,11 @@ class ApplicationFactory
             'base_uri' => $baseUri,
             'username' => $config['username'] ?? null,
             'password' => $config['password'] ?? null,
+            'access_key' => $config['access_key'] ?? null,
+            'access_secret' => $config['access_secret'] ?? null,
             'guzzle_config' => $config['guzzle']['config'] ?? null,
+            'host' => $config['host'] ?? null,
+            'port' => $config['port'] ?? null,
         ]));
     }
 }

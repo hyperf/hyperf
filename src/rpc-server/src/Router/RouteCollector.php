@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\RpcServer\Router;
 
 use FastRoute\DataGenerator;
@@ -17,33 +18,15 @@ use Hyperf\HttpServer\Router\Handler;
 
 class RouteCollector
 {
-    /**
-     * @var RouteParser
-     */
-    protected $routeParser;
+    protected string $currentGroupPrefix;
 
-    /**
-     * @var DataGenerator
-     */
-    protected $dataGenerator;
-
-    /**
-     * @var string
-     */
-    protected $currentGroupPrefix;
-
-    /**
-     * @var array
-     */
-    protected $currentGroupOptions = [];
+    protected array $currentGroupOptions = [];
 
     /**
      * Constructs a route collector.
      */
-    public function __construct(RouteParser $routeParser, DataGenerator $dataGenerator)
+    public function __construct(protected RouteParser $routeParser, protected DataGenerator $dataGenerator)
     {
-        $this->routeParser = $routeParser;
-        $this->dataGenerator = $dataGenerator;
         $this->currentGroupPrefix = '';
     }
 

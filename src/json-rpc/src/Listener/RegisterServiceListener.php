@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
@@ -17,14 +18,8 @@ use Hyperf\ServiceGovernance\ServiceManager;
 
 class RegisterServiceListener implements ListenerInterface
 {
-    /**
-     * @var ServiceManager
-     */
-    private $serviceManager;
-
-    public function __construct(ServiceManager $serviceManager)
+    public function __construct(private ServiceManager $serviceManager)
     {
-        $this->serviceManager = $serviceManager;
     }
 
     public function listen(): array
@@ -40,7 +35,7 @@ class RegisterServiceListener implements ListenerInterface
      *
      * @param AfterPathRegister $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $annotation = $event->annotation;
         if (! in_array($annotation->protocol, ['jsonrpc', 'jsonrpc-http', 'jsonrpc-tcp-length-check'])) {

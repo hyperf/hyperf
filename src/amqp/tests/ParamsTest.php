@@ -9,15 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Amqp;
 
 use Hyperf\Amqp\Params;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class ParamsTest extends TestCase
 {
     public function testConstructor()
@@ -38,11 +41,9 @@ class ParamsTest extends TestCase
 
         $this->assertFalse($params->isInsist());
         $this->assertSame('AMQPLAIN', $params->getLoginMethod());
-        $this->assertNull($params->getLoginResponse());
         $this->assertSame('en_US', $params->getLocale());
         $this->assertSame(3, $params->getConnectionTimeout());
         $this->assertSame(6, $params->getReadWriteTimeout());
-        $this->assertNull($params->getContext());
         $this->assertFalse($params->isKeepalive());
         $this->assertSame(3, $params->getHeartbeat());
         $this->assertTrue($params->isCloseOnDestruct());

@@ -9,17 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Framework\Event;
 
 class BeforeServerStart
 {
-    /**
-     * @var string
-     */
-    public $serverName;
-
-    public function __construct(string $serverName)
+    public function __construct(public string $serverName)
     {
-        $this->serverName = $serverName;
     }
 }

@@ -9,8 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Guzzle\Cases;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\HandlerStack;
@@ -19,14 +21,16 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\TransferStats;
 use Hyperf\Guzzle\CoroutineHandler;
-use Hyperf\Utils\Codec\Json;
 use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
+use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class CoroutineHandlerTest extends TestCase
 {
     public function testCreatesCurlErrors()
@@ -35,7 +39,7 @@ class CoroutineHandlerTest extends TestCase
         $request = new Request('GET', 'http://localhost:123');
         try {
             $handler($request, ['timeout' => 0.001, 'connect_timeout' => 0.001])->wait();
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $this->assertInstanceOf(ConnectException::class, $ex);
             $this->assertEquals(0, strpos($ex->getMessage(), 'Connection timed out errCode='));
         }
@@ -328,11 +332,11 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $data = Json::decode((string) $res->getBody());
+        $data = json_decode((string) $res->getBody(), true);
         $this->assertArrayNotHasKey('Content-Length', $data['headers']);
         $this->assertArrayNotHasKey('Expect', $data['headers']);
 
-        $stub = \Mockery::mock(CoroutineHandlerStub::class . '[rewriteHeaders]');
+        $stub = Mockery::mock(CoroutineHandlerStub::class . '[rewriteHeaders]');
         $stub->shouldReceive('rewriteHeaders')->withAnyArgs()->andReturnUsing(function ($headers) {
             return $headers;
         });
@@ -347,7 +351,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $data = Json::decode((string) $res->getBody());
+        $data = json_decode((string) $res->getBody(), true);
         $this->assertArrayHasKey('Content-Length', $data['headers']);
         $this->assertArrayHasKey('Expect', $data['headers']);
     }

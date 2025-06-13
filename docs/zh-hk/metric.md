@@ -10,9 +10,11 @@
 composer require hyperf/metric
 ```
 
-[hyperf/metric](https://github.com/hyperf/metric) 組件默認安裝了 [Prometheus](https://prometheus.io/) 相關依賴。如果要使用 [StatsD](https://github.com/statsd/statsd) 或 [InfluxDB](http://influxdb.com)，還需要執行下面的命令安裝對應的依賴：
+Metric 支持 [Prometheus](https://prometheus.io/)、[StatsD](https://github.com/statsd/statsd) 和 [InfluxDB](http://influxdb.com)，可以執行下面的命令安裝對應的依賴：
 
 ```bash
+# Prometheus
+composer require promphp/prometheus_client_php
 # StatsD 所需依賴
 composer require domnikl/statsd
 # InfluxDB 所需依賴 
@@ -39,7 +41,7 @@ php bin/hyperf.php vendor:publish hyperf/metric
 'default' => env('METRIC_DRIVER', 'prometheus'),
 ```
 
-* `use_standalone_process`: 是否使用 `獨立監控進程`。推薦開啟。關閉後將在 `Worker 進程` 中處理指標收集與上報。
+* `use_standalone_process`: 是否使用 `獨立監控進程`。推薦開啓。關閉後將在 `Worker 進程` 中處理指標收集與上報。
 
 ```php
 'use_standalone_process' => env('TELEMETRY_USE_STANDALONE_PROCESS', true),
@@ -93,7 +95,7 @@ Prometheus 有兩種工作模式，爬模式與推模式（通過 Prometheus Pus
 
 並配置爬取地址 `scrape_host`、爬取端口 `scrape_port`、爬取路徑 `scrape_path`。Prometheus 可以在對應配置下以 HTTP 訪問形式拉取全部指標。
 
-> 注意：爬模式下，必須啟用獨立進程，即 use_standalone_process = true。
+> 注意：異步風格下，爬模式必須啓用獨立進程，即 `use_standalone_process = true`。
 
 使用推模式時需設置：
 
@@ -204,8 +206,8 @@ interface HistogramInterface
 
 ### 配置中間件
 
-配置完驅動之後，只需配置一下中間件就能啟用請求 Histogram 統計功能。
-打開 `config/autoload/middlewares.php` 文件，示例為在 `http` Server 中啟用中間件。
+配置完驅動之後，只需配置一下中間件就能啓用請求 Histogram 統計功能。
+打開 `config/autoload/middlewares.php` 文件，示例為在 `http` Server 中啓用中間件。
 
 ```php
 <?php
@@ -232,15 +234,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Order;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 
 class IndexController extends AbstractController
 {
-    /**
-     * @Inject
-     * @var MetricFactoryInterface
-     */
-    private $metricFactory;
+    #[Inject]
+    private MetricFactoryInterface $metricFactory;
 
     public function create(Order $order)
     {
@@ -278,10 +278,7 @@ use Redis;
 
 class OnMetricFactoryReady implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -315,7 +312,7 @@ class OnMetricFactoryReady implements ListenerInterface
 
 ### 註解
 
-您可以使用 `@Counter(name="stat_name_here")` 和 `@Histogram(name="stat_name_here")` 來統計切面的調用次數和運行時間。
+您可以使用 `#[Counter(name="stat_name_here")]` 和 `#[Histogram(name="stat_name_here")]` 來統計切面的調用次數和運行時間。
 
 關於註解的使用請參閲[註解章節](zh-hk/annotation)。
 
@@ -323,7 +320,7 @@ class OnMetricFactoryReady implements ListenerInterface
 
 > 本節只適用於 Prometheus 驅動
 
-當您在使用 Prometheus 的 Histogram 時，有時會有自定義 Bucket 的需求。您可以在服務啟動前，依賴注入 Registry 並自行註冊 Histogram ，設置所需 Bucket 。稍後使用時 `MetricFactory` 就會調用您註冊好同名 Histogram 。示例如下：
+當您在使用 Prometheus 的 Histogram 時，有時會有自定義 Bucket 的需求。您可以在服務啓動前，依賴注入 Registry 並自行註冊 Histogram ，設置所需 Bucket 。稍後使用時 `MetricFactory` 就會調用您註冊好同名 Histogram 。示例如下：
 
 ```php
 <?php
@@ -395,7 +392,7 @@ return [
 use Hyperf\HttpServer\Router\Router;
 
 Router::get('/metrics', function(){
-    $registry = Hyperf\Utils\ApplicationContext::getContainer()->get(Prometheus\CollectorRegistry::class);
+    $registry = Hyperf\Context\ApplicationContext::getContainer()->get(Prometheus\CollectorRegistry::class);
     $renderer = new Prometheus\RenderTextFormat();
     return $renderer->render($registry->getMetricFamilySamples());
 });
@@ -405,11 +402,11 @@ Router::get('/metrics', function(){
 
 > 本節只適用於 Prometheus 驅動
 
-如果您啟用了默認指標，`Hyperf/Metric` 為您準備了一個開箱即用的 Grafana 控制枱。下載控制枱 [json 文件](https://cdn.jsdelivr.net/gh/hyperf/hyperf/src/metric/grafana.json)，導入 Grafana 中即可使用。
+如果您啓用了默認指標，`Hyperf/Metric` 為您準備了一個開箱即用的 Grafana 控制枱。下載控制枱 [json 文件](https://cdn.jsdelivr.net/gh/hyperf/hyperf/src/metric/grafana.json)，導入 Grafana 中即可使用。
 
 ![grafana](imgs/grafana.png)
 
 ## 注意事項
 
-- 如需在 `hyperf/command` 自定義命令中使用本組件收集指標，需要在啟動命令時添加命令行參數: `--enable-event-dispatcher`。
+- 如需在 `hyperf/command` 自定義命令中使用本組件收集指標，需要在啓動命令時添加命令行參數: `--enable-event-dispatcher`。
 

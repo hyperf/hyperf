@@ -9,31 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Event;
 
-use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
+use Psr\Log\LoggerInterface;
 
 class EventDispatcher implements EventDispatcherInterface
 {
-    /**
-     * @var ListenerProviderInterface
-     */
-    private $listeners;
-
-    /**
-     * @var null|StdoutLoggerInterface
-     */
-    private $logger;
-
     public function __construct(
-        ListenerProviderInterface $listeners,
-        ?StdoutLoggerInterface $logger = null
+        private ListenerProviderInterface $listeners,
+        private ?LoggerInterface $logger = null
     ) {
-        $this->listeners = $listeners;
-        $this->logger = $logger;
     }
 
     /**
@@ -60,7 +49,7 @@ class EventDispatcher implements EventDispatcherInterface
      */
     private function dump($listener, object $event)
     {
-        if (! $this->logger instanceof StdoutLoggerInterface) {
+        if (! $this->logger) {
             return;
         }
         $eventName = get_class($event);

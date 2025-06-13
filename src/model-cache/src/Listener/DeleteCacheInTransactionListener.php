@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ModelCache\Listener;
 
 use Hyperf\Database\Events\TransactionCommitted;
@@ -24,7 +25,7 @@ class DeleteCacheInTransactionListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if (! $event instanceof TransactionCommitted) {
             return;

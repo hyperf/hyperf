@@ -1,0 +1,6 @@
+{
+    "require": {
+        "hyperf/engine": "^2.10",
+        "hyperf/codec": "^3.1"
+    }
+}

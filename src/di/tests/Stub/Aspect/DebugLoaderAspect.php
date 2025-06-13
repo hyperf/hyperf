@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Di\Stub\Aspect;
 
 use Hyperf\Di\Annotation\Inject;
@@ -17,15 +18,15 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class DebugLoaderAspect extends AbstractAspect
 {
-    public $classes = [
+    public array $classes = [
         'Debug1AspectFoo',
     ];
 
-    public $annotations = [
+    public array $annotations = [
         Inject::class,
     ];
 
-    public $priority = 100;
+    public ?int $priority = 100;
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {

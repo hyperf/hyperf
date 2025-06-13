@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Guzzle\Stub;
 
 use Hyperf\Engine\Http\Client;
 use Hyperf\Engine\Http\RawResponse;
 use Hyperf\Guzzle\RingPHP\CoroutineHandler;
+use Mockery;
 
 class RingPHPCoroutineHanderStub extends CoroutineHandler
 {
@@ -21,7 +23,7 @@ class RingPHPCoroutineHanderStub extends CoroutineHandler
 
     protected function makeClient(string $host, int $port, bool $ssl): Client
     {
-        $client = \Mockery::mock(Client::class . '[request]', [$host, $port, $ssl]);
+        $client = Mockery::mock(Client::class . '[request]', [$host, $port, $ssl]);
         $client->shouldReceive('request')->withAnyArgs()->andReturnUsing(function ($method, $path, $headers, $body) use ($host, $port, $ssl) {
             ++$this->count;
             $body = json_encode([

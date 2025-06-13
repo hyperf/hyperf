@@ -9,19 +9,20 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ResourceGrpc;
 
 use Google\Protobuf\Internal\Message;
+use Hyperf\Collection\Collection;
 use Hyperf\Resource\Json\JsonResource;
 use Hyperf\Resource\Response\Response;
-use Hyperf\Utils\Collection;
 
 class GrpcResponse extends Response
 {
     /**
      * @param Collection|false|JsonResource $resource
      */
-    public function toMessage($resource = false): Message
+    public function toMessage(mixed $resource = false): Message
     {
         if ($resource === false) {
             $resource = $this->resource;

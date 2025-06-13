@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Retry\Stub;
 
 use Throwable;
@@ -27,6 +28,6 @@ class Foo
 
     public function fallbackWithThrowable(string $string, ?Throwable $throwable = null)
     {
-        return $string . ':' . $throwable->getMessage();
+        return $string . ':' . (! is_null($throwable) ? $throwable->getMessage() : 'fallback');
     }
 }

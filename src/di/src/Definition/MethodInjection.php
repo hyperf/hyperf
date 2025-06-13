@@ -9,24 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di\Definition;
 
 class MethodInjection implements DefinitionInterface
 {
-    /**
-     * @var string
-     */
-    private $methodName;
-
-    /**
-     * @var mixed[]
-     */
-    private $parameters = [];
-
-    public function __construct(string $methodName, array $parameters = [])
+    public function __construct(private string $methodName, private array $parameters = [])
     {
-        $this->parameters = $parameters;
-        $this->methodName = $methodName;
     }
 
     public function __toString(): string
@@ -44,9 +33,6 @@ class MethodInjection implements DefinitionInterface
         // The name does not matter for method injections, so do nothing.
     }
 
-    /**
-     * @return mixed[]
-     */
     public function getParameters(): array
     {
         return $this->parameters;

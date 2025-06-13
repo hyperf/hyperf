@@ -9,20 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
 #[Command]
 class CommandCommand extends GeneratorCommand
 {
     public function __construct()
     {
         parent::__construct('gen:command');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new command class');
+
+        parent::configure();
     }
 
     protected function getStub(): string
@@ -32,6 +36,6 @@ class CommandCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Command';
+        return $this->getConfig()['namespace'] ?? 'App\Command';
     }
 }

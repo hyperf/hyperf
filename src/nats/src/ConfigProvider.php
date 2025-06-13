@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Nats;
 
 use Hyperf\Nats\Driver\DriverFactory;
@@ -29,13 +30,6 @@ class ConfigProvider
             ],
             'listeners' => [
                 BeforeMainServerStartListener::class => 99,
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
             ],
             'publish' => [
                 [

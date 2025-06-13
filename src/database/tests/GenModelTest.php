@@ -9,17 +9,23 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Commands\Ast\ModelUpdateVisitor;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Schema\MySqlBuilder;
 use HyperfTest\Database\Stubs\ContainerStub;
+use HyperfTest\Database\Stubs\Model\Gender;
+use HyperfTest\Database\Stubs\Model\UserEnum;
 use HyperfTest\Database\Stubs\Model\UserExtEmpty;
+use HyperfTest\Database\Stubs\Model\UserExtWithTrait;
 use Mockery;
+use PhpParser\Lexer\Emulative;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -27,6 +33,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class GenModelTest extends TestCase
 {
     protected $license = '<?php
@@ -87,23 +94,110 @@ class UserExtEmpty extends Model
 {
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table = \'user_ext\';
+    protected ?string $table = \'user_ext\';
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = [\'id\', \'count\', \'float_num\', \'str\', \'json\', \'created_at\', \'updated_at\'];
+    protected array $fillable = [\'id\', \'count\', \'float_num\', \'str\', \'json\', \'created_at\', \'updated_at\'];
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
-    protected $casts = [\'id\' => \'integer\', \'count\' => \'integer\', \'created_at\' => \'datetime\'];
+    protected array $casts = [\'id\' => \'integer\', \'count\' => \'integer\', \'created_at\' => \'datetime\'];
 }', $code);
+    }
+
+    public function testGenModelWithEnum()
+    {
+        $container = ContainerStub::getContainer();
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturnUsing(function () {
+            $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+            $dispatcher->shouldReceive('dispatch')->withAnyArgs()->andReturn(null);
+            return $dispatcher;
+        });
+        $connection = $container->get(ConnectionResolverInterface::class)->connection();
+        /** @var MySqlBuilder $builder */
+        $builder = $connection->getSchemaBuilder('default');
+        $columns = $this->formatColumns($builder->getColumnTypeListing('user'));
+        foreach ($columns as $i => $column) {
+            if ($column['column_name'] === 'gender') {
+                $columns[$i]['cast'] = Gender::class;
+            }
+            if ($column['column_name'] === 'created_at' || $column['column_name'] === 'updated_at') {
+                $columns[$i]['cast'] = 'datetime';
+            }
+        }
+        $astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $stms = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserEnum.php'));
+        $traverser = new NodeTraverser();
+        $visitor = new ModelUpdateVisitor(UserEnum::class, $columns, ContainerStub::getModelOption()->setForceCasts(false));
+        $traverser->addVisitor($visitor);
+        $stms = $traverser->traverse($stms);
+        $code = (new Standard())->prettyPrintFile($stms);
+        $this->assertEquals($this->license . "
+namespace HyperfTest\\Database\\Stubs\\Model;
+
+use Carbon\\Carbon;
+/**
+ * @property int \$id 
+ * @property string \$name 
+ * @property \\HyperfTest\\Database\\Stubs\\Model\\Gender \$gender 
+ * @property Carbon \$created_at 
+ * @property Carbon \$updated_at 
+ * @property-read null|Book \$book 
+ */
+class UserEnum extends Model
+{
+    /**
+     * The table associated with the model.
+     */
+    protected ?string \$table = 'user';
+    /**
+     * The attributes that are mass assignable.
+     */
+    protected array \$fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
+    /**
+     * The attributes that should be cast to native types.
+     */
+    protected array \$casts = ['id' => 'integer', 'gender' => Gender::class, 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+    public function book()
+    {
+        var_dump(1);
+        return \$this->hasOne(Book::class, 'user_id', 'id');
+        // ignore
+    }
+}", $code);
+    }
+
+    public function testGenModelWithTrait()
+    {
+        $container = ContainerStub::getContainer();
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturnUsing(function () {
+            $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+            $dispatcher->shouldReceive('dispatch')->withAnyArgs()->andReturn(null);
+            return $dispatcher;
+        });
+        $lexer = new Emulative([
+            'usedAttributes' => [
+                'comments',
+                'startLine', 'endLine',
+                'startTokenPos', 'endTokenPos',
+            ],
+        ]);
+        $connection = $container->get(ConnectionResolverInterface::class)->connection();
+        /** @var MySqlBuilder $builder */
+        $builder = $connection->getSchemaBuilder('default');
+        $columns = $this->formatColumns($builder->getColumnTypeListing('user_ext'));
+        $columns = [];
+        $astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, $lexer);
+        $originStmts = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserExtWithTrait.php'));
+        $traverser = new NodeTraverser();
+        $visitor = new ModelUpdateVisitor(UserExtWithTrait::class, $columns, ContainerStub::getModelOption()->setWithComments(true)->setForceCasts(false));
+        $traverser->addVisitor($visitor);
+        $newStmts = $traverser->traverse($originStmts);
+        $code = (new Standard())->printFormatPreserving($newStmts, $originStmts, $lexer->getTokens());
+        $this->assertTrue(str_contains($code, '@property-read string $count_string'));
+        $this->assertTrue(str_contains($code, '@property-read null|User $user'));
     }
 
     /**

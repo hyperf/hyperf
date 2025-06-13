@@ -9,14 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketServer\Collector;
 
 class FdCollector
 {
-    /**
-     * @var array
-     */
-    protected static $fds = [];
+    protected static array $fds = [];
 
     public static function set(int $id, string $class): void
     {

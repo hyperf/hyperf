@@ -9,22 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation;
 
 use Closure;
 use Hyperf\Database\ConnectionResolverInterface;
-use Hyperf\Utils\Str;
+use Hyperf\Database\Query\Builder;
+use Hyperf\Stringable\Str;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 
 class DatabasePresenceVerifier implements PresenceVerifierInterface
 {
-    /**
-     * The database connection instance.
-     *
-     * @var \Hyperf\Database\ConnectionResolverInterface
-     */
-    protected $db;
-
     /**
      * The database connection to use.
      *
@@ -34,10 +29,11 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
 
     /**
      * Create a new database presence verifier.
+     *
+     * @param ConnectionResolverInterface $db the database connection instance
      */
-    public function __construct(ConnectionResolverInterface $db)
+    public function __construct(protected ConnectionResolverInterface $db)
     {
-        $this->db = $db;
     }
 
     /**
@@ -71,7 +67,7 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
     /**
      * Get a query builder for the given table.
      *
-     * @return \Hyperf\Database\Query\Builder
+     * @return Builder
      */
     public function table(string $table)
     {
@@ -89,8 +85,8 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
     /**
      * Add the given conditions to the query.
      *
-     * @param \Hyperf\Database\Query\Builder $query
-     * @return \Hyperf\Database\Query\Builder
+     * @param Builder $query
+     * @return Builder
      */
     protected function addConditions($query, array $conditions)
     {
@@ -110,7 +106,7 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
     /**
      * Add a "where" clause to the given query.
      *
-     * @param \Hyperf\Database\Query\Builder $query
+     * @param Builder $query
      * @param string $extraValue
      */
     protected function addWhere($query, string $key, $extraValue)

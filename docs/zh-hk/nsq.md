@@ -67,14 +67,7 @@ use Hyperf\Nsq\Annotation\Consumer;
 use Hyperf\Nsq\Message;
 use Hyperf\Nsq\Result;
 
-/**
- * @Consumer(
- *     topic="hyperf", 
- *     channel="hyperf", 
- *     name ="DemoNsqConsumer", 
- *     nums=1
- * )
- */
+#[Consumer(topic: "hyperf", channel: "hyperf", name: "DemoNsqConsumer", nums: 1)]
 class DemoNsqConsumer extends AbstractConsumer
 {
     public function consume(Message $payload): string 
@@ -86,19 +79,19 @@ class DemoNsqConsumer extends AbstractConsumer
 }
 ```
 
-### 禁止消費進程自啟
+### 禁止消費進程自啓
 
-默認情況下，使用了 `@Consumer` 註解定義後，框架會在啟動時自動創建子進程來啟動消費者，並且會在子進程異常退出後，自動重新拉起。但如果在處於開發階段進行某些調試工作時，可能會因為消費者的自動消費導致調試的不便。
+默認情況下，使用了 `#[Consumer]` 註解定義後，框架會在啓動時自動創建子進程來啓動消費者，並且會在子進程異常退出後，自動重新拉起。但如果在處於開發階段進行某些調試工作時，可能會因為消費者的自動消費導致調試的不便。
 
-在這種情況下，您可通過全局關閉和局部關閉兩種形式來控制消費進程的自啟。
+在這種情況下，您可通過全局關閉和局部關閉兩種形式來控制消費進程的自啓。
 
 #### 全局關閉
 
-您可以在默認配置文件 `config/autoload/nsq.php` 中，將對應連接的 `enable` 選項設置為 `false`，即代表該連接下的所有消費者進程都關閉自啟功能。
+您可以在默認配置文件 `config/autoload/nsq.php` 中，將對應連接的 `enable` 選項設置為 `false`，即代表該連接下的所有消費者進程都關閉自啓功能。
 
 #### 局部關閉
 
-當您只需要關閉個別消費進程的自啟功能，只需要在對應的消費者中重寫父類方法 `isEnable()` 並返回 `false` 即可關閉此消費者的自啟功能；
+當您只需要關閉個別消費進程的自啓功能，只需要在對應的消費者中重寫父類方法 `isEnable()` 並返回 `false` 即可關閉此消費者的自啓功能；
 
 ```php
 <?php
@@ -113,14 +106,7 @@ use Hyperf\Nsq\Message;
 use Hyperf\Nsq\Result;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Consumer(
- *     topic="demo_topic", 
- *     channel="demo_channel", 
- *     name ="DemoConsumer", 
- *     nums=1
- * )
- */
+#[Consumer(topic: "demo_topic", channel: "demo_channel", name: "DemoConsumer", nums: 1)]
 class DemoConsumer extends AbstractConsumer
 {
     public function __construct(ContainerInterface $container)
@@ -157,9 +143,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Nsq\Nsq;
 
-/**
- * @Command
- */
+#[Command]
 class NsqCommand extends HyperfCommand
 {
     protected $name = 'nsq:pub';
@@ -192,9 +176,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Nsq\Nsq;
 
-/**
- * @Command
- */
+#[Command]
 class NsqCommand extends HyperfCommand
 {
     protected $name = 'nsq:pub';
@@ -231,9 +213,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Nsq\Nsq;
 
-/**
- * @Command
- */
+#[Command]
 class NsqCommand extends HyperfCommand
 {
     protected $name = 'nsq:pub';
@@ -262,7 +242,7 @@ class NsqCommand extends HyperfCommand
 
 ```php
 <?php
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Nsq\Nsqd\Topic;
 
 $container = ApplicationContext::getContainer();

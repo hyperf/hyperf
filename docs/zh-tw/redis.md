@@ -2,7 +2,7 @@
 
 ## 安裝
 
-```
+```shell
 composer require hyperf/redis
 ```
 
@@ -41,18 +41,28 @@ return [
             'heartbeat' => -1,
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
         ],
+        'options' => [ // Redis 客戶端 Options, 參照 https://github.com/phpredis/phpredis#setoption
+            \Redis::OPT_PREFIX => env('REDIS_PREFIX', ''),
+            // or 'prefix' => env('REDIS_PREFIX', ''), v3.0.38 或更高版本
+        ],
     ],
 ];
 
 ```
 
+`publish`完整配置檔案使用命令
+
+```shell
+php bin/hyperf.php vendor:publish hyperf/redis
+```
+
 ## 使用
 
-`hyperf/redis` 實現了 `ext-redis` 代理和連線池，使用者可以直接通過依賴注入容器注入 `\Hyperf\Redis\Redis` 來使用 Redis 客戶端，實際獲得的是 `\Redis` 的一個代理物件。
+`hyperf/redis` 實現了 `ext-redis` 代理和連線池，使用者可以直接透過依賴注入容器注入 `\Hyperf\Redis\Redis` 來使用 Redis 客戶端，實際獲得的是 `\Redis` 的一個代理物件。
 
 ```php
 <?php
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 
@@ -106,7 +116,7 @@ return [
 
 ```
 
-### 通過代理類使用
+### 透過代理類使用
 
 我們可以重寫一個 `FooRedis` 類並繼承 `Hyperf\Redis\Redis` 類，修改 `poolName` 為上述的 `foo`，即可完成對連線池的切換，示例：
 
@@ -120,7 +130,7 @@ class FooRedis extends Redis
     protected $poolName = 'foo';
 }
 
-// 通過 DI 容器獲取或直接注入當前類
+// 透過 DI 容器獲取或直接注入當前類
 $redis = $this->container->get(FooRedis::class);
 
 $result = $redis->keys('*');
@@ -129,27 +139,75 @@ $result = $redis->keys('*');
 
 ### 使用工廠類
 
-在每個庫對應一個固定的使用場景時，通過代理類是一種很好的區分的方法，但有時候需求可能會更加的動態，這時候我們可以通過 `Hyperf\Redis\RedisFactory` 工廠類來動態的傳遞 `poolName` 來獲得對應的連線池的客戶端，而無需為每個庫建立代理類，示例如下：
+在每個庫對應一個固定的使用場景時，透過代理類是一種很好的區分的方法，但有時候需求可能會更加的動態，這時候我們可以透過 `Hyperf\Redis\RedisFactory` 工廠類來動態的傳遞 `poolName` 來獲得對應的連線池的客戶端，而無需為每個庫建立代理類，示例如下：
 
 ```php
 <?php
 use Hyperf\Redis\RedisFactory;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 
-// 通過 DI 容器獲取或直接注入 RedisFactory 類
+// 透過 DI 容器獲取或直接注入 RedisFactory 類
 $redis = $container->get(RedisFactory::class)->get('foo');
 $result = $redis->keys('*');
+```
+
+## 哨兵模式
+
+開啟哨兵模式可以在`.env`或 `redis.php` 配置檔案中修改如下
+
+多個哨兵節點使用`;`分割
+
+```env
+REDIS_HOST=
+REDIS_AUTH=Redis例項密碼
+REDIS_PORT=
+REDIS_DB=
+REDIS_SENTINEL_ENABLE=true
+REDIS_SENTINEL_PASSWORD=Redis哨兵密碼
+REDIS_SENTINEL_NODE=192.168.89.129:26381;192.168.89.129:26380;
+```
+
+```php
+<?php
+
+return [
+    'default' => [
+        'host' => env('REDIS_HOST', 'localhost'),
+        'auth' => env('REDIS_AUTH', null),
+        'port' => (int) env('REDIS_PORT', 6379),
+        'db' => (int) env('REDIS_DB', 0),
+        'timeout' => 30.0,
+        'reserved' => null,
+        'retry_interval' => 0,
+        'sentinel' => [
+            'enable' => (bool) env('REDIS_SENTINEL_ENABLE', false),
+            'master_name' => env('REDIS_MASTER_NAME', 'mymaster'),
+            'nodes' => explode(';', env('REDIS_SENTINEL_NODE', '')),
+            'persistent' => false,
+            'read_timeout' => 30.0,
+            'auth' =>  env('REDIS_SENTINEL_PASSWORD', ''),
+        ],
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
+        ],
+    ],
+];
 ```
 
 ## 叢集模式
 
 ### 使用 `name`
- 
+
 配置 `cluster`，修改修改 `redis.ini`，也可以修改 `Dockerfile` 如下
 
-```
+```shell
     # - config PHP
     && { \
         echo "upload_max_filesize=100M"; \
@@ -226,7 +284,8 @@ return [
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
         ],
         'options' => [
-            Redis::OPT_SERIALIZER => Redis::SERIALIZER_PHP,
+            \Redis::OPT_SERIALIZER => \Redis::SERIALIZER_PHP,
+            // 或者 'serializer' => \Redis::SERIALIZER_PHP, v3.0.38 或更高版本
         ],
     ],
 ];
@@ -254,7 +313,8 @@ return [
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
         ],
         'options' => [
-            Redis::OPT_READ_TIMEOUT => -1,
+            \Redis::OPT_READ_TIMEOUT => -1,
+            // 或者 'read_timeout' => -1, v3.1.3 或更高版本
         ],
     ],
 ];

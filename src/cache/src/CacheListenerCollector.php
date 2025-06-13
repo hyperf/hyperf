@@ -9,32 +9,33 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Cache;
 
 use Hyperf\Di\MetadataCollector;
 
 class CacheListenerCollector extends MetadataCollector
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
     public static function setListener(string $listener, array $value)
     {
         static::$container[$listener] = $value;
     }
 
-    public static function getListner(string $listener, $default = null)
+    public static function getListener(string $listener, ?array $default = null)
     {
         return static::$container[$listener] ?? $default;
     }
 
-    public static function clear(?string $className = null): void
+    /**
+     * @param null|string $key className
+     */
+    public static function clear(?string $key = null): void
     {
-        if ($className) {
+        if ($key) {
             foreach (static::$container as $listener => $value) {
-                if (isset($value['className']) && $value['className'] === $className) {
+                if (isset($value['className']) && $value['className'] === $key) {
                     unset(static::$container[$listener]);
                 }
             }

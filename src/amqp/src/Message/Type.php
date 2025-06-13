@@ -9,17 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Amqp\Message;
 
-class Type
+enum Type: string
 {
-    public const DIRECT = 'direct';
+    case DIRECT = 'direct';
+    case FANOUT = 'fanout';
+    case TOPIC = 'topic';
 
-    public const FANOUT = 'fanout';
-
-    public const TOPIC = 'topic';
-
-    public static function all()
+    public static function all(): array
     {
         return [
             self::DIRECT,

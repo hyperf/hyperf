@@ -9,26 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Retry\Policy;
 
 use Hyperf\Retry\RetryContext;
 
+use function Hyperf\Support\make;
+
 class SleepRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
-    /**
-     * @var int
-     */
-    private $base;
-
-    /**
-     * @var string
-     */
-    private $sleepStrategyClass;
-
-    public function __construct(int $base, string $sleepStrategyClass)
+    public function __construct(private int $base, private string $sleepStrategyClass)
     {
-        $this->base = $base;
-        $this->sleepStrategyClass = $sleepStrategyClass;
     }
 
     public function canRetry(RetryContext &$retryContext): bool

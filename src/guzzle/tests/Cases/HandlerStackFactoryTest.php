@@ -9,28 +9,33 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\Guzzle\Cases;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\HandlerStack;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Container;
 use Hyperf\Guzzle\CoroutineHandler;
 use Hyperf\Guzzle\HandlerStackFactory;
 use Hyperf\Guzzle\PoolHandler;
 use Hyperf\Guzzle\RetryMiddleware;
 use Hyperf\Pool\SimplePool\PoolFactory;
-use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
 use HyperfTest\Guzzle\Stub\HandlerStackFactoryStub;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use ReflectionClass;
+use Throwable;
 
 /**
  * @internal
  * @coversNothing
  */
+#[CoversNothing]
 class HandlerStackFactoryTest extends TestCase
 {
     public function testCreateCoroutineHandler()
@@ -43,14 +48,12 @@ class HandlerStackFactoryTest extends TestCase
         $this->assertInstanceOf(HandlerStack::class, $stack);
         $this->assertTrue($stack->hasHandler());
 
-        $ref = new \ReflectionClass($stack);
+        $ref = new ReflectionClass($stack);
 
         $handler = $ref->getProperty('handler');
-        $handler->setAccessible(true);
         $this->assertInstanceOf(CoroutineHandler::class, $handler->getValue($stack));
 
         $property = $ref->getProperty('stack');
-        $property->setAccessible(true);
         foreach ($property->getValue($stack) as $stack) {
             $this->assertTrue(in_array($stack[1], ['http_errors', 'allow_redirects', 'cookies', 'prepare_body', 'retry']));
         }
@@ -67,14 +70,12 @@ class HandlerStackFactoryTest extends TestCase
         $this->assertInstanceOf(HandlerStack::class, $stack);
         $this->assertTrue($stack->hasHandler());
 
-        $ref = new \ReflectionClass($stack);
+        $ref = new ReflectionClass($stack);
 
         $handler = $ref->getProperty('handler');
-        $handler->setAccessible(true);
         $this->assertInstanceOf(CoroutineHandler::class, $handler->getValue($stack));
 
         $property = $ref->getProperty('stack');
-        $property->setAccessible(true);
         foreach ($property->getValue($stack) as $stack) {
             $this->assertTrue(in_array($stack[1], ['http_errors', 'allow_redirects', 'cookies', 'prepare_body', 'retry']));
         }
@@ -89,14 +90,12 @@ class HandlerStackFactoryTest extends TestCase
         $this->assertTrue($stack->hasHandler());
         $this->assertInstanceOf(HandlerStack::class, $stack);
 
-        $ref = new \ReflectionClass($stack);
+        $ref = new ReflectionClass($stack);
 
         $handler = $ref->getProperty('handler');
-        $handler->setAccessible(true);
         $this->assertInstanceOf(PoolHandler::class, $handler->getValue($stack));
 
         $property = $ref->getProperty('stack');
-        $property->setAccessible(true);
         $items = array_column($property->getValue($stack), 1);
 
         $this->assertEquals(['http_errors', 'allow_redirects', 'cookies', 'prepare_body', 'retry'], $items);
@@ -109,14 +108,12 @@ class HandlerStackFactoryTest extends TestCase
         $factory = new HandlerStackFactory();
         $stack = $factory->create(['max_connections' => 50]);
 
-        $ref = new \ReflectionClass($stack);
+        $ref = new ReflectionClass($stack);
         $handler = $ref->getProperty('handler');
-        $handler->setAccessible(true);
         $handler = $handler->getValue($stack);
 
-        $ref = new \ReflectionClass($handler);
+        $ref = new ReflectionClass($handler);
         $option = $ref->getProperty('option');
-        $option->setAccessible(true);
 
         $this->assertSame(50, $option->getValue($handler)['max_connections']);
     }
@@ -128,9 +125,8 @@ class HandlerStackFactoryTest extends TestCase
         $factory = new HandlerStackFactory();
         $stack = $factory->create([], ['retry_again' => [RetryMiddleware::class, [1, 10]]]);
 
-        $ref = new \ReflectionClass($stack);
+        $ref = new ReflectionClass($stack);
         $property = $ref->getProperty('stack');
-        $property->setAccessible(true);
         $items = array_column($property->getValue($stack), 1);
         $this->assertEquals(['http_errors', 'allow_redirects', 'cookies', 'prepare_body', 'retry', 'retry_again'], $items);
     }
@@ -165,7 +161,7 @@ class HandlerStackFactoryTest extends TestCase
 
         try {
             $client->get('/');
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertSame(2, $stub->count);
             throw $exception;
         }

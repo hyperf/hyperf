@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab\Strategy;
 
-use Carbon\Carbon;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Crontab;
+use Hyperf\Crontab\LoggerInterface;
 use Hyperf\Crontab\PipeMessage;
 use Hyperf\Server\ServerFactory;
 use Psr\Container\ContainerInterface;
@@ -20,32 +22,41 @@ use Swoole\Server;
 
 class WorkerStrategy extends AbstractStrategy
 {
-    /**
-     * @var ServerFactory
-     */
-    protected $serverFactory;
+    protected ServerFactory $serverFactory;
 
-    /**
-     * @var int
-     */
-    protected $currentWorkerId = -1;
+    protected int $currentWorkerId = -1;
 
     public function __construct(ContainerInterface $container)
     {
         $this->serverFactory = $container->get(ServerFactory::class);
+
+        parent::__construct($container);
     }
 
-    public function dispatch(Crontab $crontab)
+    public function dispatch(Crontab $crontab): void
     {
+        $logger = match (true) {
+            $this->container->has(LoggerInterface::class) => $this->container->get(LoggerInterface::class),
+            $this->container->has(StdoutLoggerInterface::class) => $this->container->get(StdoutLoggerInterface::class),
+            default => null,
+        };
         $server = $this->serverFactory->getServer()->getServer();
-        if ($server instanceof Server && $crontab->getExecuteTime() instanceof Carbon) {
-            $workerId = $this->getNextWorkerId($server);
-            $server->sendMessage(new PipeMessage(
-                'callback',
-                [Executor::class, 'execute'],
-                $crontab
-            ), $workerId);
+
+        if (! $server instanceof Server) {
+            $logger?->warning('Cannot dispatch crontab, use CoroutineStrategy if run in coroutine style server.');
+            return;
         }
+        if ($crontab->getType() === 'closure') {
+            $logger?->warning('Closure type crontab is only supported in CoroutineStrategy.');
+            return;
+        }
+
+        $workerId = $this->getNextWorkerId($server);
+        $server->sendMessage(new PipeMessage(
+            'callback',
+            [Executor::class, 'execute'],
+            $crontab
+        ), $workerId);
     }
 
     protected function getNextWorkerId(Server $server): int

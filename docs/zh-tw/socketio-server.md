@@ -41,17 +41,15 @@ use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\Annotation\SocketIONamespace;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
-use Hyperf\Utils\Codec\Json;
+use Hyperf\Codec\Json;
 
-/**
- * @SocketIONamespace("/")
- */
+#[SocketIONamespace("/")]
 class WebSocketController extends BaseNamespace
 {
     /**
-     * @Event("event")
      * @param string $data
      */
+    #[Event("event")]
     public function onEvent(Socket $socket, $data)
     {
         // 應答
@@ -59,9 +57,9 @@ class WebSocketController extends BaseNamespace
     }
 
     /**
-     * @Event("join-room")
      * @param string $data
      */
+    #[Event("join-room")]
     public function onJoinRoom(Socket $socket, $data)
     {
         // 將當前使用者加入房間
@@ -73,9 +71,9 @@ class WebSocketController extends BaseNamespace
     }
 
     /**
-     * @Event("say")
      * @param string $data
      */
+    #[Event("say")]
     public function onSay(Socket $socket, $data)
     {
         $data = Json::decode($data);
@@ -94,7 +92,7 @@ class WebSocketController extends BaseNamespace
 由於服務端只實現了 WebSocket 通訊，所以客戶端要加上 `{transports:["websocket"]}` 。
 
 ```html
-<script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
 <script>
     var socket = io('ws://127.0.0.1:9502', { transports: ["websocket"] });
     socket.on('connect', data => {
@@ -112,13 +110,11 @@ class WebSocketController extends BaseNamespace
 
 ### Socket API
 
-通過 SocketAPI 對目標 Socket 進行推送，或以目標 Socket 的身份在房間內發言。需要在事件回撥中使用。
+透過 SocketAPI 對目標 Socket 進行推送，或以目標 Socket 的身份在房間內發言。需要在事件回撥中使用。
 
 ```php
 <?php
-/**
- * @Event("SomeEvent")
- */
+#[Event("SomeEvent")]
 function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
 
   // sending to the client
@@ -156,7 +152,7 @@ function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
 
 ```php
 <?php
-$io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
+$io = \Hyperf\Context\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
 
 // sending to all clients in 'game' room, including sender
 // 向 game 房間內的所有連線推送 bigger-announcement 事件。
@@ -193,8 +189,8 @@ $io->of('/foo')->emit();
 
 /**
  * class內使用也等價
- * @SocketIONamespace("/foo")
  */
+#[SocketIONamespace("/foo")]
 class FooNamespace extends BaseNamespace {
     public function onEvent(){
         $this->emit(); 
@@ -207,11 +203,11 @@ class FooNamespace extends BaseNamespace {
 
 ### 設定 Socket.io 名稱空間
 
-Socket.io 通過自定義名稱空間實現多路複用。（注意：不是 PHP 的名稱空間）
+Socket.io 透過自定義名稱空間實現多路複用。（注意：不是 PHP 的名稱空間）
 
-1. 可以通過 `@SocketIONamespace("/xxx")` 將控制器對映為 xxx 的名稱空間，
+1. 可以透過 `#[SocketIONamespace("/xxx")]` 將控制器對映為 xxx 的名稱空間，
 
-2. 也可通過
+2. 也可透過
 
 ```php
 <?php
@@ -224,7 +220,7 @@ SocketIORouter::addNamespace('/xxx' , WebSocketController::class);
 
 ### 開啟 Session 
 
-安裝並配置好 hyperf/session 元件及其對應中介軟體，再通過 `SessionAspect` 切入 SocketIO 來使用 Session 。
+安裝並配置好 hyperf/session 元件及其對應中介軟體，再透過 `SessionAspect` 切入 SocketIO 來使用 Session 。
 
 ```php
 <?php
@@ -238,7 +234,7 @@ return [
 
 ### 調整房間介面卡
 
-預設的房間功能通過 Redis 介面卡實現，可以適應多程序乃至分散式場景。
+預設的房間功能透過 Redis 介面卡實現，可以適應多程序乃至分散式場景。
 
 1. 可以替換為記憶體介面卡，只適用於單 worker 場景。
 
@@ -313,7 +309,7 @@ class WebSocketController extends BaseNamespace
 }
 ```
 
-2. 可以在控制器上新增 `@Event()` 註解，以方法名作為事件名來分發。此時應注意其他公有方法可能會和事件名衝突。
+2. 可以在控制器上新增 `#[Event]` 註解，以方法名作為事件名來分發。此時應注意其他公有方法可能會和事件名衝突。
 
 ```php
 <?php
@@ -326,10 +322,8 @@ use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 
-/**
- * @SocketIONamespace("/")
- * @Event()
- */
+#[SocketIONamespace("/")]
+#[Event]
 class WebSocketController extends BaseNamespace
 {
     public function echo(Socket $socket, $data)
@@ -349,7 +343,7 @@ class WebSocketController extends BaseNamespace
 |     $pingInterval      |  int  | 10000  |
 | $clientCallbackTimeout |  int  | 10000  |
 
-有時候，由於推送訊息比較多或者網路較卡，在 100ms 內，無法及時返回 `PONG`，就會導致連線斷開。這時候我們可以通過以下方式，進行重寫：
+有時候，由於推送訊息比較多或者網路較卡，在 100ms 內，無法及時返回 `PONG`，就會導致連線斷開。這時候我們可以透過以下方式，進行重寫：
 
 ```php
 <?php
@@ -397,7 +391,7 @@ return [
 
 ### Auth 鑑權
 
-您可以通過使用中介軟體來攔截 WebSocket 握手，實現鑑權功能，如下：
+您可以透過使用中介軟體來攔截 WebSocket 握手，實現鑑權功能，如下：
 
 ```php
 <?php
@@ -414,10 +408,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class WebSocketAuthMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -426,7 +417,7 @@ class WebSocketAuthMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // 虛擬碼，通過 isAuth 方法攔截握手請求並實現許可權檢查
+        // 虛擬碼，透過 isAuth 方法攔截握手請求並實現許可權檢查
         if (! $this->isAuth($request)) {
             return $this->container->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->raw('Forbidden');
         }

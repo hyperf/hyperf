@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ServiceGovernanceConsul\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
@@ -16,16 +17,12 @@ use Hyperf\Framework\Event\BootApplication;
 use Hyperf\ServiceGovernance\DriverManager;
 use Hyperf\ServiceGovernanceConsul\ConsulDriver;
 
+use function Hyperf\Support\make;
+
 class RegisterDriverListener implements ListenerInterface
 {
-    /**
-     * @var DriverManager
-     */
-    protected $driverManager;
-
-    public function __construct(DriverManager $manager)
+    public function __construct(protected DriverManager $driverManager)
     {
-        $this->driverManager = $manager;
     }
 
     public function listen(): array
@@ -35,7 +32,7 @@ class RegisterDriverListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $this->driverManager->register('consul', make(ConsulDriver::class));
     }

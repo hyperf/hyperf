@@ -9,29 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Crontab;
 
 class PipeMessage
 {
-    /**
-     * @var string
-     */
-    public $type;
-
-    /**
-     * @var array|callable
-     */
-    public $callable;
-
-    /**
-     * @var \Hyperf\Crontab\Crontab
-     */
-    public $data;
-
-    public function __construct(string $type, $callable, Crontab $data)
+    public function __construct(public string $type, public array $callable, public Crontab $data)
     {
-        $this->type = $type;
-        $this->callable = $callable;
-        $this->data = $data;
     }
 }

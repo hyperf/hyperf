@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace HyperfTest\HttpMessage\Stub\Server;
 
 use Hyperf\HttpMessage\Server\Request;
@@ -17,7 +18,7 @@ use Psr\Http\Message\RequestInterface;
 
 class RequestStub extends Request
 {
-    public static function normalizeParsedBody(array $data = [], ?RequestInterface $request = null)
+    public static function normalizeParsedBody(array $data = [], ?RequestInterface $request = null): array
     {
         return parent::normalizeParsedBody($data, $request);
     }
