@@ -18,6 +18,7 @@ use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
 use Hyperf\Kafka\Exception\ConnectionClosedException;
+use Hyperf\Kafka\Exception\TimeoutException;
 use longlang\phpkafka\Broker;
 use longlang\phpkafka\Producer\ProduceMessage;
 use longlang\phpkafka\Producer\Producer as LongLangProducer;
@@ -39,7 +40,12 @@ class Producer
 
     public function send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): void
     {
-        $this->sendAsync($topic, $value, $key, $headers, $partitionIndex)->wait();
+        try {
+            $this->sendAsync($topic, $value, $key, $headers, $partitionIndex)->wait();
+        } catch (TimeoutException $e) {
+            $this->close();
+            throw $e;
+        }
     }
 
     public function sendAsync(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): Promise
@@ -64,7 +70,12 @@ class Producer
 
     public function sendBatch(array $messages): void
     {
-        $this->sendBatchAsync($messages)->wait();
+        try {
+            $this->sendBatchAsync($messages)->wait();
+        } catch (TimeoutException $e) {
+            $this->close();
+            throw $e;
+        }
     }
 
     /**
@@ -93,6 +104,7 @@ class Producer
     public function close(): void
     {
         $this->chan?->close();
+        $this->chan = null;
         $this->producer?->close();
     }
 

@@ -336,6 +336,16 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile a "JSON overlaps" statement into SQL.
+     */
+    protected function compileJsonOverlaps(string $column, string $value): string
+    {
+        $column = str_replace('->>', '->', $this->wrap($column));
+
+        return 'EXISTS ( SELECT 1 FROM jsonb_array_elements((' . $column . ')::jsonb) AS elem1, jsonb_array_elements(' . $value . '::jsonb) AS elem2 WHERE elem1 = elem2)';
+    }
+
+    /**
      * Compile a "JSON length" statement into SQL.
      *
      * @param string $column

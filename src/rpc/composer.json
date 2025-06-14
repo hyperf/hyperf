@@ -18,7 +18,10 @@
     "require": {
         "php": ">=8.1",
         "hyperf/codec": "~3.1.0",
+        "hyperf/collection": "~3.1.0",
+        "hyperf/context": "~3.1.0",
         "hyperf/contract": "~3.1.0",
+        "hyperf/stringable": "~3.1.0",
         "hyperf/support": "~3.1.0",
         "jetbrains/phpstorm-attributes": "^1.0"
     },
@@ -39,6 +42,6 @@
         "branch-alias": {
             "dev-master": "3.1-dev"
         },
-        "hyperf": {}
+        "hyperf": []
     }
 }

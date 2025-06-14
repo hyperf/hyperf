@@ -41,10 +41,16 @@ class PaginatedResponse extends Response
     {
         $paginated = $this->resource->resource->toArray();
 
-        return [
+        $default = [
             'links' => $this->paginationLinks($paginated),
             'meta' => $this->meta($paginated),
         ];
+
+        if ($this->resource instanceof PaginationInformationInterface) {
+            return $this->resource->paginationInformation($paginated, $default);
+        }
+
+        return $default;
     }
 
     /**
