@@ -182,6 +182,19 @@ class CollectionTest extends TestCase
         $this->assertFalse($col->hasAny([]));
     }
 
+    #[DataProvider('collectionClassProvider')]
+    public function testHigherOrderCollectionStaticCall($collection)
+    {
+        $class1 = TestSupportCollectionHigherOrderStaticClass1::class;
+        $class2 = TestSupportCollectionHigherOrderStaticClass2::class;
+
+        $classes = new $collection([$class1, $class2]);
+
+        $this->assertEquals(['HYPERF', 'h y p e r f'], $classes->map->transform('hyperf')->toArray());
+        $this->assertEquals($class1, $classes->first->matches('Hyperf'));
+        $this->assertEquals($class2, $classes->first->matches('Framework'));
+    }
+
     public function testIntersectAssocWithNull(): void
     {
         $collection = new Collection(['a' => 'green', 'b' => 'brown', 'c' => 'blue', 'red']);
@@ -1353,5 +1366,31 @@ class CollectionTest extends TestCase
             ['id' => 2, 'name' => 'b'],
             ['id' => 1, 'name' => null],
         ]), json_encode($dataManyNull));
+    }
+}
+
+class TestSupportCollectionHigherOrderStaticClass1
+{
+    public static function transform($name)
+    {
+        return strtoupper($name);
+    }
+
+    public static function matches($name)
+    {
+        return str_starts_with($name, 'H');
+    }
+}
+
+class TestSupportCollectionHigherOrderStaticClass2
+{
+    public static function transform($name)
+    {
+        return trim(chunk_split($name, 1, ' '));
+    }
+
+    public static function matches($name)
+    {
+        return str_starts_with($name, 'F');
     }
 }
