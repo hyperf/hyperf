@@ -8,6 +8,7 @@
 ## Optimized
 
 - [#7411](https://github.com/hyperf/hyperf/pull/7411) Remove `Hyperf\Utils` Component.
+- [#7425](https://github.com/hyperf/hyperf/pull/7425) Ability to perform higher order static calls on collection items.
 
 # v3.1.56 - 2025-06-05
 
