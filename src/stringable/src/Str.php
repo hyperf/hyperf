@@ -274,10 +274,6 @@ class Str
      */
     public static function contains(string $haystack, mixed $needles, bool $ignoreCase = false): bool
     {
-        if (is_null($haystack)) {
-            return false;
-        }
-
         if ($ignoreCase) {
             return static::containsIgnoreCase($haystack, $needles);
         }
@@ -334,10 +330,6 @@ class Str
      */
     public static function endsWith(string $haystack, $needles)
     {
-        if (is_null($haystack)) {
-            return false;
-        }
-
         if (! is_iterable($needles)) {
             $needles = [$needles];
         }
@@ -842,10 +834,6 @@ class Str
      */
     public static function startsWith(string $haystack, $needles): bool
     {
-        if (is_null($haystack)) {
-            return false;
-        }
-
         if (! is_iterable($needles)) {
             $needles = [$needles];
         }
