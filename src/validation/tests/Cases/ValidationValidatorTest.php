@@ -1010,6 +1010,108 @@ class ValidationValidatorTest extends TestCase
         $this->assertEquals('The last field is required unless first is in taylor, sven.', $v->messages()->first('last'));
     }
 
+    public function testValidateProhibited()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+
+        $v = new Validator($trans, [], ['name' => 'prohibited']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['last' => 'bar'], ['name' => 'prohibited']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['name' => 'foo'], ['name' => 'prohibited']);
+        $this->assertTrue($v->fails());
+
+        $file = new SplFileInfo('');
+        $v = new Validator($trans, ['name' => $file], ['name' => 'prohibited']);
+        $this->assertTrue($v->passes());
+
+        $file = new SplFileInfo(__FILE__);
+        $v = new Validator($trans, ['name' => $file], ['name' => 'prohibited']);
+        $this->assertTrue($v->fails());
+
+        $file = new SplFileInfo(__FILE__);
+        $file2 = new SplFileInfo(__FILE__);
+        $v = new Validator($trans, ['files' => [$file, $file2]], ['files.0' => 'prohibited', 'files.1' => 'prohibited']);
+        $this->assertTrue($v->fails());
+
+        $v = new Validator($trans, ['files' => [$file, $file2]], ['files' => 'prohibited']);
+        $this->assertTrue($v->fails());
+    }
+
+    public function testValidateProhibitedIf()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['first' => 'taylor', 'last' => 'otwell'], ['last' => 'prohibited_if:first,taylor']);
+        $this->assertTrue($v->fails());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['first' => 'taylor'], ['last' => 'prohibited_if:first,taylor']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['first' => 'taylor', 'last' => 'otwell'], ['last' => 'prohibited_if:first,taylor,jess']);
+        $this->assertTrue($v->fails());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['first' => 'taylor'], ['last' => 'prohibited_if:first,taylor,jess']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => true, 'bar' => 'baz'], ['bar' => 'prohibited_if:foo,false']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => true, 'bar' => 'baz'], ['bar' => 'prohibited_if:foo,true']);
+        $this->assertTrue($v->fails());
+
+        // error message when passed multiple values (prohibited_if:foo,bar,baz)
+        $trans = $this->getIlluminateArrayTranslator();
+        $trans->addLines(['validation.prohibited_if' => 'The :attribute field is prohibited when :other is :value.'], 'en');
+        $v = new Validator($trans, ['first' => 'jess', 'last' => 'archer'], ['last' => 'prohibited_if:first,taylor,jess']);
+        $this->assertFalse($v->passes());
+        $this->assertSame('The last field is prohibited when first is jess.', $v->messages()->first('last'));
+    }
+
+    public function testValidateProhibitedUnless()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['first' => 'jess', 'last' => 'archer'], ['last' => 'prohibited_unless:first,taylor']);
+        $this->assertTrue($v->fails());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['first' => 'taylor', 'last' => 'otwell'], ['last' => 'prohibited_unless:first,taylor']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['first' => 'jess'], ['last' => 'prohibited_unless:first,taylor']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['first' => 'taylor', 'last' => 'otwell'], ['last' => 'prohibited_unless:first,taylor,jess']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['first' => 'jess', 'last' => 'archer'], ['last' => 'prohibited_unless:first,taylor,jess']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => false, 'bar' => 'baz'], ['bar' => 'prohibited_unless:foo,false']);
+        $this->assertTrue($v->passes());
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => false, 'bar' => 'baz'], ['bar' => 'prohibited_unless:foo,true']);
+        $this->assertTrue($v->fails());
+
+        // error message when passed multiple values (prohibited_unless:foo,bar,baz)
+        $trans = $this->getIlluminateArrayTranslator();
+        $trans->addLines(['validation.prohibited_unless' => 'The :attribute field is prohibited unless :other is in :values.'], 'en');
+        $v = new Validator($trans, ['first' => 'tim', 'last' => 'macdonald'], ['last' => 'prohibitedUnless:first,taylor,jess']);
+        $this->assertFalse($v->passes());
+        $this->assertSame('The last field is prohibited unless first is in taylor, jess.', $v->messages()->first('last'));
+    }
+
     public function testFailedFileUploads()
     {
         $trans = $this->getIlluminateArrayTranslator();
