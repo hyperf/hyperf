@@ -780,7 +780,7 @@ class Validator implements ValidatorContract
 
         return false;
     }
-    
+
     /**
      * Remove the given attribute.
      */
