@@ -16,7 +16,7 @@
         "hyperf/context": "~3.1.0",
         "hyperf/contract": "~3.1.0",
         "hyperf/coordinator": "~3.1.0",
-        "hyperf/engine": "~3.1.0",
+        "hyperf/engine": "^2.0",
         "hyperf/support": "~3.1.0",
         "jetbrains/phpstorm-attributes": "^1.0"
     },
