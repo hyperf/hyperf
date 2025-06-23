@@ -21,7 +21,7 @@
         "hyperf/command": "~3.1.0",
         "hyperf/context": "~3.1.0",
         "hyperf/contract": "~3.1.0",
-        "hyperf/engine": "~3.1.0",
+        "hyperf/engine": "^2.0",
         "hyperf/stringable": "~3.1.0",
         "zircote/swagger-php": "^4.6"
     },

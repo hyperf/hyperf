@@ -23,7 +23,7 @@
         "hyperf/coordinator": "~3.1.0",
         "hyperf/coroutine": "~3.1.0",
         "hyperf/di": "~3.1.0",
-        "hyperf/engine": "~3.1.0",
+        "hyperf/engine": "^2.0",
         "hyperf/guzzle": "~3.1.0",
         "hyperf/stringable": "~3.1.0",
         "hyperf/support": "~3.1.0",
