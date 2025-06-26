@@ -89,7 +89,7 @@ composer require hyperf/grpc-server
         'port' => 9503,
         'sock_type' => SWOOLE_SOCK_TCP,
         'callbacks' => [
-            Event::ON_REQUEST => [\Hyperf\GrpcServer\Server::class,'onRequest'],
+            Event::ON_REQUEST => [\Hyperf\GrpcServer\Server::class, 'onRequest'],
         ],
     ],
 ],
@@ -100,9 +100,9 @@ composer require hyperf/grpc-server
 `routes.php` 文件(参考 [路由](zh-cn/router.md))：
 
 ```php
-Router::addServer('grpc',function () {
-    Router::addGroup('/grpc.hi',function () {
-        Router::post('/sayHello','App\Controller\HiController@sayHello');
+Router::addServer('grpc', function () {
+    Router::addGroup('/grpc.hi', function () {
+        Router::post('/sayHello', 'App\Controller\HiController@sayHello');
     });
 });
 ```
