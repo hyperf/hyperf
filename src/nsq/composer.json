@@ -20,10 +20,12 @@
         "ext-bcmath": "*",
         "hyperf/code-parser": "~3.2.0",
         "hyperf/codec": "~3.2.0",
+        "hyperf/collection": "~3.2.0",
         "hyperf/contract": "~3.2.0",
+        "hyperf/coordinator": "~3.2.0",
+        "hyperf/coroutine": "~3.2.0",
         "hyperf/engine": "^2.0",
         "hyperf/support": "~3.2.0",
-        "hyperf/utils": "~3.2.0",
         "jean85/pretty-package-versions": "^1.2 || ^2.0"
     },
     "suggest": {

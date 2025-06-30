@@ -18,8 +18,14 @@
     },
     "require": {
         "php": ">=8.2",
+        "hyperf/code-parser": "~3.2.0",
+        "hyperf/collection": "~3.2.0",
         "hyperf/command": "~3.2.0",
-        "hyperf/database": "~3.2.0"
+        "hyperf/context": "~3.2.0",
+        "hyperf/contract": "~3.2.0",
+        "hyperf/database": "~3.2.0",
+        "hyperf/stringable": "~3.2.0",
+        "hyperf/support": "~3.2.0"
     },
     "autoload": {
         "psr-4": {

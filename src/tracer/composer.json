@@ -17,11 +17,16 @@
     },
     "require": {
         "php": ">=8.2",
+        "hyperf/collection": "~3.2.0",
+        "hyperf/context": "~3.2.0",
         "hyperf/contract": "~3.2.0",
+        "hyperf/coordinator": "~3.2.0",
+        "hyperf/coroutine": "~3.2.0",
         "hyperf/di": "~3.2.0",
+        "hyperf/engine": "^2.0",
         "hyperf/guzzle": "~3.2.0",
+        "hyperf/stringable": "~3.2.0",
         "hyperf/support": "~3.2.0",
-        "hyperf/utils": "~3.2.0",
         "jcchavezs/zipkin-opentracing": "^2.0",
         "opentracing/opentracing": "^1.0",
         "psr/http-message": "^1.0 || ^2.0"

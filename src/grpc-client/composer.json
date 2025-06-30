@@ -22,6 +22,7 @@
         "hyperf/context": "~3.2.0",
         "hyperf/contract": "~3.2.0",
         "hyperf/coroutine": "~3.2.0",
+        "hyperf/engine": "^2.0",
         "hyperf/event": "~3.2.0",
         "hyperf/grpc": "~3.2.0",
         "jean85/pretty-package-versions": "^1.2 || ^2.0"

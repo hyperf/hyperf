@@ -18,11 +18,13 @@
     "require": {
         "php": ">=8.2",
         "hyperf/collection": "~3.2.0",
+        "hyperf/context": "~3.2.0",
         "hyperf/contract": "~3.2.0",
+        "hyperf/coordinator": "~3.2.0",
+        "hyperf/engine": "^2.0",
         "hyperf/exception-handler": "~3.2.0",
         "hyperf/http-server": "~3.2.0",
         "hyperf/support": "~3.2.0",
-        "hyperf/utils": "~3.2.0",
         "psr/container": "^1.0 || ^2.0",
         "psr/event-dispatcher": "^1.0"
     },

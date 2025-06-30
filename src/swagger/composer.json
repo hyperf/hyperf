@@ -17,7 +17,12 @@
     },
     "require": {
         "php": ">=8.2",
+        "hyperf/codec": "~3.2.0",
         "hyperf/command": "~3.2.0",
+        "hyperf/context": "~3.2.0",
+        "hyperf/contract": "~3.2.0",
+        "hyperf/engine": "^2.0",
+        "hyperf/stringable": "~3.2.0",
         "zircote/swagger-php": "^4.6"
     },
     "suggest": {

@@ -206,7 +206,7 @@ class DatabaseSQLiteSchemaGrammarTest extends TestCase
 
         // because string return type in Hyperf\Database\Schema\Grammars\Grammar::compileForeign is a must
         // it has a redundancy statement
-        $this->assertCount(2, $statements);
+        $this->assertCount(1, $statements);
         $this->assertSame('create table "users" ("foo" varchar not null, "order_id" varchar not null, foreign key("order_id") references "orders"("id"), primary key ("foo"))', $statements[0]);
     }
 
@@ -701,7 +701,7 @@ class DatabaseSQLiteSchemaGrammarTest extends TestCase
         $this->assertInstanceOf(ForeignIdColumnDefinition::class, $foreignUuid);
         // because string return type in Hyperf\Database\Schema\Grammars\Grammar::compileForeign is a must
         // it has a redundancy statement
-        $this->assertSame(9, count($statements));
+        $this->assertSame(5, count($statements));
         $this->assertSame('alter table "users" add column "foo" varchar not null', $statements[0]);
         $this->assertSame('alter table "users" add column "company_id" varchar not null', $statements[1]);
         $this->assertSame('alter table "users" add column "laravel_idea_id" varchar not null', $statements[2]);

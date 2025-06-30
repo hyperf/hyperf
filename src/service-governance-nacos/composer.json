@@ -20,10 +20,12 @@
         "php": ">=8.2",
         "hyperf/codec": "~3.2.0",
         "hyperf/contract": "~3.2.0",
+        "hyperf/coordinator": "~3.2.0",
+        "hyperf/coroutine": "~3.2.0",
+        "hyperf/engine": "^2.0",
         "hyperf/nacos": "~3.2.0",
         "hyperf/service-governance": "~3.2.0",
-        "hyperf/support": "~3.2.0",
-        "hyperf/utils": "~3.2.0"
+        "hyperf/support": "~3.2.0"
     },
     "autoload": {
         "psr-4": {

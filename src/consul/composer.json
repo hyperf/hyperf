@@ -18,9 +18,9 @@
     },
     "require": {
         "php": ">=8.2",
-        "guzzlehttp/guzzle": "^6.3 || ^7.0"
+        "guzzlehttp/guzzle": "^6.3 || ^7.0",
+        "hyperf/collection": "~3.2.0"
     },
-    "suggest": {},
     "autoload": {
         "psr-4": {
             "Hyperf\\Consul\\": "src/"
