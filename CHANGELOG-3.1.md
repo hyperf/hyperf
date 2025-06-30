@@ -1,8 +1,9 @@
-# v3.1.58 - TBD
+# v3.1.59 - TBD
 
 ## Fixed
 
 - [#7421](https://github.com/hyperf/hyperf/pull/7421) Fixed bug that the cookie value cannot be deleted when set "".
+- [#7427](https://github.com/hyperf/hyperf/pull/7427) Fixed bug that `exclude` cannot not work when using `validation`.
 
 # v3.1.57 - 2025-06-23
 
