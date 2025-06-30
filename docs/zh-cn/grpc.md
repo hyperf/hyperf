@@ -19,8 +19,8 @@ syntax = "proto3";
 
 package grpc;
 
-service hi {
-    rpc sayHello (HiUser) returns (HiReply) {
+service Hi {
+    rpc SayHello (HiUser) returns (HiReply) {
     }
 }
 
@@ -101,8 +101,8 @@ composer require hyperf/grpc-server
 
 ```php
 Router::addServer('grpc', function () {
-    Router::addGroup('/grpc.hi', function () {
-        Router::post('/sayHello', 'App\Controller\HiController@sayHello');
+    Router::addGroup('/grpc.Hi', function () {
+        Router::post('/SayHello', 'App\Controller\HiController@sayHello');
     });
 });
 ```
@@ -170,7 +170,7 @@ class HiClient extends BaseClient
     public function sayHello(HiUser $argument)
     {
         return $this->_simpleRequest(
-            '/grpc.hi/sayHello',
+            '/grpc.Hi/SayHello',
             $argument,
             [HiReply::class, 'decode']
         );
