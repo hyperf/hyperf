@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#7421](https://github.com/hyperf/hyperf/pull/7421) Fixed bug that the cookie value cannot be deleted when set "".
+- [#7424](https://github.com/hyperf/hyperf/pull/7424) Fixed bug that the path of `php` cannot contain spaces for `watcher`.
 - [#7427](https://github.com/hyperf/hyperf/pull/7427) Fixed bug that `exclude` cannot not work when using `validation`.
 
 # v3.1.57 - 2025-06-23
