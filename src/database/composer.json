@@ -21,7 +21,7 @@
         "hyperf/conditionable": "~3.1.0",
         "hyperf/context": "~3.1.0",
         "hyperf/contract": "~3.1.0",
-        "hyperf/engine": "~3.1.0",
+        "hyperf/engine": "^2.0",
         "hyperf/macroable": "~3.1.0",
         "hyperf/stringable": "~3.1.0",
         "hyperf/support": "~3.1.0",
