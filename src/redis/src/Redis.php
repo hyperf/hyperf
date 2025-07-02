@@ -95,7 +95,14 @@ class Redis
             return true;
         }
 
-        return in_array($methodName, ['multi', 'pipeline']) && ! isset($arguments[0]);
+        if (isset($arguments['using_callback'])) {
+            return false;
+        }
+        
+        return in_array($methodName, [
+            'multi',
+            'pipeline',
+        ]);
     }
 
     /**

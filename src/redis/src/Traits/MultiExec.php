@@ -26,9 +26,12 @@ trait MultiExec
      */
     public function pipeline(?callable $callback = null)
     {
-        $pipeline = $this->__call('pipeline', []);
-
-        return is_null($callback) ? $pipeline : tap($pipeline, $callback)->exec();
+        if (is_null($callback)) {
+            return $this->__call('pipeline', []);
+        }
+        
+        $pipeline = $this->__call('pipeline', ['using_callback' => true]);
+        return tap($pipeline, $callback)->exec();
     }
 
     /**
@@ -38,8 +41,11 @@ trait MultiExec
      */
     public function transaction(?callable $callback = null)
     {
-        $transaction = $this->__call('multi', []);
-
-        return is_null($callback) ? $transaction : tap($transaction, $callback)->exec();
+        if (is_null($callback)) {
+            return $this->__call('multi', []);
+        }
+        
+        $transaction = $this->__call('multi', ['using_callback' => true]);
+        return tap($transaction, $callback)->exec();
     }
 }
