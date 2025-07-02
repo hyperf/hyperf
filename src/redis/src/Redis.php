@@ -65,15 +65,14 @@ class Redis
 
             // Release connection.
             if (! $hasContextConnection) {
-                if ($this->shouldUseSameConnection($name, $arguments)) {
+                if ($this->shouldUseSameConnection($name)) {
                     if ($name === 'select' && $db = $arguments[0]) {
                         $connection->setDatabase((int) $db);
                     }
                     // Should storage the connection to coroutine context, then use defer() to release the connection.
                     Context::set($this->getContextKey(), $connection);
-                    defer(function () use ($connection) {
-                        Context::set($this->getContextKey(), null);
-                        $connection->release();
+                    defer(function () {
+                        $this->releaseContextConnection();
                     });
                 } else {
                     // Release the connection after command executed.
@@ -86,16 +85,30 @@ class Redis
     }
 
     /**
+     * Release the connection stored in coroutine context.
+     */
+    protected function releaseContextConnection(): void
+    {
+        $contextKey = $this->getContextKey();
+        $connection = Context::get($contextKey);
+        
+        if ($connection) {
+            Context::set($contextKey, null);
+            $connection->release();
+        }
+    }
+
+    /**
      * Define the commands that need same connection to execute.
      * When these commands executed, the connection will storage to coroutine context.
      */
-    private function shouldUseSameConnection(string $methodName, array $arguments = []): bool
+    private function shouldUseSameConnection(string $methodName): bool
     {
-        if ($methodName === 'select') {
-            return true;
-        }
-
-        return in_array($methodName, ['multi', 'pipeline']) && ! isset($arguments[0]);
+        return in_array($methodName, [
+            'multi',
+            'pipeline',
+            'select',
+        ]);
     }
 
     /**

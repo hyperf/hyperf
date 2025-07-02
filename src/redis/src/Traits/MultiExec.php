@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Redis\Traits;
 
+use Hyperf\Context\Context;
 use Redis;
 use RedisCluster;
 
@@ -28,7 +29,15 @@ trait MultiExec
     {
         $pipeline = $this->__call('pipeline', []);
 
-        return is_null($callback) ? $pipeline : tap($pipeline, $callback)->exec();
+        if (is_null($callback)) {
+            return $pipeline;
+        }
+
+        try {
+            return tap($pipeline, $callback)->exec();
+        } finally {
+            $this->releaseMultiExecConnection();
+        }
     }
 
     /**
@@ -40,6 +49,27 @@ trait MultiExec
     {
         $transaction = $this->__call('multi', []);
 
-        return is_null($callback) ? $transaction : tap($transaction, $callback)->exec();
+        if (is_null($callback)) {
+            return $transaction;
+        }
+
+        try {
+            return tap($transaction, $callback)->exec();
+        } finally {
+            $this->releaseMultiExecConnection();
+        }
+    }
+
+    /**
+     * Release connection after multi-exec callback.
+     */
+    private function releaseMultiExecConnection(): void
+    {
+        $contextKey = $this->getContextKey();
+        $connection = Context::get($contextKey);
+
+        if ($connection && $connection->isUsingDefaultDatabase()) {
+            $this->releaseContextConnection();
+        }
     }
 }
