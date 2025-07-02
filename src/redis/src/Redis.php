@@ -91,7 +91,7 @@ class Redis
     {
         $contextKey = $this->getContextKey();
         $connection = Context::get($contextKey);
-        
+
         if ($connection) {
             Context::set($contextKey, null);
             $connection->release();
