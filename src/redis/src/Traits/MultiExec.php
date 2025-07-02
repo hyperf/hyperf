@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Redis\Traits;
 
+use Hyperf\Context\Context;
 use Redis;
 use RedisCluster;
 
@@ -26,9 +27,17 @@ trait MultiExec
      */
     public function pipeline(?callable $callback = null)
     {
-        $pipeline = $this->__call('pipeline', []);
-
-        return is_null($callback) ? $pipeline : tap($pipeline, $callback)->exec();
+        if (is_null($callback)) {
+            return $this->__call('pipeline', []);
+        }
+        
+        Context::set('redis.using_callback', true);
+        try {
+            $pipeline = $this->__call('pipeline', []);
+            return tap($pipeline, $callback)->exec();
+        } finally {
+            Context::set('redis.using_callback', null);
+        }
     }
 
     /**
@@ -38,8 +47,16 @@ trait MultiExec
      */
     public function transaction(?callable $callback = null)
     {
-        $transaction = $this->__call('multi', []);
-
-        return is_null($callback) ? $transaction : tap($transaction, $callback)->exec();
+        if (is_null($callback)) {
+            return $this->__call('multi', []);
+        }
+        
+        Context::set('redis.using_callback', true);
+        try {
+            $transaction = $this->__call('multi', []);
+            return tap($transaction, $callback)->exec();
+        } finally {
+            Context::set('redis.using_callback', null);
+        }
     }
 }
