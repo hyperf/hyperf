@@ -27,17 +27,7 @@ trait MultiExec
      */
     public function pipeline(?callable $callback = null)
     {
-        $pipeline = $this->__call('pipeline', []);
-
-        if (is_null($callback)) {
-            return $pipeline;
-        }
-
-        try {
-            return tap($pipeline, $callback)->exec();
-        } finally {
-            $this->releaseMultiExecConnection();
-        }
+        return $this->executeMultiExec('pipeline', $callback);
     }
 
     /**
@@ -47,29 +37,31 @@ trait MultiExec
      */
     public function transaction(?callable $callback = null)
     {
-        $transaction = $this->__call('multi', []);
-
-        if (is_null($callback)) {
-            return $transaction;
-        }
-
-        try {
-            return tap($transaction, $callback)->exec();
-        } finally {
-            $this->releaseMultiExecConnection();
-        }
+        return $this->executeMultiExec('multi', $callback);
     }
 
     /**
-     * Release connection after multi-exec callback.
+     * Execute multi-exec commands with optional callback.
+     *
+     * @return array|Redis|RedisCluster
      */
-    private function releaseMultiExecConnection(): void
+    private function executeMultiExec(string $command, ?callable $callback = null)
     {
-        $contextKey = $this->getContextKey();
-        $connection = Context::get($contextKey);
+        $instance = $this->__call($command, []);
 
-        if ($connection && $connection->isUsingDefaultDatabase()) {
-            $this->releaseContextConnection();
+        if (is_null($callback)) {
+            return $instance;
+        }
+
+        try {
+            return tap($instance, $callback)->exec();
+        } finally {
+            $contextKey = $this->getContextKey();
+            $connection = Context::get($contextKey);
+
+            if ($connection && $connection->isUsingDefaultDatabase()) {
+                $this->releaseContextConnection();
+            }
         }
     }
 }
