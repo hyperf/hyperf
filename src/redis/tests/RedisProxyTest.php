@@ -261,7 +261,7 @@ class RedisProxyTest extends TestCase
                     });
 
                     // Simulate work after callback
-                    sleep(1); 
+                    sleep(1);
 
                     $this->assertCount(4, $results);
                     $this->assertTrue($results[0]);

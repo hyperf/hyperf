@@ -197,7 +197,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     public function isUsingDefaultDatabase(): bool
     {
         return ! $this->database || $this->database === $this->config['db'];
-    }    
+    }
 
     protected function createRedisCluster(): RedisCluster
     {
