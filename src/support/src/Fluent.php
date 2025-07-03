@@ -26,7 +26,7 @@ use JsonSerializable;
  * @template TValue
  *
  * @implements \Hyperf\Contract\Arrayable<TKey, TValue>
- * @implements \ArrayAccess<TKey, TValue>
+ * @implements ArrayAccess<TKey, TValue>
  */
 class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
