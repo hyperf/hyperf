@@ -52,19 +52,16 @@ trait MultiExec
         }
 
         $hasExistingConnection = Context::has($this->getContextKey());
-
         $instance = $this->__call($command, []);
 
         try {
             return tap($instance, $callback)->exec();
         } finally {
-            if ($hasExistingConnection) {
-                return;
-            }
-
-            $connection = Context::get($this->getContextKey());
-            if ($connection && $connection->isUsingDefaultDatabase()) {
-                $this->releaseContextConnection();
+            if (!$hasExistingConnection) {
+                $connection = Context::get($this->getContextKey());
+                if ($connection && $connection->isUsingDefaultDatabase()) {
+                    $this->releaseContextConnection();
+                }
             }
         }
     }
