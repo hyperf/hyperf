@@ -1,4 +1,18 @@
-# v3.1.57 - TBD
+# v3.1.59 - TBD
+
+## Fixed
+
+- [#7421](https://github.com/hyperf/hyperf/pull/7421) Fixed bug that the cookie value cannot be deleted when set "".
+- [#7424](https://github.com/hyperf/hyperf/pull/7424) Fixed bug that the path of `php` cannot contain spaces for `watcher`.
+- [#7427](https://github.com/hyperf/hyperf/pull/7427) Fixed bug that `exclude` cannot not work when using `validation`.
+
+# v3.1.57 - 2025-06-23
+
+## Fixed
+
+- [#7402](https://github.com/hyperf/hyperf/pull/7402) Fixed bug that `connect_timeout` cannot work for `pgsql-swoole` database.
+- [#7414](https://github.com/hyperf/hyperf/pull/7414) Fixed bug that sqlite migration does not work.
+- [#7420](https://github.com/hyperf/hyperf/pull/7420) Fixed bug that luasha cannot work when redis server restart.
 
 ## Optimized
 
