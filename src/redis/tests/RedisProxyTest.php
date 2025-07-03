@@ -236,6 +236,39 @@ class RedisProxyTest extends TestCase
         });
     }
 
+    public function testPipelineCallbackAndPipeline()
+    {
+        $redis = $this->getRedis();
+        (new Waiter())->wait(function () use ($redis) {
+            $r = $redis->transaction();
+
+            $redis->set('concurrent_pipeline_test_callback_and_select_value', $id = uniqid(), 600);
+
+            $key = 'concurrent_pipeline_test_callback_and_select';
+
+            $redis->pipeline(function (\Redis $pipe) use ($key) {
+                $pipe->set($key, "value_{$key}");
+                $pipe->incr("{$key}_counter");
+                $pipe->get($key);
+                $pipe->get("{$key}_counter");
+            });
+
+            go(static function () use ($redis) {
+                $redis->select(1);
+                $redis->set('xxx', 'x');
+                $redis->set('xxx', 'x');
+                $redis->set('xxx', 'x');
+            });
+
+            $r->set('xxxxxx', 'x');
+            $r->set('xxxxxx', 'x');
+            $r->set('xxxxxx', 'x');
+            $r->set('xxxxxx', 'x');
+
+            $this->assertTrue(true);
+        });
+    }
+
     public function testConcurrentPipelineCallbacksWithLimitedConnectionPool()
     {
         $redis = $this->getRedis([], 3); // max_connections = 3
