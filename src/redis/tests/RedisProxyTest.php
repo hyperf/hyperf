@@ -240,7 +240,7 @@ class RedisProxyTest extends TestCase
     {
         $redis = $this->getRedis();
         (new Waiter())->wait(function () use ($redis) {
-            $r = $redis->transaction();
+            $r = $redis->pipeline();
 
             $redis->set('concurrent_pipeline_test_callback_and_select_value', $id = uniqid(), 600);
 
