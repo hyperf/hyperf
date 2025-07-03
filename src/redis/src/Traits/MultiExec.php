@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Redis\Traits;
 
 use Hyperf\Context\Context;
+use Hyperf\Redis\Redis as HyperfRedis;
 use Redis;
 use RedisCluster;
 
@@ -49,6 +50,10 @@ trait MultiExec
     {
         if (is_null($callback)) {
             return $this->__call($command, []);
+        }
+
+        if (! $this instanceof HyperfRedis) {
+            return tap($this->__call($command, []), $callback)->exec();
         }
 
         $hasExistingConnection = Context::has($this->getContextKey());
