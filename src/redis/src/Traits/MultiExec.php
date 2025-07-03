@@ -52,7 +52,6 @@ trait MultiExec
         }
 
         $hasExistingConnection = Context::has($this->getContextKey());
-
         $instance = $this->__call($command, []);
 
         try {
