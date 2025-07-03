@@ -215,6 +215,20 @@ class RedisProxyTest extends TestCase
         $this->assertSame([['C', 'D'], true], $chan2->pop());
     }
 
+    public function testSelectAndReleaseContextConnection()
+    {
+        $redis = $this->getRedis();
+        $redis->select(1);
+        $id = 'test:incr:' . uniqid();
+        $res = $redis->incr($id, 1);
+        $this->assertEquals(1, $res);
+        $res = $redis->get($id);
+        $this->assertEquals(1, $res);
+        $redis->releaseContextConnection();
+        $res = $redis->exists($id);
+        $this->assertTrue($res === 0);
+    }
+
     public function testPipelineCallbackAndSelect()
     {
         $redis = $this->getRedis();

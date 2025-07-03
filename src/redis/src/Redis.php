@@ -87,7 +87,7 @@ class Redis
     /**
      * Release the connection stored in coroutine context.
      */
-    protected function releaseContextConnection(): void
+    public function releaseContextConnection(): void
     {
         $contextKey = $this->getContextKey();
         $connection = Context::get($contextKey);
