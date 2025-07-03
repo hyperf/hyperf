@@ -47,18 +47,22 @@ trait MultiExec
      */
     private function executeMultiExec(string $command, ?callable $callback = null)
     {
-        $instance = $this->__call($command, []);
-
         if (is_null($callback)) {
-            return $instance;
+            return $this->__call($command, []);
         }
+
+        $hasExistingConnection = Context::has($this->getContextKey());
+
+        $instance = $this->__call($command, []);
 
         try {
             return tap($instance, $callback)->exec();
         } finally {
-            $contextKey = $this->getContextKey();
-            $connection = Context::get($contextKey);
+            if ($hasExistingConnection) {
+                return;
+            }
 
+            $connection = Context::get($this->getContextKey());
             if ($connection && $connection->isUsingDefaultDatabase()) {
                 $this->releaseContextConnection();
             }
