@@ -791,15 +791,6 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * Remove the given attribute.
-     */
-    protected function removeAttribute(string $attribute): void
-    {
-        Arr::forget($this->data, $attribute);
-        Arr::forget($this->rules, $attribute);
-    }
-
-    /**
      * Add the given attribute to the list of excluded attributes.
      */
     protected function excludeAttribute(string $attribute): void
