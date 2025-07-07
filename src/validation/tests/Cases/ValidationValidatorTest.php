@@ -2893,17 +2893,6 @@ class ValidationValidatorTest extends TestCase
         $this->assertTrue($v->passes());
     }
 
-    /**
-     * @param mixed $invalidUrl
-     */
-    #[DataProvider('invalidUrls')]
-    public function testValidateUrlWithInvalidUrls($invalidUrl)
-    {
-        $trans = $this->getIlluminateArrayTranslator();
-        $v = new Validator($trans, ['x' => $invalidUrl], ['x' => 'Url']);
-        $this->assertFalse($v->passes());
-    }
-
     public static function validUrls()
     {
         return [
@@ -3144,6 +3133,17 @@ class ValidationValidatorTest extends TestCase
             ['https://laravel.com#fragment'],
             ['https://laravel.com/#fragment'],
         ];
+    }
+
+    /**
+     * @param mixed $invalidUrl
+     */
+    #[DataProvider('invalidUrls')]
+    public function testValidateUrlWithInvalidUrls($invalidUrl)
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['x' => $invalidUrl], ['x' => 'Url']);
+        $this->assertFalse($v->passes());
     }
 
     public static function invalidUrls()
@@ -5299,17 +5299,6 @@ class ValidationValidatorTest extends TestCase
         $this->assertTrue($v->passes());
     }
 
-    /**
-     * @param mixed $uuid
-     */
-    #[DataProvider('invalidUuidList')]
-    public function testValidateWithInvalidUuid($uuid)
-    {
-        $trans = $this->getIlluminateArrayTranslator();
-        $v = new Validator($trans, ['foo' => $uuid], ['foo' => 'uuid']);
-        $this->assertFalse($v->passes());
-    }
-
     public static function validUuidList()
     {
         return [
@@ -5324,6 +5313,17 @@ class ValidationValidatorTest extends TestCase
             ['ff6f8cb0-c57d-51e1-9b21-0800200c9a66'],
             ['FF6F8CB0-C57D-11E1-9B21-0800200C9A66'],
         ];
+    }
+
+    /**
+     * @param mixed $uuid
+     */
+    #[DataProvider('invalidUuidList')]
+    public function testValidateWithInvalidUuid($uuid)
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => $uuid], ['foo' => 'uuid']);
+        $this->assertFalse($v->passes());
     }
 
     public static function invalidUuidList()
