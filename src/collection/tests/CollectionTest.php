@@ -695,19 +695,6 @@ class CollectionTest extends TestCase
         $this->assertSame(['foo'], $c->all());
     }
 
-    /**
-     * Provides each collection class, respectively.
-     *
-     * @return array
-     */
-    public static function collectionClassProvider()
-    {
-        return [
-            [Collection::class],
-            [LazyCollection::class],
-        ];
-    }
-
     #[DataProvider('collectionClassProvider')]
     public function testSoleReturnsFirstItemInCollectionIfOnlyOneExists($collection): void
     {
@@ -1353,5 +1340,18 @@ class CollectionTest extends TestCase
             ['id' => 2, 'name' => 'b'],
             ['id' => 1, 'name' => null],
         ]), json_encode($dataManyNull));
+    }
+
+    /**
+     * Provides each collection class, respectively.
+     *
+     * @return array
+     */
+    public static function collectionClassProvider()
+    {
+        return [
+            [Collection::class],
+            [LazyCollection::class],
+        ];
     }
 }
