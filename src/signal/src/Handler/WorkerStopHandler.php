@@ -15,7 +15,7 @@ namespace Hyperf\Signal\Handler;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Signal\SignalHandlerInterface;
 use Psr\Container\ContainerInterface;
-use Swoole\Server;
+use Swoole;
 
 class WorkerStopHandler implements SignalHandlerInterface
 {
@@ -41,6 +41,10 @@ class WorkerStopHandler implements SignalHandlerInterface
             sleep($time);
         }
 
-        $this->container->get(Server::class)->stop();
+        // Prevents the display of deadlock error messages during worker shutdown.
+        // These errors are purely costmetic in signal handlers and can be safely ignored.
+        Swoole\Coroutine::set(['enable_deadlock_check' => false]);
+
+        $this->container->get(Swoole\Server::class)->stop();
     }
 }
