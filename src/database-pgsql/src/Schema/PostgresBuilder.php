@@ -147,13 +147,8 @@ class PostgresBuilder extends Builder
      */
     public function getAllTables(): array
     {
-        $schemas = (array) $this->connection->getConfig('schema');
-        if (empty($schemas)) {
-            $schemas = ['public'];
-        }
-
         return $this->connection->select(
-            $this->grammar->compileGetAllTables($schemas)
+            $this->grammar->compileGetAllTables($this->getSchemas())
         );
     }
 
@@ -163,7 +158,7 @@ class PostgresBuilder extends Builder
     public function getAllViews(): array
     {
         return $this->connection->select(
-            $this->grammar->compileGetAllViews((array) $this->connection->getConfig('schema'))
+            $this->grammar->compileGetAllViews($this->getSchemas())
         );
     }
 
@@ -264,6 +259,17 @@ class PostgresBuilder extends Builder
         return $this->connection->getPostProcessor()->processIndexes(
             $this->connection->selectFromWriteConnection($this->grammar->compileIndexes($schema, $table))
         );
+    }
+
+    /**
+     * Get the schemas for the connection.
+     *
+     * @return array
+     */
+    protected function getSchemas(): array
+    {
+        $schemas = (array) $this->connection->getConfig('schema');
+        return empty($schemas) ? ['public'] : $schemas;
     }
 
     /**
