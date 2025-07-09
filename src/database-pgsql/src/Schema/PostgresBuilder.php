@@ -263,8 +263,6 @@ class PostgresBuilder extends Builder
 
     /**
      * Get the schemas for the connection.
-     *
-     * @return array
      */
     protected function getSchemas(): array
     {
