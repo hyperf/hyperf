@@ -147,8 +147,13 @@ class PostgresBuilder extends Builder
      */
     public function getAllTables(): array
     {
+        $schemas = (array) $this->connection->getConfig('schema');
+        if (empty($schemas)) {
+            $schemas = ['public'];
+        }
+
         return $this->connection->select(
-            $this->grammar->compileGetAllTables((array) $this->connection->getConfig('schema'))
+            $this->grammar->compileGetAllTables($schemas)
         );
     }
 
