@@ -1,5 +1,9 @@
 # v3.1.60 - TBD
 
+## Fixed
+
+- [#7447](https://github.com/hyperf/hyperf/pull/7447) Fixed bug that the `migrate:fresh` command did not drop Postgres tables by default.
+
 # v3.1.59 - 2025-07-03
 
 ## Fixed
