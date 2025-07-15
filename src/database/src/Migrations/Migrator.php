@@ -157,7 +157,7 @@ class Migrator
             return [];
         }
 
-        return $this->resetMigrations($migrations, $paths, $pretend);
+        return $this->resetMigrations($migrations, Arr::wrap($paths), $pretend);
     }
 
     /**
