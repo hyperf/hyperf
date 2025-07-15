@@ -537,7 +537,7 @@
     },
     "scripts": {
         "analyse": "phpstan analyse --memory-limit=-1",
-        "cs-fix": "php-cs-fixer fix $1",
+        "cs-fix": "php-cs-fixer fix $1 --verbose",
         "json-fix": [
             "./bin/composer-json-fixer",
             "@composer normalize --no-update-lock",

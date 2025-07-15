@@ -431,12 +431,6 @@ class StrTest extends TestCase
         $this->assertTrue(Str::isUrl($url));
     }
 
-    #[DataProvider('invalidUrls')]
-    public function testInvalidUrls($url)
-    {
-        $this->assertFalse(Str::isUrl($url));
-    }
-
     public static function validUrls()
     {
         return [
@@ -677,6 +671,12 @@ class StrTest extends TestCase
             ['https://hyperf.wiki#fragment'],
             ['https://hyperf.wiki/#fragment'],
         ];
+    }
+
+    #[DataProvider('invalidUrls')]
+    public function testInvalidUrls($url)
+    {
+        $this->assertFalse(Str::isUrl($url));
     }
 
     public static function invalidUrls()

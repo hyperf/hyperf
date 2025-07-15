@@ -16,7 +16,7 @@ use JetBrains\PhpStorm\ArrayShape;
 
 final class TableData
 {
-    public function __construct(protected array $columns, protected array $indexes, protected string $comment)
+    public function __construct(private array $columns, private array $indexes, private string $comment)
     {
     }
 
