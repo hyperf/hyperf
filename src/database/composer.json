@@ -17,7 +17,7 @@
     "require": {
         "php": ">=8.2",
         "hyperf/code-parser": "~3.2.0",
-        "hyperf/collection": "~3.1.23",
+        "hyperf/collection": "~3.2.0",
         "hyperf/conditionable": "~3.2.0",
         "hyperf/context": "~3.2.0",
         "hyperf/contract": "~3.2.0",
