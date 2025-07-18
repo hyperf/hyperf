@@ -56,6 +56,7 @@ use Throwable;
 
 use function Hyperf\Coroutine\defer;
 use function Hyperf\Coroutine\wait;
+use function Hyperf\Support\make;
 
 class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, OnCloseInterface, OnMessageInterface
 {
