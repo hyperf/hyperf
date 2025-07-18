@@ -90,4 +90,5 @@ parameters:
     - '#Call to function \w+\(\) with .* will always evaluate to true.#'
     - '#Trait .* is used zero times and is not analysed.#'
     - "#Method .* has (.*) in PHPDoc @throws tag but it's not thrown.#"
+    - '#PHPDoc tag @var with type .* is not subtype of native type .*.#'
     - '#Parameter \#\d+ \$previous of class (\w+)Exception constructor expects Exception\|null, Throwable given.#'
