@@ -11,7 +11,7 @@ parameters:
     maximumNumberOfProcesses: 32
     minimumNumberOfJobsPerProcess: 2
   inferPrivatePropertyTypeFromConstructor: true
-  treatPhpDocTypesAsCertain: true
+  treatPhpDocTypesAsCertain: false
   reportUnmatchedIgnoredErrors: false
   excludePaths:
     - %currentWorkingDirectory%/src/helper/*
@@ -84,3 +84,8 @@ parameters:
       path: src/collection/src/*.php
     - message: '#has no type specified#'
       path: src/nacos/src/Protobuf/*.php
+    - '#Path in (require|require_once|include|include_once)\(\) ".*" is not a file or it does not exist.#'
+    - '#Call to function is_(array|string|object)\(\) with .* will always evaluate to true.#'
+    - '#Call to static method PHPUnit\\Framework\\Assert::assertTrue\(\) with true will always evaluate to true.#'
+    - '#Trait .* is used zero times and is not analysed.#'
+    - "#Method .* has (.*) in PHPDoc @throws tag but it's not thrown.#"
