@@ -270,7 +270,7 @@ class CreateMigrationVisitor extends NodeVisitorAbstract
             $result[] = new Node\Stmt\Expression(new Node\Expr\MethodCall(
                 new Node\Expr\Variable('table'),
                 new Node\Identifier($method),
-                value(static function () use ($columns, $keyName) {
+                value(static function () use ($columns, $keyName) { // @phpstan-ignore argument.type
                     $result = [
                         PhpParser::getInstance()->getExprFromValue($columns),
                     ];
