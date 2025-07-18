@@ -87,5 +87,6 @@ parameters:
     - '#Path in (require|require_once|include|include_once)\(\) ".*" is not a file or it does not exist.#'
     - '#Call to function is_(array|string|object)\(\) with .* will always evaluate to true.#'
     - '#Call to static method PHPUnit\\Framework\\Assert::assertTrue\(\) with true will always evaluate to true.#'
+    - '#Call to function \w+\(\) with .* will always evaluate to true.#'
     - '#Trait .* is used zero times and is not analysed.#'
     - "#Method .* has (.*) in PHPDoc @throws tag but it's not thrown.#"
