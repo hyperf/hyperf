@@ -33,7 +33,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
 {
     use RecvTrait;
 
-    private ?LoadBalancerInterface $loadBalancer;
+    private ?LoadBalancerInterface $loadBalancer = null;
 
     /**
      * If $loadBalancer is null, will select a node in $nodes to request,
