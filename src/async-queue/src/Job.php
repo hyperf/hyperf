@@ -38,7 +38,7 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
 
     public function uncompress(): static
     {
-        foreach ($this as $key => $value) {
+        foreach (get_object_vars($this) as $key => $value) {
             if ($value instanceof UnCompressInterface) {
                 $this->{$key} = $value->uncompress();
             }
@@ -49,7 +49,7 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
 
     public function compress(): static
     {
-        foreach ($this as $key => $value) {
+        foreach (get_object_vars($this) as $key => $value) {
             if ($value instanceof CompressInterface) {
                 $this->{$key} = $value->compress();
             }

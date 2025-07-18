@@ -155,14 +155,20 @@ class CreateMigrationVisitor extends NodeVisitorAbstract
             $extra['total'] = $columnItem['numeric_precision'];
             $extra['places'] = $columnItem['numeric_scale'];
         }
+        $args = [
+            new Node\Arg(new Node\Scalar\String_($type)),
+            new Node\Arg(new Node\Scalar\String_($column->getName())),
+        ];
+
+        foreach ($extra as $key => $value) {
+            $args[] = new Node\Arg(new Node\Scalar\String_($key));
+            $args[] = new Node\Arg(PhpParser::getInstance()->getExprFromValue($value));
+        }
+
         return new Node\Expr\MethodCall(
             new Node\Expr\Variable('table'),
             new Node\Identifier('addColumn'),
-            [
-                new Node\Arg(new Node\Scalar\String_($type)),
-                new Node\Arg(new Node\Scalar\String_($column->getName())),
-                PhpParser::getInstance()->getExprFromValue($extra),
-            ]
+            $args
         );
     }
 
