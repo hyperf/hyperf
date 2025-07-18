@@ -92,3 +92,4 @@ parameters:
     - "#Method .* has (.*) in PHPDoc @throws tag but it's not thrown.#"
     - '#PHPDoc tag @var with type .* is not subtype of native type .*.#'
     - '#Parameter \#\d+ \$previous of class (\w+)Exception constructor expects Exception\|null, Throwable given.#'
+    - "#Match arm comparison between 'Swoole' and 'Swoole' is always true.#"
