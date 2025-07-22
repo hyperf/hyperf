@@ -135,6 +135,16 @@ class SQLiteBuilder extends Builder
     }
 
     /**
+     * Get all of the table names for the database.
+     */
+    public function getAllTables(): array
+    {
+        return $this->connection->select(
+            $this->grammar->compileGetAllTables()
+        );
+    }
+
+    /**
      * Empty the database file.
      */
     public function refreshDatabaseFile(): void
