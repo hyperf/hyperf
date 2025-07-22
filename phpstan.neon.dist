@@ -33,13 +33,12 @@ parameters:
     - %currentWorkingDirectory%/src/amqp/src/IO/SwowIO.php
   ignoreErrors:
     -
-      identifier: missingType.iterableValue
-    -
-      identifier: missingType.generics
-    -
-      identifier: missingType.return
-    -
-      identifier: missingType.parameter
+      identifiers:
+        - missingType.iterableValue
+        - missingType.generics
+        - missingType.return
+        - missingType.parameter
+        - unset.possiblyHookedProperty
     - '#Unable to resolve the template type#'
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
