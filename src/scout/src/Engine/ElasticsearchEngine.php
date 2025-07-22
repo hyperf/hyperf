@@ -57,10 +57,10 @@ class ElasticsearchEngine extends Engine
      * @phpstan-ignore-next-line
      * @param Collection<int, Model&Searchable> $models
      */
-    public function update($models): void
+    public function update($models): void // @phpstan-ignore parameter.unresolvableType
     {
         $params['body'] = [];
-        $models->each(function ($model) use (&$params) {
+        $models->each(function ($model) use (&$params) { // @phpstan-ignore argument.unresolvableType
             if ($this->index) {
                 $update = [
                     '_id' => $model->getKey(),
@@ -89,10 +89,10 @@ class ElasticsearchEngine extends Engine
      * @phpstan-ignore-next-line
      * @param Collection<int, Model&Searchable> $models
      */
-    public function delete($models): void
+    public function delete($models): void // @phpstan-ignore parameter.unresolvableType
     {
         $params['body'] = [];
-        $models->each(function ($model) use (&$params) {
+        $models->each(function ($model) use (&$params) { // @phpstan-ignore argument.unresolvableType
             if ($this->index) {
                 $delete = [
                     '_id' => $model->getKey(),

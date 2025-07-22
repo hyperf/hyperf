@@ -78,7 +78,8 @@ class Parallel
             $executionException = new ParallelExecutionException($message);
             $executionException->setResults($this->results);
             $executionException->setThrowables($this->throwables);
-            unset($this->results, $this->throwables);
+            $this->results = [];
+            $this->throwables = [];
             throw $executionException;
         }
         return $this->results;
