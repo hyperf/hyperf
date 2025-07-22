@@ -101,6 +101,16 @@ class SQLiteBuilder extends Builder
 
         return false;
     }
+    
+    /**
+     * Get the tables that belong to the database.
+     */
+    public function getTables(bool $withSize = false): array
+    {
+        return $this->connection->getPostProcessor()->processTables(
+            $this->connection->selectFromWriteConnection($this->grammar->compileTables($withSize))
+        );
+    }
 
     /**
      * Drop all tables from the database.
