@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Crontab;
 
-use Hyperf\Carbon\Carbon;
+use Carbon\Carbon;
 use Hyperf\Crontab\Crontab;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
