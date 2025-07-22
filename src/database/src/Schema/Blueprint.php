@@ -160,7 +160,7 @@ class Blueprint
             $method = 'compile' . ucfirst($command->name);
 
             if (method_exists($grammar, $method)) {
-                if (! is_null($sql = $grammar->{$method}($this, $command, $connection))) {
+                if (! empty($sql = $grammar->{$method}($this, $command, $connection))) {
                     $statements = array_merge($statements, (array) $sql);
                 }
             }
@@ -1492,6 +1492,11 @@ class Blueprint
         $this->addFluentIndexes();
 
         $this->addFluentCommands($grammar);
+
+        // Add table comment command for PostgreSQL if table has comment and is being created
+        if ($this->creating() && ! empty($this->comment) && in_array('TableComment', $grammar->getFluentCommands())) {
+            $this->addCommand('tableComment', ['value' => $this->comment]);
+        }
     }
 
     /**

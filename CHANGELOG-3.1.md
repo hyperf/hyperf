@@ -1,4 +1,34 @@
-# v3.1.56 - TBD
+# v3.1.59 - TBD
+
+## Fixed
+
+- [#7421](https://github.com/hyperf/hyperf/pull/7421) Fixed bug that the cookie value cannot be deleted when set "".
+- [#7424](https://github.com/hyperf/hyperf/pull/7424) Fixed bug that the path of `php` cannot contain spaces for `watcher`.
+- [#7427](https://github.com/hyperf/hyperf/pull/7427) Fixed bug that `exclude` cannot not work when using `validation`.
+
+# v3.1.57 - 2025-06-23
+
+## Fixed
+
+- [#7402](https://github.com/hyperf/hyperf/pull/7402) Fixed bug that `connect_timeout` cannot work for `pgsql-swoole` database.
+- [#7414](https://github.com/hyperf/hyperf/pull/7414) Fixed bug that sqlite migration does not work.
+- [#7420](https://github.com/hyperf/hyperf/pull/7420) Fixed bug that luasha cannot work when redis server restart.
+
+## Optimized
+
+- [#7411](https://github.com/hyperf/hyperf/pull/7411) Remove `Hyperf\Utils` Component.
+
+# v3.1.56 - 2025-06-05
+
+## Fixed
+
+- [#7400](https://github.com/hyperf/hyperf/pull/7400) Fixed bug that `gen:model` cannot work when using `pgsql`.
+- [#7410](https://github.com/hyperf/hyperf/pull/7410) Fixed bug that `setMultiple` cannot work for memory cache driver.
+
+## Added
+
+- [#7392](https://github.com/hyperf/hyperf/pull/7392) Added `coroutine` option to `AsCommand` and `ClosureCommand`.
+- [#7404](https://github.com/hyperf/hyperf/pull/7404) Added param `runAsync` for `CacheAHead`.
 
 # v3.1.55 - 2025-05-15
 

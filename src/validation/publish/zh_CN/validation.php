@@ -48,6 +48,11 @@ return [
     'dimensions' => ':attribute 具有无效的图片尺寸',
     'distinct' => ':attribute 字段具有重复值',
     'email' => ':attribute 必须是一个合法的电子邮件地址',
+    'exclude' => ':attribute 字段是被排除的',
+    'exclude_if' => '当 :other 为 :value 时，排除 :attribute 字段',
+    'exclude_unless' => '除非 :other 是在 :values 中，否则排除 :attribute 字段',
+    'exclude_with' => '当 :values 存在时，排除 :attribute 字段',
+    'exclude_without' => '当 :values 不存在时，排除 :attribute 字段',
     'exists' => '选定的 :attribute 是无效的',
     'file' => ':attribute 必须是一个文件',
     'filled' => ':attribute 的字段是必填的',
@@ -111,11 +116,6 @@ return [
     'required_with_all' => ':attribute 字段是必须的当 :values 是存在的',
     'required_without' => ':attribute 字段是必须的当 :values 是不存在的',
     'required_without_all' => ':attribute 字段是必须的当 没有一个 :values 是存在的',
-    'exclude' => ':attribute 字段是被排除的',
-    'exclude_if' => '当 :other 为 :value 时，排除 :attribute 字段',
-    'exclude_unless' => '除非 :other 是在 :values 中，否则排除 :attribute 字段',
-    'exclude_with' => '当 :values 存在时，排除 :attribute 字段',
-    'exclude_without' => '当 :values 不存在时，排除 :attribute 字段',
     'same' => ':attribute 和 :other 必须匹配',
     'size' => [
         'numeric' => ':attribute 必须是 :size',
@@ -148,6 +148,7 @@ return [
         'string' => '当 :other 为 :value 时 :attribute 必须介于 :min - :max 个字符之间',
         'array' => '当 :other 为 :value 时 :attribute 必须只有 :min - :max 个单元',
     ],
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines

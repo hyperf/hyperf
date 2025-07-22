@@ -196,7 +196,6 @@
         "hyperf/testing": "*",
         "hyperf/tracer": "*",
         "hyperf/translation": "*",
-        "hyperf/utils": "*",
         "hyperf/validation": "*",
         "hyperf/view": "*",
         "hyperf/view-engine": "*",

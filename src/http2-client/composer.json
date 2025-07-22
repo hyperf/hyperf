@@ -19,6 +19,7 @@
         "php": ">=8.2",
         "hyperf/contract": "~3.2.0",
         "hyperf/coordinator": "~3.2.0",
+        "hyperf/coroutine": "~3.2.0",
         "hyperf/engine": "^2.6"
     },
     "autoload": {
