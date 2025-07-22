@@ -18,8 +18,12 @@
     },
     "require": {
         "php": ">=8.2",
+        "hyperf/context": "~3.2.0",
+        "hyperf/contract": "~3.2.0",
+        "hyperf/coordinator": "~3.2.0",
         "hyperf/http-server": "~3.2.0",
-        "hyperf/rpc": "~3.2.0"
+        "hyperf/rpc": "~3.2.0",
+        "hyperf/stringable": "~3.2.0"
     },
     "suggest": {
         "hyperf/di": "Required to use annotations."

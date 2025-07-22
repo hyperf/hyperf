@@ -90,34 +90,6 @@ class WhereHasTest extends TestCase
         (new Text(['content' => 'test2']))->post()->associate($post)->save();
     }
 
-    public static function dataProviderWhereRelationCallback()
-    {
-        $callbackArray = function ($value) {
-            $callbackEloquent = function (ModelBuilder $builder) use ($value) {
-                $builder->selectRaw('id')->where('public', $value);
-            };
-
-            $callbackQuery = function (QueryBuilder $builder) use ($value) {
-                $hasMany = (new User())->posts();
-
-                $builder->from('posts')->addSelect(['*'])->whereColumn(
-                    $hasMany->getQualifiedParentKeyName(),
-                    '=',
-                    $hasMany->getQualifiedForeignKeyName()
-                );
-
-                $builder->selectRaw('id')->where('public', $value);
-            };
-
-            return [$callbackEloquent, $callbackQuery];
-        };
-
-        return [
-            'Find user with post.public = true' => $callbackArray(true),
-            'Find user with post.public = false' => $callbackArray(false),
-        ];
-    }
-
     public function testWhereRelation()
     {
         $users = User::whereRelation('posts', 'public', true)->get();
@@ -204,6 +176,34 @@ class WhereHasTest extends TestCase
         $this->assertEquals($userOrWhereRelation->first()->id, $query->first()->id);
         $this->assertEquals($userOrWhereRelation->first()->id, $userOrWhereHas->first()->id);
         $this->assertEquals($userOrWhereHas->first()->id, $query->first()->id);
+    }
+
+    public static function dataProviderWhereRelationCallback()
+    {
+        $callbackArray = function ($value) {
+            $callbackEloquent = function (ModelBuilder $builder) use ($value) {
+                $builder->selectRaw('id')->where('public', $value);
+            };
+
+            $callbackQuery = function (QueryBuilder $builder) use ($value) {
+                $hasMany = (new User())->posts();
+
+                $builder->from('posts')->addSelect(['*'])->whereColumn(
+                    $hasMany->getQualifiedParentKeyName(),
+                    '=',
+                    $hasMany->getQualifiedForeignKeyName()
+                );
+
+                $builder->selectRaw('id')->where('public', $value);
+            };
+
+            return [$callbackEloquent, $callbackQuery];
+        };
+
+        return [
+            'Find user with post.public = true' => $callbackArray(true),
+            'Find user with post.public = false' => $callbackArray(false),
+        ];
     }
 }
 

@@ -15,7 +15,9 @@
     },
     "require": {
         "php": ">=8.2",
-        "hyperf/contract": "~3.2.0"
+        "hyperf/context": "~3.2.0",
+        "hyperf/contract": "~3.2.0",
+        "hyperf/coroutine": "~3.2.0"
     },
     "suggest": {
         "hyperf/config": "Required to read snowflake config.",

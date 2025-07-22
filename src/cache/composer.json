@@ -19,8 +19,10 @@
         "hyperf/codec": "~3.2.0",
         "hyperf/collection": "~3.2.0",
         "hyperf/contract": "~3.2.0",
+        "hyperf/coordinator": "~3.2.0",
+        "hyperf/coroutine": "~3.2.0",
+        "hyperf/stringable": "~3.2.0",
         "hyperf/support": "~3.2.0",
-        "hyperf/utils": "~3.2.0",
         "psr/container": "^1.0 || ^2.0",
         "psr/simple-cache": "^1.0 || ^2.0 || ^3.0"
     },

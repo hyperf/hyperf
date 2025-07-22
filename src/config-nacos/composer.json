@@ -19,12 +19,12 @@
     "require": {
         "php": ">=8.2",
         "hyperf/codec": "~3.2.0",
+        "hyperf/collection": "~3.2.0",
         "hyperf/config-center": "~3.2.0",
         "hyperf/contract": "~3.2.0",
         "hyperf/guzzle": "~3.2.0",
         "hyperf/nacos": "~3.2.0",
         "hyperf/support": "~3.2.0",
-        "hyperf/utils": "~3.2.0",
         "jetbrains/phpstorm-attributes": "^1.0"
     },
     "suggest": {

@@ -184,7 +184,7 @@ class Client extends Server
         $uri = (new Uri($this->baseUri . ltrim($path, '/')))->withQuery(http_build_query($query));
 
         $content = http_build_query($params);
-        if ($method == 'POST' && data_get($headers, 'Content-Type') == 'application/json') {
+        if (data_get($headers, 'Content-Type') == 'application/json' && ! empty($json)) {
             $content = json_encode($json, JSON_UNESCAPED_UNICODE);
             $data = $json;
         }

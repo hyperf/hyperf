@@ -10,8 +10,11 @@
     ],
     "require": {
         "php": ">=8.2",
-        "elasticsearch/elasticsearch": "^7.0",
+        "elasticsearch/elasticsearch": "^8.0",
         "hyperf/guzzle": "~3.2.0"
+    },
+    "suggest": {
+        "hyperf/coroutine": "~3.2.0"
     },
     "autoload": {
         "psr-4": {

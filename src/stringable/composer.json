@@ -18,6 +18,7 @@
     "require": {
         "php": ">=8.2",
         "ext-mbstring": "*",
+        "doctrine/inflector": "^2.0",
         "hyperf/collection": "~3.2.0",
         "hyperf/conditionable": "~3.2.0",
         "hyperf/macroable": "~3.2.0",

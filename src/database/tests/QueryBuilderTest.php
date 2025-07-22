@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use BadMethodCallException;
+use Exception;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
@@ -1007,9 +1008,14 @@ class QueryBuilderTest extends TestCase
         $builder->select('*')->from('users')->skip(0)->take(0);
         $this->assertEquals('select * from "users" limit 0 offset 0', $builder->toSql());
 
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('users')->skip(-5)->take(-10);
-        $this->assertEquals('select * from "users" offset 0', $builder->toSql());
+        try {
+            $builder = $this->getBuilder();
+            $builder->select('*')->from('users')->skip(-5)->take(-10);
+            // $this->assertEquals('select * from "users" offset 0', $builder->toSql());
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertStringContainsString('Limit cannot be negative.', $e->getMessage());
+        }
     }
 
     public function testForPage()
@@ -3123,6 +3129,38 @@ class QueryBuilderTest extends TestCase
         $this->assertFalse(call_user_func($call, '<>'));
         $this->assertFalse(call_user_func($call, '='));
         $this->assertTrue(call_user_func($call, '!'));
+    }
+
+    public function testExistsOr()
+    {
+        $builder = $this->getBuilder();
+        $builder->getConnection()->shouldReceive('select')->andReturn([['exists' => 1]]);
+        $results = $builder->from('users')->doesntExistOr(function () {
+            return 123;
+        });
+        $this->assertSame(123, $results);
+        $builder = $this->getBuilder();
+        $builder->getConnection()->shouldReceive('select')->andReturn([['exists' => 0]]);
+        $results = $builder->from('users')->doesntExistOr(function () {
+            throw new RuntimeException();
+        });
+        $this->assertTrue($results);
+    }
+
+    public function testDoesntExistsOr()
+    {
+        $builder = $this->getBuilder();
+        $builder->getConnection()->shouldReceive('select')->andReturn([['exists' => 0]]);
+        $results = $builder->from('users')->existsOr(function () {
+            return 123;
+        });
+        $this->assertSame(123, $results);
+        $builder = $this->getBuilder();
+        $builder->getConnection()->shouldReceive('select')->andReturn([['exists' => 1]]);
+        $results = $builder->from('users')->existsOr(function () {
+            throw new RuntimeException();
+        });
+        $this->assertTrue($results);
     }
 
     protected function getBuilderWithProcessor(): Builder

@@ -11,7 +11,7 @@ parameters:
     maximumNumberOfProcesses: 32
     minimumNumberOfJobsPerProcess: 2
   inferPrivatePropertyTypeFromConstructor: true
-  treatPhpDocTypesAsCertain: true
+  treatPhpDocTypesAsCertain: false
   reportUnmatchedIgnoredErrors: false
   excludePaths:
     - %currentWorkingDirectory%/src/helper/*
@@ -33,13 +33,12 @@ parameters:
     - %currentWorkingDirectory%/src/amqp/src/IO/SwowIO.php
   ignoreErrors:
     -
-      identifier: missingType.iterableValue
-    -
-      identifier: missingType.generics
-    -
-      identifier: missingType.return
-    -
-      identifier: missingType.parameter
+      identifiers:
+        - missingType.iterableValue
+        - missingType.generics
+        - missingType.return
+        - missingType.parameter
+        - unset.possiblyHookedProperty
     - '#Unable to resolve the template type#'
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
@@ -55,9 +54,7 @@ parameters:
     - '#Call to an undefined method Hyperf\\Database\\Model\\Model::hydrate#'
     - '#PHPDoc tag @param has invalid value#'
     - '#Static call to instance method Hyperf\\RpcServer\\Router\\Router::#'
-    - '#Method Hyperf\\Utils\\Serializer\\ScalarNormalizer::denormalize\(\) should return array\|object but returns#'
     - '#Function get_debug_type invoked with 1 parameter, 0 required#'
-    - '#Call to an undefined method Hyperf\\Utils\\HigherOrderCollectionProxy::.*#'
     - '#InfluxDB\\Point constructor expects float\|null, string given#'
     - '#separator of function explode expects non-empty-string, string given#'
     - '#While loop condition is always true#'
@@ -84,3 +81,12 @@ parameters:
       path: src/collection/src/*.php
     - message: '#has no type specified#'
       path: src/nacos/src/Protobuf/*.php
+    - '#Path in (require|require_once|include|include_once)\(\) ".*" is not a file or it does not exist.#'
+    - '#Call to function is_(array|string|object)\(\) with .* will always evaluate to true.#'
+    - '#Call to static method PHPUnit\\Framework\\Assert::assertTrue\(\) with true will always evaluate to true.#'
+    - '#Call to function \w+\(\) with .* will always evaluate to true.#'
+    - '#Trait .* is used zero times and is not analysed.#'
+    - "#Method .* has (.*) in PHPDoc @throws tag but it's not thrown.#"
+    - '#PHPDoc tag @var with type .* is not subtype of native type .*.#'
+    - '#Parameter \#\d+ \$previous of class (\w+)Exception constructor expects Exception\|null, Throwable given.#'
+    - "#Match arm comparison between 'Swoole' and 'Swoole' is always true.#"

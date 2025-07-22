@@ -112,13 +112,12 @@ class Str
                 $hyphenatedWords = explode('-', $lowercaseWord);
 
                 $hyphenatedWords = array_map(function ($part) use ($minorWords) {
-                    return (in_array($part, $minorWords) && mb_strlen($part) <= 3) ? $part : ucfirst($part);
+                    return (in_array($part, $minorWords)) ? $part : ucfirst($part);
                 }, $hyphenatedWords);
 
                 $words[$i] = implode('-', $hyphenatedWords);
             } else {
                 if (in_array($lowercaseWord, $minorWords)
-                    && mb_strlen($lowercaseWord) <= 3
                     && ! ($i === 0 || in_array(mb_substr($words[$i - 1], -1), $endPunctuation))) {
                     $words[$i] = $lowercaseWord;
                 } else {
@@ -1080,7 +1079,7 @@ class Str
         $radius = $options['radius'] ?? 100;
         $omission = $options['omission'] ?? '...';
 
-        preg_match('/^(.*?)(' . preg_quote((string) $phrase) . ')(.*)$/iu', (string) $text, $matches);
+        preg_match('/^(.*?)(' . preg_quote((string) $phrase, '/') . ')(.*)$/iu', (string) $text, $matches);
 
         if (empty($matches)) {
             return null;
