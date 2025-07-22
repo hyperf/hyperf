@@ -26,7 +26,7 @@
         "hyperf/stringable": "~3.2.0",
         "hyperf/support": "~3.2.0",
         "hyperf/tappable": "~3.2.0",
-        "nesbot/carbon": "^2.0",
+        "nesbot/carbon": "^2.0 || ^3.0",
         "psr/container": "^1.0 || ^2.0",
         "psr/event-dispatcher": "^1.0"
     },

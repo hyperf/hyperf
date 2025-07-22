@@ -1,5 +1,23 @@
 # v3.2.0 - TBD
 
+## Break Changes
+
+1. `Carbon::createFromTimestamp()` don't read the default timezone by `date_default_timezone_get()` for `v3.0`.
+
+```php
+<?php
+
+use Carbon\Carbon;
+
+$t = time();
+
+# The break usage
+Carbon::createFromTimestamp($t, date_default_timezone_get());
+
+# The correct usage
+Carbon::createFromTimestamp($t, date_default_timezone_get());
+```
+
 ## Dependencies Upgrade
 
 - Upgrade the php version to `>=8.2`
@@ -12,6 +30,7 @@
 ## Added
 
 - [#6538](https://github.com/hyperf/hyperf/pull/6538) Support to specify the queue name based on the `job`.
+- [#6591](https://github.com/hyperf/hyperf/pull/6591) Support `v3.0` for `nesbot/carbon`.
 - [#6761](https://github.com/hyperf/hyperf/pull/6761) Added `toJson` method to `Hyperf\Contract\Jsonable`.
 - [#7198](https://github.com/hyperf/hyperf/pull/7198) Added connection name to `QueryException`.
 - [#7202](https://github.com/hyperf/hyperf/pull/7202) Added support for elasticsearch `8.x`.
