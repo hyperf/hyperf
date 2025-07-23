@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\Validation\Rules;
 
 use Closure;
-
 use Hyperf\Database\Model\Model;
+
 use function Hyperf\Collection\collect;
 
 trait DatabaseRule
@@ -42,9 +42,6 @@ trait DatabaseRule
 
     /**
      * Resolves the name of the table from the given string.
-     *
-     * @param  string  $table
-     * @return string
      */
     public function resolveTableName(string $table): string
     {
@@ -53,7 +50,7 @@ trait DatabaseRule
         }
 
         if (is_subclass_of($table, Model::class)) {
-            $model = new $table;
+            $model = new $table();
 
             if (str_contains($model->getTable(), '.')) {
                 return $table;
