@@ -36,6 +36,9 @@ class Network
             }
         }
         if (is_array($ips) && ! empty($ips)) {
+            if(self::isWSL2()){
+                unset($ips["lo"]);
+            }
             return current($ips);
         }
 
@@ -45,5 +48,22 @@ class Network
         }
 
         return gethostbyname($name);
+    }
+
+    /**
+     * 获取当前是否wsl2环境
+     * @return bool
+     */
+    private static function isWSL2(): bool
+    {
+        $version = @file_get_contents('/proc/version');
+        $osRelease = @file_get_contents('/proc/sys/kernel/osrelease');
+        if ($version && stripos($version, 'Microsoft') !== false) {
+            // WSL2 通常会包含 "WSL2" 或类似字段
+            if ($osRelease && stripos($osRelease, 'WSL2') !== false) {
+                return true;
+            }
+        }
+        return false;
     }
 }
