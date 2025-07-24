@@ -26,8 +26,6 @@ use Hyperf\Metric\Listener\OnMetricFactoryReady;
 use Hyperf\Metric\Listener\OnPipeMessage;
 use Hyperf\Metric\Listener\OnWorkerStart;
 use Hyperf\Metric\Process\MetricProcess;
-use InfluxDB\Driver\DriverInterface;
-use InfluxDB\Driver\Guzzle;
 use Prometheus\Storage\Adapter;
 use Prometheus\Storage\InMemory;
 
@@ -40,7 +38,6 @@ class ConfigProvider
                 MetricFactoryInterface::class => MetricFactoryPicker::class,
                 Adapter::class => InMemory::class,
                 Connection::class => UdpSocket::class,
-                DriverInterface::class => Guzzle::class,
                 MetricCollectorInterface::class => MetricCollectorFactory::class,
             ],
             'aspects' => [
