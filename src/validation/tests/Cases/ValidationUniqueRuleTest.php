@@ -66,6 +66,10 @@ class ValidationUniqueRuleTest extends TestCase
         $rule = new Unique('table');
         $rule->where('foo', 1);
         $this->assertEquals('unique:table,NULL,NULL,id,foo,"1"', (string) $rule);
+
+        $rule = new Unique(DatabaseModelWithConnection::class, 'column');
+        $rule->where('foo', 'bar');
+        $this->assertSame('unique:mysql.table,column,NULL,id,foo,"bar"', (string) $rule);
     }
 }
 
@@ -74,4 +78,9 @@ class DatabaseModelStub extends Model
     protected string $primaryKey = 'id_column';
 
     protected array $guarded = [];
+}
+
+class DatabaseModelWithConnection extends DatabaseModelStub
+{
+    protected ?string $connection = 'mysql';
 }
