@@ -82,5 +82,7 @@ class DatabaseModelStub extends Model
 
 class DatabaseModelWithConnection extends DatabaseModelStub
 {
+    protected ?string $table = 'table';
+
     protected ?string $connection = 'mysql';
 }
