@@ -26,7 +26,6 @@ class ClientFactory
         } else {
             $baseUri = sprintf('http://%s:%d', $config['host'] ?? '127.0.0.1', $config['port'] ?? 8848);
         }
-
         return new Client(new Config([
             'base_uri' => $baseUri,
             'username' => $config['username'] ?? null,
@@ -37,6 +36,7 @@ class ClientFactory
             'host' => $config['host'] ?? null,
             'port' => $config['port'] ?? null,
             'grpc' => $config['grpc'] ?? [],
+            'version' => $config['version'] ?? null,
         ]));
     }
 }

@@ -28,8 +28,16 @@ abstract class AbstractProvider
     {
     }
 
-    public function request(string $method, string|UriInterface $uri, array $options = [])
+    public function request(string $method, string|UriInterface $uri, array $options = []): ResponseInterface
     {
+        [$major, $minor, $patch] = array_pad(explode(".", $this->config->getVersion()),3,0);
+        $uriPrefix = match ($major) {
+            "1" => "nacos/v1",
+            "2" => "nacos/v2",
+            default => "nacos/v3/admin"
+        };
+        $uri = str_replace("nacos/v1", $uriPrefix, $uri);
+
         if ($accessKey = $this->config->getAccessKey()) {
             $accessSecret = $this->config->getAccessSecret();
 
