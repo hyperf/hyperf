@@ -14,11 +14,11 @@ namespace HyperfTest\Nacos\Cases;
 
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Config;
-use Hyperf\Nacos\Provider\AuthProvider;
-use Hyperf\Nacos\Provider\ConfigProvider as ConfigCenter;
-use Hyperf\Nacos\Provider\InstanceProvider;
-use Hyperf\Nacos\Provider\OperatorProvider;
-use Hyperf\Nacos\Provider\ServiceProvider;
+use Hyperf\Nacos\Provider\v1\AuthProvider;
+use Hyperf\Nacos\Provider\v1\ConfigProvider as ConfigCenter;
+use Hyperf\Nacos\Provider\v1\InstanceProvider;
+use Hyperf\Nacos\Provider\v1\OperatorProvider;
+use Hyperf\Nacos\Provider\v1\ServiceProvider;
 use HyperfTest\Nacos\AbstractTestCase;
 use PHPUnit\Framework\Attributes\CoversNothing;
 
