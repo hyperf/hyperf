@@ -15,6 +15,7 @@ namespace HyperfTest\Support;
 use Hyperf\Support\Fluent;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
@@ -87,5 +88,248 @@ class FluentTest extends TestCase
         unset($fluent['key']);
         $this->assertTrue($fluent->isEmpty());
         $this->assertFalse($fluent->isNotEmpty());
+    }
+
+    public function testConstructor()
+    {
+        $fluent = new Fluent();
+        $this->assertEquals([], $fluent->getAttributes());
+
+        $fluent = new Fluent(['name' => 'John', 'age' => 30]);
+        $this->assertEquals(['name' => 'John', 'age' => 30], $fluent->getAttributes());
+
+        $object = new stdClass();
+        $object->name = 'Jane';
+        $object->age = 25;
+        $fluent = new Fluent($object);
+        $this->assertEquals(['name' => 'Jane', 'age' => 25], $fluent->getAttributes());
+
+        $generator = function () {
+            yield 'key1' => 'value1';
+            yield 'key2' => 'value2';
+        };
+        $fluent = new Fluent($generator());
+        $this->assertEquals(['key1' => 'value1', 'key2' => 'value2'], $fluent->getAttributes());
+    }
+
+    public function testMagicCall()
+    {
+        $fluent = new Fluent();
+
+        $result = $fluent->name('John');
+        $this->assertSame($fluent, $result);
+        $this->assertEquals('John', $fluent->getAttributes()['name']);
+
+        $fluent->isActive();
+        $this->assertTrue($fluent->getAttributes()['isActive']);
+
+        $fluent->count(5);
+        $this->assertEquals(5, $fluent->getAttributes()['count']);
+
+        $fluent->setValue(null);
+        $this->assertNull($fluent->getAttributes()['setValue']);
+    }
+
+    public function testMagicGet()
+    {
+        $fluent = new Fluent(['name' => 'John', 'age' => 30]);
+
+        $this->assertEquals('John', $fluent->name);
+        $this->assertEquals(30, $fluent->age);
+        $this->assertNull($fluent->nonexistent);
+    }
+
+    public function testMagicSet()
+    {
+        $fluent = new Fluent();
+
+        $fluent->name = 'John';
+        $this->assertEquals('John', $fluent->getAttributes()['name']);
+
+        $fluent->age = 30;
+        $this->assertEquals(30, $fluent->getAttributes()['age']);
+
+        $fluent->value = null;
+        $this->assertNull($fluent->getAttributes()['value']);
+    }
+
+    public function testMagicIsset()
+    {
+        $fluent = new Fluent(['name' => 'John', 'value' => null]);
+
+        $this->assertTrue(isset($fluent->name));
+        $this->assertFalse(isset($fluent->value));
+        $this->assertFalse(isset($fluent->nonexistent));
+    }
+
+    public function testMagicUnset()
+    {
+        $fluent = new Fluent(['name' => 'John', 'age' => 30]);
+
+        unset($fluent->name);
+        $this->assertFalse(array_key_exists('name', $fluent->getAttributes()));
+        $this->assertTrue(array_key_exists('age', $fluent->getAttributes()));
+    }
+
+    public function testToString()
+    {
+        $fluent = new Fluent(['name' => 'John', 'age' => 30]);
+        $expected = json_encode(['name' => 'John', 'age' => 30]);
+
+        $this->assertEquals($expected, (string) $fluent);
+        $this->assertEquals($expected, $fluent->__toString());
+    }
+
+    public function testGet()
+    {
+        $fluent = new Fluent(['name' => 'John', 'value' => null]);
+
+        $this->assertEquals('John', $fluent->get('name'));
+        $this->assertNull($fluent->get('value'));
+        $this->assertNull($fluent->get('nonexistent'));
+        $this->assertEquals('default', $fluent->get('nonexistent', 'default'));
+
+        $closure = function () {
+            return 'closure_result';
+        };
+        $this->assertEquals('closure_result', $fluent->get('nonexistent', $closure));
+
+        $this->assertEquals('John', $fluent->get('name', 'default'));
+    }
+
+    public function testGetAttributes()
+    {
+        $attributes = ['name' => 'John', 'age' => 30];
+        $fluent = new Fluent($attributes);
+
+        $this->assertEquals($attributes, $fluent->getAttributes());
+        $this->assertSame($fluent->getAttributes(), $fluent->getAttributes());
+    }
+
+    public function testToArray()
+    {
+        $attributes = ['name' => 'John', 'age' => 30];
+        $fluent = new Fluent($attributes);
+
+        $this->assertEquals($attributes, $fluent->toArray());
+        $this->assertSame($fluent->getAttributes(), $fluent->toArray());
+    }
+
+    public function testJsonSerialize()
+    {
+        $attributes = ['name' => 'John', 'age' => 30];
+        $fluent = new Fluent($attributes);
+
+        $this->assertEquals($attributes, $fluent->jsonSerialize());
+        $this->assertEquals($attributes, json_decode(json_encode($fluent), true));
+    }
+
+    public function testToJson()
+    {
+        $attributes = ['name' => 'John', 'age' => 30];
+        $fluent = new Fluent($attributes);
+        $expected = json_encode($attributes);
+
+        $this->assertEquals($expected, $fluent->toJson());
+        $this->assertEquals($expected, $fluent->toJson(0));
+
+        $expectedPretty = json_encode($attributes, JSON_PRETTY_PRINT);
+        $this->assertEquals($expectedPretty, $fluent->toJson(JSON_PRETTY_PRINT));
+    }
+
+    public function testOffsetExists()
+    {
+        $fluent = new Fluent(['name' => 'John', 'value' => null]);
+
+        $this->assertTrue($fluent->offsetExists('name'));
+        $this->assertFalse($fluent->offsetExists('value'));
+        $this->assertFalse($fluent->offsetExists('nonexistent'));
+
+        $this->assertTrue(isset($fluent['name']));
+        $this->assertFalse(isset($fluent['value']));
+        $this->assertFalse(isset($fluent['nonexistent']));
+    }
+
+    public function testOffsetGet()
+    {
+        $fluent = new Fluent(['name' => 'John', 'value' => null]);
+
+        $this->assertEquals('John', $fluent->offsetGet('name'));
+        $this->assertNull($fluent->offsetGet('value'));
+        $this->assertNull($fluent->offsetGet('nonexistent'));
+
+        $this->assertEquals('John', $fluent['name']);
+        $this->assertNull($fluent['value']);
+        $this->assertNull($fluent['nonexistent']);
+    }
+
+    public function testOffsetSet()
+    {
+        $fluent = new Fluent();
+
+        $fluent->offsetSet('name', 'John');
+        $this->assertEquals('John', $fluent->getAttributes()['name']);
+
+        $fluent->offsetSet('value', null);
+        $this->assertNull($fluent->getAttributes()['value']);
+
+        $fluent['age'] = 30;
+        $this->assertEquals(30, $fluent->getAttributes()['age']);
+
+        $fluent[] = 'array_value';
+        $this->assertEquals('array_value', $fluent->getAttributes()[null]);
+    }
+
+    public function testOffsetUnset()
+    {
+        $fluent = new Fluent(['name' => 'John', 'age' => 30]);
+
+        $fluent->offsetUnset('name');
+        $this->assertFalse(array_key_exists('name', $fluent->getAttributes()));
+        $this->assertTrue(array_key_exists('age', $fluent->getAttributes()));
+
+        unset($fluent['age']);
+        $this->assertFalse(array_key_exists('age', $fluent->getAttributes()));
+    }
+
+    public function testChainableMethods()
+    {
+        $fluent = new Fluent();
+
+        $result = $fluent
+            ->name('John')
+            ->age(30)
+            ->isActive(true);
+
+        $this->assertSame($fluent, $result);
+        $this->assertEquals([
+            'name' => 'John',
+            'age' => 30,
+            'isActive' => true,
+        ], $fluent->getAttributes());
+    }
+
+    public function testComplexDataTypes()
+    {
+        $object = new stdClass();
+        $object->nested = 'value';
+
+        $fluent = new Fluent([
+            'array' => [1, 2, 3],
+            'object' => $object,
+            'closure' => function () { return 'test'; },
+            'null' => null,
+            'boolean' => true,
+            'integer' => 42,
+            'float' => 3.14,
+        ]);
+
+        $this->assertEquals([1, 2, 3], $fluent->get('array'));
+        $this->assertSame($object, $fluent->get('object'));
+        $this->assertInstanceOf('Closure', $fluent->get('closure'));
+        $this->assertNull($fluent->get('null'));
+        $this->assertTrue($fluent->get('boolean'));
+        $this->assertEquals(42, $fluent->get('integer'));
+        $this->assertEquals(3.14, $fluent->get('float'));
     }
 }
