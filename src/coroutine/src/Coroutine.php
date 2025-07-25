@@ -130,16 +130,17 @@ class Coroutine
     private static function printLog(Throwable $throwable): void
     {
         if (ApplicationContext::hasContainer()) {
-            $container = ApplicationContext::getContainer();
-            if ($container->has(StdoutLoggerInterface::class)) {
-                $logger = $container->get(StdoutLoggerInterface::class);
-                if ($container->has(FormatterInterface::class)) {
-                    $formatter = $container->get(FormatterInterface::class);
-                    $logger->warning($formatter->format($throwable));
-                } else {
-                    $logger->warning((string) $throwable);
-                }
-            }
+            echo (string) $throwable . PHP_EOL;
+            // $container = ApplicationContext::getContainer();
+            // if ($container->has(StdoutLoggerInterface::class)) {
+            //     $logger = $container->get(StdoutLoggerInterface::class);
+            //     if ($container->has(FormatterInterface::class)) {
+            //         $formatter = $container->get(FormatterInterface::class);
+            //         $logger->warning($formatter->format($throwable));
+            //     } else {
+            //         $logger->warning((string) $throwable);
+            //     }
+            // }
         }
     }
 }
