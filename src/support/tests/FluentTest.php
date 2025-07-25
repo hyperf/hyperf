@@ -332,4 +332,105 @@ class FluentTest extends TestCase
         $this->assertEquals(42, $fluent->get('integer'));
         $this->assertEquals(3.14, $fluent->get('float'));
     }
+
+    public function testMacro()
+    {
+        Fluent::macro('uppercase', function ($value) {
+            return strtoupper($value);
+        });
+
+        $fluent = new Fluent(['name' => 'john']);
+        $result = $fluent->uppercase($fluent->get('name'));
+
+        $this->assertEquals('JOHN', $result);
+    }
+
+    public function testMacroWithThis()
+    {
+        Fluent::macro('getUppercaseName', function () {
+            return strtoupper($this->get('name'));
+        });
+
+        $fluent = new Fluent(['name' => 'john']);
+        $result = $fluent->getUppercaseName();
+
+        $this->assertEquals('JOHN', $result);
+    }
+
+    public function testMacroChaining()
+    {
+        Fluent::macro('setAndReturn', function ($key, $value) {
+            $this->attributes[$key] = $value;
+            return $this;
+        });
+
+        $fluent = new Fluent();
+        $result = $fluent->setAndReturn('name', 'john')->setAndReturn('age', 30);
+
+        $this->assertSame($fluent, $result);
+        $this->assertEquals(['name' => 'john', 'age' => 30], $fluent->getAttributes());
+    }
+
+    public function testHasMacro()
+    {
+        $this->assertFalse(Fluent::hasMacro('customMethod'));
+
+        Fluent::macro('customMethod', function () {
+            return 'custom';
+        });
+
+        $this->assertTrue(Fluent::hasMacro('customMethod'));
+    }
+
+    public function testMacroOverridesDynamicCall()
+    {
+        Fluent::macro('name', function ($value = null) {
+            if ($value === null) {
+                return 'macro called';
+            }
+            return 'macro with value: ' . $value;
+        });
+
+        $fluent = new Fluent();
+        $result = $fluent->name();
+
+        $this->assertEquals('macro called', $result);
+
+        $result = $fluent->name('test');
+        $this->assertEquals('macro with value: test', $result);
+
+        $fluent = new Fluent();
+        $fluent->age(25);
+        $this->assertEquals(25, $fluent->get('age'));
+    }
+
+    public function testMixin()
+    {
+        $mixin = new class {
+            public function getFullName()
+            {
+                return function () {
+                    return $this->get('first_name') . ' ' . $this->get('last_name');
+                };
+            }
+
+            public function setFullName()
+            {
+                return function ($firstName, $lastName) {
+                    $this->attributes['first_name'] = $firstName;
+                    $this->attributes['last_name'] = $lastName;
+                    return $this;
+                };
+            }
+        };
+
+        Fluent::mixin($mixin);
+
+        $fluent = new Fluent();
+        $result = $fluent->setFullName('John', 'Doe');
+
+        $this->assertSame($fluent, $result);
+        $this->assertEquals('John Doe', $fluent->getFullName());
+        $this->assertEquals(['first_name' => 'John', 'last_name' => 'Doe'], $fluent->getAttributes());
+    }
 }

@@ -16,6 +16,7 @@ use ArrayAccess;
 use Closure;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
+use Hyperf\Macroable\Macroable;
 use JsonSerializable;
 
 /**
@@ -30,6 +31,10 @@ use JsonSerializable;
  */
 class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
+    use Macroable{
+        __call as macroCall;
+    }
+
     /**
      * All the attributes set on the fluent instance.
      *
@@ -58,6 +63,10 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      */
     public function __call($method, $parameters)
     {
+        if (static::hasMacro($method)) {
+            return $this->macroCall($method, $parameters);
+        }
+
         $this->attributes[$method] = count($parameters) > 0 ? $parameters[0] : true;
 
         return $this;
