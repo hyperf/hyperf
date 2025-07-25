@@ -1,5 +1,9 @@
 # v3.1.60 - TBD
 
+## Added
+
+- [#7466](https://github.com/hyperf/hyperf/pull/7466) Added `isEmpty` and `isNotEmpty` methods to `Hyperf\Support\Fluent` class.
+
 ## Fixed
 
 - [#7449](https://github.com/hyperf/hyperf/pull/7449) Fixed bug that `Hyperf\Database\Migrations\Migrator::reset()` cannot support string paths.
