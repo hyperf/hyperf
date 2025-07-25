@@ -140,6 +140,26 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     }
 
     /**
+     * Determine if the fluent instance is empty.
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->attributes);
+    }
+
+    /**
+     * Determine if the fluent instance is not empty.
+     *  
+     * @return bool
+     */
+    public function isNotEmpty()
+    {
+        return !$this->isEmpty();
+    }
+
+    /**
      * Convert the fluent instance to an array.
      *
      * @return array<TKey, TValue>
