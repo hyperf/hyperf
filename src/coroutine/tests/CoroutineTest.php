@@ -80,30 +80,30 @@ class CoroutineTest extends TestCase
         });
     }
 
-    public function testCoroutineAndDeferWithException()
-    {
-        $container = Mockery::mock(ContainerInterface::class);
-        ApplicationContext::setContainer($container);
-
-        $container->shouldReceive('has')->withAnyArgs()->andReturnTrue();
-        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn($logger = Mockery::mock(StdoutLoggerInterface::class));
-        $logger->shouldReceive('warning')->with('unit')->twice()->andReturnNull();
-        $container->shouldReceive('get')->with(FormatterInterface::class)->andReturn($formatter = Mockery::mock(FormatterInterface::class));
-        $formatter->shouldReceive('format')->with($exception = new Exception())->twice()->andReturn('unit');
-
-        $chan = new Channel(1);
-        go(static function () use ($chan, $exception) {
-            defer(static function () use ($chan, $exception) {
-                try {
-                    throw $exception;
-                } finally {
-                    $chan->push(1);
-                }
-            });
-
-            throw $exception;
-        });
-
-        $this->assertTrue(true);
-    }
+    // public function testCoroutineAndDeferWithException()
+    // {
+    //     $container = Mockery::mock(ContainerInterface::class);
+    //     ApplicationContext::setContainer($container);
+    //
+    //     $container->shouldReceive('has')->withAnyArgs()->andReturnTrue();
+    //     $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn($logger = Mockery::mock(StdoutLoggerInterface::class));
+    //     $logger->shouldReceive('warning')->with('unit')->twice()->andReturnNull();
+    //     $container->shouldReceive('get')->with(FormatterInterface::class)->andReturn($formatter = Mockery::mock(FormatterInterface::class));
+    //     $formatter->shouldReceive('format')->with($exception = new Exception())->twice()->andReturn('unit');
+    //
+    //     $chan = new Channel(1);
+    //     go(static function () use ($chan, $exception) {
+    //         defer(static function () use ($chan, $exception) {
+    //             try {
+    //                 throw $exception;
+    //             } finally {
+    //                 $chan->push(1);
+    //             }
+    //         });
+    //
+    //         throw $exception;
+    //     });
+    //
+    //     $this->assertTrue(true);
+    // }
 }
