@@ -16,6 +16,7 @@ use Closure;
 use Hyperf\Database\Model\Model;
 
 use function Hyperf\Collection\collect;
+use function Hyperf\Support\make;
 
 trait DatabaseRule
 {
@@ -50,11 +51,7 @@ trait DatabaseRule
         }
 
         if (is_subclass_of($table, Model::class)) {
-            $model = new $table();
-
-            if (str_contains($model->getTable(), '.')) {
-                return $table;
-            }
+            $model = make($table);
 
             return implode('.', array_map(function (string $part) {
                 return trim($part, '.');
