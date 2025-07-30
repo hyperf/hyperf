@@ -28,6 +28,10 @@ return [
         'acks' => -1,
         'producer_id' => -1,
         'producer_epoch' => -1,
+        'produce' => [
+            'max_retries' => 3,
+            'retry_delay' => 0.1,
+        ],
         'partition_leader_epoch' => -1,
         'interval' => 0,
         'session_timeout' => 60,
