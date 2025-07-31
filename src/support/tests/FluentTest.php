@@ -433,4 +433,23 @@ class FluentTest extends TestCase
         $this->assertEquals('John Doe', $fluent->getFullName());
         $this->assertEquals(['first_name' => 'John', 'last_name' => 'Doe'], $fluent->getAttributes());
     }
+
+    public function testFluentIsIterable()
+    {
+        $fluent = new Fluent([
+            'name' => 'Taylor',
+            'role' => 'admin',
+        ]);
+
+        $result = [];
+
+        foreach ($fluent as $key => $value) {
+            $result[$key] = $value;
+        }
+
+        $this->assertSame([
+            'name' => 'Taylor',
+            'role' => 'admin',
+        ], $result);
+    }
 }
