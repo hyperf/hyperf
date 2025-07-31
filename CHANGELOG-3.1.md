@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#7466](https://github.com/hyperf/hyperf/pull/7466) Added `isEmpty` and `isNotEmpty` methods to `Hyperf\Support\Fluent` class.
+- [#7466](https://github.com/hyperf/hyperf/pull/7466) Added `isEmpty` / `isNotEmpty` / `getIterator` methods to `Hyperf\Support\Fluent` class.
 
 ## Fixed
 
