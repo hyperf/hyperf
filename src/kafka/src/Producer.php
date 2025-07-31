@@ -172,8 +172,8 @@ class Producer
         $producerConfig->setAcks($config['acks']);
         $producerConfig->setProducerId($config['producer_id']);
         $producerConfig->setProducerEpoch($config['producer_epoch']);
-        $producerConfig->setProduceRetry($config['produce']['max_retries']);
-        $producerConfig->setProduceRetrySleep($config['produce']['retry_delay']);
+        $producerConfig->setProduceRetry($config['produce_retry']);
+        $producerConfig->setProduceRetrySleep($config['produce_retry_sleep']);
         $producerConfig->setPartitionLeaderEpoch($config['partition_leader_epoch']);
         $producerConfig->setAutoCreateTopic($config['auto_create_topic']);
         ! empty($config['sasl']) && $producerConfig->setSasl($config['sasl']);
