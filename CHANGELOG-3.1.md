@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- [#7447](https://github.com/hyperf/hyperf/pull/7447) Fixed bug that the `migrate:fresh` command did not drop Postgres tables by default.
+- [#7447](https://github.com/hyperf/hyperf/pull/7447) Fixed bug that the command `migrate:fresh` can't drop postgres tables by default.
 - [#7449](https://github.com/hyperf/hyperf/pull/7449) Fixed bug that `Hyperf\Database\Migrations\Migrator::reset()` cannot support string paths.
 
 # v3.1.59 - 2025-07-03
