@@ -7,6 +7,7 @@
 
 ## Added
 
+- [#7466](https://github.com/hyperf/hyperf/pull/7466) Added `isEmpty` / `isNotEmpty` / `getIterator` methods to `Hyperf\Support\Fluent` class.
 - [#7473](https://github.com/hyperf/hyperf/pull/7473) Added config `produce_retry` and `producer_retry_sleep` for `kafka`.
 
 # v3.1.59 - 2025-07-03
