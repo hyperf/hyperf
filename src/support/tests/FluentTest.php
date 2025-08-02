@@ -12,6 +12,10 @@ declare(strict_types=1);
 
 namespace HyperfTest\Support;
 
+use ArrayIterator;
+use Carbon\Carbon;
+use Hyperf\Collection\Collection;
+use Hyperf\Stringable\Stringable;
 use Hyperf\Support\Fluent;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -458,7 +462,7 @@ class FluentTest extends TestCase
         $fluent = new Fluent(['name' => 'John', 'age' => 30]);
         $iterator = $fluent->getIterator();
 
-        $this->assertInstanceOf(\ArrayIterator::class, $iterator);
+        $this->assertInstanceOf(ArrayIterator::class, $iterator);
         $this->assertEquals(['name' => 'John', 'age' => 30], iterator_to_array($iterator));
     }
 
@@ -511,9 +515,9 @@ class FluentTest extends TestCase
                 'name' => 'John',
                 'profile' => [
                     'email' => 'john@example.com',
-                    'age' => 30
-                ]
-            ]
+                    'age' => 30,
+                ],
+            ],
         ]);
 
         $userScope = $fluent->scope('user');
@@ -551,8 +555,8 @@ class FluentTest extends TestCase
             'tags' => ['developer', 'php'],
             'profile' => [
                 'bio' => 'A developer',
-                'city' => 'New York'
-            ]
+                'city' => 'New York',
+            ],
         ]);
 
         // Test exists/has
@@ -588,12 +592,12 @@ class FluentTest extends TestCase
         $this->assertTrue($fluent->missing(['nonexistent', 'missing']));
 
         // Test string
-        $this->assertInstanceOf(\Hyperf\Stringable\Stringable::class, $fluent->string('name'));
+        $this->assertInstanceOf(Stringable::class, $fluent->string('name'));
         $this->assertEquals('John', (string) $fluent->string('name'));
         $this->assertEquals('default', (string) $fluent->string('nonexistent', 'default'));
 
         // Test str (alias for string)
-        $this->assertInstanceOf(\Hyperf\Stringable\Stringable::class, $fluent->str('name'));
+        $this->assertInstanceOf(Stringable::class, $fluent->str('name'));
         $this->assertEquals('John', (string) $fluent->str('name'));
 
         // Test boolean
@@ -618,7 +622,7 @@ class FluentTest extends TestCase
 
         // Test collect
         $collection = $fluent->collect('tags');
-        $this->assertInstanceOf(\Hyperf\Collection\Collection::class, $collection);
+        $this->assertInstanceOf(Collection::class, $collection);
         $this->assertEquals(['developer', 'php'], $collection->toArray());
 
         // Test only
@@ -635,8 +639,8 @@ class FluentTest extends TestCase
             'tags' => ['developer', 'php'],
             'profile' => [
                 'bio' => 'A developer',
-                'city' => 'New York'
-            ]
+                'city' => 'New York',
+            ],
         ];
         $this->assertEquals($expected, $except);
     }
@@ -691,17 +695,17 @@ class FluentTest extends TestCase
             'created_at' => '2023-01-15 10:30:00',
             'formatted_date' => '15/01/2023',
             'empty_date' => '',
-            'null_date' => null
+            'null_date' => null,
         ]);
 
         // Test basic date parsing
         $date = $fluent->date('created_at');
-        $this->assertInstanceOf(\Carbon\Carbon::class, $date);
+        $this->assertInstanceOf(Carbon::class, $date);
         $this->assertEquals('2023-01-15 10:30:00', $date->format('Y-m-d H:i:s'));
 
         // Test date with format
         $date = $fluent->date('formatted_date', 'd/m/Y');
-        $this->assertInstanceOf(\Carbon\Carbon::class, $date);
+        $this->assertInstanceOf(Carbon::class, $date);
         $this->assertEquals('2023-01-15', $date->format('Y-m-d'));
 
         // Test empty date
@@ -716,7 +720,7 @@ class FluentTest extends TestCase
             'status' => 'active',
             'statuses' => ['active', 'inactive', 'pending'],
             'invalid_status' => 'invalid',
-            'empty_status' => ''
+            'empty_status' => '',
         ]);
 
         // Test enum method when enum class doesn't exist (should return default)
