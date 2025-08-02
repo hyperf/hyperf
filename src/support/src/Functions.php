@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Support;
 
+use BackedEnum;
 use Carbon\Carbon;
 use Closure;
 use DateTimeZone;
@@ -21,6 +22,7 @@ use Hyperf\Di\Container;
 use Hyperf\Stringable\StrCache;
 use Hyperf\Support\Backoff\ArrayBackoff;
 use Throwable;
+use UnitEnum;
 
 /**
  * Return the default value of the given value.
@@ -311,4 +313,26 @@ function now($tz = null)
 function today($tz = null)
 {
     return Carbon::today($tz);
+}
+
+/**
+ * Return a scalar value for the given value that might be an enum.
+ *
+ * @internal
+ *
+ * @template TValue
+ * @template TDefault
+ *
+ * @param TValue $value
+ * @param callable(TValue): TDefault|TDefault $default
+ * @return ($value is empty ? TDefault : mixed)
+ */
+function enum_value($value, $default = null)
+{
+    return match (true) {
+        $value instanceof BackedEnum => $value->value,
+        $value instanceof UnitEnum => $value->name,
+
+        default => $value ?? value($default),
+    };
 }
