@@ -4,6 +4,10 @@
 
 - [#7449](https://github.com/hyperf/hyperf/pull/7449) Fixed bug that `Hyperf\Database\Migrations\Migrator::reset()` cannot support string paths.
 
+## Added
+
+- [#7473](https://github.com/hyperf/hyperf/pull/7473)
+
 # v3.1.59 - 2025-07-03
 
 ## Fixed
