@@ -164,13 +164,25 @@ class CoroutineHandler
             }
 
             if ($uri) {
-                $settings['http_proxy_host'] = $uri->getHost();
-                $settings['http_proxy_port'] = $this->getPort($uri);
+
+                // @see https://wiki.swoole.com/zh-cn/#/client?id=socks5_proxy
+                // @see https://wiki.swoole.com/zh-cn/#/client?id=http_proxy
+
+                // support socks5 proxyUrl
+                // choose http proxy or socks5 proxy
+
+                $isSocks5Proxy = $uri->getScheme() === 'socks5h';
+                $proxySettingPrefix = $isSocks5Proxy ? 'socks5' : 'http_proxy';
+
+                // cover httpOrSocks5_proxy settings and other necessary args
+
+                $settings[$proxySettingPrefix . '_host'] = $uri->getHost();
+                $settings[$proxySettingPrefix . '_port'] = $this->getPort($uri);
                 if ($uri->getUserInfo()) {
                     [$user, $password] = explode(':', $uri->getUserInfo());
-                    $settings['http_proxy_user'] = $user;
-                    if (! empty($password)) {
-                        $settings['http_proxy_password'] = $password;
+                    $settings[$proxySettingPrefix . '_' . ($isSocks5Proxy ? 'username' : 'user')] = $user;
+                    if (!empty($password)) {
+                        $settings[$proxySettingPrefix . '_password'] = $password;
                     }
                 }
             }
