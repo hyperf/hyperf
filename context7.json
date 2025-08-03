@@ -1,0 +1,9 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "hyperf/hyperf",
+  "description": "A coroutine framework that focuses on hyperspeed and flexibility. Building microservice or middleware with ease.",
+  "folders": ["src","docs"],
+  "excludeFolders": ["*test*",".travis",".github"],
+  "excludeFiles": ["CHANGELOG*\\.md","LICENSE","bootstrap.php","licenses.md","rector.php"],
+  "rules": ["Use Hyperf framework as a web application framework."]
+}
