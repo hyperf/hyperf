@@ -1,5 +1,9 @@
 # v3.1.61 - TBD
 
+## Added
+
+- [#7481](https://github.com/hyperf/hyperf/pull/7481) Added `doesntContainStrict` method to `Collection` and `LazyCollection`.
+
 # v3.1.60 - 2025-08-02
 
 ## Fixed
