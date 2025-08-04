@@ -19,7 +19,7 @@ use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Throwable;
 
-class ElasticserachAspect extends AbstractAspect
+class ElasticsearchAspect extends AbstractAspect
 {
     use SpanStarter;
 

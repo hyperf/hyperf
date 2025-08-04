@@ -1,10 +1,28 @@
-# v3.1.59 - TBD
+# v3.1.61 - TBD
+
+# v3.1.60 - 2025-08-02
+
+## Fixed
+
+- [#7447](https://github.com/hyperf/hyperf/pull/7447) Fixed bug that the command `migrate:fresh` can't drop postgres tables by default.
+- [#7449](https://github.com/hyperf/hyperf/pull/7449) Fixed bug that `Hyperf\Database\Migrations\Migrator::reset()` cannot support string paths.
+
+## Added
+
+- [#7466](https://github.com/hyperf/hyperf/pull/7466) Added `isEmpty` / `isNotEmpty` / `getIterator` methods to `Hyperf\Support\Fluent` class.
+- [#7473](https://github.com/hyperf/hyperf/pull/7473) Added config `produce_retry` and `producer_retry_sleep` for `kafka`.
+
+# v3.1.59 - 2025-07-03
 
 ## Fixed
 
 - [#7421](https://github.com/hyperf/hyperf/pull/7421) Fixed bug that the cookie value cannot be deleted when set "".
 - [#7424](https://github.com/hyperf/hyperf/pull/7424) Fixed bug that the path of `php` cannot contain spaces for `watcher`.
 - [#7427](https://github.com/hyperf/hyperf/pull/7427) Fixed bug that `exclude` cannot not work when using `validation`.
+
+## Optimized
+
+- [#7394](https://github.com/hyperf/hyperf/pull/7394) Release redis connection immediately when using `transaction` or `pipeline` with callbacks.
 
 # v3.1.57 - 2025-06-23
 
