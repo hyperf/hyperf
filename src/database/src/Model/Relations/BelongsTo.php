@@ -372,4 +372,5 @@ class BelongsTo extends Relation
     {
         return $this->dissociate();
     }
+
 }
