@@ -362,4 +362,14 @@ class BelongsTo extends Relation
     {
         return $this->related->newInstance();
     }
+
+    /**
+     * Alias of "dissociate" method.
+     *
+     * @return Model
+     */
+    public function disassociate()
+    {
+        return $this->dissociate();
+    }
 }
