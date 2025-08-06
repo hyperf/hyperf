@@ -1537,6 +1537,86 @@ class ModelBuilderTest extends TestCase
         );
     }
 
+    public function testExceptMethodWithModel()
+    {
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder = $this->getBuilder()->setModel($model);
+
+        $testModel = new class extends Model {
+            protected array $attributes = ['id' => 1];
+
+            public function getKey()
+            {
+                return $this->attributes['id'];
+            }
+        };
+
+        $builder->getQuery()->shouldReceive('except')->once()->with($testModel)->andReturn($builder->getQuery());
+
+        $result = $builder->except($testModel);
+        $this->assertEquals($builder, $result);
+    }
+
+    public function testExceptMethodWithCollectionOfModel()
+    {
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder = $this->getBuilder()->setModel($model);
+
+        $models = new Collection([
+            new class extends Model {
+                protected array $attributes = ['id' => 1];
+
+                public function getKey()
+                {
+                    return $this->attributes['id'];
+                }
+            },
+            new class extends Model {
+                protected array $attributes = ['id' => 2];
+
+                public function getKey()
+                {
+                    return $this->attributes['id'];
+                }
+            },
+        ]);
+
+        $builder->getQuery()->shouldReceive('except')->once()->with($models)->andReturn($builder->getQuery());
+
+        $result = $builder->except($models);
+        $this->assertEquals($builder, $result);
+    }
+
+    public function testExceptMethodWithArrayOfModel()
+    {
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder = $this->getBuilder()->setModel($model);
+
+        $models = [
+            new class extends Model {
+                protected array $attributes = ['id' => 1];
+
+                public function getKey()
+                {
+                    return $this->attributes['id'];
+                }
+            },
+            new class extends Model {
+                protected array $attributes = ['id' => 2];
+
+                public function getKey()
+                {
+                    return $this->attributes['id'];
+                }
+            },
+        ];
+
+        $builder->getQuery()->shouldReceive('except')->once()->with($models)->andReturn($builder->getQuery());
+
+        $result = $builder->except($models);
+        $this->assertEquals($builder, $result);
+    }
+
     protected function mockConnectionForModel($model, $database)
     {
         $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';

@@ -1920,8 +1920,7 @@ class Builder
     /**
      * Exclude the given models from the query results.
      *
-     * @param  iterable|mixed  $models
-     * @return static
+     * @param iterable|mixed $models
      */
     public function except(mixed $models): static
     {
