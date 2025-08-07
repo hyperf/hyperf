@@ -1544,11 +1544,6 @@ class ModelBuilderTest extends TestCase
 
         $testModel = new class extends Model {
             protected array $attributes = ['id' => 1];
-
-            public function getKey()
-            {
-                return $this->attributes['id'];
-            }
         };
 
         $builder->getQuery()->shouldReceive('except')->once()->with($testModel)->andReturn($builder->getQuery());
@@ -1565,19 +1560,9 @@ class ModelBuilderTest extends TestCase
         $models = new Collection([
             new class extends Model {
                 protected array $attributes = ['id' => 1];
-
-                public function getKey()
-                {
-                    return $this->attributes['id'];
-                }
             },
             new class extends Model {
                 protected array $attributes = ['id' => 2];
-
-                public function getKey()
-                {
-                    return $this->attributes['id'];
-                }
             },
         ]);
 
@@ -1595,19 +1580,9 @@ class ModelBuilderTest extends TestCase
         $models = [
             new class extends Model {
                 protected array $attributes = ['id' => 1];
-
-                public function getKey()
-                {
-                    return $this->attributes['id'];
-                }
             },
             new class extends Model {
                 protected array $attributes = ['id' => 2];
-
-                public function getKey()
-                {
-                    return $this->attributes['id'];
-                }
             },
         ];
 
