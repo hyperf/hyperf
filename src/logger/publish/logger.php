@@ -20,7 +20,7 @@ return [
                 'class' => StreamHandler::class,
                 'constructor' => [
                     'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                    'level' => Level::DEBUG,
+                    'level' => Level::Debug,
                 ],
                 'formatter' => [
                     'class' => LineFormatter::class,
