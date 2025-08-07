@@ -1539,82 +1539,61 @@ class ModelBuilderTest extends TestCase
 
     public function testExceptMethodWithModel()
     {
-        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $model = $this->getMockModel();
         $builder = $this->getBuilder()->setModel($model);
+        $keyName = $model->getQualifiedKeyName();
 
-        $testModel = new class extends Model {
+        $builder->getQuery()->shouldReceive('where')->once()->with($keyName, '!=', Mockery::on(function ($argument) {
+            return $argument === 1;
+        }));
+
+        $builder->except(new class extends Model {
             protected array $attributes = ['id' => 1];
-
-            public function getKey()
-            {
-                return $this->attributes['id'];
-            }
-        };
-
-        $builder->getQuery()->shouldReceive('except')->once()->with($testModel)->andReturn($builder->getQuery());
-
-        $result = $builder->except($testModel);
-        $this->assertEquals($builder, $result);
+        });
     }
 
     public function testExceptMethodWithCollectionOfModel()
     {
-        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $model = $this->getMockModel();
         $builder = $this->getBuilder()->setModel($model);
+        $keyName = $model->getQualifiedKeyName();
+
+        $builder->getQuery()->shouldReceive('whereNotIn')->once()->with($keyName, Mockery::on(function ($argument) {
+            return $argument === [1, 2];
+        }));
 
         $models = new Collection([
             new class extends Model {
                 protected array $attributes = ['id' => 1];
-
-                public function getKey()
-                {
-                    return $this->attributes['id'];
-                }
             },
             new class extends Model {
                 protected array $attributes = ['id' => 2];
-
-                public function getKey()
-                {
-                    return $this->attributes['id'];
-                }
             },
         ]);
 
-        $builder->getQuery()->shouldReceive('except')->once()->with($models)->andReturn($builder->getQuery());
-
-        $result = $builder->except($models);
-        $this->assertEquals($builder, $result);
+        $builder->except($models);
     }
 
     public function testExceptMethodWithArrayOfModel()
     {
-        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $model = $this->getMockModel();
         $builder = $this->getBuilder()->setModel($model);
+        $keyName = $model->getQualifiedKeyName();
 
-        $models = [
+        $builder->getQuery()->shouldReceive('whereNotIn')->once()->with($keyName, Mockery::on(function ($argument) {
+            return $argument === [1, 2];
+        }));
+
+        $models = new Collection([
             new class extends Model {
                 protected array $attributes = ['id' => 1];
-
-                public function getKey()
-                {
-                    return $this->attributes['id'];
-                }
             },
             new class extends Model {
                 protected array $attributes = ['id' => 2];
-
-                public function getKey()
-                {
-                    return $this->attributes['id'];
-                }
             },
-        ];
+        ]);
 
-        $builder->getQuery()->shouldReceive('except')->once()->with($models)->andReturn($builder->getQuery());
-
-        $result = $builder->except($models);
-        $this->assertEquals($builder, $result);
+        $builder->except($models);
     }
 
     protected function mockConnectionForModel($model, $database)

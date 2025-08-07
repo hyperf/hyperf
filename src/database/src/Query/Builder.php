@@ -28,7 +28,6 @@ use Hyperf\Database\Concerns\ExplainsQueries;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Model\Builder as ModelBuilder;
-use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
@@ -1915,20 +1914,6 @@ class Builder
         $this->addBinding($bindings, 'having');
 
         return $this;
-    }
-
-    /**
-     * Exclude the given models from the query results.
-     *
-     * @param iterable|mixed $models
-     */
-    public function except(mixed $models): static
-    {
-        return $this->whereKeyNot(
-            $models instanceof Model
-                ? $models->getKey()
-                : Collection::wrap($models)->modelKeys()
-        );
     }
 
     /**
