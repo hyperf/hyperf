@@ -1,5 +1,9 @@
 # v3.1.61 - TBD
 
+## Added
+
+- [#7492](https://github.com/hyperf/hyperf/pull/7492) Added Macroable trait to `Hyperf\Pipeline\Pipeline` class with comprehensive unit tests.
+
 # v3.1.60 - 2025-08-02
 
 ## Fixed
