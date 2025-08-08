@@ -14,7 +14,10 @@ namespace Hyperf\Di;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\Annotation\Bind;
+use Hyperf\Di\Annotation\BindTo;
 use Hyperf\Di\Annotation\InjectAspect;
+use Hyperf\Di\Annotation\MultipleAnnotation;
 use Hyperf\Di\Aop\AstVisitorRegistry;
 use Hyperf\Di\Aop\PropertyHandlerVisitor;
 use Hyperf\Di\Aop\ProxyCallVisitor;
@@ -35,12 +38,38 @@ class ConfigProvider
 
         // Register Property Handler.
         RegisterInjectPropertyHandler::register();
+        $dependencies = [
+            MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
+            ClosureDefinitionCollectorInterface::class => ClosureDefinitionCollector::class,
+        ];
+
+        $binds = AnnotationCollector::getClassesByAnnotation(Bind::class);
+        $bindToClasses = AnnotationCollector::getClassesByAnnotation(BindTo::class);
+
+        foreach ($binds as $className => $metadata) {
+            /**
+             * @var MultipleAnnotation $metadata
+             * @var Bind[] $annotations
+             */
+            $annotations = $metadata->toAnnotations();
+            foreach ($annotations as $annotation) {
+                $dependencies[$className] = $annotation->getValue();
+            }
+        }
+
+        foreach ($bindToClasses as $className => $metadata) {
+            /**
+             * @var MultipleAnnotation $metadata
+             * @var BindTo[] $annotations
+             */
+            $annotations = $metadata->toAnnotations();
+            foreach ($annotations as $annotation) {
+                $dependencies[$annotation->getValue()] = $className;
+            }
+        }
 
         return [
-            'dependencies' => [
-                MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
-                ClosureDefinitionCollectorInterface::class => ClosureDefinitionCollector::class,
-            ],
+            'dependencies' => $dependencies,
             'aspects' => [
                 InjectAspect::class,
             ],
