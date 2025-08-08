@@ -26,9 +26,9 @@ use Hyperf\Di\Listener\RegisterBindListener;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\ScanHandler\NullScanHandler;
 use Hyperf\Framework\Event\BootApplication;
+use HyperfTest\Di\Stub\Bind\TestBind;
 use HyperfTest\Di\Stub\Bind\TestBindClass;
 use HyperfTest\Di\Stub\Bind\TestBindToClass;
-use HyperfTest\Di\Stub\Bind\TestMultipleBindClass;
 use HyperfTest\Di\Stub\Bind\TestServiceInterface;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -89,15 +89,10 @@ class RegisterBindListenerTest extends TestCase
         // Expect define method to be called for Bind annotations
         $container->shouldReceive('define')
             ->once()
-            ->with(TestBindClass::class, 'test.service');
-
-        // Expect define method to be called for multiple Bind annotations
+            ->with(TestBindClass::class, TestBind::class);
         $container->shouldReceive('define')
             ->once()
-            ->with(TestMultipleBindClass::class, 'service.primary');
-        $container->shouldReceive('define')
-            ->once()
-            ->with(TestMultipleBindClass::class, 'service.secondary');
+            ->with(TestServiceInterface::class, TestBindToClass::class);
 
         // Expect debug log
         $logger->shouldReceive('debug')
