@@ -43,7 +43,7 @@ class BindAnnotationTest extends TestCase
     public function testBindAnnotation()
     {
         $bind = new Bind('test.service');
-        $this->assertSame('test.service', $bind->getValue());
+        $this->assertSame('test.service', $bind->concrete);
     }
 
     public function testBindAnnotationCollection()
@@ -67,13 +67,13 @@ class BindAnnotationTest extends TestCase
         $bindAnnotations = $metadata->toAnnotations();
         $this->assertCount(1, $bindAnnotations);
         $this->assertInstanceOf(Bind::class, $bindAnnotations[0]);
-        $this->assertSame(TestBind::class, $bindAnnotations[0]->getValue());
+        $this->assertSame(TestBind::class, $bindAnnotations[0]->concrete);
     }
 
     public function testBindAnnotationWithEmptyValue()
     {
         // Empty string is valid for Bind annotation
         $bind = new Bind('');
-        $this->assertSame('', $bind->getValue());
+        $this->assertSame('', $bind->concrete);
     }
 }

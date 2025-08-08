@@ -53,7 +53,7 @@ class ConfigProvider
              */
             $annotations = $metadata->toAnnotations();
             foreach ($annotations as $annotation) {
-                $dependencies[$className] = $annotation->getValue();
+                $dependencies[$className] = $annotation->concrete;
             }
         }
 
@@ -64,7 +64,7 @@ class ConfigProvider
              */
             $annotations = $metadata->toAnnotations();
             foreach ($annotations as $annotation) {
-                $dependencies[$annotation->getValue()] = $className;
+                $dependencies[$annotation->abstract] = $className;
             }
         }
 

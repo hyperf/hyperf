@@ -43,7 +43,7 @@ class BindToAnnotationTest extends TestCase
     public function testBindToAnnotation()
     {
         $bindTo = new BindTo(TestServiceInterface::class);
-        $this->assertSame(TestServiceInterface::class, $bindTo->getValue());
+        $this->assertSame(TestServiceInterface::class, $bindTo->abstract);
     }
 
     public function testBindToAnnotationCollection()
@@ -69,19 +69,19 @@ class BindToAnnotationTest extends TestCase
 
         $this->assertCount(1, $bindToAnnotations);
         $this->assertInstanceOf(BindTo::class, $bindToAnnotations[0]);
-        $this->assertSame(TestServiceInterface::class, $bindToAnnotations[0]->getValue());
+        $this->assertSame(TestServiceInterface::class, $bindToAnnotations[0]->concrete);
     }
 
     public function testBindToAnnotationWithStringValue()
     {
         $bindTo = new BindTo('SomeInterface');
-        $this->assertSame('SomeInterface', $bindTo->getValue());
+        $this->assertSame('SomeInterface', $bindTo->abstract);
     }
 
     public function testBindToAnnotationWithEmptyValue()
     {
         // Empty string is valid for BindTo annotation
         $bindTo = new BindTo('');
-        $this->assertSame('', $bindTo->getValue());
+        $this->assertSame('', $bindTo->abstract);
     }
 }
