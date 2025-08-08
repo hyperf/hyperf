@@ -24,6 +24,9 @@ use Psr\Container\ContainerInterface;
 
 class RegisterBindListener implements ListenerInterface
 {
+    /**
+     * @param ContainerPlusInterface $container
+     */
     public function __construct(
         private readonly ContainerInterface $container,
         private readonly StdoutLoggerInterface $logger

@@ -17,6 +17,192 @@ composer require hyperf/di
 
 ## 绑定对象关系
 
+### 注解绑定
+
+Hyperf 提供了两个强大的注解来简化依赖注入的绑定配置：`#[Bind]` 和 `#[BindTo]`。这些注解允许您直接在类上声明绑定关系，无需在 `dependencies.php` 配置文件中手动配置。
+
+#### `#[Bind]` 注解
+
+`#[Bind]` 注解用于将当前类绑定到指定的服务名称。这在您希望为一个类创建别名或者将类注册为特定服务名称时非常有用。
+
+```php
+<?php
+namespace App\Service;
+
+use Hyperf\Di\Annotation\Bind;
+
+#[Bind('user.service')]
+class UserService
+{
+    public function getInfoById(int $id): array
+    {
+        return ['id' => $id, 'name' => 'John Doe'];
+    }
+}
+```
+
+使用上述配置后，您可以通过服务名称来注入该类：
+
+```php
+<?php
+namespace App\Controller;
+
+use Hyperf\Di\Annotation\Inject;
+use Psr\Container\ContainerInterface;
+
+class IndexController
+{
+    public function __construct(private ContainerInterface $container)
+    {
+    }
+
+    public function index()
+    {
+        // 通过服务名称获取实例
+        $userService = $this->container->get('user.service');
+        return $userService->getInfoById(1);
+    }
+}
+```
+
+##### 多重绑定
+
+`#[Bind]` 注解支持多重绑定，您可以为同一个类绑定多个服务名称：
+
+```php
+<?php
+namespace App\Service;
+
+use Hyperf\Di\Annotation\Bind;
+
+#[Bind('user.service')]
+#[Bind('user.primary')]
+#[Bind('service.user')]
+class UserService
+{
+    // 实现代码
+}
+```
+
+#### `#[BindTo]` 注解
+
+`#[BindTo]` 注解用于将当前实现类绑定到指定的接口或抽象类。这是配置接口与实现类映射关系的便捷方式。
+
+首先定义接口：
+
+```php
+<?php
+namespace App\Contract;
+
+interface UserServiceInterface
+{
+    public function getInfoById(int $id): array;
+}
+```
+
+然后在实现类上使用 `#[BindTo]` 注解：
+
+```php
+<?php
+namespace App\Service;
+
+use App\Contract\UserServiceInterface;
+use Hyperf\Di\Annotation\BindTo;
+
+#[BindTo(UserServiceInterface::class)]
+class UserService implements UserServiceInterface
+{
+    public function getInfoById(int $id): array
+    {
+        return ['id' => $id, 'name' => 'John Doe'];
+    }
+}
+```
+
+使用配置后，您可以直接注入接口：
+
+```php
+<?php
+namespace App\Controller;
+
+use App\Contract\UserServiceInterface;
+use Hyperf\Di\Annotation\Inject;
+
+class IndexController
+{
+    #[Inject]
+    private UserServiceInterface $userService;
+
+    public function index()
+    {
+        // 直接使用接口，框架会自动注入对应的实现类
+        return $this->userService->getInfoById(1);
+    }
+}
+```
+
+##### 多接口绑定
+
+`#[BindTo]` 注解同样支持多重绑定，一个实现类可以同时绑定到多个接口：
+
+```php
+<?php
+namespace App\Service;
+
+use App\Contract\UserServiceInterface;
+use App\Contract\UserQueryInterface;
+use Hyperf\Di\Annotation\BindTo;
+
+#[BindTo(UserServiceInterface::class)]
+#[BindTo(UserQueryInterface::class)]
+class UserService implements UserServiceInterface, UserQueryInterface
+{
+    public function getInfoById(int $id): array
+    {
+        return ['id' => $id, 'name' => 'John Doe'];
+    }
+
+    public function findUsers(): array
+    {
+        return [['id' => 1, 'name' => 'John']];
+    }
+}
+```
+
+#### 注解绑定的工作原理
+
+注解绑定功能通过 `RegisterBindListener` 监听器实现。该监听器会在应用启动时（`BootApplication` 事件）自动扫描所有带有 `#[Bind]` 和 `#[BindTo]` 注解的类，并将绑定关系注册到 DI 容器中。
+
+#### 配置要求
+
+注解绑定功能无需额外配置，但需要确保：
+
+1. 容器实现了 `Hyperf\Contract\ContainerInterface` 接口
+2. 启用了注解扫描功能
+3. `RegisterBindListener` 监听器已注册（默认情况下已自动注册）
+
+#### 最佳实践
+
+1. **接口优先**: 推荐使用 `#[BindTo]` 注解将实现类绑定到接口，这样可以获得更好的代码解耦和可测试性。
+
+2. **服务别名**: 使用 `#[Bind]` 注解为服务创建有意义的别名，便于在配置或其他地方引用。
+
+3. **避免循环依赖**: 注解绑定在应用启动时处理，请确保绑定的类之间不存在循环依赖关系。
+
+4. **命名约定**: 建议使用统一的命名约定，如使用点分隔的服务名称（如 `user.service`）。
+
+#### 与传统配置的关系
+
+注解绑定与 `dependencies.php` 配置文件可以共存。如果同一个绑定关系在两处都有定义，配置文件中的定义优先级更高。
+
+```php
+// config/autoload/dependencies.php
+return [
+    // 这个配置会覆盖 #[BindTo] 注解的绑定
+    UserServiceInterface::class => AnotherUserService::class,
+];
+```
+
 ### 简单对象注入
 
 通常来说，类的关系及注入是无需显性定义的，这一切 Hyperf 都会默默的为您完成，我们通过一些代码示例来说明一下相关的用法。      
