@@ -18,12 +18,12 @@ use Attribute;
 class Bind extends AbstractMultipleAnnotation
 {
     public function __construct(
-        private readonly string $value
+        private readonly string $concrete
     ) {
     }
 
     public function getValue(): string
     {
-        return $this->value;
+        return $this->concrete;
     }
 }
