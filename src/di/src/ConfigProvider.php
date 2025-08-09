@@ -55,7 +55,7 @@ class ConfigProvider
 
     /**
      * Get the annotation dependencies.
-     * @return array<string, string>
+     * @return array<class-string, class-string>
      */
     protected function collectAnnotationDependencies(): array
     {
