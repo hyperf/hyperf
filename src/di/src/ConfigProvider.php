@@ -14,7 +14,10 @@ namespace Hyperf\Di;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
+use Hyperf\Di\Annotation\Bind;
+use Hyperf\Di\Annotation\BindTo;
 use Hyperf\Di\Annotation\InjectAspect;
+use Hyperf\Di\Annotation\MultipleAnnotation;
 use Hyperf\Di\Aop\AstVisitorRegistry;
 use Hyperf\Di\Aop\PropertyHandlerVisitor;
 use Hyperf\Di\Aop\ProxyCallVisitor;
@@ -40,6 +43,7 @@ class ConfigProvider
             'dependencies' => [
                 MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
                 ClosureDefinitionCollectorInterface::class => ClosureDefinitionCollector::class,
+                ...$this->collectAnnotationDependencies(),
             ],
             'aspects' => [
                 InjectAspect::class,
@@ -59,5 +63,38 @@ class ConfigProvider
                 ],
             ],
         ];
+    }
+
+    /**
+     * Get the annotation dependencies.
+     * @return array<class-string, class-string>
+     */
+    protected function collectAnnotationDependencies(): array
+    {
+        $dependencies = [];
+
+        foreach (AnnotationCollector::getClassesByAnnotation(Bind::class) as $className => $metadata) {
+            /**
+             * @var MultipleAnnotation $metadata
+             * @var Bind[] $annotations
+             */
+            $annotations = $metadata->toAnnotations();
+            foreach ($annotations as $annotation) {
+                $dependencies[$className] = $annotation->concrete;
+            }
+        }
+
+        foreach (AnnotationCollector::getClassesByAnnotation(BindTo::class) as $className => $metadata) {
+            /**
+             * @var MultipleAnnotation $metadata
+             * @var BindTo[] $annotations
+             */
+            $annotations = $metadata->toAnnotations();
+            foreach ($annotations as $annotation) {
+                $dependencies[$annotation->abstract] = $className;
+            }
+        }
+
+        return $dependencies;
     }
 }
