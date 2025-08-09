@@ -70,7 +70,7 @@ class ConfigProvider
 
         // Register Property Handler.
         RegisterInjectPropertyHandler::register();
-        $annotationDependencies = [];
+        $dependencies = [];
 
         foreach (AnnotationCollector::getClassesByAnnotation(Bind::class) as $className => $metadata) {
             /**
@@ -79,7 +79,7 @@ class ConfigProvider
              */
             $annotations = $metadata->toAnnotations();
             foreach ($annotations as $annotation) {
-                $annotationDependencies[$className] = $annotation->concrete;
+                $dependencies[$className] = $annotation->concrete;
             }
         }
 
@@ -90,10 +90,10 @@ class ConfigProvider
              */
             $annotations = $metadata->toAnnotations();
             foreach ($annotations as $annotation) {
-                $annotationDependencies[$annotation->abstract] = $className;
+                $dependencies[$annotation->abstract] = $className;
             }
         }
 
-        return $annotationDependencies;
+        return $dependencies;
     }
 }
