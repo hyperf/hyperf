@@ -27,49 +27,12 @@ class ConfigProvider
 {
     public function __invoke(): array
     {
-        // Register AST visitors to the collector.
-        if (! AstVisitorRegistry::exists(PropertyHandlerVisitor::class)) {
-            AstVisitorRegistry::insert(PropertyHandlerVisitor::class);
-        }
-
-        if (! AstVisitorRegistry::exists(ProxyCallVisitor::class)) {
-            AstVisitorRegistry::insert(ProxyCallVisitor::class);
-        }
-
-        // Register Property Handler.
-        RegisterInjectPropertyHandler::register();
-        $dependencies = [
-            MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
-            ClosureDefinitionCollectorInterface::class => ClosureDefinitionCollector::class,
-        ];
-
-        $binds = AnnotationCollector::getClassesByAnnotation(Bind::class);
-        $bindToClasses = AnnotationCollector::getClassesByAnnotation(BindTo::class);
-
-        foreach ($binds as $className => $metadata) {
-            /**
-             * @var MultipleAnnotation $metadata
-             * @var Bind[] $annotations
-             */
-            $annotations = $metadata->toAnnotations();
-            foreach ($annotations as $annotation) {
-                $dependencies[$className] = $annotation->concrete;
-            }
-        }
-
-        foreach ($bindToClasses as $className => $metadata) {
-            /**
-             * @var MultipleAnnotation $metadata
-             * @var BindTo[] $annotations
-             */
-            $annotations = $metadata->toAnnotations();
-            foreach ($annotations as $annotation) {
-                $dependencies[$annotation->abstract] = $className;
-            }
-        }
-
         return [
-            'dependencies' => $dependencies,
+            'dependencies' => [
+                MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
+                ClosureDefinitionCollectorInterface::class => ClosureDefinitionCollector::class,
+                ...$this->collectAnnotationDependencies(),
+            ],
             'aspects' => [
                 InjectAspect::class,
             ],
@@ -88,5 +51,49 @@ class ConfigProvider
                 ],
             ],
         ];
+    }
+
+    /**
+     * Get the annotation dependencies.
+     * @return array<string, string>
+     */
+    protected function collectAnnotationDependencies(): array
+    {
+        // Register AST visitors to the collector.
+        if (! AstVisitorRegistry::exists(PropertyHandlerVisitor::class)) {
+            AstVisitorRegistry::insert(PropertyHandlerVisitor::class);
+        }
+
+        if (! AstVisitorRegistry::exists(ProxyCallVisitor::class)) {
+            AstVisitorRegistry::insert(ProxyCallVisitor::class);
+        }
+
+        // Register Property Handler.
+        RegisterInjectPropertyHandler::register();
+        $annotationDependencies = [];
+
+        foreach (AnnotationCollector::getClassesByAnnotation(Bind::class) as $className => $metadata) {
+            /**
+             * @var MultipleAnnotation $metadata
+             * @var Bind[] $annotations
+             */
+            $annotations = $metadata->toAnnotations();
+            foreach ($annotations as $annotation) {
+                $annotationDependencies[$className] = $annotation->concrete;
+            }
+        }
+
+        foreach (AnnotationCollector::getClassesByAnnotation(BindTo::class) as $className => $metadata) {
+            /**
+             * @var MultipleAnnotation $metadata
+             * @var BindTo[] $annotations
+             */
+            $annotations = $metadata->toAnnotations();
+            foreach ($annotations as $annotation) {
+                $annotationDependencies[$annotation->abstract] = $className;
+            }
+        }
+
+        return $annotationDependencies;
     }
 }
