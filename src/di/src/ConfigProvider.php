@@ -27,6 +27,18 @@ class ConfigProvider
 {
     public function __invoke(): array
     {
+        // Register AST visitors to the collector.
+        if (! AstVisitorRegistry::exists(PropertyHandlerVisitor::class)) {
+            AstVisitorRegistry::insert(PropertyHandlerVisitor::class);
+        }
+
+        if (! AstVisitorRegistry::exists(ProxyCallVisitor::class)) {
+            AstVisitorRegistry::insert(ProxyCallVisitor::class);
+        }
+
+        // Register Property Handler.
+        RegisterInjectPropertyHandler::register();
+
         return [
             'dependencies' => [
                 MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
@@ -59,17 +71,6 @@ class ConfigProvider
      */
     protected function collectAnnotationDependencies(): array
     {
-        // Register AST visitors to the collector.
-        if (! AstVisitorRegistry::exists(PropertyHandlerVisitor::class)) {
-            AstVisitorRegistry::insert(PropertyHandlerVisitor::class);
-        }
-
-        if (! AstVisitorRegistry::exists(ProxyCallVisitor::class)) {
-            AstVisitorRegistry::insert(ProxyCallVisitor::class);
-        }
-
-        // Register Property Handler.
-        RegisterInjectPropertyHandler::register();
         $dependencies = [];
 
         foreach (AnnotationCollector::getClassesByAnnotation(Bind::class) as $className => $metadata) {
