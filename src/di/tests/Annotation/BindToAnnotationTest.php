@@ -69,7 +69,7 @@ class BindToAnnotationTest extends TestCase
 
         $this->assertCount(1, $bindToAnnotations);
         $this->assertInstanceOf(BindTo::class, $bindToAnnotations[0]);
-        $this->assertSame(TestServiceInterface::class, $bindToAnnotations[0]->concrete);
+        $this->assertSame(TestServiceInterface::class, $bindToAnnotations[0]->abstract);
     }
 
     public function testBindToAnnotationWithStringValue()
