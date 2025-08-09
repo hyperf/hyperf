@@ -17,8 +17,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 class BindTo extends AbstractMultipleAnnotation
 {
-    public function __construct(
-        public readonly string $abstract
-    ) {
+    public function __construct(public readonly string $abstract)
+    {
     }
 }
