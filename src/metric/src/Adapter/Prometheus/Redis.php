@@ -377,7 +377,7 @@ LUA
         $gatherKey = $this->getMetricGatherKey('summary');
         $labelKey = Json::encode($data['labelValues']);
 
-        // 累加 sum 和 count
+        // Accumulate sum and count
         $this->redis->hIncrByFloat($key, 'sum:' . $labelKey, $data['value']);
         $this->redis->hIncrBy($key, 'count:' . $labelKey, 1);
 
