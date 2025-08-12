@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Filesystem\Adapter;
 
-use Aws\Handler\GuzzleV6\GuzzleHandler;
 use Aws\S3\S3Client;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
@@ -26,9 +25,15 @@ class S3AdapterFactory implements AdapterFactoryInterface
 {
     public function make(array $options)
     {
-        $handler = new GuzzleHandler(new Client([
-            'handler' => HandlerStack::create(new CoroutineHandler()),
-        ]));
+	    if (class_exists('\Aws\Handler\Guzzle\GuzzleHandler')) {
+		    $handler = new \Aws\Handler\Guzzle\GuzzleHandler(new Client([
+			    'handler' => HandlerStack::create(new CoroutineHandler()),
+		    ]));
+	    } else {
+		    $handler = new \Aws\Handler\GuzzleV6\GuzzleHandler(new Client([
+			    'handler' => HandlerStack::create(new CoroutineHandler()),
+		    ]));
+	    }
         $options = array_merge($options, ['http_handler' => $handler]);
         $client = new S3Client($options);
 
