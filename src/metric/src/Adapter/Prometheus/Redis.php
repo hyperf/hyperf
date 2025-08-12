@@ -381,10 +381,10 @@ LUA
         $this->redis->hIncrByFloat($key, 'sum:' . $labelKey, $data['value']);
         $this->redis->hIncrBy($key, 'count:' . $labelKey, 1);
 
-        // 存储观测值（可选，便于分位数计算，注意内存控制）
+        // Store observed values (optional, for quantile calculation, be aware of memory usage)
         $this->redis->rPush($key . ':values:' . $labelKey, $data['value']);
 
-        // 存储元数据和采集 key
+        // Accumulate sum and count
         $this->redis->hSet($key, '__meta', Json::encode($metaData));
         $this->redis->sAdd($gatherKey, $key);
     }
