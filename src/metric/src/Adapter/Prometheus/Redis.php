@@ -367,4 +367,25 @@ LUA
             default => throw new InvalidArgumentException('Unknown command'),
         };
     }
+
+    public function updateSummary(array $data): void
+    {
+        $metaData = $data;
+        unset($metaData['value'], $metaData['labelValues']);
+
+        $key = $this->toMetricKey($data);
+        $gatherKey = $this->getMetricGatherKey('summary');
+        $labelKey = Json::encode($data['labelValues']);
+
+        // 累加 sum 和 count
+        $this->redis->hIncrByFloat($key, 'sum:' . $labelKey, $data['value']);
+        $this->redis->hIncrBy($key, 'count:' . $labelKey, 1);
+
+        // 存储观测值（可选，便于分位数计算，注意内存控制）
+        $this->redis->rPush($key . ':values:' . $labelKey, $data['value']);
+
+        // 存储元数据和采集 key
+        $this->redis->hSet($key, '__meta', Json::encode($metaData));
+        $this->redis->sAdd($gatherKey, $key);
+    }
 }
