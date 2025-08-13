@@ -102,18 +102,20 @@ LUA
 
         $this->redis->eval(
             <<<'LUA'
-local result = redis.call(ARGV[1], KEYS[1], ARGV[2], ARGV[3])
-if ARGV[1] == 'hSet' then
-    if result == 1 then
-        redis.call('hSet', KEYS[1], '__meta', ARGV[4])
-        redis.call('sAdd', KEYS[2], KEYS[1])
-    end
+local cmd = ARGV[1]
+local result
+if cmd == 'hSet' then
+  result = redis.call('hSet', KEYS[1], ARGV[2], ARGV[3])
+elseif cmd == 'hIncrBy' then
+  result = redis.call('hIncrBy', KEYS[1], ARGV[2], ARGV[3])
+elseif cmd == 'hIncrByFloat' then
+  result = redis.call('hIncrByFloat', KEYS[1], ARGV[2], ARGV[3])
 else
-    if result == ARGV[3] then
-        redis.call('hSet', KEYS[1], '__meta', ARGV[4])
-        redis.call('sAdd', KEYS[2], KEYS[1])
-    end
+  return redis.error_reply('unsupported cmd: ' .. cmd)
 end
+redis.call('hSet', KEYS[1], '__meta', ARGV[4])
+redis.call('sAdd', KEYS[2], KEYS[1])
+return result
 LUA
             ,
             [
@@ -138,10 +140,25 @@ LUA
 
         $this->redis->eval(
             <<<'LUA'
-local result = redis.call(ARGV[1], KEYS[1], ARGV[3], ARGV[2])
-local added = redis.call('sAdd', KEYS[2], KEYS[1])
+local cmd   = ARGV[1]
+local key   = KEYS[1]
+local gkey  = KEYS[2]
+local value = ARGV[2]
+local field = ARGV[3]
+local meta  = ARGV[4]
+
+local result
+if cmd == 'hIncrBy' then
+  result = redis.call('hIncrBy', key, field, value)
+elseif cmd == 'hIncrByFloat' then
+  result = redis.call('hIncrByFloat', key, field, value)
+else
+  return redis.error_reply('unsupported counter cmd: ' .. tostring(cmd))
+end
+
+local added = redis.call('sAdd', gkey, key)
 if added == 1 then
-    redis.call('hMSet', KEYS[1], '__meta', ARGV[4])
+  redis.call('hMSet', key, '__meta', meta)
 end
 return result
 LUA
