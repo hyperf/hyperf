@@ -25,15 +25,15 @@ class S3AdapterFactory implements AdapterFactoryInterface
 {
     public function make(array $options)
     {
-	    if (class_exists('\Aws\Handler\Guzzle\GuzzleHandler')) {
-		    $handler = new \Aws\Handler\Guzzle\GuzzleHandler(new Client([
-			    'handler' => HandlerStack::create(new CoroutineHandler()),
-		    ]));
-	    } else {
-		    $handler = new \Aws\Handler\GuzzleV6\GuzzleHandler(new Client([
-			    'handler' => HandlerStack::create(new CoroutineHandler()),
-		    ]));
-	    }
+        $client = new Client([
+            'handler' => HandlerStack::create(new CoroutineHandler()),
+        ]);
+
+        $handlerClass = class_exists(\Aws\Handler\Guzzle\GuzzleHandler::class)
+            ? \Aws\Handler\Guzzle\GuzzleHandler::class
+            : \Aws\Handler\GuzzleV6\GuzzleHandler::class;
+
+        $handler = new $handlerClass($client);
         $options = array_merge($options, ['http_handler' => $handler]);
         $client = new S3Client($options);
 
