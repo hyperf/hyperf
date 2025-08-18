@@ -1,5 +1,9 @@
 # v3.1.61 - TBD
 
+## Added
+
+- [#7500](https://github.com/hyperf/hyperf/pull/7500) Added `push` method to `Hyperf\Collection\Arr` which allows pushing items into arrays using dot notation.
+
 ## Fixed
 
 - [#7476](https://github.com/hyperf/hyperf/pull/7476) Fixed macro validation for reference parameters.

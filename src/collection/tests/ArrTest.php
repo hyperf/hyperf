@@ -17,6 +17,7 @@ use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Resolver\ResolverDispatcher;
+use InvalidArgumentException;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -925,5 +926,52 @@ class ArrTest extends TestCase
         $key = ['id'];
         $expected = [1 => 'John', 2 => 'Jane'];
         $this->assertEquals($expected, Arr::pluck($array, $value, $key));
+    }
+
+    public function testItGetsAnArray()
+    {
+        $test_array = ['string' => 'foo bar', 'array' => ['foo', 'bar']];
+
+        // Test array values are returned as arrays
+        $this->assertSame(
+            ['foo', 'bar'],
+            Arr::array($test_array, 'array')
+        );
+
+        // Test that default array values are returned for missing keys
+        $this->assertSame(
+            [1, 'two'],
+            Arr::array($test_array, 'missing_key', [1, 'two'])
+        );
+
+        // Test that an exception is raised if the value is not an array
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('#^Array value for key \[string\] must be an array, (.*) found.#');
+        Arr::array($test_array, 'string');
+    }
+
+    public function testPush(): void
+    {
+        $array = [];
+
+        Arr::push($array, 'office.furniture', 'Desk');
+        $this->assertEquals(['Desk'], $array['office']['furniture']);
+
+        Arr::push($array, 'office.furniture', 'Chair', 'Lamp');
+        $this->assertEquals(['Desk', 'Chair', 'Lamp'], $array['office']['furniture']);
+
+        $array = [];
+
+        Arr::push($array, null, 'Chris', 'Nuno');
+        $this->assertEquals(['Chris', 'Nuno'], $array);
+
+        Arr::push($array, null, 'Taylor');
+        $this->assertEquals(['Chris', 'Nuno', 'Taylor'], $array);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Array value for key [foo.bar] must be an array, boolean found.');
+
+        $array = ['foo' => ['bar' => false]];
+        Arr::push($array, 'foo.bar', 'baz');
     }
 }
