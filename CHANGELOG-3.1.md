@@ -1,5 +1,9 @@
 # v3.1.61 - TBD
 
+## Fixed
+
+- [#7476](https://github.com/hyperf/hyperf/pull/7476) Fixed macro validation for reference parameters.
+
 # v3.1.60 - 2025-08-02
 
 ## Fixed
