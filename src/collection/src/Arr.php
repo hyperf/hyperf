@@ -49,7 +49,7 @@ class Arr
     }
 
     /**
-     * Get an array item from an array using "dot" notation.
+     * Get an array value from an array using "dot" notation, ensuring the result is an array.
      */
     public static function array(array|ArrayAccess $array, null|int|string $key, ?array $default = null): array
     {
