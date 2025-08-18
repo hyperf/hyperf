@@ -4,6 +4,10 @@
 
 - [#7476](https://github.com/hyperf/hyperf/pull/7476) Fixed macro validation for reference parameters.
 
+## Added
+
+- [#7502](https://github.com/hyperf/hyperf/pull/7502) Added `hasAll` method to `Hyperf\Collection\Arr` class.
+
 # v3.1.60 - 2025-08-02
 
 ## Fixed
