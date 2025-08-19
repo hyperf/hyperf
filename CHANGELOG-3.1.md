@@ -1,5 +1,9 @@
 # v3.1.61 - TBD
 
+## Added
+
+- [#7483](https://github.com/hyperf/hyperf/pull/7483) Added the alias `disassociate()` of `Hyperf\Database\Model\Relations\BelongsTo::dissociate()`.
+
 # v3.1.60 - 2025-08-02
 
 ## Fixed
