@@ -54,7 +54,16 @@ class Application
             return $this->providers[$name];
         }
 
-        $class = $this->alias[$name];
+        $class = $this->resolveVersionClass($this->alias[$name]);
         return $this->providers[$name] = new $class($this, $this->config);
+    }
+
+    public function resolveVersionClass(string $defaultClass): string
+    {
+        [$major, $minor] = array_pad(explode('.', $this->config->getVersion()), 2, 0);
+        $classParts = explode('\\', $defaultClass);
+        $className = end($classParts);
+        $class = __NAMESPACE__ . "\\" . "Provider\\" . "v" . $major . "\\" . $className;
+        return class_exists($class) ? $class : $defaultClass;
     }
 }
