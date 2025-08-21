@@ -42,7 +42,7 @@
 - [233cy/hyperf-tenant](https://github.com/233cy/hyperf-tenant) 为模型提供多租户字段区分
 
 ## 全文搜索
-- [liangguifeng/hyperf-scout-meilisearch](https://github.com/liangguifeng/hyperf-scout-meilisearch) 参考Laravel `scout` 适配 Hyperf  `scout` 的 `meilisearch` 组件
+- [liangguifeng/hyperf-scout-meilisearch](https://github.com/liangguifeng/hyperf-scout-meilisearch) 适配 hyperf/scout 的 Meilisearch 驱动（参考 laravel/scout）。
 
 ## 依赖注入容器
 
