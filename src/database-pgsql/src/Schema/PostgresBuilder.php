@@ -148,7 +148,7 @@ class PostgresBuilder extends Builder
     public function getAllTables(): array
     {
         return $this->connection->select(
-            $this->grammar->compileGetAllTables((array) $this->connection->getConfig('schema'))
+            $this->grammar->compileGetAllTables($this->getSchemas())
         );
     }
 
@@ -158,7 +158,7 @@ class PostgresBuilder extends Builder
     public function getAllViews(): array
     {
         return $this->connection->select(
-            $this->grammar->compileGetAllViews((array) $this->connection->getConfig('schema'))
+            $this->grammar->compileGetAllViews($this->getSchemas())
         );
     }
 
@@ -215,12 +215,23 @@ class PostgresBuilder extends Builder
     }
 
     /**
-     * Get the column type listing for a given table.
-     *
-     * @param string $table
-     * @return array
+     * Get the foreign keys for a given table.
      */
-    public function getColumnTypeListing($table)
+    public function getForeignKeys(string $table): array
+    {
+        [$schema, $table] = $this->parseSchemaAndTable($table);
+
+        $table = $this->connection->getTablePrefix() . $table;
+
+        return $this->connection->getPostProcessor()->processForeignKeys(
+            $this->connection->selectFromWriteConnection($this->grammar->compileForeignKeys($schema, $table))
+        );
+    }
+
+    /**
+     * Get the column type listing for a given table.
+     */
+    public function getColumnTypeListing(string $table, ?string $database = null): array
     {
         [$schema, $table] = $this->parseSchemaAndTable($table);
 
@@ -228,7 +239,7 @@ class PostgresBuilder extends Builder
 
         $results = $this->connection->select(
             $this->grammar->compileColumnListing(),
-            [$this->connection->getDatabaseName(), $schema, $table]
+            [$database ?? $this->connection->getDatabaseName(), $schema, $table]
         );
 
         /** @var PostgresProcessor $processor */
@@ -248,6 +259,15 @@ class PostgresBuilder extends Builder
         return $this->connection->getPostProcessor()->processIndexes(
             $this->connection->selectFromWriteConnection($this->grammar->compileIndexes($schema, $table))
         );
+    }
+
+    /**
+     * Get the schemas for the connection.
+     */
+    protected function getSchemas(): array
+    {
+        $schemas = (array) $this->connection->getConfig('schema');
+        return empty($schemas) ? ['public'] : $schemas;
     }
 
     /**

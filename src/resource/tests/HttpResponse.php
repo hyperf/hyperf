@@ -236,10 +236,10 @@ class HttpResponse
 
             PHPUnit::assertTrue(
                 Str::contains($actual, $expected),
-                'Unable to find JSON fragment: ' . PHP_EOL . PHP_EOL .
-                '[' . json_encode([$key => $value]) . ']' . PHP_EOL . PHP_EOL .
-                'within' . PHP_EOL . PHP_EOL .
-                "[{$actual}]."
+                'Unable to find JSON fragment: ' . PHP_EOL . PHP_EOL
+                . '[' . json_encode([$key => $value]) . ']' . PHP_EOL . PHP_EOL
+                . 'within' . PHP_EOL . PHP_EOL
+                . "[{$actual}]."
             );
         }
 
@@ -267,10 +267,10 @@ class HttpResponse
 
             PHPUnit::assertFalse(
                 Str::contains($actual, $unexpected),
-                'Found unexpected JSON fragment: ' . PHP_EOL . PHP_EOL .
-                '[' . json_encode([$key => $value]) . ']' . PHP_EOL . PHP_EOL .
-                'within' . PHP_EOL . PHP_EOL .
-                "[{$actual}]."
+                'Found unexpected JSON fragment: ' . PHP_EOL . PHP_EOL
+                . '[' . json_encode([$key => $value]) . ']' . PHP_EOL . PHP_EOL
+                . 'within' . PHP_EOL . PHP_EOL
+                . "[{$actual}]."
             );
         }
 
@@ -297,10 +297,10 @@ class HttpResponse
         }
 
         PHPUnit::fail(
-            'Found unexpected JSON fragment: ' . PHP_EOL . PHP_EOL .
-            '[' . json_encode($data) . ']' . PHP_EOL . PHP_EOL .
-            'within' . PHP_EOL . PHP_EOL .
-            "[{$actual}]."
+            'Found unexpected JSON fragment: ' . PHP_EOL . PHP_EOL
+            . '[' . json_encode($data) . ']' . PHP_EOL . PHP_EOL
+            . 'within' . PHP_EOL . PHP_EOL
+            . "[{$actual}]."
         );
     }
 
@@ -381,8 +381,8 @@ class HttpResponse
         $errors = $this->json()['errors'] ?? [];
 
         $errorMessage = $errors
-            ? 'Response has the following JSON validation errors:' .
-            PHP_EOL . PHP_EOL . json_encode($errors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL
+            ? 'Response has the following JSON validation errors:'
+            . PHP_EOL . PHP_EOL . json_encode($errors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL
             : 'Response does not have JSON validation errors.';
 
         foreach ($keys as $key) {
@@ -416,8 +416,8 @@ class HttpResponse
 
         if (is_null($keys) && count($errors) > 0) {
             PHPUnit::fail(
-                'Response has unexpected validation errors: ' . PHP_EOL . PHP_EOL .
-                json_encode($errors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+                'Response has unexpected validation errors: ' . PHP_EOL . PHP_EOL
+                . json_encode($errors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
             );
         }
 
@@ -489,10 +489,10 @@ class HttpResponse
 
         $actual = json_encode($this->decodeResponseJson(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
-        return 'Unable to find JSON: ' . PHP_EOL . PHP_EOL .
-            "[{$expected}]" . PHP_EOL . PHP_EOL .
-            'within response JSON:' . PHP_EOL . PHP_EOL .
-            "[{$actual}]." . PHP_EOL . PHP_EOL;
+        return 'Unable to find JSON: ' . PHP_EOL . PHP_EOL
+            . "[{$expected}]" . PHP_EOL . PHP_EOL
+            . 'within response JSON:' . PHP_EOL . PHP_EOL
+            . "[{$actual}]." . PHP_EOL . PHP_EOL;
     }
 
     /**

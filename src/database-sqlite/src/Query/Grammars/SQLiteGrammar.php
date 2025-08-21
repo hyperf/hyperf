@@ -35,10 +35,8 @@ class SQLiteGrammar extends Grammar
 
     /**
      * Compile an update statement into SQL.
-     *
-     * @param array $values
      */
-    public function compileUpdate(Builder $query, $values): string
+    public function compileUpdate(Builder $query, array $values): string
     {
         if ($query->joins || $query->limit) {
             return $this->compileUpdateWithJoinsOrLimit($query, $values);

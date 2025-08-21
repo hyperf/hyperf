@@ -13,38 +13,24 @@ declare(strict_types=1);
 namespace HyperfTest\DbConnection\Stubs;
 
 use PDO;
+use PDOStatement;
+use ReturnTypeWillChange;
 
 class PDOStub extends PDO
 {
-    public $dsn;
-
-    public $username;
-
-    public $passwd;
-
-    public $options;
-
-    public static $destruct = 0;
-
-    public function __construct(string $dsn, string $username, string $passwd, array $options)
+    public function __construct(public string $dsn, public ?string $username = null, public ?string $password = null, public ?array $options = null)
     {
-        $this->dsn = $dsn;
-        $this->username = $username;
-        $this->passwd = $passwd;
-        $this->options = $options;
     }
 
-    public function __destruct()
+    #[ReturnTypeWillChange]
+    public function prepare(string $query, array $options = []): bool|PDOStatement
     {
-        ++self::$destruct;
+        return new PDOStatementStubPHP8($query);
     }
 
-    public function prepare($statement, $driver_options = null)
+    #[ReturnTypeWillChange]
+    public function exec(string $statement): bool|int
     {
-        return new PDOStatementStubPHP8($statement);
-    }
-
-    public function exec($statement)
-    {
+        return 0;
     }
 }

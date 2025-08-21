@@ -75,6 +75,13 @@ final class ClosureCommand extends Command
         return $this;
     }
 
+    public function coroutine(bool $coroutine): self
+    {
+        $this->coroutine = $coroutine;
+
+        return $this;
+    }
+
     /**
      * @param null|callable(Crontab $crontab):Crontab $callback
      */

@@ -41,6 +41,9 @@
 - [hyperf-ext/translatable](https://github.com/hyperf-ext/translatable) 为模型提供多语言能力
 - [233cy/hyperf-tenant](https://github.com/233cy/hyperf-tenant) 为模型提供多租户字段区分
 
+## 全文搜索
+- [liangguifeng/hyperf-scout-meilisearch](https://github.com/liangguifeng/hyperf-scout-meilisearch) 参考Laravel `scout` 适配 Hyperf  `scout` 的 `meilisearch` 组件
+
 ## 依赖注入容器
 
 - [hyperf/di](https://github.com/hyperf/di) Hyperf 官方提供的支持注解及 AOP 的依赖注入容器

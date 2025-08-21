@@ -24,4 +24,19 @@ use Hyperf\Support\Fluent;
  */
 class ForeignKeyDefinition extends Fluent
 {
+    /**
+     * Indicate that updates should cascade.
+     */
+    public function cascadeOnUpdate(): static
+    {
+        return $this->onUpdate('cascade');
+    }
+
+    /**
+     * Indicate that deletes should set the foreign key value to null.
+     */
+    public function nullOnDelete(): static
+    {
+        return $this->onDelete('set null');
+    }
 }

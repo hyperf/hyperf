@@ -522,6 +522,16 @@ trait HasAttributes
     }
 
     /**
+     * Discard attribute changes and reset the attributes to their original state.
+     */
+    public function discardChanges(): static
+    {
+        [$this->attributes, $this->changes] = [$this->original, []];
+
+        return $this;
+    }
+
+    /**
      * Sync multiple original attribute with their current values.
      *
      * @param array|string $attributes
@@ -640,13 +650,11 @@ trait HasAttributes
         }
 
         if ($this->isDateAttribute($key)) {
-            return $this->fromDateTime($current) ===
-                $this->fromDateTime($original);
+            return $this->fromDateTime($current) === $this->fromDateTime($original);
         }
 
         if ($this->hasCast($key, static::$primitiveCastTypes)) {
-            return $this->castAttribute($key, $current) ===
-                $this->castAttribute($key, $original);
+            return $this->castAttribute($key, $current) === $this->castAttribute($key, $original);
         }
 
         return is_numeric($current) && is_numeric($original)
@@ -675,6 +683,14 @@ trait HasAttributes
         $this->appends = $appends;
 
         return $this;
+    }
+
+    /**
+     * Return whether the accessor attribute has been appended.
+     */
+    public function hasAppended(string $attribute): bool
+    {
+        return in_array($attribute, $this->appends);
     }
 
     /**
@@ -1130,8 +1146,7 @@ trait HasAttributes
      */
     protected function getArrayAttributeByKey(string $key)
     {
-        return isset($this->attributes[$key]) ?
-            $this->fromJson($this->attributes[$key]) : [];
+        return isset($this->attributes[$key]) ? $this->fromJson($this->attributes[$key]) : [];
     }
 
     /**

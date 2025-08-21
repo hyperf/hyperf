@@ -77,7 +77,7 @@ class Watcher
                 }
             } else {
                 $ret = exec(sprintf('%s %s/vendor/hyperf/watcher/collector-reload.php %s', $this->option->getBin(), BASE_PATH, $file));
-                if ($ret['code'] === 0) {
+                if (isset($ret['code']) && $ret['code'] === 0) {
                     $this->output->writeln('Class reload success.');
                 } else {
                     $this->output->writeln('Class reload failed.');
@@ -132,10 +132,9 @@ class Watcher
             ];
 
             proc_open(
-                $this->option->getBin() . ' ' . BASE_PATH . '/' . $this->option->getCommand(),
-                $descriptorSpec,
-                $pipes,
-                env_vars: $_ENV
+                command: $this->option->getBin() . ' ' . BASE_PATH . '/' . $this->option->getCommand(),
+                descriptor_spec: $descriptorSpec,
+                pipes: $pipes
             );
 
             $this->output->writeln('Stop server success.');

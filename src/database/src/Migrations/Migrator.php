@@ -32,7 +32,7 @@ class Migrator
      *
      * @var string
      */
-    protected $connection;
+    protected $connection = 'default';
 
     /**
      * The paths to all of the migration files.
@@ -157,7 +157,7 @@ class Migrator
             return [];
         }
 
-        return $this->resetMigrations($migrations, $paths, $pretend);
+        return $this->resetMigrations($migrations, Arr::wrap($paths), $pretend);
     }
 
     /**

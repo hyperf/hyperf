@@ -41,6 +41,11 @@ abstract class Relation
     public static $morphMap = [];
 
     /**
+     * Prevents morph relationships without a morph map.
+     */
+    protected static bool $requireMorphMap = false;
+
+    /**
      * The Model query builder instance.
      *
      * @var Builder
@@ -347,6 +352,40 @@ abstract class Relation
     public function getRelationCountHash(bool $incrementJoinCount = true)
     {
         return 'hyperf_reserved_' . ($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
+    }
+
+    /**
+     * Get the alias associated with a custom polymorphic class.
+     */
+    public static function getMorphAlias(string $className): string
+    {
+        return array_search($className, static::$morphMap, strict: true) ?: $className;
+    }
+
+    /**
+     * Prevent polymorphic relationships from being used without model mappings.
+     */
+    public static function requireMorphMap(bool $requireMorphMap = true): void
+    {
+        static::$requireMorphMap = $requireMorphMap;
+    }
+
+    /**
+     * Determine if polymorphic relationships require explicit model mapping.
+     */
+    public static function requiresMorphMap(): bool
+    {
+        return static::$requireMorphMap;
+    }
+
+    /**
+     * Define the morph map for polymorphic relations and require all morphed models to be explicitly mapped.
+     */
+    public static function enforceMorphMap(?array $map, bool $merge = true): array
+    {
+        static::requireMorphMap();
+
+        return static::morphMap($map, $merge);
     }
 
     /**

@@ -24,6 +24,7 @@ class CacheAhead extends AbstractAnnotation
 {
     /**
      * @param null|int $ttl the max offset for ttl
+     * @param bool $runAsync when this method is executed for the first time, the original method is executed asynchronously and cached, so the return value is null
      */
     public function __construct(
         public ?string $prefix = null,
@@ -34,7 +35,8 @@ class CacheAhead extends AbstractAnnotation
         public int $offset = 0,
         public string $group = 'default',
         public bool $collect = false,
-        public ?array $skipCacheResults = null
+        public ?array $skipCacheResults = null,
+        public bool $runAsync = false,
     ) {
     }
 

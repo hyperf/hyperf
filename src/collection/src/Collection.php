@@ -121,12 +121,11 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
 
         /**
          * @template TValue of array-key
-         * @phpstan-ignore-next-line
          * @var static<TValue, int> $counts
          */
         $counts = new self();
         $collection->each(function ($value) use ($counts) {
-            $counts[$value] = isset($counts[$value]) ? $counts[$value] + 1 : 1;
+            $counts->offsetSet($value, isset($counts[$value]) ? $counts[$value] + 1 : 1);
         });
         $sorted = $counts->sort();
         $highestValue = $sorted->last();
@@ -1616,7 +1615,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
                         $result = match ($options) {
                             SORT_NUMERIC => intval($values[0]) <=> intval($values[1]),
                             SORT_STRING => strcmp($values[0], $values[1]),
-                            SORT_NATURAL => strnatcmp($values[0], $values[1]),
+                            SORT_NATURAL => strnatcmp((string) $values[0], (string) $values[1]),
                             SORT_LOCALE_STRING => strcoll($values[0], $values[1]),
                             default => $values[0] <=> $values[1],
                         };

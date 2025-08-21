@@ -1818,10 +1818,10 @@ class Builder
     /**
      * Add a "group by" clause to the query.
      *
-     * @param array|string ...$groups
+     * @param array|Expression|string ...$groups
      * @return $this
      */
-    public function groupBy(...$groups)
+    public function groupBy(...$groups): static
     {
         foreach ($groups as $group) {
             $this->groups = array_merge((array) $this->groups, Arr::wrap($group));
@@ -2459,6 +2459,22 @@ class Builder
     public function doesntExist()
     {
         return ! $this->exists();
+    }
+
+    /**
+     * Execute the given callback if no rows exist for the current query.
+     */
+    public function existsOr(Closure $callback): mixed
+    {
+        return $this->exists() ? true : $callback();
+    }
+
+    /**
+     * Execute the given callback if rows exist for the current query.
+     */
+    public function doesntExistOr(Closure $callback): mixed
+    {
+        return $this->doesntExist() ? true : $callback();
     }
 
     /**

@@ -51,6 +51,11 @@ abstract class Driver implements DriverInterface
         }
     }
 
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
     public function consume(): void
     {
         $messageCount = 0;

@@ -91,15 +91,11 @@ class ModelTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
-
         Carbon::setTestNow(Carbon::now());
     }
 
     protected function tearDown(): void
     {
-        parent::tearDown();
-
         Mockery::close();
         Carbon::setTestNow(null);
 
@@ -208,6 +204,23 @@ class ModelTest extends TestCase
         $this->assertFalse(isset($model['table']));
         $this->assertEquals($model['table'], null);
         $this->assertFalse(isset($model['with']));
+    }
+
+    public function testDiscardChanges()
+    {
+        $user = new ModelStub([
+            'name' => 'Taylor Otwell',
+        ]);
+
+        $this->assertNotEmpty($user->isDirty());
+        $this->assertNull($user->getOriginal('name'));
+        $this->assertSame('Taylor Otwell', $user->getAttribute('name'));
+
+        $user->discardChanges();
+
+        $this->assertEmpty($user->isDirty());
+        $this->assertNull($user->getOriginal('name'));
+        $this->assertNull($user->getAttribute('name'));
     }
 
     public function testOnly()
@@ -1503,6 +1516,11 @@ class ModelTest extends TestCase
         $this->assertEquals('camelCased', $model->camelCased);
         $this->assertEquals('StudlyCased', $model->StudlyCased);
 
+        $this->assertTrue($model->hasAppended('is_admin'));
+        $this->assertTrue($model->hasAppended('camelCased'));
+        $this->assertTrue($model->hasAppended('StudlyCased'));
+        $this->assertFalse($model->hasAppended('not_appended'));
+
         $model->setHidden(['is_admin', 'camelCased', 'StudlyCased']);
         $this->assertEquals([], $model->toArray());
 
@@ -2073,6 +2091,18 @@ class ModelTest extends TestCase
         $model = new ModelStubWithUuid();
 
         $this->assertTrue(Str::isUuid($model->newUniqueId()));
+    }
+
+    public function testGetMorphAlias()
+    {
+        Relation::morphMap(['user' => ModelStub::class]);
+
+        try {
+            $this->assertSame('user', Relation::getMorphAlias(ModelStub::class));
+            $this->assertSame('Does\Not\Exist', Relation::getMorphAlias('Does\Not\Exist'));
+        } finally {
+            Relation::morphMap([], false);
+        }
     }
 
     protected function getContainer()

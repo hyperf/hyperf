@@ -29,9 +29,11 @@ final class AsCommand extends Command
         string $signature,
         private string $class,
         private string $method,
+        bool $coroutine = true,
     ) {
         $this->signature = $signature;
         $this->parameterParser = $container->get(ParameterParser::class);
+        $this->coroutine = $coroutine;
 
         parent::__construct();
 

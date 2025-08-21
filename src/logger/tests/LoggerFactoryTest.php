@@ -17,6 +17,7 @@ use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Logger\LoggerFactory;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Logger\Stub\BarProcessor;
 use HyperfTest\Logger\Stub\FooHandler;
 use HyperfTest\Logger\Stub\FooProcessor;
@@ -58,6 +59,16 @@ class LoggerFactoryTest extends TestCase
         $factory = $container->get(LoggerFactory::class);
         $logger = $factory->get('hyperf');
         $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
+    }
+
+    public function testInvokeLoggerByCallableConfigFromFactory()
+    {
+        $container = $this->mockContainer();
+        ApplicationContext::setContainer($container);
+        $factory = $container->get(LoggerFactory::class);
+        $logger = $factory->get($name = uniqid(), 'callable');
+
+        $this->assertStringContainsString($name, (new ClassInvoker((new ClassInvoker($logger))->handlers[0]))->url);
     }
 
     public function testInvokeLoggerFromFactoryByString()
@@ -186,6 +197,15 @@ class LoggerFactoryTest extends TestCase
                     'formatter' => [
                         'class' => LineFormatter::class,
                         'constructor' => [],
+                    ],
+                ],
+                'callable' => fn (string $name) => [
+                    'handler' => [
+                        'class' => StreamHandler::class,
+                        'constructor' => [
+                            'stream' => BASE_PATH . '/runtime/logs/' . $name . '.log',
+                            'level' => Logger::DEBUG,
+                        ],
                     ],
                 ],
                 'string' => ['handlers' => ['default']],

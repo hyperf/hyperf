@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Stdlib;
 
+use ReturnTypeWillChange;
+
 use const PHP_INT_MAX;
 
 /**
@@ -40,7 +42,8 @@ class SplPriorityQueue extends \SplPriorityQueue
      * @param TValue $value
      * @param TPriority $priority
      */
-    public function insert(mixed $value, mixed $priority)
+    #[ReturnTypeWillChange]
+    public function insert(mixed $value, mixed $priority): bool
     {
         return parent::insert($value, [$priority, $this->serial--]);
     }

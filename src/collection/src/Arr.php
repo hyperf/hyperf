@@ -491,6 +491,26 @@ class Arr
     }
 
     /**
+     * Shuffle an associative array.
+     */
+    public static function shuffleAssoc(array $array, ?int $seed = null): array
+    {
+        if (empty($array)) {
+            return [];
+        }
+
+        $keys = array_keys($array);
+        $keys = static::shuffle($keys, $seed);
+        $random = [];
+
+        foreach ($keys as $key) {
+            $random[$key] = $array[$key];
+        }
+
+        return $random;
+    }
+
+    /**
      * Sort the array using the given callback or "dot" notation.
      */
     public static function sort(array $array, null|callable|string $callback = null): array

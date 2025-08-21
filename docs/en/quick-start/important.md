@@ -37,6 +37,9 @@ Try to avoid switching between coroutines in `__get`, `__set`, and `__isset` as 
 <?php
 
 require_once 'vendor/autoload.php';
+
+use function Hyperf\Coroutine\go;
+
 Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL]);
 
 class Foo
@@ -71,7 +74,6 @@ go(static function () use ($foo) {
 });
 
 \Swoole\Event::wait();
-
 ```
 
 When we execute the above code, it will return the following results

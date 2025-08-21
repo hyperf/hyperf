@@ -103,6 +103,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `sex` enum('0','1','2') COLLATE utf8_unicode_ci NOT NULL,
   `remember_token` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -114,6 +115,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
   `name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `sex` enum('0','1','2') COLLATE utf8mb3_unicode_ci NOT NULL,
   `remember_token` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -282,19 +284,19 @@ class DatabaseMigratorIntegrationTest extends TestCase
         $queries = $blueprint->toSql($this->getConnection(), new MySqlGrammar());
 
         $this->assertSame(
-            'ALTER TABLE test_change_types ' .
-            'CHANGE a a BIGINT NOT NULL, ' .
-            'CHANGE b b TINYBLOB NOT NULL, ' .
-            'CHANGE c c TINYINT(1) NOT NULL, ' .
-            'CHANGE d d DATE NOT NULL, ' .
-            'CHANGE e e DATETIME NOT NULL, ' .
-            'CHANGE f f NUMERIC(8, 2) NOT NULL, ' .
-            'CHANGE g g DOUBLE PRECISION NOT NULL, ' .
-            'CHANGE h h INT NOT NULL, ' .
-            'CHANGE i i JSON NOT NULL, ' .
-            'CHANGE j j SMALLINT NOT NULL, ' .
-            'CHANGE k k TIME NOT NULL, ' .
-            'CHANGE l l TEXT CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`',
+            'ALTER TABLE test_change_types '
+            . 'CHANGE a a BIGINT NOT NULL, '
+            . 'CHANGE b b TINYBLOB NOT NULL, '
+            . 'CHANGE c c TINYINT(1) NOT NULL, '
+            . 'CHANGE d d DATE NOT NULL, '
+            . 'CHANGE e e DATETIME NOT NULL, '
+            . 'CHANGE f f NUMERIC(8, 2) NOT NULL, '
+            . 'CHANGE g g DOUBLE PRECISION NOT NULL, '
+            . 'CHANGE h h INT NOT NULL, '
+            . 'CHANGE i i JSON NOT NULL, '
+            . 'CHANGE j j SMALLINT NOT NULL, '
+            . 'CHANGE k k TIME NOT NULL, '
+            . 'CHANGE l l TEXT CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`',
             $queries[0]
         );
 

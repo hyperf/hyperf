@@ -77,9 +77,9 @@ trait ConditionallyLoadsAttributes
             ));
         }
 
-        return $this->removeMissingValues(array_slice($data, 0, $index, true) +
-            $merge +
-            $this->filter(array_slice($data, $index + 1, null, true)));
+        return $this->removeMissingValues(array_slice($data, 0, $index, true)
+            + $merge
+            + $this->filter(array_slice($data, $index + 1, null, true)));
     }
 
     /**

@@ -21,6 +21,9 @@ use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
+use Hyperf\Database\Exception\MultipleRecordsFoundException;
+use Hyperf\Database\Exception\RecordsNotFoundException;
+use Hyperf\Database\Exception\UniqueConstraintViolationException;
 use Hyperf\Database\Model\Collection as ModelCollection;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
@@ -39,11 +42,16 @@ use function Hyperf\Collection\collect;
 use function Hyperf\Tappable\tap;
 
 /**
+ * @template TModel of Model
  * @mixin \Hyperf\Database\Query\Builder
  */
 class Builder
 {
-    use BuildsQueries;
+    /** @use BuildsQueries<TModel> */
+    use BuildsQueries {
+        BuildsQueries::sole as baseSole;
+    }
+
     use ForwardsCalls;
     use Concerns\QueriesRelationships;
 
@@ -487,6 +495,34 @@ class Builder
     }
 
     /**
+     * Find a model by its primary key or call a callback.
+     *
+     * @template TValue
+     *
+     * @param (Closure(): TValue)|list<string>|string $columns
+     * @param null|(Closure(): TValue) $callback
+     * @return (
+     *     $id is (Arrayable<array-key, mixed>|array)
+     *     ? Collection<int, TModel>
+     *     : TModel|TValue
+     * )
+     */
+    public function findOr(mixed $id, array|Closure|string $columns = ['*'], ?Closure $callback = null): mixed
+    {
+        if ($columns instanceof Closure) {
+            $callback = $columns;
+
+            $columns = ['*'];
+        }
+
+        if (! is_null($model = $this->find($id, $columns))) {
+            return $model;
+        }
+
+        return $callback();
+    }
+
+    /**
      * Find a model by its primary key or return fresh model instance.
      *
      * @param array $columns
@@ -517,7 +553,7 @@ class Builder
     }
 
     /**
-     * Get the first record matching the attributes or create it.
+     * Get the first record matching the attributes. If the record is not found, create it.
      *
      * @return Model|static
      */
@@ -527,9 +563,21 @@ class Builder
             return $instance;
         }
 
-        return tap($this->newModelInstance($attributes + $values), function ($instance) {
-            $instance->save();
-        });
+        return $this->createOrFirst($attributes, $values);
+    }
+
+    /**
+     * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
+     *
+     * @return Model|static
+     */
+    public function createOrFirst(array $attributes = [], array $values = [])
+    {
+        try {
+            return $this->create(array_merge($attributes, $values));
+        } catch (UniqueConstraintViolationException $e) {
+            return $this->where($attributes)->first() ?? throw $e;
+        }
     }
 
     /**
@@ -628,7 +676,7 @@ class Builder
      * Get the hydrated models without eager loading.
      *
      * @param array $columns
-     * @return \Hyperf\Database\Model\Model[]|static[]
+     * @return Model[]|static[]
      */
     public function getModels($columns = ['*'])
     {
@@ -833,7 +881,7 @@ class Builder
     /**
      * Save a new model and return the instance.
      *
-     * @return $this|\Hyperf\Database\Model\Model
+     * @return $this|Model
      */
     public function create(array $attributes = [])
     {
@@ -845,7 +893,7 @@ class Builder
     /**
      * Save a new model and return the instance. Allow mass-assignment.
      *
-     * @return $this|\Hyperf\Database\Model\Model
+     * @return $this|Model
      */
     public function forceCreate(array $attributes)
     {
@@ -1009,6 +1057,23 @@ class Builder
         }
 
         return $builder;
+    }
+
+    /**
+     * Execute the query and get the first result if it's the sole matching record.
+     *
+     * @return TModel
+     *
+     * @throws ModelNotFoundException<TModel>
+     * @throws MultipleRecordsFoundException
+     */
+    public function sole(array|string $columns = ['*'])
+    {
+        try {
+            return $this->baseSole($columns);
+        } catch (RecordsNotFoundException) {
+            throw (new ModelNotFoundException())->setModel($this->model::class);
+        }
     }
 
     /**

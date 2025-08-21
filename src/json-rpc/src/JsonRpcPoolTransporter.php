@@ -169,7 +169,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
     }
 
     /**
-     * @param \Hyperf\LoadBalancer\Node[] $nodes
+     * @param Node[] $nodes
      */
     public function setNodes(array $nodes): self
     {
@@ -178,7 +178,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
     }
 
     /**
-     * @return \Hyperf\LoadBalancer\Node[]
+     * @return Node[]
      */
     public function getNodes(): array
     {

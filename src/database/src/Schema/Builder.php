@@ -238,6 +238,7 @@ class Builder
         $type = is_null($type) ? $type : strtolower($type);
 
         foreach ($this->getIndexes($table) as $value) {
+            $value = (array) $value;
             $typeMatches = is_null($type)
                 || ($type === 'primary' && $value['primary'])
                 || ($type === 'unique' && $value['unique'])
@@ -349,6 +350,18 @@ class Builder
     {
         return $this->connection->statement(
             $this->grammar->compileDisableForeignKeyConstraints()
+        );
+    }
+
+    /**
+     * Get the foreign keys for a given table.
+     */
+    public function getForeignKeys(string $table): array
+    {
+        $table = $this->connection->getTablePrefix() . $table;
+
+        return $this->connection->getPostProcessor()->processForeignKeys(
+            $this->connection->selectFromWriteConnection($this->grammar->compileForeignKeys($table))
         );
     }
 

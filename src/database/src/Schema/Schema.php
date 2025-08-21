@@ -47,6 +47,7 @@ use Hyperf\Database\ConnectionResolverInterface;
  * @method static \Hyperf\Database\Connection getConnection()
  * @method static Builder setConnection(\Hyperf\Database\Connection $connection)
  * @method static void blueprintResolver(\Closure $resolver)
+ * @method static array getForeignKeys(string $table)
  */
 class Schema
 {

@@ -193,6 +193,8 @@ class DeleteCacheListener implements ListenerInterface
 <?php
 use Hyperf\ModelListener\Annotation\ModelListener;
 use App\Model\User;
+use Hyperf\Database\Model\Events\Creating;
+use Hyperf\Database\Model\Events\Created;
 
 /**
  * 定义一个 UserObserver 观察者，监听 User 模型的事件.
@@ -202,13 +204,15 @@ use App\Model\User;
 #[ModelListener(models: [ User::class ])]
 class UserObserver
 {
-    public function creating(User $user)
+    public function creating(Creating $event)
     {
+        $user = $event->getModel();
         // 创建用户时触发
     }
     
-    public function created(User $user)
+    public function created(Created $event)
     {
+        $user = $event->getModel();
         // 用户创建完成后触发
     }
     

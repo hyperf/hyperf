@@ -150,10 +150,10 @@ class AssertableJsonString implements ArrayAccess, Countable
 
             PHPUnit::assertTrue(
                 Str::contains($actual, $expected),
-                'Unable to find JSON fragment: ' . PHP_EOL . PHP_EOL .
-                '[' . json_encode([$key => $value], JSON_UNESCAPED_UNICODE) . ']' . PHP_EOL . PHP_EOL .
-                'within' . PHP_EOL . PHP_EOL .
-                "[{$actual}]."
+                'Unable to find JSON fragment: ' . PHP_EOL . PHP_EOL
+                . '[' . json_encode([$key => $value], JSON_UNESCAPED_UNICODE) . ']' . PHP_EOL . PHP_EOL
+                . 'within' . PHP_EOL . PHP_EOL
+                . "[{$actual}]."
             );
         }
 
@@ -182,10 +182,10 @@ class AssertableJsonString implements ArrayAccess, Countable
 
             PHPUnit::assertFalse(
                 Str::contains($actual, $unexpected),
-                'Found unexpected JSON fragment: ' . PHP_EOL . PHP_EOL .
-                '[' . json_encode([$key => $value], JSON_UNESCAPED_UNICODE) . ']' . PHP_EOL . PHP_EOL .
-                'within' . PHP_EOL . PHP_EOL .
-                "[{$actual}]."
+                'Found unexpected JSON fragment: ' . PHP_EOL . PHP_EOL
+                . '[' . json_encode([$key => $value], JSON_UNESCAPED_UNICODE) . ']' . PHP_EOL . PHP_EOL
+                . 'within' . PHP_EOL . PHP_EOL
+                . "[{$actual}]."
             );
         }
 
@@ -213,10 +213,10 @@ class AssertableJsonString implements ArrayAccess, Countable
         }
 
         PHPUnit::fail(
-            'Found unexpected JSON fragment: ' . PHP_EOL . PHP_EOL .
-            '[' . json_encode($data, JSON_UNESCAPED_UNICODE) . ']' . PHP_EOL . PHP_EOL .
-            'within' . PHP_EOL . PHP_EOL .
-            "[{$actual}]."
+            'Found unexpected JSON fragment: ' . PHP_EOL . PHP_EOL
+            . '[' . json_encode($data, JSON_UNESCAPED_UNICODE) . ']' . PHP_EOL . PHP_EOL
+            . 'within' . PHP_EOL . PHP_EOL
+            . "[{$actual}]."
         );
     }
 
@@ -383,10 +383,10 @@ class AssertableJsonString implements ArrayAccess, Countable
 
         $actual = json_encode($this->decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-        return 'Unable to find JSON: ' . PHP_EOL . PHP_EOL .
-            "[{$expected}]" . PHP_EOL . PHP_EOL .
-            'within response JSON:' . PHP_EOL . PHP_EOL .
-            "[{$actual}]." . PHP_EOL . PHP_EOL;
+        return 'Unable to find JSON: ' . PHP_EOL . PHP_EOL
+            . "[{$expected}]" . PHP_EOL . PHP_EOL
+            . 'within response JSON:' . PHP_EOL . PHP_EOL
+            . "[{$actual}]." . PHP_EOL . PHP_EOL;
     }
 
     /**

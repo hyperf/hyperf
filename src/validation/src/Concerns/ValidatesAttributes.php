@@ -323,6 +323,27 @@ trait ValidatesAttributes
     }
 
     /**
+     * Validate an attribute contains a list of values.
+     *
+     * @param mixed $value
+     * @param array<int, int|string> $parameters
+     */
+    public function validateContains(string $attribute, $value, array $parameters): bool
+    {
+        if (! is_array($value)) {
+            return false;
+        }
+
+        foreach ($parameters as $parameter) {
+            if (! in_array($parameter, $value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Validate that an attribute is a valid date.
      *
      * @param mixed $value
@@ -636,6 +657,25 @@ trait ValidatesAttributes
     }
 
     /**
+     * Validate the extension of a file upload attribute is in a set of defined extensions.
+     *
+     * @param mixed $value
+     * @param array<int, int|string> $parameters
+     */
+    public function validateExtensions(string $attribute, $value, array $parameters): bool
+    {
+        if (! $this->isValidFileInstance($value)) {
+            return false;
+        }
+
+        if ($this->shouldBlockPhpUpload($value, $parameters)) {
+            return false;
+        }
+
+        return in_array(strtolower($value->getExtension()), $parameters);
+    }
+
+    /**
      * Validate the given value is a valid file.
      *
      * @param mixed $value
@@ -789,6 +829,16 @@ trait ValidatesAttributes
     public function validateUppercase(string $attribute, mixed $value, array $parameters): bool
     {
         return Str::upper($value) === $value;
+    }
+
+    /**
+     * Validate that an attribute is a valid HEX color.
+     *
+     * @param mixed $value
+     */
+    public function validateHexColor(string $attribute, $value): bool
+    {
+        return preg_match('/^#(?:(?:[0-9a-f]{3}){1,2}|(?:[0-9a-f]{4}){1,2})$/i', $value) === 1;
     }
 
     /**
@@ -1298,6 +1348,46 @@ trait ValidatesAttributes
     }
 
     /**
+     * Indicate that an attribute is excluded.
+     */
+    public function validateExclude(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Indicate that an attribute should be excluded when another attribute has a given value.
+     *
+     * @param mixed $value
+     */
+    public function validateExcludeIf(string $attribute, $value, array $parameters): bool
+    {
+        $this->requireParameterCount(2, $parameters, 'exclude_if');
+
+        if (! Arr::has($this->data, $parameters[0])) {
+            return true;
+        }
+
+        [$values, $other] = $this->parseDependentRuleParameters($parameters);
+
+        return ! in_array($other, $values, is_bool($other) || is_null($other));
+    }
+
+    /**
+     * Indicate that an attribute should be excluded when another attribute does not have a given value.
+     *
+     * @param mixed $value
+     */
+    public function validateExcludeUnless(string $attribute, $value, array $parameters): bool
+    {
+        $this->requireParameterCount(2, $parameters, 'exclude_unless');
+
+        [$values, $other] = $this->parseDependentRuleParameters($parameters);
+
+        return in_array($other, $values, is_bool($other) || is_null($other));
+    }
+
+    /**
      * Validate that an attribute exists when another attribute does not have a given value.
      *
      * @param mixed $value
@@ -1312,6 +1402,38 @@ trait ValidatesAttributes
 
         if (! in_array($data, $values)) {
             return $this->validateRequired($attribute, $value);
+        }
+
+        return true;
+    }
+
+    /**
+     * Indicate that an attribute should be excluded when another attribute presents.
+     *
+     * @param mixed $value
+     */
+    public function validateExcludeWith(string $attribute, $value, array $parameters): bool
+    {
+        $this->requireParameterCount(1, $parameters, 'exclude_with');
+
+        if (! Arr::has($this->data, $parameters[0])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Indicate that an attribute should be excluded when another attribute is missing.
+     *
+     * @param mixed $value
+     */
+    public function validateExcludeWithout(string $attribute, $value, array $parameters): bool
+    {
+        $this->requireParameterCount(1, $parameters, 'exclude_without');
+
+        if ($this->anyFailingRequired($parameters)) {
+            return false;
         }
 
         return true;
@@ -1936,5 +2058,16 @@ trait ValidatesAttributes
         if (is_numeric($this->getValue($attribute))) {
             $this->numericRules[] = $rule;
         }
+    }
+
+    /**
+     * Trim the value if it is a string.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function trim($value)
+    {
+        return is_string($value) ? trim($value) : $value;
     }
 }
