@@ -3,6 +3,7 @@
 ## Added
 
 - [#7483](https://github.com/hyperf/hyperf/pull/7483) Added the alias `disassociate()` of `Hyperf\Database\Model\Relations\BelongsTo::dissociate()`.
+- [#7484](https://github.com/hyperf/hyperf/pull/7484) Added method `Hyperf\Database\Model\Model::isSoftDeletable()`.
 
 ## Fixed
 
