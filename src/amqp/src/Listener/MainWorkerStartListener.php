@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Amqp\Listener;
 
-use Doctrine\Instantiator\Instantiator;
 use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\DeclaredExchanges;
 use Hyperf\Amqp\Message\ProducerMessageInterface;
@@ -25,6 +24,8 @@ use Hyperf\Server\Event\MainCoroutineServerStart;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Psr\Container\ContainerInterface;
 use Throwable;
+
+use function Hyperf\Support\make;
 
 class MainWorkerStartListener implements ListenerInterface
 {
@@ -57,13 +58,12 @@ class MainWorkerStartListener implements ListenerInterface
         $producerMessages = AnnotationCollector::getClassesByAnnotation(Producer::class);
         if ($producerMessages) {
             $producer = $this->container->get(\Hyperf\Amqp\Producer::class);
-            $instantiator = $this->container->get(Instantiator::class);
             /**
              * @var string $producerMessageClass
              * @var Producer $annotation
              */
             foreach ($producerMessages as $producerMessageClass => $annotation) {
-                $instance = $instantiator->instantiate($producerMessageClass);
+                $instance = make($producerMessageClass);
                 if (! $instance instanceof ProducerMessageInterface) {
                     continue;
                 }
