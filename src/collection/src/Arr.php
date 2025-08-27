@@ -156,15 +156,7 @@ class Arr
                 return value($default);
             }
 
-            if (is_array($array)) {
-                return array_first($array);
-            }
-
-            foreach ($array as $item) {
-                return $item;
-            }
-
-            return value($default);
+            return array_first($array);
         }
 
         $key = array_find_key($array, $callback);
