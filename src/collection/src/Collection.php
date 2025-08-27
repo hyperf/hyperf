@@ -497,7 +497,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     {
         $keys = is_array($key) ? $key : func_get_args();
 
-        return array_all($keys, fn ($key) => array_key_exists($key, $this->items));
+        return array_all($keys, fn ($key) => isset($this->items[$key]));
     }
 
     /**
@@ -513,7 +513,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
 
         $keys = is_array($key) ? $key : func_get_args();
 
-        return array_any($keys, fn ($key) => array_key_exists($key, $this->items));
+        return array_any($keys, fn ($key) => isset($this->items[$key]));
     }
 
     /**
