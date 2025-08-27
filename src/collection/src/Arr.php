@@ -139,16 +139,21 @@ class Arr
             if (empty($array)) {
                 return value($default);
             }
+
+            if (is_array($array)) {
+                return array_first($array);
+            }
+
             foreach ($array as $item) {
                 return $item;
             }
+
+            return value($default);
         }
-        foreach ($array as $key => $value) {
-            if (call_user_func($callback, $value, $key)) {
-                return $value;
-            }
-        }
-        return value($default);
+
+        $key = array_find_key($array, $callback);
+
+        return $key !== null ? $array[$key] : value($default);
     }
 
     /**
