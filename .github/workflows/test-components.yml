@@ -403,7 +403,10 @@ jobs:
       - name: Setup Packages
         run: |
           composer remove friendsofphp/php-cs-fixer --dev --no-update
+          # symfony/*
           for package in `cat composer.json|grep "symfony/"| awk -F '"' '{print $2}'`; do composer require "${package}:${{ matrix.symfony-version }}" --dev --no-update; done
+          # symfony/polyfill-php*
+          for package in `cat composer.json|grep "symfony/polyfill-php"| awk -F '"' '{print $2}'`; do composer require "${package}:^1.33" --dev --no-update; done
           ./.travis/requirement.install.sh
       - name: Run Test Cases
         run: |
