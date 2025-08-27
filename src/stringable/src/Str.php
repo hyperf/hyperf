@@ -19,7 +19,6 @@ use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
 use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
-use JsonException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use RuntimeException;
@@ -1113,17 +1112,7 @@ class Str
             return false;
         }
 
-        if (function_exists('json_validate')) {
-            return json_validate($value, 512);
-        }
-
-        try {
-            json_decode($value, true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
-            return false;
-        }
-
-        return true;
+        return json_validate($value, 512);
     }
 
     /**
