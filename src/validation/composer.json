@@ -24,7 +24,8 @@
         "nesbot/carbon": "^2.21",
         "psr/container": "^1.0 || ^2.0",
         "psr/event-dispatcher": "^1.0",
-        "psr/http-message": "^1.0 || ^2.0"
+        "psr/http-message": "^1.0 || ^2.0",
+        "symfony/polyfill-php83": "^1.33"
     },
     "suggest": {
         "hyperf/database": "Required if you want to use the database validation rule (~3.1.0).",

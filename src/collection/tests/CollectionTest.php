@@ -1217,7 +1217,7 @@ class CollectionTest extends TestCase
         ))->sortBy([['name', 'asc']], SORT_NATURAL);
         $this->assertEquals((string) $data->values(), (string) $dataMany);
 
-        setlocale(LC_COLLATE, 'en_US.utf8');
+        setlocale(LC_COLLATE, 'en_US.UTF-8');
         $data = (new $collection(
             [
                 ['id' => 5, 'name' => 'A'],
