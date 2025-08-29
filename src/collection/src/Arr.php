@@ -334,8 +334,7 @@ class Arr
      */
     public static function isAssoc(array $array): bool
     {
-        $keys = array_keys($array);
-        return array_keys($keys) !== $keys;
+        return ! array_is_list($array);
     }
 
     /**
