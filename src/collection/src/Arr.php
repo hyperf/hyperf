@@ -305,6 +305,30 @@ class Arr
     }
 
     /**
+     * Determine if all the keys exist in an array using "dot" notation.
+     */
+    public static function hasAll(array|ArrayAccess $array, null|array|int|string $keys): bool
+    {
+        return static::has($array, $keys);
+    }
+
+    /**
+     * Determine if at least one element in the array passes the given truth test.
+     */
+    public static function some(array $array, callable $callback): bool
+    {
+        return array_any($array, $callback);
+    }
+
+    /**
+     * Determine if all elements in the array pass the given truth test.
+     */
+    public static function every(array $array, callable $callback): bool
+    {
+        return array_all($array, $callback);
+    }
+
+    /**
      * Determines if an array is associative.
      * An array is "associative" if it doesn't have sequential numerical keys beginning with zero.
      */
