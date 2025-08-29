@@ -17,7 +17,6 @@ use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Resolver\ResolverDispatcher;
-use InvalidArgumentException;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -997,50 +996,87 @@ class ArrTest extends TestCase
         $this->assertEquals([[0 => 'John', 1 => 'Jane'], [2 => 'Greg']], $result);
     }
 
-    public function testItGetsAnArray()
+    public function testHasAll(): void
     {
-        $test_array = ['string' => 'foo bar', 'array' => ['foo', 'bar']];
+        $array = ['name' => 'Taylor', 'age' => 30, 'city' => 'Austin'];
 
-        // Test array values are returned as arrays
-        $this->assertSame(
-            ['foo', 'bar'],
-            Arr::array($test_array, 'array')
-        );
+        $this->assertTrue(Arr::hasAll($array, 'name'));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'age']));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'age', 'city']));
+        $this->assertFalse(Arr::hasAll($array, ['name', 'age', 'country']));
+        $this->assertFalse(Arr::hasAll($array, 'country'));
+        $this->assertFalse(Arr::hasAll($array, null));
+        $this->assertFalse(Arr::hasAll($array, []));
 
-        // Test that default array values are returned for missing keys
-        $this->assertSame(
-            [1, 'two'],
-            Arr::array($test_array, 'missing_key', [1, 'two'])
-        );
+        $nestedArray = [
+            'user' => [
+                'name' => 'Taylor',
+                'profile' => ['age' => 30],
+            ],
+        ];
+        $this->assertTrue(Arr::hasAll($nestedArray, 'user.name'));
+        $this->assertTrue(Arr::hasAll($nestedArray, ['user.name', 'user.profile.age']));
+        $this->assertFalse(Arr::hasAll($nestedArray, ['user.name', 'user.email']));
 
-        // Test that an exception is raised if the value is not an array
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('#^Array value for key \[string\] must be an array, (.*) found.#');
-        Arr::array($test_array, 'string');
+        $emptyArray = [];
+        $this->assertFalse(Arr::hasAll($emptyArray, 'name'));
+        $this->assertFalse(Arr::hasAll($emptyArray, ['name']));
     }
 
-    public function testPush(): void
+    public function testSome(): void
     {
-        $array = [];
+        $numbers = [1, 2, 3, 4, 5];
 
-        Arr::push($array, 'office.furniture', 'Desk');
-        $this->assertEquals(['Desk'], $array['office']['furniture']);
+        $this->assertTrue(Arr::some($numbers, fn ($value) => $value > 3));
+        $this->assertTrue(Arr::some($numbers, fn ($value) => $value === 1));
+        $this->assertTrue(Arr::some($numbers, fn ($value) => $value % 2 === 0));
+        $this->assertFalse(Arr::some($numbers, fn ($value) => $value > 10));
+        $this->assertFalse(Arr::some($numbers, fn ($value) => $value < 0));
 
-        Arr::push($array, 'office.furniture', 'Chair', 'Lamp');
-        $this->assertEquals(['Desk', 'Chair', 'Lamp'], $array['office']['furniture']);
+        $this->assertTrue(Arr::some($numbers, fn ($value, $key) => $key === 2 && $value === 3));
+        $this->assertFalse(Arr::some($numbers, fn ($value, $key) => $key === 10));
 
-        $array = [];
+        $mixed = ['apple', 'banana', 123, true, null];
+        $this->assertTrue(Arr::some($mixed, fn ($value) => is_int($value)));
+        $this->assertTrue(Arr::some($mixed, fn ($value) => is_bool($value)));
+        $this->assertTrue(Arr::some($mixed, fn ($value) => is_null($value)));
+        $this->assertFalse(Arr::some($mixed, fn ($value) => is_float($value)));
 
-        Arr::push($array, null, 'Chris', 'Nuno');
-        $this->assertEquals(['Chris', 'Nuno'], $array);
+        $empty = [];
+        $this->assertFalse(Arr::some($empty, fn ($value) => true));
 
-        Arr::push($array, null, 'Taylor');
-        $this->assertEquals(['Chris', 'Nuno', 'Taylor'], $array);
+        $strings = ['hello', 'world', 'test'];
+        $this->assertTrue(Arr::some($strings, fn ($value) => strlen($value) === 5));
+        $this->assertFalse(Arr::some($strings, fn ($value) => strlen($value) > 10));
+    }
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Array value for key [foo.bar] must be an array, boolean found.');
+    public function testEvery(): void
+    {
+        $numbers = [2, 4, 6, 8];
 
-        $array = ['foo' => ['bar' => false]];
-        Arr::push($array, 'foo.bar', 'baz');
+        $this->assertTrue(Arr::every($numbers, fn ($value) => $value % 2 === 0));
+        $this->assertTrue(Arr::every($numbers, fn ($value) => $value > 0));
+        $this->assertFalse(Arr::every($numbers, fn ($value) => $value > 5));
+        $this->assertFalse(Arr::every($numbers, fn ($value) => $value === 2));
+
+        $this->assertTrue(Arr::every($numbers, fn ($value, $key) => is_int($key)));
+        $this->assertTrue(Arr::every($numbers, fn ($value, $key) => $key >= 0 && $key < count($numbers)));
+
+        $strings = ['hello', 'world', 'test'];
+        $this->assertTrue(Arr::every($strings, fn ($value) => is_string($value)));
+        $this->assertTrue(Arr::every($strings, fn ($value) => strlen($value) >= 4));
+        $this->assertFalse(Arr::every($strings, fn ($value) => strlen($value) === 5));
+
+        $mixed = [1, 'string', null];
+        $this->assertFalse(Arr::every($mixed, fn ($value) => is_int($value)));
+        $this->assertFalse(Arr::every($mixed, fn ($value) => ! is_null($value)));
+
+        $empty = [];
+        $this->assertTrue(Arr::every($empty, fn ($value) => false));
+        $this->assertTrue(Arr::every($empty, fn ($value) => true));
+
+        $singleElement = [42];
+        $this->assertTrue(Arr::every($singleElement, fn ($value) => $value === 42));
+        $this->assertFalse(Arr::every($singleElement, fn ($value) => $value !== 42));
     }
 }

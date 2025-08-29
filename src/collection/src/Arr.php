@@ -321,31 +321,27 @@ class Arr
     }
 
     /**
-     * Determine if all of the keys exist in an array using "dot" notation.
+     * Determine if all the keys exist in an array using "dot" notation.
      */
     public static function hasAll(array|ArrayAccess $array, null|array|int|string $keys): bool
     {
-        if (is_null($keys)) {
-            return false;
-        }
+        return static::has($array, $keys);
+    }
 
-        $keys = (array) $keys;
+    /**
+     * Determine if at least one element in the array passes the given truth test.
+     */
+    public static function some(array $array, callable $callback): bool
+    {
+        return array_any($array, $callback);
+    }
 
-        if (! $array) {
-            return false;
-        }
-
-        if ($keys === []) {
-            return false;
-        }
-
-        foreach ($keys as $key) {
-            if (! static::has($array, $key)) {
-                return false;
-            }
-        }
-
-        return true;
+    /**
+     * Determine if all elements in the array pass the given truth test.
+     */
+    public static function every(array $array, callable $callback): bool
+    {
+        return array_all($array, $callback);
     }
 
     /**
