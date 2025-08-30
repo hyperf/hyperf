@@ -18,6 +18,8 @@ use Hyperf\Di\Exception\InvalidArgumentException;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
+use RuntimeException;
+use Throwable;
 
 class Container implements HyperfContainerInterface
 {
@@ -123,10 +125,11 @@ class Container implements HyperfContainerInterface
             unset($this->loadingError[$id]);
             try {
                 return $this->resolvedEntries[$id] = $this->make($id);
-            } catch (\Throwable $throwable) {
+            } catch (Throwable $throwable) {
                 $this->loadingError[$id] = (string) $throwable;
-                unset($this->loading[$id]);
                 throw new $throwable();
+            } finally {
+                unset($this->loading[$id]);
             }
         }
         return $this->waitLoading($id);
@@ -178,10 +181,10 @@ class Container implements HyperfContainerInterface
                 return $this->resolvedEntries[$id];
             }
             if (isset($this->loadingError[$id])) {
-                throw new \Exception($this->loadingError[$id]);
+                throw new RuntimeException($this->loadingError[$id]);
             }
             if (time() - $startTime > 5) {
-                throw new \Exception("The get entry or class timed out for 5 seconds for {$id}");
+                throw new RuntimeException("The get entry or class timed out for 5 seconds for {$id}");
             }
             usleep(1000);
         }
