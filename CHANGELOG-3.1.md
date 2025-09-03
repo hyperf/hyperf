@@ -14,6 +14,7 @@
 - [#7499](https://github.com/hyperf/hyperf/pull/7499) Added constant `Hyperf\Kafka\Constants\KafkaStrategy::STICKY_ASSIGNOR`.
 - [#7500](https://github.com/hyperf/hyperf/pull/7500) Added methods `Hyperf\Collection\Arr::push()` and  `Hyperf\Collection\Arr::array()`.
 - [#7502](https://github.com/hyperf/hyperf/pull/7502) Added method `Hyperf\Collection\Arr::hasAll()`.
+- [#7509](https://github.com/hyperf/hyperf/pull/7509) Added `Hyperf\Codec\Packer\Resp3Packer`.
 
 ## Fixed
 
