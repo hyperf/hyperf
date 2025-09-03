@@ -1096,6 +1096,48 @@ class Builder
     }
 
     /**
+     * Add a "where like" clause to the query.
+     */
+    public function whereLike(string $column, string $value, bool $caseSensitive = false, string $boolean = 'and', bool $not = false): static
+    {
+        $type = 'Like';
+
+        $this->wheres[] = compact('type', 'column', 'value', 'caseSensitive', 'boolean', 'not');
+
+        if (method_exists($this->grammar, 'prepareWhereLikeBinding')) {
+            $value = $this->grammar->prepareWhereLikeBinding($value, $caseSensitive);
+        }
+
+        $this->addBinding($value);
+
+        return $this;
+    }
+
+    /**
+     * Add an "or where like" clause to the query.
+     */
+    public function orWhereLike(string $column, string $value, bool $caseSensitive = false): static
+    {
+        return $this->whereLike($column, $value, $caseSensitive, 'or', false);
+    }
+
+    /**
+     * Add a "where not like" clause to the query.
+     */
+    public function whereNotLike(string $column, string $value, bool $caseSensitive = false, string $boolean = 'and'): static
+    {
+        return $this->whereLike($column, $value, $caseSensitive, $boolean, true);
+    }
+
+    /**
+     * Add an "or where not like" clause to the query.
+     */
+    public function orWhereNotLike(string $column, string $value, bool $caseSensitive = false): static
+    {
+        return $this->whereNotLike($column, $value, $caseSensitive, 'or');
+    }
+
+    /**
      * Add a "where date" statement to the query.
      *
      * @param string $column

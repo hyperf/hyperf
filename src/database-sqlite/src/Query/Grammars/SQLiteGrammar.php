@@ -34,6 +34,31 @@ class SQLiteGrammar extends Grammar
     ];
 
     /**
+     * Compile a "where like" clause.
+     */
+    protected function whereLike(Builder $query,array $where): string
+    {
+        if ($where['caseSensitive'] == false) {
+            return parent::whereLike($query, $where);
+        }
+        $where['operator'] = $where['not'] ? 'not glob' : 'glob';
+
+        return $this->whereBasic($query, $where);
+    }
+
+    /**
+     * Convert a LIKE pattern to a GLOB pattern using simple string replacement.
+     */
+    public function prepareWhereLikeBinding(string $value,bool $caseSensitive): string
+    {
+        return $caseSensitive === false ? $value : str_replace(
+            ['*', '?', '%', '_'],
+            ['[*]', '[?]', '*', '?'],
+            $value
+        );
+    }
+
+    /**
      * Compile an update statement into SQL.
      */
     public function compileUpdate(Builder $query, array $values): string
