@@ -83,6 +83,7 @@ class RequestTest extends TestCase
         $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
         $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1, '123' => '123']);
         $psrRequest->shouldReceive('getQueryParams')->andReturn(['name' => 'Hyperf']);
+        $psrRequest->shouldReceive('getUploadedFiles')->andReturn([]);
         RequestContext::set($psrRequest);
 
         $psrRequest = new Request();
@@ -91,6 +92,7 @@ class RequestTest extends TestCase
         $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
         $psrRequest->shouldReceive('getParsedBody')->andReturn(['name' => 'Hyperf']);
         $psrRequest->shouldReceive('getQueryParams')->andReturn(['id' => 1, '123' => '123']);
+        $psrRequest->shouldReceive('getUploadedFiles')->andReturn([]);
         RequestContext::set($psrRequest);
 
         $psrRequest = new Request();
@@ -103,6 +105,7 @@ class RequestTest extends TestCase
         $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
         $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1, 'data' => ['id' => 2]]);
         $psrRequest->shouldReceive('getQueryParams')->andReturn(['data' => 'Hyperf']);
+        $psrRequest->shouldReceive('getUploadedFiles')->andReturn([]);
         RequestContext::set($psrRequest);
 
         $psrRequest = new Request();

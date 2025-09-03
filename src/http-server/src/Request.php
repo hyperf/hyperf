@@ -20,6 +20,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Stringable\Str;
+use Hyperf\Support\Traits\InteractsWithData;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface as Psr7RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -36,6 +37,7 @@ use function Hyperf\Support\value;
  */
 class Request implements RequestInterface
 {
+    use InteractsWithData;
     use Macroable;
 
     /**
@@ -94,7 +96,7 @@ class Request implements RequestInterface
     /**
      * Retrieve the input data from request, include query parameters, parsed body and json body.
      */
-    public function input(string $key, mixed $default = null): mixed
+    public function input(?string $key = null, mixed $default = null): mixed
     {
         $data = $this->getInputData();
 
@@ -117,10 +119,32 @@ class Request implements RequestInterface
 
     /**
      * Retrieve all input data from request, include query parameters, parsed body and json body.
+     * @param null|mixed $keys
      */
-    public function all(): array
+    public function all($keys = null): array
     {
-        return $this->getInputData();
+        $input = array_replace_recursive($this->input(), $this->allFiles());
+
+        if (! $keys) {
+            return $input;
+        }
+
+        $results = [];
+
+        foreach (is_array($keys) ? $keys : func_get_args() as $key) {
+            Arr::set($results, $key, Arr::get($input, $key));
+        }
+
+        return $results;
+    }
+
+    public function data($key = null, $default = null): mixed
+    {
+        if ($key === null) {
+            return $this->all();
+        }
+
+        return $this->input($key, $default);
     }
 
     /**
@@ -339,6 +363,15 @@ class Request implements RequestInterface
             return true;
         }
         return false;
+    }
+
+    /**
+     * Alias for getUploadedFiles().
+     * @return array
+     */
+    public function allFiles()
+    {
+        return $this->getUploadedFiles();
     }
 
     public function getProtocolVersion(): string
