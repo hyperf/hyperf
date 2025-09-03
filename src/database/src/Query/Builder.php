@@ -1495,6 +1495,16 @@ class Builder
     }
 
     /**
+     * Add descending "reorder" clause to the query.
+     *
+     * @param Closure|Expression|ModelBuilder|static|string $column
+     */
+    public function reorderDesc(mixed $column): static
+    {
+        return $this->reorder($column, 'desc');
+    }
+
+    /**
      * Add an "or where JSON overlaps" clause to the query.
      */
     public function orWhereJsonOverlaps(string $column, mixed $value): static
