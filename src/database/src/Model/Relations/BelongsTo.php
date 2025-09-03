@@ -313,6 +313,16 @@ class BelongsTo extends Relation
     }
 
     /**
+     * Alias of "dissociate" method.
+     *
+     * @return Model
+     */
+    public function disassociate()
+    {
+        return $this->dissociate();
+    }
+
+    /**
      * Gather the keys from an array of related models.
      *
      * @return array
