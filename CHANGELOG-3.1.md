@@ -2,10 +2,18 @@
 
 ## Added
 
+- [#7467](https://github.com/hyperf/hyperf/pull/7467) Support versions v2 and v3 for nacos sdk.
+- [#7476](https://github.com/hyperf/hyperf/pull/7476) Added trait `InteractsWithData` to `Hyperf\Support\Fluent`.
+- [#7480](https://github.com/hyperf/hyperf/pull/7480) Added method `Hyperf\Database\Model\Builder::incrementOrCreate()`.
+- [#7481](https://github.com/hyperf/hyperf/pull/7481) Added methods `Collection::doesntContainStrict()` and `LazyCollection::doesntContainStrict()`.
 - [#7483](https://github.com/hyperf/hyperf/pull/7483) Added the alias `disassociate()` of `Hyperf\Database\Model\Relations\BelongsTo::dissociate()`.
 - [#7484](https://github.com/hyperf/hyperf/pull/7484) Added method `Hyperf\Database\Model\Model::isSoftDeletable()`.
 - [#7486](https://github.com/hyperf/hyperf/pull/7486) Added method `Hyperf\Database\Model\Builder::except()`.
 - [#7487](https://github.com/hyperf/hyperf/pull/7487) Added caster `Hyperf\Database\Model\Casts\AsArrayObject` for `ArrayObject`.
+- [#7492](https://github.com/hyperf/hyperf/pull/7492) Added trait `Macroable` to `Hyperf\Pipeline\Pipeline`.
+- [#7499](https://github.com/hyperf/hyperf/pull/7499) Added constant `Hyperf\Kafka\Constants\KafkaStrategy::STICKY_ASSIGNOR`.
+- [#7500](https://github.com/hyperf/hyperf/pull/7500) Added methods `Hyperf\Collection\Arr::push()` and  `Hyperf\Collection\Arr::array()`.
+- [#7502](https://github.com/hyperf/hyperf/pull/7502) Added method `Hyperf\Collection\Arr::hasAll()`.
 
 ## Fixed
 
