@@ -30,7 +30,7 @@ class Config
 
     protected int $port = 8848;
 
-    protected ?string $version = "1.0";
+    protected ?string $version = '1.0';
 
     protected array $grpc = [
         'enable' => true,
