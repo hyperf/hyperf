@@ -139,4 +139,121 @@ class RequestTest extends TestCase
         $request->clearStoredParsedData();
         $this->assertSame(['id' => 1, 'name' => 'hyperf'], $request->all());
     }
+
+    public function testRequestAllWithKeys()
+    {
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1, 'name' => 'Hyperf', 'email' => 'test@example.com']);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn(['page' => 2, 'limit' => 10]);
+        $psrRequest->shouldReceive('getUploadedFiles')->andReturn(['avatar' => new UploadedFile('/tmp/avatar', 100, 0)]);
+        RequestContext::set($psrRequest);
+
+        $request = new Request();
+        
+        // Test with array of keys
+        $result = $request->all(['id', 'name', 'page']);
+        $this->assertEquals(['id' => 1, 'name' => 'Hyperf', 'page' => 2], $result);
+        
+        // Test with individual arguments
+        $result = $request->all('id', 'email');
+        $this->assertEquals(['id' => 1, 'email' => 'test@example.com'], $result);
+        
+        // Test with non-existent keys
+        $result = $request->all(['id', 'nonexistent']);
+        $this->assertEquals(['id' => 1, 'nonexistent' => null], $result);
+    }
+
+    public function testRequestAllWithFiles()
+    {
+        $uploadedFile = new UploadedFile('/tmp/test_file', 500, 0);
+        
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1, 'name' => 'Hyperf']);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn(['page' => 1]);
+        $psrRequest->shouldReceive('getUploadedFiles')->andReturn(['file' => $uploadedFile]);
+        RequestContext::set($psrRequest);
+
+        $request = new Request();
+        $result = $request->all();
+        
+        $this->assertEquals(1, $result['id']);
+        $this->assertEquals('Hyperf', $result['name']);
+        $this->assertEquals(1, $result['page']);
+        $this->assertSame($uploadedFile, $result['file']);
+    }
+
+    public function testRequestData()
+    {
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1, 'name' => 'Hyperf']);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn(['page' => 2]);
+        $psrRequest->shouldReceive('getUploadedFiles')->andReturn(['file' => new UploadedFile('/tmp/test', 100, 0)]);
+        RequestContext::set($psrRequest);
+
+        $request = new Request();
+        
+        // Test data() with specific key
+        $this->assertEquals(1, $request->data('id'));
+        $this->assertEquals('Hyperf', $request->data('name'));
+        $this->assertEquals(2, $request->data('page'));
+        $this->assertEquals('default', $request->data('nonexistent', 'default'));
+        
+        // Test data() without key (should return all data)
+        $allData = $request->data();
+        $this->assertEquals(1, $allData['id']);
+        $this->assertEquals('Hyperf', $allData['name']);
+        $this->assertEquals(2, $allData['page']);
+        $this->assertInstanceOf(UploadedFile::class, $allData['file']);
+    }
+
+    public function testRequestAllFiles()
+    {
+        $uploadedFile1 = new UploadedFile('/tmp/file1', 100, 0);
+        $uploadedFile2 = new UploadedFile('/tmp/file2', 200, 0);
+        
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
+        $psrRequest->shouldReceive('getUploadedFiles')->andReturn([
+            'file1' => $uploadedFile1,
+            'file2' => $uploadedFile2,
+        ]);
+        RequestContext::set($psrRequest);
+
+        $request = new Request();
+        $files = $request->allFiles();
+        
+        $this->assertCount(2, $files);
+        $this->assertSame($uploadedFile1, $files['file1']);
+        $this->assertSame($uploadedFile2, $files['file2']);
+    }
+
+    public function testRequestInputWithNullKey()
+    {
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1, 'name' => 'Hyperf']);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn(['page' => 2, 'limit' => 10]);
+        RequestContext::set($psrRequest);
+
+        $request = new Request();
+        
+        // Test input() with null key should return all input data
+        $result = $request->input(null);
+        $this->assertEquals(['page' => 2, 'limit' => 10, 'id' => 1, 'name' => 'Hyperf'], $result);
+        
+        // Test with default value - data_get with null key and non-empty data ignores default
+        $result2 = $request->input(null, ['default' => 'value']);
+        $this->assertEquals(['page' => 2, 'limit' => 10, 'id' => 1, 'name' => 'Hyperf'], $result2);
+    }
+
+    public function testRequestInputWithNullKeyEmptyData()
+    {
+        // Test input() with null key on empty data
+        $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
+        $psrRequest->shouldReceive('getParsedBody')->andReturn([]);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+        RequestContext::set($psrRequest);
+        
+        $request = new Request();
+        $result = $request->input(null);
+        $this->assertEquals([], $result); // Empty data returns empty array
+    }
 }
