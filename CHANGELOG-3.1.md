@@ -13,6 +13,7 @@
 - [#7492](https://github.com/hyperf/hyperf/pull/7492) Added trait `Macroable` to `Hyperf\Pipeline\Pipeline`.
 - [#7499](https://github.com/hyperf/hyperf/pull/7499) Added constant `Hyperf\Kafka\Constants\KafkaStrategy::STICKY_ASSIGNOR`.
 - [#7500](https://github.com/hyperf/hyperf/pull/7500) Added methods `Hyperf\Collection\Arr::push()` and  `Hyperf\Collection\Arr::array()`.
+- [#7502](https://github.com/hyperf/hyperf/pull/7502) Added method `Hyperf\Collection\Arr::hasAll()`.
 
 ## Fixed
 

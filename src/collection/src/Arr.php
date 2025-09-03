@@ -324,6 +324,34 @@ class Arr
     }
 
     /**
+     * Determine if all of the keys exist in an array using "dot" notation.
+     */
+    public static function hasAll(array|ArrayAccess $array, null|array|int|string $keys): bool
+    {
+        if (is_null($keys)) {
+            return false;
+        }
+
+        $keys = (array) $keys;
+
+        if (! $array) {
+            return false;
+        }
+
+        if ($keys === []) {
+            return false;
+        }
+
+        foreach ($keys as $key) {
+            if (! static::has($array, $key)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Determines if an array is associative.
      * An array is "associative" if it doesn't have sequential numerical keys beginning with zero.
      */

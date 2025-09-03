@@ -380,6 +380,38 @@ class ArrTest extends TestCase
         $this->assertTrue(Arr::hasAny($array, ['foo.bax', 'foo.baz']));
     }
 
+    public function testHasAllMethod(): void
+    {
+        $array = ['name' => 'Taylor', 'age' => '', 'city' => null];
+        $this->assertTrue(Arr::hasAll($array, 'name'));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'age']));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'age', 'city']));
+        $this->assertFalse(Arr::hasAll($array, ['name', 'age', 'gender']));
+        $this->assertFalse(Arr::hasAll($array, 'nonexistent'));
+
+        $array = ['name' => 'Taylor', 'email' => 'foo'];
+        $this->assertTrue(Arr::hasAll($array, 'name'));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'email']));
+        $this->assertFalse(Arr::hasAll($array, ['name', 'surname']));
+        $this->assertFalse(Arr::hasAll($array, ['surname', 'password']));
+
+        $array = ['foo' => ['bar' => null, 'baz' => '']];
+        $this->assertTrue(Arr::hasAll($array, 'foo.bar'));
+        $this->assertTrue(Arr::hasAll($array, 'foo.baz'));
+        $this->assertFalse(Arr::hasAll($array, 'foo.bax'));
+        $this->assertFalse(Arr::hasAll($array, ['foo.bar', 'foo.bax']));
+        $this->assertTrue(Arr::hasAll($array, ['foo.bar', 'foo.baz']));
+        $this->assertFalse(Arr::hasAll($array, ['foo.bar', 'foo.baz', 'foo.nonexistent']));
+
+        // Test with null keys
+        $this->assertFalse(Arr::hasAll(['a' => 1], null));
+        $this->assertFalse(Arr::hasAll(['a' => 1], []));
+
+        // Test with empty array
+        $this->assertFalse(Arr::hasAll([], 'a'));
+        $this->assertFalse(Arr::hasAll([], ['a', 'b']));
+    }
+
     public function testIsAssoc(): void
     {
         $this->assertTrue(Arr::isAssoc(['a' => 'a', 0 => 'b']));
