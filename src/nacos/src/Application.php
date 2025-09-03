@@ -55,15 +55,18 @@ class Application
         }
 
         $class = $this->resolveVersionClass($this->alias[$name]);
-        return $this->providers[$name] = new $class($this, $this->config);
+        return $this->providers[$name] = new $class($this, $this->conf);
     }
 
     public function resolveVersionClass(string $defaultClass): string
     {
-        [$major, $minor] = array_pad(explode('.', $this->conf->getVersion()), 2, 0);
+        [$major] = array_pad(explode('.', $this->conf->getVersion()), 2, 0);
         $classParts = explode('\\', $defaultClass);
-        $className = end($classParts);
-        $class = __NAMESPACE__ . '\Provider\v' . $major . '\\' . $className;
+        $className = array_pop($classParts);
+        $classParts[] = 'V' . $major;
+        $classParts[] = $className;
+        $class = implode('\\', $classParts);
+
         return class_exists($class) ? $class : $defaultClass;
     }
 }
