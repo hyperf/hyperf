@@ -149,15 +149,15 @@ class RequestTest extends TestCase
         RequestContext::set($psrRequest);
 
         $request = new Request();
-        
+
         // Test with array of keys
         $result = $request->all(['id', 'name', 'page']);
         $this->assertEquals(['id' => 1, 'name' => 'Hyperf', 'page' => 2], $result);
-        
+
         // Test with individual arguments
         $result = $request->all('id', 'email');
         $this->assertEquals(['id' => 1, 'email' => 'test@example.com'], $result);
-        
+
         // Test with non-existent keys
         $result = $request->all(['id', 'nonexistent']);
         $this->assertEquals(['id' => 1, 'nonexistent' => null], $result);
@@ -166,7 +166,7 @@ class RequestTest extends TestCase
     public function testRequestAllWithFiles()
     {
         $uploadedFile = new UploadedFile('/tmp/test_file', 500, 0);
-        
+
         $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
         $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1, 'name' => 'Hyperf']);
         $psrRequest->shouldReceive('getQueryParams')->andReturn(['page' => 1]);
@@ -175,7 +175,7 @@ class RequestTest extends TestCase
 
         $request = new Request();
         $result = $request->all();
-        
+
         $this->assertEquals(1, $result['id']);
         $this->assertEquals('Hyperf', $result['name']);
         $this->assertEquals(1, $result['page']);
@@ -191,13 +191,13 @@ class RequestTest extends TestCase
         RequestContext::set($psrRequest);
 
         $request = new Request();
-        
+
         // Test data() with specific key
         $this->assertEquals(1, $request->data('id'));
         $this->assertEquals('Hyperf', $request->data('name'));
         $this->assertEquals(2, $request->data('page'));
         $this->assertEquals('default', $request->data('nonexistent', 'default'));
-        
+
         // Test data() without key (should return all data)
         $allData = $request->data();
         $this->assertEquals(1, $allData['id']);
@@ -210,7 +210,7 @@ class RequestTest extends TestCase
     {
         $uploadedFile1 = new UploadedFile('/tmp/file1', 100, 0);
         $uploadedFile2 = new UploadedFile('/tmp/file2', 200, 0);
-        
+
         $psrRequest = Mockery::mock(ServerRequestPlusInterface::class);
         $psrRequest->shouldReceive('getUploadedFiles')->andReturn([
             'file1' => $uploadedFile1,
@@ -220,7 +220,7 @@ class RequestTest extends TestCase
 
         $request = new Request();
         $files = $request->allFiles();
-        
+
         $this->assertCount(2, $files);
         $this->assertSame($uploadedFile1, $files['file1']);
         $this->assertSame($uploadedFile2, $files['file2']);
@@ -234,11 +234,11 @@ class RequestTest extends TestCase
         RequestContext::set($psrRequest);
 
         $request = new Request();
-        
+
         // Test input() with null key should return all input data
         $result = $request->input(null);
         $this->assertEquals(['page' => 2, 'limit' => 10, 'id' => 1, 'name' => 'Hyperf'], $result);
-        
+
         // Test with default value - data_get with null key and non-empty data ignores default
         $result2 = $request->input(null, ['default' => 'value']);
         $this->assertEquals(['page' => 2, 'limit' => 10, 'id' => 1, 'name' => 'Hyperf'], $result2);
@@ -251,7 +251,7 @@ class RequestTest extends TestCase
         $psrRequest->shouldReceive('getParsedBody')->andReturn([]);
         $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
         RequestContext::set($psrRequest);
-        
+
         $request = new Request();
         $result = $request->input(null);
         $this->assertEquals([], $result); // Empty data returns empty array
