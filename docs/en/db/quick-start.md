@@ -402,7 +402,7 @@ return [
 Requires `Swoole >= 5.1.0` and `--enable-swoole-sqlite` is enabled when compiling
 
 ```bash
-composer require hyperf/database-pgsql
+composer require hyperf/database-sqlite
 ```
 
 #### Configuration file

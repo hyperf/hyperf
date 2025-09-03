@@ -2,7 +2,16 @@
 
 ## Added
 
-- [#7492](https://github.com/hyperf/hyperf/pull/7492) Added Macroable trait to `Hyperf\Pipeline\Pipeline` class with comprehensive unit tests.
+- [#7467](https://github.com/hyperf/hyperf/pull/7467) Support versions v2 and v3 for nacos sdk.
+- [#7483](https://github.com/hyperf/hyperf/pull/7483) Added the alias `disassociate()` of `Hyperf\Database\Model\Relations\BelongsTo::dissociate()`.
+- [#7484](https://github.com/hyperf/hyperf/pull/7484) Added method `Hyperf\Database\Model\Model::isSoftDeletable()`.
+- [#7486](https://github.com/hyperf/hyperf/pull/7486) Added method `Hyperf\Database\Model\Builder::except()`.
+- [#7487](https://github.com/hyperf/hyperf/pull/7487) Added caster `Hyperf\Database\Model\Casts\AsArrayObject` for `ArrayObject`.
+- [#7492](https://github.com/hyperf/hyperf/pull/7492) Added Macroable trait to `Hyperf\Pipeline\Pipeline`.
+
+## Fixed
+
+- [#7476](https://github.com/hyperf/hyperf/pull/7476) Fixed macro validation for reference parameters.
 
 # v3.1.60 - 2025-08-02
 
