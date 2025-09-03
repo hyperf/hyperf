@@ -40,7 +40,7 @@ class Application
 
     protected array $providers = [];
 
-    public function __construct(protected Config $config)
+    public function __construct(protected Config $conf)
     {
     }
 
@@ -60,10 +60,10 @@ class Application
 
     public function resolveVersionClass(string $defaultClass): string
     {
-        [$major, $minor] = array_pad(explode('.', $this->config->getVersion()), 2, 0);
+        [$major, $minor] = array_pad(explode('.', $this->conf->getVersion()), 2, 0);
         $classParts = explode('\\', $defaultClass);
         $className = end($classParts);
-        $class = __NAMESPACE__ . "\\" . "Provider\\" . "v" . $major . "\\" . $className;
+        $class = __NAMESPACE__ . '\Provider\v' . $major . '\\' . $className;
         return class_exists($class) ? $class : $defaultClass;
     }
 }
