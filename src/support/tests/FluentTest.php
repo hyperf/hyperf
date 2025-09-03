@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Hyperf\Collection\Collection;
 use Hyperf\Stringable\Stringable;
 use Hyperf\Support\Fluent;
+use HyperfTest\Support\Stub\FooEnum;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -721,6 +722,7 @@ class FluentTest extends TestCase
             'statuses' => ['active', 'inactive', 'pending'],
             'invalid_status' => 'invalid',
             'empty_status' => '',
+            'zero_status' => 0,
         ]);
 
         // Test enum method when enum class doesn't exist (should return default)
@@ -742,5 +744,9 @@ class FluentTest extends TestCase
         // Test enums method with empty value (should return empty array)
         $result = $fluent->enums('empty_status', 'NonExistentEnum');
         $this->assertEquals([], $result);
+
+        // Test enum method with nonexistent key (should return default)
+        $result = $fluent->enum('zero_status', FooEnum::class, 'default_value');
+        $this->assertEquals(FooEnum::Zero, $result);
     }
 }

@@ -313,7 +313,7 @@ trait InteractsWithData
             return value($default);
         }
 
-        return $enumClass::tryFrom($this->data($key)) ?: value($default);
+        return $enumClass::tryFrom($this->data($key)) ?? value($default);
     }
 
     /**
