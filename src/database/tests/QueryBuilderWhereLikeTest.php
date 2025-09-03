@@ -49,26 +49,26 @@ class QueryBuilderWhereLikeTest extends TestCase
 
     public function testWhereLike()
     {
-        $users = Db::table('users')->whereLike('email', 'john.doe@example.com')->get();
+        $users = Db::table('like_users')->whereLike('email', 'john.doe@example.com')->get();
         $this->assertCount(1, $users);
         $this->assertSame('John.Doe@example.com', $users[0]->email);
 
-        $this->assertSame(4, Db::table('users')->whereNotLike('email', 'john.doe@example.com')->count());
+        $this->assertSame(4, Db::table('like_users')->whereNotLike('email', 'john.doe@example.com')->count());
     }
 
     public function testWhereLikeWithPercentWildcard()
     {
-        $this->assertSame(5, Db::table('users')->whereLike('email', '%@example.com')->count());
-        $this->assertSame(2, Db::table('users')->whereNotLike('email', '%Doe%')->count());
+        $this->assertSame(5, Db::table('like_users')->whereLike('email', '%@example.com')->count());
+        $this->assertSame(2, Db::table('like_users')->whereNotLike('email', '%Doe%')->count());
 
-        $users = Db::table('users')->whereLike('email', 'john%')->get();
+        $users = Db::table('like_users')->whereLike('email', 'john%')->get();
         $this->assertCount(1, $users);
         $this->assertSame('John.Doe@example.com', $users[0]->email);
     }
 
     public function testWhereLikeWithUnderscoreWildcard()
     {
-        $users = Db::table('users')->whereLike('email', '_a_e_%@example.com')->get();
+        $users = Db::table('like_users')->whereLike('email', '_a_e_%@example.com')->get();
         $this->assertCount(2, $users);
         $this->assertSame('janedoe@example.com', $users[0]->email);
         $this->assertSame('Dale.Doe@example.com', $users[1]->email);
@@ -76,21 +76,21 @@ class QueryBuilderWhereLikeTest extends TestCase
 
     public function testWhereLikeCaseSensitive()
     {
-        $users = Db::table('users')->whereLike('email', 'john.doe@example.com', true)->get();
+        $users = Db::table('like_users')->whereLike('email', 'john.doe@example.com', true)->get();
         $this->assertCount(0, $users);
 
-        $users = Db::table('users')->whereLike('email', 'tim.smith@example.com', true)->get();
+        $users = Db::table('like_users')->whereLike('email', 'tim.smith@example.com', true)->get();
         $this->assertCount(1, $users);
         $this->assertSame('tim.smith@example.com', $users[0]->email);
-        $this->assertSame(5, Db::table('users')->whereNotLike('email', 'john.doe@example.com', true)->count());
+        $this->assertSame(5, Db::table('like_users')->whereNotLike('email', 'john.doe@example.com', true)->count());
     }
 
     public function testWhereLikeWithPercentWildcardCaseSensitive()
     {
-        $this->assertSame(2, Db::table('users')->whereLike('email', '%Doe@example.com', true)->count());
-        $this->assertSame(4, Db::table('users')->whereNotLike('email', '%smith%', true)->count());
+        $this->assertSame(2, Db::table('like_users')->whereLike('email', '%Doe@example.com', true)->count());
+        $this->assertSame(4, Db::table('like_users')->whereNotLike('email', '%smith%', true)->count());
 
-        $users = Db::table('users')->whereLike('email', '%Doe@example.com', true)->get();
+        $users = Db::table('like_users')->whereLike('email', '%Doe@example.com', true)->get();
         $this->assertCount(2, $users);
         $this->assertSame('John.Doe@example.com', $users[0]->email);
         $this->assertSame('Dale.Doe@example.com', $users[1]->email);
@@ -98,11 +98,11 @@ class QueryBuilderWhereLikeTest extends TestCase
 
     public function testWhereLikeWithUnderscoreWildcardCaseSensitive()
     {
-        $users = Db::table('users')->whereLike('email', 'j__edoe@example.com', true)->get();
+        $users = Db::table('like_users')->whereLike('email', 'j__edoe@example.com', true)->get();
         $this->assertCount(1, $users);
         $this->assertSame('janedoe@example.com', $users[0]->email);
 
-        $users = Db::table('users')->whereNotLike('email', '%_oe@example.com', true)->get();
+        $users = Db::table('like_users')->whereNotLike('email', '%_oe@example.com', true)->get();
         $this->assertCount(2, $users);
         $this->assertSame('Earl.Smith@example.com', $users[0]->email);
         $this->assertSame('tim.smith@example.com', $users[1]->email);
