@@ -1,8 +1,30 @@
-# v3.1.60 - TBD
+# v3.1.61 - TBD
+
+## Added
+
+- [#7467](https://github.com/hyperf/hyperf/pull/7467) Support versions v2 and v3 for nacos sdk.
+- [#7476](https://github.com/hyperf/hyperf/pull/7476) Added trait `InteractsWithData` to `Hyperf\Support\Fluent`.
+- [#7483](https://github.com/hyperf/hyperf/pull/7483) Added the alias `disassociate()` of `Hyperf\Database\Model\Relations\BelongsTo::dissociate()`.
+- [#7484](https://github.com/hyperf/hyperf/pull/7484) Added method `Hyperf\Database\Model\Model::isSoftDeletable()`.
+- [#7486](https://github.com/hyperf/hyperf/pull/7486) Added method `Hyperf\Database\Model\Builder::except()`.
+- [#7487](https://github.com/hyperf/hyperf/pull/7487) Added caster `Hyperf\Database\Model\Casts\AsArrayObject` for `ArrayObject`.
+- [#7492](https://github.com/hyperf/hyperf/pull/7492) Added trait `Macroable` to `Hyperf\Pipeline\Pipeline`.
 
 ## Fixed
 
+- [#7476](https://github.com/hyperf/hyperf/pull/7476) Fixed macro validation for reference parameters.
+
+# v3.1.60 - 2025-08-02
+
+## Fixed
+
+- [#7447](https://github.com/hyperf/hyperf/pull/7447) Fixed bug that the command `migrate:fresh` can't drop postgres tables by default.
 - [#7449](https://github.com/hyperf/hyperf/pull/7449) Fixed bug that `Hyperf\Database\Migrations\Migrator::reset()` cannot support string paths.
+
+## Added
+
+- [#7466](https://github.com/hyperf/hyperf/pull/7466) Added `isEmpty` / `isNotEmpty` / `getIterator` methods to `Hyperf\Support\Fluent` class.
+- [#7473](https://github.com/hyperf/hyperf/pull/7473) Added config `produce_retry` and `producer_retry_sleep` for `kafka`.
 
 # v3.1.59 - 2025-07-03
 
