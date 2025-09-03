@@ -2345,7 +2345,7 @@
         "multi": false,
         "name": "path",
         "options": [],
-        "query": "label_values(skeleton_http_requests_count,request_path)",
+        "query": "label_values([[app_name]]_http_requests_count,request_path)",
         "refresh": 1,
         "regex": "",
         "sort": 0,

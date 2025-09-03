@@ -15,12 +15,17 @@ namespace Hyperf\Support;
 use ArrayAccess;
 use ArrayIterator;
 use Closure;
+use Hyperf\Collection\Arr;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Macroable\Macroable;
+use Hyperf\Support\Traits\InteractsWithData;
 use IteratorAggregate;
 use JsonSerializable;
 use Traversable;
+
+use function Hyperf\Collection\data_get;
+use function Hyperf\Collection\data_set;
 
 /**
  * Most of the methods in this file come from illuminate/support,
@@ -34,6 +39,7 @@ use Traversable;
  */
 class Fluent implements ArrayAccess, Arrayable, IteratorAggregate, Jsonable, JsonSerializable
 {
+    use InteractsWithData;
     use Macroable{
         __call as macroCall;
     }
@@ -52,9 +58,7 @@ class Fluent implements ArrayAccess, Arrayable, IteratorAggregate, Jsonable, Jso
      */
     public function __construct($attributes = [])
     {
-        foreach ($attributes as $key => $value) {
-            $this->attributes[$key] = $value;
-        }
+        $this->fill($attributes);
     }
 
     /**
@@ -124,6 +128,29 @@ class Fluent implements ArrayAccess, Arrayable, IteratorAggregate, Jsonable, Jso
     }
 
     /**
+     * Get all of the attributes from the fluent instance.
+     *
+     * @param null|array|mixed $keys
+     * @return array
+     */
+    public function all($keys = null)
+    {
+        $data = $this->data();
+
+        if (! $keys) {
+            return $data;
+        }
+
+        $results = [];
+
+        foreach (is_array($keys) ? $keys : func_get_args() as $key) {
+            Arr::set($results, $key, Arr::get($data, $key));
+        }
+
+        return $results;
+    }
+
+    /**
      * Get an attribute from the fluent instance.
      *
      * @template TGetDefault
@@ -134,11 +161,66 @@ class Fluent implements ArrayAccess, Arrayable, IteratorAggregate, Jsonable, Jso
      */
     public function get($key, $default = null)
     {
+        return data_get($this->attributes, $key, $default);
+    }
+
+    /**
+     * Set an attribute on the fluent instance using "dot" notation.
+     *
+     * @param TKey $key
+     * @param TValue $value
+     * @return $this
+     */
+    public function set($key, $value)
+    {
+        data_set($this->attributes, $key, $value);
+
+        return $this;
+    }
+
+    /**
+     * Fill the fluent instance with an array of attributes.
+     *
+     * @param iterable<TKey, TValue> $attributes
+     * @return $this
+     */
+    public function fill($attributes)
+    {
+        foreach ($attributes as $key => $value) {
+            $this->attributes[$key] = $value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get an attribute from the fluent instance.
+     *
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function value($key, $default = null)
+    {
         if (array_key_exists($key, $this->attributes)) {
             return $this->attributes[$key];
         }
 
         return value($default);
+    }
+
+    /**
+     * Get the value of the given key as a new Fluent instance.
+     *
+     * @param string $key
+     * @param mixed $default
+     * @return static
+     */
+    public function scope($key, $default = null)
+    {
+        return new static(
+            (array) $this->get($key, $default)
+        );
     }
 
     /**
@@ -252,5 +334,17 @@ class Fluent implements ArrayAccess, Arrayable, IteratorAggregate, Jsonable, Jso
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->attributes);
+    }
+
+    /**
+     * Get data from the fluent instance.
+     *
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    protected function data($key = null, $default = null)
+    {
+        return $this->get($key, $default);
     }
 }

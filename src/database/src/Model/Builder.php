@@ -605,6 +605,18 @@ class Builder
     }
 
     /**
+     * Create a record matching the attributes, or increment the existing record.
+     */
+    public function incrementOrCreate(array $attributes, string $column = 'count', float|int $default = 1, float|int $step = 1, array $extra = []): Model
+    {
+        return tap($this->firstOrCreate($attributes, [$column => $default]), function ($instance) use ($column, $step, $extra) {
+            if (! $instance->wasRecentlyCreated) {
+                $instance->increment($column, $step, $extra);
+            }
+        });
+    }
+
+    /**
      * Execute the query and get the first result or throw an exception.
      *
      * @param array $columns
