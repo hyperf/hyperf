@@ -7,6 +7,7 @@
 - [#7484](https://github.com/hyperf/hyperf/pull/7484) Added method `Hyperf\Database\Model\Model::isSoftDeletable()`.
 - [#7486](https://github.com/hyperf/hyperf/pull/7486) Added method `Hyperf\Database\Model\Builder::except()`.
 - [#7487](https://github.com/hyperf/hyperf/pull/7487) Added caster `Hyperf\Database\Model\Casts\AsArrayObject` for `ArrayObject`.
+- [#7492](https://github.com/hyperf/hyperf/pull/7492) Added Macroable trait to `Hyperf\Pipeline\Pipeline`.
 
 ## Fixed
 

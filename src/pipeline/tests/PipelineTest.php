@@ -211,6 +211,58 @@ class PipelineTest extends TestCase
         $this->assertSame($id + 6, $result);
     }
 
+    public function testPipelineMacro()
+    {
+        Pipeline::macro('customMethod', function ($value) {
+            return 'custom_' . $value;
+        });
+
+        $pipeline = new Pipeline($this->getContainer());
+        $this->assertTrue($pipeline->hasMacro('customMethod'));
+        $this->assertSame('custom_test', $pipeline->customMethod('test'));
+    }
+
+    public function testPipelineMacroWithThis()
+    {
+        Pipeline::macro('getPipes', function () {
+            return $this->pipes;
+        });
+
+        $pipeline = new Pipeline($this->getContainer());
+        $pipeline->through(['pipe1', 'pipe2']);
+
+        $this->assertEquals(['pipe1', 'pipe2'], $pipeline->getPipes());
+    }
+
+    public function testPipelineHasMacro()
+    {
+        Pipeline::macro('existingMacro', function () {
+            return 'exists';
+        });
+
+        $pipeline = new Pipeline($this->getContainer());
+
+        $this->assertTrue($pipeline->hasMacro('existingMacro'));
+        $this->assertFalse($pipeline->hasMacro('nonExistingMacro'));
+    }
+
+    public function testPipelineMacroOverwrite()
+    {
+        Pipeline::macro('testMacro', function () {
+            return 'first';
+        });
+
+        $pipeline = new Pipeline($this->getContainer());
+        $this->assertSame('first', $pipeline->testMacro());
+
+        Pipeline::macro('testMacro', function () {
+            return 'second';
+        });
+
+        $pipeline2 = new Pipeline($this->getContainer());
+        $this->assertSame('second', $pipeline2->testMacro());
+    }
+
     protected function getContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
