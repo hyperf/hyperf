@@ -11,6 +11,7 @@
 - [#7486](https://github.com/hyperf/hyperf/pull/7486) Added method `Hyperf\Database\Model\Builder::except()`.
 - [#7487](https://github.com/hyperf/hyperf/pull/7487) Added caster `Hyperf\Database\Model\Casts\AsArrayObject` for `ArrayObject`.
 - [#7492](https://github.com/hyperf/hyperf/pull/7492) Added trait `Macroable` to `Hyperf\Pipeline\Pipeline`.
+- [#7499](https://github.com/hyperf/hyperf/pull/7499) Added constant `Hyperf\Kafka\Constants\KafkaStrategy::STICKY_ASSIGNOR`.
 
 ## Fixed
 
