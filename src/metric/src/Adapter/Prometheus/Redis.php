@@ -78,8 +78,7 @@ if tonumber(result) >= tonumber(ARGV[3]) then
     redis.call('sAdd', KEYS[2], KEYS[1])
 end
 return result
-LUA
-            ,
+LUA,
             [
                 $this->toMetricKey($data),
                 $this->getMetricGatherKey(Histogram::TYPE),
@@ -114,8 +113,7 @@ else
         redis.call('sAdd', KEYS[2], KEYS[1])
     end
 end
-LUA
-            ,
+LUA,
             [
                 $this->toMetricKey($data),
                 $this->getMetricGatherKey(Gauge::TYPE),
@@ -144,8 +142,7 @@ if added == 1 then
     redis.call('hMSet', KEYS[1], '__meta', ARGV[4])
 end
 return result
-LUA
-            ,
+LUA,
             [
                 $this->toMetricKey($data),
                 $this->getMetricGatherKey(Counter::TYPE),
@@ -183,8 +180,7 @@ repeat
         redis.call('DEL', key)
     end
 until cursor == "0"
-LUA
-            ,
+LUA,
             [$searchPattern],
             0
         );

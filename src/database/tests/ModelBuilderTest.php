@@ -1537,6 +1537,65 @@ class ModelBuilderTest extends TestCase
         );
     }
 
+    public function testExceptMethodWithModel()
+    {
+        $model = $this->getMockModel();
+        $builder = $this->getBuilder()->setModel($model);
+        $keyName = $model->getQualifiedKeyName();
+
+        $builder->getQuery()->shouldReceive('where')->once()->with($keyName, '!=', Mockery::on(function ($argument) {
+            return $argument === 1;
+        }));
+
+        $builder->except(new class extends Model {
+            protected array $attributes = ['id' => 1];
+        });
+    }
+
+    public function testExceptMethodWithCollectionOfModel()
+    {
+        $model = $this->getMockModel();
+        $builder = $this->getBuilder()->setModel($model);
+        $keyName = $model->getQualifiedKeyName();
+
+        $builder->getQuery()->shouldReceive('whereNotIn')->once()->with($keyName, Mockery::on(function ($argument) {
+            return $argument === [1, 2];
+        }));
+
+        $models = new Collection([
+            new class extends Model {
+                protected array $attributes = ['id' => 1];
+            },
+            new class extends Model {
+                protected array $attributes = ['id' => 2];
+            },
+        ]);
+
+        $builder->except($models);
+    }
+
+    public function testExceptMethodWithArrayOfModel()
+    {
+        $model = $this->getMockModel();
+        $builder = $this->getBuilder()->setModel($model);
+        $keyName = $model->getQualifiedKeyName();
+
+        $builder->getQuery()->shouldReceive('whereNotIn')->once()->with($keyName, Mockery::on(function ($argument) {
+            return $argument === [1, 2];
+        }));
+
+        $models = new Collection([
+            new class extends Model {
+                protected array $attributes = ['id' => 1];
+            },
+            new class extends Model {
+                protected array $attributes = ['id' => 2];
+            },
+        ]);
+
+        $builder->except($models);
+    }
+
     protected function mockConnectionForModel($model, $database)
     {
         $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';

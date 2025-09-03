@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Pipeline;
 
 use Closure;
+use Hyperf\Macroable\Macroable;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -21,6 +22,8 @@ use Psr\Container\ContainerInterface;
  */
 class Pipeline
 {
+    use Macroable;
+
     /**
      * The object being passed through the pipeline.
      */
