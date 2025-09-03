@@ -13,10 +13,14 @@ declare(strict_types=1);
 namespace Hyperf\Support;
 
 use ArrayAccess;
+use ArrayIterator;
 use Closure;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
+use Hyperf\Macroable\Macroable;
+use IteratorAggregate;
 use JsonSerializable;
+use Traversable;
 
 /**
  * Most of the methods in this file come from illuminate/support,
@@ -28,8 +32,12 @@ use JsonSerializable;
  * @implements \Hyperf\Contract\Arrayable<TKey, TValue>
  * @implements ArrayAccess<TKey, TValue>
  */
-class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
+class Fluent implements ArrayAccess, Arrayable, IteratorAggregate, Jsonable, JsonSerializable
 {
+    use Macroable{
+        __call as macroCall;
+    }
+
     /**
      * All the attributes set on the fluent instance.
      *
@@ -58,6 +66,10 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      */
     public function __call($method, $parameters)
     {
+        if (static::hasMacro($method)) {
+            return $this->macroCall($method, $parameters);
+        }
+
         $this->attributes[$method] = count($parameters) > 0 ? $parameters[0] : true;
 
         return $this;
@@ -140,6 +152,26 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     }
 
     /**
+     * Determine if the fluent instance is empty.
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->attributes);
+    }
+
+    /**
+     * Determine if the fluent instance is not empty.
+     *
+     * @return bool
+     */
+    public function isNotEmpty()
+    {
+        return ! $this->isEmpty();
+    }
+
+    /**
      * Convert the fluent instance to an array.
      *
      * @return array<TKey, TValue>
@@ -210,5 +242,15 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     public function offsetUnset(mixed $offset): void
     {
         unset($this->attributes[$offset]);
+    }
+
+    /**
+     * Get an iterator for the attributes.
+     *
+     * @return ArrayIterator<TKey, TValue>
+     */
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->attributes);
     }
 }

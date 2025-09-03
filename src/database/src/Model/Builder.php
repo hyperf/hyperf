@@ -334,6 +334,18 @@ class Builder
     }
 
     /**
+     * Exclude the given models from the query results.
+     */
+    public function except(iterable|Model $models): static
+    {
+        return $this->whereKeyNot(
+            $models instanceof Model
+                ? $models->getKey()
+                : ModelCollection::wrap($models)->modelKeys()
+        );
+    }
+
+    /**
      * Add a basic where clause to the query.
      *
      * @param array|Closure|string $column
