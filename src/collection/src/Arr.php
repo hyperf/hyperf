@@ -139,16 +139,13 @@ class Arr
             if (empty($array)) {
                 return value($default);
             }
-            foreach ($array as $item) {
-                return $item;
-            }
+
+            return array_first($array);
         }
-        foreach ($array as $key => $value) {
-            if (call_user_func($callback, $value, $key)) {
-                return $value;
-            }
-        }
-        return value($default);
+
+        $key = array_find_key($array, $callback);
+
+        return $key !== null ? $array[$key] : value($default);
     }
 
     /**
@@ -308,13 +305,36 @@ class Arr
     }
 
     /**
+     * Determine if all the keys exist in an array using "dot" notation.
+     */
+    public static function hasAll(array|ArrayAccess $array, null|array|int|string $keys): bool
+    {
+        return static::has($array, $keys);
+    }
+
+    /**
+     * Determine if at least one element in the array passes the given truth test.
+     */
+    public static function some(array $array, callable $callback): bool
+    {
+        return array_any($array, $callback);
+    }
+
+    /**
+     * Determine if all elements in the array pass the given truth test.
+     */
+    public static function every(array $array, callable $callback): bool
+    {
+        return array_all($array, $callback);
+    }
+
+    /**
      * Determines if an array is associative.
      * An array is "associative" if it doesn't have sequential numerical keys beginning with zero.
      */
     public static function isAssoc(array $array): bool
     {
-        $keys = array_keys($array);
-        return array_keys($keys) !== $keys;
+        return ! array_is_list($array);
     }
 
     /**
@@ -729,7 +749,7 @@ class Arr
         }
 
         if (count($array) === 1) {
-            return end($array);
+            return array_last($array);
         }
 
         $finalItem = array_pop($array);
