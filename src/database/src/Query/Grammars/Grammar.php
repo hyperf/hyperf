@@ -460,7 +460,7 @@ class Grammar extends BaseGrammar
     /**
      * Compile a "value between" where clause.
      */
-    protected function whereValueBetween(Builder $query,array $where): string
+    protected function whereValueBetween(Builder $query, array $where): string
     {
         $between = $where['not'] ? 'not between' : 'between';
 
@@ -468,7 +468,7 @@ class Grammar extends BaseGrammar
 
         $max = $this->wrap(is_array($where['columns']) ? end($where['columns']) : $where['columns'][1]);
 
-        return $this->parameter($where['value']).' '.$between.' '.$min.' and '.$max;
+        return $this->parameter($where['value']) . ' ' . $between . ' ' . $min . ' and ' . $max;
     }
 
     /**
