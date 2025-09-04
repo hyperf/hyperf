@@ -20,6 +20,10 @@
 
 - [#7476](https://github.com/hyperf/hyperf/pull/7476) Fixed macro validation for reference parameters.
 
+## Optimized
+
+- [#7511](https://github.com/hyperf/hyperf/pull/7511)
+
 # v3.1.60 - 2025-08-02
 
 ## Fixed
