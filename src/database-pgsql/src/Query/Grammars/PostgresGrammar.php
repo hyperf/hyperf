@@ -193,6 +193,18 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile a "where like" clause.
+     */
+    protected function whereLike(Builder $query, array $where): string
+    {
+        $where['operator'] = $where['not'] ? 'not ' : '';
+
+        $where['operator'] .= $where['caseSensitive'] ? 'like' : 'ilike';
+
+        return $this->whereBasic($query, $where);
+    }
+
+    /**
      * Compile an update from statement into SQL.
      *
      * @return string

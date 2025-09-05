@@ -504,6 +504,20 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Compile a "where like" clause.
+     */
+    protected function whereLike(Builder $query, array $where): string
+    {
+        if ($where['caseSensitive']) {
+            throw new RuntimeException('This database engine does not support case sensitive like operations.');
+        }
+
+        $where['operator'] = $where['not'] ? 'not like' : 'like';
+
+        return $this->whereBasic($query, $where);
+    }
+
+    /**
      * Compile the "where" portions of the query.
      */
     protected function compileWheres(Builder $query): string
