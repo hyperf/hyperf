@@ -17,6 +17,8 @@ use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\Concerns\SupportsDefaultModels;
 
+use function Hyperf\Support\enum_value;
+
 class BelongsTo extends Relation
 {
     use SupportsDefaultModels;
@@ -283,6 +285,24 @@ class BelongsTo extends Relation
     }
 
     /**
+     * Get the key value of the child's foreign key.
+     */
+    public function getParentKey(): mixed
+    {
+        return $this->getForeignKeyFrom($this->child);
+    }
+
+    /**
+     * Touch all of the related models for the relationship.
+     */
+    public function touch(): void
+    {
+        if (! is_null($this->getParentKey())) {
+            parent::touch();
+        }
+    }
+
+    /**
      * Get the fully qualified associated key of the relationship.
      *
      * @return string
@@ -320,6 +340,16 @@ class BelongsTo extends Relation
     public function disassociate()
     {
         return $this->dissociate();
+    }
+
+    /**
+     * Get the value of the model's foreign key.
+     */
+    protected function getForeignKeyFrom(Model $model): mixed
+    {
+        $foreignKey = $model->{$this->foreignKey};
+
+        return enum_value($foreignKey);
     }
 
     /**

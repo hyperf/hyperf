@@ -1245,6 +1245,105 @@ class ModelTest extends TestCase
         $this->assertEquals('foo', $relation->getForeignKeyName());
     }
 
+    public function testBelongsToGetParentKey()
+    {
+        $model = new ModelStub();
+        $this->addMockConnection($model);
+        
+        // Test getParentKey() returns foreign key value
+        $model->belongs_to_stub_id = 123;
+        $relation = $model->belongsToStub();
+        $this->assertEquals(123, $relation->getParentKey());
+        
+        // Test with null foreign key
+        $model->belongs_to_stub_id = null;
+        $this->assertNull($relation->getParentKey());
+    }
+
+    public function testBelongsToTouchWithParentKey()
+    {
+        $model = new ModelStub();
+        $this->addMockConnection($model);
+        
+        // Mock the parent relation to verify touch is called
+        $parent = Mockery::mock(ModelSaveStub::class);
+        $parent->shouldReceive('touch')->once();
+        $parent->shouldReceive('getConnection')->andReturn($model->getConnection());
+        
+        $relation = Mockery::mock(BelongsTo::class)->makePartial();
+        $relation->shouldReceive('getParentKey')->andReturn(123);
+        $relation->shouldReceive('getResults')->andReturn($parent);
+        
+        // touch() should be called because parent key exists
+        $relation->touch();
+    }
+
+    public function testBelongsToTouchWithoutParentKey()
+    {
+        $model = new ModelStub();
+        $this->addMockConnection($model);
+        
+        $relation = Mockery::mock(BelongsTo::class)->makePartial();
+        $relation->shouldReceive('getParentKey')->andReturn(null);
+        $relation->shouldNotReceive('getResults');
+        
+        // touch() should not proceed because parent key is null
+        $relation->touch();
+    }
+
+    public function testBelongsToGetForeignKeyFromWithEnum()
+    {
+        // Skip enum test if PHP version < 8.1
+        if (version_compare(PHP_VERSION, '8.1.0', '<')) {
+            $this->markTestSkipped('Enum support requires PHP 8.1+');
+        }
+        
+        if (!enum_exists('HyperfTest\Database\Stubs\TestEnum')) {
+            eval('
+                namespace HyperfTest\Database\Stubs;
+                enum TestEnum: int {
+                    case ACTIVE = 1;
+                    case INACTIVE = 0;
+                }
+            ');
+        }
+        
+        $model = new ModelStub();
+        $this->addMockConnection($model);
+        
+        // Test with enum value
+        $model->belongs_to_stub_id = \HyperfTest\Database\Stubs\TestEnum::ACTIVE;
+        $relation = $model->belongsToStub();
+        $this->assertEquals(1, $relation->getParentKey());
+        
+        // Test with regular value
+        $model->belongs_to_stub_id = 456;
+        $this->assertEquals(456, $relation->getParentKey());
+        
+        // Test with string value
+        $model->belongs_to_stub_id = 'test';
+        $this->assertEquals('test', $relation->getParentKey());
+    }
+
+    public function testBelongsToGetForeignKeyFromWithRegularValues()
+    {
+        $model = new ModelStub();
+        $this->addMockConnection($model);
+        
+        // Test with integer value
+        $model->belongs_to_stub_id = 456;
+        $relation = $model->belongsToStub();
+        $this->assertEquals(456, $relation->getParentKey());
+        
+        // Test with string value
+        $model->belongs_to_stub_id = 'test';
+        $this->assertEquals('test', $relation->getParentKey());
+        
+        // Test with null value
+        $model->belongs_to_stub_id = null;
+        $this->assertNull($relation->getParentKey());
+    }
+
     public function testMorphToCreatesProperRelation()
     {
         $model = new ModelStub();
