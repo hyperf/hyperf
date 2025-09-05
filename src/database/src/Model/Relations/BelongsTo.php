@@ -203,6 +203,14 @@ class BelongsTo extends Relation
     }
 
     /**
+     * Alias of "dissociate" method.
+     */
+    public function disassociate(): Model
+    {
+        return $this->dissociate();
+    }
+
+    /**
      * Add the constraints for a relationship query.
      *
      * @param array|mixed $columns
