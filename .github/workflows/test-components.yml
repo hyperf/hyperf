@@ -11,8 +11,6 @@ on:
       - "**"
       - "!docs/**"
       - "!**.md"
-  schedule:
-    - cron: '0 2 * * *'
 env:
   SW_VERSION: 'v5.1.6'
 jobs:

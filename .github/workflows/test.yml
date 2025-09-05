@@ -11,8 +11,6 @@ on:
       - "**"
       - "!docs/**"
       - "!**.md"
-  schedule:
-    - cron: '0 14 * * *'
 
 jobs:
   cs-fix:
