@@ -37,18 +37,6 @@ class PostgresGrammar extends Grammar
     ];
 
     /**
-     * Compile a "where like" clause.
-     */
-    protected function whereLike(Builder $query,array $where): string
-    {
-        $where['operator'] = $where['not'] ? 'not ' : '';
-
-        $where['operator'] .= $where['caseSensitive'] ? 'like' : 'ilike';
-
-        return $this->whereBasic($query, $where);
-    }
-
-    /**
      * Compile an insert ignore statement into SQL.
      *
      * @return string
@@ -202,6 +190,18 @@ class PostgresGrammar extends Grammar
         }
 
         return $query;
+    }
+
+    /**
+     * Compile a "where like" clause.
+     */
+    protected function whereLike(Builder $query, array $where): string
+    {
+        $where['operator'] = $where['not'] ? 'not ' : '';
+
+        $where['operator'] .= $where['caseSensitive'] ? 'like' : 'ilike';
+
+        return $this->whereBasic($query, $where);
     }
 
     /**
