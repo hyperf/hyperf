@@ -536,10 +536,8 @@
         }
     },
     "scripts": {
-        "analyse": [
-            "phpstan analyse --memory-limit=-1 src",
-            "phpstan analyze --configuration=\"phpstan.types.neon.dist\" --memory-limit=-1 types"
-        ],
+        "analyse": "phpstan analyse --memory-limit=-1",
+        "analyse-types": "phpstan analyze --configuration=\"phpstan.types.neon.dist\" --memory-limit=-1",
         "cs-fix": "php-cs-fixer fix $1 --verbose",
         "json-fix": [
             "./bin/composer-json-fixer",

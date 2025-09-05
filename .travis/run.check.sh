@@ -2,4 +2,5 @@
 
 set -e
 
-composer analyse
+composer analyse src
+composer analyse-types
