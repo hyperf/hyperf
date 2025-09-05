@@ -1254,7 +1254,10 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         return new ModelMeta($class, $key);
     }
 
-    protected function isPrunable(): bool
+    /**
+     * Determine if the model is prunable.
+     */
+    public static function isPrunable(): bool
     {
         return self::$isPrunable[static::class] ??= in_array(Prunable::class, class_uses_recursive(static::class));
     }
