@@ -22,7 +22,6 @@ use Hyperf\Contract\Jsonable;
 use Hyperf\Contract\UnCompressInterface;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Relations\Pivot;
-use Hyperf\Database\Prunable;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
@@ -1260,6 +1259,14 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     public static function isPrunable(): bool
     {
         return self::$isPrunable[static::class] ??= in_array(Prunable::class, class_uses_recursive(static::class));
+    }
+
+    /**
+     * Determine if the model is mass prunable.
+     */
+    public static function isMassPrunable(): bool
+    {
+        return in_array(MassPrunable::class, class_uses_recursive(static::class));
     }
 
     /**

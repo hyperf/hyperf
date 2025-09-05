@@ -12,22 +12,11 @@ declare(strict_types=1);
 
 namespace HyperfTest\Database\Stubs;
 
-use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Model;
-use Hyperf\Database\Model\Prunable;
 
-use function Hyperf\Support\now;
-
-class PrunableModelStub extends Model
+class NonMassPrunableModelStub extends Model
 {
-    use Prunable;
-
-    protected ?string $table = 'prunable_stub';
+    protected ?string $table = 'non_mass_prunable_stub';
 
     protected array $fillable = ['name'];
-
-    public function prunable(): Builder
-    {
-        return $this->where('created_at', '<=', now()->subMonth());
-    }
 }

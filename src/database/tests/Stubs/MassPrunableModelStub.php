@@ -13,16 +13,16 @@ declare(strict_types=1);
 namespace HyperfTest\Database\Stubs;
 
 use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\MassPrunable;
 use Hyperf\Database\Model\Model;
-use Hyperf\Database\Model\Prunable;
 
 use function Hyperf\Support\now;
 
-class PrunableModelStub extends Model
+class MassPrunableModelStub extends Model
 {
-    use Prunable;
+    use MassPrunable;
 
-    protected ?string $table = 'prunable_stub';
+    protected ?string $table = 'mass_prunable_stub';
 
     protected array $fillable = ['name'];
 

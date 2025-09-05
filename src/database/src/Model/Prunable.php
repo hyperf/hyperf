@@ -10,10 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Database;
+namespace Hyperf\Database\Model;
 
 use Hyperf\Database\Events\ModelsPruned;
-use Hyperf\Database\Model\Builder;
 use LogicException;
 
 /**
