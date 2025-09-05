@@ -22,6 +22,7 @@ use Hyperf\Contract\Jsonable;
 use Hyperf\Contract\UnCompressInterface;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Relations\Pivot;
+use Hyperf\Database\Prunable;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
@@ -120,6 +121,13 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * The array of trait initializers that will be called on each new instance.
      */
     protected array $traitInitializers = [];
+
+    /**
+     * Cache of prunable models.
+     *
+     * @var array<class-string<self>, bool>
+     */
+    protected static array $isPrunable = [];
 
     /**
      * Create a new Model model instance.
@@ -1244,6 +1252,11 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         $class = get_class($this);
 
         return new ModelMeta($class, $key);
+    }
+
+    protected function isPrunable(): bool
+    {
+        return self::$isPrunable[static::class] ??= in_array(Prunable::class, class_uses_recursive(static::class));
     }
 
     /**
