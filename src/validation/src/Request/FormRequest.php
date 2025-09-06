@@ -205,13 +205,13 @@ class FormRequest extends Request implements ValidatesWhenResolved
         $rules = $this->rules();
         $scene = $this->getScene();
         if ($scene && isset($this->scenes[$scene]) && is_array($this->scenes[$scene])) {
-            $rulesKeys = array_keys($rules);
+
             $newRules = [];
-            foreach ($this->scenes[$scene] as $key => $rule) {
-                if (in_array($key, $rulesKeys)) {
-                    $newRules[$key] = $rule;
-                } elseif (in_array($rule, $rulesKeys)) {
-                    $newRules[$rule] = $rules[$rule];
+            foreach ($this->scenes[$scene] as $sceneRuleFiled => $sceneRule) {
+                if (is_string($sceneRuleFiled)) {
+                    $newRules[$sceneRuleFiled] = $sceneRule;
+                } elseif (is_numeric($sceneRuleFiled) && is_string($sceneRule)) {
+                    $newRules[$sceneRule] = $rules[$sceneRule];
                 }
             }
             return $newRules;
