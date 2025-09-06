@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation\Request;
 
-use Hyperf\Collection\Arr;
 use Hyperf\Context\Context;
 use Hyperf\Context\ResponseContext;
 use Hyperf\Contract\ValidatorInterface;
@@ -205,7 +204,15 @@ class FormRequest extends Request implements ValidatesWhenResolved
         $rules = $this->rules();
         $scene = $this->getScene();
         if ($scene && isset($this->scenes[$scene]) && is_array($this->scenes[$scene])) {
-            return Arr::only($rules, $this->scenes[$scene]);
+            $newRules = [];
+            foreach ($this->scenes[$scene] as $sceneRuleFiled => $sceneRule) {
+                if (is_string($sceneRuleFiled)) {
+                    $newRules[$sceneRuleFiled] = $sceneRule;
+                } elseif (is_numeric($sceneRuleFiled) && is_string($sceneRule)) {
+                    $newRules[$sceneRule] = $rules[$sceneRule];
+                }
+            }
+            return $newRules;
         }
         return $rules;
     }
