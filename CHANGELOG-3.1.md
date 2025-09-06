@@ -1,4 +1,6 @@
-# v3.1.61 - TBD
+# v3.1.62 - TBD
+
+# v3.1.61 - 2025-09-04
 
 ## Added
 
@@ -15,10 +17,11 @@
 - [#7500](https://github.com/hyperf/hyperf/pull/7500) Added methods `Hyperf\Collection\Arr::push()` and  `Hyperf\Collection\Arr::array()`.
 - [#7502](https://github.com/hyperf/hyperf/pull/7502) Added method `Hyperf\Collection\Arr::hasAll()`.
 - [#7509](https://github.com/hyperf/hyperf/pull/7509) Added `Hyperf\Codec\Packer\Resp3Packer`.
+- [#7518](https://github.com/hyperf/hyperf/pull/7518) Added method `Hyperf\Database\Query\Grammars\Grammar::whereValueBetween()`.
 
-## Fixed
+## Optimized
 
-- [#7476](https://github.com/hyperf/hyperf/pull/7476) Fixed macro validation for reference parameters.
+- [#7501](https://github.com/hyperf/hyperf/pull/7501) Added validation of `Hyperf\Macroable\Macroable::macro()` to avoid unexpected results caused by using reference parameters.
 
 ## Optimized
 

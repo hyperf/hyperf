@@ -1479,6 +1479,48 @@ class Builder
     }
 
     /**
+     * Add a where between columns statement using a value to the query.
+     * @param array{Expression|string, Expression|string} $columns
+     */
+    public function whereValueBetween(mixed $value, array $columns, string $boolean = 'and', bool $not = false): static
+    {
+        $type = 'valueBetween';
+
+        $this->wheres[] = compact('type', 'value', 'columns', 'boolean', 'not');
+
+        $this->addBinding($value, 'where');
+
+        return $this;
+    }
+
+    /**
+     * Add an or where between columns statement using a value to the query.
+     * @param array{Expression|string, Expression|string} $columns
+     */
+    public function orWhereValueBetween(mixed $value, array $columns): static
+    {
+        return $this->whereValueBetween($value, $columns, 'or');
+    }
+
+    /**
+     * Add a where not between columns statement using a value to the query.
+     * @param array{Expression|string, Expression|string} $columns
+     */
+    public function whereValueNotBetween(mixed $value, array $columns, string $boolean = 'and'): static
+    {
+        return $this->whereValueBetween($value, $columns, $boolean, true);
+    }
+
+    /**
+     * Add an or where not between columns statement using a value to the query.
+     * @param array{Expression|string, Expression|string} $columns
+     */
+    public function orWhereValueNotBetween(mixed $value, array $columns): static
+    {
+        return $this->whereValueNotBetween($value, $columns, 'or');
+    }
+
+    /**
      * Add a "where JSON overlaps" clause to the query.
      */
     public function whereJsonOverlaps(string $column, mixed $value, string $boolean = 'and', bool $not = false): static
