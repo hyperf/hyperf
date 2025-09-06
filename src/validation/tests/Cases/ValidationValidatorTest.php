@@ -5712,6 +5712,7 @@ class ValidationValidatorTest extends TestCase
         $this->assertTrue($v->passes());
         $this->assertSame([], $v->validated());
 
+        $this->expectException(ValidationException::class);
         $file = new SplFileInfo(__FILE__);
         $v = new Validator($trans, ['file' => $file], ['foo' => 'exclude_without:file|required']);
         $this->assertFalse($v->passes());
@@ -5746,6 +5747,35 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['file' => $file, 'foo' => $foo], ['foo' => 'exclude_without:file']);
         $this->assertTrue($v->passes());
         $this->assertSame([], $v->validated());
+    }
+
+    public function testValidatedThrowsOnFail()
+    {
+        $this->expectException(ValidationException::class);
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'bar'], ['baz' => 'required']);
+
+        $v->validated();
+    }
+
+    public function testValidatedThrowsOnFailEvenAfterPassesCall()
+    {
+        $this->expectException(ValidationException::class);
+
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'bar'], ['baz' => 'required']);
+
+        $v->passes();
+        $v->validated();
+    }
+
+    public function testValidatedDoesntThrowOnPass()
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => 'bar'], ['foo' => 'required']);
+
+        $this->assertSame(['foo' => 'bar'], $v->validated());
     }
 
     protected function getTranslator()
