@@ -18,6 +18,14 @@ use Hyperf\Database\Model\Model;
 
 use function Hyperf\Collection\collect;
 
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ * @template TPivotModel of \Hyperf\Database\Model\Relations\Pivot = \Hyperf\Database\Model\Relations\MorphPivot
+ * @template TAccessor of string = 'pivot'
+ *
+ * @extends BelongsToMany<TRelatedModel, TDeclaringModel, TPivotModel, TAccessor>
+ */
 class MorphToMany extends BelongsToMany
 {
     /**
