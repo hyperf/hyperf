@@ -60,6 +60,11 @@ class Option
 
     public function getBin(): string
     {
+        if (str_contains($this->bin, ' ')) {
+            // If the binary path contains spaces, we need to wrap it in quotes.
+            return '"' . $this->bin . '"';
+        }
+
         return $this->bin;
     }
 

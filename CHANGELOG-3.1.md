@@ -1,9 +1,59 @@
-# v3.1.57 - TBD
+# v3.1.62 - TBD
+
+# v3.1.61 - 2025-09-04
+
+## Added
+
+- [#7467](https://github.com/hyperf/hyperf/pull/7467) Support versions v2 and v3 for nacos sdk.
+- [#7476](https://github.com/hyperf/hyperf/pull/7476) Added trait `InteractsWithData` to `Hyperf\Support\Fluent`.
+- [#7480](https://github.com/hyperf/hyperf/pull/7480) Added method `Hyperf\Database\Model\Builder::incrementOrCreate()`.
+- [#7481](https://github.com/hyperf/hyperf/pull/7481) Added methods `Collection::doesntContainStrict()` and `LazyCollection::doesntContainStrict()`.
+- [#7483](https://github.com/hyperf/hyperf/pull/7483) Added the alias `disassociate()` of `Hyperf\Database\Model\Relations\BelongsTo::dissociate()`.
+- [#7484](https://github.com/hyperf/hyperf/pull/7484) Added method `Hyperf\Database\Model\Model::isSoftDeletable()`.
+- [#7486](https://github.com/hyperf/hyperf/pull/7486) Added method `Hyperf\Database\Model\Builder::except()`.
+- [#7487](https://github.com/hyperf/hyperf/pull/7487) Added caster `Hyperf\Database\Model\Casts\AsArrayObject` for `ArrayObject`.
+- [#7492](https://github.com/hyperf/hyperf/pull/7492) Added trait `Macroable` to `Hyperf\Pipeline\Pipeline`.
+- [#7499](https://github.com/hyperf/hyperf/pull/7499) Added constant `Hyperf\Kafka\Constants\KafkaStrategy::STICKY_ASSIGNOR`.
+- [#7500](https://github.com/hyperf/hyperf/pull/7500) Added methods `Hyperf\Collection\Arr::push()` and  `Hyperf\Collection\Arr::array()`.
+- [#7502](https://github.com/hyperf/hyperf/pull/7502) Added method `Hyperf\Collection\Arr::hasAll()`.
+- [#7509](https://github.com/hyperf/hyperf/pull/7509) Added `Hyperf\Codec\Packer\Resp3Packer`.
+- [#7518](https://github.com/hyperf/hyperf/pull/7518) Added method `Hyperf\Database\Query\Grammars\Grammar::whereValueBetween()`.
+
+## Optimized
+
+- [#7501](https://github.com/hyperf/hyperf/pull/7501) Added validation of `Hyperf\Macroable\Macroable::macro()` to avoid unexpected results caused by using reference parameters.
+
+# v3.1.60 - 2025-08-02
+
+## Fixed
+
+- [#7447](https://github.com/hyperf/hyperf/pull/7447) Fixed bug that the command `migrate:fresh` can't drop postgres tables by default.
+- [#7449](https://github.com/hyperf/hyperf/pull/7449) Fixed bug that `Hyperf\Database\Migrations\Migrator::reset()` cannot support string paths.
+
+## Added
+
+- [#7466](https://github.com/hyperf/hyperf/pull/7466) Added `isEmpty` / `isNotEmpty` / `getIterator` methods to `Hyperf\Support\Fluent` class.
+- [#7473](https://github.com/hyperf/hyperf/pull/7473) Added config `produce_retry` and `producer_retry_sleep` for `kafka`.
+
+# v3.1.59 - 2025-07-03
+
+## Fixed
+
+- [#7421](https://github.com/hyperf/hyperf/pull/7421) Fixed bug that the cookie value cannot be deleted when set "".
+- [#7424](https://github.com/hyperf/hyperf/pull/7424) Fixed bug that the path of `php` cannot contain spaces for `watcher`.
+- [#7427](https://github.com/hyperf/hyperf/pull/7427) Fixed bug that `exclude` cannot not work when using `validation`.
+
+## Optimized
+
+- [#7394](https://github.com/hyperf/hyperf/pull/7394) Release redis connection immediately when using `transaction` or `pipeline` with callbacks.
+
+# v3.1.57 - 2025-06-23
 
 ## Fixed
 
 - [#7402](https://github.com/hyperf/hyperf/pull/7402) Fixed bug that `connect_timeout` cannot work for `pgsql-swoole` database.
 - [#7414](https://github.com/hyperf/hyperf/pull/7414) Fixed bug that sqlite migration does not work.
+- [#7420](https://github.com/hyperf/hyperf/pull/7420) Fixed bug that luasha cannot work when redis server restart.
 
 ## Optimized
 
