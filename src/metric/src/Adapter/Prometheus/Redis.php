@@ -30,7 +30,9 @@ class Redis implements Adapter
     /**
      * @param \Redis $redis
      */
-    public function __construct(protected mixed $redis) {}
+    public function __construct(protected mixed $redis)
+    {
+    }
 
     /**
      * @return MetricFamilySamples[]
@@ -46,7 +48,7 @@ class Redis implements Adapter
         );
 
         return array_map(
-            fn(array $metric) => new MetricFamilySamples($metric),
+            fn (array $metric) => new MetricFamilySamples($metric),
             $metrics
         );
     }
