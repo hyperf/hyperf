@@ -30,9 +30,7 @@ class Redis implements Adapter
     /**
      * @param \Redis $redis
      */
-    public function __construct(protected mixed $redis)
-    {
-    }
+    public function __construct(protected mixed $redis) {}
 
     /**
      * @return MetricFamilySamples[]
@@ -48,7 +46,7 @@ class Redis implements Adapter
         );
 
         return array_map(
-            fn (array $metric) => new MetricFamilySamples($metric),
+            fn(array $metric) => new MetricFamilySamples($metric),
             $metrics
         );
     }
@@ -78,8 +76,7 @@ if tonumber(result) >= tonumber(ARGV[3]) then
     redis.call('sAdd', KEYS[2], KEYS[1])
 end
 return result
-LUA
-            ,
+LUA,
             [
                 $this->toMetricKey($data),
                 $this->getMetricGatherKey(Histogram::TYPE),
@@ -106,18 +103,27 @@ local cmd = ARGV[1]
 local result
 if cmd == 'hSet' then
   result = redis.call('hSet', KEYS[1], ARGV[2], ARGV[3])
+  if result == 1 then
+    redis.call('hSet', KEYS[1], '__meta', ARGV[4])
+    redis.call('sAdd', KEYS[2], KEYS[1])
+  end
 elseif cmd == 'hIncrBy' then
   result = redis.call('hIncrBy', KEYS[1], ARGV[2], ARGV[3])
+  if result == tonumber(ARGV[3]) then
+    redis.call('hSet', KEYS[1], '__meta', ARGV[4])
+    redis.call('sAdd', KEYS[2], KEYS[1])
+  end
 elseif cmd == 'hIncrByFloat' then
   result = redis.call('hIncrByFloat', KEYS[1], ARGV[2], ARGV[3])
+  if result == tonumber(ARGV[3]) then
+    redis.call('hSet', KEYS[1], '__meta', ARGV[4])
+    redis.call('sAdd', KEYS[2], KEYS[1])
+  end
 else
   return redis.error_reply('unsupported cmd: ' .. cmd)
 end
-redis.call('hSet', KEYS[1], '__meta', ARGV[4])
-redis.call('sAdd', KEYS[2], KEYS[1])
 return result
-LUA
-            ,
+LUA,
             [
                 $this->toMetricKey($data),
                 $this->getMetricGatherKey(Gauge::TYPE),
@@ -161,8 +167,7 @@ if added == 1 then
   redis.call('hMSet', key, '__meta', meta)
 end
 return result
-LUA
-            ,
+LUA,
             [
                 $this->toMetricKey($data),
                 $this->getMetricGatherKey(Counter::TYPE),
@@ -200,8 +205,7 @@ repeat
         redis.call('DEL', key)
     end
 until cursor == "0"
-LUA
-            ,
+LUA,
             [$searchPattern],
             0
         );
@@ -347,7 +351,7 @@ LUA
                 ];
             }
 
-            usort($sample['samples'], fn ($a, $b) => strcmp(implode('', $a['labelValues']), implode('', $b['labelValues'])));
+            usort($sample['samples'], fn($a, $b) => strcmp(implode('', $a['labelValues']), implode('', $b['labelValues'])));
 
             $samples[] = $sample;
         }
