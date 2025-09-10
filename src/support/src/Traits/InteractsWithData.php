@@ -19,8 +19,11 @@ use Hyperf\Collection\Collection;
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\Stringable;
 use stdClass;
+use UnitEnum;
 
 use function Hyperf\Collection\data_get;
+use function Hyperf\Support\enum_value;
+use function Hyperf\Support\value;
 
 trait InteractsWithData
 {
@@ -207,7 +210,7 @@ trait InteractsWithData
     }
 
     /**
-     * Retrieve data from the instnce as a Stringable instance.
+     * Retrieve data from the instance as a Stringable instance.
      *
      * @param string $key
      * @param mixed $default
@@ -273,13 +276,14 @@ trait InteractsWithData
      *
      * @param string $key
      * @param null|string $format
-     * @param null|string $tz
+     * @param null|string|UnitEnum $tz
      * @return null|Carbon
      *
      * @throws InvalidFormatException
      */
     public function date($key, $format = null, $tz = null)
     {
+        $tz = enum_value($tz);
         if ($this->isNotFilled($key)) {
             return null;
         }
@@ -298,15 +302,16 @@ trait InteractsWithData
      *
      * @param string $key
      * @param class-string<TEnum> $enumClass
+     * @param null|mixed $default
      * @return null|TEnum
      */
-    public function enum($key, $enumClass)
+    public function enum($key, $enumClass, $default = null)
     {
         if ($this->isNotFilled($key) || ! $this->isBackedEnum($enumClass)) {
-            return null;
+            return value($default);
         }
 
-        return $enumClass::tryFrom($this->data($key));
+        return $enumClass::tryFrom($this->data($key)) ?? value($default);
     }
 
     /**
@@ -324,9 +329,10 @@ trait InteractsWithData
             return [];
         }
 
-        return $this->collect($key)->map(function ($value) use ($enumClass) {
-            return $enumClass::tryFrom($value);
-        })->filter()->all();
+        return $this->collect($key)
+            ->map(fn ($value) => $enumClass::tryFrom($value))
+            ->filter()
+            ->all();
     }
 
     /**

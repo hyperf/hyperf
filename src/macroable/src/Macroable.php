@@ -14,8 +14,10 @@ namespace Hyperf\Macroable;
 
 use BadMethodCallException;
 use Closure;
+use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionFunction;
 use ReflectionMethod;
 
 /**
@@ -93,6 +95,18 @@ trait Macroable
      */
     public static function macro($name, $macro)
     {
+        if ($macro instanceof Closure) {
+            $reflection = new ReflectionFunction($macro);
+            foreach ($reflection->getParameters() as $parameter) {
+                if ($parameter->isPassedByReference()) {
+                    throw new InvalidArgumentException(sprintf(
+                        'Macro %s cannot accept parameters passed by reference.',
+                        $name
+                    ));
+                }
+            }
+        }
+
         static::$macros[$name] = $macro;
     }
 

@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Hyperf\Collection\Collection;
 use Hyperf\Stringable\Stringable;
 use Hyperf\Support\Fluent;
+use HyperfTest\Support\Stub\FooEnum;
 use HyperfTest\Support\Stub\TestBackedEnum;
 use HyperfTest\Support\Stub\TestEnum;
 use HyperfTest\Support\Stub\TestStringBackedEnum;
@@ -154,7 +155,7 @@ class FluentTest extends TestCase
         $this->assertJsonStringEqualsJsonString(json_encode(['foo']), $results);
     }
 
-    public function testScope()
+    public function testScope2()
     {
         $fluent = new Fluent(['user' => ['name' => 'hyperf']]);
         $this->assertEquals(['hyperf'], $fluent->scope('user.name')->toArray());
@@ -321,7 +322,7 @@ class FluentTest extends TestCase
         $this->assertEquals(['users' => [1, 2, 3], 'roles' => [4, 5, 6], 'foo' => ['bar', 'baz'], 'email' => 'test@example.com'], $fluent->collect()->all());
     }
 
-    public function testDateMethod()
+    public function testDateMethod2()
     {
         $fluent = new Fluent([
             'as_null' => null,
@@ -439,7 +440,7 @@ class FluentTest extends TestCase
         $this->assertEmpty($fluent->enums('int.doesnt_exist', TestBackedEnum::class));
     }
 
-    public function testFill()
+    public function testFill2()
     {
         $fluent = new Fluent(['name' => 'John Doe']);
 
@@ -904,6 +905,298 @@ class FluentTest extends TestCase
             'name' => 'Taylor',
             'role' => 'admin',
         ], $result);
+    }
+
+    public function testGetIterator()
+    {
+        $fluent = new Fluent(['name' => 'John', 'age' => 30]);
+        $iterator = $fluent->getIterator();
+
+        $this->assertInstanceOf(ArrayIterator::class, $iterator);
+        $this->assertEquals(['name' => 'John', 'age' => 30], iterator_to_array($iterator));
+    }
+
+    public function testSet()
+    {
+        $fluent = new Fluent();
+
+        $result = $fluent->set('name', 'John');
+        $this->assertSame($fluent, $result);
+        $this->assertEquals('John', $fluent->get('name'));
+
+        $fluent->set('user.profile.name', 'Jane');
+        $this->assertEquals('Jane', $fluent->get('user.profile.name'));
+
+        $fluent->set('level', 0);
+        $this->assertEquals(0, $fluent->get('level'));
+    }
+
+    public function testFill()
+    {
+        $fluent = new Fluent();
+
+        $result = $fluent->fill(['name' => 'John', 'age' => 30]);
+        $this->assertSame($fluent, $result);
+        $this->assertEquals(['name' => 'John', 'age' => 30], $fluent->getAttributes());
+
+        $fluent->fill(['city' => 'New York']);
+        $this->assertEquals(['name' => 'John', 'age' => 30, 'city' => 'New York'], $fluent->getAttributes());
+    }
+
+    public function testValue()
+    {
+        $fluent = new Fluent(['name' => 'John', 'value' => null]);
+
+        $this->assertEquals('John', $fluent->value('name'));
+        $this->assertNull($fluent->value('value'));
+        $this->assertNull($fluent->value('nonexistent'));
+        $this->assertEquals('default', $fluent->value('nonexistent', 'default'));
+
+        $closure = function () {
+            return 'closure_result';
+        };
+        $this->assertEquals('closure_result', $fluent->value('nonexistent', $closure));
+    }
+
+    public function testScope()
+    {
+        $fluent = new Fluent([
+            'user' => [
+                'name' => 'John',
+                'profile' => [
+                    'email' => 'john@example.com',
+                    'age' => 30,
+                ],
+            ],
+        ]);
+
+        $userScope = $fluent->scope('user');
+        $this->assertInstanceOf(Fluent::class, $userScope);
+        $this->assertEquals('John', $userScope->get('name'));
+        $this->assertEquals(['email' => 'john@example.com', 'age' => 30], $userScope->get('profile'));
+
+        $defaultScope = $fluent->scope('nonexistent', ['default' => 'value']);
+        $this->assertEquals(['default' => 'value'], $defaultScope->getAttributes());
+    }
+
+    public function testAll()
+    {
+        $attributes = ['name' => 'John', 'age' => 30, 'city' => 'New York'];
+        $fluent = new Fluent($attributes);
+
+        $this->assertEquals($attributes, $fluent->all());
+
+        $subset = $fluent->all(['name', 'age']);
+        $this->assertEquals(['name' => 'John', 'age' => 30], $subset);
+
+        $nested = $fluent->all('name', 'age');
+        $this->assertEquals(['name' => 'John', 'age' => 30], $nested);
+    }
+
+    public function testInteractsWithDataMethods()
+    {
+        $fluent = new Fluent([
+            'name' => 'John',
+            'email' => 'john@example.com',
+            'phone' => '',
+            'age' => 30,
+            'active' => true,
+            'score' => 95.5,
+            'tags' => ['developer', 'php'],
+            'profile' => [
+                'bio' => 'A developer',
+                'city' => 'New York',
+            ],
+        ]);
+
+        // Test exists/has
+        $this->assertTrue($fluent->exists('name'));
+        $this->assertTrue($fluent->has('name'));
+        $this->assertTrue($fluent->has(['name', 'email']));
+        $this->assertFalse($fluent->has('nonexistent'));
+        $this->assertFalse($fluent->has(['name', 'nonexistent']));
+
+        // Test hasAny
+        $this->assertTrue($fluent->hasAny(['name', 'nonexistent']));
+        $this->assertFalse($fluent->hasAny(['nonexistent', 'missing']));
+
+        // Test filled
+        $this->assertTrue($fluent->filled('name'));
+        $this->assertFalse($fluent->filled('phone')); // empty string
+        $this->assertTrue($fluent->filled(['name', 'email']));
+        $this->assertFalse($fluent->filled(['name', 'phone']));
+
+        // Test isNotFilled
+        $this->assertFalse($fluent->isNotFilled('name'));
+        $this->assertTrue($fluent->isNotFilled('phone'));
+        $this->assertTrue($fluent->isNotFilled(['phone']));
+        $this->assertFalse($fluent->isNotFilled(['name', 'phone']));
+
+        // Test anyFilled
+        $this->assertTrue($fluent->anyFilled(['name', 'phone']));
+        $this->assertFalse($fluent->anyFilled(['phone']));
+
+        // Test missing
+        $this->assertFalse($fluent->missing('name'));
+        $this->assertTrue($fluent->missing('nonexistent'));
+        $this->assertTrue($fluent->missing(['nonexistent', 'missing']));
+
+        // Test string
+        $this->assertInstanceOf(Stringable::class, $fluent->string('name'));
+        $this->assertEquals('John', (string) $fluent->string('name'));
+        $this->assertEquals('default', (string) $fluent->string('nonexistent', 'default'));
+
+        // Test str (alias for string)
+        $this->assertInstanceOf(Stringable::class, $fluent->str('name'));
+        $this->assertEquals('John', (string) $fluent->str('name'));
+
+        // Test boolean
+        $this->assertTrue($fluent->boolean('active'));
+        $this->assertFalse($fluent->boolean('nonexistent'));
+        $this->assertTrue($fluent->boolean('nonexistent', true));
+
+        // Test integer
+        $this->assertEquals(30, $fluent->integer('age'));
+        $this->assertEquals(0, $fluent->integer('nonexistent'));
+        $this->assertEquals(25, $fluent->integer('nonexistent', 25));
+
+        // Test float
+        $this->assertEquals(95.5, $fluent->float('score'));
+        $this->assertEquals(0.0, $fluent->float('nonexistent'));
+        $this->assertEquals(100.0, $fluent->float('nonexistent', 100.0));
+
+        // Test array
+        $this->assertEquals(['developer', 'php'], $fluent->array('tags'));
+        $this->assertEquals(['name' => 'John'], $fluent->array(['name']));
+        $this->assertEquals([], $fluent->array('nonexistent'));
+
+        // Test collect
+        $collection = $fluent->collect('tags');
+        $this->assertInstanceOf(Collection::class, $collection);
+        $this->assertEquals(['developer', 'php'], $collection->toArray());
+
+        // Test only
+        $only = $fluent->only(['name', 'email', 'nonexistent']);
+        $this->assertEquals(['name' => 'John', 'email' => 'john@example.com'], $only);
+
+        // Test except
+        $except = $fluent->except(['phone', 'age']);
+        $expected = [
+            'name' => 'John',
+            'email' => 'john@example.com',
+            'active' => true,
+            'score' => 95.5,
+            'tags' => ['developer', 'php'],
+            'profile' => [
+                'bio' => 'A developer',
+                'city' => 'New York',
+            ],
+        ];
+        $this->assertEquals($expected, $except);
+    }
+
+    public function testWhenMethods()
+    {
+        $fluent = new Fluent(['name' => 'John', 'email' => '', 'age' => 30]);
+
+        // Test whenHas
+        $result = $fluent->whenHas('name', function ($value) {
+            return 'Hello ' . $value;
+        });
+        $this->assertEquals('Hello John', $result);
+
+        $result = $fluent->whenHas('nonexistent', function () {
+            return 'exists';
+        }, function () {
+            return 'default';
+        });
+        $this->assertEquals('default', $result);
+
+        // Test whenFilled
+        $result = $fluent->whenFilled('name', function ($value) {
+            return 'Filled: ' . $value;
+        });
+        $this->assertEquals('Filled: John', $result);
+
+        $result = $fluent->whenFilled('email', function () {
+            return 'filled';
+        }, function () {
+            return 'not filled';
+        });
+        $this->assertEquals('not filled', $result);
+
+        // Test whenMissing
+        $result = $fluent->whenMissing('nonexistent', function () {
+            return 'missing';
+        });
+        $this->assertEquals('missing', $result);
+
+        $result = $fluent->whenMissing('name', function () {
+            return 'missing';
+        }, function () {
+            return 'exists';
+        });
+        $this->assertEquals('exists', $result);
+    }
+
+    public function testDateMethod()
+    {
+        $fluent = new Fluent([
+            'created_at' => '2023-01-15 10:30:00',
+            'formatted_date' => '15/01/2023',
+            'empty_date' => '',
+            'null_date' => null,
+        ]);
+
+        // Test basic date parsing
+        $date = $fluent->date('created_at');
+        $this->assertInstanceOf(Carbon::class, $date);
+        $this->assertEquals('2023-01-15 10:30:00', $date->format('Y-m-d H:i:s'));
+
+        // Test date with format
+        $date = $fluent->date('formatted_date', 'd/m/Y');
+        $this->assertInstanceOf(Carbon::class, $date);
+        $this->assertEquals('2023-01-15', $date->format('Y-m-d'));
+
+        // Test empty date
+        $this->assertNull($fluent->date('empty_date'));
+        $this->assertNull($fluent->date('null_date'));
+        $this->assertNull($fluent->date('nonexistent'));
+    }
+
+    public function testEnumMethods()
+    {
+        $fluent = new Fluent([
+            'status' => 'active',
+            'statuses' => ['active', 'inactive', 'pending'],
+            'invalid_status' => 'invalid',
+            'empty_status' => '',
+            'zero_status' => 0,
+        ]);
+
+        // Test enum method when enum class doesn't exist (should return default)
+        $result = $fluent->enum('status', 'NonExistentEnum', 'default_value');
+        $this->assertEquals('default_value', $result);
+
+        // Test enum method with empty value (should return default)
+        $result = $fluent->enum('empty_status', 'NonExistentEnum', 'default_value');
+        $this->assertEquals('default_value', $result);
+
+        // Test enum method with nonexistent key (should return default)
+        $result = $fluent->enum('nonexistent', 'NonExistentEnum', 'default_value');
+        $this->assertEquals('default_value', $result);
+
+        // Test enums method when enum class doesn't exist (should return empty array)
+        $result = $fluent->enums('statuses', 'NonExistentEnum');
+        $this->assertEquals([], $result);
+
+        // Test enums method with empty value (should return empty array)
+        $result = $fluent->enums('empty_status', 'NonExistentEnum');
+        $this->assertEquals([], $result);
+
+        // Test enum method with nonexistent key (should return default)
+        $result = $fluent->enum('zero_status', FooEnum::class, 'default_value');
+        $this->assertEquals(FooEnum::Zero, $result);
     }
 }
 

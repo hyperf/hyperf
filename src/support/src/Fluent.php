@@ -19,6 +19,7 @@ use Hyperf\Collection\Arr;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Macroable\Macroable;
+use Hyperf\Support\Traits\InteractsWithData;
 use IteratorAggregate;
 use JsonSerializable;
 use Traversable;
@@ -38,8 +39,8 @@ use function Hyperf\Collection\data_set;
  */
 class Fluent implements ArrayAccess, Arrayable, IteratorAggregate, Jsonable, JsonSerializable
 {
-    use Traits\InteractsWithData;
-    use Macroable {
+    use InteractsWithData;
+    use Macroable{
         __call as macroCall;
     }
 
