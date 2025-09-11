@@ -176,3 +176,5 @@
 - [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支持 `支付宝/微信` 的支付组件，基于 [yansongda/pay](https://github.com/yansongda/pay) 实现，适配于 `Hyperf` 框架
 - [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch) 为 Hyperf Scout 提供的 meilisearch 客户端
 - [vinchan/message-notify](https://github.com/VinchanGit/message-notify) Hyperf 异常监控报警通知组件(钉钉群机器人、飞书群机器人、邮件、QQ 频道机器人、企业微信群机器人)
+- [zzhenping/runpod-client](https://github.com/Zzhenping/runpod-client) Hyperf框架适配Runpod API接口, 支持常用的Runpod Serverless 接口(异步作业提交、状态查询、取消任务, 协程获取任务状态等)
+- [zzhenping/replicate-client](https://github.com/Zzhenping/replicate-client) Replicate API 接口适配 Hyperf 框架, 支持同步推理、Webhook 通知、以及协程等待任务完成, 支持任务取消, 状态获取。
