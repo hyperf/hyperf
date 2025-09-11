@@ -75,6 +75,40 @@ class DatabasePostgresBuilderTest extends TestCase
     }
 
     #[RequiresPhpExtension('swoole', '< 6.0')]
+    public function testWhereLikeClausePostgres()
+    {
+        $builder = $this->getPostgresBuilderWithProcessor();
+        $builder->select('*')->from('users')->whereLike('id', '1');
+        $this->assertSame('select * from "users" where "id"::text ilike ?', $builder->toSql());
+        $this->assertEquals([0 => '1'], $builder->getBindings());
+
+        $builder = $this->getPostgresBuilderWithProcessor();
+        $builder->select('*')->from('users')->whereLike('id', '1', false);
+        $this->assertSame('select * from "users" where "id"::text ilike ?', $builder->toSql());
+        $this->assertEquals([0 => '1'], $builder->getBindings());
+
+        $builder = $this->getPostgresBuilderWithProcessor();
+        $builder->select('*')->from('users')->whereLike('id', '1', true);
+        $this->assertSame('select * from "users" where "id"::text like ?', $builder->toSql());
+        $this->assertEquals([0 => '1'], $builder->getBindings());
+
+        $builder = $this->getPostgresBuilderWithProcessor();
+        $builder->select('*')->from('users')->whereNotLike('id', '1');
+        $this->assertSame('select * from "users" where "id"::text not ilike ?', $builder->toSql());
+        $this->assertEquals([0 => '1'], $builder->getBindings());
+
+        $builder = $this->getPostgresBuilderWithProcessor();
+        $builder->select('*')->from('users')->whereNotLike('id', '1', false);
+        $this->assertSame('select * from "users" where "id"::text not ilike ?', $builder->toSql());
+        $this->assertEquals([0 => '1'], $builder->getBindings());
+
+        $builder = $this->getPostgresBuilderWithProcessor();
+        $builder->select('*')->from('users')->whereNotLike('id', '1', true);
+        $this->assertSame('select * from "users" where "id"::text not like ?', $builder->toSql());
+        $this->assertEquals([0 => '1'], $builder->getBindings());
+    }
+
+    #[RequiresPhpExtension('swoole', '< 6.0')]
     public function testWhereFullText()
     {
         $builder = $this->getPostgresBuilderWithProcessor();
