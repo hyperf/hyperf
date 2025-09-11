@@ -74,6 +74,7 @@ class DatabasePostgresBuilderTest extends TestCase
         $this->assertEquals(true, $builder->dropDatabaseIfExists('my_database_a'));
     }
 
+    #[RequiresPhpExtension('swoole', '< 6.0')]
     public function testWhereLikeClausePostgres()
     {
         $builder = $this->getPostgresBuilderWithProcessor();
