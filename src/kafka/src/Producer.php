@@ -19,6 +19,7 @@ use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
 use Hyperf\Kafka\Exception\ConnectionClosedException;
 use Hyperf\Kafka\Exception\TimeoutException;
+use InvalidArgumentException;
 use longlang\phpkafka\Broker;
 use longlang\phpkafka\Producer\ProduceMessage;
 use longlang\phpkafka\Producer\Producer as LongLangProducer;
@@ -114,7 +115,7 @@ class Producer
             while (true) {
                 $this->producer = $this->makeProducer();
                 while (true) {
-                    /** @var array{int, array{string, ?string, ?string, array, ?int}|array{array}, Promise}|bool $data */
+                    /** @var array{int, array, Promise}|bool $data */
                     $data = $this->chan?->pop();
                     if (! $data) {
                         break 2;
@@ -124,7 +125,7 @@ class Producer
                         match ($type) {
                             self::SINGLE => $this->producer->send(...$args),
                             self::BATCH => $this->producer->sendBatch(...$args),
-                            default => throw new \InvalidArgumentException("Unknown producer type: " . var_export($type, true)),
+                            default => throw new InvalidArgumentException('Unknown producer type: ' . var_export($type, true)),
                         };
                         $promise->close();
                     } catch (Throwable $e) {
