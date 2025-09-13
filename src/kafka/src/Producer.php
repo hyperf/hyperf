@@ -28,6 +28,10 @@ use Throwable;
 
 class Producer
 {
+    public const SINGLE = 1;
+
+    public const BATCH = 2;
+
     protected ?Channel $chan = null;
 
     protected ?LongLangProducer $producer = null;
@@ -52,17 +56,8 @@ class Producer
     {
         $this->loop();
         $promise = new Promise($this->timeout);
-        $chan = $this->chan;
-        $chan->push(function () use ($topic, $key, $value, $headers, $partitionIndex, $promise) {
-            try {
-                $this->producer->send($topic, $value, $key, $headers, $partitionIndex);
-                $promise->close();
-            } catch (Throwable $e) {
-                $promise->push($e);
-                throw $e;
-            }
-        });
-        if ($chan->isClosing()) {
+        $this->chan->push([self::SINGLE, func_get_args(), $promise]);
+        if ($this->chan->isClosing()) {
             throw new ConnectionClosedException('Connection closed.');
         }
         return $promise;
@@ -85,17 +80,8 @@ class Producer
     {
         $this->loop();
         $promise = new Promise($this->timeout);
-        $chan = $this->chan;
-        $chan->push(function () use ($messages, $promise) {
-            try {
-                $this->producer->sendBatch($messages);
-                $promise->close();
-            } catch (Throwable $e) {
-                $promise->push($e);
-                throw $e;
-            }
-        });
-        if ($chan->isClosing()) {
+        $this->chan->push([self::BATCH, func_get_args(), $promise]);
+        if ($this->chan->isClosing()) {
             throw new ConnectionClosedException('Connection closed.');
         }
         return $promise;
@@ -128,19 +114,26 @@ class Producer
             while (true) {
                 $this->producer = $this->makeProducer();
                 while (true) {
-                    $closure = $this->chan?->pop();
-                    if (! $closure) {
+                    $data = $this->chan?->pop();
+                    if (! $data) {
                         break 2;
                     }
+                    /** @var Promise $promise */
+                    [$type, $args, $promise] = $data;
                     try {
-                        $closure->call($this);
+                        match ($type) {
+                            self::SINGLE => $this->producer->send(...$args),
+                            self::BATCH => $this->producer->sendBatch(...$args),
+                        };
+                        $promise->close();
                     } catch (Throwable $e) {
                         $this->producer->close();
+                        $promise->push($e);
 
-                        $callback = $this->getConfig()->getExceptionCallback();
-                        if ($callback) {
+                        if ($callback = $this->getConfig()->getExceptionCallback()) {
                             $callback($e);
                         }
+
                         break;
                     }
                 }
