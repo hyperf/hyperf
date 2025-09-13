@@ -114,7 +114,7 @@ class Producer
             while (true) {
                 $this->producer = $this->makeProducer();
                 while (true) {
-                    /** @var array{int, array, Promise}|bool $data */
+                    /** @var array{int, array{string, ?string, ?string, array, ?int}|array{array}, Promise}|bool $data */
                     $data = $this->chan?->pop();
                     if (! $data) {
                         break 2;
