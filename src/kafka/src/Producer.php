@@ -124,6 +124,7 @@ class Producer
                         match ($type) {
                             self::SINGLE => $this->producer->send(...$args),
                             self::BATCH => $this->producer->sendBatch(...$args),
+                            default => throw new \InvalidArgumentException("Unknown producer type: " . var_export($type, true)),
                         };
                         $promise->close();
                     } catch (Throwable $e) {
