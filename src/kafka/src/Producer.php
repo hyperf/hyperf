@@ -92,8 +92,7 @@ class Producer
 
     public function close(): void
     {
-        $chan = $this->chan;
-        $chan?->close();
+        $this->chan?->close();
         $this->chan = null;
         $this->producer?->close();
     }
