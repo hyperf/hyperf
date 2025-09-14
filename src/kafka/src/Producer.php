@@ -58,7 +58,7 @@ class Producer
         $this->loop();
         $promise = new Promise($this->timeout);
         $chan = $this->chan;
-        $chan?->push([self::SINGLE, func_get_args(), $promise]);
+        $chan?->push([self::SINGLE, [$topic, $value, $key, $headers, $partitionIndex], $promise]);
         if ($chan?->isClosing()) {
             throw new ConnectionClosedException('Connection closed.');
         }
@@ -83,7 +83,7 @@ class Producer
         $this->loop();
         $promise = new Promise($this->timeout);
         $chan = $this->chan;
-        $chan?->push([self::BATCH, func_get_args(), $promise]);
+        $chan?->push([self::BATCH, [$messages], $promise]);
         if ($chan?->isClosing()) {
             throw new ConnectionClosedException('Connection closed.');
         }
