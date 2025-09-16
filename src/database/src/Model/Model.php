@@ -1199,6 +1199,14 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
+     * Determine if the model is soft deletable.
+     */
+    public static function isSoftDeletable(): bool
+    {
+        return in_array(SoftDeletes::class, class_uses_recursive(static::class));
+    }
+
+    /**
      * Determine if the given attribute exists.
      */
     public function offsetExists(mixed $offset): bool

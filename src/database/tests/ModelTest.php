@@ -67,6 +67,8 @@ use HyperfTest\Database\Stubs\ModelWithoutRelationStub;
 use HyperfTest\Database\Stubs\ModelWithoutTableStub;
 use HyperfTest\Database\Stubs\ModelWithStub;
 use HyperfTest\Database\Stubs\NoConnectionModelStub;
+use HyperfTest\Database\Stubs\NonSoftDeletableModelStub;
+use HyperfTest\Database\Stubs\SoftDeletableModelStub;
 use HyperfTest\Database\Stubs\User;
 use LogicException;
 use Mockery;
@@ -2103,6 +2105,13 @@ class ModelTest extends TestCase
         } finally {
             Relation::morphMap([], false);
         }
+    }
+
+    public function testIsSoftDeletable()
+    {
+        $this->assertTrue(SoftDeletableModelStub::isSoftDeletable());
+        $this->assertFalse(NonSoftDeletableModelStub::isSoftDeletable());
+        $this->assertFalse(ModelStub::isSoftDeletable());
     }
 
     protected function getContainer()

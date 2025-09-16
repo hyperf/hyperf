@@ -334,6 +334,18 @@ class Builder
     }
 
     /**
+     * Exclude the given models from the query results.
+     */
+    public function except(iterable|Model $models): static
+    {
+        return $this->whereKeyNot(
+            $models instanceof Model
+                ? $models->getKey()
+                : ModelCollection::wrap($models)->modelKeys()
+        );
+    }
+
+    /**
      * Add a basic where clause to the query.
      *
      * @param array|Closure|string $column
@@ -589,6 +601,18 @@ class Builder
     {
         return tap($this->firstOrNew($attributes), function ($instance) use ($values) {
             $instance->fill($values)->save();
+        });
+    }
+
+    /**
+     * Create a record matching the attributes, or increment the existing record.
+     */
+    public function incrementOrCreate(array $attributes, string $column = 'count', float|int $default = 1, float|int $step = 1, array $extra = []): Model
+    {
+        return tap($this->firstOrCreate($attributes, [$column => $default]), function ($instance) use ($column, $step, $extra) {
+            if (! $instance->wasRecentlyCreated) {
+                $instance->increment($column, $step, $extra);
+            }
         });
     }
 
