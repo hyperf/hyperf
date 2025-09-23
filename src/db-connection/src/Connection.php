@@ -16,6 +16,7 @@ use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\ConnectionInterface as DbConnectionInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
+use Hyperf\Database\DatabaseTransactionsManager;
 use Hyperf\DbConnection\Pool\DbPool;
 use Hyperf\DbConnection\Traits\DbConnection;
 use Hyperf\Pool\Connection as BaseConnection;
@@ -82,6 +83,11 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
                     $this->refresh($connection);
                 }
             });
+
+            if ($this->container->has(DatabaseTransactionsManager::class)) {
+                $dispatcher = $this->container->get(DatabaseTransactionsManager::class);
+                $this->connection->setTransactionManager($dispatcher);
+            }
         }
 
         $this->lastUseTime = microtime(true);
