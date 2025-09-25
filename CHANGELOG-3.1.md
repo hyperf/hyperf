@@ -1,5 +1,9 @@
 # v3.1.62 - TBD
 
+## Optimized
+
+- [#7545](https://github.com/hyperf/hyperf/pull/7545) Added coordinator resume in command execution finally block.
+
 # v3.1.61 - 2025-09-04
 
 ## Added
