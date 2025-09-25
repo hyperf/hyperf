@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Hyperf\Command;
 
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coroutine\Coroutine;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\ExitException;
@@ -195,6 +197,11 @@ abstract class Command extends SymfonyCommand
                 $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
             } finally {
                 $this->eventDispatcher?->dispatch(new Event\AfterExecute($this, $exception ?? null));
+
+                try {
+                    CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+                } catch (Throwable) {
+                }
             }
 
             return $this->exitCode;
