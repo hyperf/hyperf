@@ -46,7 +46,7 @@ interface MigrationRepositoryInterface
     /**
      * Get the list of the migrations by batch number.
      *
-     * @param string $batch
+     * @param int $batch
      * @return array
      */
     public function getMigrationsByBatch($batch);
