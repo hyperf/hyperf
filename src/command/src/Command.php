@@ -199,7 +199,9 @@ abstract class Command extends SymfonyCommand
                 $this->eventDispatcher?->dispatch(new Event\AfterExecute($this, $exception ?? null));
 
                 try {
-                    CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+                    if ($this->getApplication()->isAutoExitEnabled()) {
+                        CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+                    }
                 } catch (Throwable) {
                 }
             }
