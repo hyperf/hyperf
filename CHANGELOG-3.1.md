@@ -2,7 +2,7 @@
 
 ## Optimized
 
-- [#7469](https://github.com/hyperf/hyperf/pull/7469) Support rewrite rule when using validation scene.
+- [#7469](https://github.com/hyperf/hyperf/pull/7469) Support to rewrite the rules for scene when using validation.
 - [#7545](https://github.com/hyperf/hyperf/pull/7545) Added coordinator resume in command execution finally block.
 
 # v3.1.61 - 2025-09-04
