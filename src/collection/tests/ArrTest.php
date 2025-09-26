@@ -22,6 +22,8 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Random\Engine\Mt19937;
+use Random\Engine\Secure;
 use stdClass;
 
 /**
@@ -226,6 +228,19 @@ class ArrTest extends TestCase
         $this->assertNotSame(
             range(0, 100, 10),
             Arr::shuffle(range(0, 100, 10), 1234)
+        );
+    }
+
+    public function testShuffleWithSeedEngine()
+    {
+        $this->assertSame(
+            Arr::shuffle(range(0, 100, 10), new Mt19937(1234)),
+            Arr::shuffle(range(0, 100, 10), new Mt19937(1234))
+        );
+
+        $this->assertNotSame(
+            Arr::shuffle(range(0, 100, 10), new Secure()),
+            Arr::shuffle(range(0, 100, 10), new Secure())
         );
     }
 
