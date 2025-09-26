@@ -19,6 +19,7 @@ use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Channel;
 use Hyperf\Kafka\Exception\ConnectionClosedException;
 use Hyperf\Kafka\Exception\TimeoutException;
+use InvalidArgumentException;
 use longlang\phpkafka\Broker;
 use longlang\phpkafka\Producer\ProduceMessage;
 use longlang\phpkafka\Producer\Producer as LongLangProducer;
@@ -28,6 +29,10 @@ use Throwable;
 
 class Producer
 {
+    public const SINGLE = 1;
+
+    public const BATCH = 2;
+
     protected ?Channel $chan = null;
 
     protected ?LongLangProducer $producer = null;
@@ -53,16 +58,8 @@ class Producer
         $this->loop();
         $promise = new Promise($this->timeout);
         $chan = $this->chan;
-        $chan->push(function () use ($topic, $key, $value, $headers, $partitionIndex, $promise) {
-            try {
-                $this->producer->send($topic, $value, $key, $headers, $partitionIndex);
-                $promise->close();
-            } catch (Throwable $e) {
-                $promise->push($e);
-                throw $e;
-            }
-        });
-        if ($chan->isClosing()) {
+        $chan?->push([self::SINGLE, [$topic, $value, $key, $headers, $partitionIndex], $promise]);
+        if ($chan?->isClosing()) {
             throw new ConnectionClosedException('Connection closed.');
         }
         return $promise;
@@ -86,16 +83,8 @@ class Producer
         $this->loop();
         $promise = new Promise($this->timeout);
         $chan = $this->chan;
-        $chan->push(function () use ($messages, $promise) {
-            try {
-                $this->producer->sendBatch($messages);
-                $promise->close();
-            } catch (Throwable $e) {
-                $promise->push($e);
-                throw $e;
-            }
-        });
-        if ($chan->isClosing()) {
+        $chan?->push([self::BATCH, [$messages], $promise]);
+        if ($chan?->isClosing()) {
             throw new ConnectionClosedException('Connection closed.');
         }
         return $promise;
@@ -128,19 +117,27 @@ class Producer
             while (true) {
                 $this->producer = $this->makeProducer();
                 while (true) {
-                    $closure = $this->chan?->pop();
-                    if (! $closure) {
+                    /** @var array{int, array, Promise}|bool $data */
+                    $data = $this->chan?->pop();
+                    if (! $data) {
                         break 2;
                     }
+                    [$type, $args, $promise] = $data;
                     try {
-                        $closure->call($this);
+                        match ($type) {
+                            self::SINGLE => $this->producer->send(...$args),
+                            self::BATCH => $this->producer->sendBatch(...$args),
+                            default => throw new InvalidArgumentException('Unknown producer type: ' . var_export($type, true)),
+                        };
+                        $promise->close();
                     } catch (Throwable $e) {
                         $this->producer->close();
+                        $promise->push($e);
 
-                        $callback = $this->getConfig()->getExceptionCallback();
-                        if ($callback) {
+                        if ($callback = $this->getConfig()->getExceptionCallback()) {
                             $callback($e);
                         }
+
                         break;
                     }
                 }
