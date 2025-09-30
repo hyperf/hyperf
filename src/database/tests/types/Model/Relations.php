@@ -67,8 +67,8 @@ function test(User $user, Post $post, Comment $comment, ChildUser $child): void
     assertType('Hyperf\Database\Model\Collection<int, Hyperf\Types\Relations\Role&object{pivot: Hyperf\Database\Model\Relations\Pivot}>', $user->roles()->saveMany($roles));
     assertType('array<int, Hyperf\Types\Relations\Role&object{pivot: Hyperf\Database\Model\Relations\Pivot}>', $user->roles()->saveMany($roles->all()));
     assertType('array<int, Hyperf\Types\Relations\Role&object{pivot: Hyperf\Database\Model\Relations\Pivot}>', $user->roles()->createMany($roles->all()));
-    assertType('array{attached: array, detached: array, updated: array}', $user->roles()->sync($roles));
-    assertType('array{attached: array, detached: array, updated: array}', $user->roles()->syncWithoutDetaching($roles));
+    assertType('array{attached: array<int|string>, detached: array<int|string>, updated: array<int|string>}', $user->roles()->sync($roles));
+    assertType('array{attached: array<int|string>, detached: array<int|string>, updated: array<int|string>}', $user->roles()->syncWithoutDetaching($roles));
 
     assertType('Hyperf\Database\Model\Relations\HasOneThrough<Hyperf\Types\Relations\Car, Hyperf\Types\Relations\Mechanic, Hyperf\Types\Relations\User>', $user->car());
     assertType('Hyperf\Types\Relations\Car|null', $user->car()->getResults());
