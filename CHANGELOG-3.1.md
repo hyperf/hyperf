@@ -3,6 +3,7 @@
 ## Added
 
 - [#7469](https://github.com/hyperf/hyperf/pull/7469) Support to rewrite the rules for scene when using validation.
+- [#7531](https://github.com/hyperf/hyperf/pull/7531) Support options `batch` for `migrate:rollback`.
 - [#7545](https://github.com/hyperf/hyperf/pull/7545) Added coordinator resume in command execution finally block.
 
 ## Fixed
