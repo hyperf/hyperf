@@ -128,13 +128,15 @@ class ValidationMiddlewareTest extends TestCase
         $request = Context::set(ServerRequestInterface::class, $request->withAttribute(Dispatched::class, new Dispatched($routes)));
         $response = $middleware->process($request, $handler);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('{"id":1,"request":{"username":"Hyperf","password":"Hyperf"}}', (string) $response->getBody());
+        $this->assertEquals('{"id":1,"request":{"username":"Hyperf","password":"Hyperf"}}', (string)$response->getBody());
     }
 
     public function testGetValidatorInstance()
     {
         $container = $this->createContainer();
-        Context::set(ServerRequestInterface::class, new Request('POST', new Uri('/')));
+        $request = (new Request('POST', new Uri('/')))
+            ->withParsedBody(['username' => 'Hyperf', 'password' => 'password']);
+        Context::set(ServerRequestInterface::class, $request);
         $request = $container->get(DemoRequest::class);
 
         $request->validated();
