@@ -131,7 +131,7 @@ function test(
     assertType('Hyperf\Database\Model\Builder<Hyperf\Types\Builder\User>', $query->orWhereMorphRelation($post->taggable(), 'taggable', 'id', 1));
 
     $query->chunk(1, function ($users, $page) {
-        assertType('Hyperf\Collection\Collection<int, Hyperf\Types\Builder\User>', $users);
+        assertType('Hyperf\Database\Model\Collection<int, Hyperf\Types\Builder\User>', $users);
         assertType('int', $page);
     });
     $query->chunkById(1, function ($users, $page) {
@@ -142,7 +142,7 @@ function test(
         assertType('Hyperf\Types\Builder\User', $users);
     });
     $query->chunkByIdDesc(1, function ($users, $page) {
-        assertType('Hyperf\Collection\Collection<int, Hyperf\Types\Builder\User>', $users);
+        assertType('Hyperf\Database\Model\Collection<int, Hyperf\Types\Builder\User>', $users);
         assertType('int', $page);
     });
     $query->each(function ($users, $page) {
