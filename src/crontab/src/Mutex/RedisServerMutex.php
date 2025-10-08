@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Crontab\Mutex;
 
-use Hyperf\Collection\Arr;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
@@ -24,15 +23,17 @@ use Hyperf\Redis\RedisFactory;
 class RedisServerMutex implements ServerMutex
 {
     /**
-     * The unique name for node, like mac address.
+     * The unique name for node.
      */
-    private ?string $macAddress;
+    private ?string $nodeName;
+
+    private static ?string $generatedNodeName = null;
 
     private Timer $timer;
 
     public function __construct(private RedisFactory $redisFactory)
     {
-        $this->macAddress = $this->getMacAddress();
+        $this->nodeName = $this->getNodeName();
         $this->timer = new Timer();
     }
 
@@ -41,14 +42,14 @@ class RedisServerMutex implements ServerMutex
      */
     public function attempt(Crontab $crontab): bool
     {
-        if ($this->macAddress === null) {
+        if ($this->nodeName === null) {
             return false;
         }
 
         $redis = $this->redisFactory->get($crontab->getMutexPool());
         $mutexName = $this->getMutexName($crontab);
 
-        $result = $redis->set($mutexName, $this->macAddress, ['NX', 'EX' => $crontab->getMutexExpires()]);
+        $result = $redis->set($mutexName, $this->nodeName, ['NX', 'EX' => $crontab->getMutexExpires()]);
 
         if ($result) {
             $this->timer->tick(1, function () use ($mutexName, $redis) {
@@ -64,7 +65,7 @@ class RedisServerMutex implements ServerMutex
             return true;
         }
 
-        return $redis->get($mutexName) === $this->macAddress;
+        return $redis->get($mutexName) === $this->nodeName;
     }
 
     /**
@@ -82,21 +83,56 @@ class RedisServerMutex implements ServerMutex
         return 'hyperf' . DIRECTORY_SEPARATOR . 'crontab-' . sha1($crontab->getName() . $crontab->getRule()) . '-sv';
     }
 
-    protected function getMacAddress(): ?string
+    protected function getNodeName(): ?string
     {
         if ($node = $this->getServerNode()) {
             return $node->getName();
         }
 
-        $macAddresses = swoole_get_local_mac();
+        if ($name = $this->getNodeNameFromContainer()) {
+            return $name;
+        }
 
-        foreach (Arr::wrap($macAddresses) as $name => $address) {
-            if ($address && $address !== '00:00:00:00:00:00') {
-                return $name . ':' . str_replace(':', '', $address);
-            }
+        return $this->getGeneratedNodeName();
+    }
+
+    private function getNodeNameFromContainer(): ?string
+    {
+        if (! ApplicationContext::hasContainer()) {
+            return null;
+        }
+
+        $container = ApplicationContext::getContainer();
+        $key = self::class . '.server_node';
+
+        if ($container->has($key)) {
+            return (string) $container->get($key);
+        }
+
+        if ($name = $this->generateNodeRandomName()) {
+            $container->set($key, $name);
+            return $name;
         }
 
         return null;
+    }
+
+    private function getGeneratedNodeName(): ?string
+    {
+        if (self::$generatedNodeName === null) {
+            self::$generatedNodeName = $this->generateNodeRandomName();
+        }
+
+        return self::$generatedNodeName;
+    }
+
+    private function generateNodeRandomName(): ?string
+    {
+        try {
+            return bin2hex(random_bytes(16));
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     protected function getServerNode(): ?ServerNodeInterface
