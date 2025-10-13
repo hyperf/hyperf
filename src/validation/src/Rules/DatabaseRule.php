@@ -43,9 +43,6 @@ trait DatabaseRule
 
     /**
      * Resolves the name of the table from the given string.
-     *
-     * @param string $table
-     * @return string
      */
     public function resolveTableName($table)
     {
@@ -55,6 +52,7 @@ trait DatabaseRule
 
         if (is_subclass_of($table, Model::class)) {
             $instantiator = new Instantiator();
+            /** @var Model $model */
             $model = $instantiator->instantiate($table);
 
             if (str_contains($model->getTable(), '.')) {
