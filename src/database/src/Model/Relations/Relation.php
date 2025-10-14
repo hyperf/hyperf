@@ -25,7 +25,11 @@ use function Hyperf\Collection\collect;
 use function Hyperf\Collection\last;
 
 /**
- * @mixin \Hyperf\Database\Model\Builder
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TParentModel of \Hyperf\Database\Model\Model
+ * @template TResult
+ *
+ * @mixin \Hyperf\Database\Model\Builder<TRelatedModel>
  */
 abstract class Relation
 {
@@ -109,6 +113,10 @@ abstract class Relation
 
     /**
      * Run a callback with constraints disabled on the relation.
+     *
+     * @template TCallbackReturn
+     * @param Closure(): TCallbackReturn $callback
+     * @return TCallbackReturn
      */
     public static function noConstraints(Closure $callback)
     {
@@ -154,13 +162,15 @@ abstract class Relation
 
     /**
      * Get the results of the relationship.
+     *
+     * @return TResult
      */
     abstract public function getResults();
 
     /**
      * Get the relationship for eager loading.
      *
-     * @return Collection
+     * @return Collection<int, TRelatedModel>
      */
     public function getEager()
     {
@@ -171,7 +181,7 @@ abstract class Relation
      * Execute the query as a "select" statement.
      *
      * @param array $columns
-     * @return Collection
+     * @return Collection<int, TRelatedModel>
      */
     public function get($columns = ['*'])
     {
@@ -256,7 +266,7 @@ abstract class Relation
     /**
      * Get the parent model of the relation.
      *
-     * @return Model
+     * @return TParentModel
      */
     public function getParent()
     {
@@ -276,7 +286,7 @@ abstract class Relation
     /**
      * Get the related model of the relation.
      *
-     * @return Model
+     * @return TRelatedModel
      */
     public function getRelated()
     {
