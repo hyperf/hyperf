@@ -1,5 +1,9 @@
 # v3.1.63 - TBD
 
+## Fixed
+
+- [#7561](https://github.com/hyperf/hyperf/pull/7561) Revert constructor parameter name change for `Nacos\Application`.
+
 # v3.1.62 - 2025-10-11
 
 ## Added
