@@ -4,6 +4,10 @@
 
 - [#7561](https://github.com/hyperf/hyperf/pull/7561) Revert constructor parameter name change for `Nacos\Application`.
 
+## Added
+
+- [#7553](https://github.com/hyperf/hyperf/pull/7553) Added `PATCH` method for http tests
+
 # v3.1.62 - 2025-10-11
 
 ## Added
