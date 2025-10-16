@@ -83,7 +83,6 @@ return [
                 'constructor' => [
                     'level' => Level::Debug,
                     'facility' => env('LOG_SYSLOG_FACILITY', LOG_USER),
-                    'replace_placeholders' => true,
                 ],
             ],
             'formatter' => [
