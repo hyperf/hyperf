@@ -2,11 +2,12 @@
 
 ## Fixed
 
+- [#7543](https://github.com/hyperf/hyperf/pull/7543) Fixed bug that the providers of nacos not support psr4.
 - [#7561](https://github.com/hyperf/hyperf/pull/7561) Revert constructor parameter name change for `Nacos\Application`.
 
 ## Added
 
-- [#7553](https://github.com/hyperf/hyperf/pull/7553) Added `PATCH` method for http tests
+- [#7553](https://github.com/hyperf/hyperf/pull/7553) Support method `PATCH` for `hyperf/testing`.
 
 # v3.1.62 - 2025-10-11
 
