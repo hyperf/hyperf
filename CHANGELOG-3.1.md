@@ -1,4 +1,20 @@
-# v3.1.62 - TBD
+# v3.1.63 - TBD
+
+## Fixed
+
+- [#7561](https://github.com/hyperf/hyperf/pull/7561) Revert constructor parameter name change for `Nacos\Application`.
+
+# v3.1.62 - 2025-10-11
+
+## Added
+
+- [#7469](https://github.com/hyperf/hyperf/pull/7469) Support to rewrite the rules for scene when using validation.
+- [#7531](https://github.com/hyperf/hyperf/pull/7531) Support options `batch` for `migrate:rollback`.
+- [#7545](https://github.com/hyperf/hyperf/pull/7545) Added coordinator resume in command execution finally block.
+
+## Fixed
+
+- [#7547](https://github.com/hyperf/hyperf/pull/7547) Fixed bug that the property `$pool` of kafka consumer cannot not work well.
 
 # v3.1.61 - 2025-09-04
 
