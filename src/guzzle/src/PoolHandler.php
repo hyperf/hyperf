@@ -51,7 +51,12 @@ class PoolHandler extends CoroutineHandler
         $connection = $pool->get();
         $response = null;
         try {
+            /**
+             * @var \Hyperf\Engine\Http\Client
+             */
             $client = $connection->getConnection();
+            // cookie reset
+            $client->setCookies([]);
             $headers = $this->initHeaders($request, $options);
             $settings = $this->getSettings($request, $options);
             if (! empty($settings)) {
