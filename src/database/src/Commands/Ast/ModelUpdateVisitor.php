@@ -87,8 +87,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     {
         switch ($node) {
             case $node instanceof Node\Stmt\UseUse:
-                $parts = $node->name->getParts();
-                $class = implode('\\', $parts);
+                $nameString = $node->name->toString();
+                $parts = explode('\\', $nameString);
+                $class = $nameString;
                 $alias = $node->alias?->name ?? array_pop($parts);
                 $this->uses[$class] = $alias;
                 return $node;

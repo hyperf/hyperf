@@ -47,7 +47,7 @@ class PhpParser
     public function __construct()
     {
         $parserFactory = new ParserFactory();
-        $this->parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $this->parser = $parserFactory->createForNewestSupportedVersion();
     }
 
     public static function getInstance(): PhpParser
@@ -154,7 +154,9 @@ class PhpParser
             foreach ($namespace->stmts as $class) {
                 if ($class instanceof Node\Stmt\Use_) {
                     foreach ($class->uses as $use) {
-                        $uses[$use->name->getLast()] = $use->name->toString();
+                        $nameString = $use->name->toString();
+                        $parts = explode('\\', $nameString);
+                        $uses[end($parts)] = $nameString;
                     }
                     continue;
                 }
@@ -171,13 +173,17 @@ class PhpParser
                     foreach ($class->stmts as $stmt) {
                         if ($stmt instanceof Node\Stmt\TraitUse) {
                             foreach ($stmt->traits as $trait) {
-                                if (isset($uses[$trait->getFirst()])) {
-                                    $traitName = $uses[$trait->getFirst()] . substr($trait->toString(), strlen($trait->getFirst()));
+                                $traitString = $trait->toString();
+                                $traitParts = explode('\\', $traitString);
+                                $firstPart = $traitParts[0];
+
+                                if (isset($uses[$firstPart])) {
+                                    $traitName = $uses[$firstPart] . substr($traitString, strlen($firstPart));
                                 } else {
-                                    if (count($trait->getParts()) == 1) {
-                                        $traitName = $namespace->name->toString() . '\\' . $trait->toString();
+                                    if (count($traitParts) == 1) {
+                                        $traitName = $namespace->name->toString() . '\\' . $traitString;
                                     } else {
-                                        $traitName = $trait->toString();
+                                        $traitName = $traitString;
                                     }
                                 }
                                 $traitNodes = $this->parser->parse(file_get_contents((new ReflectionClass($traitName))->getFileName()));
@@ -215,21 +221,18 @@ class PhpParser
 
         $name = $reflection->getName();
 
+        // Create the appropriate type node
+        if (in_array($name, static::TYPES)) {
+            $typeNode = new Node\Identifier($name);
+        } else {
+            $typeNode = new Node\Name('\\' . $name);
+        }
+
+        // Wrap in nullable if needed
         if ($reflection->allowsNull() && $name !== 'mixed') {
-            return new Node\NullableType($this->getTypeFromString($name));
+            return new Node\NullableType($typeNode);
         }
 
-        if (! in_array($name, static::TYPES)) {
-            return new Node\Name('\\' . $name);
-        }
-        return new Node\Identifier($name);
-    }
-
-    private function getTypeFromString(string $name)
-    {
-        if (! in_array($name, static::TYPES)) {
-            return '\\' . $name;
-        }
-        return $name;
+        return $typeNode;
     }
 }

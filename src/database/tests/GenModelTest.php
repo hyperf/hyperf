@@ -71,7 +71,7 @@ declare (strict_types=1);
             }
         }
 
-        $astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $stms = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserExtEmpty.php'));
         $traverser = new NodeTraverser();
         $visitor = new ModelUpdateVisitor(UserExtEmpty::class, $columns, ContainerStub::getModelOption());
@@ -127,7 +127,7 @@ class UserExtEmpty extends Model
                 $columns[$i]['cast'] = 'datetime';
             }
         }
-        $astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $stms = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserEnum.php'));
         $traverser = new NodeTraverser();
         $visitor = new ModelUpdateVisitor(UserEnum::class, $columns, ContainerStub::getModelOption()->setForceCasts(false));
@@ -177,19 +177,13 @@ class UserEnum extends Model
             $dispatcher->shouldReceive('dispatch')->withAnyArgs()->andReturn(null);
             return $dispatcher;
         });
-        $lexer = new Emulative([
-            'usedAttributes' => [
-                'comments',
-                'startLine', 'endLine',
-                'startTokenPos', 'endTokenPos',
-            ],
-        ]);
+        $lexer = new Emulative();
         $connection = $container->get(ConnectionResolverInterface::class)->connection();
         /** @var MySqlBuilder $builder */
         $builder = $connection->getSchemaBuilder('default');
         $columns = $this->formatColumns($builder->getColumnTypeListing('user_ext'));
         $columns = [];
-        $astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, $lexer);
+        $astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $originStmts = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserExtWithTrait.php'));
         $traverser = new NodeTraverser();
         $visitor = new ModelUpdateVisitor(UserExtWithTrait::class, $columns, ContainerStub::getModelOption()->setWithComments(true)->setForceCasts(false));
