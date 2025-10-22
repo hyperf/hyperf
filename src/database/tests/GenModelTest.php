@@ -21,7 +21,6 @@ use HyperfTest\Database\Stubs\Model\UserEnum;
 use HyperfTest\Database\Stubs\Model\UserExtEmpty;
 use HyperfTest\Database\Stubs\Model\UserExtWithTrait;
 use Mockery;
-use PhpParser\Lexer\Emulative;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
@@ -177,7 +176,6 @@ class UserEnum extends Model
             $dispatcher->shouldReceive('dispatch')->withAnyArgs()->andReturn(null);
             return $dispatcher;
         });
-        $lexer = new Emulative();
         $connection = $container->get(ConnectionResolverInterface::class)->connection();
         /** @var MySqlBuilder $builder */
         $builder = $connection->getSchemaBuilder('default');
@@ -189,7 +187,7 @@ class UserEnum extends Model
         $visitor = new ModelUpdateVisitor(UserExtWithTrait::class, $columns, ContainerStub::getModelOption()->setWithComments(true)->setForceCasts(false));
         $traverser->addVisitor($visitor);
         $newStmts = $traverser->traverse($originStmts);
-        $code = (new Standard())->printFormatPreserving($newStmts, $originStmts, $lexer->getTokens());
+        $code = (new Standard())->printFormatPreserving($newStmts, $originStmts, $astParser->getTokens());
         $this->assertTrue(str_contains($code, '@property-read string $count_string'));
         $this->assertTrue(str_contains($code, '@property-read null|User $user'));
     }
