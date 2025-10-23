@@ -77,7 +77,7 @@ use Hyperf\\Contract\\StdoutLoggerInterface;
 use Psr\\Log\\LogLevel;
 use function Hyperf\\Support\\env;
 \$result = ['app_name' => env('APP_NAME', 'skeleton'), 'app_env' => env('APP_ENV', 'dev'), 'scan_cacheable' => env('SCAN_CACHEABLE', false), StdoutLoggerInterface::class => ['log_level' => [LogLevel::ALERT, LogLevel::CRITICAL, LogLevel::DEBUG, LogLevel::EMERGENCY, LogLevel::ERROR, LogLevel::INFO, LogLevel::NOTICE, LogLevel::WARNING]]];
-return array_replace(\$result, array('scan_cacheable' => true));", $code);
+return array_replace(\$result, ['scan_cacheable' => true]);", $code);
     }
 
     public function testRewriteMain()
