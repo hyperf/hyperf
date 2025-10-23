@@ -22,6 +22,7 @@ use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\ClosureUse;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\MagicConst\Class_ as MagicConstClass;
@@ -181,8 +182,8 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             new Arg(new Closure([
                 'params' => $this->filterModifier($node->getParams()),
                 'uses' => [
-                    new Variable('__function__'),
-                    new Variable('__method__'),
+                    new ClosureUse(new Variable('__function__')),
+                    new ClosureUse(new Variable('__method__')),
                 ],
                 'stmts' => $node->stmts,
             ])),

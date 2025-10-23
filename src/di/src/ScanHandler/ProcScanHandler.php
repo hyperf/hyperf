@@ -44,7 +44,7 @@ class ProcScanHandler implements ScanHandlerInterface
 
         $proc = proc_open(
             [$this->bin, $this->stub],
-            [0 => STDIN, 1 => ['pipe', 'w'], 2 => ['redirect', 1]],
+            [0 => STDIN, 1 => ['pipe', 'w'], 2 => ['redirect', '1']],
             $pipes,
             null,
             [static::SCAN_PROC_WORKER => '(true)']
