@@ -67,7 +67,7 @@ class ModelCommand extends Command
                 'startTokenPos', 'endTokenPos',
             ],
         ]);
-        $this->astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, $this->lexer);
+        $this->astParser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7, $this->lexer);
         $this->printer = new Standard();
 
         return parent::run($input, $output);

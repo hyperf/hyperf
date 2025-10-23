@@ -30,7 +30,7 @@ class Ast
     public function __construct()
     {
         $parserFactory = new ParserFactory();
-        $this->astParser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $this->astParser = $parserFactory->create(ParserFactory::PREFER_PHP7);
         $this->printer = new Standard();
     }
 

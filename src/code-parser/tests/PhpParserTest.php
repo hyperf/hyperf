@@ -34,7 +34,7 @@ class PhpParserTest extends TestCase
     public function testGetAstFromReflectionParameter()
     {
         $parserFactory = new ParserFactory();
-        $parser7 = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $parser7 = $parserFactory->create(ParserFactory::PREFER_PHP7);
 
         $stmts = $parser7->parse(file_get_contents(__DIR__ . '/Stub/Bar.php'));
         /** @var ClassMethod $classMethod */

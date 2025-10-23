@@ -91,7 +91,7 @@ class GenSchemaCommand extends HyperfCommand
                 'startTokenPos', 'endTokenPos',
             ],
         ]);
-        $parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, $lexer);
+        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7, $lexer);
         $printer = new Standard();
 
         $traverser = new NodeTraverser();

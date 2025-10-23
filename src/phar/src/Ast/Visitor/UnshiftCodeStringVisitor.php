@@ -24,7 +24,7 @@ class UnshiftCodeStringVisitor extends NodeVisitorAbstract
     public function __construct(public string $code)
     {
         $parserFactory = new ParserFactory();
-        $this->astParser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $this->astParser = $parserFactory->create(ParserFactory::PREFER_PHP7);
     }
 
     public function beforeTraverse(array $nodes): ?array

@@ -47,7 +47,7 @@ class PhpParser
     public function __construct()
     {
         $parserFactory = new ParserFactory();
-        $this->parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $this->parser = $parserFactory->create(ParserFactory::PREFER_PHP7);
     }
 
     public static function getInstance(): PhpParser

@@ -37,7 +37,7 @@ class ModelGenerateTest extends TestCase
                 'startTokenPos', 'endTokenPos',
             ],
         ]);
-        $this->astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7, $this->lexer);
+        $this->astParser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7, $this->lexer);
         $this->printer = new Standard();
     }
 
