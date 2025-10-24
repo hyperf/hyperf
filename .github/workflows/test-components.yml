@@ -448,8 +448,8 @@ jobs:
           composer test src/framework
           composer analyse src/server
           composer test src/server
-          # composer analyse src/serializer
-          # composer test src/serializer
+          composer analyse src/serializer
+          composer test src/serializer
           # composer analyse src/task
           # composer test src/task
 
