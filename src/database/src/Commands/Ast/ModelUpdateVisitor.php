@@ -86,10 +86,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         switch ($node) {
-            case $node instanceof Node\Stmt\UseUse:
-                $nameString = $node->name->toString();
-                $parts = explode('\\', $nameString);
-                $class = $nameString;
+            case $node instanceof Node\UseItem:
+                $parts = $node->name->getParts();
+                $class = $node->name->toString();
                 $alias = $node->alias?->name ?? array_pop($parts);
                 $this->uses[$class] = $alias;
                 return $node;
