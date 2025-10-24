@@ -28,7 +28,7 @@
         "hyperf/stdlib": "~3.2.0",
         "hyperf/stringable": "~3.2.0",
         "hyperf/support": "~3.2.0",
-        "nikic/php-parser": "^4.1",
+        "nikic/php-parser": "^5.6",
         "php-di/phpdoc-reader": "^2.2",
         "psr/container": "^1.0 || ^2.0",
         "symfony/finder": "^5.0 || ^6.0 || ^7.0",

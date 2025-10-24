@@ -22,6 +22,7 @@ Carbon::createFromTimestamp($t, date_default_timezone_get());
 
 - Upgrade the php version to `>=8.2`
 - Upgrade the `elasticsearch/elasticsearch` version to `>=8.0`
+- Upgrade the `nikic/php-parser` version to `5.6`
 
 ## Removed
 

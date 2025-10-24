@@ -47,7 +47,7 @@ class PhpParser
     public function __construct()
     {
         $parserFactory = new ParserFactory();
-        $this->parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $this->parser = $parserFactory->createForNewestSupportedVersion();
     }
 
     public static function getInstance(): PhpParser
@@ -67,7 +67,7 @@ class PhpParser
         return $this->parser->parse($code);
     }
 
-    public function getNodeFromReflectionType(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name
+    public function getNodeFromReflectionType(ReflectionType $reflection): Node
     {
         if ($reflection instanceof ReflectionUnionType) {
             $unionType = [];
@@ -96,6 +96,7 @@ class PhpParser
         }
 
         if ($parameter->hasType()) {
+            /* @phpstan-ignore-next-line */
             $result->type = $this->getNodeFromReflectionType($parameter->getType());
         }
 
@@ -171,13 +172,17 @@ class PhpParser
                     foreach ($class->stmts as $stmt) {
                         if ($stmt instanceof Node\Stmt\TraitUse) {
                             foreach ($stmt->traits as $trait) {
-                                if (isset($uses[$trait->getFirst()])) {
-                                    $traitName = $uses[$trait->getFirst()] . substr($trait->toString(), strlen($trait->getFirst()));
+                                $traitString = $trait->toString();
+                                $traitParts = $trait->getParts();
+                                $firstPart = $trait->getFirst();
+
+                                if (isset($uses[$firstPart])) {
+                                    $traitName = $uses[$firstPart] . substr($traitString, strlen($firstPart));
                                 } else {
-                                    if (count($trait->getParts()) == 1) {
-                                        $traitName = $namespace->name->toString() . '\\' . $trait->toString();
+                                    if (count($traitParts) == 1) {
+                                        $traitName = $namespace->name->toString() . '\\' . $traitString;
                                     } else {
-                                        $traitName = $trait->toString();
+                                        $traitName = $traitString;
                                     }
                                 }
                                 $traitNodes = $this->parser->parse(file_get_contents((new ReflectionClass($traitName))->getFileName()));
@@ -190,6 +195,23 @@ class PhpParser
         }
 
         return $methods;
+    }
+
+    /**
+     * Convert type name to appropriate Node type.
+     */
+    public function getNodeByTypeString(string $typeName, bool $nullable = false): Node
+    {
+        if (in_array($typeName, PhpParser::TYPES)) {
+            $type = new Node\Identifier($typeName);
+        } else {
+            $type = new Node\Name('\\' . $typeName);
+        }
+
+        if ($nullable && $typeName !== 'mixed') {
+            return new Node\NullableType($type);
+        }
+        return $type;
     }
 
     private function getExprFromObject(object $value)
@@ -207,29 +229,12 @@ class PhpParser
         );
     }
 
-    private function getTypeWithNullableOrNot(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name
+    private function getTypeWithNullableOrNot(ReflectionType $reflection): Node
     {
         if (! $reflection instanceof ReflectionNamedType) {
             throw new ReflectionException('ReflectionType must be ReflectionNamedType.');
         }
 
-        $name = $reflection->getName();
-
-        if ($reflection->allowsNull() && $name !== 'mixed') {
-            return new Node\NullableType($this->getTypeFromString($name));
-        }
-
-        if (! in_array($name, static::TYPES)) {
-            return new Node\Name('\\' . $name);
-        }
-        return new Node\Identifier($name);
-    }
-
-    private function getTypeFromString(string $name)
-    {
-        if (! in_array($name, static::TYPES)) {
-            return '\\' . $name;
-        }
-        return $name;
+        return $this->getNodeByTypeString($reflection->getName(), $reflection->allowsNull());
     }
 }
