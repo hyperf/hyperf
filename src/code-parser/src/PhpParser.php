@@ -236,18 +236,6 @@ class PhpParser
 
         $name = $reflection->getName();
 
-        // Create the appropriate type node
-        if (in_array($name, static::TYPES)) {
-            $typeNode = new Node\Identifier($name);
-        } else {
-            $typeNode = new Node\Name('\\' . $name);
-        }
-
-        // Wrap in nullable if needed
-        if ($reflection->allowsNull() && $name !== 'mixed') {
-            return new Node\NullableType($typeNode);
-        }
-
-        return $typeNode;
+        return $this->getNodeByTypeString($reflection->getName(), $reflection->allowsNull());
     }
 }
