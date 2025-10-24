@@ -196,6 +196,23 @@ class PhpParser
         return $methods;
     }
 
+    /**
+     * Convert type name to appropriate Node type.
+     */
+    public function getNodeByTypeString(string $typeName, bool $nullable = false): Node
+    {
+        if (in_array($typeName, PhpParser::TYPES)) {
+            $type = new Node\Identifier($typeName);
+        } else {
+            $type = new Node\Name('\\' . $typeName);
+        }
+
+        if ($nullable) {
+            return new Node\NullableType($type);
+        }
+        return $type;
+    }
+
     private function getExprFromObject(object $value)
     {
         $ref = new ReflectionClass($value);
