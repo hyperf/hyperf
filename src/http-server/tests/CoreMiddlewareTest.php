@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace HyperfTest\HttpServer;
 
 use FastRoute\Dispatcher;
+use FastRoute\Dispatcher\Result\Matched;
+use FastRoute\Dispatcher\Result\NotMatched;
 use Hyperf\Context\Context;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
@@ -209,7 +211,10 @@ class CoreMiddlewareTest extends TestCase
         $method = $ref->getMethod('handleFound');
 
         $handler = new Handler([DemoController::class, 'demo'], '/');
-        $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
+        $result = new Matched();
+        $result->handler = $handler;
+        $result->variables = [];
+        $dispatched = new Dispatched($result);
         $res = $method->invokeArgs($middleware, [$dispatched, Mockery::mock(ServerRequestInterface::class)]);
         $this->assertSame('Hello World.', $res);
     }
@@ -223,7 +228,10 @@ class CoreMiddlewareTest extends TestCase
         $method = $ref->getMethod('handleFound');
 
         $handler = new Handler(DemoController::class, '/');
-        $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
+        $result = new Matched();
+        $result->handler = $handler;
+        $result->variables = [];
+        $dispatched = new Dispatched($result);
         $res = $method->invokeArgs($middleware, [$dispatched, Mockery::mock(ServerRequestInterface::class)]);
         $this->assertSame('Action for an invokable controller.', $res);
     }
@@ -239,7 +247,10 @@ class CoreMiddlewareTest extends TestCase
         $this->expectException(ServerErrorHttpException::class);
         $this->expectExceptionMessage('Method of class does not exist.');
         $handler = new Handler([DemoController::class, 'demo'], '/');
-        $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
+        $result = new Matched();
+        $result->handler = $handler;
+        $result->variables = [];
+        $dispatched = new Dispatched($result);
         $method->invokeArgs($middleware, [$dispatched, Mockery::mock(ServerRequestInterface::class)]);
     }
 

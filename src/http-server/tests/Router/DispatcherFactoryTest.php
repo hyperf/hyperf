@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\HttpServer\Router;
 
-use FastRoute\Dispatcher;
+use FastRoute\Dispatcher\Result\NotMatched;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
@@ -102,7 +102,7 @@ class DispatcherFactoryTest extends TestCase
 
     public function testDispatchedHandlerIsNull()
     {
-        $dispatched = new Dispatched([Dispatcher::NOT_FOUND]);
+        $dispatched = new Dispatched(new NotMatched());
         $this->assertNull($dispatched->handler);
     }
 
