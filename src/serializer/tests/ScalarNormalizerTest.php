@@ -32,18 +32,6 @@ class ScalarNormalizerTest extends TestCase
         $this->normalizer = new ScalarNormalizer();
     }
 
-    public function testHasCacheableSupportsMethod()
-    {
-        $this->assertTrue($this->normalizer->hasCacheableSupportsMethod());
-    }
-
-    public function testHasCacheableSupportsMethodReturnsFalseForSubclass()
-    {
-        $subclass = new class extends ScalarNormalizer {
-        };
-        $this->assertFalse($subclass->hasCacheableSupportsMethod());
-    }
-
     #[DataProvider('denormalizeProvider')]
     public function testDenormalize($data, string $type, $expected)
     {

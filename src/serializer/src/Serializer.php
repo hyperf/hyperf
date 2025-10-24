@@ -263,8 +263,7 @@ class Serializer implements Normalizer, SerializerInterface, NormalizerInterface
                     continue;
                 }
 
-                // TODO: Use getSupportedTypes to rewrite this since Symfony 7.
-                if (! method_exists($normalizer, 'hasCacheableSupportsMethod') || ! $normalizer->hasCacheableSupportsMethod()) {
+                if (! $normalizer->getSupportedTypes($format)) {
                     $this->normalizerCache[$format][$type][$k] = false;
                 } elseif ($normalizer->supportsNormalization($data, $format)) {
                     $this->normalizerCache[$format][$type][$k] = true;
@@ -301,7 +300,7 @@ class Serializer implements Normalizer, SerializerInterface, NormalizerInterface
                     continue;
                 }
 
-                if (! method_exists($normalizer, 'hasCacheableSupportsMethod') || ! $normalizer->hasCacheableSupportsMethod()) {
+                if (! $normalizer->getSupportedTypes($format)) {
                     $this->denormalizerCache[$format][$class][$k] = false;
                 } elseif ($normalizer->supportsDenormalization(null, $class, $format)) {
                     $this->denormalizerCache[$format][$class][$k] = true;
