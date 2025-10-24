@@ -207,7 +207,7 @@ class PhpParser
             $type = new Node\Name('\\' . $typeName);
         }
 
-        if ($nullable) {
+        if ($nullable && $typeName !== 'mixed') {
             return new Node\NullableType($type);
         }
         return $type;
