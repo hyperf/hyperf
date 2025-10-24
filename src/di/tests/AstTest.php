@@ -71,12 +71,12 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class Foo
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     function __construct()
     {
         $this->__handlePropertyHandler(__CLASS__);
     }
+    use \Hyperf\Di\Aop\ProxyTrait;
 }', $code);
     }
 
@@ -92,12 +92,12 @@ namespace HyperfTest\Di\Stub;
 
 class PathStub
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     function __construct()
     {
         $this->__handlePropertyHandler(__CLASS__);
     }
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function file(): string
     {
         return \'' . $path . '\';
@@ -119,7 +119,6 @@ namespace HyperfTest\Di\Stub;
 
 class Par2 extends Par
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     function __construct(?\HyperfTest\Di\Stub\Foo $foo)
     {
@@ -128,6 +127,7 @@ class Par2 extends Par
         }
         $this->__handlePropertyHandler(__CLASS__);
     }
+    use \Hyperf\Di\Aop\ProxyTrait;
 }', $code);
     }
 
@@ -141,8 +141,8 @@ namespace HyperfTest\Di\Stub;
 
 class FooEnumStruct
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function __construct(public FooEnum $enum = FooEnum::DEFAULT)
     {
         $this->__handlePropertyHandler(__CLASS__);
@@ -189,7 +189,6 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class Chi extends Abs
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     function __construct()
     {
@@ -198,6 +197,7 @@ class Chi extends Abs
         }
         $this->__handlePropertyHandler(__CLASS__);
     }
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function absabs(): string
     {
         $__function__ = __FUNCTION__;
@@ -218,8 +218,8 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class Bar2 extends Bar
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function __construct(int $id)
     {
         $this->__handlePropertyHandler(__CLASS__);
@@ -241,8 +241,8 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class Bar5
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function getBar(): Bar
     {
         return new class extends Bar
@@ -275,12 +275,12 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class Bar4
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     function __construct()
     {
         $this->__handlePropertyHandler(__CLASS__);
     }
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function toMethodString(): string
     {
         return __METHOD__;
@@ -350,7 +350,6 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class Bar3 extends Bar
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     function __construct(int $id)
     {
@@ -359,6 +358,7 @@ class Bar3 extends Bar
         }
         $this->__handlePropertyHandler(__CLASS__);
     }
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function getId(): int
     {
         $__function__ = __FUNCTION__;
@@ -412,8 +412,8 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class FooConstruct
 {
-    use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    use \Hyperf\Di\Aop\ProxyTrait;
     public function __construct(public readonly string $name, protected readonly int $age = 18, private ?int $id = null)
     {
         $this->__handlePropertyHandler(__CLASS__);
