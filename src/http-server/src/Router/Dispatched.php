@@ -27,13 +27,8 @@ class Dispatched
 
     /**
      * Dispatches against the provided HTTP method verb and URI.
-     *
-     * @param array $array with one of the following formats:
-     *     [Dispatcher::NOT_FOUND]
-     *     [Dispatcher::METHOD_NOT_ALLOWED, ['GET', 'OTHER_ALLOWED_METHODS']]
-     *     [Dispatcher::FOUND, $handler, ['varName' => 'value', ...]]
      */
-    public function __construct(array|Matched|MethodNotAllowed|NotMatched $result, public ?string $serverName = null)
+    public function __construct(Matched|MethodNotAllowed|NotMatched $result, public ?string $serverName = null)
     {
         if ($result instanceof Matched) {
             $this->status = Dispatcher::FOUND;
@@ -51,17 +46,6 @@ class Dispatched
         if ($result instanceof NotMatched) {
             $this->status = Dispatcher::NOT_FOUND;
             return;
-        }
-
-        $this->status = $result[0];
-        switch ($this->status) {
-            case Dispatcher::METHOD_NOT_ALLOWED:
-                $this->params = $result[1];
-                break;
-            case Dispatcher::FOUND:
-                $this->handler = $result[1];
-                $this->params = $result[2];
-                break;
         }
     }
 
