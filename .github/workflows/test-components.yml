@@ -450,6 +450,6 @@ jobs:
           composer test src/server
           composer analyse src/serializer
           composer test src/serializer
-          # composer analyse src/task
-          # composer test src/task
+          composer analyse src/task
+          composer test src/task
 
