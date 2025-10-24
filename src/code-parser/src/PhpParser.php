@@ -228,13 +228,11 @@ class PhpParser
         );
     }
 
-    private function getTypeWithNullableOrNot(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name
+    private function getTypeWithNullableOrNot(ReflectionType $reflection): Node
     {
         if (! $reflection instanceof ReflectionNamedType) {
             throw new ReflectionException('ReflectionType must be ReflectionNamedType.');
         }
-
-        $name = $reflection->getName();
 
         return $this->getNodeByTypeString($reflection->getName(), $reflection->allowsNull());
     }
