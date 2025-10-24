@@ -24,13 +24,13 @@ class ConfigProvider
 {
     public function __invoke(): array
     {
-        if (! AstVisitorRegistry::exists(ProxyCallVisitor::class)) {
-            AstVisitorRegistry::insert(ProxyCallVisitor::class);
-        }
-
         // Register AST visitors to the collector.
         if (! AstVisitorRegistry::exists(PropertyHandlerVisitor::class)) {
             AstVisitorRegistry::insert(PropertyHandlerVisitor::class);
+        }
+
+        if (! AstVisitorRegistry::exists(ProxyCallVisitor::class)) {
+            AstVisitorRegistry::insert(ProxyCallVisitor::class);
         }
 
         // Register Property Handler.
