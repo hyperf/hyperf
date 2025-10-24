@@ -172,8 +172,8 @@ class PhpParser
                         if ($stmt instanceof Node\Stmt\TraitUse) {
                             foreach ($stmt->traits as $trait) {
                                 $traitString = $trait->toString();
-                                $traitParts = explode('\\', $traitString);
-                                $firstPart = $traitParts[0];
+                                $traitParts = $trait->getParts();
+                                $firstPart = $trait->getFirst();
 
                                 if (isset($uses[$firstPart])) {
                                     $traitName = $uses[$firstPart] . substr($traitString, strlen($firstPart));
