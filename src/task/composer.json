@@ -24,8 +24,8 @@
         "hyperf/support": "~3.2.0",
         "psr/container": "^1.0 || ^2.0",
         "psr/event-dispatcher": "^1.0",
-        "symfony/property-access": "^5.0 || ^6.0",
-        "symfony/serializer": "^5.0 || ^6.0"
+        "symfony/property-access": "^6.0 || ^7.0",
+        "symfony/serializer": "^6.0 || ^7.0"
     },
     "suggest": {
         "hyperf/di": "Required to use annotation."
