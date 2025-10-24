@@ -190,15 +190,6 @@ class MiddlewareTest extends TestCase
         $this->assertSame([], MiddlewareManager::get('http', '/head-register', 'GET'));
     }
 
-    private function unwrapHandler(mixed $value): Handler
-    {
-        if ($value instanceof Handler) {
-            return $value;
-        }
-
-        return $value[0];
-    }
-
     /**
      * @param string[] $expectMiddlewares
      */
@@ -218,5 +209,14 @@ class MiddlewareTest extends TestCase
             }
             ++$offset;
         }
+    }
+
+    private function unwrapHandler(mixed $value): Handler
+    {
+        if ($value instanceof Handler) {
+            return $value;
+        }
+
+        return $value[0];
     }
 }

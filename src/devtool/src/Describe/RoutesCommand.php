@@ -81,18 +81,6 @@ class RoutesCommand extends HyperfCommand
         return $data;
     }
 
-    private function unwrapHandler(mixed $item): ?Handler
-    {
-        if ($item instanceof Handler) {
-            return $item;
-        }
-        if (is_array($item) && isset($item[0]) && $item[0] instanceof Handler) {
-            return $item[0];
-        }
-
-        return null;
-    }
-
     protected function analyzeHandler(array &$data, string $serverName, string $method, ?string $path, Handler $handler)
     {
         $uri = $handler->route;
@@ -125,6 +113,18 @@ class RoutesCommand extends HyperfCommand
                 'middleware' => implode(PHP_EOL, $middlewares),
             ];
         }
+    }
+
+    private function unwrapHandler(mixed $item): ?Handler
+    {
+        if ($item instanceof Handler) {
+            return $item;
+        }
+        if (is_array($item) && isset($item[0]) && $item[0] instanceof Handler) {
+            return $item[0];
+        }
+
+        return null;
     }
 
     private function show(array $data, OutputInterface $output)
