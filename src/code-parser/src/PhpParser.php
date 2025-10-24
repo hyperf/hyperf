@@ -96,6 +96,7 @@ class PhpParser
         }
 
         if ($parameter->hasType()) {
+            /* @phpstan-ignore-next-line */
             $result->type = $this->getNodeFromReflectionType($parameter->getType());
         }
 
