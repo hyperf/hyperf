@@ -43,10 +43,8 @@ class Dispatched
             return;
         }
 
-        if ($result instanceof NotMatched) {
-            $this->status = Dispatcher::NOT_FOUND;
-            return;
-        }
+        // At this point, $result must be NotMatched since we've already handled Matched and MethodNotAllowed cases
+        $this->status = Dispatcher::NOT_FOUND;
     }
 
     public function isFound(): bool
