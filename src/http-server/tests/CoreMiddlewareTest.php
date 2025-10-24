@@ -12,9 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\HttpServer;
 
-use FastRoute\Dispatcher;
 use FastRoute\Dispatcher\Result\Matched;
-use FastRoute\Dispatcher\Result\NotMatched;
 use Hyperf\Context\Context;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
