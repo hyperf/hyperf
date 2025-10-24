@@ -47,7 +47,7 @@ class PhpParserTest extends TestCase
         $parser = new PhpParser();
         $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
         $this->assertNodeParam($foo, $foo2 = $parser->getNodeFromReflectionParameter($parameters[1]));
-        $this->assertSame(['', 'HyperfTest', 'CodeParser', 'Stub', 'Foo'], explode('\\', $foo2->type->toString()));
+        $this->assertSame(['', 'HyperfTest', 'CodeParser', 'Stub', 'Foo'], $foo2->type->getParts());
         $this->assertNodeParam($extra, $parser->getNodeFromReflectionParameter($parameters[2]));
 
         $stmts = $parser7->parse(file_get_contents(__DIR__ . '/Stub/UnionTypeFoo.php'));
