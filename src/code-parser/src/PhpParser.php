@@ -154,9 +154,7 @@ class PhpParser
             foreach ($namespace->stmts as $class) {
                 if ($class instanceof Node\Stmt\Use_) {
                     foreach ($class->uses as $use) {
-                        $nameString = $use->name->toString();
-                        $parts = explode('\\', $nameString);
-                        $uses[end($parts)] = $nameString;
+                        $uses[$use->name->getLast()] = $use->name->toString();
                     }
                     continue;
                 }
