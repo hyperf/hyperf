@@ -24,13 +24,15 @@ class ConfigProvider
 {
     public function __invoke(): array
     {
+        // 经测试 enterNode 和 leaveNode 符合洋葱模型，权重高的 enterNode 先执行，但是 leaveNode 后执行
+        // According to tests, both enterNode and leaveNode conform to the onion model: enterNode with higher priority executes first, while leaveNode executes later.
+        if (! AstVisitorRegistry::exists(ProxyCallVisitor::class)) {
+            AstVisitorRegistry::insert(ProxyCallVisitor::class);
+        }
+
         // Register AST visitors to the collector.
         if (! AstVisitorRegistry::exists(PropertyHandlerVisitor::class)) {
             AstVisitorRegistry::insert(PropertyHandlerVisitor::class);
-        }
-
-        if (! AstVisitorRegistry::exists(ProxyCallVisitor::class)) {
-            AstVisitorRegistry::insert(ProxyCallVisitor::class);
         }
 
         // Register Property Handler.

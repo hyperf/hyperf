@@ -26,8 +26,8 @@ use Hyperf\Di\Aop\RegisterInjectPropertyHandler;
 require_once BASE_PATH . '/vendor/autoload.php';
 
 // Register AST visitors to the collector.
-AstVisitorRegistry::insert(PropertyHandlerVisitor::class);
 AstVisitorRegistry::insert(ProxyCallVisitor::class);
+AstVisitorRegistry::insert(PropertyHandlerVisitor::class);
 
 // Register Property Handler.
 RegisterInjectPropertyHandler::register();
