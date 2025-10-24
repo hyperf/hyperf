@@ -300,7 +300,7 @@ class Serializer implements Normalizer, SerializerInterface, NormalizerInterface
                     continue;
                 }
 
-                if (! $normalizer->getSupportedTypes($format)) {
+                if ($normalizer->getSupportedTypes($format)[$class] ?? false === false) {
                     $this->denormalizerCache[$format][$class][$k] = false;
                 } elseif ($normalizer->supportsDenormalization(null, $class, $format)) {
                     $this->denormalizerCache[$format][$class][$k] = true;
