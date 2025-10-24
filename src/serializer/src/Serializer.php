@@ -263,9 +263,7 @@ class Serializer implements Normalizer, SerializerInterface, NormalizerInterface
                     continue;
                 }
 
-                if (! $normalizer->getSupportedTypes($format)) {
-                    $this->normalizerCache[$format][$type][$k] = false;
-                } elseif ($normalizer->supportsNormalization($data, $format)) {
+                if ($normalizer->supportsNormalization($data, $format)) {
                     $this->normalizerCache[$format][$type][$k] = true;
                     break;
                 }
