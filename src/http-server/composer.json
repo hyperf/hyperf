@@ -35,7 +35,7 @@
         "hyperf/stdlib": "~3.2.0",
         "hyperf/stringable": "~3.2.0",
         "hyperf/support": "~3.2.0",
-        "nikic/fast-route": "^1.3",
+        "nikic/fast-route": "^2.0",
         "psr/container": "^1.0 || ^2.0",
         "swow/psr7-plus": "^1.0"
     },

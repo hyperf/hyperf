@@ -13,6 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer\Router;
 
 use FastRoute\Dispatcher;
+use FastRoute\Dispatcher\Result\Matched;
+use FastRoute\Dispatcher\Result\MethodNotAllowed;
+use FastRoute\Dispatcher\Result\NotMatched;
 
 class Dispatched
 {
@@ -26,21 +29,38 @@ class Dispatched
      * Dispatches against the provided HTTP method verb and URI.
      *
      * @param array $array with one of the following formats:
-     *
      *     [Dispatcher::NOT_FOUND]
      *     [Dispatcher::METHOD_NOT_ALLOWED, ['GET', 'OTHER_ALLOWED_METHODS']]
      *     [Dispatcher::FOUND, $handler, ['varName' => 'value', ...]]
      */
-    public function __construct(array $array, public ?string $serverName = null)
+    public function __construct(array|Matched|MethodNotAllowed|NotMatched $result, public ?string $serverName = null)
     {
-        $this->status = $array[0];
+        if ($result instanceof Matched) {
+            $this->status = Dispatcher::FOUND;
+            $this->handler = $result->handler;
+            $this->params = $result->variables;
+            return;
+        }
+
+        if ($result instanceof MethodNotAllowed) {
+            $this->status = Dispatcher::METHOD_NOT_ALLOWED;
+            $this->params = $result->allowedMethods;
+            return;
+        }
+
+        if ($result instanceof NotMatched) {
+            $this->status = Dispatcher::NOT_FOUND;
+            return;
+        }
+
+        $this->status = $result[0];
         switch ($this->status) {
             case Dispatcher::METHOD_NOT_ALLOWED:
-                $this->params = $array[1];
+                $this->params = $result[1];
                 break;
             case Dispatcher::FOUND:
-                $this->handler = $array[1];
-                $this->params = $array[2];
+                $this->handler = $result[1];
+                $this->params = $result[2];
                 break;
         }
     }

@@ -68,18 +68,19 @@ class MiddlewareTest extends TestCase
              * @var Handler $value
              */
             foreach ($items as $key => $value) {
-                $this->assertSame([DemoController::class, 'index'], $value->callback);
-                $this->assertSame('/index', $value->route);
-                $this->assertSame('index.' . strtolower($method), $value->options['name']);
+                $handler = $this->unwrapHandler($value);
+                $this->assertSame([DemoController::class, 'index'], $handler->callback);
+                $this->assertSame('/index', $handler->route);
+                $this->assertSame('index.' . strtolower($method), $handler->options['name']);
                 if ($method === 'GET') {
-                    $this->assertSame(1, $value->options['id']);
+                    $this->assertSame(1, $handler->options['id']);
                 } else {
-                    $this->assertArrayNotHasKey('id', $value->options);
+                    $this->assertArrayNotHasKey('id', $handler->options);
                 }
 
                 foreach ([
-                    $value->options['middleware'],
-                    MiddlewareManager::get('http', $value->route, $method),
+                    $handler->options['middleware'],
+                    MiddlewareManager::get('http', $handler->route, $method),
                 ] as $dataSource) {
                     $this->assertMiddlewares([
                         SetHeaderMiddleware::class,
@@ -126,19 +127,20 @@ class MiddlewareTest extends TestCase
              * @var Handler $value
              */
             foreach ($items as $key => $value) {
-                $this->assertSame([DemoController::class, 'index'], $value->callback);
-                $this->assertSame('/index', $value->route);
-                $this->assertSame('index.' . strtolower($method), $value->options['name']);
+                $handler = $this->unwrapHandler($value);
+                $this->assertSame([DemoController::class, 'index'], $handler->callback);
+                $this->assertSame('/index', $handler->route);
+                $this->assertSame('index.' . strtolower($method), $handler->options['name']);
                 if ($method === 'GET') {
-                    $this->assertSame(1, $value->options['id']);
+                    $this->assertSame(1, $handler->options['id']);
                 } else {
-                    $this->assertArrayNotHasKey('id', $value->options);
+                    $this->assertArrayNotHasKey('id', $handler->options);
                 }
 
                 foreach ([
                     // Keep same with Server.php `$middlewares = array_merge($middlewares, $registeredMiddlewares);`
-                    array_merge($globalMiddleware, $value->options['middleware']),
-                    array_merge($globalMiddleware, MiddlewareManager::get('http', $value->route, $method)),
+                    array_merge($globalMiddleware, $handler->options['middleware']),
+                    array_merge($globalMiddleware, MiddlewareManager::get('http', $handler->route, $method)),
                 ] as $dataSource) {
                     $this->assertMiddlewares([
                         FooMiddleware::class, // method middleware => 3
@@ -160,32 +162,41 @@ class MiddlewareTest extends TestCase
         $grouopCountBased = new GroupCountBased([
             [
                 'GET' => [
-                    '/index' => 'index::handler',
+                    '/index' => ['index::handler', []],
                 ],
                 'HEAD' => [
-                    '/head-register' => 'head-register::handler',
+                    '/head-register' => ['head-register::handler', []],
                 ],
             ],
+            [],
         ]);
-        $this->assertSame([
-            GroupCountBased::FOUND,
-            'index::handler',
-            [],
-        ], $grouopCountBased->dispatch('GET', '/index'));
-        $this->assertSame([
-            GroupCountBased::FOUND,
-            'index::handler',
-            [],
-        ], $grouopCountBased->dispatch('HEAD', '/index'));
-        $this->assertSame([
-            GroupCountBased::FOUND,
-            'head-register::handler',
-            [],
-        ], $grouopCountBased->dispatch('HEAD', '/head-register'));
+        $result = $grouopCountBased->dispatch('GET', '/index');
+        $this->assertSame(GroupCountBased::FOUND, $result[0]);
+        $this->assertSame('index::handler', $result->handler);
+        $this->assertSame([], $result->variables);
+
+        $result = $grouopCountBased->dispatch('HEAD', '/index');
+        $this->assertSame(GroupCountBased::FOUND, $result[0]);
+        $this->assertSame('index::handler', $result->handler);
+        $this->assertSame([], $result->variables);
+
+        $result = $grouopCountBased->dispatch('HEAD', '/head-register');
+        $this->assertSame(GroupCountBased::FOUND, $result[0]);
+        $this->assertSame('head-register::handler', $result->handler);
+        $this->assertSame([], $result->variables);
 
         $this->assertSame([FooMiddleware::class], MiddlewareManager::get('http', '/index', 'GET'));
         $this->assertSame([FooMiddleware::class], MiddlewareManager::get('http', '/index', 'HEAD'));
         $this->assertSame([], MiddlewareManager::get('http', '/head-register', 'GET'));
+    }
+
+    private function unwrapHandler(mixed $value): Handler
+    {
+        if ($value instanceof Handler) {
+            return $value;
+        }
+
+        return $value[0];
     }
 
     /**

@@ -74,7 +74,7 @@ class DispatcherFactoryTest extends TestCase
              * @var Handler $value
              */
             foreach ($items as $key => $value) {
-                $this->assertSame('Hyperf', $value->options['name']);
+                $this->assertSame('Hyperf', $this->unwrapHandler($value)->options['name']);
             }
         }
     }
@@ -95,9 +95,9 @@ class DispatcherFactoryTest extends TestCase
         $router = $factory->getRouter('http');
 
         [$routers] = $router->getData();
-        $this->assertSame('/demo', $routers['PUT']['/demo']->route);
-        $this->assertSame('/demo2', $routers['POST']['/demo2']->route);
-        $this->assertSame('/', $routers['GET']['/']->route);
+        $this->assertSame('/demo', $this->unwrapHandler($routers['PUT']['/demo'])->route);
+        $this->assertSame('/demo2', $this->unwrapHandler($routers['POST']['/demo2'])->route);
+        $this->assertSame('/', $this->unwrapHandler($routers['GET']['/'])->route);
     }
 
     public function testDispatchedHandlerIsNull()
@@ -136,27 +136,36 @@ class DispatcherFactoryTest extends TestCase
         $this->assertArrayHasKey('POST', $routers);
 
         foreach ($routers as $method => $items) {
-            /** @var Handler $value */
             foreach ($items as $value) {
+                $handler = $this->unwrapHandler($value);
                 if ($method === 'GET') {
                     // When the path is an empty string, the route contains only the prefix.
-                    $methodValue = $value->callback[1];
+                    $methodValue = $handler->callback[1];
                     $expected = match ($methodValue) {
                         'demo' => '/test',
                         'userInfo' => '/test/user_info',
                         'BookInfo' => '/test/book_info',
                     };
-                    $this->assertSame($expected, $value->route);
+                    $this->assertSame($expected, $handler->route);
                 } elseif ($method === 'POST') {
                     // When the path is null, the route is prefix + method name.
-                    $this->assertSame('/test/demo', $value->route);
-                    $this->assertSame([DemoController::class, 'demo'], $value->callback);
+                    $this->assertSame('/test/demo', $handler->route);
+                    $this->assertSame([DemoController::class, 'demo'], $handler->callback);
                 } elseif ($method === 'PUT') {
                     // When the path contains the "/" character, the route is path
-                    $this->assertSame('/demo', $value->route);
-                    $this->assertSame([DemoController::class, 'demo'], $value->callback);
+                    $this->assertSame('/demo', $handler->route);
+                    $this->assertSame([DemoController::class, 'demo'], $handler->callback);
                 }
             }
         }
+    }
+
+    private function unwrapHandler(mixed $value): Handler
+    {
+        if ($value instanceof Handler) {
+            return $value;
+        }
+
+        return $value[0];
     }
 }

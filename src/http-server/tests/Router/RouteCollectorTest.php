@@ -15,6 +15,7 @@ namespace HyperfTest\HttpServer\Router;
 use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
 use FastRoute\RouteParser\Std;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\HttpServer\Router\Handler;
 use Hyperf\HttpServer\Router\RouteCollector;
 use HyperfTest\HttpServer\Stub\RouteCollectorStub;
 use Mockery;
@@ -48,10 +49,10 @@ class RouteCollectorTest extends TestCase
         });
 
         $data = $collector->getData()[0];
-        $this->assertSame('Handler::Get', $data['GET']['/']->callback);
-        $this->assertSame('Handler::ApiGet', $data['GET']['/api/']->callback);
-        $this->assertSame('Handler::Post', $data['POST']['/']->callback);
-        $this->assertSame('Handler::ApiPost', $data['POST']['/api/']->callback);
+        $this->assertSame('Handler::Get', $this->unwrapHandler($data['GET']['/'])->callback);
+        $this->assertSame('Handler::ApiGet', $this->unwrapHandler($data['GET']['/api/'])->callback);
+        $this->assertSame('Handler::Post', $this->unwrapHandler($data['POST']['/'])->callback);
+        $this->assertSame('Handler::ApiPost', $this->unwrapHandler($data['POST']['/api/'])->callback);
     }
 
     public function testGetRouteParser()
@@ -87,10 +88,10 @@ class RouteCollectorTest extends TestCase
         ]);
 
         $data = $collector->getData()[0];
-        $this->assertSame('Handler::Get', $data['GET']['/']->callback);
-        $this->assertSame('Handler::ApiGet', $data['GET']['/api/']->callback);
-        $this->assertSame('Handler::Post', $data['POST']['/']->callback);
-        $this->assertSame(['middleware' => ['PostMiddleware']], $data['POST']['/']->options);
+        $this->assertSame('Handler::Get', $this->unwrapHandler($data['GET']['/'])->callback);
+        $this->assertSame('Handler::ApiGet', $this->unwrapHandler($data['GET']['/api/'])->callback);
+        $this->assertSame('Handler::Post', $this->unwrapHandler($data['POST']['/'])->callback);
+        $this->assertSame(['middleware' => ['PostMiddleware']], $this->unwrapHandler($data['POST']['/'])->options);
 
         $middle = MiddlewareManager::$container;
         $this->assertSame(['GetMiddleware'], $middle['http']['/']['GET']);
@@ -150,5 +151,14 @@ class RouteCollectorTest extends TestCase
             $collector->addRoute('GET', $route, 'User::Info', ['middleware' => $middlewares = ['FooMiddleware']]);
             $this->assertSame($middlewares, MiddlewareManager::get('test', $route, 'GET'));
         }
+    }
+
+    private function unwrapHandler(mixed $value): Handler
+    {
+        if ($value instanceof Handler) {
+            return $value;
+        }
+
+        return $value[0];
     }
 }

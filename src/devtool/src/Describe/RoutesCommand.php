@@ -59,20 +59,38 @@ class RoutesCommand extends HyperfCommand
         $data = [];
         [$staticRouters, $variableRouters] = $router->getData();
         foreach ($staticRouters as $method => $items) {
-            foreach ($items as $handler) {
-                $this->analyzeHandler($data, $server, $method, $path, $handler);
+            foreach ($items as $item) {
+                $handler = $this->unwrapHandler($item);
+                if ($handler instanceof Handler) {
+                    $this->analyzeHandler($data, $server, $method, $path, $handler);
+                }
             }
         }
         foreach ($variableRouters as $method => $items) {
             foreach ($items as $item) {
                 if (is_array($item['routeMap'] ?? false)) {
                     foreach ($item['routeMap'] as $routeMap) {
-                        $this->analyzeHandler($data, $server, $method, $path, $routeMap[0]);
+                        $handler = $this->unwrapHandler($routeMap[0] ?? null);
+                        if ($handler instanceof Handler) {
+                            $this->analyzeHandler($data, $server, $method, $path, $handler);
+                        }
                     }
                 }
             }
         }
         return $data;
+    }
+
+    private function unwrapHandler(mixed $item): ?Handler
+    {
+        if ($item instanceof Handler) {
+            return $item;
+        }
+        if (is_array($item) && isset($item[0]) && $item[0] instanceof Handler) {
+            return $item[0];
+        }
+
+        return null;
     }
 
     protected function analyzeHandler(array &$data, string $serverName, string $method, ?string $path, Handler $handler)
