@@ -26,7 +26,6 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     use Concerns\InteractsWithContainer;
     use Concerns\InteractsWithModelFactory;
     use Concerns\MakesHttpRequests;
-    use Concerns\RunTestsInCoroutine;
     use Concerns\InteractsWithDatabase;
 
     /**
