@@ -15,7 +15,6 @@ namespace Hyperf\Serializer;
 use ArrayObject;
 use Doctrine\Instantiator\Instantiator;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Serializer\Contract\CacheableSupportsMethodInterface;
 use ReflectionException;
 use RuntimeException;
 use Serializable;
@@ -24,9 +23,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Throwable;
 use TypeError;
 
-use function get_class;
-
-class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface, CacheableSupportsMethodInterface
+class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     protected ?Instantiator $instantiator = null;
 
@@ -91,11 +88,6 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof Throwable;
-    }
-
-    public function hasCacheableSupportsMethod(): bool
-    {
-        return get_class($this) === __CLASS__;
     }
 
     public function getSupportedTypes(?string $format): array

@@ -24,9 +24,6 @@ use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\LogicException;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
-use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
-use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
@@ -51,7 +48,7 @@ use function is_resource;
  *     $serializer->decode($data, 'xml')
  *     $serializer->denormalize($data, 'Class', 'xml')
  */
-class Serializer implements Normalizer, SerializerInterface, ContextAwareNormalizerInterface, ContextAwareDenormalizerInterface, ContextAwareEncoderInterface, ContextAwareDecoderInterface
+class Serializer implements Normalizer, SerializerInterface, NormalizerInterface, DenormalizerInterface, ContextAwareEncoderInterface, ContextAwareDecoderInterface
 {
     protected const SCALAR_TYPES = [
         'int' => true,
@@ -221,12 +218,18 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
         return isset(self::SCALAR_TYPES[$type]) || $this->getDenormalizer($data, $type, $format, $context) !== null;
     }
 
+    public function getSupportedTypes(?string $format): array
+    {
+        // This serializer delegates to normalizers, so it supports all types they support
+        return ['*' => true];
+    }
+
     final public function encode($data, string $format, array $context = []): string
     {
         return $this->encoder->encode($data, $format, $context);
     }
 
-    final public function decode(string $data, string $format, array $context = [])
+    final public function decode(string $data, string $format, array $context = []): mixed
     {
         return $this->decoder->decode($data, $format, $context);
     }
@@ -260,10 +263,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
                     continue;
                 }
 
-                // TODO: Use getSupportedTypes to rewrite this since Symfony 7.
-                if (! $normalizer instanceof CacheableSupportsMethodInterface || ! $normalizer->hasCacheableSupportsMethod()) {
-                    $this->normalizerCache[$format][$type][$k] = false;
-                } elseif ($normalizer->supportsNormalization($data, $format)) {
+                if ($normalizer->supportsNormalization($data, $format)) {
                     $this->normalizerCache[$format][$type][$k] = true;
                     break;
                 }
@@ -298,9 +298,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
                     continue;
                 }
 
-                if (! $normalizer instanceof CacheableSupportsMethodInterface || ! $normalizer->hasCacheableSupportsMethod()) {
-                    $this->denormalizerCache[$format][$class][$k] = false;
-                } elseif ($normalizer->supportsDenormalization(null, $class, $format)) {
+                if ($normalizer->supportsDenormalization(null, $class, $format)) {
                     $this->denormalizerCache[$format][$class][$k] = true;
                     break;
                 }
