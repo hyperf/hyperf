@@ -24,11 +24,13 @@ Carbon::createFromTimestamp($t, date_default_timezone_get());
 - Upgrade the `elasticsearch/elasticsearch` version to `>=8.0`
 - Upgrade the `nikic/php-parser` version to `5.6`
 - Upgrade the `symfony/*` components to `^6.0 || ^7.0`
+- Upgrade the `phpunit/phpunit` version to `^11.0`
 
 ## Removed
 
 - [#7278](https://github.com/hyperf/hyperf/pull/7278) Removed abandoned `laminas/laminas-mime` package.
 - [#7573](https://github.com/hyperf/hyperf/pull/7573) Removed deprecated `Hyperf\Serializer\Contract\CacheableSupportsMethodInterface` interface.
+- [#7577](https://github.com/hyperf/hyperf/pull/7577) Removed `Hyperf\Testing\Concerns\RunTestsInCoroutine` trait.
 
 ## Added
 
