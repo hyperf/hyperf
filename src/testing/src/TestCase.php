@@ -20,7 +20,6 @@ use function Hyperf\Support\class_uses_recursive;
 
 /**
  * @internal
- * @coversNothing
  */
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
