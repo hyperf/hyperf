@@ -321,6 +321,7 @@
             "src/stringable/src/Functions.php",
             "src/support/src/Functions.php",
             "src/tappable/src/Functions.php",
+            "src/testing/phpunit-patch.php",
             "src/translation/src/Functions.php",
             "src/view-engine/src/Functions.php",
             "src/watcher/src/Functions.php"

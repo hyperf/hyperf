@@ -32,7 +32,10 @@
     "autoload": {
         "psr-4": {
             "Hyperf\\Testing\\": "src/"
-        }
+        },
+        "files": [
+            "phpunit-patch.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
