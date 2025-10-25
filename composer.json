@@ -70,7 +70,7 @@
         "php-amqplib/php-amqplib": "^3.5",
         "php-di/phpdoc-reader": "^2.2",
         "phpstan/phpstan": "^2.0",
-        "phpunit/phpunit": "^10.1.3",
+        "phpunit/phpunit": "^11.0",
         "predis/predis": "^1.1",
         "promphp/prometheus_client_php": "~2.2.0",
         "ramsey/uuid": "^4.7",
