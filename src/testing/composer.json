@@ -22,7 +22,7 @@
         "hyperf/macroable": "~3.2.0",
         "hyperf/stringable": "~3.2.0",
         "hyperf/support": "~3.2.0",
-        "phpunit/phpunit": "^10.0",
+        "phpunit/phpunit": "^11.0",
         "psr/container": "^1.0 || ^2.0",
         "symfony/http-foundation": "^6.0 || ^7.0"
     },
@@ -32,7 +32,10 @@
     "autoload": {
         "psr-4": {
             "Hyperf\\Testing\\": "src/"
-        }
+        },
+        "files": [
+            "phpunit-patch.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
