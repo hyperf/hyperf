@@ -15,10 +15,16 @@ namespace Hyperf\Serializer\Contract;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface as SymfonyCacheableSupportsMethodInterface;
 
 if (interface_exists(SymfonyCacheableSupportsMethodInterface::class)) {
+    /**
+     * @deprecated since v3.1, will be removed in v3.2, implement "getSupportedTypes(?string $format)" instead
+     */
     interface CacheableSupportsMethodInterface extends SymfonyCacheableSupportsMethodInterface
     {
     }
 } else {
+    /**
+     * @deprecated since v3.1, will be removed in v3.2, implement "getSupportedTypes(?string $format)" instead
+     */
     interface CacheableSupportsMethodInterface
     {
     }
