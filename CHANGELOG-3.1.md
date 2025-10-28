@@ -13,6 +13,7 @@
 ## Optimized
 
 - [#7511](https://github.com/hyperf/hyperf/pull/7511) Optimized the PHPDoc for `hyperf/database`.
+- [#7536](https://github.com/hyperf/hyperf/pull/7536) Fixed bug that `Hyperf\Validation\ValidationRuleParser::parseParameters()` cannot support `PHP 8.4`.
 
 # v3.1.62 - 2025-10-11
 
