@@ -1,4 +1,30 @@
-# v3.1.62 - TBD
+# v3.1.63 - TBD
+
+## Fixed
+
+- [#7543](https://github.com/hyperf/hyperf/pull/7543) Fixed bug that the providers of nacos not support psr4.
+- [#7554](https://github.com/hyperf/hyperf/pull/7554) Fixed bug that the parameter context on redis cluster cannot work when auth config isn't set or set with null value. 
+- [#7561](https://github.com/hyperf/hyperf/pull/7561) Revert constructor parameter name change for `Nacos\Application`.
+
+## Added
+
+- [#7553](https://github.com/hyperf/hyperf/pull/7553) Support method `PATCH` for `hyperf/testing`.
+
+## Optimized
+
+- [#7511](https://github.com/hyperf/hyperf/pull/7511) Optimized the PHPDoc for `hyperf/database`.
+
+# v3.1.62 - 2025-10-11
+
+## Added
+
+- [#7469](https://github.com/hyperf/hyperf/pull/7469) Support to rewrite the rules for scene when using validation.
+- [#7531](https://github.com/hyperf/hyperf/pull/7531) Support options `batch` for `migrate:rollback`.
+- [#7545](https://github.com/hyperf/hyperf/pull/7545) Added coordinator resume in command execution finally block.
+
+## Fixed
+
+- [#7547](https://github.com/hyperf/hyperf/pull/7547) Fixed bug that the property `$pool` of kafka consumer cannot not work well.
 
 # v3.1.61 - 2025-09-04
 
