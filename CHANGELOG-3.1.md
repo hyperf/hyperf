@@ -9,6 +9,10 @@
 
 - [#7553](https://github.com/hyperf/hyperf/pull/7553) Support method `PATCH` for `hyperf/testing`.
 
+## Optimized
+
+- [#7511](https://github.com/hyperf/hyperf/pull/7511) Optimized the doc comments for `hyperf/database`.
+
 # v3.1.62 - 2025-10-11
 
 ## Added
