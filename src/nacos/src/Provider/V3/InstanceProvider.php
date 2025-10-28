@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace Hyperf\Nacos\Provider\v3;
+namespace Hyperf\Nacos\Provider\V3;
 
 use GuzzleHttp\RequestOptions;
 use Hyperf\Codec\Json;
