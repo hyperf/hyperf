@@ -17,6 +17,9 @@ use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Event\Contract\ListenerInterface;
 
+/**
+ * @deprecated since v3.1, will be removed in v3.2
+ */
 class ResumeExitCoordinatorListener implements ListenerInterface
 {
     public function listen(): array
@@ -28,6 +31,6 @@ class ResumeExitCoordinatorListener implements ListenerInterface
 
     public function process(object $event): void
     {
-        CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+        // CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
     }
 }

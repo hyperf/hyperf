@@ -19,6 +19,7 @@ class FooSceneRequest extends FormRequest
     public array $scenes = [
         'save' => ['mobile', 'name'],
         'info' => ['mobile'],
+        'get' => ['mobile' => 'string|required'],
     ];
 
     public function authorize(): bool

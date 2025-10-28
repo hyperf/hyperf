@@ -20,6 +20,13 @@ use Traversable;
 
 use function Hyperf\Tappable\tap;
 
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ * @template TResult
+ *
+ * @extends Relation<TRelatedModel, TDeclaringModel, TResult>
+ */
 abstract class HasOneOrMany extends Relation
 {
     /**
@@ -60,7 +67,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create and return an un-saved instance of the related model.
      *
-     * @return Model
+     * @return TRelatedModel
      */
     public function make(array $attributes = [])
     {
@@ -119,9 +126,9 @@ abstract class HasOneOrMany extends Relation
     /**
      * Find a model by its primary key or return new instance of the related model.
      *
-     * @param array $columns
      * @param mixed $id
-     * @return \Hyperf\Collection\Collection|Model
+     * @param array $columns
+     * @return TRelatedModel
      */
     public function findOrNew($id, $columns = ['*'])
     {
@@ -137,7 +144,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @return Model
+     * @return TRelatedModel
      */
     public function firstOrNew(array $attributes, array $values = [])
     {
@@ -153,7 +160,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the first related record matching the attributes. If the record is not found, create it.
      *
-     * @return Model
+     * @return TRelatedModel
      */
     public function firstOrCreate(array $attributes, array $values = [])
     {
@@ -167,7 +174,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
      *
-     * @return Model
+     * @return TRelatedModel
      */
     public function createOrFirst(array $attributes = [], array $values = [])
     {
@@ -181,7 +188,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @return Model
+     * @return TRelatedModel
      */
     public function updateOrCreate(array $attributes, array $values = [])
     {
@@ -195,7 +202,8 @@ abstract class HasOneOrMany extends Relation
     /**
      * Attach a model instance to the parent model.
      *
-     * @return false|Model
+     * @param TRelatedModel $model
+     * @return false|TRelatedModel
      */
     public function save(Model $model)
     {
@@ -222,7 +230,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a new instance of the related model.
      *
-     * @return Model
+     * @return TRelatedModel
      */
     public function create(array $attributes = [])
     {
@@ -236,7 +244,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a Collection of new instances of the related model.
      *
-     * @return Collection
+     * @return Collection<int, TRelatedModel>
      */
     public function createMany(array $records)
     {

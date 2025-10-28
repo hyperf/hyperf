@@ -19,6 +19,7 @@ use Hyperf\Nacos\Provider\ConfigProvider as ConfigCenter;
 use Hyperf\Nacos\Provider\InstanceProvider;
 use Hyperf\Nacos\Provider\OperatorProvider;
 use Hyperf\Nacos\Provider\ServiceProvider;
+use Hyperf\Nacos\Provider\V2;
 use HyperfTest\Nacos\AbstractTestCase;
 use PHPUnit\Framework\Attributes\CoversNothing;
 
@@ -38,5 +39,13 @@ class ApplicationTest extends AbstractTestCase
         $this->assertInstanceOf(InstanceProvider::class, $application->instance);
         $this->assertInstanceOf(OperatorProvider::class, $application->operator);
         $this->assertInstanceOf(ServiceProvider::class, $application->service);
+
+        $application = new Application(new Config(['version' => '2.0']));
+
+        $this->assertInstanceOf(V2\AuthProvider::class, $application->auth);
+        $this->assertInstanceOf(V2\ConfigProvider::class, $application->config);
+        $this->assertInstanceOf(V2\InstanceProvider::class, $application->instance);
+        $this->assertInstanceOf(V2\OperatorProvider::class, $application->operator);
+        $this->assertInstanceOf(V2\ServiceProvider::class, $application->service);
     }
 }
