@@ -2,6 +2,7 @@
 
 ## Fixed
 
+- [#7536](https://github.com/hyperf/hyperf/pull/7536) Fixed bug that `Hyperf\Validation\ValidationRuleParser::parseParameters()` cannot support `PHP 8.4`.
 - [#7543](https://github.com/hyperf/hyperf/pull/7543) Fixed bug that the providers of nacos not support psr4.
 - [#7554](https://github.com/hyperf/hyperf/pull/7554) Fixed bug that the parameter context on redis cluster cannot work when auth config isn't set or set with null value. 
 - [#7561](https://github.com/hyperf/hyperf/pull/7561) Revert constructor parameter name change for `Nacos\Application`.
