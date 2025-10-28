@@ -20,6 +20,12 @@ use Hyperf\Database\Model\Model;
 use function Hyperf\Collection\collect;
 use function Hyperf\Collection\head;
 
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ *
+ * @extends BelongsTo<TRelatedModel, TDeclaringModel>
+ */
 class MorphTo extends BelongsTo
 {
     /**
@@ -120,6 +126,8 @@ class MorphTo extends BelongsTo
      * Get the results of the relationship.
      *
      * Called via eager load method of Model query builder.
+     *
+     * @return Collection<int, TDeclaringModel>
      */
     public function getEager()
     {
@@ -134,7 +142,7 @@ class MorphTo extends BelongsTo
      * Create a new model instance by type.
      *
      * @param string $type
-     * @return Model
+     * @return TRelatedModel
      */
     public function createModelByType($type)
     {
@@ -157,8 +165,8 @@ class MorphTo extends BelongsTo
     /**
      * Associate the model instance to the given parent.
      *
-     * @param Model $model
-     * @return Model
+     * @param null|TRelatedModel $model
+     * @return TDeclaringModel
      */
     public function associate($model)
     {
@@ -178,7 +186,7 @@ class MorphTo extends BelongsTo
     /**
      * Dissociate previously associated model from the given parent.
      *
-     * @return Model
+     * @return TDeclaringModel
      */
     public function dissociate()
     {

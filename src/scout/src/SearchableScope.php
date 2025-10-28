@@ -49,6 +49,7 @@ class SearchableScope implements Scope
         });
         $builder->macro('unsearchable', function (EloquentBuilder $builder, $chunk = null) {
             $builder->chunk($chunk ?: config('scout.chunk.unsearchable', 500), function ($models) {
+                // @phpstan-ignore-next-line
                 $models->unsearchable();
                 $dispatcher = ApplicationContext::getContainer()->get(EventDispatcherInterface::class);
                 $dispatcher->dispatch(new ModelsFlushed($models));
