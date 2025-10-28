@@ -11,7 +11,7 @@
 
 ## Optimized
 
-- [#7511](https://github.com/hyperf/hyperf/pull/7511) Optimized the doc comments for `hyperf/database`.
+- [#7511](https://github.com/hyperf/hyperf/pull/7511) Optimized the PHPDoc for `hyperf/database`.
 
 # v3.1.62 - 2025-10-11
 
@@ -47,10 +47,6 @@
 ## Optimized
 
 - [#7501](https://github.com/hyperf/hyperf/pull/7501) Added validation of `Hyperf\Macroable\Macroable::macro()` to avoid unexpected results caused by using reference parameters.
-
-## Optimized
-
-- [#7511](https://github.com/hyperf/hyperf/pull/7511) Optimized the PHPDoc for `hyperf/database`.
 
 # v3.1.60 - 2025-08-02
 
