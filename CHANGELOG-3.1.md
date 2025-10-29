@@ -14,6 +14,7 @@
 ## Optimized
 
 - [#7511](https://github.com/hyperf/hyperf/pull/7511) Optimized the PHPDoc for `hyperf/database`.
+- [#7537](https://github.com/hyperf/hyperf/pull/7537) Use `priorityMiddleware` instead of `middleware` for swagger.
 
 # v3.1.62 - 2025-10-11
 
