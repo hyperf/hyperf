@@ -47,3 +47,4 @@ Carbon::createFromTimestamp($t, date_default_timezone_get());
 ## Changed
 
 - [#7208](https://github.com/hyperf/hyperf/pull/7208) Throw exceptions when the value is smaller than zero for `Hyperf\Database\Query\Builder::limit()`.
+- [#6760](https://github.com/hyperf/hyperf/pull/6760) Changed the default type of `deleted_at` to `datetime` for `hyperf/database`.
