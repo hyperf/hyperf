@@ -19,6 +19,7 @@ use Hyperf\Context\ResponseContext;
 use Hyperf\Coroutine\Waiter;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpMessage\Upload\UploadedFile;
+use Hyperf\Support\Reflection\ClassInvoker;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
@@ -115,6 +116,20 @@ class FormRequestTest extends TestCase
             $this->assertInstanceOf(ValidationException::class, $exception);
             $this->assertSame('validation.integer', $exception->validator->errors()->first());
         }
+    }
+
+    public function testRewriteRules()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+
+        $request = new FooSceneRequest($container);
+        $invoker = new ClassInvoker($request);
+        $rules = $invoker->getRules();
+        $this->assertSame(['mobile' => 'required', 'name' => 'required'], $rules);
+
+        $invoker->scene('get');
+        $rules = $invoker->getRules();
+        $this->assertSame(['mobile' => 'string|required'], $rules);
     }
 
     public function testSceneForFormRequest()
