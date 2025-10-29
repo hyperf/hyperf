@@ -24,15 +24,11 @@ use function Hyperf\Support\env;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class ClassLoaderTest extends TestCase
 {
     public function testDotEnv()
     {
-        $class = new class() extends ClassLoader {
+        $class = new class extends ClassLoader {
             public function __construct()
             {
             }

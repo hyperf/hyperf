@@ -337,7 +337,7 @@ class TranslatorTest extends TestCase
     public function testIsCountable()
     {
         $this->assertTrue(is_countable([]));
-        $this->assertTrue(is_countable(new class() implements Countable {
+        $this->assertTrue(is_countable(new class implements Countable {
             public function count()
             {
                 return 0;

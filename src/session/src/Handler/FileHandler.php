@@ -15,8 +15,8 @@ namespace Hyperf\Session\Handler;
 use Carbon\Carbon;
 use Hyperf\Support\Filesystem\Filesystem;
 use SessionHandlerInterface;
-use SplFileInfo;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 class FileHandler implements SessionHandlerInterface
 {

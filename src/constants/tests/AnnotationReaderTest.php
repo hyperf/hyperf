@@ -22,6 +22,7 @@ use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
 use HyperfTest\Constants\Stub\CannotNewInstance;
 use HyperfTest\Constants\Stub\ErrorCodeStub;
+use HyperfTest\Constants\Stub\MessageMoreCaseKey;
 use HyperfTest\Constants\Stub\WarnCode;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -49,6 +50,11 @@ class AnnotationReaderTest extends TestCase
         $classConstants = $ref->getReflectionConstants();
         $data = $reader->getAnnotations($classConstants);
         ConstantsCollector::set(WarnCode::class, $data);
+
+        $ref = new ReflectionClass(MessageMoreCaseKey::class);
+        $classConstants = $ref->getReflectionConstants();
+        $data = $reader->getAnnotations($classConstants);
+        ConstantsCollector::set(MessageMoreCaseKey::class, $data);
 
         Context::set(sprintf('%s::%s', TranslatorInterface::class, 'locale'), null);
     }
@@ -153,6 +159,17 @@ class AnnotationReaderTest extends TestCase
 
         $this->expectExceptionMessage('Attribute class "HyperfTest\Constants\Stub\NotFound" not found');
         $data = $reader->getAnnotations($classConstants);
+    }
+
+    public function testMessageMoreCaseKey()
+    {
+        $this->getContainer(true);
+
+        $this->assertSame('snake key value', MessageMoreCaseKey::FOO->getSnakeKey());
+        $this->assertSame('snake key1 value', MessageMoreCaseKey::FOO->getSnakeKey1());
+        $this->assertSame('camel case value', MessageMoreCaseKey::FOO->getCamelCase());
+        $this->assertSame('big camel case value', MessageMoreCaseKey::FOO->getBigCamel());
+        $this->assertSame('value of lowercase key', MessageMoreCaseKey::FOO->getLowercaseValue());
     }
 
     protected function getContainer($has = false)

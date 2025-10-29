@@ -20,7 +20,9 @@ use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
+use Hyperf\Kafka\Event\AfterConsumerConfigCreated;
 use Hyperf\Kafka\Event\BeforeConsume;
+use Hyperf\Kafka\Event\BeforeLongLangConsumerCreated;
 use Hyperf\Kafka\Event\FailToConsume;
 use Hyperf\Kafka\Exception\InvalidConsumeResultException;
 use Hyperf\Process\AbstractProcess;
@@ -108,6 +110,7 @@ class ConsumerManager
             {
                 $consumerConfig = $this->getConsumerConfig();
                 $consumer = $this->consumer;
+                $this->dispatcher?->dispatch(new BeforeLongLangConsumerCreated($consumer, $consumerConfig));
                 $longLangConsumer = new LongLangConsumer(
                     $consumerConfig,
                     function (ConsumeMessage $message) use ($consumer, $consumerConfig) {
@@ -199,6 +202,9 @@ class ConsumerManager
                 ! empty($config['sasl']) && $consumerConfig->setSasl($config['sasl']);
                 ! empty($config['ssl']) && $consumerConfig->setSsl($config['ssl']);
                 is_callable($config['exception_callback'] ?? null) && $consumerConfig->setExceptionCallback($config['exception_callback']);
+
+                $this->dispatcher?->dispatch(new AfterConsumerConfigCreated($consumerConfig));
+
                 return $consumerConfig;
             }
         };

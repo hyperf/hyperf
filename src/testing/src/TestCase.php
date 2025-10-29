@@ -20,15 +20,14 @@ use function Hyperf\Support\class_uses_recursive;
 
 /**
  * @internal
- * @coversNothing
  */
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     use Concerns\InteractsWithContainer;
+    use Concerns\InteractsWithDatabase;
     use Concerns\InteractsWithModelFactory;
     use Concerns\MakesHttpRequests;
     use Concerns\RunTestsInCoroutine;
-    use Concerns\InteractsWithDatabase;
 
     /**
      * The callbacks that should be run after the application is created.

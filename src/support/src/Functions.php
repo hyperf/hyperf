@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Support;
 
+use BackedEnum;
 use Carbon\Carbon;
 use Closure;
 use DateTimeZone;
@@ -21,9 +22,15 @@ use Hyperf\Di\Container;
 use Hyperf\Stringable\StrCache;
 use Hyperf\Support\Backoff\ArrayBackoff;
 use Throwable;
+use UnitEnum;
 
 /**
  * Return the default value of the given value.
+ * @template TValue
+ * @template TReturn
+ *
+ * @param (Closure(TValue):TReturn)|TValue $value
+ * @return ($value is Closure ? TReturn : TValue)
  */
 function value(mixed $value, ...$args)
 {
@@ -65,8 +72,12 @@ function env($key, $default = null)
 /**
  * Retry an operation a given number of times.
  *
+ * @template TReturn
+ *
  * @param float|int|int[] $times
+ * @param callable(int):TReturn $callback
  * @param int $sleep millisecond
+ * @return TReturn|void
  * @throws Throwable
  */
 function retry($times, callable $callback, int $sleep = 0)
@@ -95,7 +106,12 @@ function retry($times, callable $callback, int $sleep = 0)
 /**
  * Return the given value, optionally passed through the given callback.
  *
- * @param mixed $value
+ * @template TValue
+ * @template TReturn
+ *
+ * @param TValue $value
+ * @param null|(callable(TValue):TReturn) $callback
+ * @return ($callback is null ? TValue : TReturn)
  */
 function with($value, ?callable $callback = null)
 {
@@ -196,6 +212,11 @@ function getter(string $property): string
  * Create an object instance, if the DI container exist in ApplicationContext,
  * then the object will be created by DI container via `make()` method, if not,
  * the object will create by `new` keyword.
+ *
+ * @template TClass
+ *
+ * @param class-string<TClass>|string $name
+ * @return ($name is class-string<TClass> ? TClass : mixed)
  */
 function make(string $name, array $parameters = [])
 {
@@ -220,9 +241,12 @@ function swoole_hook_flags(): int
 
 /**
  * Provide access to optional objects.
+ * @template TValue
+ * @template TReturn
  *
- * @param mixed $value
- * @return mixed
+ * @param TValue $value
+ * @param null|(callable(TValue):TReturn) $callback
+ * @return ($callback is null ? Optional<TValue> : ($value is null ? null : TReturn))
  */
 function optional($value = null, ?callable $callback = null)
 {
@@ -289,4 +313,26 @@ function now($tz = null)
 function today($tz = null)
 {
     return Carbon::today($tz);
+}
+
+/**
+ * Return a scalar value for the given value that might be an enum.
+ *
+ * @internal
+ *
+ * @template TValue
+ * @template TDefault
+ *
+ * @param TValue $value
+ * @param callable(TValue): TDefault|TDefault $default
+ * @return ($value is empty ? TDefault : mixed)
+ */
+function enum_value($value, $default = null)
+{
+    return match (true) {
+        $value instanceof BackedEnum => $value->value,
+        $value instanceof UnitEnum => $value->name,
+
+        default => $value ?? value($default),
+    };
 }

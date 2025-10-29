@@ -44,6 +44,9 @@ class LoggerFactory
         }
 
         $config = $config[$group];
+        if (is_callable($config)) {
+            $config = $config($name);
+        }
         $handlers = $this->handlers($config);
         $processors = $this->processors($config);
 
@@ -137,9 +140,13 @@ class LoggerFactory
         return $handlers;
     }
 
+    /**
+     * @param class-string<HandlerInterface> $class
+     * @param array $constructor
+     * @param array $formatterConfig
+     */
     protected function handler($class, $constructor, $formatterConfig): HandlerInterface
     {
-        /** @var HandlerInterface $handler */
         $handler = make($class, $constructor);
 
         if ($handler instanceof FormattableHandlerInterface) {

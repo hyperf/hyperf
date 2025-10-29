@@ -14,10 +14,10 @@ namespace Hyperf\Tappable;
 
 /**
  * Call the given Closure with the given value then return the value.
- *
- * @param mixed $value
+ * @template TValue
+ * @param TValue $value
  * @param null|callable $callback
- * @return mixed
+ * @return ($callback is null ? HigherOrderTapProxy<TValue> : TValue)
  */
 function tap($value, $callback = null)
 {

@@ -70,7 +70,7 @@ class RetryAnnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()
@@ -97,7 +97,7 @@ class RetryAnnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()
@@ -130,7 +130,7 @@ class RetryAnnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()
@@ -163,7 +163,7 @@ class RetryAnnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()
@@ -190,7 +190,7 @@ class RetryAnnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()
@@ -219,7 +219,7 @@ class RetryAnnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()
@@ -250,7 +250,7 @@ class RetryAnnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()
@@ -278,7 +278,7 @@ class RetryAnnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()
@@ -309,7 +309,7 @@ class RetryAnnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()
@@ -337,12 +337,12 @@ class RetryAnnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()
                 {
-                    $retry = new class() extends Retry {
+                    $retry = new class extends Retry {
                         public $timeout = 0.001;
 
                         public function __construct()
@@ -367,7 +367,7 @@ class RetryAnnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()
@@ -393,7 +393,7 @@ class RetryAnnotationAspectTest extends TestCase
         $pipeline = new Pipeline($container);
 
         $aspect = new RetryAnnotationAspect();
-        $aspect2 = new class() implements AroundInterface {
+        $aspect2 = new class implements AroundInterface {
             public function process(ProceedingJoinPoint $proceedingJoinPoint)
             {
                 return $proceedingJoinPoint->process() . '_aspect';
@@ -416,7 +416,7 @@ class RetryAnnotationAspectTest extends TestCase
         });
         $point->shouldReceive('getArguments')->andReturns([]);
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()

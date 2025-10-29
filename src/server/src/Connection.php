@@ -16,11 +16,8 @@ use Hyperf\Engine\Contract\SocketInterface;
 
 class Connection
 {
-    protected $socket;
-
-    public function __construct(SocketInterface $conn)
+    public function __construct(protected SocketInterface $socket)
     {
-        $this->socket = $conn;
     }
 
     public function recv(float $timeout = 0)

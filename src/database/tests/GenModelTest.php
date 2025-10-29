@@ -19,6 +19,7 @@ use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\Gender;
 use HyperfTest\Database\Stubs\Model\UserEnum;
 use HyperfTest\Database\Stubs\Model\UserExtEmpty;
+use HyperfTest\Database\Stubs\Model\UserExtWithTrait;
 use Mockery;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
@@ -69,7 +70,7 @@ declare (strict_types=1);
             }
         }
 
-        $astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $stms = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserExtEmpty.php'));
         $traverser = new NodeTraverser();
         $visitor = new ModelUpdateVisitor(UserExtEmpty::class, $columns, ContainerStub::getModelOption());
@@ -125,7 +126,7 @@ class UserExtEmpty extends Model
                 $columns[$i]['cast'] = 'datetime';
             }
         }
-        $astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $stms = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserEnum.php'));
         $traverser = new NodeTraverser();
         $visitor = new ModelUpdateVisitor(UserEnum::class, $columns, ContainerStub::getModelOption()->setForceCasts(false));
@@ -165,6 +166,30 @@ class UserEnum extends Model
         // ignore
     }
 }", $code);
+    }
+
+    public function testGenModelWithTrait()
+    {
+        $container = ContainerStub::getContainer();
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturnUsing(function () {
+            $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+            $dispatcher->shouldReceive('dispatch')->withAnyArgs()->andReturn(null);
+            return $dispatcher;
+        });
+        $connection = $container->get(ConnectionResolverInterface::class)->connection();
+        /** @var MySqlBuilder $builder */
+        $builder = $connection->getSchemaBuilder('default');
+        $columns = $this->formatColumns($builder->getColumnTypeListing('user_ext'));
+        $columns = [];
+        $astParser = (new ParserFactory())->createForNewestSupportedVersion();
+        $originStmts = $astParser->parse(file_get_contents(__DIR__ . '/Stubs/Model/UserExtWithTrait.php'));
+        $traverser = new NodeTraverser();
+        $visitor = new ModelUpdateVisitor(UserExtWithTrait::class, $columns, ContainerStub::getModelOption()->setWithComments(true)->setForceCasts(false));
+        $traverser->addVisitor($visitor);
+        $newStmts = $traverser->traverse($originStmts);
+        $code = (new Standard())->printFormatPreserving($newStmts, $originStmts, $astParser->getTokens());
+        $this->assertTrue(str_contains($code, '@property-read string $count_string'));
+        $this->assertTrue(str_contains($code, '@property-read null|User $user'));
     }
 
     /**

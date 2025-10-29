@@ -15,6 +15,7 @@ namespace Hyperf\Redis;
 use Hyperf\Context\Context;
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Pool\PoolFactory;
+use Throwable;
 
 use function Hyperf\Coroutine\defer;
 
@@ -37,12 +38,31 @@ class Redis
         // Get a connection from coroutine context or connection pool.
         $hasContextConnection = Context::has($this->getContextKey());
         $connection = $this->getConnection($hasContextConnection);
+        // Record the start time of the command.
+        $start = (float) microtime(true);
 
         try {
+            /** @var RedisConnection $connection */
             $connection = $connection->getConnection();
             // Execute the command with the arguments.
             $result = $connection->{$name}(...$arguments);
+        } catch (Throwable $exception) {
+            throw $exception;
         } finally {
+            $time = round((microtime(true) - $start) * 1000, 2);
+            // Dispatch the command executed event.
+            $connection->getEventDispatcher()?->dispatch(
+                new Event\CommandExecuted(
+                    $name,
+                    $arguments,
+                    $time,
+                    $connection,
+                    $this->poolName,
+                    $result ?? null,
+                    $exception ?? null,
+                )
+            );
+
             // Release connection.
             if (! $hasContextConnection) {
                 if ($this->shouldUseSameConnection($name)) {
@@ -51,9 +71,8 @@ class Redis
                     }
                     // Should storage the connection to coroutine context, then use defer() to release the connection.
                     Context::set($this->getContextKey(), $connection);
-                    defer(function () use ($connection) {
-                        Context::set($this->getContextKey(), null);
-                        $connection->release();
+                    defer(function () {
+                        $this->releaseContextConnection();
                     });
                 } else {
                     // Release the connection after command executed.
@@ -63,6 +82,20 @@ class Redis
         }
 
         return $result;
+    }
+
+    /**
+     * Release the connection stored in coroutine context.
+     */
+    private function releaseContextConnection(): void
+    {
+        $contextKey = $this->getContextKey();
+        $connection = Context::get($contextKey);
+
+        if ($connection) {
+            Context::set($contextKey, null);
+            $connection->release();
+        }
     }
 
     /**

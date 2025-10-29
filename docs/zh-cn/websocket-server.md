@@ -226,15 +226,13 @@ namespace App\Controller;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\WebSocketServer\Sender;
+use function Hyperf\Coroutine\go;
 
 #[AutoController]
 class ServerController
 {
-    /**
-     * @var Sender
-     */
     #[Inject]
-    protected $sender;
+    protected Sender $sender;
 
     public function close(int $fd)
     {

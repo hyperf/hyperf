@@ -18,48 +18,34 @@ use Swoole\Coroutine;
 use Swoole\Timer;
 use Throwable;
 
-/**
- * @method string name()
- */
 trait RunTestsInCoroutine
 {
     protected bool $enableCoroutine = true;
 
-    protected string $realTestName = '';
-
-    final protected function runTestsInCoroutine(...$arguments)
+    public function runBare(): void
     {
-        parent::setName($this->realTestName);
+        if ($this->enableCoroutine && extension_loaded('swoole') && Coroutine::getCid() === -1) {
+            $exception = null;
 
-        $testResult = null;
-        $exception = null;
+            /* @phpstan-ignore-next-line */
+            \Swoole\Coroutine\run(function () use (&$exception) {
+                try {
+                    parent::runBare();
+                } catch (Throwable $e) {
+                    $exception = $e;
+                } finally {
+                    Timer::clearAll();
+                    CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+                }
+            });
 
-        /* @phpstan-ignore-next-line */
-        \Swoole\Coroutine\run(function () use (&$testResult, &$exception, $arguments) {
-            try {
-                $testResult = $this->{$this->realTestName}(...$arguments);
-            } catch (Throwable $e) {
-                $exception = $e;
-            } finally {
-                Timer::clearAll();
-                CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+            if ($exception) {
+                throw $exception;
             }
-        });
 
-        if ($exception) {
-            throw $exception;
+            return;
         }
 
-        return $testResult;
-    }
-
-    final protected function runTest(): mixed
-    {
-        if (extension_loaded('swoole') && Coroutine::getCid() === -1 && $this->enableCoroutine) {
-            $this->realTestName = $this->name();
-            parent::setName('runTestsInCoroutine');
-        }
-
-        return parent::runTest();
+        parent::runBare();
     }
 }

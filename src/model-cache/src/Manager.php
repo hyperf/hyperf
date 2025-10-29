@@ -61,13 +61,12 @@ class Manager
 
     /**
      * Fetch a model from cache.
-     * @param mixed $id
+     * @param int|string $id
+     * @param class-string<Model> $class
      */
     public function findFromCache($id, string $class): ?Model
     {
-        /** @var Model $instance */
         $instance = new $class();
-
         $name = $instance->getConnectionName();
         $primaryKey = $instance->getKeyName();
 
@@ -103,6 +102,8 @@ class Manager
 
     /**
      * Fetch many models from cache.
+     * @param array<int|string> $ids
+     * @param class-string<Model> $class
      */
     public function findManyFromCache(array $ids, string $class): Collection
     {
@@ -110,9 +111,7 @@ class Manager
             return new Collection([]);
         }
 
-        /** @var Model $instance */
         $instance = new $class();
-
         $name = $instance->getConnectionName();
         $primaryKey = $instance->getKeyName();
 
@@ -180,13 +179,13 @@ class Manager
 
     /**
      * Destroy the models for the given IDs from cache.
+     * @param class-string<Model> $class
      */
     public function destroy(iterable $ids, string $class): bool
     {
-        /** @var Model $instance */
         $instance = new $class();
-
         $name = $instance->getConnectionName();
+
         if ($handler = $this->handlers[$name] ?? null) {
             $keys = [];
             foreach ($ids as $id) {
@@ -204,13 +203,13 @@ class Manager
      * @param mixed $id
      * @param mixed $column
      * @param mixed $amount
+     * @param class-string<Model> $class
      */
     public function increment($id, $column, $amount, string $class): bool
     {
-        /** @var Model $instance */
         $instance = new $class();
-
         $name = $instance->getConnectionName();
+
         if ($handler = $this->handlers[$name] ?? null) {
             $key = $this->getCacheKey($id, $instance, $handler->getConfig());
             if ($handler->has($key)) {

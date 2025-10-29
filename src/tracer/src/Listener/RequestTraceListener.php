@@ -77,12 +77,18 @@ class RequestTraceListener implements ListenerInterface
         $tracer = TracerContext::getTracer();
         $span = TracerContext::getRoot();
         $span->setTag($this->spanTagManager->get('response', 'status_code'), (string) $response->getStatusCode());
+        if ($this->spanTagManager->has('response', 'body')) {
+            $span->setTag($this->spanTagManager->get('response', 'body'), (string) $response->getBody());
+        }
 
         if ($event->exception && $this->switchManager->isEnable('exception') && ! $this->switchManager->isIgnoreException($event->exception)) {
             $this->appendExceptionToSpan($span, $exception = $event->exception);
 
             if ($exception instanceof HttpException) {
                 $span->setTag($this->spanTagManager->get('response', 'status_code'), $exception->getStatusCode());
+                if ($this->spanTagManager->has('response', 'body')) {
+                    $span->setTag($this->spanTagManager->get('response', 'body'), (string) $response->getBody());
+                }
             }
         }
 
@@ -107,6 +113,9 @@ class RequestTraceListener implements ListenerInterface
         $span->setTag($this->spanTagManager->get('request', 'path'), (string) $uri->getPath());
         $span->setTag($this->spanTagManager->get('request', 'method'), $request->getMethod());
         $span->setTag($this->spanTagManager->get('request', 'uri'), (string) $uri);
+        if ($this->spanTagManager->has('request', 'body')) {
+            $span->setTag($this->spanTagManager->get('request', 'body'), (string) $request->getBody());
+        }
         foreach ($request->getHeaders() as $key => $value) {
             $span->setTag($this->spanTagManager->get('request', 'header') . '.' . $key, implode(', ', $value));
         }

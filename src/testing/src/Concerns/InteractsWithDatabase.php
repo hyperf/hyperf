@@ -20,12 +20,12 @@ use PHPUnit\Framework\Constraint\LogicalNot;
 
 trait InteractsWithDatabase
 {
-    private function assertDatabaseHas(string $table, array $data, ?string $connection = null): void
+    protected function assertDatabaseHas(string $table, array $data, ?string $connection = null): void
     {
         $this->assertThat($data, new HasInDatabase($this->getConnection($connection), $table));
     }
 
-    private function assertDatabaseMissing(string $table, array $data, ?string $connection = null): void
+    protected function assertDatabaseMissing(string $table, array $data, ?string $connection = null): void
     {
         $this->assertThat($data, new LogicalNot(new HasInDatabase($this->getConnection($connection), $table)));
     }

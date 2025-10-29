@@ -2,12 +2,52 @@ name: Test for Hyperf Components
 
 on:
   push:
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**.md"
   pull_request:
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**.md"
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v5.1.2'
+  SW_VERSION: 'v5.1.6'
 jobs:
+  crontab:
+    name: Test for Crontab
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '8.4', '8.3', '8.2' ]
+        carbon-version: [ '^2.0', '^3.0' ]
+      max-parallel: 2
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          extensions: redis, pdo, pdo_mysql, bcmath, swoole
+          ini-values: opcache.enable_cli=1
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Setup Carbon ${{ matrix.carbon-version }}
+        run: composer require "nesbot/carbon:${{ matrix.carbon-version }}" --no-update
+      - name: Setup Packages
+        run: ./.travis/requirement.install.sh
+      - name: Run Test Cases
+        run: |
+          composer test src/crontab -- --exclude-group NonCoroutine
+          vendor/bin/phpunit src/crontab --group NonCoroutine
   database:
     name: Test for Database
     runs-on: 'ubuntu-latest'
@@ -15,8 +55,8 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.3', '8.2', '8.1' ]
-        mysql-version: [ '5.7', '8.0' ]
+        php-version: [ '8.4', '8.3', '8.2' ]
+        mysql-version: [ '5.7', '8.0', '8.4' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -36,7 +76,12 @@ jobs:
         run: ./.travis/requirement.install.sh
       - name: Setup Services
         run: |
+          if [ ${{ matrix.mysql-version }} == '8.4' ]
+          then
+          docker run --name mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:${{ matrix.mysql-version }} --bind-address=0.0.0.0
+          else
           docker run --name mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:${{ matrix.mysql-version }} --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
+          fi
           sleep 20
       - name: Setup Mysql
         run: export TRAVIS_BUILD_DIR=$(pwd) && bash ./.travis/setup.mysql.sh
@@ -52,7 +97,7 @@ jobs:
     strategy:
       matrix:
         version: [ '^1.0', '^2.0', '^3.0' ]
-        php-version: [ '8.3', '8.2', '8.1' ]
+        php-version: [ '8.4', '8.3', '8.2' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -96,12 +141,13 @@ jobs:
   phar:
     name: Test for Building PHAR
     runs-on: 'ubuntu-latest'
+    if: false # Disable this job
     env:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
         no-dev: [ '--no-dev', '' ]
-        php-version: [ '8.1' ]
+        php-version: [ '8.2' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -152,7 +198,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.3', '8.2', '8.1' ]
+        php-version: [ '8.4', '8.3', '8.2' ]
         version: [ '^1.0', '^2.0' ]
       max-parallel: 6
       fail-fast: false
@@ -188,7 +234,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.3', '8.2', '8.1' ]
+        php-version: [ '8.4', '8.3', '8.2' ]
         version: [ '^1.0', '^2.0' ]
       max-parallel: 6
       fail-fast: false
@@ -215,6 +261,7 @@ jobs:
           composer remove league/flysystem --dev -W
           composer remove aws/aws-sdk-php --dev -W
           composer remove influxdb/influxdb-php --dev -W
+          composer remove elasticsearch/elasticsearch --dev -W
           composer remove guzzlehttp/guzzle --dev -W
           composer remove jcchavezs/zipkin-opentracing -W --dev
           composer require "psr/http-message:${{ matrix.version }}" -W
@@ -231,11 +278,9 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.3', '8.2', '8.1' ]
+        php-version: [ '8.4', '8.3', '8.2' ]
         log-version: [ '^1.0', '^2.0', '^3.0' ]
         exclude:
-          - php-version: '8.1'
-            log-version: '^1.0'
           - php-version: '8.2'
             log-version: '^1.0'
       max-parallel: 5
@@ -260,7 +305,7 @@ jobs:
           composer remove bandwidth-throttle/token-bucket --dev -W
           composer remove friendsofphp/php-cs-fixer --dev -W
           composer remove zircote/swagger-php --dev -W
-          composer remove "symfony/*" --dev -W
+          composer remove "symfony/*" --dev --no-update
       - name: Run Test Cases
         run: |
           ./.travis/requirement.install.sh
@@ -268,14 +313,14 @@ jobs:
           then
             composer require "monolog/monolog:^2.0"
           fi
-          composer require "psr/log:${{ matrix.log-version }}"
+          composer require "psr/log:${{ matrix.log-version }}" --no-update
           if [ ${{ matrix.log-version }} == '^3.0' ]
           then
-            composer require "symfony/console:^6.0" --dev -W
+            composer require "symfony/console:^6.0" --dev --no-update
           else
-            composer require "symfony/console:^5.0" --dev -W
+            composer require "symfony/console:^5.0" --dev --no-update
           fi
-          composer require symfony/event-dispatcher --dev -W
+          composer require symfony/event-dispatcher --dev --no-update
           composer update -oW
           composer analyse src/framework
           composer analyse src/server/src/Entry/Logger.php
@@ -290,7 +335,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.3', '8.2', '8.1' ]
+        php-version: [ '8.4', '8.3', '8.2' ]
         psr-version: [ '^1.0', '^2.0', '^3.0' ]
       max-parallel: 3
       fail-fast: false
@@ -317,6 +362,7 @@ jobs:
       - name: Run Test Cases
         run: |
           ./.travis/requirement.install.sh
+          composer remove thecodingmachine/graphqlite --dev -W
           composer require "psr/simple-cache:${{ matrix.psr-version }}"
           composer update -oW
           composer analyse src/cache
@@ -332,7 +378,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.3', '8.2', '8.1' ]
+        php-version: [ '8.4', '8.3', '8.2' ]
         redis: [ 'redis', 'redis-5.3.7' ]
       max-parallel: 2
       fail-fast: false
@@ -366,11 +412,8 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.3', '8.2', '8.1' ]
+        php-version: [ '8.4', '8.3', '8.2' ]
         symfony-version: [ '^6.0', '^7.0' ]
-        exclude:
-          - php-version: '8.1'
-            symfony-version: '^7.0'
       max-parallel: 2
       fail-fast: false
     steps:
@@ -405,8 +448,8 @@ jobs:
           composer test src/framework
           composer analyse src/server
           composer test src/server
-          # composer analyse src/serializer
-          # composer test src/serializer
-          # composer analyse src/task
-          # composer test src/task
+          composer analyse src/serializer
+          composer test src/serializer
+          composer analyse src/task
+          composer test src/task
 

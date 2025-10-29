@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Cases\PgSQL;
 
 use Hyperf\DB\DB;
-use HyperfTest\Database\PgSQL\Stubs\SwooleVersionStub;
 use HyperfTest\DB\Cases\AbstractTestCase;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 
 /**
  * @internal
@@ -24,9 +24,9 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 #[CoversNothing]
 class PgSQLTest extends AbstractTestCase
 {
+    #[RequiresPhpExtension('swoole', '< 6.0')]
     public function testExecute()
     {
-        SwooleVersionStub::skipV6();
         $res = DB::connection('pgsql')->execute('INSERT INTO public.users (email, name) VALUES (?, ?);', ['l@hyperf.io', 'limx']);
 
         $this->assertGreaterThan(0, $res);

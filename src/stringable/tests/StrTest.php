@@ -333,6 +333,56 @@ class StrTest extends TestCase
         $this->assertTrue(Str::isMatch(['/^[a-zA-Z,!]+$/', '/^(.*(.*(.*)))/'], 'Hello, Hyperf!'));
     }
 
+    public function testIs()
+    {
+        $this->assertTrue(Str::is('Hello/*', 'Hello/Hyperf'));
+        $this->assertFalse(Str::is('Hyperf', 'hyperf'));
+        $this->assertFalse(Str::is('', 0));
+        $this->assertFalse(Str::is([null], 0));
+        $this->assertTrue(Str::is([null], null));
+
+        $this->assertTrue(Str::is('/', '/'));
+        $this->assertFalse(Str::is('/', ' /'));
+        $this->assertFalse(Str::is('/', '/a'));
+        $this->assertTrue(Str::is('foo/*', 'foo/bar/baz'));
+
+        $this->assertTrue(Str::is('*@*', 'App\Class@method'));
+        $this->assertTrue(Str::is('*@*', 'app\Class@'));
+        $this->assertTrue(Str::is('*@*', '@method'));
+
+        // is case sensitive
+        $this->assertFalse(Str::is('*BAZ*', 'foo/bar/baz'));
+        $this->assertFalse(Str::is('*FOO*', 'foo/bar/baz'));
+        $this->assertFalse(Str::is('A', 'a'));
+
+        // is not case sensitive
+        $this->assertTrue(Str::is('A', 'a', true));
+        $this->assertTrue(Str::is('*BAZ*', 'foo/bar/baz', true));
+        $this->assertTrue(Str::is(['A*', 'B*'], 'a/', true));
+        $this->assertFalse(Str::is(['A*', 'B*'], 'f/', true));
+        $this->assertTrue(Str::is('FOO', 'foo', true));
+        $this->assertTrue(Str::is('*FOO*', 'foo/bar/baz', true));
+        $this->assertTrue(Str::is('foo/*', 'FOO/bar', true));
+
+        // Accepts array of patterns
+        $this->assertTrue(Str::is(['a*', 'b*'], 'a/'));
+        $this->assertTrue(Str::is(['a*', 'b*'], 'b/'));
+        $this->assertFalse(Str::is(['a*', 'b*'], 'f/'));
+
+        // numeric values and patterns
+        $this->assertFalse(Str::is(['a*', 'b*'], 123));
+        $this->assertTrue(Str::is(['*2*', 'b*'], 11211));
+
+        $this->assertTrue(Str::is('*/foo', 'blah/baz/foo'));
+
+        // empty patterns
+        $this->assertFalse(Str::is([], 'test'));
+
+        $this->assertFalse(Str::is('', 0));
+        $this->assertFalse(Str::is([null], 0));
+        $this->assertTrue(Str::is([null], null));
+    }
+
     public function testCamel()
     {
         $this->assertSame('helloWorld', Str::camel('HelloWorld'));
@@ -379,12 +429,6 @@ class StrTest extends TestCase
     public function testValidUrls($url)
     {
         $this->assertTrue(Str::isUrl($url));
-    }
-
-    #[DataProvider('invalidUrls')]
-    public function testInvalidUrls($url)
-    {
-        $this->assertFalse(Str::isUrl($url));
     }
 
     public static function validUrls()
@@ -627,6 +671,12 @@ class StrTest extends TestCase
             ['https://hyperf.wiki#fragment'],
             ['https://hyperf.wiki/#fragment'],
         ];
+    }
+
+    #[DataProvider('invalidUrls')]
+    public function testInvalidUrls($url)
+    {
+        $this->assertFalse(Str::isUrl($url));
     }
 
     public static function invalidUrls()
@@ -970,6 +1020,15 @@ class StrTest extends TestCase
         );
 
         $this->assertSame("\xE9", Str::trim(" \xE9 "));
+
+        $trimDefaultChars = [' ', "\n", "\r", "\t", "\v"];
+
+        foreach ($trimDefaultChars as $char) {
+            $this->assertSame('', Str::trim(" {$char} "));
+            $this->assertSame(trim(" {$char} "), Str::trim(" {$char} "));
+            $this->assertSame('foo bar', Str::trim("{$char} foo bar {$char}"));
+            $this->assertSame(trim("{$char} foo bar {$char}"), Str::trim("{$char} foo bar {$char}"));
+        }
     }
 
     public function testLtrim()
@@ -990,6 +1049,15 @@ class StrTest extends TestCase
             ')
         );
         $this->assertSame("\xE9 ", Str::ltrim(" \xE9 "));
+
+        $ltrimDefaultChars = [' ', "\n", "\r", "\t", "\v"];
+
+        foreach ($ltrimDefaultChars as $char) {
+            $this->assertSame('', Str::ltrim(" {$char} "));
+            $this->assertSame(ltrim(" {$char} "), Str::ltrim(" {$char} "));
+            $this->assertSame("foo bar {$char}", Str::ltrim("{$char} foo bar {$char}"));
+            $this->assertSame(ltrim("{$char} foo bar {$char}"), Str::ltrim("{$char} foo bar {$char}"));
+        }
     }
 
     public function testRtrim()
@@ -1011,6 +1079,15 @@ class StrTest extends TestCase
         );
 
         $this->assertSame(" \xE9", Str::rtrim(" \xE9 "));
+
+        $rtrimDefaultChars = [' ', "\n", "\r", "\t", "\v"];
+
+        foreach ($rtrimDefaultChars as $char) {
+            $this->assertSame('', Str::rtrim(" {$char} "));
+            $this->assertSame(rtrim(" {$char} "), Str::rtrim(" {$char} "));
+            $this->assertSame("{$char} foo bar", Str::rtrim("{$char} foo bar {$char}"));
+            $this->assertSame(rtrim("{$char} foo bar {$char}"), Str::rtrim("{$char} foo bar {$char}"));
+        }
     }
 
     public function testSquish()
@@ -1113,5 +1190,62 @@ class StrTest extends TestCase
     {
         $this->assertSame('http://hyperf.io', Str::replaceMatches('/^https:\/\//', 'http://', 'https://hyperf.io'));
         $this->assertSame('http://hyperf.io', Str::replaceMatches('/^https:\/\//', fn ($matches) => 'http://', 'https://hyperf.io'));
+    }
+
+    public function testNumbers(): void
+    {
+        $this->assertSame('5551234567', Str::numbers('(555) 123-4567'));
+        $this->assertSame('443', Str::numbers('L4r4v3l!'));
+        $this->assertSame('', Str::numbers('Laravel!'));
+
+        $arrayValue = ['(555) 123-4567', 'L4r4v3l', 'Laravel!'];
+        $arrayExpected = ['5551234567', '443', ''];
+        $this->assertSame($arrayExpected, Str::numbers($arrayValue));
+    }
+
+    public function testFromBase64(): void
+    {
+        $this->assertSame('foo', Str::fromBase64(base64_encode('foo')));
+        $this->assertSame('foobar', Str::fromBase64(base64_encode('foobar'), true));
+    }
+
+    public function testChopStart()
+    {
+        foreach ([
+            'http://laravel.com' => ['http://', 'laravel.com'],
+            'http://-http://' => ['http://', '-http://'],
+            'http://laravel.com' => ['htp:/', 'http://laravel.com'],
+            'http://laravel.com' => ['http://www.', 'http://laravel.com'],
+            'http://laravel.com' => ['-http://', 'http://laravel.com'],
+            'http://laravel.com' => [['https://', 'http://'], 'laravel.com'],
+            'http://www.laravel.com' => [['http://', 'www.'], 'www.laravel.com'],
+            'http://http-is-fun.test' => ['http://', 'http-is-fun.test'],
+            '🌊✋' => ['🌊', '✋'],
+            '🌊✋' => ['✋', '🌊✋'],
+        ] as $subject => $value) {
+            [$needle, $expected] = $value;
+
+            $this->assertSame($expected, Str::chopStart($subject, $needle));
+        }
+    }
+
+    public function testChopEnd()
+    {
+        foreach ([
+            'path/to/file.php' => ['.php', 'path/to/file'],
+            '.php-.php' => ['.php', '.php-'],
+            'path/to/file.php' => ['.ph', 'path/to/file.php'],
+            'path/to/file.php' => ['foo.php', 'path/to/file.php'],
+            'path/to/file.php' => ['.php-', 'path/to/file.php'],
+            'path/to/file.php' => [['.html', '.php'], 'path/to/file'],
+            'path/to/file.php' => [['.php', 'file'], 'path/to/file'],
+            'path/to/php.php' => ['.php', 'path/to/php'],
+            '✋🌊' => ['🌊', '✋'],
+            '✋🌊' => ['✋', '✋🌊'],
+        ] as $subject => $value) {
+            [$needle, $expected] = $value;
+
+            $this->assertSame($expected, Str::chopEnd($subject, $needle));
+        }
     }
 }

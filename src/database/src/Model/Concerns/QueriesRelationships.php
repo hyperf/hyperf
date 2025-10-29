@@ -125,6 +125,17 @@ trait QueriesRelationships
     }
 
     /**
+     * Add a relationship count / exists condition to the query with where clauses.
+     *
+     * Also load the relationship with same condition.
+     */
+    public function withWhereHas(string $relation, ?Closure $callback = null, string $operator = '>=', int $count = 1): Builder|static
+    {
+        return $this->whereHas(Str::before($relation, ':'), $callback, $operator, $count)
+            ->with($callback ? [$relation => fn ($query) => $callback($query)] : $relation);
+    }
+
+    /**
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
@@ -366,6 +377,54 @@ trait QueriesRelationships
     }
 
     /**
+     * Add a basic where clause to a relationship query.
+     */
+    public function whereRelation(string $relation, array|Closure|Expression|string $column, mixed $operator = null, mixed $value = null): Builder|static
+    {
+        return $this->whereHas($relation, function ($query) use ($column, $operator, $value) {
+            if ($column instanceof Closure) {
+                $column($query);
+            } else {
+                $query->where($column, $operator, $value);
+            }
+        });
+    }
+
+    /**
+     * Add an "or where" clause to a relationship query.
+     */
+    public function orWhereRelation(string $relation, array|Closure|Expression|string $column, mixed $operator = null, mixed $value = null): Builder|static
+    {
+        return $this->orWhereHas($relation, function ($query) use ($column, $operator, $value) {
+            if ($column instanceof Closure) {
+                $column($query);
+            } else {
+                $query->where($column, $operator, $value);
+            }
+        });
+    }
+
+    /**
+     * Add a polymorphic relationship condition to the query with a where clause.
+     */
+    public function whereMorphRelation(MorphTo|string $relation, array|string $types, array|Closure|Expression|string $column, mixed $operator = null, mixed $value = null): Builder|static
+    {
+        return $this->whereHasMorph($relation, $types, function ($query) use ($column, $operator, $value) {
+            $query->where($column, $operator, $value);
+        });
+    }
+
+    /**
+     * Add a polymorphic relationship condition to the query with an "or where" clause.
+     */
+    public function orWhereMorphRelation(MorphTo|string $relation, array|string $types, array|Closure|Expression|string $column, mixed $operator = null, mixed $value = null): Builder|static
+    {
+        return $this->orWhereHasMorph($relation, $types, function ($query) use ($column, $operator, $value) {
+            $query->where($column, $operator, $value);
+        });
+    }
+
+    /**
      * Add a polymorphic relationship count / exists condition to the query.
      *
      * @param string $relation
@@ -408,6 +467,14 @@ trait QueriesRelationships
     }
 
     /**
+     * Add a polymorphic relationship count / exists condition to the query with an "or".
+     */
+    public function orHasMorph(MorphTo|string $relation, array|string $types, string $operator = '>=', int $count = 1): Builder|static
+    {
+        return $this->hasMorph($relation, $types, $operator, $count, 'or');
+    }
+
+    /**
      * Add a polymorphic relationship count / exists condition to the query.
      *
      * @param array|string $types
@@ -417,6 +484,14 @@ trait QueriesRelationships
     public function doesntHaveMorph(string $relation, $types, $boolean = 'and', ?Closure $callback = null)
     {
         return $this->hasMorph($relation, $types, '<', 1, $boolean, $callback);
+    }
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query with an "or".
+     */
+    public function orDoesntHaveMorph(MorphTo|string $relation, array|string $types): Builder|static
+    {
+        return $this->doesntHaveMorph($relation, $types, 'or');
     }
 
     /**

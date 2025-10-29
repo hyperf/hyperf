@@ -20,10 +20,7 @@ abstract class RpcMessage extends Message implements RpcMessageInterface
 {
     protected string $queue = '';
 
-    /**
-     * @var mixed
-     */
-    protected $payload;
+    protected mixed $payload;
 
     public function getQueueBuilder(): QueueBuilder
     {

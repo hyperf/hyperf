@@ -54,6 +54,14 @@ class AbstractDriverTest extends TestCase
         $this->assertSame(['message' => 'Hello Hyperf', 'id' => 1], $config->get('test'));
     }
 
+    public static function getConfig(): array
+    {
+        return [
+            [self::getEtcdConfig()],
+            [self::getNacosConfig()],
+        ];
+    }
+
     #[DataProvider('getConfigAndPipeMessage')]
     public function testOnPipeMessage(Config $config, PipeMessageInterface $pipeMessage, array $assert)
     {
@@ -64,14 +72,6 @@ class AbstractDriverTest extends TestCase
 
         $driver->onPipeMessage($pipeMessage);
         $this->assertSame($assert, $config->get('test'));
-    }
-
-    public static function getConfig(): array
-    {
-        return [
-            [self::getEtcdConfig()],
-            [self::getNacosConfig()],
-        ];
     }
 
     public static function getConfigAndPipeMessage()

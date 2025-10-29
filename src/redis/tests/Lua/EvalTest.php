@@ -42,7 +42,7 @@ class EvalTest extends TestCase
         $container = ContainerStub::mockContainer();
         $logger = $container->get(StdoutLoggerInterface::class);
         $logger->shouldReceive('warning')->once()->andReturnUsing(function ($message) {
-            $this->assertSame('NOSCRIPT No matching script[HyperfTest\\Redis\\Stub\\HGetAllMultipleStub]. Use EVAL instead.', $message);
+            $this->assertSame('NOSCRIPT No matching script[HyperfTest\Redis\Stub\HGetAllMultipleStub]. Use EVAL instead.', $message);
         });
 
         $redis = $container->get(Redis::class);

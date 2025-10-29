@@ -12,11 +12,12 @@ declare(strict_types=1);
 
 namespace Hyperf\Cache;
 
+use Hyperf\Cache\Driver\DriverInterface;
 use Psr\SimpleCache\CacheInterface;
 
 class Cache implements CacheInterface
 {
-    protected $driver;
+    protected DriverInterface $driver;
 
     public function __construct(CacheManager $manager)
     {

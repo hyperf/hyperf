@@ -17,7 +17,7 @@ use PhpParser\NodeVisitorAbstract;
 
 class RewriteConfigVisitor extends NodeVisitorAbstract
 {
-    public function leaveNode(Node $node)
+    public function leaveNode(Node $node): Node|Node\Stmt\Expression
     {
         if ($node instanceof Node\Stmt\Return_) {
             $result = new Node\Expr\Variable('result');

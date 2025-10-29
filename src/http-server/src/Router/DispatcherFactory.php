@@ -117,7 +117,7 @@ class DispatcherFactory
         $prefix = $this->getPrefix($className, $annotation->prefix);
         $router = $this->getRouter($annotation->server);
 
-        $autoMethods = ['GET', 'POST', 'HEAD'];
+        $autoMethods = $annotation->defaultMethods ?? ['GET', 'POST', 'HEAD'];
         $defaultAction = '/index';
         foreach ($methods as $method) {
             $options = $annotation->options;
@@ -210,7 +210,7 @@ class DispatcherFactory
     protected function getPrefix(string $className, string $prefix): string
     {
         if (! $prefix) {
-            $handledNamespace = Str::replaceFirst('Controller', '', Str::after($className, '\\Controller\\'));
+            $handledNamespace = Str::replaceFirst('Controller', '', Str::after($className, '\Controller\\'));
             $handledNamespace = str_replace('\\', '/', $handledNamespace);
             $prefix = Str::snake($handledNamespace);
             $prefix = str_replace('/_', '/', $prefix);

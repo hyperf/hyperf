@@ -23,6 +23,7 @@ use HyperfTest\Resource\Stubs\Models\Post;
 use HyperfTest\Resource\Stubs\Models\Subscription;
 use HyperfTest\Resource\Stubs\Resources\AuthorResourceWithOptionalRelationship;
 use HyperfTest\Resource\Stubs\Resources\ObjectResource;
+use HyperfTest\Resource\Stubs\Resources\PaginationCollection;
 use HyperfTest\Resource\Stubs\Resources\PostCollectionResource;
 use HyperfTest\Resource\Stubs\Resources\PostResource;
 use HyperfTest\Resource\Stubs\Resources\PostResourceWithExtraData;
@@ -431,7 +432,7 @@ class ResourceTest extends TestCase
 
     public function testLeadingMergeKeyedValueIsMergedCorrectly()
     {
-        $filter = new class() {
+        $filter = new class {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -451,7 +452,7 @@ class ResourceTest extends TestCase
 
     public function testLeadingMergeKeyedValueIsMergedCorrectlyWhenFirstValueIsMissing()
     {
-        $filter = new class() {
+        $filter = new class {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -475,7 +476,7 @@ class ResourceTest extends TestCase
 
     public function testLeadingMergeValueIsMergedCorrectly()
     {
-        $filter = new class() {
+        $filter = new class {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -500,7 +501,7 @@ class ResourceTest extends TestCase
 
     public function testMergeValuesMayBeMissing()
     {
-        $filter = new class() {
+        $filter = new class {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -525,7 +526,7 @@ class ResourceTest extends TestCase
 
     public function testInitialMergeValuesMayBeMissing()
     {
-        $filter = new class() {
+        $filter = new class {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -550,7 +551,7 @@ class ResourceTest extends TestCase
 
     public function testMergeValueCanMergeJsonSerializable()
     {
-        $filter = new class() {
+        $filter = new class {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -581,7 +582,7 @@ class ResourceTest extends TestCase
 
     public function testMergeValueCanMergeCollectionOfJsonSerializable()
     {
-        $filter = new class() {
+        $filter = new class {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -607,7 +608,7 @@ class ResourceTest extends TestCase
 
     public function testAllMergeValuesMayBeMissing()
     {
-        $filter = new class() {
+        $filter = new class {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -632,7 +633,7 @@ class ResourceTest extends TestCase
 
     public function testNestedMerges()
     {
-        $filter = new class() {
+        $filter = new class {
             use ConditionallyLoadsAttributes;
 
             public function work()
@@ -731,6 +732,27 @@ class ResourceTest extends TestCase
             1 => 20,
             'total' => 30,
         ], ['data' => [0 => 10, 1 => 20, 'total' => 30]]);
+    }
+
+    public function testResourceCollectionPagination()
+    {
+        $this->http(function () {
+            $paginator = new LengthAwarePaginator(
+                collect([new Post(['id' => 5, 'title' => 'Test Title'])]),
+                10,
+                15,
+                1
+            );
+
+            return new PaginationCollection($paginator);
+        })->assertJson([
+            'data' => [
+                [
+                    'id' => 5,
+                    'title' => 'Test Title',
+                ],
+            ],
+        ]);
     }
 
     private function assertJsonResourceResponse($data, $expectedJson)

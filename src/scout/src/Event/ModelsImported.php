@@ -14,17 +14,13 @@ namespace Hyperf\Scout\Event;
 
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
-use Hyperf\Scout\Searchable;
 
 class ModelsImported
 {
     /**
-     * @param Collection<int, Model&Searchable>
+     * @param Collection<int, Model> $models
      */
-    public $models;
-
-    public function __construct(Collection $models)
+    public function __construct(public Collection $models)
     {
-        $this->models = $models;
     }
 }

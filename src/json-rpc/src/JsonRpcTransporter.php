@@ -28,7 +28,7 @@ class JsonRpcTransporter implements TransporterInterface
 {
     use RecvTrait;
 
-    private ?LoadBalancerInterface $loadBalancer;
+    private ?LoadBalancerInterface $loadBalancer = null;
 
     /**
      * If $loadBalancer is null, will select a node in $nodes to request,
@@ -102,7 +102,7 @@ class JsonRpcTransporter implements TransporterInterface
     }
 
     /**
-     * @param \Hyperf\LoadBalancer\Node[] $nodes
+     * @param Node[] $nodes
      */
     public function setNodes(array $nodes): self
     {

@@ -22,8 +22,6 @@ use Hyperf\Stringable\Str;
 use Hyperf\Support\Traits\ForwardsCalls;
 use Stringable;
 
-use function Hyperf\Collection\collect;
-
 abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Stringable
 {
     use ForwardsCalls;
@@ -84,6 +82,11 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
     protected static ?Closure $currentPageResolver = null;
 
     /**
+     * The query string resolver callback.
+     */
+    protected static ?Closure $queryStringResolver = null;
+
+    /**
      * Make dynamic calls into the collection.
      */
     public function __call(string $method, array $parameters)
@@ -115,9 +118,9 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
      */
     public function getUrlRange(int $start, int $end): array
     {
-        return collect(range($start, $end))->mapWithKeys(function ($page) {
-            return [$page => $this->url($page)];
-        })->all();
+        return Collection::range($start, $end)
+            ->mapWithKeys(fn ($page) => [$page => $this->url($page)])
+            ->all();
     }
 
     /**
@@ -162,7 +165,7 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
      *
      * @param null|array|string $key
      */
-    public function appends($key, ?string $value = null): static
+    public function appends($key, null|array|string $value = null): static
     {
         if (is_null($key)) {
             return $this;
@@ -412,6 +415,38 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
     }
 
     /**
+     * Add all current query string values to the paginator.
+     */
+    public function withQueryString(): static
+    {
+        if (isset(static::$queryStringResolver)) {
+            return $this->appends(call_user_func(static::$queryStringResolver));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Resolve the query string or return the default value.
+     */
+    public static function resolveQueryString(null|array|string $default = null): string
+    {
+        if (isset(static::$queryStringResolver)) {
+            return (static::$queryStringResolver)();
+        }
+
+        return $default;
+    }
+
+    /**
+     * Set with query string resolver callback.
+     */
+    public static function queryStringResolver(Closure $resolver): void
+    {
+        static::$queryStringResolver = $resolver;
+    }
+
+    /**
      * Determine if the given value is a valid page number.
      */
     protected function isValidPageNumber(int $page): bool
@@ -434,7 +469,7 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, Str
     /**
      * Add a query string value to the paginator.
      */
-    protected function addQuery(string $key, string $value): static
+    protected function addQuery(string $key, array|string $value): static
     {
         if ($key !== $this->pageName) {
             $this->query[$key] = $value;

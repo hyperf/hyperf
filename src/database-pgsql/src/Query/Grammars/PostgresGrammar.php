@@ -15,6 +15,7 @@ namespace Hyperf\Database\PgSQL\Query\Grammars;
 use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\JoinLateralClause;
 use Hyperf\Stringable\Str;
 
 use function Hyperf\Collection\collect;
@@ -46,6 +47,14 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile an insert ignore statement using a subquery into SQL.
+     */
+    public function compileInsertOrIgnoreUsing(Builder $query, array $columns, string $sql): string
+    {
+        return $this->compileInsertUsing($query, $columns, $sql) . ' on conflict do nothing';
+    }
+
+    /**
      * Compile an insert and get ID statement into SQL.
      *
      * @param array $values
@@ -61,7 +70,7 @@ class PostgresGrammar extends Grammar
      *
      * @param mixed $values
      */
-    public function compileUpdate(Builder $query, $values): string
+    public function compileUpdate(Builder $query, array $values): string
     {
         $table = $this->wrapTable($query->from);
 
@@ -151,6 +160,14 @@ class PostgresGrammar extends Grammar
     public function compileTruncate(Builder $query): array
     {
         return ['truncate ' . $this->wrapTable($query->from) . ' restart identity cascade' => []];
+    }
+
+    /**
+     * Compile a "lateral join" clause.
+     */
+    public function compileJoinLateral(JoinLateralClause $join, string $expression): string
+    {
+        return trim("{$join->type} join lateral {$expression} on true");
     }
 
     /**
@@ -319,6 +336,16 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile a "JSON overlaps" statement into SQL.
+     */
+    protected function compileJsonOverlaps(string $column, string $value): string
+    {
+        $column = str_replace('->>', '->', $this->wrap($column));
+
+        return 'EXISTS ( SELECT 1 FROM jsonb_array_elements((' . $column . ')::jsonb) AS elem1, jsonb_array_elements(' . $value . '::jsonb) AS elem2 WHERE elem1 = elem2)';
+    }
+
+    /**
      * Compile a "JSON length" statement into SQL.
      *
      * @param string $column
@@ -348,10 +375,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile the columns for an update statement.
-     *
-     * @return string
      */
-    protected function compileUpdateColumns(Builder $query, array $values)
+    protected function compileUpdateColumns(Builder $query, array $values): string
     {
         return collect($values)->map(function ($value, $key) {
             $column = last(explode('.', $key));

@@ -38,14 +38,14 @@ class BladeInjectTest extends AbstractBladeTestCase
     public function testDependenciesAreCompiled()
     {
         $string = "Foo @inject('baz', SomeNamespace\\SomeClass::class) bar";
-        $expected = 'Foo <?php $baz = \Hyperf\ViewEngine\T::inject(SomeNamespace\\SomeClass::class); ?> bar';
+        $expected = 'Foo <?php $baz = \Hyperf\ViewEngine\T::inject(SomeNamespace\SomeClass::class); ?> bar';
         $this->assertEquals($expected, $this->compiler->compileString($string));
     }
 
     public function testDependenciesAreCompiledWithDoubleQuotes()
     {
         $string = 'Foo @inject("baz", SomeNamespace\SomeClass::class) bar';
-        $expected = 'Foo <?php $baz = \Hyperf\ViewEngine\T::inject(SomeNamespace\\SomeClass::class); ?> bar';
+        $expected = 'Foo <?php $baz = \Hyperf\ViewEngine\T::inject(SomeNamespace\SomeClass::class); ?> bar';
         $this->assertEquals($expected, $this->compiler->compileString($string));
     }
 }

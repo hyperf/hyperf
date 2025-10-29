@@ -173,30 +173,35 @@ class FooCommand extends HyperfCommand
 
 ### 設置 Help
 
-```
+```php
 public function configure()
 {
     parent::configure();
     $this->setHelp('Hyperf 自定義命令演示');
 }
 
+```
+```bash
 $ php bin/hyperf.php demo:command --help
+# 輸出
 ...
 Help:
   Hyperf 自定義命令演示
-
 ```
+
 
 ### 設置 Description
 
-```
+```php
 public function configure()
 {
     parent::configure();
     $this->setDescription('Hyperf Demo Command');
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command --help
+# 輸出
 ...
 Description:
   Hyperf Demo Command
@@ -205,14 +210,16 @@ Description:
 
 ### 設置 Usage
 
-```
+```php
 public function configure()
 {
     parent::configure();
     $this->addUsage('--name 演示代碼');
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command --help
+# 輸出
 ...
 Usage:
   demo:command
@@ -231,7 +238,7 @@ Usage:
 
 #### 可選類型
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -242,19 +249,22 @@ public function handle()
 {
     $this->line($this->input->getArgument('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# 輸出
 ...
 Hyperf
 
 $ php bin/hyperf.php demo:command Swoole
+# 輸出
 ...
 Swoole
 ```
 
 #### 數組類型
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -265,8 +275,10 @@ public function handle()
 {
     var_dump($this->input->getArgument('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command Hyperf Swoole
+# 輸出
 ...
 array(2) {
   [0]=>
@@ -289,7 +301,7 @@ array(2) {
 
 #### 是否傳入可選項
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -300,14 +312,18 @@ public function handle()
 {
     var_dump($this->input->getOption('opt'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# 輸出
 bool(false)
 
 $ php bin/hyperf.php demo:command -o
+# 輸出
 bool(true)
 
 $ php bin/hyperf.php demo:command --opt
+# 輸出
 bool(true)
 ```
 
@@ -315,7 +331,7 @@ bool(true)
 
 `VALUE_OPTIONAL` 在單獨使用上與 `VALUE_REQUIRED` 並無二致
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -326,11 +342,14 @@ public function handle()
 {
     var_dump($this->input->getOption('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# 輸出
 string(6) "Hyperf"
 
 $ php bin/hyperf.php demo:command --name Swoole
+# 輸出
 string(6) "Swoole"
 ```
 
@@ -338,7 +357,7 @@ string(6) "Swoole"
 
 `VALUE_IS_ARRAY` 和 `VALUE_OPTIONAL` 配合使用，可以達到傳入多個 `Option` 的效果。
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -349,12 +368,15 @@ public function handle()
 {
     var_dump($this->input->getOption('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# 輸出
 array(0) {
 }
 
 $ php bin/hyperf.php demo:command --name Hyperf --name Swoole
+# 輸出
 array(2) {
   [0]=>
   string(6) "Hyperf"
@@ -519,4 +541,51 @@ Console::command('foo', function () {
 Console::command('bar', function () {
     $this->comment('Hello, Bar!');
 })->describe('This is another demo closure command.')->cron('* * * * *', callback: fn($cron) => $cron->setSingleton(true));
+```
+
+## AsCommand
+
+您可以通過 `AsCommand` 註解來將一個類轉換為命令。
+
+```php
+<?php
+
+namespace App\Service;
+
+use Hyperf\Command\Annotation\AsCommand;
+use Hyperf\Command\Concerns\InteractsWithIO;
+
+#[AsCommand(signature: 'foo:bar1', handle: 'bar1', description: 'The description of foo:bar1 command.')]
+#[AsCommand(signature: 'foo', description: 'The description of foo command.')]
+class FooService
+{
+    use InteractsWithIO;
+
+    #[AsCommand(signature: 'foo:bar {--bar=1 : Bar Value}', description: 'The description of foo:bar command.')]
+    public function bar($bar)
+    {
+        $this->output?->info('Bar Value: ' . $bar);
+
+        return $bar;
+    }
+
+    public function bar1()
+    {
+        $this->output?->info(__METHOD__);
+    }
+
+    public function handle()
+    {
+        $this->output?->info(__METHOD__);
+    }
+}
+```
+
+```shell
+$ php bin/hyperf.php
+
+...
+foo
+  foo:bar                   The description of foo:bar command.
+  foo:bar1                  The description of foo:bar1 command.
 ```

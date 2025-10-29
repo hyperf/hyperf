@@ -31,6 +31,7 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Cache\Stub\Foo;
 use HyperfTest\Cache\Stub\SerializeRedisDriver;
 use Mockery;
@@ -148,6 +149,21 @@ class RedisDriverTest extends TestCase
         $this->assertSame([], $driver->keys($collector));
     }
 
+    public function testOptionsPool()
+    {
+        $container = $this->getContainer();
+        $driver = $container->get(CacheManager::class)->getDriver();
+
+        $redis = (new ClassInvoker($driver))->redis;
+        $this->assertInstanceOf(RedisProxy::class, $redis);
+
+        $this->assertSame('default', (new ClassInvoker($redis))->poolName);
+
+        $driver = $container->get(CacheManager::class)->getDriver('default2');
+        $redis = (new ClassInvoker($driver))->redis;
+        $this->assertSame('serialize', (new ClassInvoker($redis))->poolName);
+    }
+
     protected function getContainer()
     {
         $container = Mockery::mock(Container::class);
@@ -162,6 +178,14 @@ class RedisDriverTest extends TestCase
                     'driver' => SerializeRedisDriver::class,
                     'packer' => PhpSerializerPacker::class,
                     'prefix' => 'c:',
+                ],
+                'default2' => [
+                    'driver' => RedisDriver::class,
+                    'packer' => PhpSerializerPacker::class,
+                    'prefix' => 'c:',
+                    'options' => [
+                        'pool' => 'serialize',
+                    ],
                 ],
             ],
             'redis' => [

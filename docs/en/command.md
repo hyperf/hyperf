@@ -179,14 +179,16 @@ The following code only modifies the content in `configure` and `handle`.
 
 ### Set Help
 
-```
+```php
 public function configure()
 {
     parent::configure();
     $this->setHelp('Hyperf's custom command demonstration');
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command --help
+# output
 ...
 Help:
   Hyperf's custom command demonstration
@@ -195,14 +197,16 @@ Help:
 
 ### Set Description
 
-```
+```php
 public function configure()
 {
     parent::configure();
     $this->setDescription('Hyperf Demo Command');
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command --help
+# output
 ...
 Description:
   Hyperf Demo Command
@@ -211,14 +215,16 @@ Description:
 
 ### Set Usage
 
-```
+```php
 public function configure()
 {
     parent::configure();
     $this->addUsage('--name Demo Code');
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command --help
+# output
 ...
 Usage:
   demo:command
@@ -237,7 +243,7 @@ The parameters support the following modes.
 
 #### Optional type
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -248,8 +254,10 @@ public function handle()
 {
     $this->line($this->input->getArgument('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# output
 ...
 Hyperf
 
@@ -260,7 +268,7 @@ Swoole
 
 #### Array type
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -271,8 +279,10 @@ public function handle()
 {
     var_dump($this->input->getArgument('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command Hyperf Swoole
+# output
 ...
 array(2) {
   [0]=>
@@ -295,7 +305,7 @@ The options support the following modes.
 
 #### Whether to pass in options
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -306,14 +316,18 @@ public function handle()
 {
     var_dump($this->input->getOption('opt'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# output
 bool(false)
 
 $ php bin/hyperf.php demo:command -o
+# output
 bool(true)
 
 $ php bin/hyperf.php demo:command --opt
+# output
 bool(true)
 ```
 
@@ -321,7 +335,7 @@ bool(true)
 
 `VALUE_OPTIONAL` is no different from `VALUE_REQUIRED` when used alone.
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -332,11 +346,14 @@ public function handle()
 {
     var_dump($this->input->getOption('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# output
 string(6) "Hyperf"
 
 $ php bin/hyperf.php demo:command --name Swoole
+# output
 string(6) "Swoole"
 ```
 
@@ -344,7 +361,7 @@ string(6) "Swoole"
 
 `VALUE_IS_ARRAY` and `VALUE_OPTIONAL`, when used together, can achieve the effect of passing multiple `Option`s.
 
-```
+```php
 public function configure()
 {
     parent::configure();
@@ -355,12 +372,15 @@ public function handle()
 {
     var_dump($this->input->getOption('name'));
 }
-
+```
+```bash
 $ php bin/hyperf.php demo:command
+# output
 array(0) {
 }
 
 $ php bin/hyperf.php demo:command --name Hyperf --name Swoole
+# output
 array(2) {
   [0]=>
   string(6) "Hyperf"
@@ -525,4 +545,51 @@ Console::command('foo', function () {
 Console::command('bar', function () {
     $this->comment('Hello, Bar!');
 })->describe('This is another demo closure command.')->cron('* * * * *', callback: fn($cron) => $cron->setSingleton(true));
+```
+
+## AsCommand
+
+You can convert a class into a command by annotating it with `AsCommand`.
+
+```php
+<?php
+
+namespace App\Service;
+
+use Hyperf\Command\Annotation\AsCommand;
+use Hyperf\Command\Concerns\InteractsWithIO;
+
+#[AsCommand(signature: 'foo:bar1', handle: 'bar1', description: 'The description of foo:bar1 command.')]
+#[AsCommand(signature: 'foo', description: 'The description of foo command.')]
+class FooService
+{
+    use InteractsWithIO;
+
+    #[AsCommand(signature: 'foo:bar {--bar=1 : Bar Value}', description: 'The description of foo:bar command.')]
+    public function bar($bar)
+    {
+        $this->output?->info('Bar Value: ' . $bar);
+
+        return $bar;
+    }
+
+    public function bar1()
+    {
+        $this->output?->info(__METHOD__);
+    }
+
+    public function handle()
+    {
+        $this->output?->info(__METHOD__);
+    }
+}
+```
+
+```shell
+$ php bin/hyperf.php
+
+...
+foo
+  foo:bar                   The description of foo:bar command.
+  foo:bar1                  The description of foo:bar1 command.
 ```

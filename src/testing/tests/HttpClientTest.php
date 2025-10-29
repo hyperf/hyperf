@@ -23,7 +23,6 @@ use function Hyperf\Coroutine\run;
 
 /**
  * @internal
- * @coversNothing
  */
 #[CoversNothing]
 class HttpClientTest extends TestCase

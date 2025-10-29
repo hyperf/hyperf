@@ -207,7 +207,7 @@ class MySQLConnection extends AbstractConnection
     /**
      * Configure the connection character set and collation.
      */
-    protected function configureCharset(PDO $connection, array $config)
+    protected function configureCharset(PDO $connection, array $config): void
     {
         if (isset($config['charset'])) {
             $connection->prepare(sprintf("set names '%s'%s", $config['charset'], $this->getCollation($config)))->execute();

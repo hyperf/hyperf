@@ -44,9 +44,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use PDO;
 
-/**
- * @Listener
- */
+#[Listener]
 class FetchModeListener implements ListenerInterface
 {
     public function listen(): array

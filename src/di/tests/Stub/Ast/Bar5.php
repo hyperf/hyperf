@@ -16,7 +16,7 @@ class Bar5
 {
     public function getBar(): Bar
     {
-        return new class() extends Bar {
+        return new class extends Bar {
             public function __construct()
             {
                 $this->id = 9501;

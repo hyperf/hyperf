@@ -57,6 +57,6 @@ class ConstantCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Constants';
+        return $this->getConfig()['namespace'] ?? 'App\Constants';
     }
 }

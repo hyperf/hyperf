@@ -20,7 +20,7 @@ class Consumer extends AbstractAnnotation
 {
     public function __construct(
         public string $exchange = '',
-        public string $routingKey = '',
+        public array|string $routingKey = '',
         public string $queue = '',
         public string $name = 'Consumer',
         public ?int $nums = null,

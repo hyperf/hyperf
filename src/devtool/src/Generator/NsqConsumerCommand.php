@@ -36,6 +36,6 @@ class NsqConsumerCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Nsq\\Consumer';
+        return $this->getConfig()['namespace'] ?? 'App\Nsq\Consumer';
     }
 }

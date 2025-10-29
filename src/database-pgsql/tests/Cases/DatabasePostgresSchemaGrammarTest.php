@@ -79,6 +79,20 @@ class DatabasePostgresSchemaGrammarTest extends TestCase
         $this->assertSame('comment on column "users"."email" is \'my first comment\'', $statements[1]);
     }
 
+    public function testCreateTableWithTableComment()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->create();
+        $blueprint->comment('This is a user table');
+        $blueprint->increments('id');
+        $blueprint->string('email');
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(2, $statements);
+        $this->assertSame('create table "users" ("id" serial primary key not null, "email" varchar(255) not null)', $statements[0]);
+        $this->assertSame('comment on table "users" is \'This is a user table\'', $statements[1]);
+    }
+
     public function testCreateTemporaryTable()
     {
         $blueprint = new Blueprint('users');
@@ -1044,6 +1058,14 @@ class DatabasePostgresSchemaGrammarTest extends TestCase
         $c = $this->getGrammar()::compileReplace();
 
         $this->assertTrue($c);
+    }
+
+    public function testCompileTables(): void
+    {
+        $this->assertSame('select c.relname as name, n.nspname as schema, pg_total_relation_size(c.oid) as size, '
+            . "obj_description(c.oid, 'pg_class') as comment from pg_class c, pg_namespace n "
+            . "where c.relkind in ('r', 'p') and n.oid = c.relnamespace and n.nspname not in ('pg_catalog', 'information_schema') "
+            . 'order by c.relname', $this->getGrammar()->compileTables());
     }
 
     public function testAddingFulltextIndexMultipleColumns()

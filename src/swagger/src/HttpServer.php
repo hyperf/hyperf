@@ -21,6 +21,7 @@ use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpServer\ResponseEmitter;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 class HttpServer implements OnRequestInterface
 {
@@ -45,24 +46,33 @@ class HttpServer implements OnRequestInterface
 
     public function onRequest($request, $response): void
     {
-        if ($request instanceof ServerRequestInterface) {
-            $psr7Request = $request;
-        } else {
-            $psr7Request = Psr7Request::loadFromSwooleRequest($request);
+        try {
+            if ($request instanceof ServerRequestInterface) {
+                $psr7Request = $request;
+            } else {
+                $psr7Request = Psr7Request::loadFromSwooleRequest($request);
+            }
+
+            $path = $psr7Request->getUri()->getPath();
+            if ($path === $this->config['url']) {
+                $stream = new Stream($this->getHtml());
+                $contentType = 'text/html;charset=utf-8';
+            } else {
+                $stream = new Stream($this->getMetadata($path));
+                $contentType = 'application/json;charset=utf-8';
+            }
+
+            $psrResponse = (new Response())->setBody($stream)->setHeader('content-type', $contentType);
+
+            $this->emitter->emit($psrResponse, $response);
+        } catch (Throwable) {
+            $this->emitter->emit(
+                (new Response())
+                    ->setBody(new Stream('Server Error'))
+                    ->setHeader('content-type', 'text/html;charset=utf-8'),
+                $response
+            );
         }
-
-        $path = $psr7Request->getUri()->getPath();
-        if ($path === $this->config['url']) {
-            $stream = new Stream($this->getHtml());
-            $contentType = 'text/html;charset=utf-8';
-        } else {
-            $stream = new Stream($this->getMetadata($path));
-            $contentType = 'application/json;charset=utf-8';
-        }
-
-        $psrResponse = (new Response())->setBody($stream)->setHeader('content-type', $contentType);
-
-        $this->emitter->emit($psrResponse, $response);
     }
 
     protected function getMetadata(string $path): string
@@ -73,7 +83,7 @@ class HttpServer implements OnRequestInterface
             return $this->metadata[$id];
         }
 
-        if (file_exists($path)) {
+        if (is_file($path) && file_exists($path)) {
             $metadata = file_get_contents($path);
         } else {
             $metadata = Json::encode([

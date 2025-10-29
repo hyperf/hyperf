@@ -21,9 +21,15 @@ use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
+use Hyperf\Database\Exception\MultipleRecordsFoundException;
+use Hyperf\Database\Exception\RecordsNotFoundException;
+use Hyperf\Database\Exception\UniqueConstraintViolationException;
 use Hyperf\Database\Model\Collection as ModelCollection;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
+use Hyperf\Database\Query\Expression;
+use Hyperf\Paginator\Contract\CursorPaginator;
+use Hyperf\Paginator\Cursor;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Stringable\Str;
 use Hyperf\Support\Traits\ForwardsCalls;
@@ -36,11 +42,16 @@ use function Hyperf\Collection\collect;
 use function Hyperf\Tappable\tap;
 
 /**
+ * @template TModel of Model
  * @mixin \Hyperf\Database\Query\Builder
  */
 class Builder
 {
-    use BuildsQueries;
+    /** @use BuildsQueries<TModel> */
+    use BuildsQueries {
+        BuildsQueries::sole as baseSole;
+    }
+
     use ForwardsCalls;
     use Concerns\QueriesRelationships;
 
@@ -94,7 +105,7 @@ class Builder
     protected $passthru = [
         'insert', 'insertGetId', 'getBindings', 'toSql', 'toRawSql', 'insertOrIgnore',
         'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'average', 'sum', 'getConnection',
-        'upsert', 'updateOrInsert',
+        'upsert', 'updateOrInsert', 'insertOrIgnoreUsing',
     ];
 
     /**
@@ -323,6 +334,18 @@ class Builder
     }
 
     /**
+     * Exclude the given models from the query results.
+     */
+    public function except(iterable|Model $models): static
+    {
+        return $this->whereKeyNot(
+            $models instanceof Model
+                ? $models->getKey()
+                : ModelCollection::wrap($models)->modelKeys()
+        );
+    }
+
+    /**
      * Add a basic where clause to the query.
      *
      * @param array|Closure|string $column
@@ -484,6 +507,34 @@ class Builder
     }
 
     /**
+     * Find a model by its primary key or call a callback.
+     *
+     * @template TValue
+     *
+     * @param (Closure(): TValue)|list<string>|string $columns
+     * @param null|(Closure(): TValue) $callback
+     * @return (
+     *     $id is (Arrayable<array-key, mixed>|array)
+     *     ? Collection<int, TModel>
+     *     : TModel|TValue
+     * )
+     */
+    public function findOr(mixed $id, array|Closure|string $columns = ['*'], ?Closure $callback = null): mixed
+    {
+        if ($columns instanceof Closure) {
+            $callback = $columns;
+
+            $columns = ['*'];
+        }
+
+        if (! is_null($model = $this->find($id, $columns))) {
+            return $model;
+        }
+
+        return $callback();
+    }
+
+    /**
      * Find a model by its primary key or return fresh model instance.
      *
      * @param array $columns
@@ -514,7 +565,7 @@ class Builder
     }
 
     /**
-     * Get the first record matching the attributes or create it.
+     * Get the first record matching the attributes. If the record is not found, create it.
      *
      * @return Model|static
      */
@@ -524,9 +575,21 @@ class Builder
             return $instance;
         }
 
-        return tap($this->newModelInstance($attributes + $values), function ($instance) {
-            $instance->save();
-        });
+        return $this->createOrFirst($attributes, $values);
+    }
+
+    /**
+     * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
+     *
+     * @return Model|static
+     */
+    public function createOrFirst(array $attributes = [], array $values = [])
+    {
+        try {
+            return $this->create(array_merge($attributes, $values));
+        } catch (UniqueConstraintViolationException $e) {
+            return $this->where($attributes)->first() ?? throw $e;
+        }
     }
 
     /**
@@ -538,6 +601,18 @@ class Builder
     {
         return tap($this->firstOrNew($attributes), function ($instance) use ($values) {
             $instance->fill($values)->save();
+        });
+    }
+
+    /**
+     * Create a record matching the attributes, or increment the existing record.
+     */
+    public function incrementOrCreate(array $attributes, string $column = 'count', float|int $default = 1, float|int $step = 1, array $extra = []): Model
+    {
+        return tap($this->firstOrCreate($attributes, [$column => $default]), function ($instance) use ($column, $step, $extra) {
+            if (! $instance->wasRecentlyCreated) {
+                $instance->increment($column, $step, $extra);
+            }
         });
     }
 
@@ -591,6 +666,17 @@ class Builder
     }
 
     /**
+     * Get a single column's value from the first result of the query or throw an exception.
+     * @throws ModelNotFoundException<Model>
+     */
+    public function valueOrFail(Expression|string $column): mixed
+    {
+        $column = $column instanceof Expression ? $column->getValue() : $column;
+
+        return $this->firstOrFail([$column])->{Str::afterLast($column, '.')};
+    }
+
+    /**
      * Execute the query as a "select" statement.
      *
      * @param array $columns
@@ -614,7 +700,7 @@ class Builder
      * Get the hydrated models without eager loading.
      *
      * @param array $columns
-     * @return \Hyperf\Database\Model\Model[]|static[]
+     * @return Model[]|static[]
      */
     public function getModels($columns = ['*'])
     {
@@ -807,9 +893,19 @@ class Builder
     }
 
     /**
+     * Paginate the given query into a cursor paginator.
+     */
+    public function cursorPaginate(?int $perPage = null, array|string $columns = ['*'], string $cursorName = 'cursor', null|Cursor|string $cursor = null): CursorPaginator
+    {
+        $perPage = $perPage ?: $this->model->getPerPage();
+
+        return $this->paginateUsingCursor($perPage, $columns, $cursorName, $cursor);
+    }
+
+    /**
      * Save a new model and return the instance.
      *
-     * @return $this|\Hyperf\Database\Model\Model
+     * @return $this|Model
      */
     public function create(array $attributes = [])
     {
@@ -821,7 +917,7 @@ class Builder
     /**
      * Save a new model and return the instance. Allow mass-assignment.
      *
-     * @return $this|\Hyperf\Database\Model\Model
+     * @return $this|Model
      */
     public function forceCreate(array $attributes)
     {
@@ -838,6 +934,26 @@ class Builder
     public function update(array $values)
     {
         return $this->toBase()->update($this->addUpdatedAtColumn($values));
+    }
+
+    /**
+     * Update the column's update timestamp.
+     */
+    public function touch(?string $column = null): false|int
+    {
+        $time = $this->model->freshTimestamp();
+
+        if ($column) {
+            return $this->toBase()->update([$column => $time]);
+        }
+
+        $column = $this->model->getUpdatedAtColumn();
+
+        if (! $this->model->usesTimestamps() || is_null($column)) {
+            return false;
+        }
+
+        return $this->toBase()->update([$column => $time]);
     }
 
     /**
@@ -965,6 +1081,23 @@ class Builder
         }
 
         return $builder;
+    }
+
+    /**
+     * Execute the query and get the first result if it's the sole matching record.
+     *
+     * @return TModel
+     *
+     * @throws ModelNotFoundException<TModel>
+     * @throws MultipleRecordsFoundException
+     */
+    public function sole(array|string $columns = ['*'])
+    {
+        try {
+            return $this->baseSole($columns);
+        } catch (RecordsNotFoundException) {
+            throw (new ModelNotFoundException())->setModel($this->model::class);
+        }
     }
 
     /**
@@ -1111,6 +1244,14 @@ class Builder
     }
 
     /**
+     * Qualify the given columns with the model's table.
+     */
+    public function qualifyColumns(array $columns): array
+    {
+        return $this->model->qualifyColumns($columns);
+    }
+
+    /**
      * Get the given macro by name.
      *
      * @param string $name
@@ -1152,6 +1293,55 @@ class Builder
     public static function hasGlobalMacro($name)
     {
         return isset(static::$macros[$name]);
+    }
+
+    /**
+     * Get the default key name of the table.
+     */
+    protected function defaultKeyName(): string
+    {
+        return $this->getModel()->getKeyName();
+    }
+
+    /**
+     * Ensure the proper order by required for cursor pagination.
+     */
+    protected function ensureOrderForCursorPagination(bool $shouldReverse = false): Collection
+    {
+        if (empty($this->query->orders) && empty($this->query->unionOrders)) {
+            $this->enforceOrderBy();
+        }
+
+        $reverseDirection = function ($order) {
+            if (! isset($order['direction'])) {
+                return $order;
+            }
+
+            $order['direction'] = $order['direction'] === 'asc' ? 'desc' : 'asc';
+
+            return $order;
+        };
+
+        if ($shouldReverse) {
+            $this->query->orders = collect($this->query->orders)->map($reverseDirection)->toArray();
+            $this->query->unionOrders = collect($this->query->unionOrders)->map($reverseDirection)->toArray();
+        }
+
+        $orders = ! empty($this->query->unionOrders) ? $this->query->unionOrders : $this->query->orders;
+
+        return collect($orders)
+            ->filter(fn ($order) => Arr::has($order, 'direction'))
+            ->values();
+    }
+
+    /**
+     * Get the Eloquent builder instances that are used in the union of the query.
+     */
+    protected function getUnionBuilders(): Collection
+    {
+        return isset($this->query->unions)
+            ? collect($this->query->unions)->pluck('query')
+            : collect();
     }
 
     /**

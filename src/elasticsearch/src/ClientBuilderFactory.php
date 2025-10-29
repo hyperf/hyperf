@@ -12,18 +12,28 @@ declare(strict_types=1);
 
 namespace Hyperf\Elasticsearch;
 
-use Elasticsearch\ClientBuilder;
-use Hyperf\Coroutine\Coroutine;
-use Hyperf\Guzzle\RingPHP\CoroutineHandler;
+use Elastic\Elasticsearch\ClientBuilder;
+use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
+use Psr\Container\ContainerInterface;
 
 class ClientBuilderFactory
 {
-    public function create()
+    protected ?GuzzleClientFactory $guzzleClientFactory = null;
+
+    public function __construct(protected ContainerInterface $container)
+    {
+        if ($container->has(GuzzleClientFactory::class)) {
+            $this->guzzleClientFactory = $container->get(GuzzleClientFactory::class);
+        }
+    }
+
+    public function create(): ClientBuilder
     {
         $builder = ClientBuilder::create();
-        if (Coroutine::inCoroutine()) {
-            $builder->setHandler(new CoroutineHandler());
-        }
+
+        $this->guzzleClientFactory && $builder->setHttpClient(
+            $this->guzzleClientFactory->create()
+        );
 
         return $builder;
     }

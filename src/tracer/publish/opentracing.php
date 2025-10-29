@@ -125,12 +125,14 @@ return [
             'uri' => 'request.uri',
             'method' => 'request.method',
             'header' => 'request.header',
+            // 'body' => 'request.body',
         ],
         'coroutine' => [
             'id' => 'coroutine.id',
         ],
         'response' => [
             'status_code' => 'response.status_code',
+            // 'body' => 'response.body',
         ],
         'rpc' => [
             'path' => 'rpc.path',

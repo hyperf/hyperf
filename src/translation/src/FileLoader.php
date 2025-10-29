@@ -14,6 +14,7 @@ namespace Hyperf\Translation;
 
 use Hyperf\Contract\TranslatorLoaderInterface;
 use Hyperf\Support\Filesystem\Filesystem;
+use JsonException;
 use RuntimeException;
 
 use function Hyperf\Collection\collect;
@@ -131,13 +132,15 @@ class FileLoader implements TranslatorLoaderInterface
         return collect(array_merge($this->jsonPaths, [$this->path]))
             ->reduce(function ($output, $path) use ($locale) {
                 if ($this->files->exists($full = "{$path}/{$locale}.json")) {
-                    $decoded = json_decode($this->files->get($full), true);
-
-                    if (is_null($decoded) || json_last_error() !== JSON_ERROR_NONE) {
+                    try {
+                        $decoded = json_decode($this->files->get($full), true, 512, JSON_THROW_ON_ERROR);
+                    } catch (JsonException $e) {
                         throw new RuntimeException("Translation file [{$full}] contains an invalid JSON structure.");
                     }
 
-                    $output = array_merge($output, $decoded);
+                    if (is_array($decoded)) {
+                        $output = array_merge($output, $decoded);
+                    }
                 }
 
                 return $output;

@@ -393,7 +393,7 @@ class FunctionsTest extends TestCase
 
     public function testValue(): void
     {
-        $callable = new class() {
+        $callable = new class {
             public function __call($method, $arguments)
             {
                 return $arguments;

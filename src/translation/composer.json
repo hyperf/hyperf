@@ -1,27 +1,29 @@
 {
     "name": "hyperf/translation",
-    "type": "library",
     "description": "An independent translation component, forked by illuminate/translation.",
     "license": "MIT",
+    "type": "library",
     "keywords": [
         "translation",
         "hyperf"
     ],
     "require": {
-        "php": ">=8.1",
-        "hyperf/contract": "~3.1.0",
-        "hyperf/macroable": "~3.1.0",
-        "hyperf/support": "~3.1.0",
-        "hyperf/utils": "~3.1.0",
-        "psr/container": "^1.0|^2.0"
+        "php": ">=8.2",
+        "hyperf/collection": "~3.2.0",
+        "hyperf/context": "~3.2.0",
+        "hyperf/contract": "~3.2.0",
+        "hyperf/macroable": "~3.2.0",
+        "hyperf/stringable": "~3.2.0",
+        "hyperf/support": "~3.2.0",
+        "psr/container": "^1.0 || ^2.0"
     },
     "autoload": {
-        "files": [
-            "src/Functions.php"
-        ],
         "psr-4": {
             "Hyperf\\Translation\\": "src/"
-        }
+        },
+        "files": [
+            "src/Functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

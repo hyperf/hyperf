@@ -2,9 +2,17 @@ name: PHPUnit for Hyperf
 
 on:
   push:
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**.md"
   pull_request:
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**.md"
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 14 * * *'
 
 jobs:
   cs-fix:
@@ -13,21 +21,25 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php: [ '8.1' ]
-        swoole: [ 'swoole']
+        php: [ '8.2' ]
+        swoole: [ 'swoole' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
           tools: php-cs-fixer
           extensions: redis, pdo, pdo_mysql, bcmath, ${{ matrix.swoole }}
       - name: Setup Packages
         run: composer update -oW
+      - name: Check Composer Json
+        run: |
+          composer normalize --dry-run --no-update-lock
+          find ./src -name composer.json -exec composer normalize --dry-run --no-update-lock {} \;
       - name: Run CS Fix
-        run: vendor/bin/php-cs-fixer fix src --dry-run --diff
+        run: vendor/bin/php-cs-fixer fix $1 --dry-run --diff
   tests:
     needs: cs-fix
     name: Test on PHP${{ matrix.php-version }} Swoole-${{ matrix.sw-version }}
@@ -35,11 +47,8 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php-version: [ '8.3', '8.2', '8.1' ]
-        sw-version: [ 'v5.0.3', 'v5.1.2', 'master' ]
-        exclude:
-          - php-version: '8.3'
-            sw-version: 'v5.0.3'
+        php-version: [ '8.4', '8.3', '8.2' ]
+        sw-version: [ 'v6.0.2', 'master' ]
       max-parallel: 20
       fail-fast: false
     env:

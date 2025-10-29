@@ -34,6 +34,8 @@ class Params
 
     protected int $maxIdleChannels = 10;
 
+    protected ?string $connectionName = null;
+
     public function __construct(array $data)
     {
         if (isset($data['insist'])) {
@@ -74,6 +76,10 @@ class Params
 
         if (isset($data['max_idle_channels'])) {
             $this->setMaxIdleChannels((int) $data['max_idle_channels']);
+        }
+
+        if (isset($data['connection_name'])) {
+            $this->setConnectionName($data['connection_name']);
         }
     }
 
@@ -184,6 +190,17 @@ class Params
     public function setMaxIdleChannels(int $maxIdleChannels): static
     {
         $this->maxIdleChannels = $maxIdleChannels;
+        return $this;
+    }
+
+    public function getConnectionName(): ?string
+    {
+        return $this->connectionName;
+    }
+
+    public function setConnectionName(?string $connectionName): static
+    {
+        $this->connectionName = $connectionName;
         return $this;
     }
 }

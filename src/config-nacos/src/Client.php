@@ -48,8 +48,8 @@ class Client implements ClientInterface
 
         $config = [];
         foreach ($listener as $key => $item) {
-            $dataId = $item['data_id'];
-            $group = $item['group'];
+            $dataId = $item['data_id'] ?? '';
+            $group = $item['group'] ?? '';
             $tenant = $item['tenant'] ?? null;
             $type = $item['type'] ?? null;
             $response = $this->client->config->get($dataId, $group, $tenant);
@@ -66,17 +66,13 @@ class Client implements ClientInterface
     public function decode(string $body, ?string $type = null): array|string
     {
         $type = strtolower((string) $type);
-        switch ($type) {
-            case 'json':
-                return Json::decode($body);
-            case 'yml':
-            case 'yaml':
-                return yaml_parse($body);
-            case 'xml':
-                return Xml::toArray($body);
-            default:
-                return $body;
-        }
+
+        return match ($type) {
+            'json' => Json::decode($body),
+            'yml', 'yaml' => yaml_parse($body),
+            'xml' => Xml::toArray($body),
+            default => $body,
+        };
     }
 
     public function getValidNodes(

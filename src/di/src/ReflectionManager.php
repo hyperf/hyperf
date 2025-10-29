@@ -118,9 +118,9 @@ class ReflectionManager extends MetadataCollector
             } catch (Throwable $e) {
                 echo sprintf(
                     "\033[31m%s\033[0m",
-                    '[ERROR] DI Reflection Manager collecting class reflections failed. ' . PHP_EOL .
-                        "File: {$file->getRealPath()}." . PHP_EOL .
-                        'Exception: ' . $e->getMessage()
+                    '[ERROR] DI Reflection Manager collecting class reflections failed. ' . PHP_EOL
+                        . "File: {$file->getRealPath()}." . PHP_EOL
+                        . 'Exception: ' . $e->getMessage()
                 ) . PHP_EOL;
             }
         }

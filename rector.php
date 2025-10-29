@@ -22,7 +22,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(InlineConstructorDefaultToPropertyRector::class);
 
     // define sets of rules
-    $rectorConfig->sets([
-        PHPUnitSetList::PHPUNIT_100,
-    ]);
+    // $rectorConfig->sets([
+    //     PHPUnitSetList::PHPUNIT_100,
+    // ]);
 };

@@ -439,7 +439,9 @@ composer require hyperf/database-sqlserver-incubator
 #### 配置檔案
 
 ```php
+// config/autoload/databases.php
 return [
+     // 其他配置
     'sqlserver' => [
         'driver' => env('DB_DRIVER', 'sqlsrv'),
         'host' => env('DB_HOST', 'mssql'),

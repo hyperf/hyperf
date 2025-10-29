@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Pipeline;
 
 use Closure;
+use Hyperf\Macroable\Macroable;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -21,6 +22,8 @@ use Psr\Container\ContainerInterface;
  */
 class Pipeline
 {
+    use Macroable;
+
     /**
      * The object being passed through the pipeline.
      */
@@ -35,6 +38,11 @@ class Pipeline
      * The method to call on each pipe.
      */
     protected string $method = 'handle';
+
+    /**
+     * The final callback to be executed after the pipeline ends regardless of the outcome.
+     */
+    protected ?Closure $finally = null;
 
     public function __construct(protected ContainerInterface $container)
     {
@@ -78,7 +86,13 @@ class Pipeline
     {
         $pipeline = array_reduce(array_reverse($this->pipes), $this->carry(), $this->prepareDestination($destination));
 
-        return $pipeline($this->passable);
+        try {
+            return $pipeline($this->passable);
+        } finally {
+            if ($this->finally) {
+                ($this->finally)($this->passable);
+            }
+        }
     }
 
     /**
@@ -87,6 +101,18 @@ class Pipeline
     public function thenReturn()
     {
         return $this->then(fn ($passable) => $passable);
+    }
+
+    /**
+     * Set a final callback to be executed after the pipeline ends regardless of the outcome.
+     *
+     * @return $this
+     */
+    public function finally(Closure $callback)
+    {
+        $this->finally = $callback;
+
+        return $this;
     }
 
     /**

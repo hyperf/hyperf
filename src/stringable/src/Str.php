@@ -112,13 +112,12 @@ class Str
                 $hyphenatedWords = explode('-', $lowercaseWord);
 
                 $hyphenatedWords = array_map(function ($part) use ($minorWords) {
-                    return (in_array($part, $minorWords) && mb_strlen($part) <= 3) ? $part : ucfirst($part);
+                    return (in_array($part, $minorWords)) ? $part : ucfirst($part);
                 }, $hyphenatedWords);
 
                 $words[$i] = implode('-', $hyphenatedWords);
             } else {
                 if (in_array($lowercaseWord, $minorWords)
-                    && mb_strlen($lowercaseWord) <= 3
                     && ! ($i === 0 || in_array(mb_substr($words[$i - 1], -1), $endPunctuation))) {
                     $words[$i] = $lowercaseWord;
                 } else {
@@ -233,6 +232,42 @@ class Str
     }
 
     /**
+     * Remove the given string(s) if it exists at the end of the haystack.
+     *
+     * @param string $subject
+     * @param array|string $needle
+     * @return string
+     */
+    public static function chopEnd($subject, $needle)
+    {
+        foreach ((array) $needle as $n) {
+            if (str_ends_with($subject, $n)) {
+                return substr($subject, 0, -strlen($n));
+            }
+        }
+
+        return $subject;
+    }
+
+    /**
+     * Remove the given string(s) if it exists at the start of the haystack.
+     *
+     * @param string $subject
+     * @param array|string $needle
+     * @return string
+     */
+    public static function chopStart($subject, $needle)
+    {
+        foreach ((array) $needle as $n) {
+            if (str_starts_with($subject, $n)) {
+                return substr($subject, strlen($n));
+            }
+        }
+
+        return $subject;
+    }
+
+    /**
      * Determine if a given string contains a given substring.
      *
      * @param array|string $needles
@@ -324,10 +359,13 @@ class Str
      *
      * @param array|string $pattern
      * @param string $value
+     * @param bool $ignoreCase
      * @return bool
      */
-    public static function is($pattern, $value)
+    public static function is($pattern, $value, $ignoreCase = false)
     {
+        $value = (string) $value;
+
         $patterns = Arr::wrap($pattern);
 
         if (empty($patterns)) {
@@ -335,6 +373,8 @@ class Str
         }
 
         foreach ($patterns as $pattern) {
+            $pattern = (string) $pattern;
+
             // If the given value is an exact match we can of course return true right
             // from the beginning. Otherwise, we will translate asterisks and do an
             // actual pattern match against the two strings to see if they match.
@@ -349,7 +389,7 @@ class Str
             // pattern such as "library/*", making any string check convenient.
             $pattern = str_replace('\*', '.*', $pattern);
 
-            if (preg_match('#^' . $pattern . '\z#u', $value) === 1) {
+            if (preg_match('#^' . $pattern . '\z#' . ($ignoreCase ? 'iu' : 'u'), $value) === 1) {
                 return true;
             }
         }
@@ -1039,7 +1079,7 @@ class Str
         $radius = $options['radius'] ?? 100;
         $omission = $options['omission'] ?? '...';
 
-        preg_match('/^(.*?)(' . preg_quote((string) $phrase) . ')(.*)$/iu', (string) $text, $matches);
+        preg_match('/^(.*?)(' . preg_quote((string) $phrase, '/') . ')(.*)$/iu', (string) $text, $matches);
 
         if (empty($matches)) {
             return null;
@@ -1059,7 +1099,7 @@ class Str
             fn ($endWithRadius) => $endWithRadius->append($omission),
         );
 
-        return $start->append($matches[2], $end)->__toString();
+        return $start->append($matches[2], (string) $end)->__toString();
     }
 
     /**
@@ -1211,7 +1251,9 @@ class Str
     public static function trim($value, $charlist = null)
     {
         if ($charlist === null) {
-            return preg_replace('~^[\s\x{FEFF}\x{200B}\x{200E}]+|[\s\x{FEFF}\x{200B}\x{200E}]+$~u', '', $value) ?? trim($value);
+            $trimDefaultCharacters = " \n\r\t\v";
+
+            return preg_replace('~^[\s\x{FEFF}\x{200B}\x{200E}' . $trimDefaultCharacters . ']+|[\s\x{FEFF}\x{200B}\x{200E}' . $trimDefaultCharacters . ']+$~u', '', $value) ?? trim($value);
         }
 
         return trim($value, $charlist);
@@ -1227,7 +1269,9 @@ class Str
     public static function ltrim($value, $charlist = null)
     {
         if ($charlist === null) {
-            return preg_replace('~^[\s\x{FEFF}\x{200B}\x{200E}]+~u', '', $value) ?? ltrim($value);
+            $ltrimDefaultCharacters = " \n\r\t\v";
+
+            return preg_replace('~^[\s\x{FEFF}\x{200B}\x{200E}' . $ltrimDefaultCharacters . ']+~u', '', $value) ?? ltrim($value);
         }
 
         return ltrim($value, $charlist);
@@ -1243,7 +1287,9 @@ class Str
     public static function rtrim($value, $charlist = null)
     {
         if ($charlist === null) {
-            return preg_replace('~[\s\x{FEFF}\x{200B}\x{200E}]+$~u', '', $value) ?? rtrim($value);
+            $rtrimDefaultCharacters = " \n\r\t\v";
+
+            return preg_replace('~[\s\x{FEFF}\x{200B}\x{200E}' . $rtrimDefaultCharacters . ']+$~u', '', $value) ?? rtrim($value);
         }
 
         return rtrim($value, $charlist);
@@ -1374,6 +1420,22 @@ class Str
     public static function wordWrap($string, $characters = 75, $break = "\n", $cutLongWords = false): string
     {
         return wordwrap($string, $characters, $break, $cutLongWords);
+    }
+
+    /**
+     * Remove all non-numeric characters from a string.
+     */
+    public static function numbers(array|string $value): array|string
+    {
+        return preg_replace('/[^0-9]/', '', $value);
+    }
+
+    /**
+     * Decode the given Base64 encoded string.
+     */
+    public static function fromBase64(string $string, bool $strict = false): false|string
+    {
+        return base64_decode($string, $strict);
     }
 
     /**

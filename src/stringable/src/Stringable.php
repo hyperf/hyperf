@@ -142,6 +142,28 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     }
 
     /**
+     * Remove the given string if it exists at the end of the current string.
+     *
+     * @param array|string $needle
+     * @return static
+     */
+    public function chopEnd($needle)
+    {
+        return new static(Str::chopEnd($this->value, $needle));
+    }
+
+    /**
+     * Remove the given string if it exists at the start of the current string.
+     *
+     * @param array|string $needle
+     * @return static
+     */
+    public function chopStart($needle)
+    {
+        return new static(Str::chopStart($this->value, $needle));
+    }
+
+    /**
      * Get the basename of the class path.
      *
      * @return static
@@ -299,11 +321,12 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      * Determine if a given string matches a given pattern.
      *
      * @param string|string[] $pattern
+     * @param bool $ignoreCase
      * @return bool
      */
-    public function is($pattern)
+    public function is($pattern, $ignoreCase = false)
     {
-        return Str::is($pattern, $this->value);
+        return Str::is($pattern, $this->value, $ignoreCase);
     }
 
     /**
@@ -1048,9 +1071,9 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
         return $this->when($this->exactly($needles), $callback, $default);
     }
 
-    public function whenIs($pattern, $callback, $default = null)
+    public function whenIs($pattern, $callback, $default = null, $ignoreCase = false)
     {
-        return $this->when($this->is($pattern), $callback, $default);
+        return $this->when($this->is($pattern, $ignoreCase), $callback, $default);
     }
 
     public function whenIsUlid($callback, $default = null)

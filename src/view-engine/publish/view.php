@@ -24,7 +24,7 @@ return [
     // Autoload components.
     'autoload' => [
         'classes' => [
-            'App\\View\\Component\\',
+            'App\View\Component\\',
         ],
         'components' => [
             'components.', // BASE_PATH . '/storage/view/components/'

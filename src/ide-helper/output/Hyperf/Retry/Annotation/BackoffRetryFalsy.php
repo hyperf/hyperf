@@ -17,7 +17,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class BackoffRetryFalsy extends RetryFalsy
 {
-    public function __construct(int $base = 100, string $sleepStrategyClass = 'Hyperf\\Retry\\BackoffStrategy')
+    public function __construct(int $base = 100, string $sleepStrategyClass = 'Hyperf\Retry\BackoffStrategy')
     {
     }
 }

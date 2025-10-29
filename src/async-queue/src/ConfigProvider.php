@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\AsyncQueue;
 
 use Hyperf\AsyncQueue\Aspect\AsyncQueueAspect;
+use Hyperf\AsyncQueue\Command\DynamicReloadMessageCommand;
 use Hyperf\AsyncQueue\Command\FlushFailedMessageCommand;
 use Hyperf\AsyncQueue\Command\InfoCommand;
 use Hyperf\AsyncQueue\Command\ReloadFailedMessageCommand;
@@ -29,6 +30,7 @@ class ConfigProvider
                 FlushFailedMessageCommand::class,
                 InfoCommand::class,
                 ReloadFailedMessageCommand::class,
+                DynamicReloadMessageCommand::class,
             ],
             'publish' => [
                 [

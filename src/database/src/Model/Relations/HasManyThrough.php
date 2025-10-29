@@ -547,6 +547,18 @@ class HasManyThrough extends Relation
     }
 
     /**
+     * Execute a callback over each item while chunking by ID.
+     */
+    public function eachById(callable $callback, int $count = 1000, ?string $column = null, ?string $alias = null): bool
+    {
+        $column = $column ?? $this->getRelated()->getQualifiedKeyName();
+
+        $alias = $alias ?? $this->getRelated()->getKeyName();
+
+        return $this->prepareQueryBuilder()->eachById($callback, $count, $column, $alias);
+    }
+
+    /**
      * Set the join clause on the query.
      */
     protected function performJoin(?Builder $query = null)
