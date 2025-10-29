@@ -104,7 +104,12 @@ function test(User $user, Post $post, Comment $comment, ChildUser $child): void
     assertType("Hyperf\\Database\\Model\\Relations\\MorphToMany<Hyperf\\Types\\Relations\\Tag, Hyperf\\Types\\Relations\\Post, Hyperf\\Database\\Model\\Relations\\MorphPivot, 'pivot'>", $post->tags());
     assertType('Hyperf\Database\Model\Collection<int, Hyperf\Types\Relations\Tag&object{pivot: Hyperf\Database\Model\Relations\MorphPivot}>', $post->tags()->getResults());
 
-    assertType('int', Relation::noConstraints(fn () => 42));
+    $value = 42;
+    /** @var int $value */
+    $value = $value;
+    assertType('int', Relation::noConstraints(function () use ($value): int {
+        return $value;
+    }));
 }
 
 class User extends Model
