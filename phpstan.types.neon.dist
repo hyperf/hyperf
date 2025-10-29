@@ -1,4 +1,5 @@
 parameters:
     level: max
     paths:
-        - src/database/tests/types
+        - src/collection/types
+        - src/database/types

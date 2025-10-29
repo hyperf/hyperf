@@ -48,11 +48,11 @@ function test(
     assertType('Hyperf\Database\Model\Collection<int, Hyperf\Types\Builder\User>', $query->findOr([1], callback: fn () => 42));
     assertType('Hyperf\Types\Builder\User', $query->findOrFail(1));
     assertType('Hyperf\Types\Builder\User|null', $query->find(1));
-    assertType('Hyperf\Types\Builder\User|int', $query->findOr(1, fn () => 42));
-    assertType('Hyperf\Types\Builder\User|int', $query->findOr(1, callback: fn () => 42));
+    assertType('42|Hyperf\Types\Builder\User', $query->findOr(1, fn () => 42));
+    assertType('42|Hyperf\Types\Builder\User', $query->findOr(1, callback: fn () => 42));
     assertType('Hyperf\Types\Builder\User|null', $query->first());
-    assertType('Hyperf\Types\Builder\User|int', $query->firstOr(fn () => 42));
-    assertType('Hyperf\Types\Builder\User|int', $query->firstOr(callback: fn () => 42));
+    assertType('42|Hyperf\Types\Builder\User', $query->firstOr(fn () => 42));
+    assertType('42|Hyperf\Types\Builder\User', $query->firstOr(callback: fn () => 42));
     assertType('Hyperf\Types\Builder\User', $query->firstOrNew(['id' => 1]));
     assertType('Hyperf\Types\Builder\User', $query->findOrNew(1));
     assertType('Hyperf\Types\Builder\User', $query->firstOrCreate(['id' => 1]));
