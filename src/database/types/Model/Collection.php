@@ -15,7 +15,7 @@ $collection = User::all();
 assertType('Hyperf\Database\Model\Collection<int, User>', $collection);
 
 assertType('User|null', $collection->find(1));
-assertType('string|User', $collection->find(1, 'string'));
+assertType('\'string\'|User', $collection->find(1, 'string'));
 assertType('Hyperf\Database\Model\Collection<int, User>', $collection->find([1]));
 
 assertType('Hyperf\Database\Model\Collection<int, User>', $collection->load('string'));
