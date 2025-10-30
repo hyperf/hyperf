@@ -365,6 +365,7 @@ class SceneRequest extends FormRequest
     protected array $scenes = [
         'foo' => ['username'],
         'bar' => ['username', 'password'],
+        'tar' => ['username' => 'string|required', 'password'],
     ];
 
     /**

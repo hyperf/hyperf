@@ -17,10 +17,11 @@ use Psr\EventDispatcher\StoppableEventInterface;
 use function Hyperf\Tappable\tap;
 
 /**
- * @method static static|\Hyperf\Database\Model\Builder|\Hyperf\Database\Query\Builder restoreOrCreate(array $attributes = [], array $values = [])
- * @method static static|\Hyperf\Database\Model\Builder|\Hyperf\Database\Query\Builder withTrashed(bool $withTrashed = true)
- * @method static static|\Hyperf\Database\Model\Builder|\Hyperf\Database\Query\Builder onlyTrashed()
- * @method static static|\Hyperf\Database\Model\Builder|\Hyperf\Database\Query\Builder withoutTrashed()
+ * @method static \Hyperf\Database\Model\Builder<static> withTrashed(bool $withTrashed = true)
+ * @method static \Hyperf\Database\Model\Builder<static> onlyTrashed()
+ * @method static \Hyperf\Database\Model\Builder<static> withoutTrashed()
+ * @method static static restoreOrCreate(array<string, mixed> $attributes = [], array<string, mixed> $values = [])
+ * @method static static createOrRestore(array<string, mixed> $attributes = [], array<string, mixed> $values = [])
  */
 trait SoftDeletes
 {

@@ -14,7 +14,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v5.1.6'
+  SW_VERSION: 'v6.1.0'
 jobs:
   crontab:
     name: Test for Crontab
