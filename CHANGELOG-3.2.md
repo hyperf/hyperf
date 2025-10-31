@@ -31,6 +31,10 @@ Carbon::createFromTimestamp($t, date_default_timezone_get());
 - [#7278](https://github.com/hyperf/hyperf/pull/7278) Removed abandoned `laminas/laminas-mime` package.
 - [#7573](https://github.com/hyperf/hyperf/pull/7573) Removed deprecated `Hyperf\Serializer\Contract\CacheableSupportsMethodInterface` interface.
 
+## Optimized
+
+- [#7142](https://github.com/hyperf/hyperf/pull/7142) Enhance array shuffle method to support custom random engines.
+
 ## Added
 
 - [#6538](https://github.com/hyperf/hyperf/pull/6538) Support to specify the queue name based on the `job`.
