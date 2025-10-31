@@ -20,6 +20,7 @@ use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\FormattableHandlerInterface;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\StreamHandler;
+use Monolog\Level;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -36,17 +37,21 @@ class LoggerFactory
     {
     }
 
-    public function make($name = 'hyperf', $group = 'default'): LoggerInterface
+    public function make(string $name = 'hyperf', ?string $channel = null): LoggerInterface
     {
-        $config = $this->config->get('logger');
-        if (! isset($config[$group])) {
-            throw new InvalidConfigException(sprintf('Logger config[%s] is not defined.', $group));
+        $channel = $channel ?? $this->config->get('logger.default', 'default');
+        $key = 'logger.channels.' . $channel;
+
+        if (! $channel || ! $this->config->has($key)) {
+            throw new InvalidConfigException(sprintf('Logger config[%s] is not defined.', $channel));
         }
 
-        $config = $config[$group];
+        $config = $this->config->get($key, []);
+
         if (is_callable($config)) {
             $config = $config($name);
         }
+
         $handlers = $this->handlers($config);
         $processors = $this->processors($config);
 
@@ -57,16 +62,18 @@ class LoggerFactory
         ]);
     }
 
-    public function get($name = 'hyperf', $group = 'default'): LoggerInterface
+    public function get(string $name = 'hyperf', ?string $channel = null): LoggerInterface
     {
-        if (isset($this->loggers[$group][$name]) && $this->loggers[$group][$name] instanceof Logger) {
-            return $this->loggers[$group][$name];
+        $channel = $channel ?? $this->config->get('logger.default', 'default');
+
+        if (isset($this->loggers[$channel][$name]) && $this->loggers[$channel][$name] instanceof Logger) {
+            return $this->loggers[$channel][$name];
         }
 
-        return $this->loggers[$group][$name] = $this->make($name, $group);
+        return $this->loggers[$channel][$name] = $this->make($name, $channel);
     }
 
-    protected function getDefaultFormatterConfig($config)
+    protected function getDefaultFormatterConfig(array $config)
     {
         $formatterClass = Arr::get($config, 'formatter.class', LineFormatter::class);
         $formatterConstructor = Arr::get($config, 'formatter.constructor', []);
@@ -77,12 +84,12 @@ class LoggerFactory
         ];
     }
 
-    protected function getDefaultHandlerConfig($config)
+    protected function getDefaultHandlerConfig(array $config)
     {
         $handlerClass = Arr::get($config, 'handler.class', StreamHandler::class);
         $handlerConstructor = Arr::get($config, 'handler.constructor', [
             'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-            'level' => Logger::DEBUG,
+            'level' => Level::Debug,
         ]);
 
         return [
@@ -115,6 +122,7 @@ class LoggerFactory
         $handlers = [];
         $defaultHandlerConfig = $this->getDefaultHandlerConfig($config);
         $defaultFormatterConfig = $this->getDefaultFormatterConfig($config);
+
         foreach ($handlerConfigs as $value) {
             if (is_string($value)) {
                 if (! $this->config->has($group = 'logger.' . $value)) {
@@ -125,15 +133,17 @@ class LoggerFactory
                     $value['formatter'] = $this->config->get($group . '.formatter', []);
                 }
             }
+
             $class = $value['class'] ?? $defaultHandlerConfig['class'];
             $constructor = $value['constructor'] ?? $defaultHandlerConfig['constructor'];
+
             if (isset($value['formatter'])) {
                 if (! isset($value['formatter']['constructor'])) {
                     $value['formatter']['constructor'] = $defaultFormatterConfig['constructor'];
                 }
             }
-            $formatterConfig = $value['formatter'] ?? $defaultFormatterConfig;
 
+            $formatterConfig = $value['formatter'] ?? $defaultFormatterConfig;
             $handlers[] = $this->handler($class, $constructor, $formatterConfig);
         }
 
@@ -142,10 +152,8 @@ class LoggerFactory
 
     /**
      * @param class-string<HandlerInterface> $class
-     * @param array $constructor
-     * @param array $formatterConfig
      */
-    protected function handler($class, $constructor, $formatterConfig): HandlerInterface
+    protected function handler($class, array $constructor, array $formatterConfig): HandlerInterface
     {
         $handler = make($class, $constructor);
 
