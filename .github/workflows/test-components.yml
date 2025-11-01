@@ -141,7 +141,7 @@ jobs:
   phar:
     name: Test for Building PHAR
     runs-on: 'ubuntu-latest'
-    if: false # Disable this job
+    # if: false # Disable this job
     env:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
