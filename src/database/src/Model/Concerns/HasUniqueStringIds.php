@@ -18,7 +18,7 @@ use Hyperf\Database\Model\ModelNotFoundException;
 trait HasUniqueStringIds
 {
     /**
-     * Generate a new UUID for the model.
+     * Generate a new unique ID for the model.
      *
      * @return string
      */
