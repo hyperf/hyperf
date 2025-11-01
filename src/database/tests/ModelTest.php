@@ -2102,7 +2102,6 @@ class ModelTest extends TestCase
 
         $uuid = $model->newUniqueId();
         $this->assertTrue(Str::isUuid($uuid));
-        
         // Verify it's a version 4 UUID (has '4' at the 15th character position)
         // UUID format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
         $uuidParts = explode('-', $uuid);
