@@ -27,4 +27,14 @@ trait HasUuids
     {
         return (string) Str::orderedUuid();
     }
+
+    /**
+     * Determine if given key is valid.
+     *
+     * @param mixed $value
+     */
+    protected function isValidUniqueId($value): bool
+    {
+        return Str::isUuid($value);
+    }
 }

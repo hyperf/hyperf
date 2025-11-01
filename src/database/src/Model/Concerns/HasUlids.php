@@ -27,4 +27,14 @@ trait HasUlids
     {
         return strtolower((string) Str::ulid());
     }
+
+    /**
+     * Determine if given key is valid.
+     *
+     * @param mixed $value
+     */
+    protected function isValidUniqueId($value): bool
+    {
+        return Str::isUlid($value);
+    }
 }

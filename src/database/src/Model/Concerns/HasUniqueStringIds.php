@@ -58,4 +58,11 @@ trait HasUniqueStringIds
 
         return $this->incrementing;
     }
+
+    /**
+     * Determine if given key is valid.
+     *
+     * @param mixed $value
+     */
+    abstract protected function isValidUniqueId($value): bool;
 }
