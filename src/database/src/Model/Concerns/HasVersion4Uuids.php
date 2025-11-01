@@ -25,6 +25,6 @@ trait HasVersion4Uuids
      */
     public function newUniqueId()
     {
-        return (string) Str::ordered Uuid();
+        return (string) Str::orderedUuid();
     }
 }
