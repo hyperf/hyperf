@@ -19,7 +19,7 @@ trait HasVersion4Uuids
     use HasUuids;
 
     /**
-     * Generate a new version 4 UUID for the model.
+     * Generate a new UUID (version 4) for the model.
      *
      * @return string
      */
