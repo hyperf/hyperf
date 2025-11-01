@@ -17,6 +17,7 @@ use Hyperf\Stringable\Str;
 trait HasVersion4Uuids
 {
     use HasUuids;
+
     /**
      * Generate a new version 4 UUID for the model.
      *
@@ -24,44 +25,6 @@ trait HasVersion4Uuids
      */
     public function newUniqueId()
     {
-        return (string) Str::ordereduuid();
-    }
-
-    /**
-     * Get the columns that should receive a unique identifier.
-     *
-     * @return array
-     */
-    public function uniqueIds()
-    {
-        return [$this->getKeyName()];
-    }
-
-    /**
-     * Get the auto-incrementing key type.
-     *
-     * @return string
-     */
-    public function getKeyType()
-    {
-        if (in_array($this->getKeyName(), $this->uniqueIds())) {
-            return 'string';
-        }
-
-        return $this->keyType;
-    }
-
-    /**
-     * Get the value indicating whether the IDs are incrementing.
-     *
-     * @return bool
-     */
-    public function getIncrementing()
-    {
-        if (in_array($this->getKeyName(), $this->uniqueIds())) {
-            return false;
-        }
-
-        return $this->incrementing;
+        return (string) Str::uuid();
     }
 }
