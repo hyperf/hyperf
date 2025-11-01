@@ -63,6 +63,7 @@ use HyperfTest\Database\Stubs\ModelStub;
 use HyperfTest\Database\Stubs\ModelStubWithTrait;
 use HyperfTest\Database\Stubs\ModelStubWithUlid;
 use HyperfTest\Database\Stubs\ModelStubWithUuid;
+use HyperfTest\Database\Stubs\ModelStubWithVersion4Uuid;
 use HyperfTest\Database\Stubs\ModelWithoutRelationStub;
 use HyperfTest\Database\Stubs\ModelWithoutTableStub;
 use HyperfTest\Database\Stubs\ModelWithStub;
@@ -2093,6 +2094,19 @@ class ModelTest extends TestCase
         $model = new ModelStubWithUuid();
 
         $this->assertTrue(Str::isUuid($model->newUniqueId()));
+    }
+
+    public function testVersion4Uuid()
+    {
+        $model = new ModelStubWithVersion4Uuid();
+
+        $uuid = $model->newUniqueId();
+        $this->assertTrue(Str::isUuid($uuid));
+        
+        // Verify it's a version 4 UUID (has '4' at the 15th character position)
+        // UUID format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+        $uuidParts = explode('-', $uuid);
+        $this->assertSame('4', $uuidParts[2][0]);
     }
 
     public function testGetMorphAlias()
