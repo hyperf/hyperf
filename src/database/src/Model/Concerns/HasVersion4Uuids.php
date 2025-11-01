@@ -16,6 +16,7 @@ use Hyperf\Stringable\Str;
 
 trait HasVersion4Uuids
 {
+    use HasUuids;
     /**
      * Generate a new version 4 UUID for the model.
      *
