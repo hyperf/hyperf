@@ -43,10 +43,9 @@ class LoggerFactory
             ! $this->config->has('logger.channels')
             && is_array($this->config->get('logger.default', 'default'))
         ) {
-            $channels = $this->config->get('logger');
             $this->config->set('logger', [
                 'default' => 'default',
-                'channels' => $channels,
+                'channels' => $this->config->get('logger'),
             ]);
         }
 
