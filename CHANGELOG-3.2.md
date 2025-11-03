@@ -2,7 +2,7 @@
 
 ## Break Changes
 
-1. [#7594](https://github.com/hyperf/hyperf/pull/7594) Refactored cache configuration to adopt Laravel-style stores pattern.
+1. [#7594](https://github.com/hyperf/hyperf/pull/7594) Refactored cache configuration.
 
 ```php
 <?php
