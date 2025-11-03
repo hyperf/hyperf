@@ -24,6 +24,7 @@ use Monolog\Level;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
+use function Hyperf\Support\env;
 use function Hyperf\Support\make;
 
 class LoggerFactory
