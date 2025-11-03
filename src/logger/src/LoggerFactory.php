@@ -135,12 +135,12 @@ class LoggerFactory
 
         foreach ($handlerConfigs as $value) {
             if (is_string($value)) {
-                if (! $this->config->has($group = 'logger.' . $value)) {
+                if (! $this->config->has($channel = 'logger.channels.' . $value)) {
                     continue;
                 }
-                $value = $this->config->get($group . '.handler', []);
-                if ($this->config->has($group . '.formatter')) {
-                    $value['formatter'] = $this->config->get($group . '.formatter', []);
+                $value = $this->config->get($channel . '.handler', []);
+                if ($this->config->has($channel . '.formatter')) {
+                    $value['formatter'] = $this->config->get($channel . '.formatter', []);
                 }
             }
 
