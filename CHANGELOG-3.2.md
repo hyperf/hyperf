@@ -18,6 +18,24 @@ Carbon::createFromTimestamp($t, date_default_timezone_get());
 Carbon::createFromTimestamp($t, date_default_timezone_get());
 ```
 
+2. The `logger` configuration structure has been changed. Please refer to [#7563](https://github.com/hyperf/hyperf/pull/7563).
+
+```php
+<?php
+return [
+    'default' => 'hyperf',
+    'channels' => [
+        'hyperf' => [
+            'driver' => 'daily',
+            'path' => BASE_PATH . '/runtime/logs/hyperf.log',
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 7,
+        ],
+        // Add your custom channels here
+    ],
+];
+```
+
 ## Dependencies Upgrade
 
 - Upgrade the php version to `>=8.2`
