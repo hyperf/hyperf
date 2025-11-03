@@ -48,7 +48,7 @@ return [
 ];
 ```
 
-3. [#7594](https://github.com/hyperf/hyperf/pull/7594) Refactored cache configuration.
+3. The `cache` configuration structure has been changed. Please refer to [#7594](https://github.com/hyperf/hyperf/pull/7594).
 
 ```php
 <?php
