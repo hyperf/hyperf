@@ -20,11 +20,9 @@ use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\FormattableHandlerInterface;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\StreamHandler;
-use Monolog\Level;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
-use function Hyperf\Support\env;
 use function Hyperf\Support\make;
 
 class LoggerFactory
@@ -44,7 +42,7 @@ class LoggerFactory
 
         if (is_array($channel) && ! isset($channel['channels'])) { // Support old configuration style.
             $channels = $this->config->get('logger');
-            $channel = env('LOG_CHANNEL', 'default');
+            $channel = 'default';
             $this->config->set('logger', [
                 'default' => $channel,
                 'channels' => $channels,
@@ -100,7 +98,7 @@ class LoggerFactory
         $handlerClass = Arr::get($config, 'handler.class', StreamHandler::class);
         $handlerConstructor = Arr::get($config, 'handler.constructor', [
             'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-            'level' => Level::Debug,
+            'level' => Logger::DEBUG,
         ]);
 
         return [
