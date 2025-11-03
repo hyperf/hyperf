@@ -2,7 +2,53 @@
 
 ## Break Changes
 
-1. [#7594](https://github.com/hyperf/hyperf/pull/7594) Refactored cache configuration.
+1. `Carbon::createFromTimestamp()` don't read the default timezone by `date_default_timezone_get()` for `v3.0`.
+
+```php
+<?php
+
+use Carbon\Carbon;
+
+$t = time();
+
+# The break usage
+Carbon::createFromTimestamp($t, date_default_timezone_get());
+
+# The correct usage
+Carbon::createFromTimestamp($t, date_default_timezone_get());
+```
+
+2. The `logger` configuration structure has been changed. Please refer to [#7563](https://github.com/hyperf/hyperf/pull/7563).
+
+```php
+<?php
+
+// Before
+return [
+    'default' => [
+        'driver' => 'daily',
+        'path' => BASE_PATH . '/runtime/logs/hyperf.log',
+        'level' => env('LOG_LEVEL', 'debug'),
+        'days' => 7,
+    ],
+];
+
+// After
+return [
+    'default' => 'default',
+    'channels' => [
+        'default' => [
+            'driver' => 'daily',
+            'path' => BASE_PATH . '/runtime/logs/hyperf.log',
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 7,
+        ],
+        // Add your custom channels here
+    ],
+];
+```
+
+3. [#7594](https://github.com/hyperf/hyperf/pull/7594) Refactored cache configuration.
 
 ```php
 <?php
@@ -24,40 +70,6 @@ return [
             'packer' => PhpSerializerPacker::class,
             'prefix' => 'c:',
         ],
-    ],
-];
-```
-
-2. `Carbon::createFromTimestamp()` don't read the default timezone by `date_default_timezone_get()` for `v3.0`.
-
-```php
-<?php
-
-use Carbon\Carbon;
-
-$t = time();
-
-# The break usage
-Carbon::createFromTimestamp($t, date_default_timezone_get());
-
-# The correct usage
-Carbon::createFromTimestamp($t, date_default_timezone_get());
-```
-
-2. The `logger` configuration structure has been changed. Please refer to [#7563](https://github.com/hyperf/hyperf/pull/7563).
-
-```php
-<?php
-return [
-    'default' => 'hyperf',
-    'channels' => [
-        'hyperf' => [
-            'driver' => 'daily',
-            'path' => BASE_PATH . '/runtime/logs/hyperf.log',
-            'level' => env('LOG_LEVEL', 'debug'),
-            'days' => 7,
-        ],
-        // Add your custom channels here
     ],
 ];
 ```
@@ -93,3 +105,4 @@ return [
 - [#7208](https://github.com/hyperf/hyperf/pull/7208) Throw exceptions when the value is smaller than zero for `Hyperf\Database\Query\Builder::limit()`.
 - [#6760](https://github.com/hyperf/hyperf/pull/6760) Changed the default type of `deleted_at` to `datetime` for `hyperf/database`.
 - [#7563](https://github.com/hyperf/hyperf/pull/7563) Changed the `logger` configuration structure.
+- [#7594](https://github.com/hyperf/hyperf/pull/7594) Changed the `cache` configuration structure.
