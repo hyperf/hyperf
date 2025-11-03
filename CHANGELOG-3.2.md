@@ -2,7 +2,33 @@
 
 ## Break Changes
 
-1. `Carbon::createFromTimestamp()` don't read the default timezone by `date_default_timezone_get()` for `v3.0`.
+1. [#7594](https://github.com/hyperf/hyperf/pull/7594) Refactored cache configuration to adopt Laravel-style stores pattern.
+
+```php
+<?php
+// Before
+return [
+    'default' => [
+        'driver' => RedisDriver::class,
+        'packer' => PhpSerializerPacker::class,
+        'prefix' => 'c:',
+    ],
+];
+
+// After
+return [
+    'default' => env('CACHE_DRIVER', 'default'),
+    'stores' => [
+        'default' => [
+            'driver' => RedisDriver::class,
+            'packer' => PhpSerializerPacker::class,
+            'prefix' => 'c:',
+        ],
+    ],
+];
+```
+
+2. `Carbon::createFromTimestamp()` don't read the default timezone by `date_default_timezone_get()` for `v3.0`.
 
 ```php
 <?php
