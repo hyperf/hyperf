@@ -31,13 +31,16 @@ class CacheManager
     {
     }
 
-    public function getDriver(string $name = 'default'): DriverInterface
+    public function getDriver(?string $name = null): DriverInterface
     {
+        $name ??= $this->config->get('cache.default', 'default');
+
         if (isset($this->drivers[$name]) && $this->drivers[$name] instanceof DriverInterface) {
             return $this->drivers[$name];
         }
 
-        $config = $this->config->get("cache.{$name}");
+        $config = $this->config->get("cache.stores.{$name}");
+
         if (empty($config)) {
             throw new InvalidArgumentException(sprintf('The cache config %s is invalid.', $name));
         }
@@ -49,11 +52,11 @@ class CacheManager
         return $this->drivers[$name] = $driver;
     }
 
-    public function call(callable $callback, string $key, int $ttl = 3600, $config = 'default')
+    public function call(callable $callback, string $key, int $ttl = 3600, ?string $name = null): mixed
     {
-        $driver = $this->getDriver($config);
-
+        $driver = $this->getDriver($name);
         [$has, $result] = $driver->fetch($key);
+
         if ($has) {
             return $result;
         }

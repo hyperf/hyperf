@@ -169,22 +169,25 @@ class RedisDriverTest extends TestCase
         $container = Mockery::mock(Container::class);
         $config = new Config([
             'cache' => [
-                'default' => [
-                    'driver' => RedisDriver::class,
-                    'packer' => PhpSerializerPacker::class,
-                    'prefix' => 'c:',
-                ],
-                'serialize' => [
-                    'driver' => SerializeRedisDriver::class,
-                    'packer' => PhpSerializerPacker::class,
-                    'prefix' => 'c:',
-                ],
-                'default2' => [
-                    'driver' => RedisDriver::class,
-                    'packer' => PhpSerializerPacker::class,
-                    'prefix' => 'c:',
-                    'options' => [
-                        'pool' => 'serialize',
+                'default' => 'default',
+                'stores' => [
+                    'default' => [
+                        'driver' => RedisDriver::class,
+                        'packer' => PhpSerializerPacker::class,
+                        'prefix' => 'c:',
+                    ],
+                    'serialize' => [
+                        'driver' => SerializeRedisDriver::class,
+                        'packer' => PhpSerializerPacker::class,
+                        'prefix' => 'c:',
+                    ],
+                    'default2' => [
+                        'driver' => RedisDriver::class,
+                        'packer' => PhpSerializerPacker::class,
+                        'prefix' => 'c:',
+                        'options' => [
+                            'pool' => 'serialize',
+                        ],
                     ],
                 ],
             ],
