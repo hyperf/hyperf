@@ -38,9 +38,11 @@ class LoggerFactory
 
     public function make(string $name = 'hyperf', ?string $channel = null): LoggerInterface
     {
-        $channel ??= $this->config->get('logger.default', 'default');
-
-        if (is_array($channel) && ! $this->config->has('logger.channels')) { // Support old configuration style.
+        // Support old configuration style.
+        if (
+            ! $this->config->has('logger.channels')
+            && is_array($this->config->get('logger.default', 'default'))
+        ) {
             $channels = $this->config->get('logger');
             $channel = 'default';
             $this->config->set('logger', [
@@ -49,6 +51,7 @@ class LoggerFactory
             ]);
         }
 
+        $channel ??= $this->config->get('logger.default', 'default');
         $key = 'logger.channels.' . $channel;
 
         if (! $channel || ! $this->config->has($key)) {
