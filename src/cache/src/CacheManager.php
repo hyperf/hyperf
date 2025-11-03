@@ -34,7 +34,10 @@ class CacheManager
     public function getDriver(?string $name = null): DriverInterface
     {
         // Support the old configuration style.
-        if (! $this->config->has('cache.stores')) {
+        if (
+            ! $this->config->has('cache.stores')
+            || is_array($this->config->get('cache.default', 'default'))
+        ) {
             $this->config->set('cache', [
                 'default' => 'default',
                 'stores' => $this->config->get('cache', []),
