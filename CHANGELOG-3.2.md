@@ -22,16 +22,54 @@ Carbon::createFromTimestamp($t, date_default_timezone_get());
 
 ```php
 <?php
+
+// Before
 return [
-    'default' => 'hyperf',
+    'default' => [
+        'driver' => 'daily',
+        'path' => BASE_PATH . '/runtime/logs/hyperf.log',
+        'level' => env('LOG_LEVEL', 'debug'),
+        'days' => 7,
+    ],
+];
+
+// After
+return [
+    'default' => 'default',
     'channels' => [
-        'hyperf' => [
+        'default' => [
             'driver' => 'daily',
             'path' => BASE_PATH . '/runtime/logs/hyperf.log',
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 7,
         ],
         // Add your custom channels here
+    ],
+];
+```
+
+3. The `cache` configuration structure has been changed. Please refer to [#7594](https://github.com/hyperf/hyperf/pull/7594).
+
+```php
+<?php
+// Before
+return [
+    'default' => [
+        'driver' => RedisDriver::class,
+        'packer' => PhpSerializerPacker::class,
+        'prefix' => 'c:',
+    ],
+];
+
+// After
+return [
+    'default' => env('CACHE_DRIVER', 'default'),
+    'stores' => [
+        'default' => [
+            'driver' => RedisDriver::class,
+            'packer' => PhpSerializerPacker::class,
+            'prefix' => 'c:',
+        ],
     ],
 ];
 ```
@@ -54,6 +92,8 @@ return [
 - [#6538](https://github.com/hyperf/hyperf/pull/6538) Support to specify the queue name based on the `job`.
 - [#6591](https://github.com/hyperf/hyperf/pull/6591) Support `v3.0` for `nesbot/carbon`.
 - [#6761](https://github.com/hyperf/hyperf/pull/6761) Added `toJson` method to `Hyperf\Contract\Jsonable`.
+- [#6794](https://github.com/hyperf/hyperf/pull/6794) feat: Add Htmlable contract interface for HTTP responses.
+- [#7019](https://github.com/hyperf/hyperf/pull/7019) Added PDO subclass support for PHP 8.4.
 - [#7198](https://github.com/hyperf/hyperf/pull/7198) Added connection name to `QueryException`.
 - [#7202](https://github.com/hyperf/hyperf/pull/7202) Added support for elasticsearch `8.x`.
 - [#7214](https://github.com/hyperf/hyperf/pull/7214) Improve `Hyperf\Support\Fluent`.
@@ -61,10 +101,10 @@ return [
 - [#7274](https://github.com/hyperf/hyperf/pull/7274) Support to take multiple items for `shift()` and `pop()` in `Hyperf\Collection\Collection`.
 - [#7302](https://github.com/hyperf/hyperf/pull/7302) Added `partition()` and `reject()` to `Hyperf\Collection\Arr`.
 - [#7312](https://github.com/hyperf/hyperf/pull/7312) Added `Macroable` support to `Hyperf\Context\Context`.
-- [#7019](https://github.com/hyperf/hyperf/pull/7019) Added PDO subclass support for PHP 8.4.
 
 ## Changed
 
 - [#7208](https://github.com/hyperf/hyperf/pull/7208) Throw exceptions when the value is smaller than zero for `Hyperf\Database\Query\Builder::limit()`.
 - [#6760](https://github.com/hyperf/hyperf/pull/6760) Changed the default type of `deleted_at` to `datetime` for `hyperf/database`.
 - [#7563](https://github.com/hyperf/hyperf/pull/7563) Changed the `logger` configuration structure.
+- [#7594](https://github.com/hyperf/hyperf/pull/7594) Changed the `cache` configuration structure.
