@@ -46,6 +46,10 @@ use function Hyperf\Coroutine\wait;
 #[CoversNothing]
 class FormRequestTest extends TestCase
 {
+    protected function setUp(): void
+    {
+    }
+
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -54,16 +58,6 @@ class FormRequestTest extends TestCase
         Context::set('http.request.parsedData', null);
         Context::set(ContainerInterface::class, null);
     }
-
-    // 每次运行完成清理
-    // protected function setUp(): void
-    // {
-        // parent::setUp();
-        // Mockery::close();
-        // Context::set(ServerRequestInterface::class, null);
-        // Context::set('http.request.parsedData', null);
-        // Context::set(ContainerInterface::class, null);
-    // }
 
     public function testRequestValidationData()
     {
@@ -130,7 +124,6 @@ class FormRequestTest extends TestCase
         }
     }
 
-
     public function testRewriteRules()
     {
         $container = Mockery::mock(ContainerInterface::class);
@@ -181,12 +174,8 @@ class FormRequestTest extends TestCase
         $container->shouldReceive('get')->with(ValidatorFactoryInterface::class)->andReturn(new ValidatorFactory($translator));
 
         $request = new FooSceneRequest($container);
-        // try {
-            $res = $request->scene('info')->validated();
-        // }catch (ValidationException $exception) {
-        //     dump($exception->validator->errors());
-        // }
-        
+        $res = $request->scene('info')->validated();
+
         $this->assertSame(['mobile' => '12345'], $res);
 
         wait(function () use ($request, $psrRequest) {
