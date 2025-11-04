@@ -48,10 +48,22 @@ class FormRequestTest extends TestCase
 {
     protected function tearDown(): void
     {
+        parent::tearDown();
         Mockery::close();
         Context::set(ServerRequestInterface::class, null);
         Context::set('http.request.parsedData', null);
+        Context::set(ContainerInterface::class, null);
     }
+
+    // 每次运行完成清理
+    // protected function setUp(): void
+    // {
+        // parent::setUp();
+        // Mockery::close();
+        // Context::set(ServerRequestInterface::class, null);
+        // Context::set('http.request.parsedData', null);
+        // Context::set(ContainerInterface::class, null);
+    // }
 
     public function testRequestValidationData()
     {
@@ -118,6 +130,7 @@ class FormRequestTest extends TestCase
         }
     }
 
+
     public function testRewriteRules()
     {
         $container = Mockery::mock(ContainerInterface::class);
@@ -130,6 +143,24 @@ class FormRequestTest extends TestCase
         $invoker->scene('get');
         $rules = $invoker->getRules();
         $this->assertSame(['mobile' => 'string|required'], $rules);
+    }
+
+    public function testNotExistsFieldRequest()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+
+        $request = new FooSceneRequest($container);
+        $invoker = new ClassInvoker($request);
+        $rules = $invoker->getRules();
+        $this->assertSame(['mobile' => 'required', 'name' => 'required'], $rules);
+
+        $invoker->scene('not-exists-field-1');
+        $rules = $invoker->getRules();
+        $this->assertSame(['not-exists-field-1' => 'required'], $rules);
+
+        $invoker->scene('not-exists-field-2');
+        $rules = $invoker->getRules();
+        $this->assertSame([], $rules);
     }
 
     public function testSceneForFormRequest()
@@ -150,7 +181,12 @@ class FormRequestTest extends TestCase
         $container->shouldReceive('get')->with(ValidatorFactoryInterface::class)->andReturn(new ValidatorFactory($translator));
 
         $request = new FooSceneRequest($container);
-        $res = $request->scene('info')->validated();
+        // try {
+            $res = $request->scene('info')->validated();
+        // }catch (ValidationException $exception) {
+        //     dump($exception->validator->errors());
+        // }
+        
         $this->assertSame(['mobile' => '12345'], $res);
 
         wait(function () use ($request, $psrRequest) {
