@@ -311,7 +311,7 @@ jobs:
           ./.travis/requirement.install.sh
           if [ ${{ matrix.log-version }} == '^1.0' ]
           then
-            composer require "monolog/monolog:^2.0"
+            composer require "monolog/monolog:^2.0" --no-update
           fi
           composer require "psr/log:${{ matrix.log-version }}" --no-update
           composer require "symfony/console:^6.0||^7.0" --dev --no-update
