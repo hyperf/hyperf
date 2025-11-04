@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestCase;
     foreach (spl_autoload_functions() as $loader) {
         if (is_array($loader) && $loader[0] instanceof ClassLoader) {
             $classLoader = $loader[0];
+            break;
         }
     }
     if (! $classLoader) {
