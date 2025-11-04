@@ -298,14 +298,6 @@ jobs:
           coverage: none
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh
-      # - name: Removed conflict Packages
-      #   run: |
-      #     composer remove elasticsearch/elasticsearch --dev -W
-      #     composer remove jonahgeorge/jaeger-client-php --dev -W
-      #     composer remove bandwidth-throttle/token-bucket --dev -W
-      #     composer remove friendsofphp/php-cs-fixer --dev -W
-      #     composer remove zircote/swagger-php --dev -W
-      #     composer remove "symfony/*" --dev --no-update
       - name: Run Test Cases
         run: |
           ./.travis/requirement.install.sh
