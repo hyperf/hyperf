@@ -314,8 +314,6 @@ jobs:
             composer require "monolog/monolog:^2.0" --no-update
           fi
           composer require "psr/log:${{ matrix.log-version }}" --no-update
-          composer require "symfony/console:^6.0||^7.0" --dev --no-update
-          composer require symfony/event-dispatcher --dev --no-update
           composer update -oW
           composer analyse src/framework
           composer analyse src/server/src/Entry/Logger.php
