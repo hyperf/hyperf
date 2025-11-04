@@ -133,7 +133,6 @@ class FormRequestTest extends TestCase
         $rules = $invoker->getRules();
         $this->assertSame(['mobile' => 'string|required'], $rules);
 
-
         $invoker->scene('not-exists-field-1');
         $rules = $invoker->getRules();
         $this->assertSame(['not-exists-field-1' => 'required'], $rules);
