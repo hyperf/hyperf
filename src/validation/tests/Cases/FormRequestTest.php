@@ -46,10 +46,6 @@ use function Hyperf\Coroutine\wait;
 #[CoversNothing]
 class FormRequestTest extends TestCase
 {
-    protected function setUp(): void
-    {
-    }
-
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -136,16 +132,7 @@ class FormRequestTest extends TestCase
         $invoker->scene('get');
         $rules = $invoker->getRules();
         $this->assertSame(['mobile' => 'string|required'], $rules);
-    }
 
-    public function testNotExistsFieldRequest()
-    {
-        $container = Mockery::mock(ContainerInterface::class);
-
-        $request = new FooSceneRequest($container);
-        $invoker = new ClassInvoker($request);
-        $rules = $invoker->getRules();
-        $this->assertSame(['mobile' => 'required', 'name' => 'required'], $rules);
 
         $invoker->scene('not-exists-field-1');
         $rules = $invoker->getRules();
