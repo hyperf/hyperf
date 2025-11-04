@@ -218,7 +218,6 @@ jobs:
       - name: Setup Packages
         run: |
           cp .travis/.env.example .env
-          ./.travis/requirement.install.sh
           composer remove friendsofphp/php-cs-fixer --dev -W
           composer remove symfony/console --dev -W
           composer require "psr/container:${{ matrix.version }}"
@@ -254,7 +253,6 @@ jobs:
       - name: Setup Packages
         run: |
           cp .travis/.env.example .env
-          ./.travis/requirement.install.sh
           composer remove swow/swow --dev -W
           composer remove league/flysystem-memory --dev -W
           composer remove league/flysystem-aws-s3-v3 --dev -W
@@ -298,29 +296,13 @@ jobs:
           coverage: none
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh
-      - name: Removed conflict Packages
-        run: |
-          composer remove elasticsearch/elasticsearch --dev -W
-          composer remove jonahgeorge/jaeger-client-php --dev -W
-          composer remove bandwidth-throttle/token-bucket --dev -W
-          composer remove friendsofphp/php-cs-fixer --dev -W
-          composer remove zircote/swagger-php --dev -W
-          composer remove "symfony/*" --dev --no-update
       - name: Run Test Cases
         run: |
-          ./.travis/requirement.install.sh
           if [ ${{ matrix.log-version }} == '^1.0' ]
           then
-            composer require "monolog/monolog:^2.0"
+            composer require "monolog/monolog:^2.0" --no-update
           fi
           composer require "psr/log:${{ matrix.log-version }}" --no-update
-          if [ ${{ matrix.log-version }} == '^3.0' ]
-          then
-            composer require "symfony/console:^6.0" --dev --no-update
-          else
-            composer require "symfony/console:^5.0" --dev --no-update
-          fi
-          composer require symfony/event-dispatcher --dev --no-update
           composer update -oW
           composer analyse src/framework
           composer analyse src/server/src/Entry/Logger.php
@@ -361,7 +343,6 @@ jobs:
         run: export TRAVIS_BUILD_DIR=$(pwd) && bash ./.travis/setup.mysql.sh
       - name: Run Test Cases
         run: |
-          ./.travis/requirement.install.sh
           composer remove thecodingmachine/graphqlite --dev -W
           composer require "psr/simple-cache:${{ matrix.psr-version }}"
           composer update -oW
