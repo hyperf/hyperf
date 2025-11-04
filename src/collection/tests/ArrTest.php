@@ -1043,4 +1043,88 @@ class ArrTest extends TestCase
         $array = ['foo' => ['bar' => false]];
         Arr::push($array, 'foo.bar', 'baz');
     }
+
+    public function testHasAll(): void
+    {
+        $array = ['name' => 'Taylor', 'age' => 30, 'city' => 'Austin'];
+
+        $this->assertTrue(Arr::hasAll($array, 'name'));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'age']));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'age', 'city']));
+        $this->assertFalse(Arr::hasAll($array, ['name', 'age', 'country']));
+        $this->assertFalse(Arr::hasAll($array, 'country'));
+        $this->assertFalse(Arr::hasAll($array, null));
+        $this->assertFalse(Arr::hasAll($array, []));
+
+        $nestedArray = [
+            'user' => [
+                'name' => 'Taylor',
+                'profile' => ['age' => 30],
+            ],
+        ];
+        $this->assertTrue(Arr::hasAll($nestedArray, 'user.name'));
+        $this->assertTrue(Arr::hasAll($nestedArray, ['user.name', 'user.profile.age']));
+        $this->assertFalse(Arr::hasAll($nestedArray, ['user.name', 'user.email']));
+
+        $emptyArray = [];
+        $this->assertFalse(Arr::hasAll($emptyArray, 'name'));
+        $this->assertFalse(Arr::hasAll($emptyArray, ['name']));
+    }
+
+    public function testSome(): void
+    {
+        $numbers = [1, 2, 3, 4, 5];
+
+        $this->assertTrue(Arr::some($numbers, fn ($value) => $value > 3));
+        $this->assertTrue(Arr::some($numbers, fn ($value) => $value === 1));
+        $this->assertTrue(Arr::some($numbers, fn ($value) => $value % 2 === 0));
+        $this->assertFalse(Arr::some($numbers, fn ($value) => $value > 10));
+        $this->assertFalse(Arr::some($numbers, fn ($value) => $value < 0));
+
+        $this->assertTrue(Arr::some($numbers, fn ($value, $key) => $key === 2 && $value === 3));
+        $this->assertFalse(Arr::some($numbers, fn ($value, $key) => $key === 10));
+
+        $mixed = ['apple', 'banana', 123, true, null];
+        $this->assertTrue(Arr::some($mixed, fn ($value) => is_int($value)));
+        $this->assertTrue(Arr::some($mixed, fn ($value) => is_bool($value)));
+        $this->assertTrue(Arr::some($mixed, fn ($value) => is_null($value)));
+        $this->assertFalse(Arr::some($mixed, fn ($value) => is_float($value)));
+
+        $empty = [];
+        $this->assertFalse(Arr::some($empty, fn ($value) => true));
+
+        $strings = ['hello', 'world', 'test'];
+        $this->assertTrue(Arr::some($strings, fn ($value) => strlen($value) === 5));
+        $this->assertFalse(Arr::some($strings, fn ($value) => strlen($value) > 10));
+    }
+
+    public function testEvery(): void
+    {
+        $numbers = [2, 4, 6, 8];
+
+        $this->assertTrue(Arr::every($numbers, fn ($value) => $value % 2 === 0));
+        $this->assertTrue(Arr::every($numbers, fn ($value) => $value > 0));
+        $this->assertFalse(Arr::every($numbers, fn ($value) => $value > 5));
+        $this->assertFalse(Arr::every($numbers, fn ($value) => $value === 2));
+
+        $this->assertTrue(Arr::every($numbers, fn ($value, $key) => is_int($key)));
+        $this->assertTrue(Arr::every($numbers, fn ($value, $key) => $key >= 0 && $key < count($numbers)));
+
+        $strings = ['hello', 'world', 'test'];
+        $this->assertTrue(Arr::every($strings, fn ($value) => is_string($value)));
+        $this->assertTrue(Arr::every($strings, fn ($value) => strlen($value) >= 4));
+        $this->assertFalse(Arr::every($strings, fn ($value) => strlen($value) === 5));
+
+        $mixed = [1, 'string', null];
+        $this->assertFalse(Arr::every($mixed, fn ($value) => is_int($value)));
+        $this->assertFalse(Arr::every($mixed, fn ($value) => ! is_null($value)));
+
+        $empty = [];
+        $this->assertTrue(Arr::every($empty, fn ($value) => false));
+        $this->assertTrue(Arr::every($empty, fn ($value) => true));
+
+        $singleElement = [42];
+        $this->assertTrue(Arr::every($singleElement, fn ($value) => $value === 42));
+        $this->assertFalse(Arr::every($singleElement, fn ($value) => $value !== 42));
+    }
 }
