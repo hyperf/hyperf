@@ -92,6 +92,8 @@ return [
 - [#6538](https://github.com/hyperf/hyperf/pull/6538) Support to specify the queue name based on the `job`.
 - [#6591](https://github.com/hyperf/hyperf/pull/6591) Support `v3.0` for `nesbot/carbon`.
 - [#6761](https://github.com/hyperf/hyperf/pull/6761) Added `toJson` method to `Hyperf\Contract\Jsonable`.
+- [#6794](https://github.com/hyperf/hyperf/pull/6794) feat: Add Htmlable contract interface for HTTP responses.
+- [#7019](https://github.com/hyperf/hyperf/pull/7019) Added PDO subclass support for PHP 8.4.
 - [#7198](https://github.com/hyperf/hyperf/pull/7198) Added connection name to `QueryException`.
 - [#7202](https://github.com/hyperf/hyperf/pull/7202) Added support for elasticsearch `8.x`.
 - [#7214](https://github.com/hyperf/hyperf/pull/7214) Improve `Hyperf\Support\Fluent`.
@@ -99,7 +101,6 @@ return [
 - [#7274](https://github.com/hyperf/hyperf/pull/7274) Support to take multiple items for `shift()` and `pop()` in `Hyperf\Collection\Collection`.
 - [#7302](https://github.com/hyperf/hyperf/pull/7302) Added `partition()` and `reject()` to `Hyperf\Collection\Arr`.
 - [#7312](https://github.com/hyperf/hyperf/pull/7312) Added `Macroable` support to `Hyperf\Context\Context`.
-- [#6794](https://github.com/hyperf/hyperf/pull/6794) feat: Add Htmlable contract interface for HTTP responses.
 
 ## Changed
 
