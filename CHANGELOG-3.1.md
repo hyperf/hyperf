@@ -1,5 +1,9 @@
 # v3.1.64 - TBD
 
+## Fixed
+
+- [#7596](https://github.com/hyperf/hyperf/pull/7596) Fixed BC when `validation` rule not define.
+
 # v3.1.63 - 2025-10-30
 
 ## Fixed
