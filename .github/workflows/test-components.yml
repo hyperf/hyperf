@@ -320,7 +320,7 @@ jobs:
           # else
           #   composer require "symfony/console:^5.0" --dev --no-update
           # fi
-          composer require "symfony/console:^5.0||^6.0" --dev --no-update
+          composer require "symfony/console:^6.0||^7.0" --dev --no-update
           composer require symfony/event-dispatcher --dev --no-update
           composer update -oW
           composer analyse src/framework
