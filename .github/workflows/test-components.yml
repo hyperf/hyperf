@@ -314,12 +314,12 @@ jobs:
             composer require "monolog/monolog:^2.0"
           fi
           composer require "psr/log:${{ matrix.log-version }}" --no-update
-          if [ ${{ matrix.log-version }} == '^3.0' ]
-          then
-            composer require "symfony/console:^6.0" --dev --no-update
-          else
-            composer require "symfony/console:^5.0" --dev --no-update
-          fi
+          # if [ ${{ matrix.log-version }} == '^3.0' ]
+          # then
+          #   composer require "symfony/console:^6.0" --dev --no-update
+          # else
+          #   composer require "symfony/console:^5.0" --dev --no-update
+          # fi
           composer require symfony/event-dispatcher --dev --no-update
           composer update -oW
           composer analyse src/framework
