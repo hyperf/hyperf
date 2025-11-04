@@ -99,6 +99,7 @@ return [
 - [#7274](https://github.com/hyperf/hyperf/pull/7274) Support to take multiple items for `shift()` and `pop()` in `Hyperf\Collection\Collection`.
 - [#7302](https://github.com/hyperf/hyperf/pull/7302) Added `partition()` and `reject()` to `Hyperf\Collection\Arr`.
 - [#7312](https://github.com/hyperf/hyperf/pull/7312) Added `Macroable` support to `Hyperf\Context\Context`.
+- [#6794](https://github.com/hyperf/hyperf/pull/6794) feat: Add Htmlable contract interface for HTTP responses.
 
 ## Changed
 
