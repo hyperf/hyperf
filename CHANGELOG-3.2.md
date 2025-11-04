@@ -22,16 +22,54 @@ Carbon::createFromTimestamp($t, date_default_timezone_get());
 
 ```php
 <?php
+
+// Before
 return [
-    'default' => 'hyperf',
+    'default' => [
+        'driver' => 'daily',
+        'path' => BASE_PATH . '/runtime/logs/hyperf.log',
+        'level' => env('LOG_LEVEL', 'debug'),
+        'days' => 7,
+    ],
+];
+
+// After
+return [
+    'default' => 'default',
     'channels' => [
-        'hyperf' => [
+        'default' => [
             'driver' => 'daily',
             'path' => BASE_PATH . '/runtime/logs/hyperf.log',
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 7,
         ],
         // Add your custom channels here
+    ],
+];
+```
+
+3. The `cache` configuration structure has been changed. Please refer to [#7594](https://github.com/hyperf/hyperf/pull/7594).
+
+```php
+<?php
+// Before
+return [
+    'default' => [
+        'driver' => RedisDriver::class,
+        'packer' => PhpSerializerPacker::class,
+        'prefix' => 'c:',
+    ],
+];
+
+// After
+return [
+    'default' => env('CACHE_DRIVER', 'default'),
+    'stores' => [
+        'default' => [
+            'driver' => RedisDriver::class,
+            'packer' => PhpSerializerPacker::class,
+            'prefix' => 'c:',
+        ],
     ],
 ];
 ```
@@ -67,3 +105,4 @@ return [
 - [#7208](https://github.com/hyperf/hyperf/pull/7208) Throw exceptions when the value is smaller than zero for `Hyperf\Database\Query\Builder::limit()`.
 - [#6760](https://github.com/hyperf/hyperf/pull/6760) Changed the default type of `deleted_at` to `datetime` for `hyperf/database`.
 - [#7563](https://github.com/hyperf/hyperf/pull/7563) Changed the `logger` configuration structure.
+- [#7594](https://github.com/hyperf/hyperf/pull/7594) Changed the `cache` configuration structure.
