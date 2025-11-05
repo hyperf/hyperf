@@ -15,16 +15,13 @@ use PHPUnit\Framework\TestCase;
 (function () {
     /** @var null|ClassLoader $classLoader */
     $classLoader = null;
-    foreach ([
-        __DIR__ . '/../../vendor/autoload.php',
-        __DIR__ . '/../../autoload.php',
-    ] as $file) {
-        if (file_exists($file)) {
-            $classLoader = require $file;
+    foreach (spl_autoload_functions() as $loader) {
+        if (is_array($loader) && $loader[0] instanceof ClassLoader) {
+            $classLoader = $loader[0];
             break;
         }
     }
-    if (! $classLoader instanceof ClassLoader) {
+    if (! $classLoader) {
         return;
     }
     if ($file = $classLoader->findFile(TestCase::class)) {
