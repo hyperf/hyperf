@@ -25,6 +25,11 @@ enum Result: string
     case REQUEUE = 'requeue';
 
     /**
+     * Retry the message.
+     */
+    case RETRY = 'retry';
+
+    /**
      * Reject the message and drop it.
      */
     case DROP = 'drop';
