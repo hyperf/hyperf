@@ -117,7 +117,7 @@ abstract class Driver implements DriverInterface
                     $this->event?->dispatch(new AfterHandle($message));
 
                     match ($result) {
-                        Result::REQUEUE => $this->retry($data),
+                        Result::REQUEUE => $this->remove($data) && $this->retry($data),
                         Result::DROP => $this->remove($data),
                         Result::ACK => $this->ack($data),
                         default => $this->ack($data),
