@@ -105,30 +105,31 @@ abstract class Driver implements DriverInterface
 
     /**
      * @param mixed $data
-     * @param MessageInterface $message
+     * @param MessageInterface|mixed $message
      */
     protected function getCallback($data, $message): callable
     {
         return function () use ($data, $message) {
             try {
-                if ($message instanceof MessageInterface) {
-                    $this->event?->dispatch(new BeforeHandle($message));
-
-                    $result = $message->job()->handle();
-
-                    match ($result) {
-                        Result::REQUEUE => $this->remove($data) && $this->retry($data),
-                        Result::RETRY => $this->remove($data) && $message->attempts() && $this->retry($message),
-                        Result::DROP => $this->remove($data),
-                        Result::ACK => $this->ack($data),
-                        default => $this->ack($data),
-                    };
-
-                    $this->event?->dispatch(new AfterHandle($message));
-                } else {
-                    // If the message is invalid, just ack it.
+                // If the message is invalid, just ack it.
+                if (! $message instanceof MessageInterface) {
                     $this->ack($data);
+                    return;
                 }
+
+                $this->event?->dispatch(new BeforeHandle($message));
+
+                $result = $message->job()->handle();
+
+                match ($result) {
+                    Result::REQUEUE => $this->remove($data) && $this->retry($data),
+                    Result::RETRY => $this->remove($data) && $message->attempts() && $this->retry($message),
+                    Result::DROP => $this->remove($data),
+                    Result::ACK => $this->ack($data),
+                    default => $this->ack($data),
+                };
+
+                $this->event?->dispatch(new AfterHandle($message, $result instanceof Result ? $result : null));
             } catch (Throwable $ex) {
                 if (isset($message, $data)) {
                     if ($message->attempts() && $this->remove($data)) {
