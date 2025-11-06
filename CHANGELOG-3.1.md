@@ -3,6 +3,7 @@
 ## Added
 
 - [#7600](https://github.com/hyperf/hyperf/pull/7600) Added method `Hyperf\Collection\Arr::sole()`.
+- [#7601](https://github.com/hyperf/hyperf/pull/7601) Added result handling for async queue jobs with `Hyperf\AsyncQueue\Result` enum.
 
 ## Fixed
 
