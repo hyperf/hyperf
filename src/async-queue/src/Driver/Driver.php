@@ -125,6 +125,9 @@ abstract class Driver implements DriverInterface
                     };
 
                     $this->event?->dispatch(new AfterHandle($message));
+                } else {
+                    // If the message is invalid, just ack it.
+                    $this->ack($data);
                 }
             } catch (Throwable $ex) {
                 if (isset($message, $data)) {
