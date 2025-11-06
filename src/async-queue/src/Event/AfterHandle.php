@@ -17,7 +17,7 @@ use Hyperf\AsyncQueue\Result;
 
 class AfterHandle extends Event
 {
-    public function __construct(MessageInterface $message, public ?Result $result = null)
+    public function __construct(MessageInterface $message, public Result $result)
     {
         parent::__construct($message);
     }
