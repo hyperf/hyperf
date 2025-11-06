@@ -118,11 +118,7 @@ abstract class Driver implements DriverInterface
 
                     match ($result) {
                         Result::REQUEUE => $this->remove($data) && $this->retry($data),
-                        Result::RETRY => (function () use ($data, $message) {
-                            if ($message->attempts() && $this->remove($data)) {
-                                $this->retry($message);
-                            }
-                        })(),
+                        Result::RETRY => $message->attempts() && ($this->remove($data) && $this->retry($message)),
                         Result::DROP => $this->remove($data),
                         Result::ACK => $this->ack($data),
                         default => $this->ack($data),
