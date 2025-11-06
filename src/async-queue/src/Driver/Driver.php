@@ -105,7 +105,7 @@ abstract class Driver implements DriverInterface
 
     /**
      * @param mixed $data
-     * @param MessageInterface $message
+     * @param MessageInterface|mixed $message
      */
     protected function getCallback($data, $message): callable
     {
