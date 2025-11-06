@@ -129,7 +129,7 @@ abstract class Driver implements DriverInterface
                     default => $this->ack($data),
                 };
 
-                $this->event?->dispatch(new AfterHandle($message));
+                $this->event?->dispatch(new AfterHandle($message, $result instanceof Result ? $result : null));
             } catch (Throwable $ex) {
                 if (isset($message, $data)) {
                     if ($message->attempts() && $this->remove($data)) {
