@@ -1,5 +1,9 @@
 # v3.1.64 - TBD
 
+## Added
+
+- [#7600](https://github.com/hyperf/hyperf/pull/7600) Added method `Hyperf\Collection\Arr::sole()`.
+
 ## Fixed
 
 - [#7596](https://github.com/hyperf/hyperf/pull/7596) Fixed BC when `validation` rule not define.
