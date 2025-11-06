@@ -34,6 +34,11 @@ trait MakesHttpRequests
         return $this->doRequest(__FUNCTION__, $uri, $data, $headers);
     }
 
+    protected function patch($uri, array $data = [], array $headers = []): TestResponse
+    {
+        return $this->doRequest(__FUNCTION__, $uri, $data, $headers);
+    }
+
     protected function delete($uri, array $data = [], array $headers = []): TestResponse
     {
         return $this->doRequest(__FUNCTION__, $uri, $data, $headers);

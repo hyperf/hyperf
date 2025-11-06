@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Base;
 
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpMessage\Util\HeaderFieldParser;
 use InvalidArgumentException;
-use Laminas\Mime\Decode;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 use Throwable;
@@ -299,7 +299,7 @@ trait MessageTrait
      */
     public function getHeaderField(string $name, string $wantedPart = '0', string $firstName = '0')
     {
-        return Decode::splitHeaderField($this->getHeaderLine($name), $wantedPart, $firstName);
+        return HeaderFieldParser::splitHeaderField($this->getHeaderLine($name), $wantedPart, $firstName);
     }
 
     public function getContentType(): string
