@@ -12,19 +12,20 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue;
 
-use Throwable;
-
-interface JobInterface
+enum Result: string
 {
-    public function fail(Throwable $e): void;
+    /**
+     * Acknowledge the message.
+     */
+    case ACK = 'ack';
 
     /**
-     * Handle the job.
-     * @return mixed|never|Result
+     * Reject the message and requeue it.
      */
-    public function handle();
+    case REQUEUE = 'requeue';
 
-    public function setMaxAttempts(int $maxAttempts): static;
-
-    public function getMaxAttempts(): int;
+    /**
+     * Reject the message and drop it.
+     */
+    case DROP = 'drop';
 }

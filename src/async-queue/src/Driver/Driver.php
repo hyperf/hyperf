@@ -18,6 +18,7 @@ use Hyperf\AsyncQueue\Event\FailedHandle;
 use Hyperf\AsyncQueue\Event\QueueLength;
 use Hyperf\AsyncQueue\Event\RetryHandle;
 use Hyperf\AsyncQueue\MessageInterface;
+use Hyperf\AsyncQueue\Result;
 use Hyperf\Codec\Packer\PhpSerializerPacker;
 use Hyperf\Collection\Arr;
 use Hyperf\Contract\PackerInterface;
@@ -112,11 +113,16 @@ abstract class Driver implements DriverInterface
             try {
                 if ($message instanceof MessageInterface) {
                     $this->event?->dispatch(new BeforeHandle($message));
-                    $message->job()->handle();
+                    $result = $message->job()->handle();
                     $this->event?->dispatch(new AfterHandle($message));
-                }
 
-                $this->ack($data);
+                    match ($result) {
+                        Result::ACK => $this->ack($data),
+                        Result::REQUEUE => $this->retry($data),
+                        Result::DROP => $this->remove($data),
+                        default => $this->ack($data),
+                    };
+                }
             } catch (Throwable $ex) {
                 if (isset($message, $data)) {
                     if ($message->attempts() && $this->remove($data)) {
