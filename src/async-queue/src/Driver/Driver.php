@@ -120,16 +120,16 @@ abstract class Driver implements DriverInterface
                 $this->event?->dispatch(new BeforeHandle($message));
 
                 $result = $message->job()->handle();
+                $result = $result instanceof Result ? $result : Result::ACK;
 
                 match ($result) {
                     Result::REQUEUE => $this->remove($data) && $this->retry($data),
                     Result::RETRY => $this->remove($data) && $message->attempts() && $this->retry($message),
                     Result::DROP => $this->remove($data),
                     Result::ACK => $this->ack($data),
-                    default => $this->ack($data),
                 };
 
-                $this->event?->dispatch(new AfterHandle($message, $result instanceof Result ? $result : null));
+                $this->event?->dispatch(new AfterHandle($message, $result));
             } catch (Throwable $ex) {
                 if (isset($message, $data)) {
                     if ($message->attempts() && $this->remove($data)) {
