@@ -7,7 +7,7 @@
 
 ## Optimized
 
-- [#7604](https://github.com/hyperf/hyperf/pull/7604) Optimized `AnnotationJob` to support call protect / private methods.
+- [#7604](https://github.com/hyperf/hyperf/pull/7604) Optimized `AnnotationJob` to support call protected / private methods.
 
 
 ## Fixed
