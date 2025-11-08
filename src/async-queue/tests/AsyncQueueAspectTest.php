@@ -20,6 +20,7 @@ use Hyperf\AsyncQueue\Driver\DriverInterface;
 use Hyperf\AsyncQueue\Environment;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\Ast;
@@ -89,10 +90,11 @@ class AsyncQueueAspectTest extends TestCase
 
     public function testAnnotationJob()
     {
-        wait(function () {
-            $container = Mockery::mock(ContainerInterface::class);
-            ApplicationContext::setContainer($container);
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+        $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
 
+        wait(function () use ($container) {
             $container->shouldReceive('get')->with(FooService::class)->andReturn(new FooService());
             $container->shouldReceive('get')->with(Environment::class)->andReturn(new Environment());
 
