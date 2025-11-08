@@ -23,18 +23,13 @@ use PHPUnit\Framework\TestCase;
  * @coversNothing
  */
 #[Group('NonCoroutine')]
-class RunTestsInCoroutineTest extends TestCase
+#[NonCoroutine]
+class AttributeOnClassTest extends TestCase
 {
     use RunTestsInCoroutine;
 
-    #[NonCoroutine]
-    public function testWithNonCoroutineAttribute()
+    public function testGetCoroutineStatus()
     {
         $this->assertFalse(Coroutine::inCoroutine());
-    }
-
-    public function testWithoutNonCoroutineAttribute()
-    {
-        $this->assertTrue(Coroutine::inCoroutine());
     }
 }
