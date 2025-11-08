@@ -14,17 +14,17 @@ namespace Hyperf\Testing\Concerns;
 
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Testing\Attributes\NonCoroutine;
+use ReflectionClass;
 use Swoole\Coroutine;
 use Swoole\Timer;
 use Throwable;
 
 trait RunTestsInCoroutine
 {
-    protected bool $enableCoroutine = true;
-
     public function runBare(): void
     {
-        if ($this->enableCoroutine && extension_loaded('swoole') && Coroutine::getCid() === -1) {
+        if ($this->isCoroutineEnabled()) {
             $exception = null;
 
             /* @phpstan-ignore-next-line */
@@ -47,5 +47,24 @@ trait RunTestsInCoroutine
         }
 
         parent::runBare();
+    }
+
+    private function isCoroutineEnabled(): bool
+    {
+        if (! extension_loaded('swoole') || Coroutine::getCid() !== -1) {
+            return false;
+        }
+
+        $refClass = new ReflectionClass(static::class);
+        foreach ($refClass->getAttributes(NonCoroutine::class) as $attribute) {
+            return false;
+        }
+
+        $refMethod = $refClass->getMethod($this->name());
+        foreach ($refMethod->getAttributes(NonCoroutine::class) as $attribute) {
+            return false;
+        }
+
+        return true;
     }
 }
