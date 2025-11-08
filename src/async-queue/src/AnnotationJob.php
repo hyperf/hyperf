@@ -45,6 +45,8 @@ class AnnotationJob extends Job
 
         $container->get(Environment::class)->setAsyncQueue(true);
 
-        (fn () => $this->{$this->method}(...$params))->call($instance);
+        $method = $this->method;
+
+        (fn () => $this->{$method}(...$params))->call($instance);
     }
 }
