@@ -75,6 +75,7 @@ class KVTest extends TestCase
                 'uri' => 'http://127.0.0.1:2379',
                 'version' => 'v3',
                 'auth' => [
+                    'enable' => true,
                     'name' => 'root',
                     'password' => '<PASSWORD>',
                 ],

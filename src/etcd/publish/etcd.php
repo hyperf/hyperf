@@ -16,8 +16,9 @@ return [
     'uri' => env('ETCD_URI', 'http://127.0.0.1:2379'),
     'version' => env('ETCD_VERSION', 'v3'),
     'auth' => [
-        'name' => env('ETCD_NAME', ''),
-        'password' => env('ETCD_PASSWORD', ''),
+        'enable' => env('ETCD_AUTH_ENABLE', false),
+        'name' => env('ETCD_AUTH_NAME', ''),
+        'password' => env('ETCD_AUTH_PASSWORD', ''),
     ],
     'options' => [
         'timeout' => 10,

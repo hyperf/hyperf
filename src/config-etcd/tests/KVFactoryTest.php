@@ -46,6 +46,7 @@ class KVFactoryTest extends TestCase
                 'uri' => 'http://127.0.0.1:2379',
                 'version' => 'v3',
                 'auth' => [
+                    'enable' => true,
                     'name' => 'root',
                     'password' => '<PASSWORD>',
                 ],
@@ -57,7 +58,7 @@ class KVFactoryTest extends TestCase
 
         $factory = new KVFactory();
         $client = new ClassInvoker($factory($container));
-        $this->assertSame('http://127.0.0.1:2379/v3beta/', $client->baseUri);
+        $this->assertSame('http://127.0.0.1:2379/v3/', $client->baseUri);
     }
 
     public function testMakeKVClientFromConfigCenter()
@@ -74,6 +75,7 @@ class KVFactoryTest extends TestCase
                             'uri' => 'http://localhost:2379',
                             'version' => 'v3',
                             'auth' => [
+                                'enable' => true,
                                 'name' => 'root',
                                 'password' => '<PASSWORD>',
                             ],
@@ -88,6 +90,7 @@ class KVFactoryTest extends TestCase
                 'uri' => 'http://127.0.0.1:2379',
                 'version' => 'v3',
                 'auth' => [
+                    'enable' => true,
                     'name' => 'root',
                     'password' => '<PASSWORD>',
                 ],
@@ -99,6 +102,6 @@ class KVFactoryTest extends TestCase
 
         $factory = new KVFactory();
         $client = new ClassInvoker($factory($container));
-        $this->assertSame('http://localhost:2379/v3beta/', $client->baseUri);
+        $this->assertSame('http://localhost:2379/v3/', $client->baseUri);
     }
 }
