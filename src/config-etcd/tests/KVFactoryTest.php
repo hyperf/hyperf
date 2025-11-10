@@ -44,7 +44,11 @@ class KVFactoryTest extends TestCase
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'etcd' => [
                 'uri' => 'http://127.0.0.1:2379',
-                'version' => 'v3beta',
+                'version' => 'v3',
+                'auth' => [
+                    'name' => 'root',
+                    'password' => '<PASSWORD>',
+                ],
                 'options' => [
                     'timeout' => 10,
                 ],
@@ -68,7 +72,11 @@ class KVFactoryTest extends TestCase
                     'etcd' => [
                         'client' => [
                             'uri' => 'http://localhost:2379',
-                            'version' => 'v3beta',
+                            'version' => 'v3',
+                            'auth' => [
+                                'name' => 'root',
+                                'password' => '<PASSWORD>',
+                            ],
                             'options' => [
                                 'timeout' => 10,
                             ],
@@ -78,7 +86,11 @@ class KVFactoryTest extends TestCase
             ],
             'etcd' => [
                 'uri' => 'http://127.0.0.1:2379',
-                'version' => 'v3beta',
+                'version' => 'v3',
+                'auth' => [
+                    'name' => 'root',
+                    'password' => '<PASSWORD>',
+                ],
                 'options' => [
                     'timeout' => 10,
                 ],

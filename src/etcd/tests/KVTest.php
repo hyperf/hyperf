@@ -73,7 +73,11 @@ class KVTest extends TestCase
         $config = new Config([
             'etcd' => [
                 'uri' => 'http://127.0.0.1:2379',
-                'version' => 'v3beta',
+                'version' => 'v3',
+                'auth' => [
+                    'name' => 'root',
+                    'password' => '<PASSWORD>',
+                ],
                 'options' => [
                     'timeout' => 10,
                 ],
