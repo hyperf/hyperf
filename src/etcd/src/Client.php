@@ -35,7 +35,7 @@ abstract class Client
         $this->baseUri = sprintf('%s/%s/', $uri, $version);
     }
 
-    protected function getDefaultHandler()
+    protected function getDefaultHandler(): HandlerStack
     {
         $id = (int) Coroutine::inCoroutine();
         if (isset($this->stacks[$id]) && $this->stacks[$id] instanceof HandlerStack) {
