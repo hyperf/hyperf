@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Etcd;
 
+use Hyperf\Etcd\V3\Auth\EtcdHandlerStackFactory;
+use Hyperf\Guzzle\HandlerStackFactory;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -19,6 +22,7 @@ class ConfigProvider
         return [
             'dependencies' => [
                 KVInterface::class => KVFactory::class,
+                HandlerStackFactory::class => EtcdHandlerStackFactory::class,
             ],
             'publish' => [
                 [

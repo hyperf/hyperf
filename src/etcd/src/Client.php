@@ -25,8 +25,13 @@ abstract class Client
      */
     protected array $stacks = [];
 
-    public function __construct(string $uri, string $version, protected array $options, protected HandlerStackFactory $factory)
-    {
+    public function __construct(
+        protected string $uri,
+        protected string $version,
+        protected array $auth,
+        protected array $options,
+        protected HandlerStackFactory $factory
+    ) {
         $this->baseUri = sprintf('%s/%s/', $uri, $version);
     }
 
@@ -37,6 +42,14 @@ abstract class Client
             return $this->stacks[$id];
         }
 
-        return $this->stacks[$id] = $this->factory->create();
+        $config = $this->auth['enable'] ?? false ? [
+            '_auth' => [
+                'baseUri' => $this->baseUri,
+                'auth' => $this->auth,
+                'options' => $this->options,
+            ],
+        ] : [];
+
+        return $this->stacks[$id] = $this->factory->create($config);
     }
 }

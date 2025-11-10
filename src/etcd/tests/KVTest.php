@@ -74,6 +74,10 @@ class KVTest extends TestCase
             'etcd' => [
                 'uri' => 'http://127.0.0.1:2379',
                 'version' => 'v3beta',
+                'auth' => [
+                    'name' => 'root',
+                    'password' => 'root',
+                ],
                 'options' => [
                     'timeout' => 10,
                 ],

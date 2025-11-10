@@ -23,20 +23,22 @@ class KVFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $config = $container->get(ConfigInterface::class);
-        $uri = $config->get('etcd.uri', 'http://127.0.0.1:2379');
-        $version = $config->get('etcd.version', 'v3beta');
-        $options = $config->get('etcd.options', []);
+        $config = $container->get(ConfigInterface::class)->get('etcd');
+        $uri = $config['uri'] ?? 'http://127.0.0.1:2379';
+        $version = $config['version'] ?? 'v3';
+        $auth = $config['auth'] ?? [];
+        $options = $config['options'] ?? [];
         $factory = $container->get(HandlerStackFactory::class);
 
-        return $this->make($uri, $version, $options, $factory);
+        return $this->make($uri, $version, $auth, $options, $factory);
     }
 
-    protected function make(string $uri, string $version, array $options, HandlerStackFactory $factory)
+    protected function make(string $uri, string $version, array $auth, array $options, HandlerStackFactory $factory)
     {
         $params = [
             'uri' => $uri,
             'version' => $version,
+            'auth' => $auth,
             'options' => $options,
             'factory' => $factory,
         ];
