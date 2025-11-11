@@ -1267,7 +1267,12 @@ class CollectionTest extends TestCase
         ))->sortBy([['name', 'asc']], SORT_NATURAL);
         $this->assertEquals((string) $data->values(), (string) $dataMany->values());
 
-        setlocale(LC_COLLATE, 'en_US.utf8');
+        $localeArray = ['en_US.utf8', 'en_US.UTF-8'];
+        $locale  = setlocale(LC_COLLATE, ...$localeArray);
+
+        // ensure the locale set successfully.
+        $this->assertTrue(in_array($locale, $localeArray));
+
         $data = (new $collection(
             [
                 ['id' => 5, 'name' => 'A'],
@@ -1278,10 +1283,10 @@ class CollectionTest extends TestCase
             ]
         ))->sortBy('name', SORT_LOCALE_STRING);
         $this->assertEquals(json_encode([
-            ['id' => 4, 'name' => 'a'],
             ['id' => 5, 'name' => 'A'],
-            ['id' => 2, 'name' => 'b'],
             ['id' => 3, 'name' => 'B'],
+            ['id' => 4, 'name' => 'a'],
+            ['id' => 2, 'name' => 'b'],
             ['id' => 1, 'name' => 'c'],
         ]), (string) $data->values());
         $dataMany = (new $collection(
