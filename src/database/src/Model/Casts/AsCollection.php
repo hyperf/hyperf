@@ -95,7 +95,13 @@ class AsCollection implements Castable
      */
     public static function using($class, $map = null)
     {
-        if (is_array($map) && is_callable($map)) {
+        if (
+            is_array($map)
+            && count($map) === 2
+            && is_string($map[0])
+            && is_string($map[1])
+            && is_callable($map)
+        ) {
             $map = $map[0] . '@' . $map[1];
         }
 
