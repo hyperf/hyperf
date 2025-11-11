@@ -8,6 +8,7 @@
 ## Optimized
 
 - [#7604](https://github.com/hyperf/hyperf/pull/7604) Optimized `AnnotationJob` to support call protected / private methods.
+- [#7611](https://github.com/hyperf/hyperf/pull/7611) Added `@param-closure-this` annotation to `Console::command()` for better IDE support.
 
 
 ## Fixed
