@@ -30,8 +30,10 @@ class Json
 
     /**
      * Encode the given value.
+     *
+     * @return string|false
      */
-    public static function encode(mixed $value, int $flags = 0): mixed
+    public static function encode(mixed $value, int $flags = 0): string|false
     {
         return isset(static::$encoder)
             ? (static::$encoder)($value, $flags)
