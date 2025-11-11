@@ -1283,7 +1283,7 @@ class CollectionTest extends TestCase
             ]
         ))->sortBy('name', SORT_LOCALE_STRING);
 
-        // 只取 name 排序
+        // name sort by locale string
         $nameArray = $data->pluck('name')->toArray();
         asort($nameArray, SORT_LOCALE_STRING);
         $this->assertEquals(json_encode(array_values($nameArray)), (string) $data->values()->pluck('name'));
