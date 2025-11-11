@@ -1268,7 +1268,7 @@ class CollectionTest extends TestCase
         $this->assertEquals((string) $data->values(), (string) $dataMany->values());
 
         $localeArray = ['en_US.utf8', 'en_US.UTF-8'];
-        $locale  = setlocale(LC_COLLATE, ...$localeArray);
+        $locale = setlocale(LC_COLLATE, ...$localeArray);
 
         // ensure the locale set successfully.
         $this->assertTrue(in_array($locale, $localeArray));
