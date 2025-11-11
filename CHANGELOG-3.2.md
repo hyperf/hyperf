@@ -87,6 +87,7 @@ return [
 - [#7278](https://github.com/hyperf/hyperf/pull/7278) Removed abandoned `laminas/laminas-mime` package.
 - [#7573](https://github.com/hyperf/hyperf/pull/7573) Removed deprecated `Hyperf\Serializer\Contract\CacheableSupportsMethodInterface` interface.
 - [#7609](https://github.com/hyperf/hyperf/pull/7609) Removed backward compatibility code from `Hyperf\AsyncQueue\JobMessage` serialization.
+- [#7610](https://github.com/hyperf/hyperf/pull/7610) Removed deprecated code scheduled for v3.2 removal, including Collection backward compatibility, ProxyTrait parameter mapping, ResumeExitCoordinatorListener, SocketIO Future flag parameter, and WebSocket HandeShakeException typo alias.
 
 ## Optimized
 
