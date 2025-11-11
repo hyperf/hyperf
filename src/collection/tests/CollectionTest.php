@@ -1279,8 +1279,8 @@ class CollectionTest extends TestCase
         ))->sortBy('name', SORT_LOCALE_STRING);
         $this->assertEquals(json_encode([
             ['id' => 4, 'name' => 'a'],
-            ['id' => 2, 'name' => 'b'],
             ['id' => 5, 'name' => 'A'],
+            ['id' => 2, 'name' => 'b'],
             ['id' => 3, 'name' => 'B'],
             ['id' => 1, 'name' => 'c'],
         ]), (string) $data->values());
