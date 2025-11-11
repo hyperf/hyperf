@@ -83,7 +83,7 @@ class Attribute
      * @param  callable  $set
      * @return static
      */
-    public static function set(callable $set)
+    public static function set(callable $set): static
     {
         return new static(null, $set);
     }
