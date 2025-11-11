@@ -30,9 +30,6 @@ class Future
 
     private bool $sent;
 
-    /**
-     * @param int $flag deprecated it will be removed in v3.2 or v4.0
-     */
     public function __construct(
         private SocketIO $socketIO,
         private Sender $sender,
@@ -41,7 +38,6 @@ class Future
         private array $data,
         callable $encode,
         private int $opcode = Opcode::TEXT,
-        private int $flag = 0,
         private ?FrameInterface $frame = null
     ) {
         $this->id = '';

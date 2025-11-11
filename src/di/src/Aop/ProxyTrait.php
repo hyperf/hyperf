@@ -16,7 +16,6 @@ use Closure;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
-use Hyperf\Di\ReflectionManager;
 use Hyperf\Stdlib\SplPriorityQueue;
 
 trait ProxyTrait
@@ -31,30 +30,6 @@ trait ProxyTrait
         $result = self::handleAround($proceedingJoinPoint);
         unset($proceedingJoinPoint);
         return $result;
-    }
-
-    /**
-     * @TODO This method will be called everytime, should optimize it later.
-     * @deprecated v3.2
-     */
-    protected static function __getParamsMap(string $className, string $method, array $args): array
-    {
-        $map = [
-            'keys' => [],
-            'order' => [],
-        ];
-        $reflectParameters = ReflectionManager::reflectMethod($className, $method)->getParameters();
-        $leftArgCount = count($args);
-        foreach ($reflectParameters as $reflectionParameter) {
-            $arg = $reflectionParameter->isVariadic() ? $args : array_shift($args);
-            if (! isset($arg) && $leftArgCount <= 0) {
-                $arg = $reflectionParameter->getDefaultValue();
-            }
-            --$leftArgCount;
-            $map['keys'][$reflectionParameter->getName()] = $arg;
-            $map['order'][] = $reflectionParameter->getName();
-        }
-        return $map;
     }
 
     protected static function handleAround(ProceedingJoinPoint $proceedingJoinPoint)
