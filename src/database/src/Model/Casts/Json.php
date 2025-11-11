@@ -42,12 +42,33 @@ class Json
 
     /**
      * Decode the given value.
+     *
+     * @param mixed $value The JSON string to decode
+     * @param bool|null $associative When true, JSON objects will be returned as associative arrays; when false, as objects
+     * @return mixed The decoded value, or null if the JSON string is invalid or represents null
+     * @throws \JsonException When JSON decoding fails (if custom decoder is not set and JSON_THROW_ON_ERROR is used)
+     *
+     * @note This method returns null both when the JSON string is "null" (valid JSON null)
+     *       and when the JSON string is invalid/malformed (decode failure).
+     *       Use json_last_error() after calling this method to distinguish between these cases.
      */
     public static function decode(mixed $value, ?bool $associative = true): mixed
     {
-        return isset(static::$decoder)
-            ? (static::$decoder)($value, $associative)
-            : json_decode($value, $associative);
+        if (isset(static::$decoder)) {
+            return (static::$decoder)($value, $associative);
+        }
+
+        $decoded = json_decode($value, $associative);
+
+        // Check for JSON decode errors
+        // Note: json_decode() returns null both for valid JSON null and decode failures.
+        // Use json_last_error() immediately after this call to distinguish between them.
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            // Return null on decode failure, but error can be checked via json_last_error()
+            return null;
+        }
+
+        return $decoded;
     }
 
     /**
