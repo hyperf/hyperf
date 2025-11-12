@@ -19,7 +19,7 @@ use Psr\Container\ContainerInterface;
 
 class ConsumerProcess extends AbstractProcess
 {
-    protected string $queue = 'default';
+    protected string $pool = 'default';
 
     protected DriverInterface $driver;
 
@@ -29,11 +29,16 @@ class ConsumerProcess extends AbstractProcess
     {
         parent::__construct($container);
 
-        $factory = $this->container->get(DriverFactory::class);
-        $this->driver = $factory->get($this->queue);
-        $this->config = $factory->getConfig($this->queue);
+        // compatible with older versions, will be removed in v3.2, use `$pool` instead.
+        if (property_exists($this, 'queue')) {
+            $this->pool = $this->queue;
+        }
 
-        $this->name = "queue.{$this->queue}";
+        $factory = $this->container->get(DriverFactory::class);
+        $this->driver = $factory->get($this->pool);
+        $this->config = $factory->getConfig($this->pool);
+
+        $this->name = "pool.{$this->pool}";
         $this->nums = $this->config['processes'] ?? 1;
     }
 
