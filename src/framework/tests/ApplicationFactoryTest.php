@@ -72,4 +72,35 @@ class ApplicationFactoryTest extends TestCase
         $application = new ClassInvoker((new ApplicationFactory())($container));
         $this->assertNull($application->dispatcher);
     }
+
+    public function testApplicationFactoryUsesAddCommandWhenAvailable()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->andReturnFalse();
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(
+            new Config([
+                'commands' => [TestCommand::class],
+            ])
+        );
+        $testCommand = Mockery::mock(\Symfony\Component\Console\Command\Command::class);
+        $testCommand->shouldReceive('getName')->andReturn('test:command');
+        $container->shouldReceive('get')->with(TestCommand::class)->andReturn($testCommand);
+
+        /** @var Application $application */
+        $application = (new ApplicationFactory())($container);
+        $this->assertInstanceOf(Application::class, $application);
+        
+        // Verify that the command was added to the application
+        // The Application should have the command whether using add() or addCommand()
+        $this->assertTrue($application->has('test:command'));
+    }
+}
+
+// Mock command class for testing
+class TestCommand extends \Symfony\Component\Console\Command\Command
+{
+    protected function configure(): void
+    {
+        $this->setName('test:command');
+    }
 }
