@@ -4,6 +4,7 @@
 
 - [#7600](https://github.com/hyperf/hyperf/pull/7600) Added method `Hyperf\Collection\Arr::sole()`.
 - [#7601](https://github.com/hyperf/hyperf/pull/7601) Added result handling for async queue jobs with `Hyperf\AsyncQueue\Result` enum.
+- [#7616](https://github.com/hyperf/hyperf/pull/7616) Added automatic consumer process registration for `hyperf/async-queue`.
 
 ## Optimized
 
@@ -15,6 +16,10 @@
 ## Fixed
 
 - [#7596](https://github.com/hyperf/hyperf/pull/7596) Fixed BC when `validation` rule not define.
+
+## Deprecated
+
+- [#7616](https://github.com/hyperf/hyperf/pull/7616) Deprecated `Hyperf\AsyncQueue\Process\ConsumerProcess` in favor of automatic consumer process registration via `async_queue.{pool}.enable` configuration.
 
 # v3.1.63 - 2025-10-30
 
