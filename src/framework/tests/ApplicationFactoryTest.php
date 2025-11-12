@@ -23,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface as PsrEventDispatcherInterface;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -82,14 +83,14 @@ class ApplicationFactoryTest extends TestCase
                 'commands' => [TestCommand::class],
             ])
         );
-        $testCommand = Mockery::mock(\Symfony\Component\Console\Command\Command::class);
+        $testCommand = Mockery::mock(Command::class);
         $testCommand->shouldReceive('getName')->andReturn('test:command');
         $container->shouldReceive('get')->with(TestCommand::class)->andReturn($testCommand);
 
         /** @var Application $application */
         $application = (new ApplicationFactory())($container);
         $this->assertInstanceOf(Application::class, $application);
-        
+
         // Verify that the command was added to the application
         // The Application should have the command whether using add() or addCommand()
         $this->assertTrue($application->has('test:command'));
@@ -97,7 +98,7 @@ class ApplicationFactoryTest extends TestCase
 }
 
 // Mock command class for testing
-class TestCommand extends \Symfony\Component\Console\Command\Command
+class TestCommand extends Command
 {
     protected function configure(): void
     {
