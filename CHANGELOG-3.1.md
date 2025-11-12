@@ -9,6 +9,7 @@
 
 - [#7604](https://github.com/hyperf/hyperf/pull/7604) Optimized `AnnotationJob` to support call protected / private methods.
 - [#7611](https://github.com/hyperf/hyperf/pull/7611) Added `@param-closure-this` annotation to `Console::command()` for better IDE support.
+- [#7615](https://github.com/hyperf/hyperf/pull/7615) Renamed `$queue` property to `$pool` in `ConsumerProcess` for better code clarity in `hyperf/async-queue`.
 
 
 ## Fixed
