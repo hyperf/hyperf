@@ -108,7 +108,7 @@ return [
 - [#7302](https://github.com/hyperf/hyperf/pull/7302) Added `partition()` and `reject()` to `Hyperf\Collection\Arr`.
 - [#7312](https://github.com/hyperf/hyperf/pull/7312) Added `Macroable` support to `Hyperf\Context\Context`.
 - [#7605](https://github.com/hyperf/hyperf/pull/7605) Added `NonCoroutine` attribute for flexible test execution control.
-- [#7618](https://github.com/hyperf/hyperf/pull/7618) Added automatic consumer process registration for async queues based on configuration.
+- [#7618](https://github.com/hyperf/hyperf/pull/7618) Added a new registration mode for async queue consumer processes that supports automatic registration based on configuration, eliminating the need for manual process registration in `config/autoload/processes.php`.
 
 ## Changed
 
