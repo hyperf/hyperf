@@ -48,9 +48,11 @@ class FormRequestTest extends TestCase
 {
     protected function tearDown(): void
     {
+        parent::tearDown();
         Mockery::close();
         Context::set(ServerRequestInterface::class, null);
         Context::set('http.request.parsedData', null);
+        Context::set(ContainerInterface::class, null);
     }
 
     public function testRequestValidationData()
@@ -130,6 +132,14 @@ class FormRequestTest extends TestCase
         $invoker->scene('get');
         $rules = $invoker->getRules();
         $this->assertSame(['mobile' => 'string|required'], $rules);
+
+        $invoker->scene('not-exists-field-1');
+        $rules = $invoker->getRules();
+        $this->assertSame(['not-exists-field-1' => 'required'], $rules);
+
+        $invoker->scene('not-exists-field-2');
+        $rules = $invoker->getRules();
+        $this->assertSame([], $rules);
     }
 
     public function testSceneForFormRequest()
@@ -151,6 +161,7 @@ class FormRequestTest extends TestCase
 
         $request = new FooSceneRequest($container);
         $res = $request->scene('info')->validated();
+
         $this->assertSame(['mobile' => '12345'], $res);
 
         wait(function () use ($request, $psrRequest) {

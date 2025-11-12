@@ -20,16 +20,20 @@ use Hyperf\AsyncQueue\Driver\DriverInterface;
 use Hyperf\AsyncQueue\Environment;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\ReflectionManager;
 use HyperfTest\AsyncQueue\Stub\FooProxy;
+use HyperfTest\AsyncQueue\Stub\FooService;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+
+use function Hyperf\Coroutine\wait;
 
 /**
  * @internal
@@ -82,6 +86,28 @@ class AsyncQueueAspectTest extends TestCase
         ]);
 
         $this->assertSame([$id, $uuid, $data], Context::get(FooProxy::class));
+    }
+
+    public function testAnnotationJob()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+        $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
+
+        wait(function () use ($container) {
+            $container->shouldReceive('get')->with(FooService::class)->andReturn(new FooService());
+            $container->shouldReceive('get')->with(Environment::class)->andReturn(new Environment());
+
+            $job = new AnnotationJob(FooService::class, 'test', []);
+            $job->handle();
+
+            $this->assertSame(1, Context::get(FooService::class . '::test'));
+
+            $job = new AnnotationJob(FooService::class, 'foo', []);
+            $job->handle();
+
+            $this->assertSame(1, Context::get(FooService::class . '::foo'));
+        });
     }
 
     protected function getContainer()

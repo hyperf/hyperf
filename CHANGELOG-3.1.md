@@ -1,5 +1,21 @@
 # v3.1.64 - TBD
 
+## Added
+
+- [#7600](https://github.com/hyperf/hyperf/pull/7600) Added method `Hyperf\Collection\Arr::sole()`.
+- [#7601](https://github.com/hyperf/hyperf/pull/7601) Added result handling for async queue jobs with `Hyperf\AsyncQueue\Result` enum.
+
+## Optimized
+
+- [#7604](https://github.com/hyperf/hyperf/pull/7604) Optimized `AnnotationJob` to support call protected / private methods.
+- [#7611](https://github.com/hyperf/hyperf/pull/7611) Added `@param-closure-this` annotation to `Console::command()` for better IDE support.
+- [#7615](https://github.com/hyperf/hyperf/pull/7615) Renamed `$queue` property to `$pool` in `ConsumerProcess` for better code clarity in `hyperf/async-queue`.
+
+
+## Fixed
+
+- [#7596](https://github.com/hyperf/hyperf/pull/7596) Fixed BC when `validation` rule not define.
+
 # v3.1.63 - 2025-10-30
 
 ## Fixed

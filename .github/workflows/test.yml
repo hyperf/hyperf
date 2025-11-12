@@ -12,7 +12,7 @@ on:
       - "!docs/**"
       - "!**.md"
   schedule:
-    - cron: '0 14 * * *'
+    - cron: "0 14 * * *"
 
 jobs:
   cs-fix:
@@ -20,16 +20,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
-        php: [ '8.2' ]
-        swoole: [ 'swoole' ]
+        os: [ubuntu-latest]
+        php: ["8.2"]
+        swoole: ["swoole"]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: "8.2"
           tools: php-cs-fixer
           extensions: redis, pdo, pdo_mysql, bcmath, ${{ matrix.swoole }}
       - name: Setup Packages
@@ -46,15 +46,15 @@ jobs:
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
-        php-version: [ '8.4', '8.3', '8.2' ]
-        sw-version: ['v6.1.0',  'v6.0.2', 'master' ]
+        os: [ubuntu-latest]
+        php-version: ["8.4", "8.3", "8.2"]
+        sw-version: ["v6.1.1", "v6.0.2", "master"]
       max-parallel: 20
       fail-fast: false
     env:
       SW_VERSION: ${{ matrix.sw-version }}
-      MYSQL_VERSION: '8.0'
-      PGSQL_VERSION: '14'
+      MYSQL_VERSION: "8.0"
+      PGSQL_VERSION: "14"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
