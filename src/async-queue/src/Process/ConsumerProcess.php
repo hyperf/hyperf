@@ -18,6 +18,9 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\AbstractProcess;
 use Psr\Container\ContainerInterface;
 
+/**
+ * @deprecated since v3.1, will be removed in v3.2, use 'async_queue.pool.enable' instead.
+ */
 class ConsumerProcess extends AbstractProcess
 {
     protected string $pool = 'default';
