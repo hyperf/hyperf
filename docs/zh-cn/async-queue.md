@@ -14,8 +14,9 @@ composer require hyperf/async-queue
 
 > 暂时只支持 `Redis Driver` 驱动。
 
-|       配置       |   类型    |                   默认值                    |                  备注                   |
+|       配置        |   类型    |                   默认值                    |                  备注                    |
 | :--------------: | :-------: | :-----------------------------------------: | :-------------------------------------: |
+|      enable      |   bool    |                    false                    |           自动创建消费进程              |
 |      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   无                    |
 |     channel      |  string   |                    queue                    |                队列前缀                 |
 |    redis.pool    |  string   |                   default                   |              redis 连接池               |
@@ -31,6 +32,7 @@ composer require hyperf/async-queue
 
 return [
     'default' => [
+        'enable' => true,
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'redis' => [
             'pool' => 'default'
@@ -56,6 +58,7 @@ return [
 
 return [
     'default' => [
+        'enable' => true,
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'channel' => 'queue',
         'retry_seconds' => [1, 5, 10, 20],
@@ -84,6 +87,14 @@ C-->F[消费任务]
 ## 使用
 
 ### 配置异步消费进程
+
+组件提供`进程配置`和`参数配置`两种方式来配置异步消费进程。
+
+#### 1. 参数配置
+
+根据上文配置文件 `config/autoload/async_queue.php` 中的参数 `enable`，自动创建消费进程。
+
+#### 2. 进程配置
 
 组件已经提供了默认 `异步消费进程`，只需要将它配置到 `config/autoload/processes.php` 中即可。
 
@@ -125,6 +136,7 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 return [
     'default' => [
+        'enable' => true,
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'redis' => [
             'pool' => 'default'
@@ -139,6 +151,7 @@ return [
         ],
     ],
     'fast' => [
+        'enable' => true,
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'redis' => [
             'pool' => 'default'
