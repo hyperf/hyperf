@@ -42,7 +42,7 @@ class ConsumerProcess extends AbstractProcess
         $this->driver = $factory->get($this->pool);
         $this->config = $factory->getConfig($this->pool);
 
-        $this->name = "pool.{$this->pool}";
+        $this->name = "queue.{$this->pool}";
         $this->nums = $this->config['processes'] ?? 1;
     }
 
