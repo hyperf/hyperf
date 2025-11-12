@@ -14,6 +14,7 @@ namespace Hyperf\AsyncQueue\Process;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\AsyncQueue\Driver\DriverInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\AbstractProcess;
 use Psr\Container\ContainerInterface;
 
@@ -31,6 +32,9 @@ class ConsumerProcess extends AbstractProcess
 
         // compatible with older versions, will be removed in v3.2, use `$pool` instead.
         if (property_exists($this, 'queue')) {
+            if ($container->has(StdoutLoggerInterface::class)) {
+                $container->get(StdoutLoggerInterface::class)->warning(sprintf('The property "%s::$queue" is deprecated since v3.1 and will be removed in v3.2, use "%s::$pool" instead.', self::class, self::class));
+            }
             $this->pool = $this->queue;
         }
 
