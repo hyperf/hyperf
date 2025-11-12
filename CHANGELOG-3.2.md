@@ -116,4 +116,4 @@ return [
 - [#6760](https://github.com/hyperf/hyperf/pull/6760) Changed the default type of `deleted_at` to `datetime` for `hyperf/database`.
 - [#7563](https://github.com/hyperf/hyperf/pull/7563) Changed the `logger` configuration structure.
 - [#7594](https://github.com/hyperf/hyperf/pull/7594) Changed the `cache` configuration structure.
-- [#xxxx](https://github.com/hyperf/hyperf/pull/xxxx) Added Symfony 7.4 compatibility to `ApplicationFactory` by detecting and using `addCommand()` method when available, while maintaining backward compatibility with Symfony 6.x and 7.x.
+- [#7620](https://github.com/hyperf/hyperf/pull/7620) Added Symfony 7.4 compatibility to `ApplicationFactory` by detecting and using `addCommand()` method when available, while maintaining backward compatibility with Symfony 6.x and 7.x.
