@@ -122,7 +122,7 @@ class StdoutLogger implements StdoutLoggerInterface
 
         return sprintf(
             '[%s] <%s>[%s]</>%s %s',
-            (new DateTime())->format('Y-m-d H:i:s-v'),
+            (new DateTime())->format('Y-m-d H:i:s.v'),
             $tag,
             strtoupper($level),
             $tagsString,
