@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Framework\Logger;
 
+use DateTime;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
@@ -114,12 +115,15 @@ class StdoutLogger implements StdoutLoggerInterface
             default => 'info',
         };
 
-        $template = sprintf('<%s>[%s]</>', $tag, strtoupper($level));
-        $implodedTags = '';
-        foreach ($tags as $value) {
-            $implodedTags .= (' [' . $value . ']');
-        }
+        $format = '[%s] <%s>[%s]</> %s %s';
 
-        return sprintf($template . $implodedTags . ' %s', $message);
+        return sprintf(
+            $format,
+            (new DateTime())->format('Y-m-d H:i:s-v'),
+            $tag,
+            strtoupper($level),
+            implode('', array_map(fn ($value) => ' [' . $value . ']', $tags)),
+            $message
+        );
     }
 }
