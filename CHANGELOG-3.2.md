@@ -92,6 +92,7 @@ return [
 ## Optimized
 
 - [#7142](https://github.com/hyperf/hyperf/pull/7142) Enhance array shuffle method to support custom random engines.
+- [#7620](https://github.com/hyperf/hyperf/pull/7620) Added Symfony 7.4 compatibility with batch command registration.
 
 ## Added
 
