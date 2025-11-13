@@ -12,19 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue;
 
-use Hyperf\AsyncQueue\Driver\DriverFactory;
-use Hyperf\Context\ApplicationContext;
-
-function dispatch(JobInterface $job, ?int $delay = null, ?int $maxAttempts = null, ?string $queue = null): bool
+/**
+ * Do not assign a value to the return value of this function unless you are very clear about the consequences of doing so.
+ */
+function dispatch(JobInterface $job): PendingDispatch
 {
-    if (is_int($maxAttempts)) {
-        $job->setMaxAttempts($maxAttempts);
-    }
-
-    $queue ??= $job->getQueueName();
-
-    return ApplicationContext::getContainer()
-        ->get(DriverFactory::class)
-        ->get($queue)
-        ->push($job, $delay ?? 0);
+    return new PendingDispatch($job);
 }
