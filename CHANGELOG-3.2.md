@@ -74,6 +74,25 @@ return [
 ];
 ```
 
+4. The `dispatch()` function now returns `PendingDispatch` instead of `bool`. Please refer to [#7623](https://github.com/hyperf/hyperf/pull/7623).
+
+```php
+<?php
+
+use function Hyperf\AsyncQueue\dispatch;
+
+// Before
+$result = dispatch($job, 60, 3, 'custom');
+// $result is bool
+
+// After
+dispatch($job)->delay(60)->setMaxAttempts(3)->onPool('custom');
+// Or with conditional chaining
+dispatch($job)
+    ->when($condition, fn($pending) => $pending->delay(60))
+    ->unless($anotherCondition, fn($pending) => $pending->onPool('custom'));
+```
+
 ## Dependencies Upgrade
 
 - Upgrade the php version to `>=8.2`
@@ -109,6 +128,7 @@ return [
 - [#7312](https://github.com/hyperf/hyperf/pull/7312) Added `Macroable` support to `Hyperf\Context\Context`.
 - [#7605](https://github.com/hyperf/hyperf/pull/7605) Added `NonCoroutine` attribute for flexible test execution control.
 - [#7618](https://github.com/hyperf/hyperf/pull/7618) Added a new registration mode for async queue consumer processes that supports automatic registration based on configuration, eliminating the need for manual process registration in `config/autoload/processes.php`.
+- [#7623](https://github.com/hyperf/hyperf/pull/7623) Added `PendingDispatch` class with fluent interface for dispatching async queue jobs, supporting method chaining with `setMaxAttempts()`, `onPool()`, `delay()`, and conditional methods `when()`/`unless()` via `Conditionable` trait.
 
 ## Changed
 
