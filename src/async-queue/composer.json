@@ -19,6 +19,7 @@
         "hyperf/codec": "~3.2.0",
         "hyperf/collection": "~3.2.0",
         "hyperf/command": "~3.2.0",
+        "hyperf/conditionable": "~3.2.0",
         "hyperf/context": "~3.2.0",
         "hyperf/contract": "~3.2.0",
         "hyperf/coroutine": "~3.2.0",
