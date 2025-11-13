@@ -83,8 +83,7 @@ class ApplicationFactoryTest extends TestCase
                 'commands' => [TestCommand::class],
             ])
         );
-        $testCommand = Mockery::mock(Command::class);
-        $testCommand->shouldReceive('getName')->andReturn('test:command');
+        $testCommand = new TestCommand();
         $container->shouldReceive('get')->with(TestCommand::class)->andReturn($testCommand);
 
         /** @var Application $application */
