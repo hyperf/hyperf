@@ -53,7 +53,10 @@ class ApplicationFactory
         }
 
         $application->addCommands(
-            array_map(fn ($command) => $this->pendingCommand($command), $commands)
+            array_map(
+                fn ($command) => $this->pendingCommand($container->get($command)),
+                $commands
+            )
         );
 
         return $application;
