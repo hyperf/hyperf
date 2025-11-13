@@ -108,6 +108,7 @@ return [
 - [#7302](https://github.com/hyperf/hyperf/pull/7302) Added `partition()` and `reject()` to `Hyperf\Collection\Arr`.
 - [#7312](https://github.com/hyperf/hyperf/pull/7312) Added `Macroable` support to `Hyperf\Context\Context`.
 - [#7605](https://github.com/hyperf/hyperf/pull/7605) Added `NonCoroutine` attribute for flexible test execution control.
+- [#7621](https://github.com/hyperf/hyperf/pull/7621) Added timestamp prefix to `StdoutLogger` output format.
 
 ## Changed
 
