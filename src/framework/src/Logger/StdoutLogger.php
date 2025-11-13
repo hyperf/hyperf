@@ -115,14 +115,17 @@ class StdoutLogger implements StdoutLoggerInterface
             default => 'info',
         };
 
-        $format = '[%s] <%s>[%s]</> %s %s';
+        $tagsString = trim(implode('', array_map(fn ($value) => ' [' . $value . ']', $tags)));
+        if ($tagsString !== '') {
+            $tagsString = ' ' . $tagsString;
+        }
 
         return sprintf(
-            $format,
+            '[%s] <%s>[%s]</>%s %s',
             (new DateTime())->format('Y-m-d H:i:s-v'),
             $tag,
             strtoupper($level),
-            implode('', array_map(fn ($value) => ' [' . $value . ']', $tags)),
+            $tagsString,
             $message
         );
     }

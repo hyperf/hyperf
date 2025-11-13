@@ -37,13 +37,13 @@ class StdoutLoggerTest extends TestCase
 
     public function testLog()
     {
-        $logger = $this->getLogger('<info>[INFO]</>  Hello Hyperf.');
+        $logger = $this->getLogger('<info>[INFO]</> Hello Hyperf.');
         $logger->info('Hello {name}.', ['name' => 'Hyperf']);
     }
 
     public function testFixedErrorContextCount()
     {
-        $logger = $this->getLogger('<info>[INFO]</>  [test tag] Hello Hyperf.');
+        $logger = $this->getLogger('<info>[INFO]</> [test tag] Hello Hyperf.');
         $logger->info('Hello {name}.', [
             'component' => 'test tag',
             'name' => 'Hyperf',
@@ -52,7 +52,7 @@ class StdoutLoggerTest extends TestCase
 
     public function testLogComplexityContext()
     {
-        $logger = $this->getLogger('<info>[INFO]</>  [test tag] Hello Hyperf <OBJECT> HyperfTest\Framework\Stub\TestObject.');
+        $logger = $this->getLogger('<info>[INFO]</> [test tag] Hello Hyperf <OBJECT> HyperfTest\Framework\Stub\TestObject.');
         $logger->info('Hello {name} {object}.', [
             'name' => 'Hyperf',
             // tags
