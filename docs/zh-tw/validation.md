@@ -769,10 +769,14 @@ return [
 'state' => 'exists:states,abbreviation'
 ```
 
-有時，你可能需要為 `exists` 查詢指定要使用的資料庫連線，這可以在表名前透過`.`前置資料庫連線來實現：
+有時，你可能需要為 `exists` 查詢指定要使用的資料庫連線，這可以在表名前透過`.`前置資料庫連線來實現，或者透過指定模型的類名自動解析：
 
 ```php
+// 前置資料庫連線的方式
 'email' => 'exists:connection.staff,email'
+
+// 模型類名自動解析的方式
+'email' => 'exists:StaffModel::class,email'
 ```
 
 如果你想要自定義驗證規則執行的查詢，可以使用 `Rule` 類來定義規則。在這個例子中，我們還以陣列形式指定了驗證規則，而不是使用 `|` 字元來限定它們：
@@ -1013,10 +1017,14 @@ $validator = $this->validationFactory->make($request->all(), [
 ```
 
 2. 自定義資料庫連線：
-   有時候，你可能需要自定義驗證器生成的資料庫連線，正如上面所看到的，設定 `unique:users` 作為驗證規則將會使用預設資料庫連線來查詢資料庫。要覆蓋預設連線，在資料表名後使用“.”指定連線：
+   有時候，你可能需要自定義驗證器生成的資料庫連線，正如上面所看到的，設定 `unique:users` 作為驗證規則將會使用預設資料庫連線來查詢資料庫。要覆蓋預設連線，在資料表名後使用“.”指定連線，或者透過指定模型的類名自動解析：
 
 ```php
+// 前置資料庫連線的方式
 'email' => 'unique:connection.users,email_address'
+
+// 模型類名自動解析的方式
+'email' => 'unique:UserModel::class,email_address'
 ```
 
 3. 強制一個忽略給定 `ID` 的唯一規則：
