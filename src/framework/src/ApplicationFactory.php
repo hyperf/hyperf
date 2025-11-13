@@ -52,15 +52,9 @@ class ApplicationFactory
             $application->setDispatcher(new SymfonyEventDispatcher($eventDispatcher));
         }
 
-        foreach ($commands as $command) {
-            $pendingCommand = $this->pendingCommand($container->get($command));
-            // Use addCommand if available (Symfony 7.4+), otherwise fall back to add()
-            if (method_exists($application, 'addCommand')) {
-                $application->addCommand($pendingCommand);
-            } else {
-                $application->add($pendingCommand);
-            }
-        }
+        $application->addCommands(
+            array_map(fn ($command) => $this->pendingCommand($command), $commands)
+        );
 
         return $application;
     }
