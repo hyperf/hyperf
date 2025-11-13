@@ -84,7 +84,7 @@ class StdoutLoggerTest extends TestCase
         $output = Mockery::mock(ConsoleOutput::class);
         $output->shouldReceive('writeln')->with(Mockery::any())->once()->andReturnUsing(function ($message) use ($expected) {
             // Strip the timestamp prefix [YYYY-MM-DD HH:MM:SS-mmm] before comparing
-            $messageWithoutTimestamp = preg_replace('/^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}-\d{3}\] /', '', $message);
+            $messageWithoutTimestamp = preg_replace('/^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\] /', '', $message);
             $this->assertSame($expected, $messageWithoutTimestamp);
         });
         return new StdoutLogger(new Config([
