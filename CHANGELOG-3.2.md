@@ -92,6 +92,7 @@ return [
 ## Optimized
 
 - [#7142](https://github.com/hyperf/hyperf/pull/7142) Enhance array shuffle method to support custom random engines.
+- [#7620](https://github.com/hyperf/hyperf/pull/7620) Added Symfony 7.4 compatibility with batch command registration.
 
 ## Added
 
@@ -116,4 +117,3 @@ return [
 - [#6760](https://github.com/hyperf/hyperf/pull/6760) Changed the default type of `deleted_at` to `datetime` for `hyperf/database`.
 - [#7563](https://github.com/hyperf/hyperf/pull/7563) Changed the `logger` configuration structure.
 - [#7594](https://github.com/hyperf/hyperf/pull/7594) Changed the `cache` configuration structure.
-- [#7620](https://github.com/hyperf/hyperf/pull/7620) Added Symfony 7.4 compatibility to `ApplicationFactory` by detecting and using `addCommand()` method when available, while maintaining backward compatibility with Symfony 6.x and 7.x.
