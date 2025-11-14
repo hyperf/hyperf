@@ -436,13 +436,15 @@
         }
     },
     "config": {
+        "audit": {
+            "block-insecure": false
+        },
         "allow-plugins": {
             "ergebnis/composer-normalize": true,
             "php-http/discovery": true
         },
         "optimize-autoloader": true,
-        "sort-packages": true,
-        "block-insecure": false
+        "sort-packages": true
     },
     "extra": {
         "branch-alias": {},
