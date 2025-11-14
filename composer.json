@@ -441,7 +441,8 @@
             "php-http/discovery": true
         },
         "optimize-autoloader": true,
-        "sort-packages": true
+        "sort-packages": true,
+        "block-insecure": false
     },
     "extra": {
         "branch-alias": {},
