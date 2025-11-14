@@ -4,6 +4,29 @@
 
 1. `Carbon::createFromTimestamp()` don't read the default timezone by `date_default_timezone_get()` for `v3.0`.
 
+2. [#7625](https://github.com/hyperf/hyperf/pull/7625) Renamed `JobInterface::getQueueName()` to `getPoolName()` in async-queue component for terminology consistency.
+
+```php
+<?php
+// Before
+class CustomJob extends \Hyperf\AsyncQueue\Job
+{
+    public function getQueueName(): string
+    {
+        return 'custom';
+    }
+}
+
+// After
+class CustomJob extends \Hyperf\AsyncQueue\Job
+{
+    public function getPoolName(): string
+    {
+        return 'custom';
+    }
+}
+```
+
 ```php
 <?php
 
@@ -117,3 +140,6 @@ return [
 - [#6760](https://github.com/hyperf/hyperf/pull/6760) Changed the default type of `deleted_at` to `datetime` for `hyperf/database`.
 - [#7563](https://github.com/hyperf/hyperf/pull/7563) Changed the `logger` configuration structure.
 - [#7594](https://github.com/hyperf/hyperf/pull/7594) Changed the `cache` configuration structure.
+- [#7615](https://github.com/hyperf/hyperf/pull/7615) Renamed `$queue` property to `$pool` in `ConsumerProcess` for async-queue component.
+- [#7625](https://github.com/hyperf/hyperf/pull/7625) Renamed `getQueueName()` to `getPoolName()` in async-queue component for terminology consistency.
+
