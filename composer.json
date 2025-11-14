@@ -440,6 +440,9 @@
             "ergebnis/composer-normalize": true,
             "php-http/discovery": true
         },
+        "audit": {
+            "block-insecure": false
+        },
         "optimize-autoloader": true,
         "sort-packages": true
     },
