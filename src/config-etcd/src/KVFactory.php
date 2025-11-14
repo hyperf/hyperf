@@ -23,11 +23,12 @@ class KVFactory extends \Hyperf\Etcd\KVFactory
         $config = $container->get(ConfigInterface::class);
         if ($client = $config->get('config_center.drivers.etcd.client')) {
             $uri = $client['uri'] ?? 'http://127.0.0.1:2379';
-            $version = $client['version'] ?? 'v3beta';
+            $version = $client['version'] ?? 'v3';
+            $auth = $client['auth'] ?? [];
             $options = $client['options'] ?? [];
             $factory = $container->get(HandlerStackFactory::class);
 
-            return $this->make($uri, $version, $options, $factory);
+            return $this->make($uri, $version, $auth, $options, $factory);
         }
 
         return parent::__invoke($container);
