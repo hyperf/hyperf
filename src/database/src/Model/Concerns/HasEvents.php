@@ -28,7 +28,6 @@ use Hyperf\Database\Model\Events\Saving;
 use Hyperf\Database\Model\Events\Updated;
 use Hyperf\Database\Model\Events\Updating;
 use Hyperf\Database\Model\Register;
-use Hyperf\Event\NullDispatcher;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
@@ -117,7 +116,7 @@ trait HasEvents
         $dispatcher = Register::getEventDispatcher();
 
         if ($dispatcher) {
-            Register::setEventDispatcher(new NullDispatcher($dispatcher));
+            Register::unsetEventDispatcher();
         }
 
         try {
