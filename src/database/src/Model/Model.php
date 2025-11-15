@@ -122,7 +122,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     protected array $traitInitializers = [];
 
     /**
-     * whether to fire the retrieved event
+     * whether to fire the retrieved event.
      */
     protected bool $shouldFireRetrievedEvent = true;
 
