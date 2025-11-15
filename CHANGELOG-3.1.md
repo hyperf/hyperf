@@ -1,5 +1,9 @@
 # v3.1.65 - TBD
 
+## Added
+
+- [#7628](https://github.com/hyperf/hyperf/pull/7628) Added method `Hyperf\Database\Model\Concerns\HasEvents::withoutEvents()` to disable model events temporarily.
+
 # v3.1.64 - 2025-11-12
 
 ## Added
