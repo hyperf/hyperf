@@ -122,6 +122,11 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     protected array $traitInitializers = [];
 
     /**
+     * whether to fire the retrieved event
+     */
+    protected bool $shouldFireRetrievedEvent = true;
+
+    /**
      * Create a new Model model instance.
      */
     public function __construct(array $attributes = [])
@@ -381,7 +386,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
         $model->setConnection($connection ?: $this->getConnectionName());
 
-        $model->fireModelEvent('retrieved');
+        $this->shouldFireRetrievedEvent && $model->fireModelEvent('retrieved');
 
         return $model;
     }
