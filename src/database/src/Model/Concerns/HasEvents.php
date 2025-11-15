@@ -27,6 +27,8 @@ use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Model\Events\Saving;
 use Hyperf\Database\Model\Events\Updated;
 use Hyperf\Database\Model\Events\Updating;
+use Hyperf\Database\Model\Register;
+use Hyperf\Event\NullDispatcher;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
@@ -103,6 +105,28 @@ trait HasEvents
     public function getAvailableEvents(): array
     {
         return array_replace($this->getDefaultEvents(), $this->events);
+    }
+
+    /**
+     * Execute a callback without firing any model events for any model type.
+     *
+     * @return mixed
+     */
+    public static function withoutEvents(callable $callback)
+    {
+        $dispatcher = Register::getEventDispatcher();
+
+        if ($dispatcher) {
+            Register::setEventDispatcher(new NullDispatcher($dispatcher));
+        }
+
+        try {
+            return $callback();
+        } finally {
+            if ($dispatcher) {
+                Register::setEventDispatcher($dispatcher);
+            }
+        }
     }
 
     /**
