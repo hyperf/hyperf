@@ -41,6 +41,7 @@ use Hyperf\Database\Query\Builder as BaseBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Engine\Channel;
+use Hyperf\Event\NullDispatcher;
 use Hyperf\Stringable\Str;
 use Hyperf\Support\Traits\InteractsWithTime;
 use HyperfTest\Database\Stubs\DateModelStub;
@@ -1478,6 +1479,163 @@ class ModelTest extends TestCase
 
         $this->assertNotContains('foo', $class->getAvailableEvents());
         $this->assertNotContains('bar', $class->getAvailableEvents());
+    }
+
+    public function testModelEventsAreDisabledWithinWithoutEventsCallback()
+    {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
+
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery'])->getMock();
+        $query = Mockery::mock(Builder::class);
+
+        $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
+
+        $result = ModelStub::withoutEvents(function () use ($model, $query) {
+            // Events should not be dispatched within this callback
+            $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
+
+            $model->name = 'hyperf';
+            $model->save();
+
+            return 'test-result';
+        });
+
+        $this->assertSame('test-result', $result);
+    }
+
+    public function testModelEventsAreReEnabledAfterWithoutEventsCallback()
+    {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
+
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery'])->getMock();
+        $query = Mockery::mock(Builder::class);
+
+        ModelStub::withoutEvents(function () {
+            // Empty callback - just testing that events are re-enabled after
+        });
+
+        // After the callback, events should be re-enabled
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
+
+        $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
+        $events->shouldReceive('dispatch')->with(Events\Saving::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Creating::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Created::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Saved::class)->andReturn(null);
+
+        $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
+
+        $model->name = 'hyperf';
+        $model->save();
+    }
+
+    public function testNestedWithoutEventsCallsWorkCorrectly()
+    {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
+
+        $callCount = 0;
+
+        ModelStub::withoutEvents(function () use (&$callCount) {
+            ++$callCount;
+
+            // First level - events should be disabled
+            $this->assertInstanceOf(NullDispatcher::class, Register::getEventDispatcher());
+
+            ModelStub::withoutEvents(function () use (&$callCount) {
+                ++$callCount;
+
+                // Second level - events should still be disabled
+                $this->assertInstanceOf(NullDispatcher::class, Register::getEventDispatcher());
+            });
+
+            // Back to first level - events should still be disabled
+            $this->assertInstanceOf(NullDispatcher::class, Register::getEventDispatcher());
+        });
+
+        $this->assertSame(2, $callCount);
+    }
+
+    public function testEventsAreReEnabledAfterExceptionInWithoutEventsCallback()
+    {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
+
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery'])->getMock();
+        $query = Mockery::mock(Builder::class);
+
+        try {
+            ModelStub::withoutEvents(function () {
+                throw new Exception('Test exception');
+            });
+        } catch (Exception $e) {
+            $this->assertSame('Test exception', $e->getMessage());
+        }
+
+        // After the exception, events should be re-enabled
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
+
+        $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
+        $events->shouldReceive('dispatch')->with(Events\Saving::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Creating::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Created::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Saved::class)->andReturn(null);
+
+        $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
+
+        $model->name = 'hyperf';
+        $model->save();
+    }
+
+    public function testWithoutEventsReturnsCallbackResult()
+    {
+        Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
+        $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
+        $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
+
+        $result = ModelStub::withoutEvents(function () {
+            return 42;
+        });
+
+        $this->assertSame(42, $result);
+
+        $result = ModelStub::withoutEvents(function () {
+            return ['key' => 'value'];
+        });
+
+        $this->assertSame(['key' => 'value'], $result);
+
+        $result = ModelStub::withoutEvents(function () {
+            return new stdClass();
+        });
+
+        $this->assertInstanceOf(stdClass::class, $result);
+    }
+
+    public function testWithoutEventsWithNullDispatcher()
+    {
+        // Test when there's no dispatcher initially
+        Register::setEventDispatcher(null);
+
+        $callCount = 0;
+        $result = ModelStub::withoutEvents(function () use (&$callCount) {
+            ++$callCount;
+            return 'test';
+        });
+
+        $this->assertSame('test', $result);
+        $this->assertSame(1, $callCount);
+        $this->assertNull(Register::getEventDispatcher());
     }
 
     public function testGetModelAttributeMethodThrowsExceptionIfNotRelation()
