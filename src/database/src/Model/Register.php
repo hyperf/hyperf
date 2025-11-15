@@ -25,7 +25,10 @@ class Register
      */
     protected static $resolver;
 
-    protected static ?EventDispatcherInterface $dispatcher = null;
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected static $dispatcher;
 
     /**
      * Resolve a connection instance.
