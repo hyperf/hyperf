@@ -126,7 +126,7 @@ return [
 - [#7019](https://github.com/hyperf/hyperf/pull/7019) Added PDO subclass support for PHP 8.4.
 - [#7198](https://github.com/hyperf/hyperf/pull/7198) Added connection name to `QueryException`.
 - [#7202](https://github.com/hyperf/hyperf/pull/7202) Added support for elasticsearch `8.x`.
-- Added support for elasticsearch `9.x`.
+- [#7629](https://github.com/hyperf/hyperf/pull/7629) Added support for elasticsearch `9.x`.
 - [#7214](https://github.com/hyperf/hyperf/pull/7214) Improve `Hyperf\Support\Fluent`.
 - [#7247](https://github.com/hyperf/hyperf/pull/7247) Added `Hyperf\Pipeline\Pipeline::finally()`.
 - [#7274](https://github.com/hyperf/hyperf/pull/7274) Support to take multiple items for `shift()` and `pop()` in `Hyperf\Collection\Collection`.
@@ -143,4 +143,3 @@ return [
 - [#7594](https://github.com/hyperf/hyperf/pull/7594) Changed the `cache` configuration structure.
 - [#7615](https://github.com/hyperf/hyperf/pull/7615) Renamed `$queue` property to `$pool` in `ConsumerProcess` for async-queue component.
 - [#7625](https://github.com/hyperf/hyperf/pull/7625) Renamed `getQueueName()` to `getPoolName()` in async-queue component for terminology consistency.
-
