@@ -141,6 +141,7 @@ abstract class Driver implements DriverInterface
                         $message->job()->fail($ex);
                     }
                 }
+                throw $ex;
             }
         };
     }
