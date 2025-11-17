@@ -131,6 +131,8 @@ abstract class Driver implements DriverInterface
 
                 $this->event?->dispatch(new AfterHandle($message, $result));
             } catch (Throwable $ex) {
+                $logger = $this->container->get(StdoutLoggerInterface::class);
+                $logger->warning($ex->getMessage());
                 if (isset($message, $data)) {
                     if ($message->attempts() && $this->remove($data)) {
                         $this->event?->dispatch(new RetryHandle($message, $ex));
@@ -141,7 +143,6 @@ abstract class Driver implements DriverInterface
                         $message->job()->fail($ex);
                     }
                 }
-                throw $ex;
             }
         };
     }
