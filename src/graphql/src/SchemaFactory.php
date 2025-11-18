@@ -21,9 +21,7 @@ class SchemaFactory
     public function __invoke(ContainerInterface $container)
     {
         $factory = new BaseSchemaFactory($container->get(CacheInterface::class), $container);
-        $factory->addTypeNamespace('App');
-        $factory->addControllerNamespace('App');
-        $factory->setDoctrineAnnotationReader($container->get(Reader::class));
+        $factory->addNamespace('App');
 
         return $factory->createSchema();
     }
