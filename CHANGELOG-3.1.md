@@ -1,5 +1,9 @@
 # v3.1.65 - TBD
 
+## Added
+
+- [#7632](https://github.com/hyperf/hyperf/pull/7632) Support `thecodingmachine/graphqlite:^8.1`.
+
 # v3.1.64 - 2025-11-12
 
 ## Added
