@@ -35,7 +35,7 @@ class SchemaFactory
 
     public function isVersion7(BaseSchemaFactory $factory): bool
     {
-        $this->version7 ??= method_exists($factory, 'addTypeNamespace');
+        $this->version7 ??= (! method_exists($factory, 'addNamespace'));
 
         return $this->version7;
     }
