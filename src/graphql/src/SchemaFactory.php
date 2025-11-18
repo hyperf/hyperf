@@ -18,11 +18,25 @@ use TheCodingMachine\GraphQLite\SchemaFactory as BaseSchemaFactory;
 
 class SchemaFactory
 {
+    public ?bool $version7 = null;
+
     public function __invoke(ContainerInterface $container)
     {
         $factory = new BaseSchemaFactory($container->get(CacheInterface::class), $container);
-        $factory->addNamespace('App');
+        if ($this->isVersion7($factory)) {
+            $factory->addTypeNamespace('App');
+            $factory->addControllerNamespace('App');
+        } else {
+            $factory->addNamespace('App');
+        }
 
         return $factory->createSchema();
+    }
+
+    public function isVersion7(BaseSchemaFactory $factory): bool
+    {
+        $this->version7 ??= method_exists($factory, 'addTypeNamespace');
+
+        return $this->version7;
     }
 }
