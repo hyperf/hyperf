@@ -12,28 +12,28 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Casts;
 
+use JsonException;
+
 class Json
 {
     /**
      * The custom JSON encoder.
      *
-     * @var callable|null
+     * @var null|callable
      */
     protected static $encoder;
 
     /**
      * The custom JSON decoder.
      *
-     * @var callable|null
+     * @var null|callable
      */
     protected static $decoder;
 
     /**
      * Encode the given value.
-     *
-     * @return string|false
      */
-    public static function encode(mixed $value, int $flags = 0): string|false
+    public static function encode(mixed $value, int $flags = 0): false|string
     {
         return isset(static::$encoder)
             ? (static::$encoder)($value, $flags)
@@ -44,9 +44,9 @@ class Json
      * Decode the given value.
      *
      * @param mixed $value The JSON string to decode
-     * @param bool|null $associative When true, JSON objects will be returned as associative arrays; when false, as objects
+     * @param null|bool $associative When true, JSON objects will be returned as associative arrays; when false, as objects
      * @return mixed The decoded value, or null if the JSON string is invalid or represents null
-     * @throws \JsonException When JSON decoding fails (if custom decoder is not set and JSON_THROW_ON_ERROR is used)
+     * @throws JsonException When JSON decoding fails (if custom decoder is not set and JSON_THROW_ON_ERROR is used)
      *
      * @note This method returns null both when the JSON string is "null" (valid JSON null)
      *       and when the JSON string is invalid/malformed (decode failure).

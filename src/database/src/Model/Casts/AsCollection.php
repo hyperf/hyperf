@@ -12,24 +12,22 @@ declare(strict_types=1);
 
 namespace Hyperf\Database\Model\Casts;
 
-use Hyperf\Contract\CastsAttributes;
 use Hyperf\Collection\Collection;
+use Hyperf\Contract\Castable;
+use Hyperf\Contract\CastsAttributes;
 use Hyperf\Stringable\Str;
 use InvalidArgumentException;
-use Hyperf\Contract\Castable;
 
 class AsCollection implements Castable
 {
     /**
      * Get the caster class to use when casting from / to this cast target.
      *
-     * @param  array  $arguments
-     * @return \Hyperf\Contract\CastsAttributes<\Hyperf\Collection\Collection<array-key, mixed>, iterable>
+     * @return CastsAttributes<Collection<array-key, mixed>, iterable>
      */
     public static function castUsing(array $arguments = []): CastsAttributes
     {
-        return new class($arguments) implements CastsAttributes
-        {
+        return new class($arguments) implements CastsAttributes {
             public function __construct(protected array $arguments)
             {
                 $this->arguments = array_pad(array_values($this->arguments), 2, '');
@@ -78,7 +76,7 @@ class AsCollection implements Castable
     /**
      * Specify the type of object each item in the collection should be mapped to.
      *
-     * @param  array{class-string, string}|class-string  $map
+     * @param array{class-string, string}|class-string $map
      * @return string
      */
     public static function of($map)
@@ -89,8 +87,8 @@ class AsCollection implements Castable
     /**
      * Specify the collection type for the cast.
      *
-     * @param  class-string  $class
-     * @param  array{class-string, string}|class-string  $map
+     * @param class-string $class
+     * @param array{class-string, string}|class-string $map
      * @return string
      */
     public static function using($class, $map = null)
