@@ -66,10 +66,6 @@ class Optional implements ArrayAccess
 
     /**
      * Dynamically pass a method to the underlying object.
-     *
-     * @param string $method
-     * @param array $parameters
-     * @return mixed
      */
     public function __call(string $method, array $parameters): mixed
     {

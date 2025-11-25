@@ -97,9 +97,6 @@ class View implements ArrayAccess, Htmlable, ViewInterface
     /**
      * Dynamically bind parameters to the view.
      *
-     * @param string $method
-     * @param array $parameters
-     * @return View
      * @throws BadMethodCallException
      */
     public function __call(string $method, array $parameters): mixed

@@ -63,10 +63,6 @@ class Fluent implements ArrayAccess, Arrayable, IteratorAggregate, Jsonable, Jso
 
     /**
      * Handle dynamic calls to the fluent instance to set attributes.
-     *
-     * @param string $method
-     * @param array $parameters
-     * @return $this
      */
     public function __call(string $method, array $parameters): mixed
     {

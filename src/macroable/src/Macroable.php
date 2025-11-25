@@ -61,9 +61,6 @@ trait Macroable
     /**
      * Dynamically handle calls to the class.
      *
-     * @param string $method
-     * @param array $parameters
-     * @return mixed
      * @throws BadMethodCallException
      */
     public function __call(string $method, array $parameters): mixed

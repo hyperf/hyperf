@@ -84,9 +84,6 @@ abstract class Relation
 
     /**
      * Handle dynamic method calls to the relationship.
-     *
-     * @param string $method
-     * @param array $parameters
      */
     public function __call(string $method, array $parameters): mixed
     {
