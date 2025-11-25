@@ -84,7 +84,7 @@ class MorphTo extends BelongsTo
      * @param string $method
      * @param array $parameters
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters): mixed
     {
         try {
             $result = parent::__call($method, $parameters);

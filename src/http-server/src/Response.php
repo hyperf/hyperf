@@ -53,7 +53,7 @@ class Response implements PsrResponseInterface, ResponseInterface
     {
     }
 
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters): mixed
     {
         $response = $this->getResponse();
         if (! method_exists($response, $method)) {

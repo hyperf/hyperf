@@ -50,7 +50,7 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
      * @param array $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters): mixed
     {
         return $this->__invoke()->{$method}(...$parameters);
     }

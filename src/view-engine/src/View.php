@@ -102,7 +102,7 @@ class View implements ArrayAccess, Htmlable, ViewInterface
      * @return View
      * @throws BadMethodCallException
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters): mixed
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);

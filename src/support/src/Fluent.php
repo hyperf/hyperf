@@ -64,11 +64,11 @@ class Fluent implements ArrayAccess, Arrayable, IteratorAggregate, Jsonable, Jso
     /**
      * Handle dynamic calls to the fluent instance to set attributes.
      *
-     * @param TKey $method
+     * @param string $method
      * @param array $parameters
      * @return $this
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters): mixed
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);

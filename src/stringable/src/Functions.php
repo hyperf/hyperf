@@ -22,7 +22,7 @@ function str($string = null)
 {
     if (func_num_args() === 0) {
         return new class implements \Stringable {
-            public function __call($method, $parameters)
+            public function __call(string $method, array $parameters): mixed
             {
                 return Str::$method(...$parameters);
             }
