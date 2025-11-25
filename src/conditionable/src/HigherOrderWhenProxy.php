@@ -74,16 +74,16 @@ class HigherOrderWhenProxy
     /**
      * Proxy a method call on the target.
      */
-    public function __call(string $method, array $arguments): mixed
+    public function __call(string $name, array $arguments): mixed
     {
         if (! $this->hasCondition) {
-            $condition = $this->target->{$method}(...$arguments);
+            $condition = $this->target->{$name}(...$arguments);
 
             return $this->condition($this->negateConditionOnCapture ? ! $condition : $condition);
         }
 
         return $this->condition
-            ? $this->target->{$method}(...$arguments)
+            ? $this->target->{$name}(...$arguments)
             : $this->target;
     }
 

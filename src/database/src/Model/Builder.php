@@ -125,41 +125,41 @@ class Builder
     /**
      * Dynamically handle calls into the query instance.
      */
-    public function __call(string $method, array $arguments): mixed
+    public function __call(string $name, array $arguments): mixed
     {
-        if ($method === 'macro') {
+        if ($name === 'macro') {
             $this->localMacros[$arguments[0]] = $arguments[1];
 
             return null;
         }
 
-        if ($method === 'mixin') {
+        if ($name === 'mixin') {
             return static::registerMixin($arguments[0], $arguments[1] ?? true);
         }
 
-        if ($this->hasMacro($method)) {
+        if ($this->hasMacro($name)) {
             array_unshift($arguments, $this);
 
-            return $this->localMacros[$method](...$arguments);
+            return $this->localMacros[$name](...$arguments);
         }
 
-        if (static::hasGlobalMacro($method)) {
-            if (static::$macros[$method] instanceof Closure) {
-                return call_user_func_array(static::$macros[$method]->bindTo($this, static::class), $arguments);
+        if (static::hasGlobalMacro($name)) {
+            if (static::$macros[$name] instanceof Closure) {
+                return call_user_func_array(static::$macros[$name]->bindTo($this, static::class), $arguments);
             }
 
-            return call_user_func_array(static::$macros[$method], $arguments);
+            return call_user_func_array(static::$macros[$name], $arguments);
         }
 
-        if (isset($this->model) && method_exists($this->model, $scope = 'scope' . ucfirst($method))) {
+        if (isset($this->model) && method_exists($this->model, $scope = 'scope' . ucfirst($name))) {
             return $this->callScope([$this->model, $scope], $arguments);
         }
 
-        if (in_array($method, $this->passthru)) {
-            return $this->toBase()->{$method}(...$arguments);
+        if (in_array($name, $this->passthru)) {
+            return $this->toBase()->{$name}(...$arguments);
         }
 
-        $this->query->{$method}(...$arguments);
+        $this->query->{$name}(...$arguments);
 
         return $this;
     }

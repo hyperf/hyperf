@@ -95,9 +95,9 @@ abstract class AbstractCursorPaginator implements Stringable
     /**
      * Make dynamic calls into the collection.
      */
-    public function __call(string $method, array $arguments): mixed
+    public function __call(string $name, array $arguments): mixed
     {
-        return $this->forwardCallTo($this->getCollection(), $method, $arguments);
+        return $this->forwardCallTo($this->getCollection(), $name, $arguments);
     }
 
     /**
