@@ -180,17 +180,17 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Handle dynamic method calls into the model.
      */
-    public function __call(string $method, array $parameters): mixed
+    public function __call(string $method, array $arguments): mixed
     {
         if (in_array($method, ['increment', 'decrement'])) {
-            return $this->{$method}(...$parameters);
+            return $this->{$method}(...$arguments);
         }
 
         if ($resolver = $this->relationResolver(static::class, $method)) {
             return $resolver($this);
         }
 
-        return $this->newQuery()->{$method}(...$parameters);
+        return $this->newQuery()->{$method}(...$arguments);
     }
 
     /**

@@ -125,22 +125,22 @@ class Builder
     /**
      * Dynamically handle calls into the query instance.
      */
-    public function __call(string $method, array $parameters): mixed
+    public function __call(string $method, array $arguments): mixed
     {
         if ($method === 'macro') {
-            $this->localMacros[$parameters[0]] = $parameters[1];
+            $this->localMacros[$arguments[0]] = $arguments[1];
 
             return null;
         }
 
         if ($method === 'mixin') {
-            return static::registerMixin($parameters[0], $parameters[1] ?? true);
+            return static::registerMixin($arguments[0], $arguments[1] ?? true);
         }
 
         if ($this->hasMacro($method)) {
-            array_unshift($parameters, $this);
+            array_unshift($arguments, $this);
 
-            return $this->localMacros[$method](...$parameters);
+            return $this->localMacros[$method](...$arguments);
         }
 
         if (static::hasGlobalMacro($method)) {

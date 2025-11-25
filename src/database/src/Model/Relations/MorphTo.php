@@ -81,13 +81,13 @@ class MorphTo extends BelongsTo
     /**
      * Handle dynamic method calls to the relationship.
      */
-    public function __call(string $method, array $parameters): mixed
+    public function __call(string $method, array $arguments): mixed
     {
         try {
-            $result = parent::__call($method, $parameters);
+            $result = parent::__call($method, $arguments);
 
             if (in_array($method, ['select', 'selectRaw', 'selectSub', 'addSelect', 'withoutGlobalScopes'])) {
-                $this->macroBuffer[] = compact('method', 'parameters');
+                $this->macroBuffer[] = compact('method', 'arguments');
             }
 
             return $result;
@@ -97,7 +97,7 @@ class MorphTo extends BelongsTo
         // we'll assume that we want to call a query macro (e.g. withTrashed) that only
         // exists on related models. We will just store the call and replay it later.
         catch (BadMethodCallException $e) {
-            $this->macroBuffer[] = compact('method', 'parameters');
+            $this->macroBuffer[] = compact('method', 'arguments');
 
             return $this;
         }

@@ -269,13 +269,13 @@ class Builder
      *
      * @throws BadMethodCallException
      */
-    public function __call(string $method, array $parameters): mixed
+    public function __call(string $method, array $arguments): mixed
     {
         if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
+            return $this->macroCall($method, $arguments);
         }
         if (Str::startsWith($method, 'where')) {
-            return $this->dynamicWhere($method, $parameters);
+            return $this->dynamicWhere($method, $arguments);
         }
 
         static::throwBadMethodCallException($method);
