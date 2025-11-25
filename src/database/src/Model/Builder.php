@@ -145,21 +145,21 @@ class Builder
 
         if (static::hasGlobalMacro($method)) {
             if (static::$macros[$method] instanceof Closure) {
-                return call_user_func_array(static::$macros[$method]->bindTo($this, static::class), $parameters);
+                return call_user_func_array(static::$macros[$method]->bindTo($this, static::class), $arguments);
             }
 
-            return call_user_func_array(static::$macros[$method], $parameters);
+            return call_user_func_array(static::$macros[$method], $arguments);
         }
 
         if (isset($this->model) && method_exists($this->model, $scope = 'scope' . ucfirst($method))) {
-            return $this->callScope([$this->model, $scope], $parameters);
+            return $this->callScope([$this->model, $scope], $arguments);
         }
 
         if (in_array($method, $this->passthru)) {
-            return $this->toBase()->{$method}(...$parameters);
+            return $this->toBase()->{$method}(...$arguments);
         }
 
-        $this->query->{$method}(...$parameters);
+        $this->query->{$method}(...$arguments);
 
         return $this;
     }
