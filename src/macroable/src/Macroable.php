@@ -63,7 +63,7 @@ trait Macroable
      *
      * @throws BadMethodCallException
      */
-    public function __call(string $name, array $parameters): mixed
+    public function __call(string $name, array $arguments): mixed
     {
         if (! static::hasMacro($name)) {
             throw new BadMethodCallException(sprintf(
@@ -79,7 +79,7 @@ trait Macroable
             $macro = $macro->bindTo($this, static::class);
         }
 
-        return $macro(...$parameters);
+        return $macro(...$arguments);
     }
 
     /**
