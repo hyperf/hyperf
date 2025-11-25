@@ -46,9 +46,9 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
     /**
      * Dynamically proxy method access to the variable.
      */
-    public function __call(string $method, array $parameters): mixed
+    public function __call(string $name, array $arguments): mixed
     {
-        return $this->__invoke()->{$method}(...$parameters);
+        return $this->__invoke()->{$name}(...$arguments);
     }
 
     /**

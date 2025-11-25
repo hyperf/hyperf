@@ -83,7 +83,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $this->reconnect();
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         try {
             $result = $this->connection->{$name}(...$arguments);

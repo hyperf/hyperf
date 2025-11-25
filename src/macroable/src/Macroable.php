@@ -63,17 +63,17 @@ trait Macroable
      *
      * @throws BadMethodCallException
      */
-    public function __call(string $method, array $parameters): mixed
+    public function __call(string $name, array $parameters): mixed
     {
-        if (! static::hasMacro($method)) {
+        if (! static::hasMacro($name)) {
             throw new BadMethodCallException(sprintf(
                 'Method %s::%s does not exist.',
                 static::class,
-                $method
+                $name
             ));
         }
 
-        $macro = static::$macros[$method];
+        $macro = static::$macros[$name];
 
         if ($macro instanceof Closure) {
             $macro = $macro->bindTo($this, static::class);

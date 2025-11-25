@@ -124,16 +124,13 @@ class Builder
 
     /**
      * Dynamically handle calls into the query instance.
-     *
-     * @param string $method
-     * @param array $parameters
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters): mixed
     {
         if ($method === 'macro') {
             $this->localMacros[$parameters[0]] = $parameters[1];
 
-            return;
+            return null;
         }
 
         if ($method === 'mixin') {

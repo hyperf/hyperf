@@ -27,9 +27,9 @@ class ViewErrorBag implements Countable, Stringable
     /**
      * Dynamically call methods on the default bag.
      */
-    public function __call(string $method, array $parameters): mixed
+    public function __call(string $name, array $arguments): mixed
     {
-        return $this->getBag('default')->{$method}(...$parameters);
+        return $this->getBag('default')->{$name}(...$arguments);
     }
 
     /**

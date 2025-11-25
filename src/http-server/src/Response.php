@@ -53,13 +53,13 @@ class Response implements PsrResponseInterface, ResponseInterface
     {
     }
 
-    public function __call(string $method, array $parameters): mixed
+    public function __call(string $name, array $parameters): mixed
     {
         $response = $this->getResponse();
-        if (! method_exists($response, $method)) {
-            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $method));
+        if (! method_exists($response, $name)) {
+            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
         }
-        return $response->{$method}(...$parameters);
+        return $response->{$name}(...$parameters);
     }
 
     public static function __callStatic($method, $parameters)

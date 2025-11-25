@@ -53,18 +53,14 @@ class TestResponse implements ArrayAccess
 
     /**
      * Handle dynamic calls into macros or pass missing methods to the base response.
-     *
-     * @param string $method
-     * @param array $args
-     * @return mixed
      */
-    public function __call($method, $args)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $args);
+        if (static::hasMacro($name)) {
+            return $this->macroCall($name, $arguments);
         }
 
-        return $this->response->{$method}(...$args);
+        return $this->response->{$name}(...$arguments);
     }
 
     /**

@@ -179,11 +179,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Handle dynamic method calls into the model.
-     *
-     * @param string $method
-     * @param array $parameters
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters): mixed
     {
         if (in_array($method, ['increment', 'decrement'])) {
             return $this->{$method}(...$parameters);

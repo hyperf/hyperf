@@ -75,9 +75,9 @@ class Client extends AbstractServiceClient
         return $this->normalizer->denormalize($fetched, $type->getName());
     }
 
-    public function __call(string $method, array $params)
+    public function __call(string $name, array $arguments): mixed
     {
-        return $this->__request($method, $params);
+        return $this->__request($name, $arguments);
     }
 
     protected function setOptions(array $options): void
