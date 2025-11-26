@@ -97,26 +97,23 @@ class View implements ArrayAccess, Htmlable, ViewInterface
     /**
      * Dynamically bind parameters to the view.
      *
-     * @param string $method
-     * @param array $parameters
-     * @return View
      * @throws BadMethodCallException
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
+        if (static::hasMacro($name)) {
+            return $this->macroCall($name, $arguments);
         }
 
-        if (! Str::startsWith($method, 'with')) {
+        if (! Str::startsWith($name, 'with')) {
             throw new BadMethodCallException(sprintf(
                 'Method %s::%s does not exist.',
                 static::class,
-                $method
+                $name
             ));
         }
 
-        return $this->with(Str::camel(substr($method, 4)), $parameters[0]);
+        return $this->with(Str::camel(substr($name, 4)), $arguments[0]);
     }
 
     /**

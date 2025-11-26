@@ -124,45 +124,42 @@ class Builder
 
     /**
      * Dynamically handle calls into the query instance.
-     *
-     * @param string $method
-     * @param array $parameters
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        if ($method === 'macro') {
-            $this->localMacros[$parameters[0]] = $parameters[1];
+        if ($name === 'macro') {
+            $this->localMacros[$arguments[0]] = $arguments[1];
 
-            return;
+            return null;
         }
 
-        if ($method === 'mixin') {
-            return static::registerMixin($parameters[0], $parameters[1] ?? true);
+        if ($name === 'mixin') {
+            return static::registerMixin($arguments[0], $arguments[1] ?? true);
         }
 
-        if ($this->hasMacro($method)) {
-            array_unshift($parameters, $this);
+        if ($this->hasMacro($name)) {
+            array_unshift($arguments, $this);
 
-            return $this->localMacros[$method](...$parameters);
+            return $this->localMacros[$name](...$arguments);
         }
 
-        if (static::hasGlobalMacro($method)) {
-            if (static::$macros[$method] instanceof Closure) {
-                return call_user_func_array(static::$macros[$method]->bindTo($this, static::class), $parameters);
+        if (static::hasGlobalMacro($name)) {
+            if (static::$macros[$name] instanceof Closure) {
+                return call_user_func_array(static::$macros[$name]->bindTo($this, static::class), $arguments);
             }
 
-            return call_user_func_array(static::$macros[$method], $parameters);
+            return call_user_func_array(static::$macros[$name], $arguments);
         }
 
-        if (isset($this->model) && method_exists($this->model, $scope = 'scope' . ucfirst($method))) {
-            return $this->callScope([$this->model, $scope], $parameters);
+        if (isset($this->model) && method_exists($this->model, $scope = 'scope' . ucfirst($name))) {
+            return $this->callScope([$this->model, $scope], $arguments);
         }
 
-        if (in_array($method, $this->passthru)) {
-            return $this->toBase()->{$method}(...$parameters);
+        if (in_array($name, $this->passthru)) {
+            return $this->toBase()->{$name}(...$arguments);
         }
 
-        $this->query->{$method}(...$parameters);
+        $this->query->{$name}(...$arguments);
 
         return $this;
     }

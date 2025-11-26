@@ -84,17 +84,14 @@ abstract class Relation
 
     /**
      * Handle dynamic method calls to the relationship.
-     *
-     * @param string $method
-     * @param array $parameters
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
+        if (static::hasMacro($name)) {
+            return $this->macroCall($name, $arguments);
         }
 
-        $result = $this->forwardCallTo($this->query, $method, $parameters);
+        $result = $this->forwardCallTo($this->query, $name, $arguments);
 
         if ($result === $this->query) {
             return $this;

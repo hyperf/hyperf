@@ -17,7 +17,7 @@ use RuntimeException;
 
 trait CoroutineProxy
 {
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         $target = $this->getTargetObject();
         return $target->{$name}(...$arguments);

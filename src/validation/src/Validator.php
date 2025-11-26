@@ -189,22 +189,20 @@ class Validator implements ValidatorContract
     /**
      * Handle dynamic calls to class methods.
      *
-     * @param mixed $method
-     * @param mixed $parameters
      * @throws BadMethodCallException when method does not exist
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        $rule = StrCache::snake(substr($method, 8));
+        $rule = StrCache::snake(substr($name, 8));
 
         if (isset($this->extensions[$rule])) {
-            return $this->callExtension($rule, $parameters);
+            return $this->callExtension($rule, $arguments);
         }
 
         throw new BadMethodCallException(sprintf(
             'Method %s::%s does not exist.',
             static::class,
-            $method
+            $name
         ));
     }
 

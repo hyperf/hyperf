@@ -36,7 +36,7 @@ class Promise
         }
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         return $this->chan->{$name}(...$arguments);
     }
