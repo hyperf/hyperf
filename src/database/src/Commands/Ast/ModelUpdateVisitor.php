@@ -177,6 +177,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     {
         $doc = '/**' . PHP_EOL;
         $doc = $this->parseProperty($doc);
+        if ($this->option->isWithScope()) {
+            $doc .= $this->parseScope();
+        }
         if ($this->option->isWithIde()) {
             $doc .= ' * @mixin \\' . GenerateModelIDEVisitor::toIDEClass(get_class($this->class)) . PHP_EOL;
         }
@@ -442,5 +445,20 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     protected function getReturnType(ReflectionMethod $method, bool $withoutNamespace = false): array
     {
         return PhpDocReader::getInstance()->getReturnType($method, $withoutNamespace);
+    }
+    /**
+     * 扫描所有方法，如果以 scope 开头则解析为 scope 方法.
+     */
+    protected function parseScope(): string
+    {
+        $doc = '';
+        foreach ($this->methods as $method) {
+            if (Str::startsWith($method->name->name, 'scope')) {
+                // 方法名去掉 scope 前缀
+                $originName = Str::camel(substr($method->name->name, 5));
+                $doc .= sprintf(' * @method static Builder|static %s()', $originName) . PHP_EOL;
+            }
+        }
+        return $doc;
     }
 }
