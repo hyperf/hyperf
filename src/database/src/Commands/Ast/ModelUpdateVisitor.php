@@ -446,6 +446,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     {
         return PhpDocReader::getInstance()->getReturnType($method, $withoutNamespace);
     }
+
     /**
      * 扫描所有方法，如果以 scope 开头则解析为 scope 方法.
      */
