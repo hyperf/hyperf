@@ -3,6 +3,7 @@
 ## Added
 
 - [#7632](https://github.com/hyperf/hyperf/pull/7632) Support `thecodingmachine/graphqlite:^8.1`.
+- [#7644](https://github.com/hyperf/hyperf/pull/7644) Updated HasUuids trait to use `Str::uuidv7()` instead of `Str::orderedUuid()` for better database performance with UUID version 7.
 
 # v3.1.64 - 2025-11-12
 
