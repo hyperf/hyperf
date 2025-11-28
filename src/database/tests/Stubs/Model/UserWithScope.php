@@ -54,4 +54,24 @@ class UserWithScope extends Model
     {
         return $query->where('votes', '>', 100);
     }
+
+    /**
+     * Scope a query to only include users with a specific status.
+     */
+    public function scopeWithStatus(Builder $query, string $status = 'active'): Builder
+    {
+        return $query->where('status', $status);
+    }
+
+    /**
+     * Scope a query to only include users within an age range.
+     */
+    public function scopeByAge(Builder $query, int $minAge, ?int $maxAge = null): Builder
+    {
+        $query = $query->where('age', '>=', $minAge);
+        if ($maxAge !== null) {
+            $query = $query->where('age', '<=', $maxAge);
+        }
+        return $query;
+    }
 }
