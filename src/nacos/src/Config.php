@@ -30,6 +30,8 @@ class Config
 
     protected int $port = 8848;
 
+    protected ?string $version = '1.0';
+
     protected array $grpc = [
         'enable' => true,
         'heartbeat' => 10,
@@ -52,6 +54,8 @@ class Config
             'guzzle_config' => 'array',
             'host' => 'string',
             'port' => 'int',
+            'grpc' => 'array',
+            'version' => 'string',
         ])]
         array $config = []
     ) {
@@ -63,6 +67,7 @@ class Config
         isset($config['guzzle_config']) && $this->guzzleConfig = (array) $config['guzzle_config'];
         isset($config['host']) && $this->host = (string) $config['host'];
         isset($config['port']) && $this->port = (int) $config['port'];
+        isset($config['version']) && $this->version = (string) $config['version'];
         isset($config['grpc']) && $this->grpc = array_replace($this->grpc, $config['grpc']);
     }
 
@@ -109,5 +114,10 @@ class Config
     public function getGrpc(): array
     {
         return $this->grpc;
+    }
+
+    public function getVersion(): string
+    {
+        return $this->version;
     }
 }

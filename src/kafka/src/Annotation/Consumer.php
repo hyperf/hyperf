@@ -22,7 +22,7 @@ class Consumer extends AbstractAnnotation
      * @param string|string[] $topic
      */
     public function __construct(
-        public string $pool = 'default',
+        public string $pool = '',
         public array|string $topic = '',
         public ?string $groupId = null,
         public ?string $memberId = null,

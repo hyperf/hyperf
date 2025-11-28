@@ -264,6 +264,53 @@ class DatabaseIntegrationTest extends TestCase
         $this->assertSame($results->first()->childPosts->pluck('childPosts')->flatten()->pluck('name')->unique()->toArray(), ['Child Post']);
     }
 
+    public function testIncrementOrCreate()
+    {
+        $user1 = ModelTestUser::incrementOrCreate(['email' => 'test@example.com'], 'value');
+        $this->assertTrue($user1->wasRecentlyCreated);
+        $this->assertSame('test@example.com', $user1->email);
+        $this->assertEquals(1, $user1->value);
+
+        $user2 = ModelTestUser::incrementOrCreate(['email' => 'test@example.com'], 'value');
+        $this->assertFalse($user2->wasRecentlyCreated);
+        $this->assertEquals($user1->id, $user2->id);
+        $this->assertEquals(2, $user2->value);
+
+        $user3 = ModelTestUser::incrementOrCreate(['email' => 'test2@example.com'], 'value', 10, 5);
+        $this->assertTrue($user3->wasRecentlyCreated);
+        $this->assertEquals(10, $user3->value);
+
+        $user4 = ModelTestUser::incrementOrCreate(['email' => 'test2@example.com'], 'value', 10, 5);
+        $this->assertFalse($user4->wasRecentlyCreated);
+        $this->assertEquals(15, $user4->value);
+
+        $user5 = ModelTestUser::incrementOrCreate(['email' => 'test3@example.com'], 'value', 1, 1, ['name' => 'Test User']);
+        $this->assertTrue($user5->wasRecentlyCreated);
+        $this->assertEquals(1, $user5->value);
+        $this->assertNull($user5->name);
+
+        $user6 = ModelTestUser::incrementOrCreate(['email' => 'test3@example.com'], 'value', 1, 1, ['name' => 'Updated User']);
+        $this->assertFalse($user6->wasRecentlyCreated);
+        $this->assertEquals(2, $user6->value);
+        $this->assertSame('Updated User', $user6->name);
+    }
+
+    public function testIncrementOrCreateOnDifferentConnection()
+    {
+        $user1 = ModelTestUser::on('second_connection')->incrementOrCreate(['email' => 'test@example.com'], 'value');
+        $this->assertTrue($user1->wasRecentlyCreated);
+        $this->assertSame('second_connection', $user1->getConnectionName());
+        $this->assertEquals(1, $user1->value);
+
+        $user2 = ModelTestUser::on('second_connection')->incrementOrCreate(['email' => 'test@example.com'], 'value');
+        $this->assertFalse($user2->wasRecentlyCreated);
+        $this->assertSame('second_connection', $user2->getConnectionName());
+        $this->assertEquals(2, $user2->value);
+
+        $this->assertEquals(0, ModelTestUser::count());
+        $this->assertEquals(1, ModelTestUser::on('second_connection')->count());
+    }
+
     protected function createSchema(): void
     {
         foreach (['default', 'second_connection'] as $connection) {

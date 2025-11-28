@@ -91,7 +91,7 @@
         "symfony/serializer": "^5.0 || ^6.0",
         "symfony/uid": "^5.0 || ^6.0",
         "symfony/var-dumper": "^5.0 || ^6.0",
-        "thecodingmachine/graphqlite": "^7.0",
+        "thecodingmachine/graphqlite": "^7.0 || ^8.1",
         "twig/twig": "^3.0",
         "vlucas/phpdotenv": "^5.0",
         "zircote/swagger-php": "^4.6"
@@ -440,6 +440,9 @@
             "ergebnis/composer-normalize": true,
             "php-http/discovery": true
         },
+        "audit": {
+            "block-insecure": false
+        },
         "optimize-autoloader": true,
         "sort-packages": true
     },
@@ -537,6 +540,7 @@
     },
     "scripts": {
         "analyse": "phpstan analyse --memory-limit=-1",
+        "analyse-types": "phpstan analyze --configuration=\"phpstan.types.neon.dist\" --memory-limit=-1",
         "cs-fix": "php-cs-fixer fix $1 --verbose",
         "json-fix": [
             "./bin/composer-json-fixer",

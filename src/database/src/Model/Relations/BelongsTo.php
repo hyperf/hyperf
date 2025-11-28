@@ -17,6 +17,12 @@ use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\Concerns\SupportsDefaultModels;
 
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ *
+ * @extends Relation<TRelatedModel, TDeclaringModel, ?TRelatedModel>
+ */
 class BelongsTo extends Relation
 {
     use SupportsDefaultModels;
@@ -172,8 +178,8 @@ class BelongsTo extends Relation
     /**
      * Associate the model instance to the given parent.
      *
-     * @param int|Model|string $model
-     * @return Model
+     * @param int|string|TRelatedModel $model
+     * @return TDeclaringModel
      */
     public function associate($model)
     {
@@ -193,7 +199,7 @@ class BelongsTo extends Relation
     /**
      * Dissociate previously associated model from the given parent.
      *
-     * @return Model
+     * @return TDeclaringModel
      */
     public function dissociate()
     {
@@ -245,7 +251,7 @@ class BelongsTo extends Relation
     /**
      * Get the child of the relationship.
      *
-     * @return Model
+     * @return TDeclaringModel
      */
     public function getChild()
     {

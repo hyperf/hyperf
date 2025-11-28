@@ -13,6 +13,7 @@
         "hyperf/collection": "~3.1.0",
         "hyperf/context": "~3.1.0",
         "hyperf/contract": "~3.1.0",
+        "hyperf/coordinator": "~3.1.0",
         "hyperf/coroutine": "~3.1.0",
         "hyperf/di": "~3.1.0",
         "hyperf/stringable": "~3.1.0",

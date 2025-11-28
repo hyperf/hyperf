@@ -49,6 +49,22 @@ class Arr
     }
 
     /**
+     * Get an array value from an array using "dot" notation, ensuring the result is an array.
+     */
+    public static function array(array|ArrayAccess $array, null|int|string $key, ?array $default = null): array
+    {
+        $value = Arr::get($array, $key, $default);
+
+        if (! is_array($value)) {
+            throw new InvalidArgumentException(
+                sprintf('Array value for key [%s] must be an array, %s found.', $key, gettype($value))
+            );
+        }
+
+        return $value;
+    }
+
+    /**
      * Collapse an array of arrays into a single array.
      */
     public static function collapse(array $array): array
@@ -308,6 +324,34 @@ class Arr
     }
 
     /**
+     * Determine if all of the keys exist in an array using "dot" notation.
+     */
+    public static function hasAll(array|ArrayAccess $array, null|array|int|string $keys): bool
+    {
+        if (is_null($keys)) {
+            return false;
+        }
+
+        $keys = (array) $keys;
+
+        if (! $array) {
+            return false;
+        }
+
+        if ($keys === []) {
+            return false;
+        }
+
+        foreach ($keys as $key) {
+            if (! static::has($array, $key)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Determines if an array is associative.
      * An array is "associative" if it doesn't have sequential numerical keys beginning with zero.
      */
@@ -470,6 +514,18 @@ class Arr
     }
 
     /**
+     * Push an item into an array using "dot" notation.
+     */
+    public static function push(array|ArrayAccess &$array, null|int|string $key, mixed ...$values): array
+    {
+        $target = static::array($array, $key, []);
+
+        array_push($target, ...$values);
+
+        return static::set($array, $key, $target);
+    }
+
+    /**
      * Shuffle the given array and return the result.
      */
     public static function shuffle(array $array, ?int $seed = null): array
@@ -508,6 +564,27 @@ class Arr
         }
 
         return $random;
+    }
+
+    /**
+     * Get the first item in the collection, but only if exactly one item exists. Otherwise, throw an exception.
+     *
+     * @param array $array
+     *
+     * @throws ItemNotFoundException
+     * @throws MultipleItemsFoundException
+     */
+    public static function sole($array, ?callable $callback = null)
+    {
+        if ($callback) {
+            $array = static::where($array, $callback);
+        }
+
+        return match (count($array)) {
+            0 => throw new ItemNotFoundException(),
+            1 => static::first($array),
+            default => throw new MultipleItemsFoundException(count($array)),
+        };
     }
 
     /**
