@@ -500,7 +500,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 }
 
                 $paramString = implode(', ', $params);
-                $doc .= sprintf(' * @method static \\Hyperf\\Database\\Model\\Builder|static %s(%s)', $originName, $paramString) . PHP_EOL;
+                $doc .= sprintf(' * @method static \Hyperf\Database\Model\Builder|static %s(%s)', $originName, $paramString) . PHP_EOL;
             }
         }
         return $doc;

@@ -226,11 +226,11 @@ class UserEnum extends Model
         $code = (new Standard())->printFormatPreserving($newStmts, $originStmts, $lexer->getTokens());
 
         // 验证生成的 scope 方法注释
-        $this->assertTrue(str_contains($code, '@method static \\Hyperf\\Database\\Model\\Builder|static active()'));
-        $this->assertTrue(str_contains($code, '@method static \\Hyperf\\Database\\Model\\Builder|static ofType(string $type)'));
-        $this->assertTrue(str_contains($code, '@method static \\Hyperf\\Database\\Model\\Builder|static popular()'));
-        $this->assertTrue(str_contains($code, '@method static \\Hyperf\\Database\\Model\\Builder|static withStatus(string $status = \'active\')'));
-        $this->assertTrue(str_contains($code, '@method static \\Hyperf\\Database\\Model\\Builder|static byAge(int $minAge, ?int $maxAge = null)'));
+        $this->assertTrue(str_contains($code, '@method static \Hyperf\Database\Model\Builder|static active()'));
+        $this->assertTrue(str_contains($code, '@method static \Hyperf\Database\Model\Builder|static ofType(string $type)'));
+        $this->assertTrue(str_contains($code, '@method static \Hyperf\Database\Model\Builder|static popular()'));
+        $this->assertTrue(str_contains($code, '@method static \Hyperf\Database\Model\Builder|static withStatus(string $status = \'active\')'));
+        $this->assertTrue(str_contains($code, '@method static \Hyperf\Database\Model\Builder|static byAge(int $minAge, ?int $maxAge = null)'));
     }
 
     /**
