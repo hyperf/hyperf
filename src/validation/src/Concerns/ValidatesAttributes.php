@@ -109,7 +109,7 @@ trait ValidatesAttributes
         if ($url = parse_url($value, PHP_URL_HOST)) {
             try {
                 $records = dns_get_record($url . '.', DNS_A | DNS_AAAA);
-                if ($records === false) {
+                if (! $records) {
                     return false;
                 }
                 return count($records) > 0;
