@@ -19,7 +19,7 @@ use Hyperf\HttpMessage\Cookie\Cookie;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Stringable;
 
-interface ResponseInterface
+interface ResponseInterface extends PsrResponseInterface
 {
     /**
      * Format data to JSON and return data with Content-Type:application/json header.
