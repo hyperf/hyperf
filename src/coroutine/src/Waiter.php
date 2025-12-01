@@ -32,7 +32,7 @@ class Waiter
     /**
      * @template TReturn
      *
-     * @param Closure():TReturn $closure
+     * @param (Closure():TReturn) $closure
      * @param null|float $timeout seconds
      * @return TReturn
      */
