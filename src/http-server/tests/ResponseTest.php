@@ -30,6 +30,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use ReflectionClass;
+use Stringable;
 use Swoole\Http\Response as SwooleResponse;
 
 /**
@@ -141,7 +142,7 @@ class ResponseTest extends TestCase
         $this->assertSame($expected, $reflectionMethod->invoke($response, $arrayable));
 
         // Xmlable
-        $xmlable = new class($expected) implements Xmlable {
+        $xmlable = new class($expected) implements Stringable, Xmlable {
             private $result;
 
             public function __construct($result)
