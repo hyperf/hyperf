@@ -4,6 +4,10 @@
 
 - [#7632](https://github.com/hyperf/hyperf/pull/7632) Support `thecodingmachine/graphqlite:^8.1`.
 
+## Optimized
+
+- [#7649](https://github.com/hyperf/hyperf/pull/7649) Refactored `OnBeforeHandle` listener to remove `AfterExecute` event handling for better separation of concerns.
+
 # v3.1.64 - 2025-11-12
 
 ## Added
