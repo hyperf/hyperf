@@ -54,7 +54,7 @@ class Parser
     /**
      * @param null|Http2Response $response
      * @param mixed $deserialize
-     * @return array{0:null|Message,1:stdClass{code:int,details:string,metadata:null|Http2Response}}
+     * @return array{0:null|Message,1:stdClass{code:int,details:string,metadata:array}}
      */
     public static function parseResponse($response, $deserialize): array
     {
@@ -63,7 +63,7 @@ class Parser
         if (! $response) {
             $status->code = Parser::GRPC_ERROR_NO_RESPONSE;
             $status->details = 'No response';
-            $status->metadata = $response;
+            $status->metadata = [];
 
             return [null, $status];
         }
@@ -72,7 +72,7 @@ class Parser
             $code = $response->headers['grpc-status'] ?? ($response->errCode ?: $response->statusCode);
             $status->code = (int) $code;
             $status->details = $message;
-            $status->metadata = $response;
+            $status->metadata = $response->headers;
 
             return [null, $status];
         }
@@ -80,7 +80,7 @@ class Parser
         if ($grpcStatus !== 0) {
             $status->code = $grpcStatus;
             $status->details = $response->headers['grpc-message'] ?? 'Unknown error';
-            $status->metadata = $response;
+            $status->metadata = $response->headers;
 
             return [null, $status];
         }
@@ -88,7 +88,7 @@ class Parser
         $reply = Parser::deserializeMessage($deserialize, $data);
         $status->code = (int) ($response->headers['grpc-status'] ?? 0);
         $status->details = $response->headers['grpc-message'] ?? 'OK';
-        $status->metadata = $response;
+        $status->metadata = $response->headers;
 
         return [$reply, $status];
     }
