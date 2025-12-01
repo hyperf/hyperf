@@ -19,8 +19,9 @@ use Hyperf\Contract\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
 use RuntimeException;
+use Stringable;
 
-class Paginator extends AbstractPaginator implements Arrayable, Countable, IteratorAggregate, JsonSerializable, Jsonable
+class Paginator extends AbstractPaginator implements Stringable, Arrayable, Countable, IteratorAggregate, JsonSerializable, Jsonable
 {
     /**
      * Determine if there are more items in the data source.
