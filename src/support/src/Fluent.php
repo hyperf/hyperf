@@ -22,6 +22,7 @@ use Hyperf\Macroable\Macroable;
 use Hyperf\Support\Traits\InteractsWithData;
 use IteratorAggregate;
 use JsonSerializable;
+use Stringable;
 use Traversable;
 
 use function Hyperf\Collection\data_get;
@@ -37,7 +38,7 @@ use function Hyperf\Collection\data_set;
  * @implements \Hyperf\Contract\Arrayable<TKey, TValue>
  * @implements ArrayAccess<TKey, TValue>
  */
-class Fluent implements ArrayAccess, Arrayable, IteratorAggregate, Jsonable, JsonSerializable
+class Fluent implements Stringable, ArrayAccess, Arrayable, IteratorAggregate, Jsonable, JsonSerializable
 {
     use InteractsWithData;
     use Macroable{

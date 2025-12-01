@@ -14,8 +14,9 @@ namespace Hyperf\Nacos\Protobuf\Response;
 
 use Hyperf\Codec\Json;
 use JsonSerializable;
+use Stringable;
 
-class ConfigChangeNotifyRequest extends Response implements JsonSerializable
+class ConfigChangeNotifyRequest extends Response implements Stringable, JsonSerializable
 {
     public string $tenant;
 

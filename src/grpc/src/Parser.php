@@ -15,7 +15,7 @@ namespace Hyperf\Grpc;
 use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Internal\Message;
 use Google\Rpc\Status;
-use Grpc\StringifyAble;
+use stdClass;
 use Swoole\Http\Response;
 use Swoole\Http2\Response as Http2Response;
 
@@ -54,26 +54,43 @@ class Parser
     /**
      * @param null|Http2Response $response
      * @param mixed $deserialize
-     * @return Http2Response[]|Message[]|StringifyAble[]
+     * @return array{0:null|Message,1:stdClass{code:int,details:string,metadata:null|Http2Response}}
      */
     public static function parseResponse($response, $deserialize): array
     {
+        $status = new stdClass();
+
         if (! $response) {
-            return ['No response', self::GRPC_ERROR_NO_RESPONSE, $response];
+            $status->code = Parser::GRPC_ERROR_NO_RESPONSE;
+            $status->details = 'No response';
+            $status->metadata = $response;
+
+            return [null, $status];
         }
         if (self::isInvalidStatus($response->statusCode)) {
             $message = $response->headers['grpc-message'] ?? 'Http status Error';
             $code = $response->headers['grpc-status'] ?? ($response->errCode ?: $response->statusCode);
-            return [$message, (int) $code, $response];
+            $status->code = (int) $code;
+            $status->details = $message;
+            $status->metadata = $response;
+
+            return [null, $status];
         }
         $grpcStatus = (int) ($response->headers['grpc-status'] ?? 0);
         if ($grpcStatus !== 0) {
-            return [$response->headers['grpc-message'] ?? 'Unknown error', $grpcStatus, $response];
+            $status->code = $grpcStatus;
+            $status->details = $response->headers['grpc-message'] ?? 'Unknown error';
+            $status->metadata = $response;
+
+            return [null, $status];
         }
         $data = $response->data ?? '';
-        $reply = self::deserializeMessage($deserialize, $data);
-        $status = (int) ($response->headers['grpc-status'] ?? 0);
-        return [$reply, $status, $response];
+        $reply = Parser::deserializeMessage($deserialize, $data);
+        $status->code = (int) ($response->headers['grpc-status'] ?? 0);
+        $status->details = $response->headers['grpc-message'] ?? 'OK';
+        $status->metadata = $response;
+
+        return [$reply, $status];
     }
 
     /**
