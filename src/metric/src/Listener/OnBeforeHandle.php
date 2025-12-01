@@ -57,7 +57,11 @@ class OnBeforeHandle implements ListenerInterface
 
     public function process(object $event): void
     {
-        if (! $this->config->get('metric.enable_command_metric', true)) {
+        if (
+            ! $event instanceof BeforeHandle
+            || ! $event->getCommand()->getApplication()->isAutoExitEnabled() // Only enable in the command with auto exit.
+            || ! $this->config->get('metric.enable_command_metric', true) // Double check the config.
+        ) {
             return;
         }
 
