@@ -85,7 +85,7 @@ class Parser
             return [null, $status];
         }
         $data = $response->data ?? '';
-        $reply = Parser::deserializeMessage($deserialize, $data);
+        $reply = self::deserializeMessage($deserialize, $data);
         $status->code = (int) ($response->headers['grpc-status'] ?? 0);
         $status->details = $response->headers['grpc-message'] ?? 'OK';
         $status->metadata = $response->headers;
