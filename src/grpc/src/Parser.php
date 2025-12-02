@@ -86,6 +86,7 @@ class Parser
         }
 
         $metadata = [];
+
         foreach ($response->headers as $key => $value) {
             $lowerKey = strtolower($key);
             // 忽略grpc官方预留，将grpc-status-details-bin保留，可解析为Google\Rpc\Status
@@ -102,10 +103,12 @@ class Parser
             }
             // 处理-bin结尾 metadata
             if (str_ends_with($lowerKey, '-bin')) {
-                $metadata[$lowerKey] = base64_decode($value, true) ?: $value;
+                if (($decoded = base64_decode($value, true)) !== false) {
+                    $metadata[$lowerKey][] = $decoded;
+                }
             } else {
                 // 处理ascii urlencode metadata
-                $metadata[$lowerKey] = rawurldecode($value);
+                $metadata[$lowerKey][] = rawurldecode($value);
             }
         }
 
