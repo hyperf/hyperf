@@ -107,7 +107,7 @@ class Parser
                     $metadata[$lowerKey][] = $decoded;
                 }
             } else {
-                // 处理ascii urlencode metadata
+                // Handle ASCII URL-encoded metadata
                 $metadata[$lowerKey][] = rawurldecode($value);
             }
         }
