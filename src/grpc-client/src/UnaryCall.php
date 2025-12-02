@@ -45,7 +45,7 @@ class UnaryCall
         }
 
         if (self::isInvalidStatus($response->statusCode)) {
-            $status->message = $response->headers['grpc-message'] ?? 'Http status Error';
+            $status->details = $response->headers['grpc-message'] ?? 'Http status Error';
             $status->code = $response->headers['grpc-status'] ?? ($response->errCode ?: $response->statusCode);
 
             return [null, $status];
@@ -55,7 +55,7 @@ class UnaryCall
 
         if ($grpcStatus !== 0) {
             $status->code = $grpcStatus;
-            $status->message = $response->headers['grpc-message'] ?? 'Unknown error';
+            $status->details = $response->headers['grpc-message'] ?? 'Unknown error';
 
             return [null, $status];
         }
