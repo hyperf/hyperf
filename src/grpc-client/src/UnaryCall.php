@@ -21,13 +21,19 @@ class UnaryCall
 
     protected mixed $message;
 
+    protected bool $completed = false;
+
     public function __construct(public mixed $response, public mixed $deserialize)
     {
-        [$this->message, $this->status] = $this->parse($this->response, $this->deserialize);
     }
 
     public function wait(): array
     {
+        if ($this->completed) {
+            [$this->message, $this->status] = $this->parse($this->response, $this->deserialize);
+            $this->completed = true;
+        }
+
         return [$this->message, $this->status];
     }
 
