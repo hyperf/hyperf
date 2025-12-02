@@ -33,7 +33,7 @@ function parallel(array $callables, int $concurrent = 0): array
 /**
  * @template TReturn
  *
- * @param Closure():TReturn $closure
+ * @param (Closure():TReturn) $closure
  * @return TReturn
  */
 function wait(Closure $closure, ?float $timeout = null)

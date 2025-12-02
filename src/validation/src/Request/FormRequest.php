@@ -208,7 +208,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
             foreach ($this->scenes[$scene] as $key => $value) {
                 if (is_string($key)) {
                     $result[$key] = $value;
-                } elseif (is_numeric($key) && is_string($value)) {
+                } elseif (is_numeric($key) && is_string($value) && isset($rules[$value])) {
                     $result[$value] = $rules[$value];
                 }
             }
