@@ -19,7 +19,7 @@ use Swoole\Http2\Response as Http2Response;
 
 class UnaryCall
 {
-    protected array $parsed;
+    protected ?array $parsed = null;
 
     public function __construct(
         protected BaseClient $client,
