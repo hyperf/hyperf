@@ -52,6 +52,8 @@ jobs:
         exclude:
           - php-version: '8.3'
             sw-version: 'v5.0.3'
+          - php-version: '8.1'
+            sw-version: 'master'
       max-parallel: 20
       fail-fast: false
     env:
