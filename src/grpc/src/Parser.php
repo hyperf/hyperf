@@ -53,7 +53,7 @@ class Parser
     /**
      * @param null|Http2Response $response
      * @param mixed $deserialize
-     * @return array{0:null|Message,1:null|Status}
+     * @return array{0:null|Message,1:null|Status,2:null|Http2Response}
      */
     public static function parseResponse($response, $deserialize): array
     {
@@ -64,6 +64,7 @@ class Parser
         return [
             self::deserializeMessage($deserialize, $response->data ?? ''),
             self::statusFromResponse($response),
+            $response,
         ];
     }
 
