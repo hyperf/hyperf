@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\GrpcClient;
 
+use Google\Protobuf\Internal\Message;
 use Hyperf\Grpc\Parser;
 use stdClass;
 use Swoole\Http2\Response as Http2Response;

@@ -84,7 +84,7 @@ class BaseClient
             return $streamId;
         }, $this->options['retry_interval'] ?? 100);
 
-        return new UnaryCall($this->recv($streamId), $deserialize);
+        return new UnaryCall($this, $streamId, $deserialize);
     }
 
     /**
