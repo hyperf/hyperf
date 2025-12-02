@@ -16,6 +16,7 @@ use Hyperf\Database\Model\Collection;
 use Hyperf\Paginator\AbstractCursorPaginator;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Stringable;
 
 /**
  * @internal
@@ -38,7 +39,7 @@ class CursorPaginatorLoadMorphCountTest extends TestCase
         $items = m::mock(Collection::class);
         $items->expects('loadMorphCount')->with('parentable', $relations);
 
-        $p = (new class extends AbstractCursorPaginator {
+        $p = (new class extends AbstractCursorPaginator implements Stringable {
             public function __toString()
             {
                 return '';
