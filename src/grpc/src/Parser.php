@@ -70,7 +70,7 @@ class Parser
         $grpcStatus = (int) ($response->headers['grpc-status'] ?? 0);
 
         if ($grpcStatus !== 0) {
-            return [null, new Status(['code' => $grpcStatus, 'message' => $response->headers['grpc-message'] ?? '']), $response];
+            return [null, new Status(['code' => $grpcStatus, 'message' => $response->headers['grpc-message'] ?? 'Unknown error']), $response];
         }
 
         return [
