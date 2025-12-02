@@ -15,7 +15,6 @@ namespace Hyperf\Grpc;
 use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Internal\Message;
 use Google\Rpc\Status;
-use stdClass;
 use Swoole\Http\Response;
 use Swoole\Http2\Response as Http2Response;
 
@@ -54,43 +53,18 @@ class Parser
     /**
      * @param null|Http2Response $response
      * @param mixed $deserialize
-     * @return array{0:null|Message,1:stdClass{code:int,details:string,metadata:array}}
+     * @return array{0:null|Message,1:null|Status}
      */
     public static function parseResponse($response, $deserialize): array
     {
-        $status = new stdClass();
-
         if (! $response) {
-            $status->code = Parser::GRPC_ERROR_NO_RESPONSE;
-            $status->details = 'No response';
-            $status->metadata = [];
-
-            return [null, $status];
+            return [null, new Status(['code' => Parser::GRPC_ERROR_NO_RESPONSE, 'message' => 'No response'])];
         }
-        if (self::isInvalidStatus($response->statusCode)) {
-            $message = $response->headers['grpc-message'] ?? 'Http status Error';
-            $code = $response->headers['grpc-status'] ?? ($response->errCode ?: $response->statusCode);
-            $status->code = (int) $code;
-            $status->details = $message;
-            $status->metadata = $response->headers;
 
-            return [null, $status];
-        }
-        $grpcStatus = (int) ($response->headers['grpc-status'] ?? 0);
-        if ($grpcStatus !== 0) {
-            $status->code = $grpcStatus;
-            $status->details = $response->headers['grpc-message'] ?? 'Unknown error';
-            $status->metadata = $response->headers;
-
-            return [null, $status];
-        }
-        $data = $response->data ?? '';
-        $reply = self::deserializeMessage($deserialize, $data);
-        $status->code = (int) ($response->headers['grpc-status'] ?? 0);
-        $status->details = $response->headers['grpc-message'] ?? 'OK';
-        $status->metadata = $response->headers;
-
-        return [$reply, $status];
+        return [
+            self::deserializeMessage($deserialize, $response->data ?? ''),
+            self::statusFromResponse($response),
+        ];
     }
 
     /**
@@ -143,10 +117,5 @@ class Parser
         }
 
         return (string) $data;
-    }
-
-    private static function isInvalidStatus(int $code): bool
-    {
-        return $code !== 0 && $code !== 200 && $code !== 400;
     }
 }
