@@ -15,7 +15,6 @@ namespace Hyperf\GrpcClient;
 use Google\Protobuf\Internal\Message;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Coroutine\Channel\Pool as ChannelPool;
-use Hyperf\Grpc\Parser;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use InvalidArgumentException;
@@ -64,7 +63,7 @@ class BaseClient
      * @param string $method The name of the method to call
      * @param Message $argument The argument to the method
      * @param callable $deserialize A function that deserializes the response
-     * @return array|Message[]|Response[]
+     * @return UnaryCall
      * @throws GrpcClientException
      */
     protected function _simpleRequest(
@@ -84,7 +83,8 @@ class BaseClient
             }
             return $streamId;
         }, $this->options['retry_interval'] ?? 100);
-        return Parser::parseResponse($this->recv($streamId), $deserialize);
+
+        return new UnaryCall($this, $streamId, $deserialize);
     }
 
     /**
