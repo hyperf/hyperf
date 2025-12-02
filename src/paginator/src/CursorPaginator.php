@@ -20,8 +20,9 @@ use Hyperf\Contract\Jsonable;
 use Hyperf\Paginator\Contract\CursorPaginator as CursorPaginatorContract;
 use IteratorAggregate;
 use JsonSerializable;
+use Stringable;
 
-class CursorPaginator extends AbstractCursorPaginator implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable, CursorPaginatorContract
+class CursorPaginator extends AbstractCursorPaginator implements Stringable, ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable, CursorPaginatorContract
 {
     /**
      * Indicates whether there are more items in the data source.
