@@ -21,7 +21,7 @@ class UnaryCall
 
     protected mixed $message;
 
-    public function __construct(protected mixed $response, protected mixed $deserialize)
+    public function __construct(public mixed $response, public mixed $deserialize)
     {
         [$this->message, $this->status] = $this->parse($this->response, $this->deserialize);
     }
