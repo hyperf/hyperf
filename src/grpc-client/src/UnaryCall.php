@@ -19,6 +19,9 @@ use Swoole\Http2\Response as Http2Response;
 
 class UnaryCall
 {
+    /**
+     * @var null|array{0:null|Message,1:stdClass}
+     */
     protected ?array $parsed = null;
 
     public function __construct(
@@ -28,6 +31,9 @@ class UnaryCall
     ) {
     }
 
+    /**
+     * @return array{0:null|Message,1:stdClass}
+     */
     public function wait(): array
     {
         if (! $this->parsed) {
