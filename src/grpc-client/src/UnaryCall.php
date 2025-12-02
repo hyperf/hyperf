@@ -14,34 +14,40 @@ namespace Hyperf\GrpcClient;
 
 use Hyperf\Grpc\Parser;
 use stdClass;
+use Swoole\Http2\Response as Http2Response;
 
 class UnaryCall
 {
-    protected stdClass $status;
+    protected array $parsed;
 
-    protected mixed $message;
-
-    protected bool $completed = false;
-
-    public function __construct(public mixed $response, public mixed $deserialize)
-    {
+    public function __construct(
+        protected BaseClient $client,
+        protected int $streamId,
+        protected mixed $deserialize
+    ) {
     }
 
     public function wait(): array
     {
-        if ($this->completed) {
-            [$this->message, $this->status] = $this->parse($this->response, $this->deserialize);
-            $this->completed = true;
+        if (! $this->parsed) {
+            $response = $this->client->recv($this->streamId);
+            $this->parsed = $this->parse($response, $this->deserialize);
         }
 
-        return [$this->message, $this->status];
+        return $this->parsed;
     }
 
+    /**
+     * @param null|Http2Response $response
+     * @param mixed $deserialize
+     * @return array{0:null|Message,1:stdClass}
+     */
     private function parse($response, $deserialize): array
     {
         $status = new stdClass();
         $status->code = 0;
         $status->details = 'OK';
+        $status->rawResponse = $response;
 
         if (! $response) {
             $status->code = Parser::GRPC_ERROR_NO_RESPONSE;
