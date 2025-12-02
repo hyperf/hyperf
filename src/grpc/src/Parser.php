@@ -130,6 +130,11 @@ class Parser
         return base64_encode(self::serializeUnpackedMessage($status));
     }
 
+    public static function isInvalidStatus(int $code): bool
+    {
+        return $code !== 0 && $code !== 200 && $code !== 400;
+    }
+
     private static function deserializeUnpackedMessage($deserialize, string $unpacked)
     {
         if (is_array($deserialize)) {
@@ -162,10 +167,5 @@ class Parser
         }
 
         return (string) $data;
-    }
-
-    private static function isInvalidStatus(int $code): bool
-    {
-        return $code !== 0 && $code !== 200 && $code !== 400;
     }
 }

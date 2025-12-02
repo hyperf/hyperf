@@ -60,7 +60,7 @@ class UnaryCall
 
         $status->metadata = Parser::parseMetadata($response);
 
-        if (self::isInvalidStatus($response->statusCode)) {
+        if (Parser::isInvalidStatus($response->statusCode)) {
             $status->details = $response->headers['grpc-message'] ?? 'Http status Error';
             $status->code = $response->headers['grpc-status'] ?? ($response->errCode ?: $response->statusCode);
 
@@ -79,10 +79,5 @@ class UnaryCall
         $message = Parser::deserializeMessage($deserialize, $response->data ?? '');
 
         return [$message, $status];
-    }
-
-    private static function isInvalidStatus(int $code): bool
-    {
-        return $code !== 0 && $code !== 200 && $code !== 400;
     }
 }
