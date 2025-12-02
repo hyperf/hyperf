@@ -29,6 +29,7 @@ use JsonException;
 use JsonSerializable;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
+use Stringable;
 use Throwable;
 
 use function Hyperf\Collection\collect;
@@ -40,7 +41,7 @@ use function Hyperf\Tappable\tap;
 /**
  * @mixin ModelIDE
  */
-abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable, CompressInterface
+abstract class Model implements Stringable, ArrayAccess, Arrayable, Jsonable, JsonSerializable, CompressInterface
 {
     use Concerns\HasAttributes;
     use Concerns\HasEvents;
