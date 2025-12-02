@@ -61,6 +61,18 @@ class Parser
             return [null, new Status(['code' => Parser::GRPC_ERROR_NO_RESPONSE, 'message' => 'No response']), null];
         }
 
+        if (self::isInvalidStatus($response->statusCode)) {
+            $message = $response->headers['grpc-message'] ?? 'Http status Error';
+            $code = $response->headers['grpc-status'] ?? ($response->errCode ?: $response->statusCode);
+            return [null, new Status(['code' => (int) $code, 'message' => $message]), $response];
+        }
+
+        $grpcStatus = (int) ($response->headers['grpc-status'] ?? 0);
+
+        if ($grpcStatus !== 0) {
+            return [null, new Status(['code' => $grpcStatus, 'message' => $response->headers['grpc-message'] ?? '']), $response];
+        }
+
         return [
             self::deserializeMessage($deserialize, $response->data ?? ''),
             self::statusFromResponse($response),
@@ -118,5 +130,10 @@ class Parser
         }
 
         return (string) $data;
+    }
+
+    private static function isInvalidStatus(int $code): bool
+    {
+        return $code !== 0 && $code !== 200 && $code !== 400;
     }
 }
