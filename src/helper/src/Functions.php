@@ -303,7 +303,7 @@ if (! function_exists('wait')) {
     /**
      * @template TReturn
      *
-     * @param (Closure():TReturn) $closure
+     * @param Closure():TReturn $closure
      * @return TReturn
      */
     function wait(Closure $closure, ?float $timeout = null)
