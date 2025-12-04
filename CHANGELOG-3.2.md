@@ -117,6 +117,7 @@ return [
 - [#7142](https://github.com/hyperf/hyperf/pull/7142) Enhance array shuffle method to support custom random engines.
 - [#7620](https://github.com/hyperf/hyperf/pull/7620) Added Symfony 7.4 compatibility with batch command registration.
 - [#7653](https://github.com/hyperf/hyperf/pull/7653) Improved `Parser::parseResponse` return value format by replacing `Grpc\StringifyAble` with `Google\Rpc\Status` objects for better standardization and code readability.
+- [#7658](https://github.com/hyperf/hyperf/pull/7658) Optimized event listener provider by adding cache for non-anonymous event classes to avoid repeated listener resolution.
 
 ## Added
 
