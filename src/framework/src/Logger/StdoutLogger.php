@@ -115,9 +115,9 @@ class StdoutLogger implements StdoutLoggerInterface
             default => 'info',
         };
 
-        $tagsString = trim(implode('', array_map(fn ($value) => ' [' . $value . ']', $tags)));
-        if ($tagsString !== '') {
-            $tagsString = ' ' . $tagsString;
+        $tagsString = '';
+        foreach ($tags as $value) {
+            $tagsString .= (' [' . $value . ']');
         }
 
         return sprintf(
