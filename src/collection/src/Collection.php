@@ -121,12 +121,11 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
 
         /**
          * @template TValue of array-key
-         * @phpstan-ignore-next-line
          * @var static<TValue, int> $counts
          */
         $counts = new self();
         $collection->each(function ($value) use ($counts) {
-            $counts[$value] = isset($counts[$value]) ? $counts[$value] + 1 : 1;
+            $counts->offsetSet($value, isset($counts[$value]) ? $counts[$value] + 1 : 1);
         });
         $sorted = $counts->sort();
         $highestValue = $sorted->last();
@@ -209,6 +208,19 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     public function doesntContain($key, $operator = null, $value = null): bool
     {
         return ! $this->contains(...func_get_args());
+    }
+
+    /**
+     * Determine if an item is not contained in the enumerable, using strict comparison.
+     *
+     * @param mixed $key
+     * @param mixed $operator
+     * @param mixed $value
+     * @return bool
+     */
+    public function doesntContainStrict($key, $operator = null, $value = null)
+    {
+        return ! $this->containsStrict(...func_get_args());
     }
 
     /**

@@ -16,6 +16,7 @@ use Hyperf\Config\Config;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Di\Container;
 use Hyperf\Engine\Channel as Chan;
 use Hyperf\Pool\Channel;
@@ -30,6 +31,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RedisCluster;
+use Throwable;
 
 use function Hyperf\Coroutine\go;
 
@@ -58,6 +60,23 @@ class RedisProxyTest extends TestCase
         $this->assertSame('yyy', $redis->get('test'));
 
         $this->assertSame('yyy', $this->getRedis()->get('test:test'));
+    }
+
+    public function testZSetAddAnd()
+    {
+        $key = 'test:zset:add:remove';
+        $redis = $this->getRedis();
+        $redis->del($key);
+
+        $redis->zAdd($key, microtime(true) * 1000 + 2, 'test');
+        usleep(1000);
+        $res = $redis->zRangeByScore($key, '0', (string) (microtime(true) * 1000));
+        $this->assertEmpty($res);
+
+        // $redis->zAdd($key, microtime(true) * 1000 + 1, 'test');
+        // usleep(500);
+        // $res = $redis->zRangeByScore($key, '0', (string) (microtime(true) * 1000));
+        // $this->assertEmpty($res);
     }
 
     public function testHyperLogLog()
@@ -196,14 +215,195 @@ class RedisProxyTest extends TestCase
         $this->assertSame([['C', 'D'], true], $chan2->pop());
     }
 
+    public function testPipelineCallbackAndSelect()
+    {
+        $redis = $this->getRedis();
+        (new Waiter())->wait(function () use ($redis) {
+            $redis->select(1);
+
+            $redis->set('concurrent_pipeline_test_callback_and_select_value', $id = uniqid(), 600);
+
+            $key = 'concurrent_pipeline_test_callback_and_select';
+
+            $redis->pipeline(function (\Redis $pipe) use ($key) {
+                $pipe->set($key, "value_{$key}");
+                $pipe->incr("{$key}_counter");
+                $pipe->get($key);
+                $pipe->get("{$key}_counter");
+            });
+
+            $this->assertSame($id, $redis->get('concurrent_pipeline_test_callback_and_select_value'));
+        });
+    }
+
+    public function testPipelineCallbackAndPipeline()
+    {
+        $redis = $this->getRedis();
+        (new Waiter())->wait(function () use ($redis) {
+            $r = $redis->pipeline();
+
+            $redis->set('concurrent_pipeline_test_callback_and_select_value', $id = uniqid(), 600);
+
+            $key = 'concurrent_pipeline_test_callback_and_select';
+
+            $redis->pipeline(function (\Redis $pipe) use ($key) {
+                $pipe->set($key, "value_{$key}");
+                $pipe->incr("{$key}_counter");
+                $pipe->get($key);
+                $pipe->get("{$key}_counter");
+            });
+
+            go(static function () use ($redis) {
+                $redis->select(1);
+                $redis->set('xxx', 'x');
+                $redis->set('xxx', 'x');
+                $redis->set('xxx', 'x');
+            });
+
+            $r->set('xxxxxx', 'x');
+            $r->set('xxxxxx', 'x');
+            $r->set('xxxxxx', 'x');
+            $r->set('xxxxxx', 'x');
+
+            $this->assertTrue(true);
+        });
+    }
+
+    public function testConcurrentPipelineCallbacksWithLimitedConnectionPool()
+    {
+        $redis = $this->getRedis([], 3); // max_connections = 3
+
+        $concurrentOperations = 20; // More than max_connections
+        $channels = [];
+
+        for ($i = 0; $i < $concurrentOperations; ++$i) {
+            $channels[$i] = new Chan(1);
+        }
+
+        // Start concurrent coroutines using pipeline with callbacks
+        for ($i = 0; $i < $concurrentOperations; ++$i) {
+            go(function () use ($redis, $channels, $i) {
+                try {
+                    $key = "concurrent_pipeline_test_{$i}";
+
+                    $results = $redis->pipeline(function (\Redis $pipe) use ($key) {
+                        $pipe->set($key, "value_{$key}");
+                        $pipe->incr("{$key}_counter");
+                        $pipe->get($key);
+                        $pipe->get("{$key}_counter");
+                    });
+
+                    // Simulate work after callback
+                    sleep(1);
+
+                    $this->assertCount(4, $results);
+                    $this->assertTrue($results[0]);
+                    $this->assertSame(1, $results[1]);
+                    $this->assertSame("value_{$key}", $results[2]);
+                    $this->assertSame('1', $results[3]);
+
+                    $channels[$i]->push(['success' => true, 'operation' => 'pipeline']);
+                } catch (Throwable $e) {
+                    $channels[$i]->push(['success' => false, 'error' => $e->getMessage()]);
+                }
+            });
+        }
+
+        $successCount = 0;
+        for ($i = 0; $i < $concurrentOperations; ++$i) {
+            $result = $channels[$i]->pop(10.0);
+            $this->assertNotFalse($result, "Operation {$i} timed out - possible connection pool exhaustion");
+
+            if ($result['success']) {
+                ++$successCount;
+            } else {
+                $this->fail("Concurrent operation {$i} failed: " . $result['error']);
+            }
+        }
+
+        $this->assertSame(
+            $concurrentOperations,
+            $successCount,
+            "All {$concurrentOperations} concurrent pipeline operations should succeed with only 3 max connections"
+        );
+
+        // Clean up
+        for ($i = 0; $i < $concurrentOperations; ++$i) {
+            $redis->del("concurrent_pipeline_test_{$i}");
+            $redis->del("concurrent_pipeline_test_{$i}_counter");
+        }
+    }
+
+    public function testConcurrentTransactionCallbacksWithLimitedConnectionPool()
+    {
+        $redis = $this->getRedis([], 3); // max_connections = 3
+
+        $concurrentOperations = 20; // More than max_connections
+        $channels = [];
+
+        for ($i = 0; $i < $concurrentOperations; ++$i) {
+            $channels[$i] = new Chan(1);
+        }
+
+        // Start concurrent coroutines using transaction with callbacks
+        for ($i = 0; $i < $concurrentOperations; ++$i) {
+            go(function () use ($redis, $channels, $i) {
+                try {
+                    $key = "concurrent_transaction_test_{$i}";
+
+                    $results = $redis->transaction(function (\Redis $transaction) use ($key) {
+                        $transaction->set($key, "tx_value_{$key}");
+                        $transaction->incr("{$key}_counter");
+                        $transaction->get($key);
+                    });
+
+                    // Simulate work after callback
+                    sleep(1);
+
+                    $this->assertCount(3, $results);
+                    $this->assertTrue($results[0]);
+                    $this->assertSame(1, $results[1]);
+                    $this->assertSame("tx_value_{$key}", $results[2]);
+
+                    $channels[$i]->push(['success' => true, 'operation' => 'transaction']);
+                } catch (Throwable $e) {
+                    $channels[$i]->push(['success' => false, 'error' => $e->getMessage()]);
+                }
+            });
+        }
+
+        $successCount = 0;
+        for ($i = 0; $i < $concurrentOperations; ++$i) {
+            $result = $channels[$i]->pop(10.0);
+            $this->assertNotFalse($result, "Transaction operation {$i} timed out - possible connection pool exhaustion");
+
+            if ($result['success']) {
+                ++$successCount;
+            } else {
+                $this->fail("Concurrent transaction {$i} failed: " . $result['error']);
+            }
+        }
+
+        $this->assertSame(
+            $concurrentOperations,
+            $successCount,
+            "All {$concurrentOperations} concurrent transaction operations should succeed with only 3 max connections"
+        );
+
+        // Clean up
+        for ($i = 0; $i < $concurrentOperations; ++$i) {
+            $redis->del("concurrent_transaction_test_{$i}");
+            $redis->del("concurrent_transaction_test_{$i}_counter");
+        }
+    }
+
     /**
      * @param mixed $options
      * @return \Redis|Redis
      */
-    private function getRedis($options = [])
+    private function getRedis($options = [], int $maxConnections = 30)
     {
         $container = Mockery::mock(Container::class);
-        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
                 'default' => [
@@ -214,7 +414,7 @@ class RedisProxyTest extends TestCase
                     'options' => $options,
                     'pool' => [
                         'min_connections' => 1,
-                        'max_connections' => 30,
+                        'max_connections' => $maxConnections,
                         'connect_timeout' => 10.0,
                         'wait_timeout' => 3.0,
                         'heartbeat' => -1,
@@ -223,17 +423,20 @@ class RedisProxyTest extends TestCase
                 ],
             ],
         ]));
-        $pool = new RedisPool($container, 'default');
         $frequency = Mockery::mock(LowFrequencyInterface::class);
         $frequency->shouldReceive('isLowFrequency')->andReturn(false);
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
-        $container->shouldReceive('make')->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
-        $container->shouldReceive('make')->with(Channel::class, ['size' => 30])->andReturn(new Channel(30));
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            return new Channel($args['size']);
+        });
         $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new PoolOption(...array_values($args));
         });
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
         $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
+
+        $pool = new RedisPool($container, 'default');
+        $container->shouldReceive('make')->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
 
         ApplicationContext::setContainer($container);
 

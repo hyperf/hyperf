@@ -20,8 +20,9 @@ use Hyperf\Contract\LengthAwarePaginatorInterface;
 use IteratorAggregate;
 use JsonSerializable;
 use RuntimeException;
+use Stringable;
 
-class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Countable, IteratorAggregate, JsonSerializable, Jsonable, LengthAwarePaginatorInterface
+class LengthAwarePaginator extends AbstractPaginator implements Stringable, Arrayable, Countable, IteratorAggregate, JsonSerializable, Jsonable, LengthAwarePaginatorInterface
 {
     /**
      * The total number of items before slicing.

@@ -21,6 +21,9 @@ use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
+use Hyperf\Database\Exception\MultipleRecordsFoundException;
+use Hyperf\Database\Exception\RecordsNotFoundException;
+use Hyperf\Database\Exception\UniqueConstraintViolationException;
 use Hyperf\Database\Model\Collection as ModelCollection;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
@@ -40,11 +43,19 @@ use function Hyperf\Tappable\tap;
 
 /**
  * @template TModel of Model
+ *
+ * @method bool chunk(int $count, callable(ModelCollection<int, TModel>, int): (bool|void) $callback)
+ * @method bool chunkByIdDesc(int $count, callable(ModelCollection<int, TModel>, int): (bool|void) $callback, null|string $column = null, null|string $alias = null)
+ *
  * @mixin \Hyperf\Database\Query\Builder
  */
 class Builder
 {
-    use BuildsQueries;
+    /** @use BuildsQueries<TModel> */
+    use BuildsQueries {
+        BuildsQueries::sole as baseSole;
+    }
+
     use ForwardsCalls;
     use Concerns\QueriesRelationships;
 
@@ -64,22 +75,16 @@ class Builder
 
     /**
      * The relationships that should be eager loaded.
-     *
-     * @var array
      */
     protected $eagerLoad = [];
 
     /**
      * All of the globally registered builder macros.
-     *
-     * @var array
      */
     protected static $macros = [];
 
     /**
      * All of the locally registered builder macros.
-     *
-     * @var array
      */
     protected $localMacros = [];
 
@@ -92,8 +97,6 @@ class Builder
 
     /**
      * The methods that should be returned from query builder.
-     *
-     * @var array
      */
     protected $passthru = [
         'insert', 'insertGetId', 'getBindings', 'toSql', 'toRawSql', 'insertOrIgnore',
@@ -103,15 +106,11 @@ class Builder
 
     /**
      * Applied global scopes.
-     *
-     * @var array
      */
     protected $scopes = [];
 
     /**
      * Removed global scopes.
-     *
-     * @var array
      */
     protected $removedScopes = [];
 
@@ -220,7 +219,7 @@ class Builder
     /**
      * Create and return an un-saved model instance.
      *
-     * @return Model
+     * @return TModel
      */
     public function make(array $attributes = [])
     {
@@ -327,6 +326,18 @@ class Builder
     }
 
     /**
+     * Exclude the given models from the query results.
+     */
+    public function except(iterable|Model $models): static
+    {
+        return $this->whereKeyNot(
+            $models instanceof Model
+                ? $models->getKey()
+                : ModelCollection::wrap($models)->modelKeys()
+        );
+    }
+
+    /**
      * Add a basic where clause to the query.
      *
      * @param array|Closure|string $column
@@ -354,7 +365,7 @@ class Builder
      * @param array|Closure|string $column
      * @param null|mixed $operator
      * @param null|mixed $value
-     * @return Builder|static
+     * @return $this
      */
     public function orWhere($column, $operator = null, $value = null)
     {
@@ -404,7 +415,7 @@ class Builder
     /**
      * Create a collection of models from plain arrays.
      *
-     * @return ModelCollection
+     * @return ModelCollection<int, TModel>
      */
     public function hydrate(array $items)
     {
@@ -420,7 +431,7 @@ class Builder
      *
      * @param string $query
      * @param array $bindings
-     * @return ModelCollection
+     * @return ModelCollection<int, TModel>
      */
     public function fromQuery($query, $bindings = [])
     {
@@ -432,9 +443,9 @@ class Builder
     /**
      * Find a model by its primary key.
      *
+     * @param mixed $id
      * @param array $columns
-     * @param array|int|string $id
-     * @return null|Model|ModelCollection|static|static[]
+     * @return ($id is array ? ModelCollection<int, TModel> : null|TModel)
      */
     public function find($id, $columns = ['*'])
     {
@@ -450,7 +461,7 @@ class Builder
      *
      * @param array|Arrayable $ids
      * @param array $columns
-     * @return ModelCollection
+     * @return ModelCollection<int, TModel>
      */
     public function findMany($ids, $columns = ['*'])
     {
@@ -466,7 +477,7 @@ class Builder
      *
      * @param array $columns
      * @param mixed $id
-     * @return Model|ModelCollection|static|static[]
+     * @return ($id is array ? ModelCollection<int, TModel> : TModel)
      * @throws ModelNotFoundException
      */
     public function findOrFail($id, $columns = ['*'])
@@ -494,11 +505,7 @@ class Builder
      *
      * @param (Closure(): TValue)|list<string>|string $columns
      * @param null|(Closure(): TValue) $callback
-     * @return (
-     *     $id is (Arrayable<array-key, mixed>|array)
-     *     ? Collection<int, TModel>
-     *     : TModel|TValue
-     * )
+     * @return ($id is (array|Arrayable<array-key, mixed>) ? ModelCollection<int, TModel> : TModel|TValue)
      */
     public function findOr(mixed $id, array|Closure|string $columns = ['*'], ?Closure $callback = null): mixed
     {
@@ -520,7 +527,7 @@ class Builder
      *
      * @param array $columns
      * @param mixed $id
-     * @return Model|static
+     * @return ($id is array ? ModelCollection<int, TModel> : TModel)
      */
     public function findOrNew($id, $columns = ['*'])
     {
@@ -534,7 +541,7 @@ class Builder
     /**
      * Get the first record matching the attributes or instantiate it.
      *
-     * @return Model|static
+     * @return TModel
      */
     public function firstOrNew(array $attributes, array $values = [])
     {
@@ -546,9 +553,9 @@ class Builder
     }
 
     /**
-     * Get the first record matching the attributes or create it.
+     * Get the first record matching the attributes. If the record is not found, create it.
      *
-     * @return Model|static
+     * @return TModel
      */
     public function firstOrCreate(array $attributes, array $values = [])
     {
@@ -556,15 +563,27 @@ class Builder
             return $instance;
         }
 
-        return tap($this->newModelInstance($attributes + $values), function ($instance) {
-            $instance->save();
-        });
+        return $this->createOrFirst($attributes, $values);
+    }
+
+    /**
+     * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
+     *
+     * @return TModel
+     */
+    public function createOrFirst(array $attributes = [], array $values = [])
+    {
+        try {
+            return $this->create(array_merge($attributes, $values));
+        } catch (UniqueConstraintViolationException $e) {
+            return $this->where($attributes)->first() ?? throw $e;
+        }
     }
 
     /**
      * Create or update a record matching the attributes, and fill it with values.
      *
-     * @return Model|static
+     * @return TModel
      */
     public function updateOrCreate(array $attributes, array $values = [])
     {
@@ -574,10 +593,22 @@ class Builder
     }
 
     /**
+     * Create a record matching the attributes, or increment the existing record.
+     */
+    public function incrementOrCreate(array $attributes, string $column = 'count', float|int $default = 1, float|int $step = 1, array $extra = []): Model
+    {
+        return tap($this->firstOrCreate($attributes, [$column => $default]), function ($instance) use ($column, $step, $extra) {
+            if (! $instance->wasRecentlyCreated) {
+                $instance->increment($column, $step, $extra);
+            }
+        });
+    }
+
+    /**
      * Execute the query and get the first result or throw an exception.
      *
      * @param array $columns
-     * @return Model|static
+     * @return TModel
      * @throws ModelNotFoundException
      */
     public function firstOrFail($columns = ['*'])
@@ -592,8 +623,10 @@ class Builder
     /**
      * Execute the query and get the first result or call a callback.
      *
-     * @param array|Closure $columns
-     * @return mixed|Model|static
+     * @template TValue
+     * @param array<string>|(Closure(): TValue) $columns
+     * @param null|(Closure(): TValue) $callback
+     * @return ($columns is (Closure(): TValue) ? TModel|TValue : ($callback is null ? null|TModel : TModel|TValue))
      */
     public function firstOr($columns = ['*'], ?Closure $callback = null)
     {
@@ -637,7 +670,7 @@ class Builder
      * Execute the query as a "select" statement.
      *
      * @param array $columns
-     * @return ModelCollection|static[]
+     * @return ModelCollection<int, TModel>
      */
     public function get($columns = ['*'])
     {
@@ -657,7 +690,7 @@ class Builder
      * Get the hydrated models without eager loading.
      *
      * @param array $columns
-     * @return \Hyperf\Database\Model\Model[]|static[]
+     * @return array<int, TModel>
      */
     public function getModels($columns = ['*'])
     {
@@ -669,7 +702,8 @@ class Builder
     /**
      * Eager load the relationships for the models.
      *
-     * @return array
+     * @param array<int, TModel> $models
+     * @return array<int, TModel>
      */
     public function eagerLoadRelations(array $models)
     {
@@ -689,7 +723,7 @@ class Builder
      * Get the relation instance for the given relation name.
      *
      * @param string $name
-     * @return Relation
+     * @return Relation<Model, TModel, *>
      */
     public function getRelation($name)
     {
@@ -719,7 +753,7 @@ class Builder
     /**
      * Get a generator for the given query.
      *
-     * @return Generator
+     * @return Generator<int, TModel, TModel, void>
      */
     public function cursor()
     {
@@ -732,6 +766,7 @@ class Builder
      * Chunk the results of a query by comparing numeric IDs.
      *
      * @param int $count
+     * @param callable(ModelCollection<int, TModel>, int): mixed $callback
      * @param null|string $column
      * @param null|string $alias
      * @return bool
@@ -782,7 +817,7 @@ class Builder
      *
      * @param string $column
      * @param null|string $key
-     * @return Collection
+     * @return Collection<array-key, mixed>
      */
     public function pluck($column, $key = null)
     {
@@ -862,7 +897,7 @@ class Builder
     /**
      * Save a new model and return the instance.
      *
-     * @return $this|\Hyperf\Database\Model\Model
+     * @return TModel
      */
     public function create(array $attributes = [])
     {
@@ -874,7 +909,7 @@ class Builder
     /**
      * Save a new model and return the instance. Allow mass-assignment.
      *
-     * @return $this|\Hyperf\Database\Model\Model
+     * @return TModel
      */
     public function forceCreate(array $attributes)
     {
@@ -1041,6 +1076,23 @@ class Builder
     }
 
     /**
+     * Execute the query and get the first result if it's the sole matching record.
+     *
+     * @return TModel
+     *
+     * @throws ModelNotFoundException<TModel>
+     * @throws MultipleRecordsFoundException
+     */
+    public function sole(array|string $columns = ['*'])
+    {
+        try {
+            return $this->baseSole($columns);
+        } catch (RecordsNotFoundException) {
+            throw (new ModelNotFoundException())->setModel($this->model::class);
+        }
+    }
+
+    /**
      * Set the relationships that should be eager loaded.
      *
      * @param mixed $relations
@@ -1074,7 +1126,7 @@ class Builder
      * Create a new instance of the model being queried.
      *
      * @param array $attributes
-     * @return Model|static
+     * @return TModel
      */
     public function newModelInstance($attributes = [])
     {
@@ -1151,7 +1203,7 @@ class Builder
     /**
      * Get the model instance being queried.
      *
-     * @return Model|static
+     * @return TModel
      */
     public function getModel()
     {
@@ -1161,7 +1213,9 @@ class Builder
     /**
      * Set a model instance for the model being queried.
      *
-     * @return $this
+     * @template TNewModel of \Hyperf\Database\Model\Model
+     * @param TNewModel $model
+     * @return Builder<TNewModel>
      */
     public function setModel(Model $model)
     {

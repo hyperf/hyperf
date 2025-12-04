@@ -23,6 +23,7 @@ use HyperfTest\Resource\Stubs\Models\Post;
 use HyperfTest\Resource\Stubs\Models\Subscription;
 use HyperfTest\Resource\Stubs\Resources\AuthorResourceWithOptionalRelationship;
 use HyperfTest\Resource\Stubs\Resources\ObjectResource;
+use HyperfTest\Resource\Stubs\Resources\PaginationCollection;
 use HyperfTest\Resource\Stubs\Resources\PostCollectionResource;
 use HyperfTest\Resource\Stubs\Resources\PostResource;
 use HyperfTest\Resource\Stubs\Resources\PostResourceWithExtraData;
@@ -731,6 +732,27 @@ class ResourceTest extends TestCase
             1 => 20,
             'total' => 30,
         ], ['data' => [0 => 10, 1 => 20, 'total' => 30]]);
+    }
+
+    public function testResourceCollectionPagination()
+    {
+        $this->http(function () {
+            $paginator = new LengthAwarePaginator(
+                collect([new Post(['id' => 5, 'title' => 'Test Title'])]),
+                10,
+                15,
+                1
+            );
+
+            return new PaginationCollection($paginator);
+        })->assertJson([
+            'data' => [
+                [
+                    'id' => 5,
+                    'title' => 'Test Title',
+                ],
+            ],
+        ]);
     }
 
     private function assertJsonResourceResponse($data, $expectedJson)

@@ -67,6 +67,8 @@ use HyperfTest\Database\Stubs\ModelWithoutRelationStub;
 use HyperfTest\Database\Stubs\ModelWithoutTableStub;
 use HyperfTest\Database\Stubs\ModelWithStub;
 use HyperfTest\Database\Stubs\NoConnectionModelStub;
+use HyperfTest\Database\Stubs\NonSoftDeletableModelStub;
+use HyperfTest\Database\Stubs\SoftDeletableModelStub;
 use HyperfTest\Database\Stubs\User;
 use LogicException;
 use Mockery;
@@ -204,6 +206,23 @@ class ModelTest extends TestCase
         $this->assertFalse(isset($model['table']));
         $this->assertEquals($model['table'], null);
         $this->assertFalse(isset($model['with']));
+    }
+
+    public function testDiscardChanges()
+    {
+        $user = new ModelStub([
+            'name' => 'Taylor Otwell',
+        ]);
+
+        $this->assertNotEmpty($user->isDirty());
+        $this->assertNull($user->getOriginal('name'));
+        $this->assertSame('Taylor Otwell', $user->getAttribute('name'));
+
+        $user->discardChanges();
+
+        $this->assertEmpty($user->isDirty());
+        $this->assertNull($user->getOriginal('name'));
+        $this->assertNull($user->getAttribute('name'));
     }
 
     public function testOnly()
@@ -1499,6 +1518,11 @@ class ModelTest extends TestCase
         $this->assertEquals('camelCased', $model->camelCased);
         $this->assertEquals('StudlyCased', $model->StudlyCased);
 
+        $this->assertTrue($model->hasAppended('is_admin'));
+        $this->assertTrue($model->hasAppended('camelCased'));
+        $this->assertTrue($model->hasAppended('StudlyCased'));
+        $this->assertFalse($model->hasAppended('not_appended'));
+
         $model->setHidden(['is_admin', 'camelCased', 'StudlyCased']);
         $this->assertEquals([], $model->toArray());
 
@@ -2081,6 +2105,13 @@ class ModelTest extends TestCase
         } finally {
             Relation::morphMap([], false);
         }
+    }
+
+    public function testIsSoftDeletable()
+    {
+        $this->assertTrue(SoftDeletableModelStub::isSoftDeletable());
+        $this->assertFalse(NonSoftDeletableModelStub::isSoftDeletable());
+        $this->assertFalse(ModelStub::isSoftDeletable());
     }
 
     protected function getContainer()

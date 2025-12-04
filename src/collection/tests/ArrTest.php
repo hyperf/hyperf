@@ -15,8 +15,11 @@ namespace HyperfTest\Collection;
 use ArrayObject;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
+use Hyperf\Collection\ItemNotFoundException;
+use Hyperf\Collection\MultipleItemsFoundException;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Resolver\ResolverDispatcher;
+use InvalidArgumentException;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -230,7 +233,11 @@ class ArrTest extends TestCase
 
     public function testShuffleAssoc(): void
     {
-        $source = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
+        $source = [];
+        $value = 'a';
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[$value++] = $i;
+        }
 
         $shuffled = Arr::shuffleAssoc($source);
 
@@ -238,7 +245,11 @@ class ArrTest extends TestCase
         $this->assertSameSize($source, $shuffled);
         $this->assertSameSize($source, array_intersect_assoc($source, $shuffled));
 
-        $source = ['a', 'b', 'c', 'd'];
+        $source = [];
+        $value = 'a';
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[] = $value++;
+        }
 
         $shuffled = Arr::shuffleAssoc($source);
 
@@ -246,7 +257,10 @@ class ArrTest extends TestCase
         $this->assertSameSize($source, $shuffled);
         $this->assertSameSize($source, array_intersect_assoc($source, $shuffled));
 
-        $source = [1, 2, 3, 4];
+        $source = [];
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[] = $i;
+        }
 
         $shuffled = Arr::shuffleAssoc($source);
 
@@ -257,7 +271,11 @@ class ArrTest extends TestCase
 
     public function testShuffleAssocWithSeed(): void
     {
-        $source = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
+        $source = [];
+        $value = 'a';
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[$value++] = $i;
+        }
 
         $this->assertSame(
             Arr::shuffleAssoc($source, 1234),
@@ -272,7 +290,11 @@ class ArrTest extends TestCase
             Arr::shuffleAssoc($source, 1234)
         );
 
-        $source = ['a', 'b', 'c', 'd'];
+        $source = [];
+        $value = 'a';
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[] = $value++;
+        }
 
         $this->assertSame(
             Arr::shuffleAssoc($source, 1234),
@@ -287,7 +309,10 @@ class ArrTest extends TestCase
             Arr::shuffleAssoc($source, 1234)
         );
 
-        $source = [1, 2, 3, 4];
+        $source = [];
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[] = $i;
+        }
 
         $this->assertSame(
             Arr::shuffleAssoc($source, 1234),
@@ -355,6 +380,38 @@ class ArrTest extends TestCase
         $this->assertTrue(Arr::hasAny($array, 'foo.baz'));
         $this->assertFalse(Arr::hasAny($array, 'foo.bax'));
         $this->assertTrue(Arr::hasAny($array, ['foo.bax', 'foo.baz']));
+    }
+
+    public function testHasAllMethod(): void
+    {
+        $array = ['name' => 'Taylor', 'age' => '', 'city' => null];
+        $this->assertTrue(Arr::hasAll($array, 'name'));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'age']));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'age', 'city']));
+        $this->assertFalse(Arr::hasAll($array, ['name', 'age', 'gender']));
+        $this->assertFalse(Arr::hasAll($array, 'nonexistent'));
+
+        $array = ['name' => 'Taylor', 'email' => 'foo'];
+        $this->assertTrue(Arr::hasAll($array, 'name'));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'email']));
+        $this->assertFalse(Arr::hasAll($array, ['name', 'surname']));
+        $this->assertFalse(Arr::hasAll($array, ['surname', 'password']));
+
+        $array = ['foo' => ['bar' => null, 'baz' => '']];
+        $this->assertTrue(Arr::hasAll($array, 'foo.bar'));
+        $this->assertTrue(Arr::hasAll($array, 'foo.baz'));
+        $this->assertFalse(Arr::hasAll($array, 'foo.bax'));
+        $this->assertFalse(Arr::hasAll($array, ['foo.bar', 'foo.bax']));
+        $this->assertTrue(Arr::hasAll($array, ['foo.bar', 'foo.baz']));
+        $this->assertFalse(Arr::hasAll($array, ['foo.bar', 'foo.baz', 'foo.nonexistent']));
+
+        // Test with null keys
+        $this->assertFalse(Arr::hasAll(['a' => 1], null));
+        $this->assertFalse(Arr::hasAll(['a' => 1], []));
+
+        // Test with empty array
+        $this->assertFalse(Arr::hasAll([], 'a'));
+        $this->assertFalse(Arr::hasAll([], ['a', 'b']));
     }
 
     public function testIsAssoc(): void
@@ -903,5 +960,81 @@ class ArrTest extends TestCase
         $key = ['id'];
         $expected = [1 => 'John', 2 => 'Jane'];
         $this->assertEquals($expected, Arr::pluck($array, $value, $key));
+    }
+
+    public function testItGetsAnArray()
+    {
+        $test_array = ['string' => 'foo bar', 'array' => ['foo', 'bar']];
+
+        // Test array values are returned as arrays
+        $this->assertSame(
+            ['foo', 'bar'],
+            Arr::array($test_array, 'array')
+        );
+
+        // Test that default array values are returned for missing keys
+        $this->assertSame(
+            [1, 'two'],
+            Arr::array($test_array, 'missing_key', [1, 'two'])
+        );
+
+        // Test that an exception is raised if the value is not an array
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('#^Array value for key \[string\] must be an array, (.*) found.#');
+        Arr::array($test_array, 'string');
+    }
+
+    public function testPush(): void
+    {
+        $array = [];
+
+        Arr::push($array, 'office.furniture', 'Desk');
+        $this->assertEquals(['Desk'], $array['office']['furniture']);
+
+        Arr::push($array, 'office.furniture', 'Chair', 'Lamp');
+        $this->assertEquals(['Desk', 'Chair', 'Lamp'], $array['office']['furniture']);
+
+        $array = [];
+
+        Arr::push($array, null, 'Chris', 'Nuno');
+        $this->assertEquals(['Chris', 'Nuno'], $array);
+
+        Arr::push($array, null, 'Taylor');
+        $this->assertEquals(['Chris', 'Nuno', 'Taylor'], $array);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Array value for key [foo.bar] must be an array, boolean found.');
+
+        $array = ['foo' => ['bar' => false]];
+        Arr::push($array, 'foo.bar', 'baz');
+    }
+
+    public function testSoleReturnsFirstItemInCollectionIfOnlyOneExists()
+    {
+        $this->assertSame('foo', Arr::sole(['foo']));
+
+        $array = [
+            ['name' => 'foo'],
+            ['name' => 'bar'],
+        ];
+
+        $this->assertSame(
+            ['name' => 'foo'],
+            Arr::sole($array, fn (array $value) => $value['name'] === 'foo')
+        );
+    }
+
+    public function testSoleThrowsExceptionIfNoItemsExist()
+    {
+        $this->expectException(ItemNotFoundException::class);
+
+        Arr::sole(['foo'], fn (string $value) => $value === 'baz');
+    }
+
+    public function testSoleThrowsExceptionIfMoreThanOneItemExists()
+    {
+        $this->expectExceptionObject(new MultipleItemsFoundException(2));
+
+        Arr::sole(['baz', 'foo', 'baz'], fn (string $value) => $value === 'baz');
     }
 }

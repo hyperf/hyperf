@@ -86,6 +86,9 @@ return (new Config())
             'import_constants' => true,
             'import_functions' => true,
         ],
+        'ordered_types' => [
+            'null_adjustment' => 'always_first',
+        ],
         'class_attributes_separation' => true,
         'combine_consecutive_unsets' => true,
         'declare_strict_types' => true,

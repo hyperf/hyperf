@@ -23,7 +23,9 @@ use Hyperf\Collection\Arr;
 use Hyperf\Contracts\Events\Dispatcher;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Exception\InvalidArgumentException;
+use Hyperf\Database\Exception\MultipleColumnsSelectedException;
 use Hyperf\Database\Exception\QueryException;
+use Hyperf\Database\Exception\UniqueConstraintViolationException;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Database\Query\Expression;
@@ -246,6 +248,28 @@ class Connection implements ConnectionInterface
         $records = $this->select($query, $bindings, $useReadPdo);
 
         return array_shift($records);
+    }
+
+    /**
+     * Run a select statement and return the first column of the first row.
+     *
+     * @throws MultipleColumnsSelectedException
+     */
+    public function scalar(string $query, array $bindings = [], bool $useReadPdo = true): mixed
+    {
+        $record = $this->selectOne($query, $bindings, $useReadPdo);
+
+        if (is_null($record)) {
+            return null;
+        }
+
+        $record = (array) $record;
+
+        if (count($record) > 1) {
+            throw new MultipleColumnsSelectedException();
+        }
+
+        return reset($record);
     }
 
     /**
@@ -983,6 +1007,16 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Determine if the given database exception was caused by a unique constraint violation.
+     *
+     * @return bool
+     */
+    protected function isUniqueConstraintError(Exception $exception)
+    {
+        return false;
+    }
+
+    /**
      * Escape a string value for safe SQL embedding.
      */
     protected function escapeString(string $value): string
@@ -1088,6 +1122,7 @@ class Connection implements ConnectionInterface
     /**
      * Run a SQL statement and log its execution context.
      *
+     * @throws UniqueConstraintViolationException
      * @throws QueryException
      */
     protected function run(string $query, array $bindings, Closure $callback)
@@ -1130,6 +1165,7 @@ class Connection implements ConnectionInterface
     /**
      * Run a SQL statement.
      *
+     * @throws UniqueConstraintViolationException
      * @throws QueryException
      */
     protected function runQueryCallback(string $query, array $bindings, Closure $callback)
@@ -1146,6 +1182,13 @@ class Connection implements ConnectionInterface
         // lot more helpful to the developer instead of just the database's errors.
         catch (Exception $e) {
             ++$this->errorCount;
+            if ($this->isUniqueConstraintError($e)) {
+                throw new UniqueConstraintViolationException(
+                    $query,
+                    $this->prepareBindings($bindings),
+                    $e
+                );
+            }
             throw new QueryException(
                 $query,
                 $this->prepareBindings($bindings),
@@ -1189,6 +1232,7 @@ class Connection implements ConnectionInterface
     /**
      * Handle a query exception that occurred during query execution.
      *
+     * @throws UniqueConstraintViolationException
      * @throws QueryException
      */
     protected function tryAgainIfCausedByLostConnection(QueryException $e, string $query, array $bindings, Closure $callback)

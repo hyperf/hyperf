@@ -501,6 +501,6 @@ $table->dropForeign(['user_id'']);
 ```php
 // 開啟外來鍵約束
 Schema::enableForeignKeyConstraints();
-// 禁用外來鍵約束
+// 停用外來鍵約束
 Schema::disableForeignKeyConstraints();
 ```

@@ -15,6 +15,7 @@ namespace Hyperf\Grpc;
 use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Internal\Message;
 use Google\Rpc\Status;
+use Grpc\StringifyAble;
 use Swoole\Http\Response;
 use Swoole\Http2\Response as Http2Response;
 
@@ -53,7 +54,7 @@ class Parser
     /**
      * @param null|Http2Response $response
      * @param mixed $deserialize
-     * @return \Grpc\StringifyAble[]|Http2Response[]|Message[]
+     * @return Http2Response[]|Message[]|StringifyAble[]
      */
     public static function parseResponse($response, $deserialize): array
     {

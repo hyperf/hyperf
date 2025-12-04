@@ -27,7 +27,46 @@ class PostgresSqlSwooleExtGrammar extends PostgresGrammar
      */
     public function compileColumnListing(): string
     {
-        return 'select column_name as column_name, data_type as data_type from information_schema.columns where table_catalog = $1 and table_schema = $2 and table_name = $3';
+        return <<<'SQL'
+        SELECT
+            a.attname AS column_name,
+            CASE
+                   WHEN format_type(a.atttypid, a.atttypmod) LIKE 'numeric%' THEN
+                       regexp_replace(format_type(a.atttypid, a.atttypmod), '^numeric', 'decimal')
+                   WHEN format_type(a.atttypid, a.atttypmod) LIKE 'timestamp%' THEN 'datetime'
+                   WHEN format_type(a.atttypid, a.atttypmod) = 'integer' THEN 'int'
+                   WHEN format_type(a.atttypid, a.atttypmod) = 'real' THEN 'float'
+                   WHEN format_type(a.atttypid, a.atttypmod) = 'double precision' THEN 'double'
+                   ELSE format_type(a.atttypid, a.atttypmod)
+                   END                               AS data_type,
+            col_description(a.attrelid, a.attnum) AS column_comment,
+            CASE
+                WHEN i.indisprimary THEN 'PRI'
+                WHEN i.indisunique THEN 'UNI'
+                ELSE NULL
+            END AS column_key,
+            CASE
+                -- Detect SERIAL type (via default value using nextval)
+                WHEN d.adbin IS NOT NULL AND pg_get_expr(d.adbin, d.adrelid) LIKE 'nextval(%' THEN 'auto_increment'
+                -- Detect GENERATED AS IDENTITY (a = by default, d = always) pgsql10+
+                WHEN a.attidentity IN ('a', 'd') THEN 'auto_increment'
+                ELSE NULL
+            END AS extra,
+            CASE WHEN a.attnotnull THEN 'NO' ELSE 'YES' END AS is_nullable,
+            pg_get_expr(d.adbin, d.adrelid) AS column_default
+        FROM pg_attribute a
+        JOIN pg_class c ON a.attrelid = c.oid
+        JOIN pg_namespace n ON c.relnamespace = n.oid
+        LEFT JOIN
+            pg_index i ON i.indrelid = c.oid AND a.attnum = ANY(i.indkey)
+        LEFT JOIN pg_attrdef d ON d.adrelid = c.oid AND d.adnum = a.attnum
+        WHERE
+            CAST($1 AS text) IS NOT NULL AND -- ignore table_catalog
+            n.nspname = $2 AND
+            c.relname = $3 AND
+            a.attnum > 0 AND NOT a.attisdropped
+        ORDER BY a.attnum
+        SQL;
     }
 
     /**

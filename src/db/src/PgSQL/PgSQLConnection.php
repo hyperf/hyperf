@@ -65,6 +65,10 @@ class PgSQLConnection extends AbstractConnection
             throw new RuntimeException($connection->error);
         }
 
+        if (! empty($this->config['schema'])) {
+            $connection->query(sprintf('set search_path to %s', $this->config['schema']));
+        }
+
         $this->connection = $connection;
         $this->lastUseTime = microtime(true);
         $this->transactions = 0;

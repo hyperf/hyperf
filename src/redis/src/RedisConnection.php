@@ -20,6 +20,7 @@ use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Exception\InvalidRedisOptionException;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LogLevel;
 use Redis;
 use RedisCluster;
@@ -35,6 +36,8 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     use Traits\MultiExec;
 
     protected null|Redis|RedisCluster $connection = null;
+
+    protected ?EventDispatcherInterface $eventDispatcher = null;
 
     protected array $config = [
         'host' => 'localhost',
@@ -62,6 +65,9 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         ],
         'options' => [],
         'context' => [],
+        'event' => [
+            'enable' => false,
+        ],
     ];
 
     /**
@@ -99,6 +105,11 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         }
 
         return $this;
+    }
+
+    public function getEventDispatcher(): ?EventDispatcherInterface
+    {
+        return $this->eventDispatcher;
     }
 
     /**
@@ -150,6 +161,10 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $this->connection = $redis;
         $this->lastUseTime = microtime(true);
 
+        if (($this->config['event']['enable'] ?? false) && $this->container->has(EventDispatcherInterface::class)) {
+            $this->eventDispatcher = $this->container->get(EventDispatcherInterface::class);
+        }
+
         return true;
     }
 
@@ -188,9 +203,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $parameters[] = $this->config['timeout'] ?? 0.0;
             $parameters[] = $this->config['cluster']['read_timeout'] ?? 0.0;
             $parameters[] = $this->config['cluster']['persistent'] ?? false;
-            if (isset($this->config['auth'])) {
-                $parameters[] = $this->config['auth'];
-            }
+            $parameters[] = $this->config['auth'] ?? null;
             if (! empty($this->config['cluster']['context'])) {
                 $parameters[] = $this->config['cluster']['context'];
             }

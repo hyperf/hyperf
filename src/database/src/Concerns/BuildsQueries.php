@@ -19,9 +19,10 @@ use Hyperf\Conditionable\Conditionable;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
+use Hyperf\Database\Exception\MultipleRecordsFoundException;
+use Hyperf\Database\Exception\RecordsNotFoundException;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Paginator\Contract\CursorPaginator as CursorPaginatorContract;
 use Hyperf\Paginator\Cursor;
@@ -33,6 +34,11 @@ use RuntimeException;
 
 use function Hyperf\Collection\data_get;
 
+/**
+ * @template TValue of object
+ * @mixin Builder
+ * @mixin \Hyperf\Database\Query\Builder
+ */
 trait BuildsQueries
 {
     use Conditionable;
@@ -41,6 +47,7 @@ trait BuildsQueries
      * Chunk the results of the query.
      *
      * @param int $count
+     * @param callable(BaseCollection<int, TValue>, int): mixed $callback
      * @return bool
      */
     public function chunk($count, callable $callback)
@@ -78,6 +85,8 @@ trait BuildsQueries
 
     /**
      * Run a map over each item while chunking.
+     *
+     * @param callable(TValue): mixed $callback
      */
     public function chunkMap(callable $callback, int $count = 1000): BaseCollection
     {
@@ -95,6 +104,7 @@ trait BuildsQueries
     /**
      * Execute a callback over each item while chunking.
      *
+     * @param callable(TValue, int): mixed $callback
      * @param int $count
      * @return bool
      */
@@ -111,6 +121,8 @@ trait BuildsQueries
 
     /**
      * Query lazily, by chunks of the given size.
+     *
+     * @return LazyCollection<int, TValue>
      */
     public function lazy(int $chunkSize = 1000): LazyCollection
     {
@@ -139,6 +151,8 @@ trait BuildsQueries
 
     /**
      * Query lazily, by chunking the results of a query by comparing IDs.
+     *
+     * @return LazyCollection<int, TValue>
      */
     public function lazyById(int $chunkSize = 1000, ?string $column = null, ?string $alias = null): LazyCollection
     {
@@ -147,6 +161,8 @@ trait BuildsQueries
 
     /**
      * Query lazily, by chunking the results of a query by comparing IDs in descending order.
+     *
+     * @return LazyCollection<int, TValue>
      */
     public function lazyByIdDesc(int $chunkSize = 1000, ?string $column = null, ?string $alias = null): LazyCollection
     {
@@ -157,7 +173,7 @@ trait BuildsQueries
      * Execute the query and get the first result.
      *
      * @param array $columns
-     * @return null|Model|object|static
+     * @return null|TValue
      */
     public function first($columns = ['*'])
     {
@@ -166,6 +182,8 @@ trait BuildsQueries
 
     /**
      * Execute a callback over each item while chunking by ID.
+     *
+     * @param callable(TValue, int): mixed $callback
      */
     public function eachById(callable $callback, int $count = 1000, ?string $column = null, ?string $alias = null): bool
     {
@@ -181,6 +199,8 @@ trait BuildsQueries
 
     /**
      * Chunk the results of a query by comparing IDs in a given order.
+     *
+     * @param callable(BaseCollection<int, TValue>, int): mixed $callback
      */
     public function orderedChunkById(int $count, callable $callback, ?string $column = null, ?string $alias = null, bool $descending = false): bool
     {
@@ -233,6 +253,8 @@ trait BuildsQueries
 
     /**
      * Chunk the results of a query by comparing IDs in descending order.
+     *
+     * @param callable(BaseCollection<int, TValue>, int): mixed $callback
      */
     public function chunkByIdDesc(int $count, callable $callback, ?string $column = null, ?string $alias = null): bool
     {
@@ -248,6 +270,29 @@ trait BuildsQueries
     public function tap($callback)
     {
         return $this->when(true, $callback);
+    }
+
+    /**
+     * Execute the query and get the first result if it's the sole matching record.
+     * @return TValue
+     * @throws RecordsNotFoundException
+     * @throws MultipleRecordsFoundException
+     */
+    public function sole(array|string $columns = ['*']): mixed
+    {
+        $result = $this->take(2)->get($columns);
+
+        $count = $result->count();
+
+        if ($count === 0) {
+            throw new RecordsNotFoundException();
+        }
+
+        if ($count > 1) {
+            throw new MultipleRecordsFoundException($count);
+        }
+
+        return $result->first();
     }
 
     /**

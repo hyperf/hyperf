@@ -21,6 +21,7 @@ use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Exception\MultipleRecordsFoundException;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
@@ -1334,6 +1335,55 @@ class ModelBuilderTest extends TestCase
         $this->assertEquals(2, $result);
     }
 
+    public function testSole()
+    {
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
+        $query->shouldReceive('take')->with(2)->andReturnSelf();
+        $result = [
+            'id' => 1,
+            'name' => 'Hyperf',
+        ];
+        $query->shouldReceive('get')->with(['*'])->andReturn(new Collection([$result]));
+        $query->from = 'foo_table';
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder->setModel($model);
+        $this->assertEquals($builder->sole()->toArray(), $result);
+    }
+
+    public function testSoleNotFound()
+    {
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
+        $query->shouldReceive('take')->with(2)->andReturnSelf();
+        $query->shouldReceive('get')->with(['1'])->andReturn(new Collection());
+        $query->from = 'foo_table';
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder->setModel($model);
+        $this->expectException(ModelNotFoundException::class);
+        $builder->sole(['1']);
+    }
+
+    public function testSoleMultipleRecordsFoundException()
+    {
+        $query = Mockery::mock(BaseBuilder::class);
+        $query->shouldReceive('from')->with('foo_table')->andReturn('foo_table');
+        $query->shouldReceive('take')->with(2)->andReturnSelf();
+        $result = [
+            'id' => 1,
+            'name' => 'Hyperf',
+        ];
+        $query->shouldReceive('get')->with(['*'])->andReturn(new Collection([$result, $result]));
+        $query->from = 'foo_table';
+        $builder = new Builder($query);
+        $model = new ModelBuilderTestStubStringPrimaryKey();
+        $builder->setModel($model);
+        $this->expectException(MultipleRecordsFoundException::class);
+        $builder->sole();
+    }
+
     public function testTouchWithCustomColumn()
     {
         Carbon::setTestNow($now = '2017-10-10 10:10:10');
@@ -1485,6 +1535,65 @@ class ModelBuilderTest extends TestCase
             ],
             $builder->lazyById(2, 'someIdField')->all()
         );
+    }
+
+    public function testExceptMethodWithModel()
+    {
+        $model = $this->getMockModel();
+        $builder = $this->getBuilder()->setModel($model);
+        $keyName = $model->getQualifiedKeyName();
+
+        $builder->getQuery()->shouldReceive('where')->once()->with($keyName, '!=', Mockery::on(function ($argument) {
+            return $argument === 1;
+        }));
+
+        $builder->except(new class extends Model {
+            protected array $attributes = ['id' => 1];
+        });
+    }
+
+    public function testExceptMethodWithCollectionOfModel()
+    {
+        $model = $this->getMockModel();
+        $builder = $this->getBuilder()->setModel($model);
+        $keyName = $model->getQualifiedKeyName();
+
+        $builder->getQuery()->shouldReceive('whereNotIn')->once()->with($keyName, Mockery::on(function ($argument) {
+            return $argument === [1, 2];
+        }));
+
+        $models = new Collection([
+            new class extends Model {
+                protected array $attributes = ['id' => 1];
+            },
+            new class extends Model {
+                protected array $attributes = ['id' => 2];
+            },
+        ]);
+
+        $builder->except($models);
+    }
+
+    public function testExceptMethodWithArrayOfModel()
+    {
+        $model = $this->getMockModel();
+        $builder = $this->getBuilder()->setModel($model);
+        $keyName = $model->getQualifiedKeyName();
+
+        $builder->getQuery()->shouldReceive('whereNotIn')->once()->with($keyName, Mockery::on(function ($argument) {
+            return $argument === [1, 2];
+        }));
+
+        $models = new Collection([
+            new class extends Model {
+                protected array $attributes = ['id' => 1];
+            },
+            new class extends Model {
+                protected array $attributes = ['id' => 2];
+            },
+        ]);
+
+        $builder->except($models);
     }
 
     protected function mockConnectionForModel($model, $database)

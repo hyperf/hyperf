@@ -20,10 +20,11 @@ use Hyperf\Contract\MessageBag as MessageBagContract;
 use Hyperf\Contract\MessageProvider;
 use Hyperf\Stringable\Str;
 use JsonSerializable;
+use Stringable;
 
 use function Hyperf\Collection\collect;
 
-class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, MessageBagContract, MessageProvider
+class MessageBag implements Stringable, Arrayable, Countable, Jsonable, JsonSerializable, MessageBagContract, MessageProvider
 {
     /**
      * All the registered messages.
