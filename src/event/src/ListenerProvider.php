@@ -23,7 +23,7 @@ class ListenerProvider implements ListenerProviderInterface
     public array $listeners = [];
 
     /**
-     * @var array<class-string, iterable<callable>>
+     * @var array<class-string, SplPriorityQueue>
      */
     protected array $listenersCache = [];
 
