@@ -22,6 +22,9 @@ class ListenerProvider implements ListenerProviderInterface
      */
     public array $listeners = [];
 
+    /**
+     * @var array<class-string, iterable<callable>>
+     */
     protected array $listenersCache = [];
 
     /**
@@ -35,7 +38,7 @@ class ListenerProvider implements ListenerProviderInterface
         $isAnonymousClass = str_contains($eventClass, '@anonymous');
 
         if (! $isAnonymousClass && isset($this->listenersCache[$eventClass])) {
-            return $this->listenersCache[$eventClass];
+            return clone $this->listenersCache[$eventClass];
         }
 
         $queue = new SplPriorityQueue();
@@ -50,7 +53,7 @@ class ListenerProvider implements ListenerProviderInterface
             $this->listenersCache[$eventClass] = $queue;
         }
 
-        return $queue;
+        return clone $queue;
     }
 
     public function on(string $event, callable $listener, int $priority = ListenerData::DEFAULT_PRIORITY): void
