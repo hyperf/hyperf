@@ -36,10 +36,8 @@ class ExcludeIf implements Stringable
 
     /**
      * Convert the rule to a validation string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (is_callable($this->condition)) {
             return call_user_func($this->condition) ? 'exclude' : '';
