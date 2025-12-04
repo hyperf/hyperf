@@ -3,6 +3,7 @@
 ## Added
 
 - [#7632](https://github.com/hyperf/hyperf/pull/7632) Support `thecodingmachine/graphqlite:^8.1`.
+- [#7585](https://github.com/hyperf/hyperf/pull/7585) Added event `Hyperf\Kafka\Event\FailToAck` and `Hyperf\Kafka\Event\FailToRequeue`.
 
 ## Optimized
 
