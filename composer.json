@@ -34,7 +34,7 @@
         "doctrine/inflector": "^2.0",
         "doctrine/instantiator": "^1.0",
         "egulias/email-validator": "^3.0",
-        "elasticsearch/elasticsearch": "^8.0",
+        "elasticsearch/elasticsearch": "^8.0 || ^9.0",
         "ergebnis/composer-normalize": "^2.43",
         "ezimuel/ringphp": "^1.1.2",
         "fakerphp/faker": "^1.23",
@@ -439,6 +439,9 @@
         "allow-plugins": {
             "ergebnis/composer-normalize": true,
             "php-http/discovery": true
+        },
+        "audit": {
+            "block-insecure": false
         },
         "optimize-autoloader": true,
         "sort-packages": true

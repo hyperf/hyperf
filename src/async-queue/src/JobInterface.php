@@ -28,5 +28,5 @@ interface JobInterface
 
     public function getMaxAttempts(): int;
 
-    public function getQueueName(): string;
+    public function getPoolName(): string;
 }

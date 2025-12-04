@@ -52,11 +52,12 @@ class ApplicationFactory
             $application->setDispatcher(new SymfonyEventDispatcher($eventDispatcher));
         }
 
-        foreach ($commands as $command) {
-            $application->add(
-                $this->pendingCommand($container->get($command))
-            );
-        }
+        $application->addCommands(
+            array_map(
+                fn ($command) => $this->pendingCommand($container->get($command)),
+                $commands
+            )
+        );
 
         return $application;
     }
