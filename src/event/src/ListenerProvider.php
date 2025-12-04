@@ -22,6 +22,8 @@ class ListenerProvider implements ListenerProviderInterface
      */
     public array $listeners = [];
 
+    protected array $listenersCache = [];
+
     /**
      * @param object $event An event for which to return the relevant listeners
      * @return iterable<callable> An iterable (array, iterator, or generator) of callables.  Each
@@ -29,12 +31,25 @@ class ListenerProvider implements ListenerProviderInterface
      */
     public function getListenersForEvent($event): iterable
     {
+        $eventClass = $event::class;
+        $isAnonymousClass = str_contains($eventClass, '@anonymous');
+
+        if (! $isAnonymousClass && isset($this->listenersCache[$eventClass])) {
+            return $this->listenersCache[$eventClass];
+        }
+
         $queue = new SplPriorityQueue();
+
         foreach ($this->listeners as $listener) {
             if ($event instanceof $listener->event) {
                 $queue->insert($listener->listener, $listener->priority);
             }
         }
+
+        if (! $isAnonymousClass) {
+            $this->listenersCache[$eventClass] = $queue;
+        }
+
         return $queue;
     }
 
