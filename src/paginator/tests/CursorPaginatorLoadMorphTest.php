@@ -40,7 +40,7 @@ class CursorPaginatorLoadMorphTest extends TestCase
         $items->shouldReceive('loadMorph')->once()->with('parentable', $relations);
 
         $p = (new class extends AbstractCursorPaginator implements Stringable {
-            public function __toString()
+            public function __toString(): string
             {
                 return '';
             }
