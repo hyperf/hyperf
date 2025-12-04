@@ -50,10 +50,10 @@ class ListenerProvider implements ListenerProviderInterface
         }
 
         if (! $isAnonymousClass) {
-            $this->listenersCache[$eventClass] = $queue;
+            $this->listenersCache[$eventClass] = clone $queue;
         }
 
-        return clone $queue;
+        return $queue;
     }
 
     public function on(string $event, callable $listener, int $priority = ListenerData::DEFAULT_PRIORITY): void
