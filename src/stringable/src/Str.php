@@ -1023,7 +1023,7 @@ class Str
     public static function uuidv7(): UuidInterface
     {
         if (! class_exists(Uuid::class)) {
-            throw new RuntimeException('The "ramsey/uuid" package is required to use the "uuid" method. Please run "composer require ramsey/uuid".');
+            throw new RuntimeException('The "ramsey/uuid" package is required to use the "uuidv7" method. Please run "composer require ramsey/uuid".');
         }
 
         return Uuid::uuid7();
