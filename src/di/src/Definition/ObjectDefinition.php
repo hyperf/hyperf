@@ -13,8 +13,9 @@ declare(strict_types=1);
 namespace Hyperf\Di\Definition;
 
 use Hyperf\Di\ReflectionManager;
+use Stringable;
 
-class ObjectDefinition implements DefinitionInterface
+class ObjectDefinition implements Stringable, DefinitionInterface
 {
     protected ?MethodInjection $constructorInjection = null;
 
