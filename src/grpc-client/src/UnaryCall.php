@@ -68,7 +68,7 @@ class UnaryCall
 
         if (Parser::isInvalidStatus($response->statusCode)) {
             $status->code = $response->headers['grpc-status'] ?? ($response->errCode ?: $response->statusCode);
-            $status->details = rawurldecode($response->headers['grpc-message'] ?? 'Http status Error');
+            $status->details = rawurldecode($response->headers['grpc-message'] ?? 'HTTP status Error');
 
             return [null, $status];
         }
