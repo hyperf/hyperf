@@ -55,6 +55,12 @@ class BaseClient
     public function __destruct()
     {
         $this->grpcClient?->close(false);
+
+        if ($this->grpcClients !== null) {
+            foreach ($this->grpcClients as $client) {
+                $client?->close(false);
+            }
+        }
     }
 
     public function __call($name, $arguments)
