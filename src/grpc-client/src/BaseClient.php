@@ -39,7 +39,7 @@ class BaseClient
      */
     private ?array $grpcClients = null;
 
-    private ?int $clientCount = null;
+    private int $clientCount = 1;
 
     public function __construct(private string $hostname, private array $options = [])
     {
@@ -201,7 +201,7 @@ class BaseClient
                 throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
             }
             $this->grpcClient = $this->options['client'];
-        } elseif ($this->clientCount !== null) { // Use multiple clients.
+        } elseif ($this->clientCount > 1) { // Use multiple clients.
             $count = $this->clientCount;
             for ($i = 0; $i < $count; ++$i) {
                 $grpcClient = (new GrpcClient($channelPool))
