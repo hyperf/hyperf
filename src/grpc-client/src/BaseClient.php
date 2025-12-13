@@ -209,13 +209,13 @@ class BaseClient
         } elseif ($this->clientCount > 1) { // Use multiple clients.
             $count = $this->clientCount;
             for ($i = 0; $i < $count; ++$i) {
-                $grpcClient = (new GrpcClient($channelPool))
-                    ->set($this->hostname, $this->options);
+                $grpcClient = new GrpcClient($channelPool);
+                $grpcClient->set($this->hostname, $this->options);
                 $this->grpcClients[] = $grpcClient;
             }
         } else { // Use single client.
-            $this->grpcClient = (new GrpcClient($channelPool))
-                ->set($this->hostname, $this->options);
+            $this->grpcClient = new GrpcClient($channelPool);
+            $this->grpcClient->set($this->hostname, $this->options);
         }
 
         $this->initialized = true;
