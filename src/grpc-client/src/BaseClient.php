@@ -70,17 +70,16 @@ class BaseClient
 
     public function _getGrpcClient(): GrpcClient
     {
-        // Initialize the client if not yet initialized.
+        // Lazy initialization: defer client setup until first use to optimize resource usage.
         if (! $this->initialized) {
             $this->init();
         }
-        // If multiple clients are used, randomly select one.
+        // For simple load balancing, randomly select a client instance if multiple are available.
         if ($this->grpcClients !== null) {
             $this->grpcClient = $this->grpcClients[array_rand($this->grpcClients)];
         }
-        // Start the client if not yet started.
+        // Ensure the client connection is started before use.
         $this->start();
-        // Return the client.
         return $this->grpcClient;
     }
 
