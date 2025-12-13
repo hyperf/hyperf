@@ -58,7 +58,7 @@ class BaseClient
 
         if ($this->grpcClients !== null) {
             foreach ($this->grpcClients as $client) {
-                $client?->close(false);
+                $client->close(false);
             }
         }
     }
