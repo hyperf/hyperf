@@ -39,8 +39,17 @@ class BaseClient
      */
     private ?array $grpcClients = null;
 
+    private ?int $clientCount = null;
+
     public function __construct(private string $hostname, private array $options = [])
     {
+        if (
+            isset($this->options['client_count'])
+            && is_int($this->options['client_count'])
+            && $this->options['client_count'] > 1
+        ) {
+            $this->clientCount = $this->options['client_count'];
+        }
     }
 
     public function __destruct()
@@ -192,13 +201,8 @@ class BaseClient
                 throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
             }
             $this->grpcClient = $this->options['client'];
-        } elseif (
-            isset($this->options['client_count'])
-            && is_int($this->options['client_count'])
-            && $this->options['client_count'] > 1
-        ) { // Use multiple clients.
-            $count = $this->options['client_count'];
-            unset($this->options['client_count']);
+        } elseif ($this->clientCount !== null) { // Use multiple clients.
+            $count = $this->clientCount;
             for ($i = 0; $i < $count; ++$i) {
                 $grpcClient = (new GrpcClient($channelPool))
                     ->set($this->hostname, $this->options);
