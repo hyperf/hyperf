@@ -34,6 +34,11 @@ class BaseClient
 
     private bool $initialized = false;
 
+    /**
+     * @var null|array<array-key,GrpcClient>
+     */
+    private ?array $grpcClients = null;
+
     public function __construct(private string $hostname, private array $options = [])
     {
     }
@@ -50,10 +55,17 @@ class BaseClient
 
     public function _getGrpcClient(): GrpcClient
     {
+        // Initialize the client if not yet initialized.
         if (! $this->initialized) {
             $this->init();
         }
+        // If multiple clients are used, randomly select one.
+        if ($this->grpcClients !== null) {
+            $this->grpcClient = $this->grpcClients[array_rand($this->grpcClients)];
+        }
+        // Start the client if not yet started.
         $this->start();
+        // Return the client.
         return $this->grpcClient;
     }
 
@@ -174,14 +186,27 @@ class BaseClient
 
     private function init()
     {
-        if (! empty($this->options['client'])) {
+        $channelPool = ApplicationContext::getContainer()->get(ChannelPool::class);
+        if (! empty($this->options['client'])) { // Use the specified client.
             if (! $this->options['client'] instanceof GrpcClient) {
                 throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
             }
             $this->grpcClient = $this->options['client'];
-        } else {
-            $this->grpcClient = new GrpcClient(ApplicationContext::getContainer()->get(ChannelPool::class));
-            $this->grpcClient->set($this->hostname, $this->options);
+        } elseif (
+            isset($this->options['client_count'])
+            && is_int($this->options['client_count'])
+            && $this->options['client_count'] > 1
+        ) { // Use multiple clients.
+            $count = $this->options['client_count'];
+            unset($this->options['client_count']);
+            for ($i = 0; $i < $count; ++$i) {
+                $grpcClient = (new GrpcClient($channelPool))
+                    ->set($this->hostname, $this->options);
+                $this->grpcClients[] = $grpcClient;
+            }
+        } else { // Use single client.
+            $this->grpcClient = (new GrpcClient($channelPool))
+                ->set($this->hostname, $this->options);
         }
 
         $this->initialized = true;
