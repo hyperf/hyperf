@@ -13,8 +13,11 @@ declare(strict_types=1);
 namespace HyperfTest\Event;
 
 use Hyperf\Event\ListenerProvider;
+use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\Event\Event\Alpha;
 use HyperfTest\Event\Event\Beta;
+use HyperfTest\Event\Listener\Alpha2Listener;
+use HyperfTest\Event\Listener\Alpha3Listener;
 use HyperfTest\Event\Listener\AlphaListener;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -40,5 +43,27 @@ class ListenerProviderTest extends TestCase
 
         $it = $provider->getListenersForEvent(new Beta());
         $this->assertNull($it->current());
+    }
+
+    public function testListenCache()
+    {
+        $provider = new ListenerProvider();
+        $provider->on(Alpha::class, [new AlphaListener(), 'process']);
+        $provider->on(Alpha::class, [new Alpha2Listener(), 'process'], 1);
+        $provider->on(Alpha::class, [new Alpha3Listener(), 'process']);
+
+        $assets = [Alpha2Listener::class, AlphaListener::class, Alpha3Listener::class];
+        $i = 0;
+        foreach ($provider->getListenersForEvent(new Alpha()) as [$class, $method]) {
+            $this->assertTrue($class instanceof $assets[$i++]);
+        }
+
+        $i = 0;
+        foreach ($provider->getListenersForEvent(new Alpha()) as [$class, $method]) {
+            $this->assertTrue($class instanceof $assets[$i++]);
+        }
+
+        $provider = new ClassInvoker($provider);
+        $this->assertArrayHasKey(Alpha::class, $provider->listenersCache);
     }
 }
