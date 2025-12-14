@@ -14,12 +14,14 @@ namespace Hyperf\GrpcClient;
 
 use Google\Protobuf\Internal\Message;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Context\Context;
 use Hyperf\Coroutine\Channel\Pool as ChannelPool;
 use Hyperf\Grpc\Parser;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use InvalidArgumentException;
 use Swoole\Http2\Response;
+use Throwable;
 
 use function Hyperf\Support\retry;
 
@@ -30,8 +32,6 @@ use function Hyperf\Support\retry;
  */
 class BaseClient
 {
-    private ?GrpcClient $grpcClient = null;
-
     private bool $initialized = false;
 
     /**
@@ -43,23 +43,22 @@ class BaseClient
 
     public function __construct(private string $hostname, private array $options = [])
     {
-        if (
-            isset($this->options['client_count'])
-            && is_int($this->options['client_count'])
-            && $this->options['client_count'] > 1
-        ) {
-            $this->clientCount = $this->options['client_count'];
-        }
+        $this->clientCount = max(1, (int) ($this->options['client_count'] ?? 0));
     }
 
     public function __destruct()
     {
-        $this->grpcClient?->close(false);
-
-        if ($this->grpcClients !== null) {
-            foreach ($this->grpcClients as $client) {
+        $lastException = null;
+        foreach ($this->grpcClients as $client) {
+            try {
                 $client->close(false);
+            } catch (Throwable $exception) {
+                $lastException = $exception;
             }
+        }
+
+        if ($lastException) {
+            throw $lastException;
         }
     }
 
@@ -68,19 +67,22 @@ class BaseClient
         return $this->_getGrpcClient()->{$name}(...$arguments);
     }
 
+    public function get(): GrpcClient
+    {
+        $key = Context::getOrSet(static::class . '::id', fn () => array_rand($this->grpcClients));
+
+        return $this->grpcClients[$key];
+    }
+
     public function _getGrpcClient(): GrpcClient
     {
         // Lazy initialization: defer client setup until first use to optimize resource usage.
         if (! $this->initialized) {
             $this->init();
         }
-        // For simple load balancing, randomly select a client instance if multiple are available.
-        if ($this->grpcClients !== null) {
-            $this->grpcClient = $this->grpcClients[array_rand($this->grpcClients)];
-        }
+
         // Ensure the client connection is started before use.
-        $this->start();
-        return $this->grpcClient;
+        return $this->start();
     }
 
     /**
@@ -184,9 +186,9 @@ class BaseClient
         return $call;
     }
 
-    private function start()
+    private function start(): GrpcClient
     {
-        $client = $this->grpcClient;
+        $client = $this->get();
         if (! ($client->isRunning() || $client->start())) {
             $message = sprintf(
                 'Grpc client start failed with error code %d when connect to %s',
@@ -195,7 +197,8 @@ class BaseClient
             );
             throw new GrpcClientException($message, StatusCode::INTERNAL);
         }
-        return true;
+
+        return $client;
     }
 
     private function init()
@@ -205,17 +208,13 @@ class BaseClient
             if (! $this->options['client'] instanceof GrpcClient) {
                 throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
             }
-            $this->grpcClient = $this->options['client'];
-        } elseif ($this->clientCount > 1) { // Use multiple clients.
-            $count = $this->clientCount;
-            for ($i = 0; $i < $count; ++$i) {
+            $this->grpcClients[] = $this->options['client'];
+        } else { // Use multiple clients.
+            for ($i = 0; $i < $this->clientCount; ++$i) {
                 $grpcClient = new GrpcClient($channelPool);
                 $grpcClient->set($this->hostname, $this->options);
                 $this->grpcClients[] = $grpcClient;
             }
-        } else { // Use single client.
-            $this->grpcClient = new GrpcClient($channelPool);
-            $this->grpcClient->set($this->hostname, $this->options);
         }
 
         $this->initialized = true;
