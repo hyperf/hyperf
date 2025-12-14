@@ -19,6 +19,7 @@ use Hyperf\Coordinator\Timer;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Redis\RedisFactory;
+use Throwable;
 
 class RedisServerMutexByNodeName implements ServerMutex
 {
@@ -96,6 +97,15 @@ class RedisServerMutexByNodeName implements ServerMutex
         return $this->getGeneratedNodeName();
     }
 
+    protected function getServerNode(): ?ServerNodeInterface
+    {
+        if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(ServerNodeInterface::class)) {
+            return ApplicationContext::getContainer()->get(ServerNodeInterface::class);
+        }
+
+        return null;
+    }
+
     private function getNodeNameFromContainer(): ?string
     {
         if (! ApplicationContext::hasContainer()) {
@@ -130,17 +140,8 @@ class RedisServerMutexByNodeName implements ServerMutex
     {
         try {
             return bin2hex(random_bytes(16));
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return null;
         }
-    }
-
-    protected function getServerNode(): ?ServerNodeInterface
-    {
-        if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(ServerNodeInterface::class)) {
-            return ApplicationContext::getContainer()->get(ServerNodeInterface::class);
-        }
-
-        return null;
     }
 }
