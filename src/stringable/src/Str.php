@@ -1018,6 +1018,18 @@ class Str
     }
 
     /**
+     * Generate a UUID (version 7).
+     */
+    public static function uuidv7(): UuidInterface
+    {
+        if (! class_exists(Uuid::class)) {
+            throw new RuntimeException('The "ramsey/uuid" package is required to use the "uuidv7" method. Please run "composer require ramsey/uuid".');
+        }
+
+        return Uuid::uuid7();
+    }
+
+    /**
      * Generate a time-ordered UUID.
      */
     public static function orderedUuid(?DateTimeInterface $time = null): UuidInterface

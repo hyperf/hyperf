@@ -67,8 +67,8 @@ class UnaryCall
         $status->metadata = Parser::parseMetadata($response);
 
         if (Parser::isInvalidStatus($response->statusCode)) {
-            $status->details = $response->headers['grpc-message'] ?? 'Http status Error';
             $status->code = $response->headers['grpc-status'] ?? ($response->errCode ?: $response->statusCode);
+            $status->details = rawurldecode($response->headers['grpc-message'] ?? 'HTTP status Error');
 
             return [null, $status];
         }
@@ -77,7 +77,7 @@ class UnaryCall
 
         if ($grpcStatus !== 0) {
             $status->code = $grpcStatus;
-            $status->details = $response->headers['grpc-message'] ?? 'Unknown error';
+            $status->details = rawurldecode($response->headers['grpc-message'] ?? 'Unknown error');
 
             return [null, $status];
         }

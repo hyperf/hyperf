@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Hyperf\Metric\Listener;
 
-use Hyperf\Command\Event\AfterExecute;
 use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -53,18 +52,16 @@ class OnBeforeHandle implements ListenerInterface
     {
         return [
             BeforeHandle::class,
-            AfterExecute::class,
         ];
     }
 
     public function process(object $event): void
     {
-        if ($event instanceof AfterExecute) {
-            CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
-            return;
-        }
-
-        if (! $this->config->get('metric.enable_command_metric', true)) {
+        if (
+            ! $event instanceof BeforeHandle
+            || ! $event->getCommand()->getApplication()->isAutoExitEnabled() // Only enable in the command with auto exit.
+            || ! $this->config->get('metric.enable_command_metric', true) // Double check the config.
+        ) {
             return;
         }
 
