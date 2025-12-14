@@ -69,7 +69,7 @@ class BaseClient
 
     public function get(): GrpcClient
     {
-        $key = Context::getOrSet(static::class . '::id', fn () => array_rand($this->grpcClients));
+        $key = Context::getOrSet(self::class . '::id', fn () => array_rand($this->grpcClients));
 
         return $this->grpcClients[$key];
     }
