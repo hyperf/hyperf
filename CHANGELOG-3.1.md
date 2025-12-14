@@ -1,6 +1,10 @@
 # v3.1.66 - TBD
 
-- ## Fixed
+## Added
+
+- [#7668](https://github.com/hyperf/hyperf/pull/7668) Added the `$isCookiePersistent` parameter to `Hyperf\Guzzle\PoolHandler` to enable persistent cookies.
+
+## Fixed
 
 - [#7669](https://github.com/hyperf/hyperf/pull/7669) Fix PostgreSQL boolean handling for emulated prepares and raw SQL.
 
