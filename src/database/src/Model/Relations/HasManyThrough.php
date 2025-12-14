@@ -23,6 +23,13 @@ use Hyperf\Database\Model\SoftDeletes;
 
 use function Hyperf\Support\class_uses_recursive;
 
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TIntermediateModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ *
+ * @extends Relation<TRelatedModel, TDeclaringModel, Collection<int, TRelatedModel>>
+ */
 class HasManyThrough extends Relation
 {
     /**
@@ -184,7 +191,7 @@ class HasManyThrough extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @return Model
+     * @return TRelatedModel
      */
     public function firstOrNew(array $attributes)
     {
@@ -198,7 +205,7 @@ class HasManyThrough extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @return Model
+     * @return TRelatedModel
      */
     public function updateOrCreate(array $attributes, array $values = [])
     {
@@ -213,6 +220,7 @@ class HasManyThrough extends Relation
      * Execute the query and get the first related model.
      *
      * @param array $columns
+     * @return null|TRelatedModel
      */
     public function first($columns = ['*'])
     {
@@ -225,7 +233,7 @@ class HasManyThrough extends Relation
      * Execute the query and get the first result or throw an exception.
      *
      * @param array $columns
-     * @return Model|static
+     * @return TRelatedModel
      * @throws ModelNotFoundException
      */
     public function firstOrFail($columns = ['*'])
@@ -240,9 +248,9 @@ class HasManyThrough extends Relation
     /**
      * Find a related model by its primary key.
      *
-     * @param array $columns
      * @param mixed $id
-     * @return null|Collection|Model
+     * @param array $columns
+     * @return ($id is array ? Collection<int, TRelatedModel> : null|TRelatedModel)
      */
     public function find($id, $columns = ['*'])
     {
@@ -260,9 +268,9 @@ class HasManyThrough extends Relation
     /**
      * Find multiple related models by their primary keys.
      *
-     * @param array $columns
      * @param mixed $ids
-     * @return Collection
+     * @param array $columns
+     * @return Collection<int, TRelatedModel>
      */
     public function findMany($ids, $columns = ['*'])
     {
@@ -279,9 +287,9 @@ class HasManyThrough extends Relation
     /**
      * Find a related model by its primary key or throw an exception.
      *
-     * @param array $columns
      * @param mixed $id
-     * @return Collection|Model
+     * @param array $columns
+     * @return ($id is array ? Collection<int, TRelatedModel> : TRelatedModel)
      * @throws ModelNotFoundException
      */
     public function findOrFail($id, $columns = ['*'])
@@ -311,7 +319,7 @@ class HasManyThrough extends Relation
      * Execute the query as a "select" statement.
      *
      * @param array $columns
-     * @return Collection
+     * @return Collection<int, TRelatedModel>
      */
     public function get($columns = ['*'])
     {
