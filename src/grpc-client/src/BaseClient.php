@@ -67,13 +67,6 @@ class BaseClient
         return $this->_getGrpcClient()->{$name}(...$arguments);
     }
 
-    public function get(): GrpcClient
-    {
-        $key = Context::getOrSet(self::class . '::id', fn () => array_rand($this->grpcClients));
-
-        return $this->grpcClients[$key];
-    }
-
     public function _getGrpcClient(): GrpcClient
     {
         // Lazy initialization: defer client setup until first use to optimize resource usage.
@@ -188,7 +181,9 @@ class BaseClient
 
     private function start(): GrpcClient
     {
-        $client = $this->get();
+        $key = Context::getOrSet(self::class . '::id', fn () => array_rand($this->grpcClients));
+        $client = $this->grpcClients[$key];
+
         if (! ($client->isRunning() || $client->start())) {
             $message = sprintf(
                 'Grpc client start failed with error code %d when connect to %s',
