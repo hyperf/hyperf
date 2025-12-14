@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#7555](https://github.com/hyperf/hyperf/pull/7555) Added `Hyperf\Crontab\Mutex\RedisServerMutexByNodeName`.
 - [#7668](https://github.com/hyperf/hyperf/pull/7668) Added the `$isCookiePersistent` parameter to `Hyperf\Guzzle\PoolHandler` to enable persistent cookies.
 
 # v3.1.65 - 2025-12-04
