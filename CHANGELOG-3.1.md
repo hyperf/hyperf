@@ -1,5 +1,9 @@
 # v3.1.66 - TBD
 
+- ## Fixed
+
+- [#7669](https://github.com/hyperf/hyperf/pull/7669) Fix PostgreSQL boolean handling for emulated prepares and raw SQL.
+
 # v3.1.65 - 2025-12-04
 
 ## Added
