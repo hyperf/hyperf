@@ -105,7 +105,18 @@ abstract class GeneratorCommand extends Command
      */
     protected function getPath(string $name): string
     {
+        if ($path = $this->input->getOption('path')) {
+            $className = Str::afterLast($name, '\\');
+
+            if (str_starts_with($path, '/')) {
+                return rtrim($path, '/') . '/' . $className . '.php';
+            }
+
+            return BASE_PATH . '/' . trim($path, '/') . '/' . $className . '.php';
+        }
+
         $project = new Project();
+
         return BASE_PATH . '/' . $project->path($name);
     }
 
@@ -189,6 +200,7 @@ abstract class GeneratorCommand extends Command
         return [
             ['force', 'f', InputOption::VALUE_NONE, 'Whether force to rewrite.'],
             ['namespace', 'N', InputOption::VALUE_OPTIONAL, 'The namespace for class.', null],
+            ['path', null, InputOption::VALUE_OPTIONAL, 'The location where the file should be created.', null],
         ];
     }
 
