@@ -24,19 +24,19 @@ use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Stringable\StrCache;
-use InfluxDB\Client;
-use InfluxDB\Database;
-use InfluxDB\Database\RetentionPolicy;
-use InfluxDB\Driver\DriverInterface;
-use InfluxDB\Point;
+use InfluxDB2\Client;
+use InfluxDB2\Point;
+use InfluxDB2\WriteApi;
 use Prometheus\CollectorRegistry;
 use Prometheus\Sample;
-
-use function Hyperf\Support\make;
 
 class MetricFactory implements MetricFactoryInterface
 {
     private string $name;
+
+    private ?Client $client = null;
+
+    private ?WriteApi $writeApi = null;
 
     public function __construct(
         private ConfigInterface $config,
@@ -81,25 +81,9 @@ class MetricFactory implements MetricFactoryInterface
 
     public function handle(): void
     {
-        $host = $this->config->get("metric.metric.{$this->name}.host");
-        $port = $this->config->get("metric.metric.{$this->name}.port");
-        $username = $this->config->get("metric.metric.{$this->name}.username");
-        $password = $this->config->get("metric.metric.{$this->name}.password");
-        $dbname = $this->config->get("metric.metric.{$this->name}.dbname");
+        $this->initializeClient();
         $interval = (float) $this->config->get("metric.metric.{$this->name}.push_interval", 5);
-        $create = $this->config->get("metric.metric.{$this->name}.auto_create_db");
-        $client = new Client($host, $port, $username, $password);
-        $guzzleClient = $this->guzzleClientFactory->create([
-            'connect_timeout' => $client->getConnectTimeout(),
-            'timeout' => $client->getTimeout(),
-            'base_uri' => $client->getBaseURI(),
-            'verify' => $client->getVerifySSL(),
-        ]);
-        $client->setDriver(make(DriverInterface::class, ['client' => $guzzleClient]));
-        $database = $client->selectDB($dbname);
-        if (! $database->exists() && $create) {
-            $database->create(new RetentionPolicy($dbname, '1d', 1, true));
-        }
+
         while (true) {
             $workerExited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($interval);
             if ($workerExited) {
@@ -112,19 +96,47 @@ class MetricFactory implements MetricFactoryInterface
                     $points[] = $this->createPoint($sample);
                 }
             }
-            $result = $database->writePoints($points, Database::PRECISION_SECONDS);
+            $this->writeApi->write($points);
         }
     }
 
     protected function createPoint(Sample $sample): Point
     {
-        return new Point(
-            $sample->getName(),
-            $sample->getValue(),
-            $labels = array_combine($sample->getLabelNames(), $sample->getLabelValues()),
-            [],
-            time()
-        );
+        $point = Point::measurement($sample->getName())
+            ->addField('value', $sample->getValue())
+            ->time(time());
+
+        $labelNames = $sample->getLabelNames();
+        $labelValues = $sample->getLabelValues();
+
+        if (count($labelNames) === count($labelValues)) {
+            for ($i = 0; $i < count($labelNames); ++$i) {
+                $point->addTag($labelNames[$i], $labelValues[$i]);
+            }
+        }
+
+        return $point;
+    }
+
+    private function initializeClient(): void
+    {
+        if ($this->client === null) {
+            $host = $this->config->get("metric.metric.{$this->name}.host");
+            $port = $this->config->get("metric.metric.{$this->name}.port");
+            $token = $this->config->get("metric.metric.{$this->name}.token");
+            $bucket = $this->config->get("metric.metric.{$this->name}.bucket");
+            $org = $this->config->get("metric.metric.{$this->name}.org");
+            $url = "http://{$host}:{$port}";
+
+            $this->client = new Client([
+                'url' => $url,
+                'token' => $token,
+                'bucket' => $bucket,
+                'org' => $org,
+            ]);
+
+            $this->writeApi = $this->client->createWriteApi();
+        }
     }
 
     private function getNamespace(): string
