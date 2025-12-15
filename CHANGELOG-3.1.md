@@ -3,6 +3,7 @@
 ## Added
 
 - [#7668](https://github.com/hyperf/hyperf/pull/7668) Added the `$isCookiePersistent` parameter to `Hyperf\Guzzle\PoolHandler` to enable persistent cookies.
+- [#7670](https://github.com/hyperf/hyperf/pull/7670) Added `--path` option to generator commands for specifying custom output locations.
 
 # v3.1.65 - 2025-12-04
 
