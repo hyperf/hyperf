@@ -16,6 +16,7 @@ use Google\Protobuf\Internal\Message;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Coroutine\Channel\Pool as ChannelPool;
+use Hyperf\Coroutine\Locker;
 use Hyperf\Grpc\Parser;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
@@ -48,6 +49,10 @@ class BaseClient
 
     public function __destruct()
     {
+        if (! $this->initialized) {
+            return;
+        }
+
         $lastException = null;
         foreach ($this->grpcClients as $client) {
             try {
@@ -184,13 +189,19 @@ class BaseClient
         $key = Context::getOrSet(self::class . '::id', fn () => array_rand($this->grpcClients));
         $client = $this->grpcClients[$key];
 
-        if (! ($client->isRunning() || $client->start())) {
-            $message = sprintf(
-                'Grpc client start failed with error code %d when connect to %s',
-                $client->getErrCode(),
-                $this->hostname
-            );
-            throw new GrpcClientException($message, StatusCode::INTERNAL);
+        if (Locker::lock($key)) {
+            try {
+                if (! ($client->isRunning() || $client->start())) {
+                    $message = sprintf(
+                        'Grpc client start failed with error code %d when connect to %s',
+                        $client->getErrCode(),
+                        $this->hostname
+                    );
+                    throw new GrpcClientException($message, StatusCode::INTERNAL);
+                }
+            } finally {
+                Locker::unlock($key);
+            }
         }
 
         return $client;
