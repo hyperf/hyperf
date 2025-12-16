@@ -188,8 +188,9 @@ class BaseClient
     {
         $key = Context::getOrSet(self::class . '::id', fn () => array_rand($this->grpcClients));
         $client = $this->grpcClients[$key];
+        $lockKey = sprintf('%s:lock:%d', self::class, $key);
 
-        if (Locker::lock($key)) {
+        if (Locker::lock($lockKey)) {
             try {
                 if (! ($client->isRunning() || $client->start())) {
                     $message = sprintf(
@@ -200,7 +201,7 @@ class BaseClient
                     throw new GrpcClientException($message, StatusCode::INTERNAL);
                 }
             } finally {
-                Locker::unlock($key);
+                Locker::unlock($lockKey);
             }
         }
 
