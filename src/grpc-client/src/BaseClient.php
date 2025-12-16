@@ -188,7 +188,7 @@ class BaseClient
     {
         $key = Context::getOrSet(self::class . '::id', fn () => array_rand($this->grpcClients));
         $client = $this->grpcClients[$key];
-        $lockKey = sprintf('%s:lock:%d', self::class, $key);
+        $lockKey = sprintf('%s:start:%d', spl_object_hash($this), $key);
 
         if (Locker::lock($lockKey)) {
             try {
@@ -210,7 +210,7 @@ class BaseClient
 
     private function init()
     {
-        $lockKey = sprintf('%s:lock', self::class);
+        $lockKey = sprintf('%s:init', spl_object_hash($this));
 
         if (Locker::lock($lockKey)) {
             try {
