@@ -210,21 +210,33 @@ class BaseClient
 
     private function init()
     {
-        $channelPool = ApplicationContext::getContainer()->get(ChannelPool::class);
-        if (! empty($this->options['client'])) { // Use the specified client.
-            if (! $this->options['client'] instanceof GrpcClient) {
-                throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
-            }
-            $this->grpcClients[] = $this->options['client'];
-        } else { // Use multiple clients.
-            for ($i = 0; $i < $this->clientCount; ++$i) {
-                $grpcClient = new GrpcClient($channelPool);
-                $grpcClient->set($this->hostname, $this->options);
-                $this->grpcClients[] = $grpcClient;
+        $lockKey = sprintf('%s:lock', self::class);
+
+        if (Locker::lock($lockKey)) {
+            try {
+                if ($this->initialized) {
+                    return;
+                }
+
+                $channelPool = ApplicationContext::getContainer()->get(ChannelPool::class);
+                if (! empty($this->options['client'])) { // Use the specified client.
+                    if (! $this->options['client'] instanceof GrpcClient) {
+                        throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
+                    }
+                    $this->grpcClients[] = $this->options['client'];
+                } else { // Use multiple clients.
+                    for ($i = 0; $i < $this->clientCount; ++$i) {
+                        $grpcClient = new GrpcClient($channelPool);
+                        $grpcClient->set($this->hostname, $this->options);
+                        $this->grpcClients[] = $grpcClient;
+                    }
+                }
+
+                $this->initialized = true;
+            } finally {
+                Locker::unlock($lockKey);
             }
         }
-
-        $this->initialized = true;
     }
 
     private function buildRequest(string $method, Message $argument, array $options): Request
