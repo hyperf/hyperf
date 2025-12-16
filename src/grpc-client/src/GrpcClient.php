@@ -149,7 +149,7 @@ class GrpcClient
 
     public function isConnected(): bool
     {
-        return $this->httpClient->connected;
+        return (bool) $this->httpClient?->connected;
     }
 
     public function isStreamExist(int $streamId): bool
