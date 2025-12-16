@@ -36,7 +36,6 @@ use Hyperf\Support\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionMethod;
-use RuntimeException;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Tappable\tap;

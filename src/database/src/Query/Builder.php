@@ -19,7 +19,6 @@ use DateTimeInterface;
 use Generator;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
-use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;

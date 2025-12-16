@@ -255,9 +255,6 @@ trait BuildsQueries
      *
      * @param int $count
      * @param callable(Collection<int, TValue>, int): mixed $callback
-     * @param null|string $column
-     * @param null|string $alias
-     * @return bool
      */
     public function chunkById($count, callable $callback, ?string $column = null, ?string $alias = null): bool
     {
@@ -267,11 +264,7 @@ trait BuildsQueries
     /**
      * Chunk the results of a query by comparing IDs in descending order.
      *
-     * @param int $count
      * @param callable(Collection<int, TValue>, int): mixed $callback
-     * @param null|string $column
-     * @param null|string $alias
-     * @return bool
      */
     public function chunkByIdDesc(int $count, callable $callback, ?string $column = null, ?string $alias = null): bool
     {

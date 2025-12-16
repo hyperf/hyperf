@@ -660,7 +660,7 @@ class ModelRealBuilderTest extends TestCase
 
         $i = 0;
         Db::table('articles')->eachById(function ($article) use (&$i) {
-            $i++;
+            ++$i;
             $this->assertSame($i, $article->id);
         });
 
@@ -668,7 +668,7 @@ class ModelRealBuilderTest extends TestCase
 
         $i = 0;
         Article::eachById(function ($article) use (&$i) {
-            $i++;
+            ++$i;
             $this->assertSame($i, $article->id);
         });
 
