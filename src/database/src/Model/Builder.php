@@ -44,6 +44,7 @@ use function Hyperf\Tappable\tap;
  * @template TModel of Model
  *
  * @method bool chunk(int $count, callable(ModelCollection<int, TModel>, int): (bool|void) $callback)
+ * @method bool chunkById(int $count, callable(ModelCollection<int, TModel>, int): (bool|void) $callback, null|string $column = null, null|string $alias = null)
  * @method bool chunkByIdDesc(int $count, callable(ModelCollection<int, TModel>, int): (bool|void) $callback, null|string $column = null, null|string $alias = null)
  *
  * @mixin \Hyperf\Database\Query\Builder
