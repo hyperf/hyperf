@@ -189,6 +189,7 @@ class BaseClient
         $key = Context::getOrSet(self::class . '::id', fn () => array_rand($this->grpcClients));
         $client = $this->grpcClients[$key];
 
+        // If the client is already running, return it directly.
         if ($client->isRunning()) {
             return $client;
         }
@@ -215,6 +216,7 @@ class BaseClient
 
     private function init()
     {
+        // Double-checked locking to avoid redundant initialization.
         if ($this->initialized) {
             return;
         }
