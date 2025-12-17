@@ -190,6 +190,10 @@ class BaseClient
         $client = $this->grpcClients[$key];
         $lockKey = sprintf('%s:start:%d', spl_object_hash($this), $key);
 
+        if ($client->isRunning()) {
+            return $client;
+        }
+
         if (Locker::lock($lockKey)) {
             try {
                 if (! ($client->isRunning() || $client->start())) {
@@ -211,6 +215,10 @@ class BaseClient
     private function init()
     {
         $lockKey = sprintf('%s:init', spl_object_hash($this));
+
+        if ($this->initialized) {
+            return;
+        }
 
         if (Locker::lock($lockKey)) {
             try {
