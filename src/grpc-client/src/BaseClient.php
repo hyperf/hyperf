@@ -214,11 +214,11 @@ class BaseClient
 
     private function init()
     {
-        $lockKey = sprintf('%s:init', spl_object_hash($this));
-
         if ($this->initialized) {
             return;
         }
+
+        $lockKey = sprintf('%s:init', spl_object_hash($this));
 
         if (Locker::lock($lockKey)) {
             try {
