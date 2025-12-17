@@ -198,7 +198,7 @@ class BaseClient
 
         if (Locker::lock($lockKey)) {
             try {
-                $client->isRunning() || $client->start(); // @phpstan-ignore booleanOr.leftAlwaysFalse
+                $client->start();
             } catch (Throwable $e) {
                 $message = sprintf(
                     'Grpc client start failed with error code %d when connect to %s',
