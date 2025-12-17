@@ -188,18 +188,24 @@ class BaseClient
     {
         $key = Context::getOrSet(self::class . '::id', fn () => array_rand($this->grpcClients));
         $client = $this->grpcClients[$key];
+
+        // If the client is already running, return it directly.
+        if ($client->isRunning()) {
+            return $client;
+        }
+
         $lockKey = sprintf('%s:start:%d', spl_object_hash($this), $key);
 
         if (Locker::lock($lockKey)) {
             try {
-                if (! ($client->isRunning() || $client->start())) {
-                    $message = sprintf(
-                        'Grpc client start failed with error code %d when connect to %s',
-                        $client->getErrCode(),
-                        $this->hostname
-                    );
-                    throw new GrpcClientException($message, StatusCode::INTERNAL);
-                }
+                $client->start(); // May throw exception
+            } catch (Throwable $e) {
+                $message = sprintf(
+                    'Grpc client start failed with error code %d when connect to %s',
+                    $client->getErrCode(),
+                    $this->hostname
+                );
+                throw new GrpcClientException($message, StatusCode::INTERNAL, $e);
             } finally {
                 Locker::unlock($lockKey);
             }
