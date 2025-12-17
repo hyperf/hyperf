@@ -216,11 +216,6 @@ class BaseClient
 
     private function init()
     {
-        // Double-checked locking to avoid redundant initialization.
-        if ($this->initialized) {
-            return;
-        }
-
         $lockKey = sprintf('%s:init', spl_object_hash($this));
 
         if (Locker::lock($lockKey)) {
