@@ -36,7 +36,6 @@ use Hyperf\Support\Traits\ForwardsCalls;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionMethod;
-use RuntimeException;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Tappable\tap;
@@ -45,6 +44,7 @@ use function Hyperf\Tappable\tap;
  * @template TModel of Model
  *
  * @method bool chunk(int $count, callable(ModelCollection<int, TModel>, int): (bool|void) $callback)
+ * @method bool chunkById(int $count, callable(ModelCollection<int, TModel>, int): (bool|void) $callback, null|string $column = null, null|string $alias = null)
  * @method bool chunkByIdDesc(int $count, callable(ModelCollection<int, TModel>, int): (bool|void) $callback, null|string $column = null, null|string $alias = null)
  *
  * @mixin \Hyperf\Database\Query\Builder
@@ -760,56 +760,6 @@ class Builder
         foreach ($this->applyScopes()->query->cursor() as $record) {
             yield $this->model->newFromBuilder($record);
         }
-    }
-
-    /**
-     * Chunk the results of a query by comparing numeric IDs.
-     *
-     * @param int $count
-     * @param callable(ModelCollection<int, TModel>, int): mixed $callback
-     * @param null|string $column
-     * @param null|string $alias
-     * @return bool
-     */
-    public function chunkById($count, callable $callback, $column = null, $alias = null)
-    {
-        $column = $column ?? $this->getModel()->getKeyName();
-
-        $alias = $alias ?? $column;
-
-        $lastId = null;
-
-        do {
-            $clone = clone $this;
-
-            // We'll execute the query for the given page and get the results. If there are
-            // no results we can just break and return from here. When there are results
-            // we will call the callback with the current chunk of these results here.
-            $results = $clone->forPageAfterId($count, $lastId, $column)->get();
-
-            $countResults = $results->count();
-
-            if ($countResults == 0) {
-                break;
-            }
-
-            // On each chunk result set, we will pass them to the callback and then let the
-            // developer take care of everything within the callback, which allows us to
-            // keep the memory low for spinning through large result sets for working.
-            if ($callback($results) === false) {
-                return false;
-            }
-
-            $lastId = $results->last()->{$alias};
-
-            if ($lastId === null) {
-                throw new RuntimeException("The chunkById operation was aborted because the [{$alias}] column is not present in the query result.");
-            }
-
-            unset($results);
-        } while ($countResults == $count);
-
-        return true;
     }
 
     /**

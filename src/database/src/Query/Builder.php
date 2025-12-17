@@ -19,7 +19,6 @@ use DateTimeInterface;
 use Generator;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
-use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
@@ -2384,55 +2383,6 @@ class Builder
     }
 
     /**
-     * Chunk the results of a query by comparing numeric IDs.
-     *
-     * @param int $count
-     * @param callable(Collection<int, object>, int): mixed $callback
-     * @param string $column
-     * @param null|string $alias
-     * @return bool
-     */
-    public function chunkById($count, callable $callback, $column = 'id', $alias = null)
-    {
-        $alias = $alias ?: $column;
-
-        $lastId = null;
-
-        do {
-            $clone = clone $this;
-
-            // We'll execute the query for the given page and get the results. If there are
-            // no results we can just break and return from here. When there are results
-            // we will call the callback with the current chunk of these results here.
-            $results = $clone->forPageAfterId($count, $lastId, $column)->get();
-
-            $countResults = $results->count();
-
-            if ($countResults == 0) {
-                break;
-            }
-
-            // On each chunk result set, we will pass them to the callback and then let the
-            // developer take care of everything within the callback, which allows us to
-            // keep the memory low for spinning through large result sets for working.
-            if ($callback($results) === false) {
-                return false;
-            }
-
-            $lastResult = $results->last();
-            $lastId = is_array($lastResult) ? $lastResult[$alias] : $lastResult->{$alias};
-
-            if ($lastId === null) {
-                throw new RuntimeException("The chunkById operation was aborted because the [{$alias}] column is not present in the query result.");
-            }
-
-            unset($results);
-        } while ($countResults == $count);
-
-        return true;
-    }
-
-    /**
      * Get an array with the values of a given column.
      *
      * @param string $column
@@ -3611,30 +3561,6 @@ class Builder
         }
 
         return $result;
-    }
-
-    /**
-     * Create a new length-aware paginator instance.
-     */
-    protected function paginator(Collection $items, int $total, int $perPage, int $currentPage, array $options): LengthAwarePaginatorInterface
-    {
-        $container = ApplicationContext::getContainer();
-        if (! method_exists($container, 'make')) {
-            throw new RuntimeException('The DI container does not support make() method.');
-        }
-        return $container->make(LengthAwarePaginatorInterface::class, compact('items', 'total', 'perPage', 'currentPage', 'options'));
-    }
-
-    /**
-     * Create a new simple paginator instance.
-     */
-    protected function simplePaginator(Collection $items, int $perPage, int $currentPage, array $options): PaginatorInterface
-    {
-        $container = ApplicationContext::getContainer();
-        if (! method_exists($container, 'make')) {
-            throw new RuntimeException('The DI container does not support make() method.');
-        }
-        return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
     }
 
     /**

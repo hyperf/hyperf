@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Concerns;
 
 use Closure;
-use Hyperf\Collection\Collection as BaseCollection;
+use Hyperf\Collection\Collection;
 use Hyperf\Collection\LazyCollection;
 use Hyperf\Conditionable\Conditionable;
 use Hyperf\Context\ApplicationContext;
@@ -22,7 +22,6 @@ use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Exception\MultipleRecordsFoundException;
 use Hyperf\Database\Exception\RecordsNotFoundException;
 use Hyperf\Database\Model\Builder;
-use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Paginator\Contract\CursorPaginator as CursorPaginatorContract;
 use Hyperf\Paginator\Cursor;
@@ -47,7 +46,7 @@ trait BuildsQueries
      * Chunk the results of the query.
      *
      * @param int $count
-     * @param callable(BaseCollection<int, TValue>, int): mixed $callback
+     * @param callable(Collection<int, TValue>, int): mixed $callback
      * @return bool
      */
     public function chunk($count, callable $callback)
@@ -88,7 +87,7 @@ trait BuildsQueries
      *
      * @param callable(TValue): mixed $callback
      */
-    public function chunkMap(callable $callback, int $count = 1000): BaseCollection
+    public function chunkMap(callable $callback, int $count = 1000): Collection
     {
         $collection = Collection::make();
 
@@ -187,9 +186,9 @@ trait BuildsQueries
      */
     public function eachById(callable $callback, int $count = 1000, ?string $column = null, ?string $alias = null): bool
     {
-        return $this->chunkById($count, function (Collection $results) use ($callback) {
-            foreach ($results as $value) {
-                if ($callback($value) === false) {
+        return $this->chunkById($count, function ($results, $page) use ($callback, $count) {
+            foreach ($results as $key => $value) {
+                if ($callback($value, (($page - 1) * $count) + $key) === false) {
                     return false;
                 }
             }
@@ -200,7 +199,7 @@ trait BuildsQueries
     /**
      * Chunk the results of a query by comparing IDs in a given order.
      *
-     * @param callable(BaseCollection<int, TValue>, int): mixed $callback
+     * @param callable(Collection<int, TValue>, int): mixed $callback
      */
     public function orderedChunkById(int $count, callable $callback, ?string $column = null, ?string $alias = null, bool $descending = false): bool
     {
@@ -252,9 +251,20 @@ trait BuildsQueries
     }
 
     /**
+     * Chunk the results of a query by comparing numeric IDs.
+     *
+     * @param int $count
+     * @param callable(Collection<int, TValue>, int): mixed $callback
+     */
+    public function chunkById($count, callable $callback, ?string $column = null, ?string $alias = null): bool
+    {
+        return $this->orderedChunkById($count, $callback, $column, $alias);
+    }
+
+    /**
      * Chunk the results of a query by comparing IDs in descending order.
      *
-     * @param callable(BaseCollection<int, TValue>, int): mixed $callback
+     * @param callable(Collection<int, TValue>, int): mixed $callback
      */
     public function chunkByIdDesc(int $count, callable $callback, ?string $column = null, ?string $alias = null): bool
     {
@@ -342,7 +352,6 @@ trait BuildsQueries
      */
     protected function paginator(Collection $items, int $total, int $perPage, int $currentPage, array $options): LengthAwarePaginatorInterface
     {
-        /** @var Container $container */
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
             throw new RuntimeException('The DI container does not support make() method.');
@@ -355,7 +364,6 @@ trait BuildsQueries
      */
     protected function simplePaginator(Collection $items, int $perPage, int $currentPage, array $options): PaginatorInterface
     {
-        /** @var Container $container */
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
             throw new RuntimeException('The DI container does not support make() method.');
@@ -459,7 +467,7 @@ trait BuildsQueries
     /**
      * Create a new cursor paginator instance.
      */
-    protected function cursorPaginator(BaseCollection $items, int $perPage, null|Cursor|string $cursor, array $options): CursorPaginator
+    protected function cursorPaginator(Collection $items, int $perPage, null|Cursor|string $cursor, array $options): CursorPaginator
     {
         return new CursorPaginator($items, $perPage, $cursor, $options);
     }

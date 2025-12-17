@@ -95,6 +95,7 @@ class ModelRealBuilderTest extends TestCase
         $conn->statement('DROP TABLE IF EXISTS `test_enum_cast`;');
         $conn->statement('DROP TABLE IF EXISTS `users`;');
         $conn->statement('DROP TABLE IF EXISTS `posts`;');
+        $conn->statement('DROP TABLE IF EXISTS `articles`;');
         Mockery::close();
     }
 
@@ -638,6 +639,40 @@ class ModelRealBuilderTest extends TestCase
             $this->assertNotSame($id, Context::get($key));
             Context::set($key, $id);
         });
+    }
+
+    public function testEachById()
+    {
+        $container = $this->getContainer();
+        Register::setConnectionResolver($container->get(ConnectionResolverInterface::class));
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        Schema::create('articles', function (Blueprint $table) {
+            $table->id('id');
+            $table->string('title', 200);
+        });
+
+        Db::table('articles')->insert([
+            ['id' => 1, 'title' => 'Another title'],
+            ['id' => 2, 'title' => 'Another title'],
+            ['id' => 3, 'title' => 'Another title'],
+        ]);
+
+        $i = 0;
+        Db::table('articles')->eachById(function ($article) use (&$i) {
+            ++$i;
+            $this->assertSame($i, $article->id);
+        });
+
+        $this->assertSame(3, $i);
+
+        $i = 0;
+        Article::eachById(function ($article) use (&$i) {
+            ++$i;
+            $this->assertSame($i, $article->id);
+        });
+
+        $this->assertSame(3, $i);
     }
 
     public function testChunkByIdButNotFound()
@@ -1398,4 +1433,9 @@ class UpdateOrFail extends Model
     protected ?string $table = 'update_or_fail';
 
     protected array $guarded = [];
+}
+
+class Article extends Model
+{
+    protected ?string $table = 'articles';
 }
