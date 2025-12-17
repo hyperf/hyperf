@@ -197,13 +197,8 @@ class BaseClient
         $lockKey = sprintf('%s:start:%d', spl_object_hash($this), $key);
 
         if (Locker::lock($lockKey)) {
-            if ($client->isRunning()) { // @phpstan-ignore if.alwaysFalse
-                Locker::unlock($lockKey);
-                return $client;
-            }
-
             try {
-                $client->start();
+                $client->isRunning() || $client->start(); // @phpstan-ignore booleanOr.leftAlwaysFalse
             } catch (Throwable $e) {
                 $message = sprintf(
                     'Grpc client start failed with error code %d when connect to %s',
