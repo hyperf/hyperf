@@ -215,6 +215,10 @@
 - [#7223](https://github.com/hyperf/hyperf/pull/7223) Optimized code for reading extra data from `composer.lock`.
 - [#7227](https://github.com/hyperf/hyperf/pull/7227) Improves phpstan docs for `Hyperf\Support\SafeCaller`.
 
+## Improved
+
+- [#7217](https://github.com/hyperf/hyperf/pull/7217) Improved `hasAny` using `array_key_exists`.
+
 # v3.1.49 - 2024-12-17
 
 ## Added
