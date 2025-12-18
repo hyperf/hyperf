@@ -5,6 +5,10 @@
 - [#7668](https://github.com/hyperf/hyperf/pull/7668) Added the `$isCookiePersistent` parameter to `Hyperf\Guzzle\PoolHandler` to enable persistent cookies.
 - [#7667](https://github.com/hyperf/hyperf/pull/7667) [#7672](https://github.com/hyperf/hyperf/pull/7672) Added support for `client_count` option to create multiple gRPC clients with load balancing in `hyperf/grpc-client`.
 
+## Optimized
+
+- [#7675](https://github.com/hyperf/hyperf/pull/7675) Removed redundant timer cleanup code from metric listeners since the Timer component now handles cleanup automatically.
+
 # v3.1.65 - 2025-12-04
 
 ## Added
