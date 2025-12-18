@@ -21,6 +21,7 @@ use Hyperf\Tracer\SwitchManager;
 use Throwable;
 
 use const OpenTracing\Tags\SPAN_KIND_RPC_CLIENT;
+
 class RedisAspect extends AbstractAspect
 {
     use SpanStarter;

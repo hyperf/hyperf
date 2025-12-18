@@ -24,6 +24,7 @@ use Throwable;
 
 use const OpenTracing\Formats\TEXT_MAP;
 use const OpenTracing\Tags\SPAN_KIND_RPC_CLIENT;
+
 class HttpClientAspect extends AbstractAspect
 {
     use SpanStarter;
