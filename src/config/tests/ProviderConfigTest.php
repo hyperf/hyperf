@@ -234,4 +234,187 @@ class ProviderConfigTest extends TestCase
         $this->assertSame('app_', $result['cache']['stores']['redis']['prefix']);
         $this->assertSame('file', $result['cache']['stores']['file']['driver']);
     }
+
+    public function testMergeThreeConfigsPreservesScalarValues()
+    {
+        $c1 = ['app' => ['name' => 'First', 'debug' => false]];
+        $c2 = ['app' => ['name' => 'Second', 'timezone' => 'UTC']];
+        $c3 = ['app' => ['name' => 'Third', 'debug' => true]];
+
+        $result = ProviderConfig::merge($c1, $c2, $c3);
+
+        $this->assertIsString($result['app']['name']);
+        $this->assertSame('Third', $result['app']['name']);
+        $this->assertIsBool($result['app']['debug']);
+        $this->assertTrue($result['app']['debug']);
+        $this->assertSame('UTC', $result['app']['timezone']);
+    }
+
+    public function testMergeWithNoArraysReturnsEmpty()
+    {
+        $result = ProviderConfig::merge();
+
+        $this->assertSame([], $result);
+    }
+
+    public function testMergeSingleArrayReturnsUnchanged()
+    {
+        $config = [
+            'app' => ['name' => 'MyApp', 'debug' => true],
+            'commands' => ['CommandA', 'CommandB'],
+        ];
+
+        $result = ProviderConfig::merge($config);
+
+        $this->assertSame($config, $result);
+    }
+
+    public function testMergeHandlesNullValues()
+    {
+        $c1 = ['app' => ['value' => 'not_null', 'nullable' => null]];
+        $c2 = ['app' => ['value' => null, 'nullable' => 'now_has_value']];
+
+        $result = ProviderConfig::merge($c1, $c2);
+
+        $this->assertNull($result['app']['value']);
+        $this->assertSame('now_has_value', $result['app']['nullable']);
+    }
+
+    public function testMergeMixedNumericAndStringKeys()
+    {
+        $c1 = ['mixed' => ['numeric_0', 'string_key' => 'value_a', 'numeric_1']];
+        $c2 = ['mixed' => ['another_numeric', 'string_key' => 'value_b']];
+
+        $result = ProviderConfig::merge($c1, $c2);
+
+        $this->assertSame('value_b', $result['mixed']['string_key']);
+        $this->assertContains('numeric_0', $result['mixed']);
+        $this->assertContains('numeric_1', $result['mixed']);
+        $this->assertContains('another_numeric', $result['mixed']);
+        $this->assertCount(4, $result['mixed']);
+    }
+
+    public function testMergeScalarReplacesArray()
+    {
+        $c1 = ['setting' => ['complex' => 'array', 'with' => 'values']];
+        $c2 = ['setting' => 'simple_string'];
+
+        $result = ProviderConfig::merge($c1, $c2);
+
+        $this->assertIsString($result['setting']);
+        $this->assertSame('simple_string', $result['setting']);
+    }
+
+    public function testMergeNestedNumericArraysWithinAssociative()
+    {
+        $c1 = [
+            'annotations' => [
+                'scan' => [
+                    'paths' => ['/path/a', '/path/b'],
+                    'collectors' => ['CollectorA'],
+                ],
+            ],
+        ];
+
+        $c2 = [
+            'annotations' => [
+                'scan' => [
+                    'paths' => ['/path/c'],
+                    'ignore_annotations' => ['IgnoreMe'],
+                ],
+            ],
+        ];
+
+        $result = ProviderConfig::merge($c1, $c2);
+
+        $this->assertSame(['/path/a', '/path/b', '/path/c'], $result['annotations']['scan']['paths']);
+        $this->assertSame(['CollectorA'], $result['annotations']['scan']['collectors']);
+        $this->assertSame(['IgnoreMe'], $result['annotations']['scan']['ignore_annotations']);
+    }
+
+    public function testMergePreservesBooleanTypes()
+    {
+        $c1 = ['flags' => ['enabled' => true, 'verbose' => false]];
+        $c2 = ['flags' => ['enabled' => false, 'debug' => true]];
+
+        $result = ProviderConfig::merge($c1, $c2);
+
+        $this->assertIsBool($result['flags']['enabled']);
+        $this->assertFalse($result['flags']['enabled']);
+        $this->assertIsBool($result['flags']['verbose']);
+        $this->assertFalse($result['flags']['verbose']);
+        $this->assertIsBool($result['flags']['debug']);
+        $this->assertTrue($result['flags']['debug']);
+    }
+
+    public function testMergePreservesIntegerTypes()
+    {
+        $c1 = ['limits' => ['timeout' => 30, 'retries' => 3]];
+        $c2 = ['limits' => ['timeout' => 60, 'max_connections' => 100]];
+
+        $result = ProviderConfig::merge($c1, $c2);
+
+        $this->assertIsInt($result['limits']['timeout']);
+        $this->assertSame(60, $result['limits']['timeout']);
+        $this->assertIsInt($result['limits']['retries']);
+        $this->assertSame(3, $result['limits']['retries']);
+        $this->assertIsInt($result['limits']['max_connections']);
+        $this->assertSame(100, $result['limits']['max_connections']);
+    }
+
+    public function testMergeRealWorldDatabaseConfigScenario()
+    {
+        $coreConfig = [
+            'database' => [
+                'default' => 'sqlite',
+                'connections' => [
+                    'sqlite' => [
+                        'driver' => 'sqlite',
+                        'database' => '/app/database.sqlite',
+                    ],
+                    'pgsql' => [
+                        'driver' => 'pgsql',
+                        'host' => 'localhost',
+                        'port' => 5432,
+                    ],
+                ],
+            ],
+        ];
+
+        $databaseConfig = [
+            'database' => [
+                'connections' => [
+                    'sqlite' => [
+                        'driver' => 'sqlite',
+                        'foreign_key_constraints' => true,
+                    ],
+                ],
+            ],
+        ];
+
+        $mysqlConfig = [
+            'database' => [
+                'connections' => [
+                    'mysql' => [
+                        'driver' => 'mysql',
+                        'host' => 'localhost',
+                        'port' => 3306,
+                    ],
+                ],
+            ],
+        ];
+
+        $result = ProviderConfig::merge($coreConfig, $databaseConfig, $mysqlConfig);
+
+        $this->assertIsString($result['database']['connections']['sqlite']['driver']);
+        $this->assertIsString($result['database']['connections']['pgsql']['driver']);
+        $this->assertIsString($result['database']['connections']['mysql']['driver']);
+        $this->assertSame('sqlite', $result['database']['connections']['sqlite']['driver']);
+        $this->assertSame('pgsql', $result['database']['connections']['pgsql']['driver']);
+        $this->assertSame('mysql', $result['database']['connections']['mysql']['driver']);
+        $this->assertSame('/app/database.sqlite', $result['database']['connections']['sqlite']['database']);
+        $this->assertTrue($result['database']['connections']['sqlite']['foreign_key_constraints']);
+        $this->assertSame(5432, $result['database']['connections']['pgsql']['port']);
+        $this->assertSame(3306, $result['database']['connections']['mysql']['port']);
+    }
 }
