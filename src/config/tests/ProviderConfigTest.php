@@ -127,4 +127,111 @@ class ProviderConfigTest extends TestCase
             $this->assertTrue(is_string($dependency) || is_callable($dependency));
         }
     }
+
+    public function testMergePreservesScalarValues()
+    {
+        $c1 = [
+            'database' => [
+                'default' => 'mysql',
+                'connections' => [
+                    'mysql' => [
+                        'driver' => 'mysql',
+                        'host' => 'localhost',
+                    ],
+                ],
+            ],
+        ];
+
+        $c2 = [
+            'database' => [
+                'connections' => [
+                    'mysql' => [
+                        'driver' => 'mysql',
+                        'port' => 3306,
+                    ],
+                ],
+            ],
+        ];
+
+        $result = ProviderConfig::merge($c1, $c2);
+
+        $this->assertIsString($result['database']['connections']['mysql']['driver']);
+        $this->assertSame('mysql', $result['database']['connections']['mysql']['driver']);
+        $this->assertSame('localhost', $result['database']['connections']['mysql']['host']);
+        $this->assertSame(3306, $result['database']['connections']['mysql']['port']);
+    }
+
+    public function testMergePreservesListenersWithPriority()
+    {
+        $c1 = [
+            'listeners' => [
+                'ListenerA',
+                'ListenerB',
+            ],
+        ];
+
+        $c2 = [
+            'listeners' => [
+                'ListenerC',
+                'PriorityListener' => 99,
+            ],
+        ];
+
+        $result = ProviderConfig::merge($c1, $c2);
+
+        $this->assertContains('ListenerA', $result['listeners']);
+        $this->assertContains('ListenerB', $result['listeners']);
+        $this->assertContains('ListenerC', $result['listeners']);
+        $this->assertArrayHasKey('PriorityListener', $result['listeners']);
+        $this->assertSame(99, $result['listeners']['PriorityListener']);
+    }
+
+    public function testMergeDeduplicatesLists()
+    {
+        $c1 = [
+            'commands' => ['CommandA', 'CommandB'],
+        ];
+
+        $c2 = [
+            'commands' => ['CommandB', 'CommandC'],
+        ];
+
+        $result = ProviderConfig::merge($c1, $c2);
+
+        $this->assertSame(['CommandA', 'CommandB', 'CommandC'], $result['commands']);
+    }
+
+    public function testMergeDeeplyNestedConfigs()
+    {
+        $c1 = [
+            'cache' => [
+                'stores' => [
+                    'redis' => [
+                        'driver' => 'redis',
+                        'connection' => 'default',
+                    ],
+                ],
+            ],
+        ];
+
+        $c2 = [
+            'cache' => [
+                'stores' => [
+                    'redis' => [
+                        'prefix' => 'app_',
+                    ],
+                    'file' => [
+                        'driver' => 'file',
+                    ],
+                ],
+            ],
+        ];
+
+        $result = ProviderConfig::merge($c1, $c2);
+
+        $this->assertSame('redis', $result['cache']['stores']['redis']['driver']);
+        $this->assertSame('default', $result['cache']['stores']['redis']['connection']);
+        $this->assertSame('app_', $result['cache']['stores']['redis']['prefix']);
+        $this->assertSame('file', $result['cache']['stores']['file']['driver']);
+    }
 }

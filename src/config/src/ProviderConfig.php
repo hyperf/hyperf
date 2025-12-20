@@ -62,7 +62,13 @@ class ProviderConfig
         if (empty($arrays)) {
             return [];
         }
-        $result = array_merge_recursive(...$arrays);
+
+        $result = array_reduce(
+            array_slice($arrays, 1),
+            [static::class, 'mergeTwo'],
+            $arrays[0]
+        );
+
         if (isset($result['dependencies'])) {
             $result['dependencies'] = [];
             foreach ($arrays as $item) {
@@ -77,6 +83,27 @@ class ProviderConfig
                         $depend->merge($value);
                     }
                 }
+            }
+        }
+
+        return $result;
+    }
+
+    private static function mergeTwo(array $base, array $override): array
+    {
+        $result = $base;
+
+        foreach ($override as $key => $value) {
+            if (is_int($key)) {
+                if (! in_array($value, $result, true)) {
+                    $result[] = $value;
+                }
+            } elseif (! array_key_exists($key, $result)) {
+                $result[$key] = $value;
+            } elseif (is_array($value) && is_array($result[$key])) {
+                $result[$key] = static::mergeTwo($result[$key], $value);
+            } else {
+                $result[$key] = $value;
             }
         }
 

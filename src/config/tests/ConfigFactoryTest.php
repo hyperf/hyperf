@@ -15,6 +15,7 @@ namespace HyperfTest\Config;
 use Hyperf\Config\Config;
 use Hyperf\Config\ConfigFactory;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 /**
  * @internal
@@ -66,5 +67,79 @@ class ConfigFactoryTest extends TestCase
                 'name' => 'banana',
             ],
         ], $config->get('a.c'));
+    }
+
+    public function testMergeTwoPreservesScalarValues()
+    {
+        $base = [
+            'database' => [
+                'connections' => [
+                    'mysql' => [
+                        'driver' => 'mysql',
+                        'host' => 'localhost',
+                    ],
+                ],
+            ],
+        ];
+
+        $override = [
+            'database' => [
+                'connections' => [
+                    'mysql' => [
+                        'driver' => 'mysql',
+                        'port' => 3306,
+                    ],
+                ],
+            ],
+        ];
+
+        $result = $this->callMergeTwo($base, $override);
+
+        $this->assertIsString($result['database']['connections']['mysql']['driver']);
+        $this->assertSame('mysql', $result['database']['connections']['mysql']['driver']);
+        $this->assertSame('localhost', $result['database']['connections']['mysql']['host']);
+        $this->assertSame(3306, $result['database']['connections']['mysql']['port']);
+    }
+
+    public function testMergeTwoCombinesLists()
+    {
+        $base = ['commands' => ['CommandA', 'CommandB']];
+        $override = ['commands' => ['CommandC']];
+
+        $result = $this->callMergeTwo($base, $override);
+
+        $this->assertSame(['CommandA', 'CommandB', 'CommandC'], $result['commands']);
+    }
+
+    public function testMergeTwoDeduplicatesLists()
+    {
+        $base = ['commands' => ['CommandA', 'CommandB']];
+        $override = ['commands' => ['CommandB', 'CommandC']];
+
+        $result = $this->callMergeTwo($base, $override);
+
+        $this->assertSame(['CommandA', 'CommandB', 'CommandC'], $result['commands']);
+    }
+
+    public function testMergeTwoPreservesListenersWithPriority()
+    {
+        $base = ['listeners' => ['ListenerA', 'ListenerB']];
+        $override = ['listeners' => ['ListenerC', 'PriorityListener' => 99]];
+
+        $result = $this->callMergeTwo($base, $override);
+
+        $this->assertContains('ListenerA', $result['listeners']);
+        $this->assertContains('ListenerB', $result['listeners']);
+        $this->assertContains('ListenerC', $result['listeners']);
+        $this->assertArrayHasKey('PriorityListener', $result['listeners']);
+        $this->assertSame(99, $result['listeners']['PriorityListener']);
+    }
+
+    private function callMergeTwo(array $base, array $override): array
+    {
+        $factory = new ConfigFactory();
+        $method = new ReflectionMethod($factory, 'mergeTwo');
+
+        return $method->invoke($factory, $base, $override);
     }
 }
