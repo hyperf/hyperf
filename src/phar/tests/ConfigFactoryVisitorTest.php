@@ -52,7 +52,8 @@ class ConfigFactory
         \$configPath = BASE_PATH . '/config';
         \$config = \$this->readConfig(\$configPath . '/config.php');
         \$autoloadConfig = \$this->readPaths([\$configPath . '/autoload']);
-        \$merged = array_merge_recursive(ProviderConfig::load(), \$config, ...\$autoloadConfig);
+        \$allConfigs = [ProviderConfig::load(), \$config, ...\$autoloadConfig];
+        \$merged = array_reduce(array_slice(\$allConfigs, 1), [\$this, 'mergeTwo'], \$allConfigs[0]);
         return new Config(\$merged);
     }
     private function readConfig(string \$configPath) : array
@@ -75,6 +76,24 @@ class ConfigFactory
             \$configs[] = \$config;
         }
         return \$configs;
+    }
+    private function mergeTwo(array \$base, array \$override) : array
+    {
+        \$result = \$base;
+        foreach (\$override as \$key => \$value) {
+            if (is_int(\$key)) {
+                if (!in_array(\$value, \$result, true)) {
+                    \$result[] = \$value;
+                }
+            } elseif (!array_key_exists(\$key, \$result)) {
+                \$result[\$key] = \$value;
+            } elseif (is_array(\$value) && is_array(\$result[\$key])) {
+                \$result[\$key] = \$this->mergeTwo(\$result[\$key], \$value);
+            } else {
+                \$result[\$key] = \$value;
+            }
+        }
+        return \$result;
     }
 }", $code);
     }
