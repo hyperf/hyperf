@@ -28,10 +28,10 @@ class ConfigChangeNotifyRequest extends Response implements Stringable, JsonSeri
 
     public function __construct(array $json)
     {
-        $this->requestId = $json['requestId'];
-        $this->tenant = $json['tenant'];
-        $this->group = $json['group'];
-        $this->dataId = $json['dataId'];
+        $this->requestId = $json['requestId'] ?? '';
+        $this->tenant = $json['tenant'] ?? '';
+        $this->group = $json['group'] ?? '';
+        $this->dataId = $json['dataId'] ?? '';
         $this->json = $json;
     }
 
