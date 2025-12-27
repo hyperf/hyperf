@@ -481,7 +481,7 @@ class Blueprint
      *
      * @param array|string $columns
      * @param string $name
-     * @return Fluent|ForeignKeyDefinition
+     * @return ForeignKeyDefinition
      */
     public function foreign($columns, $name = null)
     {
