@@ -15,6 +15,7 @@ namespace Hyperf\JsonRpc;
 use Closure;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Rpc\Protocol;
+use Hyperf\Validation\ValidationException;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -48,6 +49,8 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
                 $parameters = $this->parseMethodParameters($controller, $action, $request->getParsedBody());
             } catch (InvalidArgumentException) {
                 return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INVALID_PARAMS);
+            } catch (ValidationException $validationException) {
+                return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INVALID_PARAMS, $validationException);
             }
 
             try {
