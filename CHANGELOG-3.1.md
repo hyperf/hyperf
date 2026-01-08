@@ -112,6 +112,10 @@
 
 - [#7394](https://github.com/hyperf/hyperf/pull/7394) Release redis connection immediately when using `transaction` or `pipeline` with callbacks.
 
+## Optimized
+
+- [#7431](https://github.com/hyperf/hyperf/pull/7431) Optimized the `toCssClasses` and `toCssStyles` methods by directly using the input array to simplify the code logic.
+
 # v3.1.57 - 2025-06-23
 
 ## Fixed
