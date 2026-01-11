@@ -192,7 +192,7 @@ class Client extends Server
         $body = new SwooleStream($content);
 
         $request = new Psr7Request($method, $uri, $headers, $body);
-        $request->setServerParams($this->getServerParams($method, $uri->getPath()));
+        $request->setServerParams($this->getServerParams($method, $uri->getPath(), $uri->getPort()));
 
         return $request->withQueryParams($query)
             ->withParsedBody($data)
@@ -287,7 +287,7 @@ class Client extends Server
         return $stream;
     }
 
-    protected function getServerParams(string $method, string $uri): array
+    protected function getServerParams(string $method, string $uri, ?int $port): array
     {
         return [
             'request_method' => $method,
@@ -296,7 +296,7 @@ class Client extends Server
             'request_time' => time(),
             'request_time_float' => microtime(true),
             'server_protocol' => 'HTTP/1.1',
-            'server_port' => 9501,
+            'server_port' => $port ?? 9501,
             'remote_port' => 40005,
             'remote_addr' => '127.0.0.1',
             'master_time' => time(),
