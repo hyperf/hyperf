@@ -13,10 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Coordinator\Constants;
-use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
-use Hyperf\Coroutine\Coroutine;
 use Hyperf\Engine\Coroutine as Co;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
@@ -108,7 +105,7 @@ class OnMetricFactoryReady implements ListenerInterface
         }
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval, function () use ($metrics, $serverStatsFactory) {
+        $this->timer->tick($timerInterval, function () use ($metrics, $serverStatsFactory) {
             $this->trySet('', $metrics, Co::stats());
             $this->trySet('timer_', $metrics, Timer::stats());
 
@@ -124,12 +121,6 @@ class OnMetricFactoryReady implements ListenerInterface
             $metrics['sys_load']->set(round($load[0] / System::getCpuCoresNum(), 2));
             $metrics['metric_process_memory_usage']->set(memory_get_usage());
             $metrics['metric_process_memory_peak_usage']->set(memory_get_peak_usage());
-        });
-
-        // Clean up timer on worker exit;
-        Coroutine::create(function () use ($timerId) {
-            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            $this->timer->clear($timerId);
         });
     }
 }
