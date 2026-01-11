@@ -32,6 +32,9 @@ class SpanTagManager
             'db.query' => 'db.query',
             'db.statement' => 'db.statement',
             'db.query_time' => 'db.query_time',
+            'db.engine' => 'db.engine',
+            'db.instance' => 'db.instance',
+            'db.user' => 'db.user',
         ],
         'rpc' => [
             'path' => 'rpc.path',
