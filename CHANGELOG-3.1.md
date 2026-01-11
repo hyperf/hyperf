@@ -6,6 +6,10 @@
 - [#7667](https://github.com/hyperf/hyperf/pull/7667) [#7672](https://github.com/hyperf/hyperf/pull/7672) Added support for `client_count` option to create multiple gRPC clients with load balancing in `hyperf/grpc-client`.
 - [#7693](https://github.com/hyperf/hyperf/pull/7693) Added methods `cascadeOnDelete()`, `restrictOnDelete()`, `noActionOnDelete()`, `restrictOnUpdate()`, `nullOnUpdate()`, `noActionOnUpdate()` for `ForeignKeyDefinition`.
 
+## Fixed
+
+- [#7669](https://github.com/hyperf/hyperf/pull/7669) Fix PostgreSQL boolean handling for emulated prepares and raw SQL.
+
 # v3.1.65 - 2025-12-04
 
 ## Added
