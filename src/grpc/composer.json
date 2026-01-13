@@ -18,7 +18,7 @@
     "require": {
         "php": ">=8.1",
         "google/common-protos": "^3.2 || ^4.4",
-        "google/protobuf": "^3.6.1",
+        "google/protobuf": "^3.6.1 || ^4.2",
         "hyperf/stringable": "~3.1.0"
     },
     "suggest": {
