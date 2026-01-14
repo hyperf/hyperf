@@ -363,4 +363,25 @@ LUA,
             default => throw new InvalidArgumentException('Unknown command'),
         };
     }
+
+    public function updateSummary(array $data): void
+    {
+        $metaData = $data;
+        unset($metaData['value'], $metaData['labelValues']);
+
+        $key = $this->toMetricKey($data);
+        $gatherKey = $this->getMetricGatherKey('summary');
+        $labelKey = Json::encode($data['labelValues']);
+
+        // Accumulate sum and count
+        $this->redis->hIncrByFloat($key, 'sum:' . $labelKey, $data['value']);
+        $this->redis->hIncrBy($key, 'count:' . $labelKey, 1);
+
+        // Store observed values (optional, for quantile calculation, be aware of memory usage)
+        $this->redis->rPush($key . ':values:' . $labelKey, $data['value']);
+
+        // Accumulate sum and count
+        $this->redis->hSet($key, '__meta', Json::encode($metaData));
+        $this->redis->sAdd($gatherKey, $key);
+    }
 }
