@@ -46,6 +46,7 @@ use Hyperf\Support\Traits\InteractsWithTime;
 use HyperfTest\Database\Stubs\DateModelStub;
 use HyperfTest\Database\Stubs\DifferentConnectionModelStub;
 use HyperfTest\Database\Stubs\KeyTypeModelStub;
+use HyperfTest\Database\Stubs\MassPrunableModelStub;
 use HyperfTest\Database\Stubs\ModelAppendsStub;
 use HyperfTest\Database\Stubs\ModelBootingTestStub;
 use HyperfTest\Database\Stubs\ModelCamelStub;
@@ -67,7 +68,10 @@ use HyperfTest\Database\Stubs\ModelWithoutRelationStub;
 use HyperfTest\Database\Stubs\ModelWithoutTableStub;
 use HyperfTest\Database\Stubs\ModelWithStub;
 use HyperfTest\Database\Stubs\NoConnectionModelStub;
+use HyperfTest\Database\Stubs\NonMassPrunableModelStub;
+use HyperfTest\Database\Stubs\NonPrunableModelStub;
 use HyperfTest\Database\Stubs\NonSoftDeletableModelStub;
+use HyperfTest\Database\Stubs\PrunableModelStub;
 use HyperfTest\Database\Stubs\SoftDeletableModelStub;
 use HyperfTest\Database\Stubs\User;
 use LogicException;
@@ -2112,6 +2116,20 @@ class ModelTest extends TestCase
         $this->assertTrue(SoftDeletableModelStub::isSoftDeletable());
         $this->assertFalse(NonSoftDeletableModelStub::isSoftDeletable());
         $this->assertFalse(ModelStub::isSoftDeletable());
+    }
+
+    public function testIsPrunable()
+    {
+        $this->assertTrue(PrunableModelStub::isPrunable());
+        $this->assertFalse(NonPrunableModelStub::isPrunable());
+        $this->assertFalse(ModelStub::isPrunable());
+    }
+
+    public function testIsMassPrunable()
+    {
+        $this->assertTrue(MassPrunableModelStub::isMassPrunable());
+        $this->assertFalse(NonMassPrunableModelStub::isMassPrunable());
+        $this->assertFalse(ModelStub::isMassPrunable());
     }
 
     protected function getContainer()
