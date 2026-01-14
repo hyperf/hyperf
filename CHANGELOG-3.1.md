@@ -185,6 +185,8 @@
 - [#7286](https://github.com/hyperf/hyperf/pull/7286) Added `Hyperf\Coroutine\Coroutine::list()`.
 - [#7291](https://github.com/hyperf/hyperf/pull/7291) Support to throw exception when read `null` from `Model::createOrFirst`.
 
+- [#7289](https://github.com/hyperf/hyperf/pull/7289) Refactor `HttpClientAspect` to use `transfer` method and enhance error handling.
+
 # v3.1.51 - 2025-02-06
 
 ## Added
