@@ -769,10 +769,14 @@ return [
 'state' => 'exists:states,abbreviation'
 ```
 
-有時，你可能需要為 `exists` 查詢指定要使用的數據庫連接，這可以在表名前通過`.`前置數據庫連接來實現：
+有時，你可能需要為 `exists` 查詢指定要使用的數據庫連接，這可以在表名前通過`.`前置數據庫連接來實現，或者通過指定模型的類名自動解析：
 
 ```php
+// 前置數據庫連接的方式
 'email' => 'exists:connection.staff,email'
+
+// 模型類名自動解析的方式
+'email' => 'exists:StaffModel::class,email'
 ```
 
 如果你想要自定義驗證規則執行的查詢，可以使用 `Rule` 類來定義規則。在這個例子中，我們還以數組形式指定了驗證規則，而不是使用 `|` 字符來限定它們：
@@ -1013,10 +1017,14 @@ $validator = $this->validationFactory->make($request->all(), [
 ```
 
 2. 自定義數據庫連接：
-   有時候，你可能需要自定義驗證器生成的數據庫連接，正如上面所看到的，設置 `unique:users` 作為驗證規則將會使用默認數據庫連接來查詢數據庫。要覆蓋默認連接，在數據表名後使用“.”指定連接：
+   有時候，你可能需要自定義驗證器生成的數據庫連接，正如上面所看到的，設置 `unique:users` 作為驗證規則將會使用默認數據庫連接來查詢數據庫。要覆蓋默認連接，在數據表名後使用“.”指定連接，或者通過指定模型的類名自動解析：
 
 ```php
+// 前置數據庫連接的方式
 'email' => 'unique:connection.users,email_address'
+
+// 模型類名自動解析的方式
+'email' => 'unique:UserModel::class,email_address'
 ```
 
 3. 強制一個忽略給定 `ID` 的唯一規則：

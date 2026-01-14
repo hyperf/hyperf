@@ -769,10 +769,14 @@ return [
 'state' => 'exists:states,abbreviation'
 ```
 
-有时，你可能需要为 `exists` 查询指定要使用的数据库连接，这可以在表名前通过`.`前置数据库连接来实现：
+有时，你可能需要为 `exists` 查询指定要使用的数据库连接，这可以在表名前通过`.`前置数据库连接来实现，或者通过指定模型的类名自动解析：
 
 ```php
+// 前置数据库连接的方式
 'email' => 'exists:connection.staff,email'
+
+// 模型类名自动解析的方式
+'email' => 'exists:StaffModel::class,email'
 ```
 
 如果你想要自定义验证规则执行的查询，可以使用 `Rule` 类来定义规则。在这个例子中，我们还以数组形式指定了验证规则，而不是使用 `|` 字符来限定它们：
@@ -1013,10 +1017,14 @@ $validator = $this->validationFactory->make($request->all(), [
 ```
 
 2. 自定义数据库连接：
-   有时候，你可能需要自定义验证器生成的数据库连接，正如上面所看到的，设置 `unique:users` 作为验证规则将会使用默认数据库连接来查询数据库。要覆盖默认连接，在数据表名后使用“.”指定连接：
+   有时候，你可能需要自定义验证器生成的数据库连接，正如上面所看到的，设置 `unique:users` 作为验证规则将会使用默认数据库连接来查询数据库。要覆盖默认连接，在数据表名后使用“.”指定连接，或者通过指定模型的类名自动解析：
 
 ```php
+// 前置数据库连接的方式
 'email' => 'unique:connection.users,email_address'
+
+// 模型类名自动解析的方式
+'email' => 'unique:UserModel::class,email_address'
 ```
 
 3. 强制一个忽略给定 `ID` 的唯一规则：
