@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Filesystem\Adapter;
 
-use Aws\Handler\GuzzleV6\GuzzleHandler;
+use Aws\Handler\Guzzle\GuzzleHandler;
 use Aws\S3\S3Client;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
