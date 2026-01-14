@@ -18,6 +18,10 @@
 
 - [#7649](https://github.com/hyperf/hyperf/pull/7649) Refactored `OnBeforeHandle` listener to remove `AfterExecute` event handling for better separation of concerns.
 
+## Added
+
+- [#7628](https://github.com/hyperf/hyperf/pull/7628) Added method `Hyperf\Database\Model\Concerns\HasEvents::withoutEvents()` to disable model events temporarily.
+
 # v3.1.64 - 2025-11-12
 
 ## Added
