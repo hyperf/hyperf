@@ -56,6 +56,7 @@ use Throwable;
 
 use function Hyperf\Coroutine\defer;
 use function Hyperf\Coroutine\wait;
+use function Hyperf\Support\make;
 
 class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, OnCloseInterface, OnMessageInterface
 {
@@ -79,7 +80,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     public function initCoreMiddleware(string $serverName): void
     {
         $this->serverName = $serverName;
-        $this->coreMiddleware = new CoreMiddleware($this->container, $serverName);
+        $this->coreMiddleware = $this->createCoreMiddleware();
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
@@ -322,5 +323,10 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         $instance = $this->container->get($callback);
 
         return [$instance, $method];
+    }
+
+    protected function createCoreMiddleware(): CoreMiddlewareInterface
+    {
+        return make(CoreMiddleware::class, [$this->container, $this->serverName]);
     }
 }
