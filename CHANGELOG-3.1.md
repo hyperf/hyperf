@@ -148,6 +148,10 @@
 - [#7363](https://github.com/hyperf/hyperf/pull/7363) Fixed doc blocks for `Hyperf\HttpServer\Router\RouteCollector`.
 - [#7379](https://github.com/hyperf/hyperf/pull/7379) Fixed bug that pdo connector with pgsql cannot work when using migration.
 
+## Added
+
+- [#7366](https://github.com/hyperf/hyperf/pull/7366) Added `getClient` method to `websocket-client` component.
+
 # v3.1.54 - 2025-04-27
 
 ## Added
