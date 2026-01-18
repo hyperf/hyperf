@@ -1561,6 +1561,42 @@ class Builder
     }
 
     /**
+     * Add a clause that determines if a JSON path exists to the query.
+     */
+    public function whereJsonContainsKey(string $column, string $boolean = 'and', bool $not = false): static
+    {
+        $type = 'JsonContainsKey';
+
+        $this->wheres[] = compact('type', 'column', 'boolean', 'not');
+
+        return $this;
+    }
+
+    /**
+     * Add an "or" clause that determines if a JSON path exists to the query.
+     */
+    public function orWhereJsonContainsKey(string $column): static
+    {
+        return $this->whereJsonContainsKey($column, 'or');
+    }
+
+    /**
+     * Add a clause that determines if a JSON path does not exist to the query.
+     */
+    public function whereJsonDoesntContainKey(string $column, string $boolean = 'and'): static
+    {
+        return $this->whereJsonContainsKey($column, $boolean, true);
+    }
+
+    /**
+     * Add an "or" clause that determines if a JSON path does not exist to the query.
+     */
+    public function orWhereJsonDoesntContainKey(string $column): static
+    {
+        return $this->whereJsonDoesntContainKey($column, 'or');
+    }
+
+    /**
      * Add an "where Bit Functions and Operators" clause to the query.
      */
     public function whereBit(string $key, mixed $operator = 'and', mixed $value = null, string $boolean = 'and', bool $not = false): static
