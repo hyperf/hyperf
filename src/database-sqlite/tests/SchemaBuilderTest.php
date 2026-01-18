@@ -24,7 +24,7 @@ use Psr\Container\ContainerInterface;
  * @internal
  * @coversNothing
  */
-class DatabaseSQLiteBuilderTest extends TestCase
+class SchemaBuilderTest extends TestCase
 {
     public function testCreateDatabase()
     {
