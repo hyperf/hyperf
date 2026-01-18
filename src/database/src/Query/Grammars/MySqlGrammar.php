@@ -247,6 +247,16 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile a "JSON contains key" statement into SQL.
+     */
+    protected function compileJsonContainsKey(string $column): string
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        return 'ifnull(json_contains_path(' . $field . ', \'one\'' . $path . '), 0)';
+    }
+
+    /**
      * Compile a "JSON length" statement into SQL.
      *
      * @param string $column
