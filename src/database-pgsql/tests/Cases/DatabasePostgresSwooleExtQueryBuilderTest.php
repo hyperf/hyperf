@@ -23,7 +23,7 @@ use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\DbConnection\Db;
 use Hyperf\Stringable\Str;
-use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
+use HyperfTest\Database\PgSQL\Stubs\SwooleExtContainerStub;
 use Mockery as m;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
@@ -34,11 +34,11 @@ use PHPUnit\Framework\TestCase;
  * @coversNothing
  */
 #[CoversNothing]
-class DatabasePostgresBuilderTest extends TestCase
+class DatabasePostgresSwooleExtQueryBuilderTest extends TestCase
 {
     protected function tearDown(): void
     {
-        ContainerStub::getContainer();
+        SwooleExtContainerStub::getContainer();
         Schema::dropIfExists('test_full_text_index');
         m::close();
     }
@@ -127,7 +127,7 @@ class DatabasePostgresBuilderTest extends TestCase
     #[RequiresPhpExtension('swoole', '< 6.0')]
     public function testJoinLateralTest(): void
     {
-        $container = ContainerStub::getContainer();
+        $container = SwooleExtContainerStub::getContainer();
         $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
         Schema::dropIfExists('join_posts');
         Schema::dropIfExists('join_users');
@@ -202,7 +202,7 @@ class DatabasePostgresBuilderTest extends TestCase
     #[RequiresPhpExtension('swoole', '< 6.0')]
     public function testWhereFullTextForReal()
     {
-        $container = ContainerStub::getContainer();
+        $container = SwooleExtContainerStub::getContainer();
         $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
 
         Schema::create('test_full_text_index', function (Blueprint $table) {
