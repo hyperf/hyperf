@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
  * @internal
  * @coversNothing
  */
-class DatabaseSQLiteQueryBuilderTest extends TestCase
+class QueryBuilderTest extends TestCase
 {
     protected function tearDown(): void
     {
