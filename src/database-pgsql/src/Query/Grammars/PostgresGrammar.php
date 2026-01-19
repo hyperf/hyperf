@@ -571,18 +571,47 @@ class PostgresGrammar extends Grammar
     }
 
     /**
-     * Wrap the attributes of the give JSON path.
+     * Wrap the attributes of the given JSON path.
      *
      * @param array $path
      * @return array
      */
     protected function wrapJsonPathAttributes($path)
     {
-        return array_map(function ($attribute) {
-            return filter_var($attribute, FILTER_VALIDATE_INT) !== false
-                ? $attribute
-                : "'{$attribute}'";
-        }, $path);
+        $quote = func_num_args() === 2 ? func_get_arg(1) : "'";
+
+        return collect($path)
+            ->map(fn ($attribute) => $this->parseJsonPathArrayKeys($attribute))
+            ->collapse()
+            ->map(function ($attribute) use ($quote) {
+                return filter_var($attribute, FILTER_VALIDATE_INT) !== false
+                    ? $attribute
+                    : $quote . $attribute . $quote;
+            })
+            ->all();
+    }
+
+    /**
+     * Parse the given JSON path attribute for array keys.
+     *
+     * @param string $attribute
+     * @return array
+     */
+    protected function parseJsonPathArrayKeys($attribute)
+    {
+        if (preg_match('/(\[[^\]]+\])+$/', $attribute, $parts)) {
+            $key = Str::beforeLast($attribute, $parts[0]);
+
+            preg_match_all('/\[([^\]]+)\]/', $parts[0], $keys);
+
+            return collect([$key])
+                ->merge($keys[1])
+                ->diff('')
+                ->values()
+                ->all();
+        }
+
+        return [$attribute];
     }
 
     /**

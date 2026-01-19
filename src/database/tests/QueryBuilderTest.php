@@ -2987,7 +2987,7 @@ class QueryBuilderTest extends TestCase
 
         $builder = $this->getMySqlBuilder();
         $builder->select('*')->from('users')->whereJsonContainsKey('options->languages[0][1]');
-        $this->assertSame('select * from `users` where ifnull(json_contains_path(`options`, \'one\', \'$."languages[0][1]"\'), 0)', $builder->toSql());
+        $this->assertSame('select * from `users` where ifnull(json_contains_path(`options`, \'one\', \'$."languages"[0][1]\'), 0)', $builder->toSql());
     }
 
     public function testWhereJsonDoesntContainKeyMySql()
@@ -3002,7 +3002,7 @@ class QueryBuilderTest extends TestCase
 
         $builder = $this->getMySqlBuilder();
         $builder->select('*')->from('users')->whereJsonDoesntContainKey('options->languages[0][1]');
-        $this->assertSame('select * from `users` where not ifnull(json_contains_path(`options`, \'one\', \'$."languages[0][1]"\'), 0)', $builder->toSql());
+        $this->assertSame('select * from `users` where not ifnull(json_contains_path(`options`, \'one\', \'$."languages"[0][1]\'), 0)', $builder->toSql());
     }
 
     public function testWhereJsonLengthMySql()

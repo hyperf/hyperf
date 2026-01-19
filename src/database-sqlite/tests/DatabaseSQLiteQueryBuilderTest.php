@@ -60,6 +60,10 @@ class DatabaseSQLiteQueryBuilderTest extends TestCase
         $builder = $this->getSQLiteBuilder();
         $builder->select('*')->from('users')->where('id', '=', 1)->orWhereJsonContainsKey('options->languages');
         $this->assertSame('select * from "users" where "id" = ? or json_type("options", \'$."languages"\') is not null', $builder->toSql());
+
+        $builder = $this->getSQLiteBuilder();
+        $builder->select('*')->from('users')->whereJsonContainsKey('options->languages[0][1]');
+        $this->assertSame('select * from "users" where json_type("options", \'$."languages"[0][1]\') is not null', $builder->toSql());
     }
 
     public function testWhereJsonDoesntContainKeySqlite()
@@ -71,6 +75,10 @@ class DatabaseSQLiteQueryBuilderTest extends TestCase
         $builder = $this->getSQLiteBuilder();
         $builder->select('*')->from('users')->where('id', '=', 1)->orWhereJsonDoesntContainKey('options->languages');
         $this->assertSame('select * from "users" where "id" = ? or not json_type("options", \'$."languages"\') is not null', $builder->toSql());
+
+        $builder = $this->getSQLiteBuilder();
+        $builder->select('*')->from('users')->whereJsonDoesntContainKey('options->languages[0][1]');
+        $this->assertSame('select * from "users" where not json_type("options", \'$."languages"[0][1]\') is not null', $builder->toSql());
     }
 
     protected function getSQLiteBuilder(): Builder

@@ -1150,7 +1150,33 @@ class Grammar extends BaseGrammar
      */
     protected function wrapJsonPath($value, $delimiter = '->'): string
     {
-        return '\'$."' . str_replace($delimiter, '"."', $value) . '"\'';
+        $value = preg_replace("/([\\\\]+)?\\'/", "''", $value);
+
+        $jsonPath = collect(explode($delimiter, $value))
+            ->map(fn ($segment) => $this->wrapJsonPathSegment($segment))
+            ->join('.');
+
+        return "'$" . (str_starts_with($jsonPath, '[') ? '' : '.') . $jsonPath . "'";
+    }
+
+    /**
+     * Wrap the given JSON path segment.
+     *
+     * @param string $segment
+     */
+    protected function wrapJsonPathSegment(string $segment): string
+    {
+        if (preg_match('/(\[[^\]]+\])+$/', $segment, $parts)) {
+            $key = Str::beforeLast($segment, $parts[0]);
+
+            if (! empty($key)) {
+                return '"' . $key . '"' . $parts[0];
+            }
+
+            return $parts[0];
+        }
+
+        return '"' . $segment . '"';
     }
 
     /**
