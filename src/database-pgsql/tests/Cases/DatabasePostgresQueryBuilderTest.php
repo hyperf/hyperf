@@ -25,7 +25,7 @@ use PHPUnit\Framework\TestCase;
  * @coversNothing
  */
 #[CoversNothing]
-class QueryBuilderTest extends TestCase
+class DatabasePostgresQueryBuilderTest extends TestCase
 {
     protected function tearDown(): void
     {

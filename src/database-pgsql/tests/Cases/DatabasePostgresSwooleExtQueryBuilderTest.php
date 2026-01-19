@@ -34,7 +34,7 @@ use PHPUnit\Framework\TestCase;
  * @coversNothing
  */
 #[CoversNothing]
-class SwooleExtQueryBuilderTest extends TestCase
+class DatabasePostgresSwooleExtQueryBuilderTest extends TestCase
 {
     protected function tearDown(): void
     {
