@@ -81,6 +81,26 @@ class DatabaseSQLiteQueryBuilderTest extends TestCase
         $this->assertSame('select * from "users" where not json_type("options", \'$."languages"[0][1]\') is not null', $builder->toSql());
     }
 
+    public function testSQLiteUpdateWrappingJsonPathArrayIndex()
+    {
+        $connection = m::mock(ConnectionInterface::class);
+        $connection->shouldReceive('update')
+            ->once()
+            ->with('update "users" set "options" = json_patch(ifnull("options", json(\'{}\')), json(?)), "meta" = json_patch(ifnull("meta", json(\'{}\')), json(?)) where json_extract("options", \'$[1]."2fa"\') = true', [
+                '{"[1]":{"2fa":false}}',
+                '{"tags[0][2]":"large"}',
+            ])
+            ->andReturn(1);
+
+        $builder = new Builder($connection, new SQLiteGrammar(), new Processor());
+        $result = $builder->from('users')->where('options->[1]->2fa', true)->update([
+            'options->[1]->2fa' => false,
+            'meta->tags[0][2]' => 'large',
+        ]);
+
+        $this->assertEquals(1, $result);
+    }
+
     protected function getSQLiteBuilder(): Builder
     {
         return new Builder(m::mock(ConnectionInterface::class), new SQLiteGrammar(), new Processor());

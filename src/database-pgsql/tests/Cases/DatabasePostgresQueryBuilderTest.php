@@ -49,6 +49,10 @@ class DatabasePostgresQueryBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->select('*')->from('users')->whereJsonContainsKey('options->languages[0][1]');
         $this->assertSame('select * from "users" where case when jsonb_typeof(("options"->\'languages\'->0)::jsonb) = \'array\' then jsonb_array_length(("options"->\'languages\'->0)::jsonb) >= 2 else false end', $builder->toSql());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereJsonContainsKey('options->languages[-1]');
+        $this->assertSame('select * from "users" where case when jsonb_typeof(("options"->\'languages\')::jsonb) = \'array\' then jsonb_array_length(("options"->\'languages\')::jsonb) >= 1 else false end', $builder->toSql());
     }
 
     public function testWhereJsonDoesntContainKey(): void
@@ -64,6 +68,30 @@ class DatabasePostgresQueryBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->select('*')->from('users')->whereJsonDoesntContainKey('options->languages[0][1]');
         $this->assertSame('select * from "users" where not case when jsonb_typeof(("options"->\'languages\'->0)::jsonb) = \'array\' then jsonb_array_length(("options"->\'languages\'->0)::jsonb) >= 2 else false end', $builder->toSql());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereJsonDoesntContainKey('options->languages[-1]');
+        $this->assertSame('select * from "users" where not case when jsonb_typeof(("options"->\'languages\')::jsonb) = \'array\' then jsonb_array_length(("options"->\'languages\')::jsonb) >= 1 else false end', $builder->toSql());
+    }
+
+    public function testPostgresUpdateWrappingJsonPathArrayIndex(): void
+    {
+        $connection = m::mock(ConnectionInterface::class);
+        $connection->shouldReceive('update')
+            ->once()
+            ->with('update "users" set "options" = jsonb_set("options"::jsonb, \'{1,"2fa"}\', ?), "meta" = jsonb_set("meta"::jsonb, \'{"tags",0,2}\', ?) where ("options"->1->\'2fa\')::jsonb = \'true\'::jsonb', [
+                'false',
+                '"large"',
+            ])
+            ->andReturn(1);
+
+        $builder = new Builder($connection, new PostgresGrammar(), new PostgresProcessor());
+        $result = $builder->from('users')->where('options->[1]->2fa', true)->update([
+            'options->[1]->2fa' => false,
+            'meta->tags[0][2]' => 'large',
+        ]);
+
+        $this->assertEquals(1, $result);
     }
 
     protected function getBuilder(): Builder

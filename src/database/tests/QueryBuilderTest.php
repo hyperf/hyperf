@@ -2153,6 +2153,29 @@ class QueryBuilderTest extends TestCase
         ]);
     }
 
+    public function testMySqlUpdateWrappingJsonPathArrayIndex()
+    {
+        $grammar = new MySqlGrammar();
+        $processor = Mockery::mock(Processor::class);
+
+        $connection = $this->createMock(ConnectionInterface::class);
+        $connection->expects($this->once())
+            ->method('update')
+            ->with(
+                'update `users` set `options` = json_set(`options`, \'$[1]."2fa"\', false), `meta` = json_set(`meta`, \'$."tags"[0][2]\', ?) where `active` = ?',
+                [
+                    'large',
+                    1,
+                ]
+            );
+
+        $builder = new Builder($connection, $grammar, $processor);
+        $builder->from('users')->where('active', 1)->update([
+            'options->[1]->2fa' => false,
+            'meta->tags[0][2]' => 'large',
+        ]);
+    }
+
     public function testMySqlUpdateWithJsonPreparesBindingsCorrectly()
     {
         $grammar = new MySqlGrammar();
@@ -2255,6 +2278,29 @@ class QueryBuilderTest extends TestCase
         $builder = $this->getMySqlBuilder();
         $builder->select('*')->from('users')->where('items->price->in_usd', '=', 1)->where('items->age', '=', 2);
         $this->assertEquals('select * from `users` where json_unquote(json_extract(`items`, \'$."price"."in_usd"\')) = ? and json_unquote(json_extract(`items`, \'$."age"\')) = ?', $builder->toSql());
+    }
+
+    public function testJsonPathEscaping()
+    {
+        $expectedWithJsonEscaped = <<<'SQL'
+select json_unquote(json_extract(`json`, '$."''))#"'))
+SQL;
+
+        $builder = $this->getMySqlBuilder();
+        $builder->select("json->'))#");
+        $this->assertEquals($expectedWithJsonEscaped, $builder->toSql());
+
+        $builder = $this->getMySqlBuilder();
+        $builder->select("json->\\'))#");
+        $this->assertEquals($expectedWithJsonEscaped, $builder->toSql());
+
+        $builder = $this->getMySqlBuilder();
+        $builder->select("json->\\'))#");
+        $this->assertEquals($expectedWithJsonEscaped, $builder->toSql());
+
+        $builder = $this->getMySqlBuilder();
+        $builder->select("json->\\\\'))#");
+        $this->assertEquals($expectedWithJsonEscaped, $builder->toSql());
     }
 
     public function testMySqlSoundsLikeOperator()
