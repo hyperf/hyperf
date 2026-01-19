@@ -1161,8 +1161,6 @@ class Grammar extends BaseGrammar
 
     /**
      * Wrap the given JSON path segment.
-     *
-     * @param string $segment
      */
     protected function wrapJsonPathSegment(string $segment): string
     {
