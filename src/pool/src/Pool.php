@@ -113,6 +113,13 @@ abstract class Pool implements PoolInterface
         }
     }
 
+    public function flushAll(): void
+    {
+        while ($this->getConnectionsInChannel() > 0) {
+            $this->flushOne(true);
+        }
+    }
+
     public function getCurrentConnections(): int
     {
         return $this->currentConnections;
