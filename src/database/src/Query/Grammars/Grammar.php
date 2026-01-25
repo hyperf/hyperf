@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Query\Grammars;
 
 use Hyperf\Collection\Arr;
+use Hyperf\Database\Concerns\CompilesJsonPaths;
 use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
@@ -27,6 +28,8 @@ use function Hyperf\Collection\last;
 
 class Grammar extends BaseGrammar
 {
+    use CompilesJsonPaths;
+
     /**
      * The grammar specific operators.
      */
@@ -396,6 +399,24 @@ class Grammar extends BaseGrammar
     protected function compileJsonOverlaps(string $column, string $value): string
     {
         throw new RuntimeException('This database engine does not support JSON overlaps operations.');
+    }
+
+    /**
+     * Compile a "where JSON contains key" clause.
+     */
+    protected function whereJsonContainsKey(Builder $query, array $where): string
+    {
+        $not = $where['not'] ? 'not ' : '';
+
+        return $not . $this->compileJsonContainsKey($where['column']);
+    }
+
+    /**
+     * Compile a "JSON contains key" statement into SQL.
+     */
+    protected function compileJsonContainsKey(string $column): string
+    {
+        throw new RuntimeException('This database engine does not support JSON contains key operations.');
     }
 
     /**
@@ -1106,33 +1127,6 @@ class Grammar extends BaseGrammar
     protected function wrapJsonSelector($value): string
     {
         throw new RuntimeException('This database engine does not support JSON operations.');
-    }
-
-    /**
-     * Split the given JSON selector into the field and the optional path and wrap them separately.
-     *
-     * @param string $column
-     */
-    protected function wrapJsonFieldAndPath($column): array
-    {
-        $parts = explode('->', $column, 2);
-
-        $field = $this->wrap($parts[0]);
-
-        $path = count($parts) > 1 ? ', ' . $this->wrapJsonPath($parts[1], '->') : '';
-
-        return [$field, $path];
-    }
-
-    /**
-     * Wrap the given JSON path.
-     *
-     * @param string $value
-     * @param string $delimiter
-     */
-    protected function wrapJsonPath($value, $delimiter = '->'): string
-    {
-        return '\'$."' . str_replace($delimiter, '"."', $value) . '"\'';
     }
 
     /**

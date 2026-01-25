@@ -97,11 +97,11 @@ class GrpcClient
 
     public function start(): bool
     {
-        if ($this->recvCoroutineId !== 0 || $this->sendCoroutineId !== 0) {
-            throw new RuntimeException('Cannot restart the client.');
+        if ($this->recvCoroutineId !== 0 || $this->sendCoroutineId !== 0) { // Client already started
+            return true;
         }
         if (! Coroutine::inCoroutine()) {
-            throw new RuntimeException('Client must be started in coroutine');
+            throw new RuntimeException('Client must be started in coroutine.');
         }
         if (! $this->getHttpClient()->connect()) {
             throw new GrpcClientException('Connect failed, error=' . $this->getHttpClient()->errMsg, $this->getHttpClient()->errCode);
@@ -149,7 +149,7 @@ class GrpcClient
 
     public function isConnected(): bool
     {
-        return $this->httpClient->connected;
+        return (bool) $this->httpClient?->connected;
     }
 
     public function isStreamExist(int $streamId): bool

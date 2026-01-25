@@ -22,7 +22,7 @@ use Hyperf\Database\Migrations\Migrator;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\Support\Filesystem\Filesystem;
-use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
+use HyperfTest\Database\PgSQL\Stubs\SwooleExtContainerStub;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
@@ -41,7 +41,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function setUp(): void
     {
-        $resolver = ContainerStub::getContainer()->get(ConnectionResolverInterface::class);
+        $resolver = SwooleExtContainerStub::getContainer()->get(ConnectionResolverInterface::class);
 
         $this->migrator = new Migrator(
             $repository = new DatabaseMigrationRepository($resolver, 'migrations'),
