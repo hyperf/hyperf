@@ -210,6 +210,84 @@ class DatabaseSQLiteSchemaGrammarTest extends TestCase
         $this->assertSame('create table "users" ("foo" varchar not null, "order_id" varchar not null, foreign key("order_id") references "orders"("id"), primary key ("foo"))', $statements[0]);
     }
 
+    public function testAddingForeignKeyWithCascadeOnDelete()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->create();
+        $blueprint->string('foo')->primary();
+        $blueprint->string('order_id');
+        $blueprint->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('create table "users" ("foo" varchar not null, "order_id" varchar not null, foreign key("order_id") references "orders"("id") on delete cascade, primary key ("foo"))', $statements[0]);
+    }
+
+    public function testAddingForeignKeyWithRestrictOnDelete()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->create();
+        $blueprint->string('foo')->primary();
+        $blueprint->string('order_id');
+        $blueprint->foreign('order_id')->references('id')->on('orders')->restrictOnDelete();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('create table "users" ("foo" varchar not null, "order_id" varchar not null, foreign key("order_id") references "orders"("id") on delete restrict, primary key ("foo"))', $statements[0]);
+    }
+
+    public function testAddingForeignKeyWithNoActionOnDelete()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->create();
+        $blueprint->string('foo')->primary();
+        $blueprint->string('order_id');
+        $blueprint->foreign('order_id')->references('id')->on('orders')->noActionOnDelete();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('create table "users" ("foo" varchar not null, "order_id" varchar not null, foreign key("order_id") references "orders"("id") on delete no action, primary key ("foo"))', $statements[0]);
+    }
+
+    public function testAddingForeignKeyWithRestrictOnUpdate()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->create();
+        $blueprint->string('foo')->primary();
+        $blueprint->string('order_id');
+        $blueprint->foreign('order_id')->references('id')->on('orders')->restrictOnUpdate();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('create table "users" ("foo" varchar not null, "order_id" varchar not null, foreign key("order_id") references "orders"("id") on update restrict, primary key ("foo"))', $statements[0]);
+    }
+
+    public function testAddingForeignKeyWithNullOnUpdate()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->create();
+        $blueprint->string('foo')->primary();
+        $blueprint->string('order_id');
+        $blueprint->foreign('order_id')->references('id')->on('orders')->nullOnUpdate();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('create table "users" ("foo" varchar not null, "order_id" varchar not null, foreign key("order_id") references "orders"("id") on update set null, primary key ("foo"))', $statements[0]);
+    }
+
+    public function testAddingForeignKeyWithNoActionOnUpdate()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->create();
+        $blueprint->string('foo')->primary();
+        $blueprint->string('order_id');
+        $blueprint->foreign('order_id')->references('id')->on('orders')->noActionOnUpdate();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('create table "users" ("foo" varchar not null, "order_id" varchar not null, foreign key("order_id") references "orders"("id") on update no action, primary key ("foo"))', $statements[0]);
+    }
+
     public function testAddingUniqueKey()
     {
         $blueprint = new Blueprint('users');
