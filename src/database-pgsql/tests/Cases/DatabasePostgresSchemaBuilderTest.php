@@ -26,7 +26,7 @@ use function Hyperf\Collection\collect;
  * @coversNothing
  */
 #[RequiresPhpExtension('swoole', '< 6.0')]
-class SchemaBuilderTest extends TestCase
+class DatabasePostgresSchemaBuilderTest extends TestCase
 {
     protected function setUp(): void
     {
