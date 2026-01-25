@@ -4,6 +4,9 @@
 
 - [#7668](https://github.com/hyperf/hyperf/pull/7668) Added the `$isCookiePersistent` parameter to `Hyperf\Guzzle\PoolHandler` to enable persistent cookies.
 - [#7667](https://github.com/hyperf/hyperf/pull/7667) [#7672](https://github.com/hyperf/hyperf/pull/7672) Added support for `client_count` option to create multiple gRPC clients with load balancing in `hyperf/grpc-client`.
+- [#7693](https://github.com/hyperf/hyperf/pull/7693) Added methods `cascadeOnDelete()`, `restrictOnDelete()`, `noActionOnDelete()`, `restrictOnUpdate()`, `nullOnUpdate()`, `noActionOnUpdate()` for `ForeignKeyDefinition`.
+- [#7698](https://github.com/hyperf/hyperf/pull/7698) Added `Pool::flushAll()` and `PoolFactory::flushAll()` methods to close all pool connections.
+- [#7699](https://github.com/hyperf/hyperf/pull/7699) Added methods `whereJsonContainsKey()`, `orWhereJsonContainsKey()`, `whereJsonDoesntContainKey()`, `orWhereJsonDoesntContainKey()` for Query Builder.
 
 ## Optimized
 
