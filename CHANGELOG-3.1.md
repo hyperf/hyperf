@@ -1,5 +1,9 @@
 # v3.1.67 - TBD
 
+## Optimized
+
+- [#7676](https://github.com/hyperf/hyperf/pull/7676) Optimized the client tagging for `hyperf/tracer`.
+
 ## Fixed
 
 - [#7703](https://github.com/hyperf/hyperf/pull/7703) Fixed bug that the default ttl cannot work for memory driver of `hyperf/cache`.
