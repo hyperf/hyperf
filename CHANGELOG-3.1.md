@@ -1,5 +1,9 @@
 # v3.1.67 - TBD
 
+## Fixed
+
+- [#7703](https://github.com/hyperf/hyperf/pull/7703) Fixed bug that the default ttl cannot work for memory driver of `hyperf/cache`.
+
 # v3.1.66 - 2026-01-25
 
 ## Added
