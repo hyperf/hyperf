@@ -187,7 +187,7 @@ trait BuildsQueries
      */
     public function eachById(callable $callback, int $count = 1000, ?string $column = null, ?string $alias = null): bool
     {
-        return $this->chunkById($count, function (Collection $results) use ($callback) {
+        return $this->chunkById($count, function (BaseCollection $results) use ($callback) {
             foreach ($results as $value) {
                 if ($callback($value) === false) {
                     return false;

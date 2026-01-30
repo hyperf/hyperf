@@ -14,6 +14,7 @@ namespace Hyperf\Database\Schema\Grammars;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
 use Doctrine\DBAL\Schema\TableDiff;
+use Hyperf\Database\Concerns\CompilesJsonPaths;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Expression;
@@ -25,6 +26,8 @@ use function Hyperf\Tappable\tap;
 
 abstract class Grammar extends BaseGrammar
 {
+    use CompilesJsonPaths;
+
     /**
      * If this Grammar supports schema changes wrapped in a transaction.
      */
