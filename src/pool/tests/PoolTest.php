@@ -100,6 +100,35 @@ class PoolTest extends TestCase
         $this->assertSame(2, $pool->getCurrentConnections());
     }
 
+    public function testPoolFlushAll()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(true);
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn(value(function () {
+            $logger = Mockery::mock(StdoutLoggerInterface::class);
+            $logger->shouldReceive('error')->withAnyArgs()->times(5)->andReturn(true);
+            return $logger;
+        }));
+        $pool = new FooPool($container, []);
+
+        $conns = [];
+        for ($i = 0; $i < 5; ++$i) {
+            $conns[] = $pool->get();
+        }
+
+        foreach ($conns as $conn) {
+            $pool->release($conn);
+        }
+
+        $this->assertSame(5, $pool->getConnectionsInChannel());
+        $this->assertSame(5, $pool->getCurrentConnections());
+
+        $pool->flushAll();
+
+        $this->assertSame(0, $pool->getConnectionsInChannel());
+        $this->assertSame(0, $pool->getCurrentConnections());
+    }
+
     public function testFrequenctHitFailed()
     {
         $container = $this->getContainer();

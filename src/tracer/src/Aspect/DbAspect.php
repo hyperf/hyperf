@@ -20,6 +20,8 @@ use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Throwable;
 
+use const OpenTracing\Tags\SPAN_KIND_RPC_CLIENT;
+
 class DbAspect extends AbstractAspect
 {
     use SpanStarter;
@@ -42,7 +44,7 @@ class DbAspect extends AbstractAspect
         }
 
         $arguments = $proceedingJoinPoint->arguments['keys'];
-        $span = $this->startSpan('Db::' . $arguments['name']);
+        $span = $this->startSpan('Db::' . $arguments['name'], [], SPAN_KIND_RPC_CLIENT);
         $span->setTag($this->spanTagManager->get('db', 'db.query'), json_encode($arguments['arguments']));
         try {
             $result = $proceedingJoinPoint->process();

@@ -13,10 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Coordinator\Constants;
-use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
-use Hyperf\Coroutine\Coroutine;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Pool\Pool;
@@ -69,7 +66,7 @@ abstract class PoolWatcher
 
         $config = $this->container->get(ConfigInterface::class);
         $timerInterval = $config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval, function () use (
+        $this->timer->tick($timerInterval, function () use (
             $connectionsInUseGauge,
             $connectionsInWaitingGauge,
             $maxConnectionsGauge,
@@ -78,10 +75,6 @@ abstract class PoolWatcher
             $maxConnectionsGauge->set((float) $pool->getOption()->getMaxConnections());
             $connectionsInWaitingGauge->set((float) $pool->getConnectionsInChannel());
             $connectionsInUseGauge->set((float) $pool->getCurrentConnections());
-        });
-        Coroutine::create(function () use ($timerId) {
-            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            $this->timer->clear($timerId);
         });
     }
 
