@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Hyperf\Crontab\Mutex;
 
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
@@ -80,6 +79,11 @@ class RedisServerMutexByNodeName implements ServerMutex
         );
     }
 
+    public static function setNodeName(string $nodeName): void
+    {
+        self::$generatedNodeName = $nodeName;
+    }
+
     protected function getMutexName(Crontab $crontab)
     {
         return 'hyperf' . DIRECTORY_SEPARATOR . 'crontab-' . sha1($crontab->getName() . $crontab->getRule()) . '-sv';
@@ -91,10 +95,6 @@ class RedisServerMutexByNodeName implements ServerMutex
             return $node->getName();
         }
 
-        if ($name = $this->getNodeNameFromContainer()) {
-            return $name;
-        }
-
         return $this->getGeneratedNodeName();
     }
 
@@ -102,27 +102,6 @@ class RedisServerMutexByNodeName implements ServerMutex
     {
         if (ApplicationContext::hasContainer() && ApplicationContext::getContainer()->has(ServerNodeInterface::class)) {
             return ApplicationContext::getContainer()->get(ServerNodeInterface::class);
-        }
-
-        return null;
-    }
-
-    private function getNodeNameFromContainer(): ?string
-    {
-        if (! ApplicationContext::hasContainer()) {
-            return null;
-        }
-
-        $container = ApplicationContext::getContainer();
-        $key = self::class . '.server_node';
-
-        if ($container->has($key)) {
-            return (string) $container->get($key);
-        }
-
-        if ($container instanceof ContainerInterface && $name = $this->generateNodeRandomName()) {
-            $container->set($key, $name);
-            return $name;
         }
 
         return null;
