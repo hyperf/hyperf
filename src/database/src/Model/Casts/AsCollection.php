@@ -13,64 +13,51 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Casts;
 
 use Hyperf\Collection\Collection;
-use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Stringable\Str;
 use InvalidArgumentException;
 
-class AsCollection implements Castable
+class AsCollection implements CastsAttributes
 {
-    /**
-     * Get the caster class to use when casting from / to this cast target.
-     *
-     * @return CastsAttributes<Collection<array-key, mixed>, iterable>
-     */
-    public static function castUsing(array $arguments = []): CastsAttributes
+    public function __construct(protected ?string $collectionClass = null, protected ?string $parseCallback = null)
     {
-        return new class($arguments) implements CastsAttributes {
-            public function __construct(protected array $arguments)
-            {
-                $this->arguments = array_pad(array_values($this->arguments), 2, '');
-            }
+    }
 
-            public function get($model, $key, $value, $attributes)
-            {
-                if (! isset($attributes[$key])) {
-                    return;
-                }
+    public function get($model, string $key, $value, array $attributes)
+    {
+        if (! isset($attributes[$key])) {
+            return null;
+        }
 
-                $data = Json::decode($attributes[$key]);
+        $data = Json::decode($attributes[$key]);
 
-                $collectionClass = empty($this->arguments[0]) ? Collection::class : $this->arguments[0];
+        $collectionClass = empty($this->collectionClass) ? Collection::class : $this->collectionClass;
 
-                if (! is_a($collectionClass, Collection::class, true)) {
-                    throw new InvalidArgumentException('The provided class must extend [' . Collection::class . '].');
-                }
+        if (! is_a($collectionClass, Collection::class, true)) {
+            throw new InvalidArgumentException('The provided class must extend [' . Collection::class . '].');
+        }
 
-                if (! is_array($data)) {
-                    return null;
-                }
+        if (! is_array($data)) {
+            return null;
+        }
 
-                $instance = new $collectionClass($data);
+        $instance = new $collectionClass($data);
 
-                if (! isset($this->arguments[1]) || ! $this->arguments[1]) {
-                    return $instance;
-                }
+        if (empty($this->parseCallback)) {
+            return $instance;
+        }
 
-                if (is_string($this->arguments[1])) {
-                    $this->arguments[1] = Str::parseCallback($this->arguments[1]);
-                }
+        $parseCallback = Str::parseCallback($this->parseCallback);
+        if (is_callable($parseCallback)) {
+            return $instance->map($parseCallback);
+        }
 
-                return is_callable($this->arguments[1])
-                    ? $instance->map($this->arguments[1])
-                    : $instance->mapInto($this->arguments[1][0]);
-            }
+        return $instance->mapInto($parseCallback[0]);
+    }
 
-            public function set($model, $key, $value, $attributes)
-            {
-                return [$key => Json::encode($value)];
-            }
-        };
+    public function set($model, $key, $value, $attributes)
+    {
+        return [$key => Json::encode($value)];
     }
 
     /**
