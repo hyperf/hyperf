@@ -115,7 +115,7 @@ abstract class Relation
      * Run a callback with constraints disabled on the relation.
      *
      * @template TCallbackReturn
-     * @param Closure(): TCallbackReturn $callback
+     * @param Closure():TCallbackReturn $callback
      * @return TCallbackReturn
      */
     public static function noConstraints(Closure $callback)

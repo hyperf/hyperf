@@ -23,7 +23,9 @@ use Hyperf\Kafka\Event\AfterConsume;
 use Hyperf\Kafka\Event\AfterConsumerConfigCreated;
 use Hyperf\Kafka\Event\BeforeConsume;
 use Hyperf\Kafka\Event\BeforeLongLangConsumerCreated;
+use Hyperf\Kafka\Event\FailToAck;
 use Hyperf\Kafka\Event\FailToConsume;
+use Hyperf\Kafka\Event\FailToRequeue;
 use Hyperf\Kafka\Exception\InvalidConsumeResultException;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
@@ -131,11 +133,26 @@ class ConsumerManager
                                 }
 
                                 if ($result === Result::ACK) {
-                                    $message->getConsumer()->ack($message);
+                                    try {
+                                        $message->getConsumer()->ack($message);
+                                    } catch (Throwable $exception) {
+                                        $this->dispatcher?->dispatch(new FailToAck($consumer, $message, $exception));
+                                        throw $exception;
+                                    }
                                 }
 
                                 if ($result === Result::REQUEUE) {
-                                    $this->producer->send($message->getTopic(), $message->getValue(), $message->getKey(), $message->getHeaders());
+                                    try {
+                                        $this->producer->send(
+                                            $message->getTopic(),
+                                            $message->getValue(),
+                                            $message->getKey(),
+                                            $message->getHeaders()
+                                        );
+                                    } catch (Throwable $exception) {
+                                        $this->dispatcher?->dispatch(new FailToRequeue($consumer, $message, $exception));
+                                        throw $exception;
+                                    }
                                 }
                             }
 

@@ -18,6 +18,7 @@ use Hyperf\Context\Context;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\MultipleAnnotation;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Exception\ServerException;
 use Hyperf\Validation\Annotation\Scene;
@@ -129,7 +130,7 @@ class ValidationMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @see \Hyperf\HttpServer\CoreMiddleware::prepareHandler()
+     * @see CoreMiddleware::prepareHandler()
      */
     protected function prepareHandler(array|string $handler): array
     {

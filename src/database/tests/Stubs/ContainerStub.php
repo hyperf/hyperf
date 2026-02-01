@@ -19,6 +19,7 @@ use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\DbConnection\Db;
 use Hyperf\Di\Container;
 use Mockery;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -35,6 +36,7 @@ class ContainerStub
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
         $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
         $container->shouldReceive('get')->with('db.connector.mysql')->andReturn(new MySqlConnector());
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
         $connector = new ConnectionFactory($container);
 
         $dbConfig = [

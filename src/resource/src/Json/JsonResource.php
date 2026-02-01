@@ -23,10 +23,11 @@ use Hyperf\Resource\Response\Response;
 use JsonException;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
+use Stringable;
 
 use function Hyperf\Tappable\tap;
 
-class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable, ResponseInterface
+class JsonResource implements Stringable, ArrayAccess, JsonSerializable, Arrayable, Jsonable, ResponseInterface
 {
     use ConditionallyLoadsAttributes;
     use DelegatesToResource;

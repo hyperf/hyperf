@@ -37,6 +37,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SplFileInfo;
+use Stringable;
 
 /**
  * @internal
@@ -2856,16 +2857,16 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['x' => ['not a string']], ['x' => 'Email']);
         $this->assertFalse($v->passes());
 
-        $v = new Validator($trans, ['x' => new class {
-            public function __toString()
+        $v = new Validator($trans, ['x' => new class implements Stringable {
+            public function __toString(): string
             {
                 return 'aslsdlks';
             }
         }], ['x' => 'Email']);
         $this->assertFalse($v->passes());
 
-        $v = new Validator($trans, ['x' => new class {
-            public function __toString()
+        $v = new Validator($trans, ['x' => new class implements Stringable {
+            public function __toString(): string
             {
                 return 'foo@gmail.com';
             }
