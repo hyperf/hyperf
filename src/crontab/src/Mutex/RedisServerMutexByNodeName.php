@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Crontab\Mutex;
 
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
@@ -119,7 +120,7 @@ class RedisServerMutexByNodeName implements ServerMutex
             return (string) $container->get($key);
         }
 
-        if ($name = $this->generateNodeRandomName()) {
+        if ($container instanceof ContainerInterface && $name = $this->generateNodeRandomName()) {
             $container->set($key, $name);
             return $name;
         }
