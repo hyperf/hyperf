@@ -546,6 +546,66 @@ class MySqlSchemaGrammarTest extends TestCase
         $this->assertSame('alter table `users` add constraint `users_foo_id_foreign` foreign key (`foo_id`) references `orders` (`id`)', $statements[0]);
     }
 
+    public function testAddingForeignKeyWithCascadeOnDelete()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->cascadeOnDelete();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table `users` add constraint `users_foo_id_foreign` foreign key (`foo_id`) references `orders` (`id`) on delete cascade', $statements[0]);
+    }
+
+    public function testAddingForeignKeyWithRestrictOnDelete()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->restrictOnDelete();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table `users` add constraint `users_foo_id_foreign` foreign key (`foo_id`) references `orders` (`id`) on delete restrict', $statements[0]);
+    }
+
+    public function testAddingForeignKeyWithNoActionOnDelete()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->noActionOnDelete();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table `users` add constraint `users_foo_id_foreign` foreign key (`foo_id`) references `orders` (`id`) on delete no action', $statements[0]);
+    }
+
+    public function testAddingForeignKeyWithRestrictOnUpdate()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->restrictOnUpdate();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table `users` add constraint `users_foo_id_foreign` foreign key (`foo_id`) references `orders` (`id`) on update restrict', $statements[0]);
+    }
+
+    public function testAddingForeignKeyWithNullOnUpdate()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->nullOnUpdate();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table `users` add constraint `users_foo_id_foreign` foreign key (`foo_id`) references `orders` (`id`) on update set null', $statements[0]);
+    }
+
+    public function testAddingForeignKeyWithNoActionOnUpdate()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->noActionOnUpdate();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table `users` add constraint `users_foo_id_foreign` foreign key (`foo_id`) references `orders` (`id`) on update no action', $statements[0]);
+    }
+
     public function testAddingIncrementingID()
     {
         $blueprint = new Blueprint('users');

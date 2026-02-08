@@ -71,9 +71,8 @@ class Redis
                     }
                     // Should storage the connection to coroutine context, then use defer() to release the connection.
                     Context::set($this->getContextKey(), $connection);
-                    defer(function () use ($connection) {
-                        Context::set($this->getContextKey(), null);
-                        $connection->release();
+                    defer(function () {
+                        $this->releaseContextConnection();
                     });
                 } else {
                     // Release the connection after command executed.
@@ -83,6 +82,20 @@ class Redis
         }
 
         return $result;
+    }
+
+    /**
+     * Release the connection stored in coroutine context.
+     */
+    private function releaseContextConnection(): void
+    {
+        $contextKey = $this->getContextKey();
+        $connection = Context::get($contextKey);
+
+        if ($connection) {
+            Context::set($contextKey, null);
+            $connection->release();
+        }
     }
 
     /**

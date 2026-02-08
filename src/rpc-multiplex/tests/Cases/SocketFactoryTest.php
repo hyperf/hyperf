@@ -40,7 +40,7 @@ class SocketFactoryTest extends AbstractTestCase
         $factory = new SocketFactory($container, [
             'connect_timeout' => $connectTimeout = rand(5, 10),
             'settings' => [
-                'package_max_length' => $lenght = rand(1000, 9999),
+                'package_max_length' => $length = rand(1000, 9999),
             ],
             'recv_timeout' => $recvTimeout = rand(5, 10),
             'retry_count' => 2,
@@ -67,7 +67,7 @@ class SocketFactoryTest extends AbstractTestCase
         $client = $clients[0];
         $invoker = new ClassInvoker($client);
         $this->assertSame(9501, $invoker->port);
-        $this->assertSame($lenght, $invoker->config['package_max_length']);
+        $this->assertSame($length, $invoker->config['package_max_length']);
         $this->assertSame($connectTimeout, $invoker->config['connect_timeout']);
         $this->assertSame($recvTimeout, $invoker->config['recv_timeout']);
     }
@@ -165,7 +165,7 @@ class SocketFactoryTest extends AbstractTestCase
         $factory = new SocketFactory($container, [
             'connect_timeout' => $connectTimeout = rand(5, 10),
             'settings' => [
-                'package_max_length' => $lenght = rand(1000, 9999),
+                'package_max_length' => $length = rand(1000, 9999),
             ],
             'recv_timeout' => $recvTimeout = rand(5, 10),
             'retry_count' => 2,

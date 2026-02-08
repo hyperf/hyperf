@@ -52,7 +52,7 @@ class SetCookie implements Stringable, Arrayable
         }
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $str = $this->data['Name'] . '=' . $this->data['Value'] . '; ';
         foreach ($this->data as $k => $v) {

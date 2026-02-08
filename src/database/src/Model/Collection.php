@@ -18,6 +18,7 @@ use Hyperf\Collection\Enumerable;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\UnCompressInterface;
+use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Stringable\Str;
 use RuntimeException;
 
@@ -39,7 +40,7 @@ class Collection extends BaseCollection implements CompressInterface
      *
      * @param mixed $key
      * @param TFindDefault $default
-     * @return static<TKey|TModel>|TFindDefault|TModel
+     * @return ($key is array ? static : TFindDefault|TModel)
      */
     public function find($key, $default = null)
     {
@@ -67,7 +68,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Find a model in the collection by key or throw an exception.
      *
-     * @return TModel
+     * @return ($key is array ? static : TModel)
      *
      * @throws ModelNotFoundException
      */
@@ -98,7 +99,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationships onto the collection.
      *
-     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
+     * @param array<array-key, array|(callable(Relation<*, *, *>): mixed)|string>|string  $relations
      * @return $this
      */
     public function load($relations)
@@ -119,7 +120,8 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of aggregations over relationship's column onto the collection.
      *
-     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
+     * @param array<array-key, array|(callable(Relation<*, *, *>): mixed)|string>|string  $relations
+     * @return $this
      */
     public function loadAggregate(array|string $relations, string $column, ?string $function = null): static
     {
@@ -153,9 +155,10 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship's max column values onto the collection.
      *
-     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
+     * @param array<array-key, array|(callable(Relation<*, *, *>): mixed)|string>|string  $relations
+     * @return $this
      */
-    public function loadMax(array $relations, string $column): static
+    public function loadMax(array|string $relations, string $column): static
     {
         return $this->loadAggregate($relations, $column, 'max');
     }
@@ -163,9 +166,10 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship's min column values onto the collection.
      *
-     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
+     * @param array<array-key, array|(callable(Relation<*, *, *>): mixed)|string>|string  $relations
+     * @return $this
      */
-    public function loadMin(array $relations, string $column): static
+    public function loadMin(array|string $relations, string $column): static
     {
         return $this->loadAggregate($relations, $column, 'min');
     }
@@ -173,7 +177,8 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship's column summations onto the collection.
      *
-     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
+     * @param array<array-key, array|(callable(Relation<*, *, *>): mixed)|string>|string  $relations
+     * @return $this
      */
     public function loadSum(array|string $relations, string $column): static
     {
@@ -183,7 +188,8 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship's average column values onto the collection.
      *
-     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
+     * @param array<array-key, array|(callable(Relation<*, *, *>): mixed)|string>|string  $relations
+     * @return $this
      */
     public function loadAvg(array|string $relations, string $column): static
     {
@@ -193,7 +199,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship counts onto the collection.
      *
-     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
+     * @param array<array-key, array|(callable(Relation<*, *, *>): mixed)|string>|string  $relations
      * @return $this
      */
     public function loadCount($relations)
@@ -225,7 +231,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationships onto the collection if they are not already eager loaded.
      *
-     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
+     * @param array<array-key, array|(callable(Relation<*, *, *>): mixed)|string>|string  $relations
      * @return $this
      */
     public function loadMissing($relations)
@@ -261,7 +267,7 @@ class Collection extends BaseCollection implements CompressInterface
      * Load a set of relationships onto the mixed relationship collection.
      *
      * @param string $relation
-     * @param array<array-key, (callable(Builder): mixed)|string>|string $relations
+     * @param array<array-key, array|(callable(Relation<*, *, *>): mixed)|string>|string  $relations
      * @return $this
      */
     public function loadMorph($relation, $relations)
@@ -285,7 +291,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship counts onto the mixed relationship collection.
      *
-     * @param array<array-key, (callable(Builder): mixed)|string> $relations
+     * @param array<array-key, array|(callable(Relation<*, *, *>): mixed)|string>|string  $relations
      * @return $this
      */
     public function loadMorphCount(string $relation, array $relations)
@@ -338,7 +344,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Get the array of primary keys.
      *
-     * @return array<int, mixed>
+     * @return array<int, array-key>
      */
     public function modelKeys()
     {
@@ -351,7 +357,6 @@ class Collection extends BaseCollection implements CompressInterface
      * Merge the collection with the given items.
      *
      * @param iterable<array-key, TModel> $items
-     * @return static<TKey, TModel>
      */
     public function merge($items): static
     {
@@ -370,7 +375,7 @@ class Collection extends BaseCollection implements CompressInterface
      * @template TMapValue
      *
      * @param callable(TModel, TKey): TMapValue $callback
-     * @return BaseCollection<TKey, TMapValue>|static<TKey, TMapValue>
+     * @return (TMapValue is Model ? static<TKey, TMapValue> : BaseCollection<TKey, TMapValue>)
      */
     public function map(callable $callback): Enumerable
     {
@@ -385,7 +390,7 @@ class Collection extends BaseCollection implements CompressInterface
      * Reload a fresh model instance from the database for all the entities.
      *
      * @param array<array-key, string>|string $with
-     * @return static<TKey, TModel>
+     * @return static
      */
     public function fresh($with = [])
     {
@@ -411,7 +416,6 @@ class Collection extends BaseCollection implements CompressInterface
      * Diff the collection with the given items.
      *
      * @param iterable<array-key, TModel> $items
-     * @return static<TKey, TModel>
      */
     public function diff($items): static
     {
@@ -432,7 +436,6 @@ class Collection extends BaseCollection implements CompressInterface
      * Intersect the collection with the given items.
      *
      * @param iterable<array-key, TModel> $items
-     * @return static<TKey, TModel>
      */
     public function intersect(mixed $items): static
     {
@@ -452,7 +455,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Return only unique items from the collection.
      *
-     * @param null|(callable(TModel, TKey): bool)|string $key
+     * @param null|(callable(TModel, int): mixed)|string $key
      * @return static<int, TModel>
      */
     public function unique(mixed $key = null, bool $strict = false): static
@@ -485,7 +488,7 @@ class Collection extends BaseCollection implements CompressInterface
      * Returns only the columns from the collection with the specified keys.
      *
      * @param null|array|TKey $keys
-     * @return static<int, mixed>
+     * @return BaseCollection<int, mixed>
      */
     public function columns($keys)
     {
@@ -608,7 +611,7 @@ class Collection extends BaseCollection implements CompressInterface
      * Get an array with the values of a given key.
      *
      * @param array<array-key, string>|string $value
-     * @return BaseCollection<int, mixed>
+     * @return BaseCollection<array-key, mixed>
      */
     public function pluck(array|string $value, ?string $key = null): Enumerable
     {
@@ -618,7 +621,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Get the keys of the collection items.
      *
-     * @return BaseCollection<int, TKey>
+     * @return BaseCollection<int, int>
      */
     public function keys(): Enumerable
     {

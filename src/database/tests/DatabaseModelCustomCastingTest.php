@@ -13,13 +13,19 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Exception\InvalidCastException;
+use Hyperf\Database\Model\Casts\ArrayObject;
+use Hyperf\Database\Model\Casts\AsArrayObject;
+use Hyperf\Database\Model\Casts\AsCollection;
 use Hyperf\Database\Model\CastsValue;
 use Hyperf\Database\Model\Model;
 use HyperfTest\Database\Stubs\ContainerStub;
+use JsonSerializable;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -263,6 +269,150 @@ class DatabaseModelCustomCastingTest extends TestCase
         $model = new TestModelWithCustomCast();
         $model->invalid_caster = 'foo';
     }
+
+    public function testAsArrayObjectCasting()
+    {
+        $model = new TestModelWithArrayObjectCast();
+
+        // Test setting array data
+        $data = ['name' => 'Hyperf', 'version' => '3.1', 'features' => ['fast', 'modern']];
+        $model->config = $data;
+
+        $this->assertInstanceOf(ArrayObject::class, $model->config);
+        $this->assertEquals($data, $model->config->toArray());
+        $this->assertEquals(json_encode($data), $model->getAttributes()['config']);
+
+        // Test ArrayObject methods
+        $this->assertEquals('Hyperf', $model->config['name']);
+        $this->assertEquals('3.1', $model->config['version']);
+        $this->assertCount(3, $model->config);
+
+        // Test collect method
+        $collection = $model->config->collect();
+        $this->assertInstanceOf(Collection::class, $collection);
+        $this->assertEquals($data, $collection->toArray());
+
+        // Test modification
+        $model->config['type'] = 'framework';
+        $this->assertEquals('framework', $model->config['type']);
+        $this->assertCount(4, $model->config);
+
+        // Test JSON serialization
+        $this->assertEquals($model->config->toArray(), $model->config->jsonSerialize());
+
+        // Test with null value
+        $model->config = null;
+        $this->assertNull($model->config);
+
+        // Test with empty array
+        $model->config = [];
+        $this->assertInstanceOf(ArrayObject::class, $model->config);
+        $this->assertCount(0, $model->config);
+        $this->assertEquals([], $model->config->toArray());
+    }
+
+    public function testAsArrayObjectCastingFromDatabase()
+    {
+        $model = new TestModelWithArrayObjectCast();
+
+        // Simulate loading from database
+        $jsonData = json_encode(['database' => 'mysql', 'driver' => 'swoole']);
+        $model->setRawAttributes(['config' => $jsonData]);
+
+        $this->assertInstanceOf(ArrayObject::class, $model->config);
+        $this->assertEquals('mysql', $model->config['database']);
+        $this->assertEquals('swoole', $model->config['driver']);
+        $this->assertEquals(['database' => 'mysql', 'driver' => 'swoole'], $model->config->toArray());
+    }
+
+    public function testAsArrayObjectCastingInvalidJson()
+    {
+        $model = new TestModelWithArrayObjectCast();
+        $this->expectExceptionMessage('Syntax error');
+
+        // Test with invalid JSON - should return null
+        $model->setRawAttributes(['config' => 'invalid json']);
+        $this->assertNull($model->config);
+
+        // Test with non-array JSON - should return null
+        $model->setRawAttributes(['config' => json_encode('string value')]);
+        $this->assertNull($model->config);
+
+        $model->setRawAttributes(['config' => json_encode(123)]);
+        $this->assertNull($model->config);
+    }
+
+    public function testArrayObjectCollectMethod()
+    {
+        $data = ['a' => 1, 'b' => 2, 'c' => 3];
+        $arrayObject = new ArrayObject($data);
+
+        $collection = $arrayObject->collect();
+        $this->assertInstanceOf(Collection::class, $collection);
+        $this->assertEquals($data, $collection->toArray());
+
+        // Test collection methods work
+        $filtered = $arrayObject->collect()->filter(fn ($value) => $value > 1);
+        $this->assertEquals(['b' => 2, 'c' => 3], $filtered->toArray());
+    }
+
+    public function testArrayObjectInterfaces()
+    {
+        $data = ['key' => 'value', 'number' => 42];
+        $arrayObject = new ArrayObject($data);
+
+        // Test Arrayable interface
+        $this->assertInstanceOf(Arrayable::class, $arrayObject);
+        $this->assertEquals($data, $arrayObject->toArray());
+
+        // Test JsonSerializable interface
+        $this->assertInstanceOf(JsonSerializable::class, $arrayObject);
+        $this->assertEquals($data, $arrayObject->jsonSerialize());
+
+        // Test array access
+        $this->assertEquals('value', $arrayObject['key']);
+        $this->assertEquals(42, $arrayObject['number']);
+
+        // Test modification
+        $arrayObject['new_key'] = 'new_value';
+        $this->assertEquals('new_value', $arrayObject['new_key']);
+    }
+
+    public function testArrayObjectSerialization()
+    {
+        $model = new TestModelWithArrayObjectCast();
+        $data = ['serialized' => true, 'data' => [1, 2, 3]];
+        $model->config = $data;
+
+        // Test model serialization/unserialization
+        $serialized = serialize($model);
+        $unserialized = unserialize($serialized);
+
+        $this->assertInstanceOf(ArrayObject::class, $unserialized->config);
+        $this->assertEquals($data, $unserialized->config->toArray());
+        $this->assertEquals(json_encode($data), $unserialized->getAttributes()['config']);
+    }
+
+    public function testCastsAsCollection()
+    {
+        $m = new TestModelWithCustomCast();
+        $m->fill([
+            'as_collection' => [['id' => 1, 'name' => 'hyperf'], ['id' => 2, 'name' => 'swoole']],
+            'as_collection2' => [['id' => 3, 'name' => 'hyperf'], ['id' => 4, 'name' => 'swoole']],
+        ]);
+
+        /** @var Collection $collection */
+        $collection = $m->as_collection;
+
+        $this->assertSame(1, $collection->first()['id']);
+        $this->assertSame(2, $collection->last()['id']);
+
+        /** @var Collection $collection */
+        $collection = $m->as_collection2;
+
+        $this->assertSame(3, $collection->first()->id);
+        $this->assertSame(4, $collection->last()->id);
+    }
 }
 
 class TestModelWithCustomCast extends Model
@@ -287,6 +437,44 @@ class TestModelWithCustomCast extends Model
         'value_object_caster_with_caster_instance' => ValueObjectWithCasterInstance::class,
         'cast_using' => CastUsing::class,
         'invalid_caster' => InvalidCaster::class,
+        'as_collection' => AsCollection::class,
+        'as_collection2' => AsCollection::class,
+    ];
+
+    public function getCasts(): array
+    {
+        $casts = parent::getCasts();
+        $casts['as_collection2'] = AsCollection::using(Collection::class, [TestModelValue::class, 'from']);
+        return $casts;
+    }
+}
+
+class TestModelValue
+{
+    public function __construct(public int $id, public string $name)
+    {
+    }
+
+    public static function from(array $item)
+    {
+        return new TestModelValue($item['id'], $item['name']);
+    }
+}
+
+class TestModelWithArrayObjectCast extends Model
+{
+    /**
+     * The attributes that aren't mass assignable.
+     */
+    protected array $guarded = [];
+
+    /**
+     * The attributes that should be cast to native types.
+     */
+    protected array $casts = [
+        'config' => AsArrayObject::class,
+        'settings' => AsArrayObject::class,
+        'metadata' => AsArrayObject::class,
     ];
 }
 

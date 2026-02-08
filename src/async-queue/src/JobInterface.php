@@ -20,6 +20,7 @@ interface JobInterface
 
     /**
      * Handle the job.
+     * @return mixed|never|Result
      */
     public function handle();
 

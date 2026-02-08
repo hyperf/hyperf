@@ -26,6 +26,9 @@ class Console
      */
     protected static $commands = [];
 
+    /**
+     * @param-closure-this \Hyperf\Command\ClosureCommand $command
+     */
     public static function command(string $signature, Closure $command): ClosureCommand
     {
         return tap(make(ClosureCommand::class, [

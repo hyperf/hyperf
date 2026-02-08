@@ -79,6 +79,20 @@ class DatabasePostgresSchemaGrammarTest extends TestCase
         $this->assertSame('comment on column "users"."email" is \'my first comment\'', $statements[1]);
     }
 
+    public function testCreateTableWithTableComment()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->create();
+        $blueprint->comment('This is a user table');
+        $blueprint->increments('id');
+        $blueprint->string('email');
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(2, $statements);
+        $this->assertSame('create table "users" ("id" serial primary key not null, "email" varchar(255) not null)', $statements[0]);
+        $this->assertSame('comment on table "users" is \'This is a user table\'', $statements[1]);
+    }
+
     public function testCreateTemporaryTable()
     {
         $blueprint = new Blueprint('users');
@@ -888,6 +902,66 @@ class DatabasePostgresSchemaGrammarTest extends TestCase
 
         $this->assertCount(1, $statements);
         $this->assertSame('alter table "users" add constraint "users_parent_id_foreign" foreign key ("parent_id") references "parents" ("id") on delete cascade deferrable not valid', $statements[0]);
+    }
+
+    public function testCompileForeignWithCascadeOnDelete()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->cascadeOnDelete();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table "users" add constraint "users_foo_id_foreign" foreign key ("foo_id") references "orders" ("id") on delete cascade', $statements[0]);
+    }
+
+    public function testCompileForeignWithRestrictOnDelete()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->restrictOnDelete();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table "users" add constraint "users_foo_id_foreign" foreign key ("foo_id") references "orders" ("id") on delete restrict', $statements[0]);
+    }
+
+    public function testCompileForeignWithNoActionOnDelete()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->noActionOnDelete();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table "users" add constraint "users_foo_id_foreign" foreign key ("foo_id") references "orders" ("id") on delete no action', $statements[0]);
+    }
+
+    public function testCompileForeignWithRestrictOnUpdate()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->restrictOnUpdate();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table "users" add constraint "users_foo_id_foreign" foreign key ("foo_id") references "orders" ("id") on update restrict', $statements[0]);
+    }
+
+    public function testCompileForeignWithNullOnUpdate()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->nullOnUpdate();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table "users" add constraint "users_foo_id_foreign" foreign key ("foo_id") references "orders" ("id") on update set null', $statements[0]);
+    }
+
+    public function testCompileForeignWithNoActionOnUpdate()
+    {
+        $blueprint = new Blueprint('users');
+        $blueprint->foreign('foo_id')->references('id')->on('orders')->noActionOnUpdate();
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertSame('alter table "users" add constraint "users_foo_id_foreign" foreign key ("foo_id") references "orders" ("id") on update no action', $statements[0]);
     }
 
     public function testAddingGeometry()

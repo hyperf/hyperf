@@ -74,7 +74,7 @@ class RouteCollector
      * Adds a GET route to the collection.
      *
      * This is simply an alias of $this->addRoute('GET', $route, $handler)
-     * @param array|string $handler
+     * @param null|array|callable|string $handler
      */
     public function get(string $route, mixed $handler, array $options = []): void
     {
@@ -85,7 +85,7 @@ class RouteCollector
      * Adds a POST route to the collection.
      *
      * This is simply an alias of $this->addRoute('POST', $route, $handler)
-     * @param array|string $handler
+     * @param null|array|callable|string $handler
      */
     public function post(string $route, mixed $handler, array $options = []): void
     {
@@ -96,7 +96,7 @@ class RouteCollector
      * Adds a PUT route to the collection.
      *
      * This is simply an alias of $this->addRoute('PUT', $route, $handler)
-     * @param array|string $handler
+     * @param null|array|callable|string $handler
      */
     public function put(string $route, mixed $handler, array $options = []): void
     {
@@ -107,7 +107,7 @@ class RouteCollector
      * Adds a DELETE route to the collection.
      *
      * This is simply an alias of $this->addRoute('DELETE', $route, $handler)
-     * @param array|string $handler
+     * @param null|array|callable|string $handler
      */
     public function delete(string $route, mixed $handler, array $options = []): void
     {
@@ -118,7 +118,7 @@ class RouteCollector
      * Adds a PATCH route to the collection.
      *
      * This is simply an alias of $this->addRoute('PATCH', $route, $handler)
-     * @param array|string $handler
+     * @param null|array|callable|string $handler
      */
     public function patch(string $route, mixed $handler, array $options = []): void
     {
@@ -129,7 +129,7 @@ class RouteCollector
      * Adds a HEAD route to the collection.
      *
      * This is simply an alias of $this->addRoute('HEAD', $route, $handler)
-     * @param array|string $handler
+     * @param null|array|callable|string $handler
      */
     public function head(string $route, mixed $handler, array $options = []): void
     {

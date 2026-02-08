@@ -228,6 +228,14 @@ class PostgreSqlSwooleExtConnection extends Connection
         return new PostgresDriver();
     }
 
+    /**
+     * Escape a boolean value for safe SQL embedding.
+     */
+    protected function escapeBool(bool $value): string
+    {
+        return $value ? 'true' : 'false';
+    }
+
     protected function prepare(string $query, bool $useReadPdo = true): PostgreSQLStatement
     {
         $num = 1;

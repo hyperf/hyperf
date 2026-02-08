@@ -12,6 +12,13 @@ declare(strict_types=1);
 
 namespace Hyperf\AsyncQueue\Event;
 
+use Hyperf\AsyncQueue\MessageInterface;
+use Hyperf\AsyncQueue\Result;
+
 class AfterHandle extends Event
 {
+    public function __construct(MessageInterface $message, public Result $result)
+    {
+        parent::__construct($message);
+    }
 }

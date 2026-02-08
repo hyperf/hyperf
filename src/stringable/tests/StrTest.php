@@ -287,9 +287,15 @@ class StrTest extends TestCase
 
     public function testUuid()
     {
+        // test uuidv4
         $this->assertInstanceOf(UuidInterface::class, $uuid = Str::uuid());
         $this->assertTrue(Str::isUuid((string) $uuid));
 
+        // test uuidv7
+        $this->assertInstanceOf(UuidInterface::class, $uuid = Str::uuidv7());
+        $this->assertTrue(Str::isUuid((string) $uuid));
+
+        // test orderedUuid
         $this->assertInstanceOf(UuidInterface::class, $uuid = Str::orderedUuid());
         $this->assertTrue(Str::isUuid((string) $uuid));
     }
@@ -429,12 +435,6 @@ class StrTest extends TestCase
     public function testValidUrls($url)
     {
         $this->assertTrue(Str::isUrl($url));
-    }
-
-    #[DataProvider('invalidUrls')]
-    public function testInvalidUrls($url)
-    {
-        $this->assertFalse(Str::isUrl($url));
     }
 
     public static function validUrls()
@@ -677,6 +677,12 @@ class StrTest extends TestCase
             ['https://hyperf.wiki#fragment'],
             ['https://hyperf.wiki/#fragment'],
         ];
+    }
+
+    #[DataProvider('invalidUrls')]
+    public function testInvalidUrls($url)
+    {
+        $this->assertFalse(Str::isUrl($url));
     }
 
     public static function invalidUrls()

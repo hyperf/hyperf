@@ -94,7 +94,7 @@ class Cookie implements Stringable
      *
      * @return string The cookie
      */
-    public function __toString()
+    public function __toString(): string
     {
         $str = ($this->isRaw() ? $this->getName() : urlencode($this->getName())) . '=';
 

@@ -299,7 +299,7 @@ class Builder
     /**
      * Add a subselect expression to the query.
      *
-     * @param Builder|Closure|string $query
+     * @param Builder|Closure|ModelBuilder|string $query
      * @param string $as
      * @return Builder|static
      * @throws InvalidArgumentException
@@ -331,7 +331,7 @@ class Builder
     /**
      * Makes "from" fetch from a subquery.
      *
-     * @param Builder|Closure|string $query
+     * @param Builder|Closure|ModelBuilder|string $query
      * @param string $as
      * @return Builder|static
      * @throws InvalidArgumentException
@@ -519,7 +519,7 @@ class Builder
     /**
      * Add a subquery join clause to the query.
      *
-     * @param Builder|Closure|string $query
+     * @param Builder|Closure|ModelBuilder|string $query
      * @param string $as
      * @param Closure|string $first
      * @param null|string $operator
@@ -595,7 +595,7 @@ class Builder
     /**
      * Add a subquery left join to the query.
      *
-     * @param Builder|Closure|string $query
+     * @param Builder|Closure|ModelBuilder|string $query
      * @param string $as
      * @param Closure|string $first
      * @param null|string $operator
@@ -638,7 +638,7 @@ class Builder
     /**
      * Add a subquery right join to the query.
      *
-     * @param Builder|Closure|string $query
+     * @param Builder|Closure|ModelBuilder|string $query
      * @param string $as
      * @param Closure|string $first
      * @param null|string $operator
@@ -1479,6 +1479,48 @@ class Builder
     }
 
     /**
+     * Add a where between columns statement using a value to the query.
+     * @param array{Expression|string, Expression|string} $columns
+     */
+    public function whereValueBetween(mixed $value, array $columns, string $boolean = 'and', bool $not = false): static
+    {
+        $type = 'valueBetween';
+
+        $this->wheres[] = compact('type', 'value', 'columns', 'boolean', 'not');
+
+        $this->addBinding($value, 'where');
+
+        return $this;
+    }
+
+    /**
+     * Add an or where between columns statement using a value to the query.
+     * @param array{Expression|string, Expression|string} $columns
+     */
+    public function orWhereValueBetween(mixed $value, array $columns): static
+    {
+        return $this->whereValueBetween($value, $columns, 'or');
+    }
+
+    /**
+     * Add a where not between columns statement using a value to the query.
+     * @param array{Expression|string, Expression|string} $columns
+     */
+    public function whereValueNotBetween(mixed $value, array $columns, string $boolean = 'and'): static
+    {
+        return $this->whereValueBetween($value, $columns, $boolean, true);
+    }
+
+    /**
+     * Add an or where not between columns statement using a value to the query.
+     * @param array{Expression|string, Expression|string} $columns
+     */
+    public function orWhereValueNotBetween(mixed $value, array $columns): static
+    {
+        return $this->whereValueNotBetween($value, $columns, 'or');
+    }
+
+    /**
      * Add a "where JSON overlaps" clause to the query.
      */
     public function whereJsonOverlaps(string $column, mixed $value, string $boolean = 'and', bool $not = false): static
@@ -1516,6 +1558,42 @@ class Builder
     public function orWhereJsonDoesntOverlap(string $column, mixed $value): static
     {
         return $this->whereJsonDoesntOverlap($column, $value, 'or');
+    }
+
+    /**
+     * Add a clause that determines if a JSON path exists to the query.
+     */
+    public function whereJsonContainsKey(string $column, string $boolean = 'and', bool $not = false): static
+    {
+        $type = 'JsonContainsKey';
+
+        $this->wheres[] = compact('type', 'column', 'boolean', 'not');
+
+        return $this;
+    }
+
+    /**
+     * Add an "or" clause that determines if a JSON path exists to the query.
+     */
+    public function orWhereJsonContainsKey(string $column): static
+    {
+        return $this->whereJsonContainsKey($column, 'or');
+    }
+
+    /**
+     * Add a clause that determines if a JSON path does not exist to the query.
+     */
+    public function whereJsonDoesntContainKey(string $column, string $boolean = 'and'): static
+    {
+        return $this->whereJsonContainsKey($column, $boolean, true);
+    }
+
+    /**
+     * Add an "or" clause that determines if a JSON path does not exist to the query.
+     */
+    public function orWhereJsonDoesntContainKey(string $column): static
+    {
+        return $this->whereJsonDoesntContainKey($column, 'or');
     }
 
     /**
@@ -1954,7 +2032,7 @@ class Builder
     /**
      * Add a descending "order by" clause to the query.
      *
-     * @param string $column
+     * @param Closure|Expression|ModelBuilder|static|string $column
      * @return $this
      */
     public function orderByDesc($column)
@@ -2139,7 +2217,7 @@ class Builder
     /**
      * Add a union statement to the query.
      *
-     * @param Builder|Closure $query
+     * @param Builder|Closure|ModelBuilder $query
      * @param bool $all
      * @return Builder|static
      */
@@ -2159,7 +2237,7 @@ class Builder
     /**
      * Add a union all statement to the query.
      *
-     * @param Builder|Closure $query
+     * @param Builder|Closure|ModelBuilder $query
      * @return Builder|static
      */
     public function unionAll($query)
@@ -2234,7 +2312,7 @@ class Builder
      *
      * @param mixed $id
      * @param array $columns
-     * @return mixed|static
+     * @return null|object
      */
     public function find($id, $columns = ['*'])
     {
@@ -2257,6 +2335,7 @@ class Builder
      * Execute the query as a "select" statement.
      *
      * @param array|string $columns
+     * @return Collection<int, object>
      */
     public function get($columns = ['*']): Collection
     {
@@ -2344,6 +2423,7 @@ class Builder
      * Chunk the results of a query by comparing numeric IDs.
      *
      * @param int $count
+     * @param callable(Collection<int, object>, int): mixed $callback
      * @param string $column
      * @param null|string $alias
      * @return bool
@@ -2639,7 +2719,7 @@ class Builder
     /**
      * Insert new records into the table using a subquery.
      *
-     * @param Builder|Closure|string $query
+     * @param Builder|Closure|ModelBuilder|string $query
      * @return bool
      */
     public function insertUsing(array $columns, $query)

@@ -19,7 +19,7 @@ use Psr\Container\ContainerInterface;
 
 final class ReloadDotenvListener implements ListenerInterface
 {
-    public function __construct(protected ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
     }
 

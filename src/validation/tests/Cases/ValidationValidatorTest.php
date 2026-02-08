@@ -37,6 +37,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SplFileInfo;
+use Stringable;
 
 /**
  * @internal
@@ -2856,16 +2857,16 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['x' => ['not a string']], ['x' => 'Email']);
         $this->assertFalse($v->passes());
 
-        $v = new Validator($trans, ['x' => new class {
-            public function __toString()
+        $v = new Validator($trans, ['x' => new class implements Stringable {
+            public function __toString(): string
             {
                 return 'aslsdlks';
             }
         }], ['x' => 'Email']);
         $this->assertFalse($v->passes());
 
-        $v = new Validator($trans, ['x' => new class {
-            public function __toString()
+        $v = new Validator($trans, ['x' => new class implements Stringable {
+            public function __toString(): string
             {
                 return 'foo@gmail.com';
             }
@@ -2891,17 +2892,6 @@ class ValidationValidatorTest extends TestCase
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['x' => $validUrl], ['x' => 'Url']);
         $this->assertTrue($v->passes());
-    }
-
-    /**
-     * @param mixed $invalidUrl
-     */
-    #[DataProvider('invalidUrls')]
-    public function testValidateUrlWithInvalidUrls($invalidUrl)
-    {
-        $trans = $this->getIlluminateArrayTranslator();
-        $v = new Validator($trans, ['x' => $invalidUrl], ['x' => 'Url']);
-        $this->assertFalse($v->passes());
     }
 
     public static function validUrls()
@@ -3144,6 +3134,17 @@ class ValidationValidatorTest extends TestCase
             ['https://laravel.com#fragment'],
             ['https://laravel.com/#fragment'],
         ];
+    }
+
+    /**
+     * @param mixed $invalidUrl
+     */
+    #[DataProvider('invalidUrls')]
+    public function testValidateUrlWithInvalidUrls($invalidUrl)
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['x' => $invalidUrl], ['x' => 'Url']);
+        $this->assertFalse($v->passes());
     }
 
     public static function invalidUrls()
@@ -5299,17 +5300,6 @@ class ValidationValidatorTest extends TestCase
         $this->assertTrue($v->passes());
     }
 
-    /**
-     * @param mixed $uuid
-     */
-    #[DataProvider('invalidUuidList')]
-    public function testValidateWithInvalidUuid($uuid)
-    {
-        $trans = $this->getIlluminateArrayTranslator();
-        $v = new Validator($trans, ['foo' => $uuid], ['foo' => 'uuid']);
-        $this->assertFalse($v->passes());
-    }
-
     public static function validUuidList()
     {
         return [
@@ -5324,6 +5314,17 @@ class ValidationValidatorTest extends TestCase
             ['ff6f8cb0-c57d-51e1-9b21-0800200c9a66'],
             ['FF6F8CB0-C57D-11E1-9B21-0800200C9A66'],
         ];
+    }
+
+    /**
+     * @param mixed $uuid
+     */
+    #[DataProvider('invalidUuidList')]
+    public function testValidateWithInvalidUuid($uuid)
+    {
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['foo' => $uuid], ['foo' => 'uuid']);
+        $this->assertFalse($v->passes());
     }
 
     public static function invalidUuidList()
@@ -5509,28 +5510,68 @@ class ValidationValidatorTest extends TestCase
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, [], ['name' => 'exclude|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $v = new Validator($trans, ['name' => ''], ['name' => 'exclude|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $v = new Validator($trans, ['name' => 'foo'], ['name' => 'exclude|integer']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $file = new SplFileInfo('');
         $v = new Validator($trans, ['name' => $file], ['name' => 'exclude|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $file = new SplFileInfo(__FILE__);
         $v = new Validator($trans, ['name' => $file], ['name' => 'exclude|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $file = new SplFileInfo(__FILE__);
         $file2 = new SplFileInfo(__FILE__);
         $v = new Validator($trans, ['files' => [$file, $file2]], ['files.0' => 'exclude|required', 'files.1' => 'exclude|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $v = new Validator($trans, ['files' => [$file, $file2]], ['files' => 'exclude|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
+    }
+
+    public function testExcludeBeforeADependentRule()
+    {
+        $validator = new Validator(
+            $this->getIlluminateArrayTranslator(),
+            [
+                'profile_id' => null,
+                'type' => 'denied',
+            ],
+            [
+                'type' => ['required', 'string', 'exclude'],
+                'profile_id' => ['nullable', 'required_if:type,profile', 'integer'],
+            ],
+        );
+
+        $this->assertTrue($validator->passes());
+        $this->assertSame(['profile_id' => null], $validator->validated());
+
+        $validator = new Validator(
+            $this->getIlluminateArrayTranslator(),
+            [
+                'profile_id' => null,
+                'type' => 'profile',
+            ],
+            [
+                'type' => ['required', 'string', 'exclude'],
+                'profile_id' => ['nullable', 'required_if:type,profile', 'integer'],
+            ],
+        );
+
+        $this->assertFalse($validator->passes());
+        $this->assertSame(['profile_id' => ['validation.required_if']], $validator->getMessageBag()->getMessages());
     }
 
     public function testValidateExcludeIf()
@@ -5538,26 +5579,32 @@ class ValidationValidatorTest extends TestCase
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['first' => 'taylor'], ['last' => 'exclude_if:first,biz|required']);
         $this->assertTrue($v->fails());
+        $this->assertSame(['last' => ['validation.required']], $v->messages()->toArray());
 
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['first' => 'taylor', 'last' => 'otwell'], ['last' => 'exclude_if:first,taylor|integer']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['first' => 'taylor', 'last' => 'otwell'], ['last' => 'exclude_if:first,taylor,dayle|integer']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['first' => 'dayle', 'last' => 'rees'], ['last' => 'exclude_if:first,taylor,dayle|integer']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['foo' => true], ['bar' => 'exclude_if:foo,true|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['foo' => true], ['bar' => 'exclude_if:foo,false|required']);
         $this->assertTrue($v->fails());
+        $this->assertSame(['bar' => ['validation.required']], $v->messages()->toArray());
 
         // error message when passed multiple values (exclude_if:foo,bar,baz)
         $trans = $this->getIlluminateArrayTranslator();
@@ -5572,22 +5619,27 @@ class ValidationValidatorTest extends TestCase
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['first' => 'sven'], ['last' => 'exclude_unless:first,taylor|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['first' => 'taylor'], ['last' => 'exclude_unless:first,taylor|required']);
         $this->assertTrue($v->fails());
+        $this->assertSame(['last' => ['validation.required']], $v->messages()->toArray());
 
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['first' => 'sven', 'last' => 'wittevrongel'], ['last' => 'exclude_unless:first,taylor|integer']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['first' => 'taylor'], ['last' => 'exclude_unless:first,taylor,sven|required']);
         $this->assertTrue($v->fails());
+        $this->assertSame(['last' => ['validation.required']], $v->messages()->toArray());
 
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['first' => 'sven'], ['last' => 'exclude_unless:first,taylor,sven|required']);
         $this->assertTrue($v->fails());
+        $this->assertSame(['last' => ['validation.required']], $v->messages()->toArray());
 
         // error message when passed multiple values (exclude_unless:foo,bar,baz)
         $trans = $this->getIlluminateArrayTranslator();
@@ -5602,29 +5654,36 @@ class ValidationValidatorTest extends TestCase
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, [], ['last' => 'exclude_with:first|required']);
         $this->assertFalse($v->passes());
+        $this->assertSame(['last' => ['validation.required']], $v->messages()->toArray());
 
         $v = new Validator($trans, ['last' => ''], ['last' => 'exclude_with:first|required']);
         $this->assertFalse($v->passes());
+        $this->assertSame(['last' => ['validation.required']], $v->messages()->toArray());
 
         $v = new Validator($trans, ['first' => 'biz'], ['last' => 'exclude_with:first|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $v = new Validator($trans, ['first' => 'Taylor', 'last' => 'Otwell'], ['last' => 'exclude_with:first|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $file = new SplFileInfo(__FILE__);
         $v = new Validator($trans, ['file' => $file, 'foo' => ''], ['foo' => 'exclude_with:file|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $file = new SplFileInfo(__FILE__);
         $foo = new SplFileInfo(__FILE__);
         $v = new Validator($trans, ['file' => $file, 'foo' => $foo], ['foo' => 'exclude_with:file|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $file = new SplFileInfo(__FILE__);
         $foo = new SplFileInfo('');
         $v = new Validator($trans, ['file' => $file, 'foo' => $foo], ['foo' => 'exclude_with:file|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
     }
 
     public function testValidateExcludeWithout()
@@ -5632,50 +5691,62 @@ class ValidationValidatorTest extends TestCase
         $trans = $this->getIlluminateArrayTranslator();
         $v = new Validator($trans, ['first' => ''], ['last' => 'exclude_without:first|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $v = new Validator($trans, ['first' => '', 'last' => ''], ['last' => 'exclude_without:first|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $v = new Validator($trans, ['first' => 'bar'], ['last' => 'exclude_without:first|required']);
         $this->assertFalse($v->passes());
+        $this->assertSame(['last' => ['validation.required']], $v->messages()->toArray());
 
         $v = new Validator($trans, [], ['last' => 'exclude_without:first|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $v = new Validator($trans, ['first' => 'Taylor', 'last' => 'Otwell'], ['last' => 'exclude_without:first|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame(['last' => 'Otwell'], $v->validated());
 
         $v = new Validator($trans, ['last' => 'Otwell'], ['last' => 'exclude_without:first']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $file = new SplFileInfo(__FILE__);
         $v = new Validator($trans, ['file' => $file], ['foo' => 'exclude_without:file|required']);
         $this->assertFalse($v->passes());
+        $this->assertSame([], $v->validated());
 
         $file = new SplFileInfo(__FILE__);
         $foo = new SplFileInfo('');
         $v = new Validator($trans, ['file' => $file, 'foo' => $foo], ['foo' => 'exclude_without:file|required']);
         $this->assertFalse($v->passes());
+        $this->assertSame(['foo' => ['validation.required']], $v->messages()->toArray());
 
         $file = new SplFileInfo(__FILE__);
         $foo = new SplFileInfo(__FILE__);
         $v = new Validator($trans, ['file' => $file, 'foo' => $foo], ['foo' => 'exclude_without:file|required']);
         $this->assertTrue($v->passes());
+        $this->assertArrayHasKey('foo', $v->validated());
 
         $file = new SplFileInfo('');
         $foo = new SplFileInfo(__FILE__);
         $v = new Validator($trans, ['file' => $file, 'foo' => $foo], ['foo' => 'exclude_without:file|required']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
 
         $file = new SplFileInfo(__FILE__);
         $foo = new SplFileInfo('');
         $v = new Validator($trans, ['file' => $file, 'foo' => $foo], ['foo' => 'exclude_without:file|required']);
         $this->assertTrue($v->fails());
+        $this->assertSame(['foo' => ['validation.required']], $v->messages()->toArray());
 
         $file = new SplFileInfo('');
         $foo = new SplFileInfo('');
         $v = new Validator($trans, ['file' => $file, 'foo' => $foo], ['foo' => 'exclude_without:file']);
         $this->assertTrue($v->passes());
+        $this->assertSame([], $v->validated());
     }
 
     protected function getTranslator()

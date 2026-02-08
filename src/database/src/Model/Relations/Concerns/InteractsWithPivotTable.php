@@ -79,7 +79,7 @@ trait InteractsWithPivotTable
      * Sync the intermediate tables with a list of IDs without detaching.
      *
      * @param array|BaseCollection|Model $ids
-     * @return array
+     * @return array{attached: (int|string)[], detached: (int|string)[], updated: (int|string)[]}
      */
     public function syncWithoutDetaching($ids)
     {
@@ -91,7 +91,7 @@ trait InteractsWithPivotTable
      *
      * @param array|BaseCollection|Model $ids
      * @param bool $detaching
-     * @return array
+     * @return array{attached: (int|string)[], detached: (int|string)[], updated: (int|string)[]}
      */
     public function sync($ids, $detaching = true)
     {

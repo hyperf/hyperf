@@ -267,6 +267,7 @@ class ValidationRuleParser
         }
 
         return str_getcsv($parameter, ',', '"', '');
+
     }
 
     /**

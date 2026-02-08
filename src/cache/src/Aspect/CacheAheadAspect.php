@@ -39,6 +39,9 @@ class CacheAheadAspect extends AbstractAspect
         $arguments = $proceedingJoinPoint->arguments['keys'];
         $now = time();
 
+        /**
+         * @var CacheAhead $annotation
+         */
         [$key, $ttl, $group, $annotation] = $this->annotationManager->getCacheAheadValue($className, $method, $arguments);
         $driver = $this->manager->getDriver($group);
 
@@ -78,6 +81,11 @@ class CacheAheadAspect extends AbstractAspect
         }
 
         // If the cache does not exist, execute the callback and cache the result.
+        if ($annotation->runAsync) {
+            Coroutine::create($callback);
+            return null;
+        }
+
         return $callback();
     }
 }
