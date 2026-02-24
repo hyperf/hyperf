@@ -36,7 +36,7 @@ use Psr\Http\Message\UriInterface;
 class CoroutineHandler
 {
     /**
-     * @see \GuzzleHttp\Psr7\Uri::$defaultPorts
+     * @see Uri::$defaultPorts
      */
     private static array $defaultPorts = [
         'http' => 80,

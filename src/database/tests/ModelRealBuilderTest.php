@@ -67,6 +67,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
+use stdClass;
 
 /**
  * @internal
@@ -96,6 +97,25 @@ class ModelRealBuilderTest extends TestCase
         $conn->statement('DROP TABLE IF EXISTS `users`;');
         $conn->statement('DROP TABLE IF EXISTS `posts`;');
         Mockery::close();
+    }
+
+    public function testEachById()
+    {
+        $this->getContainer();
+
+        $count = User::query()->count();
+
+        $i = 0;
+        User::query()->eachById(function (User $user) use (&$i) {
+            ++$i;
+        });
+        $this->assertSame($i, $count);
+
+        $i = 0;
+        Db::table('user')->eachById(function (stdClass $user) use (&$i) {
+            ++$i;
+        }, 100, 'id');
+        $this->assertSame($i, $count);
     }
 
     public function testPivot()

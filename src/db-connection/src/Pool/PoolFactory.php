@@ -40,4 +40,11 @@ class PoolFactory
 
         return $this->pools[$name] = $pool;
     }
+
+    public function flushAll(): void
+    {
+        foreach ($this->pools as $pool) {
+            $pool->flushAll();
+        }
+    }
 }

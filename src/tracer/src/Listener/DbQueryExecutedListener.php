@@ -20,6 +20,8 @@ use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 
+use const OpenTracing\Tags\SPAN_KIND_RPC_CLIENT;
+
 class DbQueryExecutedListener implements ListenerInterface
 {
     use SpanStarter;
@@ -53,9 +55,12 @@ class DbQueryExecutedListener implements ListenerInterface
         $endTime = microtime(true);
         $span = $this->startSpan($this->spanTagManager->get('db', 'db.query'), [
             'start_time' => (int) (($endTime - $event->time / 1000) * 1000 * 1000),
-        ]);
+        ], SPAN_KIND_RPC_CLIENT);
         $span->setTag($this->spanTagManager->get('db', 'db.statement'), $sql);
         $span->setTag($this->spanTagManager->get('db', 'db.query_time'), $event->time . ' ms');
+        $span->setTag($this->spanTagManager->get('db', 'db.engine'), $event->connection->getDriverName());
+        $span->setTag($this->spanTagManager->get('db', 'db.instance'), $event->connection->getDatabaseName());
+        $span->setTag($this->spanTagManager->get('db', 'db.user'), $event->connection->getConfig('username'));
         $span->finish((int) ($endTime * 1000 * 1000));
     }
 }
