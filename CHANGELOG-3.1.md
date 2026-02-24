@@ -1,8 +1,10 @@
-# v3.1.67 - TBD
+# v3.1.68 - TBD
+
+# v3.1.67 - 2026-02-24
 
 ## Added
 
-- [#7459](https://github.com/hyperf/hyperf/pull/7459) Support using model name like `App\\Model\\User` for validatoin rule `exists` and `unique`.
+- [#7459](https://github.com/hyperf/hyperf/pull/7459) Support using model name like `App\\Model\\User` for validation rule `exists` and `unique`.
 - [#7555](https://github.com/hyperf/hyperf/pull/7555) Added `Hyperf\Crontab\Mutex\RedisServerMutexByNodeName`.
 - [#7607](https://github.com/hyperf/hyperf/pull/7607) Added casts `AsCollection` for `hyperf/database`.
 - [#7648](https://github.com/hyperf/hyperf/pull/7648) Support aliyun mse signature for nacos.
