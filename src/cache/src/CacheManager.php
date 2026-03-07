@@ -29,10 +29,6 @@ class CacheManager
 
     public function __construct(protected ConfigInterface $config, protected StdoutLoggerInterface $logger)
     {
-    }
-
-    public function getDriver(?string $name = null): DriverInterface
-    {
         // Support the old configuration style.
         if (
             ! $this->config->has('cache.stores')
@@ -43,7 +39,10 @@ class CacheManager
                 'stores' => $this->config->get('cache', []),
             ]);
         }
+    }
 
+    public function getDriver(?string $name = null): DriverInterface
+    {
         $name ??= $this->config->get('cache.default', 'default');
 
         if (isset($this->drivers[$name]) && $this->drivers[$name] instanceof DriverInterface) {

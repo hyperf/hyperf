@@ -34,10 +34,6 @@ class LoggerFactory
 
     public function __construct(protected ContainerInterface $container, protected ConfigInterface $config)
     {
-    }
-
-    public function make(string $name = 'hyperf', ?string $channel = null): LoggerInterface
-    {
         // Support old configuration style.
         if (
             ! $this->config->has('logger.channels')
@@ -48,7 +44,10 @@ class LoggerFactory
                 'channels' => $this->config->get('logger'),
             ]);
         }
+    }
 
+    public function make(string $name = 'hyperf', ?string $channel = null): LoggerInterface
+    {
         $channel ??= $this->config->get('logger.default', 'default');
         $key = 'logger.channels.' . $channel;
 
