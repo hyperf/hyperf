@@ -1273,6 +1273,8 @@ class CollectionTest extends TestCase
         // ensure the locale set successfully.
         $this->assertTrue(in_array($locale, $localeArray));
 
+        setlocale(LC_COLLATE, 'en_US.UTF-8');
+
         $data = (new $collection(
             [
                 ['id' => 5, 'name' => 'A'],
