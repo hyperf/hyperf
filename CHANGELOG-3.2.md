@@ -104,6 +104,7 @@ return [
 - Upgrade the `nikic/php-parser` version to `5.6`
 - Upgrade the `symfony/*` components to `^6.0 || ^7.0`
 - Upgrade the `phpunit/phpunit` version to `^11.0`
+- Upgrade the version of `google/protobuf` to `^3.6.1 || ^4.2`.
 
 ## Removed
 
