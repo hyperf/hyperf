@@ -145,3 +145,7 @@ return [
 - [#7208](https://github.com/hyperf/hyperf/pull/7208) Throw exceptions when the value is smaller than zero for `Hyperf\Database\Query\Builder::limit()`.
 - [#6760](https://github.com/hyperf/hyperf/pull/6760) Changed the default type of `deleted_at` to `datetime` for `hyperf/database`.
 - [#7563](https://github.com/hyperf/hyperf/pull/7563) Changed the `logger` configuration structure.
+- [#7594](https://github.com/hyperf/hyperf/pull/7594) Changed the `cache` configuration structure.
+- [#7615](https://github.com/hyperf/hyperf/pull/7615) Renamed `$queue` property to `$pool` in `ConsumerProcess` for async-queue component.
+- [#7625](https://github.com/hyperf/hyperf/pull/7625) Renamed `getQueueName()` to `getPoolName()` in async-queue component for terminology consistency.
+- [#7714](https://github.com/hyperf/hyperf/pull/7714) Don't support Monolog 2.x, only 3.x is supported.
