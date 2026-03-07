@@ -26,7 +26,6 @@ class ConfigProvider
                 RequestInterface::class => Request::class,
                 ResponseInterface::class => Response::class,
                 ServerRequestInterface::class => Request::class,
-                // TODO: 需要同步修改 engine-swow 中的映射关系
                 ResponseEmitterInterface::class => ResponseEmitter::class,
             ],
         ];
