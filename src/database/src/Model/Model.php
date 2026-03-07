@@ -29,6 +29,7 @@ use JsonException;
 use JsonSerializable;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
+use Stringable;
 use Throwable;
 
 use function Hyperf\Collection\collect;
@@ -40,7 +41,7 @@ use function Hyperf\Tappable\tap;
 /**
  * @mixin ModelIDE
  */
-abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable, CompressInterface
+abstract class Model implements Stringable, ArrayAccess, Arrayable, Jsonable, JsonSerializable, CompressInterface
 {
     use Concerns\HasAttributes;
     use Concerns\HasEvents;
@@ -179,21 +180,18 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Handle dynamic method calls into the model.
-     *
-     * @param string $method
-     * @param array $parameters
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (in_array($method, ['increment', 'decrement'])) {
-            return $this->{$method}(...$parameters);
+        if (in_array($name, ['increment', 'decrement'])) {
+            return $this->{$name}(...$arguments);
         }
 
-        if ($resolver = $this->relationResolver(static::class, $method)) {
+        if ($resolver = $this->relationResolver(static::class, $name)) {
             return $resolver($this);
         }
 
-        return $this->newQuery()->{$method}(...$parameters);
+        return $this->newQuery()->{$name}(...$arguments);
     }
 
     /**

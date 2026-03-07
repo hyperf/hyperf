@@ -315,12 +315,31 @@ class GrpcClient
         throw new ConnectToServerFailedException('the nacos server is not ready to work in 30 seconds, connect to server failed');
     }
 
-    private function isWorkerExit(): bool
+    protected function getMetadata(RequestInterface $request): array
     {
-        return CoordinatorManager::until(Constants::WORKER_EXIT)->isClosing();
+        return match ($this->config->getCloudName()) {
+            CloudName::Aliyun => $this->getAliyunMetadata($request),
+            default => $this->getDefaultMetadata($request),
+        };
     }
 
-    private function getMetadata(RequestInterface $request): array
+    protected function getAliyunMetadata(RequestInterface $request): array
+    {
+        $accessKey = $this->config->getAccessKey();
+        $accessSecret = $this->config->getAccessSecret();
+        $signHeaders = $this->getMseSignHeaders($request, $accessSecret);
+
+        return [
+            'type' => $request->getType(),
+            'clientIp' => $this->ip(),
+            'headers' => [
+                'Spas-AccessKey' => $accessKey,
+                ...$signHeaders,
+            ],
+        ];
+    }
+
+    protected function getDefaultMetadata(RequestInterface $request): array
     {
         if ($token = $this->getAccessToken()) {
             return [
@@ -336,6 +355,11 @@ class GrpcClient
             'type' => $request->getType(),
             'clientIp' => $this->ip(),
         ];
+    }
+
+    private function isWorkerExit(): bool
+    {
+        return CoordinatorManager::until(Constants::WORKER_EXIT)->isClosing();
     }
 
     private function grpcDefaultHeaders(): array
@@ -357,5 +381,34 @@ class GrpcClient
         }
 
         return Json::decode($contents);
+    }
+
+    private function getMseSignHeaders(RequestInterface $request, string $secretKey): array
+    {
+        $data = $request->getValue();
+        $group = $data['group'] ?? '';
+        $tenant = $data['tenant'] ?? '';
+        $timeStamp = (string) round(microtime(true) * 1000);
+        $signStr = '';
+
+        if ($tenant) {
+            $signStr .= "{$tenant}+";
+        }
+
+        if ($group) {
+            $signStr .= "{$group}+";
+        }
+
+        $signStr .= "{$timeStamp}";
+
+        return [
+            'charset' => 'utf-8',
+            'exConfigInfo' => 'true',
+            'Client-RequestToken' => md5($timeStamp),
+            'Client-RequestTS' => $timeStamp,
+            'Timestamp' => $timeStamp,
+            'Spas-Signature' => base64_encode(hash_hmac('sha1', $signStr, $secretKey, true)),
+            'Client-AppName' => '',
+        ];
     }
 }

@@ -14,7 +14,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v6.1.0'
+  SW_VERSION: 'v6.1.7'
 jobs:
   crontab:
     name: Test for Crontab
@@ -277,10 +277,7 @@ jobs:
     strategy:
       matrix:
         php-version: [ '8.4', '8.3', '8.2' ]
-        log-version: [ '^1.0', '^2.0', '^3.0' ]
-        exclude:
-          - php-version: '8.2'
-            log-version: '^1.0'
+        log-version: [ '^2.0', '^3.0' ]
       max-parallel: 5
       fail-fast: false
     steps:
@@ -298,10 +295,6 @@ jobs:
         run: ./.travis/swoole.install.sh
       - name: Run Test Cases
         run: |
-          if [ ${{ matrix.log-version }} == '^1.0' ]
-          then
-            composer require "monolog/monolog:^2.0" --no-update
-          fi
           composer require "psr/log:${{ matrix.log-version }}" --no-update
           composer update -oW
           composer analyse src/framework

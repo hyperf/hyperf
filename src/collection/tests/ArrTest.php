@@ -15,6 +15,8 @@ namespace HyperfTest\Collection;
 use ArrayObject;
 use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
+use Hyperf\Collection\ItemNotFoundException;
+use Hyperf\Collection\MultipleItemsFoundException;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Resolver\ResolverDispatcher;
 use InvalidArgumentException;
@@ -22,6 +24,8 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Random\Engine\Mt19937;
+use Random\Engine\Secure;
 use stdClass;
 
 /**
@@ -226,6 +230,19 @@ class ArrTest extends TestCase
         $this->assertNotSame(
             range(0, 100, 10),
             Arr::shuffle(range(0, 100, 10), 1234)
+        );
+    }
+
+    public function testShuffleWithSeedEngine()
+    {
+        $this->assertSame(
+            Arr::shuffle(range(0, 100, 10), new Mt19937(1234)),
+            Arr::shuffle(range(0, 100, 10), new Mt19937(1234))
+        );
+
+        $this->assertNotSame(
+            Arr::shuffle(range(0, 100, 10), new Secure()),
+            Arr::shuffle(range(0, 100, 10), new Secure())
         );
     }
 
@@ -1126,5 +1143,34 @@ class ArrTest extends TestCase
         $singleElement = [42];
         $this->assertTrue(Arr::every($singleElement, fn ($value) => $value === 42));
         $this->assertFalse(Arr::every($singleElement, fn ($value) => $value !== 42));
+    }
+
+    public function testSoleReturnsFirstItemInCollectionIfOnlyOneExists()
+    {
+        $this->assertSame('foo', Arr::sole(['foo']));
+
+        $array = [
+            ['name' => 'foo'],
+            ['name' => 'bar'],
+        ];
+
+        $this->assertSame(
+            ['name' => 'foo'],
+            Arr::sole($array, fn (array $value) => $value['name'] === 'foo')
+        );
+    }
+
+    public function testSoleThrowsExceptionIfNoItemsExist()
+    {
+        $this->expectException(ItemNotFoundException::class);
+
+        Arr::sole(['foo'], fn (string $value) => $value === 'baz');
+    }
+
+    public function testSoleThrowsExceptionIfMoreThanOneItemExists()
+    {
+        $this->expectExceptionObject(new MultipleItemsFoundException(2));
+
+        Arr::sole(['baz', 'foo', 'baz'], fn (string $value) => $value === 'baz');
     }
 }

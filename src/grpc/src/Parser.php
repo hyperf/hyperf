@@ -77,6 +77,45 @@ class Parser
     }
 
     /**
+     * @param null|Http2Response $response
+     */
+    public static function parseMetadata($response): array
+    {
+        if (! $response || empty($response->headers)) {
+            return [];
+        }
+
+        $metadata = [];
+
+        foreach ($response->headers as $key => $value) {
+            $lowerKey = strtolower($key);
+            // 忽略grpc官方预留，将grpc-status-details-bin保留，可解析为Google\Rpc\Status
+            if (str_starts_with($lowerKey, 'grpc-') && $lowerKey !== 'grpc-status-details-bin') {
+                continue;
+            }
+            // 忽略http2预留伪头
+            if (str_starts_with($lowerKey, ':')) {
+                continue;
+            }
+            // 忽略 HTTP/2 传输层头部
+            if (in_array($lowerKey, ['content-type', 'content-length', 'te'])) {
+                continue;
+            }
+            // 处理-bin结尾 metadata
+            if (str_ends_with($lowerKey, '-bin')) {
+                if (($decoded = base64_decode($value, true)) !== false) {
+                    $metadata[$lowerKey][] = $decoded;
+                }
+            } else {
+                // Handle ASCII URL-encoded metadata
+                $metadata[$lowerKey][] = rawurldecode($value);
+            }
+        }
+
+        return $metadata;
+    }
+
+    /**
      * @param Response $response
      */
     public static function statusFromResponse($response): ?Status
@@ -92,6 +131,11 @@ class Parser
     public static function statusToDetailsBin(Status $status): string
     {
         return base64_encode(self::serializeUnpackedMessage($status));
+    }
+
+    public static function isInvalidStatus(int $code): bool
+    {
+        return $code !== 0 && $code !== 200 && $code !== 400;
     }
 
     private static function deserializeUnpackedMessage($deserialize, string $unpacked)
@@ -126,10 +170,5 @@ class Parser
         }
 
         return (string) $data;
-    }
-
-    private static function isInvalidStatus(int $code): bool
-    {
-        return $code !== 0 && $code !== 200 && $code !== 400;
     }
 }

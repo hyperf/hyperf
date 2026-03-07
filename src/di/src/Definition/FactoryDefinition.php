@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Hyperf\Di\Definition;
 
-class FactoryDefinition implements DefinitionInterface
+use Stringable;
+
+class FactoryDefinition implements Stringable, DefinitionInterface
 {
     private bool $needProxy = false;
 

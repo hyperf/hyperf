@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Swagger\Request;
 
 use Hyperf\Context\RequestContext;
+use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Swagger\Exception\RuntimeException;
 use Hyperf\Validation\Request\FormRequest;
@@ -61,7 +62,7 @@ class SwaggerRequest extends FormRequest
     }
 
     /**
-     * @see \Hyperf\HttpServer\CoreMiddleware::prepareHandler()
+     * @see CoreMiddleware::prepareHandler()
      */
     protected function prepareHandler(array|string $handler): array
     {

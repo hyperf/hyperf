@@ -287,9 +287,15 @@ class StrTest extends TestCase
 
     public function testUuid()
     {
+        // test uuidv4
         $this->assertInstanceOf(UuidInterface::class, $uuid = Str::uuid());
         $this->assertTrue(Str::isUuid((string) $uuid));
 
+        // test uuidv7
+        $this->assertInstanceOf(UuidInterface::class, $uuid = Str::uuidv7());
+        $this->assertTrue(Str::isUuid((string) $uuid));
+
+        // test orderedUuid
         $this->assertInstanceOf(UuidInterface::class, $uuid = Str::orderedUuid());
         $this->assertTrue(Str::isUuid((string) $uuid));
     }

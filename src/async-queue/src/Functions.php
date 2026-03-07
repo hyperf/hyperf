@@ -15,16 +15,16 @@ namespace Hyperf\AsyncQueue;
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\Context\ApplicationContext;
 
-function dispatch(JobInterface $job, ?int $delay = null, ?int $maxAttempts = null, ?string $queue = null): bool
+function dispatch(JobInterface $job, ?int $delay = null, ?int $maxAttempts = null, ?string $pool = null): bool
 {
     if (is_int($maxAttempts)) {
         $job->setMaxAttempts($maxAttempts);
     }
 
-    $queue ??= $job->getQueueName();
+    $pool ??= $job->getPoolName();
 
     return ApplicationContext::getContainer()
         ->get(DriverFactory::class)
-        ->get($queue)
+        ->get($pool)
         ->push($job, $delay ?? 0);
 }

@@ -30,7 +30,7 @@ class ArrayRule implements Stringable
         $this->keys = is_array($keys) ? $keys : func_get_args();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         if (empty($this->keys)) {
             return 'array';

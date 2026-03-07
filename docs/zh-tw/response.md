@@ -132,21 +132,36 @@ class IndexController
 namespace App\Controller;
 
 use Hyperf\HttpServer\Contract\ResponseInterface;
+use Swoole\Coroutine;
+use Hyperf\Engine\Http\EventStream;
 
 class IndexController
 {
     public function index(ResponseInterface $response)
     {
-        for ($i=0; $i<10; $i++) {
-            $response->write((string) $i);
+       $response
+            ->withStatus(200)
+            ->withHeader('X-Event-Mode', 'Enabled') // ⭐ 自定義 Header
+            ->withHeader('X-Stream-Time', '5s');
+        $streamer = new EventStream($this->response->getConnection(), $response);
+        $startTime = time();
+        $totalSteps = 5;
+        $streamer->write("data: --- 🚀 EventStream 開始 (共 {$totalSteps} 步) ---\n\n");
+        for ($i = 1; $i <= $totalSteps; ++$i) {
+            Coroutine::sleep(1);
+            $elapsed = time() - $startTime;
+            $message = "data: 【第 {$i} 秒】資料塊傳送完成。已耗時: {$elapsed} 秒\n\n";
+            $streamer->write($message);
         }
+        $streamer->write("data: --- ✅ EventStream 結束 ---\n\n");
+        $streamer->end();
 
         return 'Hello Hyperf';
     }
 }
 ```
 
-!> 注意：在呼叫 `write` 分段傳送資料後，如果再次使用 `return` 返回資料，此時的資料不會正常返回。即上文的例子中不會輸出 `Hello Hyperf`，只會輸出 `0123456789`。
+!> 注意：在呼叫 `write` 分段傳送資料後，如果再次使用 `return` 返回資料，此時的資料不會正常返回。即上文的例子中不會輸出 `Hello Hyperf`，只會輸出 `data: 【第 {$i} 秒】資料塊傳送完成。已耗時: {$elapsed} 秒\n\n`。
 
 ## 檔案下載
 

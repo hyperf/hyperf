@@ -38,7 +38,7 @@ php bin/hyperf.php gen:swagger
 
 > The SA namespaces that appear below are `use Hyperf\Swagger\Annotation as SA`
 
-The framework can start multiple servers, and the routes of each server can be distinguished based on the `SA\Hyperferver` annotation, and generate different swagger files (using that configuration as the file name).
+The framework can start multiple servers, and the routes of each server can be distinguished based on the `SA\HyperfServer` annotation, and generate different swagger files (using that configuration as the file name).
 
 It can be configured on the controller class or method:
 ```php

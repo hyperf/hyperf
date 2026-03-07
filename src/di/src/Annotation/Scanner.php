@@ -183,6 +183,9 @@ class Scanner
         $data = [];
         if ($this->filesystem->exists($path)) {
             $data = unserialize($this->filesystem->get($path));
+            if (! $data) {
+                $data = [];
+            }
         }
 
         $this->putCache($path, serialize($classes));
@@ -281,6 +284,9 @@ class Scanner
         $data = [];
         if ($this->filesystem->exists($path)) {
             $data = unserialize($this->filesystem->get($path));
+            if (! $data) {
+                $data = [];
+            }
         }
 
         $this->putCache($path, serialize($classes));

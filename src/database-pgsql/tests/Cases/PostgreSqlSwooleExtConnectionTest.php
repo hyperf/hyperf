@@ -19,14 +19,17 @@ use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Exception\QueryException;
 use Hyperf\Database\Migrations\DatabaseMigrationRepository;
 use Hyperf\Database\Migrations\Migrator;
+use Hyperf\Database\PgSQL\PostgreSqlSwooleExtConnection;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Schema\Schema;
 use Hyperf\Support\Filesystem\Filesystem;
-use HyperfTest\Database\PgSQL\Stubs\ContainerStub;
+use HyperfTest\Database\PgSQL\Stubs\SwooleExtContainerStub;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use Swoole\Coroutine\PostgreSQL;
 use Symfony\Component\Console\Style\OutputStyle;
 
 /**
@@ -41,7 +44,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function setUp(): void
     {
-        $resolver = ContainerStub::getContainer()->get(ConnectionResolverInterface::class);
+        $resolver = SwooleExtContainerStub::getContainer()->get(ConnectionResolverInterface::class);
 
         $this->migrator = new Migrator(
             $repository = new DatabaseMigrationRepository($resolver, 'migrations'),
@@ -150,5 +153,17 @@ where c.relname = 'password_resets_for_pgsql'
 
         $this->migrator->run([__DIR__ . '/../migrations/two']);
         $this->assertSame('邮箱', $schema->connection()->selectOne($queryCommentSQL)['description'] ?? '');
+    }
+
+    public function testEscapeBoolReturnsPostgresLiterals()
+    {
+        $pdo = Mockery::mock(PostgreSQL::class);
+        $connection = new PostgreSqlSwooleExtConnection($pdo, 'test_database');
+
+        $reflection = new ReflectionClass($connection);
+        $method = $reflection->getMethod('escapeBool');
+
+        $this->assertSame('true', $method->invoke($connection, true));
+        $this->assertSame('false', $method->invoke($connection, false));
     }
 }
