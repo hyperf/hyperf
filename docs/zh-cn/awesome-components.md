@@ -41,6 +41,12 @@
 - [hyperf-ext/translatable](https://github.com/hyperf-ext/translatable) 为模型提供多语言能力
 - [233cy/hyperf-tenant](https://github.com/233cy/hyperf-tenant) 为模型提供多租户字段区分
 
+## 搜索引擎
+
+- [hyperf/elasticsearch](https://github.com/hyperf/elasticsearch) Hyperf 官方提供的 Elasticsearch 协程客户端
+- [liangguifeng/hyperf-scout-meilisearch](https://github.com/liangguifeng/hyperf-scout-meilisearch) 适配 hyperf/scout 的 Meilisearch 驱动（参考 laravel/scout）。
+- [chungou/elasticsearch](https://github.com/kaychem/hyperf-elasticsearch) 一个简单的 Elasticsearch 构造器
+
 ## 依赖注入容器
 
 - [hyperf/di](https://github.com/hyperf/di) Hyperf 官方提供的支持注解及 AOP 的依赖注入容器
@@ -56,7 +62,6 @@
 ## 客户端
 
 - [hyperf/consul](https://github.com/hyperf/consul) Hyperf 官方提供的 Consul 协程客户端
-- [hyperf/elasticsearch](https://github.com/hyperf/elasticsearch) Hyperf 官方提供的 Elasticsearch 协程客户端
 - [hyperf/grpc-client](https://github.com/hyperf/grpc-client) Hyperf 官方提供的 gRPC 协程客户端
 - [hyperf/etcd](https://github.com/hyperf/etcd) Hyperf 官方提供的 ETCD 协程客户端
 - [hyperf/rpc-client](https://github.com/hyperf/rpc-client) Hyperf 官方提供的通用 RPC 抽象协程客户端
@@ -64,7 +69,6 @@
 - [hyperf/redis](https://github.com/hyperf/redis) Hyperf 官方提供的 Redis 协程客户端
 - [hyperf/websocket-client](https://github.com/hyperf/websocket-client) Hyperf 官方提供的 WebSocket 协程客户端
 - [hyperf/cache](https://github.com/hyperf/cache) Hyperf 官方提供的基于 PSR-16 的缓存协程客户端，支持注解的使用方式
-- [chungou/elasticsearch](https://github.com/kaychem/hyperf-elasticsearch) 一个简单的 Elasticsearch 构造器
 - [friendsofhyperf/http-client](https://github.com/friendsofhyperf/http-client) 基于 Hyperf 的 Guzzle HTTP 协程客户端
 - [friendsofhyperf/openai-client](https://github.com/friendsofhyperf/openai-client) 基于 Hyperf 的 OpenAI 客户端
 

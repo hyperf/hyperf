@@ -19,7 +19,6 @@ use Hyperf\Collection\Arr;
 use Hyperf\Collection\Collection;
 use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
-use JsonException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use RuntimeException;
@@ -1018,6 +1017,18 @@ class Str
     }
 
     /**
+     * Generate a UUID (version 7).
+     */
+    public static function uuidv7(): UuidInterface
+    {
+        if (! class_exists(Uuid::class)) {
+            throw new RuntimeException('The "ramsey/uuid" package is required to use the "uuidv7" method. Please run "composer require ramsey/uuid".');
+        }
+
+        return Uuid::uuid7();
+    }
+
+    /**
      * Generate a time-ordered UUID.
      */
     public static function orderedUuid(?DateTimeInterface $time = null): UuidInterface
@@ -1113,17 +1124,7 @@ class Str
             return false;
         }
 
-        if (function_exists('json_validate')) {
-            return json_validate($value, 512);
-        }
-
-        try {
-            json_decode($value, true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
-            return false;
-        }
-
-        return true;
+        return json_validate($value, 512);
     }
 
     /**

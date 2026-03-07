@@ -56,6 +56,8 @@ class ModelNotFoundException extends RuntimeException
 
     /**
      * Get the affected Model model.
+     *
+     * @return null|class-string<TModel>
      */
     public function getModel(): ?string
     {
@@ -64,6 +66,8 @@ class ModelNotFoundException extends RuntimeException
 
     /**
      * Get the affected Model model IDs.
+     *
+     * @return array<int, int|string>
      */
     public function getIds(): array
     {

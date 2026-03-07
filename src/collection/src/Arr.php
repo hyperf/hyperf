@@ -17,6 +17,9 @@ use ArrayAccess;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Stringable\Str;
 use InvalidArgumentException;
+use Random\Engine;
+use Random\Engine\Mt19937;
+use Random\Randomizer;
 
 /**
  * @template TKey of array-key
@@ -46,6 +49,22 @@ class Arr
             static::set($array, $key, $value);
         }
         return $array;
+    }
+
+    /**
+     * Get an array value from an array using "dot" notation, ensuring the result is an array.
+     */
+    public static function array(array|ArrayAccess $array, null|int|string $key, ?array $default = null): array
+    {
+        $value = Arr::get($array, $key, $default);
+
+        if (! is_array($value)) {
+            throw new InvalidArgumentException(
+                sprintf('Array value for key [%s] must be an array, %s found.', $key, gettype($value))
+            );
+        }
+
+        return $value;
     }
 
     /**
@@ -139,16 +158,13 @@ class Arr
             if (empty($array)) {
                 return value($default);
             }
-            foreach ($array as $item) {
-                return $item;
-            }
+
+            return array_first($array);
         }
-        foreach ($array as $key => $value) {
-            if (call_user_func($callback, $value, $key)) {
-                return $value;
-            }
-        }
-        return value($default);
+
+        $key = array_find_key($array, $callback);
+
+        return $key !== null ? $array[$key] : value($default);
     }
 
     /**
@@ -308,13 +324,36 @@ class Arr
     }
 
     /**
+     * Determine if all the keys exist in an array using "dot" notation.
+     */
+    public static function hasAll(array|ArrayAccess $array, null|array|int|string $keys): bool
+    {
+        return static::has($array, $keys);
+    }
+
+    /**
+     * Determine if at least one element in the array passes the given truth test.
+     */
+    public static function some(array $array, callable $callback): bool
+    {
+        return array_any($array, $callback);
+    }
+
+    /**
+     * Determine if all elements in the array pass the given truth test.
+     */
+    public static function every(array $array, callable $callback): bool
+    {
+        return array_all($array, $callback);
+    }
+
+    /**
      * Determines if an array is associative.
      * An array is "associative" if it doesn't have sequential numerical keys beginning with zero.
      */
     public static function isAssoc(array $array): bool
     {
-        $keys = array_keys($array);
-        return array_keys($keys) !== $keys;
+        return ! array_is_list($array);
     }
 
     /**
@@ -500,24 +539,35 @@ class Arr
     }
 
     /**
+     * Push an item into an array using "dot" notation.
+     */
+    public static function push(array|ArrayAccess &$array, null|int|string $key, mixed ...$values): array
+    {
+        $target = static::array($array, $key, []);
+
+        array_push($target, ...$values);
+
+        return static::set($array, $key, $target);
+    }
+
+    /**
      * Shuffle the given array and return the result.
      */
-    public static function shuffle(array $array, ?int $seed = null): array
+    public static function shuffle(array $array, null|Engine|int $seed = null): array
     {
         if (empty($array)) {
             return [];
         }
 
-        if (! is_null($seed)) {
-            mt_srand($seed);
-            shuffle($array);
-            mt_srand();
-            return $array;
-        }
+        $engine = match (true) {
+            $seed instanceof Engine => $seed,
+            is_int($seed) => new Mt19937($seed),
+            default => null,
+        };
 
-        shuffle($array);
+        $randomizer = new Randomizer($engine);
 
-        return $array;
+        return $randomizer->shuffleArray($array);
     }
 
     /**
@@ -538,6 +588,27 @@ class Arr
         }
 
         return $random;
+    }
+
+    /**
+     * Get the first item in the collection, but only if exactly one item exists. Otherwise, throw an exception.
+     *
+     * @param array $array
+     *
+     * @throws ItemNotFoundException
+     * @throws MultipleItemsFoundException
+     */
+    public static function sole($array, ?callable $callback = null)
+    {
+        if ($callback) {
+            $array = static::where($array, $callback);
+        }
+
+        return match (count($array)) {
+            0 => throw new ItemNotFoundException(),
+            1 => static::first($array),
+            default => throw new MultipleItemsFoundException(count($array)),
+        };
     }
 
     /**
@@ -729,7 +800,7 @@ class Arr
         }
 
         if (count($array) === 1) {
-            return end($array);
+            return array_last($array);
         }
 
         $finalItem = array_pop($array);

@@ -13,20 +13,13 @@ declare(strict_types=1);
 namespace Hyperf\Serializer;
 
 use ArrayObject;
-use Hyperf\Serializer\Contract\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-use function get_class;
 use function is_scalar;
 
-class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, CacheableSupportsMethodInterface
+class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    public function hasCacheableSupportsMethod(): bool
-    {
-        return get_class($this) === __CLASS__;
-    }
-
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
     {
         return match ($type) {

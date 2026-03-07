@@ -50,7 +50,7 @@ final class Memory
 
     public function has(string $key): bool
     {
-        return isset($this->keys[$key]);
+        return array_key_exists($key, $this->keys);
     }
 
     public function get(string $key, mixed $default = null): mixed

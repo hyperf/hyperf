@@ -21,8 +21,8 @@
     },
     "suggest": {
         "hyperf/di": "Required to use ExceptionNormalizer",
-        "symfony/property-access": "Required to use SymfonyNormalizer (^5.0|^6.0)",
-        "symfony/serializer": "Required to use SymfonyNormalizer (^5.0|^6.0)"
+        "symfony/property-access": "Required to use SymfonyNormalizer (^6.0 || ^7.0)",
+        "symfony/serializer": "Required to use SymfonyNormalizer (^6.0 || ^7.0)"
     },
     "autoload": {
         "psr-4": {

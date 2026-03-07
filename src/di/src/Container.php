@@ -91,7 +91,6 @@ class Container implements HyperfContainerInterface
     }
 
     /**
-     * @internal
      * @param mixed $id
      */
     public function get($id)
@@ -104,7 +103,6 @@ class Container implements HyperfContainerInterface
     }
 
     /**
-     * @internal
      * @param mixed $id
      */
     public function has($id): bool

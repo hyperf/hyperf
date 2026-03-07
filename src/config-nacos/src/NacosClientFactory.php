@@ -44,6 +44,7 @@ class NacosClientFactory
             'host' => $options['host'] ?? null,
             'port' => $options['port'] ?? null,
             'grpc' => $options['grpc'] ?? [],
+            'version' => $options['version'] ?? null,
         ]));
     }
 }

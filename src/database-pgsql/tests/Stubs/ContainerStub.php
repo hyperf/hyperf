@@ -18,8 +18,8 @@ use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
-use Hyperf\Database\PgSQL\Connectors\PostgresSqlSwooleExtConnector;
-use Hyperf\Database\PgSQL\PostgreSqlSwooleExtConnection;
+use Hyperf\Database\PgSQL\Connectors\PostgresConnector;
+use Hyperf\Database\PgSQL\PostgreSqlConnection;
 use Mockery;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -32,14 +32,14 @@ class ContainerStub
         $container->shouldReceive('has')->andReturn(true);
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
         $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
-        $container->shouldReceive('get')->with('db.connector.pgsql-swoole')->andReturn(new PostgresSqlSwooleExtConnector());
+        $container->shouldReceive('get')->with('db.connector.pgsql')->andReturn(new PostgresConnector());
         $connector = new ConnectionFactory($container);
 
-        Connection::resolverFor('pgsql-swoole', static function ($connection, $database, $prefix, $config) {
-            return new PostgreSqlSwooleExtConnection($connection, $database, $prefix, $config);
+        Connection::resolverFor('pgsql', static function ($connection, $database, $prefix, $config) {
+            return new PostgreSqlConnection($connection, $database, $prefix, $config);
         });
         $connection = $connector->make([
-            'driver' => 'pgsql-swoole',
+            'driver' => 'pgsql',
             'host' => '127.0.0.1',
             'port' => 5432,
             'database' => 'postgres',

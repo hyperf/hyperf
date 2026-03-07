@@ -13,12 +13,17 @@ declare(strict_types=1);
 namespace Hyperf\Support;
 
 use ArrayAccess;
+use ArrayIterator;
 use Closure;
 use Hyperf\Collection\Arr;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Macroable\Macroable;
+use Hyperf\Support\Traits\InteractsWithData;
+use IteratorAggregate;
 use JsonSerializable;
+use Stringable;
+use Traversable;
 
 use function Hyperf\Collection\data_get;
 use function Hyperf\Collection\data_set;
@@ -33,9 +38,9 @@ use function Hyperf\Collection\data_set;
  * @implements \Hyperf\Contract\Arrayable<TKey, TValue>
  * @implements ArrayAccess<TKey, TValue>
  */
-class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
+class Fluent implements Stringable, ArrayAccess, Arrayable, IteratorAggregate, Jsonable, JsonSerializable
 {
-    use Traits\InteractsWithData;
+    use InteractsWithData;
     use Macroable{
         __call as macroCall;
     }
@@ -59,18 +64,14 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 
     /**
      * Handle dynamic calls to the fluent instance to set attributes.
-     *
-     * @param TKey $method
-     * @param array $parameters
-     * @return $this
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
+        if (static::hasMacro($name)) {
+            return $this->macroCall($name, $arguments);
         }
 
-        $this->attributes[$method] = count($parameters) > 0 ? $parameters[0] : true;
+        $this->attributes[$name] = count($arguments) > 0 ? $arguments[0] : true;
 
         return $this;
     }
@@ -228,6 +229,26 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     }
 
     /**
+     * Determine if the fluent instance is empty.
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->attributes);
+    }
+
+    /**
+     * Determine if the fluent instance is not empty.
+     *
+     * @return bool
+     */
+    public function isNotEmpty()
+    {
+        return ! $this->isEmpty();
+    }
+
+    /**
      * Convert the fluent instance to an array.
      *
      * @return array<TKey, TValue>
@@ -295,6 +316,16 @@ class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     public function offsetUnset(mixed $offset): void
     {
         unset($this->attributes[$offset]);
+    }
+
+    /**
+     * Get an iterator for the attributes.
+     *
+     * @return ArrayIterator<TKey, TValue>
+     */
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->attributes);
     }
 
     /**

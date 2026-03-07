@@ -12,29 +12,35 @@ declare(strict_types=1);
 use Hyperf\Cache\Driver\RedisDriver;
 use Hyperf\Codec\Packer\PhpSerializerPacker;
 
+use function Hyperf\Support\env;
+
 return [
-    'default' => [
-        'driver' => RedisDriver::class,
-        'packer' => PhpSerializerPacker::class,
-        'prefix' => 'c:',
-        'skip_cache_results' => [],
-        'options' => [
-            'pool' => 'default',
+    'default' => env('CACHE_DRIVER', 'default'),
+
+    'stores' => [
+        'default' => [
+            'driver' => RedisDriver::class,
+            'packer' => PhpSerializerPacker::class,
+            'prefix' => 'c:',
+            'skip_cache_results' => [],
+            'options' => [
+                'pool' => 'default',
+            ],
         ],
+        // 'sqlite' => [
+        //     'driver' => Hyperf\Cache\Driver\SqliteDriver::class,
+        //     'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
+        //     'prefix' => 'c:',
+        //     'database' => ':memory:',
+        //     'table' => 'hyperf_cache',
+        //     'options' => [
+        //         PDO::ATTR_CASE => PDO::CASE_NATURAL,
+        //         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        //         PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
+        //         PDO::ATTR_STRINGIFY_FETCHES => false,
+        //         PDO::ATTR_EMULATE_PREPARES => false,
+        //     ],
+        //     'max_connections' => 10,
+        // ],
     ],
-    // 'sqlite' => [
-    //     'driver' => Hyperf\Cache\Driver\SqliteDriver::class,
-    //     'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
-    //     'prefix' => 'c:',
-    //     'database' => ':memory:',
-    //     'table' => 'hyperf_cache',
-    //     'options' => [
-    //         PDO::ATTR_CASE => PDO::CASE_NATURAL,
-    //         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    //         PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
-    //         PDO::ATTR_STRINGIFY_FETCHES => false,
-    //         PDO::ATTR_EMULATE_PREPARES => false,
-    //     ],
-    //     'max_connections' => 10,
-    // ],
 ];

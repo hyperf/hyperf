@@ -83,7 +83,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $this->reconnect();
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         try {
             $result = $this->connection->{$name}(...$arguments);
@@ -203,9 +203,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $parameters[] = $this->config['timeout'] ?? 0.0;
             $parameters[] = $this->config['cluster']['read_timeout'] ?? 0.0;
             $parameters[] = $this->config['cluster']['persistent'] ?? false;
-            if (isset($this->config['auth'])) {
-                $parameters[] = $this->config['auth'];
-            }
+            $parameters[] = $this->config['auth'] ?? null;
             if (! empty($this->config['cluster']['context'])) {
                 $parameters[] = $this->config['cluster']['context'];
             }

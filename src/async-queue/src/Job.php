@@ -58,7 +58,7 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
         return $this;
     }
 
-    public function getQueueName(): string
+    public function getPoolName(): string
     {
         return 'default';
     }

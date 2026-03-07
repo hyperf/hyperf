@@ -193,9 +193,7 @@ class ElasticsearchEngine extends Engine
     public function flush(Model $model): void
     {
         // @phpstan-ignore-next-line
-        $model->newQuery()
-            ->orderBy($model->getKeyName())
-            ->unsearchable();
+        $model->newQuery()->orderBy($model->getKeyName())->unsearchable();
     }
 
     /**

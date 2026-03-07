@@ -20,6 +20,7 @@ interface JobInterface
 
     /**
      * Handle the job.
+     * @return mixed|never|Result
      */
     public function handle();
 
@@ -27,5 +28,5 @@ interface JobInterface
 
     public function getMaxAttempts(): int;
 
-    public function getQueueName(): string;
+    public function getPoolName(): string;
 }

@@ -28,7 +28,7 @@ class SafeCaller
      * @template TReturn
      * @template TDefault
      *
-     * @param Closure(): TReturn $closure
+     * @param Closure():TReturn $closure
      * @param null|(Closure(): TDefault) $default
      * @return ($default is Closure? TDefault : null)|TReturn
      */

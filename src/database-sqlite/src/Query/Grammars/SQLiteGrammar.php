@@ -212,6 +212,16 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
+     * Compile a "JSON contains key" statement into SQL.
+     */
+    protected function compileJsonContainsKey(string $column): string
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        return 'json_type(' . $field . $path . ') is not null';
+    }
+
+    /**
      * Compile the columns for an update statement.
      */
     protected function compileUpdateColumns(Builder $query, array $values): string

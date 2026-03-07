@@ -89,7 +89,7 @@ composer require hyperf/grpc-server
         'port' => 9503,
         'sock_type' => SWOOLE_SOCK_TCP,
         'callbacks' => [
-            Event::ON_REQUEST => [\Hyperf\GrpcServer\Server::class，'onRequest'],
+            Event::ON_REQUEST => [\Hyperf\GrpcServer\Server::class, 'onRequest'],
         ],
     ],
 ],
@@ -100,9 +100,9 @@ composer require hyperf/grpc-server
 `routes.php` 檔案(參考 [路由](zh-tw/router.md))：
 
 ```php
-Router::addServer('grpc'，function () {
-    Router::addGroup('/grpc.hi'，function () {
-        Router::post('/sayHello'，'App\Controller\HiController@sayHello');
+Router::addServer('grpc', function () {
+    Router::addGroup('/grpc.Hi', function () {
+        Router::post('/SayHello', 'App\Controller\HiController@sayHello');
     });
 });
 ```
@@ -170,7 +170,7 @@ class HiClient extends BaseClient
     public function sayHello(HiUser $argument)
     {
         return $this->_simpleRequest(
-            '/grpc.hi/sayHello',
+            '/grpc.Hi/SayHello',
             $argument,
             [HiReply::class, 'decode']
         );

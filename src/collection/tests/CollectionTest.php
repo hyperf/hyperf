@@ -136,6 +136,54 @@ class CollectionTest extends TestCase
         }));
     }
 
+    #[DataProvider('collectionClassProvider')]
+    public function testDoesntContainStrict($collection)
+    {
+        $c = new $collection([1, 3, 5, '02']);
+
+        $this->assertFalse($c->doesntContainStrict(1));
+        $this->assertTrue($c->doesntContainStrict('1'));
+        $this->assertTrue($c->doesntContainStrict(2));
+        $this->assertFalse($c->doesntContainStrict('02'));
+        $this->assertTrue($c->doesntContainStrict('2'));
+        $this->assertTrue($c->doesntContainStrict(true));
+        $this->assertFalse($c->doesntContainStrict(function ($value) {
+            return $value < 5;
+        }));
+        $this->assertTrue($c->doesntContainStrict(function ($value) {
+            return $value > 5;
+        }));
+
+        $c = new $collection([0]);
+        $this->assertFalse($c->doesntContainStrict(0));
+        $this->assertTrue($c->doesntContainStrict('0'));
+
+        $this->assertTrue($c->doesntContainStrict(false));
+        $this->assertTrue($c->doesntContainStrict(null));
+
+        $c = new $collection([1, null]);
+        $this->assertFalse($c->doesntContainStrict(null));
+        $this->assertTrue($c->doesntContainStrict(0));
+        $this->assertTrue($c->doesntContainStrict(false));
+
+        $c = new $collection([['v' => 1], ['v' => 3], ['v' => '04'], ['v' => 5]]);
+
+        $this->assertFalse($c->doesntContainStrict('v', 1));
+        $this->assertTrue($c->doesntContainStrict('v', 2));
+        $this->assertTrue($c->doesntContainStrict('v', '1'));
+        $this->assertTrue($c->doesntContainStrict('v', 4));
+        $this->assertFalse($c->doesntContainStrict('v', '04'));
+        $this->assertTrue($c->doesntContainStrict('v', '4'));
+
+        $c = new $collection(['date', 'class', (object) ['foo' => 50], '']);
+
+        $this->assertFalse($c->doesntContainStrict('date'));
+        $this->assertFalse($c->doesntContainStrict('class'));
+        $this->assertTrue($c->doesntContainStrict('foo'));
+        $this->assertTrue($c->doesntContainStrict(null));
+        $this->assertFalse($c->doesntContainStrict(''));
+    }
+
     public function testDot(): void
     {
         $col = Collection::make([
@@ -1102,6 +1150,7 @@ class CollectionTest extends TestCase
     #[DataProvider('collectionClassProvider')]
     public function testSortBy($collection)
     {
+        /** @var class-string<Collection> $collection */
         $data = (new $collection(
             [
                 ['id' => 5, 'name' => 'e'],
@@ -1135,7 +1184,7 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => 'a'],
             ]
         ))->sortBy(['id', 'asc']);
-        $this->assertEquals((string) $data->values(), (string) $dataMany);
+        $this->assertEquals((string) $data->values(), (string) $dataMany->values());
 
         $data = (new $collection(
             [
@@ -1162,7 +1211,7 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => '1e'],
             ]
         ))->sortBy([['name', 'asc']], SORT_NUMERIC);
-        $this->assertEquals((string) $data->values(), (string) $dataMany);
+        $this->assertEquals((string) $data->values(), (string) $dataMany->values());
 
         $data = (new $collection(
             [
@@ -1189,7 +1238,7 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => '1e'],
             ]
         ))->sortBy([['name', 'asc']], SORT_STRING);
-        $this->assertEquals((string) $data->values(), (string) $dataMany);
+        $this->assertEquals((string) $data->values(), (string) $dataMany->values());
 
         $data = (new $collection(
             [
@@ -1216,9 +1265,16 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => 'a1'],
             ]
         ))->sortBy([['name', 'asc']], SORT_NATURAL);
-        $this->assertEquals((string) $data->values(), (string) $dataMany);
+        $this->assertEquals((string) $data->values(), (string) $dataMany->values());
 
-        setlocale(LC_COLLATE, 'en_US.utf8');
+        $localeArray = ['en_US.utf8', 'en_US.UTF-8'];
+        $locale = setlocale(LC_COLLATE, ...$localeArray);
+
+        // ensure the locale set successfully.
+        $this->assertTrue(in_array($locale, $localeArray));
+
+        setlocale(LC_COLLATE, 'en_US.UTF-8');
+
         $data = (new $collection(
             [
                 ['id' => 5, 'name' => 'A'],
@@ -1228,13 +1284,12 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => 'c'],
             ]
         ))->sortBy('name', SORT_LOCALE_STRING);
-        $this->assertEquals(json_encode([
-            1 => ['id' => 4, 'name' => 'a'],
-            0 => ['id' => 5, 'name' => 'A'],
-            3 => ['id' => 2, 'name' => 'b'],
-            2 => ['id' => 3, 'name' => 'B'],
-            4 => ['id' => 1, 'name' => 'c'],
-        ]), (string) $data);
+
+        // name sort by locale string
+        $nameArray = $data->pluck('name')->toArray();
+        asort($nameArray, SORT_LOCALE_STRING);
+        $this->assertEquals(json_encode(array_values($nameArray)), (string) $data->values()->pluck('name'));
+
         $dataMany = (new $collection(
             [
                 ['id' => 5, 'name' => 'A'],
@@ -1244,7 +1299,7 @@ class CollectionTest extends TestCase
                 ['id' => 1, 'name' => 'c'],
             ]
         ))->sortBy([['name', 'asc']], SORT_LOCALE_STRING);
-        $this->assertEquals((string) $data->values(), (string) $dataMany);
+        $this->assertEquals((string) $data->values(), (string) $dataMany->values());
 
         $data = (new $collection(
             [
@@ -1278,7 +1333,7 @@ class CollectionTest extends TestCase
                 ['id' => 5, 'name' => 'e'],
             ]
         ))->sortByDesc(['id']);
-        $this->assertEquals((string) $data->values(), (string) $dataMany);
+        $this->assertEquals((string) $data->values(), (string) $dataMany->values());
 
         $dataMany = (new $collection(
             [

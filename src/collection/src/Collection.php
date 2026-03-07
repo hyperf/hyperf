@@ -155,8 +155,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     {
         if (func_num_args() === 1) {
             if ($this->useAsCallable($key)) {
-                $placeholder = new stdClass();
-                return $this->first($key, $placeholder) !== $placeholder;
+                return array_any($this->items, $key);
             }
             return in_array($key, $this->items);
         }
@@ -208,6 +207,19 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     public function doesntContain($key, $operator = null, $value = null): bool
     {
         return ! $this->contains(...func_get_args());
+    }
+
+    /**
+     * Determine if an item is not contained in the enumerable, using strict comparison.
+     *
+     * @param mixed $key
+     * @param mixed $operator
+     * @param mixed $value
+     * @return bool
+     */
+    public function doesntContainStrict($key, $operator = null, $value = null)
+    {
+        return ! $this->containsStrict(...func_get_args());
     }
 
     /**
@@ -497,6 +509,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     public function has($key): bool
     {
         $keys = is_array($key) ? $key : func_get_args();
+
         foreach ($keys as $value) {
             if (! $this->offsetExists($value)) {
                 return false;
@@ -916,12 +929,8 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
         if (! $this->useAsCallable($value)) {
             return array_search($value, $this->items, $strict);
         }
-        foreach ($this->items as $key => $item) {
-            if (call_user_func($value, $item, $key)) {
-                return $key;
-            }
-        }
-        return false;
+
+        return array_find_key($this->items, $value) ?? false;
     }
 
     /**
@@ -1662,11 +1671,6 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
                 return $result;
             }
         });
-
-        // TODO: The code will be removed in v3.2
-        if (array_is_list($this->items)) {
-            $items = array_values($items);
-        }
 
         return new static($items);
     }

@@ -39,7 +39,7 @@ class DB
     {
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         $container = ApplicationContext::getContainer();
         $config = $container->get(ConfigInterface::class);

@@ -354,6 +354,20 @@ class Builder
     }
 
     /**
+     * Disable foreign key constraints during the execution of a callback.
+     */
+    public function withoutForeignKeyConstraints(Closure $callback): mixed
+    {
+        $this->disableForeignKeyConstraints();
+
+        try {
+            return $callback();
+        } finally {
+            $this->enableForeignKeyConstraints();
+        }
+    }
+
+    /**
      * Get the foreign keys for a given table.
      */
     public function getForeignKeys(string $table): array
