@@ -20,6 +20,8 @@ use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Throwable;
 
+use const OpenTracing\Tags\SPAN_KIND_RPC_CLIENT;
+
 class RedisAspect extends AbstractAspect
 {
     use SpanStarter;
@@ -42,7 +44,7 @@ class RedisAspect extends AbstractAspect
         }
 
         $arguments = $proceedingJoinPoint->arguments['keys'];
-        $span = $this->startSpan('Redis::' . $arguments['name']);
+        $span = $this->startSpan('Redis::' . $arguments['name'], [], SPAN_KIND_RPC_CLIENT);
         $span->setTag($this->spanTagManager->get('redis', 'arguments'), json_encode($arguments['arguments']));
         try {
             $result = $proceedingJoinPoint->process();

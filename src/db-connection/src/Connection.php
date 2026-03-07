@@ -44,7 +44,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
         $this->reconnect();
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         return $this->connection->{$name}(...$arguments);
     }

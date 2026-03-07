@@ -17,6 +17,9 @@ use ArrayAccess;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Stringable\Str;
 use InvalidArgumentException;
+use Random\Engine;
+use Random\Engine\Mt19937;
+use Random\Randomizer;
 
 /**
  * @template TKey of array-key
@@ -460,6 +463,36 @@ class Arr
     }
 
     /**
+     * Partition the array into two arrays using the given callback.
+     *
+     * @param iterable<TKey, TValue> $array
+     * @return array<int<0, 1>, array<TKey, TValue>>
+     */
+    public static function partition(iterable $array, callable $callback): array
+    {
+        $passed = [];
+        $failed = [];
+
+        foreach ($array as $key => $item) {
+            if ($callback($item, $key)) {
+                $passed[$key] = $item;
+            } else {
+                $failed[$key] = $item;
+            }
+        }
+
+        return [$passed, $failed];
+    }
+
+    /**
+     * Filter the array using the negation of the given callback.
+     */
+    public static function reject(array $array, callable $callback): array
+    {
+        return static::where($array, fn ($value, $key) => ! $callback($value, $key));
+    }
+
+    /**
      * Get one or a specified number of random values from an array.
      *
      * @throws InvalidArgumentException
@@ -528,22 +561,21 @@ class Arr
     /**
      * Shuffle the given array and return the result.
      */
-    public static function shuffle(array $array, ?int $seed = null): array
+    public static function shuffle(array $array, null|Engine|int $seed = null): array
     {
         if (empty($array)) {
             return [];
         }
 
-        if (! is_null($seed)) {
-            mt_srand($seed);
-            shuffle($array);
-            mt_srand();
-            return $array;
-        }
+        $engine = match (true) {
+            $seed instanceof Engine => $seed,
+            is_int($seed) => new Mt19937($seed),
+            default => null,
+        };
 
-        shuffle($array);
+        $randomizer = new Randomizer($engine);
 
-        return $array;
+        return $randomizer->shuffleArray($array);
     }
 
     /**

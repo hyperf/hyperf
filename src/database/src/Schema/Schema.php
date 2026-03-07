@@ -44,6 +44,7 @@ use Hyperf\Database\ConnectionResolverInterface;
  * @method static void rename(string $from, string $to)
  * @method static bool enableForeignKeyConstraints()
  * @method static bool disableForeignKeyConstraints()
+ * @method static mixed withoutForeignKeyConstraints(\Closure $callback)
  * @method static \Hyperf\Database\Connection getConnection()
  * @method static Builder setConnection(\Hyperf\Database\Connection $connection)
  * @method static void blueprintResolver(\Closure $resolver)
@@ -59,7 +60,7 @@ class Schema
         return $connection->getSchemaBuilder()->{$name}(...$arguments);
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         return self::__callStatic($name, $arguments);
     }

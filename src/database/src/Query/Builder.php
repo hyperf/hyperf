@@ -267,20 +267,19 @@ class Builder
     /**
      * Handle dynamic method calls into the method.
      *
-     * @param string $method
-     * @param array $parameters
      * @throws BadMethodCallException
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
+        if (static::hasMacro($name)) {
+            return $this->macroCall($name, $arguments);
         }
-        if (Str::startsWith($method, 'where')) {
-            return $this->dynamicWhere($method, $parameters);
+        if (Str::startsWith($name, 'where')) {
+            return $this->dynamicWhere($name, $arguments);
         }
 
-        static::throwBadMethodCallException($method);
+        static::throwBadMethodCallException($name);
+        return null;
     }
 
     /**
@@ -1561,6 +1560,42 @@ class Builder
     }
 
     /**
+     * Add a clause that determines if a JSON path exists to the query.
+     */
+    public function whereJsonContainsKey(string $column, string $boolean = 'and', bool $not = false): static
+    {
+        $type = 'JsonContainsKey';
+
+        $this->wheres[] = compact('type', 'column', 'boolean', 'not');
+
+        return $this;
+    }
+
+    /**
+     * Add an "or" clause that determines if a JSON path exists to the query.
+     */
+    public function orWhereJsonContainsKey(string $column): static
+    {
+        return $this->whereJsonContainsKey($column, 'or');
+    }
+
+    /**
+     * Add a clause that determines if a JSON path does not exist to the query.
+     */
+    public function whereJsonDoesntContainKey(string $column, string $boolean = 'and'): static
+    {
+        return $this->whereJsonContainsKey($column, $boolean, true);
+    }
+
+    /**
+     * Add an "or" clause that determines if a JSON path does not exist to the query.
+     */
+    public function orWhereJsonDoesntContainKey(string $column): static
+    {
+        return $this->whereJsonDoesntContainKey($column, 'or');
+    }
+
+    /**
      * Add an "where Bit Functions and Operators" clause to the query.
      */
     public function whereBit(string $key, mixed $operator = 'and', mixed $value = null, string $boolean = 'and', bool $not = false): static
@@ -2101,10 +2136,13 @@ class Builder
     public function limit($value)
     {
         $property = $this->unions ? 'unionLimit' : 'limit';
+        $value = (int) $value;
 
-        if ($value >= 0) {
-            $this->{$property} = $value;
+        if ($value < 0) {
+            throw new InvalidArgumentException('Limit cannot be negative.');
         }
+
+        $this->{$property} = $value;
 
         return $this;
     }
