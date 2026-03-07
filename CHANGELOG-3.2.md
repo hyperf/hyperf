@@ -41,7 +41,7 @@ Carbon::createFromTimestamp($t, date_default_timezone_get());
 Carbon::createFromTimestamp($t, date_default_timezone_get());
 ```
 
-2. The `logger` configuration structure has been changed. Please refer to [#7563](https://github.com/hyperf/hyperf/pull/7563).
+3. The `logger` configuration structure has been changed. Please refer to [#7563](https://github.com/hyperf/hyperf/pull/7563).
 
 ```php
 <?php
@@ -71,7 +71,7 @@ return [
 ];
 ```
 
-3. The `cache` configuration structure has been changed. Please refer to [#7594](https://github.com/hyperf/hyperf/pull/7594).
+4. The `cache` configuration structure has been changed. Please refer to [#7594](https://github.com/hyperf/hyperf/pull/7594).
 
 ```php
 <?php
@@ -94,6 +94,20 @@ return [
             'prefix' => 'c:',
         ],
     ],
+];
+```
+
+5. Added dependencies when using `swow`.
+
+`config/autoload/dependencies.php`
+
+```php
+<?php
+use Hyperf\Contract\ResponseEmitterInterface;
+use Hyperf\Engine\ResponseEmitter;
+
+return [
+    ResponseEmitterInterface::class => ResponseEmitter::class,
 ];
 ```
 
