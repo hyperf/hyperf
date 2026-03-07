@@ -75,7 +75,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
     public function beforeTraverse(array $nodes)
     {
-        $this->methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes);
+        $this->methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes, true);
         sort($this->methods);
 
         $this->initPropertiesFromMethods();
@@ -86,13 +86,13 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         switch ($node) {
-            case $node instanceof Node\Stmt\UseUse:
+            case $node instanceof Node\UseItem:
                 $parts = $node->name->getParts();
-                $class = implode('\\', $parts);
+                $class = $node->name->toString();
                 $alias = $node->alias?->name ?? array_pop($parts);
                 $this->uses[$class] = $alias;
                 return $node;
-            case $node instanceof Node\Stmt\PropertyProperty:
+            case $node instanceof Node\PropertyItem:
                 if ((string) $node->name === 'fillable' && $this->option->isRefreshFillable()) {
                     $node = $this->rewriteFillable($node);
                 } elseif ((string) $node->name === 'casts') {
@@ -107,11 +107,11 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         return null;
     }
 
-    protected function rewriteFillable(Node\Stmt\PropertyProperty $node): Node\Stmt\PropertyProperty
+    protected function rewriteFillable(Node\PropertyItem $node): Node\PropertyItem
     {
         $items = [];
         foreach ($this->columns as $column) {
-            $items[] = new Node\Expr\ArrayItem(new Node\Scalar\String_($column['column_name']));
+            $items[] = new Node\ArrayItem(new Node\Scalar\String_($column['column_name']));
         }
 
         $node->default = new Node\Expr\Array_($items, [
@@ -120,7 +120,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         return $node;
     }
 
-    protected function rewriteCasts(Node\Stmt\PropertyProperty $node): Node\Stmt\PropertyProperty
+    protected function rewriteCasts(Node\PropertyItem $node): Node\PropertyItem
     {
         $items = [];
         $keys = [];
@@ -150,7 +150,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 continue;
             }
             if ($type || $type = $this->formatDatabaseType($column['data_type'])) {
-                $items[] = new Node\Expr\ArrayItem(
+                $items[] = new Node\ArrayItem(
                     new Node\Scalar\String_($type),
                     new Node\Scalar\String_($name)
                 );
@@ -259,7 +259,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 // Magic get<name>Attribute
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
-                    $type = PhpDocReader::getInstance()->getReturnType($method, true);
+                    $type = $this->getReturnType($method, true);
                     $this->setProperty($name, $type, true, false, '', false, 1);
                 }
                 continue;
@@ -437,5 +437,10 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         /** @var Model $model */
         $model = new $className();
         return '\\' . get_class($model->newCollection());
+    }
+
+    protected function getReturnType(ReflectionMethod $method, bool $withoutNamespace = false): array
+    {
+        return PhpDocReader::getInstance()->getReturnType($method, $withoutNamespace);
     }
 }

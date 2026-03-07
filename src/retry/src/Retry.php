@@ -20,7 +20,7 @@ use function Hyperf\Support\make;
  * @method static FluentRetry with(RetryPolicyInterface ...$policies)
  * @method static FluentRetry when(callable $when)
  * @method static FluentRetry whenReturns($when)
- * @method static FluentRetry whenThrows(string $when = \Throwable::class)
+ * @method static FluentRetry whenThrows(string $when = 'Throwable')
  * @method static FluentRetry max(int $times)
  * @method static FluentRetry inSeconds(float $seconds)
  * @method static FluentRetry fallback(callable $fallback)

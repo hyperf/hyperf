@@ -61,7 +61,7 @@ class TimerTest extends TestCase
     private function mockContainer()
     {
         $container = Mockery::mock(Container::class);
-        $container->shouldReceive('make')->with(MetricFactoryInterface::class, [])->andReturn(new class() {
+        $container->shouldReceive('make')->with(MetricFactoryInterface::class, [])->andReturn(new class {
             public function makeHistogram($name, $labels)
             {
                 $histogram = Mockery::mock(HistogramInterface::class);

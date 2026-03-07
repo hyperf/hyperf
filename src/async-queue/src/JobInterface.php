@@ -20,10 +20,13 @@ interface JobInterface
 
     /**
      * Handle the job.
+     * @return mixed|never|Result
      */
     public function handle();
 
     public function setMaxAttempts(int $maxAttempts): static;
 
     public function getMaxAttempts(): int;
+
+    public function getPoolName(): string;
 }

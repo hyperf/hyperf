@@ -82,7 +82,7 @@ Set the `max_coroutine` parameter of `Swoole Server` via the `set` method to con
 
 ### Create a coroutine
 
-Use `co(callable $callable)` or `go(callable $callable)` functions or `Hyperf\Coroutine\Coroutine::create(callable $callable)` method to create a coroutine simply, coroutine related methods and clients can be used within the coroutine.
+Use `Hyperf\Coroutine\co(callable $callable)` or `Hyperf\Coroutine\go(callable $callable)` functions or `Hyperf\Coroutine\Coroutine::create(callable $callable)` method to create a coroutine simply, coroutine related methods and clients can be used within the coroutine.
 
 ### Is it running in coroutine environment ?
 

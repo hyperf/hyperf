@@ -21,6 +21,7 @@ use Hyperf\Di\LazyLoader\LazyLoader;
 use Hyperf\Di\ScanHandler\PcntlScanHandler;
 use Hyperf\Di\ScanHandler\ScanHandlerInterface;
 use Hyperf\Support\Composer;
+use Hyperf\Support\DotenvManager;
 
 class ClassLoader
 {
@@ -43,7 +44,7 @@ class ClassLoader
         $composerLoader = Composer::getLoader();
 
         if (file_exists(BASE_PATH . '/.env')) {
-            static::loadDotenv();
+            DotenvManager::load([BASE_PATH]);
         }
 
         // Scan by ScanConfig to generate the reflection class map
@@ -59,6 +60,10 @@ class ClassLoader
         LazyLoader::bootstrap($configDir);
     }
 
+    /**
+     * @see DotenvManager::load()
+     * @deprecated use DotenvManager instead
+     */
     protected static function loadDotenv(): void
     {
         $repository = RepositoryBuilder::createWithNoAdapters()

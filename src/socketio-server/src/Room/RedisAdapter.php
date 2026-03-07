@@ -345,7 +345,7 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
         });
         while (true) {
             $data = $chan->pop();
-            if (empty($data)) { // 手动close与redis异常断开都会导致返回false
+            if (empty($data)) { // Both manual closure and abnormal disconnections from Redis result in returning false.
                 if (! $sub->closed) {
                     throw new RuntimeException('Redis subscriber disconnected from Redis.');
                 }

@@ -53,18 +53,14 @@ class TestResponse implements ArrayAccess
 
     /**
      * Handle dynamic calls into macros or pass missing methods to the base response.
-     *
-     * @param string $method
-     * @param array $args
-     * @return mixed
      */
-    public function __call($method, $args)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $args);
+        if (static::hasMacro($name)) {
+            return $this->macroCall($name, $arguments);
         }
 
-        return $this->response->{$method}(...$args);
+        return $this->response->{$name}(...$arguments);
     }
 
     /**
@@ -392,8 +388,8 @@ class TestResponse implements ArrayAccess
         $jsonErrors = Arr::get($this->json(), $responseKey) ?? [];
 
         $errorMessage = $jsonErrors
-                ? 'Response has the following JSON validation errors:' .
-                        PHP_EOL . PHP_EOL . json_encode($jsonErrors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL
+                ? 'Response has the following JSON validation errors:'
+                        . PHP_EOL . PHP_EOL . json_encode($jsonErrors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL
                 : 'Response does not have JSON validation errors.';
 
         foreach ($errors as $key => $value) {
@@ -439,8 +435,8 @@ class TestResponse implements ArrayAccess
         $jsonErrors = Arr::get($this->json(), $responseKey) ?? [];
 
         $errorMessage = $jsonErrors
-            ? 'Response has the following JSON validation errors:' .
-            PHP_EOL . PHP_EOL . json_encode($jsonErrors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL
+            ? 'Response has the following JSON validation errors:'
+            . PHP_EOL . PHP_EOL . json_encode($jsonErrors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL
             : 'Response does not have JSON validation errors.';
 
         PHPUnit::assertArrayHasKey(
@@ -479,8 +475,8 @@ class TestResponse implements ArrayAccess
 
         if (is_null($keys) && count($errors) > 0) {
             PHPUnit::fail(
-                'Response has unexpected validation errors: ' . PHP_EOL . PHP_EOL .
-                json_encode($errors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+                'Response has unexpected validation errors: ' . PHP_EOL . PHP_EOL
+                . json_encode($errors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
             );
         }
 

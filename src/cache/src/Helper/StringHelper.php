@@ -43,8 +43,8 @@ class StringHelper
      */
     public static function parse(string $value): array
     {
-        preg_match_all('/\#\{[\w\.]+\}/', $value, $matches);
+        preg_match_all('/#\{[\w.]+}/', $value, $matches);
 
-        return $matches[0] ?? [];
+        return $matches[0];
     }
 }

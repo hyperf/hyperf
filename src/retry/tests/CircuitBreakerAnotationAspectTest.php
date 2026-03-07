@@ -53,7 +53,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()
@@ -84,7 +84,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()
@@ -112,7 +112,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
         $point = Mockery::mock(ProceedingJoinPoint::class);
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
+            new class extends AnnotationMetadata {
                 public array $method;
 
                 public function __construct()

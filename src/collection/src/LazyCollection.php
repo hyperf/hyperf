@@ -20,6 +20,7 @@ use Exception;
 use Generator;
 use Hyperf\Collection\Traits\EnumeratesValues;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\CanBeEscapedWhenCastToString;
 use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
 use Iterator;
@@ -29,13 +30,12 @@ use Traversable;
 
 /**
  * @template TKey of array-key
- *
  * @template TValue
  *
  * @implements Enumerable<TKey, TValue>
  * /
  */
-class LazyCollection implements Enumerable
+class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
 {
     /**
      * @use EnumeratesValues<TKey, TValue>
@@ -273,6 +273,19 @@ class LazyCollection implements Enumerable
     public function doesntContain($key, $operator = null, $value = null): bool
     {
         return ! $this->contains(...func_get_args());
+    }
+
+    /**
+     * Determine if an item is not contained in the enumerable, using strict comparison.
+     *
+     * @param mixed $key
+     * @param mixed $operator
+     * @param mixed $value
+     * @return bool
+     */
+    public function doesntContainStrict($key, $operator = null, $value = null)
+    {
+        return ! $this->containsStrict(...func_get_args());
     }
 
     /**

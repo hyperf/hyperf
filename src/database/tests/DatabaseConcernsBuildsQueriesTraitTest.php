@@ -23,7 +23,7 @@ class DatabaseConcernsBuildsQueriesTraitTest extends TestCase
 {
     public function testTapCallbackInstance(): void
     {
-        $mock = new class() {
+        $mock = new class {
             use BuildsQueries;
         };
 

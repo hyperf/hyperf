@@ -25,7 +25,11 @@ use function Hyperf\Collection\collect;
 use function Hyperf\Collection\last;
 
 /**
- * @mixin \Hyperf\Database\Model\Builder
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TParentModel of \Hyperf\Database\Model\Model
+ * @template TResult
+ *
+ * @mixin \Hyperf\Database\Model\Builder<TRelatedModel>
  */
 abstract class Relation
 {
@@ -39,6 +43,11 @@ abstract class Relation
      * @var array
      */
     public static $morphMap = [];
+
+    /**
+     * Prevents morph relationships without a morph map.
+     */
+    protected static bool $requireMorphMap = false;
 
     /**
      * The Model query builder instance.
@@ -75,17 +84,14 @@ abstract class Relation
 
     /**
      * Handle dynamic method calls to the relationship.
-     *
-     * @param string $method
-     * @param array $parameters
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
+        if (static::hasMacro($name)) {
+            return $this->macroCall($name, $arguments);
         }
 
-        $result = $this->forwardCallTo($this->query, $method, $parameters);
+        $result = $this->forwardCallTo($this->query, $name, $arguments);
 
         if ($result === $this->query) {
             return $this;
@@ -104,6 +110,10 @@ abstract class Relation
 
     /**
      * Run a callback with constraints disabled on the relation.
+     *
+     * @template TCallbackReturn
+     * @param Closure():TCallbackReturn $callback
+     * @return TCallbackReturn
      */
     public static function noConstraints(Closure $callback)
     {
@@ -149,13 +159,15 @@ abstract class Relation
 
     /**
      * Get the results of the relationship.
+     *
+     * @return TResult
      */
     abstract public function getResults();
 
     /**
      * Get the relationship for eager loading.
      *
-     * @return Collection
+     * @return Collection<int, TRelatedModel>
      */
     public function getEager()
     {
@@ -166,7 +178,7 @@ abstract class Relation
      * Execute the query as a "select" statement.
      *
      * @param array $columns
-     * @return Collection
+     * @return Collection<int, TRelatedModel>
      */
     public function get($columns = ['*'])
     {
@@ -251,7 +263,7 @@ abstract class Relation
     /**
      * Get the parent model of the relation.
      *
-     * @return Model
+     * @return TParentModel
      */
     public function getParent()
     {
@@ -271,7 +283,7 @@ abstract class Relation
     /**
      * Get the related model of the relation.
      *
-     * @return Model
+     * @return TRelatedModel
      */
     public function getRelated()
     {
@@ -347,6 +359,40 @@ abstract class Relation
     public function getRelationCountHash(bool $incrementJoinCount = true)
     {
         return 'hyperf_reserved_' . ($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
+    }
+
+    /**
+     * Get the alias associated with a custom polymorphic class.
+     */
+    public static function getMorphAlias(string $className): string
+    {
+        return array_search($className, static::$morphMap, strict: true) ?: $className;
+    }
+
+    /**
+     * Prevent polymorphic relationships from being used without model mappings.
+     */
+    public static function requireMorphMap(bool $requireMorphMap = true): void
+    {
+        static::$requireMorphMap = $requireMorphMap;
+    }
+
+    /**
+     * Determine if polymorphic relationships require explicit model mapping.
+     */
+    public static function requiresMorphMap(): bool
+    {
+        return static::$requireMorphMap;
+    }
+
+    /**
+     * Define the morph map for polymorphic relations and require all morphed models to be explicitly mapped.
+     */
+    public static function enforceMorphMap(?array $map, bool $merge = true): array
+    {
+        static::requireMorphMap();
+
+        return static::morphMap($map, $merge);
     }
 
     /**

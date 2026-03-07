@@ -122,7 +122,7 @@ class User extends Model
 
 ```
 
-> Tip: 你可以透過將模型的公有屬性 $timestamps 值設定為 false 來禁用預設的 created_at 和 updated_at 時間戳。
+> Tip: 你可以透過將模型的公有屬性 $timestamps 值設定為 false 來停用預設的 created_at 和 updated_at 時間戳。
 
 當某個欄位是日期格式時，你可以將值設定為一個 `UNIX` 時間戳，日期時間 `(Y-m-d)` 字串，或者 `DateTime` / `Carbon` 例項。日期值會被正確格式化並儲存到你的資料庫中：
 

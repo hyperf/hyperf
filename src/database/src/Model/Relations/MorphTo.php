@@ -20,6 +20,12 @@ use Hyperf\Database\Model\Model;
 use function Hyperf\Collection\collect;
 use function Hyperf\Collection\head;
 
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ *
+ * @extends BelongsTo<TRelatedModel, TDeclaringModel>
+ */
 class MorphTo extends BelongsTo
 {
     /**
@@ -74,17 +80,14 @@ class MorphTo extends BelongsTo
 
     /**
      * Handle dynamic method calls to the relationship.
-     *
-     * @param string $method
-     * @param array $parameters
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
         try {
-            $result = parent::__call($method, $parameters);
+            $result = parent::__call($name, $arguments);
 
-            if (in_array($method, ['select', 'selectRaw', 'selectSub', 'addSelect', 'withoutGlobalScopes'])) {
-                $this->macroBuffer[] = compact('method', 'parameters');
+            if (in_array($name, ['select', 'selectRaw', 'selectSub', 'addSelect', 'withoutGlobalScopes'])) {
+                $this->macroBuffer[] = compact('name', 'arguments');
             }
 
             return $result;
@@ -94,7 +97,7 @@ class MorphTo extends BelongsTo
         // we'll assume that we want to call a query macro (e.g. withTrashed) that only
         // exists on related models. We will just store the call and replay it later.
         catch (BadMethodCallException $e) {
-            $this->macroBuffer[] = compact('method', 'parameters');
+            $this->macroBuffer[] = compact('name', 'arguments');
 
             return $this;
         }
@@ -120,6 +123,8 @@ class MorphTo extends BelongsTo
      * Get the results of the relationship.
      *
      * Called via eager load method of Model query builder.
+     *
+     * @return Collection<int, TDeclaringModel>
      */
     public function getEager()
     {
@@ -134,7 +139,7 @@ class MorphTo extends BelongsTo
      * Create a new model instance by type.
      *
      * @param string $type
-     * @return Model
+     * @return TRelatedModel
      */
     public function createModelByType($type)
     {
@@ -157,8 +162,8 @@ class MorphTo extends BelongsTo
     /**
      * Associate the model instance to the given parent.
      *
-     * @param Model $model
-     * @return Model
+     * @param null|TRelatedModel $model
+     * @return TDeclaringModel
      */
     public function associate($model)
     {
@@ -178,7 +183,7 @@ class MorphTo extends BelongsTo
     /**
      * Dissociate previously associated model from the given parent.
      *
-     * @return Model
+     * @return TDeclaringModel
      */
     public function dissociate()
     {

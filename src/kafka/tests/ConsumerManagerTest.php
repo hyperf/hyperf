@@ -127,7 +127,7 @@ class ConsumerManagerTest extends TestCase
 
     public function testConsumeReturnNull()
     {
-        $class = new class() extends AbstractConsumer {
+        $class = new class extends AbstractConsumer {
             public function consume(ConsumeMessage $message)
             {
             }

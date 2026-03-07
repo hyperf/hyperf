@@ -35,10 +35,8 @@ class SQLiteGrammar extends Grammar
 
     /**
      * Compile an update statement into SQL.
-     *
-     * @param array $values
      */
-    public function compileUpdate(Builder $query, $values): string
+    public function compileUpdate(Builder $query, array $values): string
     {
         if ($query->joins || $query->limit) {
             return $this->compileUpdateWithJoinsOrLimit($query, $values);
@@ -211,6 +209,16 @@ class SQLiteGrammar extends Grammar
         [$field, $path] = $this->wrapJsonFieldAndPath($column);
 
         return 'json_array_length(' . $field . $path . ') ' . $operator . ' ' . $value;
+    }
+
+    /**
+     * Compile a "JSON contains key" statement into SQL.
+     */
+    protected function compileJsonContainsKey(string $column): string
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        return 'json_type(' . $field . $path . ') is not null';
     }
 
     /**

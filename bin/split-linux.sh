@@ -24,6 +24,9 @@ if [[ $# -eq 0 ]]; then
     REPOS=$(ls $BASEPATH)
 fi
 
+remote github git@github.com:hyperf/.github.git
+split "src/.github" "git@github.com:hyperf/.github.git"
+
 for REPO in $REPOS ; do
     remote $REPO git@github.com:hyperf/$REPO.git
 

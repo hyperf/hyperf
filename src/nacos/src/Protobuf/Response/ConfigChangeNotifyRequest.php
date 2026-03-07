@@ -14,8 +14,9 @@ namespace Hyperf\Nacos\Protobuf\Response;
 
 use Hyperf\Codec\Json;
 use JsonSerializable;
+use Stringable;
 
-class ConfigChangeNotifyRequest extends Response implements JsonSerializable
+class ConfigChangeNotifyRequest extends Response implements Stringable, JsonSerializable
 {
     public string $tenant;
 
@@ -27,10 +28,10 @@ class ConfigChangeNotifyRequest extends Response implements JsonSerializable
 
     public function __construct(array $json)
     {
-        $this->requestId = $json['requestId'];
-        $this->tenant = $json['tenant'];
-        $this->group = $json['group'];
-        $this->dataId = $json['dataId'];
+        $this->requestId = $json['requestId'] ?? '';
+        $this->tenant = $json['tenant'] ?? '';
+        $this->group = $json['group'] ?? '';
+        $this->dataId = $json['dataId'] ?? '';
         $this->json = $json;
     }
 

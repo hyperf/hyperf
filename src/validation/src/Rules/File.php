@@ -44,6 +44,13 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
     protected array $allowedMimetypes = [];
 
     /**
+     * The extensions that the given file should match.
+     *
+     * @var array
+     */
+    protected $allowedExtensions = [];
+
+    /**
      * The minimum size in kilobytes that the file can be.
      */
     protected ?int $minimumFileSize = null;
@@ -122,6 +129,19 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
     public static function types(array|string $mimetypes): static
     {
         return \Hyperf\Tappable\tap(new static(), fn ($file) => $file->allowedMimetypes = (array) $mimetypes);
+    }
+
+    /**
+     * Limit the uploaded file to the given file extensions.
+     *
+     * @param array<int, string>|string $extensions
+     * @return $this
+     */
+    public function extensions($extensions): static
+    {
+        $this->allowedExtensions = (array) $extensions;
+
+        return $this;
     }
 
     /**
@@ -275,6 +295,10 @@ class File implements Rule, DataAwareRule, ValidatorAwareRule
         $rules = ['file'];
 
         $rules = array_merge($rules, $this->buildMimetypes());
+
+        if (! empty($this->allowedExtensions)) {
+            $rules[] = 'extensions:' . implode(',', array_map('strtolower', $this->allowedExtensions));
+        }
 
         $rules[] = match (true) {
             is_null($this->minimumFileSize) && is_null($this->maximumFileSize) => null,

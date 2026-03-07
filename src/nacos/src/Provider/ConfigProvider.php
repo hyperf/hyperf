@@ -67,10 +67,10 @@ class ConfigProvider extends AbstractProvider
         ])]
         array $options = []
     ): ResponseInterface {
-        $config = ($options['dataId'] ?? null) . self::WORD_SEPARATOR .
-            ($options['group'] ?? null) . self::WORD_SEPARATOR .
-            ($options['contentMD5'] ?? null) . self::WORD_SEPARATOR .
-            ($options['tenant'] ?? null) . self::LINE_SEPARATOR;
+        $config = ($options['dataId'] ?? null) . self::WORD_SEPARATOR
+            . ($options['group'] ?? null) . self::WORD_SEPARATOR
+            . ($options['contentMD5'] ?? null) . self::WORD_SEPARATOR
+            . ($options['tenant'] ?? null) . self::LINE_SEPARATOR;
         return $this->request('POST', 'nacos/v1/cs/configs/listener', [
             RequestOptions::QUERY => [
                 'Listening-Configs' => $config,

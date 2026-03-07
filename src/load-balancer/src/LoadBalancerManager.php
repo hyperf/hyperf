@@ -18,6 +18,9 @@ use function Hyperf\Support\make;
 
 class LoadBalancerManager
 {
+    /**
+     * @var array<string, class-string<LoadBalancerInterface>>
+     */
     private array $algorithms = [
         'random' => Random::class,
         'round-robin' => RoundRobin::class,
@@ -26,12 +29,13 @@ class LoadBalancerManager
     ];
 
     /**
-     * @var LoadBalancerInterface[]
+     * @var array<string, LoadBalancerInterface>
      */
     private array $instances = [];
 
     /**
      * Retrieve a class name of load balancer.
+     * @return class-string<LoadBalancerInterface>
      */
     public function get(string $name): string
     {
@@ -73,6 +77,7 @@ class LoadBalancerManager
 
     /**
      * Override the algorithms.
+     * @param array<string, class-string<LoadBalancerInterface>> $algorithms
      */
     public function set(array $algorithms): static
     {
@@ -87,6 +92,7 @@ class LoadBalancerManager
 
     /**
      * Register an algorithm to the manager.
+     * @param class-string<LoadBalancerInterface> $algorithm
      */
     public function register(string $key, string $algorithm): self
     {

@@ -85,7 +85,7 @@ $db->connect($config, function ($db, $r) {
 
 ### 建立一個協程
 
-只需透過 `co(callable $callable)` 或 `go(callable $callable)` 函式或 `Hyperf\Coroutine\Coroutine::create(callable $callable)` 即可建立一個協程，協程內可以使用協程相關的方法和客戶端。
+只需透過 `Hyperf\Coroutine\co(callable $callable)` 或 `Hyperf\Coroutine\go(callable $callable)` 函式或 `Hyperf\Coroutine\Coroutine::create(callable $callable)` 即可建立一個協程，協程內可以使用協程相關的方法和客戶端。
 
 ### 判斷當前是否處於協程環境內
 

@@ -17,6 +17,7 @@ use ArrayIterator;
 use Closure;
 use Hyperf\Collection\Traits\EnumeratesValues;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\CanBeEscapedWhenCastToString;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Stringable\Stringable;
@@ -31,33 +32,17 @@ use Traversable;
  *
  * @template TKey of array-key
  * @template TValue
- * @template TTimesValue
+ *
  * @implements ArrayAccess<TKey, TValue>
  * @implements Enumerable<TKey, TValue>
- *
- * @property HigherOrderCollectionProxy $average
- * @property HigherOrderCollectionProxy $avg
- * @property HigherOrderCollectionProxy $contains
- * @property HigherOrderCollectionProxy $each
- * @property HigherOrderCollectionProxy $every
- * @property HigherOrderCollectionProxy $filter
- * @property HigherOrderCollectionProxy $first
- * @property HigherOrderCollectionProxy $flatMap
- * @property HigherOrderCollectionProxy $groupBy
- * @property HigherOrderCollectionProxy $keyBy
- * @property HigherOrderCollectionProxy $map
- * @property HigherOrderCollectionProxy $max
- * @property HigherOrderCollectionProxy $min
- * @property HigherOrderCollectionProxy $partition
- * @property HigherOrderCollectionProxy $reject
- * @property HigherOrderCollectionProxy $sortBy
- * @property HigherOrderCollectionProxy $sortByDesc
- * @property HigherOrderCollectionProxy $sum
- * @property HigherOrderCollectionProxy $unique
  */
-class Collection implements Enumerable, ArrayAccess
+class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerable
 {
+    /**
+     * @use EnumeratesValues<TKey, TValue>
+     */
     use EnumeratesValues;
+
     use Macroable;
 
     /**
@@ -69,7 +54,7 @@ class Collection implements Enumerable, ArrayAccess
 
     /**
      * Create a new collection.
-     * @param null|iterable<TKey,TValue>|Jsonable|JsonSerializable $items
+     * @param null|Arrayable<TKey,TValue>|iterable<TKey,TValue>|Jsonable|JsonSerializable $items
      */
     public function __construct($items = [])
     {
@@ -77,7 +62,7 @@ class Collection implements Enumerable, ArrayAccess
     }
 
     /**
-     * @param null|iterable<TKey,TValue>|Jsonable|JsonSerializable $items
+     * @param null|Arrayable<TKey,TValue>|iterable<TKey, TValue>|Jsonable|JsonSerializable $items
      * @return static<TKey, TValue>
      */
     public function fill($items = [])
@@ -136,12 +121,11 @@ class Collection implements Enumerable, ArrayAccess
 
         /**
          * @template TValue of array-key
-         * @phpstan-ignore-next-line
          * @var static<TValue, int> $counts
          */
         $counts = new self();
         $collection->each(function ($value) use ($counts) {
-            $counts[$value] = isset($counts[$value]) ? $counts[$value] + 1 : 1;
+            $counts->offsetSet($value, isset($counts[$value]) ? $counts[$value] + 1 : 1);
         });
         $sorted = $counts->sort();
         $highestValue = $sorted->last();
@@ -171,8 +155,7 @@ class Collection implements Enumerable, ArrayAccess
     {
         if (func_num_args() === 1) {
             if ($this->useAsCallable($key)) {
-                $placeholder = new stdClass();
-                return $this->first($key, $placeholder) !== $placeholder;
+                return array_any($this->items, $key);
             }
             return in_array($key, $this->items);
         }
@@ -224,6 +207,19 @@ class Collection implements Enumerable, ArrayAccess
     public function doesntContain($key, $operator = null, $value = null): bool
     {
         return ! $this->contains(...func_get_args());
+    }
+
+    /**
+     * Determine if an item is not contained in the enumerable, using strict comparison.
+     *
+     * @param mixed $key
+     * @param mixed $operator
+     * @param mixed $value
+     * @return bool
+     */
+    public function doesntContainStrict($key, $operator = null, $value = null)
+    {
+        return ! $this->containsStrict(...func_get_args());
     }
 
     /**
@@ -513,6 +509,7 @@ class Collection implements Enumerable, ArrayAccess
     public function has($key): bool
     {
         $keys = is_array($key) ? $key : func_get_args();
+
         foreach ($keys as $value) {
             if (! $this->offsetExists($value)) {
                 return false;
@@ -776,10 +773,26 @@ class Collection implements Enumerable, ArrayAccess
 
     /**
      * Get and remove the last item from the collection.
+     * @return null|static<int, TValue>|TValue
      */
-    public function pop()
+    public function pop(int $count = 1)
     {
-        return array_pop($this->items);
+        if ($count === 1) {
+            return array_pop($this->items);
+        }
+
+        if ($count < 1) {
+            throw new InvalidArgumentException('Number of items may not be less than one.');
+        }
+
+        $results = [];
+
+        $count = min($count, $this->count());
+        for ($i = 0; $i < $count; ++$i) {
+            $results[] = array_pop($this->items);
+        }
+
+        return new static($results);
     }
 
     /**
@@ -916,12 +929,8 @@ class Collection implements Enumerable, ArrayAccess
         if (! $this->useAsCallable($value)) {
             return array_search($value, $this->items, $strict);
         }
-        foreach ($this->items as $key => $item) {
-            if (call_user_func($value, $item, $key)) {
-                return $key;
-            }
-        }
-        return false;
+
+        return array_find_key($this->items, $value) ?? false;
     }
 
     /**
@@ -973,11 +982,28 @@ class Collection implements Enumerable, ArrayAccess
     /**
      * Get and remove the first item from the collection.
      *
-     * @return null|TValue
+     * @return null|static<int, TValue>|TValue
+     *
+     * @throws InvalidArgumentException
      */
-    public function shift()
+    public function shift(int $count = 1)
     {
-        return array_shift($this->items);
+        if ($count === 1) {
+            return array_shift($this->items);
+        }
+
+        if ($count < 1) {
+            throw new InvalidArgumentException('Number of shifted items may not be less than one.');
+        }
+
+        $results = [];
+
+        $count = min($count, $this->count());
+        for ($i = 0; $i < $count; ++$i) {
+            $results[] = array_shift($this->items);
+        }
+
+        return new static($results);
     }
 
     /**
@@ -1013,7 +1039,7 @@ class Collection implements Enumerable, ArrayAccess
     /**
      * Create chunks representing a "sliding window" view of the items in the collection.
      *
-     * @return static<int, TTimesValue>
+     * @return static<int, static>
      */
     public function sliding(int $size = 2, int $step = 1): static
     {
@@ -1631,7 +1657,7 @@ class Collection implements Enumerable, ArrayAccess
                         $result = match ($options) {
                             SORT_NUMERIC => intval($values[0]) <=> intval($values[1]),
                             SORT_STRING => strcmp($values[0], $values[1]),
-                            SORT_NATURAL => strnatcmp($values[0], $values[1]),
+                            SORT_NATURAL => strnatcmp((string) $values[0], (string) $values[1]),
                             SORT_LOCALE_STRING => strcoll($values[0], $values[1]),
                             default => $values[0] <=> $values[1],
                         };

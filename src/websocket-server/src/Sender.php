@@ -17,6 +17,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Contract\WebSocket\FrameInterface;
 use Hyperf\Engine\WebSocket\Response as WsResponse;
 use Hyperf\Server\CoroutineServer;
+use Hyperf\Server\SwowServer;
 use Hyperf\WebSocketServer\Exception\InvalidMethodException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -47,11 +48,14 @@ class Sender
     {
         $this->logger = $container->get(StdoutLoggerInterface::class);
         if ($config = $container->get(ConfigInterface::class)) {
-            $this->isCoroutineServer = $config->get('server.type') === CoroutineServer::class;
+            $this->isCoroutineServer = in_array($config->get('server.type'), [
+                CoroutineServer::class,
+                SwowServer::class,
+            ]);
         }
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         [$fd, $method] = $this->getFdAndMethodFromProxyMethod($name, $arguments);
 

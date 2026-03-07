@@ -100,11 +100,11 @@ class LazyProxyTraitTest extends TestCase
 
     public function testLazyLoadWithMagicCall()
     {
-        $class1 = new class() extends FooLazyLoad {
+        $class1 = new class extends FooLazyLoad {
             use LazyProxyTrait;
         };
 
-        $class2 = new class() extends BarLazyLoad {
+        $class2 = new class extends BarLazyLoad {
             use LazyProxyTrait;
         };
 

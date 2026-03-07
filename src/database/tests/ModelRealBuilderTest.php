@@ -26,6 +26,7 @@ use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Exception\QueryException;
+use Hyperf\Database\Exception\UniqueConstraintViolationException;
 use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Model\Model;
@@ -66,6 +67,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
+use stdClass;
 
 /**
  * @internal
@@ -95,6 +97,25 @@ class ModelRealBuilderTest extends TestCase
         $conn->statement('DROP TABLE IF EXISTS `users`;');
         $conn->statement('DROP TABLE IF EXISTS `posts`;');
         Mockery::close();
+    }
+
+    public function testEachById()
+    {
+        $this->getContainer();
+
+        $count = User::query()->count();
+
+        $i = 0;
+        User::query()->eachById(function (User $user) use (&$i) {
+            ++$i;
+        });
+        $this->assertSame($i, $count);
+
+        $i = 0;
+        Db::table('user')->eachById(function (stdClass $user) use (&$i) {
+            ++$i;
+        }, 100, 'id');
+        $this->assertSame($i, $count);
     }
 
     public function testPivot()
@@ -196,6 +217,24 @@ class ModelRealBuilderTest extends TestCase
             ['select * from `user` where `id` > ? order by `id` asc limit 2', [0]],
             ['select * from `user` order by `id` asc limit 2', []],
             ['select * from `user` where `id` > ? order by `id` asc limit 2', [1]],
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
+            }
+        }
+    }
+
+    public function testUserWhereBit()
+    {
+        $this->getContainer();
+
+        $query = User::query()->whereBit('gender', 1);
+        $res = $query->get();
+        $this->assertTrue($res->count() > 0);
+
+        $sqls = [
+            ['select * from `user` where gender & ? = ?', [1, 1]],
         ];
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
@@ -403,6 +442,14 @@ class ModelRealBuilderTest extends TestCase
         $res = TestModel::query()->insert(['user_id' => 1, 'uid' => 1]);
         $this->assertTrue($res);
 
+        try {
+            $res = TestModel::query()->insert(['user_id' => 1, 'uid' => 1]);
+        } catch (UniqueConstraintViolationException $exception) {
+            // check if the exception is instance of QueryException
+            $this->assertInstanceOf(QueryException::class, $exception);
+            $this->assertStringContainsString('Duplicate entry \'1\' for key', $exception->getMessage());
+        }
+
         $model = TestModel::query()->find(1);
         $this->assertSame(1, $model->uid);
 
@@ -446,6 +493,38 @@ class ModelRealBuilderTest extends TestCase
         $this->assertIsArray($logs);
         $this->assertCount(1, $logs);
         $this->assertSame('select * from `test` where `user_id` = 1', $logs[0]['raw_query']);
+    }
+
+    public function testMySQLSetNull()
+    {
+        $container = $this->getContainer();
+        /** @var Connection $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->statement('CREATE TABLE `test` (
+            `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            `user_id` bigint(20) unsigned NOT NULL,
+            `uid` bigint(20) unsigned NOT NULL,
+            `version` bigint(20) unsigned NOT NULL,
+            `str_value` varchar(32) NULL DEFAULT NULL,
+            `int_value` bigint(20) unsigned NULL DEFAULT NULL,
+            `created_at` datetime DEFAULT NULL,
+            `updated_at` datetime DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY (`user_id`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
+        $conn->enableQueryLog();
+        $model = new TestModel();
+        $model->user_id = 1;
+        $model->uid = 1;
+        $model->version = 1;
+        $model->str_value = null;
+        $model->int_value = null;
+        $model->save();
+
+        $model = TestModel::query()->where('user_id', 1)->first();
+        $this->assertNull($model->str_value);
+        $this->assertNull($model->int_value);
     }
 
     public function testRewriteSetKeysForSaveQuery()

@@ -33,7 +33,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
 {
     use RecvTrait;
 
-    private ?LoadBalancerInterface $loadBalancer;
+    private ?LoadBalancerInterface $loadBalancer = null;
 
     /**
      * If $loadBalancer is null, will select a node in $nodes to request,
@@ -169,7 +169,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
     }
 
     /**
-     * @param \Hyperf\LoadBalancer\Node[] $nodes
+     * @param Node[] $nodes
      */
     public function setNodes(array $nodes): self
     {
@@ -178,7 +178,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
     }
 
     /**
-     * @return \Hyperf\LoadBalancer\Node[]
+     * @return Node[]
      */
     public function getNodes(): array
     {

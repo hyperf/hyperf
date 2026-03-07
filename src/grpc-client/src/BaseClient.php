@@ -14,12 +14,13 @@ namespace Hyperf\GrpcClient;
 
 use Google\Protobuf\Internal\Message;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Context\Context;
 use Hyperf\Coroutine\Channel\Pool as ChannelPool;
-use Hyperf\Grpc\Parser;
+use Hyperf\Coroutine\Locker;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use InvalidArgumentException;
-use Swoole\Http2\Response;
+use Throwable;
 
 use function Hyperf\Support\retry;
 
@@ -30,31 +31,54 @@ use function Hyperf\Support\retry;
  */
 class BaseClient
 {
-    private ?GrpcClient $grpcClient = null;
-
     private bool $initialized = false;
+
+    /**
+     * @var null|array<array-key,GrpcClient>
+     */
+    private ?array $grpcClients = null;
+
+    private int $clientCount = 1;
 
     public function __construct(private string $hostname, private array $options = [])
     {
+        $this->clientCount = max(1, (int) ($this->options['client_count'] ?? 0));
     }
 
     public function __destruct()
     {
-        $this->grpcClient?->close(false);
+        if (! $this->initialized) {
+            return;
+        }
+
+        $lastException = null;
+        foreach ($this->grpcClients as $client) {
+            try {
+                $client->close(false);
+            } catch (Throwable $exception) {
+                $lastException = $exception;
+            }
+        }
+
+        if ($lastException) {
+            throw $lastException;
+        }
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         return $this->_getGrpcClient()->{$name}(...$arguments);
     }
 
     public function _getGrpcClient(): GrpcClient
     {
+        // Lazy initialization: defer client setup until first use to optimize resource usage.
         if (! $this->initialized) {
             $this->init();
         }
-        $this->start();
-        return $this->grpcClient;
+
+        // Ensure the client connection is started before use.
+        return $this->start();
     }
 
     /**
@@ -64,7 +88,7 @@ class BaseClient
      * @param string $method The name of the method to call
      * @param Message $argument The argument to the method
      * @param callable $deserialize A function that deserializes the response
-     * @return array|\Google\Protobuf\Internal\Message[]|Response[]
+     * @return UnaryCall
      * @throws GrpcClientException
      */
     protected function _simpleRequest(
@@ -84,7 +108,8 @@ class BaseClient
             }
             return $streamId;
         }, $this->options['retry_interval'] ?? 100);
-        return Parser::parseResponse($this->recv($streamId), $deserialize);
+
+        return new UnaryCall($this, $streamId, $deserialize);
     }
 
     /**
@@ -158,33 +183,65 @@ class BaseClient
         return $call;
     }
 
-    private function start()
+    private function start(): GrpcClient
     {
-        $client = $this->grpcClient;
-        if (! ($client->isRunning() || $client->start())) {
-            $message = sprintf(
-                'Grpc client start failed with error code %d when connect to %s',
-                $client->getErrCode(),
-                $this->hostname
-            );
-            throw new GrpcClientException($message, StatusCode::INTERNAL);
+        $key = Context::getOrSet(self::class . '::id', fn () => array_rand($this->grpcClients));
+        $client = $this->grpcClients[$key];
+
+        // If the client is already running, return it directly.
+        if ($client->isRunning()) {
+            return $client;
         }
-        return true;
+
+        $lockKey = sprintf('%s:start:%d', spl_object_hash($this), $key);
+
+        if (Locker::lock($lockKey)) {
+            try {
+                $client->start(); // May throw exception
+            } catch (Throwable $e) {
+                $message = sprintf(
+                    'Grpc client start failed with error code %d when connect to %s',
+                    $client->getErrCode(),
+                    $this->hostname
+                );
+                throw new GrpcClientException($message, StatusCode::INTERNAL, $e);
+            } finally {
+                Locker::unlock($lockKey);
+            }
+        }
+
+        return $client;
     }
 
     private function init()
     {
-        if (! empty($this->options['client'])) {
-            if (! $this->options['client'] instanceof GrpcClient) {
-                throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
-            }
-            $this->grpcClient = $this->options['client'];
-        } else {
-            $this->grpcClient = new GrpcClient(ApplicationContext::getContainer()->get(ChannelPool::class));
-            $this->grpcClient->set($this->hostname, $this->options);
-        }
+        $lockKey = sprintf('%s:init', spl_object_hash($this));
 
-        $this->initialized = true;
+        if (Locker::lock($lockKey)) {
+            try {
+                if ($this->initialized) {
+                    return;
+                }
+
+                $channelPool = ApplicationContext::getContainer()->get(ChannelPool::class);
+                if (! empty($this->options['client'])) { // Use the specified client.
+                    if (! $this->options['client'] instanceof GrpcClient) {
+                        throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
+                    }
+                    $this->grpcClients[] = $this->options['client'];
+                } else { // Use multiple clients.
+                    for ($i = 0; $i < $this->clientCount; ++$i) {
+                        $grpcClient = new GrpcClient($channelPool);
+                        $grpcClient->set($this->hostname, $this->options);
+                        $this->grpcClients[] = $grpcClient;
+                    }
+                }
+
+                $this->initialized = true;
+            } finally {
+                Locker::unlock($lockKey);
+            }
+        }
     }
 
     private function buildRequest(string $method, Message $argument, array $options): Request

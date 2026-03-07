@@ -63,7 +63,7 @@ enum ErrorCode: int
 }
 ```
 
-用户可以使用 `ErrorCode::getMessage(ErrorCode::SERVER_ERROR)` 來獲取對應錯誤信息。
+用户可以使用 `ErrorCode::SERVER_ERROR->getMessage()` 來獲取對應錯誤信息。
 
 ### 定義異常類
 
@@ -82,11 +82,17 @@ use Throwable;
 
 class BusinessException extends ServerException
 {
-    public function __construct(int $code = 0, string $message = null, Throwable $previous = null)
+    public function __construct(ErrorCode|int $code = 0, ?string $message = null, ?Throwable $previous = null)
     {
         if (is_null($message)) {
-            $message = ErrorCode::getMessage($code);
+            if ($code instanceof ErrorCode) {
+                $message = $code->getMessage();
+            } else {
+                $message = ErrorCode::getMessage($code);
+            }
         }
+
+        $code = $code instanceof ErrorCode ? $code->value : $code;
 
         parent::__construct($message, $code, $previous);
     }
@@ -118,7 +124,7 @@ class IndexController extends AbstractController
 
 ### 可變參數
 
-在使用 `ErrorCode::getMessage(ErrorCode::SERVER_ERROR)` 來獲取對應錯誤信息時，我們也可以傳入可變參數，進行錯誤信息組合。比如以下情況
+在使用 `ErrorCode::SERVER_ERROR->getMessage()` 來獲取對應錯誤信息時，我們也可以傳入可變參數，進行錯誤信息組合。比如以下情況
 
 ```php
 <?php
@@ -137,10 +143,7 @@ enum ErrorCode: int
     case PARAMS_INVALID = 1000;
 }
 
-$message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, ['user_id']);
-
-// 1.2 版本以下 可以使用以下方式，但會在 1.2 版本移除
-$message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, 'user_id');
+$message = ErrorCode::PARAMS_INVALID->getMessage(['user_id']);
 ```
 
 ### 國際化
@@ -174,5 +177,5 @@ enum ErrorCode: int
     case PARAMS_INVALID = 1000;
 }
 
-$message = ErrorCode::getMessage(ErrorCode::SERVER_ERROR, ['param' => 'user_id']);
+$message = ErrorCode::SERVER_ERROR->getMessage(['param' => 'user_id']);
 ```

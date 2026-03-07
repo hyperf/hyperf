@@ -75,6 +75,13 @@ Because of the directory structure, the start command has to be run in the root 
 php bin/hyperf.php server:watch
 ```
 
+## Startup with docker 
+When configuring a file watcher for hot-reloading in Docker, specify the entry point in the Dockerfile as follows:
+
+```bash
+ENTRYPOINT ["php", "/opt/www/bin/hyperf.php", "server:watch"]
+```
+
 ## Problems
 
 - For now, there is a slight problem in the Alpine Docker environment, which will be improved in the future version.

@@ -36,6 +36,8 @@ class Generator
             throw new InvalidArgumentException('The processors of swagger must be array.');
         }
 
+        $servers = (array) $this->config->get('swagger.server', []);
+
         $generator = new \OpenApi\Generator();
         $openapi = $generator->setAliases(\OpenApi\Generator::DEFAULT_ALIASES)
             ->setNamespaces(\OpenApi\Generator::DEFAULT_NAMESPACES)
@@ -68,6 +70,14 @@ class Generator
             [$serverName, $key] = explode('|', $key, 2);
             if (empty($result[$serverName])) {
                 $result[$serverName] = $jsonArray;
+            }
+
+            if ($svs = $servers[$serverName]['servers'] ?? null) {
+                $result[$serverName]['servers'] = $svs;
+            }
+
+            if ($info = $servers[$serverName]['info'] ?? null) {
+                $result[$serverName]['info'] = $info;
             }
 
             $result[$serverName]['paths'][$key] = $path;

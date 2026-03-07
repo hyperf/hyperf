@@ -3,3 +3,4 @@
 set -e
 
 composer analyse src
+composer analyse-types

@@ -56,6 +56,94 @@ class DatabaseQueryBuilderTest extends TestCase
         m::close();
     }
 
+    public function testWhereValueBetween()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereValueBetween('2020-01-01 19:30:00', ['created_at', 'updated_at']);
+        $this->assertSame('select * from "users" where ? between "created_at" and "updated_at"', $builder->toSql());
+        $this->assertEquals([0 => '2020-01-01 19:30:00'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereValueBetween('2020-01-01 19:30:00', ['created_at', 'updated_at']);
+        $this->assertSame('select * from "users" where ? between "created_at" and "updated_at"', $builder->toSql());
+        $this->assertEquals([0 => '2020-01-01 19:30:00'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereValueBetween('2020-01-01 19:30:00', [new Raw(1), new Raw(2)]);
+        $this->assertSame('select * from "users" where ? between 1 and 2', $builder->toSql());
+        $this->assertEquals([0 => '2020-01-01 19:30:00'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereValueBetween(new Raw(1), ['created_at', 'updated_at']);
+        $this->assertSame('select * from "users" where 1 between "created_at" and "updated_at"', $builder->toSql());
+    }
+
+    public function testOrWhereValueBetween()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('id', 2)->orWhereValueBetween('2020-01-01 19:30:00', ['created_at', 'updated_at']);
+        $this->assertSame('select * from "users" where "id" = ? or ? between "created_at" and "updated_at"', $builder->toSql());
+        $this->assertEquals([0 => 2, 1 => '2020-01-01 19:30:00'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('id', 2)->orWhereValueBetween('2020-01-01 19:30:00', ['created_at', 'updated_at']);
+        $this->assertSame('select * from "users" where "id" = ? or ? between "created_at" and "updated_at"', $builder->toSql());
+        $this->assertEquals([0 => 2, 1 => '2020-01-01 19:30:00'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('id', 2)->orWhereValueBetween('2020-01-01 19:30:00', [new Raw(1), new Raw(2)]);
+        $this->assertSame('select * from "users" where "id" = ? or ? between 1 and 2', $builder->toSql());
+        $this->assertEquals([0 => 2, 1 => '2020-01-01 19:30:00'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('id', 2)->orWhereValueBetween(new Raw(1), ['created_at', 'updated_at']);
+        $this->assertSame('select * from "users" where "id" = ? or 1 between "created_at" and "updated_at"', $builder->toSql());
+    }
+
+    public function testWhereValueNotBetween()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereValueNotBetween('2020-01-01 19:30:00', ['created_at', 'updated_at']);
+        $this->assertSame('select * from "users" where ? not between "created_at" and "updated_at"', $builder->toSql());
+        $this->assertEquals([0 => '2020-01-01 19:30:00'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereValueNotBetween('2020-01-01 19:30:00', ['created_at', 'updated_at']);
+        $this->assertSame('select * from "users" where ? not between "created_at" and "updated_at"', $builder->toSql());
+        $this->assertEquals([0 => '2020-01-01 19:30:00'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereValueNotBetween('2020-01-01 19:30:00', [new Raw(1), new Raw(2)]);
+        $this->assertSame('select * from "users" where ? not between 1 and 2', $builder->toSql());
+        $this->assertEquals([0 => '2020-01-01 19:30:00'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereValueNotBetween(new Raw(1), ['created_at', 'updated_at']);
+        $this->assertSame('select * from "users" where 1 not between "created_at" and "updated_at"', $builder->toSql());
+    }
+
+    public function testOrWhereValueNotBetween()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('id', 2)->orWhereValueNotBetween('2020-01-01 19:30:00', ['created_at', 'updated_at']);
+        $this->assertSame('select * from "users" where "id" = ? or ? not between "created_at" and "updated_at"', $builder->toSql());
+        $this->assertEquals([0 => 2, 1 => '2020-01-01 19:30:00'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('id', 2)->orWhereValueNotBetween('2020-01-01 19:30:00', ['created_at', 'updated_at']);
+        $this->assertSame('select * from "users" where "id" = ? or ? not between "created_at" and "updated_at"', $builder->toSql());
+        $this->assertEquals([0 => 2, 1 => '2020-01-01 19:30:00'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('id', 2)->orWhereValueNotBetween('2020-01-01 19:30:00', [new Raw(1), new Raw(2)]);
+        $this->assertSame('select * from "users" where "id" = ? or ? not between 1 and 2', $builder->toSql());
+        $this->assertEquals([0 => 2, 1 => '2020-01-01 19:30:00'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('id', 2)->orWhereValueNotBetween(new Raw(1), ['created_at', 'updated_at']);
+        $this->assertSame('select * from "users" where "id" = ? or 1 not between "created_at" and "updated_at"', $builder->toSql());
+    }
+
     public function testBasicSelect(): void
     {
         $builder = $this->getBuilder();
@@ -897,6 +985,42 @@ class DatabaseQueryBuilderTest extends TestCase
         $builder->select('*')->from('users')->whereAny(['last_name', 'email'], '%Otwell%');
         $this->assertSame('select * from "users" where ("last_name" = ? or "email" = ?)', $builder->toSql());
         $this->assertEquals(['%Otwell%', '%Otwell%'], $builder->getBindings());
+    }
+
+    public function testWhereNone()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereNone(['last_name', 'email'], 'like', '%Otwell%');
+        $this->assertSame('select * from "users" where not ("last_name" like ? or "email" like ?)', $builder->toSql());
+        $this->assertEquals(['%Otwell%', '%Otwell%'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereNone(['last_name', 'email'], 'Otwell');
+        $this->assertSame('select * from "users" where not ("last_name" = ? or "email" = ?)', $builder->toSql());
+        $this->assertEquals(['Otwell', 'Otwell'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('first_name', 'like', '%Taylor%')->whereNone(['last_name', 'email'], 'like', '%Otwell%');
+        $this->assertSame('select * from "users" where "first_name" like ? and not ("last_name" like ? or "email" like ?)', $builder->toSql());
+        $this->assertEquals(['%Taylor%', '%Otwell%', '%Otwell%'], $builder->getBindings());
+    }
+
+    public function testOrWhereNone()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('first_name', 'like', '%Taylor%')->orWhereNone(['last_name', 'email'], 'like', '%Otwell%');
+        $this->assertSame('select * from "users" where "first_name" like ? or not ("last_name" like ? or "email" like ?)', $builder->toSql());
+        $this->assertEquals(['%Taylor%', '%Otwell%', '%Otwell%'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('first_name', 'like', '%Taylor%')->whereNone(['last_name', 'email'], 'like', '%Otwell%', 'or');
+        $this->assertSame('select * from "users" where "first_name" like ? or not ("last_name" like ? or "email" like ?)', $builder->toSql());
+        $this->assertEquals(['%Taylor%', '%Otwell%', '%Otwell%'], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('first_name', 'like', '%Taylor%')->orWhereNone(['last_name', 'email'], '%Otwell%');
+        $this->assertSame('select * from "users" where "first_name" like ? or not ("last_name" = ? or "email" = ?)', $builder->toSql());
+        $this->assertEquals(['%Taylor%', '%Otwell%', '%Otwell%'], $builder->getBindings());
     }
 
     public function testInsertOrIgnoreUsingMethod(): void

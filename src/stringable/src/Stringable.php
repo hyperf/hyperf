@@ -57,10 +57,8 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
 
     /**
      * Get the raw string value.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }
@@ -321,11 +319,12 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
      * Determine if a given string matches a given pattern.
      *
      * @param string|string[] $pattern
+     * @param bool $ignoreCase
      * @return bool
      */
-    public function is($pattern)
+    public function is($pattern, $ignoreCase = false)
     {
-        return Str::is($pattern, $this->value);
+        return Str::is($pattern, $this->value, $ignoreCase);
     }
 
     /**
@@ -1070,9 +1069,9 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
         return $this->when($this->exactly($needles), $callback, $default);
     }
 
-    public function whenIs($pattern, $callback, $default = null)
+    public function whenIs($pattern, $callback, $default = null, $ignoreCase = false)
     {
-        return $this->when($this->is($pattern), $callback, $default);
+        return $this->when($this->is($pattern, $ignoreCase), $callback, $default);
     }
 
     public function whenIsUlid($callback, $default = null)

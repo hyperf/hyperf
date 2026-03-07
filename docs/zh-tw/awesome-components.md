@@ -41,6 +41,12 @@
 - [hyperf-ext/translatable](https://github.com/hyperf-ext/translatable) 為模型提供多語言能力
 - [233cy/hyperf-tenant](https://github.com/233cy/hyperf-tenant) 為模型提供多租戶欄位區分
 
+## 搜尋引擎
+
+- [hyperf/elasticsearch](https://github.com/hyperf/elasticsearch) Hyperf 官方提供的 Elasticsearch 協程客戶端
+- [liangguifeng/hyperf-scout-meilisearch](https://github.com/liangguifeng/hyperf-scout-meilisearch) 適配 hyperf/scout 的 Meilisearch 驅動（參考 laravel/scout）。
+- [chungou/elasticsearch](https://github.com/kaychem/hyperf-elasticsearch) 一個簡單的 Elasticsearch 構造器
+
 ## 依賴注入容器
 
 - [hyperf/di](https://github.com/hyperf/di) Hyperf 官方提供的支援註解及 AOP 的依賴注入容器
@@ -56,7 +62,6 @@
 ## 客戶端
 
 - [hyperf/consul](https://github.com/hyperf/consul) Hyperf 官方提供的 Consul 協程客戶端
-- [hyperf/elasticsearch](https://github.com/hyperf/elasticsearch) Hyperf 官方提供的 Elasticsearch 協程客戶端
 - [hyperf/grpc-client](https://github.com/hyperf/grpc-client) Hyperf 官方提供的 gRPC 協程客戶端
 - [hyperf/etcd](https://github.com/hyperf/etcd) Hyperf 官方提供的 ETCD 協程客戶端
 - [hyperf/rpc-client](https://github.com/hyperf/rpc-client) Hyperf 官方提供的通用 RPC 抽象協程客戶端
@@ -64,7 +69,6 @@
 - [hyperf/redis](https://github.com/hyperf/redis) Hyperf 官方提供的 Redis 協程客戶端
 - [hyperf/websocket-client](https://github.com/hyperf/websocket-client) Hyperf 官方提供的 WebSocket 協程客戶端
 - [hyperf/cache](https://github.com/hyperf/cache) Hyperf 官方提供的基於 PSR-16 的快取協程客戶端，支援註解的使用方式
-- [chungou/elasticsearch](https://github.com/kaychem/hyperf-elasticsearch) 一個簡單的 Elasticsearch 構造器
 - [friendsofhyperf/http-client](https://github.com/friendsofhyperf/http-client) 基於 Hyperf 的 Guzzle HTTP 協程客戶端
 - [friendsofhyperf/openai-client](https://github.com/friendsofhyperf/openai-client) 基於 Hyperf 的 OpenAI 客戶端
 
