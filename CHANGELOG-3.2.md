@@ -129,6 +129,7 @@ return [
 
 ## Optimized
 
+- [#6804](https://github.com/hyperf/hyperf/pull/6804) Optimized the code for reading contents from file when using `Hyperf\Di\ReflectionManager::getAllClassesByFinder()`.
 - [#7142](https://github.com/hyperf/hyperf/pull/7142) Enhance array shuffle method to support custom random engines.
 - [#7523](https://github.com/hyperf/hyperf/pull/7523) Modernize array utilities and JSON validation using PHP 8.4+ functions with polyfills.
 - [#7620](https://github.com/hyperf/hyperf/pull/7620) Added Symfony 7.4 compatibility with batch command registration.
