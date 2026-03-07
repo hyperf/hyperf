@@ -146,3 +146,4 @@ return [
 - [#7594](https://github.com/hyperf/hyperf/pull/7594) Changed the `cache` configuration structure.
 - [#7615](https://github.com/hyperf/hyperf/pull/7615) Renamed `$queue` property to `$pool` in `ConsumerProcess` for async-queue component.
 - [#7625](https://github.com/hyperf/hyperf/pull/7625) Renamed `getQueueName()` to `getPoolName()` in async-queue component for terminology consistency.
+- [#7714](https://github.com/hyperf/hyperf/pull/7714) Don't support Monolog 2.x, only 3.x is supported.
