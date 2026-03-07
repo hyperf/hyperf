@@ -51,7 +51,7 @@
         "hyperf/engine": "^2.14",
         "hyperf/laminas-mime": "^3.0",
         "hyperf/token-bucket": "^2.0",
-        "influxdb/influxdb-php": "^1.15.0",
+        "influxdata/influxdb-client-php": "^3.0",
         "ircmaxell/random-lib": "^1.2",
         "jcchavezs/zipkin-opentracing": "^2.0",
         "jean85/pretty-package-versions": "^2.0",
