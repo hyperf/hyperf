@@ -20,8 +20,12 @@ use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
+use Hyperf\Kafka\Event\AfterConsumerConfigCreated;
 use Hyperf\Kafka\Event\BeforeConsume;
+use Hyperf\Kafka\Event\BeforeLongLangConsumerCreated;
+use Hyperf\Kafka\Event\FailToAck;
 use Hyperf\Kafka\Event\FailToConsume;
+use Hyperf\Kafka\Event\FailToRequeue;
 use Hyperf\Kafka\Exception\InvalidConsumeResultException;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
@@ -108,6 +112,7 @@ class ConsumerManager
             {
                 $consumerConfig = $this->getConsumerConfig();
                 $consumer = $this->consumer;
+                $this->dispatcher?->dispatch(new BeforeLongLangConsumerCreated($consumer, $consumerConfig));
                 $longLangConsumer = new LongLangConsumer(
                     $consumerConfig,
                     function (ConsumeMessage $message) use ($consumer, $consumerConfig) {
@@ -128,11 +133,26 @@ class ConsumerManager
                                 }
 
                                 if ($result === Result::ACK) {
-                                    $message->getConsumer()->ack($message);
+                                    try {
+                                        $message->getConsumer()->ack($message);
+                                    } catch (Throwable $exception) {
+                                        $this->dispatcher?->dispatch(new FailToAck($consumer, $message, $exception));
+                                        throw $exception;
+                                    }
                                 }
 
                                 if ($result === Result::REQUEUE) {
-                                    $this->producer->send($message->getTopic(), $message->getValue(), $message->getKey(), $message->getHeaders());
+                                    try {
+                                        $this->producer->send(
+                                            $message->getTopic(),
+                                            $message->getValue(),
+                                            $message->getKey(),
+                                            $message->getHeaders()
+                                        );
+                                    } catch (Throwable $exception) {
+                                        $this->dispatcher?->dispatch(new FailToRequeue($consumer, $message, $exception));
+                                        throw $exception;
+                                    }
                                 }
                             }
 
@@ -199,6 +219,9 @@ class ConsumerManager
                 ! empty($config['sasl']) && $consumerConfig->setSasl($config['sasl']);
                 ! empty($config['ssl']) && $consumerConfig->setSsl($config['ssl']);
                 is_callable($config['exception_callback'] ?? null) && $consumerConfig->setExceptionCallback($config['exception_callback']);
+
+                $this->dispatcher?->dispatch(new AfterConsumerConfigCreated($consumerConfig));
+
                 return $consumerConfig;
             }
         };

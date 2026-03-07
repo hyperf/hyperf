@@ -99,13 +99,12 @@ class RateLimitController
 
 默认的 key 是根据当前请求的 `url` ，当一个用户触发限流时，其他用户也被限流请求此`url`；
 
-若需要不同颗粒度的限流， 如用户纬度的限流，可以针对用户 `ID` 进行限流，达到 A 用户被限流，B 用户正常请求：
+若需要不同颗粒度的限流，如用户维度的限流，可以针对用户 `ID` 进行限流，达到 A 用户被限流，B 用户正常请求：
 
 ```php
 <?php
 
 declare(strict_types=1);
-
 
 namespace App\Controller;
 
@@ -119,9 +118,8 @@ class TestController
     /**
      * @RateLimit(create=1, capacity=3, key={TestController::class, "getUserId"})
      */
-    public function test(TestRequest $request)
+    public function test()
     {
-
         return ["QPS 1, 峰值3"];
     }
 
@@ -131,7 +129,5 @@ class TestController
         // 同理可以根据手机号、IP地址等不同纬度进行限流
         return $request->input('user_id');
     }
-
 }
-
 ```

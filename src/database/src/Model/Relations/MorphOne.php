@@ -16,6 +16,12 @@ use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\Concerns\SupportsDefaultModels;
 
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ *
+ * @extends MorphOneOrMany<TRelatedModel, TDeclaringModel, ?TRelatedModel>
+ */
 class MorphOne extends MorphOneOrMany
 {
     use SupportsDefaultModels;
@@ -57,7 +63,7 @@ class MorphOne extends MorphOneOrMany
     /**
      * Make a new related instance for the given model.
      *
-     * @return Model
+     * @return TRelatedModel
      */
     public function newRelatedInstanceFor(Model $parent)
     {

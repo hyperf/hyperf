@@ -12,7 +12,7 @@ declare(strict_types=1);
 use function Hyperf\Support\env;
 
 return [
-    // Supported IDEs: "sublime", "textmate", "emacs", "macvim", "phpstorm", "idea",
+    // Supported IDEs: "sublime", "textmate", "cursor", "emacs", "macvim", "phpstorm", "idea",
     //     "vscode", "vscode-insiders", "vscode-remote", "vscode-insiders-remote",
     //     "atom", "nova", "netbeans", "xdebug"
     'ide' => env('DEVTOOL_IDE', ''),
@@ -20,38 +20,38 @@ return [
     'generator' => [
         'amqp' => [
             'consumer' => [
-                'namespace' => 'App\\Amqp\\Consumer',
+                'namespace' => 'App\Amqp\Consumer',
             ],
             'producer' => [
-                'namespace' => 'App\\Amqp\\Producer',
+                'namespace' => 'App\Amqp\Producer',
             ],
         ],
         'aspect' => [
-            'namespace' => 'App\\Aspect',
+            'namespace' => 'App\Aspect',
         ],
         'class' => [
             'namespace' => 'App',
         ],
         'command' => [
-            'namespace' => 'App\\Command',
+            'namespace' => 'App\Command',
         ],
         'controller' => [
-            'namespace' => 'App\\Controller',
+            'namespace' => 'App\Controller',
         ],
         'job' => [
-            'namespace' => 'App\\Job',
+            'namespace' => 'App\Job',
         ],
         'listener' => [
-            'namespace' => 'App\\Listener',
+            'namespace' => 'App\Listener',
         ],
         'middleware' => [
-            'namespace' => 'App\\Middleware',
+            'namespace' => 'App\Middleware',
         ],
         'process' => [
-            'namespace' => 'App\\Process',
+            'namespace' => 'App\Process',
         ],
         'request' => [
-            'namespace' => 'App\\Request',
+            'namespace' => 'App\Request',
         ],
     ],
 ];

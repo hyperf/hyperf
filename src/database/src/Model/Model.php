@@ -25,9 +25,11 @@ use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Stringable\Str;
 use Hyperf\Stringable\StrCache;
+use JsonException;
 use JsonSerializable;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
+use Stringable;
 use Throwable;
 
 use function Hyperf\Collection\collect;
@@ -39,7 +41,7 @@ use function Hyperf\Tappable\tap;
 /**
  * @mixin ModelIDE
  */
-abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable, CompressInterface
+abstract class Model implements Stringable, ArrayAccess, Arrayable, Jsonable, JsonSerializable, CompressInterface
 {
     use Concerns\HasAttributes;
     use Concerns\HasEvents;
@@ -178,21 +180,18 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Handle dynamic method calls into the model.
-     *
-     * @param string $method
-     * @param array $parameters
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (in_array($method, ['increment', 'decrement'])) {
-            return $this->{$method}(...$parameters);
+        if (in_array($name, ['increment', 'decrement'])) {
+            return $this->{$name}(...$arguments);
         }
 
-        if ($resolver = $this->relationResolver(static::class, $method)) {
+        if ($resolver = $this->relationResolver(static::class, $name)) {
             return $resolver($this);
         }
 
-        return $this->newQuery()->{$method}(...$parameters);
+        return $this->newQuery()->{$name}(...$arguments);
     }
 
     /**
@@ -331,6 +330,16 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
+     * Qualify the given columns with the model's table.
+     */
+    public function qualifyColumns(array $columns): array
+    {
+        return collect($columns)->map(function ($column) {
+            return $this->qualifyColumn($column);
+        })->all();
+    }
+
+    /**
      * Create a new instance of the given model.
      *
      * @param array $attributes
@@ -379,7 +388,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Begin querying the model on a given connection.
      *
      * @param null|string $connection
-     * @return Builder
+     * @return Builder<static>
      */
     public static function on($connection = null)
     {
@@ -396,7 +405,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Begin querying the model on the write connection.
      *
-     * @return QueryBuilder
+     * @return Builder<static>
      */
     public static function onWriteConnection()
     {
@@ -407,7 +416,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Get all of the models from the database.
      *
      * @param array|mixed $columns
-     * @return Collection|static[]
+     * @return Collection<int, static>
      */
     public static function all($columns = ['*'])
     {
@@ -418,7 +427,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Begin querying a model with eager loading.
      *
      * @param array|string $relations
-     * @return Builder|static
+     * @return Builder<static>
      */
     public static function with($relations)
     {
@@ -472,6 +481,48 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
+     * Eager load relation's column aggregations on the model.
+     */
+    public function loadAggregate(array|string $relations, string $column, ?string $function = null): static
+    {
+        $this->newCollection([$this])->loadAggregate($relations, $column, $function);
+
+        return $this;
+    }
+
+    /**
+     * Eager load relation max column values on the model.
+     */
+    public function loadMax(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'max');
+    }
+
+    /**
+     * Eager load relation min column values on the model.
+     */
+    public function loadMin(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'min');
+    }
+
+    /**
+     * Eager load relation's column summations on the model.
+     */
+    public function loadSum(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'sum');
+    }
+
+    /**
+     * Eager load relation average column values on the model.
+     */
+    public function loadAvg(array|string $relations, string $column): static
+    {
+        return $this->loadAggregate($relations, $column, 'avg');
+    }
+
+    /**
      * Eager load relation counts on the model.
      *
      * @param array|string $relations
@@ -514,6 +565,19 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         }
 
         return $this->fill($attributes)->save($options);
+    }
+
+    /**
+     * Update the model in the database within a transaction.
+     * @throws Throwable
+     */
+    public function updateOrFail(array $attributes = [], array $options = []): bool
+    {
+        if (! $this->exists) {
+            return false;
+        }
+
+        return $this->fill($attributes)->saveOrFail($options);
     }
 
     /**
@@ -688,7 +752,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Begin querying the model.
      *
-     * @return Builder
+     * @return Builder<static>
      */
     public static function query()
     {
@@ -698,7 +762,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Get a new query builder for the model's table.
      *
-     * @return Builder
+     * @return Builder<static>
      */
     public function newQuery()
     {
@@ -708,7 +772,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Get a new query builder that doesn't have any global scopes or eager loading.
      *
-     * @return Builder|static
+     * @return Builder<static>
      */
     public function newModelQuery()
     {
@@ -718,7 +782,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Get a new query builder with no relationships loaded.
      *
-     * @return Builder
+     * @return Builder<static>
      */
     public function newQueryWithoutRelationships()
     {
@@ -743,7 +807,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Get a new query builder that doesn't have any global scopes.
      *
-     * @return Builder|static
+     * @return Builder<static>
      */
     public function newQueryWithoutScopes()
     {
@@ -754,7 +818,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Get a new query instance without a given scope.
      *
      * @param Scope|string $scope
-     * @return Builder
+     * @return Builder<static>
      */
     public function newQueryWithoutScope($scope)
     {
@@ -765,7 +829,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Get a new query to restore one or more models by their queueable IDs.
      *
      * @param array|int $ids
-     * @return Builder
+     * @return Builder<static>
      */
     public function newQueryForRestoration($ids)
     {
@@ -787,7 +851,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Create a new Model Collection instance.
      *
-     * @return Collection
+     * @return Collection<array-key, static>
      */
     public function newCollection(array $models = [])
     {
@@ -819,15 +883,14 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Convert the model instance to JSON.
      *
      * @param int $options
-     * @return string
      * @throws JsonEncodingException
      */
-    public function toJson($options = 0)
+    public function toJson($options = 0): string
     {
-        $json = json_encode($this->jsonSerialize(), $options);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw JsonEncodingException::forModel($this, json_last_error_msg());
+        try {
+            $json = json_encode($this->jsonSerialize(), $options | JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw JsonEncodingException::forModel($this, $e->getMessage());
         }
 
         return $json;
@@ -1130,6 +1193,14 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         $this->perPage = $perPage;
 
         return $this;
+    }
+
+    /**
+     * Determine if the model is soft deletable.
+     */
+    public static function isSoftDeletable(): bool
+    {
+        return in_array(SoftDeletes::class, class_uses_recursive(static::class));
     }
 
     /**

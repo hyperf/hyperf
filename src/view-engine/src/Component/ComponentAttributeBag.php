@@ -21,12 +21,13 @@ use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\HtmlString;
 use Hyperf\ViewEngine\T;
 use IteratorAggregate;
+use Stringable;
 use Traversable;
 
 use function Hyperf\Collection\collect;
 use function Hyperf\Support\value;
 
-class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
+class ComponentAttributeBag implements Stringable, ArrayAccess, Htmlable, IteratorAggregate
 {
     use Macroable;
 
@@ -65,7 +66,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
                 $value = $key;
             }
 
-            $string .= ' ' . $key . '="' . str_replace('"', '\\"', trim($value)) . '"';
+            $string .= ' ' . $key . '="' . str_replace('"', '\"', trim($value)) . '"';
         }
 
         return trim($string);

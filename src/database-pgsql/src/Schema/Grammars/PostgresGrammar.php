@@ -47,7 +47,7 @@ class PostgresGrammar extends Grammar
      *
      * @var string[]
      */
-    protected array $fluentCommands = ['Comment'];
+    protected array $fluentCommands = ['Comment', 'TableComment'];
 
     /**
      * Compile a create database command.
@@ -78,6 +78,25 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine the tables.
+     */
+    public function compileTables(): string
+    {
+        return 'select c.relname as name, n.nspname as schema, pg_total_relation_size(c.oid) as size, '
+            . "obj_description(c.oid, 'pg_class') as comment from pg_class c, pg_namespace n "
+            . "where c.relkind in ('r', 'p') and n.oid = c.relnamespace and n.nspname not in ('pg_catalog', 'information_schema') "
+            . 'order by c.relname';
+    }
+
+    /**
+     * Compile the query to determine the views.
+     */
+    public function compileViews(): string
+    {
+        return "select viewname as name, schemaname as schema, definition from pg_views where schemaname not in ('pg_catalog', 'information_schema') order by viewname";
+    }
+
+    /**
      * Compile the query to determine if a table exists.
      */
     public function compileTableExists(): string
@@ -90,7 +109,46 @@ class PostgresGrammar extends Grammar
      */
     public function compileColumnListing(): string
     {
-        return 'select column_name as column_name, data_type as data_type from information_schema.columns where table_catalog = ? and table_schema = ? and table_name = ?';
+        return <<<'SQL'
+SELECT
+    a.attname AS column_name,
+    CASE
+           WHEN format_type(a.atttypid, a.atttypmod) LIKE 'numeric%' THEN
+               regexp_replace(format_type(a.atttypid, a.atttypmod), '^numeric', 'decimal')
+           WHEN format_type(a.atttypid, a.atttypmod) LIKE 'timestamp%' THEN 'datetime'
+           WHEN format_type(a.atttypid, a.atttypmod) = 'integer' THEN 'int'
+           WHEN format_type(a.atttypid, a.atttypmod) = 'real' THEN 'float'
+           WHEN format_type(a.atttypid, a.atttypmod) = 'double precision' THEN 'double'
+           ELSE format_type(a.atttypid, a.atttypmod)
+           END                               AS data_type,
+    col_description(a.attrelid, a.attnum) AS column_comment,
+    CASE
+        WHEN i.indisprimary THEN 'PRI'
+        WHEN i.indisunique THEN 'UNI'
+        ELSE NULL
+    END AS column_key,
+    CASE
+        -- Detect SERIAL type (via default value using nextval)
+        WHEN d.adbin IS NOT NULL AND pg_get_expr(d.adbin, d.adrelid) LIKE 'nextval(%' THEN 'auto_increment'
+        -- Detect GENERATED AS IDENTITY (a = by default, d = always) pgsql10+
+        WHEN a.attidentity IN ('a', 'd') THEN 'auto_increment'
+        ELSE NULL
+    END AS extra,
+    CASE WHEN a.attnotnull THEN 'NO' ELSE 'YES' END AS is_nullable,
+    pg_get_expr(d.adbin, d.adrelid) AS column_default
+FROM pg_attribute a
+JOIN pg_class c ON a.attrelid = c.oid
+JOIN pg_namespace n ON c.relnamespace = n.oid
+LEFT JOIN
+    pg_index i ON i.indrelid = c.oid AND a.attnum = ANY(i.indkey)
+LEFT JOIN pg_attrdef d ON d.adrelid = c.oid AND d.adnum = a.attnum
+WHERE
+    CAST(? AS text) IS NOT NULL AND -- ignore table_catalog
+    n.nspname = ? AND
+    c.relname = ? AND
+    a.attnum > 0 AND NOT a.attisdropped
+ORDER BY a.attnum
+SQL;
     }
 
     /**
@@ -99,6 +157,28 @@ class PostgresGrammar extends Grammar
     public function compileColumns(): string
     {
         return 'select table_schema,table_name,column_name,ordinal_position,column_default,is_nullable,data_type from information_schema.columns where table_schema = ? order by ORDINAL_POSITION';
+    }
+
+    /**
+     * Compile the query to determine the indexes.
+     */
+    public function compileIndexes(string $schema, string $table): string
+    {
+        return sprintf(
+            "select ic.relname as name, string_agg(a.attname, ',' order by indseq.ord) as columns, "
+            . 'am.amname as "type", i.indisunique as "unique", i.indisprimary as "primary" '
+            . 'from pg_index i '
+            . 'join pg_class tc on tc.oid = i.indrelid '
+            . 'join pg_namespace tn on tn.oid = tc.relnamespace '
+            . 'join pg_class ic on ic.oid = i.indexrelid '
+            . 'join pg_am am on am.oid = ic.relam '
+            . 'join lateral unnest(i.indkey) with ordinality as indseq(num, ord) on true '
+            . 'left join pg_attribute a on a.attrelid = i.indrelid and a.attnum = indseq.num '
+            . 'where tc.relname = %s and tn.nspname = %s '
+            . 'group by ic.relname, am.amname, i.indisunique, i.indisprimary',
+            $this->quoteString($table),
+            $this->quoteString($schema)
+        );
     }
 
     /**
@@ -459,6 +539,20 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile a table comment command.
+     *
+     * @return string
+     */
+    public function compileTableComment(Blueprint $blueprint, Fluent $command)
+    {
+        return sprintf(
+            'comment on table %s is %s',
+            $this->wrapTable($blueprint),
+            "'" . str_replace("'", "''", $command->value) . "'"
+        );
+    }
+
+    /**
      * Create the column definition for a spatial MultiLineString type.
      *
      * @return string
@@ -466,6 +560,32 @@ class PostgresGrammar extends Grammar
     public function typeMultiLineString(Fluent $column)
     {
         return $this->formatPostGisType('multilinestring', $column);
+    }
+
+    /**
+     * Compile the query to determine the foreign keys.
+     */
+    public function compileForeignKeys(string $schema, string $table): string
+    {
+        return sprintf(
+            'select c.conname as name, '
+            . "string_agg(la.attname, ',' order by conseq.ord) as columns, "
+            . 'fn.nspname as foreign_schema, fc.relname as foreign_table, '
+            . "string_agg(fa.attname, ',' order by conseq.ord) as foreign_columns, "
+            . 'c.confupdtype as on_update, c.confdeltype as on_delete '
+            . 'from pg_constraint c '
+            . 'join pg_class tc on c.conrelid = tc.oid '
+            . 'join pg_namespace tn on tn.oid = tc.relnamespace '
+            . 'join pg_class fc on c.confrelid = fc.oid '
+            . 'join pg_namespace fn on fn.oid = fc.relnamespace '
+            . 'join lateral unnest(c.conkey) with ordinality as conseq(num, ord) on true '
+            . 'join pg_attribute la on la.attrelid = c.conrelid and la.attnum = conseq.num '
+            . 'join pg_attribute fa on fa.attrelid = c.confrelid and fa.attnum = c.confkey[conseq.ord] '
+            . "where c.contype = 'f' and tc.relname = %s and tn.nspname = %s "
+            . 'group by c.conname, fn.nspname, fc.relname, c.confupdtype, c.confdeltype',
+            $this->quoteString($table),
+            $this->quoteString($schema)
+        );
     }
 
     /**

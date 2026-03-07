@@ -14,8 +14,8 @@ namespace Hyperf\ViewEngine\Component;
 
 use ArrayIterator;
 use Closure;
+use Hyperf\Collection\Enumerable;
 use Hyperf\ViewEngine\Contract\DeferringDisplayableValue;
-use Hyperf\ViewEngine\Contract\Enumerable;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use IteratorAggregate;
 use Stringable;
@@ -45,14 +45,10 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
 
     /**
      * Dynamically proxy method access to the variable.
-     *
-     * @param string $method
-     * @param array $parameters
-     * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        return $this->__invoke()->{$method}(...$parameters);
+        return $this->__invoke()->{$name}(...$arguments);
     }
 
     /**
@@ -82,7 +78,7 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
     }
 
     /**
-     * Get an interator instance for the variable.
+     * Get an iterator instance for the variable.
      */
     public function getIterator(): Traversable
     {

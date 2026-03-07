@@ -335,7 +335,7 @@ class ValidationPasswordRuleTest extends TestCase
             }
         };
 
-        $ruleObject = new class() implements Rule {
+        $ruleObject = new class implements Rule {
             public function passes($attribute, $value): bool
             {
                 return $value === 'aa';

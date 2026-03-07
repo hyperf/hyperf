@@ -33,6 +33,11 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
         AnnotationCollector::collectClass($className, static::class, $this);
     }
 
+    public function collectClassConstant(string $className, ?string $target): void
+    {
+        AnnotationCollector::collectClassConstant($className, $target, static::class, $this);
+    }
+
     public function collectMethod(string $className, ?string $target): void
     {
         AnnotationCollector::collectMethod($className, $target, static::class, $this);

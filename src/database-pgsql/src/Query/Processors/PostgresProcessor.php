@@ -61,4 +61,56 @@ class PostgresProcessor extends Processor
             return (array) $result;
         }, $results);
     }
+
+    /**
+     * Process the results of an indexes query.
+     */
+    public function processIndexes(array $results): array
+    {
+        return array_map(function ($result) {
+            $result = (object) $result;
+
+            return [
+                'name' => strtolower($result->name),
+                'columns' => explode(',', $result->columns),
+                'type' => strtolower($result->type),
+                'unique' => (bool) $result->unique,
+                'primary' => (bool) $result->primary,
+            ];
+        }, $results);
+    }
+
+    /**
+     * Process the results of a foreign keys query.
+     */
+    public function processForeignKeys(array $results): array
+    {
+        return array_map(function ($result) {
+            $result = (object) $result;
+
+            return [
+                'name' => $result->name,
+                'columns' => explode(',', $result->columns),
+                'foreign_schema' => $result->foreign_schema,
+                'foreign_table' => $result->foreign_table,
+                'foreign_columns' => explode(',', $result->foreign_columns),
+                'on_update' => match (strtolower($result->on_update)) {
+                    'a' => 'no action',
+                    'r' => 'restrict',
+                    'c' => 'cascade',
+                    'n' => 'set null',
+                    'd' => 'set default',
+                    default => null,
+                },
+                'on_delete' => match (strtolower($result->on_delete)) {
+                    'a' => 'no action',
+                    'r' => 'restrict',
+                    'c' => 'cascade',
+                    'n' => 'set null',
+                    'd' => 'set default',
+                    default => null,
+                },
+            ];
+        }, $results);
+    }
 }

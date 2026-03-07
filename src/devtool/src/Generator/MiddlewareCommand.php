@@ -36,6 +36,6 @@ class MiddlewareCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Middleware';
+        return $this->getConfig()['namespace'] ?? 'App\Middleware';
     }
 }

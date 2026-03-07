@@ -19,7 +19,7 @@ trait CompilesInjections
      */
     protected function compileInject(string $expression): string
     {
-        $segments = explode(',', preg_replace('/[\\(\\)]/', '', $expression));
+        $segments = explode(',', preg_replace('/[\(\)]/', '', $expression));
 
         $variable = trim($segments[0], " '\"");
 

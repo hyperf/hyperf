@@ -36,6 +36,6 @@ class KafkaConsumerCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Kafka\\Consumer';
+        return $this->getConfig()['namespace'] ?? 'App\Kafka\Consumer';
     }
 }

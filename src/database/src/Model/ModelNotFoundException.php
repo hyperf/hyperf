@@ -15,15 +15,20 @@ namespace Hyperf\Database\Model;
 use Hyperf\Collection\Arr;
 use RuntimeException;
 
+/**
+ * @template TModel of Model
+ */
 class ModelNotFoundException extends RuntimeException
 {
     /**
      * Name of the affected Model model.
+     * @var null|class-string<TModel>
      */
     protected ?string $model = null;
 
     /**
      * The affected model IDs.
+     * @var array<int,int|string>
      */
     protected array $ids = [];
 
@@ -51,6 +56,8 @@ class ModelNotFoundException extends RuntimeException
 
     /**
      * Get the affected Model model.
+     *
+     * @return null|class-string<TModel>
      */
     public function getModel(): ?string
     {
@@ -59,6 +66,8 @@ class ModelNotFoundException extends RuntimeException
 
     /**
      * Get the affected Model model IDs.
+     *
+     * @return array<int, int|string>
      */
     public function getIds(): array
     {

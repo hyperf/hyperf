@@ -15,6 +15,7 @@ namespace Hyperf\Di\Aop;
 use Hyperf\Support\Composer;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\ClosureUse;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Assign;
@@ -33,6 +34,7 @@ use PhpParser\Node\Scalar\MagicConst\Trait_ as MagicConstTrait;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Enum_;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\Trait_;
@@ -97,6 +99,8 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 return $this->rewriteMethod($node);
             case $node instanceof Trait_:
                 // If the node is trait and php version >= 7.3, it can `use ProxyTrait` like class.
+            case $node instanceof Enum_:
+                // If the node is enum and php version >= 8.1, it can `use ProxyTrait` like class.
             case $node instanceof Class_ && ! $node->isAnonymous():
                 // Add use proxy traits.
                 $stmts = $node->stmts;
@@ -176,10 +180,10 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             new Arg($this->getArguments($node->getParams())),
             // A closure that wrapped original method code.
             new Arg(new Closure([
-                'params' => $node->getParams(),
+                'params' => $this->filterModifier($node->getParams()),
                 'uses' => [
-                    new Variable('__function__'),
-                    new Variable('__method__'),
+                    new ClosureUse(new Variable('__function__')),
+                    new ClosureUse(new Variable('__method__')),
                 ],
                 'stmts' => $node->stmts,
             ])),
@@ -192,6 +196,19 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         }
         $node->stmts = $stmts;
         return $node;
+    }
+
+    /**
+     * @param Node\Param[] $params
+     * @return Node\Param[]
+     */
+    private function filterModifier(array $params): array
+    {
+        return array_map(function (Node\Param $param) {
+            $tempParam = clone $param;
+            $tempParam->flags &= ~Class_::VISIBILITY_MODIFIER_MASK & ~Class_::MODIFIER_READONLY;
+            return $tempParam;
+        }, $params);
     }
 
     /**

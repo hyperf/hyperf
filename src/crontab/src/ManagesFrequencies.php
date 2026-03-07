@@ -591,7 +591,7 @@ trait ManagesFrequencies
      */
     protected function spliceIntoPosition(int $position, int|string $value): static
     {
-        $segments = preg_split('/\\s+/', $this->rule ?: '* * * * *');
+        $segments = preg_split('/\s+/', $this->rule ?: '* * * * *');
 
         $segments[$position - 1] = $value;
 

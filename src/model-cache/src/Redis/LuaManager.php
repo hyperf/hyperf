@@ -41,18 +41,20 @@ class LuaManager
 
     public function handle(string $key, array $keys, ?int $num = null)
     {
-        if ($this->config->isLoadScript()) {
-            $sha = $this->getLuaSha($key);
-        }
-
         $operator = $this->getOperator($key);
 
         if ($num === null) {
             $num = count($keys);
         }
 
-        if (! empty($sha)) {
+        if ($this->config->isLoadScript()) {
+            $sha = $this->getLuaSha($key);
             $luaData = $this->redis->evalSha($sha, $keys, $num);
+            if ($luaData === false) {
+                $this->flushLuaSha($key);
+                $script = $operator->getScript();
+                $luaData = $this->redis->eval($script, $keys, $num);
+            }
         } else {
             $script = $operator->getScript();
             $luaData = $this->redis->eval($script, $keys, $num);
@@ -80,5 +82,10 @@ class LuaManager
             $this->luaShas[$key] = $this->redis->script('load', $this->getOperator($key)->getScript());
         }
         return $this->luaShas[$key];
+    }
+
+    public function flushLuaSha(string $key): void
+    {
+        unset($this->luaShas[$key]);
     }
 }

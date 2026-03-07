@@ -36,6 +36,6 @@ class ProcessCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Process';
+        return $this->getConfig()['namespace'] ?? 'App\Process';
     }
 }

@@ -67,6 +67,8 @@ use HyperfTest\Database\Stubs\ModelWithoutRelationStub;
 use HyperfTest\Database\Stubs\ModelWithoutTableStub;
 use HyperfTest\Database\Stubs\ModelWithStub;
 use HyperfTest\Database\Stubs\NoConnectionModelStub;
+use HyperfTest\Database\Stubs\NonSoftDeletableModelStub;
+use HyperfTest\Database\Stubs\SoftDeletableModelStub;
 use HyperfTest\Database\Stubs\User;
 use LogicException;
 use Mockery;
@@ -91,15 +93,11 @@ class ModelTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
-
         Carbon::setTestNow(Carbon::now());
     }
 
     protected function tearDown(): void
     {
-        parent::tearDown();
-
         Mockery::close();
         Carbon::setTestNow(null);
 
@@ -208,6 +206,23 @@ class ModelTest extends TestCase
         $this->assertFalse(isset($model['table']));
         $this->assertEquals($model['table'], null);
         $this->assertFalse(isset($model['with']));
+    }
+
+    public function testDiscardChanges()
+    {
+        $user = new ModelStub([
+            'name' => 'Taylor Otwell',
+        ]);
+
+        $this->assertNotEmpty($user->isDirty());
+        $this->assertNull($user->getOriginal('name'));
+        $this->assertSame('Taylor Otwell', $user->getAttribute('name'));
+
+        $user->discardChanges();
+
+        $this->assertEmpty($user->isDirty());
+        $this->assertNull($user->getOriginal('name'));
+        $this->assertNull($user->getAttribute('name'));
     }
 
     public function testOnly()
@@ -963,6 +978,65 @@ class ModelTest extends TestCase
         $this->assertArrayHasKey('id', $array);
     }
 
+    public function testMakeVisibleIf()
+    {
+        $model = new ModelStub(['name' => 'foo', 'age' => 'bar', 'id' => 'baz']);
+        $model->setHidden(['age', 'id']);
+        $model->makeVisibleIf(true, 'age');
+        $array = $model->toArray();
+        $this->assertArrayHasKey('name', $array);
+        $this->assertArrayHasKey('age', $array);
+        $this->assertArrayNotHasKey('id', $array);
+
+        $model->setHidden(['age', 'id']);
+        $model->makeVisibleIf(false, 'age');
+        $array = $model->toArray();
+        $this->assertArrayHasKey('name', $array);
+        $this->assertArrayNotHasKey('age', $array);
+        $this->assertArrayNotHasKey('id', $array);
+
+        $model->setHidden(['age', 'id']);
+        $model->makeVisibleIf(function ($model) {
+            return ! is_null($model->name);
+        }, 'age');
+        $array = $model->toArray();
+        $this->assertArrayHasKey('name', $array);
+        $this->assertArrayHasKey('age', $array);
+        $this->assertArrayNotHasKey('id', $array);
+    }
+
+    public function testMakeHiddenIf()
+    {
+        $model = new ModelStub(['name' => 'foo', 'age' => 'bar', 'address' => 'foobar', 'id' => 'baz']);
+        $array = $model->toArray();
+        $this->assertArrayHasKey('name', $array);
+        $this->assertArrayHasKey('age', $array);
+        $this->assertArrayHasKey('address', $array);
+        $this->assertArrayHasKey('id', $array);
+
+        $array = $model->makeHiddenIf(true, 'address')->toArray();
+        $this->assertArrayNotHasKey('address', $array);
+        $this->assertArrayHasKey('name', $array);
+        $this->assertArrayHasKey('age', $array);
+        $this->assertArrayHasKey('id', $array);
+
+        $model->makeVisible('address');
+
+        $array = $model->makeHiddenIf(false, ['name', 'age'])->toArray();
+        $this->assertArrayHasKey('name', $array);
+        $this->assertArrayHasKey('age', $array);
+        $this->assertArrayHasKey('address', $array);
+        $this->assertArrayHasKey('id', $array);
+
+        $array = $model->makeHiddenIf(function ($model) {
+            return ! is_null($model->id);
+        }, ['name', 'age'])->toArray();
+        $this->assertArrayHasKey('address', $array);
+        $this->assertArrayNotHasKey('name', $array);
+        $this->assertArrayNotHasKey('age', $array);
+        $this->assertArrayHasKey('id', $array);
+    }
+
     public function testDynamicVisible()
     {
         $model = new ModelDynamicVisibleStub(['name' => 'foo', 'age' => 'bar', 'id' => 'baz']);
@@ -1444,6 +1518,11 @@ class ModelTest extends TestCase
         $this->assertEquals('camelCased', $model->camelCased);
         $this->assertEquals('StudlyCased', $model->StudlyCased);
 
+        $this->assertTrue($model->hasAppended('is_admin'));
+        $this->assertTrue($model->hasAppended('camelCased'));
+        $this->assertTrue($model->hasAppended('StudlyCased'));
+        $this->assertFalse($model->hasAppended('not_appended'));
+
         $model->setHidden(['is_admin', 'camelCased', 'StudlyCased']);
         $this->assertEquals([], $model->toArray());
 
@@ -1732,7 +1811,7 @@ class ModelTest extends TestCase
 
     public function testGetOriginalIncrementWithExtra()
     {
-        $model = new class() extends ModelCastingStub {
+        $model = new class extends ModelCastingStub {
             public function newBaseQueryBuilder()
             {
                 $connection = Mockery::mock(Connection::class);
@@ -2014,6 +2093,25 @@ class ModelTest extends TestCase
         $model = new ModelStubWithUuid();
 
         $this->assertTrue(Str::isUuid($model->newUniqueId()));
+    }
+
+    public function testGetMorphAlias()
+    {
+        Relation::morphMap(['user' => ModelStub::class]);
+
+        try {
+            $this->assertSame('user', Relation::getMorphAlias(ModelStub::class));
+            $this->assertSame('Does\Not\Exist', Relation::getMorphAlias('Does\Not\Exist'));
+        } finally {
+            Relation::morphMap([], false);
+        }
+    }
+
+    public function testIsSoftDeletable()
+    {
+        $this->assertTrue(SoftDeletableModelStub::isSoftDeletable());
+        $this->assertFalse(NonSoftDeletableModelStub::isSoftDeletable());
+        $this->assertFalse(ModelStub::isSoftDeletable());
     }
 
     protected function getContainer()

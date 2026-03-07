@@ -16,12 +16,21 @@ use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\Concerns\SupportsDefaultModels;
 
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TIntermediateModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ *
+ * @extends HasManyThrough<TRelatedModel, TIntermediateModel, TDeclaringModel>
+ */
 class HasOneThrough extends HasManyThrough
 {
     use SupportsDefaultModels;
 
     /**
      * Get the results of the relationship.
+     *
+     * @return null|TRelatedModel
      */
     public function getResults()
     {
@@ -72,7 +81,7 @@ class HasOneThrough extends HasManyThrough
     /**
      * Make a new related instance for the given model.
      *
-     * @return Model
+     * @return TRelatedModel
      */
     public function newRelatedInstanceFor(Model $parent)
     {

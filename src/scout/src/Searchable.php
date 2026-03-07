@@ -174,7 +174,7 @@ trait Searchable
      */
     public static function enableSearchSyncing(): void
     {
-        ModelObserver::enableSyncingFor(get_called_class());
+        ModelObserver::enableSyncingFor(static::class);
     }
 
     /**
@@ -182,7 +182,7 @@ trait Searchable
      */
     public static function disableSearchSyncing(): void
     {
-        ModelObserver::disableSyncingFor(get_called_class());
+        ModelObserver::disableSyncingFor(static::class);
     }
 
     /**
@@ -308,6 +308,6 @@ trait Searchable
      */
     protected static function usesSoftDelete(): bool
     {
-        return in_array(SoftDeletes::class, class_uses_recursive(get_called_class()));
+        return in_array(SoftDeletes::class, class_uses_recursive(static::class));
     }
 }

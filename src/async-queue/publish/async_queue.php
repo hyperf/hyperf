@@ -13,6 +13,7 @@ use Hyperf\AsyncQueue\Driver\RedisDriver;
 
 return [
     'default' => [
+        'enable' => true, // Whether to enable auto register consumer process.
         'driver' => RedisDriver::class,
         'redis' => [
             'pool' => 'default',

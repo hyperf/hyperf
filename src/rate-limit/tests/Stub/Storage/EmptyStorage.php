@@ -25,7 +25,7 @@ class EmptyStorage implements StorageInterface, Storage, GlobalScope
 
     public function getMutex()
     {
-        return new class() {
+        return new class {
             public function check($callback)
             {
                 return $this;

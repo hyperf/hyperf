@@ -34,7 +34,7 @@ class PhpParserTest extends TestCase
     public function testGetAstFromReflectionParameter()
     {
         $parserFactory = new ParserFactory();
-        $parser7 = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $parser7 = $parserFactory->createForNewestSupportedVersion();
 
         $stmts = $parser7->parse(file_get_contents(__DIR__ . '/Stub/Bar.php'));
         /** @var ClassMethod $classMethod */
@@ -47,7 +47,7 @@ class PhpParserTest extends TestCase
         $parser = new PhpParser();
         $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
         $this->assertNodeParam($foo, $foo2 = $parser->getNodeFromReflectionParameter($parameters[1]));
-        $this->assertSame(['', 'HyperfTest', 'CodeParser', 'Stub', 'Foo'], $foo2->type->parts);
+        $this->assertSame(['', 'HyperfTest', 'CodeParser', 'Stub', 'Foo'], $foo2->type->getParts());
         $this->assertNodeParam($extra, $parser->getNodeFromReflectionParameter($parameters[2]));
 
         $stmts = $parser7->parse(file_get_contents(__DIR__ . '/Stub/UnionTypeFoo.php'));
@@ -80,7 +80,7 @@ class PhpParserTest extends TestCase
 
         $code = $printer->prettyPrint([$stmts]);
 
-        $this->assertSame('object $id = new \\stdClass()', $code);
+        $this->assertSame('object $id = new \stdClass()', $code);
 
         $parameters = $bar->getMethod('class')->getParameters();
 

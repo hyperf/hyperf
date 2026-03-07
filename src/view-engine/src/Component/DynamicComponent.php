@@ -122,8 +122,8 @@ EOF;
             return $this->componentClasses[$this->component];
         }
 
-        return $this->componentClasses[$this->component] =
-                    $this->compiler()->componentClass($this->component);
+        return $this->componentClasses[$this->component]
+                    = $this->compiler()->componentClass($this->component);
     }
 
     /**

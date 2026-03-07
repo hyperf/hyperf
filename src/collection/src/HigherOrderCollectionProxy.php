@@ -13,17 +13,20 @@ declare(strict_types=1);
 namespace Hyperf\Collection;
 
 /**
- * @mixin Collection
+ * @template TKey of array-key
+ * @template TValue
+ *
  * @mixin Enumerable
+ * @mixin TValue
  */
 class HigherOrderCollectionProxy
 {
     /**
      * Create a new proxy instance.
-     * @param Collection $collection the collection being operated on
+     * @param Enumerable<TKey, TValue> $collection the collection being operated on
      * @param string $method the method being proxied
      */
-    public function __construct(protected Collection $collection, protected string $method)
+    public function __construct(protected Enumerable $collection, protected string $method)
     {
     }
 
@@ -40,10 +43,10 @@ class HigherOrderCollectionProxy
     /**
      * Proxy a method call onto the collection items.
      */
-    public function __call(string $method, array $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        return $this->collection->{$this->method}(function ($value) use ($method, $parameters) {
-            return $value->{$method}(...$parameters);
+        return $this->collection->{$this->method}(function ($value) use ($name, $arguments) {
+            return $value->{$name}(...$arguments);
         });
     }
 }

@@ -38,6 +38,9 @@ php bin/hyperf.php
 <?php
 
 require_once 'vendor/autoload.php';
+
+use function Hyperf\Coroutine\go;
+
 Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL]);
 
 class Foo
@@ -72,7 +75,6 @@ go(static function () use ($foo) {
 });
 
 \Swoole\Event::wait();
-
 ```
 
 当我们执行上述代码时，会返回以下结果

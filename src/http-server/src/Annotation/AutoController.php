@@ -18,7 +18,11 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS)]
 class AutoController extends AbstractAnnotation
 {
-    public function __construct(public string $prefix = '', public string $server = 'http', public array $options = [])
-    {
+    public function __construct(
+        public string $prefix = '',
+        public string $server = 'http',
+        public array $options = [],
+        public ?array $defaultMethods = null,
+    ) {
     }
 }

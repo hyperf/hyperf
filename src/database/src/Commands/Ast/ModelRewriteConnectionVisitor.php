@@ -64,7 +64,7 @@ class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
                 foreach ($class->stmts as $property) {
                     $flags = Node\Stmt\Class_::MODIFIER_PROTECTED;
                     $prop = new Node\Stmt\PropertyProperty('connection', new Node\Scalar\String_($this->connection));
-                    $class->stmts[] = new Node\Stmt\Property($flags, [$prop]);
+                    $class->stmts[] = new Node\Stmt\Property($flags, [$prop], type: new Node\NullableType(new Identifier('string')));
                     return null;
                 }
             }

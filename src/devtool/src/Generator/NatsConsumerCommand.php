@@ -36,6 +36,6 @@ class NatsConsumerCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Nats\\Consumer';
+        return $this->getConfig()['namespace'] ?? 'App\Nats\Consumer';
     }
 }

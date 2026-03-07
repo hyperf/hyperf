@@ -14,11 +14,12 @@ composer require hyperf/async-queue
 
 > 暫時只支援 `Redis Driver` 驅動。
 
-|       配置       |   型別    |                   預設值                    |                  備註                   |
-|:----------------:|:---------:|:-------------------------------------------:|:---------------------------------------:|
+|       配置        |   型別    |                   預設值                    |                  備註                    |
+| :--------------: | :-------: | :-----------------------------------------: | :-------------------------------------: |
+|      enable      |   bool    |                    false                    |           自動建立消費程序              |
 |      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   無                    |
 |     channel      |  string   |                    queue                    |                佇列字首                 |
-|    redis.pool    |  string   |                    default                  |                redis 連線池              |
+|    redis.pool    |  string   |                   default                   |              redis 連線池               |
 |     timeout      |    int    |                      2                      |           pop 訊息的超時時間            |
 |  retry_seconds   | int,array |                      5                      |           失敗後重新嘗試間隔            |
 |  handle_timeout  |    int    |                     10                      |            訊息處理超時時間             |
@@ -31,6 +32,7 @@ composer require hyperf/async-queue
 
 return [
     'default' => [
+        'enable' => true,
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'redis' => [
             'pool' => 'default'
@@ -56,6 +58,7 @@ return [
 
 return [
     'default' => [
+        'enable' => true,
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'channel' => 'queue',
         'retry_seconds' => [1, 5, 10, 20],
@@ -84,6 +87,14 @@ C-->F[消費任務]
 ## 使用
 
 ### 配置非同步消費程序
+
+元件提供`程序配置`和`參數配置`兩種方式來配置非同步消費程序。
+
+#### 1. 參數配置
+
+根據上文配置檔案 `config/autoload/async_queue.php` 中的參數 `enable`，自動建立消費程序。
+
+#### 2. 程序配置
 
 元件已經提供了預設 `非同步消費程序`，只需要將它配置到 `config/autoload/processes.php` 中即可。
 
@@ -125,6 +136,7 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 return [
     'default' => [
+        'enable' => true,
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'redis' => [
             'pool' => 'default'
@@ -139,6 +151,7 @@ return [
         ],
     ],
     'fast' => [
+        'enable' => true,
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'redis' => [
             'pool' => 'default'
@@ -376,11 +389,8 @@ use Hyperf\HttpServer\Annotation\AutoController;
 #[AutoController]
 class QueueController extends AbstractController
 {
-    /**
-     * @var QueueService
-     */
     #[Inject]
-    protected $service;
+    protected QueueService $service;
 
     /**
      * 註解模式投遞訊息
@@ -427,7 +437,7 @@ php bin/hyperf.php queue:flush {queue_name} -Q {channel_name}
 ## 事件
 
 |   事件名稱   |        觸發時機         |                         備註                         |
-|:------------:|:-----------------------:|:----------------------------------------------------:|
+| :----------: | :---------------------: | :--------------------------------------------------: |
 | BeforeHandle |     處理訊息前觸發      |                                                      |
 | AfterHandle  |     處理訊息後觸發      |                                                      |
 | FailedHandle |   處理訊息失敗後觸發    |                                                      |
@@ -470,7 +480,7 @@ return [
 任務執行流轉流程主要包括以下幾個佇列:
 
 |  佇列名  |                   備註                    |
-|:--------:|:-----------------------------------------:|
+| :------: | :---------------------------------------: |
 | waiting  |              等待消費的佇列               |
 | reserved |              正在消費的佇列               |
 | delayed  |              延遲消費的佇列               |

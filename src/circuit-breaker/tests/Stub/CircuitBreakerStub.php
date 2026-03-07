@@ -16,8 +16,10 @@ use Hyperf\CircuitBreaker\Annotation\CircuitBreaker;
 
 class CircuitBreakerStub
 {
-    public static function makeCircuitBreaker()
+    public static function makeCircuitBreaker(): CircuitBreaker
     {
-        return new CircuitBreaker(timeout: 1);
+        return new CircuitBreaker(options: [
+            'timeout' => 1,
+        ]);
     }
 }

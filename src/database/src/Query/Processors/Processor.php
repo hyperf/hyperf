@@ -46,6 +46,25 @@ class Processor
     }
 
     /**
+     * Process the results of a tables query.
+     */
+    public function processTables(array $results): array
+    {
+        return array_map(static function ($result) {
+            $result = (object) $result;
+
+            return [
+                'name' => $result->name,
+                'schema' => $result->schema ?? null, // PostgreSQL and SQL Server
+                'size' => isset($result->size) ? (int) $result->size : null,
+                'comment' => $result->comment ?? null, // MySQL and PostgreSQL
+                'collation' => $result->collation ?? null, // MySQL only
+                'engine' => $result->engine ?? null, // MySQL only
+            ];
+        }, $results);
+    }
+
+    /**
      * Process the results of a column listing query.
      */
     public function processColumnListing(array $results): array
@@ -64,5 +83,37 @@ class Processor
         }
 
         return $columns;
+    }
+
+    /**
+     * Process the results of an indexes query.
+     */
+    public function processIndexes(array $results): array
+    {
+        return $results;
+    }
+
+    /**
+     * Process the results of a views query.
+     */
+    public function processViews(array $results): array
+    {
+        return array_map(function ($result) {
+            $result = (object) $result;
+
+            return [
+                'name' => $result->name,
+                'schema' => $result->schema ?? null, // PostgreSQL and SQL Server
+                'definition' => $result->definition,
+            ];
+        }, $results);
+    }
+
+    /**
+     * Process the results of a foreign keys query.
+     */
+    public function processForeignKeys(array $results): array
+    {
+        return $results;
     }
 }

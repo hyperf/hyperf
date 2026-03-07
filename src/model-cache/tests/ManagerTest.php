@@ -89,7 +89,7 @@ class ManagerTest extends TestCase
 
         $model = new ModelStub();
         $this->assertSame(1000, $manager->getCacheTTL($model, $handler));
-        $model = new class() extends ModelStub implements ModelCache\CacheableInterface {
+        $model = new class extends ModelStub implements ModelCache\CacheableInterface {
             use ModelCache\Cacheable;
 
             public function getCacheTTL(): ?int
@@ -144,7 +144,7 @@ class ManagerTest extends TestCase
 
         $manager = new ClassInvoker(new ManagerStub($container));
         $handler = $manager->handlers['default'];
-        $model = new class() extends ModelStub {
+        $model = new class extends ModelStub {
             protected ?string $table = 'model';
         };
         $data = $manager->getAttributes($handler->getConfig(), $model, ['id' => 1]);

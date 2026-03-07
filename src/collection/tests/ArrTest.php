@@ -12,13 +12,20 @@ declare(strict_types=1);
 
 namespace HyperfTest\Collection;
 
+use ArrayObject;
 use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
+use Hyperf\Collection\ItemNotFoundException;
+use Hyperf\Collection\MultipleItemsFoundException;
 use Hyperf\Coroutine\Coroutine;
 use Hyperf\Di\Resolver\ResolverDispatcher;
+use InvalidArgumentException;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use Random\Engine\Mt19937;
+use Random\Engine\Secure;
 use stdClass;
 
 /**
@@ -226,6 +233,116 @@ class ArrTest extends TestCase
         );
     }
 
+    public function testShuffleWithSeedEngine()
+    {
+        $this->assertSame(
+            Arr::shuffle(range(0, 100, 10), new Mt19937(1234)),
+            Arr::shuffle(range(0, 100, 10), new Mt19937(1234))
+        );
+
+        $this->assertNotSame(
+            Arr::shuffle(range(0, 100, 10), new Secure()),
+            Arr::shuffle(range(0, 100, 10), new Secure())
+        );
+    }
+
+    public function testShuffleAssoc(): void
+    {
+        $source = [];
+        $value = 'a';
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[$value++] = $i;
+        }
+
+        $shuffled = Arr::shuffleAssoc($source);
+
+        $this->assertNotSame($source, $shuffled);
+        $this->assertSameSize($source, $shuffled);
+        $this->assertSameSize($source, array_intersect_assoc($source, $shuffled));
+
+        $source = [];
+        $value = 'a';
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[] = $value++;
+        }
+
+        $shuffled = Arr::shuffleAssoc($source);
+
+        $this->assertNotSame($source, $shuffled);
+        $this->assertSameSize($source, $shuffled);
+        $this->assertSameSize($source, array_intersect_assoc($source, $shuffled));
+
+        $source = [];
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[] = $i;
+        }
+
+        $shuffled = Arr::shuffleAssoc($source);
+
+        $this->assertNotSame($source, $shuffled);
+        $this->assertSameSize($source, $shuffled);
+        $this->assertSameSize($source, array_intersect_assoc($source, $shuffled));
+    }
+
+    public function testShuffleAssocWithSeed(): void
+    {
+        $source = [];
+        $value = 'a';
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[$value++] = $i;
+        }
+
+        $this->assertSame(
+            Arr::shuffleAssoc($source, 1234),
+            Arr::shuffleAssoc($source, 1234)
+        );
+        $this->assertNotSame(
+            Arr::shuffleAssoc($source),
+            Arr::shuffleAssoc($source)
+        );
+        $this->assertNotSame(
+            $source,
+            Arr::shuffleAssoc($source, 1234)
+        );
+
+        $source = [];
+        $value = 'a';
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[] = $value++;
+        }
+
+        $this->assertSame(
+            Arr::shuffleAssoc($source, 1234),
+            Arr::shuffleAssoc($source, 1234)
+        );
+        $this->assertNotSame(
+            Arr::shuffleAssoc($source),
+            Arr::shuffleAssoc($source)
+        );
+        $this->assertNotSame(
+            $source,
+            Arr::shuffleAssoc($source, 1234)
+        );
+
+        $source = [];
+        for ($i = 0; $i < 1000; ++$i) {
+            $source[] = $i;
+        }
+
+        $this->assertSame(
+            Arr::shuffleAssoc($source, 1234),
+            Arr::shuffleAssoc($source, 1234)
+        );
+        $this->assertNotSame(
+            Arr::shuffleAssoc($source),
+            Arr::shuffleAssoc($source)
+        );
+        $this->assertNotSame(
+            $source,
+            Arr::shuffleAssoc($source, 1234)
+        );
+    }
+
     public function testEmptyShuffle(): void
     {
         $this->assertEquals([], Arr::shuffle([]));
@@ -278,6 +395,38 @@ class ArrTest extends TestCase
         $this->assertTrue(Arr::hasAny($array, 'foo.baz'));
         $this->assertFalse(Arr::hasAny($array, 'foo.bax'));
         $this->assertTrue(Arr::hasAny($array, ['foo.bax', 'foo.baz']));
+    }
+
+    public function testHasAllMethod(): void
+    {
+        $array = ['name' => 'Taylor', 'age' => '', 'city' => null];
+        $this->assertTrue(Arr::hasAll($array, 'name'));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'age']));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'age', 'city']));
+        $this->assertFalse(Arr::hasAll($array, ['name', 'age', 'gender']));
+        $this->assertFalse(Arr::hasAll($array, 'nonexistent'));
+
+        $array = ['name' => 'Taylor', 'email' => 'foo'];
+        $this->assertTrue(Arr::hasAll($array, 'name'));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'email']));
+        $this->assertFalse(Arr::hasAll($array, ['name', 'surname']));
+        $this->assertFalse(Arr::hasAll($array, ['surname', 'password']));
+
+        $array = ['foo' => ['bar' => null, 'baz' => '']];
+        $this->assertTrue(Arr::hasAll($array, 'foo.bar'));
+        $this->assertTrue(Arr::hasAll($array, 'foo.baz'));
+        $this->assertFalse(Arr::hasAll($array, 'foo.bax'));
+        $this->assertFalse(Arr::hasAll($array, ['foo.bar', 'foo.bax']));
+        $this->assertTrue(Arr::hasAll($array, ['foo.bar', 'foo.baz']));
+        $this->assertFalse(Arr::hasAll($array, ['foo.bar', 'foo.baz', 'foo.nonexistent']));
+
+        // Test with null keys
+        $this->assertFalse(Arr::hasAll(['a' => 1], null));
+        $this->assertFalse(Arr::hasAll(['a' => 1], []));
+
+        // Test with empty array
+        $this->assertFalse(Arr::hasAll([], 'a'));
+        $this->assertFalse(Arr::hasAll([], ['a', 'b']));
     }
 
     public function testIsAssoc(): void
@@ -646,5 +795,382 @@ class ArrTest extends TestCase
         ];
 
         $this->assertEquals($expect, Arr::sortRecursive($array));
+    }
+
+    public function testDivide(): void
+    {
+        // Test dividing an empty array
+        [$keys, $values] = Arr::divide([]);
+        $this->assertEquals([], $keys);
+        $this->assertEquals([], $values);
+
+        // Test dividing an array with a single key-value pair
+        [$keys, $values] = Arr::divide(['name' => 'Desk']);
+        $this->assertEquals(['name'], $keys);
+        $this->assertEquals(['Desk'], $values);
+
+        // Test dividing an array with multiple key-value pairs
+        [$keys, $values] = Arr::divide(['name' => 'Desk', 'price' => 100, 'available' => true]);
+        $this->assertEquals(['name', 'price', 'available'], $keys);
+        $this->assertEquals(['Desk', 100, true], $values);
+
+        // Test dividing an array with numeric keys
+        [$keys, $values] = Arr::divide([0 => 'first', 1 => 'second']);
+        $this->assertEquals([0, 1], $keys);
+        $this->assertEquals(['first', 'second'], $values);
+
+        // Test dividing an array with null key
+        [$keys, $values] = Arr::divide([null => 'Null', 1 => 'one']);
+        $this->assertEquals([null, 1], $keys);
+        $this->assertEquals(['Null', 'one'], $values);
+
+        // Test dividing an array where the keys are arrays
+        [$keys, $values] = Arr::divide([['one' => 1, 2 => 'second'], 1 => 'one']);
+        $this->assertEquals([0, 1], $keys);
+        $this->assertEquals([['one' => 1, 2 => 'second'], 'one'], $values);
+
+        // Test dividing an array where the values are arrays
+        [$keys, $values] = Arr::divide([null => ['one' => 1, 2 => 'second'], 1 => 'one']);
+        $this->assertEquals([null, 1], $keys);
+        $this->assertEquals([['one' => 1, 2 => 'second'], 'one'], $values);
+    }
+
+    public function testDot(): void
+    {
+        $array = [];
+        $expected = [];
+        $this->assertEquals($expected, Arr::dot($array));
+        $array = ['key1' => 'value1', 'key2' => 'value2'];
+        $expected = ['key1' => 'value1', 'key2' => 'value2'];
+        $this->assertEquals($expected, Arr::dot($array));
+        $array = ['key1' => 'value1', 'nested' => ['key2' => 'value2']];
+        $expected = ['key1' => 'value1', 'nested.key2' => 'value2'];
+        $this->assertEquals($expected, Arr::dot($array));
+        $array = ['level1' => ['level2' => ['level3' => 'value3']]];
+        $expected = ['level1.level2.level3' => 'value3'];
+        $this->assertEquals($expected, Arr::dot($array));
+        $array = ['key1' => 'value1', 'nested' => ['key2' => 123, 'key3' => true]];
+        $expected = ['key1' => 'value1', 'nested.key2' => 123, 'nested.key3' => true];
+        $this->assertEquals($expected, Arr::dot($array));
+        $array = ['key1' => null, 'nested' => ['key2' => 'value2', 'key3' => null]];
+        $expected = ['key1' => null, 'nested.key2' => 'value2', 'nested.key3' => null];
+        $this->assertEquals($expected, Arr::dot($array));
+        $array = ['key1' => 'value1', 'nested' => ['key2' => 'value2']];
+        $prepend = 'prefix_';
+        $expected = ['prefix_key1' => 'value1', 'prefix_nested.key2' => 'value2'];
+        $this->assertEquals($expected, Arr::dot($array, $prepend));
+    }
+
+    public function testExists(): void
+    {
+        $array = ['key1' => 'value1', 'key2' => 'value2'];
+        $this->assertTrue(Arr::exists($array, 'key1'));
+        $this->assertFalse(Arr::exists($array, 'key3'));
+        $arrayAccess = new ArrayObject(['key1' => 'value1', 'key2' => 'value2']);
+        $this->assertTrue(Arr::exists($arrayAccess, 'key1'));
+        $this->assertFalse(Arr::exists($arrayAccess, 'key3'));
+        $array = [];
+        $this->assertFalse(Arr::exists($array, 'key1'));
+        $arrayAccess = new ArrayObject([]);
+        $this->assertFalse(Arr::exists($arrayAccess, 'key1'));
+        $array = [0 => 'value1', 1 => 'value2'];
+        $this->assertTrue(Arr::exists($array, 0));
+        $this->assertFalse(Arr::exists($array, 2));
+        $arrayAccess = new ArrayObject([0 => 'value1', 1 => 'value2']);
+        $this->assertTrue(Arr::exists($arrayAccess, 0));
+        $this->assertFalse(Arr::exists($arrayAccess, 2));
+        $array = ['key1' => 'value1', 'key2' => 'value2'];
+        $this->assertTrue(Arr::exists($array, 'key1'));
+        $this->assertFalse(Arr::exists($array, 'nonexistent'));
+    }
+
+    public function testFirst(): void
+    {
+        $array = [1, 2, 3];
+        $this->assertEquals('default', Arr::first([], null, 'default'));
+        $this->assertEquals(1, Arr::first($array));
+        $callback = static function ($value) {
+            return $value > 1;
+        };
+        $this->assertEquals(2, Arr::first($array, $callback));
+        $callback = static function ($value) {
+            return $value > 3;
+        };
+        $default = 'default';
+        $this->assertEquals('default', Arr::first($array, $callback, $default));
+        $closure = static function ($value) {
+            return $value === 2;
+        };
+        $this->assertEquals(2, Arr::first($array, $closure));
+    }
+
+    public function testLast(): void
+    {
+        $this->assertEquals('default', Arr::last([], null, 'default'));
+        $this->assertEquals(3, Arr::last([1, 2, 3]));
+        $callback = static function ($value) {
+            return $value % 2 === 0;
+        };
+        $this->assertEquals(4, Arr::last([1, 2, 3, 4], $callback));
+        $callback = static function ($value) {
+            return $value % 2 === 0;
+        };
+        $this->assertEquals('default', Arr::last([1, 3, 5], $callback, 'default'));
+        $closure = static function ($value) {
+            return $value === 4; // 寻找特定的值4
+        };
+        $this->assertEquals(4, Arr::last([1, 2, 3, 4], $closure));
+    }
+
+    public function testFlatten(): void
+    {
+        $this->assertEquals(['item1', 'item2', 'item3'], Arr::flatten(['item1', 'item2', 'item3']));
+        $this->assertEquals(['item1', 'item2', 'item3', 'item4', 'item5'], Arr::flatten(['item1', ['item2', 'item3'], ['item4', ['item5']]]));
+        $this->assertEquals(['item1', 'item2', ['item3', 'item4'], 'item5'], Arr::flatten(['item1', ['item2', ['item3', 'item4']], ['item5']], 1));
+        $this->assertEquals(['item1', 'item2', 'item3', 'item4'], Arr::flatten(['item1', 'item2', Collection::make(['item3', 'item4'])]));
+        $this->assertEquals(['item1', 'item2', 'item3'], Arr::flatten(['item1', Collection::make(['item2', 'item3'])]));
+    }
+
+    public function testPluck(): void
+    {
+        $array = [
+            ['name' => 'John', 'age' => 30],
+            ['name' => 'Jane', 'age' => 25],
+        ];
+        $value = 'name';
+        $expected = ['John', 'Jane'];
+        $this->assertEquals($expected, Arr::pluck($array, $value));
+        $array = [
+            ['id' => 1, 'name' => 'John'],
+            ['id' => 2, 'name' => 'Jane'],
+        ];
+        $value = 'name';
+        $key = 'id';
+        $expected = [1 => 'John', 2 => 'Jane'];
+        $this->assertEquals($expected, Arr::pluck($array, $value, $key));
+        $array = [
+            ['user' => ['name' => 'John']],
+            ['user' => ['name' => 'Jane']],
+        ];
+        $value = 'user.name';
+        $expected = ['John', 'Jane'];
+        $this->assertEquals($expected, Arr::pluck($array, $value));
+        $array = [
+            ['name' => 'John', 'age' => 30],
+            ['name' => 'Jane', 'age' => 25],
+        ];
+        $value = 'age';
+        $expected = [30, 25];
+        $this->assertEquals($expected, Arr::pluck($array, $value));
+        $array = [
+            ['user' => ['name' => 'John', 'age' => 30]],
+            ['user' => ['name' => 'Jane', 'age' => 25]],
+        ];
+        $this->assertEquals([30, 25], Arr::pluck($array, ['user', 'age']));
+        $array = [
+            ['id' => 1, 'user' => ['name' => 'John']],
+            ['id' => 2, 'user' => ['name' => 'Jane']],
+        ];
+        $value = 'user.name';
+        $key = ['id'];
+        $expected = [1 => 'John', 2 => 'Jane'];
+        $this->assertEquals($expected, Arr::pluck($array, $value, $key));
+    }
+
+    public function testReject()
+    {
+        $array = [1, 2, 3, 4, 5, 6];
+
+        // Test rejection behavior (removing even numbers)
+        $result = Arr::reject($array, function ($value) {
+            return $value % 2 === 0;
+        });
+
+        $this->assertEquals([
+            0 => 1,
+            2 => 3,
+            4 => 5,
+        ], $result);
+
+        // Test key preservation with associative array
+        $assocArray = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
+
+        $result = Arr::reject($assocArray, function ($value) {
+            return $value > 2;
+        });
+
+        $this->assertEquals([
+            'a' => 1,
+            'b' => 2,
+        ], $result);
+    }
+
+    public function testPartition()
+    {
+        $array = ['John', 'Jane', 'Greg'];
+
+        $result = Arr::partition($array, fn (string $value) => str_contains($value, 'J'));
+
+        $this->assertEquals([[0 => 'John', 1 => 'Jane'], [2 => 'Greg']], $result);
+    }
+
+    public function testItGetsAnArray()
+    {
+        $test_array = ['string' => 'foo bar', 'array' => ['foo', 'bar']];
+
+        // Test array values are returned as arrays
+        $this->assertSame(
+            ['foo', 'bar'],
+            Arr::array($test_array, 'array')
+        );
+
+        // Test that default array values are returned for missing keys
+        $this->assertSame(
+            [1, 'two'],
+            Arr::array($test_array, 'missing_key', [1, 'two'])
+        );
+
+        // Test that an exception is raised if the value is not an array
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('#^Array value for key \[string\] must be an array, (.*) found.#');
+        Arr::array($test_array, 'string');
+    }
+
+    public function testPush(): void
+    {
+        $array = [];
+
+        Arr::push($array, 'office.furniture', 'Desk');
+        $this->assertEquals(['Desk'], $array['office']['furniture']);
+
+        Arr::push($array, 'office.furniture', 'Chair', 'Lamp');
+        $this->assertEquals(['Desk', 'Chair', 'Lamp'], $array['office']['furniture']);
+
+        $array = [];
+
+        Arr::push($array, null, 'Chris', 'Nuno');
+        $this->assertEquals(['Chris', 'Nuno'], $array);
+
+        Arr::push($array, null, 'Taylor');
+        $this->assertEquals(['Chris', 'Nuno', 'Taylor'], $array);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Array value for key [foo.bar] must be an array, boolean found.');
+
+        $array = ['foo' => ['bar' => false]];
+        Arr::push($array, 'foo.bar', 'baz');
+    }
+
+    public function testHasAll(): void
+    {
+        $array = ['name' => 'Taylor', 'age' => 30, 'city' => 'Austin'];
+
+        $this->assertTrue(Arr::hasAll($array, 'name'));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'age']));
+        $this->assertTrue(Arr::hasAll($array, ['name', 'age', 'city']));
+        $this->assertFalse(Arr::hasAll($array, ['name', 'age', 'country']));
+        $this->assertFalse(Arr::hasAll($array, 'country'));
+        $this->assertFalse(Arr::hasAll($array, null));
+        $this->assertFalse(Arr::hasAll($array, []));
+
+        $nestedArray = [
+            'user' => [
+                'name' => 'Taylor',
+                'profile' => ['age' => 30],
+            ],
+        ];
+        $this->assertTrue(Arr::hasAll($nestedArray, 'user.name'));
+        $this->assertTrue(Arr::hasAll($nestedArray, ['user.name', 'user.profile.age']));
+        $this->assertFalse(Arr::hasAll($nestedArray, ['user.name', 'user.email']));
+
+        $emptyArray = [];
+        $this->assertFalse(Arr::hasAll($emptyArray, 'name'));
+        $this->assertFalse(Arr::hasAll($emptyArray, ['name']));
+    }
+
+    public function testSome(): void
+    {
+        $numbers = [1, 2, 3, 4, 5];
+
+        $this->assertTrue(Arr::some($numbers, fn ($value) => $value > 3));
+        $this->assertTrue(Arr::some($numbers, fn ($value) => $value === 1));
+        $this->assertTrue(Arr::some($numbers, fn ($value) => $value % 2 === 0));
+        $this->assertFalse(Arr::some($numbers, fn ($value) => $value > 10));
+        $this->assertFalse(Arr::some($numbers, fn ($value) => $value < 0));
+
+        $this->assertTrue(Arr::some($numbers, fn ($value, $key) => $key === 2 && $value === 3));
+        $this->assertFalse(Arr::some($numbers, fn ($value, $key) => $key === 10));
+
+        $mixed = ['apple', 'banana', 123, true, null];
+        $this->assertTrue(Arr::some($mixed, fn ($value) => is_int($value)));
+        $this->assertTrue(Arr::some($mixed, fn ($value) => is_bool($value)));
+        $this->assertTrue(Arr::some($mixed, fn ($value) => is_null($value)));
+        $this->assertFalse(Arr::some($mixed, fn ($value) => is_float($value)));
+
+        $empty = [];
+        $this->assertFalse(Arr::some($empty, fn ($value) => true));
+
+        $strings = ['hello', 'world', 'test'];
+        $this->assertTrue(Arr::some($strings, fn ($value) => strlen($value) === 5));
+        $this->assertFalse(Arr::some($strings, fn ($value) => strlen($value) > 10));
+    }
+
+    public function testEvery(): void
+    {
+        $numbers = [2, 4, 6, 8];
+
+        $this->assertTrue(Arr::every($numbers, fn ($value) => $value % 2 === 0));
+        $this->assertTrue(Arr::every($numbers, fn ($value) => $value > 0));
+        $this->assertFalse(Arr::every($numbers, fn ($value) => $value > 5));
+        $this->assertFalse(Arr::every($numbers, fn ($value) => $value === 2));
+
+        $this->assertTrue(Arr::every($numbers, fn ($value, $key) => is_int($key)));
+        $this->assertTrue(Arr::every($numbers, fn ($value, $key) => $key >= 0 && $key < count($numbers)));
+
+        $strings = ['hello', 'world', 'test'];
+        $this->assertTrue(Arr::every($strings, fn ($value) => is_string($value)));
+        $this->assertTrue(Arr::every($strings, fn ($value) => strlen($value) >= 4));
+        $this->assertFalse(Arr::every($strings, fn ($value) => strlen($value) === 5));
+
+        $mixed = [1, 'string', null];
+        $this->assertFalse(Arr::every($mixed, fn ($value) => is_int($value)));
+        $this->assertFalse(Arr::every($mixed, fn ($value) => ! is_null($value)));
+
+        $empty = [];
+        $this->assertTrue(Arr::every($empty, fn ($value) => false));
+        $this->assertTrue(Arr::every($empty, fn ($value) => true));
+
+        $singleElement = [42];
+        $this->assertTrue(Arr::every($singleElement, fn ($value) => $value === 42));
+        $this->assertFalse(Arr::every($singleElement, fn ($value) => $value !== 42));
+    }
+
+    public function testSoleReturnsFirstItemInCollectionIfOnlyOneExists()
+    {
+        $this->assertSame('foo', Arr::sole(['foo']));
+
+        $array = [
+            ['name' => 'foo'],
+            ['name' => 'bar'],
+        ];
+
+        $this->assertSame(
+            ['name' => 'foo'],
+            Arr::sole($array, fn (array $value) => $value['name'] === 'foo')
+        );
+    }
+
+    public function testSoleThrowsExceptionIfNoItemsExist()
+    {
+        $this->expectException(ItemNotFoundException::class);
+
+        Arr::sole(['foo'], fn (string $value) => $value === 'baz');
+    }
+
+    public function testSoleThrowsExceptionIfMoreThanOneItemExists()
+    {
+        $this->expectExceptionObject(new MultipleItemsFoundException(2));
+
+        Arr::sole(['baz', 'foo', 'baz'], fn (string $value) => $value === 'baz');
     }
 }

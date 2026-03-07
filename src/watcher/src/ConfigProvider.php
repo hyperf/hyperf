@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\Watcher;
 
 use Hyperf\Watcher\Command\WatchCommand;
+use Hyperf\Watcher\Listener\ReloadDotenvListener;
 
 class ConfigProvider
 {
@@ -23,6 +24,9 @@ class ConfigProvider
             ],
             'commands' => [
                 WatchCommand::class,
+            ],
+            'listeners' => [
+                ReloadDotenvListener::class,
             ],
             'publish' => [
                 [

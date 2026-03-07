@@ -53,7 +53,7 @@ class CoroutineMemoryDriver extends Driver implements KeyCollectorInterface
     public function setMultiple($values, $ttl = null): bool
     {
         foreach ($values as $key => $value) {
-            $this->set($key, $values, $ttl);
+            $this->set($key, $value, $ttl);
         }
 
         return true;

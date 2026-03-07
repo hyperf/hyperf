@@ -36,4 +36,10 @@ class ComposerTest extends TestCase
         $this->assertTrue(Composer::hasPackage('hyperf/framework'));
         $this->assertFalse(Composer::hasPackage('composer/unknown'));
     }
+
+    public function testGetMergedExtra()
+    {
+        $providers = Composer::getMergedExtra('hyperf')['config'] ?? [];
+        $this->assertNotEmpty($providers);
+    }
 }

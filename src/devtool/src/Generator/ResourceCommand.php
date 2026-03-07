@@ -43,7 +43,7 @@ class ResourceCommand extends GeneratorCommand
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Resource';
+        return $this->getConfig()['namespace'] ?? 'App\Resource';
     }
 
     protected function isCollection(): bool

@@ -17,6 +17,7 @@ use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\Schedule;
 use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
+use ReflectionFunction;
 
 use function Hyperf\Tappable\tap;
 
@@ -57,13 +58,26 @@ final class ClosureCommand extends Command
     {
         $inputs = array_merge($this->input->getArguments(), $this->input->getOptions());
         $parameters = $this->parameterParser->parseClosureParameters($this->closure, $inputs);
+        $ref = new ReflectionFunction($this->closure);
 
-        return $this->closure->call($this, ...$parameters);
+        if ($ref->isStatic()) {
+            ($this->closure)(...$parameters);
+            return;
+        }
+
+        $this->closure->call($this, ...$parameters);
     }
 
     public function describe(string $description): self
     {
         $this->setDescription($description);
+
+        return $this;
+    }
+
+    public function coroutine(bool $coroutine): self
+    {
+        $this->coroutine = $coroutine;
 
         return $this;
     }

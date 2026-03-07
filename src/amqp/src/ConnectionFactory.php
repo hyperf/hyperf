@@ -20,6 +20,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coroutine\Locker;
 use InvalidArgumentException;
+use PhpAmqpLib\Connection\AMQPConnectionConfig;
 use PhpAmqpLib\Wire\IO\AbstractIO;
 use Psr\Container\ContainerInterface;
 
@@ -91,6 +92,12 @@ class ConnectionFactory
         $params = new Params(Arr::get($config, 'params', []));
         $io = $this->makeIO($config, $params);
 
+        $amqpConfig = null;
+        if (! empty($params->getConnectionName())) {
+            $amqpConfig = new AMQPConnectionConfig();
+            $amqpConfig->setConnectionName($params->getConnectionName());
+        }
+
         $connection = new AMQPConnection(
             $user,
             $password,
@@ -102,7 +109,8 @@ class ConnectionFactory
             $io,
             $params->getHeartbeat(),
             $params->getConnectionTimeout(),
-            $params->getChannelRpcTimeout()
+            $params->getChannelRpcTimeout(),
+            $amqpConfig
         );
 
         return $connection->setParams($params)

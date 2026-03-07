@@ -15,14 +15,18 @@ namespace HyperfTest\DbConnection;
 use Exception;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coroutine\Waiter;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Exception\QueryException;
+use Hyperf\Database\Model\Register;
 use Hyperf\DbConnection\Connection;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Support\Reflection\ClassInvoker;
 use HyperfTest\DbConnection\Stubs\ConnectionStub;
+use HyperfTest\DbConnection\Stubs\ConnectionStub2;
 use HyperfTest\DbConnection\Stubs\ContainerStub;
 use HyperfTest\DbConnection\Stubs\PDOStub;
+use HyperfTest\DbConnection\Stubs\PDOStub2;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -41,6 +45,8 @@ class ConnectionTest extends TestCase
     {
         Mockery::close();
         Context::set('database.connection.default', null);
+        Register::unsetConnectionResolver();
+        Register::unsetEventDispatcher();
     }
 
     public function testResolveConnection()
@@ -117,38 +123,40 @@ class ConnectionTest extends TestCase
 
     public function testPdoDontDestruct()
     {
-        $container = ContainerStub::mockContainer();
-        $pool = $container->get(PoolFactory::class)->getPool('default');
-        $config = $container->get(ConfigInterface::class)->get('databases.default');
+        (new Waiter())->wait(function () {
+            $container = ContainerStub::mockContainer();
+            $pool = $container->get(PoolFactory::class)->getPool('default');
+            $config = $container->get(ConfigInterface::class)->get('databases.default');
 
-        $callables = [
-            function ($connection) {
-                $connection->selectOne('SELECT 1;');
-            }, function ($connection) {
-                $connection->table('user')->leftJoin('user_ext', 'user.id', '=', 'user_ext.id')->get();
-            },
-        ];
+            $callables = [
+                function (Connection $connection) {
+                    $connection->selectOne('SELECT 1;');
+                }, function (Connection $connection) {
+                    $connection->table('user')->leftJoin('user_ext', 'user.id', '=', 'user_ext.id')->get();
+                },
+            ];
 
-        $closes = [
-            function ($connection) {
-                $connection->close();
-            }, function ($connection) {
-                $connection->reconnect();
-            },
-        ];
+            $closes = [
+                function (Connection $connection) {
+                    $connection->close();
+                }, function (Connection $connection) {
+                    $connection->reconnect();
+                },
+            ];
 
-        foreach ($callables as $callable) {
-            foreach ($closes as $closure) {
-                $connection = new ConnectionStub($container, $pool, $config);
-                $connection->setPdo(new PDOStub('', '', '', []));
-
-                PDOStub::$destruct = 0;
-                $callable($connection);
-                $this->assertSame(0, PDOStub::$destruct);
-                $closure($connection);
-                $this->assertSame(1, PDOStub::$destruct);
+            Context::set(PDOStub2::class . '::destruct', 0);
+            $count = 0;
+            foreach ($callables as $callable) {
+                foreach ($closes as $closure) {
+                    $connection = new ConnectionStub2($container, $pool, $config);
+                    $connection->setPdo(new PDOStub2('', '', '', []));
+                    $callable($connection);
+                    $this->assertSame($count, Context::get(PDOStub2::class . '::destruct', 0));
+                    $closure($connection);
+                    $this->assertSame(++$count, Context::get(PDOStub2::class . '::destruct', 0));
+                }
             }
-        }
+        }, 10);
     }
 
     public function testConnectionSticky()

@@ -56,7 +56,7 @@ trait Cacheable
     {
         $manager = $this->getContainer()->get(Manager::class);
 
-        return $manager->destroy([$this->getKey()], get_called_class());
+        return $manager->destroy([$this->getKey()], static::class);
     }
 
     /**
@@ -83,7 +83,7 @@ trait Cacheable
                 // Only increment a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);
-                $manager->increment($this->getKey(), $column, $amount, get_called_class());
+                $manager->increment($this->getKey(), $column, $amount, static::class);
             } else {
                 // Update other columns, when increment a column's value.
                 $this->deleteCache();
@@ -108,7 +108,7 @@ trait Cacheable
                 // Only decrement a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);
-                $manager->increment($this->getKey(), $column, -$amount, get_called_class());
+                $manager->increment($this->getKey(), $column, -$amount, static::class);
             } else {
                 // Update other columns, when decrement a column's value.
                 $this->deleteCache();

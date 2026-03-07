@@ -1,29 +1,34 @@
 {
     "name": "hyperf/watcher",
-    "type": "library",
+    "description": "Hot reload watcher for Hyperf",
     "license": "MIT",
+    "type": "library",
     "keywords": [
         "dev",
         "php",
         "hyperf"
     ],
-    "description": "Hot reload watcher for Hyperf",
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "ext-posix": "*",
-        "hyperf/codec": "~3.1.0",
-        "hyperf/command": "~3.1.0",
-        "hyperf/di": "~3.1.0",
-        "hyperf/framework": "~3.1.0",
-        "hyperf/support": "~3.1.0"
+        "hyperf/codec": "~3.2.0",
+        "hyperf/command": "~3.2.0",
+        "hyperf/contract": "~3.2.0",
+        "hyperf/coordinator": "~3.2.0",
+        "hyperf/coroutine": "~3.2.0",
+        "hyperf/di": "~3.2.0",
+        "hyperf/engine": "^2.0",
+        "hyperf/framework": "~3.2.0",
+        "hyperf/stringable": "~3.2.0",
+        "hyperf/support": "~3.2.0"
     },
     "autoload": {
-        "files": [
-            "src/Functions.php"
-        ],
         "psr-4": {
             "Hyperf\\Watcher\\": "src/"
-        }
+        },
+        "files": [
+            "src/Functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

@@ -46,7 +46,7 @@ class BaseClientTest extends TestCase
                 $response->end(Parser::serializeMessage(new UserReply()));
             });
             self::$server->handle('/bug', function ($request, $response) {
-                $response->end(false);
+                $response->end('');
             });
             self::$server->start();
         });

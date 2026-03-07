@@ -136,7 +136,8 @@ class RoomAdapterTest extends AbstractTestCase
         $room->cleanUpExpiredOnce();
         $this->assertContains('not_expired', $room->clients('foo'));
 
-        $room->setTtl(1);
+        // TODO: The latest swoole cannot support sleep time < 1ms
+        $room->setTtl(2);
         $room->add('renewed', 'foo');
         $room->renew('renewed');
         usleep(500);

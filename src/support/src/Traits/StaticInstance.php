@@ -18,8 +18,9 @@ trait StaticInstance
 {
     public static function instance(array $params = [], bool $refresh = false, string $suffix = ''): static
     {
-        $key = get_called_class() . $suffix;
+        $key = static::class . $suffix;
         $instance = null;
+
         if (Context::has($key)) {
             $instance = Context::get($key);
         }

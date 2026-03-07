@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Validation\Rules;
 
+use Hyperf\Validation\ValidationRuleParser;
 use Stringable;
 
 class In implements Stringable
@@ -33,7 +34,7 @@ class In implements Stringable
     /**
      * Convert the rule to a validation string.
      *
-     * @see \Hyperf\Validation\ValidationRuleParser::parseParameters
+     * @see ValidationRuleParser::parseParameters
      */
     public function __toString(): string
     {

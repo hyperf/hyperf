@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
+use Exception;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
@@ -24,8 +25,12 @@ use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
+use Hyperf\Database\Exception\QueryException;
+use Hyperf\Database\Exception\UniqueConstraintViolationException;
 use Hyperf\Database\Model\EnumCollector;
 use Hyperf\Database\Model\Events\Saved;
+use Hyperf\Database\Model\Model;
+use Hyperf\Database\Model\Register;
 use Hyperf\Database\MySqlBitConnection;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Database\Query\Expression;
@@ -62,6 +67,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
+use stdClass;
 
 /**
  * @internal
@@ -91,6 +97,25 @@ class ModelRealBuilderTest extends TestCase
         $conn->statement('DROP TABLE IF EXISTS `users`;');
         $conn->statement('DROP TABLE IF EXISTS `posts`;');
         Mockery::close();
+    }
+
+    public function testEachById()
+    {
+        $this->getContainer();
+
+        $count = User::query()->count();
+
+        $i = 0;
+        User::query()->eachById(function (User $user) use (&$i) {
+            ++$i;
+        });
+        $this->assertSame($i, $count);
+
+        $i = 0;
+        Db::table('user')->eachById(function (stdClass $user) use (&$i) {
+            ++$i;
+        }, 100, 'id');
+        $this->assertSame($i, $count);
     }
 
     public function testPivot()
@@ -171,6 +196,15 @@ class ModelRealBuilderTest extends TestCase
         }
     }
 
+    public function testOrderByModelBuilder()
+    {
+        $this->getContainer();
+
+        $sql = User::query()->orderBy(User::query()->select('id')->limit(1))->toSql();
+
+        $this->assertSame('select * from `user` order by (select `id` from `user` limit 1) asc', $sql);
+    }
+
     public function testForPageAfterId()
     {
         $this->getContainer();
@@ -183,6 +217,24 @@ class ModelRealBuilderTest extends TestCase
             ['select * from `user` where `id` > ? order by `id` asc limit 2', [0]],
             ['select * from `user` order by `id` asc limit 2', []],
             ['select * from `user` where `id` > ? order by `id` asc limit 2', [1]],
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
+            }
+        }
+    }
+
+    public function testUserWhereBit()
+    {
+        $this->getContainer();
+
+        $query = User::query()->whereBit('gender', 1);
+        $res = $query->get();
+        $this->assertTrue($res->count() > 0);
+
+        $sqls = [
+            ['select * from `user` where gender & ? = ?', [1, 1]],
         ];
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
@@ -390,6 +442,14 @@ class ModelRealBuilderTest extends TestCase
         $res = TestModel::query()->insert(['user_id' => 1, 'uid' => 1]);
         $this->assertTrue($res);
 
+        try {
+            $res = TestModel::query()->insert(['user_id' => 1, 'uid' => 1]);
+        } catch (UniqueConstraintViolationException $exception) {
+            // check if the exception is instance of QueryException
+            $this->assertInstanceOf(QueryException::class, $exception);
+            $this->assertStringContainsString('Duplicate entry \'1\' for key', $exception->getMessage());
+        }
+
         $model = TestModel::query()->find(1);
         $this->assertSame(1, $model->uid);
 
@@ -433,6 +493,38 @@ class ModelRealBuilderTest extends TestCase
         $this->assertIsArray($logs);
         $this->assertCount(1, $logs);
         $this->assertSame('select * from `test` where `user_id` = 1', $logs[0]['raw_query']);
+    }
+
+    public function testMySQLSetNull()
+    {
+        $container = $this->getContainer();
+        /** @var Connection $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->statement('CREATE TABLE `test` (
+            `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            `user_id` bigint(20) unsigned NOT NULL,
+            `uid` bigint(20) unsigned NOT NULL,
+            `version` bigint(20) unsigned NOT NULL,
+            `str_value` varchar(32) NULL DEFAULT NULL,
+            `int_value` bigint(20) unsigned NULL DEFAULT NULL,
+            `created_at` datetime DEFAULT NULL,
+            `updated_at` datetime DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY (`user_id`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
+        $conn->enableQueryLog();
+        $model = new TestModel();
+        $model->user_id = 1;
+        $model->uid = 1;
+        $model->version = 1;
+        $model->str_value = null;
+        $model->int_value = null;
+        $model->save();
+
+        $model = TestModel::query()->where('user_id', 1)->first();
+        $this->assertNull($model->str_value);
+        $this->assertNull($model->int_value);
     }
 
     public function testRewriteSetKeysForSaveQuery()
@@ -852,6 +944,32 @@ class ModelRealBuilderTest extends TestCase
         $this->assertNull($userWithoutPosts[0]->best_post_rating);
     }
 
+    public function testChunkMap()
+    {
+        Schema::dropIfExists('posts');
+        Schema::create('posts', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->text('content');
+            $table->timestamps();
+        });
+        $container = $this->getContainer();
+
+        $db = new Db($container);
+        $container->shouldReceive('get')->with(Db::class)->andReturn($db);
+        Db::table('posts')->whereRaw('1=1')->delete();
+        Db::table('posts')->insert([
+            ['title' => 'Foo Post', 'content' => 'Lorem Ipsum.', 'created_at' => new Carbon('2017-11-12 13:14:15')],
+            ['title' => 'Bar Post', 'content' => 'Lorem Ipsum.', 'created_at' => new Carbon('2018-01-02 03:04:05')],
+        ]);
+        $results = Db::table('posts')->orderBy('id')->chunkMap(function ($post) {
+            return $post->title;
+        }, 1);
+        $this->assertCount(2, $results);
+        $this->assertSame('Foo Post', $results[0]);
+        $this->assertSame('Bar Post', $results[1]);
+    }
+
     public function testEnumCast()
     {
         $container = $this->getContainer();
@@ -1158,6 +1276,123 @@ class ModelRealBuilderTest extends TestCase
         Schema::drop('accounting_test');
     }
 
+    public function testOrderedLazyById(): void
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        Schema::create('lazy_users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+        $now = Carbon::now();
+        Db::table('lazy_users')->insert([
+            ['name' => 'Hyperf1', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Hyperf2', 'created_at' => $now->addMinutes(), 'updated_at' => $now->addMinutes()],
+            ['name' => 'Hyperf3', 'created_at' => $now->addMinutes(2), 'updated_at' => $now->addMinutes(2)],
+            ['name' => 'Hyperf4', 'created_at' => $now->addMinutes(3), 'updated_at' => $now->addMinutes(3)],
+            ['name' => 'Hyperf5', 'created_at' => $now->addMinutes(4), 'updated_at' => $now->addMinutes(4)],
+            ['name' => 'Hyperf6', 'created_at' => $now->addMinutes(5), 'updated_at' => $now->addMinutes(5)],
+            ['name' => 'Hyperf7', 'created_at' => $now->addMinutes(6), 'updated_at' => $now->addMinutes(6)],
+            ['name' => 'Hyperf8', 'created_at' => $now->addMinutes(7), 'updated_at' => $now->addMinutes(7)],
+            ['name' => 'Hyperf9', 'created_at' => $now->addMinutes(8), 'updated_at' => $now->addMinutes(8)],
+            ['name' => 'Hyperf10', 'created_at' => $now->addMinutes(9), 'updated_at' => $now->addMinutes(9)],
+        ]);
+        $results = LazyUserModel::query()->lazyById(10);
+        $this->assertCount(10, $results);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $dbResults = Db::table('lazy_users')->lazyById(10);
+        $this->assertCount(10, $dbResults);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $results = LazyUserModel::query()->lazyById(5);
+        $dbResults = Db::table('lazy_users')->lazyById(5);
+        $this->assertCount(10, $results);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $this->assertCount(10, $dbResults);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $results = LazyUserModel::query()->lazyByIdDesc(10);
+        $this->assertCount(10, $results);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
+        $dbResults = Db::table('lazy_users')->lazyByIdDesc(10);
+        $this->assertCount(10, $dbResults);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
+        $results = LazyUserModel::query()->lazyByIdDesc(5);
+        $dbResults = Db::table('lazy_users')->lazyByIdDesc(5);
+        $this->assertCount(10, $dbResults);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
+        $this->assertCount(10, $results);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . (10 - $index), $value->name);
+        }
+        $results = LazyUserModel::query()->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyByIdDesc(10, 'created_at', 'create_date');
+        $dbResults = Db::table('lazy_users')->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyByIdDesc(10, 'created_at', 'create_date');
+        $this->assertCount(10, $results);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $this->assertCount(10, $dbResults);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $results = LazyUserModel::query()->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyById(10, 'created_at', 'create_date');
+        $dbResults = Db::table('lazy_users')->select(['id', 'name', 'created_at as create_date', 'updated_at'])->lazyById(10, 'created_at', 'create_date');
+        $this->assertCount(10, $results);
+        foreach ($results as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        $this->assertCount(10, $dbResults);
+        foreach ($dbResults as $index => $value) {
+            $this->assertSame('Hyperf' . ($index + 1), $value->name);
+        }
+        Schema::dropIfExists('lazy_users');
+    }
+
+    public function testUpdateOrFail(): void
+    {
+        $container = $this->getContainer();
+        Register::setConnectionResolver($container->get(ConnectionResolverInterface::class));
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        Schema::create('update_or_fail', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 5);
+            $table->timestamps();
+        });
+        $model = UpdateOrFail::create([
+            'name' => Str::random(5),
+        ]);
+
+        try {
+            $model->updateOrFail([
+                'name' => Str::random(6),
+            ]);
+        } catch (Exception $e) {
+            $this->assertInstanceOf(QueryException::class, $e);
+        }
+
+        $this->assertFalse((new UpdateOrFail())->updateOrFail([]));
+        $name = Str::random(4);
+        $model->updateOrFail([
+            'name' => $name,
+        ]);
+        $this->assertSame($name, $model->name);
+        Schema::drop('update_or_fail');
+    }
+
     protected function getContainer()
     {
         $dispatcher = Mockery::mock(EventDispatcherInterface::class);
@@ -1171,4 +1406,16 @@ class ModelRealBuilderTest extends TestCase
 
         return $container;
     }
+}
+
+class LazyUserModel extends Model
+{
+    protected ?string $table = 'lazy_users';
+}
+
+class UpdateOrFail extends Model
+{
+    protected ?string $table = 'update_or_fail';
+
+    protected array $guarded = [];
 }

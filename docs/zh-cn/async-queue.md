@@ -14,11 +14,12 @@ composer require hyperf/async-queue
 
 > 暂时只支持 `Redis Driver` 驱动。
 
-|       配置       |   类型    |                   默认值                    |                  备注                   |
-|:----------------:|:---------:|:-------------------------------------------:|:---------------------------------------:|
+|       配置        |   类型    |                   默认值                    |                  备注                    |
+| :--------------: | :-------: | :-----------------------------------------: | :-------------------------------------: |
+|      enable      |   bool    |                    false                    |           自动创建消费进程              |
 |      driver      |  string   | Hyperf\AsyncQueue\Driver\RedisDriver::class |                   无                    |
 |     channel      |  string   |                    queue                    |                队列前缀                 |
-|    redis.pool    |  string   |                    default                  |                redis 连接池              |
+|    redis.pool    |  string   |                   default                   |              redis 连接池               |
 |     timeout      |    int    |                      2                      |           pop 消息的超时时间            |
 |  retry_seconds   | int,array |                      5                      |           失败后重新尝试间隔            |
 |  handle_timeout  |    int    |                     10                      |            消息处理超时时间             |
@@ -31,6 +32,7 @@ composer require hyperf/async-queue
 
 return [
     'default' => [
+        'enable' => true,
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'redis' => [
             'pool' => 'default'
@@ -56,6 +58,7 @@ return [
 
 return [
     'default' => [
+        'enable' => true,
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'channel' => 'queue',
         'retry_seconds' => [1, 5, 10, 20],
@@ -84,6 +87,14 @@ C-->F[消费任务]
 ## 使用
 
 ### 配置异步消费进程
+
+组件提供`进程配置`和`参数配置`两种方式来配置异步消费进程。
+
+#### 1. 参数配置
+
+根据上文配置文件 `config/autoload/async_queue.php` 中的参数 `enable`，自动创建消费进程。
+
+#### 2. 进程配置
 
 组件已经提供了默认 `异步消费进程`，只需要将它配置到 `config/autoload/processes.php` 中即可。
 
@@ -125,6 +136,7 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 return [
     'default' => [
+        'enable' => true,
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'redis' => [
             'pool' => 'default'
@@ -139,6 +151,7 @@ return [
         ],
     ],
     'fast' => [
+        'enable' => true,
         'driver' => Hyperf\AsyncQueue\Driver\RedisDriver::class,
         'redis' => [
             'pool' => 'default'
@@ -376,11 +389,8 @@ use Hyperf\HttpServer\Annotation\AutoController;
 #[AutoController]
 class QueueController extends AbstractController
 {
-    /**
-     * @var QueueService
-     */
     #[Inject]
-    protected $service;
+    protected QueueService $service;
 
     /**
      * 注解模式投递消息
@@ -427,7 +437,7 @@ php bin/hyperf.php queue:flush {queue_name} -Q {channel_name}
 ## 事件
 
 |   事件名称   |        触发时机         |                         备注                         |
-|:------------:|:-----------------------:|:----------------------------------------------------:|
+| :----------: | :---------------------: | :--------------------------------------------------: |
 | BeforeHandle |     处理消息前触发      |                                                      |
 | AfterHandle  |     处理消息后触发      |                                                      |
 | FailedHandle |   处理消息失败后触发    |                                                      |
@@ -470,7 +480,7 @@ return [
 任务执行流转流程主要包括以下几个队列:
 
 |  队列名  |                   备注                    |
-|:--------:|:-----------------------------------------:|
+| :------: | :---------------------------------------: |
 | waiting  |              等待消费的队列               |
 | reserved |              正在消费的队列               |
 | delayed  |              延迟消费的队列               |

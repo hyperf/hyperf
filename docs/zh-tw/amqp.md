@@ -45,9 +45,11 @@ return [
             'login_response' => null,
             'locale' => 'en_US',
             'connection_timeout' => 3.0,
+            // 儘量保持是 heartbeat 數值的兩倍
             'read_write_timeout' => 6.0,
             'context' => null,
             'keepalive' => false,
+            // 儘量保證每個訊息的消費時間小於心跳時間
             'heartbeat' => 3,
             'close_on_destruct' => false,
         ],

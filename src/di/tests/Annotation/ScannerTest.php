@@ -15,6 +15,7 @@ namespace HyperfTest\Di\Annotation;
 use Composer\Autoload\ClassLoader;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ContainerInterface;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
@@ -22,11 +23,14 @@ use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\ScanHandler\NullScanHandler;
 use Hyperf\Support\Composer;
 use Hyperf\Support\Filesystem\Filesystem;
-use HyperfTest\Di\Stub\AnnotationCollector;
 use HyperfTest\Di\Stub\Aspect\Debug1Aspect;
 use HyperfTest\Di\Stub\Aspect\Debug2Aspect;
 use HyperfTest\Di\Stub\Aspect\Debug3Aspect;
-use HyperfTest\Di\Stub\AspectCollector;
+use HyperfTest\Di\Stub\Collect\Annotation\ClassAnnotation;
+use HyperfTest\Di\Stub\Collect\Annotation\ClassConstantAnnotation;
+use HyperfTest\Di\Stub\Collect\Annotation\MethodAnnotation;
+use HyperfTest\Di\Stub\Collect\Annotation\PropertyAnnotation;
+use HyperfTest\Di\Stub\Collect\Foo;
 use Mockery;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -37,21 +41,13 @@ use ReflectionClass;
  * @coversNothing
  */
 #[CoversNothing]
-/**
- * @internal
- * @coversNothing
- */
 class ScannerTest extends TestCase
 {
     protected function tearDown(): void
     {
-        AspectCollector::clear();
-        AnnotationCollector::clear();
         Mockery::close();
         ReflectionManager::clear();
-        (function () {
-            self::$classLoader = null;
-        })->call(new Composer());
+        (fn () => self::$classLoader = null)->call(new Composer());
     }
 
     public function testGetChangedAspects()
@@ -59,9 +55,7 @@ class ScannerTest extends TestCase
         $this->getContainer();
 
         $loader = Mockery::mock(ClassLoader::class);
-        $loader->shouldReceive('findFile')->andReturnUsing(function ($class) {
-            return $class;
-        });
+        $loader->shouldReceive('findFile')->andReturnUsing(fn ($class) => $class);
         Composer::setLoader($loader);
 
         $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
@@ -105,7 +99,38 @@ class ScannerTest extends TestCase
         $this->assertEquals([Debug3Aspect::class], $changed);
     }
 
-    protected function getContainer()
+    public function testCollect()
+    {
+        $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
+        $reader = new AnnotationReader();
+        $scanner->collect($reader, ReflectionManager::reflectClass(Foo::class));
+
+        $classAnnotation = AnnotationCollector::getClassAnnotation(Foo::class, ClassAnnotation::class);
+        $this->assertInstanceOf(ClassAnnotation::class, $classAnnotation);
+
+        $methodAnnotation = AnnotationCollector::getClassMethodAnnotation(Foo::class, 'method')[MethodAnnotation::class];
+        $this->assertInstanceOf(MethodAnnotation::class, $methodAnnotation);
+
+        $propertyAnnotation = AnnotationCollector::getClassPropertyAnnotation(Foo::class, 'foo')[PropertyAnnotation::class];
+        $this->assertInstanceOf(PropertyAnnotation::class, $propertyAnnotation);
+
+        $classConstantAnnotation = AnnotationCollector::getClassConstantAnnotation(Foo::class, 'FOO')[ClassConstantAnnotation::class];
+        $this->assertInstanceOf(ClassConstantAnnotation::class, $classConstantAnnotation);
+
+        $result = AnnotationCollector::getClassesByAnnotation(ClassAnnotation::class);
+        $this->assertSame([Foo::class => $classAnnotation], $result);
+
+        $result = AnnotationCollector::getMethodsByAnnotation(MethodAnnotation::class);
+        $this->assertSame([['class' => Foo::class, 'method' => 'method', 'annotation' => $methodAnnotation]], $result);
+
+        $result = AnnotationCollector::getPropertiesByAnnotation(PropertyAnnotation::class);
+        $this->assertSame([['class' => Foo::class, 'property' => 'foo', 'annotation' => $propertyAnnotation]], $result);
+
+        $result = AnnotationCollector::getClassConstantsByAnnotation(ClassConstantAnnotation::class);
+        $this->assertSame([['class' => Foo::class, 'constant' => 'FOO', 'annotation' => $classConstantAnnotation]], $result);
+    }
+
+    protected function getContainer(): ContainerInterface
     {
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);

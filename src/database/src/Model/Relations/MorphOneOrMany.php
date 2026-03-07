@@ -17,6 +17,13 @@ use Hyperf\Database\Model\Model;
 
 use function Hyperf\Collection\last;
 
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TParentModel of \Hyperf\Database\Model\Model
+ * @template TResult
+ *
+ * @extends HasOneOrMany<TRelatedModel, TParentModel, TResult>
+ */
 abstract class MorphOneOrMany extends HasOneOrMany
 {
     /**

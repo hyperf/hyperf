@@ -14,6 +14,7 @@ namespace Hyperf\Scout;
 
 use Closure;
 use Hyperf\Collection\Collection as BaseCollection;
+use Hyperf\Conditionable\Conditionable;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Macroable\Macroable;
@@ -26,6 +27,7 @@ use function Hyperf\Tappable\tap;
 class Builder
 {
     use Macroable;
+    use Conditionable;
 
     /**
      * Optional callback before model query execution.
@@ -124,26 +126,6 @@ class Builder
             'column' => $column,
             'direction' => strtolower($direction) == 'asc' ? 'asc' : 'desc',
         ];
-        return $this;
-    }
-
-    /**
-     * Apply the callback's query changes if the given "value" is true.
-     *
-     * @param callable($this, $value): $this $callback
-     * @param callable($this, $value): $this $default
-     * @return $this
-     */
-    public function when(mixed $value, callable $callback, ?callable $default = null): static
-    {
-        $value = $value instanceof Closure ? $value($this) : $value;
-
-        if ($value) {
-            return $callback($this, $value) ?: $this;
-        }
-        if ($default) {
-            return $default($this, $value) ?: $this;
-        }
         return $this;
     }
 

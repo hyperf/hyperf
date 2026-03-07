@@ -31,8 +31,8 @@ class ModelDynamicRelationsTest extends TestCase
 {
     public function setUp(): void
     {
-        $grammarClass = 'Hyperf\Database\Query\Grammars\\Grammar';
-        $processorClass = 'Hyperf\Database\Query\Processors\\Processor';
+        $grammarClass = 'Hyperf\Database\Query\Grammars\Grammar';
+        $processorClass = 'Hyperf\Database\Query\Processors\Processor';
         $grammar = new $grammarClass();
         $processor = new $processorClass();
         $connection = Mockery::mock(ConnectionInterface::class, ['getQueryGrammar' => $grammar, 'getPostProcessor' => $processor]);

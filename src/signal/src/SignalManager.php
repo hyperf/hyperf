@@ -24,7 +24,7 @@ use Psr\Container\ContainerInterface;
 class SignalManager
 {
     /**
-     * @var SignalHandlerInterface[][][]
+     * @var SignalHandler[][][]
      */
     protected array $handlers = [];
 

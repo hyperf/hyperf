@@ -35,38 +35,37 @@ use function Hyperf\Support\value;
 
 /**
  * @template TKey of array-key
- * @template TTimesValue
- *
  * @template TValue
- * @property HigherOrderCollectionProxy $average
- * @property HigherOrderCollectionProxy $avg
- * @property HigherOrderCollectionProxy $contains
- * @property HigherOrderCollectionProxy $doesntContain
- * @property HigherOrderCollectionProxy $each
- * @property HigherOrderCollectionProxy $every
- * @property HigherOrderCollectionProxy $filter
- * @property HigherOrderCollectionProxy $first
- * @property HigherOrderCollectionProxy $flatMap
- * @property HigherOrderCollectionProxy $groupBy
- * @property HigherOrderCollectionProxy $keyBy
- * @property HigherOrderCollectionProxy $map
- * @property HigherOrderCollectionProxy $max
- * @property HigherOrderCollectionProxy $min
- * @property HigherOrderCollectionProxy $partition
- * @property HigherOrderCollectionProxy $percentage
- * @property HigherOrderCollectionProxy $reject
- * @property HigherOrderCollectionProxy $skipUntil
- * @property HigherOrderCollectionProxy $skipWhile
- * @property HigherOrderCollectionProxy $some
- * @property HigherOrderCollectionProxy $sortBy
- * @property HigherOrderCollectionProxy $sortByDesc
- * @property HigherOrderCollectionProxy $sum
- * @property HigherOrderCollectionProxy $takeUntil
- * @property HigherOrderCollectionProxy $takeWhile
- * @property HigherOrderCollectionProxy $unique
- * @property HigherOrderCollectionProxy $unless
- * @property HigherOrderCollectionProxy $until
- * @property HigherOrderCollectionProxy $when
+ *
+ * @property HigherOrderCollectionProxy<TKey, TValue> $average
+ * @property HigherOrderCollectionProxy<TKey, TValue> $avg
+ * @property HigherOrderCollectionProxy<TKey, TValue> $contains
+ * @property HigherOrderCollectionProxy<TKey, TValue> $doesntContain
+ * @property HigherOrderCollectionProxy<TKey, TValue> $each
+ * @property HigherOrderCollectionProxy<TKey, TValue> $every
+ * @property HigherOrderCollectionProxy<TKey, TValue> $filter
+ * @property HigherOrderCollectionProxy<TKey, TValue> $first
+ * @property HigherOrderCollectionProxy<TKey, TValue> $flatMap
+ * @property HigherOrderCollectionProxy<TKey, TValue> $groupBy
+ * @property HigherOrderCollectionProxy<TKey, TValue> $keyBy
+ * @property HigherOrderCollectionProxy<TKey, TValue> $map
+ * @property HigherOrderCollectionProxy<TKey, TValue> $max
+ * @property HigherOrderCollectionProxy<TKey, TValue> $min
+ * @property HigherOrderCollectionProxy<TKey, TValue> $partition
+ * @property HigherOrderCollectionProxy<TKey, TValue> $percentage
+ * @property HigherOrderCollectionProxy<TKey, TValue> $reject
+ * @property HigherOrderCollectionProxy<TKey, TValue> $skipUntil
+ * @property HigherOrderCollectionProxy<TKey, TValue> $skipWhile
+ * @property HigherOrderCollectionProxy<TKey, TValue> $some
+ * @property HigherOrderCollectionProxy<TKey, TValue> $sortBy
+ * @property HigherOrderCollectionProxy<TKey, TValue> $sortByDesc
+ * @property HigherOrderCollectionProxy<TKey, TValue> $sum
+ * @property HigherOrderCollectionProxy<TKey, TValue> $takeUntil
+ * @property HigherOrderCollectionProxy<TKey, TValue> $takeWhile
+ * @property HigherOrderCollectionProxy<TKey, TValue> $unique
+ * @property HigherOrderCollectionProxy<TKey, TValue> $unless
+ * @property HigherOrderCollectionProxy<TKey, TValue> $until
+ * @property HigherOrderCollectionProxy<TKey, TValue> $when
  */
 trait EnumeratesValues
 {
@@ -194,6 +193,7 @@ trait EnumeratesValues
 
     /**
      * Create a new collection by invoking the callback a given amount of times.
+     * @template TTimesValue
      *
      * @param null|(callable(int): TTimesValue) $callback
      * @return static<int, TTimesValue>
@@ -408,7 +408,7 @@ trait EnumeratesValues
      * @param callable(mixed...): TMapSpreadValue $callback
      * @return static<TKey, TMapSpreadValue>
      */
-    public function mapSpread(callable $callback): self|static
+    public function mapSpread(callable $callback): Enumerable
     {
         return $this->map(function ($chunk, $key) use ($callback) {
             $chunk[] = $key;
@@ -428,7 +428,7 @@ trait EnumeratesValues
      * @param callable(TValue, TKey): array<TMapToGroupsKey, TMapToGroupsValue> $callback
      * @return static<TMapToGroupsKey, static<int, TMapToGroupsValue>>
      */
-    public function mapToGroups(callable $callback): self|static
+    public function mapToGroups(callable $callback): Enumerable
     {
         $groups = $this->mapToDictionary($callback);
 
@@ -444,7 +444,7 @@ trait EnumeratesValues
      * @param callable(TValue, TKey): (array<TFlatMapKey, TFlatMapValue>|Collection<TFlatMapKey, TFlatMapValue>) $callback
      * @return static<TFlatMapKey, TFlatMapValue>
      */
-    public function flatMap(callable $callback): self|static
+    public function flatMap(callable $callback): Enumerable
     {
         return $this->map($callback)->collapse();
     }
@@ -456,7 +456,7 @@ trait EnumeratesValues
      * @param class-string<TMapIntoValue> $class
      * @return static<TKey, TMapIntoValue>
      */
-    public function mapInto(mixed $class): self|static
+    public function mapInto(mixed $class): Enumerable
     {
         if (is_subclass_of($class, BackedEnum::class)) {
             return $this->map(fn ($value, $key) => $class::from($value));
@@ -515,20 +515,11 @@ trait EnumeratesValues
      */
     public function partition(mixed $key, mixed $operator = null, mixed $value = null): static
     {
-        $passed = [];
-        $failed = [];
-
         $callback = func_num_args() === 1
             ? $this->valueRetriever($key)
             : $this->operatorForWhere(...func_get_args());
 
-        foreach ($this as $key => $item) {
-            if ($callback($item, $key)) {
-                $passed[$key] = $item;
-            } else {
-                $failed[$key] = $item;
-            }
-        }
+        [$passed, $failed] = Arr::partition($this->getIterator(), $callback);
 
         return new static([new static($passed), new static($failed)]);
     }
@@ -961,10 +952,8 @@ trait EnumeratesValues
 
     /**
      * Get the collection of items as JSON.
-     *
-     * @return string
      */
-    public function toJson(int $options = 0)
+    public function toJson(int $options = 0): string
     {
         return json_encode($this->jsonSerialize(), $options);
     }
@@ -1026,7 +1015,7 @@ trait EnumeratesValues
      * @param callable|string $key
      * @param null|string $operator
      */
-    protected function operatorForWhere(mixed $key, mixed $operator = null, mixed $value = null): Closure
+    protected function operatorForWhere(mixed $key, mixed $operator = null, mixed $value = null): callable|Closure
     {
         if ($this->useAsCallable($key)) {
             return $key;

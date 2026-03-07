@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Hyperf\Di;
 
+use ReflectionAttribute;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
@@ -30,16 +31,17 @@ abstract class AbstractCallableDefinitionCollector extends MetadataCollector
                 $parameter->getType(),
                 $parameter->allowsNull(),
                 $parameter->isDefaultValueAvailable(),
-                $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null
+                $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
+                $parameter->getAttributes()
             );
         }
         return $definitions;
     }
 
     /**
-     * @param mixed $defaultValue
+     * @param ReflectionAttribute[] $attributes
      */
-    protected function createType(string $name, ?\ReflectionType $type, bool $allowsNull, bool $hasDefault = false, $defaultValue = null): ReflectionType
+    protected function createType(string $name, ?\ReflectionType $type, bool $allowsNull, bool $hasDefault = false, mixed $defaultValue = null, array $attributes = []): ReflectionType
     {
         // TODO: Support ReflectionUnionType.
         $typeName = match (true) {
@@ -51,6 +53,7 @@ abstract class AbstractCallableDefinitionCollector extends MetadataCollector
             'defaultValueAvailable' => $hasDefault,
             'defaultValue' => $defaultValue,
             'name' => $name,
+            'attributes' => $attributes,
         ]);
     }
 }

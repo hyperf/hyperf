@@ -28,7 +28,7 @@ class ModelRewriteInheritanceVisitor extends AbstractVisitor
         parent::__construct($option, $data);
 
         if (! empty($option->getUses())) {
-            preg_match_all('/\s*([a-z0-9\\\\]+)(as)?([a-z0-9]+)?;?\s*/is', $option->getUses(), $match);
+            preg_match_all('/\s*([a-z0-9\\\]+)(as)?([a-z0-9]+)?;?\s*/is', $option->getUses(), $match);
             if (isset($match[1][0])) {
                 $this->parentClass = $match[1][0];
             }

@@ -23,6 +23,7 @@ use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 use const OpenTracing\Formats\TEXT_MAP;
+use const OpenTracing\Tags\SPAN_KIND_RPC_CLIENT;
 
 class HttpClientAspect extends AbstractAspect
 {
@@ -57,7 +58,7 @@ class HttpClientAspect extends AbstractAspect
         $method = $arguments['keys']['method'] ?? 'Null';
         $uri = $arguments['keys']['uri'] ?? 'Null';
         $key = "HTTP Request [{$method}] {$uri}";
-        $span = $this->startSpan($key);
+        $span = $this->startSpan($key, [], SPAN_KIND_RPC_CLIENT);
         $span->setTag('source', $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName);
         if ($this->spanTagManager->has('http_client', 'http.url')) {
             $span->setTag($this->spanTagManager->get('http_client', 'http.url'), $uri);

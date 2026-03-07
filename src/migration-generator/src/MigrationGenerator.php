@@ -47,7 +47,7 @@ class MigrationGenerator
         protected ConfigInterface $config,
         protected ?OutputInterface $output = null,
     ) {
-        $this->astParser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $this->astParser = (new ParserFactory())->createForNewestSupportedVersion();
         $this->printer = new Standard();
         $this->files = make(Filesystem::class);
     }

@@ -120,7 +120,7 @@ class PhpDocReader
             }
 
             // Ignore types containing special characters ([], <> ...)
-            if (! preg_match('/^[a-zA-Z0-9\\\\_]+$/', $type)) {
+            if (! preg_match('/^[a-zA-Z0-9\\\_]+$/', $type)) {
                 continue;
             }
 
