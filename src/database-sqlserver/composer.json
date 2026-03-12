@@ -1,5 +1,5 @@
 {
-    "name": "hyperf/database-sqlserver-incubator",
+    "name": "hyperf/database-sqlserver",
     "type": "library",
     "description": "The sqlserver driver for hyperf/database.",
     "license": "MIT",
@@ -17,8 +17,9 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=8.1",
-        "hyperf/database": "~3.1.0"
+        "php": ">=8.2",
+        "hyperf/database": "~3.2.0",
+        "hyperf/db-connection": "~3.2.0"
     },
     "autoload": {
         "psr-4": {
