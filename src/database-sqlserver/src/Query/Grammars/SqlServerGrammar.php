@@ -560,7 +560,7 @@ class SqlServerGrammar extends Grammar
      *
      * @param string $value
      */
-    protected function wrapJsonBooleanValue($value): string
+    protected function wrapJsonBooleanValue($value)
     {
         return "'" . $value . "'";
     }
@@ -637,7 +637,7 @@ class SqlServerGrammar extends Grammar
      * @param string $value
      * @param string $delimiter
      */
-    protected function wrapJsonPath($value, $delimiter = '->'): string
+    protected function wrapJsonPath($value, $delimiter = '->')
     {
         $value = preg_replace("/([\\\\]+)?\\'/", "''", $value);
 
