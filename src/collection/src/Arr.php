@@ -751,11 +751,9 @@ class Arr
      */
     public static function toCssClasses(array $array): string
     {
-        $classList = static::wrap($array);
-
         $classes = [];
 
-        foreach ($classList as $class => $constraint) {
+        foreach ($array as $class => $constraint) {
             if (is_numeric($class)) {
                 $classes[] = $constraint;
             } elseif ($constraint) {
@@ -771,11 +769,9 @@ class Arr
      */
     public static function toCssStyles(array $array): string
     {
-        $styleList = static::wrap($array);
-
         $styles = [];
 
-        foreach ($styleList as $class => $constraint) {
+        foreach ($array as $class => $constraint) {
             if (is_numeric($class)) {
                 $styles[] = Str::finish($constraint, ';');
             } elseif ($constraint) {
