@@ -169,6 +169,7 @@ fgetcsv($fp) must be changed to fgetcsv($fp, escape: '')
 
 - [#6760](https://github.com/hyperf/hyperf/pull/6760) Changed the default type of `deleted_at` to `datetime` for `hyperf/database`.
 - [#7208](https://github.com/hyperf/hyperf/pull/7208) Throw exceptions when the value is smaller than zero for `Hyperf\Database\Query\Builder::limit()`.
+- [#7372](https://github.com/hyperf/hyperf/pull/7372) Use empty string as `escape` for function `str_getcsv`.
 - [#7462](https://github.com/hyperf/hyperf/pull/7462) Replaced `influxdb/influxdb-php` into `influxdata/influxdb-client-php`.
 - [#7563](https://github.com/hyperf/hyperf/pull/7563) Changed the `logger` configuration structure.
 - [#7594](https://github.com/hyperf/hyperf/pull/7594) Changed the `cache` configuration structure.
