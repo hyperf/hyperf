@@ -111,6 +111,15 @@ return [
 ];
 ```
 
+## Warn
+
+1. If you have upgraded to PHP 8.4, please note that both the `fgetcsv` and `fputcsv` methods now require providing a default value for the `escape` parameter.
+
+```
+fputcsv($fp, $fields) must be changed to fputcsv($fp, $fields, escape: '')
+fgetcsv($fp) must be changed to fgetcsv($fp, escape: '')
+```
+
 ## Dependencies Upgrade
 
 - Upgrade the php version to `>=8.2`
