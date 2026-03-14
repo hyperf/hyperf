@@ -78,9 +78,9 @@ class ServiceClient extends AbstractServiceClient
         throw new RequestException('Invalid response.');
     }
 
-    public function __call(string $method, array $params)
+    public function __call(string $name, array $arguments): mixed
     {
-        return $this->__request($method, $params);
+        return $this->__request($name, $arguments);
     }
 
     protected function setOptions(array $options): void

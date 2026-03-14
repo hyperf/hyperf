@@ -113,10 +113,10 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                         }
                         $argType = new Node\UnionType($unionTypeIdentifier);
                     } else {
-                        $argType = $argumentType->getName();
-                        if ($argumentType->allowsNull()) {
-                            $argType = new Node\NullableType($argType);
-                        }
+                        $argType = PhpParser::getInstance()->getNodeByTypeString(
+                            $argumentType->getName(),
+                            $argumentType->allowsNull()
+                        );
                     }
                 }
                 if ($argument->isDefaultValueAvailable()) {

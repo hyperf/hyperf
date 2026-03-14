@@ -50,7 +50,7 @@ class Db
     {
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         if ($name === 'connection') {
             return $this->__connection(...$arguments);

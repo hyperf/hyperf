@@ -76,7 +76,7 @@ class LoggerFactoryTest extends TestCase
         $container = $this->mockContainer();
         ApplicationContext::setContainer($container);
         $factory = $container->get(LoggerFactory::class);
-        $logger = $factory->get(group: 'string');
+        $logger = $factory->get(channel: 'string');
         $this->assertInstanceOf(\Hyperf\Logger\Logger::class, $logger);
     }
 
@@ -186,102 +186,105 @@ class LoggerFactoryTest extends TestCase
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config = new Config([
             'logger' => [
-                'default' => [
-                    'handler' => [
-                        'class' => StreamHandler::class,
-                        'constructor' => [
-                            'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                            'level' => Logger::DEBUG,
-                        ],
-                    ],
-                    'formatter' => [
-                        'class' => LineFormatter::class,
-                        'constructor' => [],
-                    ],
-                ],
-                'callable' => fn (string $name) => [
-                    'handler' => [
-                        'class' => StreamHandler::class,
-                        'constructor' => [
-                            'stream' => BASE_PATH . '/runtime/logs/' . $name . '.log',
-                            'level' => Logger::DEBUG,
-                        ],
-                    ],
-                ],
-                'string' => ['handlers' => ['default']],
-                'default-handlers' => [
-                    'handlers' => [
-                        [
+                'default' => 'default',
+                'channels' => [
+                    'default' => [
+                        'handler' => [
                             'class' => StreamHandler::class,
                             'constructor' => [
                                 'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
                                 'level' => Logger::DEBUG,
                             ],
-                            'formatter' => [
-                                'class' => LineFormatter::class,
-                            ],
                         ],
-                        [
-                            'class' => TestHandler::class,
+                        'formatter' => [
+                            'class' => LineFormatter::class,
+                            'constructor' => [],
+                        ],
+                    ],
+                    'callable' => fn (string $name) => [
+                        'handler' => [
+                            'class' => StreamHandler::class,
                             'constructor' => [
+                                'stream' => BASE_PATH . '/runtime/logs/' . $name . '.log',
                                 'level' => Logger::DEBUG,
                             ],
-                            'formatter' => [
-                                'class' => LineFormatter::class,
-                            ],
                         ],
                     ],
-                    'formatter' => [
-                        'class' => LineFormatter::class,
-                        'constructor' => [],
-                    ],
-                ],
-                'processor-test' => [
-                    'handlers' => [
-                        [
-                            'class' => FooHandler::class,
-                            'constructor' => [
-                                'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                                'level' => Logger::DEBUG,
+                    'string' => ['handlers' => ['default']],
+                    'default-handlers' => [
+                        'handlers' => [
+                            [
+                                'class' => StreamHandler::class,
+                                'constructor' => [
+                                    'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                                    'level' => Logger::DEBUG,
+                                ],
+                                'formatter' => [
+                                    'class' => LineFormatter::class,
+                                ],
                             ],
-                            'formatter' => [
-                                'class' => LineFormatter::class,
+                            [
+                                'class' => TestHandler::class,
+                                'constructor' => [
+                                    'level' => Logger::DEBUG,
+                                ],
+                                'formatter' => [
+                                    'class' => LineFormatter::class,
+                                ],
                             ],
                         ],
+                        'formatter' => [
+                            'class' => LineFormatter::class,
+                            'constructor' => [],
+                        ],
                     ],
-                    'processors' => [
-                        [
+                    'processor-test' => [
+                        'handlers' => [
+                            [
+                                'class' => FooHandler::class,
+                                'constructor' => [
+                                    'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                                    'level' => Logger::DEBUG,
+                                ],
+                                'formatter' => [
+                                    'class' => LineFormatter::class,
+                                ],
+                            ],
+                        ],
+                        'processors' => [
+                            [
+                                'class' => FooProcessor::class,
+                                'constructor' => [
+                                    'repeat' => 2,
+                                ],
+                            ],
+                            [
+                                'class' => BarProcessor::class,
+                            ],
+                            function (array|LogRecord $records) {
+                                $records['extra']['callback'] = true;
+                                return $records;
+                            },
+                        ],
+                    ],
+                    'default-processor' => [
+                        'handlers' => [
+                            [
+                                'class' => FooHandler::class,
+                                'constructor' => [
+                                    'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                                    'level' => Logger::DEBUG,
+                                ],
+                                'formatter' => [
+                                    'class' => LineFormatter::class,
+                                ],
+                            ],
+                        ],
+                        'processor' => [
                             'class' => FooProcessor::class,
                             'constructor' => [
                                 'repeat' => 2,
                             ],
-                        ],
-                        [
-                            'class' => BarProcessor::class,
-                        ],
-                        function (array|LogRecord $records) {
-                            $records['extra']['callback'] = true;
-                            return $records;
-                        },
-                    ],
-                ],
-                'default-processor' => [
-                    'handlers' => [
-                        [
-                            'class' => FooHandler::class,
-                            'constructor' => [
-                                'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                                'level' => Logger::DEBUG,
-                            ],
-                            'formatter' => [
-                                'class' => LineFormatter::class,
-                            ],
-                        ],
-                    ],
-                    'processor' => [
-                        'class' => FooProcessor::class,
-                        'constructor' => [
-                            'repeat' => 2,
                         ],
                     ],
                 ],

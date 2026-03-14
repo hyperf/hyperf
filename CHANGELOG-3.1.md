@@ -1,8 +1,10 @@
-# v3.1.67 - TBD
+# v3.1.68 - TBD
+
+# v3.1.67 - 2026-02-24
 
 ## Added
 
-- [#7459](https://github.com/hyperf/hyperf/pull/7459) Support using model name like `App\\Model\\User` for validatoin rule `exists` and `unique`.
+- [#7459](https://github.com/hyperf/hyperf/pull/7459) Support using model name like `App\\Model\\User` for validation rule `exists` and `unique`.
 - [#7555](https://github.com/hyperf/hyperf/pull/7555) Added `Hyperf\Crontab\Mutex\RedisServerMutexByNodeName`.
 - [#7607](https://github.com/hyperf/hyperf/pull/7607) Added casts `AsCollection` for `hyperf/database`.
 - [#7648](https://github.com/hyperf/hyperf/pull/7648) Support aliyun mse signature for nacos.
@@ -15,6 +17,7 @@
 
 - [#7703](https://github.com/hyperf/hyperf/pull/7703) Fixed bug that the default ttl cannot work for memory driver of `hyperf/cache`.
 - [#7705](https://github.com/hyperf/hyperf/pull/7705) Fixed bug that `eachById` cannot work for `Hyperf\Database\Query\Builder`.
+- [#7712](https://github.com/hyperf/hyperf/pull/7712) Fixed bug that the classes cache cannot decode.
 
 # v3.1.66 - 2026-01-25
 

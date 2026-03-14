@@ -19,7 +19,6 @@ use stdClass;
 
 /**
  * @internal
- * @coversNothing
  */
 #[CoversNothing]
 class DebugTest extends TestCase

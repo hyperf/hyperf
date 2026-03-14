@@ -33,7 +33,7 @@ class Redis
     {
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         // Get a connection from coroutine context or connection pool.
         $hasContextConnection = Context::has($this->getContextKey());
