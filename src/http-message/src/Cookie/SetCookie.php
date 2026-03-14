@@ -52,7 +52,7 @@ class SetCookie implements Stringable, Arrayable
         }
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $str = $this->data['Name'] . '=' . $this->data['Value'] . '; ';
         foreach ($this->data as $k => $v) {
@@ -357,7 +357,7 @@ class SetCookie implements Stringable, Arrayable
             return false;
         }
 
-        return (bool) preg_match('/\.' . preg_quote($cookieDomain) . '$/', $domain);
+        return (bool) preg_match('/\.' . preg_quote($cookieDomain, '/') . '$/', $domain);
     }
 
     /**

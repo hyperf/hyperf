@@ -266,7 +266,11 @@ class ValidationRuleParser
             return [$parameter];
         }
 
-        return str_getcsv($parameter);
+        if (PHP_VERSION_ID >= 90000) {
+            return str_getcsv($parameter, escape: '');
+        }
+
+        return str_getcsv($parameter, escape: '\\');
     }
 
     /**

@@ -108,7 +108,11 @@ trait ValidatesAttributes
 
         if ($url = parse_url($value, PHP_URL_HOST)) {
             try {
-                return count(dns_get_record($url . '.', DNS_A | DNS_AAAA)) > 0;
+                $records = dns_get_record($url . '.', DNS_A | DNS_AAAA);
+                if (! $records) {
+                    return false;
+                }
+                return count($records) > 0;
             } catch (Exception) {
                 return false;
             }
@@ -956,17 +960,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        if (function_exists('json_validate')) {
-            return json_validate($value);
-        }
-
-        try {
-            json_decode($value, flags: JSON_THROW_ON_ERROR);
-        } catch (Throwable) {
-            return false;
-        }
-
-        return true;
+        return json_validate($value);
     }
 
     /**

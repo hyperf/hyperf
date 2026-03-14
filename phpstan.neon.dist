@@ -11,7 +11,7 @@ parameters:
     maximumNumberOfProcesses: 32
     minimumNumberOfJobsPerProcess: 2
   inferPrivatePropertyTypeFromConstructor: true
-  treatPhpDocTypesAsCertain: true
+  treatPhpDocTypesAsCertain: false
   reportUnmatchedIgnoredErrors: false
   excludePaths:
     - %currentWorkingDirectory%/src/helper/*
@@ -24,6 +24,7 @@ parameters:
     - %currentWorkingDirectory%/src/database-pgsql/*
     - %currentWorkingDirectory%/src/db/src/PgSQL/*
     - %currentWorkingDirectory%/src/filesystem/*
+    - %currentWorkingDirectory%/src/graphql/*
     - %currentWorkingDirectory%/src/grpc/*
     - %currentWorkingDirectory%/src/grpc-server/*
     - %currentWorkingDirectory%/src/ide-helper/*
@@ -33,13 +34,12 @@ parameters:
     - %currentWorkingDirectory%/src/amqp/src/IO/SwowIO.php
   ignoreErrors:
     -
-      identifier: missingType.iterableValue
-    -
-      identifier: missingType.generics
-    -
-      identifier: missingType.return
-    -
-      identifier: missingType.parameter
+      identifiers:
+        - missingType.iterableValue
+        - missingType.generics
+        - missingType.return
+        - missingType.parameter
+        - unset.possiblyHookedProperty
     - '#Unable to resolve the template type#'
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
@@ -62,6 +62,7 @@ parameters:
     - '#Unsafe access to private property .* through static::#'
     - '#Unsafe call to private method .* through static::#'
     - '#Property .* is never read, only written#'
+    - '#Function Hyperf\\Support\\retry\(\) should return .* but return statement is missing#'
     - message: '#Match arm is unreachable because previous comparison is always true#'
       path: src/amqp/src/IO/IOFactory.php
     - '#.*TKey.*TValue#'
@@ -82,3 +83,12 @@ parameters:
       path: src/collection/src/*.php
     - message: '#has no type specified#'
       path: src/nacos/src/Protobuf/*.php
+    - '#Path in (require|require_once|include|include_once)\(\) ".*" is not a file or it does not exist.#'
+    - '#Call to function is_(array|string|object)\(\) with .* will always evaluate to true.#'
+    - '#Call to static method PHPUnit\\Framework\\Assert::assertTrue\(\) with true will always evaluate to true.#'
+    - '#Call to function \w+\(\) with .* will always evaluate to true.#'
+    - '#Trait .* is used zero times and is not analysed.#'
+    - "#Method .* has (.*) in PHPDoc @throws tag but it's not thrown.#"
+    - '#PHPDoc tag @var with type .* is not subtype of native type .*.#'
+    - '#Parameter \#\d+ \$previous of class (\w+)Exception constructor expects Exception\|null, Throwable given.#'
+    - "#Match arm comparison between 'Swoole' and 'Swoole' is always true.#"

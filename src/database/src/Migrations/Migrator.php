@@ -157,7 +157,7 @@ class Migrator
             return [];
         }
 
-        return $this->resetMigrations($migrations, $paths, $pretend);
+        return $this->resetMigrations($migrations, Arr::wrap($paths), $pretend);
     }
 
     /**
@@ -353,6 +353,10 @@ class Migrator
     {
         if (($steps = $options['step'] ?? 0) > 0) {
             return $this->repository->getMigrations($steps);
+        }
+
+        if (($batch = $options['batch'] ?? 0) > 0) {
+            return $this->repository->getMigrationsByBatch($batch);
         }
 
         return $this->repository->getLast();

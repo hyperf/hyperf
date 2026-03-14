@@ -36,7 +36,7 @@ use Psr\Http\Message\UriInterface;
 class CoroutineHandler
 {
     /**
-     * @see \GuzzleHttp\Psr7\Uri::$defaultPorts
+     * @see Uri::$defaultPorts
      */
     private static array $defaultPorts = [
         'http' => 80,
@@ -77,7 +77,8 @@ class CoroutineHandler
         try {
             $raw = $client->request($request->getMethod(), $path, $headers, (string) $request->getBody());
         } catch (Exception $exception) {
-            $exception = new ConnectException($exception->getMessage(), $request, null, [
+            $message = sprintf('Failed to connecting to %s port %s, %s', $host, $port, $exception->getMessage());
+            $exception = new ConnectException($message, $request, null, [
                 'errCode' => $exception->getCode(),
             ]);
             return Create::rejectionFor($exception);

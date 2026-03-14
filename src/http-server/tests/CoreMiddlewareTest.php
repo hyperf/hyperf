@@ -44,6 +44,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 use ReflectionMethod;
+use Stringable;
 use Swow\Psr7\Message\ResponsePlusInterface;
 
 /**
@@ -98,10 +99,15 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // Jsonable
-        $response = $reflectionMethod->invoke($middleware, new class implements Jsonable {
+        $response = $reflectionMethod->invoke($middleware, new class implements Stringable, Jsonable {
             public function __toString(): string
             {
                 return json_encode(['foo' => 'bar'], JSON_UNESCAPED_UNICODE);
+            }
+
+            public function toJson($options = 0): string
+            {
+                return json_encode(['foo' => 'bar'], $options);
             }
         }, $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -109,7 +115,7 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // __toString
-        $response = $reflectionMethod->invoke($middleware, new class {
+        $response = $reflectionMethod->invoke($middleware, new class implements Stringable {
             public function __toString(): string
             {
                 return 'This is a string';

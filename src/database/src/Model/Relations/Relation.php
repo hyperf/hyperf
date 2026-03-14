@@ -25,7 +25,11 @@ use function Hyperf\Collection\collect;
 use function Hyperf\Collection\last;
 
 /**
- * @mixin \Hyperf\Database\Model\Builder
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TParentModel of \Hyperf\Database\Model\Model
+ * @template TResult
+ *
+ * @mixin \Hyperf\Database\Model\Builder<TRelatedModel>
  */
 abstract class Relation
 {
@@ -80,17 +84,14 @@ abstract class Relation
 
     /**
      * Handle dynamic method calls to the relationship.
-     *
-     * @param string $method
-     * @param array $parameters
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
+        if (static::hasMacro($name)) {
+            return $this->macroCall($name, $arguments);
         }
 
-        $result = $this->forwardCallTo($this->query, $method, $parameters);
+        $result = $this->forwardCallTo($this->query, $name, $arguments);
 
         if ($result === $this->query) {
             return $this;
@@ -109,6 +110,10 @@ abstract class Relation
 
     /**
      * Run a callback with constraints disabled on the relation.
+     *
+     * @template TCallbackReturn
+     * @param Closure():TCallbackReturn $callback
+     * @return TCallbackReturn
      */
     public static function noConstraints(Closure $callback)
     {
@@ -154,13 +159,15 @@ abstract class Relation
 
     /**
      * Get the results of the relationship.
+     *
+     * @return TResult
      */
     abstract public function getResults();
 
     /**
      * Get the relationship for eager loading.
      *
-     * @return Collection
+     * @return Collection<int, TRelatedModel>
      */
     public function getEager()
     {
@@ -171,7 +178,7 @@ abstract class Relation
      * Execute the query as a "select" statement.
      *
      * @param array $columns
-     * @return Collection
+     * @return Collection<int, TRelatedModel>
      */
     public function get($columns = ['*'])
     {
@@ -256,7 +263,7 @@ abstract class Relation
     /**
      * Get the parent model of the relation.
      *
-     * @return Model
+     * @return TParentModel
      */
     public function getParent()
     {
@@ -276,7 +283,7 @@ abstract class Relation
     /**
      * Get the related model of the relation.
      *
-     * @return Model
+     * @return TRelatedModel
      */
     public function getRelated()
     {

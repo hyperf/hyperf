@@ -139,6 +139,21 @@ class DatabaseMigrationRepositoryTest extends TestCase
         $repo->createRepository();
     }
 
+    public function testGetMigrationsByBatchReturnsCorrectMigrations()
+    {
+        $repo = $this->getRepository();
+        $query = Mockery::mock(Builder::class);
+        $connectionMock = Mockery::mock(Connection::class);
+        $repo->getConnectionResolver()->shouldReceive('connection')->with(null)->andReturn($connectionMock);
+        $repo->getConnection()->shouldReceive('table')->once()->with('migrations')->andReturn($query);
+        $query->shouldReceive('where')->once()->with('batch', '5')->andReturn($query);
+        $query->shouldReceive('orderBy')->once()->with('migration', 'desc')->andReturn($query);
+        $query->shouldReceive('get')->once()->andReturn(new Collection(['migration2', 'migration1']));
+        $query->shouldReceive('useWritePdo')->once()->andReturn($query);
+
+        $this->assertEquals(['migration2', 'migration1'], $repo->getMigrationsByBatch('5'));
+    }
+
     protected function getRepository()
     {
         return new DatabaseMigrationRepository(Mockery::mock(ConnectionResolverInterface::class), 'migrations');

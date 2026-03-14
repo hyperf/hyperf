@@ -14,8 +14,10 @@ namespace Hyperf\Macroable;
 
 use BadMethodCallException;
 use Closure;
+use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionFunction;
 use ReflectionMethod;
 
 /**
@@ -59,28 +61,25 @@ trait Macroable
     /**
      * Dynamically handle calls to the class.
      *
-     * @param string $method
-     * @param array $parameters
-     * @return mixed
      * @throws BadMethodCallException
      */
-    public function __call($method, $parameters)
+    public function __call(string $name, array $arguments): mixed
     {
-        if (! static::hasMacro($method)) {
+        if (! static::hasMacro($name)) {
             throw new BadMethodCallException(sprintf(
                 'Method %s::%s does not exist.',
                 static::class,
-                $method
+                $name
             ));
         }
 
-        $macro = static::$macros[$method];
+        $macro = static::$macros[$name];
 
         if ($macro instanceof Closure) {
             $macro = $macro->bindTo($this, static::class);
         }
 
-        return $macro(...$parameters);
+        return $macro(...$arguments);
     }
 
     /**
@@ -93,6 +92,18 @@ trait Macroable
      */
     public static function macro($name, $macro)
     {
+        if ($macro instanceof Closure) {
+            $reflection = new ReflectionFunction($macro);
+            foreach ($reflection->getParameters() as $parameter) {
+                if ($parameter->isPassedByReference()) {
+                    throw new InvalidArgumentException(sprintf(
+                        'Macro %s cannot accept parameters passed by reference.',
+                        $name
+                    ));
+                }
+            }
+        }
+
         static::$macros[$name] = $macro;
     }
 

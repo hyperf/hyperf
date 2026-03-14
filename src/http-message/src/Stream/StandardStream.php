@@ -16,6 +16,7 @@ use Exception;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
+use Stringable;
 
 use function clearstatcache;
 use function fclose;
@@ -42,7 +43,7 @@ use const SEEK_SET;
  * Author: Martijn van der Ven <martijn@vanderven.se>.
  * @license https://github.com/Nyholm/psr7/blob/master/LICENSE
  */
-final class StandardStream implements StreamInterface
+final class StandardStream implements Stringable, StreamInterface
 {
     /** @var array Hash of readable and writable stream types */
     private const READ_WRITE_HASH = [

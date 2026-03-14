@@ -30,6 +30,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use ReflectionClass;
+use Stringable;
 use Swoole\Http\Response as SwooleResponse;
 
 /**
@@ -141,7 +142,7 @@ class ResponseTest extends TestCase
         $this->assertSame($expected, $reflectionMethod->invoke($response, $arrayable));
 
         // Xmlable
-        $xmlable = new class($expected) implements Xmlable {
+        $xmlable = new class($expected) implements Stringable, Xmlable {
             private $result;
 
             public function __construct($result)
@@ -241,6 +242,7 @@ class ResponseTest extends TestCase
         $id = uniqid();
         $cookie1 = new Cookie('Name', 'Hyperf');
         $cookie2 = new Cookie('Request-Id', $id);
+        $cookie3 = new Cookie('Cleared', '');
         $swooleResponse->shouldReceive('status')->with(200, 'OK')->andReturnUsing(function ($code) {
             $this->assertSame($code, 200);
             return true;
@@ -251,9 +253,9 @@ class ResponseTest extends TestCase
             }
             return true;
         });
-        $swooleResponse->shouldReceive('rawcookie')->withAnyArgs()->twice()->andReturnUsing(function ($name, $value, ...$args) use ($id) {
-            $this->assertTrue($name == 'Name' || $name == 'Request-Id');
-            $this->assertTrue($value == 'Hyperf' || $value == $id);
+        $swooleResponse->shouldReceive('rawcookie')->withAnyArgs()->times(3)->andReturnUsing(function ($name, $value, ...$args) use ($id) {
+            $this->assertTrue(in_array($name, ['Name', 'Request-Id', 'Cleared']));
+            $this->assertTrue(in_array($value, ['Hyperf', $id, 'deleted']));
             return true;
         });
         $swooleResponse->shouldReceive('end')->once()->andReturn(true);
@@ -261,7 +263,7 @@ class ResponseTest extends TestCase
         Context::set(PsrResponseInterface::class, $psrResponse = new \Hyperf\HttpMessage\Server\Response());
 
         $response = new Response();
-        $response = $response->withCookie($cookie1)->withCookie($cookie2)->withHeader('X-Token', 'xxx')->withStatus(200);
+        $response = $response->withCookie($cookie1)->withCookie($cookie2)->withCookie($cookie3)->withHeader('X-Token', 'xxx')->withStatus(200);
 
         $this->assertInstanceOf(Response::class, $response);
         $this->assertInstanceOf(ResponseInterface::class, $response);

@@ -48,7 +48,7 @@ class RouteGuideClientTest extends TestCase
         $point = new Point();
         $point->setLatitude(407838351);
         $point->setLongitude(-746143763);
-        [$feature] = $client->getFeature($point);
+        [$feature] = $client->getFeature($point)->wait();
         $this->assertEquals('Patriots Path, Mendham, NJ 07945, USA', $feature->getName());
     }
 

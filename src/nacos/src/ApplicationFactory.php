@@ -35,6 +35,7 @@ class ApplicationFactory
             'guzzle_config' => $config['guzzle']['config'] ?? null,
             'host' => $config['host'] ?? null,
             'port' => $config['port'] ?? null,
+            'version' => $config['version'] ?? null,
         ]));
     }
 }

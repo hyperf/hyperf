@@ -65,6 +65,7 @@ class ValidationExistsRuleTest extends TestCase
         ApplicationContext::setContainer($container);
         Register::setConnectionResolver($resolver);
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(new EventDispatcher());
+        $container->shouldReceive('make')->with(UserWithConnection::class)->andReturn(new UserWithConnection());
 
         $this->createSchema();
     }
@@ -88,6 +89,10 @@ class ValidationExistsRuleTest extends TestCase
         $rule = new Exists('table', 'column');
         $rule->where('foo', 'bar');
         $this->assertEquals('exists:table,column,foo,"bar"', (string) $rule);
+
+        $rule = new Exists(UserWithConnection::class, 'column');
+        $rule->where('foo', 'bar');
+        $this->assertSame('exists:mysql.users,column,foo,"bar"', (string) $rule);
     }
 
     public function testItChoosesValidRecordsUsingWhereInRule()
@@ -221,4 +226,9 @@ class DatabaseTestUser extends Model
     protected ?string $table = 'users';
 
     protected array $guarded = [];
+}
+
+class UserWithConnection extends DatabaseTestUser
+{
+    protected ?string $connection = 'mysql';
 }

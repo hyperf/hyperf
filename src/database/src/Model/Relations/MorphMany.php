@@ -14,6 +14,12 @@ namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Database\Model\Collection;
 
+/**
+ * @template TRelatedModel of \Hyperf\Database\Model\Model
+ * @template TDeclaringModel of \Hyperf\Database\Model\Model
+ *
+ * @extends MorphOneOrMany<TRelatedModel, TDeclaringModel, Collection<int, TRelatedModel>>
+ */
 class MorphMany extends MorphOneOrMany
 {
     /**

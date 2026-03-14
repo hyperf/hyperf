@@ -100,9 +100,9 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         $this->timer = new Timer();
     }
 
-    public function __call($method, $args)
+    public function __call(string $name, array $arguments): mixed
     {
-        return $this->of('/')->{$method}(...$args);
+        return $this->of('/')->{$name}(...$arguments);
     }
 
     public function onMessage($server, $frame): void

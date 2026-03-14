@@ -81,6 +81,14 @@ class Client extends Server
         ]);
     }
 
+    public function patch(string $uri, array $data = [], array $headers = [])
+    {
+        return $this->request('PATCH', $uri, [
+            'headers' => $headers,
+            'form_params' => $data,
+        ]);
+    }
+
     public function delete(string $uri, array $data = [], array $headers = [])
     {
         return $this->request('DELETE', $uri, [

@@ -58,6 +58,11 @@ return [
     'email' => 'The :attribute must be a valid email address.',
     'ends_with' => 'The :attribute must end with one of the following: :values.',
     'enum' => 'The selected :attribute is invalid.',
+    'exclude' => 'The :attribute field is excluded.',
+    'exclude_if' => 'The :attribute field is excluded when :other is :value.',
+    'exclude_unless' => 'The :attribute field is excluded unless :other is in :values.',
+    'exclude_with' => 'The :attribute field is excluded when :values is present.',
+    'exclude_without' => 'The :attribute field is excluded when :values is not present.',
     'exists' => 'The selected :attribute is invalid.',
     'extensions' => 'The :attribute must have one of the following extensions: :values.',
     'file' => 'The :attribute must be a file.',
@@ -133,11 +138,6 @@ return [
     'required_with_all' => 'The :attribute field is required when :values is present.',
     'required_without' => 'The :attribute field is required when :values is not present.',
     'required_without_all' => 'The :attribute field is required when none of :values are present.',
-    'exclude' => 'The :attribute field is excluded.',
-    'exclude_if' => 'The :attribute field is excluded when :other is :value.',
-    'exclude_unless' => 'The :attribute field is excluded unless :other is in :values.',
-    'exclude_with' => 'The :attribute field is excluded when :values is present.',
-    'exclude_without' => 'The :attribute field is excluded when :values is not present.',
     'same' => 'The :attribute and :other must match.',
     'size' => [
         'numeric' => 'The :attribute must be :size.',
@@ -172,6 +172,7 @@ return [
         'string' => 'The :attribute must be between :min and :max characters when :other is :value.',
         'array' => 'The :attribute must have between :min and :max items when :other is :value.',
     ],
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines

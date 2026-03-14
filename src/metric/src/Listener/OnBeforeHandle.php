@@ -12,14 +12,10 @@ declare(strict_types=1);
 
 namespace Hyperf\Metric\Listener;
 
-use Hyperf\Command\Event\AfterExecute;
 use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Coordinator\Constants;
-use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
-use Hyperf\Coroutine\Coroutine;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
@@ -53,18 +49,16 @@ class OnBeforeHandle implements ListenerInterface
     {
         return [
             BeforeHandle::class,
-            AfterExecute::class,
         ];
     }
 
     public function process(object $event): void
     {
-        if ($event instanceof AfterExecute) {
-            CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
-            return;
-        }
-
-        if (! $this->config->get('metric.enable_command_metric', true)) {
+        if (
+            ! $event instanceof BeforeHandle
+            || ! $event->getCommand()->getApplication()->isAutoExitEnabled() // Only enable in the command with auto exit.
+            || ! $this->config->get('metric.enable_command_metric', true) // Double check the config.
+        ) {
             return;
         }
 
@@ -116,16 +110,11 @@ class OnBeforeHandle implements ListenerInterface
         );
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval, function () use ($metrics) {
+        $this->timer->tick($timerInterval, function () use ($metrics) {
             $this->trySet('gc_', $metrics, gc_status());
             $this->trySet('', $metrics, getrusage());
             $metrics['memory_usage']->set(memory_get_usage());
             $metrics['memory_peak_usage']->set(memory_get_peak_usage());
-        });
-        // Clean up timer on worker exit;
-        Coroutine::create(function () use ($timerId) {
-            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            $this->timer->clear($timerId);
         });
     }
 }
