@@ -263,10 +263,8 @@ class SqlServerGrammar extends Grammar
 
     /**
      * Compile an update statement into SQL.
-     *
-     * @param array $values
      */
-    public function compileUpdate(Builder $query,array $values): string
+    public function compileUpdate(Builder $query, array $values): string
     {
         $table = $this->wrapTable($query->from);
 
@@ -619,8 +617,6 @@ class SqlServerGrammar extends Grammar
 
     /**
      * Compile a "where JSON contains key" clause.
-     *
-     * @return string
      */
     protected function whereJsonContainsKey(Builder $query, array $where): string
     {
@@ -650,6 +646,7 @@ class SqlServerGrammar extends Grammar
 
     /**
      * Wrap the given JSON path segment.
+     * @param mixed $segment
      */
     protected function wrapJsonPathSegment($segment)
     {
