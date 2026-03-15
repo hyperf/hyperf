@@ -124,8 +124,10 @@ class Builder
 
     /**
      * The table joins for the query.
+     *
+     * @var array
      */
-    public array $joins = [];
+    public $joins;
 
     /**
      * The where constraints for the query.
@@ -1271,7 +1273,7 @@ class Builder
      * Add a nested where statement to the query.
      *
      * @param string $boolean
-     * @return static
+     * @return Builder|static
      */
     public function whereNested(Closure $callback, $boolean = 'and')
     {

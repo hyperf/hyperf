@@ -273,7 +273,7 @@ class SqlServerGrammar extends Grammar
         $where = $this->compileWheres($query);
 
         return trim(
-            ! empty($query->joins)
+            isset($query->joins)
                 ? $this->compileUpdateWithJoins($query, $table, $columns, $where)
                 : $this->compileUpdateWithoutJoins($query, $table, $columns, $where)
         );
@@ -289,7 +289,7 @@ class SqlServerGrammar extends Grammar
         $where = $this->compileWheres($query);
 
         return trim(
-            ! empty($query->joins)
+            isset($query->joins)
                 ? $this->compileDeleteWithJoins($query, $table, $where)
                 : $this->compileDeleteWithoutJoins($query, $table, $where)
         );
