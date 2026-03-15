@@ -124,10 +124,8 @@ class Builder
 
     /**
      * The table joins for the query.
-     *
-     * @var array
      */
-    public $joins;
+    public ?array $joins = null;
 
     /**
      * The where constraints for the query.
