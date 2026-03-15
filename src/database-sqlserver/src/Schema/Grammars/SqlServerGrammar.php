@@ -772,6 +772,7 @@ class SqlServerGrammar extends Grammar
     protected function typeTimestamp(Fluent $column): string
     {
         if ($column->useCurrent) {
+            /* @phpstan-ignore-next-line */
             $column->default(new Expression('CURRENT_TIMESTAMP'));
         }
 
@@ -786,6 +787,7 @@ class SqlServerGrammar extends Grammar
     protected function typeTimestampTz(Fluent $column): string
     {
         if ($column->useCurrent) {
+            /* @phpstan-ignore-next-line */
             $column->default(new Expression('CURRENT_TIMESTAMP'));
         }
 
@@ -897,14 +899,14 @@ class SqlServerGrammar extends Grammar
 
     /**
      * Get the SQL for an auto-increment column modifier.
-     *
-     * @return null|string
      */
-    protected function modifyIncrement(Blueprint $blueprint, Fluent $column)
+    protected function modifyIncrement(Blueprint $blueprint, Fluent $column): ?string
     {
         if (! $column->change && in_array($column->type, $this->serials) && $column->autoIncrement) {
             return ' identity primary key';
         }
+
+        return null;
     }
 
     /**
