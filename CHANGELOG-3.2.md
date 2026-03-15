@@ -164,6 +164,7 @@ fgetcsv($fp) must be changed to fgetcsv($fp, escape: '')
 - [#7605](https://github.com/hyperf/hyperf/pull/7605) Added `NonCoroutine` attribute for flexible test execution control.
 - [#7618](https://github.com/hyperf/hyperf/pull/7618) Added a new registration mode for async queue consumer processes that supports automatic registration based on configuration, eliminating the need for manual process registration in `config/autoload/processes.php`.
 - [#7621](https://github.com/hyperf/hyperf/pull/7621) Added timestamp prefix to `StdoutLogger` output format.
+- [#7717](https://github.com/hyperf/hyperf/pull/7717) Added package `database-sqlserver`.
 
 ## Changed
 
