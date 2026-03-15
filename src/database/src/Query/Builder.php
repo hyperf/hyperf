@@ -1271,7 +1271,7 @@ class Builder
      * Add a nested where statement to the query.
      *
      * @param string $boolean
-     * @return Builder|static
+     * @return static
      */
     public function whereNested(Closure $callback, $boolean = 'and')
     {
