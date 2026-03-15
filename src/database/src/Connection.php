@@ -977,6 +977,9 @@ class Connection implements ConnectionInterface
 
     /**
      * Set the table prefix and return the grammar.
+     * @template T of Grammar
+     * @param T $grammar
+     * @return T
      */
     public function withTablePrefix(Grammar $grammar): Grammar
     {

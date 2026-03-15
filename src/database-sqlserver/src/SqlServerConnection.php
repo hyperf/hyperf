@@ -14,6 +14,7 @@ namespace Hyperf\Database\Sqlsrv;
 
 use Closure;
 use Hyperf\Database\Connection;
+use Hyperf\Database\Grammar;
 use Hyperf\Database\Sqlsrv\Query\Grammars\SqlServerGrammar as QueryGrammar;
 use Hyperf\Database\Sqlsrv\Query\Processors\SqlServerProcessor;
 use Hyperf\Database\Sqlsrv\Query\SqlServerBuilder as QueryBuilder;
@@ -104,7 +105,8 @@ class SqlServerConnection extends Connection
     }
 
     /**
-     * Get the default schema grammar instance.
+     * Set the table prefix and return the grammar.
+     * @return Grammar&SchemaGrammar
      */
     protected function getDefaultSchemaGrammar(): SchemaGrammar
     {

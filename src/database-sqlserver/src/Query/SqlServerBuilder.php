@@ -17,8 +17,8 @@ use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\Expression as ExpressionContract;
+use Hyperf\Database\Query\IndexHint;
 use Hyperf\Database\Sqlsrv\Exception\InvalidArgumentException;
-use RectorPrefix202308\Illuminate\Contracts\Database\Query\ConditionExpression;
 
 use function Hyperf\Collection\head;
 
@@ -93,11 +93,10 @@ class SqlServerBuilder extends Builder
      * @param mixed $operator
      * @param mixed $value
      * @param string $boolean
-     * @return $this
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and'): static
     {
-        if ($column instanceof ConditionExpression) {
+        if ($column instanceof Expression) {
             $type = 'Expression';
 
             $this->wheres[] = compact('type', 'column', 'boolean');
@@ -161,14 +160,10 @@ class SqlServerBuilder extends Builder
 
         $type = 'Basic';
 
-        $columnString = ($column instanceof ExpressionContract)
-            ? $this->grammar->getValue($column)
-            : $column;
-
         // If the column is making a JSON reference we'll check to see if the value
         // is a boolean. If it is, we'll add the raw boolean string as an actual
         // value to the query to ensure this is properly handled by the query.
-        if (str_contains($columnString, '->') && is_bool($value)) {
+        if (str_contains($column, '->') && is_bool($value)) {
             $value = new Expression($value ? 'true' : 'false');
 
             if (is_string($column)) {
@@ -211,7 +206,7 @@ class SqlServerBuilder extends Builder
     {
         $type = 'Basic';
 
-        if ($column instanceof ConditionExpression) {
+        if ($column instanceof Expression) {
             $type = 'Expression';
 
             $this->havings[] = compact('type', 'column', 'boolean');
@@ -328,8 +323,6 @@ class SqlServerBuilder extends Builder
 
     /**
      * Add an index hint to suggest a query index.
-     *
-     * @return $this
      */
     public function useIndex(string $index): static
     {
@@ -340,8 +333,6 @@ class SqlServerBuilder extends Builder
 
     /**
      * Add an index hint to force a query index.
-     *
-     * @return $this
      */
     public function forceIndex(string $index): static
     {
@@ -352,8 +343,6 @@ class SqlServerBuilder extends Builder
 
     /**
      * Add an index hint to ignore a query index.
-     *
-     * @return $this
      */
     public function ignoreIndex(string $index): static
     {

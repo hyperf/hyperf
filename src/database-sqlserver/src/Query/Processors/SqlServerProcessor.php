@@ -48,6 +48,7 @@ class SqlServerProcessor extends Processor
      */
     public function processColumns(array $results): array
     {
+        /* @phpstan-ignore-next-line */
         return array_map(function ($result) {
             $result = (object) $result;
 

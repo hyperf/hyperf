@@ -16,7 +16,7 @@ use Hyperf\Collection\Arr;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\Grammars\Grammar;
-use Hyperf\Database\Sqlsrv\Query\IndexHint;
+use Hyperf\Database\Query\IndexHint;
 use Hyperf\Stringable\Str;
 
 use function Hyperf\Collection\collect;
