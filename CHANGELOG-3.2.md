@@ -111,6 +111,15 @@ return [
 ];
 ```
 
+## Warn
+
+1. If you have upgraded to PHP 8.4, please note that both the `fgetcsv` and `fputcsv` methods now require providing a default value for the `escape` parameter.
+
+```
+fputcsv($fp, $fields) must be changed to fputcsv($fp, $fields, escape: '')
+fgetcsv($fp) must be changed to fgetcsv($fp, escape: '')
+```
+
 ## Dependencies Upgrade
 
 - Upgrade the php version to `>=8.2`
@@ -131,6 +140,7 @@ return [
 
 - [#6804](https://github.com/hyperf/hyperf/pull/6804) Optimized the code for reading contents from file when using `Hyperf\Di\ReflectionManager::getAllClassesByFinder()`.
 - [#7142](https://github.com/hyperf/hyperf/pull/7142) Enhance array shuffle method to support custom random engines.
+- [#7431](https://github.com/hyperf/hyperf/pull/7431) Optimized the `toCssClasses` and `toCssStyles` methods by directly using the input array to simplify the code logic.
 - [#7523](https://github.com/hyperf/hyperf/pull/7523) Modernize array utilities and JSON validation using PHP 8.4+ functions with polyfills.
 - [#7620](https://github.com/hyperf/hyperf/pull/7620) Added Symfony 7.4 compatibility with batch command registration.
 - [#7653](https://github.com/hyperf/hyperf/pull/7653) Improved `Parser::parseResponse` return value format by replacing `Grpc\StringifyAble` with `Google\Rpc\Status` objects for better standardization and code readability.
@@ -159,6 +169,7 @@ return [
 
 - [#6760](https://github.com/hyperf/hyperf/pull/6760) Changed the default type of `deleted_at` to `datetime` for `hyperf/database`.
 - [#7208](https://github.com/hyperf/hyperf/pull/7208) Throw exceptions when the value is smaller than zero for `Hyperf\Database\Query\Builder::limit()`.
+- [#7372](https://github.com/hyperf/hyperf/pull/7372) Use empty string as `escape` for function `str_getcsv`.
 - [#7462](https://github.com/hyperf/hyperf/pull/7462) Replaced `influxdb/influxdb-php` into `influxdata/influxdb-client-php`.
 - [#7563](https://github.com/hyperf/hyperf/pull/7563) Changed the `logger` configuration structure.
 - [#7594](https://github.com/hyperf/hyperf/pull/7594) Changed the `cache` configuration structure.
