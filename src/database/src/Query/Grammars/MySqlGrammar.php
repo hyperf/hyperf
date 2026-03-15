@@ -107,7 +107,7 @@ class MySqlGrammar extends Grammar
         // can get join statements to attach to other tables when they're needed.
         $joins = '';
 
-        if (isset($query->joins)) {
+        if (! empty($query->joins)) {
             $joins = ' ' . $this->compileJoins($query, $query->joins);
         }
 
@@ -194,7 +194,7 @@ class MySqlGrammar extends Grammar
 
         $where = is_array($query->wheres) ? $this->compileWheres($query) : '';
 
-        return isset($query->joins)
+        return ! empty($query->joins)
             ? $this->compileDeleteWithJoins($query, $table, $where)
             : $this->compileDeleteWithoutJoins($query, $table, $where);
     }

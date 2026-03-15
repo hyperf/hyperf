@@ -199,7 +199,7 @@ class Grammar extends BaseGrammar
         // can get join statements to attach to other tables when they're needed.
         $joins = '';
 
-        if (isset($query->joins)) {
+        if (! empty($query->joins)) {
             $joins = ' ' . $this->compileJoins($query, $query->joins);
         }
 

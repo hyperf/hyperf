@@ -147,7 +147,7 @@ class PostgresGrammar extends Grammar
      */
     public function compileDelete(Builder $query): string
     {
-        if (isset($query->joins) || isset($query->limit)) {
+        if (! empty($query->joins) || isset($query->limit)) {
             return $this->compileDeleteWithJoinsOrLimit($query);
         }
 
@@ -199,7 +199,7 @@ class PostgresGrammar extends Grammar
      */
     protected function compileUpdateFrom(Builder $query)
     {
-        if (! isset($query->joins)) {
+        if (empty($query->joins)) {
             return '';
         }
 
@@ -447,7 +447,7 @@ class PostgresGrammar extends Grammar
     {
         $baseWheres = $this->compileWheres($query);
 
-        if (! isset($query->joins)) {
+        if (empty($query->joins)) {
             return $baseWheres;
         }
 
