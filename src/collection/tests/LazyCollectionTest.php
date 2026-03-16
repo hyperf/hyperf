@@ -17,14 +17,15 @@ use Hyperf\Collection\Collection;
 use Hyperf\Collection\LazyCollection;
 use InvalidArgumentException;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 use function Hyperf\Tappable\tap;
 
 /**
  * @internal
- * @coversNothing
  */
+#[CoversNothing]
 class LazyCollectionTest extends TestCase
 {
     public function testCanCreateEmptyCollection()
