@@ -77,11 +77,9 @@ class Parser
     }
 
     /**
-     * Parese stream message
+     * Parese stream message.
      *
-     * @param string $buffer
      * @param mixed $deserialize
-     * @return array
      */
     public static function parseStreamMessage(string $buffer, $deserialize): array
     {
